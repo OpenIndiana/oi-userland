@@ -1,0 +1,30 @@
+To build in fastdebug mode, configure with
+
+  bash ./configure ... --with-debug-level=fastdebug
+
+The patches here are for code that's only built in debug mode.
+
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/opto/type.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/opto/type.cpp
+@@ -912,6 +912,9 @@
+   assert(Compile::current()->_type_verify == nullptr || Compile::current()->_type_verify->empty_cache(), "cache should have been discarded");
+ }
+ 
++#ifdef _C
++#undef _C
++#endif
+ class VerifyMeet {
+ private:
+   Compile* _C;
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/utilities/vmError.cpp
+@@ -79,6 +79,9 @@
+ #ifndef PRODUCT
+ #include <signal.h>
+ #endif // PRODUCT
++#ifdef ASSERT
++# include <alloca.h>
++#endif // ASSERT
+ 
+ bool              VMError::coredump_status;
+ char              VMError::coredump_message[O_BUFLEN];

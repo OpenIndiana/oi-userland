@@ -1,14 +1,12 @@
-fix problem with UICommon
-
-VirtualBoxVM: supR3HardenedMainGetTrustedMain: dlopen("/opt/VirtualBox/amd64/VirtualBoxVM.so",) failed: ld.so.1: VirtualBoxVM: fatal: relocation error: file /opt/VirtualBox/amd64/UICommon.so: symbol _ZN8QPrinterC1ENS_11PrinterModeE: referenced symbol not found
-
---- VirtualBox-7.0.18/src/VBox/Frontends/VirtualBox/Makefile.kmk.orig
-+++ VirtualBox-7.0.18/src/VBox/Frontends/VirtualBox/Makefile.kmk
-@@ -1713,6 +1713,7 @@
- endif
- ifndef VBOX_WITH_QT6
-  UICommon_QT_MODULES.solaris += X11Extras
-+ UICommon_QT_MODULES.solaris += PrintSupport
- endif
+diff --git a/src/VBox/Frontends/VirtualBox/Makefile.kmk b/src/VBox/Frontends/VirtualBox/Makefile.kmk
+index f67421e..fe0623e 100644
+--- a/src/VBox/Frontends/VirtualBox/Makefile.kmk
++++ b/src/VBox/Frontends/VirtualBox/Makefile.kmk
+@@ -1660,6 +1660,7 @@ endif
  ifdef VBOX_WITH_SCREENSAVER_CONTROL
   UICommon_QT_MODULES.solaris  += DBus
+  UICommon_QT_MODULES.solaris  += Xml
++ UICommon_QT_MODULES.solaris  += PrintSupport
+ endif
+ ifdef VBOX_WITH_SCREENSAVER_CONTROL
+  UICommon_QT_MODULES.freebsd  += DBus

@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tempora
-HUMAN_VERSION =			5.7.0
+HUMAN_VERSION =			5.8.0
 COMPONENT_SUMMARY =		Objects and routines pertaining to date and time (tempora)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:888190a2dbe3255ff26dfa9fcecb25f4d38434c0f1943cd61de98bb41c410c50
+	sha256:1e9606e65a3f2063460961d68515dee07bdaca0859305a8d3e6604168175fef1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

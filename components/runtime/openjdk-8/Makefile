@@ -17,31 +17,31 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         openjdk
-OPENJDK_BUILD_NUMBER=	352
-HUMAN_VERSION=          jdk8u$(OPENJDK_BUILD_NUMBER)-ga
+COMPONENT_NAME=		jdk8u
+OPENJDK_BUILD_NUMBER=	432
+HUMAN_VERSION=		$(COMPONENT_NAME)$(OPENJDK_BUILD_NUMBER)-ga
 COMPONENT_VERSION=      1.8.$(OPENJDK_BUILD_NUMBER)
 COMPONENT_SUMMARY=      Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=          jdk8u-$(HUMAN_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:141dcb6b321cc78e993f1f126dde9f6c0a7af5d11bfe390f5cf5b1513fabdc1c
+	sha256:6ac8ee2b6932e4632ea2c33fe2320d6ceaca50a67521fac02a67027e40437460
 COMPONENT_ARCHIVE_URL=  \
-	https://github.com/openjdk/jdk8u/archive/refs/tags/jdk8u352-ga.tar.gz
-COMPONENT_PROJECT_URL=  https://openjdk.org/
+	https://github.com/openjdk/jdk8u/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+COMPONENT_PROJECT_URL=	https://wiki.openjdk.org/display/jdk8u
 
 
 # Java testing archives
 JTREG_VERSION=6.1
 PKG_MACROS += JTREG_VERSION=$(JTREG_VERSION).$(JTREG_SUFFIX)
 PKG_MACROS += JTREG_HUMAN_VERSION=$(JTREG_VERSION)-$(JTREG_SUFFIX)
-JTREG_SUFFIX=2
+JTREG_SUFFIX=3
 JPRT_JTREG_HOME=$(COMPONENT_DIR)/$(COMPONENT_SRC_1)/build/images/jtreg
 
 COMPONENT_SRC_1= jtreg-jtreg-$(JTREG_VERSION)-$(JTREG_SUFFIX)
 COMPONENT_ARCHIVE_1=      jtreg-$(JTREG_VERSION)+$(JTREG_SUFFIX).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:d68397542188a24ecf8c42c4cf4b818dda2bd95aee8d6b0980ede78c36fcb40f
+	sha256:38a7a3f8d48d50eac8e09eb2f9880c7792fa198ec44d246df88492d45d6ee4cf
 COMPONENT_ARCHIVE_URL_1=  \
     https://github.com/openjdk/jtreg/archive/refs/tags/$(COMPONENT_ARCHIVE_1)
 
@@ -90,28 +90,37 @@ COMPONENT_ARCHIVE_HASH_12 = sha256:a21e50ffbb67e7adc5b46cf7b9e1a480f1e0f04fd4201
 CLEAN_PATHS += $(BUILD_DIR) $(JPRT_JTREG_HOME)
 CLEAN_PATHS += cacerts.out
 
+# Use OpenJDK 8 as the boot JDK
+JAVA_HOME = $(JAVA8_HOME)
+
+# Build fails with GCC 14
+GCC_VERSION = 13
+
 include $(WS_MAKE_RULES)/common.mk
 
-JAVA_BUILD_HOME=$(PROTO_DIR)/usr/jdk/instances/openjdk1.8.0
 COMPONENT_TEST_TARGETS=test
 COMPONENT_TEST_ENV=$(COMPONENT_BUILD_ENV)
 COMPONENT_TEST_ENV+=USERLAND_ARCHIVES=$(USERLAND_ARCHIVES)
 COMPONENT_TEST_ENV+=ANT=/usr/bin/ant
 COMPONENT_TEST_ENV+=ANT_JAR=/usr/share/lib/ant/ant.jar
-COMPONENT_TEST_ENV+=JOBS=4
+COMPONENT_TEST_ENV+=JOBS=$(PARALLEL_JOBS)
 
 COMPONENT_TEST_ARGS+=JPRT_JTREG_HOME=$(JPRT_JTREG_HOME)
 COMPONENT_TEST_ARGS+=JTREG_HOME=$(JPRT_JTREG_HOME)
 COMPONENT_TEST_ARGS+=JT_HOME=$(JPRT_JTREG_HOME)
 
-# Remove df output from one of the tests 
-COMPONENT_TEST_TRANSFORMS+= -e "'/^.*Agent\[[0-9]+\]: stdout: \/.*files$$/d'"
+# Normalize test results
+COMPONENT_TEST_TRANSFORMS += "-e '/make\[/d'"						# delete make logs
+COMPONENT_TEST_TRANSFORMS += "-e '/^Agent id: [0-9]/d'"					# random Agend id
+COMPONENT_TEST_TRANSFORMS += "-e '/^elapsed time/d'"					# timing
+COMPONENT_TEST_TRANSFORMS += "-e 's/ (build time [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\})//'"	# timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^[0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}/d'"		# timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^TIME:/d'"						# timing
+COMPONENT_TEST_TRANSFORMS += "-e 's/[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}/\$$(TIMESTAMP)/'"	# timestamp
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(timeout handling was \)[0-9]\{1,\}ms/\1\$$(TIMEOUT)/'"	# timeout
+COMPONENT_TEST_TRANSFORMS += "-e 's|$(COMPONENT_DIR)|\$$(COMPONENT_DIR)|g'"		# COMPONENT_DIR
 
 PATCH_LEVEL=0
-
-CC=gcc
-CXX=g++
-PATH=$(GCC_ROOT)/bin:$(PATH.gnu)
 
 CONFIGURE_SCRIPT=	$(BUILD_DIR_$(BITS))/configure
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CP) -r $(SOURCE_DIR)/* $(@D))
@@ -133,7 +142,7 @@ CONFIGURE_OPTIONS+=        STRIP=$(STRIP)
 
 COMPONENT_BUILD_ENV+=	USE_GCC=1
 
-COMPONENT_BUILD_ARGS = JOBS=4
+COMPONENT_BUILD_ARGS = JOBS=$(PARALLEL_JOBS)
 
 COMPONENT_BUILD_TARGETS = images
 
@@ -185,7 +194,11 @@ $(BUILD_DIR_64)/.tested-and-compared:   $(TESTS_BUILT) build
 
 REQUIRED_PACKAGES += developer/build/ant
 
+# Manually added boot JDK
+REQUIRED_PACKAGES += runtime/java/openjdk8
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93

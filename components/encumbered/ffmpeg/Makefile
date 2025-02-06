@@ -18,11 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.0.1
+COMPONENT_VERSION=	7.1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:bce9eeb0f17ef8982390b1f37711a61b4290dc8c2a0c1a37b5857e85bfb0e4ff
+COMPONENT_ARCHIVE_HASH=	sha256:40973d44970dbc83ef302b0609f2e74982be2d85916dd2ee7472d30678a7abe6
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -38,10 +39,25 @@ COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -I/usr/X11/include
-CFLAGS += $(CPP_LARGEFILES)
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-CPPFLAGS += $($(COMPILER)_C99_ENABLE)
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/LICENSE.md ; \
+		printf '\n--- COPYING.LGPLv2.1 ------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv2.1 ; \
+		printf '\n--- COPYING.LGPLv3 --------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv3 ; \
+		printf '\n--- COPYING.GPLv2 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv2 ; \
+		printf '\n--- COPYING.GPLv3 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv3 \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
+
+# ISO C23 functions are needed, for example stdc_count_ones().
+CPPFLAGS += $($(COMPILER)_C23_ENABLE)
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
@@ -129,6 +145,7 @@ REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
+REQUIRED_PACKAGES += library/video/x265-41
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

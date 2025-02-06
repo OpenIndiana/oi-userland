@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		watch
 COMPONENT_VERSION=	3.3.16
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Linux watch utility
 COMPONENT_PROJECT_URL=	https://gitlab.com/procps-ng/procps
 COMPONENT_FMRI=		utilities/watch
@@ -39,6 +40,8 @@ CONFIGURE_OPTIONS +=	--disable-kill
 CONFIGURE_OPTIONS +=	--disable-modern-top
 CONFIGURE_OPTIONS +=	--disable-numa
 CONFIGURE_OPTIONS +=	--enable-watch8bit
+# is needed to be able to build.
+CONFIGURE_OPTIONS +=	--disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

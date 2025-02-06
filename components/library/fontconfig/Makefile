@@ -11,18 +11,20 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
-COMPONENT_VERSION=	2.15.0
+COMPONENT_VERSION=	2.16.0
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
+COMPONENT_ARCHIVE_HASH= sha256:6a33dc555cc9ba8b10caf7695878ef134eeb36d0af366041f639b1da9b6ed220
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig/
 COMPONENT_ARCHIVE_URL= 	https://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/$(COMPONENT_NAME)
@@ -30,17 +32,25 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_FMRI.fontconfig-32= $(COMPONENT_FMRI)/32
+
+# Make gcc 14 accept the old code.
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
+COMPONENT_PREP_ACTION= ( cd $(@D); autoreconf )
 
 # Gperf files should be regenerated
 # https://bugs.freedesktop.org/show_bug.cgi?id=101280
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(RM) $(SOURCE_DIR)/src/fcobjshash.h )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-baseconfigdir=$(ETCDIR)/fonts
 CONFIGURE_OPTIONS += --with-default-fonts='/usr/share/fonts'
 CONFIGURE_OPTIONS += --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
@@ -58,15 +68,15 @@ $(BUILD_DIR)/.fonts_installed:	$(INSTALL_64)
 
 install:	$(INSTALL_64) $(BUILD_DIR)/.fonts_installed
 
-# This is necessary to pass tests
-unexport SHELLOPTS
-
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/gperf
+REQUIRED_PACKAGES += library/json-c/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/expat/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32

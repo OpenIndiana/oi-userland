@@ -27,6 +27,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		history-encumbered
 
+include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies

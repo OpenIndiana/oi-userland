@@ -29,14 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.5
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.4.7
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277
+COMPONENT_ARCHIVE_HASH= sha256:7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -60,16 +59,13 @@ CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += LDAPLIBS="-lldap-2.6 -llber-2.6"
 
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --enable-largefile
 CONFIGURE_OPTIONS += --disable-selinux-support
 CONFIGURE_OPTIONS += --disable-libdns
-CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
+CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/libexec/pinentry
 CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-ksba-prefix=$(CONFIGURE_PREFIX)
@@ -79,14 +75,16 @@ CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-readline=$(CONFIGURE_PREFIX)
 
-MAN8LIST= addgnupghome applygnupgdefaults
-
-install:	$(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
-	    $(CP) -R 'en@boldquot' en )
+	    $(CP) -R 'en@boldquot' en ) ;
 
-# Alas we have some failing tests after changes in shared-macros.mk:
-# build, install and test in clean environment (c86a36b0fd6dda8c75b28642c319842ace789385)
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Testing fails without HOME set
+COMPONENT_TEST_ENV += HOME=/tmp
+
 COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
@@ -97,6 +95,7 @@ COMPONENT_TEST_TRANSFORMS += "-e '/====/p'"
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += security/pinentry
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
@@ -110,7 +109,6 @@ REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += security/pinentry
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

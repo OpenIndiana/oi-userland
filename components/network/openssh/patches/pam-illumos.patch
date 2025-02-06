@@ -1,0 +1,12 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth-pam.c a/auth-pam.c
+--- a~/auth-pam.c	1970-01-01 00:00:00
++++ a/auth-pam.c	1970-01-01 00:00:00
+@@ -68,7 +68,7 @@
+ #endif
+ 
+ /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
+-#ifdef PAM_SUN_CODEBASE
++#if defined(PAM_SUN_CODEBASE) && !defined(__illumos__)
+ # define sshpam_const		/* Solaris, HP-UX, SunOS */
+ #else
+ # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */

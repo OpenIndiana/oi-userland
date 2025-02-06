@@ -14,18 +14,20 @@
 #   $WS_TOOLS/python-integrate-project zope.testrunner
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			6.5
+HUMAN_VERSION =			6.6.1
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d1ff88aa8dab42a2f0de2f522719f675e8977a4b82ece6526ae742e1fdabdbdc
+	sha256:949426d4ae5f572dc8a6b07309f26f4da4e63e6f91e03bc7c4b9f5b8f6db0650
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
+
+COMPONENT_SRC =			zope_testrunner-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -47,9 +49,9 @@ TOX_POSARGS += -vv
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(subprocess \)[0-9]\{1,\}\( is still running\)/\1\$$(PID)\2/'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/zope-exceptions
 PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing

@@ -14,36 +14,34 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-python
-COMPONENT_VERSION=	1.22.11
+COMPONENT_VERSION=	1.24.12
 COMPONENT_SUMMARY=	Python bindings for the GStreamer streaming media framework
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:99e37ea9f7163099734f9b0fce361bc67a0e7a65ffba9bc497127506a3fdedb3
+COMPONENT_ARCHIVE_HASH=	sha256:d679e2ca3e655a7328627c4670c324fc22f588d2cb8ecd2fa7a6a42df51132cc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_FMRI=	library/python/python-gst
-COMPONENT_LICENSE=	LGPL v2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += -Dpygi-overrides-dir=$(PYTHON_VENDOR_PACKAGES)/gi/overrides
-
-# As test results keep only everything between the lines containing Ok: and Timeout:
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ok:/,/^Timeout:/p" '
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4023
+CONFIGURE_OPTIONS += -Dpython.platlibdir=$(PYTHON_VENDOR_PACKAGES)
 
 # Build dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

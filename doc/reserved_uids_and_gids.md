@@ -39,7 +39,6 @@ UID   | User name
 53    | named
 54    | lightdm
 55    | mongodb
-56    | couchdb
 57    | elasticsearch
 58    | redis
 60    | xvm
@@ -114,7 +113,6 @@ GID   | Group name
 53    | named
 54    | lightdm
 55    | mongodb
-56    | couchdb
 57    | elasticsearch
 58    | redis
 59    | vboxsf

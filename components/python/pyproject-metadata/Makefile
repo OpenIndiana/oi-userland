@@ -19,16 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_metadata
-HUMAN_VERSION =			0.8.0
-COMPONENT_SUMMARY =		pyproject_metadata - PEP 621 metadata parsing
+HUMAN_VERSION =			0.9.0
+COMPONENT_SUMMARY =		PEP 621 metadata parsing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:376d5a00764ac29440a54579f88e66b7d9cb7e629d35c35a1c7248bfebc9b455
+	sha256:8511c00a4cad96686af6a6b4143433298beb96105a9379afdc9b0328f4f260c9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core

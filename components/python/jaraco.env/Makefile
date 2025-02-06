@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.env
 HUMAN_VERSION =			1.0.0
-COMPONENT_SUMMARY =		jaraco.env - Facilities for environment variables
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Facilities for environment variables
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.env
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a3/c7/22994a63d2f7b93e482b4ca00614b39371b0fd0ddd6e332a70194b21647e/jaraco.env-1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:11187cedc0f8f45a62dcaccbb6c1576a7200203041e7999223144718dd39a1f8
 COMPONENT_LICENSE =		MIT
@@ -34,12 +33,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-ruff

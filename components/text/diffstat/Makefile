@@ -22,17 +22,18 @@
 # Copyright (c) 2020, Michal Nowak
 #
 
-BUILD_BITS= 64
+# disable CONFIGURE_DEFAULT_DIRS, because --localedir is not supported
+CONFIGURE_DEFAULT_DIRS=no
 USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.66
+COMPONENT_VERSION=	1.67
 COMPONENT_SUMMARY=	A utility which provides statistics based on the output of diff
 COMPONENT_PROJECT_URL=	https://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:f54531bbe32e8e0fa461f018b41e3af516b632080172f361f05e50367ecbb69e
+COMPONENT_ARCHIVE_HASH=	sha256:760ed0c99c6d643238d41b80e60278cf1683ffb94a283954ac7ef168c852766a
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/diffstat
 COMPONENT_CLASSIFICATION= System/Text Tools

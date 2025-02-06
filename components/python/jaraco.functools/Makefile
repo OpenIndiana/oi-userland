@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.functools
-HUMAN_VERSION =			4.0.2
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		Functools like those found in stdlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3460c74cd0d32bf82b9576bbb3527c4364d5b27a21f5158a62aed6c4b42e23f5
+	sha256:70f7e0e2ae076498e212562325e805204fc092d7b4c17e0e86c959e249701a9d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -1,3 +1,7 @@
+$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "cipher": algorithms.TripleDES,
+$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
+  "class": algorithms.TripleDES,
 test_empty (tests.test_archive.ArchiveTests) ... ok
 test_gzip_mtime (tests.test_archive.ArchiveTests) ... ok
 test_prefix (tests.test_archive.ArchiveTests) ... ok
@@ -62,9 +66,8 @@ test_init_username_passwd_set (tests.test_client.HttpGitClientTests) ... ok
 test_init_username_set_no_password (tests.test_client.HttpGitClientTests) ... ok
 test_smart_request_content_type_with_directive_check (tests.test_client.HttpGitClientTests) ... ok
 test_url_redirect_location (tests.test_client.HttpGitClientTests) ... ok
-test_clone (tests.test_client.LocalGitClientTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
-  warnings.warn(
-ok
+test_urllib3_protocol_error (tests.test_client.HttpGitClientTests) ... ok
+test_clone (tests.test_client.LocalGitClientTests) ... ok
 test_fetch_empty (tests.test_client.LocalGitClientTests) ... ok
 test_fetch_into_empty (tests.test_client.LocalGitClientTests) ... ok
 test_fetch_pack_none (tests.test_client.LocalGitClientTests) ... ok
@@ -99,6 +102,7 @@ test_run_command_with_port_username_and_privkey (tests.test_client.SubprocessSSH
 test_run_with_ssh_command (tests.test_client.SubprocessSSHVendorTests) ... ok
 test_get_url (tests.test_client.TCPGitClientTests) ... ok
 test_get_url_with_port (tests.test_client.TCPGitClientTests) ... ok
+test_extract_agent_and_symrefs (tests.test_client.TestExtractAgentAndSymrefs) ... ok
 test_error (tests.test_client.TestGetTransportAndPath) ... ok
 test_git_ssh_explicit (tests.test_client.TestGetTransportAndPath) ... ok
 test_http (tests.test_client.TestGetTransportAndPath) ... ok
@@ -136,6 +140,7 @@ test_ssh_port_homepath (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_ssh_user_host_relpath (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_tcp (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_tcp_port (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
+test_win32_url_to_path (tests.test_client.TestGetTransportAndPathFromUrl) ... ok
 test_apply (tests.test_config.ApplyInsteadOfTests) ... ok
 test_apply_multiple (tests.test_config.ApplyInsteadOfTests) ... ok
 test_none (tests.test_config.ApplyInsteadOfTests) ... ok
@@ -509,6 +514,7 @@ test_check_tag_with_unparseable_field (tests.test_objects.TagParseTests) ... ok
 test_parse (tests.test_objects.TagParseTests) ... ok
 test_parse_no_message (tests.test_objects.TagParseTests) ... ok
 test_parse_no_tagger (tests.test_objects.TagParseTests) ... ok
+test_tag_withough_sig (tests.test_objects.TagParseTests) ... ok
 test_tree_copy_after_update (tests.test_objects.TagParseTests)
 Check Tree.id is correctly updated when the tree is copied after updated. ... ok
 test_serialize_none_message (tests.test_objects.TagSerializeTests) ... ok
@@ -531,12 +537,10 @@ test_add (tests.test_objects.TreeTests) ... ok
 test_check (tests.test_objects.TreeTests) ... ok
 test_iter (tests.test_objects.TreeTests) ... ok
 test_parse_tree (tests.test_objects.TreeTests) ... ok
-test_parse_tree_extension (tests.test_objects.TreeTests) ... skipped '<function parse_tree at $(POINTER)> extension not found'
+test_parse_tree_extension (tests.test_objects.TreeTests) ... skipped 'None extension not found'
 test_simple (tests.test_objects.TreeTests) ... ok
 test_sorted_tree_items (tests.test_objects.TreeTests) ... ok
-test_sorted_tree_items_extension (tests.test_objects.TreeTests) ... skipped '<function sorted_tree_items at $(POINTER)> extension not found'
 test_sorted_tree_items_name_order (tests.test_objects.TreeTests) ... ok
-test_sorted_tree_items_name_order_extension (tests.test_objects.TreeTests) ... skipped '<function sorted_tree_items at $(POINTER)> extension not found'
 test_tree_items_dir_sort (tests.test_objects.TreeTests) ... ok
 test_tree_iteritems_dir_sort (tests.test_objects.TreeTests) ... ok
 test_tree_update_id (tests.test_objects.TreeTests) ... ok
@@ -598,6 +602,8 @@ test_get_depth (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_get_nonexistant (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter (tests.test_object_store.DiskObjectStoreTests) ... ok
+test_iter_prefix (tests.test_object_store.DiskObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.DiskObjectStoreTests) ... ok
 test_loose_compression_level (tests.test_object_store.DiskObjectStoreTests) ... ok
@@ -629,6 +635,8 @@ test_get_depth (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_get_nonexistant (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter (tests.test_object_store.MemoryObjectStoreTests) ... ok
+test_iter_prefix (tests.test_object_store.MemoryObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.MemoryObjectStoreTests) ... ok
 test_peel_sha (tests.test_object_store.MemoryObjectStoreTests) ... ok
@@ -655,6 +663,8 @@ test_get_depth (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_get_nonexistant (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_get_raw (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter (tests.test_object_store.OverlayObjectStoreTests) ... ok
+test_iter_prefix (tests.test_object_store.OverlayObjectStoreTests) ... ok
+test_iter_prefix_not_found (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter_tree_contents (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_iter_tree_contents_include_trees (tests.test_object_store.OverlayObjectStoreTests) ... ok
 test_peel_sha (tests.test_object_store.OverlayObjectStoreTests) ... ok
@@ -691,6 +701,7 @@ test_branchy_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_chain_degenerate (tests.test_pack.DeltaChainIteratorTests) ... ok
+test_ext_ref_deltified_object_based_on_itself (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_ext_ref_multiple_times (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_long_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
 test_mixed_chain (tests.test_pack.DeltaChainIteratorTests) ... ok
@@ -710,6 +721,7 @@ test_get_stored_checksum (tests.test_pack.PackIndexTests) ... ok
 test_index_check (tests.test_pack.PackIndexTests) ... ok
 test_index_len (tests.test_pack.PackIndexTests) ... ok
 test_iter (tests.test_pack.PackIndexTests) ... ok
+test_iter_prefix (tests.test_pack.PackIndexTests) ... ok
 test_iterentries (tests.test_pack.PackIndexTests) ... ok
 test_object_offset (tests.test_pack.PackIndexTests)
 Tests that the correct object offset is returned from the index. ... ok
@@ -811,9 +823,7 @@ test_add_file_clrf_conversion (tests.test_porcelain.AddTests) ... ok
 test_add_ignored (tests.test_porcelain.AddTests) ... ok
 test_add_not_in_repo (tests.test_porcelain.AddTests) ... ok
 test_simple (tests.test_porcelain.ArchiveTests) ... ok
-test_branch_exists (tests.test_porcelain.BranchCreateTests) ... $(@D)/dulwich/repo.py:888: DeprecationWarning: use get_user_identity() rather than Repo._get_user_identity
-  warnings.warn(
-ok
+test_branch_exists (tests.test_porcelain.BranchCreateTests) ... ok
 test_new_branch (tests.test_porcelain.BranchCreateTests) ... ok
 test_simple (tests.test_porcelain.BranchDeleteTests) ... ok
 test_simple_unicode (tests.test_porcelain.BranchDeleteTests) ... ok
@@ -993,9 +1003,12 @@ test_caps (tests.test_protocol.CapabilitiesTestCase) ... ok
 test_caps_want_line (tests.test_protocol.CapabilitiesTestCase) ... ok
 test_plain (tests.test_protocol.CapabilitiesTestCase) ... ok
 test_plain_want_line (tests.test_protocol.CapabilitiesTestCase) ... ok
+test_filter_ref_prefix (tests.test_protocol.FilterRefPrefixTests) ... ok
 test_multiple_packets (tests.test_protocol.PktLineParserTests) ... ok
 test_none (tests.test_protocol.PktLineParserTests) ... ok
 test_small_fragments (tests.test_protocol.PktLineParserTests) ... ok
+test_pkt_line (tests.test_protocol.PktLineTests) ... ok
+test_pkt_seq (tests.test_protocol.PktLineTests) ... ok
 test_eof (tests.test_protocol.ProtocolTests) ... ok
 test_read_cmd (tests.test_protocol.ProtocolTests) ... ok
 test_read_cmd_noend0 (tests.test_protocol.ProtocolTests) ... ok
@@ -1095,6 +1108,7 @@ test_write_with_peeled (tests.test_refs.PackedRefsFileTests) ... ok
 test_write_without_peeled (tests.test_refs.PackedRefsFileTests) ... ok
 test_invalid (tests.test_refs.ParseSymrefValueTests) ... ok
 test_valid (tests.test_refs.ParseSymrefValueTests) ... ok
+test_split_peeled_refs (tests.test_refs.StripPeeledRefsTests) ... ok
 test_strip_peeled_refs (tests.test_refs.StripPeeledRefsTests) ... ok
 test_build_repo (tests.test_repository.BuildRepoRootTests) ... ok
 test_commit_branch (tests.test_repository.BuildRepoRootTests) ... ok
@@ -1162,7 +1176,7 @@ test_contains_object (tests.test_repository.RepositoryRootTests) ... ok
 test_contains_ref (tests.test_repository.RepositoryRootTests) ... ok
 test_delitem (tests.test_repository.RepositoryRootTests) ... ok
 test_fetch (tests.test_repository.RepositoryRootTests) ... ok
-test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1281: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
+test_fetch_ignores_missing_refs (tests.test_repository.RepositoryRootTests) ... $(@D)/dulwich/refs.py:1288: UserWarning: ref refs/heads/blah points at non-present sha 1234566789123456789123567891234657373833
   warnings.warn(
 ok
 test_get_config (tests.test_repository.RepositoryRootTests) ... ok
@@ -1339,29 +1353,55 @@ test_archive (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'expor
 test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/email/parser.py:38: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  self._class = _class
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/warnings.py:186: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  filters.remove(item)
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ok
+test_send_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_nothing_to_send (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_one_error (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... skipped 'exporting archives not supported over http'
+test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichHttpClientTestGitProtov0) ... ok
 test_archive (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_send_new_branch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
@@ -1372,13 +1412,36 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichMockSSHClientTes
 test_send_pack_one_error (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichMockSSHClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichMockSSHClientTestGitProtov0) ... ok
 test_archive (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_send_new_branch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
@@ -1389,13 +1452,36 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClient
 test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
+test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_archive (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTest) ... ok
-test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_zero_sha (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_get_refs (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_send_new_branch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
@@ -1406,13 +1492,36 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichTCPClientTest) .
 test_send_pack_one_error (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'skip flaky test; see #1015'
 test_send_without_report_status (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_fetch_pack_zero_sha (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_get_refs (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_incremental_fetch_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_repeat (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_multiple_errors (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_nothing_to_send (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_pack_one_error (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
+test_send_remove_branch (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... skipped 'skip flaky test; see #1015'
+test_send_without_report_status (tests.compat.test_client.DulwichTCPClientTestGitProtov0) ... ok
 test_copy (tests.compat.test_pack.TestPack) ... ok
 test_delta_large_object (tests.compat.test_pack.TestPack) ... skipped 'skipping slow, large test'
 test_delta_medium_object (tests.compat.test_pack.TestPack) ... ok
 test_deltas_work (tests.compat.test_pack.TestPack) ... ok
 test_patch_apply (tests.compat.test_patch.CompatPatchTestCase) ... ok
-test_sign (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpg is not available'
-test_verify (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpg is not available'
+test_sign (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify_with_empty_message (tests.compat.test_porcelain.CommitCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_sign (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
+test_verify (tests.compat.test_porcelain.TagCreateSignTestCase) ... skipped 'gpgme not available, skipping tests that require GPG signing'
 test_all_objects (tests.compat.test_repository.InitNewWorkingDirectoryTestCase) ... ok
 test_bare (tests.compat.test_repository.InitNewWorkingDirectoryTestCase) ... ok
 test_git_worktree_config (tests.compat.test_repository.InitNewWorkingDirectoryTestCase)
@@ -1529,8 +1638,7 @@ test_push_to_dulwich_no_op (tests.compat.test_web.SmartWebTestCase) ... ok
 test_push_to_dulwich_remove_branch (tests.compat.test_web.SmartWebTestCase) ... ok
 test_shallow_clone_from_git_is_identical (tests.compat.test_web.SmartWebTestCase) ... ok
 test_run_command_data_transfer (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
-test_run_command_password (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... Socket exception: Connection reset by peer (131)
-ok
+test_run_command_password (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
 test_run_command_with_privkey (tests.contrib.test_paramiko_vendor.ParamikoSSHVendorTests) ... ok
 test_get_recent_tags (tests.contrib.test_release_robot.GetRecentTagsTest)
 Test get recent tags. ... ok
@@ -1549,6 +1657,8 @@ test_get_depth (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Req
 test_get_nonexistant (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_get_raw (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
+test_iter_prefix (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
+test_iter_prefix_not_found (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter_tree_contents (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_iter_tree_contents_include_trees (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 test_peel_sha (tests.contrib.test_swift.SwiftObjectStoreTests) ... skipped "Required libraries are not installed (['geventhttpclient'])"
@@ -1581,6 +1691,6 @@ test_init_no_data (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required
 test_put_named_file (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1514 tests
+Ran 1625 tests
 
-OK (skipped=84, expected failures=1)
+OK (skipped=93, expected failures=1)

@@ -10,10 +10,10 @@ Subject: [PATCH 02/34] PAM Support
 #
 
 *** orig/servconf.c	Mon Dec  5 17:23:03 2011
-diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -278,7 +278,12 @@ fill_default_server_options(ServerOption
+@@ -297,7 +297,12 @@ fill_default_server_options(ServerOption
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -23,10 +23,10 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 +#else
  		options->use_pam = 0;
 +#endif
+ 	if (options->pam_service_name == NULL)
+ 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  
- 	/* Standard Options */
- 	if (options->num_host_key_files == 0) {
-@@ -1333,8 +1338,17 @@ process_server_config_line_depth(ServerO
+@@ -1345,8 +1350,17 @@ process_server_config_line_depth(ServerO
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
@@ -36,11 +36,11 @@ diff -wpruN '--exclude=*.orig' a~/servconf.c a/servconf.c
 +		    " This option is always on.", filename, linenum);
 +		while (arg)
 +			arg = strdelim(&str);
-+		break; 
++		break;
 +#else
  		intptr = &options->use_pam;
  		goto parse_flag;
 +#endif
- 
- 	/* Standard Options */
- 	case sBadOption:
+ 	case sPAMServiceName:
+ 		charptr = &options->pam_service_name;
+ 		arg = argv_next(&ac, &av);

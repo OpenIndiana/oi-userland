@@ -17,12 +17,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
-COMPONENT_VERSION= 3.5.0
+COMPONENT_VERSION= 3.6.1
 COMPONENT_SUMMARY= Crypto and TLS for Modern C++
 COMPONENT_PROJECT_URL= https://botan.randombit.net/
 COMPONENT_SRC= Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:67e8dae1ca2468d90de4e601c87d5f31ff492b38e8ab8bcbd02ddf7104ed8a9f
+COMPONENT_ARCHIVE_HASH= sha256:7cb8575d88d232c77174769d7f9e24bb44444160585986eebd66e749cb9a9089
 COMPONENT_ARCHIVE_URL= https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/security/botan
 COMPONENT_CLASSIFICATION= System/Security
@@ -63,6 +63,8 @@ CONFIGURE_OPTIONS += --with-lzma
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-sqlite3
 CONFIGURE_OPTIONS += --with-python-versions=$(PYTHON_VERSION)
+# Make documentation consistent
+CONFIGURE_OPTIONS += --without-sphinx
 
 COMPONENT_TEST_TRANSFORMS += \
 	' -e "s/in [0-9]*.[0-9]* msec //" ' \

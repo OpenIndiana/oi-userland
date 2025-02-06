@@ -105,11 +105,11 @@ update-metadata:	$(COMPONENT_DIRS.nolog)
 component-hook:	$(COMPONENT_DIRS.nosetup)
 
 clean:		$(COMPONENT_DIRS.nosetup)
-	$(RM) $(WS_TOP)/components/$(ENCUMBERED)components.mk \
-	$(WS_TOP)/components/mapping.json \
+	$(RM) $(WS_TOP)/components/mapping.json \
 	.profile
 
 clobber:	$(COMPONENT_DIRS.nosetup) clean
+	$(RM) $(WS_TOP)/components/$(ENCUMBERED)components.mk
 	@cd $(WS_TOP)/tools ; echo "clobbering tools..." ; $(GMAKE) clobber
 	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE) $(WS_MACH)/perl-meta-deps-cache
 

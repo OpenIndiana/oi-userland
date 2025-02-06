@@ -12,19 +12,17 @@
 # Copyright 2018 Aurelien Larcher
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        pugixml
-COMPONENT_VERSION=     1.14
-COMPONENT_REVISION=    1
+COMPONENT_VERSION=     1.15
 COMPONENT_SUMMARY=     pugixml - light-weight C++ XML processing library
 COMPONENT_PROJECT_URL= https://pugixml.org/
 COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/zeux/pugixml/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:2f10e276870c64b1db6809050a75e11a897a8d7456c4be5c6b2e35a11168a015
+COMPONENT_ARCHIVE_HASH= sha256:655ade57fa703fb421c2eb9a0113b5064bddb145d415dd1f88c79353d90d511a
 COMPONENT_FMRI=        library/pugixml
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=     MIT

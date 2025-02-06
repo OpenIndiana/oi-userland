@@ -1,0 +1,12 @@
+# Solaris/Ilumos does not provide scheduling class SCHED_IDLE
+--- qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp	2024-05-08 07:14:45.000000000 +0200
++++ qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/platform/default/thread.cpp.new	2024-06-26 20:27:15.005935711 +0200
+@@ -28,7 +28,7 @@
+     struct sched_param param;
+     param.sched_priority = 0;
+ 
+-    if (sched_setscheduler(0, SCHED_IDLE, &param) != 0) {
++    if (sched_setscheduler(0, SCHED_OTHER, &param) != 0) {
+         Log::Warning(Event::General, "Couldn't set thread scheduling policy");
+     }
+ }

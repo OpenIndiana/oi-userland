@@ -1,0 +1,28 @@
+#
+# need to fix regular expression. Test fails on Solaris with
+# error:
+#      Expected: '.*?test\.d\/test\.lnk \-> test\.d\/test\.txt$',
+#      got:      ' lrwxrwxrwx   1 anedvedi staff          10 Aug  9 23:42 test.d/test.lnk -> ./test.txt'
+#    
+# the thing is we have './test.txt' instead of 'test.d/test.txt'
+#
+# fix has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1510
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/STAT.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/STAT.pm
+@@ -600,7 +600,12 @@ sub stat_symlink_showsymlinks_on {
+       $self->assert(qr/$expected/, $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+-      $expected = '.*?test\.d\/test\.lnk \-> test\.d\/test\.txt$';
++      $expected = '.*test\.d\/test\.lnk \-> \./test\.txt$';
++      if ($^O eq 'solaris') {
++        $expected = '.*test\.d\/test\.lnk \-> \./test\.txt$';
++      } else {
++        $expected = '.*?test\.d\/test\.lnk \-> test\.d\/test\.txt$';
++      }
+       $self->assert(qr/$expected/, $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };

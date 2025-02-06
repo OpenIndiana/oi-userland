@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Pod::Spell
-HUMAN_VERSION =			1.26
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.27
 COMPONENT_SUMMARY =		Pod::Spell - a formatter for spellchecking Pod
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2f05bfc9cfb04b96fcbfa2c8544d1e6ae908596d3696c46e0e26556b750afbbf
+	sha256:7ef56c9229f3efbc71a0462ce44490c0dd49fbf3b21fe85bb08b1eeac6f7b063
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

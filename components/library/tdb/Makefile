@@ -14,12 +14,12 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
-BUILD_BITS= 64_and_32
 BUILD_STYLE= waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= tdb
 COMPONENT_VERSION= 1.4.12
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Trivial Database Library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz

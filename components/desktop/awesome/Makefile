@@ -14,16 +14,14 @@
 # Copyright (c) 2019 Michal Nowak
 #
 
-BUILD_BITS=		64
-BUILD_STYLE=		cmake
-
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         awesome
 COMPONENT_VERSION=      4.3
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=  https://awesomewm.org
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      A highly configurable, next generation framework window manager for X.
+COMPONENT_PROJECT_URL=  https://awesomewm.org
 COMPONENT_FMRI=         desktop/window-manager/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,10 +32,11 @@ COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= LICENSE
 
 # There are manual tests in tests/ dir
-TESTS_TARGET=		$(NO_TESTS)
+TESTS_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
+CMAKE_OPTIONS += "-DSYSCONFDIR=$(ETCDIR)"
 CMAKE_OPTIONS += "-DLUA_LIBRARY=/usr/lib/64/liblua.so"
 
 # Packages Required at Buildtime. Not found By gmake

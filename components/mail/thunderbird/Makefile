@@ -30,22 +30,25 @@
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
+# ESR should be set to esr for esr build, or an empty string for other builds
+ESR = esr
+
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 2
+# CANDIDATE_BUILD= 3
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.1.1
+COMPONENT_VERSION =	128.6.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)esr.source.tar.xz
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:178eb13d4841e842a542870589e7c13c388431892c110374aa41176079884632
+	 sha256:55da5991f82b6463f20a9088c46f637713af637218ad47c3110afb7d83593852
 ifndef CANDIDATE_BUILD
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
@@ -58,10 +61,7 @@ ALLOW_UNVERIFIED_DOWNLOADS=yes
 export ALLOW_UNVERIFIED_DOWNLOADS
 
 # There are a set of .xpi files (as given in the LANG_LIST definition
-# below) that we need. We could download and unpack them individually, but
-# they doesn't contain version in its file name and there is lot of them.
-# Therefore we will download them and archive them in Userland cache using
-# one file with version number.
+# below) that we need. They are downloaded and unpacked individually.
 
 LANG_LIST = af ar ast be bg br ca cak cs cy \
        da de dsb el en-CA en-GB en-US es-AR es-ES es-MX et \
@@ -72,10 +72,10 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
 
     ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)esr-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
     else
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)esr/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
 endif
 
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
@@ -132,6 +132,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-release" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=release" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
@@ -206,6 +207,11 @@ COMPONENT_POST_INSTALL_ACTION += \
                 $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
         done ;
 
+# copy distribution.ini to install staging area
+COMPONENT_POST_INSTALL_ACTION += \
+   mkdir $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution ; \
+   $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/distribution.ini ;
+
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 COMPONENT_TEST_DIR =    $(@D)/js/src
@@ -234,8 +240,8 @@ REQUIRED_PACKAGES += web/browser/lynx
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

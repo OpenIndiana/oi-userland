@@ -1,21 +1,5 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov pyproject_fmt_rust --cov $(@D)/tests --cov-fail-under=100 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
-Error processing line 1 of $(PYTHON_DIR)/vendor-packages/coverage_enable_subprocess.pth:
-
-  Traceback (most recent call last):
-    File "$(PYTHON_DIR)/site.py", line 177, in addpackage
-      exec(line)
-    File "<string>", line 1, in <module>
-    File "<string>", line 7, in <module>
-    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 1383, in process_startup
-      cov = Coverage(config_file=cps)
-    File "$(PYTHON_DIR)/vendor-packages/coverage/control.py", line 285, in __init__
-      self.config = read_coverage_config(
-    File "$(PYTHON_DIR)/vendor-packages/coverage/config.py", line 601, in read_coverage_config
-      raise ConfigError(f"Couldn't read {fname!r} as a config file")
-  coverage.exceptions.ConfigError: Couldn't read '$(@D)/setup.cfg' as a config file
-
-Remainder of file ignored
+py$(PYV): commands[0]> python -m pytest --cov pyproject_fmt_rust --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml --junitxml $(@D)/.tox/junit.py$(PYV).xml tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -32,7 +16,7 @@ tests/test_main.py::test_format_toml[collapsed] PASSED
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 100% reached. Total coverage: 100.00%
+Required test coverage of 100.0% reached. Total coverage: 100.00%
 ======== 2 passed ========
   py$(PYV): OK
   congratulations :)

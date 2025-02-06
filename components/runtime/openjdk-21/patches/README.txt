@@ -3,7 +3,31 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
-JDK 21 now we're in rampdown.
+Cleanup: remove audio solaris 7 compatibility code
+
+Cleanup: use pset_getloadavg() directly
+
+Cleanup: Remove SolarisX86JavaThreadPDAccess, it's for 32-bit.
+
+Cleanup: allow fastdebug builds, see fastdebug.patch
+
+Cleanup: remove unused JSIG_VERSION_1_4_1 define
+
+Cleanup: remove unused SOLARIS_MUTATOR_LIBTHREAD hunk
+
+21.0.5
+
+Drop the png patch. It no longer applies and appears unnecessary with
+the png update.
+
+Need to provide an implementation of pd_pretouch_memory()
+
+Cleanup: src/hotspot/os/solaris and src/hotspot/os_cpu/solaris_x86
+split out into separate restore patches.
+
+Cleanup: format warning in print_memory_info()
+
+Cleanup: use jdk21 to build jdk21, as it's LTS.
 
 21.0.4
 
@@ -261,7 +285,7 @@ a constant so we can easily handle that.
 Build:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk20 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk21 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-dtrace \

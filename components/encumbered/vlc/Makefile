@@ -18,12 +18,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 3.0.20
-COMPONENT_REVISION= 4
+COMPONENT_VERSION= 3.0.21
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:adc7285b4d2721cddf40eb5270cada2aaa10a334cb546fd55a06353447ba29b5
+COMPONENT_ARCHIVE_HASH=	sha256:24dbbe1d7dfaeea0994d5def0bbde200177347136dbfe573f5b6a4cee25afbb0
 COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.videolan.org/vlc
 COMPONENT_FMRI= media/vlc
@@ -146,8 +145,8 @@ CONFIGURE_OPTIONS += --enable-fribidi
 CONFIGURE_OPTIONS += --enable-fontconfig
 CONFIGURE_OPTIONS += --enable-svg
 CONFIGURE_OPTIONS += --enable-svgdec
+CONFIGURE_OPTIONS += --enable-dav1d
 CONFIGURE_OPTIONS += --disable-caca
-CONFIGURE_OPTIONS += --disable-dav1d
 CONFIGURE_OPTIONS += --disable-kva
 
 # Audio
@@ -200,11 +199,11 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += audio/faad2
 REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
+REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += developer/ffmpeg-6
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/sdl-image

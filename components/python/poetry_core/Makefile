@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			1.9.0
-COMPONENT_SUMMARY =		poetry_core - Poetry PEP 517 Build Backend
+HUMAN_VERSION =			2.0.1
+COMPONENT_SUMMARY =		Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f2/db/20a9f9cae3f3c213a8c406deb4395698459fd96962cea8f2ccb230b1943c/poetry_core-1.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fa7a4001eae8aa572ee84f35feb510b321bd652e5cf9293249d62853e1f935a2
+	sha256:10177c2772469d9032a49f0d8707af761b1c597cea3b4fb31546e5cd436eb157
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,15 +31,27 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing dependencies for this project are maintained using poetry.  We
-# neither do have poetry packaged yet, nor support listing poetry dependencies
-# without poetry.  For now we just hope all required testing dependencies are
-# installed.
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += test
 
-# https://github.com/python-poetry/poetry/issues/7824
-# https://github.com/python-poetry/poetry/issues/7826
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+# https://github.com/python-poetry/poetry/issues/9967
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_complete.py::test_package_with_include
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_sdist.py::test_default_with_excluded_data
+PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_wheel.py::test_default_src_with_excluded_data
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
+TEST_REQUIRED_PACKAGES.python += library/python/trove-classifiers
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

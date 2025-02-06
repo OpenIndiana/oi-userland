@@ -35,12 +35,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.80.0
+COMPONENT_VERSION=	1.84.0
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6f606c193f230f6b2cae4576f7b24d50f5f9b25dff11dbf9b22f787d3521d672
+COMPONENT_ARCHIVE_HASH=	sha256:15cee7395b07ffde022060455b3140366ec3a12cbbea8f1ef2ff371a9cca51bf
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -54,7 +54,7 @@ TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-CLANG_VERSION= 18
+CLANG_VERSION= 19
 
 # Need some help to pick the correct ar binary
 GNUAR= $(GNUBIN)/ar
@@ -138,12 +138,15 @@ COMPONENT_INSTALL_ENV += CARGO_HOME=$(CARGO_HOME)
 COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
 # manually added dependencies
+REQUIRED_PACKAGES += developer/gcc-13
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
+REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

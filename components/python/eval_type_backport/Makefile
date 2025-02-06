@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		eval_type_backport
-HUMAN_VERSION =			0.2.0
-COMPONENT_SUMMARY =		eval_type_backport - Like \`typing._eval_type\`, but lets older Python versions use newer typing features.
+HUMAN_VERSION =			0.2.2
+COMPONENT_SUMMARY =		Like \`typing._eval_type\`, but lets older Python versions use newer typing features.
 COMPONENT_PROJECT_URL =		https://github.com/alexmojaki/eval_type_backport
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:68796cfbc7371ebf923f03bdf7bef415f3ec098aeced24e054b253a0e78f7b37
+	sha256:f0576b4cf01ebb5bd358d02314d31846af5e07678387486e2c798af0e7d849c1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

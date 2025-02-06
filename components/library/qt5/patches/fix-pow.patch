@@ -1,0 +1,22 @@
+--- qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/programs/fill_extrusion_program.hpp.orig	2024-05-08 07:14:45.000000000 +0200
++++ qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/programs/fill_extrusion_program.hpp	2024-09-05 22:03:05.009628021 +0200
+@@ -87,7 +87,7 @@
+     using Program::Program;
+ 
+     static LayoutVertex layoutVertex(Point<int16_t> p, double nx, double ny, double nz, unsigned short t, uint16_t e) {
+-        const auto factor = pow(2, 13);
++        const auto factor = pow(static_cast<double>(2), 13);
+ 
+         return LayoutVertex {
+             {{
+--- qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/tile/raster_dem_tile.cpp.orig	2024-05-08 07:14:45.000000000 +0200
++++ qt-everywhere-src-5.15.14/qtlocation/src/3rdparty/mapbox-gl-native/src/mbgl/tile/raster_dem_tile.cpp	2024-09-05 22:33:52.130846645 +0200
+@@ -87,7 +87,7 @@
+ void RasterDEMTile::backfillBorder(const RasterDEMTile& borderTile, const DEMTileNeighbors mask) {
+     int32_t dx = borderTile.id.canonical.x - id.canonical.x;
+     const int8_t dy = borderTile.id.canonical.y - id.canonical.y;
+-    const uint32_t dim = pow(2, id.canonical.z);
++    const uint32_t dim = pow(static_cast<double>(2), id.canonical.z);
+     if (dx == 0 && dy == 0) return;
+     if (std::abs(dy) > 1) return;
+     // neighbor is in another world wrap

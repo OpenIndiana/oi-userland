@@ -18,12 +18,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
-COMPONENT_VERSION=	3.4
+COMPONENT_VERSION=	3.5.1
+HUMAN_VERSION=		3.5a
 COMPONENT_SUMMARY=	tmux terminal multiplexer
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:551ab8dea0bf505c0ad6b7bb35ef567cdde0ccb84357df142c254f35a23e19aa
+COMPONENT_ARCHIVE_HASH= sha256:16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951
 COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -35,7 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I/usr/include/ncurses
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f -i)
+COMPONENT_PREP_ACTION= ( cd $(@D) ; autoreconf -fiv )
 
 CONFIGURE_OPTIONS += --enable-utempter
 CONFIGURE_OPTIONS += LIBS="-lncurses"

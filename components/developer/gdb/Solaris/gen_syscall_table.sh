@@ -48,9 +48,10 @@ EOM
         sed < $TMPDIR/offsets32.h 's/\t0x/_32&/'
         sed < $TMPDIR/offsets64.h 's/\t0x/_64&/'
         $EGREP $'define\tPR(FN|ARG)SZ' /usr/include/sys/old_procfs.h
-    } | tee illumos-offsets.h > ${SOURCE_DIR}/bfd/illumos-offsets.h
+    } > ${SOURCE_DIR}/bfd/illumos-offsets.h
 
 }
 
 [ ! -d ${TMPDIR} ] && mkdir ${TMPDIR}
 generate
+rm -rf ${TMPDIR}

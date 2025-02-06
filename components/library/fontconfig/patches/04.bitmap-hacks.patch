@@ -1,5 +1,5 @@
---- fontconfig-2.13.0/src/fcmatch.c.orig	2018-03-08 16:45:52.377939235 +0000
-+++ fontconfig-2.13.0/src/fcmatch.c	2018-03-08 16:47:13.473464653 +0000
+--- fontconfig-2.16.0/src/fcmatch.c.orig
++++ fontconfig-2.16.0/src/fcmatch.c
 @@ -50,6 +50,15 @@
  	return -1.0;
      }
@@ -16,7 +16,7 @@
      if (v < 0)
  	v = -v;
      *bestValue = FcValueCanonicalize (value2);
-@@ -754,6 +763,46 @@
+@@ -857,6 +866,46 @@
      return new;
  }
  
@@ -63,18 +63,18 @@
  static FcPattern *
  FcFontSetMatchInternal (FcFontSet   **sets,
  			int	    nsets,
-@@ -767,6 +816,8 @@
-     int		    i;
-     int		    set;
+@@ -872,6 +921,8 @@
+     FcCompareData   data;
+     const FcPatternElt *elt;
  
 +    FcChangeFormat ( p );
 +
      for (i = 0; i < PRI_END; i++)
  	bestscore[i] = 0;
      best = 0;
-@@ -1048,6 +1099,8 @@
-     FcBool    	    *patternLangSat;
+@@ -1212,6 +1263,8 @@
      FcValue	    patternLang;
+     FcCompareData   data;
  
 +    FcChangeFormat ( p );
 +

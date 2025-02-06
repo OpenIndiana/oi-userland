@@ -5,34 +5,31 @@
 #
 # Copyright 2016 Hans Rosenfeld <rosenfeld@grumpf.hope-2000.org>
 # Copyright 2023 Klaus Ziegler
+# Copyright 2024 OmniOS Community Edition (OmniOSce) Association.
 #
 
 . /lib/svc/share/ipf_include.sh
 . /lib/svc/share/smf_include.sh
 
-SSHDIR=/etc/ssh
-PIDFILE=/var/run/sshd.pid
+rc=$SMF_EXIT_OK
 
 create_ipf_rules()
 {
-	FMRI=$1
-	ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
-	ipf6_file=`fmri_to_file ${FMRI} $IPF6_SUFFIX`
-	policy=`get_policy ${FMRI}`
+    FMRI=$1
+    ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
+    ipf6_file=`fmri_to_file ${FMRI} $IPF6_SUFFIX`
+    policy=`get_policy ${FMRI}`
 
-	#
-	# Get port from /etc/ssh/sshd_config
-	#
-	tports=`grep "^Port" /etc/ssh/sshd_config 2>/dev/null | \
-	    awk '{print $2}'`
+    tports=`/usr/sbin/sshd -T 2>/dev/null | awk '/^port / {print $2}'`
 
-	echo "# $FMRI" >$ipf_file
-	echo "# $FMRI" >$ipf6_file
-	for port in $tports; do
-		generate_rules $FMRI $policy "tcp" $port $ipf_file
-		generate_rules $FMRI $policy "tcp" $port $ipf6_file _6
-	done
+    echo "# $FMRI" >$ipf_file
+    echo "# $FMRI" >$ipf6_file
+    for port in $tports; do
+        generate_rules $FMRI $policy "tcp" $port $ipf_file
+        generate_rules $FMRI $policy "tcp" $port $ipf6_file _6
+    done
 }
+
 
 # This script is being used as part of an SMF
 # start/stop/refresh method for SSH server.
@@ -47,18 +44,18 @@ case $1 in
 	;;
 
 'start')
-	#
-	# If host keys don't exist when the service is started, create them.
-	#
-	/usr/bin/ssh-keygen -A
-
-	/usr/lib/ssh/sshd
+    # If host keys don't exist when the service is started, create them.                                               
+    # If we can't, we will flag this service as degraded but still allow it                                            
+    # to attempt to start to end up with a system that is as functional as                                             
+    # possible, and potentially has a running sshd to aid remote recovery.                                             
+	/usr/bin/ssh-keygen -A || rc=$SMF_EXIT_MON_DEGRADE 
+	/usr/sbin/sshd || rc=$SMF_EXIT_ERR_FATAL
 	;;
 
 *)
-	echo "Usage: $0 { start | restart }"
-	exit 1
+	echo "Usage: $0 start"
+    rc=$SMF_ERROR_FATAL
 	;;
 esac
 
-exit $?
+exit $rc

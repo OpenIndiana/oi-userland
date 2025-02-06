@@ -19,25 +19,31 @@
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	23
-OPENJDK_PATCH=	36
+OPENJDK_UPDATE=	0
+OPENJDK_BUILD=	1
 COMPONENT_NAME=		openjdk
-COMPONENT_VERSION=	$(OPENJDK_VERSION)
+COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk23u-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)+$(OPENJDK_PATCH).tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
+COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8dfde8104652a5c3c295fe6be3850a5230e543953945802ededd3245dbbbe78c
+	sha256:0e058ae2956871aafc5be33960b6e0f8dd954d234d590d249bcb3b619b579a0a
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/openjdk/jdk23u/archive/$(COMPONENT_ARCHIVE)
+	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
+COMPONENT_LICENSE_FILE=	LICENSE
 
 OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Use OpenJDK 23 as the boot JDK
+JAVA_VERSION = 23
 
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
 PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
@@ -56,7 +62,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk22/
+CONFIGURE_OPTIONS+=        --with-boot-jdk=$(JAVA_HOME)
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -130,14 +136,10 @@ test:		$(NO_TESTS)
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
 
-# Manually added boot JDK
-REQUIRED_PACKAGES += runtime/java/openjdk22
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

@@ -1,7 +1,7 @@
-diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1625,6 +1625,62 @@ else
+@@ -1672,6 +1672,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -64,7 +64,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5604,6 +5660,7 @@ echo "                       PAM support
+@@ -5725,6 +5781,7 @@ echo "                       PAM support
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -72,58 +72,28 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
-diff -wpruN '--exclude=*.orig' a~/sshd.8 a/sshd.8
---- a~/sshd.8	1970-01-01 00:00:00
-+++ a/sshd.8	1970-01-01 00:00:00
-@@ -908,6 +908,12 @@ the user's home directory becomes access
- This file should be writable only by the user, and need not be
- readable by anyone else.
- .Pp
-+.It Pa /etc/hosts.allow
-+.It Pa /etc/hosts.deny
-+Access controls that should be enforced by tcp-wrappers are defined here.
-+Further details are described in
-+.Xr hosts_access 5 .
-+.Pp
- .It Pa /etc/hosts.equiv
- This file is for host-based authentication (see
- .Xr ssh 1 ) .
-@@ -1037,6 +1043,7 @@ Each SSHv2 userauth type has its own PAM
- .Xr ssh-keygen 1 ,
- .Xr ssh-keyscan 1 ,
- .Xr chroot 2 ,
-+.Xr hosts_access 5 ,
- .Xr login.conf 5 ,
- .Xr moduli 5 ,
- .Xr sshd_config 5 ,
-diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
---- a~/sshd.c	1970-01-01 00:00:00
-+++ a/sshd.c	1970-01-01 00:00:00
-@@ -129,6 +129,17 @@
- #include "srclimit.h"
- #include "dh.h"
- 
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
+--- a~/sshd-session.c	1970-01-01 00:00:00
++++ a/sshd-session.c	1970-01-01 00:00:00
+@@ -70,6 +70,11 @@
+ #include <prot.h>
+ #endif
+  
 +#ifdef LIBWRAP
 +#include <tcpd.h>
 +#include <syslog.h>
-+int allow_severity;
-+int deny_severity;
 +#endif /* LIBWRAP */
 +
-+#ifndef O_NOCTTY
-+#define O_NOCTTY	0
-+#endif
-+
- /* Re-exec fds */
- #define REEXEC_DEVCRYPTO_RESERVED_FD	(STDERR_FILENO + 1)
- #define REEXEC_STARTUP_PIPE_FD		(STDERR_FILENO + 2)
-@@ -2207,6 +2218,24 @@ main(int ac, char **av)
- #ifdef SSH_AUDIT_EVENTS
+ #include "xmalloc.h"
+ #include "ssh.h"
+ #include "ssh2.h"
+@@ -1271,6 +1276,25 @@ main(int ac, char **av)
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
+ 
 +#ifdef LIBWRAP
-+	allow_severity = options.log_facility|LOG_INFO;
-+	deny_severity = options.log_facility|LOG_WARNING;
++	int allow_severity = options.log_facility|LOG_INFO;
++	int deny_severity = options.log_facility|LOG_WARNING;
 +	/* Check whether logins are denied from this host. */
 +	if (ssh_packet_connection_is_on_socket(ssh)) {
 +		struct request_info req;
@@ -139,6 +109,31 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
 +		}
 +	}
 +#endif /* LIBWRAP */
- 
++
  	rdomain = ssh_packet_rdomain_in(ssh);
  
+ 	/* Log the connection. */
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd.8 a/sshd.8
+--- a~/sshd.8	1970-01-01 00:00:00
++++ a/sshd.8	1970-01-01 00:00:00
+@@ -925,6 +925,12 @@ the user's home directory becomes access
+ This file should be writable only by the user, and need not be
+ readable by anyone else.
+ .Pp
++.It Pa /etc/hosts.allow
++.It Pa /etc/hosts.deny
++Access controls that should be enforced by tcp-wrappers are defined here.
++Further details are described in
++.Xr hosts_access 5 .
++.Pp
+ .It Pa /etc/hosts.equiv
+ This file is for host-based authentication (see
+ .Xr ssh 1 ) .
+@@ -1052,6 +1058,7 @@ Each SSHv2 userauth type has its own PAM
+ .Xr ssh-keygen 1 ,
+ .Xr ssh-keyscan 1 ,
+ .Xr chroot 2 ,
++.Xr hosts_access 5 ,
+ .Xr login.conf 5 ,
+ .Xr moduli 5 ,
+ .Xr sshd_config 5 ,

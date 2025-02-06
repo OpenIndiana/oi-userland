@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-regressions
+#   $WS_TOOLS/python-integrate-project -d python/pytest-regressions pytest_regressions
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-regressions
-HUMAN_VERSION =			2.5.0
-COMPONENT_REVISION =		1
+COMPONENT_NAME =		pytest_regressions
+HUMAN_VERSION =			2.7.0
 COMPONENT_SUMMARY =		Easy to use fixtures to write regression tests.
 COMPONENT_PROJECT_URL =		https://github.com/ESSS/pytest-regressions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:818c7884c1cff3babf89eebb02cbc27b307856b1985427c24d52cb812a106fd9
+	sha256:4c30064e0923929012c94f5d6f35205be06fd8709c7f0dba0228e05c460af05e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

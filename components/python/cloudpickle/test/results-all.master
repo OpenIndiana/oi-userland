@@ -5,11 +5,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 258 items
+collecting ... collected 272 items
 
-'_cloudpickle_testpkg')
-'_cloudpickle_testpkg')
-not import '_cloudpickle_testpkg': No module named
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_closed_file PASSED
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_empty_file PASSED
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_pickling_special_file_handles PASSED
@@ -17,6 +14,7 @@ tests/cloudpickle_file_test.py::CloudPickleFileTests::test_plus_mode PASSED
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_r_mode PASSED
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_seek PASSED
 tests/cloudpickle_file_test.py::CloudPickleFileTests::test_w_mode PASSED
+tests/cloudpickle_test.py::test_extract_class_dict PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_Ellipsis PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_EllipsisType PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_NamedTuple PASSED
@@ -39,6 +37,7 @@ tests/cloudpickle_test.py::CloudPickleTest::test_builtin_staticmethod PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_builtin_type_constructor PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_cell_manipulation PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_class_annotations PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_class_no_firstlineno_deletion_ PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_classmethod PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_closure_interacting_with_a_global_variable PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_closure_none_is_preserved PASSED
@@ -47,10 +46,15 @@ tests/cloudpickle_test.py::CloudPickleTest::test_correct_globals_import PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_cycle_in_classdict_globals PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dataclass PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dataclass_fields_are_preserved PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_deterministic_dynamic_class_attr_ordering_for_chained_pickling PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_deterministic_pickle_bytes_for_function PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_deterministic_str_interning_for_chained_dynamic_class_pickling PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dict_items PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dict_keys PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dict_values PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_class_determinist_subworker_tuple_memoization PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_class_deterministic_roundtrip XFAIL
+tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_func_deterministic_roundtrip PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_module PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_module_no_package PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_dynamic_module_with_unpicklable_builtin PASSED
@@ -67,6 +71,7 @@ tests/cloudpickle_test.py::CloudPickleTest::test_generic_subclass PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_generic_type PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_getset_descriptor PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_import PASSED
+tests/cloudpickle_test.py::CloudPickleTest::test_importing_multiprocessing_does_not_impact_whichmodule PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_instance_with_slots PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_instancemethods_without_self PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_interactive_dynamic_type_and_remote_instances PASSED
@@ -107,7 +112,7 @@ tests/cloudpickle_test.py::CloudPickleTest::test_non_module_object_passing_which
 tests/cloudpickle_test.py::CloudPickleTest::test_odict_items PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_odict_keys PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_odict_values PASSED
-tests/cloudpickle_test.py::CloudPickleTest::test_out_of_band_buffers SKIPPED
+tests/cloudpickle_test.py::CloudPickleTest::test_out_of_band_buffers PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_partial PASSED
 tests/cloudpickle_test.py::CloudPickleTest::test_pickle_constructs_from_installed_packages_registered_for_pickling_by_value SKIPPED_testpkg')
 tests/cloudpickle_test.py::CloudPickleTest::test_pickle_constructs_from_module_registered_for_pickling_by_value PASSED
@@ -158,6 +163,7 @@ tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_builtin_staticmethod P
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_builtin_type_constructor PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_cell_manipulation PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_class_annotations PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_class_no_firstlineno_deletion_ PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_classmethod PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_closure_interacting_with_a_global_variable PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_closure_none_is_preserved PASSED
@@ -166,10 +172,15 @@ tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_correct_globals_import
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_cycle_in_classdict_globals PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dataclass PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dataclass_fields_are_preserved PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_deterministic_dynamic_class_attr_ordering_for_chained_pickling PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_deterministic_pickle_bytes_for_function PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_deterministic_str_interning_for_chained_dynamic_class_pickling PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dict_items PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dict_keys PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dict_values PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_class_determinist_subworker_tuple_memoization PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_class_deterministic_roundtrip XFAIL
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_func_deterministic_roundtrip PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_module PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_module_no_package PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_dynamic_module_with_unpicklable_builtin PASSED
@@ -186,6 +197,7 @@ tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_generic_subclass PASSE
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_generic_type PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_getset_descriptor PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_import PASSED
+tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_importing_multiprocessing_does_not_impact_whichmodule PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_instance_with_slots PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_instancemethods_without_self PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_interactive_dynamic_type_and_remote_instances PASSED
@@ -217,6 +229,7 @@ tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_memoryview PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_method_descriptors PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_module PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_module_importability SKIPPEDle named
+'_cloudpickle_testpkg')
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_module_locals_behavior PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_multiprocess PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_multiprocessing_lock_raises PASSED
@@ -255,21 +268,21 @@ tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_weakset_identity_prese
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_wraps_preserves_function_annotations PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_wraps_preserves_function_doc PASSED
 tests/cloudpickle_test.py::Protocol2CloudPickleTest::test_wraps_preserves_function_name PASSED
-tests/cloudpickle_test.py::test_extract_class_dict PASSED
 tests/cloudpickle_test.py::test_lookup_module_and_qualname_dynamic_typevar PASSED
 tests/cloudpickle_test.py::test_lookup_module_and_qualname_importable_typevar SKIPPED_testpkg')
 tests/cloudpickle_test.py::test_lookup_module_and_qualname_stdlib_typevar PASSED
-tests/cloudpickle_test.py::test_module_level_pickler PASSED
 tests/cloudpickle_test.py::test_register_pickle_by_value SKIPPED (could
+not import '_cloudpickle_testpkg': No module named
+'_cloudpickle_testpkg')
+tests/cloudpickle_test.py::test_module_level_pickler PASSED
+tests/test_backward_compat.py::test_simple_func PASSED
+tests/test_backward_compat.py::test_simple_class PASSED
+tests/test_backward_compat.py::test_dynamic_module PASSED
+tests/test_backward_compat.py::test_simple_enum PASSED
 tests/test_backward_compat.py::test_complex_class PASSED
 tests/test_backward_compat.py::test_complex_function PASSED
-tests/test_backward_compat.py::test_dynamic_module PASSED
 tests/test_backward_compat.py::test_nested_function PASSED
-tests/test_backward_compat.py::test_simple_class PASSED
-tests/test_backward_compat.py::test_simple_enum PASSED
-tests/test_backward_compat.py::test_simple_func PASSED
 
-
-======== 242 passed, 16 skipped ========
+======== 255 passed, 15 skipped, 2 xfailed ========
   py$(PYV): OK
   congratulations :)

@@ -5,10 +5,11 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6875 items / 5881 deselected / 994 selected
+collecting ... collected 7002 items / 5997 deselected / 1005 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
+test/test_InfoExtractor.py::TestInfoExtractor::test_get_netrc_login_info PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_html_search_meta PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_html_search_regex PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_ie_key PASSED
@@ -30,6 +31,7 @@ test/test_YoutubeDL.py::TestFormatSelection::test_format_not_available PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_audio PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_audio_exts PASSED
+test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_by_vcodec_sort PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_issue_10083 PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_string_ops PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_format_selection_video PASSED
@@ -61,6 +63,7 @@ test/test_aes.py::TestAES::test_decrypt_text PASSED
 test/test_aes.py::TestAES::test_ecb_decrypt PASSED
 test/test_aes.py::TestAES::test_ecb_encrypt PASSED
 test/test_aes.py::TestAES::test_encrypt PASSED
+test/test_aes.py::TestAES::test_gcm_aligned_decrypt PASSED
 test/test_aes.py::TestAES::test_gcm_decrypt PASSED
 test/test_aes.py::TestAES::test_key_expansion PASSED
 test/test_aes.py::TestAES::test_pad_block PASSED
@@ -83,9 +86,6 @@ test/test_compat.py::TestCompat::test_compat_etree_fromstring PASSED
 test/test_compat.py::TestCompat::test_compat_etree_fromstring_doctype PASSED
 test/test_compat.py::TestCompat::test_compat_expanduser PASSED
 test/test_compat.py::TestCompat::test_compat_passthrough PASSED
-test/test_compat.py::TestCompat::test_compat_urllib_parse_unquote PASSED
-test/test_compat.py::TestCompat::test_compat_urllib_parse_unquote_plus PASSED
-test/test_compat.py::TestCompat::test_compat_urllib_parse_urlencode PASSED
 test/test_compat.py::TestCompat::test_struct_unpack PASSED
 test/test_config.py::TestConfig::test_config__ENVIRON_DEFAULTS_sanity PASSED
 test/test_config.py::TestConfig::test_config_all_environ_values PASSED
@@ -97,10 +97,12 @@ test/test_config.py::TestConfig::test_config_override_commandline PASSED
 test/test_config.py::TestConfig::test_config_override_files PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_derive_key PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v10 PASSED
+test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v10_meta24 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_linux_v11 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_mac_derive_key PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_mac_v10 PASSED
 test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_windows_v10 PASSED
+test/test_cookies.py::TestCookies::test_chrome_cookie_decryptor_windows_v10_meta24 PASSED
 test/test_cookies.py::TestCookies::test_get_desktop_environment PASSED
 test/test_cookies.py::TestCookies::test_pbkdf2_sha1 PASSED
 test/test_cookies.py::TestCookies::test_safari_cookie_parsing PASSED
@@ -348,6 +350,7 @@ test/test_networking.py::TestHTTPImpersonateRequestHandler::test_http_error_resp
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Requests-urllib3] PASSED
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.client] PASSED
 test/test_networking.py::TestRequestHandlerMisc::test_remove_logging_handler[Websockets-websockets.server] PASSED
+test/test_networking.py::TestRequestHandlerMisc::test_wrap_request_errors PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_file_urls[Urllib] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_http_error_returns_content[Urllib] PASSED
 test/test_networking.py::TestUrllibRequestHandler::test_verify_cert_error_text[Urllib] PASSED
@@ -388,27 +391,6 @@ test/test_networking.py::TestCurlCFFIRequestHandler::test_request_error_mapping[
 test/test_networking.py::TestCurlCFFIRequestHandler::test_response_reader[CurlCFFI] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Urllib-False-http] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Requests-False-http] PASSED
-----------------------------------------
-Exception occurred during processing of request from ('127.0.0.1', 56684)
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/socketserver.py", line 683, in process_request_thread
-    self.finish_request(request, client_address)
-  File "$(PYTHON_DIR)/socketserver.py", line 360, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "$(PYTHON_DIR)/socketserver.py", line 747, in __init__
-    self.handle()
-  File "$(PYTHON_DIR)/http/server.py", line 433, in handle
-    self.handle_one_request()
-  File "$(PYTHON_DIR)/http/server.py", line 421, in handle_one_request
-    method()
-  File "$(@D)/test/test_networking.py", line 259, in do_GET
-    self._headers()
-  File "$(@D)/test/test_networking.py", line 84, in _headers
-    self.wfile.write(payload)
-  File "$(PYTHON_DIR)/socketserver.py", line 826, in write
-    self._sock.sendall(b)
-BrokenPipeError: [Errno 32] Broken pipe
-----------------------------------------
 test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[CurlCFFI-False-http] SKIPPED
 test/test_networking.py::TestRequestHandlerValidation::test_no_proxy[Websockets-False-ws] PASSED
 test/test_networking.py::TestRequestHandlerValidation::test_empty_proxy[Urllib-http] PASSED
@@ -660,6 +642,7 @@ test/test_networking_utils.py::TestNetworkingExceptions::test_incomplete_read_er
 test/test_plugins.py::TestPlugins::test_directories_containing_plugins PASSED
 test/test_plugins.py::TestPlugins::test_extractor_classes PASSED
 test/test_plugins.py::TestPlugins::test_importing_zipped_module PASSED
+test/test_plugins.py::TestPlugins::test_plugin_dirs PASSED
 test/test_plugins.py::TestPlugins::test_postprocessor_classes PASSED
 test/test_postprocessors.py::TestMetadataFromField::test_field_to_template PASSED
 test/test_postprocessors.py::TestMetadataFromField::test_format_to_regex PASSED
@@ -850,6 +833,13 @@ test/test_traversal.py::TestTraversal::test_traversal_re PASSED
 test/test_traversal.py::TestTraversal::test_traversal_xml_etree PASSED
 test/test_traversal.py::TestTraversal::test_traversal_unbranching PASSED
 test/test_traversal.py::TestTraversal::test_traversal_morsel PASSED
+test/test_traversal.py::TestTraversal::test_traversal_filter PASSED
+test/test_traversal.py::TestTraversalHelpers::test_traversal_require PASSED
+test/test_traversal.py::TestTraversalHelpers::test_subs_list_to_dict PASSED
+test/test_traversal.py::TestTraversalHelpers::test_trim_str PASSED
+test/test_traversal.py::TestTraversalHelpers::test_unpack PASSED
+test/test_traversal.py::TestTraversalHelpers::test_find_element PASSED
+test/test_traversal.py::TestTraversalHelpers::test_find_elements PASSED
 test/test_traversal.py::TestDictGet::test_dict_get PASSED
 test/test_update.py::TestUpdate::test_query_update PASSED
 test/test_update.py::TestUpdate::test_update_spec PASSED
@@ -895,7 +885,6 @@ test/test_utils.py::TestUtil::test_get_elements_text_and_html_by_attribute PASSE
 test/test_utils.py::TestUtil::test_hide_login_info PASSED
 test/test_utils.py::TestUtil::test_http_header_dict PASSED
 test/test_utils.py::TestUtil::test_int_or_none PASSED
-test/test_utils.py::TestUtil::test_intlist_to_bytes PASSED
 test/test_utils.py::TestUtil::test_iri_to_uri PASSED
 test/test_utils.py::TestUtil::test_is_html PASSED
 test/test_utils.py::TestUtil::test_js_to_json_common_constructors PASSED
@@ -925,6 +914,7 @@ test/test_utils.py::TestUtil::test_parse_duration PASSED
 test/test_utils.py::TestUtil::test_parse_filesize PASSED
 test/test_utils.py::TestUtil::test_parse_iso8601 PASSED
 test/test_utils.py::TestUtil::test_parse_resolution PASSED
+test/test_utils.py::TestUtil::test_partial_application PASSED
 test/test_utils.py::TestUtil::test_pkcs1pad PASSED
 test/test_utils.py::TestUtil::test_prepend_extension PASSED
 test/test_utils.py::TestUtil::test_read_batch_urls PASSED
@@ -1028,6 +1018,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 841 passed, 153 skipped, 5881 deselected ========
+======== 852 passed, 153 skipped, 5997 deselected ========
   py$(PYV): OK
   congratulations :)

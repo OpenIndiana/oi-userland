@@ -1,0 +1,42 @@
+--- geeqie-2.5/src/histogram.cc.old	2024-10-13 11:37:03.841785917 -0400
++++ geeqie-2.5/src/histogram.cc	2024-10-13 11:38:22.911894227 -0400
+@@ -308,7 +308,7 @@
+ 		}
+ 
+ 	if (max > 0)
+-		logmax = log(max);
++		logmax = std::log(max);
+ 	else
+ 		logmax = 1.0;
+ 
+@@ -384,7 +384,7 @@
+ 				if (v[chanmax] == 0)
+ 					pt = 0;
+ 				else if (histogram->histogram_mode)
+-					pt = (static_cast<gdouble>(log(v[chanmax]))) / logmax * (height - 1);
++					pt = (static_cast<gdouble>(std::log(v[chanmax]))) / logmax * (height - 1);
+ 				else
+ 					pt = (static_cast<gdouble>(v[chanmax])) / max * (height - 1);
+ 
+--- geeqie-2.5/src/pan-view/pan-calendar.cc.old	2024-10-13 12:13:27.464106505 -0400
++++ geeqie-2.5/src/pan-view/pan-calendar.cc	2024-10-13 12:14:01.108288937 -0400
+@@ -111,7 +111,7 @@
+ 			}
+ 		}
+ 
+-	grid = static_cast<gint>(sqrt(g_list_length(list)) + 0.5);
++	grid = static_cast<gint>(std::sqrt(g_list_length(list)) + 0.5);
+ 
+ 	x = pi_day->x + pi_day->width + 4;
+ 	y = pi_day->y;
+--- geeqie-2.5/src/pan-view/pan-folder.cc.old	2024-10-13 12:15:25.948689578 -0400
++++ geeqie-2.5/src/pan-view/pan-folder.cc	2024-10-13 01:15:45.795123279 -0400
+@@ -253,7 +253,7 @@
+ 	x += PAN_BOX_BORDER;
+ 	y += PAN_BOX_BORDER;
+ 
+-	grid_size = static_cast<gint>(sqrt(g_list_length(f)) + 0.9);
++	grid_size = static_cast<gint>(std::sqrt(g_list_length(f)) + 0.9);
+ 	grid_count = 0;
+ 	x_start = x;
+ 	y_height = y;

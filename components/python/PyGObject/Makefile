@@ -15,49 +15,147 @@
 #
 
 BUILD_STYLE = pyproject
-# Force setup.py build style to get the pkgconfig file installed
-# see also: https://pygobject.readthedocs.io/en/latest/packagingguide.html
-BUILD_STYLE = setup.py
+# Force meson build style because the default PEP 517 build style is unable to
+# create wheels with the pkgconfig file.  See meson.build and
+# https://github.com/pygobject/pycairo/issues/312
+BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
+# We want to build for all Python versions
+SINGLE_PYTHON_VERSION = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyGObject
-HUMAN_VERSION =			3.46.0
-COMPONENT_SUMMARY =		PyGObject - Python bindings for GObject Introspection
-COMPONENT_PROJECT_URL =		https://pygobject.readthedocs.io
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ac/4a/f24ddf1d20cc4b56affc7921e29928559a06c922eb60077448392792b914/PyGObject-3.46.0.tar.gz
+HUMAN_VERSION =			3.50.0
+COMPONENT_SUMMARY =		Python bindings for GObject Introspection
+COMPONENT_PROJECT_URL =		https://pygobject.gnome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:481437b05af0a66b7c366ea052710eb3aacbb979d22d30b797f7ec29347ab1e6
+	sha256:4500ad3dbf331773d8dedf7212544c999a76fc96b63a91b3dcac1e5925a1d103
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	COPYING
 
-# Manifest options for library/python/pygobject-3-39 package
-COMPONENT_FMRI.PyGObject-3-39 =		library/python/pygobject-3-39
+TEST_STYLE = pytest
 
-# Force setup.py test style because the automatically detected pytest test
-# style does not work properly.
-TEST_STYLE = setup.py
+COMPONENT_SRC =			pygobject-$(HUMAN_VERSION)
 
 # We cannot obsolete pygobject-27 yet because it is needed by gimp and pygtk2-27.
 PYTHON_VERSIONS_OBSOLETING := $(filter-out 2.7, $(PYTHON_VERSIONS_OBSOLETING))
 
+# Bring in usual defaults for the pyproject based Python projects
+include $(WS_MAKE_RULES)/pyproject-defaults.mk
+
+# These variables needs to be defined before the common.mk include.
+BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
+INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
+TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
+else
+TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compared)
+endif
+
+# Add runtime dependencies from project metadata to generated manifest
+GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
+# Add build dependencies from project metadata to REQUIRED_PACKAGES
+REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
+# Add runtime dependencies from project metadata to REQUIRED_PACKAGES
+REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-runtime.res
+
 include $(WS_MAKE_RULES)/common.mk
 
-# Make sure the data files are installed at proper location
-PYTHON_DATA = $(USRDIR)
+# Set BITS and PYTHON_VERSION for all targets
+$(foreach t,built installed tested tested-and-compared, \
+	$(eval $(BUILD_DIR)/$(MACH64)-%/.$(t): BITS=64) \
+	$(foreach v,$(PYTHON_VERSION), \
+		$(eval $(BUILD_DIR)/%-$(v)/.$(t): PYTHON_VERSION=$(v)) \
+	) \
+)
+
+# Move all modules from default site-packages directory to vendor-packages
+# directory where we place modules shipped by the OS but not included in the
+# core Python distribution.
+COMPONENT_POST_INSTALL_ACTION += \
+	if [ -d $(PROTO_DIR)/$(PYTHON_DIR)/site-packages ] ; then \
+		$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB) ; \
+		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
+	fi ;
 
 # Rename some files to make way for symlinks
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTOUSRINCDIR)/pygobject-3.0; $(MV) pygobject.h pygobject.h-$(PYTHON_VERSION)) ;
 COMPONENT_POST_INSTALL_ACTION += \
-	(cd $(PROTOUSRLIBDIR)/pkgconfig; $(MKDIR) ../$(MACH64)/pkgconfig; $(MV) pygobject-3.0.pc ../$(MACH64)/pkgconfig/pygobject-3.0.pc-$(PYTHON_VERSION)) ;
+	(cd $(PROTOUSRLIBDIR64)/pkgconfig; $(MV) pygobject-3.0.pc pygobject-3.0.pc-$(PYTHON_VERSION)) ;
 
 # Replace Python version in header and pkgconfig file names
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -E -e 's/(pygobject((\.h)|(-3\.0\.pc))-)3\.[0-9]*$$/\1$$(PYVER)/' | uniq
 
+# We need to add -$(PYV) to package fmri
+GENERATE_EXTRA_CMD += | \
+	$(GSED) -e 's/^\(set name=pkg.fmri [^@]*\)\(.*\)$$/\1-$$(PYV)\2/'
+
+# Per Python version test infrastructure
+COMPONENT_TEST_BUILD_DIR = $(BUILD_DIR)/test-$(PYTHON_VERSION)
+COMPONENT_TEST_OUTPUT =	$(COMPONENT_TEST_BUILD_DIR)/test-$(PYTHON_VERSION)-results
+COMPONENT_TEST_DIFFS =	$(COMPONENT_TEST_BUILD_DIR)/test-$(PYTHON_VERSION)-diffs
+COMPONENT_TEST_SNAPSHOT = $(COMPONENT_TEST_BUILD_DIR)/results-$(PYTHON_VERSION).snapshot
+COMPONENT_TEST_TRANSFORM_CMD = $(COMPONENT_TEST_BUILD_DIR)/transform-$(PYTHON_VERSION)-results
+
+# Testing uses Pytest under the hood so we need to make sure we do not load all
+# installed Pytest plugins that could cause testing to fail.
+COMPONENT_TEST_ENV += PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+
+# Following tests (from Python core) fails in our environment.
+# Further investigation is needed.
+PYTEST_ADDOPTS += --deselect tests/test_events.py::GLibEventLoopTests::test_bidirectional_pty
+PYTEST_ADDOPTS += --deselect tests/test_events.py::GLibEventLoopTests::test_read_pty_output
+PYTEST_ADDOPTS += --deselect tests/test_events.py::GLibEventLoopTests::test_write_pty
+COMPONENT_TEST_ENV += PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
+
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Add build dependencies from project metadata to REQUIRED_PACKAGES
+$(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
+	$(MKDIR) $(BUILD_DIR)
+	$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
+	$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
+	cd $(SOURCE_DIR) ; $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
+	$(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
+		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
+		> $@
+
+# Remove any previous dependency files
+COMPONENT_POST_INSTALL_ACTION +=	$(RM) $(@D)/.depend-runtime ;
+
+# Add runtime dependencies from project metadata to generated manifest
+GENERATE_EXTRA_CMD += | \
+	$(CAT) - <( \
+		echo "" ; \
+		echo "\# python modules are unusable without python runtime binary" ; \
+		echo "depend type=require fmri=__TBD pkg.debug.depend.file=python\$$(PYVER) \\" ; \
+		echo "    pkg.debug.depend.path=usr/bin" ; \
+		echo "" ; \
+		echo "\# Automatically generated dependencies based on distribution metadata" ; \
+		$(CAT) $(BUILD_DIR)/META.depend-runtime.res \
+	)
+
+# Generate raw lists of runtime dependencies per Python version
+COMPONENT_POST_INSTALL_ACTION += \
+	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) >> $(@D)/.depend-runtime ;
+
+# Convert raw per version lists of runtime dependencies to single resolved
+# runtime dependency list.
+$(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS))
+	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-runtime) | $(SORT) -u \
+		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/meson-python
 PYTHON_REQUIRED_PACKAGES += library/python/pycairo
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/cairo

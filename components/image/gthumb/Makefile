@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
 COMPONENT_VERSION=      3.12.6
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,9 +39,9 @@ PATH= $(PATH.gnu)
 # For LCMS2 detection
 CPPFLAGS += -I/usr/include/lcms2
 
-CPPFLAGS += $(JPEG_CPPFLAGS)
-CFLAGS += $(JPEG_CFLAGS)
-LDFLAGS += $(JPEG_LDFLAGS)
+#CPPFLAGS += $(JPEG_CPPFLAGS)
+#CFLAGS += $(JPEG_CFLAGS)
+#LDFLAGS += $(JPEG_LDFLAGS)
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
@@ -61,7 +62,6 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += image/library/exiv2
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg

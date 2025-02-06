@@ -7,7 +7,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1321 items
+collecting ... collected 1337 items
 
 tests/test_fnmatch.py::TestFnMatch::test_cases[case0] PASSED
 tests/test_fnmatch.py::TestFnMatch::test_cases[case1] PASSED
@@ -276,6 +276,10 @@ tests/test_glob.py::Testglob::test_negateall PASSED
 tests/test_glob.py::Testglob::test_negateall_bytes PASSED
 tests/test_glob.py::Testglob::test_magic_non_magic PASSED
 tests/test_glob.py::Testglob::test_non_magic_magic PASSED
+tests/test_glob.py::TestGlobStarLong::test_glob_cases[case0] PASSED
+tests/test_glob.py::TestGlobStarLong::test_glob_cases[case1] PASSED
+tests/test_glob.py::TestGlobStarLong::test_glob_cases[case2] PASSED
+tests/test_glob.py::TestGlobStarLong::test_glob_cases[case3] PASSED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case0] PASSED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case1] PASSED
 tests/test_glob.py::TestGlobMarked::test_glob_cases[case2] PASSED
@@ -1212,6 +1216,10 @@ tests/test_globmatch.py::TestGlobMatchSpecial::test_root_dir PASSED
 tests/test_globmatch.py::TestGlobMatchSpecial::test_unfinished_ext PASSED
 tests/test_globmatch.py::TestGlobMatchSpecial::test_windows_drives PASSED
 tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_follow_symlink PASSED
+tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_globstarlong PASSED
+tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_globstarlong_follow PASSED
+tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_globstarlong_matchbase PASSED
+tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_globstarlong_matchbase_follow PASSED
 tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_symlink PASSED
 tests/test_globmatch.py::TestGlobmatchSymlink::test_globmatch_trigger_symlink_cache PASSED
 tests/test_globmatch.py::TestTilde::test_tilde_globmatch PASSED
@@ -1254,6 +1262,7 @@ tests/test_pathlib.py::TestPathlibGlobmatch::test_cases[case10] PASSED
 tests/test_pathlib.py::TestPathlibGlobmatch::test_cases[case11] PASSED
 tests/test_pathlib.py::TestPathlibGlobmatch::test_cases[case12] PASSED
 tests/test_pathlib.py::TestPathlibGlobmatch::test_cases[case13] PASSED
+tests/test_pathlib.py::TestPathlibGlobmatch::test_full_match_alias PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case0] PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case1] PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case2] PASSED
@@ -1268,6 +1277,7 @@ tests/test_pathlib.py::TestPathlibMatch::test_cases[case10] PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case11] PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case12] PASSED
 tests/test_pathlib.py::TestPathlibMatch::test_cases[case13] PASSED
+tests/test_pathlib.py::TestPathlibMatch::test_full_match_alias PASSED
 tests/test_pathlib.py::TestRealpath::test_real_directory PASSED
 tests/test_pathlib.py::TestRealpath::test_real_file PASSED
 tests/test_pathlib.py::TestExceptions::test_absolute_glob PASSED
@@ -1284,6 +1294,12 @@ tests/test_pathlib.py::TestExpansionLimit::test_limit_globmatch PASSED
 tests/test_pathlib.py::TestExpansionLimit::test_limit_match PASSED
 tests/test_pathlib.py::TestExpansionLimit::test_limit_rglob PASSED
 tests/test_pathlib.py::TestExcludes::test_exclude PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_match_globstarlong_no_follow PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_match_globstarlong_no_follow_real_path PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_match_globstarlong_symlink PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_match_globstarlong_symlink_real_path PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_rglob_globstar PASSED
+tests/test_pathlib.py::TestPathlibSymlink::test_rglob_globstarlong_symlink PASSED
 tests/test_versions.py::TestVersion::test_asserts PASSED
 tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
@@ -1332,7 +1348,7 @@ tests/test_wcparse.py::TestWcparse::test_translate_unique_optimization_okay PASS
 tests/test_wcparse.py::TestWcparse::test_unc_pattern PASSED
 
 
-======== 1170 passed, 151 skipped ========
+======== 1186 passed, 151 skipped ========
 py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
 py$(PYV): commands[3]> $(PYTHON) -m coverage xml
@@ -1342,15 +1358,15 @@ Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
 wcmatch/__init__.py       1      0   100%
 wcmatch/__meta__.py      69      0   100%
-wcmatch/_wcmatch.py     143      1    99%   179
-wcmatch/_wcparse.py    1015      2    99%   365, 389
+wcmatch/_wcmatch.py     150      1    99%   196
+wcmatch/_wcparse.py    1009      2    99%   363, 387
 wcmatch/fnmatch.py       40      0   100%
-wcmatch/glob.py         511     28    95%   113-115, 178-180, 225-227, 258-259, 309-321, 338-339, 814, 832-833
-wcmatch/pathlib.py       99      6    94%   86, 100, 171, 180-182
+wcmatch/glob.py         520     28    95%   113-115, 180-182, 227-229, 260-261, 312-324, 341-342, 824, 842-843
+wcmatch/pathlib.py      101      6    94%   86, 100, 181, 190-192
 wcmatch/posix.py          8      0   100%
 wcmatch/util.py          95      4    96%   62, 221-223
 wcmatch/wcmatch.py      165      4    98%   103-106, 135
 ---------------------------------------------------
-TOTAL                  2146     45    98%
+TOTAL                  2158     45    98%
   py$(PYV): OK
   congratulations :)

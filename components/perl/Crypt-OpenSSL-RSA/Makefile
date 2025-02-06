@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_PERL_MODULE =		Crypt::OpenSSL::RSA
 HUMAN_VERSION =			0.33
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Crypt::OpenSSL::RSA - RSA encoding and decoding, using the openSSL libraries
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,10 +30,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Set OPENSSL_PREFIX so Crypt::OpenSSL::Guess is able to find our preferred OpenSSL
+COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-bignum
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-random
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library

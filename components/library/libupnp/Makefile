@@ -13,15 +13,16 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2022 Niklas Poslovski
 #
+
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libupnp
-COMPONENT_VERSION= 1.14.19
+COMPONENT_VERSION= 1.14.20
 COMPONENT_SUMMARY= Portable C library for UPnP
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:b6423c573b758d09539f5e6c4712c1a9fd35dccf835f81d99473d50a50ad49b0
+COMPONENT_ARCHIVE_HASH= sha256:ee4b4f85aa00ce38b782cf480fa569a90c7ccb23b0a9a076073a2d0bd6227335
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/pupnp/files/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://pupnp.sourceforge.io/
 COMPONENT_FMRI= system/library/libupnp
@@ -39,15 +40,12 @@ CONFIGURE_SCRIPT = $(@D)/configure
 LDLFAGS += -lsocket -lnsl
 
 CPPFLAGS += -DSOLARIS -D_POSIX_PTHREAD_SEMANTICS
-CFLAGS.32 =  -D_FILE_OFFSET_BITS=64
 CFLAGS += $(CFLAGS.$(BITS))
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		termcolor
-HUMAN_VERSION =			2.4.0
-COMPONENT_SUMMARY =		termcolor - ANSI color formatting for output in terminal
+HUMAN_VERSION =			2.5.0
+COMPONENT_SUMMARY =		ANSI color formatting for output in terminal
 COMPONENT_PROJECT_URL =		https://github.com/termcolor/termcolor
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/10/56/d7d66a84f96d804155f6ff2873d065368b25a07222a6fd51c4f24ef6d764/termcolor-2.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aab9e56047c8ac41ed798fa36d892a37aca6b3e9159f3e0c24bc64a9b3ac7b7a
+	sha256:998d8d27da6d48442e8e1f016119076b690d962507531df4890fcd2db2ef8a6f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING.txt
 

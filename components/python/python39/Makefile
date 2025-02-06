@@ -25,24 +25,23 @@
 # Copyright (c) 2021, Aurelien Larcher
 #
 
-USE_OPENSSL11= yes
 USE_PARALLEL_BUILD=	yes
 USE_CTF=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.19
+COMPONENT_VERSION=      3.9.21
 PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d4892cd1618f6458cb851208c030df1482779609d0f3939991bd38184f8c679e
+COMPONENT_ARCHIVE_HASH=	sha256:3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/python-39
 COMPONENT_CLASSIFICATION= Development/Python
 COMPONENT_LICENSE=      PSFv2
-COMPONENT_LICENSE_FILE=	python39.license
+COMPONENT_LICENSE_FILE=	LICENSE
 
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
@@ -92,9 +91,7 @@ XPROFILE_DIR= $(BUILD_DIR_$(BITS))/.profile
 # PYTHONPATH in the environment can be harmful, but setting it to empty via
 # _INSTALL_ENV causes problems too, so just ignore the entire environment.
 # (see 20396493) Because of this, we have to explicitly specify PATH in
-# multiple places below. Also up the limit of maximum opened files for
-# testing purposes and pgo.
-ENV := ulimit -n 16384; $(ENV) -i
+# multiple places below.
 
 # Configure script should look into sbin folder when looking for dtrace
 CONFIGURE_ENV += PATH="$(PATH):/usr/sbin"
@@ -190,6 +187,8 @@ REQUIRED_PACKAGES += developer/object-file
 REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += database/sqlite-3
@@ -197,8 +196,6 @@ REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8

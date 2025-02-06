@@ -1,0 +1,18 @@
+Use GNU diff instead of Solaris diff.
+
+Solaris diff doesn't understand the -N option, which is part of the default
+option set.
+
+This is a very Solaris-specific patch, and should not be passed upstream.
+
+--- mercurial-6.9.1/hgext/extdiff.py.orig
++++ mercurial-6.9.1/hgext/extdiff.py
+@@ -708,7 +708,7 @@
+     program = opts.get(b'program')
+     option = opts.get(b'option')
+     if not program:
+-        program = b'diff'
++        program = b'gdiff'
+         option = option or [b'-Npru']
+     cmdline = b' '.join(map(procutil.shellquote, [program] + option))
+     return dodiff(ui, repo, cmdline, pats, opts)

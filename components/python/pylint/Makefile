@@ -19,15 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pylint
-HUMAN_VERSION =			3.2.6
+HUMAN_VERSION =			3.3.4
 COMPONENT_SUMMARY =		python code static checker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a5d01678349454806cff6d886fb072294f56a58c4761278c97fb557d708e1eb3
+	sha256:74ae7a38b177e69a9b525d0794bd8183820bfa7eb68cc1bee6e8ed22a42be4ce
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# Manifest options for developer/python/pylint package
-COMPONENT_FMRI.pylint-meta =		developer/python/pylint
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,11 +33,11 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/pylint-dev/pylint/pull/9576
 COMPONENT_PREP_ACTION += \
 	for t in \
+		i/inconsistent/inconsistent_quotes_fstring \
 		i/inconsistent/inconsistent_returns \
 		i/invalid/invalid_all/invalid_all_format_valid_5 \
 		i/invalid/invalid_all/invalid_all_format_valid_6 \
 		n/no/no_name_in_module \
-		r/recursion/recursion_error_3159 \
 		r/regression/regression_4680 \
 		u/unreachable \
 		u/undefined/undefined_variable_typing \
@@ -54,6 +51,9 @@ COMPONENT_PREP_ACTION += \
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/astroid
@@ -78,4 +78,5 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/six
+TEST_REQUIRED_PACKAGES.python += library/python/types-setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

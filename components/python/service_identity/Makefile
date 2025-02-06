@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		service_identity
-HUMAN_VERSION =			24.1.0
-COMPONENT_SUMMARY =		service_identity - Service identity verification for pyOpenSSL & cryptography.
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/38/d2/2ac20fd05f1b6fce31986536da4caeac51ed2e1bb25d4a7d73ca4eccdfab/service_identity-24.1.0.tar.gz
+HUMAN_VERSION =			24.2.0
+COMPONENT_SUMMARY =		Service identity verification for pyOpenSSL & cryptography.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6829c9d62fb832c2e1c435629b0a8c476e1929881f28bee4d20bc24161009221
+	sha256:b8683ba13f0d39c6cd5d625d2c5f65421d6d707b013b375c355751557cbe8e09
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

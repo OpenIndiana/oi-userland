@@ -26,20 +26,21 @@
 # Copyright (c) 2020  Michal Nowak
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
-COMPONENT_VERSION=	6.4
+COMPONENT_VERSION=	6.5
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159
+COMPONENT_ARCHIVE_HASH=	sha256:136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=		library/ncurses
 COMPONENT_LICENSE=	MIT
+COMPONENT_LICENSE_FILE=	COPYING
 
 #TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -70,7 +71,8 @@ CONFIGURE_OPTIONS += --with-pcre2
 CONFIGURE_OPTIONS += --with-shared
 # Compatibility with older programs
 CONFIGURE_OPTIONS += --with-abi-version=5
-CONFIGURE_OPTIONS += --with-normal
+# Disable static libraries
+CONFIGURE_OPTIONS += --without-normal
 CONFIGURE_OPTIONS += --without-debug
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/ncurses
 
@@ -84,7 +86,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 # The provided test programs are interactive, so they won't be usable for our machinery.
 COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/test
 COMPONENT_TEST_TARGETS= check
-COMPONENT_PRE_TEST_ACTION= ( cd $(COMPONENT_TEST_DIR) && configure )
+COMPONENT_PRE_TEST_ACTION= ( cd $(COMPONENT_TEST_DIR) && PATH="$(PATH)" ./configure )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/pcre2

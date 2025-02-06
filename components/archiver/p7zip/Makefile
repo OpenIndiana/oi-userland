@@ -27,21 +27,21 @@
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
+ENV = /usr/bin/env
+
 COMPONENT_NAME=         p7zip
-COMPONENT_VERSION=      16.2
-HUMAN_VERSION=		16.02
-COMPONENT_REVISION=     6
+COMPONENT_VERSION=      17.6
+HUMAN_VERSION=		17.06
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
-COMPONENT_PROJECT_URL=  https://p7zip.sourceforge.net/
-COMPONENT_SRC=          $(COMPONENT_NAME)_$(HUMAN_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC)_src_all.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f
-COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/p7zip/p7zip/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://github.com/p7zip-project/p7zip
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=      v$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:c35640020e8f044b425d9c18e1808ff9206dc7caf77c9720f57eb0849d714cd1
+COMPONENT_ARCHIVE_URL=	https://github.com/p7zip-project/p7zip/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         compress/p7zip
 COMPONENT_CLASSIFICATION= System/Core
 
 include $(WS_MAKE_RULES)/common.mk
-
 
 COMPONENT_TEST_DIR =           $(@D)
 COMPONENT_TEST_ENV =           P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
@@ -55,8 +55,7 @@ COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
 
 COMPONENT_BUILD_ARGS += BUILD_CC="$(CC)"
-# Note: the -std=c++11 setting below is probably not needed for a newer version.
-COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX) -std=c++11"
+COMPONENT_BUILD_ARGS += BUILD_CXX="$(CXX)"
 COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ARGS += BUILD_FLAGS="$(CPP_LARGEFILES) $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS)"
 
@@ -78,7 +77,18 @@ install:	build $(INSTALL_64) $(EXTRATARGETS)
 
 # When p7zip's install target is run, it creates all its directories mode 555,
 # so they're impossible to remove without adding the write bit first.
-COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR) ;
+
+COMPONENT_TEST_TRANSFORMS += '-e "/^REP=/d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Comment = /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Modified = /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Created = /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Compressed: /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Headers Size = /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Physical Size = /d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^1 file,/d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^Archive size: /d" '
+
 
 ifeq ($(strip $(MACH)),sparc)
 REQUIRED_PACKAGES += system/library/math
@@ -89,3 +99,4 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

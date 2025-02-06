@@ -1,11 +1,11 @@
---- libreoffice-6.4.2.2/sal/osl/unx/socket.cxx.1	2020-03-14 13:10:11.725559641 +0000
-+++ libreoffice-6.4.2.2/sal/osl/unx/socket.cxx	2020-03-14 13:10:54.911745912 +0000
-@@ -870,7 +870,7 @@
-     static auto const init = []() -> std::pair<oslSocketResult, OUString> {
-             sal_Char LocalHostname[256] = "";
+--- libreoffice-25.2.0.2/sal/osl/unx/socket.cxx.~1~	2025-01-14 21:34:28.945995643 -0500
++++ libreoffice-25.2.0.2/sal/osl/unx/socket.cxx	2025-01-14 23:08:03.281179923 -0500
+@@ -866,7 +866,7 @@
+ {
+     char LocalHostname[256] = "";
  
 -#ifdef SYSV
 +#if defined(SYSV) && !defined(__sun__)
-             struct utsname uts;
+     struct utsname uts;
  
-             if (uname(&uts) < 0)
+     if (uname(&uts) < 0)

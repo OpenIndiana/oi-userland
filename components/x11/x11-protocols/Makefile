@@ -18,6 +18,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xorgproto
 COMPONENT_VERSION= 2024.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= x11/header/x11-protocols
 COMPONENT_SUMMARY= X Window System protocol definitions
 COMPONENT_CLASSIFICATION= Development/X11
@@ -36,7 +37,6 @@ COMPONENT_PREP_ACTION +=( cd $(@D); autoreconf -fiv );
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --without-xmlto
-CONFIGURE_OPTIONS+= --with-asciidoc
 CONFIGURE_OPTIONS+= --without-fop
 CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --enable-legacy
@@ -44,7 +44,6 @@ CONFIGURE_OPTIONS+= --enable-legacy
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
 # Build dependencies
-REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 
 # Auto-generated dependencies

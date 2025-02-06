@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    xlogo
-COMPONENT_VERSION= 1.0.6
+COMPONENT_VERSION= 1.0.7
 COMPONENT_SUMMARY= xlogo application to display the X Window System logo
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c16ae461a7f7ea275f55c82acf3ee86ce0eb5e406f3a91ab2bb4d332693f32a0
+COMPONENT_ARCHIVE_HASH= sha256:8a3f67b20407a53286a7de1a04dbda12d272234d59ef35e68ecfaf7633d83624
 COMPONENT_FMRI=    x11/xlogo
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

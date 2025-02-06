@@ -7,9 +7,9 @@
 # 2187 |         uintptr_t StubAlignment = getStubAlignment();
 # it seems that StubAlignment is not used at all so just remove
 
---- llvm-17.0.1.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp	2023-09-22 19:43:07.710542014 +0200
-+++ llvm-17.0.1.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp.new	2023-09-22 20:54:32.526085255 +0200
-@@ -2184,7 +2184,7 @@
+--- llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp.orig
++++ llvm-18.1.8.src/lib/ExecutionEngine/RuntimeDyld/RuntimeDyldELF.cpp
+@@ -2185,7 +2185,7 @@
  
          uintptr_t BaseAddress =
            reinterpret_cast<uintptr_t>(Section.getAddress());
@@ -18,7 +18,7 @@
          StubAddress = BaseAddress + StubOffset;
          StubAddress = llvm::alignTo(StubAddress, 4U);
          StubOffset = StubAddress - BaseAddress;
-@@ -2215,7 +2215,7 @@
+@@ -2216,7 +2216,7 @@
      } else {
        uintptr_t BaseAddress =
          reinterpret_cast<uintptr_t>(Section.getAddress());
@@ -27,7 +27,7 @@
        StubAddress = BaseAddress + StubOffset;
        StubAddress = llvm::alignTo(StubAddress, 4U);
        StubOffset = StubAddress - BaseAddress;
-@@ -2256,7 +2256,7 @@
+@@ -2257,7 +2257,7 @@
  
          uintptr_t BaseAddress =
            reinterpret_cast<uintptr_t>(Section.getAddress());
@@ -36,7 +36,7 @@
  
          StubAddress = BaseAddress + StubOffset;
          StubAddress = llvm::alignTo(StubAddress, 8U);
-@@ -2298,7 +2298,7 @@
+@@ -2299,7 +2299,7 @@
      } else {
        uintptr_t BaseAddress =
          reinterpret_cast<uintptr_t>(Section.getAddress());

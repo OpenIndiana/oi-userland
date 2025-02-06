@@ -19,18 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco.test
-HUMAN_VERSION =			5.4.0
-COMPONENT_SUMMARY =		jaraco.test - Testing support by jaraco
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.test
+HUMAN_VERSION =			5.5.1
+COMPONENT_SUMMARY =		Testing support by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dbd343878758adc54447d6115c461789adb31fc4073b212950243093ba317ec2
+	sha256:4c04616455c43a281947da3177099e3246849117e3057c49bc9644c28ba7d375
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-include $(WS_MAKE_RULES)/common.mk
+COMPONENT_SRC =			jaraco_test-$(HUMAN_VERSION)
 
-# https://github.com/pytest-dev/pytest/issues/12112
-PYTEST_ADDOPTS += --ignore jaraco/test/cpython.py
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-collections
@@ -38,7 +36,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs

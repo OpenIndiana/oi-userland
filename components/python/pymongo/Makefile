@@ -19,34 +19,30 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.8.0
+HUMAN_VERSION =			4.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3639d459b06257b529c5675bb68e0f89d4a4d77fe5f76c01107202c3ba52d4cb
+	sha256:21b9969e155c4b16a160fbe90c390a07ca7514479af6c3811b1d15ead26e10ba
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Github tarball use different source directory than sdist
-COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
+TEST_STYLE = pytest
+
+# The 10.10.10.10 version was briefly available at PyPI and so we packaged it.
+# It later disappeared because it was created mistakenly but since IPS cannot
+# downgrade we need to keep it.
+COMPONENT_VERSION =		10.10.10.10
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/test.txt
+
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
-
-# Normalize pointer
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(traceback object at \)0x[a-f0-9]\{12\}>/\1\$$(POINTER)>/g'"
-# The order of items in the list is random
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(Must be one of (\)[^)]\{1,\})/\1LIST)/g'"
-
-# For testing the svc:/application/database/mongodb-44:default service must be
-# online.
-
-# Manually added test dependencies
-TEST_REQUIRED_PACKAGES += service/database/mongodb-44
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/dnspython
@@ -56,3 +52,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

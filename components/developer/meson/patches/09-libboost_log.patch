@@ -1,0 +1,13 @@
+libboost_log.so needs -lsocket and -lnsl to link properly.
+
+--- meson-1.6.0/mesonbuild/dependencies/boost.py.orig
++++ meson-1.6.0/mesonbuild/dependencies/boost.py
+@@ -336,6 +336,8 @@
+         return args
+ 
+     def get_link_args(self) -> T.List[str]:
++        if self.mod_name == 'boost_log':
++            return [self.path.as_posix(), '-lsocket', '-lnsl']
+         return [self.path.as_posix()]
+ 
+ class BoostDependency(SystemDependency):

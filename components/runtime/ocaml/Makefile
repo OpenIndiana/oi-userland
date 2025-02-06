@@ -22,14 +22,14 @@
 #
 # Copyright (c) 2013, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2023 Friedrich Kink. All rights reserved.
+# Copyright 2023,2024 Friedrich Kink. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ocaml
 COMPONENT_VERSION_MAJOR=	5.2
-COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).0
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MAJOR).1
 COMPONENT_SUMMARY=		Objective Caml compiler and programming environment
 COMPONENT_DESCRIPTION=	Objective Caml is a high-level, strongly-typed, functional and object-oriented programming language \
 from the ML family of languages. This package comprises two batch compilers \
@@ -39,7 +39,7 @@ COMPONENT_PROJECT_URL=		https://ocaml.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_SRC=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:48554abfd530fcdaa08f23f801b699e4f74c320ddf7d0bd56b0e8c24e55fc911
+COMPONENT_ARCHIVE_HASH=	sha256:abdd3124a888165eeac518d8fb05b483b2f813c40c1d2242817bb2f62a3144fc
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/$(COMPONENT_ARCHIVE_SRC)
 COMPONENT_FMRI=			runtime/ocaml
 COMPONENT_CLASSIFICATION=	Development/System

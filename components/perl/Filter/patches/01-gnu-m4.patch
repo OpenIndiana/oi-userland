@@ -1,0 +1,22 @@
+We need m4 implementation with -P support.
+
+--- Filter-1.64/lib/Filter/m4.pm.orig
++++ Filter-1.64/lib/Filter/m4.pm
+@@ -13,7 +13,7 @@
+     $sep = ';';
+ }
+ else {
+-    ($m4) = 'm4';
++    ($m4) = '/usr/gnu/bin/m4';
+     $sep = ':';
+ }
+ 
+@@ -60,7 +60,7 @@
+     }
+     else {
+         Filter::Util::Exec::filter_add ($self, 'sh', '-c',
+-                "m4 $m4arg 2>/dev/null");
++                "/usr/gnu/bin/m4 $m4arg 2>/dev/null");
+     }
+ }
+ 

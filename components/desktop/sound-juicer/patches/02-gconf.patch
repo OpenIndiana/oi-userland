@@ -1,0 +1,14 @@
+--- sound-juicer-3.40.0/src/sj-main.c.orig
++++ sound-juicer-3.40.0/src/sj-main.c
+@@ -1783,6 +1783,11 @@
+ 
+   gtk_window_set_default_icon_name ("sound-juicer");
+ 
++  /*
++      add special setting for brasero media library init
++  */
++  g_setenv ("DBUS_SESSION_BUS_ADDRESS", "autolaunch:", TRUE);
++
+   brasero_media_library_start ();
+ 
+   metadata = sj_metadata_getter_new ();

@@ -14,30 +14,26 @@
 #   $WS_TOOLS/python-integrate-project hpack
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hpack
-HUMAN_VERSION =			4.0.0
-COMPONENT_SUMMARY =		hpack - Pure-Python HPACK header compression
-COMPONENT_PROJECT_URL =		https://github.com/python-hyper/hpack
+HUMAN_VERSION =			4.1.0
+COMPONENT_SUMMARY =		Pure-Python HPACK header encoding
+COMPONENT_PROJECT_URL =		https://github.com/python-hyper/hpack/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python-hyper/hpack/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b714329acc1d4facaed34329584f8a6b234abb9141b640ec021f991f5108a300
+	sha256:d8e08ec703362fab42224f31e3eee0a73b8c6a28e1f05c1318feb2c54453abcf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

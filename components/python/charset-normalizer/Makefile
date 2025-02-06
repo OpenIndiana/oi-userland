@@ -11,21 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project charset-normalizer
+#   $WS_TOOLS/python-integrate-project -d python/charset-normalizer charset_normalizer
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		charset-normalizer
-HUMAN_VERSION =			3.3.2
-COMPONENT_SUMMARY =		charset-normalizer - The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
-COMPONENT_PROJECT_URL =		https://github.com/Ousret/charset_normalizer
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz
+COMPONENT_NAME =		charset_normalizer
+HUMAN_VERSION =			3.4.1
+COMPONENT_SUMMARY =		The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5
+	sha256:44251f18cd68a75b56585dd00dae26183e102cd5e0f9f1466e6df5da2ed64ea3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,18 +35,9 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += dev-requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/mypy
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/black
-TEST_REQUIRED_PACKAGES.python += library/python/build
-TEST_REQUIRED_PACKAGES.python += library/python/chardet
-TEST_REQUIRED_PACKAGES.python += library/python/codecov
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/flask
-TEST_REQUIRED_PACKAGES.python += library/python/isort
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/requests
-TEST_REQUIRED_PACKAGES.python += library/python/wheel

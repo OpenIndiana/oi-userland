@@ -11,22 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-pytz
+#   $WS_TOOLS/python-integrate-project -d python/types-pytz types_pytz
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-pytz
-HUMAN_VERSION =			2024.1.0.20240417
-COMPONENT_SUMMARY =		types-pytz - Typing stubs for pytz
+COMPONENT_NAME =		types_pytz
+HUMAN_VERSION =			2025.1.0.20250204
+COMPONENT_SUMMARY =		Typing stubs for pytz
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6810c8a1f68f21fdf0f4f374a432487c77645a0ac0b31de4bf4690cf21ad3981
+	sha256:00f750132769f1c65a4f7240bc84f13985b4da774bd17dfbe5d9cd442746bd49
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 

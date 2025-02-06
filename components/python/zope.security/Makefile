@@ -14,18 +14,20 @@
 #   $WS_TOOLS/python-integrate-project zope.security
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.security
-HUMAN_VERSION =			7.1
+HUMAN_VERSION =			7.3
 COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.security
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed092bc659aa273c45929cfbd10b8e479f1ea8cf469fe0ff8bbc3ae24ea16e63
+	sha256:5db5f79195321f2450ba49b3e1e47ba54364f966fdfc6d39df723043fe6c5549
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+COMPONENT_SRC =			zope_security-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 

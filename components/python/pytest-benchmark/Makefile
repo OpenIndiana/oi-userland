@@ -19,28 +19,46 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-benchmark
-HUMAN_VERSION =			4.0.0
-COMPONENT_SUMMARY =		pytest-benchmark - A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
+HUMAN_VERSION =			5.1.0
+COMPONENT_SUMMARY =		A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/pytest-benchmark
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/28/08/e6b0067efa9a1f2a1eb3043ecd8a0c48bfeb60d3255006dcc829d72d5da2/pytest-benchmark-4.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb0785b83efe599a6a956361c0691ae1dbb5318018561af10f3e915caa0048d1
+	sha256:9ea661cdc292e8231f7cd4c10b0319e56a2118e2c09d9f50e1b3d150d2aca105
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# We have no pygal packaged yet
+PYTEST_ADDOPTS += --deselect tests/test_benchmark.py::test_histogram
+PYTEST_ADDOPTS += --deselect tests/test_cli.py::test_compare
+PYTEST_ADDOPTS += --deselect tests/test_storage.py::test_rendering
+PYTEST_ADDOPTS += --deselect tests/test_storage.py::test_regression_checks
+PYTEST_ADDOPTS += --deselect tests/test_storage.py::test_regression_checks_inf
+PYTEST_ADDOPTS += --deselect tests/test_storage.py::test_compare_1
+PYTEST_ADDOPTS += --deselect tests/test_storage.py::test_compare_2
+
+# We have no aspectlib packaged yet
+PYTEST_ADDOPTS += --deselect tests/test_with_testcase.py::TerribleTerribleWayToWritePatchTests::test_foo2
+PYTEST_ADDOPTS += --deselect tests/test_with_weaver.py::test_weave_fixture
+PYTEST_ADDOPTS += --deselect tests/test_with_weaver.py::test_weave_method
+
+# https://github.com/ionelmc/pytest-benchmark/issues/163
+PYTEST_ADDOPTS += --deselect tests/test_utils.py::test_parse_elasticsearch_storage
+
+# https://github.com/fedora-python/tox-current-env/issues/68
+PYTEST_ADDOPTS += --deselect tests/test_cli.py::test_hooks
+
+# Drop benchmark reports
+COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} benchmark:/,/^$$/d'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} cProfile/,/^$$/d'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/py-cpuinfo
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/aspectlib
 TEST_REQUIRED_PACKAGES.python += library/python/elasticsearch
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
-TEST_REQUIRED_PACKAGES.python += library/python/hunter
-TEST_REQUIRED_PACKAGES.python += library/python/pygal
-TEST_REQUIRED_PACKAGES.python += library/python/pygaljs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-instafail
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

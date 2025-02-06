@@ -1,0 +1,16 @@
+This is to get the following sentence in both the man page and help:
+
+Processes in an uninterruptible sleep state also contribute to the load
+average.
+
+--- coreutils-9.5/src/uptime.c.orig
++++ coreutils-9.5/src/uptime.c
+@@ -151,7 +151,7 @@
+ Print the current time, the length of time the system has been up,\n\
+ the number of users on the system, and the average number of jobs\n\
+ in the run queue over the last 1, 5 and 15 minutes."));
+-#ifdef __linux__
++#if defined(__linux__) || defined(__illumos__)
+       /* It would be better to introduce a configure test for this,
+          but such a test is hard to write.  For the moment then, we
+          have a hack which depends on the preprocessor used at compile

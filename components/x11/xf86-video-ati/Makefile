@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-ati
 COMPONENT_VERSION= 6.14.6
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-ati
 COMPONENT_SUMMARY= xf86-video-ati - ATI Radeon video driver for the Xorg X server
 COMPONENT_ARCHIVE_HASH= \
@@ -32,7 +32,7 @@ COMPONENT_PREP_ACTION = \
  ( cd $(@D) && \
     aclocal -I. && \
     autoheader && \
-    libtoolize --automake --copy --force && \
+    PATH="$(PATH)" libtoolize --automake --copy --force && \
     automake -a -f -c && \
     autoconf && \
     cp $(COMPONENT_DIR)/srcs/i2c/*.h $(COMPONENT_DIR)/srcs/i2c/*.c src/ )

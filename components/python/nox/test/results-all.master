@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 568 items
+collecting ... collected 583 items
 
 tests/test__option_set.py::TestOptionSet::test_namespace PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace_values PASSED
@@ -33,6 +33,8 @@ tests/test__parametrize.py::test_parametrize_decorator_multiple_and_stack PASSED
 tests/test__parametrize.py::test_generate_calls_simple PASSED
 tests/test__parametrize.py::test_generate_calls_multiple_args PASSED
 tests/test__parametrize.py::test_generate_calls_ids PASSED
+tests/test__parametrize.py::test_generate_calls_tags PASSED
+tests/test__parametrize.py::test_generate_calls_merge_tags PASSED
 tests/test__parametrize.py::test_generate_calls_session_python PASSED
 tests/test__parametrize.py::test_generate_calls_python_compatibility PASSED
 tests/test__version.py::test_needs_version_default PASSED
@@ -291,6 +293,7 @@ tests/test_sessions.py::TestSession::test_run_install_only PASSED
 tests/test_sessions.py::TestSession::test_run_install_only_should_install PASSED
 tests/test_sessions.py::TestSession::test_run_success PASSED
 tests/test_sessions.py::TestSession::test_run_error PASSED
+tests/test_sessions.py::TestSession::test_run_install_script PASSED
 tests/test_sessions.py::TestSession::test_run_overly_env PASSED
 tests/test_sessions.py::TestSession::test_by_default_all_invocation_env_vars_are_passed PASSED
 tests/test_sessions.py::TestSession::test_no_included_invocation_env_vars_are_passed PASSED
@@ -436,13 +439,14 @@ tests/test_tasks.py::test_filter_manifest_pythons_not_found PASSED
 tests/test_tasks.py::test_filter_manifest_keywords PASSED
 tests/test_tasks.py::test_filter_manifest_keywords_not_found PASSED
 tests/test_tasks.py::test_filter_manifest_keywords_syntax_error PASSED
-tests/test_tasks.py::test_filter_manifest_tags[None-4] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags1-3] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags2-3] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags3-1] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags4-4] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags5-3] PASSED
-tests/test_tasks.py::test_filter_manifest_tags[tags6-4] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[None-8] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags1-7] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags2-5] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags3-3] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags4-8] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags5-7] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags6-6] PASSED
+tests/test_tasks.py::test_filter_manifest_tags[tags7-8] PASSED
 tests/test_tasks.py::test_filter_manifest_tags_not_found[tags-are-case-insensitive] PASSED
 tests/test_tasks.py::test_filter_manifest_tags_not_found[tag-does-not-exist] PASSED
 tests/test_tasks.py::test_merge_sessions_and_tags PASSED
@@ -478,7 +482,7 @@ tests/test_toml.py::test_load_script_block[example.py] PASSED
 tests/test_toml.py::test_load_script_block[example] PASSED
 tests/test_toml.py::test_load_no_script_block PASSED
 tests/test_toml.py::test_load_multiple_script_block PASSED
-tests/test_toml.py::test_load_non_recongnised_extension PASSED
+tests/test_toml.py::test_load_non_recognised_extension PASSED
 tests/test_tox_to_nox.py::test_trivial PASSED
 tests/test_tox_to_nox.py::test_skipinstall PASSED
 tests/test_tox_to_nox.py::test_usedevelop PASSED
@@ -502,6 +506,7 @@ tests/test_virtualenv.py::test_condaenv_bin_windows PASSED
 tests/test_virtualenv.py::test_condaenv_ SKIPPED (Missing conda comm...)
 tests/test_virtualenv.py::test_condaenv_detection SKIPPED (Missing c...)
 tests/test_virtualenv.py::test_uv_creation SKIPPED (Missing uv command.)
+tests/test_virtualenv.py::test_uv_managed_python SKIPPED (Missing uv...)
 tests/test_virtualenv.py::test_constructor_defaults PASSED
 tests/test_virtualenv.py::test_constructor_explicit PASSED
 tests/test_virtualenv.py::test_env PASSED
@@ -533,6 +538,16 @@ tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/
 tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-FileNotFoundError-True-uv] PASSED
 tests/test_virtualenv.py::test_find_uv[None-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv] PASSED
 tests/test_virtualenv.py::test_find_uv[None-FileNotFoundError-False-uv] PASSED
+tests/test_virtualenv.py::test_uv_version[0-{"version": "0.2.3", "commit_info": null}-0.2.3] PASSED
+tests/test_virtualenv.py::test_uv_version[1-None-0.0] PASSED
+tests/test_virtualenv.py::test_uv_version[1-{"version": "9.9.9", "commit_info": null}-0.0] PASSED
+tests/test_virtualenv.py::test_uv_version_no_uv PASSED
+tests/test_virtualenv.py::test_uv_install[3.11-True] SKIPPED (Missin...)
+tests/test_virtualenv.py::test_uv_install[pypy3.8-True] SKIPPED (Mis...)
+tests/test_virtualenv.py::test_uv_install[cpython3.9-True] SKIPPED (...)
+tests/test_virtualenv.py::test_uv_install[python3.12-True] SKIPPED (...)
+tests/test_virtualenv.py::test_uv_install[nonpython9.22-False] SKIPPED
+tests/test_virtualenv.py::test_uv_install[java11-False] SKIPPED (Mis...)
 tests/test_virtualenv.py::test_create_reuse_venv_environment PASSED
 tests/test_virtualenv.py::test_create_reuse_oldstyle_virtualenv_environment PASSED
 tests/test_virtualenv.py::test_inner_functions_reusing_venv PASSED
@@ -585,4 +600,4 @@ INFO     nox:test_logger.py:75 bar
 INFO     nox:test_logger.py:84 bar
 OUTPUT   nox:test_logger.py:85 foo
 =========================== short test summary info ============================
-======== 543 passed, 24 skipped, 1 xpassed ========
+======== 551 passed, 31 skipped, 1 xpassed ========

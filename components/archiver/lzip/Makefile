@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzip
-COMPONENT_VERSION=	1.24.1
+COMPONENT_VERSION=	1.25
 COMPONENT_SUMMARY=	Lzip - a lossless data compressor with a user interface similar to the one of gzip or bzip2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://lzip.nongnu.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:30c9cb6a0605f479c496c376eb629a48b0a1696d167e3c1e090c5defa481b162
+COMPONENT_ARCHIVE_HASH=	sha256:09418a6d8fb83f5113f5bd856e09703df5d37bae0308c668d0f346e3d3f0a56f
 COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/lzip/$(COMPONENT_ARCHIVE)
 # Signature verification fails
 #COMPONENT_SIG_URL=	https://download.savannah.gnu.org/releases/lzip/$(COMPONENT_ARCHIVE).sig

@@ -17,12 +17,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libppd
-COMPONENT_VERSION= 2.0.0
+COMPONENT_VERSION= 2.1.0
 COMPONENT_SUMMARY= libppd is the legacy support library for PPD files
 COMPONENT_DESCRIPTION= LIBPPD is only for legacy PPD file support! It should not be a motivation to create new PPD files or new PPD extensions!
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:882d3c659a336e91559de8f3c76fc26197fe6e5539d9b484a596e29a5a4e0bc8
+COMPONENT_ARCHIVE_HASH=	sha256:bc4d7f8b749a8809f532459a5dd2f3513556ea2b96b3e12aced3e078c2697cba
 COMPONENT_PROJECT_URL= https://openprinting.github.io/
 COMPONENT_ARCHIVE_URL= https://github.com/OpenPrinting/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	print/$(COMPONENT_NAME)
@@ -65,6 +65,7 @@ COMPONENT_TEST_ENV    += libtool_execute_magic='%%%MAGIC variable%%%'
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/print/cups-libs
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/libcupsfilters
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

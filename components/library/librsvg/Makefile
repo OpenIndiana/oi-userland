@@ -16,16 +16,18 @@
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.58.2
+COMPONENT_VERSION=	2.59.2
+COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:18e9d70c08cf25f50d610d6d5af571561d67cf4179f962e04266475df6e2e224
+COMPONENT_ARCHIVE_HASH= sha256:ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -41,35 +43,18 @@ LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld
 
 PATH=                   $(PATH.gnu)
 
-# Cloning is required for gmake test to pass
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D); )
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc/$(MACH64)
-CONFIGURE_OPTIONS += --disable-Bsymbolic
-CONFIGURE_OPTIONS += --disable-static
-# does not build
-CONFIGURE_OPTIONS += --disable-gtk-doc
-CONFIGURE_OPTIONS += --enable-introspection
-CONFIGURE_OPTIONS += --enable-vala
-
-COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
-
-COMPONENT_TEST_TRANSFORMS = \
-	'-n ' \
-	'-e "s/finished in.*s$$//"' \
-    '-e "/^test result:/p" '
+LDFLAGS=		-lsocket
 
 # Manually added dependencies
 REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += developer/cargo-c
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += system/library/fontconfig
 #needed to build the man page
-REQUIRED_PACKAGES += library/python/docutils-39
+PYTHON_REQUIRED_PACKAGES += library/python/docutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += image/library/libpng16
-REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
@@ -77,5 +62,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += service/gnome/desktop-cache
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/freetype-2
 REQUIRED_PACKAGES += system/library/math

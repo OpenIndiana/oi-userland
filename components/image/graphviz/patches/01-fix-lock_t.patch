@@ -1,0 +1,29 @@
+/usr/include/sys/machtypes.h has a conflicting definition of lock_t.
+
+--- graphviz-12.2.0/lib/gvpr/actions.c.orig	2024-11-03 20:33:36.000000000 +0100
++++ graphviz-12.2.0/lib/gvpr/actions.c	2024-11-06 23:22:20.779498850 +0100
+@@ -502,7 +502,7 @@
+     if (data->lock.zombie)
+       agclose(g);
+     else
+-      data->lock = (lock_t){0};
++      data->lock = (gvpr_lock_t){0};
+   }
+   return oldv;
+ }
+--- graphviz-12.2.0/lib/gvpr/compile.h.orig	2024-11-03 20:33:36.000000000 +0100
++++ graphviz-12.2.0/lib/gvpr/compile.h	2024-11-06 23:29:37.207415511 +0100
+@@ -38,11 +38,11 @@
+ typedef struct {
+   bool locked: 1; ///< is the lock currently taken?
+   bool zombie: 1; ///< was a deletion request recorded while locked?
+-} lock_t;
++} gvpr_lock_t;
+ 
+     typedef struct {
+ 	Agrec_t h;
+-	lock_t lock;
++	gvpr_lock_t lock;
+     } gval_t;
+ 
+     typedef struct {

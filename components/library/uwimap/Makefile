@@ -19,14 +19,14 @@
 # CDDL HEADER END
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2025 Klaus Ziegler
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		imap
 COMPONENT_VERSION=	2007f
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 IPS_COMPONENT_VERSION=	0.2007.6
 COMPONENT_PROJECT_URL=	http://www.washington.edu/imap/
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -45,11 +45,9 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATH=$(PATH.gnu)
 
-INSTALL_COMMON=$(BUILD_DIR)/.installed
-
 CFLAGS += -D__EXTENSIONS__
 
-# Provide location for openssl 3.1 headers/libraries
+# Provide location for openssl 3 headers/libraries
 # (Also hardcoded in patch file: z_01ec_makefile.patch )
 CFLAGS += -I$(OPENSSL_INCDIR)
 LDFLAGS += -L$(OPENSSL_LIBDIR)
@@ -66,24 +64,23 @@ COMPONENT_BUILD_ARGS += EXTRALDFLAGS="$(LDFLAGS)"
 
 COMPONENT_BUILD_TARGETS = ec
 
-$(INSTALL_COMMON):	$(BUILD_32_and_64)
-	$(MKDIR) -p $(PROTO_DIR)/usr/lib/$(MACH64)
-	$(MKDIR) -p $(PROTO_DIR)/usr/include/c-client
-	$(CP) $(BUILD_DIR_32)/c-client/libc-client.so.1 $(PROTO_DIR)/usr/lib/
-	$(CP) $(BUILD_DIR_64)/c-client/libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)
-	$(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/libc-client.so
-	$(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)/libc-client.so
-	$(CP) $(SOURCE_DIR)/src/osdep/unix/*.h $(PROTO_DIR)/usr/include/c-client/
-	$(CP) $(SOURCE_DIR)/src/c-client/*.h $(PROTO_DIR)/usr/include/c-client/
-	$(CP) $(BUILD_DIR_32)/c-client/linkage.h $(PROTO_DIR)/usr/include/c-client/
-	$(CP) $(BUILD_DIR_32)/c-client/osdep.h $(PROTO_DIR)/usr/include/c-client/
-	$(TOUCH) $@
+define COMPONENT_INSTALL_ACTION=
+	($(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64)) ; \
+	($(MKDIR) $(PROTO_DIR)/usr/include/c-client) ; \
+	($(CP) $(BUILD_DIR_64)/c-client/libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)) ; \
+	($(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/libc-client.so) ; \
+	($(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)/libc-client.so) ; \
+	($(CP) $(SOURCE_DIR)/src/osdep/unix/*.h $(PROTO_DIR)/usr/include/c-client/) ; \
+	($(CP) $(SOURCE_DIR)/src/c-client/*.h $(PROTO_DIR)/usr/include/c-client/) ; \
+	($(CP) $(BUILD_DIR_64)/c-client/linkage.h $(PROTO_DIR)/usr/include/c-client/) ; \
+	($(CP) $(BUILD_DIR_64)/c-client/osdep.h $(PROTO_DIR)/usr/include/c-client/);
+endef
 
-build:	$(BUILD_32_and_64)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_COMMON)
+install:	build $(INSTALL_64)
 
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)

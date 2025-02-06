@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gitdb
-HUMAN_VERSION =			4.0.11
-COMPONENT_SUMMARY =		gitdb - Git Object Database
+HUMAN_VERSION =			4.0.12
+COMPONENT_SUMMARY =		Git Object Database
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/gitdb
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/19/0d/bbb5b5ee188dec84647a4664f3e11b06ade2bde568dbd489d9d64adef8ed/gitdb-4.0.11.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bf5421126136d6d0af55bc1e7c1af1c397a34f5b7bd79e776cd3e89785c2b04b
+	sha256:5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

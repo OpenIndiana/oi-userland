@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
-HUMAN_VERSION =			3.9.0
-COMPONENT_SUMMARY =		flit_core - Distribution-building parts of Flit. See flit package for more information
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/e6/c1ac50fe3eebb38a155155711e6e864e254ce4b6e17fe2429b4c4d5b9e80/flit_core-3.9.0.tar.gz
+HUMAN_VERSION =			3.10.1
+COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72ad266176c4a3fcfab5f2930d76896059851240570ce9a98733b658cb786eba
+	sha256:66e5b87874a0d6e39691f0e22f09306736b633548670ad3c09ec9db03c5662f7
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

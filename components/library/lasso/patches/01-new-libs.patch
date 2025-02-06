@@ -1,0 +1,74 @@
+
+upstream via mail to lasso@listes.entrouvert.com at: Tue Dec 10 17:55:04 EET 2024
+
+--- lasso-2.8.2/lasso/lasso.c.orig	2023-01-25 18:10:30.746769119 +0100
++++ lasso-2.8.2/lasso/lasso.c	2024-12-10 18:49:27.428161572 +0100
+@@ -270,7 +270,7 @@
+ 	 * xmlsec-crypto library.
+ 	 */
+ #ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
+-	if (xmlSecCryptoDLLoadLibrary(BAD_CAST XMLSEC_CRYPTO) < 0) {
++	if (xmlSecCryptoDLLoadLibrary(BAD_CAST xmlSecGetDefaultCrypto) < 0) {
+ 		message(G_LOG_LEVEL_CRITICAL,
+ 				"Unable to load default xmlsec-crypto library. Make sure"
+ 				"that you have it installed and check shared libraries path"
+--- lasso-2.8.2/lasso/xml/tools.c.~1~	2023-03-06 12:05:02.761160572 +0100
++++ lasso-2.8.2/lasso/xml/tools.c	2024-12-10 20:42:49.239495585 +0100
+@@ -308,8 +308,8 @@
+ 			pub_key = lasso_get_public_key_from_pem_cert_file(file);
+ 			break;
+ 		case LASSO_PEM_FILE_TYPE_PUB_KEY:
+-			pub_key = xmlSecCryptoAppKeyLoad(file,
+-					xmlSecKeyDataFormatPem, NULL, NULL, NULL);
++			pub_key = xmlSecCryptoAppKeyLoadEx(file,
++					xmlSecKeyDataTypePublic, xmlSecKeyDataFormatPem, NULL, NULL, NULL);
+ 			break;
+ 		case LASSO_PEM_FILE_TYPE_PRIVATE_KEY:
+ 			pub_key = lasso_get_public_key_from_private_key_file(file);
+@@ -377,8 +377,8 @@
+ static xmlSecKeyPtr
+ lasso_get_public_key_from_private_key_file(const char *private_key_file)
+ {
+-	return xmlSecCryptoAppKeyLoad(private_key_file,
+-			xmlSecKeyDataFormatPem, NULL, NULL, NULL);
++	return xmlSecCryptoAppKeyLoadEx(private_key_file,
++			xmlSecKeyDataTypePublic, xmlSecKeyDataFormatPem, NULL, NULL, NULL);
+ }
+ 
+ /**
+@@ -614,7 +614,7 @@
+ 		case LASSO_SIGNATURE_METHOD_HMAC_SHA256:
+ 		case LASSO_SIGNATURE_METHOD_HMAC_SHA384:
+ 		case LASSO_SIGNATURE_METHOD_HMAC_SHA512:
+-			evp_md_ctx = EVP_MD_CTX_create();
++			evp_md_ctx = EVP_MD_CTX_new();
+ 			if (EVP_DigestSignInit(evp_md_ctx, NULL, md, NULL, pkey) <= 0) {
+ 				message(G_LOG_LEVEL_CRITICAL, "EVP_DigestSignInit failed");
+ 				goto done;
+@@ -675,7 +675,7 @@
+ 	lasso_release_xml_string(b64_sigret);
+ 	lasso_release_xml_string(e_b64_sigret);
+ 	if (evp_md_ctx) {
+-		EVP_MD_CTX_destroy(evp_md_ctx);
++		EVP_MD_CTX_free(evp_md_ctx);
+ 		evp_md_ctx = NULL;
+ 	}
+ 	if (hmac_pkey) {
+@@ -792,7 +792,7 @@
+ 			lasso_base64_decode(b64_signature, &signature, (int*)&signature_len),
+ 			LASSO_DS_ERROR_INVALID_SIGNATURE);
+ 	/* verify signature */
+-	evp_md_ctx = EVP_MD_CTX_create();
++	evp_md_ctx = EVP_MD_CTX_new();
+ 
+ 	switch (method) {
+ 		case LASSO_SIGNATURE_METHOD_RSA_SHA1:
+@@ -878,7 +878,7 @@
+ 	lasso_release_string(digest);
+ 	lasso_release_string(new_signature);
+ 	if (evp_md_ctx) {
+-		EVP_MD_CTX_destroy(evp_md_ctx);
++		EVP_MD_CTX_free(evp_md_ctx);
+ 		evp_md_ctx = NULL;
+ 	}
+ 	if (hmac_pkey) {

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cffi
-HUMAN_VERSION =			1.17.0
+HUMAN_VERSION =			1.17.1
 COMPONENT_SUMMARY =		Foreign Function Interface for Python calling C code.
 COMPONENT_PROJECT_URL =		http://cffi.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f3157624b7558b914cb039fd1af735e5e8049a87c817cc215109ad1c8779df76
+	sha256:1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

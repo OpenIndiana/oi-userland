@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic_core
-HUMAN_VERSION =			2.23.0
+HUMAN_VERSION =			2.28.0
 COMPONENT_SUMMARY =		Core functionality for Pydantic validation and serialization
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:954509ea58b1adf6614390056da194e86feb83423679984f8453416db7cfa8c9
+	sha256:4aea61530f9fdc8f128a4772c0fdbce9159ecea03201c16fe2e4ba7ebd11b173
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,7 +36,8 @@ LD_Z_IGNORE=
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += tests/requirements.txt
+TEST_REQUIREMENTS_PEP735 += testing
+# https://github.com/pydantic/pydantic-core/issues/1554
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
 
 # Normalize pointers
@@ -68,6 +69,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/dirty-equals
 TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/inline-snapshot
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout

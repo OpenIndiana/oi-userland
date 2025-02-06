@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project check-manifest
+#   $WS_TOOLS/python-integrate-project -d python/check-manifest check_manifest
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		check-manifest
-HUMAN_VERSION =			0.49
-COMPONENT_SUMMARY =		check-manifest - Check MANIFEST.in in a Python source package for completeness
+COMPONENT_NAME =		check_manifest
+HUMAN_VERSION =			0.50
+COMPONENT_SUMMARY =		Check MANIFEST.in in a Python source package for completeness
 COMPONENT_PROJECT_URL =		https://github.com/mgedmin/check-manifest
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bc/b3/33f739b91114bd2c6f019f0fd2cc679e58bfb5bd0d56327021f97b85499a/check-manifest-0.49.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:64a640445542cf226919657c7b78d02d9c1ca5b1c25d7e66e0e1ff325060f416
+	sha256:d300f9f292986aa1a30424af44eb45c5644e0a810e392e62d553b24bb3393494
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -37,5 +35,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

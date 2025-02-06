@@ -313,10 +313,14 @@ test_unsigned_byte_validator (tests.test_helpers.TestHelpers) ... ok
 test_unsigned_short_validator (tests.test_helpers.TestHelpers) ... ok
 test_update_namespaces (tests.test_helpers.TestHelpers) ... ok
 test_encode_and_decode_url (tests.test_locations.TestLocations) ... ok
+test_get_uri (tests.test_locations.TestLocations) ... ok
+test_get_uri_path (tests.test_locations.TestLocations) ... ok
+test_is_drive_path_function (tests.test_locations.TestLocations) ... ok
 test_is_encoded_url (tests.test_locations.TestLocations) ... ok
 test_is_local_url_function (tests.test_locations.TestLocations) ... ok
 test_is_remote_url_function (tests.test_locations.TestLocations) ... ok
 test_is_safe_url (tests.test_locations.TestLocations) ... ok
+test_is_unc_path_function (tests.test_locations.TestLocations) ... ok
 test_is_url_function (tests.test_locations.TestLocations) ... ok
 test_match_location (tests.test_locations.TestLocations) ... ok
 test_normalize_locations_function (tests.test_locations.TestLocations) ... ok
@@ -326,11 +330,15 @@ test_normalize_url_slashes (tests.test_locations.TestLocations) ... ok
 test_normalize_url_unc_paths__issue_246 (tests.test_locations.TestLocations) ... ok
 test_normalize_url_unc_paths__issue_268 (tests.test_locations.TestLocations) ... ok
 test_normalize_url_windows (tests.test_locations.TestLocations) ... ok
-test_normalize_url_with_base_unc_path (tests.test_locations.TestLocations) ... ok
+test_normalize_url_with_base_unc_path_on_others (tests.test_locations.TestLocations) ... ok
+test_normalize_url_with_base_unc_path_on_windows (tests.test_locations.TestLocations) ... skipped 'Run only on Windows systems'
+test_normalize_url_with_base_url_with_local_part (tests.test_locations.TestLocations) ... skipped ''
+test_normalize_url_with_local_part (tests.test_locations.TestLocations) ... ok
 test_normalize_url_with_query_part (tests.test_locations.TestLocations) ... ok
 test_path_from_uri (tests.test_locations.TestLocations) ... ok
 test_url_path_is_file_function (tests.test_locations.TestLocations) ... ok
 test_urlsplit (tests.test_locations.TestLocations) ... ok
+test_urn_uri (tests.test_locations.TestLocations) ... ok
 test_decode_memory_usage (tests.test_memory.TestMemoryUsage) ... skipped 'Memory profiler is not installed!'
 test_element_tree_memory_usage (tests.test_memory.TestMemoryUsage) ... skipped 'Memory profiler is not installed!'
 test_package_memory_usage (tests.test_memory.TestMemoryUsage) ... skipped 'Memory profiler is not installed!'
@@ -505,7 +513,7 @@ test_it_translation (tests.test_translations.TestTranslations) ... ok
 test_pl_translation (tests.test_translations.TestTranslations) ... ok
 test_pl_validation_translation (tests.test_translations.TestTranslations) ... ok
 test_extra_validator__issue_291 (tests.test_typing.TestTyping) ... ok
-test_protocols (tests.test_typing.TestTyping) ... ok
+test_protocols (tests.test_typing.TestTyping) ... skipped 'ep450 needs a patch for protocols'
 test_schema_source (tests.test_typing.TestTyping) ... ok
 test_simple_types (tests.test_typing.TestTyping) ... ok
 test_xml_document_validation (xmlschema.testing._builders.TestValidator001) ... ok
@@ -562,6 +570,7 @@ test_xml_document_validation (xmlschema.testing._builders.TestValidator051) ... 
 test_xml_document_validation (xmlschema.testing._builders.TestValidator052) ... ok
 test_xml_document_validation (xmlschema.testing._builders.TestValidator053) ... ok
 test_xml_document_validation (xmlschema.testing._builders.TestValidator054) ... ok
+test_xml_document_validation (xmlschema.testing._builders.TestValidator055) ... ok
 test_example3 (tests.test_wsdl.TestWsdlDocuments) ... ok
 test_example3_without_types__issue_347 (tests.test_wsdl.TestWsdlDocuments) ... ok
 test_example4 (tests.test_wsdl.TestWsdlDocuments) ... ok
@@ -752,6 +761,7 @@ Test encoding data of a non-root element ... ok
 test_encode_unordered_content (tests.validation.test_encoding.TestEncoding) ... ok
 test_encode_unordered_content_2 (tests.validation.test_encoding.TestEncoding)
 Here we test with a default converter at the schema level ... ok
+test_encoding_qname_with_enumeration__issue_411 (tests.validation.test_encoding.TestEncoding) ... ok
 test_encoding_with_default_namespace__issue_400 (tests.validation.test_encoding.TestEncoding) ... ok
 test_error_message (tests.validation.test_encoding.TestEncoding) ... ok
 test_float_encoding (tests.validation.test_encoding.TestEncoding) ... ok
@@ -786,6 +796,7 @@ Test encoding data of a non-root element ... ok
 test_encode_unordered_content (tests.validation.test_encoding.TestEncoding11) ... ok
 test_encode_unordered_content_2 (tests.validation.test_encoding.TestEncoding11)
 Here we test with a default converter at the schema level ... ok
+test_encoding_qname_with_enumeration__issue_411 (tests.validation.test_encoding.TestEncoding11) ... ok
 test_encoding_with_default_namespace__issue_400 (tests.validation.test_encoding.TestEncoding11) ... ok
 test_error_message (tests.validation.test_encoding.TestEncoding11) ... ok
 test_float_encoding (tests.validation.test_encoding.TestEncoding11) ... ok
@@ -821,6 +832,7 @@ test_issue_238__validate_bytes_strings (tests.validation.test_validation.TestVal
 test_issue_350__ignore_xsi_type_for_schema_validation (tests.validation.test_validation.TestValidation) ... ok
 test_issue_356__validate_empty_simple_elements (tests.validation.test_validation.TestValidation) ... ok
 test_issue_363 (tests.validation.test_validation.TestValidation) ... ok
+test_issue_410 (tests.validation.test_validation.TestValidation) ... ok
 test_lxml (tests.validation.test_validation.TestValidation) ... ok
 test_max_depth_argument (tests.validation.test_validation.TestValidation) ... ok
 test_path_argument (tests.validation.test_validation.TestValidation) ... ok
@@ -847,6 +859,7 @@ test_issue_238__validate_bytes_strings (tests.validation.test_validation.TestVal
 test_issue_350__ignore_xsi_type_for_schema_validation (tests.validation.test_validation.TestValidation11) ... ok
 test_issue_356__validate_empty_simple_elements (tests.validation.test_validation.TestValidation11) ... ok
 test_issue_363 (tests.validation.test_validation.TestValidation11) ... ok
+test_issue_410 (tests.validation.test_validation.TestValidation11) ... ok
 test_lxml (tests.validation.test_validation.TestValidation11) ... ok
 test_max_depth_argument (tests.validation.test_validation.TestValidation11) ... ok
 test_nested_all_groups_and_wildcard (tests.validation.test_validation.TestValidation11) ... ok
@@ -942,9 +955,11 @@ test_content_type (tests.validators.test_complex_types.TestXsd11ComplexType) ...
 test_element_only_content_extension (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_element_restrictions (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_empty_content_extension (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
+test_illegal_restriction__issue_425 (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_is_empty (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_mixed_content_extension__issue_334 (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_mixed_content_extension__issue_337 (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
+test_mixed_content_extension__issue_414 (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_occurs_restriction (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_recursive_complex_type (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
 test_restriction_with_empty_particle__issue_323 (tests.validators.test_complex_types.TestXsd11ComplexType) ... ok
@@ -960,9 +975,11 @@ test_content_type (tests.validators.test_complex_types.TestXsdComplexType) ... o
 test_element_only_content_extension (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_element_restrictions (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_empty_content_extension (tests.validators.test_complex_types.TestXsdComplexType) ... ok
+test_illegal_restriction__issue_425 (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_is_empty (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_mixed_content_extension__issue_334 (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_mixed_content_extension__issue_337 (tests.validators.test_complex_types.TestXsdComplexType) ... ok
+test_mixed_content_extension__issue_414 (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_occurs_restriction (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_recursive_complex_type (tests.validators.test_complex_types.TestXsdComplexType) ... ok
 test_restriction_with_empty_particle__issue_323 (tests.validators.test_complex_types.TestXsdComplexType) ... ok
@@ -1068,6 +1085,7 @@ test_effective_min_occurs (tests.validators.test_groups.TestXsdGroups) ... ok
 test_get_subgroups (tests.validators.test_groups.TestXsdGroups) ... ok
 test_has_occurs_restriction (tests.validators.test_groups.TestXsdGroups) ... ok
 test_is_empty (tests.validators.test_groups.TestXsdGroups) ... ok
+test_is_optional__issue_410 (tests.validators.test_groups.TestXsdGroups) ... ok
 test_is_pointless (tests.validators.test_groups.TestXsdGroups) ... ok
 test_iter_elements (tests.validators.test_groups.TestXsdGroups) ... ok
 test_iter_model (tests.validators.test_groups.TestXsdGroups) ... ok
@@ -1085,6 +1103,7 @@ test_identity_counter (tests.validators.test_identities.TestXsd11Identities) ...
 test_invalid_selector_node (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_invalid_selector_path (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_key_definition (tests.validators.test_identities.TestXsd11Identities) ... ok
+test_key_multiple_values__issue_418 (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_key_reference_definition (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_key_validation (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_keyref (tests.validators.test_identities.TestXsd11Identities) ... ok
@@ -1097,7 +1116,6 @@ test_missing_keyref_refer (tests.validators.test_identities.TestXsd11Identities)
 test_missing_selector (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_missing_selector_path (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_selector_default_namespace (tests.validators.test_identities.TestXsd11Identities) ... ok
-test_selector_target_namespace (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_wrong_kind_keyref_refer (tests.validators.test_identities.TestXsd11Identities) ... ok
 test_build (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_cardinality_mismatch_keyref_refer (tests.validators.test_identities.TestXsdIdentities) ... ok
@@ -1106,6 +1124,7 @@ test_identity_counter (tests.validators.test_identities.TestXsdIdentities) ... o
 test_invalid_selector_node (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_invalid_selector_path (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_key_definition (tests.validators.test_identities.TestXsdIdentities) ... ok
+test_key_multiple_values__issue_418 (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_key_validation (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_keyref (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_keyref_counter (tests.validators.test_identities.TestXsdIdentities) ... ok
@@ -1114,7 +1133,6 @@ test_missing_key_name (tests.validators.test_identities.TestXsdIdentities) ... o
 test_missing_keyref_refer (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_missing_selector (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_missing_selector_path (tests.validators.test_identities.TestXsdIdentities) ... ok
-test_selector_target_namespace (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_wrong_kind_keyref_refer (tests.validators.test_identities.TestXsdIdentities) ... ok
 test_deprecated_methods (tests.validators.test_models.TestModelBasedSorting) ... ok
 test_iter_collapsed_content_with_optional_elements (tests.validators.test_models.TestModelBasedSorting) ... ok
@@ -1125,11 +1143,14 @@ test_sort_content (tests.validators.test_models.TestModelBasedSorting) ... ok
 test_distinguishable_paths_one_level (tests.validators.test_models.TestModelPaths) ... ok
 test_distinguishable_paths_three_levels (tests.validators.test_models.TestModelPaths) ... ok
 test_distinguishable_paths_two_levels (tests.validators.test_models.TestModelPaths) ... ok
+test_advance_smart_methods (tests.validators.test_models.TestModelValidation) ... ok
 test_cars_model (tests.validators.test_models.TestModelValidation) ... ok
+test_check_following (tests.validators.test_models.TestModelValidation) ... ok
 test_choice_model_with_extended_occurs (tests.validators.test_models.TestModelValidation) ... ok
 test_collection_model (tests.validators.test_models.TestModelValidation) ... ok
 test_emptiable_all_model (tests.validators.test_models.TestModelValidation) ... ok
 test_empty_choice_groups (tests.validators.test_models.TestModelValidation) ... ok
+test_get_model_particle (tests.validators.test_models.TestModelValidation) ... ok
 test_issue_086 (tests.validators.test_models.TestModelValidation) ... ok
 test_iter_group (tests.validators.test_models.TestModelValidation) ... ok
 test_meta_attr_declarations_group (tests.validators.test_models.TestModelValidation)
@@ -1151,20 +1172,28 @@ test_model_group5 (tests.validators.test_models.TestModelValidation) ... ok
 test_model_group6 (tests.validators.test_models.TestModelValidation) ... ok
 test_model_group7 (tests.validators.test_models.TestModelValidation) ... ok
 test_model_group8 (tests.validators.test_models.TestModelValidation) ... ok
+test_model_occurs_check_methods (tests.validators.test_models.TestModelValidation) ... ok
+test_model_visitor_copy (tests.validators.test_models.TestModelValidation) ... ok
+test_model_visitor_copy_nested (tests.validators.test_models.TestModelValidation) ... ok
+test_particle_occurs_check_methods (tests.validators.test_models.TestModelValidation) ... ok
 test_person_type_model (tests.validators.test_models.TestModelValidation) ... ok
 test_sequence_model_with_extended_occurs (tests.validators.test_models.TestModelValidation) ... ok
 test_sequence_model_with_nested_choice_model (tests.validators.test_models.TestModelValidation) ... ok
 test_sequence_model_with_optional_elements (tests.validators.test_models.TestModelValidation) ... ok
 test_single_item_groups (tests.validators.test_models.TestModelValidation) ... ok
+test_stoppable_property (tests.validators.test_models.TestModelValidation) ... ok
 test_vehicles_model (tests.validators.test_models.TestModelValidation) ... ok
+test_advance_smart_methods (tests.validators.test_models.TestModelValidation11) ... ok
 test_all_model_with_extended_occurs (tests.validators.test_models.TestModelValidation11) ... ok
 test_all_model_with_relaxed_occurs (tests.validators.test_models.TestModelValidation11) ... ok
 test_all_model_with_wildcard (tests.validators.test_models.TestModelValidation11) ... ok
 test_cars_model (tests.validators.test_models.TestModelValidation11) ... ok
+test_check_following (tests.validators.test_models.TestModelValidation11) ... ok
 test_choice_model_with_extended_occurs (tests.validators.test_models.TestModelValidation11) ... ok
 test_collection_model (tests.validators.test_models.TestModelValidation11) ... ok
 test_emptiable_all_model (tests.validators.test_models.TestModelValidation11) ... ok
 test_empty_choice_groups (tests.validators.test_models.TestModelValidation11) ... ok
+test_get_model_particle (tests.validators.test_models.TestModelValidation11) ... ok
 test_issue_086 (tests.validators.test_models.TestModelValidation11) ... ok
 test_iter_group (tests.validators.test_models.TestModelValidation11) ... ok
 test_meta_attr_declarations_group (tests.validators.test_models.TestModelValidation11)
@@ -1186,11 +1215,16 @@ test_model_group5 (tests.validators.test_models.TestModelValidation11) ... ok
 test_model_group6 (tests.validators.test_models.TestModelValidation11) ... ok
 test_model_group7 (tests.validators.test_models.TestModelValidation11) ... ok
 test_model_group8 (tests.validators.test_models.TestModelValidation11) ... ok
+test_model_occurs_check_methods (tests.validators.test_models.TestModelValidation11) ... ok
+test_model_visitor_copy (tests.validators.test_models.TestModelValidation11) ... ok
+test_model_visitor_copy_nested (tests.validators.test_models.TestModelValidation11) ... ok
+test_particle_occurs_check_methods (tests.validators.test_models.TestModelValidation11) ... ok
 test_person_type_model (tests.validators.test_models.TestModelValidation11) ... ok
 test_sequence_model_with_extended_occurs (tests.validators.test_models.TestModelValidation11) ... ok
 test_sequence_model_with_nested_choice_model (tests.validators.test_models.TestModelValidation11) ... ok
 test_sequence_model_with_optional_elements (tests.validators.test_models.TestModelValidation11) ... ok
 test_single_item_groups (tests.validators.test_models.TestModelValidation11) ... ok
+test_stoppable_property (tests.validators.test_models.TestModelValidation11) ... ok
 test_vehicles_model (tests.validators.test_models.TestModelValidation11) ... ok
 test_parse (tests.validators.test_notations.TestXsd10Notations) ... ok
 test_properties (tests.validators.test_notations.TestXsd10Notations) ... ok
@@ -1201,11 +1235,10 @@ test_has_occurs_restriction (tests.validators.test_particles.TestParticleMixin) 
 test_is_ambiguous (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_emptiable (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_empty (tests.validators.test_particles.TestParticleMixin) ... ok
-test_is_missing (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_multiple (tests.validators.test_particles.TestParticleMixin) ... ok
-test_is_over (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_single (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_univocal (tests.validators.test_particles.TestParticleMixin) ... ok
+test_occurs_checkers (tests.validators.test_particles.TestParticleMixin) ... ok
 test_occurs_property (tests.validators.test_particles.TestParticleMixin) ... ok
 test_parse_particle (tests.validators.test_particles.TestParticleMixin) ... ok
 test_add_schema (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1391,8 +1424,8 @@ test_string_representation (tests.validators.test_xsdbase.TestXsdValidator) ... 
 test_valid_schema (tests.validators.test_xsdbase.TestXsdValidator) ... ok
 
 ----------------------------------------------------------------------
-Ran 1366 tests
+Ran 1399 tests
 
-OK (skipped=4)
+OK (skipped=7)
   py$(PYV): OK
   congratulations :)

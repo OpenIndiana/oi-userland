@@ -1,0 +1,88 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Checker.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Debug.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::DumpAsText.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::DumpAsXML.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::HTML.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::HTMLBatch.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::JustPod.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::LinkSection.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Methody.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::PullParser.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::PullParserEndToken.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::PullParserStartToken.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::PullParserTextToken.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::PullParserToken.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::RTF.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Search.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::SimpleTree.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Subclassing.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::Text.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::TextContent.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::XHTML.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Pod::Simple::XMLOutStream.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/BlackBox.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Checker.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Debug.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/DumpAsText.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/DumpAsXML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/HTML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/HTMLBatch.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/HTMLLegacy.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/JustPod.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/LinkSection.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Methody.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Progress.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/PullParser.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/PullParserEndToken.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/PullParserStartToken.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/PullParserTextToken.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/PullParserToken.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/RTF.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Search.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/SimpleTree.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Subclassing.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Text.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/TextContent.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/TiedOutFH.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/Transcode.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/TranscodeDumb.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/TranscodeSmart.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/XHTML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Pod/Simple/XMLOutStream.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/encode-$(PLV)@2.78
+depend type=require fmri=pkg:/library/perl-5/pod-escapes-$(PLV)@1.4
+depend type=require fmri=pkg:/library/perl-5/text-tabs+wrap-$(PLV)@98.112.902

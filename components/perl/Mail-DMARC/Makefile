@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mail::DMARC
+#   $WS_TOOLS/perl-integrate-module Mail-DMARC
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mail::DMARC
-HUMAN_VERSION =			1.20240314
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Mail::DMARC - Perl implementation of DMARC
+COMPONENT_NAME =		Mail-DMARC
+HUMAN_VERSION =			1.20250203
+COMPONENT_SUMMARY =		Perl implementation of DMARC
 COMPONENT_CPAN_AUTHOR =		MSIMERSON
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2cf366f87da287cf6f612d1dccbcf54417faa3c4e45295f5547279bd26593d2c
+	sha256:d37d63e58bfda3d91376e4edf9e66cfc221f4b01f5cf26ca4d46ad5fff3ffee2
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,19 +46,27 @@ PERL_REQUIRED_PACKAGES += library/perl-5/dbix-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/email-mime
 PERL_REQUIRED_PACKAGES += library/perl-5/email-sender
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir-install
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
+PERL_REQUIRED_PACKAGES += library/perl-5/http-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-dkim
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/module-load
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
 PERL_REQUIRED_PACKAGES += library/perl-5/net-idn-encode
 PERL_REQUIRED_PACKAGES += library/perl-5/net-imap-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/net-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/net-smtps
 PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
+PERL_REQUIRED_PACKAGES += library/perl-5/pod-usage
 PERL_REQUIRED_PACKAGES += library/perl-5/regexp-common
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += library/perl-5/socket6
+PERL_REQUIRED_PACKAGES += library/perl-5/sys-syslog
 PERL_REQUIRED_PACKAGES += library/perl-5/test-file-sharedir
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-libxml
@@ -68,3 +75,4 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-mock
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-file-sharedir
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-output
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

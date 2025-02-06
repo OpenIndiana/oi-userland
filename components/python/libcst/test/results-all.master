@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2063 items
+collecting ... collected 2098 items / 1 deselected / 2097 selected
 
 libcst/_nodes/tests/test_assert.py::AssertConstructionTest::test_invalid_0 PASSED
 libcst/_nodes/tests/test_assert.py::AssertConstructionTest::test_invalid_1 PASSED
@@ -507,6 +507,7 @@ libcst/_nodes/tests/test_global.py::GlobalConstructionTest::test_valid_2 PASSED
 libcst/_nodes/tests/test_global.py::GlobalParsingTest::test_valid_0 PASSED
 libcst/_nodes/tests/test_global.py::GlobalParsingTest::test_valid_1 PASSED
 libcst/_nodes/tests/test_global.py::GlobalParsingTest::test_valid_2 PASSED
+libcst/_nodes/tests/test_if.py::IfTest::test_invalid_0 PASSED
 libcst/_nodes/tests/test_if.py::IfTest::test_valid_0 PASSED
 libcst/_nodes/tests/test_if.py::IfTest::test_valid_1 PASSED
 libcst/_nodes/tests/test_if.py::IfTest::test_valid_2 PASSED
@@ -1237,6 +1238,13 @@ libcst/codemod/commands/tests/test_convert_type_comments.py::TestConvertTypeComm
 libcst/codemod/commands/tests/test_convert_type_comments.py::TestConvertTypeComments_FunctionDef::test_no_quoting PASSED
 libcst/codemod/commands/tests/test_convert_type_comments.py::TestConvertTypeComments_FunctionDef::test_prioritization_order_for_type_application PASSED
 libcst/codemod/commands/tests/test_convert_type_comments.py::TestConvertTypeComments_FunctionDef::test_simple_function_type_comments PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_nested_union PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_simple_union PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_single_type_union PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_union_in_function PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_union_no_import PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_union_with_alias PASSED
+libcst/codemod/commands/tests/test_convert_union_to_or.py::TestConvertUnionToOrCommand::test_union_with_unused_import PASSED
 libcst/codemod/commands/tests/test_ensure_import_present.py::EnsureImportPresentCommandTest::test_import_entity PASSED
 libcst/codemod/commands/tests/test_ensure_import_present.py::EnsureImportPresentCommandTest::test_import_entity_aliased PASSED
 libcst/codemod/commands/tests/test_ensure_import_present.py::EnsureImportPresentCommandTest::test_import_module PASSED
@@ -1252,6 +1260,13 @@ libcst/codemod/commands/tests/test_fix_pyre_directives.py::TestFixPyreDirectives
 libcst/codemod/commands/tests/test_fix_pyre_directives.py::TestFixPyreDirectivesCommand::test_no_need_to_fix_complex_bottom PASSED
 libcst/codemod/commands/tests/test_fix_pyre_directives.py::TestFixPyreDirectivesCommand::test_no_need_to_fix_complex_top PASSED
 libcst/codemod/commands/tests/test_fix_pyre_directives.py::TestFixPyreDirectivesCommand::test_no_need_to_fix_simple PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_import_alias PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_no_arguments PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_typing PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_typing_alias PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_with_arguments PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_with_optional PASSED
+libcst/codemod/commands/tests/test_fix_variadic_callable.py::TestFixVariadicCallableCommmand::test_callable_with_variadic_arguments PASSED
 libcst/codemod/commands/tests/test_noop.py::TestNOOPCodemod::test_noop PASSED
 libcst/codemod/commands/tests/test_remove_pyre_directive.py::TestRemovePyreStrictCommand::test_remove_from_file PASSED
 libcst/codemod/commands/tests/test_remove_pyre_directive.py::TestRemovePyreStrictCommand::test_remove_from_file_with_comment PASSED
@@ -1274,8 +1289,15 @@ libcst/codemod/commands/tests/test_remove_unused_imports.py::RemoveUnusedImports
 libcst/codemod/commands/tests/test_remove_unused_imports.py::RemoveUnusedImportsCommandTest::test_suppression_on_first_line_of_multiline_import_refers_to_whole_block PASSED
 libcst/codemod/commands/tests/test_remove_unused_imports.py::RemoveUnusedImportsCommandTest::test_type_annotations PASSED
 libcst/codemod/commands/tests/test_remove_unused_imports.py::RemoveUnusedImportsCommandTest::test_unused_in_conditional PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_comma_import PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_comma_import_from PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_comma_import_from_parens PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_complex_module_rename PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_complex_module_rename_with_asname PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_parent_module PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_parent_module_2 PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_parent_module_3 PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_parent_module_asname PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_same_dotted_module PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_import_same_module PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_input_with_colon_sep PASSED
@@ -1291,8 +1313,11 @@ libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_no_removal
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_other_import_froms_untouched PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_other_imports_untouched PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_other_unused_imports_untouched PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_push_down_toplevel_names PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_push_down_toplevel_names_with_asname PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_attr PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_attr_asname PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_attr_asname_2 PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_class PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_import_from_prefix PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_import_prefix PASSED
@@ -1310,7 +1335,9 @@ libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_nam
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_name_asname PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_repeated_name_with_asname PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_single_with_colon PASSED
+libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_rename_to_builtin PASSED
 libcst/codemod/commands/tests/test_rename.py::TestRenameCommand::test_repeated_name PASSED
+libcst/codemod/commands/tests/test_rename_typing_generic_aliases.py::TestRenameCommand::test_rename_typing_generic_alias PASSED
 libcst/codemod/commands/tests/test_strip_strings_from_types.py::TestStripStringsCodemod::test_async PASSED
 libcst/codemod/commands/tests/test_strip_strings_from_types.py::TestStripStringsCodemod::test_literal PASSED
 libcst/codemod/commands/tests/test_strip_strings_from_types.py::TestStripStringsCodemod::test_literal_alias PASSED
@@ -1325,7 +1352,8 @@ libcst/codemod/tests/test_codemod.py::TestSkipDetection::test_did_not_skip_but_s
 libcst/codemod/tests/test_codemod.py::TestSkipDetection::test_skipped_but_should_not XFAIL
 libcst/codemod/tests/test_codemod.py::TestMultipass::test_multi_iterations PASSED
 libcst/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_codemod_external PASSED
-libcst/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_codemod_formatter_error_input PASSED
+libcst/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_matcher_decorators_multiprocessing PASSED
+libcst/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_warning_messages_several_files PASSED
 libcst/codemod/tests/test_metadata.py::TestMetadata::test_metadata_works PASSED
 libcst/codemod/tests/test_runner.py::TestRunner::test_runner_default PASSED
 libcst/codemod/tests/test_runner.py::TestRunner::test_runner_failure PASSED
@@ -1564,6 +1592,11 @@ libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_packa
 libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_4 PASSED
 libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_5 PASSED
 libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_6 PASSED
+libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_using_pyproject_toml_0 PASSED
+libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_using_pyproject_toml_1 PASSED
+libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_using_pyproject_toml_2 PASSED
+libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_using_pyproject_toml_3 PASSED
+libcst/helpers/tests/test_module.py::ModuleTest::test_calculate_module_and_package_using_pyproject_toml_4 PASSED
 libcst/helpers/tests/test_module.py::ModuleTest::test_get_absolute_module_0 PASSED
 libcst/helpers/tests/test_module.py::ModuleTest::test_get_absolute_module_1 PASSED
 libcst/helpers/tests/test_module.py::ModuleTest::test_get_absolute_module_10 PASSED
@@ -1975,6 +2008,7 @@ libcst/tests/test_exceptions.py::ExceptionsTest::test_parser_syntax_error_str__d
 libcst/tests/test_exceptions.py::ExceptionsTest::test_pickle PASSED
 libcst/tests/test_pyre_integration.py::PyreIntegrationTest::test_type_availability_0 PASSED
 libcst/tests/test_roundtrip.py::RoundTripTests::test_clean_roundtrip PASSED
+libcst/tests/test_roundtrip.py::RoundTripTests::test_transform_roundtrip PASSED
 libcst/tests/test_tabs.py::ExpandTabsTest::test_expand_tabs_0 PASSED
 libcst/tests/test_tabs.py::ExpandTabsTest::test_expand_tabs_1 PASSED
 libcst/tests/test_tabs.py::ExpandTabsTest::test_expand_tabs_2 PASSED
@@ -2079,4 +2113,4 @@ libcst/codemod/tests/test_metadata.py:23
     class TestingTransform(ContextAwareTransformer):
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 2046 passed, 15 skipped, 2 xfailed, 2 warnings ========
+======== 2080 passed, 15 skipped, 1 deselected, 2 xfailed, 2 warnings ========

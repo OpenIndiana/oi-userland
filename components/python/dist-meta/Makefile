@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dist-meta
 HUMAN_VERSION =			0.8.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parse and create Python distribution metadata.
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/dist-meta
 COMPONENT_ARCHIVE_URL =		\
@@ -43,6 +44,9 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/repo-helper/dist-meta/issues/21#issuecomment-1464061088
+PYTEST_ADDOPTS += --deselect tests/test_distributions.py::test_packages_distributions
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
 PYTHON_REQUIRED_PACKAGES += library/python/handy-archives
@@ -59,7 +63,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/consolekit
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/first
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/hpy
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pypi-json

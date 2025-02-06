@@ -23,14 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
-<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-
 file path=usr/bin/stardict
 file path=usr/lib/$(MACH64)/stardict/plugins/customdict.so
 file path=usr/lib/$(MACH64)/stardict/plugins/stardict_cal.so

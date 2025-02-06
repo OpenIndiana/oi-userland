@@ -19,17 +19,17 @@
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	24
-OPENJDK_PATCH=	11
+OPENJDK_PATCH=	29
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
 COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)+$(OPENJDK_PATCH).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:78298ebb2e65d6a32167749d53f325a2e768b7f2e7232636ff4346230c1ccdb5
+	sha256:d19cbb22635669c610ae0d7ee92a170a8410f0a77c5b51d79306cf29e3944f8d
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/openjdk/jdk/archive/$(COMPONENT_ARCHIVE)
+	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
@@ -83,6 +83,7 @@ CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --disable-option-checking
 CONFIGURE_OPTIONS+=        --enable-deprecated-ports=yes
 CONFIGURE_OPTIONS+=        DATE=/usr/bin/gdate
+CONFIGURE_OPTIONS+=        SORT=/usr/bin/gsort
 
 CONFIGURE_ENV+= LD=/usr/bin/gld
 COMPONENT_BUILD_ENV+= LD=/usr/bin/gld
@@ -137,7 +138,6 @@ REQUIRED_PACKAGES += runtime/java/openjdk23
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

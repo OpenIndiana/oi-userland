@@ -22,13 +22,12 @@
 # Copyright (c) 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
 COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	libsndfile - a library for reading/writing sound files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsndfile/
@@ -42,8 +41,6 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Drop 32-bit binaries
-COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 # Install Octave files
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTO_DIR)/usr/share/octave/site/m ;
 COMPONENT_POST_INSTALL_ACTION += \

@@ -12,26 +12,23 @@
 # Copyright 2022 Friedrich Kink
 #
 
-BUILD_BITS=             64
-BUILD_STYLE=            configure
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tre
-COMPONENT_VERSION=	0.8.0
+COMPONENT_VERSION=	0.9.0
 COMPONENT_SUMMARY=	TRE - The free and portable approximate regex matching library.
-COMPONENT_PROJECT_URL=	https://laurikari.net/tre/tre-0-8-0-released/
+COMPONENT_PROJECT_URL=	https://laurikari.net/tre
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/laurikari/tre/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:f57f5698cafdfe516d11fb0b71705916fe1162f14b08cf69d7cf86923b5a2477
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_URL=	http://laurikari.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=sha256:8dc642c2cde02b2dac6802cdbe2cda201daf79c4ebcbb3ea133915edf1636658
 COMPONENT_LICENSE=	Copyright (c) 2001-2009 Ville Laurikari <vl@iki.fi>
 COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TRANSFORMS += '-ne "/^All/p" '
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

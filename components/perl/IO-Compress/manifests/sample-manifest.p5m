@@ -1,0 +1,87 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/perl5/$(PERLVER)/bin/streamzip
+file path=usr/perl5/$(PERLVER)/bin/zipdetails
+file path=usr/perl5/$(PERLVER)/man/man1/streamzip.1
+file path=usr/perl5/$(PERLVER)/man/man1/zipdetails.1
+file path=usr/perl5/$(PERLVER)/man/man3perl/Compress::Zlib.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/File::GlobMapper.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::Base.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::Bzip2.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::Deflate.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::FAQ.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::Gzip.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::RawDeflate.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Compress::Zip.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::AnyInflate.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::AnyUncompress.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::Base.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::Bunzip2.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::Gunzip.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::Inflate.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::RawInflate.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/IO::Uncompress::Unzip.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/Compress/Zlib.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/File/GlobMapper.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Adapter/Bzip2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Adapter/Deflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Adapter/Identity.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Base/Common.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Bzip2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Deflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/FAQ.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Gzip.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Gzip/Constants.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/RawDeflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Zip.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Zip/Constants.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Zlib/Constants.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Compress/Zlib/Extra.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Adapter/Bunzip2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Adapter/Identity.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Adapter/Inflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/AnyInflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/AnyUncompress.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Bunzip2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Gunzip.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Inflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/RawInflate.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/IO/Uncompress/Unzip.pm
+
+# perl modules are unusable without perl runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/compress-raw-bzip2-$(PLV)@2.213
+depend type=require fmri=pkg:/library/perl-5/compress-raw-zlib-$(PLV)@2.213
+depend type=require fmri=pkg:/library/perl-5/encode-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/scalar-list-utils-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/time-local-$(PLV)

@@ -2,51 +2,49 @@ Solaris pkgconfig file changes
 
 Not suitable for upstream
 
---- a/glib/meson.build	2019-10-31 16:01:22.777037273 -0700
-+++ b/glib/meson.build	2019-10-31 16:01:38.923014840 -0700
-@@ -440,10 +440,10 @@
-   libraries_private : [osx_ldflags, win32_ldflags],
+--- glib-2.82.0/glib/meson.build.orig
++++ glib-2.82.0/glib/meson.build
+@@ -447,10 +447,10 @@
    subdirs : ['glib-2.0'],
    extra_cflags : ['-I${libdir}/glib-2.0/include'] + win32_cflags,
--  variables : ['bindir=' + join_paths('${prefix}', get_option('bindir')),
--               'glib_genmarshal=' + join_paths('${bindir}', 'glib-genmarshal'),
--               'gobject_query=' + join_paths('${bindir}', 'gobject-query'),
--               'glib_mkenums=' + join_paths('${bindir}', 'glib-mkenums')],
-+  variables : [
-+               'glib_genmarshal=glib-genmarshal',
-+               'gobject_query=gobject-query',
-+               'glib_mkenums=glib-mkenums'],
+   variables : [
+-    'glib_genmarshal=' + '${bindir}' / 'glib-genmarshal',
+-    'gobject_query=' + '${bindir}' / 'gobject-query',
+-    'glib_mkenums=' + '${bindir}' / 'glib-mkenums',
+-    'glib_valgrind_suppressions=' + '${datadir}' /
++    'glib_genmarshal=glib-genmarshal',
++    'gobject_query=gobject-query',
++    'glib_mkenums=glib-mkenums',
++    'glib_valgrind_suppressions=' +
+       valgrind_suppression_file_install_subdir /
+       fs.name(valgrind_suppression_file),
+   ],
+--- glib-2.82.0/gio/meson.build.orig
++++ glib-2.82.0/gio/meson.build
+@@ -889,13 +889,13 @@
+     'dtdsdir=' + '${datadir}' / dtds_subdir,
+     'giomoduledir=' + pkgconfig_giomodulesdir,
+     'gio=' + '${bindir}' / 'gio',
+-    'gio_querymodules=' + pkgconfig_multiarch_bindir / 'gio-querymodules',
+-    'glib_compile_schemas=' + pkgconfig_multiarch_bindir / 'glib-compile-schemas',
+-    'glib_compile_resources=' + '${bindir}' / 'glib-compile-resources',
+-    'gdbus=' + '${bindir}' /'gdbus',
+-    'gdbus_codegen=' + '${bindir}' / 'gdbus-codegen',
+-    'gresource=' + '${bindir}' / 'gresource',
+-    'gsettings=' + '${bindir}' / 'gsettings',
++    'gio_querymodules=gio-querymodules',
++    'glib_compile_schemas=glib-compile-schemas',
++    'glib_compile_resources=glib-compile-resources',
++    'gdbus=gdbus',
++    'gdbus_codegen=gdbus-codegen',
++    'gresource=gresource',
++    'gsettings=gsettings',
+   ],
    version : glib_version,
    install_dir : glib_pkgconfigreldir,
-   filebase : 'glib-2.0',
---- a/gio/meson.build	2020-03-04 11:38:44.071086819 -0800
-+++ b/gio/meson.build	2020-03-04 11:39:13.908503397 -0800
-@@ -881,14 +881,14 @@
-                'schemasdir=' + join_paths('${datadir}', schemas_subdir),
-                'bindir=' + join_paths('${prefix}', get_option('bindir')),
-                'giomoduledir=' + pkgconfig_giomodulesdir,
--               'gio=' + join_paths('${bindir}', 'gio'),
--               'gio_querymodules=@0@'.format(pkgconfig_multiarch_bindir / 'gio-querymodules'),
--               'glib_compile_schemas=@0@'.format(pkgconfig_multiarch_bindir / 'glib-compile-schemas'),
--               'glib_compile_resources=' + join_paths('${bindir}', 'glib-compile-resources'),
--               'gdbus=' + join_paths('${bindir}', 'gdbus'),
--               'gdbus_codegen=' + join_paths('${bindir}', 'gdbus-codegen'),
--               'gresource=' + join_paths('${bindir}', 'gresource'),
--               'gsettings=' + join_paths('${bindir}', 'gsettings')],
-+               'gio=gio',
-+               'gio_querymodules=gio-querymodules',
-+               'glib_compile_schemas=glib-compile-schemas',
-+               'glib_compile_resources=glib-compile-resources',
-+               'gdbus=gdbus',
-+               'gdbus_codegen=gdbus-codegen',
-+               'gresource=gresource',
-+               'gsettings=gsettings'],
-   version : glib_version,
-   install_dir : glib_pkgconfigreldir,
-   filebase : 'gio-2.0',
---- a/meson.build	2020-03-04 09:02:32.869174026 -0800
-+++ b/meson.build	2020-03-04 09:02:58.419670458 -0800
-@@ -1930,7 +1930,7 @@
+--- glib-2.82.0/meson.build.orig
++++ glib-2.82.0/meson.build
+@@ -2089,7 +2089,7 @@
    glibconfig_conf.set('g_threads_impl_def', 'WIN32')
    glib_conf.set('THREADS_WIN32', 1)
  else

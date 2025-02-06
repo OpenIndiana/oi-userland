@@ -7,11 +7,9 @@
 # the patch will eventually die with future re-sync.
 # it depends on whether our change will get accepted.
 #
-diff --git a/tests/api/misc.c b/tests/api/misc.c
-index 199883488..23bc3a479 100644
 --- a/tests/api/misc.c
 +++ b/tests/api/misc.c
-@@ -307,7 +307,7 @@ START_TEST (dir_readlink_test) {
+@@ -313,7 +313,7 @@ START_TEST (dir_readlink_test) {
  
    /* Not chrooted, absolute dst path */
    memset(buf, '\0', bufsz);
@@ -19,8 +17,8 @@ index 199883488..23bc3a479 100644
 +  dst_path = "/tmp/home/user/file.dat";
    dst_pathlen = strlen(dst_path);
    res = symlink(dst_path, path);
-   fail_unless(res == 0, "Failed to symlink '%s' to '%s': %s", path, dst_path,
-@@ -377,7 +377,7 @@ START_TEST (dir_readlink_test) {
+   ck_assert_msg(res == 0, "Failed to symlink '%s' to '%s': %s", path, dst_path,
+@@ -424,7 +424,7 @@ START_TEST (dir_readlink_test) {
      dst_path, buf);
  
    /* Chrooted, absolute destination path shorter than chroot path */
@@ -29,7 +27,7 @@ index 199883488..23bc3a479 100644
    memset(buf, '\0', bufsz);
    dst_path = "/foo";
    dst_pathlen = strlen(dst_path);
-@@ -396,7 +396,7 @@ START_TEST (dir_readlink_test) {
+@@ -443,7 +443,7 @@ START_TEST (dir_readlink_test) {
  
    /* Chrooted, overlapping chroot to non-dir */
    memset(buf, '\0', bufsz);
@@ -38,7 +36,7 @@ index 199883488..23bc3a479 100644
    dst_pathlen = strlen(dst_path);
  
    (void) unlink(path);
-@@ -413,7 +413,7 @@ START_TEST (dir_readlink_test) {
+@@ -460,7 +460,7 @@ START_TEST (dir_readlink_test) {
  
    /* Chrooted, absolute destination within chroot */
    memset(buf, '\0', bufsz);
@@ -47,7 +45,7 @@ index 199883488..23bc3a479 100644
    dst_pathlen = strlen(dst_path);
    expected_path = "/file.txt";
    expected_pathlen = strlen(expected_path);
-@@ -432,9 +432,9 @@ START_TEST (dir_readlink_test) {
+@@ -479,9 +479,9 @@ START_TEST (dir_readlink_test) {
  
    /* Chrooted, absolute destination outside of chroot */
    memset(buf, '\0', bufsz);
@@ -59,7 +57,7 @@ index 199883488..23bc3a479 100644
    expected_pathlen = strlen(expected_path);
  
    (void) unlink(path);
-@@ -1068,8 +1068,8 @@ START_TEST (path_subst_uservar_test) {
+@@ -1364,8 +1364,8 @@ START_TEST (path_subst_uservar_test) {
      res);
  
    session.user = "user";
@@ -70,7 +68,7 @@ index 199883488..23bc3a479 100644
    path = pstrdup(p, original);
    mark_point();
    res = path_subst_uservar(p, &path);
-@@ -1079,8 +1079,8 @@ START_TEST (path_subst_uservar_test) {
+@@ -1375,8 +1375,8 @@ START_TEST (path_subst_uservar_test) {
      res);
  
    session.user = "user";
@@ -81,7 +79,7 @@ index 199883488..23bc3a479 100644
    path = pstrdup(p, original);
    mark_point();
    res = path_subst_uservar(p, &path);
-@@ -1090,8 +1090,8 @@ START_TEST (path_subst_uservar_test) {
+@@ -1386,8 +1386,8 @@ START_TEST (path_subst_uservar_test) {
      res);
  
    session.user = "user";
@@ -92,7 +90,7 @@ index 199883488..23bc3a479 100644
    path = pstrdup(p, original);
    mark_point();
    res = path_subst_uservar(p, &path);
-@@ -1101,8 +1101,8 @@ START_TEST (path_subst_uservar_test) {
+@@ -1397,8 +1397,8 @@ START_TEST (path_subst_uservar_test) {
      res);
  
    session.user = "user";
@@ -103,7 +101,7 @@ index 199883488..23bc3a479 100644
    path = pstrdup(p, original);
    mark_point();
    res = path_subst_uservar(p, &path);
-@@ -1113,7 +1113,7 @@ START_TEST (path_subst_uservar_test) {
+@@ -1409,7 +1409,7 @@ START_TEST (path_subst_uservar_test) {
  
    /* Attempt to use an invalid index */
    session.user = "user";
@@ -112,7 +110,7 @@ index 199883488..23bc3a479 100644
    expected = original;
    path = pstrdup(p, original);
    mark_point();
-@@ -1125,7 +1125,7 @@ START_TEST (path_subst_uservar_test) {
+@@ -1421,7 +1421,7 @@ START_TEST (path_subst_uservar_test) {
  
    /* Attempt to use an out-of-bounds index */
    session.user = "user";
@@ -121,7 +119,7 @@ index 199883488..23bc3a479 100644
    expected = original;
    path = pstrdup(p, original);
    mark_point();
-@@ -1137,7 +1137,7 @@ START_TEST (path_subst_uservar_test) {
+@@ -1433,7 +1433,7 @@ START_TEST (path_subst_uservar_test) {
  
    /* Attempt to use an out-of-bounds index */
    session.user = "user";

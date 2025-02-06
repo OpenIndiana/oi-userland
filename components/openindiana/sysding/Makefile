@@ -71,3 +71,4 @@ download:: $(SOURCE_DIR)/.downloaded
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93

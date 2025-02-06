@@ -24,17 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.22.5
+COMPONENT_VERSION=	0.23.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fe10c37353213d78a5b83d48af231e005c4da84db5ce88037d88355938259640
+COMPONENT_ARCHIVE_HASH=	sha256:c1f97a72a7385b7e71dd07b5fea6cdaf12c9b88b564976b23bd8c11857af2970
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -42,6 +42,12 @@ COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Our sed misbehaves during the tests and let msgfilter-2 and msgfilter-4 tests being skipped.
+PATH= $(PATH.gnu)
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --disable-libasprintf
@@ -57,16 +63,11 @@ COMPONENT_POST_INSTALL_ACTION.64 += \
 		$(MV) $(PROTOUSRSHAREMAN1DIR)/$$f.1 $(PROTOGNUSHAREMAN1) ; \
 	done ;
 
-# Tests should run in a clean environment
-COMPONENT_TEST_ENV= -i PATH=$(PATH)
-
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/=========/p" ' \
 	'-e "/Testsuite summary for/p" '
 
 # Manually added dependencies
-REQUIRED_PACKAGES += library/libcroco
-
 TEST_REQUIRED_PACKAGES += library/guile
 TEST_REQUIRED_PACKAGES += runtime/clisp
 TEST_REQUIRED_PACKAGES += runtime/tcl-8

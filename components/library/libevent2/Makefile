@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent2
 COMPONENT_VERSION=	2.1.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://libevent.org/
 COMPONENT_SUMMARY=	An event notification library for event-driven network servers
 COMPONENT_FMRI=         library/libevent2
@@ -73,5 +74,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += system/library

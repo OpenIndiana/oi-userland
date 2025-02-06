@@ -1,11 +1,11 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config=$(@D)/pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml -n=auto tests --durations 5 --run-integration
+py$(PYV): commands[0]> pytest --durations 15 -n auto --junitxml $(@D)/.tox/junit.py$(PYV).xml --no-cov-on-fail --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests --run-integration
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1731 items]
+X workers [1817 items]
 
 scheduling tests via LoadScheduling
 
@@ -613,33 +613,6 @@ tests/config/cli/test_parser.py::test_parser_const_with_default_none PASSED
 tests/config/cli/test_parser.py::test_parser_hint PASSED
 tests/config/cli/test_parser.py::test_parser_unsupported_type PASSED
 tests/config/cli/test_parser.py::test_sub_sub_command PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py-{foo,bar}-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py37-{base,i18n},b-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[py37-{i18n,base},b-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[{env}-MatchError\\('No variable name was supplied in {env} substitution'\\)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_dont_replace[{toxinidir,}-None] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[123[]-exp_output1] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[C:\\WINDOWS\\foo\\bar-exp_output18] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[\\] []-exp_output4] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[]-exp_output0] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[[]123-exp_output2] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\-exp_output16] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\[\\] []-exp_output3] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\[] []-exp_output5] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\d-exp_output17] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[\\{foo} {bar}-exp_output7] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[p{foo:b{a{r}:t}:{ba}z}s-exp_output15] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{\\{}-exp_output13] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{\\}}-exp_output14] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo:B:c:D:e}-exp_output12] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo:{bar}}-exp_output10] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo\\::{bar}}-exp_output11] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo\\} {bar}-exp_output9] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo} {bar}-exp_output8] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expr[{foo}-exp_output6] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression0-MatchExpression(expr=[['posargs']], term_pos=None)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression1-MatchExpression(expr=[['posargs']], term_pos=1)] PASSED
-tests/config/loader/ini/replace/test_replace.py::test_match_expression_repr[match_expression2-MatchExpression(expr='foo', term_pos=-42)] PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_default_deep PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_default_with_colon PASSED
 tests/config/loader/ini/replace/test_replace_env_var.py::test_replace_env_missing PASSED
@@ -815,6 +788,33 @@ tests/config/loader/test_memory_loader.py::test_memory_loader_fails_invalid[valu
 tests/config/loader/test_memory_loader.py::test_memory_loader_fails_invalid[value4-of_type4-ValueError-invalid literal for int] PASSED
 tests/config/loader/test_memory_loader.py::test_memory_loader_override PASSED
 tests/config/loader/test_memory_loader.py::test_memory_loader_repr PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py-{foo,bar}-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py37-{base,i18n},b-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[py37-{i18n,base},b-None] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[{env}-MatchError\\('No variable name was supplied in {env} substitution'\\)] PASSED
+tests/config/loader/test_replace.py::test_dont_replace[{toxinidir,}-None] PASSED
+tests/config/loader/test_replace.py::test_match_expr[123[]-exp_output1] PASSED
+tests/config/loader/test_replace.py::test_match_expr[C:\\WINDOWS\\foo\\bar-exp_output18] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[\\] []-exp_output4] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[]-exp_output0] PASSED
+tests/config/loader/test_replace.py::test_match_expr[[]123-exp_output2] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\-exp_output16] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\[\\] []-exp_output3] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\[] []-exp_output5] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\d-exp_output17] PASSED
+tests/config/loader/test_replace.py::test_match_expr[\\{foo} {bar}-exp_output7] PASSED
+tests/config/loader/test_replace.py::test_match_expr[p{foo:b{a{r}:t}:{ba}z}s-exp_output15] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{\\{}-exp_output13] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{\\}}-exp_output14] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo:B:c:D:e}-exp_output12] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo:{bar}}-exp_output10] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo\\::{bar}}-exp_output11] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo\\} {bar}-exp_output9] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo} {bar}-exp_output8] PASSED
+tests/config/loader/test_replace.py::test_match_expr[{foo}-exp_output6] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression0-MatchExpression(expr=[['posargs']], term_pos=None)] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression1-MatchExpression(expr=[['posargs']], term_pos=1)] PASSED
+tests/config/loader/test_replace.py::test_match_expression_repr[match_expression2-MatchExpression(expr='foo', term_pos=-42)] PASSED
 tests/config/loader/test_section.py::test_section_eq PASSED
 tests/config/loader/test_section.py::test_section_not_eq[section0-a-b] PASSED
 tests/config/loader/test_section.py::test_section_not_eq[section1-other1] PASSED
@@ -988,6 +988,30 @@ tests/config/loader/test_str_convert.py::test_str_convert_ok[magic-magic-str] PA
 tests/config/loader/test_str_convert.py::test_str_convert_ok[true-True-bool] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[-None-of_type0] PASSED
 tests/config/loader/test_str_convert.py::test_str_convert_ok_py$(PYV)[1,2-value1-of_type1] PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_bool_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_bool_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_command_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_command_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok_key PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_nok_value PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_dict_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_env_list_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_env_list_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_found_keys PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_literal_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_literal_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_nok_element PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_optional_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_list_optional_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_load_raw PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_load_repr PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_path_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_path_ok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_str_nok PASSED
+tests/config/loader/test_toml_loader.py::test_toml_loader_str_ok PASSED
 tests/config/source/test_discover.py::test_bad_src_content PASSED
 tests/config/source/test_discover.py::test_no_src_cwd PASSED
 tests/config/source/test_discover.py::test_no_src_has_py_project_toml_above PASSED
@@ -999,6 +1023,42 @@ tests/config/source/test_source_ini.py::test_source_ini_custom_non_testenv_secti
 tests/config/source/test_source_ini.py::test_source_ini_ignore_invalid_factor_filters PASSED
 tests/config/source/test_source_ini.py::test_source_ini_ignore_non_testenv_sections PASSED
 tests/config/source/test_source_ini.py::test_source_ini_with_interpolated PASSED
+tests/config/source/test_toml_pyproject.py::test_config_deps PASSED
+tests/config/source/test_toml_pyproject.py::test_config_deps_req PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_bad_type_env_name PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_core PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_extra PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_non_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_circular_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_circular_unset PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_name_via_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_name_via_env_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_env_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_fails PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_core PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_env_section_absolute PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_from_section_absolute_nok PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_default PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_empty PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_empty_optional PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_posargs_set PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_env PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_replace_ref_of PASSED
+tests/config/source/test_toml_pyproject.py::test_config_in_toml_with_legacy PASSED
+tests/config/source/test_toml_pyproject.py::test_config_requires PASSED
+tests/config/source/test_toml_pyproject.py::test_config_set_env_ref PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_core PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_extra PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_non_default PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_default PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_env_name_via_env PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_env_name_via_env_set PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_from_env_section_absolute PASSED
+tests/config/source/test_toml_tox.py::test_config_in_toml_replace_from_section_absolute PASSED
 tests/config/test_main.py::test_args_are_paths_when_disabled PASSED
 tests/config/test_main.py::test_args_are_paths_when_from_child_dir PASSED
 tests/config/test_main.py::test_args_are_paths_when_with_change_dir PASSED
@@ -1078,14 +1138,30 @@ tests/execute/local_subprocess/test_local_subprocess.py::test_allow_list_externa
 tests/execute/local_subprocess/test_local_subprocess.py::test_command_does_not_exist PASSED
 tests/execute/local_subprocess/test_local_subprocess.py::test_command_keyboard_interrupt PASSED
 tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_fail PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[no_show-nothing-color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[no_show-nothing-no_color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[no_show-simple-color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[no_show-simple-no_color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[show-nothing-color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[show-nothing-no_color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[show-simple-color] PASSED
-tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-no_show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-no_show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-no_show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-no_show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_default-show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-no_show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-no_show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-no_show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-no_show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_reset-show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-no_show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-no_show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-no_show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-no_show-simple-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-show-nothing-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-show-nothing-no_color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-show-simple-color] PASSED
+tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass[stderr_color_yellow-show-simple-no_color] PASSED
 tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_basic_pass_show_on_standard_newline_flush PASSED
 tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_does_not_overwrite[COLUMNS] PASSED
 tests/execute/local_subprocess/test_local_subprocess.py::test_local_execute_does_not_overwrite[ROWS] PASSED
@@ -1174,6 +1250,7 @@ tests/session/cmd/test_legacy.py::test_legacy_list_env_with_empty_or_missing_env
 tests/session/cmd/test_legacy.py::test_legacy_list_env_with_no_tox_file PASSED
 tests/session/cmd/test_legacy.py::test_legacy_run_parallel PASSED
 tests/session/cmd/test_legacy.py::test_legacy_run_sequential PASSED
+tests/session/cmd/test_legacy.py::test_legacy_run_sequential_ci PASSED
 tests/session/cmd/test_legacy.py::test_legacy_show_config PASSED
 tests/session/cmd/test_legacy.py::test_legacy_show_config_with_env PASSED
 tests/session/cmd/test_list_envs.py::test_list_env PASSED
@@ -1187,6 +1264,7 @@ tests/session/cmd/test_parallel.py::test_keyboard_interrupt PASSED
 tests/session/cmd/test_parallel.py::test_parallel_general PASSED
 tests/session/cmd/test_parallel.py::test_parallel_legacy_accepts_no_arg PASSED
 tests/session/cmd/test_parallel.py::test_parallel_no_spinner PASSED
+tests/session/cmd/test_parallel.py::test_parallel_no_spinner_ci PASSED
 tests/session/cmd/test_parallel.py::test_parallel_no_spinner_legacy PASSED
 tests/session/cmd/test_parallel.py::test_parallel_requires_arg PASSED
 tests/session/cmd/test_parallel.py::test_parallel_run_live_out PASSED
@@ -1201,6 +1279,7 @@ tests/session/cmd/test_quickstart.py::test_quickstart_help PASSED
 tests/session/cmd/test_quickstart.py::test_quickstart_no_args PASSED
 tests/session/cmd/test_quickstart.py::test_quickstart_ok PASSED
 tests/session/cmd/test_quickstart.py::test_quickstart_refuse PASSED
+tests/session/cmd/test_schema.py::test_show_schema_empty_dir PASSED
 tests/session/cmd/test_sequential.py::test_backend_not_found PASSED
 tests/session/cmd/test_sequential.py::test_commands_ignore_errors[0-0-8-8] PASSED
 tests/session/cmd/test_sequential.py::test_commands_ignore_errors[0-8-0-8] PASSED
@@ -1515,11 +1594,6 @@ tests/tox_env/python/pip/test_req_file.py::test_legacy_requirement_file[-r] PASS
 tests/tox_env/python/pip/test_req_file.py::test_opt_only_req_file PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_iadd PASSED
 tests/tox_env/python/pip/test_req_file.py::test_req_with_no_deps PASSED
-tests/tox_env/python/test_python_api.py::test_base_python_absolute[py310-//a/python310/bin/python-None] PASSED
-tests/tox_env/python/test_python_api.py::test_base_python_absolute[py310-win-\\\\?\\UNC\\a\\python310\\python.exe-nt] SKIPPED
-tests/tox_env/python/test_python_api.py::test_base_python_absolute[py311-win-\\\\a\\python311\\python.exe-nt] SKIPPED
-tests/tox_env/python/test_python_api.py::test_base_python_absolute[py312-unix-/opt/python312/bin/python-posix] PASSED
-tests/tox_env/python/test_python_api.py::test_base_python_absolute[py312-win-C:\\Program Files\\Python312\\python.exe-nt] SKIPPED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-False] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3-py2-py3-py2-True] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_conflict[py3.11-py310-py3.11-py310-False] PASSED
@@ -1571,6 +1645,7 @@ tests/tox_env/python/test_python_api.py::test_extract_base_python[py3-py3] PASSE
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3.12-py3.12] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3000-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py311-py311] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy-3.10-pypy3.10] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy2-pypy2] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[rustpython3-rustpython3] PASSED
 tests/tox_env/python/test_python_api.py::test_list_installed_deps[False] PASSED
@@ -1588,6 +1663,8 @@ tests/tox_env/python/test_python_api.py::test_python_keep_hash_seed PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed_incorrect PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed_negative PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[cpython-3-12-64] PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[pypy-3-9-32] PASSED
 tests/tox_env/python/test_python_api.py::test_python_use_hash_seed_from_env PASSED
 tests/tox_env/python/test_python_api.py::test_requirements_txt PASSED
 tests/tox_env/python/test_python_api.py::test_usedevelop_with_nonexistent_basepython PASSED
@@ -1595,6 +1672,15 @@ tests/tox_env/python/test_python_runner.py::test_config_skip_missing_interpreter
 tests/tox_env/python/test_python_runner.py::test_config_skip_missing_interpreters[false-true-True] PASSED
 tests/tox_env/python/test_python_runner.py::test_config_skip_missing_interpreters[true-config-True] PASSED
 tests/tox_env/python/test_python_runner.py::test_config_skip_missing_interpreters[true-false-False] PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_bad_entry PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_bad_requirement PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_cyclic PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_include PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_missing PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_multiple PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_not_list PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_not_table PASSED
+tests/tox_env/python/test_python_runner.py::test_dependency_groups_single PASSED
 tests/tox_env/python/test_python_runner.py::test_deps_config_path_req PASSED
 tests/tox_env/python/test_python_runner.py::test_extras_are_normalized[d-oc-d-oc] PASSED
 tests/tox_env/python/test_python_runner.py::test_extras_are_normalized[d.oc-d-oc] PASSED
@@ -1743,13 +1829,13 @@ tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
 
-171 files skipped due to complete coverage.
+179 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 
-Required test coverage of 88.0% reached. Total coverage: 98.63%
-============================= slowest 5 durations ==============================
+Required test coverage of 88.0% reached. Total coverage: 98.41%
+============================= slowest 15 durations =============================
 =========================== short test summary info ============================
-======== 1727 passed, 4 skipped ========
+======== 1816 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

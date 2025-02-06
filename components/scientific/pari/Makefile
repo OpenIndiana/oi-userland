@@ -9,18 +9,24 @@
 #
 
 #
-# Copyright 2021,2022 David Stes
+# Copyright (c) 2021,2022 David Stes
+# Copyright (c) 2023 Andreas Wacknitz
+# Copyright (c) 2024 David Stes
+
+#
+# The manifest pari.p5m holds no license and copyright info per explicit request from 
+# Bill Allombert from the PARI team
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
-COMPONENT_VERSION=	2.15.5
+COMPONENT_VERSION=	2.17.1
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0efdda7515d9d954f63324c34b34c560e60f73a81c3924a71260a2cc91d5f981
+COMPONENT_ARCHIVE_HASH=	sha256:67ba6f3071233725258541e4f174b5efbc64c65ae5115bade9edfc45f1fde5dc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/math/pari
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -31,8 +37,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-# Configure complains when built outside of source tree
-# The PARI script config/genfunclist uses find -type f and fails on symlinks
+# Configure has an option --builddir but this fails when built outside of source tree
+# The PARI script config/genfunclist uses find -type f and skips symlinks
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # PARI/gp Configure is not autoconf 
@@ -42,6 +48,8 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/Configure
 CONFIGURE_OPTIONS= --prefix=$(CONFIGURE_PREFIX)
 # PARI/gp installs its 64bit library in /usr/lib
 CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR64)
+# multi-threaded libraries (enables tls, or thread local stack)
+CONFIGURE_OPTIONS += --mt=pthread
 CONFIGURE_OPTIONS += --with-readline
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
@@ -61,9 +69,12 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/gp-sta..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS += '-e "s/gp-dyn..TIME=[ ]*[0-9]*//g"'
 COMPONENT_TEST_TRANSFORMS += '-e "/Total bench/d"'
 
+# gmake test dependencies
+TEST_REQUIRED_PACKAGES += library/math/pari-elldata
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

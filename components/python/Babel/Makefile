@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		babel
-HUMAN_VERSION =			2.16.0
+HUMAN_VERSION =			2.17.0
 COMPONENT_SUMMARY =		Internationalization utilities
 COMPONENT_PROJECT_URL =		https://babel.pocoo.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d1f3554ca26605fe173f3de0c65f750f5a42f924499bf134de6423582298e316
+	sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,8 +41,10 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^WARNING:import_cldr:/d'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
+TEST_REQUIRED_PACKAGES.python += library/python/jinja2
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytz
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

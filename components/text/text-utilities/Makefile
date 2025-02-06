@@ -30,6 +30,7 @@ COMPONENT_NAME=		text-utilities
 COMPONENT_MAJOR_VERSION=2.33
 COMPONENT_MINOR_VERSION=2
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Various Linux utilities
 COMPONENT_FMRI=		text/text-utilities
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -42,9 +43,10 @@ COMPONENT_ARCHIVE_URL=	https://mirrors.edge.kernel.org/pub/linux/utils/util-linu
 COMPONENT_LICENSE_FILE=	README.licensing
 COMPONENT_LICENSE=	GPL-2.0-or-later, GPL-2.0, LGPL-2.1-or-later, BSD-3-Clause, BSD-4-Clause-UC, Public Domain
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+# Testing needs the proto area prepared
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
+
+include $(WS_MAKE_RULES)/common.mk
 
 # We currently only want some of the text-utils text utilities from this
 # component, so enumerate it in a macro that we can use for build and install.
@@ -53,12 +55,6 @@ PROGRAMS =	colcrt colrm column hexdump rename
 
 # Build a utility program used by one of the hexdump tests.
 PROGRAMS +=	test_sysinfo
-
-# We don't need the Python bindings built.
-CONFIGURE_OPTIONS =	--prefix=/usr
-CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_BINDIR.32)
-CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	--without-python
 
 # Always show the build and link lines for easier debugging.
 COMPONENT_BUILD_ARGS +=		V=1
@@ -73,7 +69,7 @@ COMPONENT_INSTALL_TARGETS =	install-man install-binPROGRAMS
 
 # Limit translations to the text utilities (and lib/* and include/* ) only.
 COMPONENT_PRE_INSTALL_ACTION = \
-	(cd $(@D)/po ; $(GMAKE) text-utilities.pot-update)
+	(cd $(@D)/po ; $(ENV) PATH="$(PATH)" $(GMAKE) text-utilities.pot-update)
 
 # Install the message files.
 COMPONENT_POST_INSTALL_ACTION = \
@@ -104,14 +100,6 @@ COMPONENT_TEST_TARGETS =	colrm colcrt column hexdump rename
 # Remove date from diff
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s/ *20[12][0-9].*//"'
-
-TEST_TARGET= install $(TEST_64)
-
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

@@ -20,48 +20,33 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-COMPONENT_MJR_VERSION=	1.54
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
+HUMAN_VERSION=		1.56.1
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:efa7738ca24039e5cd02739945f0343f08d6ffb74f75366c44b920027fd496e6
-COMPONENT_ARCHIVE_URL=  https://gitlab.gnome.org/GNOME/pango/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# Testing needs GNU tools
 PATH= $(PATH.gnu)
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# needed to produce GIR and Typelib files
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 
-COMPONENT_POST_INSTALL_ACTION = ( \
-	$(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
-	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) \
-	$(PROTO_DIR)/usr/bin/$(MACH64)/pango-querymodules \
-	  $(PROTO_DIR)/usr/lib/$(MACH64)/pango/*/modules/*.so | sed -e "s:$(PROTO_DIR)::" \
-	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
+# Dynamic library version number
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-# cp boundaries.utf8 to tests directory in the build area
-COMPONENT_PRE_TEST_ACTION += \
-	cp $(SOURCE_DIR)/tests/boundaries.utf8 $(BUILD_DIR_$(BITS))/tests/
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
-	./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
-	./testboundaries; ./testcolor; ./testiter; ./testscript; \
-	./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
-	./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/      [0-9].[0-9][0-9]s//" ' \
-	'-e "s/      [0-9][0-9].[0-9][0-9]s//" ' \
-	'-e "s/[0-9]*\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
-	'-e "s/test-layout\:[0-9]*/test-layout/" '
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz

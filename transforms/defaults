@@ -60,6 +60,10 @@
 <transform file path=etc/hpnssh/sshd?_config -> default preserve renamenew>
 <transform file path=etc/hpnssh/sshd_config -> default restart_fmri svc:/network/hpnssh:default>
 
+# Change in Graphviz plugins should refresh the plugins configuration
+<transform file link hardlink path=usr/lib.*/graphviz/libgvplugin_ -> \
+    default refresh_fmri svc:/application/graphviz/configure-plugins:default>
+
 #
 # Most directories and files under /etc/security are group sys
 #
@@ -130,11 +134,6 @@ set name=variant.arch value=$(MACH)
 
 
 #
-# Set the default GCC for mediated links
-#
-<transform link mediator=gcc mediator-version=13 -> default mediator-priority vendor>
-
-#
 # Set the default Python for mediated links
 #
 <transform link mediator=python mediator-version=3.9 -> default tmp.fmri %{pkg.fmri} >
@@ -142,19 +141,9 @@ set name=variant.arch value=$(MACH)
 <transform link tmp.fmri=.* -> delete tmp.fmri .* >
 
 #
-# Set the default Apache for mediated links
-#
-<transform link mediator=apache mediator-version=2.2 -> default mediator-priority vendor>
-
-#
 # Set the default Ruby for mediated links
 #
 <transform link mediator=ruby mediator-version=2.3 -> default mediator-priority vendor>
-
-#
-# Set the default Java for mediated links
-#
-<transform link mediator=java mediator-version=17 -> default mediator-priority vendor>
 
 #
 # Set the default MySQL for mediated links

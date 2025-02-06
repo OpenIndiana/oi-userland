@@ -19,21 +19,15 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		six
-COMPONENT_VERSION =		1.16.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		six - Python 2 and 3 compatibility utilities
+HUMAN_VERSION =			1.17.0
+COMPONENT_SUMMARY =		Python 2 and 3 compatibility utilities
 COMPONENT_PROJECT_URL =		https://github.com/benjaminp/six
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926
+	sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 

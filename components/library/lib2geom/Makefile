@@ -13,17 +13,18 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lib2geom
-COMPONENT_VERSION=	1.3
-HUMAN_VERSION=		1.3.0
+COMPONENT_VERSION=	1.4
+HUMAN_VERSION=		1.4.0
 COMPONENT_SUMMARY=	easy 2D graphics library
 COMPONENT_PROJECT_URL=	https://gitlab.com/inkscape/lib2geom
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:bd07f2a1322fcad16a55a1901207faa55dffdecebc56a00eabd4575f62e043c9
+COMPONENT_ARCHIVE_HASH=	sha256:717a87ce7f2192271a789c1273ae7b432856c522647b9fe33bb4dd662942b3ea
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1, MPL-1.1
@@ -32,19 +33,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -D2GEOM_BUILD_SHARED:BOOL=ON
+#CMAKE_OPTIONS += -D2GEOM_TESTING=OFF
 
-#unexport SHELLOPTS
-# We have one failing test:
-# nl-vector-test: fatal: relocation error: file /usr/lib/64/libgsl.so.27: symbol cblas_dcopy: referenced symbol not found
+# We have two failing test:
+# 1. nl-vector-test: fatal: relocation error: file /usr/lib/64/libgsl.so.27: symbol cblas_dcopy: referenced symbol not found
 # This probably happens because cblas_dcopy is in libgslcblas
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/passed/p" ' \
-	' -e "/Passed/p" ' \
-	' -e "/PASSED/p" ' \
-	' -e "/FAILED/p" ' \
-	' -e "/Subprocess killed/p" '
+# 2.  LineTest.CoincidingIntersect
+COMPONENT_TEST_TRANSFORMS += ' -e "/Subprocess killed/p" '
+
+# Manually added build dependencies
+TEST_REQUIRED_PACKAGES += developer/googletest
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

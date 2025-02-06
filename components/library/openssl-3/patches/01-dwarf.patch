@@ -1,0 +1,23 @@
+We patch out the desire to omit the frame pointer and add in dwarf-2 debug
+information which can be converted to CTF.
+
+--- openssl-3.4.0/Configurations/10-main.conf.orig
++++ openssl-3.4.0/Configurations/10-main.conf
+@@ -241,7 +241,7 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3 -fomit-frame-pointer")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
+         lib_cppflags     => add("-DL_ENDIAN"),
+         bn_ops           => "BN_LLONG",
+         shared_cflag     => "-fPIC",
+@@ -262,7 +262,7 @@
+         CC               => "gcc",
+         CFLAGS           => add_before(picker(default => "-Wall",
+                                               debug   => "-O0 -g",
+-                                              release => "-O3")),
++                                              release => "-O3 -gdwarf-2 -gstrict-dwarf")),
+         cflags           => add("-m64"),
+         lib_cppflags     => add("-DL_ENDIAN"),
+         bn_ops           => "SIXTY_FOUR_BIT_LONG",

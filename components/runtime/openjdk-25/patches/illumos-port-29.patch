@@ -1,0 +1,15 @@
+For FIONREAD
+
+--- a/src/java.base/unix/native/libnio/ch/UnixFileDispatcherImpl.c	Thu Oct 31 07:46:35 2024
++++ b/src/java.base/unix/native/libnio/ch/UnixFileDispatcherImpl.c	Fri Nov  1 19:28:12 2024
+@@ -33,6 +33,10 @@
+ #define fdatasync fsync
+ #endif
+ 
++#ifdef __solaris__
++#include <sys/filio.h>
++#endif
++
+ #if defined(__linux__)
+ #include <linux/fs.h>
+ #include <sys/ioctl.h>

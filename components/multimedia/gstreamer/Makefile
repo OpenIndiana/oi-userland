@@ -10,49 +10,76 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
+# Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS = 32_and_64
-USE_DEFAULT_TEST_TRANSFORMS= yes
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gstreamer
-COMPONENT_VERSION= 0.10.36
-COMPONENT_REVISION= 6
-COMPONENT_SUMMARY= GNOME streaming media framework
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e556a529e0a8cf1cd0afd0cab2af5488c9524e7c3f409de29b5d82bb41ae7a30
-COMPONENT_PROJECT_URL = https://gstreamer.freedesktop.org
+COMPONENT_NAME=		gstreamer
+COMPONENT_VERSION=	1.24.12
+COMPONENT_SUMMARY=      GNOME streaming media framework
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:b3522d1b4fe174fff3b3c7f0603493e2367bd1c43f5804df15b634bd22b1036f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI = library/audio/gstreamer
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE = LGPLv2.0
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_FMRI=		library/audio/gstreamer
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT = -O2
+CONFIGURE_OPTIONS += -Dexamples=disabled
+CONFIGURE_OPTIONS += -Dintrospection=enabled
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-PATH = $(PATH.gnu)
+PYTHON_SCRIPTS += usr/libexec/gstreamer-1.0/gst-plugins-doc-cache-generator
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --disable-examples
-CONFIGURE_OPTIONS.32 += --enable-introspection=no
-CONFIGURE_OPTIONS += --program-suffix=""
+# Install additional file
+COMPONENT_POST_INSTALL_ACTION += \
+	$(INSTALL) -D files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/library-audio-gstreamer
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CC="$(CC)"
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# Testing fails without TZ set
+COMPONENT_TEST_ENV += TZ=UTC
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
+
+# not picked up by REQUIRED_PACKAGES but still needed
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+
+# gmp & gsl needed only for the test suite
+TEST_REQUIRED_PACKAGES += library/gmp
+TEST_REQUIRED_PACKAGES += developer/gsl
+
+# gst-devtools is optional testing dependency.  However, if it is available it
+# must be at the same major version as the main gstreamer package to run tests
+# successfully.
+GST_DEVTOOLS_VERSION = \
+	$(shell $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools1/Makefile print-value-COMPONENT_VERSION)
+ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
+else
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer1/devtools
+endif
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -14,18 +14,21 @@
 #   $WS_TOOLS/python-integrate-project zope.proxy
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.proxy
-HUMAN_VERSION =			5.3
+HUMAN_VERSION =			6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Generic Transparent Proxies
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.proxy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ad24d28ebc6ade9fbebe0cc4bdc4ec50d1dee41a453e331afd2a1260be967608
+	sha256:9b70bf787fcbd3ecb86ba886d71e5cd857da0d6dbe2fcf2b6c24774f24747e2e
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+COMPONENT_SRC =			zope_proxy-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -41,7 +44,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools

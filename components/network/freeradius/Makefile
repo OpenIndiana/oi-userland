@@ -23,35 +23,33 @@
 
 include ../../../make-rules/shared-macros.mk
 
-OPENSSL_VERSION= 3.1
-
 COMPONENT_NAME=		freeradius
-COMPONENT_VERSION=	3.2.5
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	3.2.7
+COMPONENT_VERSION_=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
 		TACACS+ and VMPS. Using RADIUS allows authentication and authorization for a \
 		network to be centralized, and minimizes the number of changes that have to be \
 		done when adding or deleting new users to a network.
-COMPONENT_SRC=		$(COMPONENT_NAME)-server-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-server-release_$(COMPONENT_VERSION_)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://freeradius.org/
-COMPONENT_ARCHIVE_HASH=	sha256:1e75f5fc1961d9854d1cb3c6921612fbe2b9edb8ee508a5a7cbd69f1e7607115
-COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/$(COMPONENT_NAME)-server/releases/download/release_3_2_5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_$(COMPONENT_VERSION_).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:ebb906a236a8db71ba96875c9e53405bc8493e363c3815af65ae829cb6c288a3
 COMPONENT_FMRI=		network/radius
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	LICENSE
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-TEST_TARGET= $(NO_TESTS)
-
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
-        $(CLONEY) $(SOURCE_DIR) $(@D); \
-	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; \
-        );
+	$(CLONEY) $(SOURCE_DIR) $(@D); \
+	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; );
+
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += CFLAGS="-I/usr/include/odbc"
 CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
@@ -82,7 +80,7 @@ COMPONENT_POST_INSTALL_ACTION =  \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ;
 
-# manually added dependency r compilation only)
+# Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
@@ -102,6 +100,7 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/talloc
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += service/network/unbound
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

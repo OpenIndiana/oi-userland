@@ -162,6 +162,8 @@ COMPONENT_TEST_ENV += $(PYTHON_ENV)
 # Set CARGO_HOME to make sure projects built using rust (for example via
 # setuptools-rust) do not pollute user's home directory with cargo bits.
 COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
+# Similarly, force our preferred target linker for cargo.
+COMPONENT_BUILD_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 
 # Make sure the default Python version is installed last and so is the
 # canonical version.  This is needed for components that keep PYTHON_VERSIONS
@@ -176,17 +178,9 @@ $(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call
 # where egg-info is re-generated
 CLONEY_ARGS = CLONEY_MODE="copy"
 
-COMPONENT_BUILD_CMD = $(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_SETUP_PY_ARGS)
+COMPONENT_CONFIGURE_ACTION = true
 
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
-	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
+COMPONENT_BUILD_CMD = $(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_SETUP_PY_ARGS)
 
 
 COMPONENT_INSTALL_CMD = $(PYTHON) setup.py --no-user-cfg install
@@ -197,13 +191,8 @@ COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
 COMPONENT_INSTALL_ARGS +=	--skip-build
 COMPONENT_INSTALL_ARGS +=	--force
 
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS))
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
+# this is needed to override the default set in shared-macros.mk
+COMPONENT_INSTALL_TARGETS =
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Rename binaries in /usr/bin to contain version number
@@ -365,24 +354,32 @@ USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox
 USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
-# Please note we set PATH below four times for $(COMPONENT_TEST_CMD) (aka tox)
-# to workaround https://github.com/tox-dev/tox/issues/2538
+# Please note we set PATH below five times for tox to workaround
+# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
+	if [ -x "$(TOX)" ] ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
-		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
+		echo "Testing dependency groups:" ; \
+		PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
+		( PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
 				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
+		for e in $$(PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
-		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
+		done \
+		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
 	fi ;
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
@@ -419,6 +416,7 @@ $(eval $(call pytest-plugin,betamax,pytest-betamax))
 $(eval $(call pytest-plugin,faker,faker))
 $(eval $(call pytest-plugin,flaky,flaky))
 $(eval $(call pytest-plugin,hypothesis,hypothesispytest))
+$(eval $(call pytest-plugin,inline-snapshot,inline_snapshot))
 $(eval $(call pytest-plugin,jaraco-test,jaraco.test.http))
 $(eval $(call pytest-plugin,jaraco-vcs,jaraco.vcs.fixtures))
 $(eval $(call pytest-plugin,kgb,kgb))
@@ -582,39 +580,6 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\{0,1\}\) in .*$$/\1
 
 COMPONENT_TEST_DIR = $(@D)$(COMPONENT_SUBDIR:%=/%)
 
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Temporarily create symlinks for renamed binaries
 COMPONENT_PRE_TEST_ACTION += \
@@ -710,3 +675,6 @@ clean::
 pypi_url_multi = pypi:///$(COMPONENT_NAME_$(1))==$(COMPONENT_VERSION_$(1))
 pypi_url_single = pypi:///$(COMPONENT_NAME)==$(COMPONENT_VERSION)
 pypi_url = $(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
+
+# Use common rules
+USE_COMMON_RULES = yes

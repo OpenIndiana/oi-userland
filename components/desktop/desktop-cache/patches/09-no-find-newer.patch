@@ -1,0 +1,215 @@
+Do not use find_newer.  The same functionality can be achieved using the
+"find -newer" command.  In addition, the find_newer script is not ported to
+Python 3.7+ and so it does not work.
+
+See also https://www.illumos.org/issues/16855
+
+Hoewever, this patch also changes both desktop-mime-cache and
+pixbuf-loaders-installer scripts to create the cache file unconditionally on
+every run becuase the overhead with the cache file creation is negligible.
+Such a cache creation makes sure that the outdated cache file is regenerated
+even when it is newer (timestamp) than the source file(s).
+
+--- desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer.orig
++++ desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer
+@@ -36,7 +36,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -46,46 +45,14 @@
+ #
+ # for each architecture 
+ #   if loader file exist 
+-#      get the list of modules newer than the loader file
++#      get the list of modules
+ #   else
+ #      make list greater than zero
+ #
+ #   if list generate loader list     
+ #
+ 
+-start_pixbuf_loaders_installer ()
+-{
+-for ARCH in $(/bin/isainfo) ; do
+-  BINDIR='/usr/bin'
+-  DIR="$ARCH"
+-  [ "$ARCH" == "i386" ] && BINDIR='/usr/bin/i86' && DIR=''
+-
+-  test -x $BINDIR/gdk-pixbuf-query-loaders || {
+-      echo "gdk-pixbuf-query-loaders not installed"
+-      continue
+-  }
+-  if [ -a "/usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache" ]; then
+-    RESULT=`${FIND_NEWER} -f -c -m --name '*.so' \
+-	--newer /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache \
+-	/usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders 2>/dev/null`
+-  else
+-    RESULT="no loader file"
+-  fi
+-
+-  if [ -n "$RESULT" ]; then 
+-    echo "updating/creating gdk pixbuf loader file"
+-    $BINDIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
+-    if [ $? -ne 0 ]; then
+-      echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+-      exit $SMF_EXIT_ERR_FATAL
+-    else
+-      echo "gdk pixbuf loaders installed in /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+-    fi
+-  fi
+-done
+-}
+-
+-refresh_pixbuf_loaders_installer ()
++pixbuf_loaders_installer ()
+ {
+ for ARCH in $(/bin/isainfo) ; do
+   BINDIR='/usr/bin'
+@@ -135,6 +102,6 @@
+ 	;;
+ esac
+ 
+-${METHOD}_pixbuf_loaders_installer
++pixbuf_loaders_installer
+ 
+ exit $SMF_EXIT_OK
+--- desktop-cache-smf-services-0.2.2/desktop-mime-cache/desktop-mime-cache.orig
++++ desktop-cache-smf-services-0.2.2/desktop-mime-cache/desktop-mime-cache
+@@ -35,7 +35,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -44,7 +43,7 @@
+ 
+ #
+ # IF the mime cache exist then :
+-#   get the list of mime type files newer than the cache file
++#   get the list of mime type files
+ # ELSE
+ #   make list greater than zero to generate a cache
+ #
+@@ -53,32 +52,7 @@
+ 
+ MIMEFILE="/usr/share/applications/mimeinfo.cache"
+ 
+-start_desktop_mime_cache () {
+-if [ -a $MIMEFILE ]; then
+-  RESULT=`${FIND_NEWER} -f -c -m \
+-      --newer $MIMEFILE \
+-      /usr/share/applications 2>/dev/null`
+-else
+-  RESULT="no cache found"
+-fi
+-
+-if [ -n "$RESULT" ]; then 
+-  test -x /usr/bin/update-desktop-database || {
+-    echo "update-desktop-database not installed"
+-    return
+-  }
+-  echo "updating desktop file cache" 
+-  /usr/bin/update-desktop-database
+-  if [ $? -ne 0 ]; then
+-    echo "update-mime-database exited with an error while generating the desktop file cache $MIMEFILE"
+-    exit $SMF_EXIT_ERR_FATAL
+-  else
+-    echo "desktop file cache $MIMEFILE generated"
+-  fi
+-fi
+-}
+-
+-refresh_desktop_mime_cache () {
++desktop_mime_cache () {
+ if [ -a $MIMEFILE ]; then
+   RESULT=`/usr/bin/find /usr/share/applications ! -type d -follow 2>/dev/null`
+ else
+@@ -119,6 +93,6 @@
+ 	;;
+ esac
+ 
+-${METHOD}_desktop_mime_cache
++desktop_mime_cache
+ 
+ exit $SMF_EXIT_OK
+--- desktop-cache-smf-services-0.2.2/mime-types-cache/mime-types-cache.orig
++++ desktop-cache-smf-services-0.2.2/mime-types-cache/mime-types-cache
+@@ -35,7 +35,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -54,9 +53,8 @@
+ start_mime_types_cache ()
+ {
+ if [ -a "/usr/share/mime/mime.cache" ]; then
+-  RESULT=`${FIND_NEWER} -f -c -m \
+-      --newer /usr/share/mime/mime.cache \
+-      /usr/share/mime/packages 2>/dev/null`
++  RESULT=`/usr/bin/find /usr/share/mime/packages -follow ! -type d \
++    -newer /usr/share/mime/mime.cache`
+ else
+   RESULT="no cache found"
+ fi
+--- desktop-cache-smf-services-0.2.2/input-method/input-method-cache.orig
++++ desktop-cache-smf-services-0.2.2/input-method/input-method-cache
+@@ -36,7 +36,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -62,9 +61,8 @@
+       continue
+   }
+   if [ -a "/usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache" ]; then
+-    RESULT=`${FIND_NEWER} -c -f -m --name '*.so' \
+-	--newer /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache \
+-	/usr/lib/$DIR/gtk-2.0/*/immodules 2>/dev/null`
++    RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-2.0/*/immodules -follow ! -type d \
++	-name '*.so' -newer /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache`
+   else
+     RESULT="no cache file"
+   fi
+@@ -115,9 +113,8 @@
+       continue
+   }
+   if [ -a "/usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache" ]; then
+-    RESULT=`${FIND_NEWER} -c -f -m --name '*.so' \
+-	--newer /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache \
+-	/usr/lib/$DIR/gtk-3.0/*/immodules 2>/dev/null`
++    RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-3.0/*/immodules -follow ! -type d \
++	-name '*.so' -newer /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache`
+   else
+     RESULT="no cache file"
+   fi
+--- desktop-cache-smf-services-0.2.2/icon-cache/icon-cache.orig
++++ desktop-cache-smf-services-0.2.2/icon-cache/icon-cache
+@@ -36,7 +36,6 @@
+ . /lib/svc/share/smf_include.sh
+ 
+ USAGE="Usage: $0 { start | refresh }"
+-FIND_NEWER=/usr/share/desktop-cache/find_newer
+ 
+ if [ $# -ne 1 ] ; then
+     echo $USAGE
+@@ -61,7 +60,7 @@
+ for DIR in /usr/share/icons/*; do
+      if [ -a "$DIR/index.theme" ] ; then
+       if [ -a "$DIR/icon-theme.cache" ] ; then
+-	RESULT=`${FIND_NEWER} -f -m -c --newer $DIR/icon-theme.cache $DIR 2>/dev/null`
++	RESULT=`/usr/bin/find $DIR -follow ! -type d -newer $DIR/icon-theme.cache`
+       else
+ 	RESULT=`/usr/bin/find $DIR -type d`
+ 	if [ ${#RESULT} == ${#DIR} ]; then

@@ -1,0 +1,14 @@
+While testing we rename the lz4 directory and so setuptools-scm is unable to
+find the lz4/version.py file causing testing to fail.  To avoid that we simply
+disable setuptools-scm because we do not need it anyway.
+
+--- lz4-4.4.3/pyproject.toml.orig
++++ lz4-4.4.3/pyproject.toml
+@@ -1,6 +1,3 @@
+ [build-system]
+ requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2", "pkgconfig"]
+ build-backend = "setuptools.build_meta"
+-
+-[tool.setuptools_scm]
+-write_to = "lz4/version.py"
+\ No newline at end of file

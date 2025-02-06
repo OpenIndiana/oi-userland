@@ -17,17 +17,16 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sgml-common
 COMPONENT_VERSION= 0.6.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Common SGML catalog and DTD files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
   sha256:7dc418c1d361123ffc5e45d61f1b97257940a8eb35d0bfbbc493381cc5b1f959
 COMPONENT_ARCHIVE_URL= \
-  ftp://sources.redhat.com/pub/docbook-tools/new-trials/SOURCES/$(COMPONENT_ARCHIVE)
+  https://sourceware.org/ftp/docbook-tools/new-trials/SOURCES/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
 XMLCATALOG=$(PROTO_DIR)/etc/xml/catalog
 
@@ -38,13 +37,10 @@ COMPONENT_PREP_ACTION +=(cd $(@D) && \
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --with-docdir=$(USRSHAREDOCDIR)
-
-build: $(BUILD_32)
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 install: $(INSTALL_32)
+	cd $(PROTOUSRDIR); mv doc share
 	$(MKDIR) $(PROTO_DIR)/etc/xml $(PROTO_DIR)/usr/share/sgml/docbook
 	# Create an empty XML catalog.
 	/usr/bin/xmlcatalog --noout --create $(XMLCATALOG)
@@ -57,3 +53,5 @@ install: $(INSTALL_32)
 	# Also create the common DocBook catalog
 	/usr/bin/xmlcatalog --noout --create $(PROTO_DIR)/usr/share/sgml/docbook/xmlcatalog
 	$(TOUCH) $(PROTO_DIR)/etc/sgml/catalog
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93

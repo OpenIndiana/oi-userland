@@ -23,7 +23,6 @@
 # Copyright (c) 2011, 2021, Oracle and/or its affiliates.
 #
 
-BUILD_BITS=	64
 BUILD_STYLE= meson
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
@@ -31,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
 COMPONENT_MJR_VERSION=	3.22
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).2
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).3
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
 Meld is a visual diff and merge tool. You can compare two or three files \
@@ -42,7 +41,7 @@ Bazaar-ng and Mercurial.
 COMPONENT_PROJECT_URL=	https://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:46a0a713fbcd1b153b377a1e0757c8ce255c9822467658eacfbd89b1e92316ef
+COMPONENT_ARCHIVE_HASH= sha256:37f7f29eb1ff0fec4d8b088d5483c556de1089f6d018fe6d481993caf2499d84
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/meld/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Editors

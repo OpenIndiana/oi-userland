@@ -16,22 +16,19 @@
 # Copyright (c) 2023 Klaus Ziegler
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-keyring
-COMPONENT_VERSION=	42.1
-COMPONENT_REVISION=	1
-COMPONENT_MJR_VERSION=	$(word 1,$(subst ., ,$(HUMAN_VERSION)))
+COMPONENT_VERSION=	46.2
 COMPONENT_SUMMARY=	GNOME Keyring is a collection of components that store secrets, passwords, keys, certificates and make them available to applications
-COMPONENT_PROJECT_URL=	https://www.gnome.org
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c7f4d040cc76a6b7fe67e08ef9106911c3c80d40fc88cbfc8e2684a4c946e3e6
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:bf26c966b8a8b7f3285ecc8bb3e467b9c20f9535b94dc451c9c559ddcff61925
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Sessions
 COMPONENT_FMRI=		gnome/gnome-keyring
 COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # Required due to patches.
@@ -39,7 +36,8 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -fiv )
 
 PAM_MODULE_DIR = $(USRLIBDIR)/security/$(MACH64)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_ENV += MAKE="$(GMAKE)"
+
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --disable-selinux
 CONFIGURE_OPTIONS += --disable-static

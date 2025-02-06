@@ -113,7 +113,7 @@ static void audit_failure(pool *p, char *authuser) {
     goto fail;
   }
 
-  if ((authuser != NULL) && (authuser[0] != NULL) &&
+  if ((authuser != NULL) && (authuser[0] != 0) &&
     (getpwnam_r(authuser, &pwd, pwdbuf, pwdbuf_len, &result) == 0) &&
     (result != NULL)) {
     uid = pwd.pw_uid;
@@ -284,14 +284,14 @@ static int audit_sess_init(void) {
 
   if (adt_set_user(aht, ADT_NO_AUDIT, ADT_NO_AUDIT, 0, ADT_NO_AUDIT, termid,
     ADT_SETTID) != 0) {
-    pr_log_pri(PR_LOG_DEBUG, "adt_set_user: %", strerror(errno));
+    pr_log_pri(PR_LOG_DEBUG, "adt_set_user: %s", strerror(errno));
     free(termid);
     (void) adt_end_session(aht);
     goto out;
   }
   free(termid);
   if (adt_set_proc(aht) != 0) {
-    pr_log_pri(PR_LOG_DEBUG, "adt_set_proc: %", strerror(errno));
+    pr_log_pri(PR_LOG_DEBUG, "adt_set_proc: %s", strerror(errno));
     (void) adt_end_session(aht);
     goto out;
   }

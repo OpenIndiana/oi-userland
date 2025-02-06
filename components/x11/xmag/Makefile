@@ -18,16 +18,17 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xmag
-COMPONENT_VERSION=        1.0.7
+COMPONENT_VERSION=        1.0.8
 COMPONENT_FMRI=           x11/xmag
 COMPONENT_SUMMARY=  xmag - screen magnification utility
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:009936cc5a2706084079127b26cf55c713767650a34cb69e5682d60e33ce7461
+COMPONENT_ARCHIVE_HASH= sha256:326d3c583d795bb53ac609d144e7f7fb1499baba7eaec14b8e6cd232ea069532
+COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11

@@ -8,11 +8,13 @@ TEST    checkasm-av_tx
 TEST    checkasm-blockdsp
 TEST    checkasm-bswapdsp
 TEST    checkasm-exrdsp
+TEST    checkasm-fdctdsp
 TEST    checkasm-fixed_dsp
 TEST    checkasm-flacdsp
 TEST    checkasm-float_dsp
 TEST    checkasm-fmtconvert
 TEST    checkasm-g722dsp
+TEST    checkasm-h263dsp
 TEST    checkasm-h264chroma
 TEST    checkasm-h264dsp
 TEST    checkasm-h264pred
@@ -26,19 +28,25 @@ TEST    checkasm-huffyuvdsp
 TEST    checkasm-idctdsp
 TEST    checkasm-jpeg2000dsp
 TEST    checkasm-llauddsp
+TEST    checkasm-lls
 TEST    checkasm-llviddsp
 TEST    checkasm-llviddspenc
 TEST    checkasm-lpc
 TEST    checkasm-motion
+TEST    checkasm-mpegvideoencdsp
 TEST    checkasm-opusdsp
 TEST    checkasm-pixblockdsp
 TEST    checkasm-sbrdsp
 TEST    checkasm-rv34dsp
+TEST    checkasm-rv40dsp
 TEST    checkasm-svq1enc
 TEST    checkasm-synth_filter
 TEST    checkasm-sw_gbrp
+TEST    checkasm-sw_range_convert
 TEST    checkasm-sw_rgb
 TEST    checkasm-sw_scale
+TEST    checkasm-sw_yuv2rgb
+TEST    checkasm-sw_yuv2yuv
 TEST    checkasm-takdsp
 TEST    checkasm-utvideodsp
 TEST    checkasm-v210dec
@@ -57,6 +65,7 @@ TEST    checkasm-videodsp
 TEST    checkasm-vorbisdsp
 TEST    checkasm-vp8dsp
 TEST    checkasm-vp9dsp
+TEST    checkasm-vvc_alf
 TEST    checkasm-vvc_mc
 TEST    source
 IGNORE	source
@@ -135,8 +144,6 @@ TEST    cpu_init
 TEST    pixelutils
 TEST    sws-pixdesc-query
 TEST    sws-floatimg-cmp
-TEST    sws-yuv-colorspace
-TEST    sws-yuv-range
 TEST    fifo-muxer-tst
 TEST    filter-adelay
 TEST    filter-aecho
@@ -189,6 +196,7 @@ TEST    filter-channelmap-one-str
 TEST    filter-channelsplit
 TEST    filter-join
 TEST    filter-volume
+TEST    filter-crazychannels
 TEST    filter-formats
 TEST    filter-overlay
 TEST    filter-overlay_rgb
@@ -501,6 +509,9 @@ TEST    filter-pixelize-avg
 TEST    filter-pixelize-min
 TEST    filter-pixelize-max
 TEST    filter-tiltandshift
+TEST    filter-tiltandshift-410
+TEST    filter-tiltandshift-422
+TEST    filter-tiltandshift-444
 TEST    filter-boxblur
 TEST    filter-colorchannelmixer
 TEST    filter-drawbox
@@ -600,6 +611,8 @@ TEST    filter-refcmp-psnr-rgb
 TEST    filter-refcmp-psnr-yuv
 TEST    filter-refcmp-ssim-rgb
 TEST    filter-refcmp-ssim-yuv
+TEST    filter-refcmp-xpsnr-rgb
+TEST    filter-refcmp-xpsnr-yuv
 TEST    swr-resample_async-s16p-8000-44100
 TEST    swr-resample_async-s16p-44100-8000
 TEST    swr-resample_async-fltp-8000-44100
@@ -916,9 +929,12 @@ TEST    swr-resample_exact_lin-dblp-96000-8000
 TEST    swr-resample_exact_lin-dblp-96000-44100
 TEST    swr-resample_exact_lin-dblp-96000-48000
 TEST    swr-audioconvert
+TEST    sws-yuv-colorspace
+TEST    sws-yuv-range
 TEST    mov-channel-description
 TEST    mov-mp4-pcm
 TEST    mov-mp4-pcm-float
+TEST    mov-vfr
 TEST    dcinema-encode
 TEST    pcm_dvd-16-1-96000
 TEST    utvideoenc_rgba_left
@@ -1006,6 +1022,7 @@ TEST    vsynth1-asv2
 TEST    vsynth1-vc2-420p
 TEST    vsynth1-ffv1
 TEST    vsynth1-ffv1-v0
+TEST    vsynth1-ffv1-v2
 TEST    vsynth1-ffv1-v3-yuv420p
 TEST    vsynth1-ffv1-2pass
 TEST    vsynth1-ffvhuff
@@ -1140,6 +1157,7 @@ TEST    vsynth2-asv2
 TEST    vsynth2-vc2-420p
 TEST    vsynth2-ffv1
 TEST    vsynth2-ffv1-v0
+TEST    vsynth2-ffv1-v2
 TEST    vsynth2-ffv1-v3-yuv420p
 TEST    vsynth2-ffv1-2pass
 TEST    vsynth2-ffvhuff
@@ -1274,6 +1292,7 @@ TEST    vsynth3-asv1
 TEST    vsynth3-asv2
 TEST    vsynth3-ffv1
 TEST    vsynth3-ffv1-v0
+TEST    vsynth3-ffv1-v2
 TEST    vsynth3-ffv1-v3-yuv420p
 TEST    vsynth3-ffv1-2pass
 TEST    vsynth3-ffvhuff
@@ -1402,6 +1421,7 @@ TEST    lavf-mkv
 TEST    lavf-mkv_attachment
 TEST    lavf-mov
 TEST    lavf-mov_rtphint
+TEST    lavf-mov_hybrid_frag
 TEST    lavf-ismv
 TEST    lavf-mp4
 TEST    lavf-mpg
@@ -1593,5 +1613,6 @@ TEST    iamf-7_1_4
 TEST    iamf-ambisonic_1
 TEST    mov-mp4-iamf-stereo
 TEST    mov-mp4-iamf-5_1_4
-TEST    mov-mp4-iamf-7_1_4
+TEST    mov-mp4-iamf-7_1_4-video-first
+TEST    mov-mp4-iamf-7_1_4-video-last
 TEST    mov-mp4-iamf-ambisonic_1

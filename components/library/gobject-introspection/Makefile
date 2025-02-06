@@ -21,33 +21,30 @@
 # can't be used by end-users !!!
 
 BUILD_STYLE= meson
-SINGLE_PYTHON_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gobject-introspection
+COMPONENT_NAME =		gobject-introspection
+HUMAN_VERSION =			1.82.0
+COMPONENT_SUMMARY =		Introspection for GObject libraries
+COMPONENT_ARCHIVE_HASH =	sha256:0f5a4c1908424bf26bc41e9361168c363685080fbdb87a196c891c8401ca2f09
+COMPONENT_FMRI =		library/desktop/gobject/gobject-introspection
+COMPONENT_CLASSIFICATION =	Development/GNOME and GTK+
+COMPONENT_LICENSE =		GPL-2.0-or-later AND LGPL-2.0-or-later AND MIT
 
-COMPONENT_VERSION_MAJOR= 1
-COMPONENT_VERSION_MINOR= 76
-COMPONENT_VERSION_MICRO= 1
-COMPONENT_VERSION_DL= $(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
-COMPONENT_VERSION= $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
-COMPONENT_SUMMARY= Introspection for GObject libraries
-COMPONENT_PROJECT_URL= https://live.gnome.org/GObjectIntrospection
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:196178bf64345501dcdc4d8469b36aa6fe80489354efe71cb7cb8ab82a3738bf
-COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI= library/desktop/gobject/gobject-introspection
-COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
-COMPONENT_LICENSE= GPLv2, LGPLv2
-
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_ENV += PYTHON=$(PYTHON)
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.GPL -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPL ; \
+		printf '\n--- COPYING.LGPL ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-# We have transfrom rules that re-add cpython-$(PYV) to manifest files. Thus, remove it here:
-COMPONENT_POST_INSTALL_ACTION = (cd $(PROTOUSRLIBDIR)/$(MACH64)/$(COMPONENT_NAME)/giscanner; \
-	$(MV) _giscanner.cpython-39.so _giscanner.so)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-n ' \
@@ -58,9 +55,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Skipped/p" ' \
 	'-e "/^Timeout/p" '
 
+PYTHON_SCRIPTS += usr/bin/g-ir-annotation-tool
+PYTHON_SCRIPTS += usr/bin/g-ir-doc-tool
+PYTHON_SCRIPTS += usr/bin/g-ir-scanner
+
+# Build dependencies
+# Both mako and markdown are needed for doctool (see meson.build)
+PYTHON_REQUIRED_PACKAGES += library/python/mako
+PYTHON_REQUIRED_PACKAGES += library/python/markdown
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/python/markdown
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

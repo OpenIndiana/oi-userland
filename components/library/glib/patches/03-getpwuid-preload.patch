@@ -1,0 +1,13 @@
+https://gitlab.gnome.org/GNOME/glib/-/issues/3505
+
+--- glib-2.82.2/glib/tests/getpwuid-preload.c.orig
++++ glib-2.82.2/glib/tests/getpwuid-preload.c
+@@ -28,7 +28,7 @@
+ #ifndef __APPLE__
+ 
+ #define GET_REAL(func) \
+-  (real_##func = dlsym (RTLD_NEXT, #func))
++  (real_##func = dlsym (RTLD_NEXT, "__posix_" #func))
+ 
+ #define DEFINE_WRAPPER(return_type, func, argument_list) \
+   static return_type (* real_##func) argument_list;      \

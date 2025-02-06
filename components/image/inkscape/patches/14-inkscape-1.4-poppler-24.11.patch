@@ -1,0 +1,39 @@
+diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp.omv~ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp.omv~	2024-11-04 15:39:50.513905343 +0100
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/poppler-cairo-font-engine.cpp	2024-11-04 15:41:54.785423195 +0100
+@@ -421,9 +421,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+                 FoFiTrueType *ff;
+ #endif
+                 if (!font_data.empty()) {
+-                    ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                    ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+                 } else {
+-                    ff = FoFiTrueType::load(fileName.c_str());
++                    ff = FoFiTrueType::load(fileName.c_str(), 0);
+                 }
+                 if (!ff) {
+                     goto err2;
+@@ -446,9 +446,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+             FoFiTrueType *ff;
+ #endif
+             if (!font_data.empty()) {
+-                ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+             } else {
+-                ff = FoFiTrueType::load(fileName.c_str());
++                ff = FoFiTrueType::load(fileName.c_str(), 0);
+             }
+             if (!ff) {
+                 error(errSyntaxError, -1, "failed to load truetype font\n");
+@@ -514,9 +514,9 @@ CairoFreeTypeFont *CairoFreeTypeFont::cr
+                     FoFiTrueType *ff;
+ #endif
+                     if (!font_data.empty()) {
+-                        ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size());
++                        ff = FoFiTrueType::make((fontchar)font_data.data(), font_data.size(), 0);
+                     } else {
+-                        ff = FoFiTrueType::load(fileName.c_str());
++                        ff = FoFiTrueType::load(fileName.c_str(), 0);
+                     }
+                     if (ff) {
+                         if (ff->isOpenTypeCFF()) {

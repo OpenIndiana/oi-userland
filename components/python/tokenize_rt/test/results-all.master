@@ -5,7 +5,7 @@ py$(PYV): commands[1]> python -m coverage run -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 39 items
+collecting ... collected 44 items
 
 tests/tokenize_rt_test.py::test_re_partition_no_match PASSED
 tests/tokenize_rt_test.py::test_re_partition_match PASSED
@@ -20,6 +20,7 @@ tests/tokenize_rt_test.py::test_src_to_tokens_implicit_continue PASSED
 tests/tokenize_rt_test.py::test_src_to_tokens_no_eol_eof PASSED
 tests/tokenize_rt_test.py::test_src_to_tokens_multiline_string PASSED
 tests/tokenize_rt_test.py::test_src_to_tokens_fstring_with_escapes PASSED
+tests/tokenize_rt_test.py::test_src_to_tokens_fstring_with_named_escapes PASSED
 tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/empty.py] PASSED
 tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/unicode_snowman.py] PASSED
 tests/tokenize_rt_test.py::test_roundtrip_tokenize[testing/resources/backslash_continuation.py] PASSED
@@ -46,12 +47,16 @@ tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[((("foo")))-6-3
 tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[a + ("foo")-6-5] PASSED
 tests/tokenize_rt_test.py::test_rfind_string_parts_parenthesized[a or ("foo")-6-5] PASSED
 tests/tokenize_rt_test.py::test_main PASSED
+tests/tokenize_rt_test.py::test_curly_escape[-] PASSED
+tests/tokenize_rt_test.py::test_curly_escape[{foo}-{{foo}}] PASSED
+tests/tokenize_rt_test.py::test_curly_escape[\\N{SNOWMAN}-\\N{SNOWMAN}] PASSED
+tests/tokenize_rt_test.py::test_curly_escape[\\N{SNOWMAN} {bar}-\\N{SNOWMAN} {{bar}}] PASSED
 
-======== 39 passed ========
+======== 44 passed ========
 py$(PYV): commands[2]> python -m coverage report
 Name    Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------
-TOTAL     228      0     48      0   100%
+TOTAL     240      0     46      0   100%
 
 3 files skipped due to complete coverage.
   py$(PYV): OK

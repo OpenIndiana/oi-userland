@@ -1,10 +1,14 @@
+$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:207: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 363 items / 2 skipped
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=None
+collecting ... collected 374 items / 2 skipped
 
 test_elasticsearch/test_async/test_server/test_clients.py::test_indices_analyze_unicode[kwargs0] SKIPPED
 test_elasticsearch/test_async/test_server/test_clients.py::test_indices_analyze_unicode[kwargs1] SKIPPED
@@ -19,6 +23,7 @@ test_elasticsearch/test_async/test_server/test_helpers.py::TestStreamingBulk::te
 test_elasticsearch/test_async/test_server/test_helpers.py::TestStreamingBulk::test_rejected_documents_are_retried SKIPPED
 test_elasticsearch/test_async/test_server/test_helpers.py::TestStreamingBulk::test_rejected_documents_are_retried_at_most_max_retries_times SKIPPED
 test_elasticsearch/test_async/test_server/test_helpers.py::TestStreamingBulk::test_transport_error_is_raised_with_max_retries SKIPPED
+test_elasticsearch/test_async/test_server/test_helpers.py::TestStreamingBulk::test_connection_timeout_is_retried_with_retry_status_callback SKIPPED
 test_elasticsearch/test_async/test_server/test_helpers.py::TestBulk::test_bulk_works_with_single_item SKIPPED
 test_elasticsearch/test_async/test_server/test_helpers.py::TestBulk::test_all_documents_get_inserted SKIPPED
 test_elasticsearch/test_async/test_server/test_helpers.py::TestBulk::test_stats_only_reports_numbers SKIPPED
@@ -226,6 +231,9 @@ test_elasticsearch/test_client/test_utils.py::test_handles_ascii PASSED
 test_elasticsearch/test_client/test_utils.py::test_handles_bytestring PASSED
 test_elasticsearch/test_client/test_utils.py::test_handles_unicode PASSED
 test_elasticsearch/test_client/test_utils.py::test_handles_unicode2 PASSED
+test_elasticsearch/test_client/test_utils.py::TestStabilityWarning::test_default PASSED
+test_elasticsearch/test_client/test_utils.py::TestStabilityWarning::test_beta PASSED
+test_elasticsearch/test_client/test_utils.py::TestStabilityWarning::test_experimental PASSED
 test_elasticsearch/test_exceptions.py::TestTransformError::test_transform_error_parse_with_error_reason PASSED
 test_elasticsearch/test_exceptions.py::TestTransformError::test_transform_error_parse_with_error_string PASSED
 test_elasticsearch/test_helpers.py::TestParallelBulk::test_all_chunks_sent PASSED
@@ -239,9 +247,12 @@ test_elasticsearch/test_helpers.py::TestChunkActions::test_chunks_are_chopped_by
 test_elasticsearch/test_helpers.py::TestChunkActions::test_chunks_are_chopped_by_byte_size_properly PASSED
 test_elasticsearch/test_helpers.py::TestExpandActions::test_string_actions_are_marked_as_simple_inserts[whatever0] PASSED
 test_elasticsearch/test_helpers.py::TestExpandActions::test_string_actions_are_marked_as_simple_inserts[whatever1] PASSED
+test_elasticsearch/test_helpers.py::test_serialize_bulk_index_error PASSED
+test_elasticsearch/test_helpers.py::test_serialize_scan_error PASSED
 test_elasticsearch/test_otel.py::test_enabled SKIPPED (TEST_WITH_OTE...)
 test_elasticsearch/test_otel.py::test_minimal_span SKIPPED (TEST_WIT...)
 test_elasticsearch/test_otel.py::test_detailed_span SKIPPED (TEST_WI...)
+test_elasticsearch/test_otel.py::test_forward_otel_context_to_subthreads SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_indices_analyze_unicode[kwargs0] SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_indices_analyze_unicode[kwargs1] SKIPPED
 test_elasticsearch/test_server/test_clients.py::test_bulk_works_with_string_body SKIPPED
@@ -256,6 +267,7 @@ test_elasticsearch/test_server/test_helpers.py::test_bulk_rejected_documents_are
 test_elasticsearch/test_server/test_helpers.py::test_bulk_rejected_documents_are_retried_when_bytes_or_string[True] SKIPPED
 test_elasticsearch/test_server/test_helpers.py::test_bulk_rejected_documents_are_retried_at_most_max_retries_times SKIPPED
 test_elasticsearch/test_server/test_helpers.py::test_bulk_transport_error_is_raised_with_max_retries SKIPPED
+test_elasticsearch/test_server/test_helpers.py::test_connection_timeout_is_retried_with_retry_status_callback SKIPPED
 test_elasticsearch/test_server/test_helpers.py::test_bulk_works_with_single_item SKIPPED
 test_elasticsearch/test_server/test_helpers.py::test_all_documents_get_inserted SKIPPED
 test_elasticsearch/test_server/test_helpers.py::test_stats_only_reports_numbers SKIPPED
@@ -293,6 +305,9 @@ test_elasticsearch/test_server/test_helpers.py::test_reindex_index_datastream_op
 test_elasticsearch/test_server/test_mapbox_vector_tile.py::test_mapbox_vector_tile_error SKIPPED
 test_elasticsearch/test_server/test_mapbox_vector_tile.py::test_mapbox_vector_tile_response SKIPPED
 test_elasticsearch/test_server/test_otel.py::test_otel_end_to_end SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[bulk] SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[streaming_bulk] SKIPPED
+test_elasticsearch/test_server/test_otel.py::test_otel_bulk[parallel_bulk] SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_text_response SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_object_response SKIPPED
 test_elasticsearch/test_server/test_responses.py::test_exists_response SKIPPED
@@ -464,4 +479,4 @@ test_elasticsearch/test_transport.py::TestTransport::test_sniffing_disabled_on_e
     Elasticsearch(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 223 passed, 142 skipped, 26 warnings ========
+======== 228 passed, 148 skipped, 26 warnings ========

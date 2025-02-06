@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk3-nocsd
 COMPONENT_VERSION=	3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_FMRI=		library/desktop/gtk3/gtk3-nocsd
 COMPONENT_SUMMARY=	A small module used to disable the client side decoration of Gtk+ 3
 COMPONENT_CLASSIFICATION=Applications/Plug-ins and Run-times
@@ -48,5 +48,5 @@ REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

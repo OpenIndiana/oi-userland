@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build
-HUMAN_VERSION =			0.18.0
+HUMAN_VERSION =			0.18.1
 COMPONENT_SUMMARY =		Improved build system generator for Python C/C++/Fortran/Cython extensions
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:71a13af467d1a38510c3494786e2edb73ead53ea922bde6e519dc5372aa65096
+	sha256:a4152ac5a084d499c28a7797be0628d8366c336e2fb0e1a063eb32e55efcb8e7
 COMPONENT_LICENSE =		BSD-2-Clause OR MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -11,24 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Text::CSV_XS
+#   $WS_TOOLS/perl-integrate-module Text-CSV_XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Text::CSV_XS
-HUMAN_VERSION =			1.56
-COMPONENT_SUMMARY =		Text::CSV_XS - comma-separated values manipulation routines
+COMPONENT_NAME =		Text-CSV_XS
+HUMAN_VERSION =			1.60
+COMPONENT_SUMMARY =		Comma-Separated Values manipulation routines
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.56.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.60.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6457894075b2cb3dece3d08657e789123803e9c20d25708a41eb41ae272bf4fb
+	sha256:798f8b45d5d4a24e34faeec6ae157d62356556ea0ba046d8e80f8fbf5c826911
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_subtests
-HUMAN_VERSION =			0.13.1
+HUMAN_VERSION =			0.14.1
 COMPONENT_SUMMARY =		unittest subTest() support and subtests fixture
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-subtests
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:989e38f0f1c01bc7c6b2e04db7d9fd859db35d77c2c1a430c831a70cbf3fde2d
+	sha256:350c00adc36c3aff676a66135c81aed9e2182e15f6c3ec8721366918bbbf7580
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

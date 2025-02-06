@@ -1,10 +1,14 @@
+$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:207: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 138 items
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=None
+collecting ... collected 142 items
 
 tests/test_asyncio.py::test_basic_usage[shell] PASSED
 tests/test_asyncio.py::test_basic_usage[exec] PASSED
@@ -34,7 +38,9 @@ tests/test_asyncio.py::test_input[False] PASSED
 tests/test_asyncio.py::test_input[True] PASSED
 tests/test_asyncio.py::test_popen_recorder PASSED
 tests/test_asyncio.py::test_asyncio_subprocess_using_callback[no-callback] PASSED
-tests/test_asyncio.py::test_asyncio_subprocess_using_callback[noop-callback-causes-infinite-loop] XFAIL
+tests/test_asyncio.py::test_asyncio_subprocess_using_callback[with-callback] PASSED
+tests/test_asyncio.py::test_asyncio_subprocess_using_communicate_with_callback_kwargs PASSED
+tests/test_asyncio.py::test_process_recorder_args PASSED
 tests/test_examples.py::test_documentation[docs/index.rst] PASSED
 tests/test_examples.py::test_documentation[README.rst] PASSED
 tests/test_subprocess.py::test_legacy_usage PASSED
@@ -131,6 +137,8 @@ tests/test_subprocess.py::test_non_piped_same_file[True-True] PASSED
 tests/test_subprocess.py::test_non_piped_same_file[False-False] PASSED
 tests/test_subprocess.py::test_non_piped_same_file[False-True] PASSED
 tests/test_subprocess.py::test_process_recorder PASSED
+tests/test_subprocess.py::test_process_recorder_args PASSED
+tests/test_subprocess.py::test_fake_popen_is_typed PASSED
 tests/test_typing.py::test_typing PASSED
 tests/test_utils.py::test_simple_command[whoami] PASSED
 tests/test_utils.py::test_simple_command[command1] PASSED
@@ -145,4 +153,13 @@ tests/test_utils.py::test_invalid_instantiation PASSED
 tests/test_utils.py::test_str_conversions PASSED
 tests/test_utils.py::test_command_iter PASSED
 
-======== 133 passed, 4 skipped, 1 xfailed ========
+=============================== warnings summary ===============================
+tests/test_examples.py::test_documentation[docs/index.rst]
+tests/test_examples.py::test_documentation[README.rst]
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:207: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+  The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+  
+    warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 138 passed, 4 skipped, 2 warnings ========

@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libayatana-indicator
 COMPONENT_VERSION=      0.9.4
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Ayatana Indicators shared library
 COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/libayatana-indicator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,10 +32,19 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# /usr/lib/$(MACH64) needed to make dbus-daemon program available for tests
-PATH = $(PATH.illumos):/usr/lib:/usr/lib/$(MACH64)
+# /usr/libexec needed to make dbus-daemon program available for tests
+PATH = $(PATH.illumos):/usr/libexec
 
 CMAKE_OPTIONS += -DENABLE_TESTS=On
+
+# Testing needs an X server
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Test dependencies
+TEST_REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
 
 # Manually added test dependency
 TEST_REQUIRED_PACKAGES += developer/dbus-test-runner

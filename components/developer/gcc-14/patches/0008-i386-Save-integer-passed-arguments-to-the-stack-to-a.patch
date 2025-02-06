@@ -1,4 +1,4 @@
-From 7d8f7ba23dc3647ce6bcdc5b2601ca4f217e5c2c Mon Sep 17 00:00:00 2001
+From 3f2a4b8f8ceef1a2095e1611e9c7b20590efcf23 Mon Sep 17 00:00:00 2001
 From: Richard Lowe <richlowe@richlowe.net>
 Date: Sat, 23 Jan 2016 22:14:56 -0500
 Subject: i386: Save integer-passed arguments to the stack, to
@@ -39,10 +39,10 @@ Originally implemented in:
  create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
 
 diff --git a/gcc/config/i386/i386-options.cc b/gcc/config/i386/i386-options.cc
-index ac48b5c61c4d..aa3a45dc9602 100644
+index 6c212a8edeb9..8f330973f028 100644
 --- a/gcc/config/i386/i386-options.cc
 +++ b/gcc/config/i386/i386-options.cc
-@@ -2766,6 +2766,9 @@ ix86_option_override_internal (bool main_args_p,
+@@ -2788,6 +2788,9 @@ ix86_option_override_internal (bool main_args_p,
  	&= ~(OPTION_MASK_ISA2_AVX5124FMAPS | OPTION_MASK_ISA2_AVX5124VNNIW);
      }
  
@@ -53,7 +53,7 @@ index ac48b5c61c4d..aa3a45dc9602 100644
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
    ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
 diff --git a/gcc/config/i386/i386.cc b/gcc/config/i386/i386.cc
-index e0dc5da88b0b..f6f07630a407 100644
+index 92b8fa7b7329..b18ac72dbc9a 100644
 --- a/gcc/config/i386/i386.cc
 +++ b/gcc/config/i386/i386.cc
 @@ -433,6 +433,9 @@ static bool i386_asm_output_addr_const_extra (FILE *, rtx);
@@ -316,10 +316,10 @@ index e0dc5da88b0b..f6f07630a407 100644
      otherwise zero.  */
  
 diff --git a/gcc/config/i386/i386.h b/gcc/config/i386/i386.h
-index 529edff93a41..6a4d538938e4 100644
+index 26e15d2677fb..4b00a785562b 100644
 --- a/gcc/config/i386/i386.h
 +++ b/gcc/config/i386/i386.h
-@@ -2595,6 +2595,11 @@ enum avx_u128_state
+@@ -2597,6 +2597,11 @@ enum avx_u128_state
  
     saved frame pointer			if frame_pointer_needed
  					<- HARD_FRAME_POINTER
@@ -331,7 +331,7 @@ index 529edff93a41..6a4d538938e4 100644
     [saved regs]
  					<- reg_save_offset
     [padding0]
-@@ -2628,6 +2633,7 @@ enum avx_u128_state
+@@ -2630,6 +2635,7 @@ enum avx_u128_state
    */
  struct GTY(()) ix86_frame
  {
@@ -339,7 +339,7 @@ index 529edff93a41..6a4d538938e4 100644
    int nsseregs;
    int nregs;
    int va_arg_size;
-@@ -2639,6 +2645,7 @@ struct GTY(()) ix86_frame
+@@ -2641,6 +2647,7 @@ struct GTY(()) ix86_frame
    HOST_WIDE_INT hard_frame_pointer_offset;
    HOST_WIDE_INT stack_pointer_offset;
    HOST_WIDE_INT hfp_save_offset;
@@ -369,7 +369,7 @@ index d5f793a9e8b0..c0305bd79703 100644
  Target RejectNegative Negative(mtune=) Joined Var(ix86_tune_string)
  Schedule code for given CPU.
 diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index cb53a55501c3..29af3cda5f51 100644
+index 2f2f3700057b..36ea22d6ccf0 100644
 --- a/gcc/doc/invoke.texi
 +++ b/gcc/doc/invoke.texi
 @@ -21168,6 +21168,10 @@ The default setting is @samp{tpidr_el0}.  It is recommended to compile all

@@ -17,15 +17,15 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fastfetch
-COMPONENT_VERSION=        2.21.3
+COMPONENT_VERSION=        2.35.0
 COMPONENT_SUMMARY=        An actively maintained, feature-rich and performance oriented, neofetch like system information tool
 COMPONENT_PROJECT_URL=    https://github.com/fastfetch-cli/fastfetch
-COMPONENT_FMRI=           application/fastfetch
-COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=    https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:cec1f126ade7a5ef971901b1cdbe79f5864523d7a0a92732991619485d13e2e7
+COMPONENT_ARCHIVE_HASH=   sha256:e066d84f9ca176e24f162ce99dab7fac5238b5e8c94ab4aaff5850b6cc5c6ead
+COMPONENT_FMRI=           application/fastfetch
+COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=        MIT
 COMPONENT_LICENSE_FILE=   LICENSE
 
@@ -37,5 +37,6 @@ CMAKE_OPTIONS += -DENABLE_LTO=Off
 COMPONENT_TEST_CMD = ./fastfetch --list-features && ./fastfetch
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += system/file-system/zfs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

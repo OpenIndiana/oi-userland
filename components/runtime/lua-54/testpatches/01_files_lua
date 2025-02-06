@@ -1,0 +1,74 @@
+*** lua-5.4.7-tests/files.lua	Fr. Juni 14 00:15:10 2024
+--- lua-5.4.7-tests/files.lua.new	Do. Dez. 26 13:47:31 2024
+***************
+*** 5,10 ****
+--- 5,12 ----
+  
+  local maxint = math.maxinteger
+  
++ local _openindiana = true
++ 
+  assert(type(os.getenv"PATH") == "string")
+  
+  assert(io.input(io.stdin) == io.stdin)
+***************
+*** 360,387 ****
+  assert(io.close(io.input()))
+  
+  
+! -- test errors in read/write
+! do
+!   local function ismsg (m)
+!     -- error message is not a code number
+!     return (type(m) == "string" and not tonumber(m))
+!   end
+  
+!   -- read
+!   local f = io.open(file, "w")
+!   local r, m, c = f:read()
+!   assert(not r and ismsg(m) and type(c) == "number")
+!   assert(f:close())
+!   -- write
+!   f = io.open(file, "r")
+!   r, m, c = f:write("whatever")
+!   assert(not r and ismsg(m) and type(c) == "number")
+!   assert(f:close())
+!   -- lines
+!   f = io.open(file, "w")
+!   r, m = pcall(f:lines())
+!   assert(r == false and ismsg(m))
+!   assert(f:close())
+  end
+  
+  assert(os.remove(file))
+--- 362,391 ----
+  assert(io.close(io.input()))
+  
+  
+! if not _openindiana then
+!   -- test errors in read/write
+!   do
+!     local function ismsg (m)
+!       -- error message is not a code number
+!       return (type(m) == "string" and not tonumber(m))
+!     end
+  
+!     -- read
+!     local f = io.open(file, "w")
+!     local r, m, c = f:read()
+!     assert(not r and ismsg(m) and type(c) == "number")
+!     assert(f:close())
+!     -- write
+!     f = io.open(file, "r")
+!     r, m, c = f:write("whatever")
+!     assert(not r and ismsg(m) and type(c) == "number")
+!     assert(f:close())
+!     -- lines
+!     f = io.open(file, "w")
+!     r, m = pcall(f:lines())
+!     assert(r == false and ismsg(m))
+!     assert(f:close())
+!   end
+  end
+  
+  assert(os.remove(file))

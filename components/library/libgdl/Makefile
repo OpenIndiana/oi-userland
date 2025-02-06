@@ -23,36 +23,21 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gdl
-COMPONENT_VERSION=  3.28.0
-COMPONENT_REVISION= 2
+HUMAN_VERSION=			3.40.0
 COMPONENT_SUMMARY=  Gnome Docking library
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_PROJECT_URL=  https://developer.gnome.org/gdl/
-COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:52cc98ecc105148467b3b2b4e0d27ae484b1b6710d53413f771ed07ef1b737b6
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/gdl/3.28/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=		sha256:3641d4fd669d1e1818aeff3cf9ffb7887fc5c367850b78c28c775eba4ab6a555
 COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
 COMPONENT_FMRI=     library/libgdl
+COMPONENT_LICENSE=		LGPL-2.0-only
+COMPONENT_LICENSE_FILE=		COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnome.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+# GNU msgfmt is needed
+PATH = $(PATH.gnu)
 
-# gobject-introspection
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build:      $(BUILD_32_and_64)
-
-install:    $(INSTALL_32_and_64)
-
-# creates test-dock in build arch/gdl
-test:       $(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

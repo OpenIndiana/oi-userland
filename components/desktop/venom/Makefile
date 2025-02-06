@@ -12,14 +12,14 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_STYLE=meson
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         venom
 COMPONENT_VERSION=      0.5.5
-COMPONENT_REVISION=     1
-COMPONENT_PROJECT_URL=  https://github.com/naxuroqa/venom
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      A modern Tox client for the desktop
+COMPONENT_PROJECT_URL=  https://github.com/naxuroqa/venom
 COMPONENT_FMRI=         communication/im/venom
 COMPONENT_SRC=          Venom-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
@@ -35,11 +35,14 @@ PATH = $(PATH.gnu)
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/build/pkg-config
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlcipher
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gspell
+REQUIRED_PACKAGES += library/desktop/gspell-3
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/libgee

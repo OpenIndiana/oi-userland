@@ -1,0 +1,133 @@
+--- meson-1.6.0/unittests/allplatformstests.py.orig
++++ meson-1.6.0/unittests/allplatformstests.py
+@@ -1630,6 +1630,11 @@
+                 # so ignore that.
+                 self.assertTrue(rpath.startswith('/usr/lib/gcc'))
+                 rpaths = rpath.split(':')[1:]
++            elif is_sunos():
++                # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++                # so ignore that.
++                self.assertTrue(rpath.startswith('/usr/gcc/'))
++                rpaths = rpath.split(':')[1:]
+             else:
+                 rpaths = rpath.split(':')
+             for path in rpaths:
+@@ -1641,6 +1646,10 @@
+                 # The rpath should be equal to /usr/lib/gccVERSION
+                 self.assertTrue(rpath.startswith('/usr/lib/gcc'))
+                 self.assertEqual(len(rpath.split(':')), 1)
++            elif is_sunos():
++                # The rpath should be equal to /usr/gcc/VERSION/lib
++                self.assertTrue(rpath.startswith('/usr/gcc/'))
++                self.assertEqual(len(rpath.split(':')), 1)
+             else:
+                 self.assertIsNone(rpath)
+ 
+--- meson-1.6.0/unittests/linuxliketests.py.orig
++++ meson-1.6.0/unittests/linuxliketests.py
+@@ -911,13 +911,39 @@
+         self.init(testdir)
+         self.build()
+         build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
++        if is_sunos():
++            # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++            # so ignore that.
++            self.assertTrue(build_rpath.startswith('/usr/gcc/'))
++            build_rpath = ":".join(build_rpath.split(':')[1:])
+         self.assertEqual(build_rpath, '$ORIGIN/sub:/foo/bar')
+         build_rpath = get_rpath(os.path.join(self.builddir, 'progcxx'))
++        if is_sunos():
++            # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++            # so ignore that.
++            self.assertTrue(build_rpath.startswith('/usr/gcc/'))
++            build_rpath = ":".join(build_rpath.split(':')[1:])
+         self.assertEqual(build_rpath, '$ORIGIN/sub:/foo/bar')
+         self.install()
+         install_rpath = get_rpath(os.path.join(self.installdir, 'usr/bin/prog'))
++        if is_sunos():
++            # OpenIndiana will add /usr/gcc/VERSION/lib to the rpath,
++            # so remove it before proceeding
++            install_rpaths = install_rpath.split(':')
++            for p in install_rpaths:
++                if p.startswith('/usr/gcc/'):
++                    install_rpaths.remove(p)
++            install_rpath = ":".join(install_rpaths)
+         self.assertEqual(install_rpath, '/baz')
+         install_rpath = get_rpath(os.path.join(self.installdir, 'usr/bin/progcxx'))
++        if is_sunos():
++            # OpenIndiana will add /usr/gcc/VERSION/lib to the rpath,
++            # so remove it before proceeding
++            install_rpaths = install_rpath.split(':')
++            for p in install_rpaths:
++                if p.startswith('/usr/gcc/'):
++                    install_rpaths.remove(p)
++            install_rpath = ":".join(install_rpaths)
+         self.assertEqual(install_rpath, 'baz')
+ 
+     @skipIfNoPkgconfig
+@@ -933,13 +959,39 @@
+         self.init(testdir, override_envvars={'PKG_CONFIG_PATH': testdir})
+         self.build()
+         build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
++        if is_sunos():
++            # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++            # so ignore that.
++            self.assertTrue(build_rpath.startswith('/usr/gcc/'))
++            build_rpath = ":".join(build_rpath.split(':')[1:])
+         self.assertEqual(build_rpath, '$ORIGIN/sub:/foo/bar:/foo/dummy')
+         build_rpath = get_rpath(os.path.join(self.builddir, 'progcxx'))
++        if is_sunos():
++            # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++            # so ignore that.
++            self.assertTrue(build_rpath.startswith('/usr/gcc/'))
++            build_rpath = ":".join(build_rpath.split(':')[1:])
+         self.assertEqual(build_rpath, '$ORIGIN/sub:/foo/bar:/foo/dummy')
+         self.install()
+         install_rpath = get_rpath(os.path.join(self.installdir, 'usr/bin/prog'))
++        if is_sunos():
++            # OpenIndiana will add /usr/gcc/VERSION/lib to the rpath,
++            # so remove it before proceeding
++            install_rpaths = install_rpath.split(':')
++            for p in install_rpaths:
++                if p.startswith('/usr/gcc/'):
++                    install_rpaths.remove(p)
++            install_rpath = ":".join(install_rpaths)
+         self.assertEqual(install_rpath, '/baz:/foo/dummy')
+         install_rpath = get_rpath(os.path.join(self.installdir, 'usr/bin/progcxx'))
++        if is_sunos():
++            # OpenIndiana will add /usr/gcc/VERSION/lib to the rpath,
++            # so remove it before proceeding
++            install_rpaths = install_rpath.split(':')
++            for p in install_rpaths:
++                if p.startswith('/usr/gcc/'):
++                    install_rpaths.remove(p)
++            install_rpath = ":".join(install_rpaths)
+         self.assertEqual(install_rpath, 'baz:/foo/dummy')
+ 
+     @skipIfNoPkgconfig
+@@ -989,6 +1041,11 @@
+             self.build()
+             self.install(use_destdir=False)
+             got_rpath = get_rpath(os.path.join(yonder_prefix, 'bin/rpathified'))
++            if is_sunos():
++                # OpenIndiana will prepend /usr/gcc/VERSION/lib to the rpath,
++                # so ignore that.
++                self.assertTrue(got_rpath.startswith('/usr/gcc/'))
++                got_rpath = ":".join(got_rpath.split(':')[1:])
+             self.assertEqual(got_rpath, yonder_libdir, rpath_format)
+ 
+     @skip_if_not_base_option('b_sanitize')
+@@ -1663,7 +1720,12 @@
+         self.init(testdir)
+         self.build()
+         build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
+-        self.assertIsNone(build_rpath)
++        if is_sunos():
++            # OpenIndiana will add /usr/gcc/VERSION/lib to the rpath
++            self.assertTrue(build_rpath.startswith('/usr/gcc/'))
++            self.assertEqual(len(build_rpath.split(':')), 1)
++        else:
++            self.assertIsNone(build_rpath)
+ 
+     def test_lookup_system_after_broken_fallback(self):
+         # Just to generate libfoo.pc so we can test system dependency lookup.

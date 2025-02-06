@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cloudpickle
-HUMAN_VERSION =			3.0.0
-COMPONENT_SUMMARY =		cloudpickle - Pickler class to extend the standard pickle.Pickler functionality
+HUMAN_VERSION =			3.1.1
+COMPONENT_SUMMARY =		Pickler class to extend the standard pickle.Pickler functionality
 COMPONENT_PROJECT_URL =		https://github.com/cloudpipe/cloudpickle
 COMPONENT_ARCHIVE_URL =		\
-	https://github.com/cloudpipe/cloudpickle/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+	https://github.com/cloudpipe/cloudpickle/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:49cc8581ce305630b1e179bc083069b21b45db4731e5e3f2ea6fc40b131e1c55
+	sha256:f1a9fcfccfd94c5999bff2eb7fa7107eb0a2f70b8b12573fcbcf2659af7cf9c1
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,7 +36,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

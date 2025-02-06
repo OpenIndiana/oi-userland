@@ -15,27 +15,21 @@
 #
 
 BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-fixture-config
-HUMAN_VERSION =			1.7.0
-COMPONENT_SUMMARY =		pytest-fixture-config - Fixture configuration utils for py.test
-COMPONENT_PROJECT_URL =		https://github.com/manahl/pytest-plugins
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/07/19/37fe282f262b65247e310ec59223329e1ad53a71683f81a139e7d9ca7916/pytest-fixture-config-1.7.0.tar.gz
+HUMAN_VERSION =			1.8.0
+COMPONENT_SUMMARY =		Fixture configuration utils for py.test
+COMPONENT_PROJECT_URL =		https://github.com/man-group/pytest-plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:41a17417721f6862ce6b40e3280fddd8e1659b2c306ec46b237d7021fec5218e
+	sha256:c739895fe20851bdba53f246d0599aa389bc1a1cba48db2ecac0130576dc1b0e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest

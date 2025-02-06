@@ -1,0 +1,28 @@
+From a2671e12b19ecab0e60e745a29eb8e0751fe45a8 Mon Sep 17 00:00:00 2001
+From: Jonathan Perkin <jonathan@perkin.org.uk>
+Date: Tue, 02 Apr 2024 18:07:25 +0000
+Subject: [PATCH] syscall: implement Mkfifo on illumos
+
+Change-Id: Ied223c3a0121d907b6f32005ea9f1bf5e4aebdc4
+GitHub-Last-Rev: 38142b90bc8fbf25a31d3e12702e22af5d5af1e2
+GitHub-Pull-Request: golang/go#66648
+
+Userland-Porter: Toasterson
+Userland-Port-Note: This PR has been backported and wont be needed in the future. Mark for review and possible removal in golang 1.23
+---
+
+diff --git a/src/syscall/syscall_solaris.go b/src/syscall/syscall_solaris.go
+index 30400b4..89e9459 100644
+--- a/src/syscall/syscall_solaris.go
++++ b/src/syscall/syscall_solaris.go
+@@ -280,6 +280,10 @@
+ 	return int(r0), err
+ }
+ 
++func Mkfifo(path string, mode uint32) (err error) {
++	return Mknod(path, mode|S_IFIFO, 0)
++}
++
+ func gethostname() (name string, err uintptr)
+ 
+ func Gethostname() (name string, err error) {

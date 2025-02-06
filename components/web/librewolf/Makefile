@@ -16,14 +16,14 @@
 # Copyright 2019 Geoffrey Weiss
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Carsten Grzemba
-# Copyright 2023-2024 Niklas Poslovski
+# Copyright 2023-2025 Niklas Poslovski
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	129.0.1
+COMPONENT_MAJOR_VERSION =	134.0.2
 COMPONENT_MINOR_VERSION =	1
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
@@ -32,12 +32,12 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8868128bf1681eb7cc6df0abe33b6bd44de73ba38ad0528ee1ee90ddc8a94fdf
+COMPONENT_ARCHIVE_HASH= sha256:146c61a725a849a6b0ffb8d85b3cea6b925bc5b21847c65b8ed5ae70e4ea8025
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.79.0
+RUST_VERSION= 1.82.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -95,6 +95,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
@@ -112,7 +113,7 @@ LD_MAP_NOEXBSS.sparc=
 LD_Z_IGNORE=
 
 # missing symbols from gtk3 during Firefox start
-LD_B_DIRECT=
+# LD_B_DIRECT=
 
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
@@ -147,10 +148,12 @@ COMPONENT_POST_BUILD_ACTION = \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
 COMPONENT_POST_INSTALL_ACTION  = \
-    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
+    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/ -name "*.so"`; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
     done ; \
+    mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution ; \
+    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
@@ -182,8 +185,8 @@ REQUIRED_PACKAGES += web/browser/lynx
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

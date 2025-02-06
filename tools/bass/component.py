@@ -1,4 +1,3 @@
-#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -90,7 +89,7 @@ class Component(object):
         if self.debug:
             logger.debug('Executing \'gmake %s\' in %s', targets, path)
 
-        proc = subprocess.Popen(['gmake', '-s', targets],
+        proc = subprocess.Popen(['gmake', '-s', '--no-print-directory', targets],
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE,
                                 cwd=path,

@@ -10,64 +10,45 @@
 #
 
 #
-# Copyright 2024 Geoff Weiss
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project numpy
 #
 
-BUILD_STYLE=setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         numpy
-COMPONENT_VERSION=      1.26.4
-COMPONENT_REVISION=     1
-COMPONENT_FMRI=         library/python/numpy
-COMPONENT_CLASSIFICATION=Development/Python
-COMPONENT_SUMMARY=      Fundamental package for scientific computing with Python
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010
-COMPONENT_ARCHIVE_URL=  $(call pypi_url)
-COMPONENT_PROJECT_URL=  https://numpy.org/
-COMPONENT_LICENSE=      NUMPY
-COMPONENT_LICENSE_FILE= LICENSE.txt
+COMPONENT_NAME =		numpy
+HUMAN_VERSION =			2.0.2
+COMPONENT_SUMMARY =		Fundamental package for array computing in Python
+COMPONENT_PROJECT_URL =		https://numpy.org
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:883c987dee1880e2a864ab0dc9892292582510604156762362d9326444636e78
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-LD_OPTIONS      += -lm
 
-PYTHON_ENV +=   CC="$(CC) $(CC_BITS)"
-PYTHON_ENV +=   CXX="$(CXX) $(CC_BITS)"
+# NumPy Tests must be run outside source directory so switch to the proto area
+COMPONENT_TEST_DIR = $(PROTO_DIR)/$(PYTHON_LIB)
 
-# reset COMPONENT_INSTALL_ARGS. numpy does not generate dynamicly generated
-# header/data files with --skip-build
-COMPONENT_INSTALL_ARGS =
-COMPONENT_INSTALL_ARGS +=       --root $(PROTO_DIR)
-COMPONENT_INSTALL_ARGS +=       --install-lib=$(PYTHON_LIB)
-COMPONENT_INSTALL_ARGS +=       --install-data=$(PYTHON_DATA)
-COMPONENT_INSTALL_ARGS +=       --force
+# https://github.com/numpy/numpy/issues/27670
+# https://www.illumos.org/issues/5346
+PYTEST_ADDOPTS += --deselect numpy/_core/tests/test_longdouble.py::test_str_roundtrip
+PYTEST_ADDOPTS += --deselect numpy/_core/tests/test_print.py::TestCommaDecimalPointLocale::test_locale_longdouble
+PYTEST_ADDOPTS += --deselect numpy/lib/tests/test_function_base.py::TestPercentile::test_linear_interpolation[inverted_cdf-False-20-longdouble-longdouble-quantile-0.4]
+PYTEST_ADDOPTS += --deselect numpy/lib/tests/test_function_base.py::TestPercentile::test_linear_interpolation[averaged_inverted_cdf-False-27.5-longdouble-longdouble-quantile-0.4]
 
-# .pyc files have to be recompiled after changing shebang path
-COMPONENT_POST_INSTALL_ACTION += \
-	for file in $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/numpy/*.py ; do \
-	$(GSED) -i 's/env\ python3/python$(PYTHON_VERSION)/' $$file ; \
-	done; \
-	for file in $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/numpy/*/*.py ; do \
-	$(GSED) -i 's/env\ python3/python$(PYTHON_VERSION)/' $$file ; \
-	done; \
-	for file in $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/numpy/*/*/*.py ; do \
-	$(GSED) -i 's/env\ python3/python$(PYTHON_VERSION)/' $$file ; \
-	done; \
-	$(PYTHON) -m compileall $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages
-
-# Build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-
-# Test dependencies
-TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+# https://www.illumos.org/issues/16874
+PYTEST_ADDOPTS += --deselect numpy/_core/tests/test_umath.py::TestSpecialFloats::test_exp2
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/cython
+PYTHON_REQUIRED_PACKAGES += library/python/meson-python
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

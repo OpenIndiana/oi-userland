@@ -1,0 +1,13 @@
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/2978
+
+--- gst-plugins-good-1.24.12/sys/v4l2/gstv4l2object.c.orig
++++ gst-plugins-good-1.24.12/sys/v4l2/gstv4l2object.c
+@@ -569,7 +569,7 @@
+     v4l2object->fd_open = NULL;
+     v4l2object->close = close;
+     v4l2object->dup = dup;
+-    v4l2object->ioctl = ioctl;
++    v4l2object->ioctl = (void *)ioctl;
+     v4l2object->read = read;
+     v4l2object->mmap = mmap;
+     v4l2object->munmap = munmap;

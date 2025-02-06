@@ -240,6 +240,7 @@ test_normalize_case_for_drive (pyfakefs.tests.fake_filesystem_test.NormalizeCase
 test_normalize_case_for_lazily_added_empty_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... skipped 'Regression test for Windows problem only'
 test_normalize_case_for_non_existing_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... ok
 test_absolute_path_remains_unchanged (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
+test_cwd_from_pathlib_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dot_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dotted_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_empty_path_should_get_normalized_to_root_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
@@ -468,6 +469,7 @@ test_chmod_follow_symlink (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_no_follow_symlink (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_non_existent (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_uses_open_fd_as_path (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
+test_chmod_uses_open_fd_as_path_not_available_under_windows (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chown_bad_arguments (pyfakefs.tests.fake_os_test.FakeOsModuleTest)
 os.chown() with bad args (Issue #30) ... ok
 test_chown_existing_file (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
@@ -935,6 +937,7 @@ test_remove_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest)
 test_remove_unreadable_dir_from_other_user (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
 test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
 test_stat_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
@@ -949,6 +952,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
@@ -963,6 +967,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
@@ -977,6 +982,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
@@ -1088,6 +1094,7 @@ test_chmod_follow_symlink (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... ski
 test_chmod_no_follow_symlink (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chmod_non_existent (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chmod_uses_open_fd_as_path (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
+test_chmod_uses_open_fd_as_path_not_available_under_windows (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chown_bad_arguments (pyfakefs.tests.fake_os_test.RealOsModuleTest)
 os.chown() with bad args (Issue #30) ... skipped 'Only tests fake FS'
 test_chown_existing_file (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
@@ -1544,6 +1551,7 @@ test_remove_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest)
 test_remove_unreadable_dir_from_other_user (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
 test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
 test_stat_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
@@ -1558,6 +1566,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skip
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
@@ -1572,6 +1581,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
@@ -1586,6 +1596,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skippe
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
@@ -2064,6 +2075,9 @@ test_exec_module_in_fake_fs (pyfakefs.tests.fake_filesystem_unittest_test.AutoPa
 test_run_module (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_path (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_system_stat (pyfakefs.tests.fake_filesystem_unittest_test.FailedPatchingTest) ... expected failure
+test_fake_import_dotted_module (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
+test_fake_relative_import (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
+test_simple_fake_import (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
 test_non_root_behavior (pyfakefs.tests.fake_filesystem_unittest_test.NoRootUserTest)
 Check that fs behaves as non-root user regardless of actual ... ok
 test_fake_path_exists1 (pyfakefs.tests.fake_filesystem_unittest_test.NoSkipNamesTest) ... ok
@@ -2080,13 +2094,77 @@ test_system_stat (pyfakefs.tests.fake_filesystem_unittest_test.PatchModuleTestUs
 test_system_stat_failing (pyfakefs.tests.fake_filesystem_unittest_test.PatchModuleTestUsingDecorator) ... expected failure
 test_cwd (pyfakefs.tests.fake_filesystem_unittest_test.PathlibTest)
 Make sure fake file system is used for os in pathlib ... ok
-test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... ok
-test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... ok
-test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
+test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+    self.close()
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+    unlink(self.name)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+    self.close()
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+    unlink(self.name)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
+test_that_tempfile_is_patched_after_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest)
+Regression test for #1098 ... ok
+test_fake_path_does_not_exist1 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist2 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist3 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist4 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
 test_is_absolute (pyfakefs.tests.fake_filesystem_unittest_test.TestAbsolutePathOnWindows) ... skipped 'Windows-specific behavior'
 test_attributes (pyfakefs.tests.fake_filesystem_unittest_test.TestAttributesWithFakeModuleNames)
 Attributes of module under test are not patched ... ok
@@ -2229,10 +2307,58 @@ test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializat
 Basic initialization tests - taken from pathlib.Path ... skipped 'Windows specific behavior'
 test_is_absolute (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
 test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
-test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
-Verify faked pure POSIX paths use filesystem-independent separators. ... ok
-test_windows_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
-Verify faked pure Windows paths use filesystem-independent separators. ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
 test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
@@ -2271,6 +2397,22 @@ test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_joinpath (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_to_string (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_joinpath (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_to_string (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
 test_abspath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_access (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
@@ -2390,6 +2532,22 @@ test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skippe
 test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
 test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_joinpath (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_to_string (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_joinpath (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_to_string (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
 test_abspath (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_access (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
@@ -2435,6 +2593,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
+test_exists (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_open_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_read_bytes_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_read_text_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
@@ -2648,6 +2807,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... ok
+test_file_removed_during_scandir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_inode (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_is_link (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
@@ -2662,6 +2822,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackage
 test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
@@ -2780,6 +2941,7 @@ test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOp
 test_write_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
 test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'Only tests fake FS'
 test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'newline argument new in Python 3.10'
+test_file_removed_during_scandir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_inode (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_is_link (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
@@ -2796,9 +2958,9 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2567 tests
+Ran 2672 tests
 
-OK (skipped=1062, expected failures=2)
+OK (skipped=1085, expected failures=2)
 py$(PYV): commands[1]> python -m pyfakefs.tests.all_tests_without_extra_packages
 test_alt_sep (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
 test_collapse_path_with_mixed_separators (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
@@ -3040,6 +3202,7 @@ test_normalize_case_for_drive (pyfakefs.tests.fake_filesystem_test.NormalizeCase
 test_normalize_case_for_lazily_added_empty_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... skipped 'Regression test for Windows problem only'
 test_normalize_case_for_non_existing_file (pyfakefs.tests.fake_filesystem_test.NormalizeCaseTest) ... ok
 test_absolute_path_remains_unchanged (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
+test_cwd_from_pathlib_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dot_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_dotted_path_is_normalized (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
 test_empty_path_should_get_normalized_to_root_path (pyfakefs.tests.fake_filesystem_test.NormalizePathTest) ... ok
@@ -3268,6 +3431,7 @@ test_chmod_follow_symlink (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_no_follow_symlink (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_non_existent (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chmod_uses_open_fd_as_path (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
+test_chmod_uses_open_fd_as_path_not_available_under_windows (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
 test_chown_bad_arguments (pyfakefs.tests.fake_os_test.FakeOsModuleTest)
 os.chown() with bad args (Issue #30) ... ok
 test_chown_existing_file (pyfakefs.tests.fake_os_test.FakeOsModuleTest) ... ok
@@ -3735,6 +3899,7 @@ test_remove_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest)
 test_remove_unreadable_dir_from_other_user (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
 test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
 test_stat_unreadable_dir (pyfakefs.tests.fake_os_test.FakeOsUnreadableDirTest) ... ok
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
@@ -3749,6 +3914,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirFdRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
@@ -3763,6 +3929,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirFdTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
@@ -3777,6 +3944,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_posix (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... ok
 test_stat_windows (pyfakefs.tests.fake_os_test.FakeScandirRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
@@ -3888,6 +4056,7 @@ test_chmod_follow_symlink (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... ski
 test_chmod_no_follow_symlink (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chmod_non_existent (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chmod_uses_open_fd_as_path (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
+test_chmod_uses_open_fd_as_path_not_available_under_windows (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
 test_chown_bad_arguments (pyfakefs.tests.fake_os_test.RealOsModuleTest)
 os.chown() with bad args (Issue #30) ... skipped 'Only tests fake FS'
 test_chown_existing_file (pyfakefs.tests.fake_os_test.RealOsModuleTest) ... skipped 'Only tests fake FS'
@@ -4344,6 +4513,7 @@ test_remove_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest)
 test_remove_unreadable_dir_from_other_user (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
 test_stat_file_in_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
 test_stat_unreadable_dir (pyfakefs.tests.fake_os_test.RealOsUnreadableDirTest) ... skipped 'Only tests fake FS'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
@@ -4358,6 +4528,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skip
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirFdRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
@@ -4372,6 +4543,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirFdTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
@@ -4386,6 +4558,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skippe
 test_stat_ino_dev (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_stat_posix (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Only tests fake FS'
 test_stat_windows (pyfakefs.tests.fake_os_test.RealScandirRelTest) ... skipped 'Windows specific behavior'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_inode (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
 test_is_link (pyfakefs.tests.fake_os_test.RealScandirTest) ... skipped 'Only tests fake FS'
@@ -4864,6 +5037,9 @@ test_exec_module_in_fake_fs (pyfakefs.tests.fake_filesystem_unittest_test.AutoPa
 test_run_module (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_path (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_system_stat (pyfakefs.tests.fake_filesystem_unittest_test.FailedPatchingTest) ... expected failure
+test_fake_import_dotted_module (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
+test_fake_relative_import (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
+test_simple_fake_import (pyfakefs.tests.fake_filesystem_unittest_test.FakeImportTest) ... ok
 test_non_root_behavior (pyfakefs.tests.fake_filesystem_unittest_test.NoRootUserTest)
 Check that fs behaves as non-root user regardless of actual ... ok
 test_fake_path_exists1 (pyfakefs.tests.fake_filesystem_unittest_test.NoSkipNamesTest) ... ok
@@ -4880,13 +5056,77 @@ test_system_stat (pyfakefs.tests.fake_filesystem_unittest_test.PatchModuleTestUs
 test_system_stat_failing (pyfakefs.tests.fake_filesystem_unittest_test.PatchModuleTestUsingDecorator) ... expected failure
 test_cwd (pyfakefs.tests.fake_filesystem_unittest_test.PathlibTest)
 Make sure fake file system is used for os in pathlib ... ok
-test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... ok
-test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... ok
-test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
-test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
+test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+    self.close()
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+    unlink(self.name)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumePatcherTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+    self.close()
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+    unlink(self.name)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
+test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+Traceback (most recent call last):
+  File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+  File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
+test_that_tempfile_is_patched_after_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest)
+Regression test for #1098 ... ok
+test_fake_path_does_not_exist1 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist2 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist3 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
+test_fake_path_does_not_exist4 (pyfakefs.tests.fake_filesystem_unittest_test.RuntimeSkipModuleTest) ... ok
 test_is_absolute (pyfakefs.tests.fake_filesystem_unittest_test.TestAbsolutePathOnWindows) ... skipped 'Windows-specific behavior'
 test_attributes (pyfakefs.tests.fake_filesystem_unittest_test.TestAttributesWithFakeModuleNames)
 Attributes of module under test are not patched ... ok
@@ -5029,10 +5269,58 @@ test_init_with_segments (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializat
 Basic initialization tests - taken from pathlib.Path ... skipped 'Windows specific behavior'
 test_is_absolute (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
 test_path_parts (pyfakefs.tests.fake_pathlib_test.FakePathlibInitializationWithDriveTest) ... skipped 'Windows specific behavior'
-test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
-Verify faked pure POSIX paths use filesystem-independent separators. ... ok
-test_windows_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest)
-Verify faked pure Windows paths use filesystem-independent separators. ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTest) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestLinux) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestMacos) ... ok
+test_posix_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_parsing (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_posix_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_absolute_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_local_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_is_absolute_for_relative_path (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_parsing_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_parsing_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_str_backslash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
+test_windows_pure_path_str_forward_slash (pyfakefs.tests.fake_pathlib_test.FakePathlibModulePurePathTestWindows) ... ok
 test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
 test_glob_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest) ... ok
@@ -5071,6 +5359,22 @@ test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest) ... ok
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_joinpath (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_to_string (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePosixPathTest) ... ok
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_joinpath (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_to_string (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPureWindowsPathTest) ... ok
 test_abspath (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_access (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
@@ -5190,6 +5494,22 @@ test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skippe
 test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
 test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest) ... skipped 'Only tests fake FS'
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_joinpath (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_to_string (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePosixPathTest) ... skipped 'Only tests fake FS'
+test_is_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_is_reserved (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_joinpath (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_to_string (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
+test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPureWindowsPathTest) ... skipped 'Only tests fake FS'
 test_abspath (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_access (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_changed_owner_and_group (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
@@ -5235,6 +5555,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest) ... skipped 'Only tests fake FS'
 test_walk (pyfakefs.tests.fake_pathlib_test.RealPathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... skipped 'Only tests fake FS'
+test_exists (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_open_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_read_bytes_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
 test_read_text_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest) ... ok
@@ -5448,6 +5769,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... ok
+test_file_removed_during_scandir (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_inode (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_is_link (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
@@ -5462,6 +5784,7 @@ test_scandir_with_fd (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackage
 test_stat_ino_dev (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.FakeScandirPackageTest) ... skipped 'The scandir package is not installed'
+test_file_removed_during_scandir (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_inode (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
 test_is_link (pyfakefs.tests.fake_os_test.FakeScandirTest) ... ok
@@ -5580,6 +5903,7 @@ test_write_bytes (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOp
 test_write_text (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
 test_write_text_with_encoding (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
 test_write_with_newline_arg (pyfakefs.tests.fake_legacy_modules_test.RealPathlibPath2FileOperationTest) ... skipped 'The pathlib2 package is not installed'
+test_file_removed_during_scandir (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_index_access_to_stat_times_returns_int (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_inode (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 test_is_link (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
@@ -5596,16 +5920,16 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2567 tests
+Ran 2672 tests
 
-OK (skipped=1152, expected failures=2)
+OK (skipped=1175, expected failures=2)
 py$(PYV): commands[2]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 9 items
+collecting ... collected 10 items
 
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_fs_fixture PASSED
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_fs_fixture_alias PASSED
@@ -5616,7 +5940,80 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_use_own_io_module PASSED
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_switch_to_windows PASSED
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_switch_to_linux PASSED
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_switch_to_macos PASSED
+pyfakefs/pytest_tests/pytest_plugin_test.py::test_updatecache_problem PASSED
 
-======== 9 passed ========
+=============================== warnings summary ===============================
+pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+  
+  Traceback (most recent call last):
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2157, in remove_object
+      target_directory.remove_entry(basename)
+    File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
+      entry = self.get_entry(pathname_name)
+    File "$(@D)/pyfakefs/fake_file.py", line 566, in get_entry
+      return self.entries[to_string(pathname_name)]
+  KeyError: 'tmpXXXXXXXX'
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+      self.close()
+    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+      self.tempfile_cleanup(self_, unlink or os.unlink)
+    File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+      unlink(self.name)
+    File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+      return f(*args, **kwargs)
+    File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+      self.filesystem.remove(path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+      self.remove_object(norm_path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+      self.raise_os_error(errno.ENOENT, file_path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+      raise OSError(err_no, message, filename)
+  FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume_contextmanager
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
+  
+  Traceback (most recent call last):
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2157, in remove_object
+      target_directory.remove_entry(basename)
+    File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
+      entry = self.get_entry(pathname_name)
+    File "$(@D)/pyfakefs/fake_file.py", line 566, in get_entry
+      return self.entries[to_string(pathname_name)]
+  KeyError: 'tmpXXXXXXXX'
+  
+  During handling of the above exception, another exception occurred:
+  
+  Traceback (most recent call last):
+    File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
+      self.close()
+    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+      self.tempfile_cleanup(self_, unlink or os.unlink)
+    File "$(PYTHON_DIR)/tempfile.py", line 457, in close
+      unlink(self.name)
+    File "$(@D)/pyfakefs/fake_os.py", line 1455, in wrapped
+      return f(*args, **kwargs)
+    File "$(@D)/pyfakefs/fake_os.py", line 745, in unlink
+      self.filesystem.remove(path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3076, in remove
+      self.remove_object(norm_path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2159, in remove_object
+      self.raise_os_error(errno.ENOENT, file_path)
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+      raise OSError(err_no, message, filename)
+  FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 10 passed, 2 warnings ========
   py$(PYV): OK
   congratulations :)

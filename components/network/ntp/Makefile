@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p18
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/

@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		versioneer
 HUMAN_VERSION =			0.29
-COMPONENT_SUMMARY =		versioneer - Easy VCS-based management of project version strings
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Easy VCS-based management of project version strings
 COMPONENT_PROJECT_URL =		https://github.com/python-versioneer/python-versioneer
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/32/d7/854e45d2b03e1a8ee2aa6429dd396d002ce71e5d88b77551b2fb249cb382/versioneer-0.29.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5ab283b9857211d61b53318b7c792cf68e798e765ee17c27ade9f6c924235731
 COMPONENT_LICENSE =		Unlicense
@@ -39,11 +38,9 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/flake8-docstrings
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip

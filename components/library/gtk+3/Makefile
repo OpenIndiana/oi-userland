@@ -19,55 +19,44 @@ BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gtk+
-COMPONENT_MJR_VERSION=	3.24
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).41
+COMPONENT_NAME=         gtk
+HUMAN_VERSION=		3.24.48
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:47da61487af3087a94bc49296fd025ca0bc02f96ef06c556e7c8988bd651b6fa
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d10ce9ea9df44c1016d8d1721f39e55d3d607fcfb85334aec0d236cdc9a70556
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=      LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += -Dwayland_backend=false
 CONFIGURE_OPTIONS += -Dprint_backends=cups,file
 CONFIGURE_OPTIONS += -Dman=true
 CONFIGURE_OPTIONS += -Dgtk_doc=true
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
-
-# Tests are run using an X virtual framebuffer.
-COMPONENT_TEST_ENV= DISPLAY=:1
-
-COMPONENT_PRE_TEST_ACTION = \
-    $(SHELL) $(COMPONENT_DIR)/start_Xvfb $(COMPONENT_DIR)
-COMPONENT_POST_TEST_ACTION = \
-    $(SHELL) $(COMPONENT_DIR)/stop_Xvfb $(COMPONENT_DIR)
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Test dependencies
 TEST_REQUIRED_PACKAGES += gnome/theme/hicolor-icon-theme
-TEST_REQUIRED_PACKAGES += x11/server/xvfb
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += gnome/accessibility/at-spi2-atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
+REQUIRED_PACKAGES += gnome/theme/adwaita-icon-theme
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pybind11
-HUMAN_VERSION =			2.13.5
+HUMAN_VERSION =			2.13.6
 COMPONENT_SUMMARY =		Seamless operability between C++11 and Python
 COMPONENT_PROJECT_URL =		https://github.com/pybind/pybind11
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ae33f635322f9d9741abde0c5f348bf9373f6c22298883395e586cb43c55574e
+	sha256:ba6af10348c12b24e92fa086b39cfba0eff619b61ac77c406167d813b096d39a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

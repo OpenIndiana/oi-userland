@@ -11,33 +11,34 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::DSA
+#   $WS_TOOLS/perl-integrate-module Crypt-DSA
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::DSA
-HUMAN_VERSION =			1.17
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Crypt::DSA - DSA Signatures and Key Generation
-COMPONENT_CPAN_AUTHOR =		ADAMK
+COMPONENT_NAME =		Crypt-DSA
+HUMAN_VERSION =			1.19
+COMPONENT_SUMMARY =		DSA Signatures and Key Generation
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d1b8585f6bf746f76e5dc5da3641d325ed656bc2e5f344b54514b55c31009a03
-COMPONENT_LICENSE =		Artistic-1.0
+	sha256:1d192241b587f0a41b9f1a38bb90c2e10dcf31104eaaaf35d4803b68ff6cda9c
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Makefile.PL needs to find bundled inc::Module::Install
-COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
-
-# Optional test dependencies missing from metadata
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des_ede3
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/convert-asn1
+PERL_REQUIRED_PACKAGES += library/perl-5/convert-pem
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-urandom
 PERL_REQUIRED_PACKAGES += library/perl-5/data-buffer
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha1
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
+PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des_ede3
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

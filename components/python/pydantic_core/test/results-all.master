@@ -1,7 +1,7 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=100000)
 hypothesis profile 'fast' -> max_examples=2, database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
@@ -9,17 +9,19 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4532 items
+collecting ... collected 4624 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_lax PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_strict PASSED
+tests/benchmarks/test_complete_benchmark.py::test_complete_core_root PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_serializer_to_python PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_serializer_to_json PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_error PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_isinstance PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_core_json PASSED
+tests/benchmarks/test_complete_benchmark.py::test_complete_core_root_json PASSED
 tests/benchmarks/test_complete_benchmark.py::test_build_schema PASSED
 tests/benchmarks/test_micro_benchmarks.py::TestBenchmarkSimpleModel::test_core_python_fs PASSED
 tests/benchmarks/test_micro_benchmarks.py::TestBenchmarkSimpleModel::test_core_json_fs PASSED
@@ -254,6 +256,7 @@ tests/serializers/test_any.py::test_slots_mixed SKIPPED (slots are o...)
 tests/serializers/test_any.py::test_numpy_float PASSED
 tests/serializers/test_any.py::test_ser_json_inf_nan_with_any PASSED
 tests/serializers/test_any.py::test_ser_json_inf_nan_with_list_of_any PASSED
+tests/serializers/test_any.py::test_ser_json_int_subclass_value_larger_than_i64 PASSED
 tests/serializers/test_any.py::test_simple_any_ser_schema_repr PASSED
 tests/serializers/test_any.py::test_simple_any_ser_schema PASSED
 tests/serializers/test_bytes.py::test_bytes PASSED
@@ -281,12 +284,14 @@ tests/serializers/test_complex.py::test_complex_json[0j-0j] PASSED
 tests/serializers/test_complex.py::test_complex_json[(-inf+2j)--inf+2j] PASSED
 tests/serializers/test_complex.py::test_complex_json[(inf+2j)-inf+2j] PASSED
 tests/serializers/test_complex.py::test_complex_json[(nan+2j)-NaN+2j] PASSED
+tests/serializers/test_complex.py::test_complex_inference PASSED
 tests/serializers/test_dataclasses.py::test_dataclass PASSED
 tests/serializers/test_dataclasses.py::test_serialization_exclude PASSED
 tests/serializers/test_dataclasses.py::test_serialization_alias PASSED
 tests/serializers/test_dataclasses.py::test_properties PASSED
 tests/serializers/test_dataclasses.py::test_slots_mixed SKIPPED (slo...)
 tests/serializers/test_dataclasses.py::test_extra_custom_serializer XFAIL
+tests/serializers/test_dataclasses.py::test_dataclass_initvar_not_required_on_union_ser PASSED
 tests/serializers/test_datetime.py::test_datetime PASSED
 tests/serializers/test_datetime.py::test_datetime_key PASSED
 tests/serializers/test_datetime.py::test_datetime_json[value0-2022-12-02T12:13:14] PASSED
@@ -414,6 +419,9 @@ tests/serializers/test_generator.py::test_generator_any PASSED
 tests/serializers/test_generator.py::test_generator_int PASSED
 tests/serializers/test_generator.py::test_include PASSED
 tests/serializers/test_generator.py::test_custom_serializer PASSED
+tests/serializers/test_infer.py::test_infer_to_python PASSED
+tests/serializers/test_infer.py::test_infer_serialize PASSED
+tests/serializers/test_infer.py::test_infer_json_key PASSED
 tests/serializers/test_json.py::test_json_int PASSED
 tests/serializers/test_json.py::test_list_json PASSED
 tests/serializers/test_json.py::test_dict_key_json PASSED
@@ -555,6 +563,7 @@ tests/serializers/test_model.py::test_extra_config PASSED
 tests/serializers/test_model.py::test_extra_config_nested_model PASSED
 tests/serializers/test_model.py::test_extra_custom_serializer PASSED
 tests/serializers/test_model.py::test_no_warn_on_exclude PASSED
+tests/serializers/test_model.py::test_warn_on_missing_field PASSED
 tests/serializers/test_model_root.py::test_model_root PASSED
 tests/serializers/test_model_root.py::test_function_plain_field_serializer_to_python PASSED
 tests/serializers/test_model_root.py::test_function_wrap_field_serializer_to_python PASSED
@@ -780,6 +789,28 @@ tests/serializers/test_union.py::test_union_serializer_picks_exact_type_over_sub
 tests/serializers/test_union.py::test_tagged_union PASSED
 tests/serializers/test_union.py::test_union_float_int PASSED
 tests/serializers/test_union.py::test_custom_serializer PASSED
+tests/serializers/test_union.py::test_tagged_union_with_aliases PASSED
+tests/serializers/test_union.py::test_union_model_wrap_serializer PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models[input0-expected0] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models[input1-expected1] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models[input2-expected2] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models[input3-expected3] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_invalid_variant PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union[input0-expected0] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union[input1-expected1] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union[input2-expected2] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union[input3-expected3] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_invalid_variant PASSED
+tests/serializers/test_union.py::test_mixed_union_models_and_other_types PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_key_serialization[input0-{"true":"1"}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_key_serialization[input1-{"1":"1"}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_key_serialization[input2-{"2.3":"1"}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_key_serialization[input3-{"a":"b"}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_serialization[input0-{"key":true}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_serialization[input1-{"key":1}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_serialization[input2-{"key":2.3}] PASSED
+tests/serializers/test_union.py::test_union_of_unions_of_models_with_tagged_union_json_serialization[input3-{"key":"a"}] PASSED
+tests/serializers/test_union.py::test_discriminated_union_ser_with_typed_dict PASSED
 tests/serializers/test_url.py::test_url PASSED
 tests/serializers/test_url.py::test_multi_host_url PASSED
 tests/serializers/test_url.py::test_url_dict_keys PASSED
@@ -828,6 +859,10 @@ tests/test_config.py::test_hide_input_in_errors[config0-type=string_type, input_
 tests/test_config.py::test_hide_input_in_errors[config1-type=string_type, input_value=123, input_type=int] PASSED
 tests/test_config.py::test_hide_input_in_errors[config2-type=string_type] PASSED
 tests/test_config.py::test_cache_strings PASSED
+tests/test_custom_errors.py::test_validation_error_subclassable PASSED
+tests/test_custom_errors.py::test_validation_error_loc_overrides PASSED
+tests/test_custom_errors.py::test_custom_pydantic_error_subclassable PASSED
+tests/test_custom_errors.py::test_custom_pydantic_error_overrides PASSED
 tests/test_docstrings.py::test_docstrings[NotSetType.token] SKIPPED
 tests/test_docstrings.py::test_readme[NotSetType.token] SKIPPED (Onl...)
 tests/test_errors.py::test_pydantic_value_error PASSED
@@ -859,40 +894,41 @@ tests/test_errors.py::test_pydantic_custom_error_type_raise_custom_no_ctx[ctx1] 
 tests/test_errors.py::test_error_type[no_such_attribute-Object has no attribute 'wrong_name'-context0] PASSED
 tests/test_errors.py::test_error_type[json_invalid-Invalid JSON: foobar-context1] PASSED
 tests/test_errors.py::test_error_type[json_type-JSON input should be string, bytes or bytearray-None] PASSED
+tests/test_errors.py::test_error_type[needs_python_object-Cannot check `isinstance` when validating from json, use a JsonOrPython validator instead-context3] PASSED
 tests/test_errors.py::test_error_type[recursion_loop-Recursion error - cyclic reference detected-None] PASSED
-tests/test_errors.py::test_error_type[model_type-Input should be a valid dictionary or instance of Foobar-context4] PASSED
+tests/test_errors.py::test_error_type[model_type-Input should be a valid dictionary or instance of Foobar-context5] PASSED
 tests/test_errors.py::test_error_type[model_attributes_type-Input should be a valid dictionary or object to extract fields from-None] PASSED
-tests/test_errors.py::test_error_type[dataclass_exact_type-Input should be an instance of Foobar-context6] PASSED
-tests/test_errors.py::test_error_type[dataclass_type-Input should be a dictionary or an instance of Foobar-context7] PASSED
+tests/test_errors.py::test_error_type[dataclass_exact_type-Input should be an instance of Foobar-context7] PASSED
+tests/test_errors.py::test_error_type[dataclass_type-Input should be a dictionary or an instance of Foobar-context8] PASSED
 tests/test_errors.py::test_error_type[missing-Field required-None] PASSED
 tests/test_errors.py::test_error_type[frozen_field-Field is frozen-None] PASSED
 tests/test_errors.py::test_error_type[frozen_instance-Instance is frozen-None] PASSED
 tests/test_errors.py::test_error_type[extra_forbidden-Extra inputs are not permitted-None] PASSED
 tests/test_errors.py::test_error_type[invalid_key-Keys should be strings-None] PASSED
-tests/test_errors.py::test_error_type[get_attribute_error-Error extracting attribute: foo-context13] PASSED
+tests/test_errors.py::test_error_type[get_attribute_error-Error extracting attribute: foo-context14] PASSED
 tests/test_errors.py::test_error_type[none_required-Input should be None-None] PASSED
-tests/test_errors.py::test_error_type[enum-Input should be foo-context15] PASSED
-tests/test_errors.py::test_error_type[greater_than-Input should be greater than 42.1-context16] PASSED
+tests/test_errors.py::test_error_type[enum-Input should be foo-context16] PASSED
 tests/test_errors.py::test_error_type[greater_than-Input should be greater than 42.1-context17] PASSED
-tests/test_errors.py::test_error_type[greater_than-Input should be greater than 2020-01-01-context18] PASSED
-tests/test_errors.py::test_error_type[greater_than_equal-Input should be greater than or equal to 42.1-context19] PASSED
-tests/test_errors.py::test_error_type[less_than-Input should be less than 42.1-context20] PASSED
-tests/test_errors.py::test_error_type[less_than_equal-Input should be less than or equal to 42.1-context21] PASSED
+tests/test_errors.py::test_error_type[greater_than-Input should be greater than 42.1-context18] PASSED
+tests/test_errors.py::test_error_type[greater_than-Input should be greater than 2020-01-01-context19] PASSED
+tests/test_errors.py::test_error_type[greater_than_equal-Input should be greater than or equal to 42.1-context20] PASSED
+tests/test_errors.py::test_error_type[less_than-Input should be less than 42.1-context21] PASSED
+tests/test_errors.py::test_error_type[less_than_equal-Input should be less than or equal to 42.1-context22] PASSED
 tests/test_errors.py::test_error_type[finite_number-Input should be a finite number-None] PASSED
-tests/test_errors.py::test_error_type[too_short-Foobar should have at least 42 items after validation, not 40-context23] PASSED
-tests/test_errors.py::test_error_type[too_long-Foobar should have at most 42 items after validation, not 50-context24] PASSED
+tests/test_errors.py::test_error_type[too_short-Foobar should have at least 42 items after validation, not 40-context24] PASSED
+tests/test_errors.py::test_error_type[too_long-Foobar should have at most 42 items after validation, not 50-context25] PASSED
 tests/test_errors.py::test_error_type[string_type-Input should be a valid string-None] PASSED
 tests/test_errors.py::test_error_type[string_sub_type-Input should be a string, not an instance of a subclass of str-None] PASSED
 tests/test_errors.py::test_error_type[string_unicode-Input should be a valid string, unable to parse raw data as a unicode string-None] PASSED
-tests/test_errors.py::test_error_type[string_pattern_mismatch-String should match pattern 'foo'-context28] PASSED
-tests/test_errors.py::test_error_type[string_too_short-String should have at least 42 characters-context29] PASSED
-tests/test_errors.py::test_error_type[string_too_short-String should have at least 1 character-context30] PASSED
-tests/test_errors.py::test_error_type[string_too_long-String should have at most 42 characters-context31] PASSED
-tests/test_errors.py::test_error_type[string_too_long-String should have at most 1 character-context32] PASSED
+tests/test_errors.py::test_error_type[string_pattern_mismatch-String should match pattern 'foo'-context29] PASSED
+tests/test_errors.py::test_error_type[string_too_short-String should have at least 42 characters-context30] PASSED
+tests/test_errors.py::test_error_type[string_too_short-String should have at least 1 character-context31] PASSED
+tests/test_errors.py::test_error_type[string_too_long-String should have at most 42 characters-context32] PASSED
+tests/test_errors.py::test_error_type[string_too_long-String should have at most 1 character-context33] PASSED
 tests/test_errors.py::test_error_type[dict_type-Input should be a valid dictionary-None] PASSED
-tests/test_errors.py::test_error_type[mapping_type-Input should be a valid mapping, error: foobar-context34] PASSED
+tests/test_errors.py::test_error_type[mapping_type-Input should be a valid mapping, error: foobar-context35] PASSED
 tests/test_errors.py::test_error_type[iterable_type-Input should be iterable-None] PASSED
-tests/test_errors.py::test_error_type[iteration_error-Error iterating over object, error: foobar-context36] PASSED
+tests/test_errors.py::test_error_type[iteration_error-Error iterating over object, error: foobar-context37] PASSED
 tests/test_errors.py::test_error_type[list_type-Input should be a valid list-None] PASSED
 tests/test_errors.py::test_error_type[tuple_type-Input should be a valid tuple-None] PASSED
 tests/test_errors.py::test_error_type[set_type-Input should be a valid set-None] PASSED
@@ -902,49 +938,49 @@ tests/test_errors.py::test_error_type[int_type-Input should be a valid integer-N
 tests/test_errors.py::test_error_type[int_parsing-Input should be a valid integer, unable to parse string as an integer-None] PASSED
 tests/test_errors.py::test_error_type[int_parsing_size-Unable to parse input string as an integer, exceeded maximum size-None] PASSED
 tests/test_errors.py::test_error_type[int_from_float-Input should be a valid integer, got a number with a fractional part-None] PASSED
-tests/test_errors.py::test_error_type[multiple_of-Input should be a multiple of 42.1-context46] PASSED
-tests/test_errors.py::test_error_type[greater_than-Input should be greater than 42.1-context47] PASSED
-tests/test_errors.py::test_error_type[greater_than_equal-Input should be greater than or equal to 42.1-context48] PASSED
-tests/test_errors.py::test_error_type[less_than-Input should be less than 42.1-context49] PASSED
-tests/test_errors.py::test_error_type[less_than_equal-Input should be less than or equal to 42.1-context50] PASSED
+tests/test_errors.py::test_error_type[multiple_of-Input should be a multiple of 42.1-context47] PASSED
+tests/test_errors.py::test_error_type[greater_than-Input should be greater than 42.1-context48] PASSED
+tests/test_errors.py::test_error_type[greater_than_equal-Input should be greater than or equal to 42.1-context49] PASSED
+tests/test_errors.py::test_error_type[less_than-Input should be less than 42.1-context50] PASSED
+tests/test_errors.py::test_error_type[less_than_equal-Input should be less than or equal to 42.1-context51] PASSED
 tests/test_errors.py::test_error_type[float_type-Input should be a valid number-None] PASSED
 tests/test_errors.py::test_error_type[float_parsing-Input should be a valid number, unable to parse string as a number-None] PASSED
 tests/test_errors.py::test_error_type[bytes_type-Input should be a valid bytes-None] PASSED
-tests/test_errors.py::test_error_type[bytes_too_short-Data should have at least 42 bytes-context54] PASSED
-tests/test_errors.py::test_error_type[bytes_too_short-Data should have at least 1 byte-context55] PASSED
-tests/test_errors.py::test_error_type[bytes_too_long-Data should have at most 42 bytes-context56] PASSED
-tests/test_errors.py::test_error_type[bytes_too_long-Data should have at most 1 byte-context57] PASSED
-tests/test_errors.py::test_error_type[bytes_invalid_encoding-Data should be valid base64: Invalid byte 1, offset 1-context58] PASSED
-tests/test_errors.py::test_error_type[bytes_invalid_encoding-Data should be valid hex: Odd number of digits-context59] PASSED
-tests/test_errors.py::test_error_type[value_error-Value error, foobar-context60] PASSED
-tests/test_errors.py::test_error_type[assertion_error-Assertion failed, foobar-context61] PASSED
-tests/test_errors.py::test_error_type[literal_error-Input should be foo-context62] PASSED
-tests/test_errors.py::test_error_type[literal_error-Input should be foo or bar-context63] PASSED
+tests/test_errors.py::test_error_type[bytes_too_short-Data should have at least 42 bytes-context55] PASSED
+tests/test_errors.py::test_error_type[bytes_too_short-Data should have at least 1 byte-context56] PASSED
+tests/test_errors.py::test_error_type[bytes_too_long-Data should have at most 42 bytes-context57] PASSED
+tests/test_errors.py::test_error_type[bytes_too_long-Data should have at most 1 byte-context58] PASSED
+tests/test_errors.py::test_error_type[bytes_invalid_encoding-Data should be valid base64: Invalid byte 1, offset 1-context59] PASSED
+tests/test_errors.py::test_error_type[bytes_invalid_encoding-Data should be valid hex: Odd number of digits-context60] PASSED
+tests/test_errors.py::test_error_type[value_error-Value error, foobar-context61] PASSED
+tests/test_errors.py::test_error_type[assertion_error-Assertion failed, foobar-context62] PASSED
+tests/test_errors.py::test_error_type[literal_error-Input should be foo-context63] PASSED
+tests/test_errors.py::test_error_type[literal_error-Input should be foo or bar-context64] PASSED
 tests/test_errors.py::test_error_type[date_type-Input should be a valid date-None] PASSED
-tests/test_errors.py::test_error_type[date_parsing-Input should be a valid date in the format YYYY-MM-DD, foobar-context65] PASSED
-tests/test_errors.py::test_error_type[date_from_datetime_parsing-Input should be a valid date or datetime, foobar-context66] PASSED
+tests/test_errors.py::test_error_type[date_parsing-Input should be a valid date in the format YYYY-MM-DD, foobar-context66] PASSED
+tests/test_errors.py::test_error_type[date_from_datetime_parsing-Input should be a valid date or datetime, foobar-context67] PASSED
 tests/test_errors.py::test_error_type[date_from_datetime_inexact-Datetimes provided to dates should have zero time - e.g. be exact dates-None] PASSED
 tests/test_errors.py::test_error_type[date_past-Date should be in the past-None] PASSED
 tests/test_errors.py::test_error_type[date_future-Date should be in the future-None] PASSED
 tests/test_errors.py::test_error_type[time_type-Input should be a valid time-None] PASSED
-tests/test_errors.py::test_error_type[time_parsing-Input should be in a valid time format, foobar-context71] PASSED
+tests/test_errors.py::test_error_type[time_parsing-Input should be in a valid time format, foobar-context72] PASSED
 tests/test_errors.py::test_error_type[datetime_type-Input should be a valid datetime-None] PASSED
-tests/test_errors.py::test_error_type[datetime_parsing-Input should be a valid datetime, foobar-context73] PASSED
-tests/test_errors.py::test_error_type[datetime_from_date_parsing-Input should be a valid datetime or date, foobar-context74] PASSED
-tests/test_errors.py::test_error_type[datetime_object_invalid-Invalid datetime object, got foobar-context75] PASSED
+tests/test_errors.py::test_error_type[datetime_parsing-Input should be a valid datetime, foobar-context74] PASSED
+tests/test_errors.py::test_error_type[datetime_from_date_parsing-Input should be a valid datetime or date, foobar-context75] PASSED
+tests/test_errors.py::test_error_type[datetime_object_invalid-Invalid datetime object, got foobar-context76] PASSED
 tests/test_errors.py::test_error_type[datetime_past-Input should be in the past-None] PASSED
 tests/test_errors.py::test_error_type[datetime_future-Input should be in the future-None] PASSED
 tests/test_errors.py::test_error_type[timezone_naive-Input should not have timezone info-None] PASSED
 tests/test_errors.py::test_error_type[timezone_aware-Input should have timezone info-None] PASSED
-tests/test_errors.py::test_error_type[timezone_offset-Timezone offset of 0 required, got 60-context80] PASSED
+tests/test_errors.py::test_error_type[timezone_offset-Timezone offset of 0 required, got 60-context81] PASSED
 tests/test_errors.py::test_error_type[time_delta_type-Input should be a valid timedelta-None] PASSED
-tests/test_errors.py::test_error_type[time_delta_parsing-Input should be a valid timedelta, foobar-context82] PASSED
+tests/test_errors.py::test_error_type[time_delta_parsing-Input should be a valid timedelta, foobar-context83] PASSED
 tests/test_errors.py::test_error_type[frozen_set_type-Input should be a valid frozenset-None] PASSED
-tests/test_errors.py::test_error_type[is_instance_of-Input should be an instance of Foo-context84] PASSED
-tests/test_errors.py::test_error_type[is_subclass_of-Input should be a subclass of Foo-context85] PASSED
+tests/test_errors.py::test_error_type[is_instance_of-Input should be an instance of Foo-context85] PASSED
+tests/test_errors.py::test_error_type[is_subclass_of-Input should be a subclass of Foo-context86] PASSED
 tests/test_errors.py::test_error_type[callable_type-Input should be callable-None] PASSED
-tests/test_errors.py::test_error_type[union_tag_invalid-Input tag 'foo' found using bar does not match any of the expected tags: baz-context87] PASSED
-tests/test_errors.py::test_error_type[union_tag_not_found-Unable to extract tag using discriminator foo-context88] PASSED
+tests/test_errors.py::test_error_type[union_tag_invalid-Input tag 'foo' found using bar does not match any of the expected tags: baz-context88] PASSED
+tests/test_errors.py::test_error_type[union_tag_not_found-Unable to extract tag using discriminator foo-context89] PASSED
 tests/test_errors.py::test_error_type[arguments_type-Arguments must be a tuple, list or a dictionary-None] PASSED
 tests/test_errors.py::test_error_type[missing_argument-Missing required argument-None] PASSED
 tests/test_errors.py::test_error_type[unexpected_keyword_argument-Unexpected keyword argument-None] PASSED
@@ -953,22 +989,22 @@ tests/test_errors.py::test_error_type[unexpected_positional_argument-Unexpected 
 tests/test_errors.py::test_error_type[missing_positional_only_argument-Missing required positional only argument-None] PASSED
 tests/test_errors.py::test_error_type[multiple_argument_values-Got multiple values for argument-None] PASSED
 tests/test_errors.py::test_error_type[url_type-URL input should be a string or URL-None] PASSED
-tests/test_errors.py::test_error_type[url_parsing-Input should be a valid URL, Foobar-context97] PASSED
-tests/test_errors.py::test_error_type[url_syntax_violation-Input violated strict URL syntax rules, Foobar-context98] PASSED
-tests/test_errors.py::test_error_type[url_too_long-URL should have at most 42 characters-context99] PASSED
-tests/test_errors.py::test_error_type[url_too_long-URL should have at most 1 character-context100] PASSED
-tests/test_errors.py::test_error_type[url_scheme-URL scheme should be "foo", "bar" or "spam"-context101] PASSED
+tests/test_errors.py::test_error_type[url_parsing-Input should be a valid URL, Foobar-context98] PASSED
+tests/test_errors.py::test_error_type[url_syntax_violation-Input violated strict URL syntax rules, Foobar-context99] PASSED
+tests/test_errors.py::test_error_type[url_too_long-URL should have at most 42 characters-context100] PASSED
+tests/test_errors.py::test_error_type[url_too_long-URL should have at most 1 character-context101] PASSED
+tests/test_errors.py::test_error_type[url_scheme-URL scheme should be "foo", "bar" or "spam"-context102] PASSED
 tests/test_errors.py::test_error_type[uuid_type-UUID input should be a string, bytes or UUID object-None] PASSED
-tests/test_errors.py::test_error_type[uuid_parsing-Input should be a valid UUID, Foobar-context103] PASSED
-tests/test_errors.py::test_error_type[uuid_version-UUID version 42 expected-context104] PASSED
+tests/test_errors.py::test_error_type[uuid_parsing-Input should be a valid UUID, Foobar-context104] PASSED
+tests/test_errors.py::test_error_type[uuid_version-UUID version 42 expected-context105] PASSED
 tests/test_errors.py::test_error_type[decimal_type-Decimal input should be an integer, float, string or Decimal object-None] PASSED
 tests/test_errors.py::test_error_type[decimal_parsing-Input should be a valid decimal-None] PASSED
-tests/test_errors.py::test_error_type[decimal_max_digits-Decimal input should have no more than 42 digits in total-context107] PASSED
-tests/test_errors.py::test_error_type[decimal_max_digits-Decimal input should have no more than 1 digit in total-context108] PASSED
-tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should have no more than 42 decimal places-context109] PASSED
-tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should have no more than 1 decimal place-context110] PASSED
-tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 42 digits before the decimal point-context111] PASSED
-tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 1 digit before the decimal point-context112] PASSED
+tests/test_errors.py::test_error_type[decimal_max_digits-Decimal input should have no more than 42 digits in total-context108] PASSED
+tests/test_errors.py::test_error_type[decimal_max_digits-Decimal input should have no more than 1 digit in total-context109] PASSED
+tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should have no more than 42 decimal places-context110] PASSED
+tests/test_errors.py::test_error_type[decimal_max_places-Decimal input should have no more than 1 decimal place-context111] PASSED
+tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 42 digits before the decimal point-context112] PASSED
+tests/test_errors.py::test_error_type[decimal_whole_digits-Decimal input should have no more than 1 digit before the decimal point-context113] PASSED
 tests/test_errors.py::test_error_type[complex_type-Input should be a valid python complex object, a number, or a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex-None] PASSED
 tests/test_errors.py::test_error_type[complex_str_parsing-Input should be a valid complex string following the rules at https://docs.python.org/3/library/functions.html#complex-None] PASSED
 tests/test_errors.py::test_all_errors_covered PASSED
@@ -1085,6 +1121,7 @@ tests/test_json.py::test_bad_repr PASSED
 tests/test_json.py::test_inf_nan_allow PASSED
 tests/test_json.py::test_partial_parse PASSED
 tests/test_json.py::test_json_bytes_base64_round_trip PASSED
+tests/test_json.py::test_json_bytes_base64_no_padding PASSED
 tests/test_json.py::test_json_bytes_base64_invalid PASSED
 tests/test_json.py::test_json_bytes_hex_round_trip PASSED
 tests/test_json.py::test_json_bytes_hex_invalid PASSED
@@ -1174,11 +1211,13 @@ tests/test_schema_functions.py::test_schema_functions[uuid_schema-()-{'type': 'u
 tests/test_schema_functions.py::test_schema_functions[decimal_schema-()-{'type': 'decimal'}] PASSED
 tests/test_schema_functions.py::test_schema_functions[decimal_schema-(multiple_of=5, gt=1.2)-{'type': 'decimal', 'multiple_of': 5, 'gt': 1.2}] PASSED
 tests/test_schema_functions.py::test_schema_functions[complex_schema-()-{'type': 'complex'}] PASSED
+tests/test_schema_functions.py::test_schema_functions[invalid_schema-()-{'type': 'invalid'}] PASSED
 tests/test_schema_functions.py::test_all_schema_functions_used PASSED
 tests/test_schema_functions.py::test_invalid_custom_error PASSED
 tests/test_schema_functions.py::test_invalid_custom_error_type PASSED
 tests/test_schema_functions.py::test_expected_serialization_types[return_schema0] PASSED
 tests/test_schema_functions.py::test_expected_serialization_types[return_schema1] PASSED
+tests/test_schema_functions.py::test_err_on_invalid PASSED
 tests/test_strict.py::test_int_strict_argument[python-False-False-123-123_0] PASSED
 tests/test_strict.py::test_int_strict_argument[python-False-False-123-123_1] PASSED
 tests/test_strict.py::test_int_strict_argument[python-None-False-123-123_0] PASSED
@@ -1268,6 +1307,20 @@ tests/test_validation_context.py::test_wrap[json] PASSED
 tests/test_validation_context.py::test_isinstance[python] PASSED
 tests/test_validation_context.py::test_isinstance[json] PASSED
 tests/test_validation_context.py::test_validate_assignment_with_context PASSED
+tests/validators/test_allow_partial.py::test_list PASSED
+tests/validators/test_allow_partial.py::test_set_frozenset[set_schema] PASSED
+tests/validators/test_allow_partial.py::test_set_frozenset[frozenset_schema] PASSED
+tests/validators/test_allow_partial.py::test_dict PASSED
+tests/validators/test_allow_partial.py::test_dict_list PASSED
+tests/validators/test_allow_partial.py::test_partial_typed_dict PASSED
+tests/validators/test_allow_partial.py::test_non_partial_typed_dict PASSED
+tests/validators/test_allow_partial.py::test_double_nested PASSED
+tests/validators/test_allow_partial.py::test_tuple_list PASSED
+tests/validators/test_allow_partial.py::test_dataclass PASSED
+tests/validators/test_allow_partial.py::test_nullable PASSED
+tests/validators/test_allow_partial.py::test_json[None] PASSED
+tests/validators/test_allow_partial.py::test_json[json_nested_type1] PASSED
+tests/validators/test_allow_partial.py::test_json_trailing_strings PASSED
 tests/validators/test_arguments.py::test_args_kwargs PASSED
 tests/validators/test_arguments.py::test_positional_args[python-(1, 'a', True)-((1, 'a', True), {})] PASSED
 tests/validators/test_arguments.py::test_positional_args[python-[1, 'a', True]-((1, 'a', True), {})] PASSED
@@ -1395,12 +1448,21 @@ tests/validators/test_arguments.py::test_default_factory[json-ArgsKwargs((1,), {
 tests/validators/test_arguments.py::test_default_factory[json-ArgsKwargs((), {'a': 1})-((), {'a': 1, 'b': 42})] SKIPPED
 tests/validators/test_arguments.py::test_repr PASSED
 tests/validators/test_arguments.py::test_build_non_default_follows PASSED
-tests/validators/test_arguments.py::test_kwargs[python-ArgsKwargs((1, 2))-((1, 2), {})] PASSED
-tests/validators/test_arguments.py::test_kwargs[python-ArgsKwargs((1,), {'b': '4', 'c': 'a'})-((1,), {'b': 4, 'c': 'a'})] PASSED
-tests/validators/test_arguments.py::test_kwargs[python-ArgsKwargs((1, 2), {'x': 'abc'})-((1, 2), {'x': 'abc'})] PASSED
-tests/validators/test_arguments.py::test_kwargs[json-ArgsKwargs((1, 2))-((1, 2), {})] SKIPPED
-tests/validators/test_arguments.py::test_kwargs[json-ArgsKwargs((1,), {'b': '4', 'c': 'a'})-((1,), {'b': 4, 'c': 'a'})] SKIPPED
-tests/validators/test_arguments.py::test_kwargs[json-ArgsKwargs((1, 2), {'x': 'abc'})-((1, 2), {'x': 'abc'})] SKIPPED
+tests/validators/test_arguments.py::test_build_missing_var_kwargs PASSED
+tests/validators/test_arguments.py::test_kwargs_uniform[python-ArgsKwargs((1, 2))-((1, 2), {})] PASSED
+tests/validators/test_arguments.py::test_kwargs_uniform[python-ArgsKwargs((1,), {'b': '4', 'c': 'a'})-((1,), {'b': 4, 'c': 'a'})] PASSED
+tests/validators/test_arguments.py::test_kwargs_uniform[python-ArgsKwargs((1, 2), {'x': 'abc'})-((1, 2), {'x': 'abc'})] PASSED
+tests/validators/test_arguments.py::test_kwargs_uniform[json-ArgsKwargs((1, 2))-((1, 2), {})] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_uniform[json-ArgsKwargs((1,), {'b': '4', 'c': 'a'})-((1,), {'b': 4, 'c': 'a'})] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_uniform[json-ArgsKwargs((1, 2), {'x': 'abc'})-((1, 2), {'x': 'abc'})] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[python-input_value0-expected0] PASSED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[python-input_value1-expected1] PASSED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[python-input_value2-expected2] PASSED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[python-input_value3-expected3] PASSED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[json-input_value0-expected0] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[json-input_value1-expected1] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[json-input_value2-expected2] SKIPPED
+tests/validators/test_arguments.py::test_kwargs_typed_dict[json-input_value3-expected3] SKIPPED
 tests/validators/test_arguments.py::test_alias[python-ArgsKwargs((1,))-((1,), {})] PASSED
 tests/validators/test_arguments.py::test_alias[python-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] PASSED
 tests/validators/test_arguments.py::test_alias[python-ArgsKwargs((), {'a': 1})-Err('Foo\\n  Missing required argument [type=missing_argument,')] PASSED
@@ -1757,6 +1819,8 @@ tests/validators/test_date.py::test_date[inf] PASSED
 tests/validators/test_date.py::test_date[-inf] PASSED
 tests/validators/test_date.py::test_date[minus] PASSED
 tests/validators/test_date.py::test_date[pus] PASSED
+tests/validators/test_date.py::test_date[min-date] PASSED
+tests/validators/test_date.py::test_date[year-0] PASSED
 tests/validators/test_date.py::test_date_json[python-2022-06-08-expected0] PASSED
 tests/validators/test_date.py::test_date_json[python-1453-01-28-expected1] PASSED
 tests/validators/test_date.py::test_date_json[python-1654646400-expected2] PASSED
@@ -1851,13 +1915,15 @@ tests/validators/test_datetime.py::test_datetime[input_value12-expected12] PASSE
 tests/validators/test_datetime.py::test_datetime[input_value13-expected13] PASSED
 tests/validators/test_datetime.py::test_datetime[1654646400.1234568-expected14] PASSED
 tests/validators/test_datetime.py::test_datetime[253402300800000-expected15] PASSED
-tests/validators/test_datetime.py::test_datetime[-20000000000-expected16] PASSED
+tests/validators/test_datetime.py::test_datetime[-80000000000000-expected16] PASSED
 tests/validators/test_datetime.py::test_datetime[nan-expected17] PASSED
 tests/validators/test_datetime.py::test_datetime[inf-expected18] PASSED
 tests/validators/test_datetime.py::test_datetime[-inf-expected19] PASSED
 tests/validators/test_datetime.py::test_datetime[--expected20] PASSED
 tests/validators/test_datetime.py::test_datetime[+-expected21] PASSED
 tests/validators/test_datetime.py::test_datetime[2022-02-30-expected22] PASSED
+tests/validators/test_datetime.py::test_datetime[0001-01-01T00:00:00.000000Z-expected23] PASSED
+tests/validators/test_datetime.py::test_datetime[0000-12-31T23:59:59.999999Z-expected24] PASSED
 tests/validators/test_datetime.py::test_datetime_strict[input_value0-expected0] PASSED
 tests/validators/test_datetime.py::test_datetime_strict[input_value1-expected1] PASSED
 tests/validators/test_datetime.py::test_datetime_strict[2022-06-08T12:13:14-expected2] PASSED
@@ -2139,6 +2205,7 @@ tests/validators/test_definitions.py::test_repeat_after PASSED
 tests/validators/test_definitions.py::test_deep PASSED
 tests/validators/test_definitions.py::test_use_after PASSED
 tests/validators/test_definitions.py::test_definition_chain PASSED
+tests/validators/test_definitions.py::test_forwards_get_default_value PASSED
 tests/validators/test_definitions_recursive.py::test_branch_nullable PASSED
 tests/validators/test_definitions_recursive.py::test_unused_ref PASSED
 tests/validators/test_definitions_recursive.py::test_nullable_error PASSED
@@ -2222,6 +2289,13 @@ tests/validators/test_enums.py::test_enum_with_int_subclass PASSED
 tests/validators/test_enums.py::test_validate_float_for_int_enum PASSED
 tests/validators/test_enums.py::test_missing_error_converted_to_val_error PASSED
 tests/validators/test_enums.py::test_big_int PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_succeed_for_decimal[-1] PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_succeed_for_decimal[0] PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_succeed_for_decimal[1] PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_succeed_for_custom_type PASSED
+tests/validators/test_enums.py::test_enum_str_validation_should_fail_for_decimal_when_expecting_str_value PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_fail_for_incorrect_decimal_value PASSED
+tests/validators/test_enums.py::test_enum_int_validation_should_fail_for_plain_type_without_eq_checking PASSED
 tests/validators/test_float.py::test_float[python-0-0] PASSED
 tests/validators/test_float.py::test_float[python-1-1] PASSED
 tests/validators/test_float.py::test_float[python-42-42_0] PASSED
@@ -2597,21 +2671,27 @@ tests/validators/test_int.py::test_int_py_and_json[python-+04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-++4_2-expected32] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python--+1-expected33] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-+-1-expected34] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python---0001-expected35] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--+0001-expected36] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--0-001-expected37] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--0+001-expected38] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--00001--1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python--00042_000--42000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-  04_2.0 -42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-  0_42.0 -42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-  _042.0 -expected41] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42_-expected42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42_.0-expected43] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-  _042.0 -expected47] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42_-expected48] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42_.0-expected49] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-000001-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-123456789.0-123456789] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python- -expected46] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-1.-expected47] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-42.-expected48] PASSED
-tests/validators/test_int.py::test_int_py_and_json[python-123456789123456.00001-expected49] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python- -expected52] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-1.-expected53] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-42.-expected54] PASSED
+tests/validators/test_int.py::test_int_py_and_json[python-123456789123456.00001-expected55] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-10000000000-10000000000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-9223372036854775807-9223372036854775807] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-9223372036854775808-9223372036854775808] PASSED
@@ -2655,21 +2735,27 @@ tests/validators/test_int.py::test_int_py_and_json[json-+04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-++4_2-expected32] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json--+1-expected33] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-+-1-expected34] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json---0001-expected35] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--+0001-expected36] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--0-001-expected37] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--0+001-expected38] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--00001--1] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json--00042_000--42000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-4_2-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-0_42-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-4_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-04_2.0-42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-  04_2.0 -42] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-  0_42.0 -42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-  _042.0 -expected41] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42_-expected42] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42_.0-expected43] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-  _042.0 -expected47] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42_-expected48] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42_.0-expected49] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-000001-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-123456789.0-123456789] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json- -expected46] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-1.-expected47] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-42.-expected48] PASSED
-tests/validators/test_int.py::test_int_py_and_json[json-123456789123456.00001-expected49] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json- -expected52] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-1.-expected53] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-42.-expected54] PASSED
+tests/validators/test_int.py::test_int_py_and_json[json-123456789123456.00001-expected55] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-10000000000-10000000000] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-9223372036854775807-9223372036854775807] PASSED
 tests/validators/test_int.py::test_int_py_and_json[json-9223372036854775808-9223372036854775808] PASSED
@@ -2827,6 +2913,7 @@ tests/validators/test_is_subclass.py::test_is_subclass[input_value8-False] PASSE
 tests/validators/test_is_subclass.py::test_not_parent PASSED
 tests/validators/test_is_subclass.py::test_invalid_type PASSED
 tests/validators/test_is_subclass.py::test_custom_repr PASSED
+tests/validators/test_is_subclass.py::test_is_subclass_json PASSED
 tests/validators/test_json.py::test_any[python-{"a": 1}-expected0] PASSED
 tests/validators/test_json.py::test_any[python-"a"-a] PASSED
 tests/validators/test_json.py::test_any[python-1-1] PASSED
@@ -3004,6 +3091,7 @@ tests/validators/test_literal.py::test_mix_int_enum_with_int[<lambda>-err1] PASS
 tests/validators/test_literal.py::test_mix_str_enum_with_str[<lambda>-err0] PASSED
 tests/validators/test_literal.py::test_mix_str_enum_with_str[<lambda>-err1] PASSED
 tests/validators/test_literal.py::test_big_int PASSED
+tests/validators/test_literal.py::test_enum_for_str PASSED
 tests/validators/test_model.py::test_model_class PASSED
 tests/validators/test_model.py::test_model_class_extra PASSED
 tests/validators/test_model.py::test_model_class_extra_forbid PASSED
@@ -3045,6 +3133,7 @@ tests/validators/test_model.py::test_validate_assignment_model_validator_functio
 tests/validators/test_model.py::test_validate_assignment_model_validator_function[with_info_before_validator_function-call11-call21] PASSED
 tests/validators/test_model.py::test_validate_assignment_model_validator_function[with_info_wrap_validator_function-call12-call22] PASSED
 tests/validators/test_model.py::test_model_error PASSED
+tests/validators/test_model.py::test_model_with_enum_int_field_validation_should_succeed_for_any_type_equality_checks PASSED
 tests/validators/test_model_fields.py::test_simple PASSED
 tests/validators/test_model_fields.py::test_strict PASSED
 tests/validators/test_model_fields.py::test_with_default PASSED
@@ -3185,7 +3274,7 @@ tests/validators/test_model_fields.py::test_from_attributes_extra_forbid PASSED
 tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=1)-{'a': 1}] PASSED
 tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=<built-in method now of type object at $(POINTER)>)-{'a': <built-in method now of type object at $(POINTER)>}] PASSED
 tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=<function <lambda> at $(POINTER)>)-{'a': HasRepr(IsStr(regex='.+<lambda>.+'))}] PASSED
-tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '/home/marcel/.local/lib/python3.9/site-packages', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages'])-{'a': ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '/home/marcel/.local/lib/python3.9/site-packages', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']}] PASSED
+tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages'])-{'a': ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']}] PASSED
 tests/validators/test_model_fields.py::test_from_attributes_function[Cls(a=<function foobar at $(POINTER)>)-{'a': <function foobar at $(POINTER)>}] PASSED
 tests/validators/test_model_fields.py::test_from_attributes_error_error PASSED
 tests/validators/test_model_fields.py::test_from_attributes_path[{'foo': {'bar': {'bat': '123'}}}-{'my_field': 123}] PASSED
@@ -3440,6 +3529,8 @@ tests/validators/test_string.py::test_lax_subclass[{'to_lower': True}] PASSED
 tests/validators/test_string.py::test_lax_subclass_plain_enum[{}] PASSED
 tests/validators/test_string.py::test_lax_subclass_plain_enum[{'to_lower': True}] PASSED
 tests/validators/test_string.py::test_subclass_preserved PASSED
+tests/validators/test_string.py::test_coerce_numbers_to_str_with_invalid_unicode_character[True] PASSED
+tests/validators/test_string.py::test_coerce_numbers_to_str_with_invalid_unicode_character[False] PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_disabled_in_strict_mode PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str_raises_for_bool PASSED
 tests/validators/test_string.py::test_coerce_numbers_to_str[42] PASSED
@@ -4200,6 +4291,7 @@ tests/validators/test_url.py::test_url_cases[http://us\xdfer:pas\u211ds@a\U0001f
 tests/validators/test_url.py::test_url_cases[http://us\xdfer:pas\u211ds@a\U0001f4a3b.com:123/c?d=e&d=f#g-expected96-URI_CLASS] PASSED
 tests/validators/test_url.py::test_url_defaults_single_url[validator_kwargs0-http://example.org-expected0] PASSED
 tests/validators/test_url.py::test_url_defaults_single_url[validator_kwargs1-redis://-expected1] PASSED
+tests/validators/test_url.py::test_url_host_required PASSED
 tests/validators/test_url.py::test_url_defaults_multi_host_url[validator_kwargs0-http://example.org-expected0] PASSED
 tests/validators/test_url.py::test_url_defaults_multi_host_url[validator_kwargs1-redis://-expected1] PASSED
 tests/validators/test_url.py::test_url_defaults_multi_host_url[validator_kwargs2-redis://localhost,127.0.0.1-expected2] PASSED
@@ -4450,7 +4542,7 @@ tests/validators/test_with_default.py::test_tuple_positional PASSED
 tests/validators/test_with_default.py::test_tuple_positional_omit PASSED
 tests/validators/test_with_default.py::test_on_error_default PASSED
 tests/validators/test_with_default.py::test_factory_runtime_error PASSED
-tests/validators/test_with_default.py::test_factory_type_error PASSED
+tests/validators/test_with_default.py::test_factory_missing_arg PASSED
 tests/validators/test_with_default.py::test_typed_dict_error PASSED
 tests/validators/test_with_default.py::test_on_error_default_not_int PASSED
 tests/validators/test_with_default.py::test_on_error_default_factory PASSED
@@ -4543,5 +4635,6 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value8-expected8] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value9-expected9] PASSED
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
+=============================== inline snapshot ================================
 
-======== 4439 passed, 91 skipped, 2 xfailed ========
+======== 4527 passed, 95 skipped, 2 xfailed ========

@@ -14,15 +14,16 @@
 #
 
 USE_PARALLEL_BUILD= yes
+DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.30.6
+COMPONENT_VERSION=	2.30.12
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c6ef64ca18a19d13df6eb22df9aff19fb0db65610a74cc81dae33a82235cacd4
+COMPONENT_ARCHIVE_HASH=	sha256:ac356ea55e8b9dd0b2d1fa27da40ef7e238267ccf9324704850d5d47375b48ea
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
 COMPONENT_CLASSIFICATION =	System/Libraries
@@ -34,10 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh )
+CFLAGS += $(XPG6MODE)
+
+COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --enable-year2038
+CONFIGURE_OPTIONS += --enable-static=no
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/libsamplerate

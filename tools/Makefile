@@ -25,25 +25,8 @@
 include ../make-rules/shared-macros.mk
 
 #download setup prep build install publish \
-#validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
+#validate:	pkglint time-$(MACH32).so time-$(MACH64).so
 download setup prep build install publish validate: pkglint time-$(MACH32).so time-$(MACH64).so
-
-# generate wrappers for parfait. we need to generate them
-# with the correct compiler variables from the common makefiles because
-# some things reset the environment which causes lovely infinite
-# loops
-links:
-	@$(MKDIR) parfait
-	@for i in cc CC gcc g++ ld ; do \
-		$(MKDIR) parfait ; \
-		$(RM) parfait/$$i ; \
-		echo "#!/bin/ksh" > parfait/$$i ; \
-		echo "IFS=" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++" >> parfait/$$i ; \
-		echo "exec" $(PARFAIT_ROOT)/bin/parfait-$$i '$$*' >> parfait/$$i ; \
-		chmod +x parfait/$$i ; \
-	done
 
 pkglint:
 	@rm -f pkglint
@@ -69,5 +52,4 @@ clean:
 
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc
-	@$(RM) -r parfait
 

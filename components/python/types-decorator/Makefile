@@ -11,22 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-decorator
+#   $WS_TOOLS/python-integrate-project -d python/types-decorator types_decorator
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-decorator
-HUMAN_VERSION =			5.1.8.20240310
-COMPONENT_SUMMARY =		types-decorator - Typing stubs for decorator
+COMPONENT_NAME =		types_decorator
+HUMAN_VERSION =			5.1.8.20250121
+COMPONENT_SUMMARY =		Typing stubs for decorator
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:52e316b03783886a8a2abdc228f7071680ba65894545cd2085ebe3cf88684a0e
+	sha256:1b89bb1c481a1d3399e28f1aa3459366b76dde951490992ae8475ba91287cd04
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 

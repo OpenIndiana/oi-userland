@@ -37,3 +37,7 @@ endif
 # Since both ffmpeg libraries package and ffmpeg development package are
 # encumbered we do this here instead of ips.mk.
 REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/ffmpeg/{p;s/library/developer/}'
+
+# If a component needs a runtime x265 library then it also needs the x265
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/video\/x265-/{p;s/-.*$$//}'

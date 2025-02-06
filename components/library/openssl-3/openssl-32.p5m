@@ -1,0 +1,58 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2024 Marcel Telka
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# All symlinks outside versioned directories are mediated ...
+<transform link -> default mediator openssl>
+<transform link path=usr/openssl/3/ -> delete mediator ^openssl$>
+# ... except for versioned dynamic libraries
+<transform link path=usr/lib/.*\.so\. -> delete mediator ^openssl$>
+<transform link mediator=openssl$ -> default mediator-implementation openssl>
+<transform link mediator=openssl$ -> default mediator-version 3>
+
+link path=usr/lib/cmake/OpenSSL target=../../openssl/3/lib/cmake/OpenSSL
+link path=usr/lib/libcrypto.so target=../openssl/3/lib/libcrypto.so
+link path=usr/lib/libcrypto.so.3 target=../openssl/3/lib/libcrypto.so.3
+link path=usr/lib/libssl.so target=../openssl/3/lib/libssl.so
+link path=usr/lib/libssl.so.3 target=../openssl/3/lib/libssl.so.3
+link path=usr/lib/pkgconfig/libcrypto.pc \
+    target=../../openssl/3/lib/pkgconfig/libcrypto.pc
+link path=usr/lib/pkgconfig/libssl.pc \
+    target=../../openssl/3/lib/pkgconfig/libssl.pc
+link path=usr/lib/pkgconfig/openssl.pc \
+    target=../../openssl/3/lib/pkgconfig/openssl.pc
+file path=usr/openssl/3/include/openssl/configuration-32.h variant.arch=i386
+file path=usr/openssl/3/lib/cmake/OpenSSL/OpenSSLConfig.cmake
+file path=usr/openssl/3/lib/cmake/OpenSSL/OpenSSLConfigVersion.cmake
+file path=usr/openssl/3/lib/engines-3/capi.so
+file path=usr/openssl/3/lib/engines-3/loader_attic.so
+file path=usr/openssl/3/lib/engines-3/padlock.so
+link path=usr/openssl/3/lib/libcrypto.so target=libcrypto.so.3
+file path=usr/openssl/3/lib/libcrypto.so.3
+link path=usr/openssl/3/lib/libssl.so target=libssl.so.3
+file path=usr/openssl/3/lib/libssl.so.3
+file path=usr/openssl/3/lib/ossl-modules/legacy.so
+file path=usr/openssl/3/lib/pkgconfig/libcrypto.pc
+file path=usr/openssl/3/lib/pkgconfig/libssl.pc
+file path=usr/openssl/3/lib/pkgconfig/openssl.pc

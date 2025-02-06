@@ -11,26 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project BTrees
+#   $WS_TOOLS/python-integrate-project -d python/BTrees btrees
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		BTrees
-HUMAN_VERSION =			6.0
+COMPONENT_NAME =		btrees
+HUMAN_VERSION =			6.1
 COMPONENT_SUMMARY =		Scalable persistent object containers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/BTrees
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f69b8cdd33434e13e180216bb82ae0b7cd31fadfb7cc559695cb37319ca35ff0
+	sha256:e18746f8641869a20f45328c9b5f97dc6c71a1195960356aef63b75f5c8d445f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/persistent

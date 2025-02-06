@@ -31,7 +31,7 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 # and HUMAN_VERSION.
 COMPONENT_VERSION=	1.1.1.23
 HUMAN_VERSION=		1.1.1w
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)

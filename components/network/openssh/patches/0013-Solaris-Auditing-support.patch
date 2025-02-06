@@ -1,7 +1,7 @@
-diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
+diff -wpruN --no-dereference '--exclude=*.orig' a~/INSTALL a/INSTALL
 --- a~/INSTALL	1970-01-01 00:00:00
 +++ a/INSTALL	1970-01-01 00:00:00
-@@ -107,9 +107,13 @@ http://www.gnu.org/software/automake/
+@@ -103,9 +103,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
  
@@ -18,7 +18,7 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
  
  makedepend:
  
-@@ -175,8 +179,9 @@ name).
+@@ -171,8 +175,9 @@ name).
  There are a few other options to the configure script:
  
  --with-audit=[module] enable additional auditing via the specified module.
@@ -30,22 +30,22 @@ diff -wpruN '--exclude=*.orig' a~/INSTALL a/INSTALL
  
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
-diff -wpruN '--exclude=*.orig' a~/Makefile.in a/Makefile.in
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Makefile.in a/Makefile.in
 --- a~/Makefile.in	1970-01-01 00:00:00
 +++ a/Makefile.in	1970-01-01 00:00:00
-@@ -120,7 +120,7 @@ SSHOBJS= ssh.o readconf.o clientloop.o s
- 	sshconnect.o sshconnect2.o mux.o $(SKOBJS)
+@@ -128,7 +128,7 @@ SSHDOBJS=sshd.o \
+ 	$(SKOBJS)
  
- SSHDOBJS=sshd.o auth-rhosts.o auth-passwd.o \
+ SSHD_SESSION_OBJS=sshd-session.o auth-rhosts.o auth-passwd.o \
 -	audit.o audit-bsm.o audit-linux.o platform.o \
 +	audit.o audit-bsm.o audit-linux.o audit-solaris.o platform.o \
  	sshpty.o sshlogin.o servconf.o serverloop.o \
- 	auth.o auth2.o auth-options.o session.o \
+ 	auth.o auth2.o auth2-methods.o auth-options.o session.o \
  	auth2-chall.o groupaccess.o \
-diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
+diff -wpruN --no-dereference '--exclude=*.orig' a~/README.platform a/README.platform
 --- a~/README.platform	1970-01-01 00:00:00
 +++ a/README.platform	1970-01-01 00:00:00
-@@ -71,10 +71,10 @@ zlib-devel and pam-devel, on Debian base
+@@ -72,10 +72,10 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
  
@@ -60,7 +60,7 @@ diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
  added to /etc/security/audit_event:
  
  	32800:AUE_openssh:OpenSSH login:lo
-@@ -85,6 +85,9 @@ There is no official registry of 3rd par
+@@ -86,6 +86,9 @@ There is no official registry of 3rd par
  number is already in use on your system, you may change it at build time
  by configure'ing --with-cflags=-DAUE_openssh=32801 then rebuilding.
  
@@ -70,7 +70,7 @@ diff -wpruN '--exclude=*.orig' a~/README.platform a/README.platform
  
  Platforms using PAM
  -------------------
-diff -wpruN '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
 --- a~/audit-bsm.c	1970-01-01 00:00:00
 +++ a/audit-bsm.c	1970-01-01 00:00:00
 @@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
@@ -82,7 +82,7 @@ diff -wpruN '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
  {
  	AuditInfoTermID *tid = &ssh_bsm_tid;
  	char buf[1024];
-diff -wpruN '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
 --- a~/audit-linux.c	1970-01-01 00:00:00
 +++ a/audit-linux.c	1970-01-01 00:00:00
 @@ -71,7 +71,7 @@ linux_audit_record_event(int uid, const
@@ -94,7 +94,7 @@ diff -wpruN '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
  {
  	/* not implemented */
  }
-diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 --- a~/audit-solaris.c	1970-01-01 00:00:00
 +++ a/audit-solaris.c	1970-01-01 00:00:00
 @@ -0,0 +1,574 @@
@@ -672,7 +672,7 @@ diff -wpruN '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
 +	(void) adt_end_session(ah);
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
-diff -wpruN '--exclude=*.orig' a~/audit.c a/audit.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.c a/audit.c
 --- a~/audit.c	1970-01-01 00:00:00
 +++ a/audit.c	1970-01-01 00:00:00
 @@ -120,7 +120,7 @@ audit_event_lookup(ssh_audit_event_t ev)
@@ -680,11 +680,11 @@ diff -wpruN '--exclude=*.orig' a~/audit.c a/audit.c
   */
  void
 -audit_connection_from(const char *host, int port)
-+audit_connection_from(struct ssh *, const char *host, int port)
++audit_connection_from(struct ssh *ssh, const char *host, int port)
  {
  	debug("audit connection from %s port %d euid %d", host, port,
  	    (int)geteuid());
-diff -wpruN '--exclude=*.orig' a~/audit.h a/audit.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.h a/audit.h
 --- a~/audit.h	1970-01-01 00:00:00
 +++ a/audit.h	1970-01-01 00:00:00
 @@ -47,7 +47,7 @@ enum ssh_audit_event_type {
@@ -696,10 +696,10 @@ diff -wpruN '--exclude=*.orig' a~/audit.h a/audit.h
  void	audit_event(struct ssh *, ssh_audit_event_t);
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
-diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
 --- a~/configure.ac	1970-01-01 00:00:00
 +++ a/configure.ac	1970-01-01 00:00:00
-@@ -1730,7 +1730,7 @@ AC_ARG_WITH([libedit],
+@@ -1777,7 +1777,7 @@ AC_ARG_WITH([libedit],
  
  AUDIT_MODULE=none
  AC_ARG_WITH([audit],
@@ -708,7 +708,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  	[
  	  AC_MSG_CHECKING([for supported audit module])
  	  case "$withval" in
-@@ -1767,6 +1767,13 @@ AC_ARG_WITH([audit],
+@@ -1814,6 +1814,13 @@ AC_ARG_WITH([audit],
  		SSHDLIBS="$SSHDLIBS -laudit"
  		AC_DEFINE([USE_LINUX_AUDIT], [1], [Use Linux audit module])
  		;;
@@ -722,7 +722,7 @@ diff -wpruN '--exclude=*.orig' a~/configure.ac a/configure.ac
  	  debug)
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
-diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
+diff -wpruN --no-dereference '--exclude=*.orig' a~/defines.h a/defines.h
 --- a~/defines.h	1970-01-01 00:00:00
 +++ a/defines.h	1970-01-01 00:00:00
 @@ -715,6 +715,11 @@ struct winsize {
@@ -737,10 +737,10 @@ diff -wpruN '--exclude=*.orig' a~/defines.h a/defines.h
  #if !defined(HAVE___func__) && defined(HAVE___FUNCTION__)
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
-diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
---- a~/sshd.c	1970-01-01 00:00:00
-+++ a/sshd.c	1970-01-01 00:00:00
-@@ -2186,7 +2186,7 @@ main(int ac, char **av)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
+--- a~/sshd-session.c	1970-01-01 00:00:00
++++ a/sshd-session.c	1970-01-01 00:00:00
+@@ -1254,7 +1254,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
  #ifdef SSH_AUDIT_EVENTS
@@ -749,8 +749,8 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  #endif
  
  	rdomain = ssh_packet_rdomain_in(ssh);
-@@ -2275,8 +2275,10 @@ main(int ac, char **av)
- 	}
+@@ -1348,8 +1348,10 @@ main(int ac, char **av)
+ 		set_process_rdomain(ssh, options.routing_domain);
  
  #ifdef SSH_AUDIT_EVENTS
 +#ifndef USE_SOLARIS_AUDIT
@@ -760,14 +760,3 @@ diff -wpruN '--exclude=*.orig' a~/sshd.c a/sshd.c
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
-@@ -2305,6 +2307,10 @@ main(int ac, char **av)
- 		do_pam_session(ssh);
- 	}
- #endif
-+#ifdef	USE_SOLARIS_AUDIT
-+	/* Audit should take place after all successful pam */
-+	audit_event(ssh, SSH_AUTH_SUCCESS);
-+#endif	/* USE_SOLARIS_AUDIT */
- 
- 	/*
- 	 * In privilege separation, we fork another child and prepare

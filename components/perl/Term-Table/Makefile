@@ -11,28 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Term::Table
+#   $WS_TOOLS/perl-integrate-module Term-Table
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Term::Table
-HUMAN_VERSION =			0.022
-COMPONENT_SUMMARY =		Term::Table - Format a header and rows into a table
+COMPONENT_NAME =		Term-Table
+HUMAN_VERSION =			0.024
+COMPONENT_SUMMARY =		Format a header and rows into a table
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b9dbdacfa7362846e3c4a100081832db9da74b7356828ef9d92869c44642e0b8
+	sha256:52288538c3b0514bcd2b61f645686c256619e56a421ae992e2b76d31927c4ece
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# Term::Table has been added to Perl 5.40 core
-PERL_VERSIONS := $(filter 5.36 5.38, $(PERL_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/term-size-any
 PERL_REQUIRED_PACKAGES += library/perl-5/unicode-linebreak
 PERL_REQUIRED_PACKAGES += runtime/perl

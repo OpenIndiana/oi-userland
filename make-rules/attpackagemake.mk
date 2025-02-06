@@ -46,11 +46,10 @@
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
-COMPONENT_BUILD_ENV += \
-    CC_EXPLICIT="$(CC)" \
-	PATH=$(shell dirname $(CC)):$(PATH) \
-	CC=$(shell basename $(CC)) 
-	NPROC="$(NPROC)" 
+COMPONENT_BUILD_ENV += CC_EXPLICIT="$(CC)"
+COMPONENT_BUILD_ENV += PATH=$(dir $(CC)):$(PATH)
+COMPONENT_BUILD_ENV += CC=$(notdir $(CC))
+COMPONENT_BUILD_ENV += NPROC="$(NPROC)"
 
 # This explicitly exports the build type for 32/64 bit distinction 
 COMPONENT_BUILD_ARGS = \

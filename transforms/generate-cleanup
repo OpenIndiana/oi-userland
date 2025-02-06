@@ -97,18 +97,12 @@
 <transform dir file link hardlink -> \
 	edit path "^(usr\/gcc\/)\d+\/" "\1$!(GCCVER)/">
 
-<transform dir file link hardlink -> \
-	edit target "/(sparcv9|amd64)$" "/$!(MACH64)">
-<transform dir file link hardlink -> \
-	edit target "/(sparcv9|amd64)/" "/$!(MACH64)/">
-<transform dir file link hardlink -> \
-	edit target "/(sparcv7|i86)$" "/$!(MACH32)">
-<transform dir file link hardlink -> \
-	edit target "/(sparcv7|i86)/" "/$!(MACH32)/">
-<transform dir file link hardlink -> \
-	edit target "/(sparc|i386)$" "/$!(MACH)">
-<transform dir file link hardlink -> \
-	edit target "/(sparc|i386)/" "/$!(MACH)/">
+<transform link hardlink -> \
+	edit target "(^|/)(sparcv9|amd64)(/|$)" "\1$!(MACH64)\3">
+<transform link hardlink -> \
+	edit target "(^|/)(sparcv7|i86)(/|$)" "\1$!(MACH32)\3">
+<transform link hardlink -> \
+	edit target "(^|/)(sparc|i386)(/|$)" "\1$!(MACH)\3">
 
 # <transform dir file link hardlink -> \
 # 	edit path "$(COMPONENT_NAME)" "$!(COMPONENT_NAME)">
@@ -129,6 +123,16 @@
 	edit path "$(IPS_COMPONENT_RE_VERSION)" "$!(IPS_COMPONENT_VERSION)">
 <transform dir file link hardlink -> \
 	edit target "$(IPS_COMPONENT_RE_VERSION)" "$!(IPS_COMPONENT_VERSION)">
+
+# Clang support (must be after HUMAN_VERSION transforms)
+<transform dir file link hardlink path="usr/clang/[^/]+/lib/lib.*\.so" -> \
+	edit path "(lib[^/]+\.so\.)\d+" "\1$!(CLANGVER)">
+<transform link hardlink path="usr/clang/[^/]+/lib/lib.*\.so" -> \
+	edit target "(lib[^/]+\.so\.)\d+" "\1$!(CLANGVER)">
+<transform dir file link hardlink -> \
+	edit path "^(usr/clang/[^/]+/lib/clang/)\d+/" "\1$!(CLANGVER)/">
+<transform dir file link hardlink -> \
+	edit path "^(usr/clang/)\d+/" "\1$!(CLANGVER)/">
 
 # convert temporary macro names to their real name
 <transform set -> \

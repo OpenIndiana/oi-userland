@@ -2,7 +2,7 @@
  * ProFTPD - FTP server daemon
  * Copyright (c) 1997, 1998 Public Flood Software
  * Copyright (c) 2003-2010 The ProFTPD Project team
- * Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2022, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,24 @@
  * also has the concept of basic privileges that we can take away to further
  * restrict a process lower than what a normal user process can do, this
  * module removes some of those as well.
+ *
+ * One has to keep in mind proftpd session process (a forked child, which
+ * handles connection from client), needs more care when it comes to
+ * privileges. As soon as session process is forked, it continues to to run as
+ * _not_ privilege aware. The privileges are adjusted after the first
+ * authentication attempt. If the authentication is successful the session
+ * process drops privileges to set as follows:
+ * 5272:   /usr/lib/inet/proftpd
+ * flags = PRIV_AWARE|PRIV_PROC_SENSITIVE
+ *	E: basic,net_privaddr,proc_audit,!proc_exec,!proc_fork,!proc_info,
+ *		!proc_session
+ *	I: basic,!proc_exec,!proc_fork,!proc_info,!proc_session
+ *	P: basic,net_privaddr,proc_audit,!proc_exec,!proc_fork,!proc_info,
+ *		!proc_session
+ *	L: all
+ *
+ * On the other hand if the authentication attempt fails, the session
+ * process won't become privilege aware.
  */
 
 #include <stdio.h>
@@ -55,11 +73,15 @@
 #define	PRIV_USE_SETID			0x0020
 #define	PRIV_USE_FILE_OWNER		0x0040
 #define	PRIV_DROP_FILE_WRITE		0x0080
+#define	PRIV_USE_TASKID			0x0100
+#define	PRIV_USE_CHROOT			0x0200
+#define	PRIV_USE_AUDIT			0x0400
 
 #define	PRIV_SOL_ROOT_PRIVS	\
 	(PRIV_USE_FILE_CHOWN | PRIV_USE_FILE_CHOWN_SELF | \
 	PRIV_USE_DAC_READ | PRIV_USE_DAC_WRITE | PRIV_USE_DAC_SEARCH | \
-	PRIV_USE_FILE_OWNER)
+	PRIV_USE_FILE_OWNER | PRIV_USE_SETID | PRIV_USE_TASKID | \
+	PRIV_USE_CHROOT | PRIV_USE_AUDIT)
 
 static unsigned int solaris_priv_flags = 0;
 static unsigned char use_privs = TRUE;
@@ -68,6 +90,7 @@ MODRET set_solaris_priv(cmd_rec *cmd) {
   unsigned int flags = 0;
   config_rec *c = NULL;
   register unsigned int i = 0;
+  char **argv = (char **)(cmd->argv);
 
   if (cmd->argc - 1 < 1)
     CONF_ERROR(cmd, "need at least one parameter");
@@ -78,36 +101,35 @@ MODRET set_solaris_priv(cmd_rec *cmd) {
   flags |= PRIV_USE_FILE_CHOWN;
 
   for (i = 1; i < cmd->argc; i++) {
-    char *cm = cmd->argv[i];
-    char *cp = cmd->argv[i];
+    char *cp = argv[i];
     cp++;
 
-    if (cm[0] != '+' && cm[0] != '-')
+    if (*argv[i] != '+' && *argv[i] != '-')
       CONF_ERROR(cmd, pstrcat(cmd->tmp_pool, ": bad option: '",
-        cm, "'", NULL));
+        argv[i], "'", NULL));
 
     if (strcasecmp(cp, "PRIV_USE_FILE_CHOWN") == 0) {
-      if (cm[0] == '-')
+      if (*argv[i] == '-')
         flags &= ~PRIV_USE_FILE_CHOWN;
 
     } else if (strcasecmp(cp, "PRIV_FILE_CHOWN_SELF") == 0) {
-      if (cm[0] == '-')
+      if (*argv[i] == '-')
         flags &= ~PRIV_USE_FILE_CHOWN_SELF;
 
     } else if (strcasecmp(cp, "PRIV_DAC_READ") == 0) {
-      if (cm[0] == '+')
+      if (*argv[i] == '+')
         flags |= PRIV_USE_DAC_READ;
 
     } else if (strcasecmp(cp, "PRIV_DAC_WRITE") == 0) {
-      if (cm[0] == '+')
+      if (*argv[i] == '+')
         flags |= PRIV_USE_DAC_WRITE;
 
     } else if (strcasecmp(cp, "PRIV_DAC_SEARCH") == 0) {
-      if (cm[0] == '+')
+      if (*argv[i] == '+')
         flags |= PRIV_USE_DAC_SEARCH;
 
     } else if (strcasecmp(cp, "PRIV_FILE_OWNER") == 0) {
-      if (cm[0] == '+')
+      if (*argv[i] == '+')
         flags |= PRIV_USE_FILE_OWNER;
 
     } else {
@@ -116,7 +138,7 @@ MODRET set_solaris_priv(cmd_rec *cmd) {
     }
   }
 
-  c = add_config_param(cmd->argv[0], 1, NULL);
+  c = add_config_param(argv[0], 1, NULL);
   c->argv[0] = pcalloc(c->pool, sizeof(unsigned int));
   *((unsigned int *) c->argv[0]) = flags;
 
@@ -149,9 +171,8 @@ MODRET set_solaris_priv_engine(cmd_rec *cmd) {
  * successfully completed, which means authentication is successful,
  * so we can "tweak" our root access down to almost nothing.
  */
-MODRET solaris_priv_post_pass(cmd_rec *cmd) {
+MODRET solaris_priv_post_passwd(cmd_rec *cmd, unsigned int priv_flags) {
   int res = -1;
-  int priv_flags = solaris_priv_flags;
   priv_set_t *p = NULL;
   priv_set_t *i = NULL;
 
@@ -222,6 +243,15 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   if (priv_flags & PRIV_DROP_FILE_WRITE)
     priv_delset(p, PRIV_FILE_WRITE);
 
+  if (priv_flags & PRIV_USE_TASKID)
+    priv_addset(p, PRIV_PROC_TASKID);
+
+  if (priv_flags & PRIV_USE_CHROOT)
+    priv_addset(p, PRIV_PROC_CHROOT);
+
+  if (priv_flags & PRIV_USE_AUDIT)
+    priv_addset(p, PRIV_SYS_AUDIT);
+
   res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
   res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
 
@@ -245,7 +275,13 @@ out:
   if (res != -1) {
     /* That's it!  Disable all further id switching */
     session.disable_id_switching = TRUE;
-
+    /*
+     * unfortunately there are some proftpd modules (e.g. mod_auth_pam.c),
+     * which just override 'disable_id_switching' above. This is of course
+     * very futile on Oracle Solaris. Hence we just introduce our own specific
+     * flag
+     */
+    session.priv_aware = TRUE;
   } else {
     pr_log_pri(PR_LOG_NOTICE, MOD_SOLARIS_PRIV_VERSION ": attempt to configure "
       "privileges failed, reverting to normal operation");
@@ -349,6 +385,8 @@ static int solaris_priv_sess_init(void) {
       c = find_config(main_server->conf, CONF_PARAM, "RootRevoke", FALSE);
       if (c &&
           *((unsigned char *) c->argv[0]) == TRUE) {
+        use_setuid = FALSE;
+      } else {
         use_setuid = TRUE;
       }
     }
@@ -362,6 +400,10 @@ static int solaris_priv_sess_init(void) {
   }
 
   return 0;
+}
+
+MODRET solaris_priv_post_passwd_ok(cmd_rec *rec) {
+  return (solaris_priv_post_passwd(rec, solaris_priv_flags));
 }
 
 static int solaris_priv_module_init(void) {
@@ -380,7 +422,7 @@ static conftable solaris_priv_conftab[] = {
 };
 
 static cmdtable solaris_priv_cmdtab[] = {
-  { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
+  { POST_CMD, C_PASS, G_NONE, solaris_priv_post_passwd_ok, FALSE, FALSE },
   { 0, NULL }
 };
 

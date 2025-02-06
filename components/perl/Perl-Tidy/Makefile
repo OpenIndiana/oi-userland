@@ -11,24 +11,24 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Perl::Tidy
+#   $WS_TOOLS/perl-integrate-module Perl-Tidy
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Perl::Tidy
-HUMAN_VERSION =			20240511
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Perl::Tidy - indent and reformat perl scripts
+COMPONENT_NAME =		Perl-Tidy
+HUMAN_VERSION =			20250105
+COMPONENT_SUMMARY =		indent and reformat perl scripts
 COMPONENT_CPAN_AUTHOR =		SHANCOCK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47ff9e8ce98b5a43dc2d9ce4f02b9af3f4824a5fd912473edc9c16dc595468f2
+	sha256:d2cea2b909da69ab6d09f00dcb27cd9551184a5e4267d825da15d2f52e228632
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

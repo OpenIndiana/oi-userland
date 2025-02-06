@@ -12,45 +12,39 @@
 # Copyright 2016 Aurelien Larcher
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libraw
-COMPONENT_VERSION= 0.21.2
+COMPONENT_VERSION= 0.21.3
 COMPONENT_SUMMARY= libraw - library for reading RAW files obtained from digital photo cameras
 COMPONENT_PROJECT_URL= https://www.libraw.org/
 COMPONENT_SRC_NAME= LibRaw
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/data/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:fe7288013206854baf6e4417d0fb63ba4ed7227bf36fff021992671c2dd34b03
+COMPONENT_ARCHIVE_HASH= sha256:dba34b7fc1143503942fa32ad9db43e94f714e62a4a856e91617f8f3e1e0aa5c
 COMPONENT_FMRI= image/library/libraw
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE= CDDLv1.0,LGPLv2.1
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
-#TEST_TARGET= $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION += ( cd $(@D); autoreconf -fiv )
-
-# Use default libjpeg
-CXXFLAGS += $(JPEG_CPPFLAGS)
-CXXFLAGS += $(JPEG_CXXFLAGS)
-CONFIGURE_ENV += LDFLAGS="$(JPEG_LDFLAGS)"
-CONFIGURE_ENV += LIBS="$(JPEG_LDFLAGS)"
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-jpeg
 CONFIGURE_OPTIONS += --enable-jasper
 CONFIGURE_OPTIONS += --enable-lcms
-CONFIGURE_OPTIONS += --disable-demosaic-pack-gpl2
-CONFIGURE_OPTIONS += --disable-demosaic-pack-gpl3
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += codec/jasper
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
