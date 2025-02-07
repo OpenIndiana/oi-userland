@@ -13,10 +13,14 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD = yes
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			googletest
 COMPONENT_VERSION=		1.15.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Google test framework
 COMPONENT_PROJECT_URL=	https://google.github.io/googletest/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,13 +32,14 @@ COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE=	 	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	LICENSE
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 DROP_STATIC_LIBRARIES= yes
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+# build tests for googletest - see CONTRIBUTING.md
+CMAKE_OPTIONS += -Dgtest_build_tests=ON -Dgmock_build_tests=ON
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
