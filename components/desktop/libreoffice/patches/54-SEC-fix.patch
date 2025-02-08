@@ -9,3 +9,25 @@
  /**
   * An RTF destination state is the last open destination control word.
   *
+--- libreoffice-25.2.0.0.alpha1/sw/source/writerfilter/rtftok/rtftokenizer.hxx.old	2024-12-04 03:10:23.504242665 -0500
++++ libreoffice-25.2.0.0.alpha1/sw/source/writerfilter/rtftok/rtftokenizer.hxx	2024-12-04 03:11:18.978458899 -0500
+@@ -27,6 +27,8 @@
+ 
+ namespace writerfilter::rtftok
+ {
++// fix error with SEC being defined elsewhere
++#undef SEC
+ /// RTF tokenizer that separates control words from text.
+ class RTFTokenizer final : public virtual SvRefBase
+ {
+--- libreoffice-25.2.0.0.alpha1/sw/source/writerfilter/rtftok/rtfskipdestination.hxx.old	2024-12-04 03:10:29.542776709 -0500
++++ libreoffice-25.2.0.0.alpha1/sw/source/writerfilter/rtftok/rtfskipdestination.hxx	2024-12-04 03:12:23.645993239 -0500
+@@ -11,6 +11,8 @@
+ 
+ namespace writerfilter::rtftok
+ {
++// fix error with SEC being defined elsewhere
++#undef SEC
+ class RTFListener;
+ 
+ /// Skips a destination after a not parsed control word if it was prefixed with \*

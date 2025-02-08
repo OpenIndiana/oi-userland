@@ -1,0 +1,42 @@
+diff -Naur libreoffice-25.2.0.0.alpha1/external/skia.old/solaris-proc-a.out.patch libreoffice-25.2.0.0.alpha1/external/skia/solaris-proc-a.out.patch
+--- libreoffice-25.2.0.0.alpha1/external/skia.old/solaris-proc-a.out.patch	1969-12-31 19:00:00.000000000 -0500
++++ libreoffice-25.2.0.0.alpha1/external/skia/solaris-proc-a.out.patch	2024-11-27 09:37:31.409031843 -0500
+@@ -0,0 +1,27 @@
++--- skia/src/utils/SkGetExecutablePath_linux.cpp.old	2024-11-27 09:33:12.178161573 -0500
+++++ skia/src/utils/SkGetExecutablePath_linux.cpp	2024-11-27 09:34:49.212189661 -0500
++@@ -7,7 +7,12 @@
++ 
++ #include "src/utils/SkGetExecutablePath.h"
++ 
+++#ifdef __sun__
+++#include <limits.h>
+++#else
++ #include <linux/limits.h>
+++#endif
+++
++ #include <sys/types.h>
++ #include <unistd.h>
++ #include <cstddef>
++@@ -16,7 +21,11 @@
++ 
++ std::string SkGetExecutablePath() {
++     std::string result(PATH_MAX, '\0');
+++#ifdef __sun__
+++    ssize_t len = readlink("/proc/self/a.out", result.data(), result.size() - 1);
+++#else
++     ssize_t len = readlink("/proc/self/exe", result.data(), result.size() - 1);
+++#endif
++     if (len < 0 || static_cast<size_t>(len) >= PATH_MAX - 1) {
++         result.clear();
++     } else {
+diff -Naur libreoffice-25.2.0.0.alpha1/external/skia.old/UnpackedTarball_skia.mk libreoffice-25.2.0.0.alpha1/external/skia/UnpackedTarball_skia.mk
+--- libreoffice-25.2.0.0.alpha1/external/skia.old/UnpackedTarball_skia.mk	2024-11-22 15:05:31.000000000 -0500
++++ libreoffice-25.2.0.0.alpha1/external/skia/UnpackedTarball_skia.mk	2024-11-27 09:39:38.239947372 -0500
+@@ -41,6 +41,7 @@
+     help-msvc-analyzer.patch \
+     always_inline_and_multiversioning_conflict.patch.1 \
+     windows-define-conflict.patch.1 \
++    solaris-proc-a.out.patch \
+ 
+ $(eval $(call gb_UnpackedTarball_set_patchlevel,skia,1))
+ 
