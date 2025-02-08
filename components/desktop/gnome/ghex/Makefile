@@ -15,12 +15,12 @@
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS = yes
 
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghex
-HUMAN_VERSION=		46.1
+HUMAN_VERSION=		46.2
 COMPONENT_SUMMARY=      Hex editor for the GNOME desktop
-COMPONENT_ARCHIVE_HASH=	sha256:8a13975474eee27719b29ad763f1b24760a1aede6d7da4b623703070bc26e9fd
+COMPONENT_ARCHIVE_HASH=	sha256:a8f276a36397a70d20b862ff7c664243d9cf2891deb9be06d745a4f1ac661f31
 COMPONENT_FMRI=         desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=	GPL-2.0-only
