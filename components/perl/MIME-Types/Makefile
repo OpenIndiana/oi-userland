@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module MIME::Types
+#   $WS_TOOLS/perl-integrate-module MIME-Types
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		MIME::Types
-HUMAN_VERSION =			2.26
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		MIME::Types - Definition of MIME types
+COMPONENT_NAME =		MIME-Types
+HUMAN_VERSION =			2.27
+COMPONENT_SUMMARY =		Definition of MIME types
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc738483cb4cdb47d61e85fe9304fa929aa9ab927e3171ec2ba2ab1cd7cefdff
+	sha256:276cd4488bf1d4f477d67a05d4d0c10512b18ef25f9e06d21b34ce69e64f8bdc
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,4 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/mojolicious
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
