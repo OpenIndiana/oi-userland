@@ -1,14 +1,10 @@
-$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
-The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
-
-  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict, default_loop_scope=None
-collecting ... collected 46 items
+asyncio: mode=auto, asyncio_default_fixture_loop_scope=function
+collecting ... collected 45 items
 
 tests/test_impl.py::test_single_addr_info_errors PASSED
 tests/test_impl.py::test_single_addr_success PASSED
@@ -39,8 +35,6 @@ RuntimeError: coroutine ignored GeneratorExit)
 tests/test_impl.py::test_handling_system_exit XFAIL (raises
 RuntimeError: coroutine ignored GeneratorExit)
 tests/test_impl.py::test_cancellation_is_not_swallowed PASSED
-tests/test_impl.py::test_python_38_compat SKIPPED (requires < python
-3.8.2)
 tests/test_impl.py::test_single_addr_info_close_errors[connect_side_effect0] PASSED
 tests/test_impl.py::test_single_addr_info_close_errors[connect_side_effect1] PASSED
 tests/test_init.py::test_init PASSED
@@ -61,7 +55,7 @@ tests/test_utils.py::test_remove_addr_infos PASSED
 tests/test_utils.py::test_remove_addr_infos_slow_path PASSED
 tests/test_utils.py::test_addr_to_addr_infos PASSED
 
-3 files skipped due to complete coverage.
+4 files skipped due to complete coverage.
 
 
-======== 41 passed, 4 skipped, 2 xfailed ========
+======== 41 passed, 3 skipped, 2 xfailed ========
