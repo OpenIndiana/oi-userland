@@ -1,0 +1,165 @@
+We have no pytest-run-parallel packaged yet.
+
+--- pydantic_core-2.29.0/pyproject.toml.orig
++++ pydantic_core-2.29.0/pyproject.toml
+@@ -50,7 +50,6 @@
+     # pytest-examples currently depends on aiohttp via black; we don't want to build it on platforms like aarch64 musllinux in CI
+     'pytest-examples; implementation_name == "cpython" and platform_machine == "x86_64"',
+     'pytest-mock',
+-    'pytest-run-parallel',
+     'pytest-timeout',
+     'python-dateutil',
+     # numpy doesn't offer prebuilt wheels for all versions and platforms we test in CI e.g. aarch64 musllinux
+--- pydantic_core-2.29.0/tests/test_docstrings.py.orig
++++ pydantic_core-2.29.0/tests/test_docstrings.py
+@@ -14,7 +14,6 @@
+ 
+ @pytest.mark.skipif(CodeExample is None or sys.platform not in {'linux', 'darwin'}, reason='Only on linux and macos')
+ @pytest.mark.parametrize('example', find_examples('python/pydantic_core/core_schema.py'), ids=str)
+-@pytest.mark.thread_unsafe  # TODO investigate why pytest_examples seems to be thread unsafe here
+ def test_docstrings(example: CodeExample, eval_example: EvalExample):
+     eval_example.set_config(quotes='single')
+ 
+@@ -28,7 +27,6 @@
+ 
+ @pytest.mark.skipif(CodeExample is None or sys.platform not in {'linux', 'darwin'}, reason='Only on linux and macos')
+ @pytest.mark.parametrize('example', find_examples('README.md'), ids=str)
+-@pytest.mark.thread_unsafe  # TODO investigate why pytest_examples seems to be thread unsafe here
+ def test_readme(example: CodeExample, eval_example: EvalExample):
+     eval_example.set_config(line_length=100, quotes='single')
+     if eval_example.update_examples:
+--- pydantic_core-2.29.0/tests/test_hypothesis.py.orig
++++ pydantic_core-2.29.0/tests/test_hypothesis.py
+@@ -19,14 +19,12 @@
+ 
+ 
+ @given(strategies.datetimes())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_datetime_datetime(datetime_schema, data):
+     assert datetime_schema.validate_python(data) == data
+ 
+ 
+ @pytest.mark.skipif(sys.platform == 'win32', reason='Can fail on windows, I guess due to 64-bit issue')
+ @given(strategies.integers(min_value=-11_676_096_000, max_value=253_402_300_799_000))
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_datetime_int(datetime_schema, data):
+     try:
+         if abs(data) > 20_000_000_000:
+@@ -43,7 +41,6 @@
+ 
+ 
+ @given(strategies.binary())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_datetime_binary(datetime_schema, data):
+     try:
+         datetime_schema.validate_python(data)
+@@ -92,7 +89,6 @@
+ 
+ @pytest.mark.skipif(sys.platform == 'emscripten', reason='Seems to fail sometimes on pyodide no idea why')
+ @given(strategies.from_type(BranchModel))
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_recursive(definition_schema, data):
+     assert definition_schema.validate_python(data) == data
+ 
+@@ -112,7 +108,6 @@
+ 
+ 
+ @given(branch_models_with_cycles())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_definition_cycles(definition_schema, data):
+     try:
+         assert definition_schema.validate_python(data) == data
+@@ -135,7 +130,6 @@
+ 
+ 
+ @given(strategies.timedeltas())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_pytimedelta_as_timedelta(dt):
+     v = SchemaValidator({'type': 'timedelta', 'gt': dt})
+     # simplest way to check `pytimedelta_as_timedelta` is correct is to extract duration from repr of the validator
+@@ -156,7 +150,6 @@
+ 
+ 
+ @given(strategies.text())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_urls_text(url_validator, text):
+     try:
+         url_validator.validate_python(text)
+@@ -173,7 +166,6 @@
+ 
+ 
+ @given(strategies.text())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_multi_host_urls_text(multi_host_url_validator, text):
+     try:
+         multi_host_url_validator.validate_python(text)
+@@ -190,7 +182,6 @@
+ 
+ 
+ @given(strategies.text())
+-@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
+ def test_serialize_string(str_serializer: SchemaSerializer, data):
+     assert str_serializer.to_python(data) == data
+     assert json.loads(str_serializer.to_json(data)) == data
+--- pydantic_core-2.29.0/tests/validators/test_frozenset.py.orig
++++ pydantic_core-2.29.0/tests/validators/test_frozenset.py
+@@ -82,7 +82,6 @@
+         ('abc', Err('Input should be a valid frozenset')),
+     ],
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_frozenset_ints_python(input_value, expected):
+     v = SchemaValidator({'type': 'frozenset', 'items_schema': {'type': 'int'}})
+     if isinstance(expected, Err):
+@@ -166,7 +165,6 @@
+         ),
+     ],
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_frozenset_kwargs_python(kwargs: dict[str, Any], input_value, expected):
+     v = SchemaValidator({'type': 'frozenset', **kwargs})
+     if isinstance(expected, Err):
+--- pydantic_core-2.29.0/tests/validators/test_list.py.orig
++++ pydantic_core-2.29.0/tests/validators/test_list.py
+@@ -71,7 +71,6 @@
+     ],
+     ids=repr,
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_list_int(input_value, expected):
+     v = SchemaValidator({'type': 'list', 'items_schema': {'type': 'int'}})
+     if isinstance(expected, Err):
+@@ -171,7 +170,6 @@
+         ),
+     ],
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_list_length_constraints(kwargs: dict[str, Any], input_value, expected):
+     v = SchemaValidator({'type': 'list', **kwargs})
+     if isinstance(expected, Err):
+@@ -513,7 +511,6 @@
+     ],
+     ids=repr,
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_list_allowed_inputs_python(testcase: ListInputTestCase):
+     v = SchemaValidator(core_schema.list_schema(core_schema.int_schema(), strict=testcase.strict))
+     if isinstance(testcase.output, Err):
+--- pydantic_core-2.29.0/tests/validators/test_set.py.orig
++++ pydantic_core-2.29.0/tests/validators/test_set.py
+@@ -73,7 +73,6 @@
+         ('abc', Err('Input should be a valid set')),
+     ],
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_set_ints_python(input_value, expected):
+     v = SchemaValidator({'type': 'set', 'items_schema': {'type': 'int'}})
+     if isinstance(expected, Err):
+@@ -163,7 +162,6 @@
+     ],
+     ids=repr,
+ )
+-@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
+ def test_set_kwargs(kwargs: dict[str, Any], input_value, expected):
+     v = SchemaValidator({'type': 'set', **kwargs})
+     if isinstance(expected, Err):
