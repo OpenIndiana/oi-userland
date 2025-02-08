@@ -4,13 +4,14 @@ py$(PYV): commands[0]> python -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
+configfile: pyproject.toml
 collecting ... collected 9 items
 
+tests/test_hello.py::test_read_hello PASSED
 tests/test_hello.py::test_change_test_files PASSED
+tests/test_hello.py::test_read_spam_from_other_dir PASSED
 tests/test_hello.py::test_file_override PASSED
 tests/test_hello.py::test_local_directory PASSED
-tests/test_hello.py::test_read_hello PASSED
-tests/test_hello.py::test_read_spam_from_other_dir PASSED
 tests/test_hello.py::test_shared_directory PASSED
 tests/test_nonexistent.py::test_missing_data_dir_starts_empty PASSED
 tests/test_pathlib.py::test_win32_longpath_idempotent PASSED
