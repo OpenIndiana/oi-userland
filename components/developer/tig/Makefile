@@ -17,13 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.5.11
+COMPONENT_VERSION=	2.5.12
 COMPONENT_SUMMARY=	Text-mode interface for git
 COMPONENT_DESCRIPTION=	Tig is an ncurses-based text-mode interface for git. It functions mainly as a Git repository browser, but can also assist in staging changes for commit at chunk level and act as a pager for output from various Git commands.
 COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b36ef52b1a19d87257adfa9047cc3e21d6bd528bbd28458fe49003eb3e374aa7
+COMPONENT_ARCHIVE_HASH= sha256:5dda8a098810bb499096e17fc9f69c0a5915a23f46be27209fc8195d7a792108
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/tig
 COMPONENT_CLASSIFICATION= Development/Source Code Management
