@@ -24,15 +24,8 @@
 # Rules and Macros for building opens source software that uses AT&T's package
 # tool.
 #
-# To use these rules, include ../make-rules/attpackagemake.mk in your Makefile
-# and define "build", "install" targets appropriate to building your component.
-# Ex:
-#
-# 	build:		$(BUILD_32) \
-#	 		$(BUILD_64)
-# 
-#	install:	$(INSTALL_32) \
-#	 		$(INSTALL_64)
+# To use these rules, set BUILD_STYLE to attpackagemake and include
+# $(WS_MAKE_RULES)/common.mk in your Makefile.
 #
 # Any additional pre/post configure, build, or install actions can be specified
 # in your Makefile by setting them in on of the following macros:
@@ -44,12 +37,16 @@
 #	COMPONENT_BUILD_TARGETS, COMPONENT_INSTALL_TARGETS
 #
 
-# Environment variables and arguments passed into the build and install
-# environment(s).  These are the initial settings.
+# Configure
+COMPONENT_CONFIGURE_ACTION = true
+
+# Build
 COMPONENT_BUILD_ENV += CC_EXPLICIT="$(CC)"
 COMPONENT_BUILD_ENV += PATH=$(dir $(CC)):$(PATH)
 COMPONENT_BUILD_ENV += CC=$(notdir $(CC))
 COMPONENT_BUILD_ENV += NPROC="$(NPROC)"
+
+COMPONENT_BUILD_CMD = bin/package make
 
 # This explicitly exports the build type for 32/64 bit distinction 
 COMPONENT_BUILD_ARGS = \
@@ -57,65 +54,29 @@ COMPONENT_BUILD_ARGS = \
 						CCFLAGS="$(CFLAGS)" \
 						LDFLAGS="$(CXXFLAGS)" 
 
-# The install and test process needs the same environment as the build
+# Install
+# The install process needs the same environment as the build
 COMPONENT_INSTALL_ENV = $(COMPONENT_BUILD_ENV)
-COMPONENT_TEST_ENV = $(COMPONENT_BUILD_ENV)
+COMPONENT_INSTALL_CMD = bin/package flat
 COMPONENT_INSTALL_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
-COMPONENT_TEST_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
 
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
-	$(COMPONENT_PRE_BUILD_ACTION)
-	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
-   		bin/package make $(COMPONENT_BUILD_TARGETS) $(COMPONENT_BUILD_ARGS)
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
+COMPONENT_PRE_INSTALL_ACTION += $(RM) -r $(PROTO_DIR)/$(MACH$(BITS)) ;
+COMPONENT_PRE_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)/$(MACH$(BITS)) ;
 
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	$(RM) -r $(PROTO_DIR)/$(MACH$(BITS)); $(MKDIR) $(PROTO_DIR)/$(MACH$(BITS));
-	cd $(@D); $(ENV) $(COMPONENT_INSTALL_ENV) \
-		bin/package flat $(COMPONENT_INSTALL_TARGETS) \
-		$(COMPONENT_INSTALL_ARGS) \
+COMPONENT_INSTALL_ACTION ?= \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS) \
+		$(COMPONENT_INSTALL_TARGETS) \
 		$(PROTO_DIR)/$(MACH$(BITS)) $(COMPONENT_INSTALL_PACKAGES) 
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
 
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		bin/package test $(COMPONENT_TEST_TARGETS) \
-		$(COMPONENT_TEST_ARGS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		bin/package test $(COMPONENT_TEST_TARGETS) \
-		$(COMPONENT_TEST_ARGS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
+# Test
+# The test process needs the same environment as the build
+COMPONENT_TEST_ENV = $(COMPONENT_BUILD_ENV)
+COMPONENT_TEST_CMD = bin/package test
+COMPONENT_TEST_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Use common rules
+USE_COMMON_RULES = yes
