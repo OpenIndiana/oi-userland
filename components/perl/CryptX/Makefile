@@ -15,16 +15,15 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		CryptX
-HUMAN_VERSION =			0.084
-COMPONENT_SUMMARY =		CryptX - Cryptographic toolkit
+COMPONENT_NAME =		CryptX
+HUMAN_VERSION =			0.085
+COMPONENT_SUMMARY =		Cryptographic toolkit
 COMPONENT_CPAN_AUTHOR =		MIK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3b392d2dfdac93c1597f5406ac5cb51307b611b825b95206b1a5914205f9aadb
+	sha256:be817c6d254c236d2c42958a1bcba4b9dbee1855b7160fa2ecf9cf2934b33ffe
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,5 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/json
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
