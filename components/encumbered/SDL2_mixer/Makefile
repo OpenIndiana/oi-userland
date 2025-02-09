@@ -25,16 +25,17 @@
 
 # This file (by default) provides the package with encumbered code
 # or inseparable run-time dependencies:
-USE_ENCUMBERED?=yes
+
+USE_ENCUMBERED?= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL2_mixer
-COMPONENT_VERSION=      2.8.0
+COMPONENT_VERSION=      2.8.1
 COMPONENT_PROJECT_URL=  https://github.com/libsdl-org/SDL_mixer
 COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1cfb34c87b26dbdbc7afd68c4f545c0116ab5f90bbfecc5aebe2a9cb4bb31549
+COMPONENT_ARCHIVE_HASH= sha256:cb760211b056bfe44f4a1e180cc7cb201137e4d1572f2002cc1be728efd22660
 COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl2-mixer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -53,8 +54,6 @@ PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./autogen.sh )
 
-CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBEXECDIR)
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-music-cmd
 CONFIGURE_OPTIONS +=	--enable-music-wave
