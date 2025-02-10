@@ -24,6 +24,16 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Runtime libraries for protobuf 24.4 used to live in this package.
+#
+# TODO: This should be removed once nothing depends on unversioned protobuf
+# package to get runtime libraries.
+#
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/$(MACH64)/libprotobuf.so.24.4.0
+
+# Depend on runtime libraries to make sure .so symlinks are not dead.
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/$(MACH64)/libprotobuf.so.$(HUMAN_VERSION).0
+
 link path=usr/bin/protoc target=protoc-$(HUMAN_VERSION).0
 file path=usr/bin/protoc-$(HUMAN_VERSION).0
 file path=usr/include/google/protobuf/any.h
@@ -267,12 +277,9 @@ file path=usr/lib/$(MACH64)/cmake/utf8_range/utf8_range-targets-noconfig.cmake
 file path=usr/lib/$(MACH64)/cmake/utf8_range/utf8_range-targets.cmake
 link path=usr/lib/$(MACH64)/libprotobuf-lite.so \
     target=libprotobuf-lite.so.$(HUMAN_VERSION).0
-file path=usr/lib/$(MACH64)/libprotobuf-lite.so.$(HUMAN_VERSION).0
 link path=usr/lib/$(MACH64)/libprotobuf.so \
     target=libprotobuf.so.$(HUMAN_VERSION).0
-file path=usr/lib/$(MACH64)/libprotobuf.so.$(HUMAN_VERSION).0
 link path=usr/lib/$(MACH64)/libprotoc.so target=libprotoc.so.$(HUMAN_VERSION).0
-file path=usr/lib/$(MACH64)/libprotoc.so.$(HUMAN_VERSION).0
 file path=usr/lib/$(MACH64)/libutf8_range.a
 file path=usr/lib/$(MACH64)/libutf8_validity.a
 file path=usr/lib/$(MACH64)/pkgconfig/protobuf-lite.pc
