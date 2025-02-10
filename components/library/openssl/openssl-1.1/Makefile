@@ -31,7 +31,7 @@ COMPONENT_NAME=	openssl-$(COMPONENT_VERSION_SHORT)
 # and HUMAN_VERSION.
 COMPONENT_VERSION=	1.1.1.23
 HUMAN_VERSION=		1.1.1w
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	OpenSSL - a Toolkit for Transport Layer (TLS v1+) protocols and general purpose cryptographic library
 COMPONENT_PROJECT_URL=	https://www.openssl.org/
 COMPONENT_SRC=		openssl-$(HUMAN_VERSION)
@@ -46,12 +46,15 @@ COMPONENT_LICENSE=	OpenSSL, SSLeay
 # COPY_COMMON_FILES is there so that the copy is called as soon as
 # the Makefile is parsed.
 PATCH_DIR=patches-all
-COPY_COMMON_FILES:= rm -rf $(PATCH_DIR) && $(shell rsync -ac patches/ $(PATCH_DIR) && \
+COPY_COMMON_FILES:= $(RM) -rf $(PATCH_DIR) && $(shell rsync -ac patches/ $(PATCH_DIR) && \
 	cp -p ../common/patches/043-x86_asm_illegal_subtraction.patch $(PATCH_DIR))
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(GCC_ROOT)/bin:$(PATH.illumos)
+
+# fix error: implicit declaration of function 'bn_mod_exp_mont_fixed_top'; did you mean 'BN_mod_exp_mont_word'? [-Wimplicit-function-declaration]
+CFLAGS += -Wno-error=implicit-function-declaration
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
@@ -156,6 +159,9 @@ COMPONENT_TEST_TRANSFORMS = \
         '-e "/skipped/p" ' \
         '-e "/ok/p" ' \
         '-e "/success/p" '
+
+clean::
+	$(RM) -rf $(PATCH_DIR)
 
 REQUIRED_PACKAGES += developer/build/makedepend
 
