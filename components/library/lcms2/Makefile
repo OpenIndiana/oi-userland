@@ -21,29 +21,23 @@
 # Copyright (c) 2015-2017, Aurelien Larcher 
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        lcms2
-COMPONENT_MJR_VERSION=	2.16
+COMPONENT_MJR_VERSION=	2.17
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION)
 COMPONENT_SUMMARY=      The Little Color Management System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.littlecms.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d873d34ad8b9b4cea010631f1a6228d2087475e4dc5e763eb81acc23d9d45a51
+COMPONENT_ARCHIVE_HASH=	sha256:d11af569e42a1baa1650d20ad61d12e41af4fead4aa7964a01f93b08b53ab074
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/lcms2
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 # Seems that we have no other way to designate that we want large file support.
 CFLAGS += $(CPP_LARGEFILES)
@@ -64,17 +58,8 @@ CONFIGURE_OPTIONS += --with-pic
 COMPONENT_PRE_TEST_ACTION = ( cd $(@D); $(MAKE) -C testbed clean )
 
 COMPONENT_TEST_ARGS = -k -i
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s|^.*test bed.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*MPixel.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*Single block hit.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*$(CC).*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*source=.*libtool=no.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^.*DEPDIR=.deps.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*(ignored)*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Leaving directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "s|^make.*: Entering directory.*$$|XXX_REMOVE_XXX|g" ' \
-	'-e "/^XXX_REMOVE_XXX$$/d" '
+COMPONENT_TEST_TRANSFORMS += ' -n '
+COMPONENT_TEST_TRANSFORMS += ' -e "/Ok/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
