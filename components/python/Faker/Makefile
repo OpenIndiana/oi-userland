@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		faker
-HUMAN_VERSION =			35.2.0
+HUMAN_VERSION =			36.1.0
 COMPONENT_SUMMARY =		Faker is a Python package that generates fake data for you.
 COMPONENT_PROJECT_URL =		https://github.com/joke2k/faker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:28c24061780f83b45d9cb15a72b8f143b09d276c9ff52eb557744b7a89e8ba19
+	sha256:f40510350aecfe006f45cb3f8879b35e861367cf347f51a7f2ca2c0571fdcc0b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,9 +34,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
+PYTHON_REQUIRED_PACKAGES += library/python/tzdata
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
