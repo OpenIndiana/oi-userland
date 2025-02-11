@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-Random
-HUMAN_VERSION =			1.56
+HUMAN_VERSION =			1.57
 COMPONENT_SUMMARY =		Cryptographically Secure, True Random Number Generator.
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e1cb37e58f1da29d75b34d8933cf638a10fdf1c58f056d078ef382fc1bbaf4d5
+	sha256:9504676c0ce041103adfa7023f8c861c408061c902963414c1edbb2d88727515
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
