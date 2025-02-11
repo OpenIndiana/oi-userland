@@ -17,14 +17,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           netcdf-c
-COMPONENT_VERSION=        4.9.2
+COMPONENT_VERSION=        4.9.3
 COMPONENT_SUMMARY=        A set of software libraries and self-describing, machine-independent data formats. 
 COMPONENT_DESCRIPTION=    NetCDF (Network Common Data Form) is a set of software libraries and machine-independent data formats \
 	that support the creation, access, and sharing of array-oriented scientific data.
 COMPONENT_PROJECT_URL=    https://www.unidata.ucar.edu/software/netcdf/ 
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7
+COMPONENT_ARCHIVE_HASH=   sha256:990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff
 COMPONENT_ARCHIVE_URL=    https://github.com/Unidata/netcdf-c/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=           library/netcdf-c
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -38,8 +38,6 @@ CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --enable-hdf5
 CONFIGURE_OPTIONS += --with-plugin-dir=/usr/share/netcdf-c/plugins
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
