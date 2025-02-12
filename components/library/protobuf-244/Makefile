@@ -31,12 +31,13 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=      29.3
+COMPONENT_VERSION=      24.4
+COMPONENT_REVISION=		4
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:008a11cc56f9b96679b4c285fd05f46d317d685be3ab524b2a310be0fbad987e
+COMPONENT_ARCHIVE_HASH= sha256:616bb3536ac1fff3fb1a141450fa28b875e985712170ea7f1bfe5e5fc41e2cd8
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -48,11 +49,7 @@ COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
 
 include $(WS_MAKE_RULES)/common.mk
 
-# We need shared libraries, not static
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
-# Make pkglint happy by avoiding $ORIGIN in rpath
-CMAKE_OPTIONS += -DCMAKE_SKIP_INSTALL_RPATH=TRUE
-# Use external (our packaged) googletest
 CMAKE_OPTIONS += -Dprotobuf_USE_EXTERNAL_GTEST=ON
 CMAKE_OPTIONS += -Dprotobuf_ABSL_PROVIDER=package
 
