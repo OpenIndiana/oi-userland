@@ -19,15 +19,19 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			5.0.7
+HUMAN_VERSION =			5.2.1
 COMPONENT_SUMMARY =		Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/redis/redis-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8f611490b93c8109b50adc317b31bfd84fff31def3475b92e7e80bf39f48175b
+	sha256:fdb92ef773faac88c2bf80c47ecddbbdf93bae93363b4e6f9418b5686260420b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+COMPONENT_SRC =			redis-py-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,6 +62,12 @@ PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_json.py
 PYTEST_ADDOPTS += --ignore tests/test_timeseries.py
 PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_timeseries.py
 
+# https://github.com/redis/redis-py/issues/3508
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_cluster.py
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
 PYTHON_REQUIRED_PACKAGES += runtime/python
@@ -66,10 +76,10 @@ TEST_REQUIRED_PACKAGES.python += library/python/click
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/invoke
 TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/urllib3
 TEST_REQUIRED_PACKAGES.python += library/python/wheel
