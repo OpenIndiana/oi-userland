@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			6.7
+HUMAN_VERSION =			7.0
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f5550a495e3f15f4ba85073062aac62fc8435bfa04bee8d8ac90a0c03d01a3f5
+	sha256:06245c359d203ac95c562cec6cac53436ce21bf3af33775b81b3ae20b55700a0
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
