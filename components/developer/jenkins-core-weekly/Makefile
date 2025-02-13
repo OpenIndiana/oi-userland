@@ -30,8 +30,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			weekly
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	496
-COMPONENT_ARCHIVE_HASH=		sha256:fed109b3052c90ac95341d2a3bdf7284b1334168c20f4a503cacb1014103d682
+COMPONENT_MINOR_VERSION=	497
+COMPONENT_ARCHIVE_HASH=		sha256:9b0ea73ffff18dc9a1691f0c60a31a7a4b84951edc5e46851605c9264167d466
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -54,6 +54,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 CLEAN_PATHS += $(SOURCE_DIR)
+CLEAN_PATHS += $(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION)
 
 COMPONENT_POST_UNPACK_ACTION += ( $(MKDIR) $(SOURCE_DIR) );
 
