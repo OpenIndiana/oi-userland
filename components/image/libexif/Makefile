@@ -20,12 +20,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif
 COMPONENT_RELEASE= 0.6
-COMPONENT_VERSION= $(COMPONENT_RELEASE).24
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= $(COMPONENT_RELEASE).25
 COMPONENT_SUMMARY= EXIF tag parsing library for digital cameras
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e5f15eeab693028cfdc4c0d78f024e1ca78baa0e1f636dc443395e9fbb0a2b7a
+COMPONENT_ARCHIVE_HASH= sha256:b23af41f37019b8d591d4d9b42ba52fd30709b6767341aa887f9afe400c8408a
 COMPONENT_ARCHIVE_URL= https://github.com/libexif/libexif/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://libexif.github.io/
 COMPONENT_FMRI= image/library/libexif
@@ -39,8 +38,6 @@ COMPONENT_PREP_ACTION= (cd $(@D) && PATH="$(PATH)" autoreconf -fi)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-docs
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
