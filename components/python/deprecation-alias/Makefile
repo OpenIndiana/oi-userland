@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		deprecation-alias
-HUMAN_VERSION =			0.3.3
+HUMAN_VERSION =			0.4.0
 COMPONENT_SUMMARY =		A wrapper around 'deprecation' providing support for deprecated aliases.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/deprecation-alias
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/deprecation-alias/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b01ead461db334a056a34b3f0852a223671c50b8ff0f29c3aebd7f3a196cefa
+	sha256:a8a9822921faa2b59927894a9347400c471ba7fe41ef173be4e556ce118d20eb
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,9 +44,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/deprecation
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
