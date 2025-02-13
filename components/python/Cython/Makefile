@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cython
-HUMAN_VERSION =			3.0.11
+HUMAN_VERSION =			3.0.12
 COMPONENT_SUMMARY =		The Cython compiler for writing C extensions in the Python language.
 COMPONENT_PROJECT_URL =		https://cython.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7146dd2af8682b4ca61331851e6aebce9fe5158e75300343f80c07ca80b1faff
+	sha256:b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
