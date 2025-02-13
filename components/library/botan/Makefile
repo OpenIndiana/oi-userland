@@ -17,12 +17,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
-COMPONENT_VERSION= 3.6.1
+COMPONENT_VERSION= 3.7.1
 COMPONENT_SUMMARY= Crypto and TLS for Modern C++
 COMPONENT_PROJECT_URL= https://botan.randombit.net/
 COMPONENT_SRC= Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7cb8575d88d232c77174769d7f9e24bb44444160585986eebd66e749cb9a9089
+COMPONENT_ARCHIVE_HASH= sha256:fc0620463461caaea8e60f06711d7e437a3ad1eebd6de4ac29c14bbd901ccd1b
 COMPONENT_ARCHIVE_URL= https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/security/botan
 COMPONENT_CLASSIFICATION= System/Security
@@ -54,7 +54,6 @@ CONFIGURE_OPTIONS += --cpu=x86_64
 else
 CONFIGURE_OPTIONS += --cpu=sparc64
 endif
-
 CONFIGURE_OPTIONS += --disable-static-library
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --os solaris
@@ -66,12 +65,11 @@ CONFIGURE_OPTIONS += --with-python-versions=$(PYTHON_VERSION)
 # Make documentation consistent
 CONFIGURE_OPTIONS += --without-sphinx
 
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/in [0-9]*.[0-9]* msec //" ' \
-	' -e "s/in [0-9]*.[0-9]* sec //" ' \
-	' -n ' \
-	' -e "/ok/p" ' \
-	' -e "/:/p" '
+COMPONENT_TEST_TRANSFORMS += ' -e "s/in [0-9]*.[0-9]* msec //" '
+COMPONENT_TEST_TRANSFORMS += ' -e "s/in [0-9]*.[0-9]* sec //" '
+COMPONENT_TEST_TRANSFORMS += ' -n '
+COMPONENT_TEST_TRANSFORMS += ' -e "/ok/p" '
+COMPONENT_TEST_TRANSFORMS += ' -e "/:/p" '
 
 # Manually added dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

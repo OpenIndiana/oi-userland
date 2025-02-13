@@ -1,0 +1,19 @@
+--- libreoffice-25.2.0.0.alpha1/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx.old	2024-11-27 00:36:33.172061606 -0500
++++ libreoffice-25.2.0.0.alpha1/sdext/source/pdfimport/xpdfwrapper/pdfioutdev_gpl.cxx	2024-11-27 00:39:38.417861026 -0500
+@@ -1263,6 +1263,8 @@
+             normalize(mat[4]), normalize(mat[5])
+             );
+ 
++// error: no matching function for call to 'GfxImageColorMap::GfxImageColorMap(int, Object*, GfxDeviceRGBColorSpace*)' 
++#ifndef __sun__
+     PDFRectangle aBox;
+     aBox.x1 = pBbox[0];
+     aBox.y1 = pBbox[1];
+@@ -1326,6 +1328,7 @@
+     writePng_(aBuf, pRgbStr.get(), nBitmapWidth, nBitmapHeight, pRgbIdentityColorMap.get(),
+         pAlphaStr.get(), nBitmapWidth, nBitmapHeight, pGrayIdentityColorMap.get());
+     writeBinaryBuffer(aBuf);
++#endif
+ 
+     // If we return false here we can fall back to the slow path
+     return true;

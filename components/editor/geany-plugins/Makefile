@@ -15,11 +15,11 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      2.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Plugins for Geany editor
 COMPONENT_DESCRIPTION=	Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +40,8 @@ PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
 CFLAGS += -D_FILE_OFFSET_BITS=64
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_ENV += CHECK_CFLAGS="-I/usr/include/check"
 CONFIGURE_ENV += PYTHON=$(PYTHON.3.9.64)
@@ -64,7 +66,6 @@ REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtkspell3
 REQUIRED_PACKAGES += library/desktop/pango
-REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/libsoup
@@ -72,4 +73,3 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math

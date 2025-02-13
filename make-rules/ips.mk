@@ -672,3 +672,13 @@ CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-perl
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-python
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-ruby
 CLEAN_PATHS +=	$(GENERATED_ARCH_MANIFESTS)
+
+# If a component needs a runtime abseil-cpp library then it also needs the
+# abseil-cpp development files for building.  Add such dependency automatically
+# here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/abseil-cpp-/{p;s/-[^-]*$$//}'
+
+# If a component needs a runtime protobuf library then it also needs the
+# protobuf development files for building.  Add such dependency automatically
+# here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/protobuf-/{p;s/-[^-]*$$//}'

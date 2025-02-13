@@ -1,6 +1,6 @@
---- libreoffice-7.5.3.1/external/skia/Library_skia.mk.old	2023-04-22 20:48:42.387319778 -0400
-+++ libreoffice-7.5.3.1/external/skia/Library_skia.mk	2023-04-22 20:49:54.180660732 -0400
-@@ -96,7 +96,7 @@
+--- libreoffice-25.2.0.0.alpha1/external/skia/Library_skia.mk.~1~	2024-11-22 15:05:31.000000000 -0500
++++ libreoffice-25.2.0.0.alpha1/external/skia/Library_skia.mk	2024-12-02 01:33:18.558633273 -0500
+@@ -109,7 +109,7 @@
      libpng \
  ))
  
@@ -9,3 +9,12 @@
  $(eval $(call gb_Library_add_libs,skia,\
      -lm \
      -ldl \
+@@ -296,7 +296,7 @@
+ #
+ $(eval $(call gb_Library_add_generated_exception_objects,skia,\
+     UnpackedTarball/skia/tools/window/WindowContext \
+-	$(if $(filter LINUX,$(OS)),UnpackedTarball/skia/tools/window/unix/RasterWindowContext_unix) \
++	$(if $(filter LINUX SOLARIS,$(OS)),UnpackedTarball/skia/tools/window/unix/RasterWindowContext_unix) \
+     $(if $(filter WNT,$(OS)),UnpackedTarball/skia/tools/window/win/RasterWindowContext_win) \
+ ))
+ ifeq ($(SKIA_GPU),METAL)

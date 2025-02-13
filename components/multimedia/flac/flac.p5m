@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,11 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# drop 32 bit executables:
-<transform file path=.*/bin/$(MACH32)/.+ -> drop>
-
-file path=usr/bin/$(MACH32)/flac
-file path=usr/bin/$(MACH32)/metaflac
 file path=usr/bin/flac
 file path=usr/bin/metaflac
 file path=usr/include/FLAC++/all.h
@@ -44,20 +39,20 @@ file path=usr/include/FLAC/metadata.h
 file path=usr/include/FLAC/ordinals.h
 file path=usr/include/FLAC/stream_decoder.h
 file path=usr/include/FLAC/stream_encoder.h
-link path=usr/lib/$(MACH64)/libFLAC++.so target=libFLAC++.so.10.0.1
-link path=usr/lib/$(MACH64)/libFLAC++.so.10 target=libFLAC++.so.10.0.1
-file path=usr/lib/$(MACH64)/libFLAC++.so.10.0.1
-link path=usr/lib/$(MACH64)/libFLAC.so target=libFLAC.so.12.1.0
-link path=usr/lib/$(MACH64)/libFLAC.so.12 target=libFLAC.so.12.1.0
-file path=usr/lib/$(MACH64)/libFLAC.so.12.1.0
+link path=usr/lib/$(MACH64)/libFLAC++.so target=libFLAC++.so.11.0.0
+link path=usr/lib/$(MACH64)/libFLAC++.so.11 target=libFLAC++.so.11.0.0
+file path=usr/lib/$(MACH64)/libFLAC++.so.11.0.0
+link path=usr/lib/$(MACH64)/libFLAC.so target=libFLAC.so.14.0.0
+link path=usr/lib/$(MACH64)/libFLAC.so.14 target=libFLAC.so.14.0.0
+file path=usr/lib/$(MACH64)/libFLAC.so.14.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/flac++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/flac.pc
-link path=usr/lib/libFLAC++.so target=libFLAC++.so.10.0.1
-link path=usr/lib/libFLAC++.so.10 target=libFLAC++.so.10.0.1
-file path=usr/lib/libFLAC++.so.10.0.1
-link path=usr/lib/libFLAC.so target=libFLAC.so.12.1.0
-link path=usr/lib/libFLAC.so.12 target=libFLAC.so.12.1.0
-file path=usr/lib/libFLAC.so.12.1.0
+link path=usr/lib/libFLAC++.so target=libFLAC++.so.11.0.0
+link path=usr/lib/libFLAC++.so.11 target=libFLAC++.so.11.0.0
+file path=usr/lib/libFLAC++.so.11.0.0
+link path=usr/lib/libFLAC.so target=libFLAC.so.14.0.0
+link path=usr/lib/libFLAC.so.14 target=libFLAC.so.14.0.0
+file path=usr/lib/libFLAC.so.14.0.0
 file path=usr/lib/pkgconfig/flac++.pc
 file path=usr/lib/pkgconfig/flac.pc
 file path=usr/share/aclocal/libFLAC++.m4
@@ -137,17 +132,19 @@ file path=usr/share/doc/flac/api/classFLAC_1_1Metadata_1_1VorbisComment.png
 file path=usr/share/doc/flac/api/classFLAC_1_1Metadata_1_1VorbisComment_1_1Entry-members.html
 file path=usr/share/doc/flac/api/classFLAC_1_1Metadata_1_1VorbisComment_1_1Entry.html
 file path=usr/share/doc/flac/api/classes.html
+file path=usr/share/doc/flac/api/clipboard.js
 file path=usr/share/doc/flac/api/closed.png
 file path=usr/share/doc/flac/api/decoder_8h.html
 file path=usr/share/doc/flac/api/decoder_8h_source.html
-file path=usr/share/doc/flac/api/dir_7a75621a61c8e2d5fbe74e2a21034dac.html
-file path=usr/share/doc/flac/api/dir_8020ed0f53f33d12f569711d2405876e.html
-file path=usr/share/doc/flac/api/dir_a233f131bf92251559139733cc63a5ca.html
-file path=usr/share/doc/flac/api/dir_c122f5d6544f32779f55e8358fb78605.html
+file path=usr/share/doc/flac/api/dir_3f2dd3e73d9ed581de80a197fadaa5f1.html
+file path=usr/share/doc/flac/api/dir_871f74886150c610f0d7182694c86554.html
+file path=usr/share/doc/flac/api/dir_9ec6a59333a7d326f7b0f4e4cc113317.html
+file path=usr/share/doc/flac/api/dir_f6b4d1827acc94a56fa9000a1c624aad.html
 file path=usr/share/doc/flac/api/doc.svg
 file path=usr/share/doc/flac/api/docd.svg
 file path=usr/share/doc/flac/api/doxygen.css
 file path=usr/share/doc/flac/api/doxygen.svg
+file path=usr/share/doc/flac/api/doxygen_crawl.html
 file path=usr/share/doc/flac/api/dynsections.js
 file path=usr/share/doc/flac/api/encoder_8h.html
 file path=usr/share/doc/flac/api/encoder_8h_source.html
@@ -234,6 +231,7 @@ file path=usr/share/doc/flac/api/group__porting__1__1__2__to__1__1__3.html
 file path=usr/share/doc/flac/api/group__porting__1__1__3__to__1__1__4.html
 file path=usr/share/doc/flac/api/group__porting__1__1__4__to__1__2__0.html
 file path=usr/share/doc/flac/api/group__porting__1__3__4__to__1__4__0.html
+file path=usr/share/doc/flac/api/group__porting__1__4__3__to__1__5__0.html
 file path=usr/share/doc/flac/api/hierarchy.html
 file path=usr/share/doc/flac/api/index.html
 file path=usr/share/doc/flac/api/jquery.js
@@ -246,10 +244,12 @@ file path=usr/share/doc/flac/api/nav_fd.png
 file path=usr/share/doc/flac/api/nav_g.png
 file path=usr/share/doc/flac/api/nav_h.png
 file path=usr/share/doc/flac/api/nav_hd.png
+file path=usr/share/doc/flac/api/navtree.css
 file path=usr/share/doc/flac/api/open.png
 file path=usr/share/doc/flac/api/ordinals_8h_source.html
 file path=usr/share/doc/flac/api/plus.svg
 file path=usr/share/doc/flac/api/plusd.svg
+file path=usr/share/doc/flac/api/resize.js
 file path=usr/share/doc/flac/api/splitbar.png
 file path=usr/share/doc/flac/api/splitbard.png
 file path=usr/share/doc/flac/api/stream__decoder_8h.html

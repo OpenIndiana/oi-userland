@@ -1,0 +1,46 @@
+The -d option for diff is GNU extension.
+
+--- citus-13.0.1/src/test/regress/bin/test_diff.orig
++++ citus-13.0.1/src/test/regress/bin/test_diff
+@@ -10,7 +10,7 @@
+ # diff file.out against file_$1.out, also strip out timestamps & file paths
+ function create_result()
+ {
+-	diff -dU2 -w "$SCRIPTPATH/test/file.out" "$SCRIPTPATH/test/file_$1.out" \
++	diff -U2 -w "$SCRIPTPATH/test/file.out" "$SCRIPTPATH/test/file_$1.out" \
+ 		| sed -E 's/^(\+\+\+|---).+\/([^/]+)\t.+$/\1 \2/' \
+ 		> "$SCRIPTPATH/test/results/$1.out"
+ }
+--- citus-13.0.1/src/test/regress/pg_regress_multi.pl.orig
++++ citus-13.0.1/src/test/regress/pg_regress_multi.pl
+@@ -160,7 +160,7 @@
+ # a bit more context to make it easier to locate failed test sections.
+ #
+ # Also, ignore whitespace, without this the diffs on windows are unreadable
+-$ENV{PG_REGRESS_DIFF_OPTS} = '-dU10 -w';
++$ENV{PG_REGRESS_DIFF_OPTS} = '-U10 -w';
+ 
+ my $plainRegress = "";
+ my $isolationRegress = "";
+--- citus-13.0.1/src/test/regress/citus_tests/run_test.py.orig
++++ citus-13.0.1/src/test/regress/citus_tests/run_test.py
+@@ -228,7 +228,7 @@
+ 
+     os.chdir(REGRESS_DIR)
+     os.environ["PATH"] = str(REGRESS_DIR / "bin") + os.pathsep + os.environ["PATH"]
+-    os.environ["PG_REGRESS_DIFF_OPTS"] = "-dU10 -w"
++    os.environ["PG_REGRESS_DIFF_OPTS"] = "-U10 -w"
+ 
+     fake_config_args = {
+         "--pgxsdir": str(pgxs_path.parent.parent.parent),
+--- citus-13.0.1/src/test/regress/Makefile.orig
++++ citus-13.0.1/src/test/regress/Makefile
+@@ -14,7 +14,7 @@
+ # We do this to be able to mask shard Ids, placement Ids, node ports, etc.
+ MAKEFILE_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
+ export PATH := $(MAKEFILE_DIR)/bin:$(PATH)
+-export PG_REGRESS_DIFF_OPTS = -dU10 -w
++export PG_REGRESS_DIFF_OPTS = -U10 -w
+ # Use lower isolation test timeout, the 5 minute default is waaay too long for
+ # us so we use 60 seconds instead. We should detect blockages very quickly and
+ # most queries that we run are also very fast. So fast even that 60 seconds is

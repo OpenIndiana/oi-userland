@@ -1,0 +1,40 @@
+--- libreoffice-25.2.0.0.alpha1/vcl/inc/unx/sessioninhibitor.hxx.old	2024-12-01 16:46:26.509063234 -0500
++++ libreoffice-25.2.0.0.alpha1/vcl/inc/unx/sessioninhibitor.hxx	2024-12-01 16:46:52.541461093 -0500
+@@ -49,7 +49,7 @@
+ 
+     std::optional<int> mnXScreenSaverTimeout;
+ 
+-#if USING_X11 && !defined(__sun)
++#if USING_X11
+     BOOL mbDPMSWasEnabled;
+     CARD16 mnDPMSStandbyTimeout;
+     CARD16 mnDPMSSuspendTimeout;
+--- libreoffice-25.2.0.0.alpha1/vcl/unx/generic/window/sessioninhibitor.cxx.old	2024-12-01 16:47:31.601438291 -0500
++++ libreoffice-25.2.0.0.alpha1/vcl/unx/generic/window/sessioninhibitor.cxx	2024-12-01 16:48:06.463360204 -0500
+@@ -18,10 +18,8 @@
+ #include <X11/Xlib.h>
+ #include <X11/Xatom.h>
+ 
+-#if !defined(__sun)
+ #include <X11/extensions/dpms.h>
+ #endif
+-#endif
+ 
+ #include <config_gio.h>
+ 
+@@ -306,7 +304,6 @@
+ 
+ void SessionManagerInhibitor::inhibitDPMS( bool bInhibit, Display* pDisplay )
+ {
+-#if !defined(__sun)
+     int dummy;
+     // This won't change while X11 is running, hence
+     // we can evaluate only once and store as static
+@@ -341,7 +338,6 @@
+                          mnDPMSSuspendTimeout,
+                          mnDPMSOffTimeout );
+     }
+-#endif // !defined(__sun)
+ }
+ #endif // USING_X11
+ 

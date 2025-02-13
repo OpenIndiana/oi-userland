@@ -4,8 +4,15 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 583 items
+collecting ... collected 634 items / 11 deselected / 623 selected
 
+tests/test__cli.py::test_get_dependencies PASSED
+tests/test__cli.py::test_version_check PASSED
+tests/test__cli.py::test_nox_check PASSED
+tests/test__cli.py::test_unmatched_specifier PASSED
+tests/test__cli.py::test_invalid_mode PASSED
+tests/test__cli.py::test_invalid_backend_envvar PASSED
+tests/test__cli.py::test_invalid_backend_inline PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace_values PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace_non_existent_options_with_values PASSED
@@ -15,6 +22,7 @@ tests/test__option_set.py::TestOptionSet::test_session_completer PASSED
 tests/test__option_set.py::TestOptionSet::test_session_completer_invalid_sessions PASSED
 tests/test__option_set.py::TestOptionSet::test_python_completer PASSED
 tests/test__option_set.py::TestOptionSet::test_tag_completer PASSED
+tests/test__option_set.py::TestOptionSet::test_validation_options PASSED
 tests/test__parametrize.py::test_param_eq[param0-other0-True] PASSED
 tests/test__parametrize.py::test_param_eq[param1-other1-True] PASSED
 tests/test__parametrize.py::test_param_eq[param2-other2-False] PASSED
@@ -37,6 +45,13 @@ tests/test__parametrize.py::test_generate_calls_tags PASSED
 tests/test__parametrize.py::test_generate_calls_merge_tags PASSED
 tests/test__parametrize.py::test_generate_calls_session_python PASSED
 tests/test__parametrize.py::test_generate_calls_python_compatibility PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort[dependencies0-expected0] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort[dependencies1-expected1] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort[dependencies2-expected2] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort[dependencies3-expected3] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort[dependencies4-expected4] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort_CycleError[dependencies0-expected_cycle0] PASSED
+tests/test__resolver.py::test_lazy_stable_topo_sort_CycleError[dependencies1-expected_cycle1] PASSED
 tests/test__version.py::test_needs_version_default PASSED
 tests/test__version.py::test_get_nox_version PASSED
 tests/test__version.py::test_parse_needs_version[-None] PASSED
@@ -159,6 +174,8 @@ tests/test_main.py::test_main_with_bad_session_names[test(arg=[42.0])] PASSED
 tests/test_main.py::test_main_with_bad_session_names[test(arg=[43])] PASSED
 tests/test_main.py::test_main_with_bad_session_names[test(arg=<user_nox_module.Foo object at 0x123456789abc>)] PASSED
 tests/test_main.py::test_main_with_bad_session_names[test(arg=datetime.datetime(1980, 1, 1))] PASSED
+tests/test_main.py::test_main_requries_modern_param[w] PASSED
+tests/test_main.py::test_main_requries_modern_param[u] PASSED
 tests/test_main.py::test_main_noxfile_options PASSED
 tests/test_main.py::test_main_noxfile_options_disabled_by_flag PASSED
 tests/test_main.py::test_main_noxfile_options_sessions PASSED
@@ -203,6 +220,13 @@ tests/test_main.py::test_main_noxfile_options_reuse_venv_compat_check[never-Fals
 tests/test_main.py::test_main_noxfile_options_reuse_venv_compat_check[never-True-yes] PASSED
 tests/test_main.py::test_main_noxfile_options_reuse_venv_compat_check[never---no-reuse-existing-virtualenvs-no] PASSED
 tests/test_main.py::test_main_noxfile_options_reuse_venv_compat_check[never---reuse-existing-virtualenvs-yes] PASSED
+tests/test_main.py::test_noxfile_options_cant_be_set PASSED
+tests/test_main.py::test_noxfile_options_cant_be_set_long PASSED
+tests/test_main.py::test_symlink_orig PASSED
+tests/test_main.py::test_symlink_orig_not PASSED
+tests/test_main.py::test_symlink_sym PASSED
+tests/test_main.py::test_symlink_sym_not PASSED
+tests/test_main.py::test_noxfile_no_script_mode PASSED
 tests/test_manifest.py::test__normalize_arg PASSED
 tests/test_manifest.py::test__normalized_session_match PASSED
 tests/test_manifest.py::test_init PASSED
@@ -261,6 +285,13 @@ tests/test_manifest.py::test_null_session_function PASSED
 tests/test_manifest.py::test_keyword_locals_length PASSED
 tests/test_manifest.py::test_keyword_locals_iter PASSED
 tests/test_manifest.py::test_no_venv_backend_but_some_pythons PASSED
+tests/test_project.py::test_classifiers PASSED
+tests/test_project.py::test_no_classifiers PASSED
+tests/test_project.py::test_no_requires_python PASSED
+tests/test_project.py::test_python_range PASSED
+tests/test_project.py::test_python_range_gt PASSED
+tests/test_project.py::test_python_range_no_min PASSED
+tests/test_project.py::test_dependency_groups PASSED
 tests/test_registry.py::test_session_decorator PASSED
 tests/test_registry.py::test_session_decorator_single_python PASSED
 tests/test_registry.py::test_session_decorator_list_of_pythons PASSED
@@ -297,6 +328,7 @@ tests/test_sessions.py::TestSession::test_run_install_script PASSED
 tests/test_sessions.py::TestSession::test_run_overly_env PASSED
 tests/test_sessions.py::TestSession::test_by_default_all_invocation_env_vars_are_passed PASSED
 tests/test_sessions.py::TestSession::test_no_included_invocation_env_vars_are_passed PASSED
+tests/test_sessions.py::TestSession::test_no_included_invocation_env_vars_are_passed_empty PASSED
 tests/test_sessions.py::TestSession::test_run_external_not_a_virtualenv PASSED
 tests/test_sessions.py::TestSession::test_run_external_condaenv PASSED
 tests/test_sessions.py::TestSession::test_run_external_with_error_on_external_run PASSED
@@ -406,6 +438,7 @@ tests/test_sessions.py::TestSessionRunner::test__reuse_venv_outcome[always-True-
 tests/test_sessions.py::TestSessionRunner::test__reuse_venv_outcome[never-None-False] PASSED
 tests/test_sessions.py::TestSessionRunner::test__reuse_venv_outcome[never-False-False] PASSED
 tests/test_sessions.py::TestSessionRunner::test__reuse_venv_outcome[never-True-False] PASSED
+tests/test_sessions.py::TestSessionRunner::test__reuse_venv_invalid PASSED
 tests/test_sessions.py::TestSessionRunner::test_execute_noop_success PASSED
 tests/test_sessions.py::TestSessionRunner::test_execute_quit PASSED
 tests/test_sessions.py::TestSessionRunner::test_execute_skip PASSED
@@ -491,8 +524,8 @@ tests/test_tox_to_nox.py::test_deps PASSED
 tests/test_tox_to_nox.py::test_env PASSED
 tests/test_tox_to_nox.py::test_chdir PASSED
 tests/test_tox_to_nox.py::test_dash_in_envname PASSED
-tests/test_tox_to_nox.py::test_non_identifier_in_envname SKIPPED (No...)
 tests/test_tox_to_nox.py::test_descriptions_into_docstrings PASSED
+tests/test_tox_to_nox.py::test_commands_with_requirements PASSED
 tests/test_virtualenv.py::test_process_env_constructor PASSED
 tests/test_virtualenv.py::test_process_env_create PASSED
 tests/test_virtualenv.py::test_invalid_venv_create PASSED
@@ -508,12 +541,14 @@ tests/test_virtualenv.py::test_condaenv_detection SKIPPED (Missing c...)
 tests/test_virtualenv.py::test_uv_creation SKIPPED (Missing uv command.)
 tests/test_virtualenv.py::test_uv_managed_python SKIPPED (Missing uv...)
 tests/test_virtualenv.py::test_constructor_defaults PASSED
+tests/test_virtualenv.py::test_constructor_pypy_dash PASSED
 tests/test_virtualenv.py::test_constructor_explicit PASSED
 tests/test_virtualenv.py::test_env PASSED
 tests/test_virtualenv.py::test_blacklisted_env PASSED
 tests/test_virtualenv.py::test__clean_location PASSED
 tests/test_virtualenv.py::test_bin_paths PASSED
 tests/test_virtualenv.py::test_bin_windows PASSED
+tests/test_virtualenv.py::test_bin_windows_mingw PASSED
 tests/test_virtualenv.py::test_create PASSED
 tests/test_virtualenv.py::test_create_reuse_environment PASSED
 tests/test_virtualenv.py::test_create_reuse_environment_with_different_interpreter PASSED
@@ -534,10 +569,15 @@ tests/test_virtualenv.py::test_stale_environment[conda-virtualenv-False] SKIPPED
 tests/test_virtualenv.py::test_passthrough_environment_venv_backend PASSED
 tests/test_virtualenv.py::test_create_reuse_stale_virtualenv_environment SKIPPED
 tests/test_virtualenv.py::test_create_reuse_uv_environment SKIPPED (...)
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-FileNotFoundError-True-uv] PASSED
-tests/test_virtualenv.py::test_find_uv[None-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv] PASSED
-tests/test_virtualenv.py::test_find_uv[None-FileNotFoundError-False-uv] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.5.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.6.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-False-uv-0.0.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-False-uv-0.6.0-1] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-True-uv-0.6.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-False-uv-0.0.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-False-uv-0.6.0-1] PASSED
+tests/test_virtualenv.py::test_find_uv[None-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.5.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[None-None-False-uv-0.5.0-0] PASSED
 tests/test_virtualenv.py::test_uv_version[0-{"version": "0.2.3", "commit_info": null}-0.2.3] PASSED
 tests/test_virtualenv.py::test_uv_version[1-None-0.0] PASSED
 tests/test_virtualenv.py::test_uv_version[1-{"version": "9.9.9", "commit_info": null}-0.0] PASSED
@@ -595,9 +635,12 @@ ________________________ test_no_color_timestamp[color] ________________________
 ----------------------------- Captured stderr call -----------------------------
 foo
 foo
+foo
+foo
+foo
 ------------------------------ Captured log call -------------------------------
 INFO     nox:test_logger.py:75 bar
 INFO     nox:test_logger.py:84 bar
 OUTPUT   nox:test_logger.py:85 foo
 =========================== short test summary info ============================
-======== 551 passed, 31 skipped, 1 xpassed ========
+======== 592 passed, 30 skipped, 11 deselected, 1 xpassed ========
