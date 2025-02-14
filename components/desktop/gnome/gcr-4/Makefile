@@ -21,9 +21,9 @@ include ../../../../make-rules/shared-macros.mk
 # This is gcr-4 ABI series
 
 COMPONENT_NAME=			gcr
-HUMAN_VERSION=			4.3.0
+HUMAN_VERSION=			4.3.1
 COMPONENT_SUMMARY=		Library for displaying certificates and crypto UI, accessing key stores
-COMPONENT_ARCHIVE_HASH=		sha256:c3ee8728e4364b0397f435fa20f92f901ab139d2b264f4e059d67b3c0f43cd36
+COMPONENT_ARCHIVE_HASH=		sha256:b2f070fff1840eef70546a28be80235427c116aadc593b5b68ccc869be3aa09d
 COMPONENT_FMRI=			library/gnome/gcr-4
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.0-only
