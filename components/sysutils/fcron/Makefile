@@ -20,24 +20,22 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fcron
-COMPONENT_VERSION=        3.3.2
+COMPONENT_VERSION=        3.3.3
 COMPONENT_SUMMARY=        Frequency Cron
 COMPONENT_PROJECT_URL=    http://fcron.free.fr
 COMPONENT_SRC=		  fcron-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	  $(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	  sha256:0d25586c5a5875b2bd853a7d57a7a01938e3b1ac5a68ae52525b66b302ca196e
+COMPONENT_ARCHIVE_HASH=	  sha256:e5b48c9b78cb38cfb24a038dcb13a08b5121889375378f42f3c94bc250d21497
 COMPONENT_ARCHIVE_URL=	  http://fcron.free.fr/archives/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           sysutils/fcron
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
 COMPONENT_LICENSE=        GPLv2
+COMPONENT_LICENSE_FILE=   doc/en/txt/gpl.txt
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)
-# gcc 14 complains about this
-CFLAGS += -Wno-error=incompatible-pointer-types
-CFLAGS += -Wno-error=int-conversion
 
 # a modified copy of the sysVinit-launcher script
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
@@ -60,7 +58,7 @@ CONFIGURE_OPTIONS += --with-pam=no
 
 # default install is install-staged + strip + perms (perms set permissions)
 
-COMPONENT_INSTALL_TARGETS=install-staged
+COMPONENT_INSTALL_TARGETS= install-staged
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += editor/vim
