@@ -16,14 +16,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
-COMPONENT_VERSION=	1.5.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.4.3
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 COMPONENT_PROJECT_URL=	https://xiph.org/flac
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f2c1c76592a82ffff8413ba3c4a1299b6c7ab06c734dee03fd88630485c2b920
-COMPONENT_ARCHIVE_URL=	https://github.com/xiph/flac/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:6c58e69cd22348f441b861092b825e591d0b822e106de6eb0ee4d05d27205b70
+COMPONENT_ARCHIVE_URL=	https://downloads.us.xiph.org/releases/flac/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		codec/flac
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
@@ -34,8 +34,8 @@ COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
 include $(WS_MAKE_RULES)/common.mk
 
 CXXFLAGS += -fstack-protector-all
-CFLAGS += $(XPG6MODE)
 
+#CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-ogg
 
 ifeq   ($(MACH), i386)
@@ -49,8 +49,6 @@ else
 CONFIGURE_OPTIONS += --disable-sse
 CONFIGURE_OPTIONS += --disable-asm-optimizations
 endif
-
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32)
 
 # Note that the test needed to be run with standard user privileges.
 COMPONENT_TEST_TRANSFORMS = \
