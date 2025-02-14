@@ -1,0 +1,42 @@
+https://github.com/protobuf-c/protobuf-c/issues/764
+
+--- protobuf-c-1.5.1/Makefile.in.orig
++++ protobuf-c-1.5.1/Makefile.in
+@@ -2703,7 +2703,7 @@
+ @CODE_COVERAGE_RULES@
+ 
+ @BUILD_COMPILER_TRUE@protobuf-c/protobuf-c.pb.cc protobuf-c/protobuf-c.pb.h: @PROTOC@ $(top_srcdir)/protobuf-c/protobuf-c.proto
+-@BUILD_COMPILER_TRUE@	$(AM_V_GEN)@PROTOC@ -I$(top_srcdir) --cpp_out=$(top_builddir) $(top_srcdir)/protobuf-c/protobuf-c.proto
++@BUILD_COMPILER_TRUE@	$(AM_V_GEN)@PROTOC@ -I$(top_srcdir) -I/usr/include --cpp_out=$(top_builddir) $(top_srcdir)/protobuf-c/protobuf-c.proto
+ #
+ # protoc-c compat link
+ #
+@@ -2714,16 +2714,16 @@
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@$(t_generated_code2_cxx_generate_packed_data_OBJECTS): t/test-full.pb.h
+ 
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/test.pb-c.c t/test.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/test.proto
+-@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/test.proto
++@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) -I/usr/include --c_out=$(top_builddir) $(top_srcdir)/t/test.proto
+ 
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/test-optimized.pb-c.c t/test-optimized.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/test-optimized.proto
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/test-optimized.proto
+ 
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/test-full.pb-c.c t/test-full.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/test-full.proto
+-@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/test-full.proto
++@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) -I/usr/include --c_out=$(top_builddir) $(top_srcdir)/t/test-full.proto
+ 
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/test-full.pb.cc t/test-full.pb.h: @PROTOC@ $(top_srcdir)/t/test-full.proto
+-@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ -I$(top_srcdir) --cpp_out=$(top_builddir) $(top_srcdir)/t/test-full.proto
++@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ -I$(top_srcdir) -I/usr/include --cpp_out=$(top_builddir) $(top_srcdir)/t/test-full.proto
+ 
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/test-proto3.pb-c.c t/test-proto3.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/test-proto3.proto
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/test-proto3.proto
+@@ -2731,7 +2731,7 @@
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/generated-code2/test-full-cxx-output.inc: t/generated-code2/cxx-generate-packed-data$(EXEEXT)
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)$(top_builddir)/t/generated-code2/cxx-generate-packed-data$(EXEEXT) > $(top_builddir)/t/generated-code2/test-full-cxx-output.inc
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/issue204/issue204.pb-c.c t/issue204/issue204.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue204/issue204.proto
+-@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue204/issue204.proto
++@BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) -I/usr/include --c_out=$(top_builddir) $(top_srcdir)/t/issue204/issue204.proto
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/issue220/issue220.pb-c.c t/issue220/issue220.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue220/issue220.proto
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@	$(AM_V_GEN)@PROTOC@ --plugin=protoc-gen-c=$(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) -I$(top_srcdir) --c_out=$(top_builddir) $(top_srcdir)/t/issue220/issue220.proto
+ @BUILD_COMPILER_TRUE@@CROSS_COMPILING_FALSE@t/issue251/issue251.pb-c.c t/issue251/issue251.pb-c.h: $(top_builddir)/protoc-gen-c/protoc-gen-c$(EXEEXT) $(top_srcdir)/t/issue251/issue251.proto
