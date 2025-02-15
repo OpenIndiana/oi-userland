@@ -23,11 +23,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	14
-COMPONENT_MNR_VERSION=	15
+COMPONENT_MNR_VERSION=	16
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:02e891e314b4e9ee24cbd78028dab7c73f9c1ba3e30835bcbef71fe220401fc5
+COMPONENT_ARCHIVE_HASH=	sha256:673c26f15ebb14306ad0ea051d8acfb3915dd342de942f5b502e5354a0ab760c
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			database/postgres-$(COMPONENT_MJR_VERSION)
@@ -37,6 +37,9 @@ COMPONENT_LICENSE_FILE=	COPYRIGHT
 
 TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION=	($(CLONEY) $(SOURCE_DIR) $(@D))
