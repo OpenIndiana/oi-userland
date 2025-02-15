@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		simplejson
-HUMAN_VERSION =			3.19.3
+HUMAN_VERSION =			3.20.1
 COMPONENT_SUMMARY =		Simple, fast, extensible JSON encoder/decoder for Python
 COMPONENT_PROJECT_URL =		https://github.com/simplejson/simplejson
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e086896c36210ab6050f2f9f095a5f1e03c83fa0e7f296d6cba425411364680
+	sha256:e64139b4ec4f1f24c142ff7dcafe55a22b811a74d86d66560c8815687143037d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
