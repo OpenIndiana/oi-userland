@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			2.0.1
+HUMAN_VERSION =			2.1.0
 COMPONENT_SUMMARY =		Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:10177c2772469d9032a49f0d8707af761b1c597cea3b4fb31546e5cd436eb157
+	sha256:ceea605d31dbae232eee53f81489e4c1de203fc00e7f7e25fd095c8629e5feec
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,11 +36,6 @@ TEST_REQUIREMENTS_POETRY += test
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
-
-# https://github.com/python-poetry/poetry/issues/9967
-PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_complete.py::test_package_with_include
-PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_sdist.py::test_default_with_excluded_data
-PYTEST_ADDOPTS += --deselect tests/masonry/builders/test_wheel.py::test_default_src_with_excluded_data
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
