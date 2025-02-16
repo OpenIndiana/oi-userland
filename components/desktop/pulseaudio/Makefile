@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
 COMPONENT_VERSION=	17.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Sample Rate Converter for audio
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -34,6 +34,8 @@ COMPONENT_LICENSE=	LGPLv2.1,GPLv2,MIT,adrian-license,Sun Public Domain license
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # MESON_BUILDTYPE = debug
 # COMPONENT_BUILD_ARGS += --verbose
@@ -79,8 +81,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/sip
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fftw-3
