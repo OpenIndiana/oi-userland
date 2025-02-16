@@ -1,0 +1,15 @@
+https://gitlab.freedesktop.org/xorg/driver/xf86-video-intel/-/issues/230
+See also https://www.illumos.org/issues/1777
+
+--- xf86-video-intel-e6a4c4740c15ace9dd79dc7c18955f2eb413a6a5/src/sna/sna_video.c.orig
++++ xf86-video-intel-e6a4c4740c15ace9dd79dc7c18955f2eb413a6a5/src/sna/sna_video.c
+@@ -67,6 +67,9 @@
+ #else
+ #define bswap_32 bswap32
+ #endif
++#elif defined(__illumos__)
++#include <sys/byteorder.h>
++#define bswap_32 BSWAP_32
+ #else
+ #include <byteswap.h>
+ #endif

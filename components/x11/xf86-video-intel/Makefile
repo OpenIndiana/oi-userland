@@ -20,15 +20,15 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xf86-video-intel
 COMPONENT_VERSION= 2.99.917
-COMPONENT_REVISION= 11
+COMPONENT_REVISION= 12
 COMPONENT_FMRI= x11/server/xorg/driver/xorg-video-intel
 COMPONENT_SUMMARY= xf86-video-intel - Intel integrated graphics chipset driver for the Xorg X server
-COMPONENT_GIT_DATE= 20171018
-COMPONENT_GIT_HASH= 4798e18b2b2c8b0a05dc967e6140fd9962bc1a73
+COMPONENT_GIT_DATE= 20250210
+COMPONENT_GIT_HASH= e6a4c4740c15ace9dd79dc7c18955f2eb413a6a5
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-$(COMPONENT_GIT_DATE).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:71afc36afaa9893c29ce937d09b464a54f0f56a6f13db9a8feb414e744b45fd7
+	sha256:b7ecb1385cba049f3de9a06b052abe68b97e297541d0022e25fe0aa149b88bfb
 COMPONENT_ARCHIVE_URL= \
   https://gitlab.freedesktop.org/xorg/driver/xf86-video-intel/-/archive/$(COMPONENT_GIT_HASH)/$(COMPONENT_SRC).tar.bz2
 
@@ -106,7 +106,6 @@ REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/libxshmfence
 REQUIRED_PACKAGES += x11/library/libxtst
-REQUIRED_PACKAGES += x11/library/libxv
 REQUIRED_PACKAGES += x11/library/libxvmc
 REQUIRED_PACKAGES += x11/library/xcb-util
 REQUIRED_PACKAGES += x11/server/xorg
