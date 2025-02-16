@@ -44,7 +44,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3504
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 GIT_TAG=		sun-v5.0.70
 PLUGIN_REV=		5.0-202501172014-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
@@ -117,6 +117,10 @@ gcc_OPT+=		-Wno-error=incompatible-pointer-types
 gcc_OPT+=		-Wno-error=return-mismatch
 gcc_OPT+=		-Wno-error=int-to-pointer-cast
 
+# epoll(5) seems to work with OpenSmalltalk, but valgrind complains #17199
+# also on Linux some OpenSmalltalk users prefer to disable epoll when fork used
+# http://lists.squeakfoundation.org/pipermail/vm-dev/2022-February/037652.html
+
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
 CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
@@ -124,10 +128,8 @@ CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
 CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.cog
 CONFIGURE_OPTIONS.64 +=	--with-src=src/spur64.cog
+CONFIGURE_OPTIONS +=	--disable-epoll
 
-# epoll(5) seems to work, so use epoll instead of select(3c)
-CONFIGURE_ENV    +=     ax_cv_have_epoll=yes
-CONFIGURE_ENV    +=     ax_cv_have_epoll_pwait=yes
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
