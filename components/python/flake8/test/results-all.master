@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 464 items
+collecting ... collected 465 items
 
 tests/integration/test_aggregator.py::test_aggregate_options_with_config PASSED
 tests/integration/test_aggregator.py::test_aggregate_options_when_isolated PASSED
@@ -128,6 +128,7 @@ tests/unit/test_base_formatter.py::test_handle_formats_the_error PASSED
 tests/unit/test_checker_manager.py::test_oserrors_cause_serial_fall_back PASSED
 tests/unit/test_checker_manager.py::test_oserrors_are_reraised PASSED
 tests/unit/test_checker_manager.py::test_multiprocessing_cpu_count_not_implemented PASSED
+tests/unit/test_checker_manager.py::test_jobs_count_limited_to_file_count PASSED
 tests/unit/test_checker_manager.py::test_make_checkers PASSED
 tests/unit/test_debug.py::test_debug_information PASSED
 tests/unit/test_decision_engine.py::test_was_ignored_ignores_errors[ignore_list0-extend_ignore0-E111] PASSED
@@ -472,38 +473,28 @@ tests/unit/test_violation.py::test_is_inline_ignored[E111-a = 1  # noqa: ABC123-
 tests/unit/test_violation.py::test_is_inline_ignored[ABC123-a = 1  # noqa: ABC124-False] PASSED
 tests/unit/test_violation.py::test_disable_is_inline_ignored PASSED
 
-======== 464 passed ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 465 passed ========
 py$(PYV): commands[1]> python -m coverage report
 Name                                                                                                                                         Stmts   Miss Branch BrPart  Cover   Missing
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/__init__.py                 24      2      6      1    90%   58-59
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/api/legacy.py               71      2      8      0    97%   211-212
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/checker.py                 294     22     88      7    92%   70-77, 81, 211-212, 240-241, 338-339, 365-374, 376->413, 400->411, 441, 517-518, 549
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/formatting/base.py          63      0     24      1    99%   193->195
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/main/application.py        129      7     18      1    95%   104-107, 210-211, 215
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/__init__.py                 24      2      4      1    89%   58-59
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/api/legacy.py               71      2      6      0    97%   211-212
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/checker.py                 295     22     84      7    92%   70-77, 81, 211-212, 240-241, 339-340, 366-375, 377->414, 401->412, 442, 518-519, 550
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/formatting/base.py          63      0     20      1    99%   193->195
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/main/application.py        129      7     14      1    94%   104-107, 210-211, 215
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/aggregator.py       22      3      4      1    85%   42-44
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/manager.py         120      1     40      1    99%   198
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/options/manager.py         120      1     36      1    99%   198
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pycodestyle.py      75      2     10      2    95%   100, 106
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/plugins/pyflakes.py         27      1      4      1    94%   97
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/processor.py               222      0     66      2    99%   219->225, 268->exit
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/style_guide.py             143      0     40      2    99%   172->exit, 173->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/flake8/processor.py               222      0     62      2    99%   219->225, 268->exit
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                         3731     40    577     19    99%
+TOTAL                                                                                                                                         3740     40    486     17    99%
 
-59 files skipped due to complete coverage.
+60 files skipped due to complete coverage.
 py$(PYV): commands[2]> python -m coverage report --fail-under 100 --include 'tests/*'
 Name    Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------
-TOTAL    1870      0     60      0   100%
+TOTAL    1878      0     30      0   100%
 
 38 files skipped due to complete coverage.
   py$(PYV): OK
