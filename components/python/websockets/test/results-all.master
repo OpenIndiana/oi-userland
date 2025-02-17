@@ -34,6 +34,8 @@ test_junk_handshake (tests.asyncio.test_client.ClientTests)
 Client closes the connection when receiving non-HTTP response from server. ... ok
 test_keepalive_is_enabled (tests.asyncio.test_client.ClientTests)
 Client enables keepalive and measures latency by default. ... ok
+test_legacy_user_agent (tests.asyncio.test_client.ClientTests)
+Client can override User-Agent header with additional_headers. ... ok
 test_logger (tests.asyncio.test_client.ClientTests)
 Client accepts a logger argument. ... ok
 test_override_user_agent (tests.asyncio.test_client.ClientTests)
@@ -58,10 +60,14 @@ test_tcp_connection_fails (tests.asyncio.test_client.ClientTests)
 Client fails to connect to server. ... ok
 test_timeout_during_handshake (tests.asyncio.test_client.ClientTests)
 Client times out before receiving handshake response from server. ... ok
+test_https_proxy_without_ssl (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects proxy_ssl=None when proxy is HTTPS. ... ok
 test_invalid_subprotocol (tests.asyncio.test_client.ClientUsageErrorsTests)
 Client rejects single value of subprotocols. ... ok
+test_proxy_ssl_without_https_proxy (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects proxy_ssl when proxy isn't HTTPS. ... ok
 test_secure_uri_without_ssl (tests.asyncio.test_client.ClientUsageErrorsTests)
-Client rejects no ssl when URI is secure. ... ok
+Client rejects ssl=None when URI is secure. ... ok
 test_ssl_without_secure_uri (tests.asyncio.test_client.ClientUsageErrorsTests)
 Client rejects ssl when URI isn't secure. ... ok
 test_unix_with_path_and_sock (tests.asyncio.test_client.ClientUsageErrorsTests)
@@ -70,6 +76,38 @@ test_unix_without_path_or_sock (tests.asyncio.test_client.ClientUsageErrorsTests
 Unix client requires path when sock isn't provided. ... ok
 test_unsupported_compression (tests.asyncio.test_client.ClientUsageErrorsTests)
 Client rejects incorrect value of compression. ... ok
+test_unsupported_proxy (tests.asyncio.test_client.ClientUsageErrorsTests)
+Client rejects unsupported proxy. ... ok
+test_authenticated_http_proxy (tests.asyncio.test_client.HTTPProxyClientTests)
+Client connects to server through an authenticated HTTP proxy. ... skipped 'mitmproxy not installed'
+test_authenticated_http_proxy_error (tests.asyncio.test_client.HTTPProxyClientTests)
+Client fails to authenticate to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy (tests.asyncio.test_client.HTTPProxyClientTests)
+Client connects to server through an HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_error (tests.asyncio.test_client.HTTPProxyClientTests)
+Client receives no response when connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_failure (tests.asyncio.test_client.HTTPProxyClientTests)
+Client fails to connect to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_timeout (tests.asyncio.test_client.HTTPProxyClientTests)
+Client times out while connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_override_user_agent (tests.asyncio.test_client.HTTPProxyClientTests)
+Client can override User-Agent header with user_agent_header. ... skipped 'mitmproxy not installed'
+test_http_proxy_protocol_error (tests.asyncio.test_client.HTTPProxyClientTests)
+Client receives invalid data when connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_remove_user_agent (tests.asyncio.test_client.HTTPProxyClientTests)
+Client can remove User-Agent header with user_agent_header. ... skipped 'mitmproxy not installed'
+test_https_proxy (tests.asyncio.test_client.HTTPProxyClientTests)
+Client connects to server through an HTTPS proxy. ... skipped 'mitmproxy not installed'
+test_https_proxy_invalid_proxy_certificate (tests.asyncio.test_client.HTTPProxyClientTests)
+Client rejects certificate when proxy certificate isn't trusted. ... skipped 'mitmproxy not installed'
+test_https_proxy_invalid_server_certificate (tests.asyncio.test_client.HTTPProxyClientTests)
+Client rejects certificate when proxy certificate isn't trusted. ... skipped 'mitmproxy not installed'
+test_https_server_hostname (tests.asyncio.test_client.HTTPProxyClientTests)
+Client sets server_hostname to the value of proxy_server_hostname. ... skipped 'mitmproxy not installed'
+test_secure_http_proxy (tests.asyncio.test_client.HTTPProxyClientTests)
+Client connects to server securely through an HTTP proxy. ... skipped 'mitmproxy not installed'
+test_secure_https_proxy (tests.asyncio.test_client.HTTPProxyClientTests)
+Client connects to server securely through an HTTPS proxy. ... skipped 'mitmproxy not installed'
 test_connection (tests.asyncio.test_client.SecureClientTests)
 Client connects to server securely. ... ok
 test_cross_origin_redirect (tests.asyncio.test_client.SecureClientTests)
@@ -84,16 +122,32 @@ test_set_server_hostname_explicitly (tests.asyncio.test_client.SecureClientTests
 Client sets server_hostname to the value provided in argument. ... ok
 test_set_server_hostname_implicitly (tests.asyncio.test_client.SecureClientTests)
 Client sets server_hostname to the host in the WebSocket URI. ... ok
-test_connection (tests.asyncio.test_client.SecureUnixClientTests)
-Client connects to server securely over a Unix socket. ... ok
-test_set_server_hostname (tests.asyncio.test_client.SecureUnixClientTests)
-Client sets server_hostname to the host in the WebSocket URI. ... ok
+test_authenticated_socks_proxy (tests.asyncio.test_client.SocksProxyClientTests)
+Client connects to server through an authenticated SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_authenticated_socks_proxy_error (tests.asyncio.test_client.SocksProxyClientTests)
+Client fails to authenticate to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_explicit_socks_proxy (tests.asyncio.test_client.SocksProxyClientTests)
+Client connects to server through a SOCKS5 proxy set explicitly. ... skipped 'mitmproxy not installed'
+test_ignore_proxy_with_existing_socket (tests.asyncio.test_client.SocksProxyClientTests)
+Client connects using a pre-existing socket. ... skipped 'mitmproxy not installed'
+test_secure_socks_proxy (tests.asyncio.test_client.SocksProxyClientTests)
+Client connects to server securely through a SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy (tests.asyncio.test_client.SocksProxyClientTests)
+Client connects to server through a SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy_connection_failure (tests.asyncio.test_client.SocksProxyClientTests)
+Client fails to connect to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy_connection_timeout (tests.asyncio.test_client.SocksProxyClientTests)
+Client times out while connecting to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
 test_connection (tests.asyncio.test_client.UnixClientTests)
 Client connects to server over a Unix socket. ... ok
 test_cross_origin_redirect (tests.asyncio.test_client.UnixClientTests)
 Client doesn't follows redirect to a URI on a different origin. ... ok
+test_secure_connection (tests.asyncio.test_client.UnixClientTests)
+Client connects to server securely over a Unix socket. ... ok
 test_set_host_header (tests.asyncio.test_client.UnixClientTests)
 Client sets the Host header to the host in the WebSocket URI. ... ok
+test_set_server_hostname (tests.asyncio.test_client.UnixClientTests)
+Client sets server_hostname to the host in the WebSocket URI. ... ok
 test_acknowledge_canceled_ping (tests.asyncio.test_connection.ClientConnectionTests)
 ping is acknowledged by a pong with the same payload after being canceled. ... ok
 test_acknowledge_ping (tests.asyncio.test_connection.ClientConnectionTests)
@@ -225,9 +279,9 @@ recv receives a binary message. ... ok
 test_recv_binary_as_text (tests.asyncio.test_connection.ClientConnectionTests)
 recv receives a binary message as a str. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
-recv can be cancelled before receiving a frame. ... ok
+recv can be canceled before receiving a frame. ... ok
 test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
-recv cannot be cancelled after receiving a frame. ... ok
+recv cannot be canceled after receiving a frame. ... ok
 test_recv_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
@@ -247,9 +301,9 @@ recv_streaming receives a binary message. ... ok
 test_recv_streaming_binary_as_str (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming can be cancelled before receiving a frame. ... ok
+recv_streaming can be canceled before receiving a frame. ... ok
 test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ClientConnectionTests)
-recv_streaming cannot be cancelled after receiving a frame. ... ok
+recv_streaming cannot be canceled after receiving a frame. ... ok
 test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.ClientConnectionTests)
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ClientConnectionTests)
@@ -477,9 +531,9 @@ recv receives a binary message. ... ok
 test_recv_binary_as_text (tests.asyncio.test_connection.ServerConnectionTests)
 recv receives a binary message as a str. ... ok
 test_recv_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
-recv can be cancelled before receiving a frame. ... ok
+recv can be canceled before receiving a frame. ... ok
 test_recv_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
-recv cannot be cancelled after receiving a frame. ... ok
+recv cannot be canceled after receiving a frame. ... ok
 test_recv_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
 recv raises ConnectionClosedError after an error. ... ok
 test_recv_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
@@ -499,9 +553,9 @@ recv_streaming receives a binary message. ... ok
 test_recv_streaming_binary_as_str (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming receives a binary message as a str. ... ok
 test_recv_streaming_cancellation_before_receiving (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming can be cancelled before receiving a frame. ... ok
+recv_streaming can be canceled before receiving a frame. ... ok
 test_recv_streaming_cancellation_while_receiving (tests.asyncio.test_connection.ServerConnectionTests)
-recv_streaming cannot be cancelled after receiving a frame. ... ok
+recv_streaming cannot be canceled after receiving a frame. ... ok
 test_recv_streaming_connection_closed_error (tests.asyncio.test_connection.ServerConnectionTests)
 recv_streaming raises ConnectionClosedError after an error. ... ok
 test_recv_streaming_connection_closed_ok (tests.asyncio.test_connection.ServerConnectionTests)
@@ -720,6 +774,32 @@ test_put_then_get (tests.asyncio.test_messages.SimpleQueueTests)
 get returns an item that is already put. ... ok
 test_reset (tests.asyncio.test_messages.SimpleQueueTests)
 reset sets the content of the queue. ... ok
+test_custom_router_factory (tests.asyncio.test_router.RouterTests)
+Router supports a custom router factory. ... ok
+test_force_redirect_server_name (tests.asyncio.test_router.RouterTests)
+Router redirects connections to the host declared in server_name. ... ok
+test_force_secure_redirect (tests.asyncio.test_router.RouterTests)
+Router redirects ws:// connections to a wss:// URI when ssl=True. ... ok
+test_not_found (tests.asyncio.test_router.RouterTests)
+Router rejects requests to unknown paths with an HTTP 404 error. ... ok
+test_process_request_coroutine_returning_none (tests.asyncio.test_router.RouterTests)
+Router supports a process_request coroutine returning None. ... ok
+test_process_request_coroutine_returning_response (tests.asyncio.test_router.RouterTests)
+Router supports a process_request coroutine returning a response. ... ok
+test_process_request_function_returning_none (tests.asyncio.test_router.RouterTests)
+Router supports a process_request function returning None. ... ok
+test_process_request_function_returning_response (tests.asyncio.test_router.RouterTests)
+Router supports a process_request function returning a response. ... ok
+test_redirect (tests.asyncio.test_router.RouterTests)
+Router redirects connections according to redirect_to. ... ok
+test_route_with_query_string (tests.asyncio.test_router.RouterTests)
+Router ignores query strings when matching paths. ... ok
+test_router_matches_paths_and_extracts_parameters (tests.asyncio.test_router.RouterTests)
+Router matches paths and extracts parameters. ... ok
+test_secure_redirect (tests.asyncio.test_router.RouterTests)
+Router redirects connections to a wss:// URI when TLS is enabled. ... ok
+test_router_supports_unix_sockets (tests.asyncio.test_router.UnixRouterTests)
+Router supports Unix sockets. ... ok
 test_authorization_with_incorrect_password (tests.asyncio.test_server.BasicAuthTests)
 basic_auth rejects client with incorrect password. ... ok
 test_authorization_with_unknown_username (tests.asyncio.test_server.BasicAuthTests)
@@ -1458,6 +1538,8 @@ test_custom_connection_factory (tests.sync.test_client.ClientTests)
 Client runs ClientConnection factory provided in create_connection. ... ok
 test_disable_compression (tests.sync.test_client.ClientTests)
 Client disables compression. ... ok
+test_disable_keepalive (tests.sync.test_client.ClientTests)
+Client disables keepalive. ... ok
 test_existing_socket (tests.sync.test_client.ClientTests)
 Client connects using a pre-existing socket. ... ok
 test_handshake_fails (tests.sync.test_client.ClientTests)
@@ -1470,6 +1552,10 @@ test_invalid_uri (tests.sync.test_client.ClientTests)
 Client receives an invalid URI. ... ok
 test_junk_handshake (tests.sync.test_client.ClientTests)
 Client closes the connection when receiving non-HTTP response from server. ... ok
+test_keepalive_is_enabled (tests.sync.test_client.ClientTests)
+Client enables keepalive and measures latency by default. ... ok
+test_legacy_user_agent (tests.sync.test_client.ClientTests)
+Client can override User-Agent header with additional_headers. ... ok
 test_logger (tests.sync.test_client.ClientTests)
 Client accepts a logger argument. ... ok
 test_override_user_agent (tests.sync.test_client.ClientTests)
@@ -1482,6 +1568,8 @@ test_timeout_during_handshake (tests.sync.test_client.ClientTests)
 Client times out before receiving handshake response from server. ... ok
 test_invalid_subprotocol (tests.sync.test_client.ClientUsageErrorsTests)
 Client rejects single value of subprotocols. ... ok
+test_proxy_ssl_without_https_proxy (tests.sync.test_client.ClientUsageErrorsTests)
+Client rejects proxy_ssl when proxy isn't HTTPS. ... ok
 test_ssl_without_secure_uri (tests.sync.test_client.ClientUsageErrorsTests)
 Client rejects ssl when URI isn't secure. ... ok
 test_unix_with_path_and_sock (tests.sync.test_client.ClientUsageErrorsTests)
@@ -1490,6 +1578,38 @@ test_unix_without_path_or_sock (tests.sync.test_client.ClientUsageErrorsTests)
 Unix client requires path when sock isn't provided. ... ok
 test_unsupported_compression (tests.sync.test_client.ClientUsageErrorsTests)
 Client rejects incorrect value of compression. ... ok
+test_unsupported_proxy (tests.sync.test_client.ClientUsageErrorsTests)
+Client rejects unsupported proxy. ... ok
+test_authenticated_http_proxy (tests.sync.test_client.HTTPProxyClientTests)
+Client connects to server through an authenticated HTTP proxy. ... skipped 'mitmproxy not installed'
+test_authenticated_http_proxy_error (tests.sync.test_client.HTTPProxyClientTests)
+Client fails to authenticate to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy (tests.sync.test_client.HTTPProxyClientTests)
+Client connects to server through an HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_error (tests.sync.test_client.HTTPProxyClientTests)
+Client receives no response when connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_failure (tests.sync.test_client.HTTPProxyClientTests)
+Client fails to connect to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_connection_timeout (tests.sync.test_client.HTTPProxyClientTests)
+Client times out while connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_override_user_agent (tests.sync.test_client.HTTPProxyClientTests)
+Client can override User-Agent header with user_agent_header. ... skipped 'mitmproxy not installed'
+test_http_proxy_protocol_error (tests.sync.test_client.HTTPProxyClientTests)
+Client receives invalid data when connecting to the HTTP proxy. ... skipped 'mitmproxy not installed'
+test_http_proxy_remove_user_agent (tests.sync.test_client.HTTPProxyClientTests)
+Client can remove User-Agent header with user_agent_header. ... skipped 'mitmproxy not installed'
+test_https_proxy (tests.sync.test_client.HTTPProxyClientTests)
+Client connects to server through an HTTPS proxy. ... skipped 'mitmproxy not installed'
+test_https_proxy_invalid_proxy_certificate (tests.sync.test_client.HTTPProxyClientTests)
+Client rejects certificate when proxy certificate isn't trusted. ... skipped 'mitmproxy not installed'
+test_https_proxy_invalid_server_certificate (tests.sync.test_client.HTTPProxyClientTests)
+Client rejects certificate when server certificate isn't trusted. ... skipped 'mitmproxy not installed'
+test_https_proxy_server_hostname (tests.sync.test_client.HTTPProxyClientTests)
+Client sets server_hostname to the value of proxy_server_hostname. ... skipped 'mitmproxy not installed'
+test_secure_http_proxy (tests.sync.test_client.HTTPProxyClientTests)
+Client connects to server securely through an HTTP proxy. ... skipped 'mitmproxy not installed'
+test_secure_https_proxy (tests.sync.test_client.HTTPProxyClientTests)
+Client connects to server securely through an HTTPS proxy. ... skipped 'mitmproxy not installed'
 test_connection (tests.sync.test_client.SecureClientTests)
 Client connects to server securely. ... ok
 test_reject_invalid_server_certificate (tests.sync.test_client.SecureClientTests)
@@ -1500,18 +1620,36 @@ test_set_server_hostname_explicitly (tests.sync.test_client.SecureClientTests)
 Client sets server_hostname to the value provided in argument. ... ok
 test_set_server_hostname_implicitly (tests.sync.test_client.SecureClientTests)
 Client sets server_hostname to the host in the WebSocket URI. ... ok
-test_connection (tests.sync.test_client.SecureUnixClientTests)
-Client connects to server securely over a Unix socket. ... ok
-test_set_server_hostname (tests.sync.test_client.SecureUnixClientTests)
-Client sets server_hostname to the host in the WebSocket URI. ... ok
+test_authenticated_socks_proxy (tests.sync.test_client.SocksProxyClientTests)
+Client connects to server through an authenticated SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_authenticated_socks_proxy_error (tests.sync.test_client.SocksProxyClientTests)
+Client fails to authenticate to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_explicit_socks_proxy (tests.sync.test_client.SocksProxyClientTests)
+Client connects to server through a SOCKS5 proxy set explicitly. ... skipped 'mitmproxy not installed'
+test_ignore_proxy_with_existing_socket (tests.sync.test_client.SocksProxyClientTests)
+Client connects using a pre-existing socket. ... skipped 'mitmproxy not installed'
+test_secure_socks_proxy (tests.sync.test_client.SocksProxyClientTests)
+Client connects to server securely through a SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy (tests.sync.test_client.SocksProxyClientTests)
+Client connects to server through a SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy_connection_failure (tests.sync.test_client.SocksProxyClientTests)
+Client fails to connect to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
+test_socks_proxy_connection_timeout (tests.sync.test_client.SocksProxyClientTests)
+Client times out while connecting to the SOCKS5 proxy. ... skipped 'mitmproxy not installed'
 test_connection (tests.sync.test_client.UnixClientTests)
 Client connects to server over a Unix socket. ... ok
+test_secure_connection (tests.sync.test_client.UnixClientTests)
+Client connects to server securely over a Unix socket. ... ok
 test_set_host_header (tests.sync.test_client.UnixClientTests)
 Client sets the Host header to the host in the WebSocket URI. ... ok
+test_set_server_hostname (tests.sync.test_client.UnixClientTests)
+Client sets server_hostname to the host in the WebSocket URI. ... ok
 test_acknowledge_ping (tests.sync.test_connection.ClientConnectionTests)
 ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.sync.test_connection.ClientConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_ping_on_close (tests.sync.test_connection.ClientConnectionTests)
+ping with ack_on_close is acknowledged when the connection is closed. ... ok
 test_acknowledge_previous_ping (tests.sync.test_connection.ClientConnectionTests)
 ping is acknowledged by a pong for as a later ping. ... ok
 test_close (tests.sync.test_connection.ClientConnectionTests)
@@ -1542,6 +1680,8 @@ test_close_waits_for_close_frame (tests.sync.test_connection.ClientConnectionTes
 close waits for a close frame (then EOF) before returning. ... ok
 test_close_waits_for_connection_closed (tests.sync.test_connection.ClientConnectionTests)
 close waits for EOF before returning. ... ok
+test_disable_keepalive (tests.sync.test_connection.ClientConnectionTests)
+keepalive is disabled when ping_interval is None. ... ok
 test_enter (tests.sync.test_connection.ClientConnectionTests)
 __enter__ returns the connection itself. ... ok
 test_exit (tests.sync.test_connection.ClientConnectionTests)
@@ -1560,6 +1700,20 @@ test_iter_mixed (tests.sync.test_connection.ClientConnectionTests)
 __iter__ yields a mix of text and binary messages. ... ok
 test_iter_text (tests.sync.test_connection.ClientConnectionTests)
 __iter__ yields text messages. ... ok
+test_keepalive (tests.sync.test_connection.ClientConnectionTests)
+keepalive sends pings at ping_interval and measures latency. ... ok
+test_keepalive_ignores_timeout (tests.sync.test_connection.ClientConnectionTests)
+keepalive ignores timeouts if ping_timeout isn't set. ... ok
+test_keepalive_reports_errors (tests.sync.test_connection.ClientConnectionTests)
+keepalive reports unexpected errors in logs. ... ok
+test_keepalive_terminates_when_sending_ping_fails (tests.sync.test_connection.ClientConnectionTests)
+keepalive task terminates when sending a ping fails. ... ok
+test_keepalive_terminates_while_sleeping (tests.sync.test_connection.ClientConnectionTests)
+keepalive task terminates while waiting to send a ping. ... ok
+test_keepalive_terminates_while_waiting_for_pong (tests.sync.test_connection.ClientConnectionTests)
+keepalive task terminates while waiting to receive a pong. ... ok
+test_keepalive_times_out (tests.sync.test_connection.ClientConnectionTests)
+keepalive closes the connection if ping_timeout elapses. ... ok
 test_local_address (tests.sync.test_connection.ClientConnectionTests)
 Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ClientConnectionTests)
@@ -1688,6 +1842,8 @@ test_acknowledge_ping (tests.sync.test_connection.ServerConnectionTests)
 ping is acknowledged by a pong with the same payload. ... ok
 test_acknowledge_ping_non_matching_pong (tests.sync.test_connection.ServerConnectionTests)
 ping isn't acknowledged by a pong with a different payload. ... ok
+test_acknowledge_ping_on_close (tests.sync.test_connection.ServerConnectionTests)
+ping with ack_on_close is acknowledged when the connection is closed. ... ok
 test_acknowledge_previous_ping (tests.sync.test_connection.ServerConnectionTests)
 ping is acknowledged by a pong for as a later ping. ... ok
 test_close (tests.sync.test_connection.ServerConnectionTests)
@@ -1718,6 +1874,8 @@ test_close_waits_for_close_frame (tests.sync.test_connection.ServerConnectionTes
 close waits for a close frame (then EOF) before returning. ... ok
 test_close_waits_for_connection_closed (tests.sync.test_connection.ServerConnectionTests)
 close waits for EOF before returning. ... skipped 'only relevant on the client-side'
+test_disable_keepalive (tests.sync.test_connection.ServerConnectionTests)
+keepalive is disabled when ping_interval is None. ... ok
 test_enter (tests.sync.test_connection.ServerConnectionTests)
 __enter__ returns the connection itself. ... ok
 test_exit (tests.sync.test_connection.ServerConnectionTests)
@@ -1736,6 +1894,20 @@ test_iter_mixed (tests.sync.test_connection.ServerConnectionTests)
 __iter__ yields a mix of text and binary messages. ... ok
 test_iter_text (tests.sync.test_connection.ServerConnectionTests)
 __iter__ yields text messages. ... ok
+test_keepalive (tests.sync.test_connection.ServerConnectionTests)
+keepalive sends pings at ping_interval and measures latency. ... ok
+test_keepalive_ignores_timeout (tests.sync.test_connection.ServerConnectionTests)
+keepalive ignores timeouts if ping_timeout isn't set. ... ok
+test_keepalive_reports_errors (tests.sync.test_connection.ServerConnectionTests)
+keepalive reports unexpected errors in logs. ... ok
+test_keepalive_terminates_when_sending_ping_fails (tests.sync.test_connection.ServerConnectionTests)
+keepalive task terminates when sending a ping fails. ... ok
+test_keepalive_terminates_while_sleeping (tests.sync.test_connection.ServerConnectionTests)
+keepalive task terminates while waiting to send a ping. ... ok
+test_keepalive_terminates_while_waiting_for_pong (tests.sync.test_connection.ServerConnectionTests)
+keepalive task terminates while waiting to receive a pong. ... ok
+test_keepalive_times_out (tests.sync.test_connection.ServerConnectionTests)
+keepalive closes the connection if ping_timeout elapses. ... ok
 test_local_address (tests.sync.test_connection.ServerConnectionTests)
 Connection provides a local_address attribute. ... ok
 test_logger (tests.sync.test_connection.ServerConnectionTests)
@@ -1978,6 +2150,28 @@ test_set_low_water_mark (tests.sync.test_messages.AssemblerTests)
 low sets the low-water and high-water marks. ... ok
 test_unset_high_and_low_water_marks (tests.sync.test_messages.AssemblerTests)
 High-water and low-water marks are unset. ... ok
+test_custom_router_factory (tests.sync.test_router.RouterTests)
+Router supports a custom router factory. ... ok
+test_force_redirect_server_name (tests.sync.test_router.RouterTests)
+Router redirects connections to the host declared in server_name. ... ok
+test_force_secure_redirect (tests.sync.test_router.RouterTests)
+Router redirects ws:// connections to a wss:// URI when ssl=True. ... ok
+test_not_found (tests.sync.test_router.RouterTests)
+Router rejects requests to unknown paths with an HTTP 404 error. ... ok
+test_process_request_returning_none (tests.sync.test_router.RouterTests)
+Router supports a process_request returning None. ... ok
+test_process_request_returning_response (tests.sync.test_router.RouterTests)
+Router supports a process_request returning a response. ... ok
+test_redirect (tests.sync.test_router.RouterTests)
+Router redirects connections according to redirect_to. ... ok
+test_route_with_query_string (tests.sync.test_router.RouterTests)
+Router ignores query strings when matching paths. ... ok
+test_router_matches_paths_and_extracts_parameters (tests.sync.test_router.RouterTests)
+Router matches paths and extracts parameters. ... ok
+test_secure_redirect (tests.sync.test_router.RouterTests)
+Router redirects connections to a wss:// URI when TLS is enabled. ... ok
+test_router_supports_unix_sockets (tests.sync.test_router.UnixRouterTests)
+Router supports Unix sockets. ... ok
 test_ssl_context_argument (tests.sync.test_server.BackwardsCompatibilityTests)
 Server supports the deprecated ssl_context argument. ... ok
 test_web_socket_server_class (tests.sync.test_server.BackwardsCompatibilityTests) ... ok
@@ -2025,6 +2219,8 @@ test_custom_connection_factory (tests.sync.test_server.ServerTests)
 Server runs ServerConnection factory provided in create_connection. ... ok
 test_disable_compression (tests.sync.test_server.ServerTests)
 Server disables compression. ... ok
+test_disable_keepalive (tests.sync.test_server.ServerTests)
+Server disables keepalive. ... ok
 test_existing_socket (tests.sync.test_server.ServerTests)
 Server receives connection using a pre-existing socket. ... ok
 test_fileno (tests.sync.test_server.ServerTests)
@@ -2033,6 +2229,8 @@ test_handshake_fails (tests.sync.test_server.ServerTests)
 Server receives connection from client but the handshake fails. ... ok
 test_junk_handshake (tests.sync.test_server.ServerTests)
 Server closes the connection when receiving non-HTTP request from client. ... ok
+test_keepalive_is_enabled (tests.sync.test_server.ServerTests)
+Server enables keepalive and measures latency. ... ok
 test_logger (tests.sync.test_server.ServerTests)
 Server accepts a logger argument. ... ok
 test_override_server (tests.sync.test_server.ServerTests)
@@ -2337,6 +2535,7 @@ test_parse_invalid_status_line (tests.test_http11.ResponseTests) ... ok
 test_parse_non_integer_status (tests.test_http11.ResponseTests) ... ok
 test_parse_non_three_digit_status (tests.test_http11.ResponseTests) ... ok
 test_parse_unsupported_protocol (tests.test_http11.ResponseTests) ... ok
+test_parse_without_body (tests.test_http11.ResponseTests) ... ok
 test_serialize (tests.test_http11.ResponseTests) ... ok
 test_serialize_with_body (tests.test_http11.ResponseTests) ... ok
 test_attribute_error (tests.test_imports.ImportsTests) ... ok
@@ -2661,10 +2860,14 @@ test_read_line_too_long_need_more_data (tests.test_streams.StreamReaderTests) ..
 test_read_to_eof (tests.test_streams.StreamReaderTests) ... ok
 test_read_to_eof_at_eof (tests.test_streams.StreamReaderTests) ... ok
 test_read_to_eof_too_long (tests.test_streams.StreamReaderTests) ... ok
-test_error (tests.test_uri.URITests) ... ok
-test_resource_name (tests.test_uri.URITests) ... ok
-test_success (tests.test_uri.URITests) ... ok
-test_user_info (tests.test_uri.URITests) ... ok
+test_get_proxy (tests.test_uri.URITests) ... ok
+test_parse_invalid_proxies (tests.test_uri.URITests) ... ok
+test_parse_invalid_uris (tests.test_uri.URITests) ... ok
+test_parse_proxy_user_info (tests.test_uri.URITests) ... ok
+test_parse_resource_name (tests.test_uri.URITests) ... ok
+test_parse_user_info (tests.test_uri.URITests) ... ok
+test_parse_valid_proxies (tests.test_uri.URITests) ... ok
+test_parse_valid_uris (tests.test_uri.URITests) ... ok
 test_apply_mask (tests.test_utils.ApplyMaskTests) ... ok
 test_apply_mask_check_input_types (tests.test_utils.ApplyMaskTests) ... ok
 test_apply_mask_check_mask_length (tests.test_utils.ApplyMaskTests) ... ok
@@ -2679,8 +2882,8 @@ test_accept_key (tests.test_utils.UtilsTests) ... ok
 test_generate_key (tests.test_utils.UtilsTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 1836 tests
+Ran 1940 tests
 
-OK (skipped=23)
+OK (skipped=69)
   py$(PYV): OK
   congratulations :)
