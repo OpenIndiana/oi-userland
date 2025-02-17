@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 489 items
+collecting ... collected 496 items
 
 tests/mypy/test_type_annotations.py::test_positive PASSED
 tests/mypy/test_type_annotations.py::test_negative PASSED
@@ -210,6 +210,7 @@ tests/test_checkers.py::TestProtocol::test_missing_kwarg PASSED
 tests/test_checkers.py::TestProtocol::test_extra_kwarg PASSED
 tests/test_checkers.py::TestProtocol::test_instance_staticmethod_mismatch PASSED
 tests/test_checkers.py::TestProtocol::test_instance_classmethod_mismatch PASSED
+tests/test_checkers.py::TestProtocol::test_builtin_signature_check PASSED
 tests/test_checkers.py::TestRecursiveType::test_valid PASSED
 tests/test_checkers.py::TestRecursiveType::test_fail PASSED
 tests/test_checkers.py::TestAnnotated::test_valid PASSED
@@ -265,6 +266,7 @@ tests/test_instrumentation.py::test_unpacking_assign[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_from_generator[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_success[typechecked] PASSED
+tests/test_instrumentation.py::test_attribute_assign_unpacking[typechecked] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_fail[typechecked] PASSED
 tests/test_instrumentation.py::TestOptionsOverride::test_forward_ref_policy[typechecked] PASSED
 tests/test_instrumentation.py::TestOptionsOverride::test_typecheck_fail_callback[typechecked] PASSED
@@ -282,6 +284,8 @@ tests/test_instrumentation.py::test_literal_in_union[typechecked] PASSED
 tests/test_instrumentation.py::test_typevar_forwardref[typechecked] PASSED
 tests/test_instrumentation.py::test_suppress_annotated_assignment[typechecked] PASSED
 tests/test_instrumentation.py::test_suppress_annotated_multi_assignment[typechecked] PASSED
+tests/test_instrumentation.py::TestUsesForwardRef::test_success[typechecked] SKIPPED
+tests/test_instrumentation.py::TestUsesForwardRef::test_failure[typechecked] SKIPPED
 tests/test_instrumentation.py::test_type_checked_func[importhook] PASSED
 tests/test_instrumentation.py::test_type_checked_func_error[importhook] PASSED
 tests/test_instrumentation.py::test_non_type_checked_func[importhook] PASSED
@@ -314,6 +318,7 @@ tests/test_instrumentation.py::test_unpacking_assign[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_from_generator[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_with_annotation[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_success[importhook] PASSED
+tests/test_instrumentation.py::test_attribute_assign_unpacking[importhook] PASSED
 tests/test_instrumentation.py::test_unpacking_assign_star_no_annotation_fail[importhook] PASSED
 tests/test_instrumentation.py::TestOptionsOverride::test_forward_ref_policy[importhook] PASSED
 tests/test_instrumentation.py::TestOptionsOverride::test_typecheck_fail_callback[importhook] PASSED
@@ -331,6 +336,8 @@ tests/test_instrumentation.py::test_literal_in_union[importhook] PASSED
 tests/test_instrumentation.py::test_typevar_forwardref[importhook] PASSED
 tests/test_instrumentation.py::test_suppress_annotated_assignment[importhook] PASSED
 tests/test_instrumentation.py::test_suppress_annotated_multi_assignment[importhook] PASSED
+tests/test_instrumentation.py::TestUsesForwardRef::test_success[importhook] SKIPPED
+tests/test_instrumentation.py::TestUsesForwardRef::test_failure[importhook] SKIPPED
 tests/test_plugins.py::test_custom_type_checker PASSED
 tests/test_pytest_plugin.py::test_config_options PASSED
 tests/test_pytest_plugin.py::test_commandline_options PASSED
@@ -498,6 +505,6 @@ tests/test_utils.py::test_function_name PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
-======== 473 passed, 7 skipped, 9 xfailed ========
+======== 476 passed, 11 skipped, 9 xfailed ========
   py$(PYV): OK
   congratulations :)
