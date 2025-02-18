@@ -13,12 +13,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= schroedinger
 COMPONENT_VERSION= 1.0.11
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Library for decoding and encoding video in the Dirac format
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -32,11 +31,6 @@ COMPONENT_LICENSE_FILE= COPYING.LGPL
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-# Build can't create generated sources without this
-COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-CONFIGURE_SCRIPT= $(@D)/configure
 
 CONFIGURE_OPTIONS += --disable-gtk-doc
 CONFIGURE_OPTIONS += --enable-shared
