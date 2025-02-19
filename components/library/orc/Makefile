@@ -13,13 +13,12 @@
 #
 
 BUILD_STYLE = meson
-BUILD_BITS = 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         orc
-COMPONENT_VERSION=	0.4.40
+COMPONENT_VERSION=	0.4.41
 COMPONENT_FMRI=		library/orc
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/projects/orc.html
 COMPONENT_SUMMARY=	The Optimized Inner Loop Runtime Compiler for SIMD array operations
@@ -27,16 +26,13 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:3fc2bee78dfb7c41fd9605061fc69138db7df007eae2f669a1f56e8bacef74ab
+	sha256:cb1bfd4f655289cd39bc04642d597be9de5427623f0861c1fc19c08d98467fa2
 COMPONENT_ARCHIVE_URL=  \
 	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-2-Clause AND BSD-3-Clause
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Heals libgstvideoscale (from gstreamer 0.10) core dump
-gcc_OPT = -O2
 
 # Dynamic library version number
 SOVER = 0.$(word 3,$(subst ., ,$(COMPONENT_VERSION))).0
