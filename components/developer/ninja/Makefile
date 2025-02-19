@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
 COMPONENT_VERSION=	1.12.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_SRC=    		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
