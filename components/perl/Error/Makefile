@@ -18,18 +18,20 @@ BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Error
-HUMAN_VERSION =			0.17029
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Error - Error/exception handling in an OO-ish way
+COMPONENT_NAME =		Error
+HUMAN_VERSION =			0.17030
+COMPONENT_SUMMARY =		Error/exception handling in an OO-ish way
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1a23f7913032aed6d4b68321373a3899ca66590f4727391a091ec19c95bf7adc
+	sha256:34d382276c0fb0d6b38355b94c96a30b12d834d5662eb53f088ee25e3e712924
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
