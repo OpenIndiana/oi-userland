@@ -17,8 +17,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libcupsfilters
-COMPONENT_VERSION= 2.1.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.1.1
 COMPONENT_SUMMARY= libcupsfilters contains all the code of the filters of the former cups-filters package as library functions
 COMPONENT_DESCRIPTION= The filter functions are principally intended to be used for the data format conversion tasks needed in \
 					   Printer Applications. They are already in use (together with libppd and pappl-retrofit) by the CUPS-driver \
@@ -28,7 +27,7 @@ COMPONENT_DESCRIPTION= The filter functions are principally intended to be used 
 					   make/model/device ID matching, ...
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:cbe900c7783e4aab0b1681629fad7322d82d082a51e8bae7e1c741d26bdcd294
+COMPONENT_ARCHIVE_HASH=	sha256:6c303e36cfde05a6c88fb940c62b6a18e7cdbfb91f077733ebc98f104925ce36
 COMPONENT_PROJECT_URL= https://openprinting.github.io/
 COMPONENT_ARCHIVE_URL= https://github.com/OpenPrinting/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	print/$(COMPONENT_NAME)
