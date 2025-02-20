@@ -13,22 +13,22 @@
 #
 
 BUILD_STYLE= cmake
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pan
-COMPONENT_VERSION=      0.161
-COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
+COMPONENT_VERSION=      0.162
 COMPONENT_SUMMARY=      A powerful Newsgroup Article reader
-COMPONENT_FMRI=         desktop/nntp/pan
+COMPONENT_PROJECT_URL=  https://pan.rebelbase.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:4c2c34b9e4a13275b73fae4f5dbdb3f857cf6b58c4813a373dd9d67ce37779d9
+COMPONENT_ARCHIVE_HASH= sha256:f33b136621f7c0e7feac9ed6d0ff3fe15013335a100cb48b4151f4528be10059
 COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/GNOME/pan/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         desktop/nntp/pan
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS += -lsocket -lnsl
