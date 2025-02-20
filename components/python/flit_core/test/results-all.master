@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 103 items
+collecting ... collected 132 items
 
 tests_core/test_build_thyself.py::test_prepare_metadata PASSED
 tests_core/test_build_thyself.py::test_wheel PASSED
@@ -45,6 +45,9 @@ tests_core/test_common.py::test_metadata_2_3_requires_dist[zope.interface (>3.5.
 tests_core/test_common.py::test_metadata_2_3_requires_dist[pywin32 >1.0; sys_platform == 'win32'-pywin32 >1.0; sys_platform == 'win32'] PASSED
 tests_core/test_common.py::test_metadata_2_3_provides_extra[foo-foo] PASSED
 tests_core/test_common.py::test_metadata_2_3_provides_extra[foo__bar..baz-foo-bar-baz] PASSED
+tests_core/test_common.py::test_metadata_license[value0-MIT-None] PASSED
+tests_core/test_common.py::test_metadata_license[value1-None-MIT] PASSED
+tests_core/test_common.py::test_metadata_license[value2-None-Apache-2.0] PASSED
 tests_core/test_config.py::test_flatten_entrypoints PASSED
 tests_core/test_config.py::test_load_toml PASSED
 tests_core/test_config.py::test_load_toml_ns PASSED
@@ -71,23 +74,33 @@ tests_core/test_config.py::test_bad_pep621_info[proj_bad0-\\bstr\\b] PASSED
 tests_core/test_config.py::test_bad_pep621_info[proj_bad1-[Uu]nrecognised] PASSED
 tests_core/test_config.py::test_bad_pep621_info[proj_bad2-both] PASSED
 tests_core/test_config.py::test_bad_pep621_info[proj_bad3-required] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad4-list] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad5-strings] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad6-entry-point.*tables] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad7-entry-point.*string] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad8-\\[project\\.gui-scripts\\]] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad9-scripts.*string] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad10-gui-scripts.*string] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad11-list.*optional-dep] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad12-string.*optional-dep] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad13-dynamic] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad14-dynamic.*\\[project\\]] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad15-author.*\\bdict] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad16-maintainer.*title] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad17-not valid] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad18-not valid] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad19-not valid] PASSED
-tests_core/test_config.py::test_bad_pep621_info[proj_bad20-clash] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad4-license field should be <class 'str'> or <class 'dict'>, not <class 'int'>] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad5-License classifiers are deprecated in favor of the license expression] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad6-\\blist\\b] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad7-'/LICENSE'.+must not start with '/'] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad8-'../LICENSE'.+must not contain '..'] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad9-No files found.+'NOT_FOUND'] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad10-Pattern contains invalid characters] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad11-'\\*\\*LICENSE'.+Invalid pattern] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad12-'./'.+Unacceptable pattern] SKIPPED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad13-license-files cannot be used with a license table] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad14-list] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad15-strings] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad16-entry-point.*tables] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad17-entry-point.*string] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad18-\\[project\\.gui-scripts\\]] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad19-scripts.*string] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad20-gui-scripts.*string] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad21-list.*optional-dep] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad22-string.*optional-dep] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad23-dynamic] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad24-dynamic.*\\[project\\]] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad25-author.*\\bdict] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad26-maintainer.*title] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad27-not valid] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad28-not valid] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad29-not valid] PASSED
+tests_core/test_config.py::test_bad_pep621_info[proj_bad30-clash] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[readme0-required] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[readme1-content-type] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[/opt/README.rst-relative] PASSED
@@ -95,6 +108,21 @@ tests_core/test_config.py::test_bad_pep621_readme[readme3-both] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[readme4-required] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[readme5-[Uu]nrecognised] PASSED
 tests_core/test_config.py::test_bad_pep621_readme[5-readme.*string] PASSED
+tests_core/test_config.py::test_license_expr[mit-MIT] PASSED
+tests_core/test_config.py::test_license_expr[apache-2.0-Apache-2.0] PASSED
+tests_core/test_config.py::test_license_expr[APACHE-2.0+-Apache-2.0+] PASSED
+tests_core/test_config.py::test_license_expr[LiceNseref-Public-DoMain-LicenseRef-Public-DoMain] PASSED
+tests_core/test_config.py::test_license_expr_error PASSED
+tests_core/test_config.py::test_license_file_defaults_with_old_metadata PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files0-files0] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files1-files1] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files2-files2] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files3-files3] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files4-files4] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files5-files5] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files6-files6] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files7-files7] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files8-files8] PASSED
 tests_core/test_sdist.py::test_make_sdist PASSED
 tests_core/test_sdist.py::test_make_sdist_pep621 PASSED
 tests_core/test_sdist.py::test_make_sdist_pep621_nodynamic PASSED
@@ -108,5 +136,6 @@ tests_core/test_wheel.py::test_source_date_epoch PASSED
 tests_core/test_wheel.py::test_zero_timestamp PASSED
 tests_core/test_wheel.py::test_main PASSED
 tests_core/test_wheel.py::test_data_dir PASSED
+tests_core/test_wheel.py::test_license_files PASSED
 
-======== 103 passed ========
+======== 131 passed, 1 skipped ========
