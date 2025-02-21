@@ -1,19 +1,19 @@
---- unrar/makefile	2017-11-21 22:53:39.000000000 +0000
-+++ unrar/makefile.new	2018-05-26 15:19:08.862458981 +0000
-@@ -2,13 +2,13 @@
- # Makefile for UNIX - unrar
- 
- # Linux using GCC
+--- unrar/makefile.old	2025-02-19 19:20:57.553942015 -0500
++++ unrar/makefile	2025-02-19 19:21:12.043963664 -0500
+@@ -5,13 +5,13 @@
+ # 2024.08.19: -march=native isn't recognized on some platforms such as RISCV64.
+ # Thus we removed it. Clang ARM users can add -march=armv8-a+crypto to enable
+ # ARM NEON crypto.
 -CXX=c++
--CXXFLAGS=-O2 -Wno-logical-op-parentheses -Wno-switch -Wno-dangling-else
-+#CXX=c++
-+#CXXFLAGS=-O2 -Wno-logical-op-parentheses -Wno-switch -Wno-dangling-else
+-CXXFLAGS=-O2 -std=c++11 -Wno-logical-op-parentheses -Wno-switch -Wno-dangling-else
++# CXX=c++
++# CXXFLAGS=-O2 -std=c++11 -Wno-logical-op-parentheses -Wno-switch -Wno-dangling-else
  LIBFLAGS=-fPIC
  DEFINES=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -DRAR_SMP
  STRIP=strip
  AR=ar
 -LDFLAGS=-pthread
-+#LDFLAGS=-pthread
++# LDFLAGS=-pthread
  DESTDIR=/usr
  
- # Linux using LCC
+ ##########################
