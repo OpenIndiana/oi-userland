@@ -17,12 +17,11 @@ BUILD_STYLE= waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=    talloc
-COMPONENT_VERSION= 2.4.2
-COMPONENT_SUMMARY= talloc is a hierarchical, reference counted memory \
-		       pool system with destructors.
+COMPONENT_VERSION= 2.4.3
+COMPONENT_SUMMARY= talloc is a hierarchical, reference counted memory pool system with destructors.
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:85ecf9e465e20f98f9950a52e9a411e14320bc555fa257d87697b7e7a9b1d8a6
+COMPONENT_ARCHIVE_HASH= sha256:dc46c40b9f46bb34dd97fe41f548b0e8b247b77a918576733c528e83abd854dd
 COMPONENT_ARCHIVE_URL= https://download.samba.org/pub/talloc/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://$(COMPONENT_NAME).samba.org/$(COMPONENT_NAME)/doc/html/index.html
 COMPONENT_FMRI = library/talloc
