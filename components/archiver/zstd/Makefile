@@ -19,13 +19,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zstd
-COMPONENT_VERSION=	1.5.6
+COMPONENT_VERSION=	1.5.7
 COMPONENT_SUMMARY=	Zstandard, or zstd for short, is a fast lossless compression algorithm, targeting real-time compression scenarios
 COMPONENT_PROJECT_URL=	https://facebook.github.io/zstd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/facebook/zstd/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:8c29e06cf42aacc1eafc4077ae2ec6c6fcb96a626157e0593d5e82a34fd403c1
+COMPONENT_ARCHIVE_HASH=	sha256:eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
 COMPONENT_FMRI=		compress/zstd
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	BSD,GPLv2.0
