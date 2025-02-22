@@ -19,9 +19,9 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=	0.8.3
+COMPONENT_VERSION=	0.8.4
 COMPONENT_SUMMARY=      Library for desktop notifications
-COMPONENT_ARCHIVE_HASH=	sha256:ee8f3ef946156ad3406fdf45feedbdcd932dbd211ab4f16f75eba4f36fb2f6c0
+COMPONENT_ARCHIVE_HASH=	sha256:8fa04d4ebdc155b0a239df88bd9f09e8f2739d5707a1390b427ab4985f83d25a
 COMPONENT_FMRI=         library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
