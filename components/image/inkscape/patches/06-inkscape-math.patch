@@ -1,6 +1,6 @@
---- inkscape-0.91/src/extension/internal/wmf-print.cpp.orig	2016-08-16 11:04:13.093104602 +0200
-+++ inkscape-0.91/src/extension/internal/wmf-print.cpp	2016-08-16 11:04:28.479477371 +0200
-@@ -558,7 +558,7 @@
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/wmf-print.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/wmf-print.cpp
+@@ -551,7 +551,7 @@
          Geom::Point p1(one * transform);
          Geom::Point p(p1 - p0);
  
@@ -9,9 +9,9 @@
  
          if (!style->stroke_width.computed) {
              return 0;   //if width is 0 do not (reset) the pen, it should already be NULL_PEN
---- inkscape-0.91/src/extension/internal/emf-inout.cpp.orig	2016-08-16 11:03:29.860875081 +0200
-+++ inkscape-0.91/src/extension/internal/emf-inout.cpp	2016-08-16 11:03:45.931064786 +0200
-@@ -2594,7 +2594,7 @@
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/emf-inout.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/emf-inout.cpp
+@@ -2653,7 +2653,7 @@
              PU_EMRROUNDRECT pEmr = (PU_EMRROUNDRECT) lpEMFR;
              U_RECTL rc = pEmr->rclBox;
              U_SIZEL corner = pEmr->szlCorner;
@@ -20,9 +20,9 @@
              double f1 = 1.0 - f;
              double cnx = corner.cx/2;
              double cny = corner.cy/2;
---- inkscape-0.91/src/extension/internal/wmf-inout.cpp.orig	2016-08-16 11:02:45.530096102 +0200
-+++ inkscape-0.91/src/extension/internal/wmf-inout.cpp	2016-08-16 11:02:57.465244612 +0200
-@@ -2132,7 +2132,7 @@
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/wmf-inout.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/wmf-inout.cpp
+@@ -2190,7 +2190,7 @@
              int16_t Height,Width;
              nSize = U_WMRROUNDRECT_get(contents, &Width, &Height, &rc);
              U_sanerect16(rc, &left, &top, &right, &bottom);
@@ -31,9 +31,9 @@
              double f1 = 1.0 - f;
              double cnx = Width/2;
              double cny = Height/2;
---- inkscape-0.91/src/extension/internal/emf-print.cpp.orig	2016-08-16 11:02:08.808717868 +0200
-+++ inkscape-0.91/src/extension/internal/emf-print.cpp	2016-08-16 11:01:51.861965562 +0200
-@@ -666,7 +666,7 @@
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/emf-print.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/emf-print.cpp
+@@ -648,7 +648,7 @@
          Geom::Point p1(one * transform);
          Geom::Point p(p1 - p0);
  
@@ -42,10 +42,10 @@
  
          if (!style->stroke_width.computed) {
              return 0;   //if width is 0 do not (reset) the pen, it should already be NULL_PEN
---- inkscape-0.91/src/ui/dialog/grid-arrange-tab.cpp.orig	2016-08-16 11:07:19.712271085 +0200
-+++ inkscape-0.91/src/ui/dialog/grid-arrange-tab.cpp	2016-08-16 11:09:58.255151367 +0200
-@@ -555,8 +555,8 @@
-                 prefs->setInt("/dialogs/gridtiler/NoOfCols", NoOfCols);
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/ui/dialog/grid-arrange-tab.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/ui/dialog/grid-arrange-tab.cpp
+@@ -437,8 +437,8 @@
+                 NoOfColsSpinner.set_value(NoOfCols);
              }
          } else {
 -            double PerRow = ceil(sqrt(selcount));
@@ -54,10 +54,10 @@
 +            double PerCol = ceil(sqrt(static_cast<double>(selcount)));
              NoOfRowsSpinner.set_value(PerRow);
              NoOfColsSpinner.set_value(PerCol);
-             prefs->setInt("/dialogs/gridtiler/NoOfCols", static_cast<int>(PerCol));
---- inkscape-INKSCAPE_1_0/src/extension/internal/metafile-print.cpp.~1~	2020-05-01 06:29:13.000000000 +0000
-+++ inkscape-INKSCAPE_1_0/src/extension/internal/metafile-print.cpp	2020-05-06 11:29:19.363050649 +0000
-@@ -352,8 +352,8 @@
+         }
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/metafile-print.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/metafile-print.cpp
+@@ -362,8 +362,8 @@
      double x1, y1, x2, y2;
      Geom::Path SVGep;
  
@@ -68,7 +68,7 @@
      x2 = ctr[X]  +  cos(F) * rx * cos(M_PI)   +   sin(-F) * ry * sin(M_PI);
      y2 = ctr[Y]  +  sin(F) * rx * cos(M_PI)   +   cos(F)  * ry * sin(M_PI);
  
-@@ -376,13 +376,13 @@
+@@ -386,13 +386,13 @@
      double x21, y21, x22, y22;
      double degrot = F * 360. / (2.*M_PI);
  
@@ -86,7 +86,7 @@
      x22 = ctr[X]  +  cos(F) * rx2 * cos(M_PI)   +   sin(-F) * ry2 * sin(M_PI);
      y22 = ctr[Y]  +  sin(F) * rx2 * cos(M_PI)   +   cos(F)  * ry2 * sin(M_PI);
  
-@@ -403,8 +403,8 @@
+@@ -413,8 +413,8 @@
      double x1, y1, x2, y2;
      Geom::Path SVGep;
  

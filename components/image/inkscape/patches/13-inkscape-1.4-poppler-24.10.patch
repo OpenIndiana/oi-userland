@@ -1,7 +1,6 @@
-diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp.omv~ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp
---- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp.omv~	2024-10-16 22:02:45.286278494 +0200
-+++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp	2024-10-16 23:49:12.890891669 +0200
-@@ -810,7 +810,7 @@ void PdfParser::opSetExtGState(Object ar
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.cpp
+@@ -810,7 +810,7 @@
              _POPPLER_FREE(obj3);
              if (_POPPLER_CALL_ARGS_DEREF(obj3, obj2.dictLookup, "G").isStream()) {
                  if (_POPPLER_CALL_ARGS_DEREF(obj4, obj3.streamGetDict()->lookup, "Group").isDict()) {
@@ -10,7 +9,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
                      GBool isolated = gFalse;
                      GBool knockout = gFalse;
                      if (!_POPPLER_CALL_ARGS_DEREF(obj5, obj4.dictLookup, "CS").isNull()) {
-@@ -857,7 +857,7 @@ void PdfParser::opSetExtGState(Object ar
+@@ -857,7 +857,7 @@
  }
  
  void PdfParser::doSoftMask(Object *str, GBool alpha,
@@ -19,7 +18,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  		     GBool isolated, GBool knockout,
  		     Function *transferFunc, GfxColor *backdropColor) {
    Dict *dict, *resDict;
-@@ -920,9 +920,9 @@ void PdfParser::doSoftMask(Object *str,
+@@ -920,9 +920,9 @@
  	  alpha, transferFunc, backdropColor);
    --formDepth;
  
@@ -32,7 +31,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    _POPPLER_FREE(obj1);
  }
  
-@@ -936,41 +936,28 @@ void PdfParser::opSetRenderingIntent(Obj
+@@ -936,41 +936,28 @@
  
  /**
   * Get a newly allocated color space instance by CS operation argument.
@@ -79,7 +78,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  {
      if (!obj->isName())
          return nullptr;
-@@ -983,7 +970,7 @@ void PdfParser::opSetFillGray(Object arg
+@@ -983,7 +970,7 @@
    GfxColor color;
    builder->beforeStateChange(state);
    state->setFillPattern(nullptr);
@@ -88,7 +87,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    color.c[0] = dblToCol(args[0].getNum());
    state->setFillColor(&color);
    builder->updateStyle(state);
-@@ -995,7 +982,7 @@ void PdfParser::opSetStrokeGray(Object a
+@@ -995,7 +982,7 @@
    GfxColor color;
    builder->beforeStateChange(state);
    state->setStrokePattern(nullptr);
@@ -97,7 +96,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    color.c[0] = dblToCol(args[0].getNum());
    state->setStrokeColor(&color);
    builder->updateStyle(state);
-@@ -1008,7 +995,7 @@ void PdfParser::opSetFillCMYKColor(Objec
+@@ -1008,7 +995,7 @@
    int i;
    builder->beforeStateChange(state);
    state->setFillPattern(nullptr);
@@ -106,7 +105,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    for (i = 0; i < 4; ++i) {
      color.c[i] = dblToCol(args[i].getNum());
    }
-@@ -1022,7 +1009,7 @@ void PdfParser::opSetStrokeCMYKColor(Obj
+@@ -1022,7 +1009,7 @@
    GfxColor color;
    builder->beforeStateChange(state);
    state->setStrokePattern(nullptr);
@@ -115,7 +114,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    for (int i = 0; i < 4; ++i) {
      color.c[i] = dblToCol(args[i].getNum());
    }
-@@ -1036,7 +1023,7 @@ void PdfParser::opSetFillRGBColor(Object
+@@ -1036,7 +1023,7 @@
    GfxColor color;
    builder->beforeStateChange(state);
    state->setFillPattern(nullptr);
@@ -124,7 +123,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    for (int i = 0; i < 3; ++i) {
      color.c[i] = dblToCol(args[i].getNum());
    }
-@@ -1049,7 +1036,7 @@ void PdfParser::opSetStrokeRGBColor(Obje
+@@ -1049,7 +1036,7 @@
    GfxColor color;
    builder->beforeStateChange(state);
    state->setStrokePattern(nullptr);
@@ -133,7 +132,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    for (int i = 0; i < 3; ++i) {
      color.c[i] = dblToCol(args[i].getNum());
    }
-@@ -1061,13 +1048,13 @@ void PdfParser::opSetStrokeRGBColor(Obje
+@@ -1061,13 +1048,13 @@
  void PdfParser::opSetFillColorSpace(Object args[], int numArgs)
  {
    assert(numArgs >= 1);
@@ -149,7 +148,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
      colorSpace->getDefaultColor(&color);
      state->setFillColor(&color);
      builder->updateStyle(state);
-@@ -1082,13 +1069,13 @@ void PdfParser::opSetStrokeColorSpace(Ob
+@@ -1082,13 +1069,13 @@
    assert(numArgs >= 1);
    builder->beforeStateChange(state);
  
@@ -165,7 +164,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
      colorSpace->getDefaultColor(&color);
      state->setStrokeColor(&color);
      builder->updateStyle(state);
-@@ -1152,7 +1139,7 @@ void PdfParser::opSetFillColorN(Object a
+@@ -1152,7 +1139,7 @@
        builder->updateStyle(state);
      }
      if (auto pattern = lookupPattern(&(args[numArgs - 1]), state)) {
@@ -174,7 +173,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
          builder->updateStyle(state);
      }
  
-@@ -1195,7 +1182,7 @@ void PdfParser::opSetStrokeColorN(Object
+@@ -1195,7 +1182,7 @@
        builder->updateStyle(state);
      }
      if (auto pattern = lookupPattern(&(args[numArgs - 1]), state)) {
@@ -183,7 +182,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
          builder->updateStyle(state);
      }
  
-@@ -1572,7 +1559,7 @@ void PdfParser::doShadingPatternFillFall
+@@ -1572,7 +1559,7 @@
  // TODO not good that numArgs is ignored but args[] is used:
  void PdfParser::opShFill(Object args[], int /*numArgs*/)
  {
@@ -192,7 +191,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
    GfxPath *savedPath = nullptr;
    bool savedState = false;
  
-@@ -1608,19 +1595,19 @@ void PdfParser::opShFill(Object args[],
+@@ -1608,19 +1595,19 @@
    // do shading type-specific operations
    switch (shading->getType()) {
    case 1: // Function-based shading
@@ -216,7 +215,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
      break;
    }
  
-@@ -1630,7 +1617,6 @@ void PdfParser::opShFill(Object args[],
+@@ -1630,7 +1617,6 @@
      state->setPath(savedPath);
    }
  
@@ -224,7 +223,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  }
  
  void PdfParser::doFunctionShFill(GfxFunctionShading *shading) {
-@@ -2521,7 +2507,7 @@ void PdfParser::doImage(Object * /*ref*/
+@@ -2521,7 +2507,7 @@
          
      } else {
          // get color space and color map
@@ -233,7 +232,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
          _POPPLER_CALL_ARGS(obj1, dict->lookup, "ColorSpace");
          if (obj1.isNull()) {
              _POPPLER_FREE(obj1);
-@@ -2530,11 +2516,11 @@ void PdfParser::doImage(Object * /*ref*/
+@@ -2530,11 +2516,11 @@
          if (!obj1.isNull()) {
              colorSpace = lookupColorSpaceCopy(obj1);
          } else if (csMode == streamCSDeviceGray) {
@@ -248,7 +247,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
          } else {
              colorSpace = nullptr;
          }
-@@ -2547,7 +2533,7 @@ void PdfParser::doImage(Object * /*ref*/
+@@ -2547,7 +2533,7 @@
              _POPPLER_FREE(obj1);
              _POPPLER_CALL_ARGS(obj1, dict->lookup, "D");
          }
@@ -257,7 +256,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
          _POPPLER_FREE(obj1);
          if (!colorMap->isOk()) {
              delete colorMap;
-@@ -2617,7 +2603,7 @@ void PdfParser::doImage(Object * /*ref*/
+@@ -2617,7 +2603,7 @@
  	            _POPPLER_FREE(obj1);
                      _POPPLER_CALL_ARGS(obj1, maskDict->lookup, "CS");
              }
@@ -266,7 +265,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
              _POPPLER_FREE(obj1);
              if (!maskColorSpace || maskColorSpace->getMode() != csDeviceGray) {
                  goto err1;
-@@ -2627,7 +2613,7 @@ void PdfParser::doImage(Object * /*ref*/
+@@ -2627,7 +2613,7 @@
                  _POPPLER_FREE(obj1);
                  _POPPLER_CALL_ARGS(obj1, maskDict->lookup, "D");
              }
@@ -275,7 +274,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
              _POPPLER_FREE(obj1);
              if (!maskColorMap->isOk()) {
                  delete maskColorMap;
-@@ -2739,7 +2725,7 @@ void PdfParser::doForm(Object *str, doub
+@@ -2739,7 +2725,7 @@
  {
      Dict *dict;
      GBool transpGroup, isolated, knockout;
@@ -284,7 +283,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
      Object matrixObj, bboxObj;
      double m[6], bbox[4];
      Object resObj;
-@@ -2831,14 +2817,11 @@ void PdfParser::doForm(Object *str, doub
+@@ -2831,14 +2817,11 @@
      doForm1(str, resDict, m, bbox, transpGroup, gFalse, blendingColorSpace, isolated, knockout);
      --formDepth;
  
@@ -300,7 +299,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
                          Function *transferFunc, GfxColor *backdropColor)
  {
      Parser *oldParser;
-@@ -2847,7 +2830,7 @@ void PdfParser::doForm1(Object *str, Dic
+@@ -2847,7 +2830,7 @@
      pushResources(resDict);
  
      // Add a new container group before saving the state
@@ -309,10 +308,9 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  
      // save current graphics state
      saveState();
-diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h.omv~ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h
---- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h.omv~	2024-10-16 22:03:47.306988617 +0200
-+++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h	2024-10-16 23:19:36.970279193 +0200
-@@ -138,7 +138,7 @@ public:
+--- inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h.orig
++++ inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-parser.h
+@@ -138,7 +138,7 @@
      void loadPatternColorProfiles(Dict *resources);
      void loadColorProfile();
      void loadColorSpaceProfile(GfxColorSpace *space, Object *obj);
@@ -321,7 +319,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  
      std::shared_ptr<CairoFontEngine> getFontEngine();
  
-@@ -174,10 +174,7 @@ private:
+@@ -174,10 +174,7 @@
  
      OpHistoryEntry *operatorHistory; // list containing the last N operators
  
@@ -333,7 +331,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
  
      void setDefaultApproximationPrecision(); // init color deltas
      void pushOperator(const char *name);
-@@ -203,7 +200,7 @@ private:
+@@ -203,7 +200,7 @@
      void opSetMiterLimit(Object args[], int numArgs);
      void opSetLineWidth(Object args[], int numArgs);
      void opSetExtGState(Object args[], int numArgs);
@@ -342,7 +340,7 @@ diff -up inkscape-1.4_2024-10-09_e7c3feb100/src/extension/internal/pdfinput/pdf-
                      Function *transferFunc, GfxColor *backdropColor);
      void opSetRenderingIntent(Object args[], int numArgs);
  
-@@ -297,7 +294,7 @@ private:
+@@ -297,7 +294,7 @@
    void doForm(Object *str, double *offset = nullptr);
    void doForm1(Object *str, Dict *resDict, double *matrix, double *bbox,
  	       GBool transpGroup = gFalse, GBool softMask = gFalse,
