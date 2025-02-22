@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tracker
 COMPONENT_VERSION=      1.8.3
-COMPONENT_REVISION=     16
+COMPONENT_REVISION=     17
 COMPONENT_SUMMARY=      Desktop search tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -39,16 +39,15 @@ PATH= $(PATH.gnu)
 CFLAGS += -std=gnu89 $(XPG6MODE)
 
 # Use default libjpeg
-CPPFLAGS += $(JPEG_CPPFLAGS)
-CFLAGS += $(JPEG_CFLAGS)
-LDFLAGS += $(JPEG_LDFLAGS)
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+#CPPFLAGS += $(JPEG_CPPFLAGS)
+#CFLAGS += $(JPEG_CFLAGS)
+#LDFLAGS += $(JPEG_LDFLAGS)
+#CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi)
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-libstemmer
 CONFIGURE_OPTIONS += --disable-maemo
 CONFIGURE_OPTIONS += --disable-schemas-compile
@@ -115,19 +114,21 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/gnome/libmediaart
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libxml2
