@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
 COMPONENT_VERSION=	2.10.38
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +40,9 @@ PYTHON=/usr/bin/$(MACH64)/python2.7
 
 CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include
 CFLAGS += -I/usr/include/libmng
+# gcc 14 complains about these
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=implicit-function-declaration
 
 COMPONENT_PREP_ACTION= ( \
 	cd $(@D)  && \
