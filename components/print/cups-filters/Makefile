@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	cups-filters
 COMPONENT_VERSION=	2.0.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Additional backends, filters and other software for CUPS
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -47,7 +47,6 @@ COMPONENT_INSTALL_ENV += PATH="$(PATH.gnu)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += --libdir=/usr/lib/cups/$(MACH64)
 CONFIGURE_OPTIONS += --localedir=$(USRSHARELOCALEDIR)
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-mutool
