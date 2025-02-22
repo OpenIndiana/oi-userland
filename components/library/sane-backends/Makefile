@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION= 7
+COMPONENT_REVISION= 8
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
