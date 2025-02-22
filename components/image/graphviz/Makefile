@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
 COMPONENT_VERSION=		12.2.1
+COMPONENT_REVISION=		1
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
