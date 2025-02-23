@@ -30,7 +30,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	10
+COMPONENT_REVISION=	11
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.enlightenment.org
@@ -86,8 +86,8 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/bullet
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
