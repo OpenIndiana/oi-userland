@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenSceneGraph
 COMPONENT_VERSION=	3.6.5
-COMPONENT_REVISION= 8
+COMPONENT_REVISION= 9
 COMPONENT_PROJECT_URL=	https://www.openscenegraph.com
 COMPONENT_SUMMARY=	OpenSceneGraph - High performance 3D graphics toolkit.
 COMPONENT_SRC=		OpenSceneGraph-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,11 +32,6 @@ include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 CMAKE_CXX_FLAGS += -std=c++11
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 # This is to get libraries to install into /usr/lib/$(MACH64)
 CMAKE_OPTIONS += -DLIB_POSTFIX=/$(MACH64)
@@ -54,8 +49,8 @@ REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
