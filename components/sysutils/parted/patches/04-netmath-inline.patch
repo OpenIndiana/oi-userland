@@ -1,0 +1,35 @@
+Modern gcc fails with these inline functions.
+
+--- parted-1.8.8/include/parted/natmath.h.orig
++++ parted-1.8.8/include/parted/natmath.h
+@@ -86,10 +86,10 @@
+ extern const PedAlignment* ped_alignment_any;
+ extern const PedAlignment* ped_alignment_none;
+ 
+-extern inline PedSector
++extern PedSector
+ ped_div_round_up (PedSector numerator, PedSector divisor);
+ 
+-extern inline PedSector
++extern PedSector
+ ped_div_round_to_nearest (PedSector numerator, PedSector divisor);
+ 
+ #endif /* PED_NATMATH_H_INCLUDED */
+--- parted-1.8.8/libparted/cs/natmath.c.orig
++++ parted-1.8.8/libparted/cs/natmath.c
+@@ -74,13 +74,13 @@
+ 	return sector - abs_mod (sector, grain_size);
+ }
+ 
+-inline PedSector
++PedSector
+ ped_div_round_up (PedSector numerator, PedSector divisor)
+ {
+                 return (numerator + divisor - 1) / divisor;
+ }
+ 
+-inline PedSector
++PedSector
+ ped_div_round_to_nearest (PedSector numerator, PedSector divisor)
+ {
+                 return (numerator + divisor/2) / divisor;

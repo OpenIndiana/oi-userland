@@ -1,0 +1,25 @@
+Definitions should never go to headers.
+
+--- parted-1.8.8/libparted/fs/fat/count.h.orig
++++ parted-1.8.8/libparted/fs/fat/count.h
+@@ -29,7 +29,7 @@
+ 	FAT_FLAG_BAD=3
+ };
+ 
+-struct __attribute__ ((packed)) _FatClusterInfo {
++extern struct __attribute__ ((packed)) _FatClusterInfo {
+ 	unsigned int    units_used:6;   /* 1 unit = cluster_size / 64 */
+ 	FatClusterFlag  flag:2;
+ } fat16;
+--- parted-1.8.8/libparted/fs/fat/count.c.orig
++++ parted-1.8.8/libparted/fs/fat/count.c
+@@ -24,6 +24,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
++#include "count.h"
++struct __attribute__ ((packed)) _FatClusterInfo fat16;
++
+ #ifndef DISCOVER_ONLY
+ 
+ #if 0

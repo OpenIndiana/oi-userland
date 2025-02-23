@@ -1,0 +1,25 @@
+This fixes an overflow detected by new GCC.  The strncat() -> strcat() change
+solves similar false positive.
+
+--- parted-1.8.8/libparted/fs/fat/bootsector.c.orig
++++ parted-1.8.8/libparted/fs/fat/bootsector.c
+@@ -293,7 +293,7 @@
+ 
+ 	memset (bs, 0, 512);
+ 	memcpy (bs->boot_jump, FAT_BOOT_JUMP, 3);
+-	memcpy (bs->u.fat32.boot_code, FAT_BOOT_CODE, FAT_BOOT_CODE_LENGTH);
++	memcpy (bs->u.fat32.boot_code, FAT_BOOT_CODE, sizeof(FAT_BOOT_CODE));
+ 	return 1;
+ }
+ 
+--- parted-1.8.8/parted/parted.c.orig
++++ parted-1.8.8/parted/parted.c
+@@ -1178,7 +1178,7 @@
+                                 ped_realloc (&_res, strlen (res)
+                                                            + 1 + 2);
+                                 res = _res;
+-                                strncat (res, ", ", 2);
++                                strcat (res, ", ");
+                         }
+ 
+                         name = _(ped_partition_flag_get_name (flag));

@@ -1,0 +1,248 @@
+Various unsorted solaris fixes and changes.
+
+--- parted-1.8.8/libparted/fs/ext2/ext2.h.orig
++++ parted-1.8.8/libparted/fs/ext2/ext2.h
+@@ -45,7 +45,12 @@
+   typedef off_t loff_t;
+ #endif
+ 
++#if defined(__sun)
++typedef off_t loff_t;
++typedef uint32_t blk_t;
++#else
+ typedef u_int32_t blk_t;
++#endif
+ 
+ #ifdef HAVE_LINUX_EXT2_FS_H
+ #define _LINUX_TYPES_H
+--- parted-1.8.8/libparted/fs/jfs/jfs_types.h.orig
++++ parted-1.8.8/libparted/fs/jfs/jfs_types.h
+@@ -112,7 +112,10 @@
+ #define	HIGHORDER	0x80000000u	/* high order bit on            */
+ #define	ONES		0xffffffffu	/* all bit on                   */
+ 
++#if !defined(__sun)
+ typedef int boolean_t;
++#endif
++
+ #define TRUE 1
+ #define FALSE 0
+ 
+--- parted-1.8.8/libparted/fs/xfs/platform_defs.h.orig
++++ parted-1.8.8/libparted/fs/xfs/platform_defs.h
+@@ -57,6 +57,10 @@
+ # endif
+ #endif
+ 
++#if defined(__sun)
++typedef off_t		loff_t;
++#endif
++
+ typedef loff_t		xfs_off_t;
+ typedef uint64_t	xfs_ino_t;
+ typedef uint32_t	xfs_dev_t;
+--- parted-1.8.8/libparted/labels/dos.c.orig
++++ parted-1.8.8/libparted/labels/dos.c
+@@ -36,7 +36,7 @@
+  * the source, and how to build it
+  */
+ 
+-static const char MBR_BOOT_CODE[] = {
++static const unsigned char MBR_BOOT_CODE[] = {
+ 	0xfa, 0xb8, 0x00, 0x10, 0x8e, 0xd0, 0xbc, 0x00,
+ 	0xb0, 0xb8, 0x00, 0x00, 0x8e, 0xd8, 0x8e, 0xc0,
+ 	0xfb, 0xbe, 0x00, 0x7c, 0xbf, 0x00, 0x06, 0xb9,
+@@ -1318,6 +1318,8 @@
+ 		dos_data->system |= dos_data->hidden ? PART_FLAG_HIDDEN : 0;
+ 	} else if (!strcmp (fs_type->name, "sun-ufs"))
+ 		dos_data->system = PARTITION_SUN_UFS;
++	else if (!strcmp (fs_type->name, "solaris"))
++		dos_data->system = PARTITION_SUN_UFS;
+ 	else if (!strcmp (fs_type->name, "linux-swap"))
+ 		dos_data->system = PARTITION_LINUX_SWAP;
+ 	else
+--- parted-1.8.8/libparted/labels/gpt.c.orig
++++ parted-1.8.8/libparted/labels/gpt.c
+@@ -58,6 +58,10 @@
+ #define GPT_HEADER_REVISION_V1_00 0x00010000
+ #define GPT_HEADER_REVISION_V0_99 0x00009900
+ 
++#ifdef __sun
++#define __attribute__(X)	/*nothing*/
++#endif /* __sun */
++
+ typedef uint16_t efi_char16_t;	/* UNICODE character */
+ typedef struct _GuidPartitionTableHeader_t GuidPartitionTableHeader_t;
+ typedef struct _GuidPartitionEntryAttributes_t GuidPartitionEntryAttributes_t;
+@@ -123,6 +127,9 @@
+ 		    PED_CPU_TO_LE16 (0x11AA), 0xaa, 0x11, \
+ 		    { 0x00, 0x30, 0x65, 0x43, 0xEC, 0xAC }})
+ 
++#ifdef __sun
++#pragma pack(1)
++#endif
+ struct __attribute__ ((packed)) _GuidPartitionTableHeader_t {
+ 	uint64_t Signature;
+ 	uint32_t Revision;
+@@ -142,12 +149,11 @@
+ };
+ 
+ struct __attribute__ ((packed)) _GuidPartitionEntryAttributes_t {
+-#ifdef __GNUC__ /* XXX narrow this down to !TinyCC */
++#if defined(__GNUC__) || defined(__sun) /* XXX narrow this down to !TinyCC */
+ 	uint64_t RequiredToFunction:1;
+ 	uint64_t Reserved:47;
+         uint64_t GuidSpecific:16;
+ #else
+-#       warning "Using crippled partition entry type"
+ 	uint32_t RequiredToFunction:1;
+ 	uint32_t Reserved:32;
+ 	uint32_t LOST:5;
+@@ -163,6 +169,9 @@
+ 	GuidPartitionEntryAttributes_t Attributes;
+ 	efi_char16_t PartitionName[72 / sizeof(efi_char16_t)];
+ };
++#ifdef __sun
++#pragma pack()
++#endif
+ 
+ #define GPT_PMBR_LBA 0
+ #define GPT_PMBR_SECTORS 1
+@@ -183,6 +192,9 @@
+          sizeof(GuidPartitionEntry_t))
+ 
+ 
++#ifdef __sun
++#pragma pack(1)
++#endif
+ struct __attribute__ ((packed)) _PartitionRecord_t {
+ 	/* Not used by EFI firmware. Set to 0x80 to indicate that this
+ 	   is the bootable legacy partition. */
+@@ -236,6 +248,9 @@
+ 	int		entry_count;
+ 	efi_guid_t	uuid;
+ };
++#ifdef __sun
++#pragma pack()
++#endif
+ 
+ /* uses libparted's disk_specific field in PedPartition, to store our info */
+ typedef struct _GPTPartitionData {
+@@ -428,6 +443,7 @@
+ 	int gpt_sig_found = 0;
+ 
+ 	PED_ASSERT (dev != NULL, return 0);
++	PED_ASSERT (pth_raw != NULL, return 0);
+ 
+ 	if (ped_device_read(dev, pth_raw, 1, GPT_HEADER_SECTORS)
+ 	|| ped_device_read(dev, pth_raw, dev->length - 1, GPT_HEADER_SECTORS)) {
+@@ -880,9 +896,14 @@
+ 	if (!_parse_header (disk, gpt, &write_back))
+ 		goto error_free_gpt;
+ 
+-
+-	ptes_size = sizeof (GuidPartitionEntry_t) * gpt_disk_data->entry_count;
++	/*
++	 * ptes_size is in bytes and must be a multiple of sector_size.
++	 */
++	ptes_size = ped_round_up_to(
++		sizeof (GuidPartitionEntry_t) * gpt_disk_data->entry_count,
++		disk->dev->sector_size);
+ 	ptes = (GuidPartitionEntry_t*) ped_malloc (ptes_size);
++
+ 	if (!ped_device_read (disk->dev, ptes,
+ 			      PED_LE64_TO_CPU(gpt->PartitionEntryLBA),
+ 			      ptes_size / disk->dev->sector_size))
+@@ -971,8 +992,13 @@
+ 	gpt->Reserved1 = 0;
+ 
+ 	if (alternate) {
+-		PedSector ptes_size = gpt_disk_data->entry_count
+-				      * sizeof (GuidPartitionEntry_t) / disk->dev->sector_size;
++		/*
++		 * ptes_size is in sectors
++		 */
++		PedSector ptes_size = ped_div_round_up(
++			gpt_disk_data->entry_count *
++			sizeof (GuidPartitionEntry_t),
++			disk->dev->sector_size);
+ 
+ 		gpt->MyLBA = PED_CPU_TO_LE64 (disk->dev->length - 1);
+ 		gpt->AlternateLBA = PED_CPU_TO_LE64 (1);
+@@ -1035,7 +1061,12 @@
+ 
+ 	gpt_disk_data = disk->disk_specific;
+ 
+-	ptes_size = sizeof (GuidPartitionEntry_t) * gpt_disk_data->entry_count;
++	/*
++	 * ptes_size is in bytes and must be a multiple of sector_size.
++	 */
++	ptes_size = ped_round_up_to(
++		sizeof (GuidPartitionEntry_t) * gpt_disk_data->entry_count,
++		disk->dev->sector_size);
+ 	ptes = (GuidPartitionEntry_t*) ped_malloc (ptes_size);
+ 	if (!ptes)
+ 		goto error;
+--- parted-1.8.8/libparted/labels/pc98.c.orig
++++ parted-1.8.8/libparted/labels/pc98.c
+@@ -112,7 +112,7 @@
+ } PC98PartitionData;
+ 
+ /* this MBR boot code is dummy */
+-static const char MBR_BOOT_CODE[] = {
++static const unsigned char MBR_BOOT_CODE[] = {
+ 	0xcb,			/* retf */
+ 	0x00, 0x00, 0x00,	/* */
+ 	0x49, 0x50, 0x4c, 0x31  /* "IPL1" */
+--- parted-1.8.8/libparted/labels/sun.c.orig
++++ parted-1.8.8/libparted/labels/sun.c
+@@ -48,6 +48,12 @@
+ typedef struct _SunPartitionData    SunPartitionData;
+ typedef struct _SunDiskData         SunDiskData;
+ 
++#if defined(__sun)
++typedef uint8_t u_int8_t;
++typedef uint16_t u_int16_t;
++typedef uint32_t u_int32_t;
++#endif
++
+ struct __attribute__ ((packed)) _SunRawPartition {
+ 	u_int32_t	start_cylinder; /* where the part starts... */
+ 	u_int32_t	num_sectors;	/* ...and it's length */
+--- parted-1.8.8/parted/parted.c.orig
++++ parted-1.8.8/parted/parted.c
+@@ -17,6 +17,10 @@
+     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
++/*
++ * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
++ */
++
+ #include <config.h>
+ 
+ #include "closeout.h"
+@@ -1952,7 +1956,7 @@
+ }
+ 
+ static int
+-do_version ()
++do_version (PedDevice** dev)
+ {
+     printf ("\n%s\n%s",
+             prog_name,
+@@ -2448,11 +2452,14 @@
+           "rebooting.  Read section 4 of the Parted User "
+           "documentation for more information."));
+ }
++
++#if !defined(__sun)
+ if (!opt_script_mode && !opt_machine_mode && disk_is_modified) {
+         ped_exception_throw (
+                 PED_EXCEPTION_INFORMATION, PED_EXCEPTION_OK,
+                 _("You may need to update /etc/fstab.\n"));
+ }
++#endif
+ 
+ ped_device_close (dev);
+ 
