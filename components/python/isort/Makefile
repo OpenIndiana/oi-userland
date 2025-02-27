@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		isort
-HUMAN_VERSION =			6.0.0
+HUMAN_VERSION =			6.0.1
 COMPONENT_SUMMARY =		A Python utility / library to sort Python imports.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:75d9d8a1438a9432a7d7b54f2d3b45cad9a4a0fdba43617d9873379704a8bdf1
+	sha256:1cb5df28dfbc742e490c5e41bad6da41b805b0a8be7bc93cd0fb2a8a890ac450
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
