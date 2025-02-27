@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 4919 items
+collecting ... collected 5306 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -179,7 +179,7 @@ tests/serializers/test_any.py::test_any_json_round_trip[foo] PASSED
 tests/serializers/test_any.py::test_any_json_round_trip[value5] PASSED
 tests/serializers/test_any.py::test_any_json_round_trip[value6] PASSED
 tests/serializers/test_any.py::test_any_python[MyDataclass(a=1, b='foo')-{'a': 1, 'b': 'foo'}-{'a': 1, 'b': 'foo'}] PASSED
-tests/serializers/test_any.py::test_any_python[MyModel({'a': 1, 'b': 'foo', '__pydantic_serializer__': SchemaSerializer(serializer=Model(\n    ModelSerializer {\n        class: Py(\n            $(POINTER),\n        ),\n        serializer: Fields(\n            GeneralFieldsSerializer {\n                fields: {\n                    "a": SerField {\n                        key_py: Py(\n                            $(POINTER),\n                        ),\n                        alias: None,\n                        alias_py: None,\n                        serializer: Some(\n                            Any(\n                                AnySerializer,\n                            ),\n                        ),\n                        required: true,\n                    },\n                    "b": SerField {\n                        key_py: Py(\n                            $(POINTER),\n                        ),\n                        alias: None,\n                        alias_py: None,\n                        serializer: Some(\n                            Any(\n                                AnySerializer,\n                            ),\n                        ),\n                        required: true,\n                    },\n                },\n                computed_fields: None,\n                mode: SimpleDict,\n                extra_serializer: None,\n                filter: SchemaFilter {\n                    include: None,\n                    exclude: None,\n                },\n                required_fields: 2,\n            },\n        ),\n        has_extra: false,\n        root_model: false,\n        name: "MyModel",\n    },\n), definitions=[])})-{'a': 1, 'b': 'foo'}-{'a': 1, 'b': 'foo'}] PASSED
+tests/serializers/test_any.py::test_any_python[MyModel({'a': 1, 'b': 'foo', '__pydantic_serializer__': SchemaSerializer(serializer=Model(\n    ModelSerializer {\n        class: Py(\n            $(POINTER),\n        ),\n        serializer: Fields(\n            GeneralFieldsSerializer {\n                fields: {\n                    "a": SerField {\n                        key_py: Py(\n                            $(POINTER),\n                        ),\n                        alias: None,\n                        alias_py: None,\n                        serializer: Some(\n                            Any(\n                                AnySerializer,\n                            ),\n                        ),\n                        required: true,\n                        serialize_by_alias: None,\n                    },\n                    "b": SerField {\n                        key_py: Py(\n                            $(POINTER),\n                        ),\n                        alias: None,\n                        alias_py: None,\n                        serializer: Some(\n                            Any(\n                                AnySerializer,\n                            ),\n                        ),\n                        required: true,\n                        serialize_by_alias: None,\n                    },\n                },\n                computed_fields: None,\n                mode: SimpleDict,\n                extra_serializer: None,\n                filter: SchemaFilter {\n                    include: None,\n                    exclude: None,\n                },\n                required_fields: 2,\n            },\n        ),\n        has_extra: false,\n        root_model: false,\n        name: "MyModel",\n    },\n), definitions=[])})-{'a': 1, 'b': 'foo'}-{'a': 1, 'b': 'foo'}] PASSED
 tests/serializers/test_any.py::test_any_python[{1, 2, 3}-{1, 2, 3}-IsList(1, 2, 3, check_order=False)] PASSED
 tests/serializers/test_any.py::test_any_python[{1, '2', b'3'}-{1, '2', b'3'}-IsList(1, '2', '3', check_order=False)] PASSED
 tests/serializers/test_any.py::test_set_member_db PASSED
@@ -292,6 +292,15 @@ tests/serializers/test_dataclasses.py::test_properties PASSED
 tests/serializers/test_dataclasses.py::test_slots_mixed SKIPPED (slo...)
 tests/serializers/test_dataclasses.py::test_extra_custom_serializer XFAIL
 tests/serializers/test_dataclasses.py::test_dataclass_initvar_not_required_on_union_ser PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-expected0] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-expected1] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-expected2] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-expected3] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-expected4] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-expected5] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-expected6] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-expected7] PASSED
+tests/serializers/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-expected8] PASSED
 tests/serializers/test_datetime.py::test_datetime PASSED
 tests/serializers/test_datetime.py::test_datetime_key PASSED
 tests/serializers/test_datetime.py::test_datetime_json[value0-2022-12-02T12:13:14] PASSED
@@ -564,6 +573,15 @@ tests/serializers/test_model.py::test_extra_config_nested_model PASSED
 tests/serializers/test_model.py::test_extra_custom_serializer PASSED
 tests/serializers/test_model.py::test_no_warn_on_exclude PASSED
 tests/serializers/test_model.py::test_warn_on_missing_field PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[True-True-expected0] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[True-False-expected1] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[True-None-expected2] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[False-True-expected3] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[False-False-expected4] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[False-None-expected5] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[None-True-expected6] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[None-False-expected7] PASSED
+tests/serializers/test_model.py::test_by_alias_and_name_config_interaction[None-None-expected8] PASSED
 tests/serializers/test_model_root.py::test_model_root PASSED
 tests/serializers/test_model_root.py::test_function_plain_field_serializer_to_python PASSED
 tests/serializers/test_model_root.py::test_function_wrap_field_serializer_to_python PASSED
@@ -705,6 +723,15 @@ tests/serializers/test_typed_dict.py::test_function_plain_field_serializer_to_js
 tests/serializers/test_typed_dict.py::test_function_wrap_field_serializer_to_json PASSED
 tests/serializers/test_typed_dict.py::test_function_wrap_field_serializer_to_json_no_info PASSED
 tests/serializers/test_typed_dict.py::test_extra_custom_serializer PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-expected0] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-expected1] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-expected2] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-expected3] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-expected4] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-expected5] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-expected6] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-expected7] PASSED
+tests/serializers/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-expected8] PASSED
 tests/serializers/test_union.py::test_union_bool_int[True-True-False-False] PASSED
 tests/serializers/test_union.py::test_union_bool_int[True-True-False-True] PASSED
 tests/serializers/test_union.py::test_union_bool_int[True-True-True-False] PASSED
@@ -1471,16 +1498,20 @@ tests/validators/test_arguments.py::test_alias[python-ArgsKwargs((), {'a': 1})-E
 tests/validators/test_arguments.py::test_alias[json-ArgsKwargs((1,))-((1,), {})] SKIPPED
 tests/validators/test_arguments.py::test_alias[json-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] SKIPPED
 tests/validators/test_arguments.py::test_alias[json-ArgsKwargs((), {'a': 1})-Err('Foo\\n  Missing required argument [type=missing_argument,')] SKIPPED
-tests/validators/test_arguments.py::test_alias_populate_by_name[python-ArgsKwargs((1,))-((1,), {})] PASSED
-tests/validators/test_arguments.py::test_alias_populate_by_name[python-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] PASSED
-tests/validators/test_arguments.py::test_alias_populate_by_name[python-ArgsKwargs((), {'a': 1})-((), {'a': 1})] PASSED
-tests/validators/test_arguments.py::test_alias_populate_by_name[python-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
-tests/validators/test_arguments.py::test_alias_populate_by_name[python-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
-tests/validators/test_arguments.py::test_alias_populate_by_name[json-ArgsKwargs((1,))-((1,), {})] SKIPPED
-tests/validators/test_arguments.py::test_alias_populate_by_name[json-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] SKIPPED
-tests/validators/test_arguments.py::test_alias_populate_by_name[json-ArgsKwargs((), {'a': 1})-((), {'a': 1})] SKIPPED
-tests/validators/test_arguments.py::test_alias_populate_by_name[json-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
-tests/validators/test_arguments.py::test_alias_populate_by_name[json-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
+tests/validators/test_arguments.py::test_alias_validate_by_name[python-ArgsKwargs((1,))-((1,), {})] PASSED
+tests/validators/test_arguments.py::test_alias_validate_by_name[python-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] PASSED
+tests/validators/test_arguments.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1})-((), {'a': 1})] PASSED
+tests/validators/test_arguments.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
+tests/validators/test_arguments.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
+tests/validators/test_arguments.py::test_alias_validate_by_name[json-ArgsKwargs((1,))-((1,), {})] SKIPPED
+tests/validators/test_arguments.py::test_alias_validate_by_name[json-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] SKIPPED
+tests/validators/test_arguments.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1})-((), {'a': 1})] SKIPPED
+tests/validators/test_arguments.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
+tests/validators/test_arguments.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
+tests/validators/test_arguments.py::test_only_validate_by_name[python] PASSED
+tests/validators/test_arguments.py::test_only_validate_by_name[json] SKIPPED
+tests/validators/test_arguments.py::test_only_allow_alias[python] PASSED
+tests/validators/test_arguments.py::test_only_allow_alias[json] SKIPPED
 tests/validators/test_arguments.py::test_function_any PASSED
 tests/validators/test_arguments.py::test_function_types PASSED
 tests/validators/test_arguments.py::test_function_positional_only SKIPPED
@@ -1489,6 +1520,87 @@ tests/validators/test_arguments.py::test_function_positional_kwargs SKIPPED
 tests/validators/test_arguments.py::test_function_args_kwargs PASSED
 tests/validators/test_arguments.py::test_invalid_schema PASSED
 tests/validators/test_arguments.py::test_error_display PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-None-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-True-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[None-False-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-None-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-True-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[True-False-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-None-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-True-False-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-None-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-None-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-None-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-True-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-True-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-True-False] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
+tests/validators/test_arguments.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
 tests/validators/test_bool.py::test_bool[python-False-False] PASSED
 tests/validators/test_bool.py::test_bool[python-True-True] PASSED
 tests/validators/test_bool.py::test_bool[python-0-False] PASSED
@@ -1797,6 +1909,93 @@ tests/validators/test_dataclasses.py::test_dataclass_args_init_with_default[inpu
 tests/validators/test_dataclasses.py::test_dataclass_args_init_with_default[input_value3-forbid-expected3] PASSED
 tests/validators/test_dataclasses.py::test_dataclass_args_init_with_default[input_value4-forbid-expected4] PASSED
 tests/validators/test_dataclasses.py::test_dataclass_args_init_with_default[input_value5-allow-expected5] PASSED
+tests/validators/test_dataclasses.py::test_alias_allow_pop[python] PASSED
+tests/validators/test_dataclasses.py::test_alias_allow_pop[json] PASSED
+tests/validators/test_dataclasses.py::test_only_validate_by_name[python] PASSED
+tests/validators/test_dataclasses.py::test_only_validate_by_name[json] PASSED
+tests/validators/test_dataclasses.py::test_only_allow_alias[python] PASSED
+tests/validators/test_dataclasses.py::test_only_allow_alias[json] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-None-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-True-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[None-False-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-None-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-True-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[True-False-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-None-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-True-False-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-None-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-None-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-None-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-True-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-True-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-True-False] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
+tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
 tests/validators/test_date.py::test_date[date] PASSED
 tests/validators/test_date.py::test_date[str] PASSED
 tests/validators/test_date.py::test_date[bytes] PASSED
@@ -2444,6 +2643,7 @@ tests/validators/test_enums.py::test_enum_int_validation_should_succeed_for_cust
 tests/validators/test_enums.py::test_enum_str_validation_should_fail_for_decimal_when_expecting_str_value PASSED
 tests/validators/test_enums.py::test_enum_int_validation_should_fail_for_incorrect_decimal_value PASSED
 tests/validators/test_enums.py::test_enum_int_validation_should_fail_for_plain_type_without_eq_checking PASSED
+tests/validators/test_enums.py::test_strict_enum_wrap_json PASSED
 tests/validators/test_float.py::test_float[python-0-0] PASSED
 tests/validators/test_float.py::test_float[python-1-1] PASSED
 tests/validators/test_float.py::test_float[python-42-42_0] PASSED
@@ -3466,6 +3666,10 @@ tests/validators/test_model_fields.py::test_empty_string_aliases[python] PASSED
 tests/validators/test_model_fields.py::test_empty_string_aliases[json] PASSED
 tests/validators/test_model_fields.py::test_alias_allow_pop[python] PASSED
 tests/validators/test_model_fields.py::test_alias_allow_pop[json] PASSED
+tests/validators/test_model_fields.py::test_only_validate_by_name[python] PASSED
+tests/validators/test_model_fields.py::test_only_validate_by_name[json] PASSED
+tests/validators/test_model_fields.py::test_only_allow_alias[python] PASSED
+tests/validators/test_model_fields.py::test_only_allow_alias[json] PASSED
 tests/validators/test_model_fields.py::test_alias_path[python-{'foo': {'bar': '123'}}-({'field_a': 123}, None, {'field_a'})] PASSED
 tests/validators/test_model_fields.py::test_alias_path[python-{'x': '123'}-Err('foo.bar\\\\n +Field required \\\\[type=missing,')] PASSED
 tests/validators/test_model_fields.py::test_alias_path[python-{'foo': '123'}-Err('foo.bar\\\\n +Field required \\\\[type=missing,')] PASSED
@@ -3634,6 +3838,87 @@ tests/validators/test_model_fields.py::test_extra_behavior_ignore[config3-schema
 tests/validators/test_model_fields.py::test_extra_behavior_ignore[config4-schema_extra_behavior_kw4] PASSED
 tests/validators/test_model_fields.py::test_extra_behavior_ignore[config5-schema_extra_behavior_kw5] PASSED
 tests/validators/test_model_fields.py::test_extra_behavior_ignore[None-schema_extra_behavior_kw6] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-None-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-True-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[None-False-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-None-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-True-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[True-False-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-None-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-True-False-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-None-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-None-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-None-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-True-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-True-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-True-False] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
+tests/validators/test_model_fields.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
 tests/validators/test_model_init.py::test_model_init PASSED
 tests/validators/test_model_init.py::test_model_init_nested PASSED
 tests/validators/test_model_init.py::test_function_before PASSED
@@ -4186,6 +4471,10 @@ tests/validators/test_typed_dict.py::test_empty_string_aliases[python] PASSED
 tests/validators/test_typed_dict.py::test_empty_string_aliases[json] PASSED
 tests/validators/test_typed_dict.py::test_alias_allow_pop[python] PASSED
 tests/validators/test_typed_dict.py::test_alias_allow_pop[json] PASSED
+tests/validators/test_typed_dict.py::test_only_validate_by_name[python] PASSED
+tests/validators/test_typed_dict.py::test_only_validate_by_name[json] PASSED
+tests/validators/test_typed_dict.py::test_only_allow_alias[python] PASSED
+tests/validators/test_typed_dict.py::test_only_allow_alias[json] PASSED
 tests/validators/test_typed_dict.py::test_alias_path[python-{'foo': {'bar': '123'}}-{'field_a': 123}] PASSED
 tests/validators/test_typed_dict.py::test_alias_path[python-{'x': '123'}-Err('foo.bar\\\\n +Field required \\\\[type=missing,')] PASSED
 tests/validators/test_typed_dict.py::test_alias_path[python-{'foo': '123'}-Err('foo.bar\\\\n +Field required \\\\[type=missing,')] PASSED
@@ -4305,6 +4594,87 @@ tests/validators/test_typed_dict.py::test_extra_behavior_ignore[config4-schema_e
 tests/validators/test_typed_dict.py::test_extra_behavior_ignore[config5-schema_extra_behavior_kw5] PASSED
 tests/validators/test_typed_dict.py::test_extra_behavior_ignore[None-schema_extra_behavior_kw6] PASSED
 tests/validators/test_typed_dict.py::test_leak_typed_dict PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-None-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-True-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[None-False-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-None-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-True-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[True-False-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-None-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-True-False-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-None-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-None-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-None-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-True-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-True-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-True-False] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
+tests/validators/test_typed_dict.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
 tests/validators/test_union.py::test_union_bool_int[True-True] PASSED
 tests/validators/test_union.py::test_union_bool_int[False-False] PASSED
 tests/validators/test_union.py::test_union_bool_int[true-True] PASSED
@@ -4337,7 +4707,9 @@ tests/validators/test_union.py::test_union_list_bool_int PASSED
 tests/validators/test_union.py::test_no_choices PASSED
 tests/validators/test_union.py::test_empty_choices PASSED
 tests/validators/test_union.py::test_one_choice PASSED
-tests/validators/test_union.py::test_strict_union PASSED
+tests/validators/test_union.py::test_strict_union_flag PASSED
+tests/validators/test_union.py::test_strict_union_config_level PASSED
+tests/validators/test_union.py::test_strict_union_member_level PASSED
 tests/validators/test_union.py::test_custom_error PASSED
 tests/validators/test_union.py::test_custom_error_type PASSED
 tests/validators/test_union.py::test_custom_error_type_context PASSED
@@ -4735,27 +5107,30 @@ tests/validators/test_uuid.py::test_uuid[1b4e28ba-2fa1-11d2-883f-0016d3cca427-ex
 tests/validators/test_uuid.py::test_uuid[6ba7b810-9dad-11d1-80b4-00c04fd430c8-expected7] PASSED
 tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5d-expected8] PASSED
 tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c11-expected9] PASSED
-tests/validators/test_uuid.py::test_uuid[00000000-8000-4000-8000-000000000000-expected10] PASSED
-tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected11] PASSED
-tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected12] PASSED
-tests/validators/test_uuid.py::test_uuid[\x124Vx\x124Vx\x124Vx\x124Vx-expected13] PASSED
-tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00-expected14] PASSED
-tests/validators/test_uuid.py::test_uuid[ebcdab58-6eb8-46fb-a190-d07a33e9eac8-expected15] PASSED
-tests/validators/test_uuid.py::test_uuid[input_value16-expected16] PASSED
-tests/validators/test_uuid.py::test_uuid[input_value17-expected17] PASSED
-tests/validators/test_uuid.py::test_uuid[not-a-valid-uuid-expected18] PASSED
-tests/validators/test_uuid.py::test_uuid[12345678-1234-5678-1234-5678123456789-expected19] PASSED
-tests/validators/test_uuid.py::test_uuid[12345678-1234-1234-1234-1234567890123-expected20] PASSED
-tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000-expected21] PASSED
-tests/validators/test_uuid.py::test_uuid[550e8400-e29b-41d4-a716-expected22] PASSED
-tests/validators/test_uuid.py::test_uuid[f47ac10b-58cc-4372-a567-0e02b2c3d47-expected23] PASSED
-tests/validators/test_uuid.py::test_uuid[de305d54-75b4-431b-adb2-eb6b9e54601-expected24] PASSED
-tests/validators/test_uuid.py::test_uuid[1b4e28ba-2fa1-11d2-883f-0016d3cca42-expected25] PASSED
-tests/validators/test_uuid.py::test_uuid[6ba7b810-9dad-11d1-80b4-00c04fd430c-expected26] PASSED
-tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5-expected27] PASSED
-tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c1-expected28] PASSED
-tests/validators/test_uuid.py::test_uuid[214850178493633095719753750962310141912-expected29] PASSED
-tests/validators/test_uuid.py::test_uuid[0-expected30] PASSED
+tests/validators/test_uuid.py::test_uuid[1efea93d-7bb8-6ea0-afdc-e76cbc0c8e05-expected10] PASSED
+tests/validators/test_uuid.py::test_uuid[0194fdc2-5d6a-733c-97f9-2feeb9d2a609-expected11] PASSED
+tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-882b-a067-9cb3a51f5c11-expected12] PASSED
+tests/validators/test_uuid.py::test_uuid[00000000-8000-4000-8000-000000000000-expected13] PASSED
+tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected14] PASSED
+tests/validators/test_uuid.py::test_uuid[00000000-0000-4000-0000-000000000000-expected15] PASSED
+tests/validators/test_uuid.py::test_uuid[\x124Vx\x124Vx\x124Vx\x124Vx-expected16] PASSED
+tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00-expected17] PASSED
+tests/validators/test_uuid.py::test_uuid[ebcdab58-6eb8-46fb-a190-d07a33e9eac8-expected18] PASSED
+tests/validators/test_uuid.py::test_uuid[input_value19-expected19] PASSED
+tests/validators/test_uuid.py::test_uuid[input_value20-expected20] PASSED
+tests/validators/test_uuid.py::test_uuid[not-a-valid-uuid-expected21] PASSED
+tests/validators/test_uuid.py::test_uuid[12345678-1234-5678-1234-5678123456789-expected22] PASSED
+tests/validators/test_uuid.py::test_uuid[12345678-1234-1234-1234-1234567890123-expected23] PASSED
+tests/validators/test_uuid.py::test_uuid[\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000\x00\x00\x00\x000-expected24] PASSED
+tests/validators/test_uuid.py::test_uuid[550e8400-e29b-41d4-a716-expected25] PASSED
+tests/validators/test_uuid.py::test_uuid[f47ac10b-58cc-4372-a567-0e02b2c3d47-expected26] PASSED
+tests/validators/test_uuid.py::test_uuid[de305d54-75b4-431b-adb2-eb6b9e54601-expected27] PASSED
+tests/validators/test_uuid.py::test_uuid[1b4e28ba-2fa1-11d2-883f-0016d3cca42-expected28] PASSED
+tests/validators/test_uuid.py::test_uuid[6ba7b810-9dad-11d1-80b4-00c04fd430c-expected29] PASSED
+tests/validators/test_uuid.py::test_uuid[886313e1-3b8a-5372-9b90-0c9aee199e5-expected30] PASSED
+tests/validators/test_uuid.py::test_uuid[c0a8f9a8-aa5e-482b-a067-9cb3a51f5c1-expected31] PASSED
+tests/validators/test_uuid.py::test_uuid[214850178493633095719753750962310141912-expected32] PASSED
+tests/validators/test_uuid.py::test_uuid[0-expected33] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[input_value0-expected0] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[12345678-1234-5678-1234-567812345678-expected1] PASSED
 tests/validators/test_uuid.py::test_uuid_strict[12345678-1234-5678-1234-567812345678-expected2] PASSED
@@ -4768,26 +5143,38 @@ tests/validators/test_uuid.py::test_uuid_version[0e7ac198-9acd-4c0c-b4b4-761974b
 tests/validators/test_uuid.py::test_uuid_version[input_value5-4-expected5] PASSED
 tests/validators/test_uuid.py::test_uuid_version[0e7ac198-9acd-4c0c-b4b4-761974bf71d7-4-expected6] PASSED
 tests/validators/test_uuid.py::test_uuid_version[input_value7-4-expected7] PASSED
-tests/validators/test_uuid.py::test_uuid_version[00000000-8000-4000-8000-000000000000-4-expected8] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value9-4-expected9] PASSED
-tests/validators/test_uuid.py::test_uuid_version[00000000-0000-4000-0000-000000000000-None-expected10] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value11-None-expected11] PASSED
-tests/validators/test_uuid.py::test_uuid_version[00000000-7fff-4000-7fff-000000000000-None-expected12] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value13-None-expected13] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value14-4-expected14] PASSED
-tests/validators/test_uuid.py::test_uuid_version[b34b6755-f49c-3bd2-6f06-131a708c2bf3-None-expected15] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value16-None-expected16] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value17-4-expected17] PASSED
-tests/validators/test_uuid.py::test_uuid_version[a6cc5730-2261-11ee-9c43-2eb5a363657c-5-expected18] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value19-5-expected19] PASSED
-tests/validators/test_uuid.py::test_uuid_version[04e4aeb3-8f20-30d0-8852-d295e1265eed-4-expected20] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value21-4-expected21] PASSED
-tests/validators/test_uuid.py::test_uuid_version[0e7ac198-9acd-4c0c-b4b4-761974bf71d7-3-expected22] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value23-3-expected23] PASSED
-tests/validators/test_uuid.py::test_uuid_version[08ed0736-fb95-5cc5-85ed-37e4f3df9b29-1-expected24] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value25-1-expected25] PASSED
-tests/validators/test_uuid.py::test_uuid_version[00000000-0000-4000-0000-000000000000-4-expected26] PASSED
-tests/validators/test_uuid.py::test_uuid_version[input_value27-4-expected27] PASSED
+tests/validators/test_uuid.py::test_uuid_version[0194fdc2-5d6a-733c-97f9-2feeb9d2a609-7-expected8] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value9-7-expected9] PASSED
+tests/validators/test_uuid.py::test_uuid_version[1efea93d-7bb8-6ea0-afdc-e76cbc0c8e05-6-expected10] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value11-6-expected11] PASSED
+tests/validators/test_uuid.py::test_uuid_version[c0a8f9a8-aa5e-882b-a067-9cb3a51f5c11-8-expected12] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value13-8-expected13] PASSED
+tests/validators/test_uuid.py::test_uuid_version[00000000-8000-4000-8000-000000000000-4-expected14] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value15-4-expected15] PASSED
+tests/validators/test_uuid.py::test_uuid_version[00000000-0000-4000-0000-000000000000-None-expected16] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value17-None-expected17] PASSED
+tests/validators/test_uuid.py::test_uuid_version[00000000-7fff-4000-7fff-000000000000-None-expected18] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value19-None-expected19] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value20-4-expected20] PASSED
+tests/validators/test_uuid.py::test_uuid_version[b34b6755-f49c-3bd2-6f06-131a708c2bf3-None-expected21] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value22-None-expected22] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value23-4-expected23] PASSED
+tests/validators/test_uuid.py::test_uuid_version[1efea93d-7bb8-6ea0-afdc-e76cbc0c8e05-8-expected24] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value25-8-expected25] PASSED
+tests/validators/test_uuid.py::test_uuid_version[c0a8f9a8-aa5e-882b-a067-9cb3a51f5c11-6-expected26] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value27-6-expected27] PASSED
+tests/validators/test_uuid.py::test_uuid_version[a6cc5730-2261-11ee-9c43-2eb5a363657c-7-expected28] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value29-7-expected29] PASSED
+tests/validators/test_uuid.py::test_uuid_version[a6cc5730-2261-11ee-9c43-2eb5a363657c-5-expected30] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value31-5-expected31] PASSED
+tests/validators/test_uuid.py::test_uuid_version[04e4aeb3-8f20-30d0-8852-d295e1265eed-4-expected32] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value33-4-expected33] PASSED
+tests/validators/test_uuid.py::test_uuid_version[0e7ac198-9acd-4c0c-b4b4-761974bf71d7-3-expected34] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value35-3-expected35] PASSED
+tests/validators/test_uuid.py::test_uuid_version[08ed0736-fb95-5cc5-85ed-37e4f3df9b29-1-expected36] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value37-1-expected37] PASSED
+tests/validators/test_uuid.py::test_uuid_version[00000000-0000-4000-0000-000000000000-4-expected38] PASSED
+tests/validators/test_uuid.py::test_uuid_version[input_value39-4-expected39] PASSED
 tests/validators/test_uuid.py::test_uuid_json[python-a6cc5730-2261-11ee-9c43-2eb5a363657c-expected0] PASSED
 tests/validators/test_uuid.py::test_uuid_json[python-12345678123456781234567812345678-expected1] PASSED
 tests/validators/test_uuid.py::test_uuid_json[python-c0a8f9a8-aa5e-482b-a067-9cb3a51f5c1-expected2] PASSED
@@ -4932,4 +5319,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 =============================== inline snapshot ================================
 
-======== 4822 passed, 95 skipped, 2 xfailed ========
+======== 5203 passed, 101 skipped, 2 xfailed ========
