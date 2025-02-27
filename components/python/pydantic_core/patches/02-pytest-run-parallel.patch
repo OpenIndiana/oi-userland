@@ -1,7 +1,7 @@
 We have no pytest-run-parallel packaged yet.
 
---- pydantic_core-2.29.0/pyproject.toml.orig
-+++ pydantic_core-2.29.0/pyproject.toml
+--- pydantic_core-2.30.0/pyproject.toml.orig
++++ pydantic_core-2.30.0/pyproject.toml
 @@ -50,7 +50,6 @@
      # pytest-examples currently depends on aiohttp via black; we don't want to build it on platforms like aarch64 musllinux in CI
      'pytest-examples; implementation_name == "cpython" and platform_machine == "x86_64"',
@@ -10,8 +10,8 @@ We have no pytest-run-parallel packaged yet.
      'pytest-timeout',
      'python-dateutil',
      # numpy doesn't offer prebuilt wheels for all versions and platforms we test in CI e.g. aarch64 musllinux
---- pydantic_core-2.29.0/tests/test_docstrings.py.orig
-+++ pydantic_core-2.29.0/tests/test_docstrings.py
+--- pydantic_core-2.30.0/tests/test_docstrings.py.orig
++++ pydantic_core-2.30.0/tests/test_docstrings.py
 @@ -14,7 +14,6 @@
  
  @pytest.mark.skipif(CodeExample is None or sys.platform not in {'linux', 'darwin'}, reason='Only on linux and macos')
@@ -28,8 +28,8 @@ We have no pytest-run-parallel packaged yet.
  def test_readme(example: CodeExample, eval_example: EvalExample):
      eval_example.set_config(line_length=100, quotes='single')
      if eval_example.update_examples:
---- pydantic_core-2.29.0/tests/test_hypothesis.py.orig
-+++ pydantic_core-2.29.0/tests/test_hypothesis.py
+--- pydantic_core-2.30.0/tests/test_hypothesis.py.orig
++++ pydantic_core-2.30.0/tests/test_hypothesis.py
 @@ -19,14 +19,12 @@
  
  
@@ -75,7 +75,7 @@ We have no pytest-run-parallel packaged yet.
  @given(strategies.timedeltas())
 -@pytest.mark.thread_unsafe  # https://github.com/Quansight-Labs/pytest-run-parallel/issues/20
  def test_pytimedelta_as_timedelta(dt):
-     v = SchemaValidator({'type': 'timedelta', 'gt': dt})
+     v = SchemaValidator(cs.timedelta_schema(gt=dt))
      # simplest way to check `pytimedelta_as_timedelta` is correct is to extract duration from repr of the validator
 @@ -156,7 +150,6 @@
  
@@ -101,43 +101,43 @@ We have no pytest-run-parallel packaged yet.
  def test_serialize_string(str_serializer: SchemaSerializer, data):
      assert str_serializer.to_python(data) == data
      assert json.loads(str_serializer.to_json(data)) == data
---- pydantic_core-2.29.0/tests/validators/test_frozenset.py.orig
-+++ pydantic_core-2.29.0/tests/validators/test_frozenset.py
-@@ -82,7 +82,6 @@
+--- pydantic_core-2.30.0/tests/validators/test_frozenset.py.orig
++++ pydantic_core-2.30.0/tests/validators/test_frozenset.py
+@@ -83,7 +83,6 @@
          ('abc', Err('Input should be a valid frozenset')),
      ],
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_frozenset_ints_python(input_value, expected):
-     v = SchemaValidator({'type': 'frozenset', 'items_schema': {'type': 'int'}})
+     v = SchemaValidator(cs.frozenset_schema(items_schema=cs.int_schema()))
      if isinstance(expected, Err):
-@@ -166,7 +165,6 @@
+@@ -167,7 +166,6 @@
          ),
      ],
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_frozenset_kwargs_python(kwargs: dict[str, Any], input_value, expected):
-     v = SchemaValidator({'type': 'frozenset', **kwargs})
+     v = SchemaValidator(cs.frozenset_schema(**kwargs))
      if isinstance(expected, Err):
---- pydantic_core-2.29.0/tests/validators/test_list.py.orig
-+++ pydantic_core-2.29.0/tests/validators/test_list.py
-@@ -71,7 +71,6 @@
+--- pydantic_core-2.30.0/tests/validators/test_list.py.orig
++++ pydantic_core-2.30.0/tests/validators/test_list.py
+@@ -72,7 +72,6 @@
      ],
      ids=repr,
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_list_int(input_value, expected):
-     v = SchemaValidator({'type': 'list', 'items_schema': {'type': 'int'}})
+     v = SchemaValidator(cs.list_schema(items_schema=cs.int_schema()))
      if isinstance(expected, Err):
-@@ -171,7 +170,6 @@
+@@ -172,7 +171,6 @@
          ),
      ],
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_list_length_constraints(kwargs: dict[str, Any], input_value, expected):
-     v = SchemaValidator({'type': 'list', **kwargs})
+     v = SchemaValidator(cs.list_schema(**kwargs))
      if isinstance(expected, Err):
-@@ -513,7 +511,6 @@
+@@ -510,7 +508,6 @@
      ],
      ids=repr,
  )
@@ -145,21 +145,21 @@ We have no pytest-run-parallel packaged yet.
  def test_list_allowed_inputs_python(testcase: ListInputTestCase):
      v = SchemaValidator(core_schema.list_schema(core_schema.int_schema(), strict=testcase.strict))
      if isinstance(testcase.output, Err):
---- pydantic_core-2.29.0/tests/validators/test_set.py.orig
-+++ pydantic_core-2.29.0/tests/validators/test_set.py
-@@ -73,7 +73,6 @@
+--- pydantic_core-2.30.0/tests/validators/test_set.py.orig
++++ pydantic_core-2.30.0/tests/validators/test_set.py
+@@ -74,7 +74,6 @@
          ('abc', Err('Input should be a valid set')),
      ],
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_set_ints_python(input_value, expected):
-     v = SchemaValidator({'type': 'set', 'items_schema': {'type': 'int'}})
+     v = SchemaValidator(cs.set_schema(items_schema=cs.int_schema()))
      if isinstance(expected, Err):
-@@ -163,7 +162,6 @@
+@@ -164,7 +163,6 @@
      ],
      ids=repr,
  )
 -@pytest.mark.thread_unsafe  # generators in parameters not compatible with pytest-run-parallel, https://github.com/Quansight-Labs/pytest-run-parallel/issues/14
  def test_set_kwargs(kwargs: dict[str, Any], input_value, expected):
-     v = SchemaValidator({'type': 'set', **kwargs})
+     v = SchemaValidator(cs.set_schema(**kwargs))
      if isinstance(expected, Err):
