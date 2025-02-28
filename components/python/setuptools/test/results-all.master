@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1415 items]
+X workers [1419 items]
 
 scheduling tests via LoadScheduling
 
@@ -43,6 +43,10 @@ pkg_resources/tests/test_pkg_resources.py::TestDeepVersionLookupDistutils::test_
 pkg_resources/tests/test_pkg_resources.py::TestResourceManager::test_get_cache_path PASSED
 pkg_resources/tests/test_pkg_resources.py::TestResourceManager::test_get_cache_path_race PASSED
 pkg_resources/tests/test_pkg_resources.py::TestResourceManager::test_setuptools_not_imported PASSED
+pkg_resources/tests/test_pkg_resources.py::TestWorkdirRequire::test_require_non_normalised_name[0.42-pkg2.mod>=0.4] PASSED
+pkg_resources/tests/test_pkg_resources.py::TestWorkdirRequire::test_require_non_normalised_name[0.42.1-pkg4.mod>0.2,<1] PASSED
+pkg_resources/tests/test_pkg_resources.py::TestWorkdirRequire::test_require_non_normalised_name[1.2.3-pkg1.mod>=1] PASSED
+pkg_resources/tests/test_pkg_resources.py::TestWorkdirRequire::test_require_non_normalised_name[1.2.3.4-pkg3.mod<=2] PASSED
 pkg_resources/tests/test_pkg_resources.py::TestZipProvider::test_resource_filename_rewrites_on_change PASSED
 pkg_resources/tests/test_pkg_resources.py::TestZipProvider::test_resource_listdir PASSED
 pkg_resources/tests/test_pkg_resources.py::mypy PASSED
@@ -1039,7 +1043,7 @@ setuptools/tests/test_editable_install.py::TestCustomBuildWheel::test_access_pla
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_case_sensitivity PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_combine_namespaces_nested PASSED
-setuptools/tests/test_editable_install.py::TestFinderTemplate::test_dynamic_path_computation $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-pxkhii0x/setup.py': No source for code: '/tmp/easy_install-pxkhii0x/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_editable_install.py::TestFinderTemplate::test_dynamic_path_computation PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_intermediate_packages PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_namespace PASSED
 setuptools/tests/test_editable_install.py::TestFinderTemplate::test_namespace_case_sensitivity PASSED
@@ -1404,7 +1408,7 @@ setuptools/tests/test_wheel.py::test_wheel_install[requires5] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[requires_ensure_order] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[script] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[utf-8] PASSED
-setuptools/tests/test_wheel.py::test_wheel_install_pep_503 PASSED
+setuptools/tests/test_wheel.py::test_wheel_install_pep_503 $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-14qvffhm/setup.py': No source for code: '/tmp/easy_install-14qvffhm/setup.py'. (couldnt-parse) PASSED
 setuptools/tests/test_wheel.py::test_wheel_is_compatible PASSED
 setuptools/tests/test_wheel.py::test_wheel_mode PASSED
 setuptools/tests/test_wheel.py::test_wheel_no_dist_dir PASSED
@@ -1429,6 +1433,6 @@ tools/vendored.py::mypy PASSED
 ===================================== mypy =====================================
 
 Success: no issues found in 142 source files
-======== 1299 passed, 111 skipped, 4 xfailed, 1 xpassed ========
+======== 1303 passed, 111 skipped, 4 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
