@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
 # eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz

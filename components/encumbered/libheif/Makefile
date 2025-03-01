@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libheif
 COMPONENT_VERSION=	1.19.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libheif is an ISO/IEC 23008-12:2017 HEIF and AVIF (AV1 Image File Format) file format decoder and encoder
 COMPONENT_PROJECT_URL=  https://github.com/strukturag/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)

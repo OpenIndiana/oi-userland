@@ -5,7 +5,7 @@ benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=
 hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 563 items / 7 deselected / 556 selected
+collecting ... collected 564 items / 7 deselected / 557 selected
 
 tests/benchmark/test_api.py::test_sort_file PASSED
 tests/benchmark/test_api.py::test_sort_file_in_place PASSED
@@ -61,6 +61,7 @@ tests/unit/test_api.py::test_sorted_imports_multiple_configs PASSED
 tests/unit/test_api.py::test_diff_stream PASSED
 tests/unit/test_api.py::test_sort_code_string_mixed_newlines PASSED
 tests/unit/test_api.py::test_find_imports_in_file PASSED
+tests/unit/test_api.py::test_find_imports_in_file_error PASSED
 tests/unit/test_api.py::test_find_imports_in_code PASSED
 tests/unit/test_comments.py::test_add_to_line PASSED
 tests/unit/test_comments.py::test_fuzz_add_to_line PASSED
@@ -565,246 +566,289 @@ tests/unit/test_wrap_modes.py::test_fuzz_vertical_hanging_indent_bracket PASSED
 tests/unit/test_wrap_modes.py::test_fuzz_vertical_prefix_from_module_import PASSED
 
 =============================== warnings summary ===============================
-isort/settings.py:417
-isort/settings.py:417
-  $(@D)/isort/settings.py:417: UserWarning: `known_other` setting is defined, but OTHER is not included in `sections` config option: ('FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER').
+tests/integration/test_setting_combinations.py:159
+  $(@D)/tests/integration/test_setting_combinations.py:159: UserWarning: `known_other` setting is defined, but OTHER is not included in `sections` config option: ('FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER').
   
   See: https://pycqa.github.io/isort/#custom-sections-and-ordering.
-    warn(
+    config=isort.Config(
+
+tests/integration/test_setting_combinations.py:1024
+  $(@D)/tests/integration/test_setting_combinations.py:1024: UserWarning: `known_other` setting is defined, but OTHER is not included in `sections` config option: ('FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER').
+  
+  See: https://pycqa.github.io/isort/#custom-sections-and-ordering.
+    config=isort.Config(
 
 tests/unit/test_hooks.py::test_git_hook_uses_the_configuration_file_specified_in_settings_path
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes testsection, but no known_testsection is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/hooks.py:74: UserWarning: `sections` setting includes testsection, but no known_testsection is defined. The following known_SECTION config options are defined: .
+    config = Config(
 
 tests/unit/test_isort.py::test_atomic_mode
-  $(@D)/isort/api.py:201: UserWarning: Passed in content Python AST errors found but ignored due to Cython extension
-    warn(
-
-tests/unit/test_isort.py::test_atomic_mode
-  $(@D)/isort/api.py:229: UserWarning: Passed in content Python AST errors found but ignored due to Cython extension
-    warn(
+  $(@D)/isort/api.py:92: UserWarning: Passed in content Python AST errors found but ignored due to Cython extension
+    sort_stream(
 
 tests/unit/test_isort.py::test_custom_sections_exception_handling
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes DJANGO, but no known_django is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/api.py:657: UserWarning: `sections` setting includes DJANGO, but no known_django is defined. The following known_SECTION config options are defined: .
+    config = Config(**config_kwargs)
 
 tests/unit/test_isort.py::test_custom_sections_exception_handling
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes PANDAS, but no known_pandas is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/api.py:657: UserWarning: `sections` setting includes PANDAS, but no known_pandas is defined. The following known_SECTION config options are defined: .
+    config = Config(**config_kwargs)
 
 tests/unit/test_isort.py::test_failing_file_check_916
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes NORDIGEN, but no known_nordigen is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/api.py:657: UserWarning: `sections` setting includes NORDIGEN, but no known_nordigen is defined. The following known_SECTION config options are defined: .
+    config = Config(**config_kwargs)
 
 tests/unit/test_isort.py::test_python_future_category
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes FUTURE_LIBRARY, but no known_future_library is defined. The following known_SECTION config options are defined: future_thirdparty.
-    warn(
+  $(@D)/isort/api.py:657: UserWarning: `sections` setting includes FUTURE_LIBRARY, but no known_future_library is defined. The following known_SECTION config options are defined: future_thirdparty.
+    config = Config(**config_kwargs)
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file  due to [Errno 21] Is a directory: '/tmp/pytest-of-marcel/pytest-1/config0'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file  due to [Errno 21] Is a directory: '/tmp/pytest-of-marcel/pytest-6/config0'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file îi񾋕
-  𿰱7𜅫󩣅󱎾 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/îi\U0007e2d5\x10\r\U0003fc317\U0001c16b\x17\U000e98c5\U000f13be'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file  󁋼 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\xa0\U000c12fc'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 9 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/9'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file B
+  Ü®
+  ÖQ­_󩆾Y due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/B\x15\x1cÜ®\x0bÖQ\xad_\U000e91beY\x7f'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file  due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x03'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file J due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/J'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ô due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/ô\x8e'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ,v due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x04,v'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file â󠂔򺝻x due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/â\U000e0094\U000ba77bx'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 󢚠 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\U000e26a0'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 񽔅 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\U0007d505'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file I¾ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/I¾\x9e'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ,򆪩b􎠽  due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/,\U00086aa9\x1ab\U0010e83d \x9a'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ×V񚩙񚨺d𤵽º due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/×V\U0005aa59\U0005aa3ad𤵽º'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file |𻉌伵®/ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/|\U0003b24c伵®/\x14'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ò𒳒􀺗 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/ò\U00012cd2\U00100e97'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ÅÁ#!_󉜆â	úJ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/ÅÁ#\x99!_\U000c9706â\túJ'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file o·ßvs due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/o·ßvs\x88'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 1Q¯÷󻉯=¦z*𱊟񨩋b𛳧]¼'¿򥿕ï#äeÛR due to [Errno 2] No such file or directory: "/tmp/pytest-of-marcel/pytest-1/config0/1Q¯÷\U000fb26f=¦z*\x13\x07𱊟\U00068a4bb\U0001bce7]¼\x0f'¿\U000a5fd5\x17ï#äeÛR"
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 򚸏ÎOþcs
+   due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\U0009ae0fÎOþcs\x1d\x01'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file [r due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/[r'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Pä
+   due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/P\x90ä\x0b'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ãR´ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/ã\x94R´'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file z򃂾¶ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/z\U000830be¶'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ÿ򚍦 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x84ÿ\x18\U0009a366'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file %T
+  矂áp due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/%T\x98\x85\x81矂áp'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ®¶PLÆïAº󳖢öÀÍ
-  ë󇽪 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/®¶PLÆï\x92Aº\U000f35a2öÀÍ\në\U000c7f6a'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 9 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/9\x01\x9d'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file  due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x15\x15'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file /O}򲄰Y due to [Errno 2] No such file or directory: '/O\x90}\U000b2130\x82Y'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 󔋤󷻯󞚲³ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x12\U000d42e4\U000f7eef\U000de6b2³'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file W due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/W'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 8é5󲬝𐩇
-  򛀞Ê򾆈ぷ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/8é5\x80\U000f2b1d𐩇\x1e\U0009b01eÊ\U000be188ぷ'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ¾Á»Vã×í­ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/¾Á\x80»\x05Vã×í\xad'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 򿿸)Ò due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\U000bfff8)Ò'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ú# due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/ú#'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file [
-   due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/[\x85'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 󆾲¼ï due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x16\U000c6fb2\x14¼ï\x1a'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file y𼑣 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x80y\U0003c463'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Ø due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/Ø'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ­ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\xad'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file :. due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/:.'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 򠮑å due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x07\U000a0b91å'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 󛐮¥ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\U000db42e¥'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file !a󆃡 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/!\x86a\U000c60e1'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file »Ù󧋷E"[~C򜔣Å񄂦Ø򶨇d𥖠my䷑ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/»Ù\U000e72f7E"[~C\U0009c523Å\x91\U000440a6\x89Ø\U000b6a07\x12d𥖠my䷑\x02'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file J㗙<<D¦󤴨ã󹧣?ùåT򭤅􍈀3ã񥙺|df due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x95J㗙<<D¦\U000e4d28ã\U000f99e3?ùåT\U000ad905\U0010d2003ã\U0006567a|\x9c\x8cd\x96f'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file rYã6, due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/rYã6,'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file q?' due to [Errno 2] No such file or directory: "/tmp/pytest-of-marcel/pytest-1/config0/q?\x91\x15'"
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ~򕣆󁔛 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/~\U000958c6\U000c151b'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ^򚿕 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/^\U0009afd5'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Îö𰚉ûà#󔔴q due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/Îö𰚉ûà#\U000d4534q\x9c\x82'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 蠂±c due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/蠂±c'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file t$Ä5*TU򜷞󭥳񫛌äi|	N4 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x8dt$Ä5*TU\U0009cdde\x13\U000ed973\x99\U0006b6ccäi|\tN4'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file  due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x93'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file u𾖯P@ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/u\U0003e5afP@'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ÕÐ¯ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/ÕÐ¯'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file  æåÓ򂩴􇝳àí due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/ æåÓ\U00082a74\U00107773àí'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ½%n due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/½%n\x82\x05'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Xª· due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/Xª·'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ´©􇹡򀺼ÜÆ<Ý due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/´©\U00107e61\U00080ebcÜÆ<Ý'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ´󀇊Ú due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/´\U000c01ca\x7f\x06Ú'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file EÑ¸Æl due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/EÑ\x92¸Æ\x88l'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file OkÌ򃁶𡭇èÐ!ä,(>YA due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/OkÌ\x12\U00083076\x8c\x08𡭇è\x1fÐ!ä,(>YA'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file ® due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/®'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file *êq
+   due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/*êq\x0c'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 񗿾"ÌÞ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\x9f\x95\U00057ffe\x80"ÌÞ'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 򠮎ÿ󸍎0¶蔤p򻇆Ê𓊸#𼼬 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\U000a0b8eÿ\U000f834e0¶\x8e蔤p\U000bb1c6Ê𓊸#\U0003cf2c'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 񋯎I due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\U0004bbceI'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file â񁐝 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/â\U0004141d'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 򿏺򘥅 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\U000bf3fa\U00098945'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 򇧟fxK󗋁ã«îeGÏ􆦦 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\U000879dff\x82xK\x08\U000d72c1ã«îeG\x98Ï\U001069a6'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file c due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/c'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file µ[ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/µ['
+    main.sort_imports(
 
 tests/unit/test_main.py::test_fuzz_sort_imports
-  $(@D)/isort/main.py:105: UserWarning: Unable to parse file 򓎦 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-1/config0/\U000933a6'
-    warn(f"Unable to parse file {file_name} due to {error}")
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file 󡧰𫞰: due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x9a\U000e19f0𫞰:'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Óá¹¤lN;𣄳Ñì¨󙏺 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x97\x80Óá¹¤lN;𣄳Ñì¨\U000d93fa'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ã·'âÂ÷R󯅘 due to [Errno 2] No such file or directory: "/tmp/pytest-of-marcel/pytest-6/config0/ã·'âÂ÷R\U000ef158"
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file þÖ¾¡¦ due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/þÖ\x93¾¡¦'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file R𫊮 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/R𫊮'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file  due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x0f\x91'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ÜÃL¯ÀÃ񺇋;\®ê'󇶍P$*¢ù due to [Errno 2] No such file or directory: "/tmp/pytest-of-marcel/pytest-6/config0/ÜÃL¯ÀÃ\U0007a1cb;\\®ê'\U000c7d8dP$*¢ù"
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file öý.¥d¦Jò/򒄓𔷛 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/öý.¥d¦Jò\x12\x1f/\U00092113\U00014ddb\x81'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file ß&cíY򾷤Ïát}ð due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x82ß&cíY\U000bede4\x04Ïát\x07}ð'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file r󧸉yw򐇑Qq@ÐKbA>vj󣀪 due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/r\x83\U000e7e09y\x9aw\U000901d1Qq@\x1fÐK\x9db\x8cA\x02>vj\U000e302a'
+    main.sort_imports(
+
+tests/unit/test_main.py::test_fuzz_sort_imports
+  $(@D)/tests/unit/test_main.py:34: UserWarning: Unable to parse file Ø due to [Errno 2] No such file or directory: '/tmp/pytest-of-marcel/pytest-6/config0/\x91Ø'
+    main.sort_imports(
 
 tests/unit/test_main.py::test_missing_default_section
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes MADEUP, but no known_madeup is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/main.py:1124: UserWarning: `sections` setting includes MADEUP, but no known_madeup is defined. The following known_SECTION config options are defined: .
+    config = Config(**config_dict)
 
 tests/unit/test_main.py::test_main
-  $(@D)/isort/main.py:1082: UserWarning: virtual_env dir does not exist: /random-root-folder-that-cant-exist-right?
-    warn(f"virtual_env dir does not exist: {arguments['virtual_env']}")
+  $(@D)/tests/unit/test_main.py:209: UserWarning: virtual_env dir does not exist: /random-root-folder-that-cant-exist-right?
+    main.main(
 
 tests/unit/test_main.py::test_main
-  $(@D)/isort/main.py:1263: UserWarning: not-exist was broken path, make sure it exists correctly
-    warn(f"{was_broken} was broken path, make sure it exists correctly")
+  $(@D)/tests/unit/test_main.py:344: UserWarning: not-exist was broken path, make sure it exists correctly
+    main.main([str(python_file), "not-exist", "--verbose", "--check-only"])
 
 tests/unit/test_main.py::test_unsupported_encodings
-  $(@D)/isort/main.py:109: UserWarning: Encoding not supported for /tmp/pytest-of-marcel/pytest-1/test_unsupported_encodings0/file.py
-    warn(f"Encoding not supported for {file_name}")
+  $(@D)/isort/main.py:1214: UserWarning: Encoding not supported for /tmp/pytest-of-marcel/pytest-6/test_unsupported_encodings0/file.py
+    sort_imports(  # type: ignore
 
 tests/unit/test_parse.py::test_file_contents
-  $(@D)/isort/parse.py:570: UserWarning: could not place module xyz of line import xyz -- Do you need to define a default section?
-    warn(
+  $(@D)/tests/unit/test_parse.py:43: UserWarning: could not place module xyz of line import xyz -- Do you need to define a default section?
+    ) = parse.file_contents(TEST_CONTENTS, config=Config(default_section=""))
 
 tests/unit/test_parse.py::test_file_contents
-  $(@D)/isort/parse.py:570: UserWarning: could not place module one of line     three) -- Do you need to define a default section?
-    warn(
+  $(@D)/tests/unit/test_parse.py:43: UserWarning: could not place module one of line     three) -- Do you need to define a default section?
+    ) = parse.file_contents(TEST_CONTENTS, config=Config(default_section=""))
 
 tests/unit/test_parse.py::test_file_contents
-  $(@D)/isort/parse.py:570: UserWarning: could not place module zebra of line not_bacon -- Do you need to define a default section?
-    warn(
+  $(@D)/tests/unit/test_parse.py:43: UserWarning: could not place module zebra of line not_bacon -- Do you need to define a default section?
+    ) = parse.file_contents(TEST_CONTENTS, config=Config(default_section=""))
 
 tests/unit/test_parse.py::test_file_contents
-  $(@D)/isort/parse.py:452: UserWarning: could not place module x of line     three) -- Do you need to define a default section?
-    warn(
+  $(@D)/tests/unit/test_parse.py:43: UserWarning: could not place module x of line     three) -- Do you need to define a default section?
+    ) = parse.file_contents(TEST_CONTENTS, config=Config(default_section=""))
 
 tests/unit/test_regressions.py::test_reverse_relative_combined_with_force_sort_within_sections_issue_1395
-  $(@D)/isort/settings.py:442: UserWarning: `sections` setting includes APPLICATION, but no known_application is defined. The following known_SECTION config options are defined: .
-    warn(
+  $(@D)/isort/api.py:657: UserWarning: `sections` setting includes APPLICATION, but no known_application is defined. The following known_SECTION config options are defined: .
+    config = Config(**config_kwargs)
 
 tests/unit/test_settings.py::TestConfig::test_known_settings
-  $(@D)/isort/settings.py:405: UserWarning: Can't set both known_thirdparty and known_third_party in the same config file.
+  $(@D)/tests/unit/test_settings.py:28: UserWarning: Can't set both known_thirdparty and known_third_party in the same config file.
   Default to known_third_party if unsure.
   
   See: https://pycqa.github.io/isort/#custom-sections-and-ordering.
-    warn(
+    assert Config(
 
 tests/unit/test_settings.py::TestConfig::test_invalid_profile
-  $(@D)/isort/settings.py:358: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  $(@D)/isort/settings.py:359: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
     import pkg_resources
 
 tests/unit/test_settings.py::TestConfig::test_invalid_profile
@@ -850,13 +894,13 @@ tests/unit/test_settings.py: 16 warnings
     declare_namespace(pkg)
 
 tests/unit/test_settings.py::test_find_config
-  $(@D)/isort/settings.py:780: UserWarning: Failed to pull configuration information from /tmp/pytest-of-marcel/pytest-1/test_find_config0/.isort.cfg
-    warn(f"Failed to pull configuration information from {potential_config_file}")
+  $(@D)/tests/unit/test_settings.py:139: UserWarning: Failed to pull configuration information from /tmp/pytest-of-marcel/pytest-6/test_find_config0/.isort.cfg
+    assert not settings._find_config(str(tmpdir))[1]
 
 tests/unit/test_settings.py::test_find_all_configs
-  $(@D)/isort/settings.py:817: UserWarning: Failed to pull configuration information from /tmp/pytest-of-marcel/pytest-1/test_find_all_configs0/subdir4/pyproject.toml
-    warn(f"Failed to pull configuration information from {potential_config_file}")
+  $(@D)/tests/unit/test_settings.py:275: UserWarning: Failed to pull configuration information from /tmp/pytest-of-marcel/pytest-6/test_find_all_configs0/subdir4/pyproject.toml
+    config_trie = settings.find_all_configs(str(tmpdir))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 554 passed, 1 skipped, 7 deselected, 1 xfailed, 86 warnings ========
+======== 555 passed, 1 skipped, 7 deselected, 1 xfailed, 95 warnings ========

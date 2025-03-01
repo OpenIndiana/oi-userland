@@ -1,0 +1,28 @@
+On HP Z6 G4 fmd crashes with segfaults because nodes->nodeTab is NULL. Add some guards to prevent these kind of crashes.
+
+diff --git a/usr/src/cmd/fm/modules/common/fabric-xlate/fx_subr.c b/usr/src/cmd/fm/modules/common/fabric-xlate/fx_subr.c
+index 94678dbd47..e584829ed9 100644
+--- a/usr/src/cmd/fm/modules/common/fabric-xlate/fx_subr.c
++++ b/usr/src/cmd/fm/modules/common/fabric-xlate/fx_subr.c
+@@ -249,13 +249,15 @@ fab_xpath_query(fmd_hdl_t *hdl, const char *query)
+ 	    xpathObj->type);
+ 	nodes = xpathObj->nodesetval;
+ 
+-	if (nodes) {
++	if (nodes && nodes->nodeTab && nodes->nodeTab[0]) {
+ 		temp = (char *)xmlNodeGetContent(nodes->nodeTab[0]);
+-		fmd_hdl_debug(hdl, "query result: %s\n", temp);
+-		res = fmd_hdl_strdup(hdl, temp, FMD_SLEEP);
+-		xmlFree(temp);
+-		xmlXPathFreeObject(xpathObj);
+-		return (res);
++		if (temp) {
++    		fmd_hdl_debug(hdl, "query result: %s\n", temp);
++    		res = fmd_hdl_strdup(hdl, temp, FMD_SLEEP);
++    		xmlFree(temp);
++    		xmlXPathFreeObject(xpathObj);
++    		return (res);
++		}
+ 	}
+ 	xmlXPathFreeObject(xpathObj);
+ 	return (NULL);

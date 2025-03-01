@@ -23,6 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+# Runtime libraries for flac 1.4 used to live in this package.
+#
+# TODO: This should be removed once nothing depends on unversioned flac package
+# to get runtime libraries.
+#
+depend type=require fmri=codec/flac-14
+
 file path=usr/bin/flac
 file path=usr/bin/metaflac
 file path=usr/include/FLAC++/all.h
@@ -40,19 +47,11 @@ file path=usr/include/FLAC/ordinals.h
 file path=usr/include/FLAC/stream_decoder.h
 file path=usr/include/FLAC/stream_encoder.h
 link path=usr/lib/$(MACH64)/libFLAC++.so target=libFLAC++.so.11.0.0
-link path=usr/lib/$(MACH64)/libFLAC++.so.11 target=libFLAC++.so.11.0.0
-file path=usr/lib/$(MACH64)/libFLAC++.so.11.0.0
 link path=usr/lib/$(MACH64)/libFLAC.so target=libFLAC.so.14.0.0
-link path=usr/lib/$(MACH64)/libFLAC.so.14 target=libFLAC.so.14.0.0
-file path=usr/lib/$(MACH64)/libFLAC.so.14.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/flac++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/flac.pc
 link path=usr/lib/libFLAC++.so target=libFLAC++.so.11.0.0
-link path=usr/lib/libFLAC++.so.11 target=libFLAC++.so.11.0.0
-file path=usr/lib/libFLAC++.so.11.0.0
 link path=usr/lib/libFLAC.so target=libFLAC.so.14.0.0
-link path=usr/lib/libFLAC.so.14 target=libFLAC.so.14.0.0
-file path=usr/lib/libFLAC.so.14.0.0
 file path=usr/lib/pkgconfig/flac++.pc
 file path=usr/lib/pkgconfig/flac.pc
 file path=usr/share/aclocal/libFLAC++.m4

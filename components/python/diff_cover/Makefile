@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		diff_cover
-HUMAN_VERSION =			9.2.2
+HUMAN_VERSION =			9.2.3
 COMPONENT_SUMMARY =		Run coverage and linting reports on diffs
 COMPONENT_PROJECT_URL =		https://github.com/Bachmann1234/diff-cover
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a1bffd8a9fd18989f8173987826818854dffb659ec6fbafe669f304d1e4fd57
+	sha256:342e92128e6236b1adee2ddb4e6cbc1d470465c14829cfc64c4cdae581115f3b
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,10 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project uses poetry to manage test dependencies.
 TEST_REQUIREMENTS_POETRY += dev
-
-# https://github.com/Bachmann1234/diff_cover/issues/438
-PYTEST_ADDOPTS += --deselect tests/test_integration.py::TestDiffQualityIntegration::test_html_with_external_css
-PYTEST_ADDOPTS += --deselect tests/test_snippets.py::test_style_defs
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/chardet

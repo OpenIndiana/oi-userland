@@ -28,13 +28,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
-COMPONENT_VERSION=	3.4.1
+COMPONENT_VERSION=	3.4.2
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://cache.ruby-lang.org/pub/ruby/3.4/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:018d59ffb52be3c0a6d847e22d3fd7a2c52d0ddfee249d3517a0c8c6dbfa70af
+COMPONENT_ARCHIVE_HASH= sha256:ebf1c2eb58f5da17c23e965d658dd7e6202c5c50f5179154c5574452bef4b3e0
 COMPONENT_FMRI=		runtime/ruby-34
 COMPONENT_CLASSIFICATION= Development/Ruby
 COMPONENT_LICENSE=	Ruby License
@@ -136,8 +136,8 @@ CONFIGURE_OPTIONS +=	--disable-option-checking
 CONFIGURE_OPTIONS +=	--with-openssl-dir=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
-CLEAN_PATHS +=		Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
-			Solaris/ruby.1.sedscript.mod
+CLEAN_PATHS +=	Solaris/gem.1 Solaris/rbconfig.sedscript.mod \
+				Solaris/ruby.1.sedscript.mod
 
 COMPONENT_TEST_TRANSFORMS += \
     '-n' \
@@ -152,7 +152,7 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/.* tests, X assertions, .* failures, .* errors, X skips/p"'
 COMPONENT_TEST_TRANSFORMS += ' | head -4'
 
-# manually added dependencies
+# manually added build dependencies
 REQUIRED_PACKAGES += developer/lang/rustc
 
 # Auto-generated dependencies

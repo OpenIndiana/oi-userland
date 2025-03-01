@@ -14,20 +14,20 @@
 #   $WS_TOOLS/python-integrate-project zope.testing
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope.testing
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		zope.testing - Zope testing helpers
+HUMAN_VERSION =			5.1
+COMPONENT_SUMMARY =		Zope testing helpers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1c/45/a22985a9a5bb886ae0665f04c1ffe985d9558c3e9881fde808fc9dc0a6f9/zope.testing-5.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e87cd0d8d666573cdaf133816ab7b9beec801a64a86595c19cb5fe992ef3d649
+	sha256:7135ebaaec3d38796e491a9adb127a3651aa0e3b20128de6c778451fa11acc47
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+COMPONENT_SRC =			zope_testing-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,12 +36,13 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(@D)/src
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-exceptions
 TEST_REQUIRED_PACKAGES.python += library/python/zope-interface

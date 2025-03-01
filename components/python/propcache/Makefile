@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		propcache
-HUMAN_VERSION =			0.2.1
+HUMAN_VERSION =			0.3.0
 COMPONENT_SUMMARY =		Accelerated property cache
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/propcache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3f77ce728b19cb537714499928fe800c3dda29e8d9428778fc7c186da4c09a64
+	sha256:a8fd93de4e1d278046345f49e2238cdb298589325849b2645d4a94c53faeffc5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,9 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += requirements/test.txt
-
-# We have no pytest-codspeed packaged yet
-PYTEST_ADDOPTS += --ignore tests/test_benchmarks.py
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
@@ -49,6 +46,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

@@ -1,11 +1,11 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --cov=cachetools
+py$(PYV): commands[0]> python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --cov=cachetools --cov-report term-missing
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 215 items
+collecting ... collected 216 items
 
 tests/test_cache.py::CacheTest::test_defaults PASSED
 tests/test_cache.py::CacheTest::test_delete PASSED
@@ -27,6 +27,7 @@ tests/test_cached.py::CacheWrapperTest::test_decorator_clear PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_clear_lock PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_info PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_lock PASSED
+tests/test_cached.py::CacheWrapperTest::test_decorator_lock_info PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_typed PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_wrapped PASSED
 tests/test_cached.py::CacheWrapperTest::test_zero_size_cache_decorator PASSED
@@ -280,6 +281,6 @@ tests/test_mru.py::MRUCacheTest::test_update
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 
-======== 215 passed, 15 warnings ========
+======== 216 passed, 15 warnings ========
   py$(PYV): OK
   congratulations :)

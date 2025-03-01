@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xhost
-COMPONENT_VERSION=  1.0.9
+COMPONENT_VERSION=  1.0.10
 COMPONENT_SUMMARY=  xhost - utility for mananging X server access control lists
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ea86b531462035b19a2e5e01ef3d9a35cca7d984086645e2fc844d8f0e346645
+COMPONENT_ARCHIVE_HASH= sha256:a8afd70059479c712948b895e41c35a4a8bfcede3ba2d5a4b855c88bbb725be1
 COMPONENT_FMRI=     x11/xhost
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

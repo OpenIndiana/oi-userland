@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flac
 COMPONENT_VERSION=	1.5.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	An Open Source Lossless Audio Codec
 COMPONENT_PROJECT_URL=	https://xiph.org/flac
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -26,6 +27,9 @@ COMPONENT_ARCHIVE_URL=	https://github.com/xiph/flac/releases/download/$(COMPONEN
 COMPONENT_FMRI=		codec/flac
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	Xiph.org BSD-style, binaries & media player plugins also use GPL v2, LGPL v2.1, documentation uses FDL v1.2
+
+COMPONENT_FMRI.library=		$(COMPONENT_FMRI)-$(subst .,,$(basename $(HUMAN_VERSION)))
+COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1400 items
+collecting ... collected 1462 items
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -81,6 +81,12 @@ tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backu
 tests/test_backup.py::TestBackup::test_validate_incremental_backup_configs_backup_compression[None-None] PASSED
 tests/test_backup.py::TestBackup::test_get_last_full_backup_id PASSED
 tests/test_backup.py::TestBackup::test_backup_fsync_and_set_sizes PASSED
+tests/test_backup.py::TestBackup::test_get_closest_backup_id_from_target_time[20250107T120000] PASSED
+tests/test_backup.py::TestBackup::test_get_closest_backup_id_from_target_time[None] PASSED
+tests/test_backup.py::TestBackup::test_get_closest_backup_id_from_target_lsn[20250107T120000] PASSED
+tests/test_backup.py::TestBackup::test_get_closest_backup_id_from_target_lsn[None] PASSED
+tests/test_backup.py::TestBackup::test_get_last_backup_id_from_target_tli[20250107T120000] PASSED
+tests/test_backup.py::TestBackup::test_get_last_backup_id_from_target_tli[None] PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_no_wal_cleanup_if_not_oldest_backup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_last_backup PASSED
@@ -92,6 +98,7 @@ tests/test_backup.py::TestWalCleanup::test_delete_by_retention_wal_cleanup_if_al
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_if_oldest_two_nokeep_and_standalone PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_no_wal_cleanup_if_oldest_two_full_and_standalone PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_by_retention_wal_cleanup_preserves_backup_wal PASSED
+tests/test_backup.py::TestWalCleanup::test_delete_wal_directory_when_feasible PASSED
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_nominal PASSED
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_exec_not_found PASSED
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_failed_cmd PASSED
@@ -256,6 +263,14 @@ tests/test_barman_cloud_restore.py::TestCloudRestore::test_unsupported_snapshot_
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_snapshots_backup[gcp-provider_args0] PASSED
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_snapshots_backup[azure-provider_args1] PASSED
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_snapshots_backup[aws-provider_args2] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id[target_time-2025-01-07 15:15:00-20250107T120000] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id[target_lsn-3/5B000000-20250106T120000] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id[None-None-20250108T120000] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id_with_target_tli[20250108T120000-latest-2] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id_with_target_tli[20250108T120000-current-None] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id_with_target_tli[20250107T120000-1-1] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id_with_target_tli[20250108T120000-2-2] PASSED
+tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_without_backup_id_and_no_backup_id_found_from_targets PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderObjectStore::test_download_backup PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderObjectStore::test_download_backup_recovery_dir_exists PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_download_backup PASSED
@@ -369,6 +384,19 @@ tests/test_cli.py::TestCli::test_restore_recovery_instance_kwarg_not_passed PASS
 tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[gcp_zone-snapshot_recovery_zone] PASSED
 tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[azure_resource_group-None] PASSED
 tests/test_cli.py::TestCli::test_restore_snapshot_provider_args[aws_region-None] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[target_time-2025-01-07 12:01:00-False] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[target_lsn-3/5F000000-False] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[None-None-False] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[target_immediate-True-True] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[target_xid-12345-True] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id[target_name-whatever_name-True] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[target_time-2025-01-07 12:01:00-1] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[target_time-2025-01-07 12:01:00-None] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[target_lsn-3/5F000000-1] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[target_lsn-3/5F000000-None] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[None-None-1] PASSED
+tests/test_cli.py::TestCli::test_restore_without_a_backup_id_with_target_tli[None-None-None] PASSED
+tests/test_cli.py::TestCli::test_restore_no_candidate_backup_found PASSED
 tests/test_cli.py::TestCli::test_check_target_action PASSED
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[False-None-False] PASSED
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-None-True] PASSED
@@ -1005,9 +1033,9 @@ tests/test_recovery_executor.py::TestRecoveryExecutor::test_setup_recovery_confi
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_setup_recovery_configuration_file[120000-custom.recovery.conf-custom.recovery.conf-False] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[None-False-None] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[2-False-None] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[2-True-2] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[3-True-3] PASSED
-tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[current-False-None] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[current-True-2] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[latest-True-10] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_generate_recovery_conf_pre12 PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_generate_recovery_conf PASSED
@@ -1092,6 +1120,10 @@ tests/test_server.py::TestServer::test_standby_init PASSED
 tests/test_server.py::TestServer::test_check_config_missing PASSED
 tests/test_server.py::TestServer::test_xlogdb_with_exception PASSED
 tests/test_server.py::TestServer::test_xlogdb PASSED
+tests/test_server.py::TestServer::test_xlogdb_is_rebuilt_if_not_present PASSED
+tests/test_server.py::TestServer::test_rebuild_xlogdb PASSED
+tests/test_server.py::TestServer::test_rebuild_xlogdb_unkown_files_present PASSED
+tests/test_server.py::TestServer::test_rebuild_xlogdb_with_compression PASSED
 tests/test_server.py::TestServer::test_get_wal_full_path PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files0-target_tlis0-None-None-None-False-expected_indices0] PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files1-target_tlis1-None-None-None-False-expected_indices1] PASSED
@@ -1104,6 +1136,8 @@ tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files0
 tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files1-expected_indices1] PASSED
 tests/test_server.py::TestServer::test_pg_stat_archiver_show PASSED
 tests/test_server.py::TestServer::test_pg_stat_archiver_status PASSED
+tests/test_server.py::TestServer::test_status_active_model PASSED
+tests/test_server.py::TestServer::test_show_active_model PASSED
 tests/test_server.py::TestServer::test_check_postgres_too_old PASSED
 tests/test_server.py::TestServer::test_check_postgres PASSED
 tests/test_server.py::TestServer::test_check_wal_streaming PASSED
@@ -1138,7 +1172,9 @@ tests/test_server.py::TestServer::test_incoming_thresholds[incoming-archiver] PA
 tests/test_server.py::TestServer::test_incoming_thresholds[streaming-streaming_archiver] PASSED
 tests/test_server.py::TestServer::test_replication_status PASSED
 tests/test_server.py::TestServer::test_timeline_has_children PASSED
+tests/test_server.py::TestServer::test_xlogdb_directory PASSED
 tests/test_server.py::TestServer::test_xlogdb_file_name PASSED
+tests/test_server.py::TestServer::test_xlogdb_file_path PASSED
 tests/test_server.py::TestServer::test_create_physical_repslot PASSED
 tests/test_server.py::TestServer::test_drop_repslot PASSED
 tests/test_server.py::TestServer::test_receive_wal_checks[remote_status0-None] PASSED
@@ -1165,11 +1201,13 @@ tests/test_server.py::TestServer::test_put_wal[obj9-SHA256SUMS-sha256-2432a52815
 tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-file_absent-Checksum without corresponding file] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-sum_absent-Missing checksum for file] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-sum_mismatch-Bad file checksum] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[MD5SUMS-md5-dest_exists-Impossible to write already existing] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-file_absent-Checksum without corresponding file] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-sum_absent-Missing checksum for file] PASSED
 tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-sum_mismatch-Bad file checksum] PASSED
-tests/test_server.py::TestServer::test_put_wal_fail[SHA256SUMS-sha256-dest_exists-Impossible to write already existing] PASSED
+tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[MD5SUMS-md5-Duplicate Files Detected with Mismatched Checksums-False] PASSED
+tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[MD5SUMS-md5-Duplicate Files with Identical Checksums.-True] PASSED
+tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[SHA256SUMS-sha256-Duplicate Files Detected with Mismatched Checksums-False] PASSED
+tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[SHA256SUMS-sha256-Duplicate Files with Identical Checksums.-True] PASSED
 tests/test_server.py::TestServer::test_put_wal_fsync[obj0-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef] PASSED
 tests/test_server.py::TestServer::test_put_wal_fsync[obj1-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64] PASSED
 tests/test_server.py::TestServer::test_get_systemid_file_path PASSED
@@ -1186,6 +1224,8 @@ tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_age
 tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_size PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_under_minimum_size PASSED
 tests/test_server.py::TestServer::test_get_backup_ext_info PASSED
+tests/test_server.py::TestServer::test_move_wal_file_to_errors_directory[duplicate] PASSED
+tests/test_server.py::TestServer::test_move_wal_file_to_errors_directory[unknown] PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy_log PASSED
 tests/test_server.py::TestCheckStrategy::test_check_strategy PASSED
@@ -1297,6 +1337,28 @@ tests/test_utils.py::TestCheckBackupNames::test_check_backup_name_success[backup
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_match PASSED
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_multiple_match PASSED
 tests/test_utils.py::TestCheckBackupNames::test_get_backup_info_from_name_no_match PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_time[2025-01-08 12:15:00-20250108T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_time[2025-01-07 12:15:00-20250107T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_time[2025-01-06 12:15:00-20250106T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/61000000-20250108T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/62000000-20250108T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/5E000000-20250107T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/5F000000-20250107T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/5B000000-20250106T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_lsn[3/5C000000-20250106T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_tli[3-None] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_tli[2-20250111T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_get_backup_id_from_target_tli[1-20250108T120000] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_with_backup_id[current-1] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_with_backup_id[latest-3] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_with_backup_id[1-1] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_with_backup_id[None-None] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_without_backup_id[current-None] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_without_backup_id[latest-3] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_without_backup_id[1-1] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_without_backup_id[None-None] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_invalid_keyword[a1-'a1' is not a valid timeline keyword] PASSED
+tests/test_utils.py::TestBackupRecoveryTargets::test_parse_target_tli_invalid_keyword[1.0-'1.0' is not a valid timeline keyword] PASSED
 tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format PASSED
 tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format_error[2024-01-01] PASSED
 tests/test_utils.py::TestAWSSnapshotLock::test_check_aws_expiration_date_format_error[2024-01-01T00:00:00] PASSED
@@ -1435,7 +1497,7 @@ tests/test_compressor.py: 39 warnings
 tests/test_executor.py: 15 warnings
 tests/test_recovery_executor.py: 2 warnings
 tests/test_wal_archiver.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/setuptools/_distutils/version.py:337: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(PYTHON_DIR)/vendor-packages/setuptools/_distutils/version.py:336: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     other = LooseVersion(other)
 
 tests/test_command_wrappers.py: 26 warnings
@@ -1513,11 +1575,11 @@ tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmoun
     logging.warn("Error resolving mount point: {}".format(exc))
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
-  $(@D)/tests/test_utils.py:551: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:557: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoder)
 
 tests/test_utils.py::TestBarmanEncoderV2::test_version_objects
-  $(@D)/tests/test_utils.py:642: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/tests/test_utils.py:648: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoderV2)
 
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
@@ -1525,10 +1587,10 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-  $(@D)/barman/wal_archiver.py:694: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/wal_archiver.py:682: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1377 passed, 23 skipped, 313 warnings ========
+======== 1439 passed, 23 skipped, 313 warnings ========
   py$(PYV): OK
   congratulations :)
