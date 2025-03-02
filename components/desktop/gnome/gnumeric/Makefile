@@ -12,18 +12,17 @@
 # Copyright 2019 Jason Martin
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
-include ../../../make-rules/shared-macros.mk
+include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     gnumeric
 COMPONENT_MJR_VERSION=  1.12
-COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).57
-COMPONENT_SUMMARY=  GTK Spreadsheet Application
-COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_VERSION=  $(COMPONENT_MJR_VERSION).59
+COMPONENT_SUMMARY=  Gnumeric is an open-source spreadsheet program
+COMPONENT_PROJECT_URL=  https://www.gnumeric.org
 COMPONENT_SRC=      $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:aff50b1b62340c24fccf453d5fad3e7fb73f4bc4b34f7e34b6c3d2d9af6a1e4f
+COMPONENT_ARCHIVE_HASH= sha256:cb3750b176d641f9423df721b831658c829557552f8887fedf8a53d907eceb51
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=   Applications/Office
@@ -38,18 +37,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBEXECDIR.$(BITS))
-CONFIGURE_OPTIONS += --without-perl
-
 COMPONENT_TEST_ARGS += -k
 
 # Build dependencies
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += runtime/perl
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/goffice
