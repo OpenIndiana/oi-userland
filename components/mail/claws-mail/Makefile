@@ -19,13 +19,12 @@ USE_PARALLEL_BUILD= Yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.3.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.3.1
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:24a4d024c36f98add0e0b935cfa03cc6df01bc1b3f479a7a9d6df57705b04b2f
+COMPONENT_ARCHIVE_HASH= sha256:8fc4f0e0f274297063e5e7682089a32b65ac1b2d21cfa13c54b980520952def2
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -66,6 +65,7 @@ REQUIRED_PACKAGES += file/gnu-coreutils
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
