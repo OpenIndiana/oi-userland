@@ -20,10 +20,15 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
+# Odd minor versions are unstable.
+# https://gi.readthedocs.io/en/latest/changelog.html
+
 COMPONENT_NAME =		gobject-introspection
-HUMAN_VERSION =			1.83.2
+HUMAN_VERSION =			1.82.0
+IPS_COMPONENT_VERSION =		1.83.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Introspection for GObject libraries
-COMPONENT_ARCHIVE_HASH =	sha256:8a0442517d4d793e44c64cbec9d284df71c94f19e6409a75e217a3d82bda8eae
+COMPONENT_ARCHIVE_HASH =	sha256:0f5a4c1908424bf26bc41e9361168c363685080fbdb87a196c891c8401ca2f09
 COMPONENT_FMRI =		library/desktop/gobject/gobject-introspection
 COMPONENT_CLASSIFICATION =	Development/GNOME and GTK+
 COMPONENT_LICENSE =		GPL-2.0-or-later AND LGPL-2.0-or-later AND MIT
