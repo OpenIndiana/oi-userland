@@ -32,6 +32,7 @@ COMPONENT_FMRI=         video/rtmpdump
 # This project does not do release tarballs.  It even does not use git tags so
 # we need to pin to the desired commit explicitly.
 GIT_REPO=https://git.ffmpeg.org/rtmpdump
+GIT_BRANCH = master
 GIT_COMMIT_ID=6f6bb1353fc84f4cc37138baa99f586750028a01
 GIT_HASH = sha256:627ea7b61a14ae5820d3ab164c2e7ce3331a1dd362d8b5b8017bd217b1952743
 
