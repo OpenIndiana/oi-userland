@@ -376,6 +376,7 @@ test_against_empty_tree (tests.test_index.SimpleIndexTestCase) ... ok
 test_empty (tests.test_index.SimpleIndexTestCase) ... ok
 test_getitem (tests.test_index.SimpleIndexTestCase) ... ok
 test_iter (tests.test_index.SimpleIndexTestCase) ... ok
+test_iter_skip_hash (tests.test_index.SimpleIndexTestCase) ... ok
 test_iterobjects (tests.test_index.SimpleIndexTestCase) ... ok
 test_len (tests.test_index.SimpleIndexTestCase) ... ok
 test_simple_write (tests.test_index.SimpleIndexWriterTestCase) ... ok
@@ -866,11 +867,22 @@ test_no_verify (tests.test_porcelain.CommitTests) ... ok
 test_timezone (tests.test_porcelain.CommitTests) ... ok
 test_unicode (tests.test_porcelain.CommitTests) ... ok
 test_simple (tests.test_porcelain.CommitTreeTests) ... ok
+test_add_and_merge_dirs (tests.test_porcelain.ConeModeTests)
+Verify that cone_mode_add merges new directories instead of overwriting them. ... ok
+test_force_removal_of_local_mods (tests.test_porcelain.ConeModeTests)
+Confirm that force=True removes local changes in excluded paths. ... ok
+test_init_excludes_everything (tests.test_porcelain.ConeModeTests)
+Verify that cone_mode_init writes minimal patterns and empties the working tree. ... ok
+test_set_overwrites_old_dirs (tests.test_porcelain.ConeModeTests)
+Ensure that calling cone_mode_set again overwrites old includes. ... ok
+test_set_specific_dirs (tests.test_porcelain.ConeModeTests)
+Verify that cone_mode_set overwrites the included directories to only the specified ones. ... ok
 test_no_commits (tests.test_porcelain.DescribeTests) ... ok
 test_single_commit (tests.test_porcelain.DescribeTests) ... ok
 test_tag (tests.test_porcelain.DescribeTests) ... ok
 test_tag_and_commit (tests.test_porcelain.DescribeTests) ... ok
 test_tag_and_commit_full (tests.test_porcelain.DescribeTests) ... ok
+test_untagged_commit_abbreviation (tests.test_porcelain.DescribeTests) ... ok
 test_empty (tests.test_porcelain.DiffTreeTests) ... ok
 test_simple (tests.test_porcelain.FetchTests) ... ok
 test_with_remote_name (tests.test_porcelain.FetchTests) ... ok
@@ -944,6 +956,17 @@ test_commit_with_change (tests.test_porcelain.ShowTests) ... ok
 test_nolist (tests.test_porcelain.ShowTests) ... ok
 test_simple (tests.test_porcelain.ShowTests) ... ok
 test_tag (tests.test_porcelain.ShowTests) ... ok
+test_tag_unicode (tests.test_porcelain.ShowTests) ... ok
+test_destructive_refuse_uncommitted_changes_without_force (tests.test_porcelain.SparseCheckoutTests)
+Fail on uncommitted changes for newly excluded paths without force. ... ok
+test_fnmatch_gitignore_pattern_expansion (tests.test_porcelain.SparseCheckoutTests)
+Reading/writing patterns align with gitignore/fnmatch expansions. ... ok
+test_force_removes_local_changes_for_excluded_paths (tests.test_porcelain.SparseCheckoutTests)
+Forced sparse checkout removes local modifications for newly excluded paths. ... ok
+test_only_included_paths_appear_in_wtree (tests.test_porcelain.SparseCheckoutTests)
+Only included paths remain in the working tree, excluded paths are removed. ... ok
+test_previously_included_paths_become_excluded (tests.test_porcelain.SparseCheckoutTests)
+Previously included files become excluded after pattern changes. ... ok
 test_empty (tests.test_porcelain.StatusTests) ... ok
 test_get_tree_changes_add (tests.test_porcelain.StatusTests)
 Unit test for get_tree_changes add. ... ok
@@ -1351,7 +1374,10 @@ $(@D)/tests/../docs/tutorial/conclusion.txt
 Doctest: conclusion.txt ... ok
 test_archive (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'exporting archives not supported over http'
 test_fetch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
+test_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/email/message.py:121: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
+  self.policy = policy
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_fetch_pack_no_side_band_64k (tests.compat.test_client.DulwichHttpClientTest) ... skipped 'side-band-64k cannot be disabled with git protocol v2'
 test_fetch_pack_with_nondefault_symref (tests.compat.test_client.DulwichHttpClientTest) ... ok
@@ -1361,10 +1387,7 @@ test_get_refs_with_peeled_tag (tests.compat.test_client.DulwichHttpClientTest) .
 test_get_refs_with_ref_prefix (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_incremental_fetch_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_repeat (tests.compat.test_client.DulwichHttpClientTest) ... ok
-test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... $(PYTHON_DIR)/warnings.py:186: ResourceWarning: unclosed <socket.socket fd=7, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', $(PORT))>
-  filters.remove(item)
-ResourceWarning: Enable tracemalloc to get the object allocation traceback
-ok
+test_send_new_branch_empty_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_from_shallow_clone (tests.compat.test_client.DulwichHttpClientTest) ... ok
 test_send_pack_multiple_errors (tests.compat.test_client.DulwichHttpClientTest) ... ok
@@ -1472,7 +1495,7 @@ test_send_pack_nothing_to_send (tests.compat.test_client.DulwichSubprocessClient
 test_send_pack_one_error (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_remove_branch (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
 test_send_without_report_status (tests.compat.test_client.DulwichSubprocessClientTestGitProtov0) ... ok
-test_archive (tests.compat.test_client.DulwichTCPClientTest) ... ok
+test_archive (tests.compat.test_client.DulwichTCPClientTest) ... skipped 'git-daemon was already running on port 9418'
 test_fetch_empty_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack (tests.compat.test_client.DulwichTCPClientTest) ... ok
 test_fetch_pack_depth (tests.compat.test_client.DulwichTCPClientTest) ... ok
@@ -1691,6 +1714,6 @@ test_init_no_data (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required
 test_put_named_file (tests.contrib.test_swift.TestSwiftRepo) ... skipped "Required libraries are not installed (['geventhttpclient'])"
 
 ----------------------------------------------------------------------
-Ran 1625 tests
+Ran 1638 tests
 
-OK (skipped=93, expected failures=1)
+OK (skipped=94, expected failures=1)
