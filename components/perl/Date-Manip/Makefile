@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Date-Manip
-HUMAN_VERSION =			6.96
+HUMAN_VERSION =			6.97
 COMPONENT_SUMMARY =		Date manipulation routines
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3aafd2886e356cae4540aabcca9e8fee3d059e4c7f6e390a12ea53ea3edd93e3
+	sha256:47948b4a4f6852653b71036855af4fbb27f670cbda96f7416ff89b11d0dcc57e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
