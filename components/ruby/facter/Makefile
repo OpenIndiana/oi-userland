@@ -20,6 +20,8 @@
 #
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
+
+BUILD_STYLE= gem
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		facter
@@ -39,25 +41,19 @@ COMPONENT_CLASSIFICATION=	Development/Ruby
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	facter.license
 
+# facter requires the installation of the following rubygems to run
+# the unittests:  rspec rspec-expectations mocha rake rack hiera
+# Disable the tests until these rubygems are available.
+TEST_TARGET=	$(NO_TESTS)
+
+include $(WS_TOP)/make-rules/common.mk
+include $(WS_TOP)/make-rules/ruby.mk
+
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/gem.mk
-include $(WS_TOP)/make-rules/ruby.mk
-
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-# facter requires the installation of the following rubygems to run
-# the unittests:  rspec rspec-expectations mocha rake rack hiera
-# Disable the tests until these rubygems are available.
-test:		$(NO_TESTS)
-
-REQUIRED_PACKAGES += runtime/ruby-23
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/ruby-32
