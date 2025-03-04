@@ -60,6 +60,7 @@ test_iso_year_property (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_isocalendar (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_issubclass (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_issue_36_fromstring_with_more_microseconds_digits (tests.test_datatypes.DateTimeTypesTest) ... ok
+test_issue_84_error_parsing_midnight_hours (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_le_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_lt_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
 test_sub_operator (tests.test_datatypes.DateTimeTypesTest) ... ok
@@ -82,6 +83,7 @@ test_isinstance (tests.test_datatypes.DurationTypesTest) ... ok
 test_issubclass (tests.test_datatypes.DurationTypesTest) ... ok
 test_le (tests.test_datatypes.DurationTypesTest) ... ok
 test_lt (tests.test_datatypes.DurationTypesTest) ... ok
+test_max_min_months (tests.test_datatypes.DurationTypesTest) ... ok
 test_mul_operator (tests.test_datatypes.DurationTypesTest) ... ok
 test_ne (tests.test_datatypes.DurationTypesTest) ... ok
 test_string_representation (tests.test_datatypes.DurationTypesTest) ... ok
@@ -2446,6 +2448,7 @@ test_node_document_uri_function (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_node_kind_property (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_node_nilled_property (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_path_property (tests.test_xpath_nodes.XPathNodesTest) ... ok
+test_path_property_with_namespaces (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_text_nodes (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_typed_element_nodes (tests.test_xpath_nodes.XPathNodesTest) ... ok
 test_arity_property (tests.test_xpath_tokens.XPath1TokenTest) ... ok
@@ -2468,8 +2471,6 @@ test_string_value_function (tests.test_xpath_tokens.XPath1TokenTest) ... ok
 test_unexpected_method (tests.test_xpath_tokens.XPath1TokenTest) ... ok
 test_xpath_error (tests.test_xpath_tokens.XPath1TokenTest) ... ok
 test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath1TokenTest) ... ok
-test_add_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
-test_add_xsd_type_alternatives (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_arity_property (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_atomization_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_bind_namespace_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
@@ -2479,7 +2480,6 @@ test_compare_operator (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_data_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_expected_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_get_argument_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
-test_get_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_iter_leaf_elements_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_iter_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_match_xsd_type (tests.test_xpath_tokens.XPath2TokenTest) ... ok
@@ -2488,14 +2488,12 @@ test_number_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_ordinal_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_position (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_select_results (tests.test_xpath_tokens.XPath2TokenTest) ... ok
-test_select_xsd_nodes (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_source_property (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_string_value_function (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_unexpected_method (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_xpath_error (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath2TokenTest) ... ok
-test_add_xsd_type (tests.test_xpath_tokens.XPath30TokenTest) ... ok
-test_add_xsd_type_alternatives (tests.test_xpath_tokens.XPath30TokenTest) ... ok
+test_xsd_type_labeling (tests.test_xpath_tokens.XPath2TokenTest) ... ok
 test_arity_property (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_atomization_function (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_bind_namespace_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
@@ -2505,7 +2503,6 @@ test_compare_operator (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_data_value_function (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_expected_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_get_argument_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
-test_get_xsd_type (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_iter_leaf_elements_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_iter_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_match_xsd_type (tests.test_xpath_tokens.XPath30TokenTest) ... ok
@@ -2514,14 +2511,12 @@ test_number_value_function (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_ordinal_function (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_position (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_select_results (tests.test_xpath_tokens.XPath30TokenTest) ... ok
-test_select_xsd_nodes (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_source_property (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_string_value_function (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_unexpected_method (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_xpath_error (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath30TokenTest) ... ok
-test_add_xsd_type (tests.test_xpath_tokens.XPath31TokenTest) ... ok
-test_add_xsd_type_alternatives (tests.test_xpath_tokens.XPath31TokenTest) ... ok
+test_xsd_type_labeling (tests.test_xpath_tokens.XPath30TokenTest) ... ok
 test_arity_property (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_atomization_function (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_bind_namespace_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
@@ -2531,7 +2526,6 @@ test_compare_operator (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_data_value_function (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_expected_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_get_argument_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
-test_get_xsd_type (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_iter_leaf_elements_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_iter_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_match_xsd_type (tests.test_xpath_tokens.XPath31TokenTest) ... ok
@@ -2540,15 +2534,15 @@ test_number_value_function (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_ordinal_function (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_position (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_select_results (tests.test_xpath_tokens.XPath31TokenTest) ... ok
-test_select_xsd_nodes (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_source_property (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_string_value_function (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_unexpected_method (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_xpath_error (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 test_xpath_error_shortcuts (tests.test_xpath_tokens.XPath31TokenTest) ... ok
+test_xsd_type_labeling (tests.test_xpath_tokens.XPath31TokenTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 2538 tests
+Ran 2532 tests
 
 OK (skipped=2)
   py$(PYV): OK
