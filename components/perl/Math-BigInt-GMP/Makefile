@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt-GMP
-HUMAN_VERSION =			1.7001
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.7002
 COMPONENT_SUMMARY =		check that a library is available
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:417581fdce63892e24f08279cdd6b065cb60c41d5acfa22dd2ad93b6d3e87071
+	sha256:13af32267d26424226966de1beed2332915324b25015185a135eeb8ffd4b76ab
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
