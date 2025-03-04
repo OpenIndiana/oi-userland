@@ -11,22 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.vcs
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.vcs jaraco_vcs
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.vcs
-HUMAN_VERSION =			2.4.0
+COMPONENT_NAME =		jaraco_vcs
+HUMAN_VERSION =			2.4.1
 COMPONENT_SUMMARY =		Facilities for working with VCS repositories
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e2b876bd6ff41787f7f42f949ea292d53ab93e53868df36da25f2872b4962910
+	sha256:1b3b1a4a9bebe14c0bba1ff17f30e01b4eacc3d64724fad6b51a3ee657fc4de5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-COMPONENT_SRC =			jaraco_vcs-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
