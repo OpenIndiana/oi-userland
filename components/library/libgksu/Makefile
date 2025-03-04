@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libgksu
 COMPONENT_VERSION=      2.0.12
-COMPONENT_REVISION=     6
+COMPONENT_REVISION=     7
 COMPONENT_FMRI=         library/desktop/libgksu
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_PROJECT_URL=  http://www.nongnu.org/gksu/
@@ -37,6 +37,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
+# make gcc-14 happy.
+CFLAGS += -Wno-int-conversion -Wno-incompatible-pointer-types
+
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(TOUCH) NEWS  README&&\
 					libtoolize --copy --force &&\
@@ -51,8 +54,8 @@ CONFIGURE_OPTIONS+=	--libexecdir=$(USRLIBDIR)
 CONFIGURE_OPTIONS+=     --disable-gtk-doc	
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/gconf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/startup-notification
