@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			libmediaart
-HUMAN_VERSION=			1.9.6
+HUMAN_VERSION=			1.9.7
 COMPONENT_SUMMARY=		Library tasked with managing, extracting and handling media art caches
-COMPONENT_ARCHIVE_HASH=		sha256:c3bc5025d7db380587f9c8eb800c611f6b5a16d6b4b78fcff93f62876a677f17
+COMPONENT_ARCHIVE_HASH=		sha256:2b43dd9f54f0d8d0b89e2addb83341ab06d7b98cb1b2e704383584af9c560f6b
 COMPONENT_FMRI=			library/gnome/libmediaart
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -29,6 +29,9 @@ COMPONENT_LICENSE_FILE=		COPYING.LESSER
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
