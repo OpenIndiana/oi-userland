@@ -89,12 +89,6 @@ COMPONENT_PRE_INSTALL_ACTION = ( \
 	$(INSTALL) -m 644 $(@D)/utils/images/xscreensaver.xpm $(PROTO_DIR)/usr/share/pixmaps ; \
 	)
 
-# needed for current OpenIndiana PathSpec.
-COMPONENT_POST_INSTALL_ACTION = ( \
-	$(MKDIR) $(PROTOUSRSHAREDIR)/X11/app-defaults; \
-	$(MV) $(PROTOUSRDIR)/X11R6/lib/X11/app-defaults/XScreenSaver $(PROTOUSRSHAREDIR)/X11/app-defaults ; \
-	)
-
 # Build dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
 REQUIRED_PACKAGES += image/library/libpng16
