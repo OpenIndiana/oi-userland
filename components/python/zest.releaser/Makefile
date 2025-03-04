@@ -11,18 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zest.releaser
+#   $WS_TOOLS/python-integrate-project -d python/zest.releaser zest_releaser
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			9.2.0
+COMPONENT_NAME =		zest_releaser
+HUMAN_VERSION =			9.3.0
 COMPONENT_SUMMARY =		Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6cdbb15a125838144135176182e42d5b04eaae467df9d7b1e77ac24dd4d6266
+	sha256:e66bc85d0edd6fc6f4317da2f00e6af05f33b4eb3c2086bf5217da8f7ae47c16
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
@@ -35,6 +35,7 @@ TOX_POSARGS += -vv
 PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/cmarkgfm
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/readme-renderer
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
