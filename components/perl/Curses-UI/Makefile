@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Curses-UI
 HUMAN_VERSION =			0.9609
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A curses based OO user interface framework
 COMPONENT_CPAN_AUTHOR =		MDXI
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,6 +28,12 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Makefile.PL needs to find bundled inc::Module::Install
+COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/curses
