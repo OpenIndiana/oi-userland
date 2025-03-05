@@ -11,13 +11,12 @@
 #
 # Copyright 2016-2018 Aurelien Larcher
 #
-PREFERRED_BITS=64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hwloc
-COMPONENT_VERSION_MAJOR=2.9
-COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).2
+COMPONENT_VERSION_MAJOR=2.12
+COMPONENT_VERSION=      $(COMPONENT_VERSION_MAJOR).0
 COMPONENT_SUMMARY=      hwloc - Portable Hardware Locality
 COMPONENT_PROJECT_URL=  https://www.open-mpi.org/projects/hwloc/
 COMPONENT_FMRI=         developer/hwloc
@@ -26,7 +25,7 @@ COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL= \
   https://download.open-mpi.org/release/hwloc/v$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:0a87fdf677f8b00b567d229b6320bf6b25c693edaa43e0b85268d999d6b060cf
+COMPONENT_ARCHIVE_HASH= sha256:06a0a2bdc0a5714e839164683846a0e936a896213758e9d37e49e232b89c58d4
 COMPONENT_LICENSE=      BSD-2
 
 # When CONFIGURE_FIX_LIBTOOL_RPATH is integrated, we can remove local fix and enable it
@@ -56,7 +55,6 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += diagnostic/scanpci
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libxml2

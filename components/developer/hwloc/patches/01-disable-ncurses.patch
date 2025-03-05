@@ -1,0 +1,12 @@
+--- hwloc-2.12.0/utils/lstopo/lstopo-ascii.c.old	2025-03-05 00:23:49.928775877 -0500
++++ hwloc-2.12.0/utils/lstopo/lstopo-ascii.c	2025-03-05 00:24:34.830734590 -0500
+@@ -21,6 +21,9 @@
+ #include <wchar.h>
+ #endif /* HAVE_PUTWC */
+ 
++/* Illumos doesn't have a compatible tputs() */
++#undef HWLOC_HAVE_LIBTERMCAP
++
+ #ifdef HWLOC_HAVE_LIBTERMCAP
+ #ifdef HWLOC_USE_NCURSES
+ #  include <ncurses.h>
