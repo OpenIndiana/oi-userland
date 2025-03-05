@@ -24,8 +24,8 @@
 # Copyright (c) 2018 Norm Jacobs
 # Copyright (c) 2018 Ken Mays
 # Copyright (c) 2020 Michal Nowak
-# Copyright (c) 2022 Klaus Ziegler
 # Copyright (c) 2022 Niklas Poslovski
+# Copyright (c) 2025 Klaus Ziegler
 #
 
 USE_COMMON_TEST_MASTER= no
@@ -35,6 +35,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
 COMPONENT_VERSION=	2.44
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,7 +70,10 @@ CONFIGURE_OPTIONS +=    --target=$(GNU_TRIPLET)
 #
 # See https://www.illumos.org/issues/15028
 #
+# SPARC doesn't use binutils at all for illumos-gate.
+ifneq ($(strip $(MACH)),sparc)
 CONFIGURE_OPTIONS +=	--enable-warn-rwx-segments=no
+endif
 
 COMPONENT_TEST_ARGS += -k
 
