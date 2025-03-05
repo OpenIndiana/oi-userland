@@ -13,16 +13,15 @@
 # Copyright 2015 Aurelien Larcher
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         faad2
-COMPONENT_VERSION=      2.11.1
+COMPONENT_VERSION=      2.11.2
 COMPONENT_SUMMARY=      Freeware Advanced Audio (AAC) Decoder including SBR decoding
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:72dbc0494de9ee38d240f670eccf2b10ef715fd0508c305532ca3def3225bb06
+COMPONENT_ARCHIVE_HASH= sha256:3fcbd305e4abd34768c62050e18ca0986f7d9c5eca343fb98275418013065c0e
 COMPONENT_PROJECT_URL=  https://github.com/knik0/faad2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
