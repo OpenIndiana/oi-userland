@@ -43,10 +43,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3504
-COMPONENT_REVISION=	4
-GIT_TAG=		sun-v5.0.70
-PLUGIN_REV=		5.0-202501172014-cog
+COMPONENT_VERSION=	5.0.3517
+GIT_TAG=		sun-v5.0.71
+PLUGIN_REV=		5.0-202503071743-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -60,7 +59,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:31eb43ecea76728b4a83ed8cebdcf70f9adeea324e990895e7c134a8cb91854c
+COMPONENT_ARCHIVE_HASH=	sha256:1957e987fe5224b04d154d59eb34fd9de080904aa2731469d2ee44f745726419
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -114,8 +113,6 @@ LIBS = "-lmapmalloc"
 gcc_OPT=		-DAIO_DEBUG -DNDEBUG -DDEBUGVM=0 -DCOGMTVM=0
 gcc_OPT+=		-Wno-error=implicit-function-declaration
 gcc_OPT+=		-Wno-error=incompatible-pointer-types
-gcc_OPT+=		-Wno-error=return-mismatch
-gcc_OPT+=		-Wno-error=int-to-pointer-cast
 
 # epoll(5) seems to work with OpenSmalltalk, but valgrind complains #17199
 # also on Linux some OpenSmalltalk users prefer to disable epoll when fork used
@@ -126,6 +123,8 @@ CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
+CONFIGURE_OPTIONS +=	--without-vm-sound-Sun
+CONFIGURE_OPTIONS +=	--without-vm-sound-OSS
 CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.cog
 CONFIGURE_OPTIONS.64 +=	--with-src=src/spur64.cog
 CONFIGURE_OPTIONS +=	--disable-epoll
