@@ -57,23 +57,11 @@ fi
 # back-slashes.) Windows users should declare the full path to the openssl
 # binary here if it is not in their system PATH.
 #
+#set_var EASYRSA_OPENSSL	"openssl"
 set_var EASYRSA_OPENSSL	"/usr/openssl/3/bin/openssl"
 #
 # This sample is in Windows syntax -- edit it for your path if not using PATH:
 #set_var EASYRSA_OPENSSL	"C:/Program Files/OpenSSL-Win32/bin/openssl.exe"
-
-# Edit this variable to point to your soon-to-be-created key directory.
-# By default, this will be "$PWD/pki" (ie: the "pki" subdirectory of the
-# directory you are currently in).
-#
-# WARNING: init-pki will do a rm -rf on this directory so make sure you define
-# it correctly!  Interactive mode will prompt before acting.
-#
-#set_var EASYRSA_PKI		"$PWD/pki"
-
-# Define directory for temporary subdirectories.
-#
-#set_var EASYRSA_TEMP_DIR	"$EASYRSA_PKI"
 
 # Define X509 DN mode.
 #
@@ -147,9 +135,10 @@ set_var EASYRSA_OPENSSL	"/usr/openssl/3/bin/openssl"
 #
 #set_var EASYRSA_CERT_EXPIRE	825
 
-# How many days until the next CRL publish date?  Note that the CRL can still
-# be parsed after this timeframe passes. It is only used for an expected next
-# publication date.
+# How many days until the Certificate Revokation List will expire.
+#
+# IMPORTANT: When the CRL expires, an OpenVPN Server which uses a
+# CRL will reject ALL new connections, until the CRL is replaced.
 #
 #set_var EASYRSA_CRL_DAYS	180
 
@@ -173,6 +162,10 @@ set_var EASYRSA_OPENSSL	"/usr/openssl/3/bin/openssl"
 #set_var	EASYRSA_KU_CRIT		1
 #set_var	EASYRSA_EKU_CRIT	1
 #set_var	EASYRSA_SAN_CRIT	1
+
+# Disable automatic inline files
+#
+#set_var	EASYRSA_DISABLE_INLINE	1
 
 # Support deprecated "Netscape" extensions? (choices "yes" or "no").
 # The default is "no", to discourage use of deprecated extensions.
