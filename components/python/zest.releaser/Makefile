@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest_releaser
-HUMAN_VERSION =			9.3.0
+HUMAN_VERSION =			9.5.0
 COMPONENT_SUMMARY =		Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e66bc85d0edd6fc6f4317da2f00e6af05f33b4eb3c2086bf5217da8f7ae47c16
+	sha256:fea55cd8ffc9ad6ad4c2bea4090f644bc7384e0fc31615eec9689df060cac01f
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
@@ -36,6 +36,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/cmarkgfm
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/readme-renderer
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
@@ -46,6 +47,5 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/check-manifest
 TEST_REQUIRED_PACKAGES.python += library/python/pep440
 TEST_REQUIRED_PACKAGES.python += library/python/pyroma
-TEST_REQUIRED_PACKAGES.python += library/python/wheel
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
