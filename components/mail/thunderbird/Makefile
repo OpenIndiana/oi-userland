@@ -35,16 +35,16 @@ ESR = esr
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 1
+# CANDIDATE_BUILD= 5
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.7.1
+COMPONENT_VERSION =	128.8.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:93f9b754ed68bdfa6bf15c5787c1845441be02b3830c1730b6379cec9b8f275e
+	 sha256:dac8bb727e7fed445d3977093d51832a9d116de078f86cc07081abd8e42b6f43
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -168,13 +168,18 @@ CONFIGURE_ENV += CARGO_HOME=$(CARGO_HOME)
 COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
 
+# This is needed to run bins/libs in .rustup
+CONFIGURE_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
-# because we touched old-configure.in and js/src/old-configure.in
+# Use version of rust specific for this thunderbird version
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
         export RUSTUP_HOME=$(RUSTUP_HOME); \
         export CARGO_HOME=$(CARGO_HOME); \
         export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+        export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
         curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
         source $(CARGO_HOME)/env; \
         rustup install $(RUST_VERSION); \
@@ -182,10 +187,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup show; \
 	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
 	);
-
-# COMPONENT_POST_BUILD_ACTION = \
-# 	(cd $(@D)/mail/installer ; $(ENV) $(COMPONENT_BUILD_ENV) \
-# 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
 COMPONENT_POST_INSTALL_ACTION  += \
     for file in `find $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird -name "*.so"`; \
@@ -230,7 +231,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/psutil
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += runtime/nodejs-22

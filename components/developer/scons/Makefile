@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d developer/scons SCons
+#   $WS_TOOLS/python-integrate-project -d developer/scons scons
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		SCons
-HUMAN_VERSION =			4.8.1
+COMPONENT_NAME =		scons
+HUMAN_VERSION =			4.9.0
 COMPONENT_SUMMARY =		Open Source next-generation build tool.
 COMPONENT_PROJECT_URL =		https://www.scons.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/76/a2c1293642f9a448f2d012cabf525be69ca5abf4af289bc0935ac1554ee8/scons-4.8.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b641357904d2f56f7bfdbb37e165ab996b6143c948b9df0efc7305f54949daa
+	sha256:f1a5e161bf3d1411d780d65d7919654b9405555994621d3d68e42d62114b592a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

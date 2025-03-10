@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inline_snapshot
-HUMAN_VERSION =			0.18.2
+HUMAN_VERSION =			0.20.4
 COMPONENT_SUMMARY =		golden master/snapshot/approval testing library which puts the values right into your source code
 COMPONENT_PROJECT_URL =		https://15r10nk.github.io/inline-snapshot/latest
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1be34afa453b75d120e12e8fb4724e28cb23f71b8f0fb0a7bc822a78c97ff826
+	sha256:6f353b1893b60ad6d3134f215d527fe507df01e5e1155cd3c2d7242bde451e4d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,15 +43,15 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/<update, fix>/<fix, update>/'"
 # https://github.com/15r10nk/inline-snapshot/issues/126
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 
+# https://github.com/15r10nk/inline-snapshot/issues/206
+PYTEST_ADDOPTS += --deselect tests/test_formating.py::test_format_command_fail
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/asttokens
-PYTHON_REQUIRED_PACKAGES += library/python/black
-PYTHON_REQUIRED_PACKAGES += library/python/click
 PYTHON_REQUIRED_PACKAGES += library/python/executing
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/rich
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/dirty-equals
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis

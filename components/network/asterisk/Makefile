@@ -19,11 +19,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	22.1.0
+COMPONENT_VERSION=	22.2.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c892e9a51919d62bee2bed8b7c6f59ec79dfd48768ae289df61dba2da83f4413
+COMPONENT_ARCHIVE_HASH=	sha256:1e217bc25fa722964d5ae8745da31e6aa77a7b9430b77d1f3520185308490d90
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -34,12 +34,18 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS) 
 include $(WS_MAKE_RULES)/common.mk
 
+# Sub-projects fail to build with gcc-14
+GCC_VERSION= 13
+
+CFLAGS += -m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD
+CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap
+LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR)
+
 PATH= $(PATH.gnu)
 
 PATCH_LEVEL= 0
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
-
 
 # res_geolocation does not build with the illumos linker due to missing capabilities/options
 # no workaround known so far
@@ -123,10 +129,10 @@ CONFIGURE_OPTIONS +=	--with-mysqlclient=$(MYSQL_HOME)
 CONFIGURE_OPTIONS +=	--with-postgres=$(PG_HOME)
 CONFIGURE_OPTIONS +=	NOISY_BUILD=yes
 CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS))
-CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6 -L$(JPEG_LIBDIR)"
-CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 # HAVE_OPENSSL_BIO_METHOD not properly recognised by configure therefore expiclitly set
-CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD"
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS += samples
 
@@ -136,6 +142,7 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 REQUIRED_PACKAGES += library/popt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)

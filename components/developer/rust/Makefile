@@ -24,7 +24,7 @@
 # Copyright 2018, Aurelien Larcher
 # Copyright 2018, Michal Nowak
 # Copyright 2021, Carsten Grzemba
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2025 Friedrich Kink
 #
 
 # This build is a mixture of configure and python style
@@ -35,12 +35,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.84.0
+COMPONENT_VERSION=	1.85.0
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:15cee7395b07ffde022060455b3140366ec3a12cbbea8f1ef2ff371a9cca51bf
+COMPONENT_ARCHIVE_HASH=	sha256:2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -53,8 +53,6 @@ RUST_ARCH= x86_64-unknown-illumos
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
-
-CLANG_VERSION= 19
 
 # Need some help to pick the correct ar binary
 GNUAR= $(GNUBIN)/ar
@@ -128,7 +126,6 @@ COMPONENT_BUILD_ENV += VERBOSE=1
 COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
 
 COMPONENT_PRE_INSTALL_ACTION = mkdir -p $(PROTO_DIR)
-COMPONENT_POST_INSTALL_ACTION +=  $(TOUCH) $(BUILD_DIR)/META.depend-runtime.res
 
 # Cleanup standard environment
 COMPONENT_INSTALL_ENV= 
@@ -138,7 +135,6 @@ COMPONENT_INSTALL_ENV += CARGO_HOME=$(CARGO_HOME)
 COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
 # manually added dependencies
-REQUIRED_PACKAGES += developer/gcc-13
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
@@ -146,7 +142,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
-REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
