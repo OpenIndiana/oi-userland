@@ -43,3 +43,113 @@ index 8375f6f99510..be2e4d222367 100644
  
  mostlyclean:
  	-$(LIBTOOL_CLEAN) rm -f libobjc$(libsuffix).la libobjc_gc$(libsuffix).la *.lo
+-----------------------------------------------------------------------------------------
+
+Inspired by old patch: 0024-Make-install-strip-target-work-for-libobjc.patch above,
+which didn't work, also stripping all other libraries now. Whitout this patch the
+installed libraries don't maintain a symbol table. According to the man-page of
+gstrip command the -s options says:
+
+--strip-all / Remove all symbols.
+
+therefore we use -x option to gstrip.
+
+--- gcc-releases-gcc-13.3.0/libitm/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libitm/Makefile.in	2025-03-10 12:24:32.059808037 +0200
+@@ -956,7 +956,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libgomp/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libgomp/Makefile.in	2025-03-10 12:24:50.385274725 +0200
+@@ -1145,7 +1145,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libquadmath/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libquadmath/Makefile.in	2025-03-10 12:25:07.097731235 +0200
+@@ -1209,7 +1209,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libatomic/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libatomic/Makefile.in	2025-03-10 12:25:24.762217352 +0200
+@@ -764,7 +764,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libgfortran/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libgfortran/Makefile.in	2025-03-10 12:25:42.395457938 +0200
+@@ -7493,7 +7493,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libssp/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libssp/Makefile.in	2025-03-10 12:26:02.076848320 +0200
+@@ -700,7 +700,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libsanitizer/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libsanitizer/Makefile.in	2025-03-10 12:26:16.427602815 +0200
+@@ -651,7 +651,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libgo/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libgo/Makefile.in	2025-03-10 12:26:32.149425112 +0200
+@@ -2467,7 +2467,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
+--- gcc-releases-gcc-13.3.0/libstdc++-v3/Makefile.in.orig	2024-05-21 10:32:24.000000000 +0300
++++ gcc-releases-gcc-13.3.0/libstdc++-v3/Makefile.in	2025-03-10 12:26:47.215016145 +0200
+@@ -691,7 +691,7 @@
+ 	      install; \
+ 	else \
+ 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+-	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM) -x" \
+ 	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+ 	fi
+ mostlyclean-generic:
