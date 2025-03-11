@@ -10,8 +10,15 @@
 #
 
 #
-# Copyright 2022 Daniel Bell
-#
+# (C)Copyright 2024, Benny Lyons
+
+# Runtime warnings:
+#  WARNING: package com.apple.eio not in java.desktop
+# WARNING: package jdk.internal.opt not in jdk.internal.opt
+# WARNING: A terminally deprecated method in java.lang.System has been called
+# WARNING: System::setSecurityManager has been called by org.netbeans.TopSecurityManager (file:/export/home/benn/devl/oi/oi-userland/components/editor/netbeans/build/amd64/nbbuild/netbeans/platform/lib/boot
+
+
 
 BUILD_BITS=64 # for binaries or 32_and_64 for libraries
 BITS=64
@@ -19,13 +26,17 @@ BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
-COMPONENT_VERSION= 12.6
+COMPONENT_VERSION= 20
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
-COMPONENT_DESCRIPTION=  Full-featured IDE for C/C++, Java, PHP and more
+COMPONENT_DESCRIPTION=  IDE for C/C++, Java, PHP, Perl Python, and more \
+                        For C/C++ inlude 8.2 Plugin Portal and install \
+                        the C/C++ plugin (CND). The CPPLite Kit is in early \
+                        stages of development.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.zip
+COMPONENT_ARCHIVE_HASH=sha256:a898bc394137dadb9f2ae6935cf9c9448321c30524b2ad61632536a7444f6ca7
 COMPONENT_ARCHIVE_URL= https://archive.apache.org/dist/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_LICENSE= Apache-2.0
@@ -33,15 +44,23 @@ COMPONENT_PROJECT_URL= https://www.netbeans.org/
 
 UNPACK_ARGS= --relocate-to=$(COMPONENT_SRC)
 
+# PYTHON_VERSION = $(shell python -V | cut -d ' ' -f2)
+PYVER = $(shell python -V | cut -d ' ' -f2  | cut -c1-3)
+python_shebang:='\#\!\/usr\/bin\/python3.9'
+
+
+
+
 TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS=
 
+
 $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	mkdir -p $(PROTO_DIR)/usr/netbeans/;
 	[ -d $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION) ] || cp -R $(BUILD_DIR_64)/nbbuild/netbeans $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION);
-	for FILE in $(PROTO_DIR)/usr/netbeans/12.6/ide/bin/nativeexecution/SunOS-x86_64/{pty,pty_open,process_start,killall}; do \
+	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/{pty,pty_open,process_start,killall}; do \
 		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$FILE; \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' $$FILE; \
 	done;
@@ -52,8 +71,20 @@ $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	touch $(BUILD_DIR_64)/.installed;
 
 install: $(BUILD_DIR_64)/.installed
+	$(GSED) -i -e  '1s?.*?$(python_shebang)?' $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/extide/ant/bin/runant.py;
 
 
+
+# Netbeans runtime dependencies
 # Build dependencies
-REQUIRED_PACKAGES+= developer/build/ant
-REQUIRED_PACKAGES+= developer/java/openjdk8
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += developer/build/ant
+REQUIRED_PACKAGES += developer/java/openjdk8
+REQUIRED_PACKAGES += runtime/java/openjdk21
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += runtime/python
+
+
+# Auto-generated dependencies
