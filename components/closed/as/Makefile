@@ -10,19 +10,22 @@
 
 #
 # Copyright 2012, Andrzej Szeszo
+# Copyright 2025, Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         as
 COMPONENT_VERSION=      0.5.11
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=	Sun as
+COMPONENT_PROJECT_URL=	https://www.openindiana.org/
+COMPONENT_FMRI=		developer/as
 COMPONENT_SRC=          $(COMPONENT_NAME)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME).tar.gz
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:1758eb4721981d76c86dfe05b20d8dbccadc5938800554d2d54768e90fb7b623
 
-$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE):
-	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) https://pkg.openindiana.org/legacy \
-	pkg:/developer/build/make@0.5.11,5.11-0.134:20100302T014001Z
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
