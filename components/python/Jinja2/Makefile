@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jinja2
-HUMAN_VERSION =			3.1.5
+HUMAN_VERSION =			3.1.6
 COMPONENT_SUMMARY =		A very fast and expressive template engine.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb
+	sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
