@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-HUMAN_VERSION=		1.56.1
+HUMAN_VERSION=		1.56.2
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_ARCHIVE_HASH=	sha256:426be66460c98b8378573e7f6b0b2ab450f6bb6d2ec7cecc33ae81178f246480
+COMPONENT_ARCHIVE_HASH=	sha256:03b7afd7ed730bef651155cbfb5320556b8ef92b0dc04abbb9784dcd4057afe7
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
