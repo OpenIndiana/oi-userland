@@ -1,0 +1,22 @@
+--- ftgl-2.4.0/src/FTVectoriser.cpp.orig	2019-02-07 22:39:58.000000000 +0100
++++ ftgl-2.4.0/src/FTVectoriser.cpp	2025-03-13 16:49:54.366160521 +0100
+@@ -168,7 +168,7 @@
+     for(int i = 0; i < ftContourCount; ++i)
+     {
+         FT_Vector* pointList = &outline.points[startIndex];
+-        char* tagList = &outline.tags[startIndex];
++        unsigned char* tagList = &outline.tags[startIndex];
+ 
+         endIndex = outline.contours[i];
+         contourLength =  (endIndex - startIndex) + 1;
+--- ftgl-2.4.0/src/FTContour.h	2019-02-07 22:39:58.000000000 +0100
++++ ftgl/src/FTContour.h	2025-03-13 16:49:54.335442355 +0100
+@@ -52,7 +52,7 @@
+          * @param pointTags
+          * @param numberOfPoints
+          */
+-        FTContour(FT_Vector* contour, char* pointTags, unsigned int numberOfPoints);
++        FTContour(FT_Vector* contour, unsigned char* pointTags, unsigned int numberOfPoints);
+ 
+         /**
+          * Destructor
