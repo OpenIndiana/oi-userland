@@ -54,8 +54,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 REQUIRED_PACKAGES += text/xmlto
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
 PYTHON_REQUIRED_PACKAGES += library/python/pycups
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
-PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/ksh93
