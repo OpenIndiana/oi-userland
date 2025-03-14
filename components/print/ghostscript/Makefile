@@ -30,14 +30,14 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.4.0
-HUMAN_VERSION=		10.04.0
+COMPONENT_VERSION=      10.5.0
+HUMAN_VERSION=		10.05.0
 NUMERICAL_VERSION=	$(subst .,,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:527eef0b6cd04ecf1c8d7a11796c69a52d34ffe36afca86a400729a2fc01c887
+COMPONENT_ARCHIVE_HASH= sha256:aac9c4fdf61805a76f6220012735c1ae832813788314bfc04055cc0c8959b9a3
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	print/filter/ghostscript
@@ -73,6 +73,8 @@ CFLAGS += $(XPG7MODE)
 CFLAGS += -D__STDC_NO_ATOMICS__=1
 # Honour encrypted PDF permissions
 CFLAGS += -DUSE_PDF_PERMISSIONS=1
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
 
 # configure(1) options to use
 CONFIGURE_OPTIONS += --with-drivers=ALL
@@ -140,7 +142,6 @@ COMPONENT_TEST_TRANSFORMS += "-e '/extract.c:.*:extract_subpage_free/d'"
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
