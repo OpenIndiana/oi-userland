@@ -19,11 +19,13 @@
 # CDDL HEADER END
 #
 # Copyright 2016 Grüninger GmbH, Andreas Grüninger (grueni)
+# Copyright 2025 Klaus Ziegler
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           bundler
 COMPONENT_VERSION=        1.13.6
+COMPONENT_REVISION=       1
 COMPONENT_FMRI=           library/ruby/$(COMPONENT_NAME)
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).gem
@@ -33,8 +35,7 @@ COMPONENT_PROJECT_URL=    http://puppetlabs.com/bundler
 COMPONENT_CLASSIFICATION= Development/Ruby
 COMPONENT_LICENSE=        MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 include $(WS_MAKE_RULES)/gem.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
@@ -42,12 +43,7 @@ include $(WS_MAKE_RULES)/ruby.mk
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec --ruby $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) > $(SOURCE_DIR)/$(GEMSPEC)
 
-# common targets
-build:    $(BUILD_32)
 
-install:  $(INSTALL_32)
-
-test:     $(TESTS_32)
-
-
-REQUIRED_PACKAGES += runtime/ruby-23
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/ruby-32
