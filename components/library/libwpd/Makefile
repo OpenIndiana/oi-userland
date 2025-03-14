@@ -20,12 +20,11 @@
 #
 # Copyright (c) 2015-2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libwpd
 COMPONENT_VERSION=      0.10.3
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      libwpd - library for reading Corel WordPerfect(tm) documents 
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/libwpd
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +37,10 @@ COMPONENT_LICENSE=      LGPLv2.1 MPLv2
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+ifeq ($(MACH), sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
