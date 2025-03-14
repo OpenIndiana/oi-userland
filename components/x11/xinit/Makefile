@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xinit
-COMPONENT_VERSION=        1.4.3
+COMPONENT_VERSION=        1.4.4
 COMPONENT_SUMMARY=        xinit - X Window System initializer
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:86409f21a6a31148d2c1c17bf5f2d904eb5ef455f9dc67c49fbd0c10ab18fd5a
+COMPONENT_ARCHIVE_HASH=   sha256:40a47c7a164c7f981ce3787b4b37f7e411fb43231dcde543d70094075dacfef9
 COMPONENT_FMRI=           x11/session/xinit
 COMPONENT_LICENSE_FILE=   COPYING
 
