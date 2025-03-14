@@ -1,0 +1,15 @@
+
+Why shouldn't we test patches not from our OS, hopefully others
+distros do the same for us...
+
+--- ftgl-2.4.0/m4/gl.m4.orig	2019-02-07 22:39:58.000000000 +0100
++++ ftgl-2.4.0/m4/gl.m4	2025-03-13 16:03:54.891507153 +0100
+@@ -50,7 +50,7 @@
+ # -Xlinker is used because libtool is busted prior to 1.6 wrt frameworks
+ AC_TRY_LINK([#include <OpenGL/gl.h>], [glBegin(GL_POINTS)],
+     [GL_DYLIB="/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
+-     FRAMEWORK_OPENGL="-Xlinker -framework -Xlinker OpenGL -dylib_file $GL_DYLIB: $GL_DYLIB"
++     FRAMEWORK_OPENGL="-Xlinker -framework -Xlinker OpenGL -dylib_file $GL_DYLIB:$GL_DYLIB"
+      ac_cv_search_glBegin="$FRAMEWORK_OPENGL"
+      AC_MSG_RESULT(yes)],
+     [AC_MSG_RESULT(no)])
