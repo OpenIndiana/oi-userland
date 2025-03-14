@@ -12,13 +12,13 @@
 # Copyright 2021 Alexander Pyhalov
 #
 
-BUILD_BITS=32
 BUILD_STYLE=gem
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rexml
 COMPONENT_VERSION=	3.2.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	An XML toolkit for Ruby 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
@@ -33,9 +33,11 @@ COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
 	$(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/ruby-32
+# Auto-generated dependencies
