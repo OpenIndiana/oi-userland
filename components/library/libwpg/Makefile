@@ -20,7 +20,6 @@
 #
 # Copyright (c) 2015-2017, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwpg
