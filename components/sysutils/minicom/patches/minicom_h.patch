@@ -1,0 +1,51 @@
+
+This fixes the following compiler Problem Not suiteable for upstream:
+
+ld: fatal: symbol 'vt_inmap' is multiply-defined:
+        (file minicom.o type=OBJT; file vt100.o type=OBJT);
+ld: fatal: symbol 'vt_outmap' is multiply-defined:
+        (file minicom.o type=OBJT; file vt100.o type=OBJT);
+ld: fatal: symbol 'dial_pass' is multiply-defined:
+        (file minicom.o type=OBJT; file dial.o type=OBJT);
+ld: fatal: symbol 'dial_user' is multiply-defined:
+        (file minicom.o type=OBJT; file dial.o type=OBJT);
+ld: fatal: symbol 'portfd_is_socket' is multiply-defined:
+        (file minicom.o type=OBJT; file sysdep1_s.o type=OBJT);
+ld: fatal: symbol 'portfd_sock_addr' is multiply-defined:
+        (file minicom.o type=OBJT; file sysdep1_s.o type=OBJT);
+ld: fatal: symbol 'portfd_is_connected' is multiply-defined:
+        (file minicom.o type=OBJT; file sysdep1_s.o type=OBJT);
+ld: fatal: file processing errors. No output written to minicom
+collect2: error: ld returned 1 exit status
+make[2]: *** [Makefile:461: minicom] Error 1
+
+--- minicom-v2.7.1/src/minicom.h.~1~	2017-04-24 01:54:31.000000000 +0300
++++ minicom-v2.7.1/src/minicom.h	2025-03-15 18:49:26.949602642 +0200
+@@ -109,13 +109,13 @@
+ 
+ EXTERN char *dial_name;	    /* System we're conneced to */
+ EXTERN char *dial_number;   /* Number we've dialed. */
+-EXTERN char *dial_user;     /* Our username there */
+-EXTERN char *dial_pass;     /* Our password */
++extern char *dial_user;     /* Our username there */
++extern char *dial_pass;     /* Our password */
+ 
+ #ifdef USE_SOCKET
+-EXTERN int portfd_is_socket;	/* File descriptor is a unix socket */
+-EXTERN int portfd_is_connected;	/* 1 if the socket is connected */
+-EXTERN struct sockaddr_un portfd_sock_addr;	/* the unix socket address */
++extern int portfd_is_socket;	/* File descriptor is a unix socket */
++extern int portfd_is_connected;	/* 1 if the socket is connected */
++extern struct sockaddr_un portfd_sock_addr;	/* the unix socket address */
+ #define portfd_connected ((portfd_is_socket && !portfd_is_connected) \
+                            ? -1 : portfd)
+ #else
+@@ -141,7 +141,7 @@
+ EXTERN int st_attr;	/* Status Bar attributes. */
+ 
+ /* jl 04.09.97 conversion tables */
+-EXTERN unsigned char vt_outmap[256], vt_inmap[256];
++extern unsigned char vt_outmap[256], vt_inmap[256];
+ 
+ /* MARK updated 02/17/95 - history buffer */
+ EXTERN int num_hist_lines;  /* History buffer size */
