@@ -19,13 +19,13 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tinyxml2
-COMPONENT_VERSION =		10.0.0
+COMPONENT_VERSION =		10.1.0
 COMPONENT_SUMMARY =		Simple, small, efficient, C++ XML parser that can be easily integrated into other programs
 COMPONENT_PROJECT_URL =		https://github.com/leethomason/tinyxml2
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL =		https://github.com/leethomason/tinyxml2/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH =	sha256:3bdf15128ba16686e69bce256cc468e76c7b94ff2c7f391cc5ec09e40bff3839
+COMPONENT_ARCHIVE_HASH =	sha256:9da7e1aebbf180ef6f39044b9740a4e96fa69e54a01318488512ae92ca97a685
 COMPONENT_FMRI =		library/tinyxml2
 COMPONENT_CLASSIFICATION =	System/Libraries
 COMPONENT_LICENSE =		Zlib
