@@ -15,13 +15,13 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		atkmm
 COMPONENT_MJR_VERSION=	2.28
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	atkmm - C++ Wrapper for the atk Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -52,8 +52,8 @@ REQUIRED_PACKAGES += library/libxslt
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/glibmm
 REQUIRED_PACKAGES += library/c++/sigcpp
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
