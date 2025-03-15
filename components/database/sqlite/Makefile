@@ -25,22 +25,23 @@
 BUILD_BITS= 64_and_32
 ENV=/usr/bin/env
 USE_PARALLEL_BUILD= yes
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.47.2
-COMPONENT_REVISION=     1
-TARBALL_VERSION=		3470200
+COMPONENT_VERSION=      3.49.1
+TARBALL_VERSION=		3490100
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:e6a471f1238225f34c2c48c5601b54024cc538044368230f59ff0672be1fc623
+COMPONENT_ARCHIVE_HASH= sha256:4404d93cbce818b1b98ca7259d0ba9b45db76f2fdd9373e56f2d29b519f4d43b
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2024/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2025/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
 COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # 'oserror' test has too low threshold for file descriptor depletion. When it's
@@ -68,7 +69,6 @@ CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
 CONFIGURE_OPTIONS.32	+= --disable-tcl
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS		+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS		+= --disable-static
 CONFIGURE_OPTIONS		+= --enable-readline
 CONFIGURE_OPTIONS		+= --enable-fts3
@@ -104,7 +104,7 @@ COMPONENT_TEST_TRANSFORMS= \
 	' -e "/^Number of malloc/p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
