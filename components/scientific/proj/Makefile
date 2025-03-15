@@ -18,22 +18,22 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        proj
-COMPONENT_VERSION=      9.5.1
+COMPONENT_VERSION=      9.6.0
 COMPONENT_SUMMARY=      PROJ is a generic coordinate transformation software that transforms geospatial coordinates from \
 	one coordinate reference system (CRS) to another
 COMPONENT_PROJECT_URL=  https://proj.org/
 COMPONENT_SRC=	        $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://download.osgeo.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:a8395f9696338ffd46b0feb603edbb730fad6746fba77753c77f7f997345e3d3
+COMPONENT_ARCHIVE_HASH=	sha256:d8cae521c311c39513193657e75767f7cfbf2f91bd202fcd4a200028d3b57e14
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
-COMPONENT_ARCHIVE_1=		proj-data-1.19.tar.gz
+COMPONENT_ARCHIVE_1=		proj-data-1.21.tar.gz
 COMPONENT_ARCHIVE_URL_1=	https://download.osgeo.org/proj/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1=	sha256:fc197199fedee975b6d12865f7efe3ae6c3287526b1f656d75f113fc47a95d54
+COMPONENT_ARCHIVE_HASH_1=	sha256:687e1b9086ed517091daeb0341042fdaa6212f114c7c191b3a39b25d8dcce9c0
 
 include $(WS_MAKE_RULES)/common.mk
 
