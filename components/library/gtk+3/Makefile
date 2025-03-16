@@ -20,10 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk
-HUMAN_VERSION=		3.24.48
-COMPONENT_REVISION=	1
+HUMAN_VERSION=		3.24.49
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_ARCHIVE_HASH=	sha256:d10ce9ea9df44c1016d8d1721f39e55d3d607fcfb85334aec0d236cdc9a70556
+COMPONENT_ARCHIVE_HASH=	sha256:5ea52c6a28f0e5ecf2e9a3c2facbb30d040b73871fcd5f33cd1317e9018a146e
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
@@ -43,8 +42,8 @@ CONFIGURE_OPTIONS += -Dgtk_doc=true
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
-COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Test dependencies
