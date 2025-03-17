@@ -12,7 +12,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2025 Andreas Wacknitz
 #
 
 BUILD_STYLE= meson
@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-HUMAN_VERSION=		1.56.2
+HUMAN_VERSION=		1.56.3
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_ARCHIVE_HASH=	sha256:03b7afd7ed730bef651155cbfb5320556b8ef92b0dc04abbb9784dcd4057afe7
+COMPONENT_ARCHIVE_HASH=	sha256:2606252bc25cd8d24e1b7f7e92c3a272b37acd6734347b73b47a482834ba2491
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
