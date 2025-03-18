@@ -14,6 +14,8 @@
 # Copyright 2021,2024 Andreas Wacknitz
 #
 
+# SunRay utaudio needs 32bit library
+BUILD_BITS=64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
@@ -44,13 +46,18 @@ CONFIGURE_OPTIONS += --enable-network
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-optimization=3
 ifeq ($(strip $(MACH)),i386)
-CONFIGURE_OPTIONS += --with-cpu=x86-64
+CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
+CONFIGURE_OPTIONS.32 += --with-cpu=x86
 endif
-CONFIGURE_OPTIONS += --with-default-audio=pulse
+CONFIGURE_OPTIONS.32 += --with-audio=dummy
+CONFIGURE_OPTIONS.32 += --with-default-audio="dummy"
+CONFIGURE_OPTIONS.64 += --with-default-audio="pulse"
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/sdl2
+REQUIRED_PACKAGES += library/sdl2/32
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
