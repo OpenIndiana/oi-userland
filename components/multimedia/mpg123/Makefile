@@ -14,11 +14,13 @@
 # Copyright 2021,2024 Andreas Wacknitz
 #
 
+BUILD_BITS=64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
 COMPONENT_VERSION= 1.32.10
+COMPONENT_REVISON= 1
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_PROJECT_URL= https://mpg123.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,9 +46,11 @@ CONFIGURE_OPTIONS += --enable-network
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-optimization=3
 ifeq ($(strip $(MACH)),i386)
-CONFIGURE_OPTIONS += --with-cpu=x86-64
+CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
+CONFIGURE_OPTIONS.32 += --with-cpu=x86
 endif
 CONFIGURE_OPTIONS += --with-default-audio=pulse
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
