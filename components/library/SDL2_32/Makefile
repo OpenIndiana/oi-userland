@@ -13,19 +13,19 @@
 # Copyright (c) 2020 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
+BUILD_BITS= 32
 USE_PARALLEL_BUILD= yes
 DROP_STATIC_LIBRARIES= yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
-COMPONENT_VERSION=	2.32.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.32.2
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f15b478253e1ff6dac62257ded225ff4e7d0c5230204ac3450f1144ee806f934
+COMPONENT_ARCHIVE_HASH=	sha256:c5f30c427fd8107ee4a400c84d4447dd211352512eaf0b6e89cc6a50a2821922
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl2
 COMPONENT_CLASSIFICATION =	System/Libraries
@@ -38,8 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
-
-COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh );
+COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh )
 
 CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --enable-year2038
@@ -47,9 +46,6 @@ CONFIGURE_OPTIONS += --enable-static=no
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/libsamplerate
-# needed to link test objects
-REQUIRED_PACKAGES += library/audio/pulseaudio
-REQUIRED_PACKAGES += library/audio/pulseaudio/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
