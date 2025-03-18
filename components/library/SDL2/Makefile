@@ -13,12 +13,14 @@
 # Copyright (c) 2020 Andreas Wacknitz
 #
 
+BUILD_BITS= 64_and_32
 USE_PARALLEL_BUILD= yes
 DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
 COMPONENT_VERSION=	2.32.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +47,9 @@ CONFIGURE_OPTIONS += --enable-static=no
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/libsamplerate
+# needed to link test objects
+REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/audio/pulseaudio/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
