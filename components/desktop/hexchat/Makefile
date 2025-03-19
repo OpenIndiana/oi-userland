@@ -13,13 +13,12 @@
 # Copyright 2020 Michal Nowak
 #
 
-BITS= 64
 BUILD_STYLE= meson
-OPENSSLi_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexchat
 COMPONENT_VERSION=	2.16.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	HexChat IRC client
 COMPONENT_PROJECT_URL=	https://hexchat.github.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,12 +56,12 @@ CONFIGURE_ENV += AR="/usr/gnu/bin/ar"
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += x11/library/libx11
