@@ -21,62 +21,42 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2025 Klaus Ziegler
 #
 
+BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
+DROP_STATIC_LIBRARIES = yes
+
 COMPONENT_NAME=		tidy
-COMPONENT_VERSION=	1.0.0
-COMPONENT_REVISION=	4
-COMPONENT_PROJECT_URL=	http://tidy.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_VERSION=	5.8.0
+COMPONENT_PROJECT_URL=	https://www.html-tidy.org
+COMPONENT_SUMMARY=	The HTML Tidy Library.
+COMPONENT_FMRI=		text/tidy
+COMPONENT_SRC=		$(COMPONENT_NAME)-html5-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=	https://github.com/htacg/$(COMPONENT_NAME)-html5/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:074023e48ed151db743d194af1028e4a17fa72a18e4069b4f18d4683db4bb9cf
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	library/tidy
+    sha256:59c86d5b2e452f63c5cdb29c866a12a4c55b1741d7025cf2f3ce0cde99b0660e
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-#tree.js, treeview.js, tidyenum_8h.html are installed 
-#from files directory manually as doxygen didn't generate them.
-#This needs to be fixed later. 
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -DTIDY_CONSOLE_SHARED=ON
+CMAKE_OPTIONS += -DBUILD_TAB2SPACE=ON
 
-COMPONENT_PREP_ACTION =  \
-        (cd $(SOURCE_DIR); doxygen htmldoc/doxygen.cfg)
+# For some reason cmake does not install the tab2space binary,
+# distribution 5.8.0 does not come with man-pages for libtidy.3
+# and tab2space.1 therefore install at least the old ones.
+COMPONENT_POST_INSTALL_ACTION += \
+	($(CP) $(BUILD_DIR_64)/tab2space $(PROTOUSRBINDIR) ; \
+	$(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
+	$(CP) $(COMPONENT_DIR)/files/tab2space.1 $(PROTOUSRSHAREMAN1DIR) ; \
+	$(CP) $(COMPONENT_DIR)/files/libtidy.3 $(PROTOUSRSHAREMAN3DIR))
 
-CONFIGURE_OPTIONS  +=       --disable-static 
-CONFIGURE_OPTIONS  +=       --enable-access 
-CONFIGURE_OPTIONS  +=       --enable-utf16 
-CONFIGURE_OPTIONS  +=       --enable-asian
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CP) -r $(SOURCE_DIR)/test $(@D))
-
-PROTODOCDIR=$(PROTOUSRSHAREDIR)/doc/tidy
-
-$(PROTODOCDIR):
-	$(MKDIR) $@
-
-# ASLR_MODE = $(ASLR_ENABLE)
-
-COMPONENT_TEST_DIR =    $(@D)/test
-COMPONENT_TEST_CMD =    ./testall.sh
-COMPONENT_TEST_TARGETS =
-
-# Master test results are the same for both 32-bit and 64-bit, so override
-# here, rather than create multiple identical master files.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) $(PROTODOCDIR)
-		$(CP) -r $(SOURCE_DIR)/htmldoc/api $(PROTODOCDIR)
-
-test:		$(TEST_32_and_64)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
