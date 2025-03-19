@@ -18,11 +18,15 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
+# Odd minor versions are unstable.
+# More details at:
+# https://blog.gtk.org/2016/09/01/versioning-and-long-term-stability-promise-in-gtk/
+
 COMPONENT_NAME =		gtk
-HUMAN_VERSION =			4.16.12
+HUMAN_VERSION =			4.16.13
 COMPONENT_SUMMARY =		The GTK toolkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ef31bdbd6f082c4401634a20c850b0050c9bf252ef1e079764ee95a2a0c4c95a
+	sha256:ddf3d9e12b848139a945d191d5ca56b78d0647f53b55b8bca5f9902b61624498
 COMPONENT_PROJECT_URL =		https://www.gtk.org/
 COMPONENT_FMRI =		library/desktop/gtk4
 COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Libraries
