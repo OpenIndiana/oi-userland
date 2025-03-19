@@ -12,7 +12,6 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 
 include ../../../make-rules/shared-macros.mk
@@ -20,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libhandy
 COMPONENT_MJR_VERSION=  1.8
 COMPONENT_VERSION=		$(COMPONENT_MJR_VERSION).3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Library full of GTK+ widgets for mobile phones
 COMPONENT_PROJECT_URL=  https://gitlab.gnome.org/GNOME/libhandy
 COMPONENT_SRC=          libhandy-$(COMPONENT_VERSION)
@@ -45,7 +45,7 @@ REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += developer/ui-designer/glade
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
