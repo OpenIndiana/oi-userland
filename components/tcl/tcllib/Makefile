@@ -11,9 +11,11 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2018, Michal Nowak
-# Copyright (c) 2023, Klaus Ziegler
+# Copyright (c) 2025, Klaus Ziegler
 #
 
+# disable CONFIGURE_DEFAULT_DIRS, because tcllib does not support --localdir
+CONFIGURE_DEFAULT_DIRS=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcllib
@@ -46,7 +48,10 @@ COMPONENT_POST_INSTALL_ACTION += \
         (for app in $(APPS); do \
           $(GSED) -i "s:/usr/bin/env tclsh:$(USRBINDIR)/tclsh:" $(PROTO_DIR)$(USRBINDIR)/$$app; \
         done); \
-		$(MV) $(PROTO_DIR)$(USRBINDIR)/{,tcl}page
+		$(MV) $(PROTO_DIR)$(USRBINDIR)/{,tcl}page ; \
+		$(MKDIR) $(PROTOUSRSHAREDIR) $(PROTOUSRLIBDIR64) ; \
+		$(MV) $(PROTOUSRLIBDIR)/tcllib$(HUMAN_VERSION) $(PROTOUSRLIBDIR64) ; \
+		$(MV) $(PROTOUSRDIR)/man $(PROTOUSRSHAREDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/tcl-8
