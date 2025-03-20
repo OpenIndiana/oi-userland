@@ -11,23 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module ExtUtils::Depends
+#   $WS_TOOLS/perl-integrate-module ExtUtils-Depends
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		ExtUtils::Depends
-HUMAN_VERSION =			0.8001
-COMPONENT_SUMMARY =		ExtUtils::Depends - Easily build XS extensions that depend on XS extensions
-COMPONENT_CPAN_AUTHOR =		XAOC
+COMPONENT_NAME =		ExtUtils-Depends
+HUMAN_VERSION =			0.8002
+COMPONENT_SUMMARY =		Easily build XS extensions that depend on XS extensions
+COMPONENT_CPAN_AUTHOR =		ETJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:673c4387e7896c1a216099c1fbb3faaa7763d7f5f95a1a56a60a2a2906c131c5
+	sha256:02b9a46450050ce19b325b23e46bb4ec644229d7f2d95044f67a86d8efacdc29
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-number-delta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
