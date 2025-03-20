@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= totem
 COMPONENT_VERSION =		42.0
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY= Totem Multimedia Player
 COMPONENT_ARCHIVE_HASH=		sha256:4af0491ddb95df8b33aee399d3a50f9c7ab17de88d3af63356567cf88f57e6ab
 COMPONENT_FMRI = gnome/media/totem
@@ -45,8 +45,8 @@ REQUIRED_PACKAGES += text/rarian
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gnome-desktop
