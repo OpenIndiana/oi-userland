@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pidgin
 COMPONENT_VERSION=      2.14.14
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Multiprotocol Instant Messaging Client
 COMPONENT_PROJECT_URL=  https://www.pidgin.im
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -81,7 +82,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
-REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
