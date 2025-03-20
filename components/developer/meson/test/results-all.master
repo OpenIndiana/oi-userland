@@ -1,4 +1,4 @@
-Meson build system 1.6.0 Project and Unit Tests
+Meson build system 1.7.0 Project and Unit Tests
 System information.
 Architecture: ('64bit', 'ELF')
 Machine: i86pc
@@ -19,7 +19,7 @@ test_meson_exe_windows (__main__.CommandTests) ... skipped 'NOT IMPLEMENTED'
 
 !!
   self.initialize_options()
-$(PYTHON_DIR)/vendor-packages/setuptools/_distutils/cmd.py:66: EasyInstallDeprecationWarning: easy_install command is deprecated.
+$(PYTHON_DIR)/vendor-packages/setuptools/_distutils/cmd.py:79: EasyInstallDeprecationWarning: easy_install command is deprecated.
 !!
 
         ********************************************************************************
@@ -36,16 +36,16 @@ zip_safe flag not set; analyzing archive contents...
 mesonbuild.__pycache__.mdevenv.cpython-39: module references __file__
 mesonbuild.__pycache__.minstall.cpython-39: module references __file__
 mesonbuild.scripts.__pycache__.pycompile.cpython-39: module references __file__
-Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                ok
+Generating targets:   0%|          | 0/1 eta ?Generating targets: 100%|██████████| 1/1 eta 00:00                                                  Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?Generating targets: 100%|██████████| 1/1 eta 00:00                                                  Writing build.ninja:   0%|          | 0/34 eta ?                                                ok
 test_meson_runpython (__main__.CommandTests) ... ok
-test_meson_uninstalled (__main__.CommandTests) ... Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                ok
+test_meson_uninstalled (__main__.CommandTests) ... Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?Generating targets: 100%|██████████| 1/1 eta 00:00                                                  Writing build.ninja:   0%|          | 0/34 eta ?                                                Generating targets:   0%|          | 0/1 eta ?                                              Writing build.ninja:   0%|          | 0/34 eta ?                                                ok
 test_meson_zipapp (__main__.CommandTests) ... ok
 
 ----------------------------------------------------------------------
 Ran 5 tests
 
 OK (skipped=1)
-Meson build system 1.6.0 Command Tests
+Meson build system 1.7.0 Command Tests
 $ $(PYTHON) run_meson_command_tests.py -v --failfast
 Running unittests.
 
@@ -54,7 +54,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-X workers [534 items]
+X workers [550 items]
 
 scheduling tests via LoadScheduling
 
@@ -195,7 +195,9 @@ unittests/allplatformstests.py::AllPlatformTests::test_rsp_support PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_run_target_files_path PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_run_target_subdir PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_rust_clippy PASSED
+unittests/allplatformstests.py::AllPlatformTests::test_rust_clippy_as_rustc PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_rust_rlib_linkage PASSED
+unittests/allplatformstests.py::AllPlatformTests::test_rust_test_warnings PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_same_d_option_twice PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_same_d_option_twice_configure PASSED
 unittests/allplatformstests.py::AllPlatformTests::test_same_dash_option_twice PASSED
@@ -257,6 +259,7 @@ unittests/failuretests.py::FailureTests::test_apple_frameworks_dependency SKIPPE
 unittests/failuretests.py::FailureTests::test_assert_default_message PASSED
 unittests/failuretests.py::FailureTests::test_boost_BOOST_ROOT_dependency PASSED
 unittests/failuretests.py::FailureTests::test_boost_notfound_dependency PASSED
+unittests/failuretests.py::FailureTests::test_compiler_cache_without_compiler PASSED
 unittests/failuretests.py::FailureTests::test_dependency PASSED
 unittests/failuretests.py::FailureTests::test_dependency_invalid_method PASSED
 unittests/failuretests.py::FailureTests::test_dict_forbids_duplicate_keys PASSED
@@ -307,6 +310,7 @@ unittests/internaltests.py::InternalTests::test_msvc_toolset_version SKIPPED
 unittests/internaltests.py::InternalTests::test_needs_exe_wrapper_override PASSED
 unittests/internaltests.py::InternalTests::test_option_key_from_string PASSED
 unittests/internaltests.py::InternalTests::test_pkgconfig_parse_libs PASSED
+unittests/internaltests.py::InternalTests::test_program_version PASSED
 unittests/internaltests.py::InternalTests::test_quote_arg PASSED
 unittests/internaltests.py::InternalTests::test_sort_libpaths PASSED
 unittests/internaltests.py::InternalTests::test_split_args PASSED
@@ -419,6 +423,8 @@ unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_internal_libraries P
 unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_link_order PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_relative_paths PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_uninstalled PASSED
+unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_uninstalled_env_added PASSED
+unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_uninstalled_env_prepended PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_pkgconfig_usage PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_prelinking PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_qt5dependency_no_lrelease PASSED
@@ -431,6 +437,7 @@ unittests/linuxliketests.py::LinuxlikeTests::test_soname PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_static_archive_stripping PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_static_link PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_symlink_builddir PASSED
+unittests/linuxliketests.py::LinuxlikeTests::test_top_options_in_sp PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_unity_subproj PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_usage_external_library PASSED
 unittests/linuxliketests.py::LinuxlikeTests::test_usage_pkgconfig_prefixes PASSED
@@ -507,6 +514,7 @@ unittests/platformagnostictests.py::PlatformAgnosticTests::test_format_invalid_c
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_format_invalid_editorconfig_value PASSED
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_invalid_option_names PASSED
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_meson_package_cache_dir PASSED
+unittests/platformagnostictests.py::PlatformAgnosticTests::test_mtest_rebuild_deps PASSED
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_new_subproject_reconfigure PASSED
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_none_backend PASSED
 unittests/platformagnostictests.py::PlatformAgnosticTests::test_option_validation PASSED
@@ -554,6 +562,10 @@ unittests/taptests.py::TAPParserTests::test_directive_explanation PASSED
 unittests/taptests.py::TAPParserTests::test_empty PASSED
 unittests/taptests.py::TAPParserTests::test_empty_line PASSED
 unittests/taptests.py::TAPParserTests::test_empty_plan PASSED
+unittests/taptests.py::TAPParserTests::test_high_max_early_plan PASSED
+unittests/taptests.py::TAPParserTests::test_high_max_late_plan PASSED
+unittests/taptests.py::TAPParserTests::test_low_max_early_plan PASSED
+unittests/taptests.py::TAPParserTests::test_low_max_late_plan PASSED
 unittests/taptests.py::TAPParserTests::test_many_early_plan PASSED
 unittests/taptests.py::TAPParserTests::test_many_late_plan PASSED
 unittests/taptests.py::TAPParserTests::test_middle_plan PASSED
@@ -567,10 +579,14 @@ unittests/taptests.py::TAPParserTests::test_one_test_todo PASSED
 unittests/taptests.py::TAPParserTests::test_one_test_with_name PASSED
 unittests/taptests.py::TAPParserTests::test_one_test_with_number PASSED
 unittests/taptests.py::TAPParserTests::test_out_of_order PASSED
+unittests/taptests.py::TAPParserTests::test_out_of_order_missing_numbers PASSED
+unittests/taptests.py::TAPParserTests::test_out_of_order_no_plan PASSED
 unittests/taptests.py::TAPParserTests::test_plan_directive PASSED
-unittests/taptests.py::TAPParserTests::test_too_few PASSED
 unittests/taptests.py::TAPParserTests::test_too_few_bailout PASSED
-unittests/taptests.py::TAPParserTests::test_too_many PASSED
+unittests/taptests.py::TAPParserTests::test_too_few_early_plan PASSED
+unittests/taptests.py::TAPParserTests::test_too_few_late_plan PASSED
+unittests/taptests.py::TAPParserTests::test_too_many_early_plan PASSED
+unittests/taptests.py::TAPParserTests::test_too_many_late_plan PASSED
 unittests/taptests.py::TAPParserTests::test_too_many_plans PASSED
 unittests/taptests.py::TAPParserTests::test_unexpected PASSED
 unittests/taptests.py::TAPParserTests::test_version PASSED
@@ -593,34 +609,35 @@ unittests/windowstests.py::WindowsTests::test_qt5dependency_vscrt SKIPPED
 unittests/windowstests.py::WindowsTests::test_rc_depends_files SKIPPED
 unittests/windowstests.py::WindowsTests::test_vsenv_option SKIPPED
 
-======== 449 passed, 85 skipped ========
-Meson build system 1.6.0 Unit Tests
+======== 465 passed, 85 skipped ========
+Meson build system 1.7.0 Unit Tests
 Disabling pytest-cov
-Meson build system 1.6.0 Project Tests
-Using python 3.9.20 (main, Sep  8 2024, 11:56:02)  ('$(PYTHON)')
+Meson build system 1.7.0 Project Tests
+Using python 3.9.21 (main, Dec 13 2024, 20:24:16)  ('$(PYTHON)')
 
 host machine compilers
 
-c      : [gcc]      /usr/gcc/13/bin/gcc (gcc 13.3.0 "gcc (OpenIndiana 13.3.0-oi-0) 13.3.0")
-cpp    : [gcc]      /usr/gcc/13/bin/g++ (gcc 13.3.0 "g++ (OpenIndiana 13.3.0-oi-0) 13.3.0")
+c      : [gcc]      /usr/gcc/14/bin/gcc (gcc 14.2.0 "gcc (OpenIndiana 14.2.0-oi-1) 14.2.0")
+cpp    : [gcc]      /usr/gcc/14/bin/g++ (gcc 14.2.0 "g++ (OpenIndiana 14.2.0-oi-1) 14.2.0")
 cs     : [not found]
 cuda   : [not found]
-cython : [cython]   cython (cython 3.0.11)
+cython : [cython]   cython (cython 3.0.12)
 d      : [not found]
-fortran: [gcc]      gfortran (gcc 13.3.0 "GNU Fortran (OpenIndiana 13.3.0-oi-0) 13.3.0")
-java   : [unknown]  javac (unknown 17.0.12)
+fortran: [gcc]      gfortran (gcc 14.2.0 "GNU Fortran (OpenIndiana 14.2.0-oi-1) 14.2.0")
+java   : [unknown]  javac (unknown 21.0.5)
+linearasm: [not found]
 masm   : [not found]
 nasm   : [nasm]     nasm (nasm 2.16.03)
-objc   : [clang]    ccache clang (clang 18.1.8)
-objcpp : [clang]    ccache clang++ (clang 18.1.8)
-rust   : [rustc]    rustc -C linker=/usr/gcc/13/bin/gcc (rustc 1.81.0)
+objc   : [clang]    ccache clang (clang 19.1.7)
+objcpp : [clang]    ccache clang++ (clang 19.1.7)
+rust   : [rustc]    rustc -C linker=/usr/gcc/14/bin/gcc (rustc 1.85.0)
 swift  : [not found]
-vala   : [valac]    valac (valac 0.56.17)
+vala   : [valac]    valac (valac 0.56.18)
 
 tools
 
-ninja  : /usr/bin/ninja (1.11.1)
-cmake  : /usr/bin/cmake (3.30.5)
+ninja  : /usr/bin/ninja (1.12.1)
+cmake  : /usr/bin/cmake (3.31.6)
 hotdoc : not found
 
 Checking that configuring works...
@@ -629,7 +646,7 @@ Checking that building works...
 Checking that testing works...
 Checking that installing works...
 
-Running tests with 4 workers
+Running tests with 8 workers
 
 Running cmake tests.
 
@@ -1299,6 +1316,7 @@ Reason: this test only works on Linux. Patches welcome.
  [SUCCESS]   rust: 23 crt-static
  [SUCCESS]   rust: 24 system deps
  [SUCCESS]   rust: 25 cargo lock
+ [SUCCESS]   rust: 26 cargo system deps
 
 Not running d tests.
 
@@ -1463,6 +1481,11 @@ Reason: MPI library not available
  [SUCCESS]   frameworks: 35 boost symlinks
  [SUCCESS]   frameworks: 36 gtkdoc cpp
  [SUCCESS]   frameworks: 37 gir cpp
+ [SUCCESS]   frameworks: 38 gir both_libraries
+ [SUCCESS]   frameworks: 39 qt qml    (method=config-tool)
+ [SKIPPED]   frameworks: 39 qt qml    (method=pkg-config)
+Reason: qt6 not found.
+ [SUCCESS]   frameworks: 39 qt qml    (method=qmake)
 
 Running nasm tests.
 
@@ -1491,8 +1514,8 @@ Running format tests.
  [SUCCESS]   format: 5 transform    (fmt_config=options)
 
 
-Total passed tests:  671
+Total passed tests:  675
 Total failed tests:  0
-Total skipped tests: 49
+Total skipped tests: 50
 $ $(PYTHON) run_unittests.py --backend=ninja --failfast
 $ $(PYTHON) run_project_tests.py -v --failfast
