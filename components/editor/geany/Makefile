@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
 COMPONENT_VERSION=      2.0
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=      A fast and lightweight IDE
 COMPONENT_DESCRIPTION=	Small and fast IDE, which has only a few dependencies from other package (independent on DE)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -75,7 +75,7 @@ REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
