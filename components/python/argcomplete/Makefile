@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argcomplete
-HUMAN_VERSION =			3.5.1
+HUMAN_VERSION =			3.6.0
 COMPONENT_SUMMARY =		Bash tab completion for argparse
 COMPONENT_PROJECT_URL =		https://github.com/kislyuk/argcomplete
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb1ee355aa2557bd3d0145de7b06b2a45b0ce461e1e7813f5d066039ab4177b4
+	sha256:2e4e42ec0ba2fff54b0d244d0b1623e86057673e57bafe72dda59c64bd5dee8b
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -36,6 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV += PYTHONPATH=$(@D)/test/test_package:$(PROTO_DIR)/$(PYTHON_LIB)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
