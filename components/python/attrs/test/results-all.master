@@ -7,7 +7,7 @@ hypothesis profile 'patience' -> deadline=timedelta(milliseconds=400), suppress_
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-X workers [1338 items]
+X workers [1342 items]
 
 scheduling tests via LoadScheduling
 
@@ -786,8 +786,12 @@ tests/test_hooks.py::TestTransformHook::test_hook_add_field PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied_auto_attrib PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied_modify_attrib PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_conflicting_defaults_after_reorder PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_generator PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_override_alias PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_remove_field PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_reorder_fields PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_reorder_fields_before_order_check PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_with_inheritance PASSED
 tests/test_import.py::TestImportStar::test_from_attr_import_star PASSED
 tests/test_init_subclass.py::test_init_subclass_attrs PASSED
@@ -908,7 +912,6 @@ tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__hash__] PASSE
 tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__init__] PASSED
 tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__le__] PASSED
 tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__lt__] PASSED
-tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__ne__] PASSED
 tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__repr__] PASSED
 tests/test_make.py::TestClassBuilder::test_attaches_meta_dunders[__str__] PASSED
 tests/test_make.py::TestClassBuilder::test_copy[kwargs0] PASSED
@@ -987,7 +990,6 @@ tests/test_make.py::TestDocs::test_docs[__gt__] PASSED
 tests/test_make.py::TestDocs::test_docs[__init__] PASSED
 tests/test_make.py::TestDocs::test_docs[__le__] PASSED
 tests/test_make.py::TestDocs::test_docs[__lt__] PASSED
-tests/test_make.py::TestDocs::test_docs[__ne__] PASSED
 tests/test_make.py::TestDocs::test_docs[__repr__] PASSED
 tests/test_make.py::TestFields::test_fields PASSED
 tests/test_make.py::TestFields::test_fields_properties PASSED
@@ -1022,8 +1024,10 @@ tests/test_make.py::TestMakeClass::test_dict PASSED
 tests/test_make.py::TestMakeClass::test_generic_dynamic_class PASSED
 tests/test_make.py::TestMakeClass::test_make_class_ordered PASSED
 tests/test_make.py::TestMakeClass::test_missing_sys_getframe PASSED
+tests/test_make.py::TestMakeClass::test_normalized_unicode_attr_args PASSED
 tests/test_make.py::TestMakeClass::test_simple[list] PASSED
 tests/test_make.py::TestMakeClass::test_simple[tuple] PASSED
+tests/test_make.py::TestMakeClass::test_unnormalized_unicode_attr_args PASSED
 tests/test_make.py::TestMakeOrder::test_subclasses_cannot_be_compared PASSED
 tests/test_make.py::TestMatchArgs::test_explicit_match_args SKIPPED
 tests/test_make.py::TestMatchArgs::test_make_class SKIPPED
@@ -1351,6 +1355,6 @@ tests/test_version_info.py::TestVersionInfo::test_wrong_len[other1] PASSED
 tests/test_version_info.py::TestVersionInfo::test_wrong_type[other0] PASSED
 
 =========================== short test summary info ============================
-======== 1316 passed, 21 skipped, 1 xfailed ========
+======== 1320 passed, 21 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
