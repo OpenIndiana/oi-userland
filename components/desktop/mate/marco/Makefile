@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		marco
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MATE Window Manager
 COMPONENT_ARCHIVE_HASH= sha256:2496e5e40ee980cd6849493ac3e0f8fd0dec8b81c674da8d9ba19a577f0ac2e1
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -43,7 +44,7 @@ REQUIRED_PACKAGES += text/itstool
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
