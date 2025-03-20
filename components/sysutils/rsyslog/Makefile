@@ -23,12 +23,11 @@
 # Copyright (c) 2022 Friedrch Kink
 #
 
-OPENSSL_VERSION= 3.1
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
 COMPONENT_VERSION=	8.2406.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
