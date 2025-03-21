@@ -3,15 +3,15 @@ py$(PYV): commands[0]> python -X warn_default_encoding -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-setuptools version 75.8.0 from '$(PYTHON_DIR)/vendor-packages/setuptools/__init__.py'
-setuptools_scm version 8.2.0 from '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py'
+setuptools version 75.8.2 from '$(PYTHON_DIR)/vendor-packages/setuptools/__init__.py'
+setuptools_scm version 8.2.1 from '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py'
 packaging version 24.2 from '$(PYTHON_DIR)/vendor-packages/packaging/__init__.py'
 build version 1.2.2.post1 from '$(PYTHON_DIR)/vendor-packages/build/__init__.py'
 wheel version 0.45.1 from '$(PYTHON_DIR)/vendor-packages/wheel/__init__.py'
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: testing
-collecting ... collected 266 items
+collecting ... collected 270 items
 
 testing/test_basic_api.py::test_run_plain PASSED
 testing/test_basic_api.py::test_data_from_mime PASSED
@@ -106,7 +106,7 @@ testing/test_functions.py::test_dump_version_works_with_pretend[1.0] PASSED
 testing/test_functions.py::test_dump_version_works_with_pretend[1.2.3.dev1+ge871260] PASSED
 testing/test_functions.py::test_dump_version_works_with_pretend[1.2.3.dev15+ge871260.d20180625] PASSED
 testing/test_functions.py::test_dump_version_modern PASSED
-testing/test_functions.py::test_dump_version_on_old_python PASSED
+testing/test_functions.py::test_dump_version_on_old_python SKIPPED (...)
 testing/test_functions.py::test_dump_version_mypy PASSED
 testing/test_functions.py::test_dump_version_flake8 SKIPPED (always ...)
 testing/test_functions.py::test_dump_version_ruff SKIPPED (ruff not ...)
@@ -213,6 +213,10 @@ testing/test_regressions.py::test_use_scm_version_callable PASSED
 testing/test_regressions.py::test_case_mismatch_on_windows_git SKIPPED
 testing/test_regressions.py::test_entrypoints_load PASSED
 testing/test_regressions.py::test_write_to_absolute_path_passes_when_subdir_of_root PASSED
+testing/test_regressions.py::test_version_as_tuple[1.0-expected0] PASSED
+testing/test_regressions.py::test_version_as_tuple[1.0a2-expected1] PASSED
+testing/test_regressions.py::test_version_as_tuple[1.0.b2dev1-expected2] PASSED
+testing/test_regressions.py::test_version_as_tuple[1.0.dev1-expected3] PASSED
 testing/test_version.py::test_next_semver[exact] PASSED
 testing/test_version.py::test_next_semver[short_tag] PASSED
 testing/test_version.py::test_next_semver[normal_branch] PASSED
@@ -281,6 +285,6 @@ testing/test_version.py::test_calver_guess_next_data[next day with v prefix] PAS
 testing/test_version.py::test_custom_version_cls PASSED
 
 =========================== short test summary info ============================
-======== 256 passed, 9 skipped, 1 xfailed ========
+======== 259 passed, 10 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
