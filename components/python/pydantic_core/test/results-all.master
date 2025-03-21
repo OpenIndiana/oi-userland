@@ -9,7 +9,7 @@ testpaths: tests
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 5306 items
+collecting ... collected 5601 items
 
 tests/benchmarks/test_complete_benchmark.py::test_complete_valid PASSED
 tests/benchmarks/test_complete_benchmark.py::test_complete_invalid PASSED
@@ -637,11 +637,11 @@ tests/serializers/test_serialize_as_any.py::test_serialize_as_any_with_typeddict
 tests/serializers/test_serialize_as_any.py::test_serialize_as_any_with_unrelated_models PASSED
 tests/serializers/test_set_frozenset.py::test_set_any PASSED
 tests/serializers/test_set_frozenset.py::test_frozenset_any PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[apple-apple-`set\\[int\\]` but got `str` with value `'apple'`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value1-json_output1-`set\\[int\\]` but got `list` with value `\\[1, 2, 3\\]`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value2-json_output2-`set\\[int\\]` but got `tuple` with value `\\(1, 2, 3\\)`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value3-json_output3-`set\\[int\\]` but got `frozenset` with value `frozenset\\({1, 2, 3}\\)`] PASSED
-tests/serializers/test_set_frozenset.py::test_set_fallback[input_value4-json_output4-`int` but got `str` with value `'a'`] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[apple-apple-set\\[int\\]] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value1-json_output1-set\\[int\\]] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value2-json_output2-set\\[int\\]] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value3-json_output3-set\\[int\\]] PASSED
+tests/serializers/test_set_frozenset.py::test_set_fallback[input_value4-json_output4-int] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-1-1-1-None] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-1-1-1-any] PASSED
 tests/serializers/test_simple.py::test_simple_serializers[int-10000000000000000000000000000000000000000-10000000000000000000000000000000000000000-10000000000000000000000000000000000000000-None] PASSED
@@ -1170,6 +1170,12 @@ tests/test_misc.py::test_unicode_error_input_repr PASSED
 tests/test_misc.py::test_core_schema_import_field_validation_info PASSED
 tests/test_misc.py::test_core_schema_import_missing PASSED
 tests/test_prebuilt.py::test_prebuilt_val_and_ser_used PASSED
+tests/test_prebuilt.py::test_prebuilt_not_used_for_wrap_serializer_functions PASSED
+tests/test_prebuilt.py::test_prebuilt_not_used_for_wrap_validator_functions PASSED
+tests/test_prebuilt.py::test_prebuilt_not_used_for_after_validator_functions PASSED
+tests/test_prebuilt.py::test_reuse_plain_serializer_ok PASSED
+tests/test_prebuilt.py::test_reuse_plain_validator_ok PASSED
+tests/test_prebuilt.py::test_reuse_before_validator_ok PASSED
 tests/test_schema_functions.py::test_schema_functions[any_schema-()-{'type': 'any'}] PASSED
 tests/test_schema_functions.py::test_schema_functions[any_schema-(metadata=['foot', 'spa'])-{'type': 'any', 'metadata': ['foot', 'spa']}] PASSED
 tests/test_schema_functions.py::test_schema_functions[none_schema-()-{'type': 'none'}] PASSED
@@ -1223,6 +1229,7 @@ tests/test_schema_functions.py::test_schema_functions[model_fields_schema-({'foo
 tests/test_schema_functions.py::test_schema_functions[model_schema-(<class 'tests.test_schema_functions.MyModel'>, {'type': 'int'})-{'type': 'model', 'cls': <class 'tests.test_schema_functions.MyModel'>, 'schema': {'type': 'int'}}] PASSED
 tests/test_schema_functions.py::test_schema_functions[arguments_parameter-('foo', {'type': 'int'})-{'name': 'foo', 'schema': {'type': 'int'}}] PASSED
 tests/test_schema_functions.py::test_schema_functions[arguments_schema-([{'name': 'foo', 'schema': {'type': 'int'}}, {'name': 'bar', 'schema': {'type': 'str'}}], serialization={'type': 'format', 'formatting_string': 'd'})-{'type': 'arguments', 'arguments_schema': [{'name': 'foo', 'schema': {'type': 'int'}}, {'name': 'bar', 'schema': {'type': 'str'}}], 'serialization': {'type': 'format', 'formatting_string': 'd'}}] PASSED
+tests/test_schema_functions.py::test_schema_functions[arguments_v3_schema-([{'name': 'foo', 'schema': {'type': 'int'}}, {'name': 'bar', 'schema': {'type': 'str'}}], serialization={'type': 'format', 'formatting_string': 'd'})-{'type': 'arguments-v3', 'arguments_schema': [{'name': 'foo', 'schema': {'type': 'int'}}, {'name': 'bar', 'schema': {'type': 'str'}}], 'serialization': {'type': 'format', 'formatting_string': 'd'}}] PASSED
 tests/test_schema_functions.py::test_schema_functions[call_schema-({'type': 'arguments', 'arguments_schema': [{'name': 'foo', 'schema': {'type': 'int'}}]}, <function val_function at $(POINTER)>)-{'type': 'call', 'function': <function val_function at $(POINTER)>, 'arguments_schema': {'type': 'arguments', 'arguments_schema': [{'name': 'foo', 'schema': {'type': 'int'}}]}}] PASSED
 tests/test_schema_functions.py::test_schema_functions[custom_error_schema-({'type': 'int'}, 'foobar', custom_error_message='Hello')-{'type': 'custom-error', 'schema': {'type': 'int'}, 'custom_error_type': 'foobar', 'custom_error_message': 'Hello'}] PASSED
 tests/test_schema_functions.py::test_schema_functions[json_schema-({'type': 'int'})-{'type': 'json', 'schema': {'type': 'int'}}] PASSED
@@ -1336,6 +1343,276 @@ tests/test_validation_context.py::test_wrap[json] PASSED
 tests/test_validation_context.py::test_isinstance[python] PASSED
 tests/test_validation_context.py::test_isinstance[json] PASSED
 tests/test_validation_context.py::test_validate_assignment_with_context PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[python-ArgsKwargs((1,))-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[python-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[python-ArgsKwargs((), {'a': 1})-Err('Foo\\n  Missing required argument [type=missing_argument,')] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[python-{'Foo': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[python-{'a': 1}-Err('Foo\\n  Missing required argument [type=missing_argument,')] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[json-ArgsKwargs((1,))-((1,), {})] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias[json-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias[json-ArgsKwargs((), {'a': 1})-Err('Foo\\n  Missing required argument [type=missing_argument,')] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias[json-{'Foo': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias[json-{'a': 1}-Err('Foo\\n  Missing required argument [type=missing_argument,')] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-ArgsKwargs((1,))-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1})-((), {'a': 1})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-{'Foo': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[python-{'a': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-ArgsKwargs((1,))-((1,), {})] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-ArgsKwargs((), {'Foo': 1})-((), {'a': 1})] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1})-((), {'a': 1})] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1, 'b': 2})-Err('b\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-ArgsKwargs((), {'a': 1, 'Foo': 2})-Err('a\\n  Unexpected keyword argument [type=unexpected_keyword_argument,')] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-{'Foo': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_alias_validate_by_name[json-{'a': 1}-((1,), {})] PASSED
+tests/validators/arguments_v3/test_alias.py::test_only_validate_by_name[python] PASSED
+tests/validators/arguments_v3/test_alias.py::test_only_validate_by_name[json] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_only_allow_alias[python] PASSED
+tests/validators/arguments_v3/test_alias.py::test_only_allow_alias[json] SKIPPED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-None-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-True-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[None-False-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-None-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-True-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[True-False-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-None-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-True-False-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-None-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-None-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-None-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-True-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-True-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-True-False] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
+tests/validators/arguments_v3/test_alias.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
+tests/validators/arguments_v3/test_build_errors.py::test_build_non_default_follows_default PASSED
+tests/validators/arguments_v3/test_build_errors.py::test_duplicate_parameter_name PASSED
+tests/validators/arguments_v3/test_build_errors.py::test_invalid_positional_only_parameter_position PASSED
+tests/validators/arguments_v3/test_build_errors.py::test_invalid_positional_or_keyword_parameter_position PASSED
+tests/validators/arguments_v3/test_build_errors.py::test_invalid_var_args_parameter_position PASSED
+tests/validators/arguments_v3/test_build_errors.py::test_invalid_keyword_only_parameter_position PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[python-input_value0-unexpected_keyword_argument] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[python-input_value1-unexpected_keyword_argument] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[python-input_value2-extra_forbidden] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[python-input_value3-extra_forbidden] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[json-input_value0-unexpected_keyword_argument] SKIPPED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[json-input_value1-unexpected_keyword_argument] SKIPPED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[json-input_value2-extra_forbidden] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_forbid[json-input_value3-extra_forbidden] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[python-input_value0] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[python-input_value1] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[python-input_value2] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[python-input_value3] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[json-input_value1] SKIPPED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[json-input_value2] PASSED
+tests/validators/arguments_v3/test_extra.py::test_extra_ignore[json-input_value3] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[python-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[python-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_no_args[json-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_general.py::test_no_args[json-input_value2-expected2] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_no_args[json-input_value3-expected3] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-ArgsKwargs((1, 2))-((1, 2), {})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-ArgsKwargs((1,))-((1,), {'b': 42})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-ArgsKwargs((1,), {'b': 3})-((1,), {'b': 3})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-ArgsKwargs((), {'a': 1})-((), {'a': 1, 'b': 42})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-{'a': 1, 'b': 2}-((1, 2), {})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[python-{'a': 1}-((1, 42), {})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-ArgsKwargs((1, 2))-((1, 2), {})] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-ArgsKwargs((1,))-((1,), {'b': 42})] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-ArgsKwargs((1,), {'b': 3})-((1,), {'b': 3})] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-ArgsKwargs((), {'a': 1})-((), {'a': 1, 'b': 42})] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-{'a': 1, 'b': 2}-((1, 2), {})] PASSED
+tests/validators/arguments_v3/test_general.py::test_default_factory[json-{'a': 1}-((1, 42), {})] PASSED
+tests/validators/arguments_v3/test_general.py::test_internal_error[python] PASSED
+tests/validators/arguments_v3/test_general.py::test_internal_error[json] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_repr PASSED
+tests/validators/arguments_v3/test_general.py::test_full[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_general.py::test_full[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_general.py::test_full[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_general.py::test_full[json-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[python-input_value0] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[python-input_value1] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[python-input_value2] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[python-input_value3] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[json-input_value1] SKIPPED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[json-input_value2] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only[json-input_value3] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_validation_error[python-input_value0] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_validation_error[python-input_value1] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_validation_error[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_validation_error[json-input_value1] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_error_required[python-input_value0] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_error_required[python-input_value1] PASSED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_error_required[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_keyword_only.py::test_keyword_only_error_required[json-input_value1] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[python-input_value0] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[python-input_value1] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[python-input_value2] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[python-input_value3] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[json-input_value1] SKIPPED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[json-input_value2] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only[json-input_value3] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only_validation_error[python] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only_validation_error[json] SKIPPED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only_error_required[python] PASSED
+tests/validators/arguments_v3/test_positional_only.py::test_positional_only_error_required[json] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value4-expected4] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[python-input_value5-expected5] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value1-expected1] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value2-expected2] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value3-expected3] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value4-expected4] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword[json-input_value5-expected5] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[python-input_value0-err_loc0] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[python-input_value1-err_loc1] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[python-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[json-input_value0-err_loc0] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[json-input_value1-err_loc1] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_or_keyword_validation_error[json-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_only_error_required[python-input_value0] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_only_error_required[python-input_value1] PASSED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_only_error_required[json-input_value0] SKIPPED
+tests/validators/arguments_v3/test_positional_or_keyword.py::test_positional_only_error_required[json-input_value1] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[python-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[python-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[python-input_value4-expected4] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[json-input_value1-expected1] SKIPPED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[json-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[json-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args[json-input_value4-expected4] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[python-input_value0-err_loc0] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[python-input_value1-err_loc1] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[python-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[python-input_value3-err_loc3] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[json-input_value0-err_loc0] SKIPPED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[json-input_value1-err_loc1] SKIPPED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[json-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_validation_error[json-input_value3-err_loc3] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_invalid_tuple[python] PASSED
+tests/validators/arguments_v3/test_var_args.py::test_var_args_invalid_tuple[json] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[python-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[python-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[json-input_value1-expected1] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[json-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs[json-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[python-input_value0-err_loc0] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[python-input_value1-err_loc1] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[python-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[python-input_value3-err_loc3] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[json-input_value0-err_loc0] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[json-input_value1-err_loc1] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[json-input_value2-err_loc2] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_validation_error[json-input_value3-err_loc3] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_invalid_dict[python] PASSED
+tests/validators/arguments_v3/test_var_kwargs_uniform.py::test_var_kwargs_invalid_dict[json] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value0-expected0] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value1-expected1] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value2-expected2] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value3-expected3] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value4-expected4] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value5-expected5] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value6-expected6] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value7-expected7] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value8-expected8] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value9-expected9] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[python-input_value10-expected10] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value0-expected0] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value1-expected1] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value2-expected2] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value3-expected3] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value4-expected4] SKIPPED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value5-expected5] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value6-expected6] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value7-expected7] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value8-expected8] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value9-expected9] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs[json-input_value10-expected10] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs_invalid_dict[python] PASSED
+tests/validators/arguments_v3/test_var_kwargs_unpacked_typed_dict.py::test_var_kwargs_invalid_dict[json] PASSED
 tests/validators/test_allow_partial.py::test_list PASSED
 tests/validators/test_allow_partial.py::test_set_frozenset[set_schema] PASSED
 tests/validators/test_allow_partial.py::test_set_frozenset[frozenset_schema] PASSED
@@ -1996,6 +2273,10 @@ tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[
 tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-None] PASSED
 tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-True] PASSED
 tests/validators/test_dataclasses.py::test_by_alias_and_name_config_interaction[False-False-False-False] SKIPPED
+tests/validators/test_date.py::test_constraints_schema_validation[le] PASSED
+tests/validators/test_date.py::test_constraints_schema_validation[lt] PASSED
+tests/validators/test_date.py::test_constraints_schema_validation[ge] PASSED
+tests/validators/test_date.py::test_constraints_schema_validation[gt] PASSED
 tests/validators/test_date.py::test_date[date] PASSED
 tests/validators/test_date.py::test_date[str] PASSED
 tests/validators/test_date.py::test_date[bytes] PASSED
@@ -2100,6 +2381,10 @@ tests/validators/test_date.py::test_date_future[json-2068-06-08-expected2] PASSE
 tests/validators/test_date.py::test_date_future[json-3105734400-expected3] PASSED
 tests/validators/test_date.py::test_date_past_future_today PASSED
 tests/validators/test_date.py::test_offset_too_large PASSED
+tests/validators/test_datetime.py::test_constraints_schema_validation[le] PASSED
+tests/validators/test_datetime.py::test_constraints_schema_validation[lt] PASSED
+tests/validators/test_datetime.py::test_constraints_schema_validation[ge] PASSED
+tests/validators/test_datetime.py::test_constraints_schema_validation[gt] PASSED
 tests/validators/test_datetime.py::test_datetime[input_value0-expected0] PASSED
 tests/validators/test_datetime.py::test_datetime[input_value1-expected1] PASSED
 tests/validators/test_datetime.py::test_datetime[2022-01-01-expected2] PASSED
@@ -2204,6 +2489,11 @@ tests/validators/test_datetime.py::test_tz_constraint_too_high PASSED
 tests/validators/test_datetime.py::test_tz_constraint_wrong PASSED
 tests/validators/test_datetime.py::test_tz_hash PASSED
 tests/validators/test_datetime.py::test_tz_cmp PASSED
+tests/validators/test_decimal.py::test_constraints_schema_validation[multiple_of] PASSED
+tests/validators/test_decimal.py::test_constraints_schema_validation[le] PASSED
+tests/validators/test_decimal.py::test_constraints_schema_validation[lt] PASSED
+tests/validators/test_decimal.py::test_constraints_schema_validation[ge] PASSED
+tests/validators/test_decimal.py::test_constraints_schema_validation[gt] PASSED
 tests/validators/test_decimal.py::test_decimal[python-0-expected0] PASSED
 tests/validators/test_decimal.py::test_decimal[python-1-expected1] PASSED
 tests/validators/test_decimal.py::test_decimal[python-42-expected2] PASSED
@@ -3130,6 +3420,11 @@ tests/validators/test_generator.py::test_too_short[python] PASSED
 tests/validators/test_generator.py::test_too_short[json] PASSED
 tests/validators/test_generator.py::test_generator_too_long PASSED
 tests/validators/test_generator.py::test_generator_too_short PASSED
+tests/validators/test_int.py::test_constraints_schema_validation[multiple_of] PASSED
+tests/validators/test_int.py::test_constraints_schema_validation[le] PASSED
+tests/validators/test_int.py::test_constraints_schema_validation[lt] PASSED
+tests/validators/test_int.py::test_constraints_schema_validation[ge] PASSED
+tests/validators/test_int.py::test_constraints_schema_validation[gt] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-False-0] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-True-1] PASSED
 tests/validators/test_int.py::test_int_py_and_json[python-0-0_0] PASSED
@@ -5319,4 +5614,4 @@ tests/validators/test_with_default.py::test_validate_default_raises_dataclass[in
 tests/validators/test_with_default.py::test_validate_default_raises_dataclass[input_value10-expected10] PASSED
 =============================== inline snapshot ================================
 
-======== 5203 passed, 101 skipped, 2 xfailed ========
+======== 5446 passed, 153 skipped, 2 xfailed ========

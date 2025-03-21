@@ -1,8 +1,8 @@
 We have no pytest-run-parallel packaged yet.
 
---- pydantic_core-2.30.0/pyproject.toml.orig
-+++ pydantic_core-2.30.0/pyproject.toml
-@@ -50,7 +50,6 @@
+--- pydantic_core-2.32.0/pyproject.toml.orig
++++ pydantic_core-2.32.0/pyproject.toml
+@@ -57,7 +57,6 @@
      # pytest-examples currently depends on aiohttp via black; we don't want to build it on platforms like aarch64 musllinux in CI
      'pytest-examples; implementation_name == "cpython" and platform_machine == "x86_64"',
      'pytest-mock',
@@ -10,8 +10,8 @@ We have no pytest-run-parallel packaged yet.
      'pytest-timeout',
      'python-dateutil',
      # numpy doesn't offer prebuilt wheels for all versions and platforms we test in CI e.g. aarch64 musllinux
---- pydantic_core-2.30.0/tests/test_docstrings.py.orig
-+++ pydantic_core-2.30.0/tests/test_docstrings.py
+--- pydantic_core-2.32.0/tests/test_docstrings.py.orig
++++ pydantic_core-2.32.0/tests/test_docstrings.py
 @@ -14,7 +14,6 @@
  
  @pytest.mark.skipif(CodeExample is None or sys.platform not in {'linux', 'darwin'}, reason='Only on linux and macos')
@@ -28,8 +28,8 @@ We have no pytest-run-parallel packaged yet.
  def test_readme(example: CodeExample, eval_example: EvalExample):
      eval_example.set_config(line_length=100, quotes='single')
      if eval_example.update_examples:
---- pydantic_core-2.30.0/tests/test_hypothesis.py.orig
-+++ pydantic_core-2.30.0/tests/test_hypothesis.py
+--- pydantic_core-2.32.0/tests/test_hypothesis.py.orig
++++ pydantic_core-2.32.0/tests/test_hypothesis.py
 @@ -19,14 +19,12 @@
  
  
@@ -101,8 +101,8 @@ We have no pytest-run-parallel packaged yet.
  def test_serialize_string(str_serializer: SchemaSerializer, data):
      assert str_serializer.to_python(data) == data
      assert json.loads(str_serializer.to_json(data)) == data
---- pydantic_core-2.30.0/tests/validators/test_frozenset.py.orig
-+++ pydantic_core-2.30.0/tests/validators/test_frozenset.py
+--- pydantic_core-2.32.0/tests/validators/test_frozenset.py.orig
++++ pydantic_core-2.32.0/tests/validators/test_frozenset.py
 @@ -83,7 +83,6 @@
          ('abc', Err('Input should be a valid frozenset')),
      ],
@@ -119,8 +119,8 @@ We have no pytest-run-parallel packaged yet.
  def test_frozenset_kwargs_python(kwargs: dict[str, Any], input_value, expected):
      v = SchemaValidator(cs.frozenset_schema(**kwargs))
      if isinstance(expected, Err):
---- pydantic_core-2.30.0/tests/validators/test_list.py.orig
-+++ pydantic_core-2.30.0/tests/validators/test_list.py
+--- pydantic_core-2.32.0/tests/validators/test_list.py.orig
++++ pydantic_core-2.32.0/tests/validators/test_list.py
 @@ -72,7 +72,6 @@
      ],
      ids=repr,
@@ -145,8 +145,8 @@ We have no pytest-run-parallel packaged yet.
  def test_list_allowed_inputs_python(testcase: ListInputTestCase):
      v = SchemaValidator(core_schema.list_schema(core_schema.int_schema(), strict=testcase.strict))
      if isinstance(testcase.output, Err):
---- pydantic_core-2.30.0/tests/validators/test_set.py.orig
-+++ pydantic_core-2.30.0/tests/validators/test_set.py
+--- pydantic_core-2.32.0/tests/validators/test_set.py.orig
++++ pydantic_core-2.32.0/tests/validators/test_set.py
 @@ -74,7 +74,6 @@
          ('abc', Err('Input should be a valid set')),
      ],
