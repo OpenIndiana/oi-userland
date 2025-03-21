@@ -31,12 +31,13 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=	30.1
+COMPONENT_VERSION=      29.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1451b03faec83aed17cdc71671d1bbdfd72e54086b827f5f6fd02bf7a4041b68
+COMPONENT_ARCHIVE_HASH=	sha256:008a11cc56f9b96679b4c285fd05f46d317d685be3ab524b2a310be0fbad987e
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -61,6 +62,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
+REQUIRED_PACKAGES += library/c++/protobuf
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
