@@ -22,10 +22,10 @@ include ../../../make-rules/shared-macros.mk
 ABIVER = 2.91
 
 COMPONENT_NAME=			vte
-HUMAN_VERSION=			0.78.4
+HUMAN_VERSION=			0.80.0
 COMPONENT_SUMMARY=		Virtual terminal widget for GTK applications
 COMPONENT_ARCHIVE_HASH= \
-	sha256:2dea4e412266592b6460a3fe4488f5e3d50712f139815790c0ecb44710f7e17e
+	sha256:267f63739765e568cf8113d0e2ee8f593028946187854bebe268c778e62647c8
 COMPONENT_FMRI=			library/desktop/vte-291
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		CC-BY-4.0 AND GPL-3.0-only AND LGPL-3.0-only AND MIT
@@ -69,6 +69,9 @@ GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # SOVER is needed for manifest processing
 PKG_MACROS += SOVER=$(SOVER)
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/fast_float
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

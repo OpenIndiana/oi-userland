@@ -1,9 +1,9 @@
 Workaround for missing cfmakeraw().
 See also https://www.illumos.org/issues/1060
 
---- vte-0.78.4/src/app/app.cc.orig
-+++ vte-0.78.4/src/app/app.cc
-@@ -3971,7 +3971,15 @@
+--- vte-0.80.0/src/app/app.cc.orig
++++ vte-0.80.0/src/app/app.cc
+@@ -4860,7 +4860,15 @@
                 struct termios tcattr;
                 if (tcgetattr(STDIN_FILENO, &tcattr) == 0) {
                         saved_tcattr = tcattr;
@@ -19,8 +19,8 @@ See also https://www.illumos.org/issues/1060
                         if (tcsetattr(STDIN_FILENO, TCSANOW, &tcattr) == 0)
                                 reset_termios = true;
                 }
---- vte-0.78.4/src/dumpkeys.c.orig
-+++ vte-0.78.4/src/dumpkeys.c
+--- vte-0.80.0/src/dumpkeys.c.orig
++++ vte-0.80.0/src/dumpkeys.c
 @@ -162,7 +162,15 @@
  	}
  	original = tcattr;
@@ -37,8 +37,8 @@ See also https://www.illumos.org/issues/1060
  	if (tcsetattr(STDIN_FILENO, TCSANOW, &tcattr) != 0) {
  		perror("tcsetattr");
  		return 1;
---- vte-0.78.4/src/mev.c.orig
-+++ vte-0.78.4/src/mev.c
+--- vte-0.80.0/src/mev.c.orig
++++ vte-0.80.0/src/mev.c
 @@ -358,7 +358,15 @@
  
  	original = tcattr;
