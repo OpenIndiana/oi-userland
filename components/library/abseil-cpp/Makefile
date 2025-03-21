@@ -19,12 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         abseil-cpp
-COMPONENT_VERSION=	20250127.0
+COMPONENT_VERSION=	20250127.1
 COMPONENT_SUMMARY=      Collection of C++ library code designed to augment the C++ standard library
 COMPONENT_PROJECT_URL=  https://abseil.io
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:16242f394245627e508ec6bb296b433c90f8d914f73b9c026fddb905e27276e8
+COMPONENT_ARCHIVE_HASH=	sha256:b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811
 COMPONENT_ARCHIVE_URL=	https://github.com/abseil/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/abseil-cpp
 COMPONENT_CLASSIFICATION=       Development/C++
