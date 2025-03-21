@@ -1,11 +1,9 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m coverage run -m pytest --strict-markers
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
-cachedir: .tox/py$(PYV)/.pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 150 items
+collecting ... collected 151 items
 
 tests/test_bcrypt.py::test_gensalt_basic PASSED
 tests/test_bcrypt.py::test_gensalt_rounds_valid[4-$2b$04$] PASSED
@@ -157,15 +155,6 @@ tests/test_bcrypt.py::test_invalid_params[password-$2b$04$cVWp4XaNU8a4v1uMRum2SO
 tests/test_bcrypt.py::test_invalid_params[password-$2b$04$cVWp4XaNU8a4v1uMRum2SO-513-10-ValueError] PASSED
 tests/test_bcrypt.py::test_invalid_params[password-$2b$04$cVWp4XaNU8a4v1uMRum2SO-20-0-ValueError] PASSED
 tests/test_bcrypt.py::test_2a_wraparound_bug PASSED
+tests/test_bcrypt.py::test_multithreading PASSED
 
-======== 150 passed ========
-py$(PYV): commands[1]> python -m coverage combine
-py$(PYV): commands[2]> python -m coverage report -m --fail-under 100
-Name                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/bcrypt/__init__.py       3      0      0      0   100%
-tests/test_bcrypt.py                                                                                                                 96      0      0      0   100%
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                99      0      0      0   100%
-  py$(PYV): OK
-  congratulations :)
+======== 151 passed ========
