@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
-HUMAN_VERSION =			8.2.0
+HUMAN_VERSION =			8.2.1
 COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a18396a1bc0219c974d1a74612b11f9dce0d5bd8b1dc55c65f6ac7fd609e8c28
+	sha256:51cfdd1deefc9b8c08d1a61e940a59c4dec39eb6c285d33fa2f1b4be26c7874d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
