@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		babl
 COMPONENT_VERSION=	0.1.112
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -70,7 +71,6 @@ LD_Z_IGNORE=
 REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
-REQUIRED_PACKAGES += web/browser/w3m
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/lcms2
