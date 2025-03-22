@@ -23,6 +23,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-terminal
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MATE terminal emulator
 COMPONENT_ARCHIVE_HASH= sha256:f135eb1a9e2ae22798ecb2dc1914fdb4cfd774e6bb65c0152be37cc6c9469e92
 COMPONENT_FMRI=		terminal/mate-terminal
@@ -39,8 +40,8 @@ REQUIRED_PACKAGES += library/gnome/yelp-tools
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
