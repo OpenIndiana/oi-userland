@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-utils
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Basic MATE utils
 COMPONENT_ARCHIVE_HASH= sha256:58449d7a0d1d900ff03b78ca9f7e98c21e97f47fc26bee7ff1c61834f22f88d3
 COMPONENT_ARCHIVE_URL=	https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
@@ -37,7 +38,7 @@ CONFIGURE_OPTIONS += --disable-disk-image-mounter
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
