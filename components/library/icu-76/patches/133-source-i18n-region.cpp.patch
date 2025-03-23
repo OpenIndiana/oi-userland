@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+prevent a null pointer dereference
+
+--- icu/source/i18n/region.cpp.orig
++++ icu/source/i18n/region.cpp
+@@ -510,6 +510,10 @@
+ 
+     if ( r->fType == URGN_DEPRECATED && r->preferredValues->size() == 1) {
+         StringEnumeration *pv = r->getPreferredValues(status);
++	if ( U_FAILURE(status) ) {
++	    delete r;
++	    return nullptr;
++	}
+         pv->reset(status);
+         const UnicodeString *ustr = pv->snext(status);
+         r = static_cast<Region*>(uhash_get(regionIDMap, ustr));
