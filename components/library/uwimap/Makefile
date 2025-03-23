@@ -22,11 +22,13 @@
 # Copyright 2025 Klaus Ziegler
 #
 
+BUILD_STYLE= justmake
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		imap
 COMPONENT_VERSION=	2007f
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 IPS_COMPONENT_VERSION=	0.2007.6
 COMPONENT_PROJECT_URL=	http://www.washington.edu/imap/
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -38,10 +40,11 @@ COMPONENT_FMRI=	library/uw-imap
 COMPONENT_SUMMARY=	University of Washington IMAP library
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE.txt
+COMPONENT_BUILD_ARGS=	-j20
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
+
+include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
 
@@ -67,6 +70,7 @@ COMPONENT_BUILD_TARGETS = ec
 define COMPONENT_INSTALL_ACTION=
 	($(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64)) ; \
 	($(MKDIR) $(PROTO_DIR)/usr/include/c-client) ; \
+	($(CP) $(BUILD_DIR_32)/c-client/libc-client.so.1 $(PROTO_DIR)/usr/lib) ; \
 	($(CP) $(BUILD_DIR_64)/c-client/libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)) ; \
 	($(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/libc-client.so) ; \
 	($(LN) -fs libc-client.so.1 $(PROTO_DIR)/usr/lib/$(MACH64)/libc-client.so) ; \
@@ -84,4 +88,5 @@ test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += system/library
