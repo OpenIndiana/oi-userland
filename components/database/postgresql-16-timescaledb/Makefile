@@ -16,11 +16,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	timescaledb
-COMPONENT_VERSION=	2.18.2
+COMPONENT_VERSION=	2.19.0
 COMPONENT_SUMMARY=	Timescaledb extension for PostgreSQL
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:30f4ddf5bd71e4e30706f6715aa52109b4672c611e5948d865a2b43471032a92
+COMPONENT_ARCHIVE_HASH= sha256:783bfcb6513523827127304d3e51c27e95644f59446bef80d4a96d5de58ae5ee
 COMPONENT_ARCHIVE_URL=	https://github.com/timescale/timescaledb/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	www.timescale.com
 COMPONENT_FMRI=	database/postgres-$(PG_VERNUM)/$(COMPONENT_NAME)
@@ -38,6 +38,9 @@ COMPONENT_BUILD_ACTION= cd $(@D); \
 	cd build && gmake
 
 COMPONENT_INSTALL_ACTION= cd $(@D)/build && $(ENV) $(COMPONENT_INSTALL_ENV) gmake install DESTDIR=$(PROTO_DIR)
+
+# Manually add dependencies
+REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
