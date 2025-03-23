@@ -14,24 +14,28 @@
 #   $WS_TOOLS/python-integrate-project decorator
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		decorator
-COMPONENT_VERSION =		5.1.1
-COMPONENT_SUMMARY =		decorator - Decorators for Humans
-COMPONENT_PROJECT_URL =		https://github.com/micheles/decorator
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/66/0c/8d907af351aa16b42caae42f9d6aa37b900c67308052d10fdce809f8d952/decorator-5.1.1.tar.gz
+HUMAN_VERSION =			5.2.1
+COMPONENT_SUMMARY =		Decorators for Humans
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330
+	sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = setup.py
+# This project uses custom testing.  See $(SOURCE_DIR)/README.rst.
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Custom testing
+COMPONENT_TEST_CMD = $(PYTHON) tests/test.py
+COMPONENT_TEST_ARGS = -v
+COMPONENT_TEST_TARGETS =
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
