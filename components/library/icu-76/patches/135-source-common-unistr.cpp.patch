@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2016, Oracle and/or its affiliates. All rights reserved.
+#
+getBuffer handling is tracked upstream as
+https://unicode-org.atlassian.net/browse/ICU-12378
+
+--- icu/source/common/unistr.cpp.orig
++++ icu/source/common/unistr.cpp
+@@ -666,6 +666,9 @@
+         return result;
+     }
+     const char16_t *array = getBuffer();
++    if (array == nullptr) {
++        return result;
++    }
+     int32_t len = length();
+     int32_t prev = 0;
+     for (int32_t i=0;;) {

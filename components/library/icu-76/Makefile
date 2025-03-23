@@ -20,12 +20,12 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
-COMPONENT_VERSION =		77.1
-COMPONENT_REVISION =		0
+COMPONENT_VERSION =		76.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
-COMPONENT_ARCHIVE_HASH =	sha256:588e431f77327c39031ffbb8843c0e3bc122c211374485fa87dc5f3faff24061
+COMPONENT_ARCHIVE_HASH =	sha256:dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e
 COMPONENT_PROJECT_URL =		https://icu.unicode.org/
 COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(subst .,-,$(HUMAN_VERSION))/$(COMPONENT_ARCHIVE)
 COMPONENT_VERSION_MAJOR =	$(firstword $(subst ., ,$(HUMAN_VERSION)))
@@ -109,6 +109,5 @@ PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
