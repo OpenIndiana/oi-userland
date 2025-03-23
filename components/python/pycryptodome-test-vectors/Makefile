@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pycryptodome-test-vectors
+#   $WS_TOOLS/python-integrate-project -d python/pycryptodome-test-vectors pycryptodome_test_vectors
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pycryptodome-test-vectors
-HUMAN_VERSION =			1.0.20
+COMPONENT_NAME =		pycryptodome_test_vectors
+HUMAN_VERSION =			1.0.21
 COMPONENT_SUMMARY =		Test vectors for PyCryptodome
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc7ff17f2632017b2b98f00e7c3e749cfada95ed69cba01fa62951cd4baab9f9
+	sha256:63246c55038093a5de4ffa72c7f8042a55508335bd0f0016b1850499df19c853
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
