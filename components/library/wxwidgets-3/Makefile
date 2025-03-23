@@ -18,15 +18,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_MAJOR_VERSION= 3.2
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).7
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://github.com/wxWidgets/wxWidgets/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:939e5b77ddc5b6092d1d7d29491fe67010a2433cf9b9c0d841ee4d04acb9dce7
+COMPONENT_ARCHIVE_HASH= sha256:69a1722f874d91cd1c9e742b72df49e0fab02890782cf794791c3104cee868c6
 COMPONENT_FMRI=         library/graphics/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      wxWindows Library license
@@ -82,7 +81,6 @@ REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math

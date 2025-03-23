@@ -12,7 +12,7 @@
 #
 # Copyright 2017 Aurelien Larcher
 # Copyright 2019 Michal Nowak
-# Copyright 2022, 2023 Andreas Wacknitz
+# Copyright 2025 Andreas Wacknitz
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,12 +25,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-
 depend fmri=service/opengl/ogl-select type=require
 
 # Common issue. Ignore dependency on libGL.so.1, libEGL.so.1 and depend on service/opengl/ogl-select.
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
 <transform file -> add pkg.depend.bypass-generate libEGL\.so\.1>
+
+<transform file path=usr/lib/$(MACH64)/wx/config/getk2-unicode.* -> default mode 0555>
 
 link path=usr/bin/wx-config target=../lib/$(MACH64)/wx/config/gtk2-unicode-3.2
 link path=usr/bin/wxrc target=wxrc-3.2
@@ -810,7 +811,7 @@ file path=usr/lib/$(MACH64)/libwx_gtk2u_stc-3.2.so.0
 link path=usr/lib/$(MACH64)/libwx_gtk2u_xrc-3.2.so \
     target=libwx_gtk2u_xrc-3.2.so.0
 file path=usr/lib/$(MACH64)/libwx_gtk2u_xrc-3.2.so.0
-file path=usr/lib/$(MACH64)/wx/config/gtk2-unicode-3.2 mode=0555
+file path=usr/lib/$(MACH64)/wx/config/gtk2-unicode-3.2
 file path=usr/lib/$(MACH64)/wx/include/gtk2-unicode-3.2/wx/setup.h
 file path=usr/share/aclocal/wxwin.m4
 file path=usr/share/bakefile/presets/wx.bkl
@@ -818,24 +819,49 @@ file path=usr/share/bakefile/presets/wx_presets.py
 file path=usr/share/bakefile/presets/wx_unix.bkl
 file path=usr/share/bakefile/presets/wx_win32.bkl
 file path=usr/share/bakefile/presets/wx_xrc.bkl
+file path=usr/share/locale/af/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/an/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ar/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/ca/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/co/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/cs/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/da/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/de/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/el/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/es/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/eu/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/fa_IR/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/fi/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/fr/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/gl_ES/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/hi/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/hr/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/hu/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/id/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/it/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/ja/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ka/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ko_KR/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/lt/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/lv/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ms/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/nb/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ne/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/nl/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/pl/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/pt/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ro/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/ru/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/sk/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/sl/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/sq/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/sr/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/sv/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/ta/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/tr/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/uk/LC_MESSAGES/wxstd-3.2.mo
+file path=usr/share/locale/vi/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/wxstd-3.2.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/wxstd-3.2.mo
