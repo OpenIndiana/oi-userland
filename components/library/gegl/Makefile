@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).56
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -43,7 +43,7 @@ CFLAGS += $(XPG6MODE)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += -Ddocs=false
 CONFIGURE_OPTIONS += -Dgi-docgen=disabled
-CONFIGURE_OPTIONS += -Dvapigen=disabled
+CONFIGURE_OPTIONS += -Dvapigen=enabled
 CONFIGURE_OPTIONS += -Dworkshop=true
 # libav is from encumbered
 CONFIGURE_OPTIONS += -Dlibav=disabled
@@ -53,6 +53,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
