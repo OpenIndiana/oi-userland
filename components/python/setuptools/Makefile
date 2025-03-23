@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			75.8.2
+HUMAN_VERSION =			77.0.3
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4880473a969e5f23f2a2be3646b2dfd84af9028716d398e46192f84bc36900d2
+	sha256:583b361c8da8de57403743e756609670de6fb2345920e36dc5c2d914c319c945
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,7 +52,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
-TEST_REQUIRED_PACKAGES.python += library/python/jaraco-collections
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-functools

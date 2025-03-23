@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1419 items]
+X workers [1441 items]
 
 scheduling tests via LoadScheduling
 
@@ -188,6 +188,7 @@ setuptools/_importlib.py::mypy PASSED
 setuptools/_itertools.py::mypy PASSED
 setuptools/_itertools.py::setuptools._itertools.ensure_unique PASSED
 setuptools/_normalization.py::mypy PASSED
+setuptools/_normalization.py::setuptools._normalization._missing_canonicalize_license_expression PASSED
 setuptools/_normalization.py::setuptools._normalization.best_effort_version PASSED
 setuptools/_normalization.py::setuptools._normalization.filename_component PASSED
 setuptools/_normalization.py::setuptools._normalization.filename_component_broken PASSED
@@ -263,6 +264,8 @@ setuptools/discovery.py::setuptools.discovery.remove_nested_packages PASSED
 setuptools/discovery.py::setuptools.discovery.remove_stubs PASSED
 setuptools/dist.py::mypy PASSED
 setuptools/dist.py::setuptools.dist.Distribution._expand_patterns PASSED
+setuptools/dist.py::setuptools.dist.Distribution._finalize_license_expression PASSED
+setuptools/dist.py::setuptools.dist.Distribution._find_pattern PASSED
 setuptools/errors.py::mypy PASSED
 setuptools/extension.py::mypy PASSED
 setuptools/glob.py::mypy PASSED
@@ -272,6 +275,7 @@ setuptools/logging.py::mypy PASSED
 setuptools/monkey.py::mypy PASSED
 setuptools/msvc.py::mypy PASSED
 setuptools/msvc.py::setuptools.msvc SKIPPED
+setuptools/msvc.py::setuptools.msvc.EnvironmentInfo.VCTools SKIPPED
 setuptools/namespaces.py::mypy PASSED
 setuptools/namespaces.py::setuptools.namespaces.Installer._pkg_names PASSED
 setuptools/package_index.py::mypy PASSED
@@ -292,16 +296,24 @@ setuptools/tests/config/test_apply_pyprojecttoml.py::TestDeprecatedFields::test_
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestExtModules::test_pyproject_sets_attribute PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestInteropCommandLineParsing::test_version PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_both_license_and_license_files_defined PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_both_license_and_license_files_defined_pep639 PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_default_patterns PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_deprecated_file_expands_to_text PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_license_files_defined_twice PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestLicenseFiles::test_missing_patterns PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestMeta::test_example_file_in_sdist PASSED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[classifiers-classifiers-value3] PASSED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[extras_require-optional-dependencies-value1] PASSED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[install_requires-dependencies-value0] PASSED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[install_requires-dependencies-value2] PASSED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[classifiers-classifiers-value0] SKIPPED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[entry_points-gui-scripts-value2] SKIPPED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[entry_points-scripts-value1] SKIPPED
-setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[install_requires-dependencies-value3] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_license_files_exempt_from_dynamic PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[classifiers-classifiers-value4] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[extras_require-optional-dependencies-value2] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[install_requires-dependencies-value1] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[install_requires-dependencies-value3] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_listed_in_dynamic[license_expression-license-MIT] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[classifiers-classifiers-value2] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[entry_points-gui-scripts-value4] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[entry_points-scripts-value3] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[install_requires-dependencies-value5] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[license-license-Not SPDX] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_not_listed_in_dynamic[license_expression-license-MIT] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_optional_dependencies_dont_remove_env_markers PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_scripts_dont_require_dynamic_entry_points[gui-scripts-gui_scripts] PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::TestPresetField::test_scripts_dont_require_dynamic_entry_points[scripts-console_scripts] PASSED
@@ -331,6 +343,10 @@ setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equiva
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/python/importlib_metadata/raw/2f05392ca980952a6960d82b2f2d2ea10aa53239/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/sqlalchemy/sqlalchemy/raw/533f5718904b620be8d63f2474229945d6f8ba5d/setup.cfg] SKIPPED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_apply_pyproject_equivalent_to_setupcfg[https://github.com/tkem/cachetools/raw/2fd87a94b8d3861d80e9e4236cd480bfdd21c90d/setup.cfg] SKIPPED
+setuptools/tests/config/test_apply_pyprojecttoml.py::test_license_classifier_with_license_expression PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::test_license_classifier_without_license_expression PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::test_license_in_metadata[license-expression] PASSED
+setuptools/tests/config/test_apply_pyprojecttoml.py::test_license_in_metadata[license-text] PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_no_explicit_content_type_for_missing_extension PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_pep621_example PASSED
 setuptools/tests/config/test_apply_pyprojecttoml.py::test_readme_content_type[Readme.txt-text/plain] PASSED
@@ -402,7 +418,7 @@ setuptools/tests/config/test_setupcfg.py::TestMetadata::test_file_mixed PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_file_sandboxed PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_interpolation PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_license_cfg PASSED
-setuptools/tests/config/test_setupcfg.py::TestMetadata::test_make_option_lowercase PASSED
+setuptools/tests/config/test_setupcfg.py::TestMetadata::test_make_option_lowercase XFAIL
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_multiline PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_non_ascii_1 PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_non_ascii_3 PASSED
@@ -415,7 +431,7 @@ setuptools/tests/config/test_setupcfg.py::TestMetadata::test_version_file PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_version_with_package_dir_complex PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_version_with_package_dir_rename PASSED
 setuptools/tests/config/test_setupcfg.py::TestMetadata::test_version_with_package_dir_simple PASSED
-setuptools/tests/config/test_setupcfg.py::TestMetadata::test_warn_dash_deprecation PASSED
+setuptools/tests/config/test_setupcfg.py::TestMetadata::test_warn_dash_deprecation XFAIL
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_basic PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_case_sensitive_entry_points PASSED
 setuptools/tests/config/test_setupcfg.py::TestOptions::test_cmdclass SKIPPED
@@ -486,6 +502,7 @@ setuptools/tests/test_bdist_egg.py::Test::test_bdist_egg PASSED
 setuptools/tests/test_bdist_egg.py::Test::test_exclude_source_files PASSED
 setuptools/tests/test_bdist_egg.py::mypy PASSED
 setuptools/tests/test_bdist_wheel.py::mypy PASSED
+setuptools/tests/test_bdist_wheel.py::test_allow_grace_period_parent_directory_license PASSED
 setuptools/tests/test_bdist_wheel.py::test_build_from_readonly_tree PASSED
 setuptools/tests/test_bdist_wheel.py::test_build_number PASSED
 setuptools/tests/test_bdist_wheel.py::test_compression[deflated] PASSED
@@ -500,9 +517,10 @@ setuptools/tests/test_bdist_wheel.py::test_get_abi_tag_windows PASSED
 setuptools/tests/test_bdist_wheel.py::test_licenses_default PASSED
 setuptools/tests/test_bdist_wheel.py::test_licenses_deprecated PASSED
 setuptools/tests/test_bdist_wheel.py::test_licenses_disabled PASSED
-setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*, LICENSE] PASSED
-setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses/*\n  LICENSE] PASSED
-setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.py-from setuptools import setup\n\nsetup(\n    name='dummy_dist',\n    version='1.0',\n  license_files=['licenses/DUMMYFILE', 'LICENSE'])\n] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses_dir/*, LICENSE] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.cfg-[metadata]\nlicense_files=licenses_dir/*\n  LICENSE] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_override[setup.py-from setuptools import setup\n\nsetup(\n    name='dummy_dist',\n    version='1.0',\n  license_files=['licenses_dir/DUMMYFILE', 'LICENSE'])\n] PASSED
+setuptools/tests/test_bdist_wheel.py::test_licenses_preserve_folder_structure PASSED
 setuptools/tests/test_bdist_wheel.py::test_limited_abi PASSED
 setuptools/tests/test_bdist_wheel.py::test_no_ctypes PASSED
 setuptools/tests/test_bdist_wheel.py::test_no_scripts PASSED
@@ -832,6 +850,8 @@ setuptools/tests/test_config_discovery.py::mypy PASSED
 setuptools/tests/test_config_discovery.py::test_compatible_with_numpy_configuration PASSED
 setuptools/tests/test_config_discovery.py::test_name_discovery_doesnt_break_cli PASSED
 setuptools/tests/test_config_discovery.py::test_preserve_explicit_name_with_dynamic_version PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_license_files_dynamic[# Let setuptools autofill license-files] PASSED
+setuptools/tests/test_core_metadata.py::TestPEP643::test_license_files_dynamic[license-files = ['LICENSE*', 'AUTHORS*', 'NOTICE']] PASSED
 setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields0-pyproject.toml] PASSED
 setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields0-setup.cfg] PASSED
 setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields1-pyproject.toml] PASSED
@@ -1006,7 +1026,7 @@ setuptools/tests/test_easy_install.py::TestPTHFileWriter::test_add_from_site_is_
 setuptools/tests/test_easy_install.py::TestPTHFileWriter::test_many_pth_distributions_merge_together PASSED
 setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header PASSED
 setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_args PASSED
-setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_exe_with_spaces PASSED
+setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_exe_with_spaces $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-5y5f9f90/setup.py': No source for code: '/tmp/easy_install-5y5f9f90/setup.py'. (couldnt-parse) PASSED
 setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_non_ascii_exe PASSED
 setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_honors_fetch_params PASSED
 setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_honors_pip_env PASSED
@@ -1156,6 +1176,7 @@ setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_files[fil
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_files[files8-incl_licenses8-excl_licenses8] PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_files[files_only_added_once] PASSED
 setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_files[no_default_glob_patterns] PASSED
+setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_files[recursive_glob] PASSED
 setuptools/tests/test_egg_info.py::TestWriteEntries::test_invalid_entry_point PASSED
 setuptools/tests/test_egg_info.py::TestWriteEntries::test_valid_entry_point PASSED
 setuptools/tests/test_egg_info.py::mypy PASSED
@@ -1315,6 +1336,7 @@ setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[../external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/../dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/file.h] PASSED
+setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - deprecated license table with file entry] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - directive with str instead of list] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[pyproject.toml - static readme/license files and dynamic version] PASSED
 setuptools/tests/test_sdist.py::TestSdistTest::test_add_files_referenced_by_config_directives[setup.cfg - long_description and version] PASSED
@@ -1408,7 +1430,7 @@ setuptools/tests/test_wheel.py::test_wheel_install[requires5] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[requires_ensure_order] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[script] PASSED
 setuptools/tests/test_wheel.py::test_wheel_install[utf-8] PASSED
-setuptools/tests/test_wheel.py::test_wheel_install_pep_503 $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-14qvffhm/setup.py': No source for code: '/tmp/easy_install-14qvffhm/setup.py'. (couldnt-parse) PASSED
+setuptools/tests/test_wheel.py::test_wheel_install_pep_503 PASSED
 setuptools/tests/test_wheel.py::test_wheel_is_compatible PASSED
 setuptools/tests/test_wheel.py::test_wheel_mode PASSED
 setuptools/tests/test_wheel.py::test_wheel_no_dist_dir PASSED
@@ -1433,6 +1455,6 @@ tools/vendored.py::mypy PASSED
 ===================================== mypy =====================================
 
 Success: no issues found in 142 source files
-======== 1303 passed, 111 skipped, 4 xfailed, 1 xpassed ========
+======== 1320 passed, 114 skipped, 6 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)
