@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt_dlp
-HUMAN_VERSION =			2025.2.19
+HUMAN_VERSION =			2025.3.21
 COMPONENT_SUMMARY =		A feature-rich command-line audio/video downloader
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f33ca76df2e4db31880f2fe408d44f5058d9f135015b13e50610dfbe78245bea
+	sha256:5bcf47b2897254ea3816935a8dde47d243bff556782cced6b16a2b85e6b682ba
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
