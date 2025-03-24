@@ -29,14 +29,14 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         harfbuzz
-COMPONENT_VERSION=      10.4.0
+COMPONENT_VERSION=      11.0.1
 COMPONENT_FMRI=         library/c++/harfbuzz
 COMPONENT_SUMMARY=      HarfBuzz - an OpenType text shaping engine. 
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/HarfBuzz/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:480b6d25014169300669aa1fc39fb356c142d5028324ea52b3a27648b9beaad8
+COMPONENT_ARCHIVE_HASH= sha256:4a7890090538136db64742073af4b4d776ab8b50e6855676a8165eb8b7f60b7a
 COMPONENT_ARCHIVE_URL=  https://github.com/harfbuzz/harfbuzz/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
@@ -72,6 +72,7 @@ REQUIRED_PACKAGES += developer/icu
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/glib2
