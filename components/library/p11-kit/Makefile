@@ -25,12 +25,13 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
 COMPONENT_VERSION=	0.25.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
@@ -41,8 +42,11 @@ COMPONENT_ARCHIVE_HASH= sha256:04d0a86450cdb1be018f26af6699857171a188ac6d5b8c907
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_BUILD_ARGS= -j20
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_FMRI.$(COMPONENT_NAME)-32=	$(COMPONENT_FMRI)/32
 
 PATH= $(PATH.gnu)
 
@@ -76,5 +80,6 @@ REQUIRED_PACKAGES += utility/bash-completion
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libtasn1
+REQUIRED_PACKAGES += library/libtasn1/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
