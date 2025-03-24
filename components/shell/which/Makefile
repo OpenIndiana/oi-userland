@@ -24,12 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		which
-COMPONENT_VERSION=	2.22
+COMPONENT_VERSION=	2.23
 COMPONENT_SUMMARY=	GNU which - Utility to show the full path of (shell) commands
 COMPONENT_PROJECT_URL=	https://savannah.gnu.org/projects/which/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9f85cde3f2c257021b8508f756704bee6002fa8f5680297d30f186cc1f342af5
+COMPONENT_ARCHIVE_HASH= sha256:a2c558226fc4d9e4ce331bd2fd3c3f17f955115d2c00e447618a4ef9978a2a73
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/which
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
