@@ -1,44 +1,47 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> black --diff .
-All done! ✨ 🍰 ✨
-5 files would be left unchanged.
+No Python files are present to be formatted. Nothing to do 😴
 py$(PYV): commands[1]> python -m pytest --cov --cov-report=html --cov-fail-under=100
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 27 items
+configfile: pyproject.toml
+collecting ... collected 30 items
 
-tests/test_expandvars.py::test_bad_substitution_err PASSED
-tests/test_expandvars.py::test_brace_never_closed_err PASSED
-tests/test_expandvars.py::test_corner_cases PASSED
-tests/test_expandvars.py::test_escape PASSED
-tests/test_expandvars.py::test_expand_var_symbol[%] PASSED
-tests/test_expandvars.py::test_expand_var_symbol[&] PASSED
-tests/test_expandvars.py::test_expand_var_symbol[=] PASSED
-tests/test_expandvars.py::test_expand_var_symbol[\xa3] PASSED
-tests/test_expandvars.py::test_expandvars_combo PASSED
 tests/test_expandvars.py::test_expandvars_constant PASSED
 tests/test_expandvars.py::test_expandvars_empty PASSED
-tests/test_expandvars.py::test_expandvars_from_file PASSED
-tests/test_expandvars.py::test_expandvars_get_default PASSED
-tests/test_expandvars.py::test_expandvars_indirection PASSED
-tests/test_expandvars.py::test_expandvars_pid PASSED
 tests/test_expandvars.py::test_expandvars_simple PASSED
-tests/test_expandvars.py::test_expandvars_substitute PASSED
+tests/test_expandvars.py::test_expandvars_from_file PASSED
+tests/test_expandvars.py::test_expandvars_combo PASSED
+tests/test_expandvars.py::test_expandvars_pid PASSED
+tests/test_expandvars.py::test_expandvars_get_default PASSED
 tests/test_expandvars.py::test_expandvars_update_default PASSED
-tests/test_expandvars.py::test_invalid_length_err PASSED
-tests/test_expandvars.py::test_invalid_operand_err PASSED
-tests/test_expandvars.py::test_missing_escapped_character PASSED
+tests/test_expandvars.py::test_expandvars_substitute PASSED
 tests/test_expandvars.py::test_offset PASSED
 tests/test_expandvars.py::test_offset_length PASSED
+tests/test_expandvars.py::test_expandvars_indirection PASSED
+tests/test_expandvars.py::test_length PASSED
+tests/test_expandvars.py::test_escape PASSED
+tests/test_expandvars.py::test_corner_cases PASSED
 tests/test_expandvars.py::test_strict_parsing PASSED
+tests/test_expandvars.py::test_missing_escapped_character PASSED
+tests/test_expandvars.py::test_invalid_length_err PASSED
+tests/test_expandvars.py::test_bad_substitution_err PASSED
+tests/test_expandvars.py::test_invalid_indirect_expansion PASSED
+tests/test_expandvars.py::test_brace_never_closed_err PASSED
+tests/test_expandvars.py::test_invalid_operand_err PASSED
+tests/test_expandvars.py::test_expand_var_symbol[%] PASSED
+tests/test_expandvars.py::test_expand_var_symbol[&] PASSED
+tests/test_expandvars.py::test_expand_var_symbol[\xa3] PASSED
+tests/test_expandvars.py::test_expand_var_symbol[=] PASSED
+tests/test_long_string.py::test_parsing_long_string PASSED
 tests/test_option_nounset.py::test_expandvars_option_nounset PASSED
 tests/test_option_nounset.py::test_expandvars_option_nounset_with_strict PASSED
 tests/test_recover_null.py::test_strict_parsing_recover_null PASSED
 
 Required test coverage of 100% reached. Total coverage: 100.00%
 
-======== 27 passed ========
+======== 30 passed ========
   py$(PYV): OK
   congratulations :)
