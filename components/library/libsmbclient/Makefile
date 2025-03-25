@@ -22,19 +22,19 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2023,2024 Friedrich Kink. All rights reserved.
+# Copyright 2025 Klaus Ziegler. All rights reserved.
 #
 
-BUILD_BITS = 64
 BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.21.2
+COMPONENT_VERSION=	4.22.0
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bde66be3d2025cb949de38518ad2652f3795f824c7fa89d4e443ede1ae828ea6
+COMPONENT_ARCHIVE_HASH=	sha256:b39242e1ac1f5469e634c94b2e472045e5060975c2dd6c4cdcdfce0c5586cd76
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -50,6 +50,7 @@ WAF = PYTHONHASHSEED=1 $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
 
 # Compiler settings
 CFLAGS	+=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
+CFLAGS	+=	-Wno-implicit-function-declaration -Wno-incompatible-pointer-types
 
 LDFLAGS +=	-R/usr/lib/libsmbclient
 LDFLAGS +=	-R/usr/lib/libsmbclient/private
