@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sgml-common
 COMPONENT_VERSION= 0.6.3
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Common SGML catalog and DTD files
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
@@ -25,10 +25,14 @@ COMPONENT_ARCHIVE_HASH= \
   sha256:7dc418c1d361123ffc5e45d61f1b97257940a8eb35d0bfbbc493381cc5b1f959
 COMPONENT_ARCHIVE_URL= \
   https://sourceware.org/ftp/docbook-tools/new-trials/SOURCES/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI =		data/docbook/sgml-common
+COMPONENT_CLASSIFICATION =	Desktop (GNOME)/Documentation
+COMPONENT_LICENSE =		GPL-3.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_TOP)/make-rules/common.mk
 
-XMLCATALOG=$(PROTO_DIR)/etc/xml/catalog
+XMLCATALOG = $(PROTOETCDIR)/xml/catalog
 
 COMPONENT_PREP_ACTION +=(cd $(@D) && \
 			aclocal && \
@@ -36,22 +40,32 @@ COMPONENT_PREP_ACTION +=(cd $(@D) && \
 			automake --add-missing --copy );
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
+CLONEY_MODE =
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 
-install: $(INSTALL_32)
-	cd $(PROTOUSRDIR); mv doc share
-	$(MKDIR) $(PROTO_DIR)/etc/xml $(PROTO_DIR)/usr/share/sgml/docbook
-	# Create an empty XML catalog.
-	/usr/bin/xmlcatalog --noout --create $(XMLCATALOG)
-	# Now put the common DocBook entries in it
-	/usr/bin/xmlcatalog --noout --add "delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG)
-	/usr/bin/xmlcatalog --noout --add "delegatePublic" "-//OASIS//DTD DocBook XML" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG)
-	/usr/bin/xmlcatalog --noout --add "delegatePublic" "ISO 8879:1986" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG)
-	/usr/bin/xmlcatalog --noout --add "delegateSystem" "http://www.oasis-open.org/docbook/" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG)
-	/usr/bin/xmlcatalog --noout --add "delegateURI" "http://www.oasis-open.org/docbook/" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG)
-	# Also create the common DocBook catalog
-	/usr/bin/xmlcatalog --noout --create $(PROTO_DIR)/usr/share/sgml/docbook/xmlcatalog
-	$(TOUCH) $(PROTO_DIR)/etc/sgml/catalog
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOUSRDIR)/doc $(PROTOUSRDIR)/share ;
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTOETCDIR)/xml ;
+# Create an empty XML catalog.
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --create $(XMLCATALOG) ;
+# Now put the common DocBook entries in it
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --add "delegatePublic" "-//OASIS//ENTITIES DocBook XML" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG) ;
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --add "delegatePublic" "-//OASIS//DTD DocBook XML" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG) ;
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --add "delegatePublic" "ISO 8879:1986" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG) ;
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --add "delegateSystem" "http://www.oasis-open.org/docbook/" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG) ;
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --add "delegateURI" "http://www.oasis-open.org/docbook/" "file:///usr/share/sgml/docbook/xmlcatalog" $(XMLCATALOG) ;
+# Also create the common DocBook catalog
+COMPONENT_POST_INSTALL_ACTION += /usr/bin/xmlcatalog --noout --create $(PROTOETCDIR)/xml/docbook-xmlcatalog ;
+COMPONENT_POST_INSTALL_ACTION += $(TOUCH) $(PROTOETCDIR)/sgml/catalog ;
+# Install additional files
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in html.dcl html.soc xml.dcl xml.soc ; do \
+		$(INSTALL) -Dt $(PROTOUSRSHAREDIR)/sgml $(COMPONENT_DIR)/files/$$f ; \
+	done ;
+# Create the xmlcatalog symlink
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTOUSRSHAREDIR)/sgml/docbook ;
+COMPONENT_POST_INSTALL_ACTION += $(SYMLINK) ../../../../etc/xml/docbook-xmlcatalog $(PROTOUSRSHAREDIR)/sgml/docbook/xmlcatalog ;
+# We do not need xml-iso-entities-8879.1986
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/xml/xml-iso-entities-8879.1986
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
