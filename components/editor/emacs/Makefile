@@ -21,7 +21,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
 # Copyright (c) 2020, Andreas Wacknitz
-# Copyright (c) 2023, Klaus Ziegler
+# Copyright (c) 2025, Klaus Ziegler
 #
 
 USE_PARALLEL_BUILD= yes
@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      30.1
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -98,7 +99,6 @@ CONFIGURE_OPTIONS +=	--with-sqlite3
 CONFIGURE_OPTIONS +=	--with-tiff
 CONFIGURE_OPTIONS +=	--with-toolkit-scroll-bars
 CONFIGURE_OPTIONS +=	--with-webp
-CONFIGURE_OPTIONS +=	--with-treesitter
 CONFIGURE_OPTIONS +=	--with-sound=oss
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
