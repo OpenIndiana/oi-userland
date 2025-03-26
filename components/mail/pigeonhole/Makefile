@@ -12,11 +12,11 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS=		64 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pigeonhole
 COMPONENT_VERSION=      0.5.21.1
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Sieve Support for Dovecot
 COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin for \
 			Dovecot's Local Delivery Agent (LDA) and also for its LMTP \
@@ -48,9 +48,9 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc \
 		    --libexecdir=/usr/lib \
                     --with-ldap=plugin \
 		    --enable-static=no \
-		    --with-dovecot=/usr/lib/amd64/dovecot \
+		    --with-dovecot=/usr/lib/$(MACH64)/dovecot \
 		    --with-dovecot-install-dirs \
-		    LDFLAGS="-Wl,-rpath=/usr/lib/amd64/dovecot -lldap_r"
+		    LDFLAGS="-Wl,-rpath=/usr/lib/$(MACH64)/dovecot -lldap_r"
 
 COMPONENT_TEST_TRANSFORMS = \
 	'-n ' \
