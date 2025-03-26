@@ -11,24 +11,27 @@
 
 #
 # Copyright 2022 Daniel Bell
+# Copyright 2024 Benny Lyons
 #
 
-BUILD_BITS=64 # for binaries or 32_and_64 for libraries
-BITS=64
 BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
-COMPONENT_VERSION= 12.6
+COMPONENT_VERSION= 25
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
-COMPONENT_DESCRIPTION=  Full-featured IDE for C/C++, Java, PHP and more
+COMPONENT_DESCRIPTION=  IDE for C/C++, Java, PHP, Perl Python, and more \
+                        For C/C++ inlude 8.2 Plugin Portal and install \
+                        the C/C++ plugin (CND). The CPPLite Kit is in early \
+                        stages of development.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.zip
-COMPONENT_ARCHIVE_URL= https://archive.apache.org/dist/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_ARCHIVE_HASH=	sha256:a1828c8bbb2c2c50a9cd6daf9f918678fa7f003ef12b861bf1670a719e948183
+COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= Apache-2.0
+COMPONENT_LICENSE_FILE= LICENSE
 COMPONENT_PROJECT_URL= https://www.netbeans.org/
 
 UNPACK_ARGS= --relocate-to=$(COMPONENT_SRC)
@@ -38,10 +41,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ARGS=
 
+PYTHON_SHEBANG="\#\!\/usr\/bin\/python$(PYTHON_VERSION)"
+
 $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	mkdir -p $(PROTO_DIR)/usr/netbeans/;
 	[ -d $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION) ] || cp -R $(BUILD_DIR_64)/nbbuild/netbeans $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION);
-	for FILE in $(PROTO_DIR)/usr/netbeans/12.6/ide/bin/nativeexecution/SunOS-x86_64/{pty,pty_open,process_start,killall}; do \
+	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/{pty,pty_open,process_start,killall}; do \
 		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$FILE; \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' $$FILE; \
 	done;
@@ -52,8 +57,14 @@ $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	touch $(BUILD_DIR_64)/.installed;
 
 install: $(BUILD_DIR_64)/.installed
+	$(GSED) -i -e  "1s?.*?$(PYTHON_SHEBANG)?" $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/extide/ant/bin/runant.py;
 
+# Runtime dependencies
+REQUIRED_PACKAGES += runtime/java/openjdk21
+REQUIRED_PACKAGES += runtime/python
 
-# Build dependencies
-REQUIRED_PACKAGES+= developer/build/ant
-REQUIRED_PACKAGES+= developer/java/openjdk8
+# Auto-generated dependencies
+REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/library
