@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		domdf_python_tools
-HUMAN_VERSION =			3.9.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.10.0
 COMPONENT_SUMMARY =		Helpful functions for Python
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/domdf_python_tools
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/domdf_python_tools/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:652c4b63db55b6cd247c1ec86b9f267fce1fdd4b6b6ad3bbc7126fb5259eb4fd
+	sha256:bb3ec59bd58a67b204da884730876a22c7c74ce4a93ae7535c9ccd9b29aeb495
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,10 +51,9 @@ PYTEST_ADDOPTS += --deselect tests/test_import_tools.py::test_discover_entry_poi
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x0\*[0-9a-f]\{12\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
 PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/click
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
