@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dist-meta
-HUMAN_VERSION =			0.8.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.9.0
 COMPONENT_SUMMARY =		Parse and create Python distribution metadata.
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/dist-meta
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/repo-helper/dist-meta/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8491c92b85e80c844550f2081a08c0469bdd4fd61802c13c1c6afdcd16f8cbef
+	sha256:0e2337a7c4db6c8b12ce626bb19812f5fd0b793838b21fbac3b5dfd074394255
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,9 +49,8 @@ PYTEST_ADDOPTS += --deselect tests/test_distributions.py::test_packages_distribu
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
 PYTHON_REQUIRED_PACKAGES += library/python/handy-archives
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/apeye
 TEST_REQUIRED_PACKAGES.python += library/python/atomicwrites
