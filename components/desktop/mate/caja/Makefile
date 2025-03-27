@@ -25,6 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		caja
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	File manager for the MATE desktop
 COMPONENT_ARCHIVE_HASH= sha256:1e3014ce1455817ec2ef74d09efdfb6835d8a372ed9a16efb5919ef7b821957a
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -32,6 +33,9 @@ COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 
 TEST_TARGET= $(TEST_$(MK_BITS))
 include $(WS_MAKE_RULES)/common.mk
+
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration -Wno-int-conversion
 
 COMPONENT_PREP_ACTION=	\
 	( cp $(COMPONENT_DIR)/files/icons/*.png $(@D)/icons && \
@@ -51,8 +55,8 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += developer/build/autoconf-archive
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
