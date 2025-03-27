@@ -25,12 +25,12 @@
 # Copyright 2023,2024 Friedrich Kink
 #
 
-BUILD_BITS =			64
 BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_VERSION =		4.21.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
@@ -59,6 +59,8 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
 CFLAGS +=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto -DHAVE_FREEBSD_SUNACL_H -DACE_INHERITED_ACE
+# make gcc-14 happy.
+CFLAGS +=	-Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion
 CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
 
@@ -77,7 +79,7 @@ LD_OPTIONS +=	-B direct
 # to avoid a clash with system gssapi.h (some declaration are not compatible)
 COMPONENT_POST_CONFIGURE_ACTION= ( \
 	$(RM) $(@D)/third_party/heimdal/lib/gssapi/gssapi.h; \
-	$(GSED) -i -e 's:/usr/lib/amd64:/usr/lib:' $(@D)/bin/c4che/default_cache.py; \
+	$(GSED) -i -e 's:/usr/lib/$(MACH64):/usr/lib:' $(@D)/bin/c4che/default_cache.py; \
 	 ); 
 #
 # set everything for target configure.
@@ -147,6 +149,7 @@ REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
