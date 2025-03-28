@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt
-HUMAN_VERSION =			2.004001
+HUMAN_VERSION =			2.005001
 COMPONENT_SUMMARY =		Pure Perl module to test Math::BigInt with scalars
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cfea8e6a5c3dcefd129e7d90d8772e91904c9662ce0ce9e103e842695c7f1f1c
+	sha256:38576ae13133ccf27e082f2b2e63f89c67dcc0de1abb7ceae7857159da9dc750
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
