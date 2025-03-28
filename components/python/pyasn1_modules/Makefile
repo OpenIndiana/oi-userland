@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1_modules
-HUMAN_VERSION =			0.4.1
+HUMAN_VERSION =			0.4.2
 COMPONENT_SUMMARY =		A collection of ASN.1-based protocols modules
 COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1-modules
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c28e2dbf9c06ad61c71a075c7e0f9fd0f1b0bb2d2ad4377f240d33ac2ab60a7c
+	sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
