@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lasso
 COMPONENT_VERSION= 2.8.2
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -44,13 +44,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
 CONFIGURE_OPTIONS += --disable-perl
 CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --disable-python
 CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
-
-unexport SHELLOPTS
 
 # Manually added dependencies
 # inkscape is needed for png file creation:
