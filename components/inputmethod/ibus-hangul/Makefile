@@ -16,12 +16,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-hangul
 COMPONENT_VERSION=        1.5.5
-COMPONENT_SUMMARY=        libhangul - The hangul engine for IBus
+COMPONENT_SUMMARY=        ibus-hangul - The hangul engine for IBus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=   sha256:a5aac88286cd18960229860e3e1a778978a7aeaa484ad9acfa48284b87fdc3bb
 COMPONENT_ARCHIVE_URL=    https://github.com/libhangul/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=           system/input-method/library/ibus/hangul
+COMPONENT_FMRI=           system/input-method/ibus/hangul
 COMPONENT_CLASSIFICATION= System/Localizations
 COMPONENT_LICENSE=        GPL v2
 COMPONENT_LICENSE_FILE=   COPYING
