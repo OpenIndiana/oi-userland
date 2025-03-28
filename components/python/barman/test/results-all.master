@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1482 items
+collecting ... collected 1486 items
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -864,6 +864,9 @@ tests/test_executor.py::TestSnapshotBackupExecutor::test_check_success PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_check_failure[snapshot instance exists-False-missing_disks0-unmounted_disks0-cannot find compute instance {snapshot_instance}] PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_check_failure[snapshot disks attached to instance-True-missing_disks1-unmounted_disks1-cannot find snapshot disks attached to instance {snapshot_instance}: disk1, disk2] PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_check_failure[snapshot disks mounted on instance-True-missing_disks2-unmounted_disks2-cannot find snapshot disks mounted on instance {snapshot_instance}: disk1, disk2] PASSED
+tests/test_executor.py::TestBackupExecutor::test__purge_unused_wal_files_begin_wal_skip PASSED
+tests/test_executor.py::TestBackupExecutor::test__purge_unused_wal_files_worm_mode_skip PASSED
+tests/test_executor.py::TestBackupExecutor::test__purge_unused_wal_files PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_cmd PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_cmd_path PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_get_last_output PASSED
@@ -1167,6 +1170,7 @@ tests/test_server.py::TestServer::test_check_standby[db=primary-False-True-fake_
 tests/test_server.py::TestServer::test_check_replication_slot PASSED
 tests/test_server.py::TestServer::test_get_wal_info PASSED
 tests/test_server.py::TestServer::test_backup PASSED
+tests/test_server.py::TestServer::test_backup_worm_mode_skip PASSED
 tests/test_server.py::TestServer::test_cannot_delete_keep_backup PASSED
 tests/test_server.py::TestServer::test_cannot_delete_backup_due_to_minimum_redundancy PASSED
 tests/test_server.py::TestServer::test_delete_running_backup PASSED
@@ -1582,16 +1586,16 @@ tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
-  $(@D)/barman/backup_executor.py:457: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:463: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(postgres.server_txt_version)
 
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
-  $(@D)/barman/backup_executor.py:553: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/backup_executor.py:559: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
 tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmounted_disks_resolve_exception
-  $(@D)/barman/backup_executor.py:1697: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
+  $(@D)/barman/backup_executor.py:1703: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
     logging.warn("Error resolving mount point: {}".format(exc))
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
@@ -1611,6 +1615,6 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1459 passed, 23 skipped, 313 warnings ========
+======== 1463 passed, 23 skipped, 313 warnings ========
   py$(PYV): OK
   congratulations :)
