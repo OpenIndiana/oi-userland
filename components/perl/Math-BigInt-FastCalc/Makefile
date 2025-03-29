@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt-FastCalc
-HUMAN_VERSION =			0.5019
+HUMAN_VERSION =			0.5020
 COMPONENT_SUMMARY =		Math::BigInt::Calc with some XS for more speed
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:389893f4055c58e251880f7e27aba52f9a3b6842894c70df93a14852a3e72d60
+	sha256:6dfd72e784e612aab46136532a609c0b77a5b0b7854ab837682d64fb1af2a74e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
