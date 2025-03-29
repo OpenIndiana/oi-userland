@@ -18,11 +18,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bacula
-COMPONENT_VERSION=      15.0.2
+COMPONENT_VERSION=      15.0.3
 COMPONENT_SUMMARY=      Bacula (network backup solution)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:55515c2a66af9a86b955daea4089378b864d051b2e6e30383bef36e693acea7a
+COMPONENT_ARCHIVE_HASH= sha256:294afd3d2eb9d5b71c3d0e88fdf19eb513bfdb843b28d35c0552e4ae062827a1
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bacula/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.bacula.org
 COMPONENT_LICENSE=      AGPLv3 with exceptions
