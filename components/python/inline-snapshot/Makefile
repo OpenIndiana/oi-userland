@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		inline_snapshot
-HUMAN_VERSION =			0.20.10
+HUMAN_VERSION =			0.21.0
 COMPONENT_SUMMARY =		golden master/snapshot/approval testing library which puts the values right into your source code
 COMPONENT_PROJECT_URL =		https://15r10nk.github.io/inline-snapshot/latest
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f0ee30d89f811605589eee84b6288f34fd6b8cf8c1ee878a8fa081168373b7e
+	sha256:7de19c049fe1557aeb546541eeeec99cb270eaed1db08ad5e7934923c3339041
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,6 +47,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 PYTHON_REQUIRED_PACKAGES += library/python/asttokens
 PYTHON_REQUIRED_PACKAGES += library/python/executing
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/rich
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
