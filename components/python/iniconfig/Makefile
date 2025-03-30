@@ -19,17 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
-HUMAN_VERSION =			2.0.0
-COMPONENT_SUMMARY =		iniconfig - brain-dead simple config-ini parsing
+HUMAN_VERSION =			2.1.0
+COMPONENT_SUMMARY =		brain-dead simple config-ini parsing
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/iniconfig
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d7/4b/cbd8e699e64a6f16ca3a8220661b5f83792b3017d0f79807cb8708d33913/iniconfig-2.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3
+	sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = none
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
