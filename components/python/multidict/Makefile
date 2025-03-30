@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.2.0
 COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:22ae2ebf9b0c69d206c003e2f6a914ea33f0a932d4aa16f236afc049d9958f4a
+	sha256:0085b0afb2446e57050140240a8595846ed64d1cbd26cef936bfab3192c673b8
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,8 +52,17 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/multidict $(@D)/multidict-RENAMED ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/multidict-RENAMED $(@D)/multidict ;
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/pytest.txt
+
+# We have no pytest-codspeed packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_multidict_benchmarks.py
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
