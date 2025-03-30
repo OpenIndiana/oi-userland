@@ -19,13 +19,13 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycodestyle
-HUMAN_VERSION =			2.12.1
+HUMAN_VERSION =			2.13.0
 COMPONENT_SUMMARY =		Python style guide checker
 COMPONENT_PROJECT_URL =		https://pycodestyle.pycqa.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/pycodestyle/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:231f65fbf5558e342cbad275245accb8a988d637cbeaf66508dd890f3d2d60fa
+	sha256:b1a4db0d9b8285f6643bcdb41362be6d6c94b891b13ead09c57a2513c46b717b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
