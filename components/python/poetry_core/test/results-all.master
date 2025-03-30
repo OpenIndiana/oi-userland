@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2578 items / 9 deselected / 2569 selected
+collecting ... collected 2629 items / 9 deselected / 2620 selected
 
 tests/constraints/generic/test_constraint.py::test_allows[constraint10-constraint20-True] PASSED
 tests/constraints/generic/test_constraint.py::test_allows[constraint11-constraint21-False] PASSED
@@ -136,6 +136,8 @@ tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint129
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint13-constraint23-expected3] PASSED
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint130-constraint230-expected30] PASSED
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint131-constraint231-expected31] PASSED
+tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint132-constraint232-expected32] PASSED
+tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint133-constraint233-expected33] PASSED
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint14-constraint24-expected4] PASSED
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint15-constraint25-expected5] PASSED
 tests/constraints/generic/test_constraint.py::test_intersect_extra[constraint16-constraint26-expected6] PASSED
@@ -218,6 +220,8 @@ tests/constraints/generic/test_constraint.py::test_union_extra[constraint129-con
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint13-constraint23-expected3] PASSED
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint130-constraint230-expected30] PASSED
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint131-constraint231-expected31] PASSED
+tests/constraints/generic/test_constraint.py::test_union_extra[constraint132-constraint232-expected32] PASSED
+tests/constraints/generic/test_constraint.py::test_union_extra[constraint133-constraint233-expected33] PASSED
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint14-constraint24-expected4] PASSED
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint15-constraint25-expected5] PASSED
 tests/constraints/generic/test_constraint.py::test_union_extra[constraint16-constraint26-expected6] PASSED
@@ -1528,7 +1532,12 @@ tests/packages/utils/test_utils.py::test_create_nested_marker_base_constraint[==
 tests/packages/utils/test_utils.py::test_create_nested_marker_base_constraint[==linux-sys_platform == "linux"] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[*-] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3-python_version == "3"] PASSED
+tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.*,>=3.9-python_version >= "3.9" and python_version < "4"] PASSED
+tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.*,>=3.9.0-python_full_version >= "3.9.0" and python_version < "4"] PASSED
+tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.*,>=3.9.1-python_full_version >= "3.9.1" and python_version < "4"] PASSED
+tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.*-python_version >= "3" and python_version < "4"] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.9-python_version == "3.9"] PASSED
+tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.9.*-python_version >= "3.9" and python_version < "3.10"] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.9.0-python_full_version == "3.9.0"] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[3.9.1-python_full_version == "3.9.1"] PASSED
 tests/packages/utils/test_utils.py::test_create_nested_marker_version_constraint[<3-python_version < "3"] PASSED
@@ -2105,7 +2114,9 @@ tests/version/test_markers.py::test_cnf[A_-marker2-expected2] PASSED
 tests/version/test_markers.py::test_cnf[any-marker1-expected1] PASSED
 tests/version/test_markers.py::test_cnf[empty-marker0-expected0] PASSED
 tests/version/test_markers.py::test_complex_intersection PASSED
+tests/version/test_markers.py::test_complex_intersection_with_itertools_product_duplicates PASSED
 tests/version/test_markers.py::test_complex_union PASSED
+tests/version/test_markers.py::test_complex_union_is_deterministic PASSED
 tests/version/test_markers.py::test_dnf[(A+B(C+D))(E+F)_AE+AF+BCE+BCF+BDE+BDF-marker9-expected9] PASSED
 tests/version/test_markers.py::test_dnf[(A+B)(C+D)_AC+AD+BC+BD-marker7-expected7] PASSED
 tests/version/test_markers.py::test_dnf[A(B+C)+(D+E)(F+G)_AB+AC+DF+DG+EF+DG-marker8-expected8] PASSED
@@ -2131,7 +2142,8 @@ tests/version/test_markers.py::test_exclude[python_version >= "3.6"-implementati
 tests/version/test_markers.py::test_exclude[python_version >= "3.6"-python_version-*] PASSED
 tests/version/test_markers.py::test_intersect_compacts_constraints PASSED
 tests/version/test_markers.py::test_intersection_avoids_combinatorial_explosion PASSED
-tests/version/test_markers.py::test_intersection_no_endless_recursion PASSED
+tests/version/test_markers.py::test_intersection_no_endless_recursion[(python_version < "3.9" or extra != "bigquery" and extra != "parquet" and extra != "motherduck" and extra != "athena" and extra != "synapse" and extra != "clickhouse" and extra != "dremio" and extra != "lancedb" and extra != "deltalake" and extra != "pyiceberg" and python_version < "3.13") and extra != "postgres" and extra != "redshift" and extra != "postgis"-python_version >= "3.12" and python_version < "3.13" or extra != "databricks"-(python_version < "3.9" or extra != "bigquery" and extra != "parquet" and extra != "motherduck" and extra != "athena" and extra != "synapse" and extra != "clickhouse" and extra != "dremio" and extra != "lancedb" and extra != "deltalake" and extra != "pyiceberg") and python_version < "3.13" and extra != "postgres" and extra != "redshift" and extra != "postgis" and (python_version == "3.12" or extra != "databricks")] PASSED
+tests/version/test_markers.py::test_intersection_no_endless_recursion[python_version < "3.7" and (python_version < "3.6" or platform_system != "Darwin" or platform_machine != "arm64")-(python_version < "3.6" or platform_system != "Linux" or platform_machine != "aarch64") and python_version < "3.9"-python_version < "3.7" and (python_version < "3.6" or platform_system != "Darwin" or platform_machine != "arm64") and (python_version < "3.6" or platform_system != "Linux" or platform_machine != "aarch64")] PASSED
 tests/version/test_markers.py::test_invert["tegra" in platform_release-"tegra" not in platform_release] PASSED
 tests/version/test_markers.py::test_invert["tegra" not in platform_release-"tegra" in platform_release] PASSED
 tests/version/test_markers.py::test_invert[implementation_name != "pypy"-implementation_name == "pypy"] PASSED
@@ -2332,34 +2344,39 @@ tests/version/test_markers.py::test_parse_single_marker[python_version in "2.7, 
 tests/version/test_markers.py::test_parse_single_marker[python_version not in "2.7, 3.0, 3.1"-python_version-<2.7 || >=2.8,<3.0 || >=3.2] PASSED
 tests/version/test_markers.py::test_parse_single_marker[sys_platform == "darwin"-sys_platform-darwin] PASSED
 tests/version/test_markers.py::test_parse_version_like_markers[platform_release >= "9.0" and platform_release < "11.0"-env0] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[(python_version == "3.8" or platform_system == "Linux") and sys_platform == "darwin"-~3.8-sys_platform == "darwin"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[<empty>-~3.8-<empty>] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_full_version < "3.8.0"-~3.8-<empty>] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_full_version >= "3.8.0"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_full_version >= "3.8.1" and python_version < "3.9"-~3.8-python_full_version >= "3.8.1"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_full_version >= "3.8.1"-~3.8-python_full_version >= "3.8.1"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.10"->=3.9-python_version == "3.9"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.11"->=3.9-python_version < "3.11"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9" and sys_platform == "linux"-~3.9-sys_platform == "linux"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-<=3.10-python_version < "3.8" or python_version >= "3.9"] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"->=3.7-python_version < "3.8" or python_version >= "3.9"] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-~3.6 || ~3.8-python_version < "3.8"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"->=3.7-python_version == "3.7" or python_version >= "3.9"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-~3.6 || ~3.8-python_version == "3.6"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-~3.7 || ~3.9-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-~3.7-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or python_version >= "3.9"-~3.9-] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or sys_platform == "linux" or python_version >= "3.9" or sys_platform == "win32"-~3.7 || ~3.9-sys_platform == "linux" or sys_platform == "win32"] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or sys_platform == "linux" or python_version >= "3.9"-~3.7 || ~3.9-sys_platform == "linux"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or sys_platform == "linux" or python_version >= "3.9" or sys_platform == "win32"-~3.7 || ~3.9-] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version < "3.8" or sys_platform == "linux" or python_version >= "3.9"-~3.7 || ~3.9-] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version <= "3.10"->=3.9-python_version <= "3.10"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version <= "3.9"->=3.9-python_version == "3.9"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8" or python_version >= "3.9"->=3.8.0,<4.0.0-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8" or python_version >= "3.9"->=3.8.7,<4.0.0-] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8" or sys_platform == "linux" or python_version >= "3.9"->=3.8.0,<4.0.0-sys_platform == "linux"] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8" or sys_platform == "linux" or python_version >= "3.9"->=3.8.7,<4.0.0-sys_platform == "linux"] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8" or sys_platform == "linux"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8"->=3.8.7,<3.9.0-] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.8"-~3.8-] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version == "3.9"->=3.9-python_version == "3.9"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version > "3.7"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version > "3.8"-~3.8-<empty>] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.7" and python_version < "4.0"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8" and python_full_version < "3.8.2"-~3.8-python_full_version < "3.8.2"] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8" and python_version < "3.9"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8" and sys_platform == "linux" and python_version < "3.9"-~3.8-sys_platform == "linux"] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8"-~3.8-0] PASSED
-tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8"-~3.8-1] PASSED
+tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.8"-~3.8-] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[python_version >= "3.9"-~3.8-<empty>] PASSED
 tests/version/test_markers.py::test_reduce_by_python_constraint[sys_platform == "linux"-~3.8-sys_platform == "linux"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect PASSED
@@ -2376,14 +2393,20 @@ tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra == "a"-<empty>] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra != "a"-extra == "b"-extra != "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra != "b"-extra == "a"-extra == "a" and extra != "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b" and extra == "c" and extra == "d"-extra == "a" and extra == "b"-extra == "a" and extra == "b" and extra == "c" and extra == "d"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra != "c"-extra == "a" and extra == "b" and extra != "c"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "a" and extra == "b" and extra == "c"-extra == "a" and extra == "b" and extra == "c"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "a" and extra == "b"-extra == "a" and extra == "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "a" or extra == "b"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "b" and extra == "a"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "c" and extra != "d"-extra == "a" and extra == "b" and extra == "c" and extra != "d"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" and extra == "b"-extra == "c"-extra == "a" and extra == "b" and extra == "c"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b" or extra == "c" or extra == "d"-extra == "a" or extra == "b"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra != "a"-extra == "b" and extra != "a"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra != "c"-(extra == "a" or extra == "b") and extra != "c"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "a" and extra == "b"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "a" or extra != "c"-(extra == "a" or extra == "b") and (extra == "a" or extra != "c")] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "a" or extra == "b" or extra == "c"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "a" or extra == "b"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "a"-extra == "a"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a" or extra == "b"-extra == "b" or extra == "a"-extra == "a" or extra == "b"] PASSED
@@ -2392,6 +2415,13 @@ tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra != "b"-extra == "a" and extra != "b"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra == "a"-extra == "a"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_extras[extra == "a"-extra == "b"-extra == "a" and extra == "b"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[python_version == "3.6"-python_version == "3.7"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[python_version > "3.6"-python_version < "3.7"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[python_version > "3.6"-python_version <= "3.6"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[python_version >= "3.6"-python_version < "3.6"0] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[python_version >= "3.6"-python_version < "3.6"1] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[sys_platform != "win32"-sys_platform == "win32"] PASSED
+tests/version/test_markers.py::test_single_marker_intersect_is_empty[sys_platform == "win32"-sys_platform == "linux"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_is_single_marker[python_version < "3.6"-python_version < "3.4"-python_version < "3.4"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_is_single_marker[python_version >= "3.6"-python_version < "3.7"-python_version == "3.6"] PASSED
 tests/version/test_markers.py::test_single_marker_intersect_with_multi PASSED
@@ -2416,13 +2446,19 @@ tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extr
 tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra == "a"-] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra != "a"-extra == "b"-extra != "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra != "b"-extra == "a"-extra == "a"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b" and extra == "c" and extra == "d"-extra == "a" and extra == "b"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b"-extra != "c"-extra == "a" and extra == "b" or extra != "c"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b"-extra == "a" and extra == "b" and extra == "c"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b"-extra == "a" and extra == "b"-extra == "a" and extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b"-extra == "c" and extra != "d"-extra == "a" and extra == "b" or extra == "c" and extra != "d"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "b"-extra == "c"-extra == "a" and extra == "b" or extra == "c"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" and extra == "c"-extra == "a" or extra == "b"-extra == "a" or extra == "b"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b" or extra == "c" or extra == "d"-extra == "a" or extra == "b"-extra == "a" or extra == "b" or extra == "c" or extra == "d"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra != "a"-] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra != "c"-extra == "a" or extra == "b" or extra != "c"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "a" and extra == "c"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "a" or extra != "c"-extra == "a" or extra == "b" or extra != "c"] PASSED
+tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "a" or extra == "b" or extra == "c"-extra == "a" or extra == "b" or extra == "c"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "a" or extra == "b"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "a"-extra == "a" or extra == "b"] PASSED
 tests/version/test_markers.py::test_single_marker_union_extras[extra == "a" or extra == "b"-extra == "c"-extra == "a" or extra == "b" or extra == "c"] PASSED
@@ -2518,8 +2554,21 @@ tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_n
 tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment7-True] PASSED
 tests/version/test_markers.py::test_validate[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment8-False] PASSED
 tests/version/test_markers.py::test_validate[sys.platform == 'win32'-environment10-False] PASSED
-tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version > "3.6" and python_full_version < "3.6.2"-python_version > "3.6" and python_version < "3.7"-python_version > "3.6" and python_version < "3.7"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.10" and platform_system == "Linux"-python_version == "3.11" and platform_system != "Darwin" or platform_system != "Linux" and platform_system != "Darwin" and python_version <= "3.11" and python_full_version >= "3.10.0"-python_version >= "3.10" and python_version <= "3.11" and platform_system != "Darwin"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.6" and platform_system == "Linux" and platform_machine == "aarch64" or python_version == "3.9" and platform_system != "Darwin" or python_version == "3.9" and platform_machine != "arm64" or python_version >= "3.8" and platform_system == "Linux" and platform_machine == "aarch64" and python_version < "3.10"-python_version == "3.7" and platform_system == "Linux" and platform_machine == "aarch64"-python_version >= "3.6" and python_version < "3.10" and platform_system == "Linux" and platform_machine == "aarch64" or python_version == "3.9" and platform_machine != "arm64" or python_version == "3.9" and platform_system != "Darwin"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9" or python_version == "3.10"-python_version > "3.7" and python_version < "3.11" and sys_platform == "linux"-python_version > "3.7" and python_version < "3.11"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9" or python_version == "3.10"-python_version > "3.7" and python_version <= "3.10" and sys_platform == "linux"-python_version > "3.7" and python_version <= "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9" or python_version == "3.10"-python_version >= "3.8" and python_version < "3.11" and sys_platform == "linux"-python_version >= "3.8" and python_version < "3.11"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9" or python_version == "3.10"-python_version >= "3.8" and python_version <= "3.10" and sys_platform == "linux"-python_version >= "3.8" and python_version <= "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version > "3.7" and python_version < "3.10" and sys_platform == "linux"-python_version > "3.7" and python_version < "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version > "3.7" and python_version <= "3.9" and sys_platform == "linux"-python_version > "3.7" and python_version < "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version >= "3.8" and python_version < "3.10" and sys_platform == "linux"-python_version >= "3.8" and python_version < "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version >= "3.8" and python_version <= "3.9" and sys_platform == "linux"-python_version >= "3.8" and python_version < "3.10"0] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version >= "3.8" and python_version <= "3.9" and sys_platform == "linux"-python_version >= "3.8" and python_version < "3.10"1] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8" or python_version == "3.9"-python_version >= "3.8" and python_version <= "3.9"-python_version >= "3.8" and python_version < "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version == "3.8"-python_version == "3.9"-python_version >= "3.8" and python_version < "3.10"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version > "3.6" and python_full_version < "3.7.2"-python_version > "3.6" and python_version < "3.8"-python_version > "3.6" and python_version < "3.8"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version > "3.7"-python_version >= "3.8" and sys_platform == "linux"-python_version > "3.7"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_full_version < "3.6.2"-python_full_version >= "3.6.2" and python_version < "3.7"-python_version == "3.6"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_full_version < "3.6.2"-python_version >= "3.6" and python_version < "3.7"-python_version == "3.6"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_full_version < "3.7.2"-python_full_version >= "3.6.2" and python_version < "3.8"-python_version >= "3.6" and python_version < "3.8"] PASSED
@@ -2537,6 +2586,8 @@ tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_vers
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_version <= "3.7"-python_version == "3.6"-python_version >= "3.6" and python_version <= "3.7"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_version <= "3.7"-python_version == "3.7" and implementation_name == "cpython"-python_version >= "3.6" and python_version <= "3.7"] PASSED
 tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.6" and python_version <= "3.7"-python_version == "3.7"-python_version >= "3.6" and python_version <= "3.7"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.8" and python_version < "3.9"-python_version >= "3.9" and python_version < "3.10"-python_version >= "3.8" and python_version < "3.10"] PASSED
+tests/version/test_markers.py::test_version_ranges_collapse_on_union[python_version >= "3.8" and python_version < "3.9"-python_version >= "3.9" and python_version < "3.11"-python_version >= "3.8" and python_version < "3.11"] PASSED
 tests/version/test_markers.py::test_without_extras[extra == "foo" or extra == "bar"-] PASSED
 tests/version/test_markers.py::test_without_extras[extra == "foo"-] PASSED
 tests/version/test_markers.py::test_without_extras[python_version >= "3.6" and (extra == "foo" or extra == "bar") or implementation_name == "pypy"-python_version >= "3.6" or implementation_name == "pypy"] PASSED
@@ -2575,4 +2626,4 @@ tests/version/test_requirements.py::test_requirement[name>=2,<3-expected12] PASS
 tests/version/test_requirements.py::test_requirement[name>=3-expected4] PASSED
 tests/version/test_requirements.py::test_requirement[name>=3.*-expected5] PASSED
 
-======== 2564 passed, 5 skipped, 9 deselected ========
+======== 2615 passed, 5 skipped, 9 deselected ========
