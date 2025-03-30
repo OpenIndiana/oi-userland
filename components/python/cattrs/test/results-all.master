@@ -1,16 +1,16 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands_pre[0]> python -c 'import pathlib; pathlib.Path("cov.pth").write_text("import coverage; coverage.process_startup()")'
 py$(PYV): commands[0]> python -m coverage run -m pytest tests -n auto
-$(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
+$(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:39: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
   warner(PytestBenchmarkWarning(text))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-benchmark: 4.0.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=5)
+benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=True warmup_iterations=5)
 hypothesis profile 'tests' -> deadline=None, suppress_health_check=[HealthCheck.too_slow], database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [757 items]
+X workers [761 items]
 
 scheduling tests via LoadScheduling
 
@@ -410,6 +410,10 @@ tests/test_dataclasses.py::test_dataclasses_in_container[BaseConverter-False] PA
 tests/test_dataclasses.py::test_dataclasses_in_container[BaseConverter-True] PASSED
 tests/test_dataclasses.py::test_dataclasses_in_container[Converter-False] PASSED
 tests/test_dataclasses.py::test_dataclasses_in_container[Converter-True] PASSED
+tests/test_dataclasses.py::test_kw_only_propagation[BaseConverter-False] SKIPPED
+tests/test_dataclasses.py::test_kw_only_propagation[BaseConverter-True] SKIPPED
+tests/test_dataclasses.py::test_kw_only_propagation[Converter-False] SKIPPED
+tests/test_dataclasses.py::test_kw_only_propagation[Converter-True] SKIPPED
 tests/test_dicts.py::test_any_keys[BaseConverter-False] PASSED
 tests/test_dicts.py::test_any_keys[BaseConverter-True] PASSED
 tests/test_dicts.py::test_any_keys[Converter-False] PASSED
@@ -779,9 +783,13 @@ tests/test_validation.py::test_set_validation PASSED
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
   $(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184: HypothesisWarning: Return-type annotation is `st.SearchStrategy[typing.Tuple[attr._make._CountingAttr, st.SearchStrategy]]`, but the decorated function should return a value (not a strategy)
     exec(co, module.__dict__)
 
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/assertion/rewrite.py:184
@@ -792,6 +800,6 @@ tests/test_validation.py::test_set_validation PASSED
     exec(co, module.__dict__)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 715 passed, 27 skipped, 15 xfailed, 12 warnings ========
+======== 715 passed, 31 skipped, 15 xfailed, 16 warnings ========
   py$(PYV): OK
   congratulations :)
