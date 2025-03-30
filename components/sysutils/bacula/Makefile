@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bacula
 COMPONENT_VERSION=      15.0.3
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Bacula (network backup solution)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -30,6 +31,11 @@ COMPONENT_LICENSE_FILE= LICENSE
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# manual add dependency to math library on SPARC.
+ifeq ($(MACH), sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
 
 # Missing files in build dir for configure without this.
 # enable openldap support instead of native Solaris support
