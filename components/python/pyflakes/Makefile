@@ -19,13 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-HUMAN_VERSION =			3.2.0
-COMPONENT_SUMMARY =		pyflakes - passive checker of Python programs
+HUMAN_VERSION =			3.3.0
+COMPONENT_SUMMARY =		passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/f9/669d8c9c86613c9d568757c7f5824bd3197d7b1c6c27553bc5618a27cce2/pyflakes-3.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c61603ff154621fb2a9172037d84dca3500def8c8b630657d1701f026f8af3f
+	sha256:1955be314ebe8e9bdd100d5877fe10f0fd47fb2497e4f365e981a1a87cc8d9d7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
