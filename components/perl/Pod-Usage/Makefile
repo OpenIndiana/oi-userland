@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Usage
-HUMAN_VERSION =			2.04
+HUMAN_VERSION =			2.05
 COMPONENT_SUMMARY =		extracts POD documentation and shows usage information
 COMPONENT_CPAN_AUTHOR =		MAREKR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d08fa46df9f03c09224f9ee827809853dd6e4a7b3a666b71fc747d9c7866e73
+	sha256:100c27908757c56ebfeca8b7bf15a9867e449df663ff013de3855d183dfbea30
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
