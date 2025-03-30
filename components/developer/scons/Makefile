@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scons
-HUMAN_VERSION =			4.9.0
+HUMAN_VERSION =			4.9.1
 COMPONENT_SUMMARY =		Open Source next-generation build tool.
 COMPONENT_PROJECT_URL =		https://www.scons.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f1a5e161bf3d1411d780d65d7919654b9405555994621d3d68e42d62114b592a
+	sha256:bacac880ba2e86d6a156c116e2f8f2bfa82b257046f3ac2666c85c53c615c338
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
