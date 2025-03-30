@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services
-COMPONENT_VERSION=	1.24.12
+COMPONENT_VERSION=	1.26.0
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:688222f270d24be4ed8a3852fa331897db662c7b813fbc39f6deb176b33ec9c0
+COMPONENT_ARCHIVE_HASH=	sha256:af5b27f5c9363027372100cac0baf19055280729df1cc58dd4e454ef698eb1ff
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -49,6 +49,9 @@ GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # SOVER is needed for manifest processing
 PKG_MACROS += SOVER=$(SOVER)
+
+# Testing fails with the (deprecated) cogl installed
+TEST_CONFLICTING_PACKAGES += library/desktop/cogl
 
 # Dependencies not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
