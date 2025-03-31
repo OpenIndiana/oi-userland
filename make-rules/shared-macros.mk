@@ -1205,6 +1205,11 @@ RUST_OS = illumos
 # This is the linker we would like to use with cargo
 CARGO_TARGET_LINKER = $(CC)
 
+# Set CARGO_HOME to do not pollute user's home directory with cargo bits.
+CARGO_HOME = $(@D)/.cargo
+COMPONENT_BUILD_ENV += CARGO_HOME="$(CARGO_HOME)"
+COMPONENT_INSTALL_ENV += CARGO_HOME="$(CARGO_HOME)"
+COMPONENT_TEST_ENV += CARGO_HOME="$(CARGO_HOME)"
 
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
@@ -1472,13 +1477,11 @@ LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 LD_EXEC_OPTIONS = $(LD_Z_ASLR)
 
 # Environment variables and arguments passed into the build and install
-# environment(s).  These are the initial settings.
-COMPONENT_BUILD_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
-COMPONENT_INSTALL_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+# environment(s).
+COMPONENT_BUILD_ENV += LD_OPTIONS="$(LD_OPTIONS)"
+COMPONENT_BUILD_ENV += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+COMPONENT_INSTALL_ENV += LD_OPTIONS="$(LD_OPTIONS)"
+COMPONENT_INSTALL_ENV += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
 # PATH should be always set
 COMPONENT_BUILD_ENV += PATH="$(PATH)"
