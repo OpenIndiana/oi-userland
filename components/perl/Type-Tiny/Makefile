@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Type::Tiny
+#   $WS_TOOLS/perl-integrate-module Type-Tiny
 #
 
 BUILD_STYLE = makemaker
@@ -19,12 +19,12 @@ USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Type::Tiny
-HUMAN_VERSION =			2.006000
-COMPONENT_SUMMARY =		Type::Tiny - tiny, yet Moo(se)-compatible type constraint
+COMPONENT_NAME =		Type-Tiny
+HUMAN_VERSION =			2.008000
+COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c685ebbba5145dc02944c305e8e82759811032a55e6da270a751b63b76500ea
+	sha256:997ea06f1c6b9be37c3456294bdf861e632538c29313cd6869ff2b1b1c44dcb3
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,15 +37,19 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
+PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-requirements
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-lexalias
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
 PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/ref-util-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/regexp-util
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny-xs
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
