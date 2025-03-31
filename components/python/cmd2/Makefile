@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cmd2
-HUMAN_VERSION =			2.5.8
+HUMAN_VERSION =			2.5.11
 COMPONENT_SUMMARY =		cmd2 - quickly build feature-rich and user-friendly interactive command line applications in Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ddf29beaa7c9d4e9806eefad528a59c372ca97b4c0d83e019fef0e37c44f4497
+	sha256:30a0d385021fbe4a4116672845e5695bbe56eb682f9096066776394f954a7429
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS_EXTRAS += test
+TEST_REQUIREMENTS_PEP735 += test
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/build
