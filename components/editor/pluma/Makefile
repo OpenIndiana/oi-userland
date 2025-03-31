@@ -14,12 +14,12 @@
 # Copyright (c) 2021 Tim Mooney.  All rights reserved
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pluma
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SUMMARY=	MATE text editor
 COMPONENT_PROJECT_URL=	https://mate-desktop.org/
@@ -55,13 +55,18 @@ COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
+# manual add dependency to math library on SPARC.
+ifeq ($(MACH), sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
+
 # Build dependencies
 REQUIRED_PACKAGES += data/iso-codes
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
