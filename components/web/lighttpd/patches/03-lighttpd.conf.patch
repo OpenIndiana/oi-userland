@@ -1,8 +1,8 @@
 Developed in-house, not fed back.
 Solaris-specific: configuration file customization.
 
---- doc/config/lighttpd.conf	2013-11-04 08:53:35.317845225 -0800
-+++ doc/config/lighttpd.conf	2013-11-04 08:52:54.468735970 -0800
+--- doc/config/lighttpd.annotated.conf.orig	2025-03-22 21:40:18.000000000 +0200
++++ doc/config/lighttpd.annotated.conf	2025-03-31 22:21:35.397612326 +0300
 @@ -13,11 +13,11 @@
  ## if you add a variable here. Add the corresponding variable in the
  ## chroot example as well.
@@ -14,24 +14,24 @@ Solaris-specific: configuration file customization.
 -var.conf_dir    = "/etc/lighttpd"
 +var.log_root    = "/var/lighttpd/1.4/logs"
 +var.server_root = "/var/lighttpd/1.4"
-+var.state_dir   = log_root
-+var.home_dir    = server_root
++var.state_dir   = "log_root"
++var.home_dir    = "server_root"
 +var.conf_dir    = "/etc/lighttpd/1.4"
  
- ## 
+ ##
  ## run the server chrooted.
 @@ -58,7 +58,7 @@
  ## used in:
- ## conf.d/compress.conf
+ ## conf.d/deflate.conf
  ##
 -var.cache_dir   = "/var/cache/lighttpd"
 +var.cache_dir   = server_root + "/cache"
  
  ##
  ## Base directory for sockets.
-@@ -101,8 +101,8 @@
+@@ -97,8 +97,8 @@
  ## Run as a different username/groupname.
- ## This requires root permissions during startup. 
+ ## This requires root permissions during startup.
  ##
 -server.username  = "lighttpd"
 -server.groupname = "lighttpd"
@@ -40,7 +40,7 @@ Solaris-specific: configuration file customization.
  
  ##
  ## Enable lighttpd to serve requests on sockets received from systemd
-@@ -118,7 +118,7 @@
+@@ -114,7 +114,7 @@
  ##
  ## Document root
  ##
@@ -49,25 +49,25 @@ Solaris-specific: configuration file customization.
  
  ##
  ## The value for the "Server:" response field.
-@@ -130,7 +130,7 @@
+@@ -126,7 +126,7 @@
  ##
  ## store a pid file
  ##
 -server.pid-file = state_dir + "/lighttpd.pid"
-+server.pid-file = log_root + "/run.pid"
++server.pid-file = state_dir + "/run.pid"
  
  ##
  #######################################################################
-@@ -184,7 +184,7 @@
+@@ -180,7 +180,7 @@
+ ## poll   (recommended if none of above are available)
  ## select (*not* recommended)
- ## libev  (*not* recommended)
  ##
--#server.event-handler = "linux-sysepoll"
+-#server.event-handler = "epoll"
 +server.event-handler = "solaris-devpoll"
  
  ##
  ## The basic network interface for all platforms at the syscalls read()
-@@ -331,7 +331,7 @@
+@@ -327,7 +327,7 @@
  ##                                 "index.htm", "default.htm" )
  ##
  index-file.names += (
@@ -76,7 +76,7 @@ Solaris-specific: configuration file customization.
  )
  
  ##
-@@ -386,7 +386,7 @@
+@@ -374,7 +374,7 @@
  ## Format: <errorfile-prefix><status-code>.html
  ## -> ..../status-404.html for 'File not found'
  ##
@@ -85,8 +85,8 @@ Solaris-specific: configuration file customization.
  
  ##
  ## mimetype mapping
---- doc/config/conf.d/fastcgi.conf	2013-10-07 07:21:24.418114603 -0700
-+++ doc/config/conf.d/fastcgi.conf	2013-10-07 07:24:01.824986033 -0700
+--- doc/config/conf.d/fastcgi.conf.~1~	2025-03-22 21:40:18.000000000 +0200
++++ doc/config/conf.d/fastcgi.conf	2025-04-01 08:57:15.857249205 +0300
 @@ -22,8 +22,8 @@
  #fastcgi.server = ( ".php" =>
  #                   ( "php-local" =>
@@ -97,4 +97,4 @@ Solaris-specific: configuration file customization.
 +#                       "bin-path" => "/usr/php/bin/php-cgi",
  #                       "max-procs" => 1,
  #                       "broken-scriptfilename" => "enable",
- #                     )
+ #                     ),
