@@ -10,18 +10,19 @@
 
 #
 # Copyright 2022 Friedrich Kink
+# Copyright 2025 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libiax2
-COMPONENT_VERSION=      0.2.3
+COMPONENT_VERSION=      1.3.4
 COMPONENT_FMRI=         library/libiax2
 COMPONENT_SUMMARY=      A portable IAX/IAX2 protocol telephony client library.
 COMPONENT_CLASSIFICATION=Applications/Internet
-COMPONENT_SRC=          iaxmodem-1.3.3
+COMPONENT_SRC=          iaxmodem-1.3.4
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:463f96b4e7e1abf0efc9bdb7cbe3b2f10486a123ca8e2e40a5b04c1abb00d28d
+COMPONENT_ARCHIVE_HASH= sha256:900de2f77072bce02786fe7f4d4ddfd4b9f5fe3255b1319772383099adee5633
 COMPONENT_PROJECT_URL=  https://iaxmodem.sourceforge.net/
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/iaxmodem/files/latest/$(COMPONENT_ARCHIVE)
 
