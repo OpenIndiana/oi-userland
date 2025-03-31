@@ -30,8 +30,8 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_MAJOR_VERSION= 3.31
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).6
+COMPONENT_MAJOR_VERSION= 4.0
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).0
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_DESCRIPTION= \
 CMake is a family of tools designed to build, test and package software. \
@@ -42,13 +42,18 @@ workspaces that can be used in the compiler environment of your choice.
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0
+COMPONENT_ARCHIVE_HASH=	sha256:ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=      BSD 3 Clause, MIT, GPLv2, LGPLv2.1, LGPLv3, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Dynamically create the license file from its sources:
+$(COMPONENT_LICENSE_FILE): $(SOURCE_DIR)/LICENSE.rst $(SOURCE_DIR)/Licenses/README.rst $(SOURCE_DIR)/Licenses/LGPLv2.1.txt \
+	$(SOURCE_DIR)/Licenses/LGPLv3.txt
+	cat $? > $@
 
 CMAKE_VERSION= $(COMPONENT_MAJOR_VERSION)
 PKG_MACROS += CMAKE_VERSION=$(CMAKE_VERSION)

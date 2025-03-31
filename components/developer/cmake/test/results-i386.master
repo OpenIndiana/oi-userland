@@ -26,7 +26,8 @@ Test kwsys.testProcess-10 ..............................   Passed
 Test kwiml.test ........................................   Passed
 Test CMake.Copyright ...................................   Passed
 Test CommandLineTest ...................................   Passed
-Test FindPackageTest ...................................   Passed
+Test FindPackageCMakeTest ..............................   Passed
+Test FindPackageCpsTest ................................   Passed
 Test StringFileTest ....................................   Passed
 Test TryCompile ........................................   Passed
 Test SystemInformation .................................   Passed
@@ -50,7 +51,6 @@ Test NewlineArgs .......................................   Passed
 Test SetLang ...........................................   Passed
 Test EmptyProperty .....................................   Passed
 Test ExternalOBJ .......................................   Passed
-Test LoadCommand .......................................   Passed
 Test LinkDirectory .....................................   Passed
 Test LinkLanguage ......................................   Passed
 Test LinkLine ..........................................   Passed
@@ -79,7 +79,6 @@ Test SourceFileProperty ................................   Passed
 Test SourceFileIncludeDirProperty ......................   Passed
 Test CxxDialect ........................................   Passed
 Test CrossCompile ......................................   Passed
-Test Policy0002 ........................................   Passed
 Test CMakeBuildTest ....................................   Passed
 Test CMakeDoubleProject ................................   Passed
 Test Module.CheckTypeSize ..............................   Passed
@@ -135,7 +134,6 @@ Test CPackTestAllGenerators ............................   Passed
 Test CPackComponentsPrefix .............................   Passed
 Test X11 ...............................................   Passed
 Test CMakeTestAllGenerators ............................   Passed
-Test LoadedCommandOneConfig ............................   Passed
 Test complexOneConfig ..................................   Passed
 Test complex ...........................................   Passed
 Test Environment .......................................   Passed
@@ -207,6 +205,7 @@ Test WarnUnusedCliUsed .................................   Passed
 Test WarnUninitialized .................................   Passed
 Test TestsWorkingDirectory .............................   Passed
 Test CTest.NoNewline ...................................   Passed
+Test CTest.ScriptMode ..................................   Passed
 Test CTest.UpdateSVN ...................................   Passed
 Test CTest.UpdateCVS ...................................   Passed
 Test CTest.UpdateGIT ...................................   Passed
@@ -280,12 +279,14 @@ Test CMakeLib.testCTestResourceAllocator ...............   Passed
 Test CMakeLib.testCTestResourceSpec ....................   Passed
 Test CMakeLib.testCTestResourceGroups ..................   Passed
 Test CMakeLib.testDebug ................................   Passed
+Test CMakeLib.testDocumentationFormatter ...............   Passed
 Test CMakeLib.testGccDepfileReader .....................   Passed
 Test CMakeLib.testGeneratedFileStream ..................   Passed
 Test CMakeLib.testJSONHelpers ..........................   Passed
 Test CMakeLib.testRST ..................................   Passed
 Test CMakeLib.testRange ................................   Passed
 Test CMakeLib.testOptional .............................   Passed
+Test CMakeLib.testPathResolver .........................   Passed
 Test CMakeLib.testString ...............................   Passed
 Test CMakeLib.testStringAlgorithms .....................   Passed
 Test CMakeLib.testSystemTools ..........................   Passed
@@ -295,6 +296,7 @@ Test CMakeLib.testXMLSafe ..............................   Passed
 Test CMakeLib.testFindPackageCommand ...................   Passed
 Test CMakeLib.testUVHandlePtr ..........................   Passed
 Test CMakeLib.testUVJobServerClient ....................   Passed
+Test CMakeLib.testUVPatches ............................   Passed
 Test CMakeLib.testUVProcessChain .......................   Passed
 Test CMakeLib.testUVRAII ...............................   Passed
 Test CMakeLib.testUVStreambuf ..........................   Passed
@@ -332,11 +334,9 @@ Test RunCMake.CMP0038 ..................................   Passed
 Test RunCMake.CMP0039 ..................................   Passed
 Test RunCMake.CMP0040 ..................................   Passed
 Test RunCMake.CMP0041 ..................................   Passed
-Test RunCMake.CMP0043 ..................................   Passed
 Test RunCMake.CMP0045 ..................................   Passed
 Test RunCMake.CMP0046 ..................................   Passed
 Test RunCMake.CMP0049 ..................................   Passed
-Test RunCMake.CMP0050 ..................................   Passed
 Test RunCMake.CMP0051 ..................................   Passed
 Test RunCMake.CMP0053 ..................................   Passed
 Test RunCMake.CMP0054 ..................................   Passed
@@ -389,6 +389,7 @@ Test RunCMake.CompilerNotFound .........................   Passed
 Test RunCMake.CompilerId ...............................   Passed
 Test RunCMake.CompilerTest .............................   Passed
 Test RunCMake.Configure ................................   Passed
+Test RunCMake.CpsExportImport ..........................   Passed
 Test RunCMake.DisallowedCommands .......................   Passed
 Test RunCMake.ExportCompileCommands ....................   Passed
 Test RunCMake.ExcludeFromAll ...........................   Passed
@@ -398,6 +399,7 @@ Test RunCMake.ExtraGenerators ..........................   Passed
 Test RunCMake.FeatureSummary ...........................   Passed
 Test RunCMake.FPHSA ....................................   Passed
 Test RunCMake.FileAPI ..................................***Failed
+Test RunCMake.Instrumentation ..........................   Passed
 Test RunCMake.ConfigDir ................................   Passed
 Test RunCMake.FindBoost ................................   Passed
 Test RunCMake.FindLua ..................................   Passed
@@ -433,6 +435,7 @@ Test RunCMake.Languages ................................   Passed
 Test RunCMake.LanguageStandards ........................   Passed
 Test RunCMake.LinkItemValidation .......................   Passed
 Test RunCMake.LinkStatic ...............................   Passed
+Test RunCMake.ARCHIVER-prefix ..........................   Passed
 Test RunCMake.ObjectLibrary ............................   Passed
 Test RunCMake.ParseImplicitIncludeInfo .................   Passed
 Test RunCMake.ParseImplicitLinkInfo ....................   Passed
@@ -490,6 +493,7 @@ Test RunCMake.ctest_upload .............................   Passed
 Test RunCMake.ctest_environment ........................   Passed
 Test RunCMake.ctest_empty_binary_directory .............   Passed
 Test RunCMake.ctest_fixtures ...........................   Passed
+Test RunCMake.ctest_instrumentation ....................   Passed
 Test RunCMake.define_property ..........................   Passed
 Test RunCMake.file .....................................   Passed
 Test RunCMake.file-CHMOD ...............................   Passed
@@ -500,6 +504,7 @@ Test RunCMake.file-STRINGS .............................   Passed
 Test RunCMake.find_file ................................   Passed
 Test RunCMake.find_library .............................   Passed
 Test RunCMake.find_package .............................   Passed
+Test RunCMake.find_package-CPS .........................   Passed
 Test RunCMake.find_path ................................   Passed
 Test RunCMake.find_program .............................   Passed
 Test RunCMake.foreach ..................................   Passed
@@ -522,6 +527,7 @@ Test RunCMake.project_injected .........................   Passed
 Test RunCMake.property_init ............................   Passed
 Test RunCMake.DependencyProviders ......................   Passed
 Test RunCMake.return ...................................   Passed
+Test RunCMake.SarifOutput ..............................   Passed
 Test RunCMake.separate_arguments .......................   Passed
 Test RunCMake.set_property .............................   Passed
 Test RunCMake.string ...................................   Passed
@@ -558,6 +564,7 @@ Test RunCMake.target_link_libraries-LINK_LANGUAGE ......   Passed
 Test RunCMake.target_link_libraries-LINK_LANG_AND_ID ...   Passed
 Test RunCMake.target_link_libraries-LINK_LIBRARY .......   Passed
 Test RunCMake.target_link_libraries-LINK_GROUP .........   Passed
+Test RunCMake.target_link_libraries-LINKER-prefix ......   Passed
 Test RunCMake.add_link_options .........................   Passed
 Test RunCMake.target_link_options ......................   Passed
 Test RunCMake.add_compile_definitions ..................   Passed
@@ -597,6 +604,7 @@ Test RunCMake.ctest_labels_for_subprojects .............   Passed
 Test RunCMake.CompilerArgs .............................   Passed
 Test RunCMake.LinkerLauncher ...........................   Passed
 Test RunCMake.CPack_7Z .................................   Passed
+Test RunCMake.CPack_TAR ................................   Passed
 Test RunCMake.CPack_TBZ2 ...............................   Passed
 Test RunCMake.CPack_TGZ ................................   Passed
 Test RunCMake.CPack_TXZ ................................   Passed
@@ -617,6 +625,7 @@ Test RunCMake.CMakePresetsPackage ......................   Passed
 Test RunCMake.CMakePresetsWorkflow .....................   Passed
 Test RunCMake.VerifyHeaderSets .........................   Passed
 Test RunCMake.set_tests_properties .....................   Passed
+Test RunCMake.CMakeListFileName ........................   Passed
 Test RunCMake.Codegen ..................................   Passed
 Test RunCMake.TransformDepfile .........................   Passed
 Test FindPackageModeMakefileTest .......................   Passed
@@ -647,7 +656,7 @@ Test CMake.EndStuff ....................................   Passed
 Test CMake.GetPrerequisites ............................   Passed
 Test CMake.PolicyCheck .................................   Passed
 
-99% tests passed, 1 tests failed out of 645
+99% tests passed, 1 tests failed out of 654
 
 Label Time Summary:
 CUDA       =*proc (14 tests)
@@ -658,7 +667,7 @@ ISPC       =*proc (7 tests)
 Total Test time (real) =
 
 The following tests FAILED:
-	397 - RunCMake.FileAPI (Failed)
+	398 - RunCMake.FileAPI (Failed)
 Errors while running CTest
 Output from these tests are in: $(@D)/Testing/Temporary/LastTest.log
 Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
