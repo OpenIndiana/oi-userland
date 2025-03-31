@@ -307,11 +307,6 @@ SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 [[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
-if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/pyproject.toml" ]] ; then
-	[[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
-	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
-fi
-
 # Get summary if not already provided
 if [[ -z "$SUMMARY" ]] ; then
 	SUMMARY=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.summary')
