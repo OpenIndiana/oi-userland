@@ -1,0 +1,84 @@
+--- gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/src/lib.rs.old	2025-02-18 21:41:42.122637652 -0500
++++ gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/src/lib.rs	2025-02-18 21:52:04.774078549 -0500
+@@ -152,7 +152,7 @@
+     const LOOPBACK: &[NameMtu] = &[NameMtu(Some("lo0"), 32_768), NameMtu(Some("lo0"), 32_768)];
+     #[cfg(target_os = "netbsd")]
+     const LOOPBACK: &[NameMtu] = &[NameMtu(Some("lo0"), 33_624), NameMtu(Some("lo0"), 33_624)];
+-    #[cfg(target_os = "solaris")]
++    #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+     // Note: Different loopback MTUs for IPv4 and IPv6?!
+     const LOOPBACK: &[NameMtu] = &[NameMtu(Some("lo0"), 8_232), NameMtu(Some("lo0"), 8_252)];
+ 
+--- gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/.cargo-checksum.json.old	2025-02-18 21:53:43.500887507 -0500
++++ gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/.cargo-checksum.json	2025-02-18 21:54:36.235258100 -0500
+@@ -1 +1 @@
+-{"files":{"CODE_OF_CONDUCT.md":"f7b4cba1deaa0a77bd611c04c84ef5b6859e44c8370f7513fe688fb9531b913b","Cargo.lock":"0d7b4f80f302400b5fba9847542ab3a0e94dd50bb0d27111927a6e4037b42eef","Cargo.toml":"82ab8662dd7a9c324bd23a7234fa2b8d6df9a9cab2b9baa778039bb55666bfb8","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"4ad721b5b6a3d39ca3e2202f403d897c4a1d42896486dd58963a81f8e64ef61d","README.md":"2c9cce2eb06f0897e9b2fb68d8fa640da581bf440c26f266f8af5b3edb02dc6a","SECURITY.md":"75455814b6cf997e22a927eb979b4356d788583aa1eb96e90853aaab0f82ad1b","build.rs":"c26ac0385171924eefec5ce864067419bb023961b054abaf060d8da567dc6241","src/bsd.rs":"e680ddb399419bb67219fa1c0d3e6672d32023f325584869bd050e2f2ecc8ff9","src/lib.rs":"a59ae67763bc6bb9e6a4f7e7af61fed722ca032b667276a68e6ad687f1fe1e6e","src/linux.rs":"4e99612a04d744e2ca22b2e353faa500b37cb58caddaecb7566b4748aa1f7209","src/routesocket.rs":"be837947e2c3f9301a174499217fe8920ff492918bf85ca5eb281eb7ad2240e1","src/windows.rs":"b139c7aaa0c39415ce1773f1c9569be1a6b82dfe82334ab0c6cb80e7d232363e"},"package":"4c30d3771729ec4349aae3b1a7c0b6b4a1500459e60b1fda95fe0657c3711574"}
+\ No newline at end of file
++{"files":{"CODE_OF_CONDUCT.md":"f7b4cba1deaa0a77bd611c04c84ef5b6859e44c8370f7513fe688fb9531b913b","Cargo.lock":"0d7b4f80f302400b5fba9847542ab3a0e94dd50bb0d27111927a6e4037b42eef","Cargo.toml":"82ab8662dd7a9c324bd23a7234fa2b8d6df9a9cab2b9baa778039bb55666bfb8","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"4ad721b5b6a3d39ca3e2202f403d897c4a1d42896486dd58963a81f8e64ef61d","README.md":"2c9cce2eb06f0897e9b2fb68d8fa640da581bf440c26f266f8af5b3edb02dc6a","SECURITY.md":"75455814b6cf997e22a927eb979b4356d788583aa1eb96e90853aaab0f82ad1b","build.rs":"a607d0ec09087a5d1fd6d7f54179b09a9cd388cb7931ecda31ace3a1db173d6f","src/bsd.rs":"d157251ede4af2abc0610293f169635a0b071df9fcaecf6c6971e93169ab8713","src/lib.rs":"288ccfa2cfd39dccbef97f4b1071593ce18f68ea1d584773c14a60a8a8dda50c","src/linux.rs":"4e99612a04d744e2ca22b2e353faa500b37cb58caddaecb7566b4748aa1f7209","src/routesocket.rs":"be837947e2c3f9301a174499217fe8920ff492918bf85ca5eb281eb7ad2240e1","src/windows.rs":"b139c7aaa0c39415ce1773f1c9569be1a6b82dfe82334ab0c6cb80e7d232363e"},"package":"4c30d3771729ec4349aae3b1a7c0b6b4a1500459e60b1fda95fe0657c3711574"}
+--- gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/build.rs.old	2025-02-18 22:40:12.792257531 -0500
++++ gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/build.rs	2025-02-18 22:40:42.285341578 -0500
+@@ -103,7 +103,8 @@
+                 target_os = "freebsd",
+                 target_os = "openbsd",
+                 target_os = "netbsd",
+-                target_os = "solaris"
++                target_os = "solaris",
++                target_os = "illumos"
+             )
+         }
+     }
+--- gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/src/bsd.rs.old	2025-02-18 22:43:52.529091055 -0500
++++ gecko-dev-0d1f8ff61fe506646fe3898ef727817b4436ab32/third_party/rust/mtu/src/bsd.rs	2025-02-18 22:47:56.563821918 -0500
+@@ -31,7 +31,7 @@
+     include!(env!("BINDINGS"));
+ }
+ 
+-#[cfg(any(target_os = "netbsd", target_os = "solaris"))]
++#[cfg(any(target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
+ use crate::bsd::bindings::RTA_IFP;
+ use crate::{
+     aligned_by,
+@@ -53,13 +53,13 @@
+ #[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd"))]
+ asserted_const_with_type!(RTM_ADDRS, i32, RTA_DST, u32);
+ 
+-#[cfg(any(target_os = "netbsd", target_os = "solaris"))]
++#[cfg(any(target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
+ asserted_const_with_type!(RTM_ADDRS, i32, RTA_DST | RTA_IFP, u32);
+ 
+-#[cfg(not(target_os = "solaris"))]
++#[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+ type AddressFamily = u8;
+ 
+-#[cfg(target_os = "solaris")]
++#[cfg(any(target_os = "solaris", target_os = "illumos"))]
+ type AddressFamily = u16;
+ 
+ asserted_const_with_type!(AF_INET, AddressFamily, libc::AF_INET, i32);
+@@ -200,7 +200,7 @@
+         match ip {
+             IpAddr::V4(ip) => SockaddrStorage {
+                 sin: sockaddr_in {
+-                #[cfg(not(target_os = "solaris"))]
++                #[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+                 #[allow(clippy::cast_possible_truncation)]
+                 // `sockaddr_in` len is <= u8::MAX per `const_assert!` above.
+                 sin_len: std::mem::size_of::<sockaddr_in>() as u8,
+@@ -214,7 +214,7 @@
+             },
+             IpAddr::V6(ip) => SockaddrStorage {
+                 sin6: sockaddr_in6 {
+-                #[cfg(not(target_os = "solaris"))]
++                #[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+                 #[allow(clippy::cast_possible_truncation)]
+                 // `sockaddr_in6` len is <= u8::MAX per `const_assert!` above.
+                 sin6_len: std::mem::size_of::<sockaddr_in6>() as u8,
+@@ -225,7 +225,7 @@
+                 sin6_port: 0,
+                 sin6_flowinfo: 0,
+                 sin6_scope_id: 0,
+-                #[cfg(target_os = "solaris")]
++                #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+                 __sin6_src_id: 0,
+                 },
+             },
