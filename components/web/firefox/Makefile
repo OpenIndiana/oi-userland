@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
-# CANDIDATE_BETA=9
+# CANDIDATE_BUILD=2
+# CANDIDATE_BETA=10
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	136.0.4
+COMPONENT_VERSION =	137.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     0299b6544c93b13c8c6c85457d0d3bad1d11963b
+COMPONENT_GIT_HASH=     3b3c7a0c930a5451be3b4088ed795ce01ddf002e
 COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:4a28b9e1c2b8f2f1d434745ebb87fcba8ae116a202878f0fb1e83da63cf7c242
+COMPONENT_ARCHIVE_HASH= sha256:1ec47e2f83ccb80c0133f171091b5669c7ffdf7b86051fc85c0f915b7bcba91d
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.84.0
+RUST_VERSION = 1.85.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -206,6 +206,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	export RUSTUP_HOME=$(RUSTUP_HOME); \
 	export CARGO_HOME=$(CARGO_HOME); \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+	export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
 	curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
 	source $(CARGO_HOME)/env; \
 	rustup install $(RUST_VERSION); \
@@ -219,6 +220,9 @@ ENV +=	CXXFLAGS="$(CXXFLAGS)"
 ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
 ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 ENV += CARGO_HOME=$(CARGO_HOME)
+
+# This is needed to run bins/libs in .rustup
+ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
