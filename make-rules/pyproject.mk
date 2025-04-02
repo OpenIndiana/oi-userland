@@ -41,7 +41,7 @@ COMPONENT_BUILD_ARGS +=		--no-isolation
 COMPONENT_INSTALL_CMD =		$(PYTHON) -m installer
 COMPONENT_INSTALL_ARGS =
 COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
-COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
+COMPONENT_INSTALL_ARGS +=	$(@D)$(COMPONENT_SUBDIR:%=/%)/dist/*.whl
 
 USERLAND_REQUIRED_PACKAGES.python += library/python/build
 USERLAND_REQUIRED_PACKAGES.python += library/python/installer
@@ -100,7 +100,7 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	# properly when we bootstrap the pyproject_installer bootstrapper.
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
-	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
+	cd $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%) ; $(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@
