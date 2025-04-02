@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lz4
-HUMAN_VERSION =			4.4.3
+HUMAN_VERSION =			4.4.4
 COMPONENT_SUMMARY =		LZ4 Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-lz4/python-lz4
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91ed5b71f9179bf3dbfe85d92b52d4b53de2e559aa4daa3b7de18e0dd24ad77d
+	sha256:070fd0627ec4393011251a094e08ed9fdcc78cb4e7ab28f507638eee4e39abda
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
