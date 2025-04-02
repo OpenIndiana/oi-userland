@@ -26,13 +26,13 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gdbm
-COMPONENT_VERSION=	1.24
+COMPONENT_VERSION=	1.25
 COMPONENT_SUMMARY=	gdbm is a set of database routines that use extensible hashing. It works similar to the standard UNIX dbm routines
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gdbm/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf
+COMPONENT_ARCHIVE_HASH= sha256:d02db3c5926ed877f8817b81cd1f92f53ef74ca8c6db543fbba0271b34f393ec
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/database/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Databases

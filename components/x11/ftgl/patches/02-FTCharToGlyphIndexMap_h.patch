@@ -1,0 +1,28 @@
+# 
+# This fixes the following error:
+# ===============================
+# /usr/gcc/14/bin/g++ -DHAVE_CONFIG_H -I. -I/ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src -I.. -IFTGlyph -IFTFont -IFTLayout -I/ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/harfbuzz -I/usr/include/glib-2.0 -I/usr/lib/amd64/glib-2.0/include -I/usr/include/pcre -m64 -O3 -W -Wall -Wundef -Wfloat-equal -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare -Winline -MT libftgl_la-FTCharmap.lo -MD -MP -MF .deps/libftgl_la-FTCharmap.Tpo -c /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharmap.cpp  -fPIC -DPIC -o .libs/libftgl_la-FTCharmap.o
+# In file included from /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharmap.h:35,
+#                  from /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharmap.cpp:30:
+# In destructor 'virtual FTCharToGlyphIndexMap::~FTCharToGlyphIndexMap()',
+#     inlined from 'FTCharmap::FTCharmap(FTFace*)' at /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharmap.cpp:55:1:
+# /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharToGlyphIndexMap.h:77:21: warning: inlining failed in call to 'void FTCharToGlyphIndexMap::clear()': call is unlikely and code size would grow [-Winline]
+#    77 |         inline void clear()
+#       |                     ^~~~~
+# /ws/klausz/oi-userland/components/x11/ftgl/ftgl-2.4.0/src/FTCharToGlyphIndexMap.h:74:18: note: called from here
+#    74 |             clear();
+#       |             ~~~~~^~
+# 
+# send upstream at: March 13, 2025 at 04:42:56 PM CET
+# 
+--- ftgl-2.4.0/src/FTCharToGlyphIndexMap.h.orig	2019-02-07 22:39:58.000000000 +0100
++++ ftgl-2.4.0/src/FTCharToGlyphIndexMap.h	2025-03-13 16:28:50.085042144 +0100
+@@ -74,7 +74,7 @@
+             clear();
+         }
+ 
+-        inline void clear()
++        void clear()
+         {
+             for(int j = 0; Indices && j < BucketIdxSize; j++)
+             {

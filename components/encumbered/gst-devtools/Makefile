@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-devtools
-COMPONENT_VERSION=	1.24.12
+COMPONENT_VERSION=	1.26.0
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:4ef3dd12e5827068d6db7ad01876d1216a80717116c24a0d5b3b57fd7e3c3478
+COMPONENT_ARCHIVE_HASH=	sha256:eff33d7dc292bb074a2788ea887b6283398ffdefafa49fb7d08efe6658a65648
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/devtools
@@ -33,6 +33,11 @@ COMPONENT_LICENSE_FILE=	validate/COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# dots_viewer fails to compile due to missing illumos support in
+# the single-instance crate.
+# https://github.com/WLBF/single-instance/issues/18
+CONFIGURE_OPTIONS += -Ddots_viewer=disabled
 
 PYTHON_SCRIPTS += usr/bin/gst-validate-launcher
 

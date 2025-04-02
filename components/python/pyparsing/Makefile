@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyparsing
-HUMAN_VERSION =			3.2.1
+HUMAN_VERSION =			3.2.3
 COMPONENT_SUMMARY =		pyparsing module - Classes and methods to define and execute parsing grammars
 COMPONENT_PROJECT_URL =		https://github.com/pyparsing/pyparsing/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61980854fd66de3a90028d679a954d5f2623e83144b5afe5ee86f43d762e5f0a
+	sha256:b9c13f1ab8b3b542f72e28f634bad4de758ab3ce4546e4301970ad6fa77c38be
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		shippinglabel
-HUMAN_VERSION =			2.1.0
+HUMAN_VERSION =			2.2.0
 COMPONENT_SUMMARY =		Utilities for handling packages.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/shippinglabel
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/shippinglabel/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:51ea365ca7fc8ff691d80dac446abc1cd595c997a6b9bc0a4aab4e8d89d07e51
+	sha256:87c6557dbc8ec691e3000c1e55b32d6c3115d2e7b8704f34c162adc336667bdc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -57,10 +57,9 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
 PYTHON_REQUIRED_PACKAGES += library/python/dist-meta
 PYTHON_REQUIRED_PACKAGES += library/python/dom-toml
 PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/apeye
 TEST_REQUIRED_PACKAGES.python += library/python/betamax

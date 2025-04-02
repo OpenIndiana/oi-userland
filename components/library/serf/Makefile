@@ -22,13 +22,12 @@
 #
 # Copyright (c) 2016, 2017, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64
 BUILD_STYLE= justmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		serf
 COMPONENT_VERSION=	1.3.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	high performance C-based HTTP client library
 COMPONENT_DESCRIPTION= The serf library is a high performance C-based HTTP client library. \
 It is built upon the Apache Portable Runtime (APR) library.  Features include multiplexed, \
@@ -98,11 +97,11 @@ test:          $(TEST_64)
 REQUIRED_PACKAGES += developer/build/scons
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -159,10 +159,7 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
-# Set CARGO_HOME to make sure projects built using rust (for example via
-# setuptools-rust) do not pollute user's home directory with cargo bits.
-COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
-# Similarly, force our preferred target linker for cargo.
+# Force our preferred target linker for cargo.
 COMPONENT_BUILD_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 
 # Make sure the default Python version is installed last and so is the
@@ -430,6 +427,7 @@ $(eval $(call pytest-plugin,pytest-console-scripts,console-scripts))
 $(eval $(call pytest-plugin,pytest-cov,pytest_cov))
 $(eval $(call pytest-plugin,pytest-custom-exit-code,custom_exit_code))
 $(eval $(call pytest-plugin,pytest-datadir,pytest-datadir))
+$(eval $(call pytest-plugin,pytest-dependency,dependency))
 $(eval $(call pytest-plugin,pytest-enabler,enabler))
 $(eval $(call pytest-plugin,pytest-env,env))
 $(eval $(call pytest-plugin,pytest-expect,pytest_expect))
@@ -445,6 +443,7 @@ $(eval $(call pytest-plugin,pytest-metadata,metadata))
 $(eval $(call pytest-plugin,pytest-mock,pytest_mock))
 $(eval $(call pytest-plugin,pytest-mypy,mypy))
 $(eval $(call pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))
+$(eval $(call pytest-plugin,pytest-order,pytest_order))
 $(eval $(call pytest-plugin,pytest-perf,perf))
 $(eval $(call pytest-plugin,pytest-randomly,randomly))
 $(eval $(call pytest-plugin,pytest-regressions,regressions))
@@ -465,7 +464,6 @@ $(eval $(call pytest-plugin,pytest-subprocess,pytest-subprocess))
 $(eval $(call pytest-plugin,pytest-subtests,subtests))
 $(eval $(call pytest-plugin,pytest-system-statistics,system-statistics))
 $(eval $(call pytest-plugin,pytest-timeout,timeout))
-$(eval $(call pytest-plugin,pytest-travis-fold,travis-fold))
 $(eval $(call pytest-plugin,pytest-xdist,xdist))
 $(eval $(call pytest-plugin,pytest-xdist,xdist.looponfail))
 $(eval $(call pytest-plugin,pytest-xprocess,xprocess))

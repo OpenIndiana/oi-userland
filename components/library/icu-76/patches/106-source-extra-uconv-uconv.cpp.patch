@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2015, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+Add NULL checks to getBuffer calls and catch a potential file leak
+https://unicode-org.atlassian.net/browse/ICU-12378
+
+--- icu/source/extra/uconv/uconv.cpp.orig
++++ icu/source/extra/uconv/uconv.cpp
+@@ -445,7 +445,10 @@
+         }
+     }
+ 
+-    const char16_t *u = s.getBuffer(), *limit = u + s.length();
++    const char16_t *u = s.getBuffer();
++    if (u == nullptr)
++        return -1;
++    const char16_t *limit = u + s.length();
+     char16_t c;
+ 
+     while (u < limit) {
+@@ -1348,6 +1351,7 @@
+ 
+     cf.setBufferSize(bufsz);
+ 
++    try {
+     if(remainArgv < remainArgvLimit) {
+         for (iter = remainArgv; iter != remainArgvLimit; iter++) {
+             if (!cf.convertFile(
+@@ -1367,6 +1371,11 @@
+             goto error_exit;
+         }
+     }
++    }
++    catch (int e)
++    {
++        goto error_exit;
++    }
+ 
+     goto normal_exit;
+ error_exit:

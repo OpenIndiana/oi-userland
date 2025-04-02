@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libdbusmenu
 COMPONENT_VERSION=      16.0.4.0
 HUMAN_VERSION=          16.04.0
-COMPONENT_REVISION=		3
+COMPONENT_REVISION=		4
 COMPONENT_SUMMARY=      Library for passing menus over DBus
 COMPONENT_PROJECT_URL=  https://launchpad.net/libdbusmenu
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -48,9 +48,9 @@ unexport SHELLOPTS
 TEST_REQUIRED_PACKAGES += developer/dbus-test-runner
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
+PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3

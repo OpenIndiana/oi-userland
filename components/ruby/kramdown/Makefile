@@ -10,20 +10,20 @@
 
 #
 # Copyright 2021 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS=32
 BUILD_STYLE=gem
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		kramdown
-COMPONENT_VERSION=	2.3.1
+COMPONENT_VERSION=	2.5.1
 COMPONENT_SUMMARY=	Ruby Markdown superset converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:59e938cfa42a3d6169b295727fe09c4c91d742336c8fbd1042529f4db664ab49
+    sha256:87bbb6abd9d3cebe4fc1f33e367c392b4500e6f8fa19dd61c0972cf4afe7368c
 COMPONENT_ARCHIVE_URL=  https://rubygems.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://kramdown.gettalong.org/
 COMPONENT_FMRI=		library/ruby/kramdown
@@ -32,10 +32,13 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET=		$(NO_TESTS)
+
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
 	$(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-REQUIRED_PACKAGES += runtime/ruby-23
+# Auto-generated dependencies
+REQUIRED_PACKAGES += runtime/ruby-32

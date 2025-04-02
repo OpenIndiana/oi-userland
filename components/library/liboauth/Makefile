@@ -27,9 +27,10 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		liboauth
 COMPONENT_VERSION=	1.0.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A library for processing data according to the oAuth standard
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://sourceforge.net/projects/liboauth
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/liboauth
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:0df60157b052f0e774ade8a8bac59d6e8d4b464058cc55f9208d72e41156811f
@@ -39,9 +40,7 @@ COMPONENT_FMRI=	library/liboauth
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= COPYING.MIT
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 # Use NSS backend instead of OpenSSL backend due to GPL-licensed components
@@ -67,12 +66,6 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS:/p" ' \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(TEST_32_and_64)
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen

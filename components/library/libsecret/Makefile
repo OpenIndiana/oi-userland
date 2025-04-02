@@ -21,9 +21,9 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsecret
-HUMAN_VERSION=		0.21.6
+HUMAN_VERSION=		0.21.7
 COMPONENT_SUMMARY=	GObject-based library for storing and receiving secrets
-COMPONENT_ARCHIVE_HASH=	sha256:747b8c175be108c880d3adfb9c3537ea66e520e4ad2dccf5dce58003aeeca090
+COMPONENT_ARCHIVE_HASH=	sha256:6b452e4750590a2b5617adc40026f28d2f4903de15f1250e1d1c40bfd68ed55e
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Security
 COMPONENT_LICENSE=      LGPL-2.1-only
@@ -56,7 +56,7 @@ COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHARELOCALEDIR) ;
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:0
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 

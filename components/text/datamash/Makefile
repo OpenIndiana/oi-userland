@@ -15,13 +15,12 @@
 # Copyright (c) 2014, David Hoeppner. All rights reserved.
 #
 
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		datamash
 COMPONENT_VERSION=	1.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	performs numeric, textual and statistical operations on data files
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/datamash/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -127,7 +127,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2024.10
+DISTRIBUTION_VERSION = 2025.04
 # Native OS version
 OS_VERSION :=		$(shell $(UNAME) -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
@@ -1096,7 +1096,7 @@ TCLSH.8.6.sparc.64 =	/usr/bin/sparcv9/tclsh8.6
 TCLSH =		$(TCLSH.$(TCL_VERSION).$(MACH).$(BITS))
 
 # ICU library
-ICU_VERSION =			76
+ICU_VERSION =			77
 ICU_LIBRARY_PKG =		library/icu-$(ICU_VERSION)
 REQUIRED_PACKAGES_SUBST +=	ICU_LIBRARY_PKG
 
@@ -1205,6 +1205,11 @@ RUST_OS = illumos
 # This is the linker we would like to use with cargo
 CARGO_TARGET_LINKER = $(CC)
 
+# Set CARGO_HOME to do not pollute user's home directory with cargo bits.
+CARGO_HOME = $(@D)/.cargo
+COMPONENT_BUILD_ENV += CARGO_HOME="$(CARGO_HOME)"
+COMPONENT_INSTALL_ENV += CARGO_HOME="$(CARGO_HOME)"
+COMPONENT_TEST_ENV += CARGO_HOME="$(CARGO_HOME)"
 
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
@@ -1472,13 +1477,11 @@ LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 LD_EXEC_OPTIONS = $(LD_Z_ASLR)
 
 # Environment variables and arguments passed into the build and install
-# environment(s).  These are the initial settings.
-COMPONENT_BUILD_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
-COMPONENT_INSTALL_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)" \
-    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+# environment(s).
+COMPONENT_BUILD_ENV += LD_OPTIONS="$(LD_OPTIONS)"
+COMPONENT_BUILD_ENV += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+COMPONENT_INSTALL_ENV += LD_OPTIONS="$(LD_OPTIONS)"
+COMPONENT_INSTALL_ENV += LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
 # PATH should be always set
 COMPONENT_BUILD_ENV += PATH="$(PATH)"

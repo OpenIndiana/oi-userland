@@ -17,7 +17,7 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 13.3.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -41,24 +41,44 @@ include $(WS_MAKE_RULES)/gcc-component.mk
 CPPFLAGS+=" -D_TS_ERRNO"
 LDFLAGS="-R$OPT/lib"
 
+# SPARC support.
+ifeq ($(MACH), sparc)
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cd $(SOURCE_DIR) && autogen Makefile.def && \
+	$(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/gmp_asm_sparcv9_cpuflags.patch
+CONFIGURE_OPTIONS+= --with-mulhigh-size=2048
+CONFIGURE_OPTIONS+= --with-cpu=ultrasparc
+else
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	cd $(SOURCE_DIR) && autogen Makefile.def
+endif
+
+COMPONENT_POST_INSTALL_ACTION = \
+	( cd $(PROTOUSRDIR)/gcc/13/bin ; \
+	  $(STRIP) \
+		cpp gcov gcov-dump gcov-tool go gofmt lto-dump \
+		$(GNU_TRIPLET)-g++ \
+		$(GNU_TRIPLET)-gccgo \
+		$(GNU_TRIPLET)-gcc-ar \
+		$(GNU_TRIPLET)-gcc-nm \
+		$(GNU_TRIPLET)-gfortran \
+		$(GNU_TRIPLET)-gcc-ranlib \
+		$(GNU_TRIPLET)-gcc-$(COMPONENT_VERSION) ; \
+	  cd ../lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION) ; \
+	  $(STRIP) \
+		cc1* collect2 f951 g++-mapper-server go1 lto-wrapper lto1 )
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS+= --with-ld=$(LD) --without-gnu-ld
-CONFIGURE_OPTIONS+= --with-as=/usr/bin/gas --with-gnu-as
-CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/${TRIPLETS[amd64]}/bin
+CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
 CONFIGURE_OPTIONS+= --with-build-config=no
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,objc
-# CONFIGURE_OPTIONS+= --with-arch-32=i586
 CONFIGURE_OPTIONS+= --enable-shared
 CONFIGURE_OPTIONS+= --with-system-zlib
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-__cxa_atexit
 CONFIGURE_OPTIONS+= --enable-initfini-array
-# CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 

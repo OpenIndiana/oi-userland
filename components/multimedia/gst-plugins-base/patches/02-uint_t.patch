@@ -1,0 +1,12 @@
+uint_t is undefined in netinet/tcp.h is sys/types.h hasn't been included before.
+
+--- gst-plugins-base-1.26.0/gst/tcp/gsttcpsrcstats.c.orig	2025-03-11 21:14:44.000000000 +0100
++++ gst-plugins-base-1.26.0/gst/tcp/gsttcpsrcstats.c	2025-03-15 13:03:25.388678066 +0100
+@@ -6,6 +6,7 @@
+ 
+ /* macOS and iOS have the .h files but the tcp_info struct is private API */
+ #if defined(HAVE_NETINET_TCP_H) && defined(HAVE_NETINET_IN_H) && defined(HAVE_SYS_SOCKET_H)
++#include <sys/types.h>
+ #include <netinet/tcp.h>
+ #include <netinet/in.h>
+ #include <sys/socket.h>

@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Jim Klimov
+# Copyright (c) 2025, Klaus Ziegler
 #
 
 BUILD_STYLE= justmake
@@ -32,6 +33,7 @@ ENV = /usr/bin/env
 COMPONENT_NAME=         p7zip
 COMPONENT_VERSION=      17.6
 HUMAN_VERSION=		17.06
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      The p7zip compression and archiving utility
 COMPONENT_PROJECT_URL=  https://github.com/p7zip-project/p7zip
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -47,8 +49,15 @@ COMPONENT_TEST_DIR =           $(@D)
 COMPONENT_TEST_ENV =           P7ZIP_HOME_DIR=$(BUILD_DIR)/$(MACH$(BITS))/bin
 COMPONENT_TEST_TARGETS =       test test_7z test_7zr
 
+# make COMPONENT_PREP_ACTION architecture independent.
+ifeq ($(MACH), sparc)
+ARCH= $(MACH)_gcc
+else
+ARCH= x86
+endif
+
 COMPONENT_PREP_ACTION = (cd $(@D) && \
-	$(GSED) -e 's,^CC=,\#CC=,' -e 's,^CXX=,\#CXX=,' -e 's,-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE,$$(BUILD_FLAGS),' < makefile.solaris_x86 > makefile.machine && \
+	$(GSED) -e 's,^CC=,\#CC=,' -e 's,^CXX=,\#CXX=,' -e 's,-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE,$$(BUILD_FLAGS),' < makefile.solaris_$(ARCH) > makefile.machine && \
 	( echo 'CC=$$(BUILD_CC) $$(ALLFLAGS)'; echo 'CXX=$$(BUILD_CXX) $$(ALLFLAGS)' ) >> makefile.machine )
 
 COMPONENT_BUILD_TARGETS = all3
@@ -66,6 +75,8 @@ $(BUILD_DIR)/%: $(SOURCE_DIR)/DOC/%
 
 EXTRATARGETS = \
 	$(BUILD_DIR)/copying.txt $(BUILD_DIR)/unRarLicense.txt
+
+COMPONENT_PRE_INSTALL_ACTION = cd $(COMPONENT_SRC); $(GPATCH) -p1 < ../files/07-fix-$(MACH64)-lib-path.patch
 
 COMPONENT_POST_INSTALL_ACTION = \
 	( $(MKDIR) $(PROTOUSRLIBDIR)/p7zip/$(MACH$(BITS)) \

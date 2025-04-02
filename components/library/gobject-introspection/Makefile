@@ -24,11 +24,9 @@ include ../../../make-rules/shared-macros.mk
 # https://gi.readthedocs.io/en/latest/changelog.html
 
 COMPONENT_NAME =		gobject-introspection
-HUMAN_VERSION =			1.82.0
-IPS_COMPONENT_VERSION =		1.83.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.84.0
 COMPONENT_SUMMARY =		Introspection for GObject libraries
-COMPONENT_ARCHIVE_HASH =	sha256:0f5a4c1908424bf26bc41e9361168c363685080fbdb87a196c891c8401ca2f09
+COMPONENT_ARCHIVE_HASH =	sha256:945b57da7ec262e5c266b89e091d14be800cc424277d82a02872b7d794a84779
 COMPONENT_FMRI =		library/desktop/gobject/gobject-introspection
 COMPONENT_CLASSIFICATION =	Development/GNOME and GTK+
 COMPONENT_LICENSE =		GPL-2.0-or-later AND LGPL-2.0-or-later AND MIT

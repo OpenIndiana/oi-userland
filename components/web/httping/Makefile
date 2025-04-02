@@ -16,13 +16,12 @@
 # Copyright 2017 Adam Stevko
 # Copyright 2020 Andreas Wacknitz
 #
-BUILD_BITS=			64
 BUILD_STYLE=		justmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httping
 COMPONENT_VERSION=	2.5
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		diagnostic/httping
 COMPONENT_SUMMARY=	Ping using HTTP requests
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -43,7 +42,7 @@ CC +=		$(CC_BITS)
 EXTRA_LIBRARIES =	-lsocket -lnsl
 EXTRA_LIBRARIES +=	-lncurses -lfftw3 -lssl -lcrypto -lresolv -lm
 
-# Provide location for openssl 3.1 headers/libraries
+# Provide location for openssl-3 headers/libraries
 CFLAGS += -I$(OPENSSL_INCDIR)
 LDFLAGS  += -L$(OPENSSL_LIBDIR)
 

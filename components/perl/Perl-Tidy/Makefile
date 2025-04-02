@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Perl-Tidy
-HUMAN_VERSION =			20250214
+HUMAN_VERSION =			20250311
 COMPONENT_SUMMARY =		indent and reformat perl scripts
 COMPONENT_CPAN_AUTHOR =		SHANCOCK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e71d8e93b2ff55ed7e0cc981117424499edfc927e96e353dbc6fbea1f2a81fa3
+	sha256:7fc6ceda4e3c9fc79c777afbcf8d167ecc35b16ff81c9cbeaf727b15d0502d8a
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 

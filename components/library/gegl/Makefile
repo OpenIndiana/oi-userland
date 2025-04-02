@@ -21,12 +21,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
-COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).54
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).58
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:35a342f08c6b4379adee2cb5748fc4e307cfdcf2417c0bb17d6ca6543f238b1e
+COMPONENT_ARCHIVE_HASH= sha256:d5678bbd5fe535941b82f965b97fcc9385ce936f70c982bd565a53d5519d1bff
 COMPONENT_ARCHIVE_URL= https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://www.gegl.org/
 COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
@@ -43,7 +42,7 @@ CFLAGS += $(XPG6MODE)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += -Ddocs=false
 CONFIGURE_OPTIONS += -Dgi-docgen=disabled
-CONFIGURE_OPTIONS += -Dvapigen=disabled
+CONFIGURE_OPTIONS += -Dvapigen=enabled
 CONFIGURE_OPTIONS += -Dworkshop=true
 # libav is from encumbered
 CONFIGURE_OPTIONS += -Dlibav=disabled
@@ -53,6 +52,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

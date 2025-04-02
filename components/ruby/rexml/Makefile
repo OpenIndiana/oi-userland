@@ -12,7 +12,6 @@
 # Copyright 2021 Alexander Pyhalov
 #
 
-BUILD_BITS=32
 BUILD_STYLE=gem
 
 include ../../../make-rules/shared-macros.mk
@@ -26,16 +25,18 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a33c3bf95fda7983ec7f05054f3a985af41dbc25a0339843bd2479e93cabb123
 COMPONENT_ARCHIVE_URL=  https://rubygems.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://github.com/ruby/rexml
-COMPONENT_FMRI=		library/ruby/rexml
+COMPONENT_FMRI=		library/ruby/rexml-32
 COMPONENT_CLASSIFICATION=	Development/Ruby
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
 	$(GEM) spec $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/ruby-32
+# Auto-generated dependencies

@@ -23,6 +23,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-calc
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MATE Calculator App
 COMPONENT_ARCHIVE_HASH= sha256:804b125d1e2864b1e74af816da9b2ab8b19472b9af974437ee7355ada5e628f5
 COMPONENT_CLASSIFICATION=	Applications/Accessories
@@ -32,7 +33,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_check
-HUMAN_VERSION =			2.5.0
+HUMAN_VERSION =			2.5.2
 COMPONENT_SUMMARY =		A pytest plugin that allows multiple failures per test.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3a6be8431c7720287958436d97a6b823eed5ae5ceb7da5572a0e4a9462feaf88
+	sha256:131fa57ad2f0e21e39886e05255142bb584e61881a5e4584fd06b14aae63ee5d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

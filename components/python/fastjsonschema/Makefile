@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project fastjsonschema
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fastjsonschema
 HUMAN_VERSION =			2.21.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Fastest Python implementation of JSON schema
 COMPONENT_PROJECT_URL =		https://github.com/horejsek/python-fastjsonschema
 COMPONENT_ARCHIVE_HASH =	\
@@ -38,4 +39,5 @@ PYTEST_ADDOPTS += -m 'not benchmark'
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python

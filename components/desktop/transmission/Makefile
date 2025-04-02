@@ -14,13 +14,12 @@
 # Copyright 2022-2023 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		transmission
 COMPONENT_VERSION=	3.0.0
 HUMAN_VERSION=		3.00
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	https://www.transmissionbt.com/
 COMPONENT_SUMMARY=	GTK and console BitTorrent client
 COMPONENT_FMRI=		desktop/torrent/transmission
@@ -36,6 +35,8 @@ COMPONENT_LICENSE=	GPLv2,MIT
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS += -Wno-incompatible-pointer-types
 
 CONFIGURE_OPTIONS+=	--program-prefix=""
 CONFIGURE_OPTIONS+=	--with-gtk

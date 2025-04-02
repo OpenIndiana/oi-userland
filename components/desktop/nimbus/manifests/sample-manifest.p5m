@@ -10,10 +10,11 @@
 #
 
 #
-# Copyright 2018 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -24,8 +25,6 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/engines/libnimbus.a
 file path=usr/lib/$(MACH64)/gtk-2.0/2.10.0/engines/libnimbus.so
-file path=usr/lib/gtk-2.0/2.10.0/engines/libnimbus.a
-file path=usr/lib/gtk-2.0/2.10.0/engines/libnimbus.so
 file path=usr/share/icons/nimbus/12x12/actions/info.png
 link path=usr/share/icons/nimbus/12x12/apps/gnome-help.png \
     target=help-browser.png
@@ -277,8 +276,7 @@ link path=usr/share/icons/nimbus/16x16/actions/gtk-unindent-ltr.png \
     target=format-indent-less.png
 link path=usr/share/icons/nimbus/16x16/actions/gtk-unindent-rtl.png \
     target=format-indent-more.png
-link \
-    path=usr/share/icons/nimbus/16x16/actions/gtk-zoom-$(COMPONENT_VERSION).png \
+link path=usr/share/icons/nimbus/16x16/actions/gtk-zoom-100.png \
     target=zoom-original.png
 link path=usr/share/icons/nimbus/16x16/actions/gtk-zoom-in.png \
     target=zoom-in.png
@@ -2053,8 +2051,7 @@ link path=usr/share/icons/nimbus/24x24/actions/gtk-unindent-ltr.png \
     target=format-indent-less.png
 link path=usr/share/icons/nimbus/24x24/actions/gtk-unindent-rtl.png \
     target=format-indent-more.png
-link \
-    path=usr/share/icons/nimbus/24x24/actions/gtk-zoom-$(COMPONENT_VERSION).png \
+link path=usr/share/icons/nimbus/24x24/actions/gtk-zoom-100.png \
     target=zoom-original.png
 link path=usr/share/icons/nimbus/24x24/actions/gtk-zoom-in.png \
     target=zoom-in.png
@@ -2784,7 +2781,7 @@ link path=usr/share/icons/nimbus/24x24/status/error.png target=dialog-error.png
 file path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-0-24.png
 file path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-25-49.png
 file path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-50-74.png
-file path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-75-$(COMPONENT_VERSION).png
+file path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-75-100.png
 link path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-disconn.png \
     target=network-offline.png
 link path=usr/share/icons/nimbus/24x24/status/gnome-netstatus-error.png \
@@ -2839,7 +2836,7 @@ link path=usr/share/icons/nimbus/24x24/status/nm-no-connection.png \
 file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-0-24.png
 file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-25-49.png
 file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-50-74.png
-file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-75-$(COMPONENT_VERSION).png
+file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-75-100.png
 file path=usr/share/icons/nimbus/24x24/status/nwam-wireless-nosignal.png
 link path=usr/share/icons/nimbus/24x24/status/stock_dialog-error.png \
     target=dialog-error.png
@@ -3533,7 +3530,7 @@ link path=usr/share/icons/nimbus/32x32/status/error.png target=dialog-error.png
 file path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-0-24.png
 file path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-25-49.png
 file path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-50-74.png
-file path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-75-$(COMPONENT_VERSION).png
+file path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-75-100.png
 link path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-disconn.png \
     target=network-offline.png
 link path=usr/share/icons/nimbus/32x32/status/gnome-netstatus-error.png \
@@ -3584,7 +3581,7 @@ link path=usr/share/icons/nimbus/32x32/status/nm-no-connection.png \
 file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-0-24.png
 file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-25-49.png
 file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-50-74.png
-file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-75-$(COMPONENT_VERSION).png
+file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-75-100.png
 file path=usr/share/icons/nimbus/32x32/status/nwam-wireless-nosignal.png
 link path=usr/share/icons/nimbus/32x32/status/stock_dialog-error.png \
     target=dialog-error.png
@@ -5867,6 +5864,104 @@ link path=usr/share/themes/dark-nimbus/gtk-2.0/zoom-original.png \
     target=../../nimbus/gtk-2.0/zoom-original.png
 link path=usr/share/themes/dark-nimbus/gtk-2.0/zoom-out.png \
     target=../../nimbus/gtk-2.0/zoom-out.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/budgie.css \
+    target=../../../nimbus/gtk-3.0/apps/budgie.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/desktop.css \
+    target=../../../nimbus/gtk-3.0/apps/desktop.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/gnome-flashback.css \
+    target=../../../nimbus/gtk-3.0/apps/gnome-flashback.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/gnome-terminal.css \
+    target=../../../nimbus/gtk-3.0/apps/gnome-terminal.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/libreoffice.css \
+    target=../../../nimbus/gtk-3.0/apps/libreoffice.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/mate.css \
+    target=../../../nimbus/gtk-3.0/apps/mate.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/synaptic.css \
+    target=../../../nimbus/gtk-3.0/apps/synaptic.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/apps/unity.css \
+    target=../../../nimbus/gtk-3.0/apps/unity.css
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-checked-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-active.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-checked-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-checked-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-insensitive.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-checked.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-mixed-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-active.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-mixed-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-mixed-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-insensitive.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-mixed-symbolic.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-symbolic.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-mixed.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-unchecked-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-active.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-unchecked-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-unchecked-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-insensitive.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/checkbox-unchecked.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-mixed-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-active.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-mixed-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-mixed-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-insensitive.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-mixed-symbolic.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-symbolic.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-mixed.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-selected-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-active.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-selected-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-selected-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-insensitive.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-selected.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-unselected-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-active.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-unselected-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-hover.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-unselected-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-insensitive.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/radio-unselected.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected.png
+link \
+    path=usr/share/themes/dark-nimbus/gtk-3.0/assets/scrollbar-slider-horiz.png \
+    target=../../../nimbus/gtk-3.0/assets/scrollbar-slider-horiz.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/assets/scrollbar-slider.png \
+    target=../../../nimbus/gtk-3.0/assets/scrollbar-slider.png
+link path=usr/share/themes/dark-nimbus/gtk-3.0/gtk-widgets-assets.css \
+    target=../../nimbus/gtk-3.0/gtk-widgets-assets.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/gtk-widgets.css \
+    target=../../nimbus/gtk-3.0/gtk-widgets.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/gtk.css \
+    target=../../nimbus/gtk-3.0/gtk.css
+link path=usr/share/themes/dark-nimbus/gtk-3.0/settings.ini \
+    target=../../nimbus/gtk-3.0/settings.ini
+link path=usr/share/themes/dark-nimbus/gtk-3.0/thumbnail.png \
+    target=../../nimbus/gtk-3.0/thumbnail.png
 file path=usr/share/themes/dark-nimbus/index.theme
 link \
     path=usr/share/themes/dark-nimbus/metacity-1/button-close-icon-prelight.png \
@@ -6116,6 +6211,107 @@ link path=usr/share/themes/light-nimbus/gtk-2.0/zoom-original.png \
     target=../../nimbus/gtk-2.0/zoom-original.png
 link path=usr/share/themes/light-nimbus/gtk-2.0/zoom-out.png \
     target=../../nimbus/gtk-2.0/zoom-out.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/budgie.css \
+    target=../../../nimbus/gtk-3.0/apps/budgie.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/desktop.css \
+    target=../../../nimbus/gtk-3.0/apps/desktop.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/gnome-flashback.css \
+    target=../../../nimbus/gtk-3.0/apps/gnome-flashback.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/gnome-terminal.css \
+    target=../../../nimbus/gtk-3.0/apps/gnome-terminal.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/libreoffice.css \
+    target=../../../nimbus/gtk-3.0/apps/libreoffice.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/mate.css \
+    target=../../../nimbus/gtk-3.0/apps/mate.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/synaptic.css \
+    target=../../../nimbus/gtk-3.0/apps/synaptic.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/apps/unity.css \
+    target=../../../nimbus/gtk-3.0/apps/unity.css
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-checked-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-active.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-checked-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-checked-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked-insensitive.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-checked.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-checked.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-mixed-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-active.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-mixed-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-mixed-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-insensitive.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-mixed-symbolic.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed-symbolic.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-mixed.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-mixed.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-unchecked-active.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-active.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-unchecked-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-unchecked-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked-insensitive.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/checkbox-unchecked.png \
+    target=../../../nimbus/gtk-3.0/assets/checkbox-unchecked.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-mixed-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-active.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-mixed-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-mixed-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-insensitive.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-mixed-symbolic.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed-symbolic.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-mixed.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-mixed.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-selected-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-active.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-selected-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-selected-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected-insensitive.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-selected.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-selected.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-unselected-active.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-active.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-unselected-hover.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-hover.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-unselected-insensitive.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected-insensitive.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/radio-unselected.png \
+    target=../../../nimbus/gtk-3.0/assets/radio-unselected.png
+link \
+    path=usr/share/themes/light-nimbus/gtk-3.0/assets/scrollbar-slider-horiz.png \
+    target=../../../nimbus/gtk-3.0/assets/scrollbar-slider-horiz.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/assets/scrollbar-slider.png \
+    target=../../../nimbus/gtk-3.0/assets/scrollbar-slider.png
+link path=usr/share/themes/light-nimbus/gtk-3.0/gtk-widgets-assets.css \
+    target=../../nimbus/gtk-3.0/gtk-widgets-assets.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/gtk-widgets.css \
+    target=../../nimbus/gtk-3.0/gtk-widgets.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/gtk.css \
+    target=../../nimbus/gtk-3.0/gtk.css
+link path=usr/share/themes/light-nimbus/gtk-3.0/settings.ini \
+    target=../../nimbus/gtk-3.0/settings.ini
+link path=usr/share/themes/light-nimbus/gtk-3.0/thumbnail.png \
+    target=../../nimbus/gtk-3.0/thumbnail.png
 file path=usr/share/themes/light-nimbus/index.theme
 link \
     path=usr/share/themes/light-nimbus/metacity-1/button-close-icon-prelight.png \

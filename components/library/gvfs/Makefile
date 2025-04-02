@@ -13,7 +13,6 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gvfs
@@ -37,8 +36,9 @@ PATH= $(PATH.gnu)
 COMPONENT_PREP_ACTION= ( cd $(@D) && \
 	autoreconf -if)
 
+CFLAGS += -Wno-deprecated-declarations -Wno-incompatible-pointer-types
 CPPFLAGS += -D_XPG4_2 -D__EXTENSIONS__
-LDFLAGS += -lxml2 -L/usr/lib/libsmbclient/$(MACH64) -R/usr/lib/libsmbclient/$(MACH64)
+LDFLAGS += -lxml2 -L/usr/lib/libsmbclient -R/usr/lib/libsmbclient
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-fuse
@@ -57,11 +57,6 @@ CONFIGURE_OPTIONS += --enable-keyring
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-samba-includes=/usr/include/libsmbclient
-
-CONFIGURE_OPTIONS.32 += --without-samba
-CONFIGURE_OPTIONS.64 += --with-samba
-#CONFIGURE_OPTIONS.64 += --with-samba-libs=/usr/lib/libsmbclient/$(MACH64)
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV+= PERL=$(PERL)
 CONFIGURE_ENV+= GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas

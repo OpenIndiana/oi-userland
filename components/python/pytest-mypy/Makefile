@@ -11,38 +11,33 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-mypy
+#   $WS_TOOLS/python-integrate-project -d python/pytest-mypy pytest_mypy
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-mypy
-HUMAN_VERSION =			0.10.3
-COMPONENT_SUMMARY =		pytest-mypy - Mypy static type checker plugin for Pytest
-COMPONENT_PROJECT_URL =		https://github.com/dbader/pytest-mypy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/85/3a/318c91140f242cafff64ddac97d6999640bc3da9afbf37253475c2208e79/pytest-mypy-0.10.3.tar.gz
+COMPONENT_NAME =		pytest_mypy
+HUMAN_VERSION =			1.0.0
+COMPONENT_SUMMARY =		A Pytest Plugin for Mypy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f8458f642323f13a2ca3e2e61509f7767966b527b4d8adccd5032c3e7b4fd3db
+	sha256:e284a2e8d27bc16a3069c34ab601b2f48fceba9bd435d65f69b7d8f41c373d6e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/filelock
 PYTHON_REQUIRED_PACKAGES += library/python/mypy
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
-TEST_REQUIRED_PACKAGES.python += library/python/pexpect
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

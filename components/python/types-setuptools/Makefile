@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_setuptools
-HUMAN_VERSION =			75.8.2.20250301
+HUMAN_VERSION =			78.1.0.20250329
 COMPONENT_SUMMARY =		Typing stubs for setuptools
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c900bceebfffc92a4abc3cfd4b3c39ead1a2298a73dae37e6bc09da7baf797a0
+	sha256:31e62950c38b8cc1c5114b077504e36426860a064287cac11b9666ab3a483234
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,4 +32,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python

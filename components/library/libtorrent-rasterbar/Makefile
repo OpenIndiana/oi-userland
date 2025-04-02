@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent-rasterbar
 COMPONENT_VERSION=	2.0.11
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	An open source C++ library implementing the BitTorrent protocol
 COMPONENT_GIT_URL= https://github.com/arvidn
 COMPONENT_PROJECT_URL=	$(COMPONENT_GIT_URL)/libtorrent
@@ -68,6 +69,11 @@ COMPONENT_POST_UNPACK_ACTION_3= \
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# manual add dependency to math library on SPARC.
+ifeq ($(MACH), sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
 
 # Provide paths for OpenSSL
 CFLAGS  += -I$(OPENSSL_INCDIR)

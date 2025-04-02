@@ -23,6 +23,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		eom
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      MATE image viewer
 COMPONENT_ARCHIVE_HASH= sha256:9a01cab2995a1a8c7258c865eae5f182ed4730c44672afdc3a07e423edd53abc
 COMPONENT_ARCHIVE_URL=  https://pub.mate-desktop.org/releases/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
@@ -50,9 +51,9 @@ REQUIRED_PACKAGES += system/library/libdbus-glib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += image/library/librsvg
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
