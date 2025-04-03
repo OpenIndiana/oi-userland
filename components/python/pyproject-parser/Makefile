@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject-parser
-HUMAN_VERSION =			0.11.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.13.0
 COMPONENT_SUMMARY =		Parser for 'pyproject.toml'
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/pyproject-parser
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/repo-helper/pyproject-parser/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:908291a7c667e12cd15e400399b5551bb1e97fa11b2af2473be0cbbe4b0d57d2
+	sha256:5a95409b191b7c7be08d4e0c6e558c9253dc428750819cd65115619630a9aa6c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -51,17 +50,19 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-regressions
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-datadir
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/apeye-core
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/dom-toml
 PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
 PYTHON_REQUIRED_PACKAGES += library/python/natsort
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/shippinglabel
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/click
 TEST_REQUIRED_PACKAGES.python += library/python/cmarkgfm
