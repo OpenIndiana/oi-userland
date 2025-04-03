@@ -1,5 +1,5 @@
---- meson-1.7.0/unittests/allplatformstests.py.orig
-+++ meson-1.7.0/unittests/allplatformstests.py
+--- meson-1.7.1/unittests/allplatformstests.py.orig
++++ meson-1.7.1/unittests/allplatformstests.py
 @@ -1630,6 +1630,11 @@
                  # so ignore that.
                  self.assertTrue(rpath.startswith('/usr/lib/gcc'))
@@ -23,9 +23,9 @@
              else:
                  self.assertIsNone(rpath)
  
---- meson-1.7.0/unittests/linuxliketests.py.orig
-+++ meson-1.7.0/unittests/linuxliketests.py
-@@ -911,13 +911,39 @@
+--- meson-1.7.1/unittests/linuxliketests.py.orig
++++ meson-1.7.1/unittests/linuxliketests.py
+@@ -905,13 +905,39 @@
          self.init(testdir)
          self.build()
          build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
@@ -65,7 +65,7 @@
          self.assertEqual(install_rpath, 'baz')
  
      @skipIfNoPkgconfig
-@@ -933,13 +959,39 @@
+@@ -927,13 +953,39 @@
          self.init(testdir, override_envvars={'PKG_CONFIG_PATH': testdir})
          self.build()
          build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
@@ -105,7 +105,7 @@
          self.assertEqual(install_rpath, 'baz:/foo/dummy')
  
      @skipIfNoPkgconfig
-@@ -989,6 +1041,11 @@
+@@ -983,6 +1035,11 @@
              self.build()
              self.install(use_destdir=False)
              got_rpath = get_rpath(os.path.join(yonder_prefix, 'bin/rpathified'))
@@ -117,7 +117,7 @@
              self.assertEqual(got_rpath, yonder_libdir, rpath_format)
  
      @skip_if_not_base_option('b_sanitize')
-@@ -1699,7 +1756,12 @@
+@@ -1693,7 +1750,12 @@
          self.init(testdir)
          self.build()
          build_rpath = get_rpath(os.path.join(self.builddir, 'prog'))
