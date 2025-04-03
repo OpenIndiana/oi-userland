@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
 COMPONENT_VERSION= 3.0.21
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -37,6 +38,8 @@ include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CONFIGURE_ENV += BUILDCC="/usr/bin/gcc"
 
 # Required for POSIX recvmsg/sendmsg
 LDFLAGS += -lnsl -lsocket
@@ -201,6 +204,7 @@ REQUIRED_PACKAGES += audio/mpg123
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += developer/ffmpeg-6
@@ -215,8 +219,10 @@ REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += library/c++/protobuf-302
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
@@ -251,6 +257,7 @@ REQUIRED_PACKAGES += library/video/libschroedinger
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
+REQUIRED_PACKAGES += library/video/x265-41
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
