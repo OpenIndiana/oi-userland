@@ -11,23 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-cov
+#   $WS_TOOLS/python-integrate-project -d python/pytest-cov pytest_cov
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-cov
-HUMAN_VERSION =			6.0.0
+COMPONENT_NAME =		pytest_cov
+HUMAN_VERSION =			6.1.0
 COMPONENT_SUMMARY =		Pytest plugin for measuring coverage.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-cov
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fde0b595ca248bb8e2d76f020b465f3b107c9632e6a1d1705f17834c89dcadc0
+	sha256:ec55e828c66755e5b74a21bd7cc03c303a9f928389c0563e50ba454a6dbe71db
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/coverage
