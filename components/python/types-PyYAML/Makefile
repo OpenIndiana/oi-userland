@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/types-PyYAML types_pyyaml
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_pyyaml
-HUMAN_VERSION =			6.0.12.20250326
+HUMAN_VERSION =			6.0.12.20250402
 COMPONENT_SUMMARY =		Typing stubs for PyYAML
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5e2d86d8706697803f361ba0b8188eef2999e1c372cd4faee4ebb0844b8a4190
+	sha256:d7c13c3e6d335b6af4b0122a01ff1d270aba84ab96d1a1a1063ecba3e13ec075
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,4 +32,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
