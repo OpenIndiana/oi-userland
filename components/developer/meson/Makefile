@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson
-HUMAN_VERSION =			1.7.0
+HUMAN_VERSION =			1.7.1
 COMPONENT_SUMMARY =		A high performance build system
 COMPONENT_PROJECT_URL =		https://mesonbuild.com
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:08efbe84803eed07f863b05092d653a9d348f7038761d900412fddf56deb0284
+	sha256:155780a5be87f6dd7f427ad8bcbf0f2b2c5f62ee5fdacca7caa9de8439a24b89
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -70,6 +70,10 @@ PYTEST_ADDOPTS += --deselect unittests/machinefiletests.py::NativeFileTests::tes
 
 # Remove timing
 COMPONENT_TEST_TRANSFORMS += "-e '/^Total .*time:/d'"
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+# Varies between test runs
+COMPONENT_TEST_TRANSFORMS += "-e 's/Generating targets:.*//g'"
 
 # This project does not support tox so we need to provide test requirements
 # manually.
