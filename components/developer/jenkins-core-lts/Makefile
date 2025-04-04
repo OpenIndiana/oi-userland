@@ -31,8 +31,8 @@ COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			lts
 COMPONENT_MAJOR_VERSION=	2
 COMPONENT_MINOR_VERSION=	492
-COMPONENT_PATCH_VERSION=	2
-COMPONENT_ARCHIVE_HASH=		sha256:ae60fbd5f07ca4cd423a4737ed71f3b54ecf14666bb98a0cbff6a773540c2275
+COMPONENT_PATCH_VERSION=	3
+COMPONENT_ARCHIVE_HASH=		sha256:90ccf556133c36fdf7653ad710f00d248bf2895f9fbc26ccee0e2d3ba681b01f
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -55,6 +55,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CLEAN_PATHS += $(SOURCE_DIR)
+CLEAN_PATHS += $(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION)
 
 COMPONENT_POST_UNPACK_ACTION += ( $(MKDIR) $(SOURCE_DIR) );
 
@@ -89,4 +90,4 @@ install: $(INSTALL_64)
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk17
+REQUIRED_PACKAGES += runtime/java/openjdk21
