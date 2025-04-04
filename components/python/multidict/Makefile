@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			6.3.2
 COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0085b0afb2446e57050140240a8595846ed64d1cbd26cef936bfab3192c673b8
+	sha256:c1035eea471f759fa853dd6e76aaa1e389f93b3e1403093fa0fd3ab4db490678
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -59,14 +58,13 @@ TEST_REQUIREMENTS += requirements/pytest.txt
 
 # We have no pytest-codspeed packaged yet
 PYTEST_ADDOPTS += --ignore tests/test_multidict_benchmarks.py
-
-# 6.3.0 was yanked, but IPS cannot downgrade
-COMPONENT_VERSION =		6.3.0
+PYTEST_ADDOPTS += --ignore tests/test_views_benchmarks.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/objgraph
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
