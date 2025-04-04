@@ -35,16 +35,16 @@ ESR = esr
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 3
+# CANDIDATE_BUILD= 2
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.9.0
+COMPONENT_VERSION =	128.9.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:75033b168ede45eac576624327eb1cc32480494e4d698758b33382be5b0fb7bd
+	 sha256:2d6caeb9c958d89d9a789eeaf0e41064f4a8678b493452e89a244f5dc60e952d
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
