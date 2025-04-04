@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3385 items]
+X workers [3404 items]
 
 scheduling tests via LoadScheduling
 
@@ -183,6 +183,7 @@ tests/test_client_functional.py::test_aiohttp_request_context_manager[pyloop] PA
 tests/test_client_functional.py::test_aiohttp_request_coroutine[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_close_sess_on_error[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_not_found PASSED
+tests/test_client_functional.py::test_aiohttp_request_ssl[pyloop] PASSED
 tests/test_client_functional.py::test_async_payload_generator[pyloop] PASSED
 tests/test_client_functional.py::test_async_with_session PASSED
 tests/test_client_functional.py::test_auth_persist_on_redirect_to_other_host_with_global_auth[pyloop] PASSED
@@ -361,6 +362,7 @@ tests/test_client_functional.py::test_skip_auto_headers_user_agent[pyloop] PASSE
 tests/test_client_functional.py::test_skip_default_auto_headers_user_agent[pyloop] PASSED
 tests/test_client_functional.py::test_socket_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client[pyloop] PASSED
+tests/test_client_functional.py::test_ssl_client_alpn[pyloop] PASSED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof_nested[pyloop] PASSED
@@ -614,6 +616,7 @@ tests/test_client_session.py::test_closed[pyloop] PASSED
 tests/test_client_session.py::test_connector[pyloop] PASSED
 tests/test_client_session.py::test_connector_loop[pyloop] PASSED
 tests/test_client_session.py::test_cookie_jar_usage[pyloop] PASSED
+tests/test_client_session.py::test_cookies_with_not_quoted_cookie_jar[pyloop] PASSED
 tests/test_client_session.py::test_create_connector[pyloop] PASSED
 tests/test_client_session.py::test_default_proxy[pyloop] PASSED
 tests/test_client_session.py::test_del[pyloop] PASSED
@@ -809,6 +812,7 @@ tests/test_connector.py::test_connector_cache_trace_race PASSED
 tests/test_connector.py::test_connector_context_manager[pyloop] PASSED
 tests/test_connector.py::test_connector_does_not_remove_needed_waiters[pyloop] PASSED
 tests/test_connector.py::test_connector_multiple_event_loop PASSED
+tests/test_connector.py::test_connector_resolve_in_case_of_trace_cache_miss_exception[pyloop] PASSED
 tests/test_connector.py::test_connector_throttle_trace_race[pyloop] PASSED
 tests/test_connector.py::test_create_conn[pyloop] PASSED
 tests/test_connector.py::test_ctor_cleanup PASSED
@@ -974,12 +978,14 @@ tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_readchunk_r
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_readexactly[pyloop] PASSED
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_readline[pyloop] PASSED
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_readline_resume_paused[pyloop] PASSED
+tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_resumed_on_eof[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_feed_pause[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_has_buffer[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_read_eof[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_read_with_exception[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_resume_on_read[pyloop] PASSED
 tests/test_flowcontrol_streams.py::test_flow_control_data_queue_waiter_cancelled[pyloop] PASSED
+tests/test_flowcontrol_streams.py::test_stream_reader_eof_when_full PASSED
 tests/test_formdata.py::test_form_data_is_multipart_param PASSED
 tests/test_formdata.py::test_formdata_field_name_is_not_quoted PASSED
 tests/test_formdata.py::test_formdata_field_name_is_quoted PASSED
@@ -1677,13 +1683,17 @@ tests/test_http_parser.py::test_whitespace_before_header[py-parser-pyloop] PASSE
 tests/test_http_writer.py::test_drain[pyloop] PASSED
 tests/test_http_writer.py::test_drain_no_transport[pyloop] PASSED
 tests/test_http_writer.py::test_payloadwriter_properties[pyloop] PASSED
+tests/test_http_writer.py::test_serialize_headers_raises_on_new_line_or_carriage_return[\n] PASSED
+tests/test_http_writer.py::test_serialize_headers_raises_on_new_line_or_carriage_return[\r] PASSED
 tests/test_http_writer.py::test_set_eof_after_write_headers[pyloop] PASSED
 tests/test_http_writer.py::test_write_calls_callback[pyloop] PASSED
 tests/test_http_writer.py::test_write_drain[pyloop] PASSED
 tests/test_http_writer.py::test_write_eof_calls_callback[pyloop] PASSED
 tests/test_http_writer.py::test_write_headers_prevents_injection[pyloop] PASSED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_writelines[pyloop] PASSED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_writelines[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_2d_shape_memoryview[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_bytes_memoryview[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_chunked[pyloop] PASSED
@@ -1695,6 +1705,8 @@ tests/test_http_writer.py::test_write_payload_deflate_compression[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_connection_lost[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_writelines[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_writelines[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_eof[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_length[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_short_ints_memoryview[pyloop] PASSED
@@ -1703,6 +1715,8 @@ tests/test_http_writer.py::test_write_to_closed_transport[pyloop] PASSED
 tests/test_http_writer.py::test_write_to_closing_transport[pyloop] PASSED
 tests/test_imports.py::test___all__ PASSED
 tests/test_imports.py::test_web___all__ PASSED
+tests/test_leaks.py::test_leak[check_for_client_response_leak.py-ClientResponse leaked] PASSED
+tests/test_leaks.py::test_leak[check_for_request_leak.py-Request leaked] PASSED
 tests/test_loop.py::TestCase::test_default_loop PASSED
 tests/test_loop.py::TestCase::test_on_startup_hook PASSED
 tests/test_loop.py::test_default_loop[pyloop] PASSED
@@ -2520,6 +2534,7 @@ tests/test_web_functional.py::test_http10_keep_alive_with_headers_close[pyloop] 
 tests/test_web_functional.py::test_http11_keep_alive_default[pyloop] PASSED
 tests/test_web_functional.py::test_httpfound_cookies_302[pyloop] PASSED
 tests/test_web_functional.py::test_iter_any[pyloop] PASSED
+tests/test_web_functional.py::test_keepalive_expires_on_time[pyloop] PASSED
 tests/test_web_functional.py::test_keepalive_race_condition[pyloop] PASSED
 tests/test_web_functional.py::test_large_header[pyloop] PASSED
 tests/test_web_functional.py::test_large_header_allowed[pyloop] PASSED
@@ -2934,6 +2949,9 @@ tests/test_web_response.py::test_last_modified_string_invalid[xxyyzz-None] PASSE
 tests/test_web_response.py::test_last_modified_timestamp PASSED
 tests/test_web_response.py::test_multiline_reason PASSED
 tests/test_web_response.py::test_nonstr_text_in_ctor PASSED
+tests/test_web_response.py::test_passing_cimultidict_to_web_response_not_mutated[CIMultiDict] PASSED
+tests/test_web_response.py::test_passing_cimultidict_to_web_response_not_mutated[MultiDict] PASSED
+tests/test_web_response.py::test_passing_cimultidict_to_web_response_not_mutated[dict] PASSED
 tests/test_web_response.py::test_payload_body_get_text[async_iter-None] PASSED
 tests/test_web_response.py::test_payload_body_get_text[payload1-test] PASSED
 tests/test_web_response.py::test_payload_body_get_text[payload2-test] PASSED
@@ -2941,7 +2959,7 @@ tests/test_web_response.py::test_payload_body_get_text[payload3-test] PASSED
 tests/test_web_response.py::test_payload_body_get_text[payload4-test] PASSED
 tests/test_web_response.py::test_payload_body_get_text[payload5-test] PASSED
 tests/test_web_response.py::test_payload_body_get_text[payload7-None] PASSED
-tests/test_web_response.py::test_payload_body_get_text[payload8---x\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 4\r\n\r\ntest] PASSED
+tests/test_web_response.py::test_payload_body_get_text[payload8---x\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 4\r\n\r\ntest] PASSED
 tests/test_web_response.py::test_payload_body_get_text[test-test] PASSED
 tests/test_web_response.py::test_prepare_calls_signal PASSED
 tests/test_web_response.py::test_prepare_twice PASSED
@@ -3132,6 +3150,7 @@ tests/test_web_server.py::test_handler_cancellation PASSED
 tests/test_web_server.py::test_no_handler_cancellation PASSED
 tests/test_web_server.py::test_raw_server_cancelled_in_write_eof[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_do_not_swallow_exceptions[pyloop] PASSED
+tests/test_web_server.py::test_raw_server_does_not_swallow_base_exceptions[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_handler_timeout[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_html_exception[pyloop] PASSED
 tests/test_web_server.py::test_raw_server_html_exception_debug[pyloop] PASSED
@@ -3394,7 +3413,162 @@ tests/test_worker.py::test_run[AsyncioWorker-pyloop] PASSED
 tests/test_worker.py::test_run_async_factory[AsyncioWorker-pyloop] PASSED
 tests/test_worker.py::test_run_not_app[AsyncioWorker-pyloop] PASSED
 
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
+Name                                                                                                                                            Stmts   Miss  Cover
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/__init__.py                  29      3    90%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/__init__.py        0      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/helpers.py        77      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/models.py         51      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader.py          6      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_c.py      271    271     0%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py     271    228    16%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py         73      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                      113      5    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py             71      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                   574     25    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py        162      6    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py             166      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py            713     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                275      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py         70      6    91%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                775     59    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                283      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                  97      2    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                      94      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                  484     15    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http.py                      11      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_exceptions.py           53      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py              516     15    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_websocket.py             6      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py              144      8    94%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/log.py                        7      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                625     16    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                  260      5    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py          31      1    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py            173      9    95%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                  82     42    49%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/streams.py                  418      5    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tcp_helpers.py               19      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/test_utils.py               338     11    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tracing.py                  196      4    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/typedefs.py                  32      6    81%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web.py                      128      1    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_app.py                  316      8    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_exceptions.py           157      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_fileresponse.py         188      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_log.py                  103      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_middlewares.py           61      1    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_protocol.py             372     22    94%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py              445      9    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py             490      4    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py             108      3    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py               213     16    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_server.py                42      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py        746     12    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                   389      8    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                   130     13    90%
+tests/conftest.py                                                                                                                                 141     16    89%
+tests/isolated/check_for_client_response_leak.py                                                                                                   32      0   100%
+tests/isolated/check_for_request_leak.py                                                                                                           29      1    97%
+tests/test_base_protocol.py                                                                                                                       200      0   100%
+tests/test_benchmarks_client.py                                                                                                                   287    287     0%
+tests/test_benchmarks_client_request.py                                                                                                            56     56     0%
+tests/test_benchmarks_client_ws.py                                                                                                                 66     66     0%
+tests/test_benchmarks_cookiejar.py                                                                                                                 14     14     0%
+tests/test_benchmarks_http_websocket.py                                                                                                            71     71     0%
+tests/test_benchmarks_http_writer.py                                                                                                               11     11     0%
+tests/test_benchmarks_web_fileresponse.py                                                                                                          63     63     0%
+tests/test_benchmarks_web_middleware.py                                                                                                            25     25     0%
+tests/test_benchmarks_web_response.py                                                                                                              33     33     0%
+tests/test_benchmarks_web_urldispatcher.py                                                                                                        320    320     0%
+tests/test_circular_imports.py                                                                                                                     31      1    97%
+tests/test_classbasedview.py                                                                                                                       39      2    95%
+tests/test_client_connection.py                                                                                                                    94      0   100%
+tests/test_client_exceptions.py                                                                                                                   199      0   100%
+tests/test_client_fingerprint.py                                                                                                                   59      0   100%
+tests/test_client_functional.py                                                                                                                  2651     27    99%
+tests/test_client_proto.py                                                                                                                        144      0   100%
+tests/test_client_request.py                                                                                                                      838     11    99%
+tests/test_client_response.py                                                                                                                     490      5    99%
+tests/test_client_session.py                                                                                                                      605      5    99%
+tests/test_client_ws.py                                                                                                                           489      0   100%
+tests/test_client_ws_functional.py                                                                                                                879     20    98%
+tests/test_compression_utils.py                                                                                                                    15      0   100%
+tests/test_connector.py                                                                                                                          2148     52    98%
+tests/test_cookiejar.py                                                                                                                           467      0   100%
+tests/test_flowcontrol_streams.py                                                                                                                 143      0   100%
+tests/test_formdata.py                                                                                                                             86      0   100%
+tests/test_helpers.py                                                                                                                             454     39    91%
+tests/test_http_exceptions.py                                                                                                                     109      0   100%
+tests/test_http_parser.py                                                                                                                        1106     19    98%
+tests/test_http_writer.py                                                                                                                         338      0   100%
+tests/test_imports.py                                                                                                                              40     17    58%
+tests/test_leaks.py                                                                                                                                12      0   100%
+tests/test_loop.py                                                                                                                                 36      2    94%
+tests/test_multipart.py                                                                                                                           826     37    96%
+tests/test_multipart_helpers.py                                                                                                                   446     19    96%
+tests/test_payload.py                                                                                                                              96      6    94%
+tests/test_proxy.py                                                                                                                               325      0   100%
+tests/test_proxy_functional.py                                                                                                                    462    462     0%
+tests/test_pytest_plugin.py                                                                                                                        27      0   100%
+tests/test_resolver.py                                                                                                                            231     90    61%
+tests/test_route_def.py                                                                                                                           210     20    90%
+tests/test_run_app.py                                                                                                                             577     10    98%
+tests/test_streams.py                                                                                                                            1079      0   100%
+tests/test_tcp_helpers.py                                                                                                                          52      2    96%
+tests/test_test_utils.py                                                                                                                          274      5    98%
+tests/test_tracing.py                                                                                                                              48      0   100%
+tests/test_urldispatch.py                                                                                                                         879     14    98%
+tests/test_web_app.py                                                                                                                             454      5    99%
+tests/test_web_cli.py                                                                                                                              94      0   100%
+tests/test_web_exceptions.py                                                                                                                      179      0   100%
+tests/test_web_functional.py                                                                                                                     1626     50    97%
+tests/test_web_log.py                                                                                                                             132      2    98%
+tests/test_web_middleware.py                                                                                                                      285      4    99%
+tests/test_web_request.py                                                                                                                         513      0   100%
+tests/test_web_request_handler.py                                                                                                                  42      1    98%
+tests/test_web_response.py                                                                                                                        928      3    99%
+tests/test_web_runner.py                                                                                                                          151      9    94%
+tests/test_web_sendfile.py                                                                                                                         84      0   100%
+tests/test_web_sendfile_functional.py                                                                                                             673      7    99%
+tests/test_web_server.py                                                                                                                          250      1    99%
+tests/test_web_urldispatcher.py                                                                                                                   526     20    96%
+tests/test_web_websocket.py                                                                                                                       444      2    99%
+tests/test_web_websocket_functional.py                                                                                                            866     53    94%
+tests/test_websocket_data_queue.py                                                                                                                 23      0   100%
+tests/test_websocket_handshake.py                                                                                                                 152      0   100%
+tests/test_websocket_parser.py                                                                                                                    365      4    99%
+tests/test_websocket_writer.py                                                                                                                     97      0   100%
+tests/test_worker.py                                                                                                                              189      4    98%
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                           37879   2864    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3342 passed, 38 skipped, 5 xfailed ========
+======== 3361 passed, 38 skipped, 5 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
