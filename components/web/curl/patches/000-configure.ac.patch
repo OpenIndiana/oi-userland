@@ -1,21 +1,20 @@
-Enable illumos gss support.  It is incorrectly assumed to be heimdal--do not add to libcurl.pc file
---- curl-8.11.1/configure.ac.~1~	2024-12-11 02:08:12.000000000 -0500
-+++ curl-8.11.1/configure.ac	2024-12-11 16:44:46.448078749 -0500
-@@ -2054,6 +2054,9 @@
-             *-hp-hpux*)
-               gss_libname="gss"
-               ;;
-+            *solaris2*)
-+              gss_libname="gss"
-+              ;;
-             *)
-               gss_libname="gssapi"
-               ;;
-@@ -2076,6 +2079,9 @@
+--- curl-8.13.0/configure.ac.orig	2025-04-02 07:47:41.000000000 +0200
++++ curl-8.13.0/configure.ac	2025-04-05 15:50:00.109802467 +0200
+@@ -2020,6 +2020,9 @@
+           *-hp-hpux*)
+             gss_libname="gss"
+             ;;
++          *-solaris2*)
++            gss_libname="gss"
++            ;;
+           *)
+             gss_libname="gssapi"
+             ;;
+@@ -2041,6 +2044,9 @@
        *-hp-hpux*)
          LIBS="-lgss $LIBS"
          ;;
-+      *solaris2*)
++      *-solaris2*)
 +        LIBS="-lgss $LIBS"
 +        ;;
        *)
