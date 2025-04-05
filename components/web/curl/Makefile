@@ -27,14 +27,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.12.1
+COMPONENT_VERSION=      8.13.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_ARCHIVE_HASH= sha256:0341f1ed97a26c811abaebd37d62b833956792b7607ea3f15d001613c76de202
+COMPONENT_ARCHIVE_HASH= sha256:4a093979a3c2d02de2fbc00549a32771007f2e78032c6faa5ecd2f7a9e152025
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -44,7 +44,6 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Community code uses different defs
-#$(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
 $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
 CPPFLAGS += $(CPP_LARGEFILES)
@@ -57,7 +56,6 @@ CPPFLAGS += $(shell pkg-config --cflags libidn2)
 CPPFLAGS += $(shell krb5-config --cflags)
 LIBS     += $(shell krb5-config --libs gssapi)
 
-#GSSAPI_LIBDIR_32= /usr/lib
 GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
 
 LDFLAGS += -m$(BITS)
