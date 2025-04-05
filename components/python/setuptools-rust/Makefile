@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_rust
-HUMAN_VERSION =			1.11.0
+HUMAN_VERSION =			1.11.1
 COMPONENT_SUMMARY =		Setuptools Rust extension plugin
 COMPONENT_PROJECT_URL =		https://github.com/PyO3/setuptools-rust
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f765d66f3def6fdc85e1e6d889c6a812aea1430c8dadcf1c7b6779b45f874fb2
+	sha256:7dabc4392252ced314b8050d63276e05fdc5d32398fc7d3cce1f6a6ac35b76c0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
