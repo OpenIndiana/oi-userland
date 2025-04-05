@@ -14,13 +14,13 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libsigc++
 COMPONEN_MAJOR_VERSION=	3.6
 COMPONENT_VERSION=      $(COMPONEN_MAJOR_VERSION).0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Libsigc++ - a library that implements a typesafe callback system for standard C++
 COMPONENT_PROJECT_URL=  https://libsigc.sourceforge.net
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,9 +35,6 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += -Dbuild-documentation=true
-
-# Prevent test failure:
-unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
 
