@@ -1,14 +1,14 @@
---- harfbuzz-2.9.0/src/check-symbols.py.orig	2021-08-12 01:48:45.000000000 +0000
-+++ harfbuzz-2.9.0/src/check-symbols.py	2021-08-27 20:25:22.927513501 +0000
+--- harfbuzz-11.0.0/src/check-symbols.py.orig	2025-03-23 23:33:53.000000000 +0100
++++ harfbuzz-11.0.0/src/check-symbols.py	2025-03-24 15:43:49.671738874 +0100
 @@ -9,8 +9,9 @@
  
- IGNORED_SYMBOLS = '|'.join(['_fini', '_init', '_fdata', '_ftext', '_fbss',
+ IGNORED_SYMBOLS = ['_fini', '_init', '_fdata', '_ftext', '_fbss',
  	'__bss_start', '__bss_start__', '__bss_end__', '_edata', '_end', '_bss_end__',
 -	'__end__', '__gcov_.*', 'llvm_.*', 'flush_fn_list', 'writeout_fn_list', 'mangle_path',
--	'lprofDirMode', 'reset_fn_list'])
+-	'lprofDirMode', 'reset_fn_list']
 +    '__end__', '__gcov_flush.*', 'llvm_.*', '_DYNAMIC', '_GLOBAL_OFFSET_TABLE_',
-+	'lprofDirMode', 'reset_fn_list',
-+    '_PROCEDURE_LINKAGE_TABLE_', '_etext', '_lib_version'])
++    'lprofDirMode', 'reset_fn_list',
++    '_PROCEDURE_LINKAGE_TABLE_', '_etext', '_lib_version']
  
- nm = os.getenv ('NM', shutil.which ('nm'))
- if not nm:
+ # Rust
+ IGNORED_SYMBOLS += [
