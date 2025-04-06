@@ -29,18 +29,16 @@ BUILD_STYLE = justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
-HUMAN_VERSION =		2.05
-COMPONENT_VERSION =	2.5
-COMPONENT_REVISION =	1
+HUMAN_VERSION =		2.06
+COMPONENT_VERSION =	2.6
 COMPONENT_SUMMARY=	Filename Encoding Conversion Tool
 COMPONENT_DESCRIPTION=	Convmv helps convert a single filename,\
  a directory tree and the contained files or a whole filesystem\
  into a different encoding.
-COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
+COMPONENT_PROJECT_URL=	https://www.j3e.de/linux/convmv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:53b6ac8ae4f9beaee5bc5628f6a5382bfd14f42a5bed3d881b829d7b52d81ca6
+COMPONENT_ARCHIVE_HASH=	sha256:a37192e266742e7fe33ec19a3be49aea7fd4d066887863a6e193fa345bf2e592
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/convmv
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
