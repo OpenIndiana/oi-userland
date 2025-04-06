@@ -20,13 +20,12 @@
 #
 # Copyright (c) 2023 Friedrich Kink
 #
-BUILD_STYLE= configure
-BUILD_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ragel
 COMPONENT_VERSION=      6.10
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Ragel compiles executable finite state machines from regular languages.
 COMPONENT_PROJECT_URL=  https://www.colm.net/open-source/ragel/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,8 +42,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This is needed because the community provided 'check' target is not viewpath aware
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-#CONFIGURE_OPTIONS +=	--enable-manual
 
 ASLR_MODE= $(ASLR_ENABLE)
 
