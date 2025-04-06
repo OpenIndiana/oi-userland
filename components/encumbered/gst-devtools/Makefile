@@ -34,10 +34,8 @@ COMPONENT_LICENSE_FILE=	validate/COPYING
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-# dots_viewer fails to compile due to missing illumos support in
-# the single-instance crate.
-# https://github.com/WLBF/single-instance/issues/18
-CONFIGURE_OPTIONS += -Ddots_viewer=disabled
+# Need to compile dynamic rust crates. See https://www.illumos.org/issues/15767
+LD_Z_IGNORE=
 
 PYTHON_SCRIPTS += usr/bin/gst-validate-launcher
 
@@ -55,11 +53,22 @@ GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 # SOVER is needed for manifest processing
 PKG_MACROS += SOVER=$(SOVER)
 
+# Need to patch single-instance dependency crate since it does not have
+# Illumos support.
+# Download all dependency crates and then apply patch.
+CRATE_PATCH_FLAG = --backup --version-control=numbered -p0
+COMPONENT_PRE_BUILD_ACTION= \
+	CARGO_HOME=$(@D)/.cargo cargo fetch --manifest-path $(SOURCE_DIR)/dots-viewer/Cargo.toml ; \
+	for patchfile in patches-crate/*.patch; do \
+ 		gpatch $(CRATE_PATCH_FLAG) < $$patchfile ; \
+ 	done ;
+
 # build dependency not detected by REQUIRED_PACKAGES
 REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base

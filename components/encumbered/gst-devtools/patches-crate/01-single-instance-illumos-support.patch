@@ -1,0 +1,76 @@
+--- build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/single-instance-0.3.3/src/lib.rs.orig	1973-11-29 16:33:09.000000000 -0500
++++ build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/single-instance-0.3.3/src/lib.rs	2025-04-03 16:53:11.007308785 -0400
+@@ -22,7 +22,7 @@
+ 
+ pub mod error;
+ 
+-#[cfg(target_os = "macos")]
++#[cfg(any(target_os = "macos", target_os = "illumos"))]
+ extern crate libc;
+ #[cfg(target_os = "linux")]
+ extern crate nix;
+@@ -169,6 +169,46 @@
+                 Ok(Self {
+                     _file: file,
+                     is_single,
++                })
++            }
++        }
++
++        /// Returns whether this instance is single.
++        pub fn is_single(&self) -> bool {
++            self.is_single
++        }
++    }
++}
++
++#[cfg(target_os = "illumos")]
++mod inner {
++    use error::Result;
++    use libc::{___errno, flock, EWOULDBLOCK, LOCK_EX, LOCK_NB};
++    use std::fs::File;
++    use std::os::unix::io::AsRawFd;
++    use std::path::Path;
++
++    /// A struct representing one running instance.
++    pub struct SingleInstance {
++        _file: File,
++        is_single: bool,
++    }
++
++    impl SingleInstance {
++        /// Returns a new SingleInstance object.
++        pub fn new(name: &str) -> Result<Self> {
++            let path = Path::new(name);
++            let file = if path.exists() {
++                File::open(path)?
++            } else {
++                File::create(path)?
++            };
++            unsafe {
++                let rc = flock(file.as_raw_fd(), LOCK_EX | LOCK_NB);
++                let is_single = rc == 0 || EWOULDBLOCK != *___errno();
++                Ok(Self {
++                    _file: file,
++                    is_single,
+                 })
+             }
+         }
+--- build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/single-instance-0.3.3/src/error.rs.orig	1973-11-29 16:33:09.000000000 -0500
++++ build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/single-instance-0.3.3/src/error.rs	2025-04-03 16:19:56.443021509 -0400
+@@ -6,7 +6,7 @@
+     #[error("new abstract addr error")]
+     Nix(#[from] nix::Error),
+ 
+-    #[cfg(target_os = "macos")]
++    #[cfg(any(target_os = "macos", target_os = "illumos"))]
+     #[error("file open or create error")]
+     Io(#[from] std::io::Error),
+ 
+@@ -19,4 +19,4 @@
+     MutexError(u32),
+ }
+ 
+-pub type Result<T> = std::result::Result<T, SingleInstanceError>;
+\ No newline at end of file
++pub type Result<T> = std::result::Result<T, SingleInstanceError>;
