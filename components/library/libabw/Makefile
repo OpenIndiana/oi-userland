@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libabw
 COMPONENT_VERSION=      0.1.3
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      libabw - library for reading AbiWord documents
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libabw
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
