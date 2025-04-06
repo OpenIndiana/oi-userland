@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			glibmm
 HUMAN_VERSION=			2.82.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		C++ API for parts of glib that are useful for C++
 COMPONENT_ARCHIVE_HASH=		sha256:38684cff317273615c67b8fa9806f16299d51e5506d9b909bae15b589fa99cb6
 COMPONENT_FMRI=			library/c++/glibmm-268
