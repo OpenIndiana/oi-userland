@@ -27,13 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gawk
-COMPONENT_VERSION=		5.3.1
-COMPONENT_REVISION=		1
-COMPONENT_SUMMARY=		GNU awk
+COMPONENT_VERSION=		5.3.2
+COMPONENT_SUMMARY=		GNU awk, a program that you can use to select particular records in a file and perform operations upon them.
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gawk/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:694db764812a6236423d4ff40ceb7b6c4c441301b72ad502bb5c27e00cd56f78
+COMPONENT_ARCHIVE_HASH= sha256:f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			text/gawk
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -45,7 +44,6 @@ PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --with-mpfr=$(LIBDIR.$(BITS))
 
