@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			cppunit
 COMPONENT_VERSION=		1.15.1
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=		Unit Testing Library for C++
 COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/cppunit/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,9 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-doxygen
-
-# Tests failure
-unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += LANG=C
 
