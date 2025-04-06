@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_cov
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.1.1
 COMPONENT_SUMMARY =		Pytest plugin for measuring coverage.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-cov
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ec55e828c66755e5b74a21bd7cc03c303a9f928389c0563e50ba454a6dbe71db
+	sha256:46935f7aaefba760e716c2ebfbe1c216240b9592966e7da99ea8292d4d3e2a0a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
