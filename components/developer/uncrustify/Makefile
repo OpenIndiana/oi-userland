@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         uncrustify
 COMPONENT_VERSION=      0.77.1
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      source code beautifier
 COMPONENT_PROJECT_URL=  https://uncrustify.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,6 +33,9 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+# cmake 4.0 is not detected correctly
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 COMPONENT_POST_INSTALL_ACTION= $(MKDIR) -p $(PROTO_DIR)/usr/share/doc/uncrustify && \
     $(CP) -r $(SOURCE_DIR)/documentation/htdocs $(PROTO_DIR)/usr/share/doc/uncrustify
