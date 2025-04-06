@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		unittest-cpp
 COMPONENT_VERSION=	2.0.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	UnitTest++ is a lightweight unit testing framework for C++
 COMPONENT_PROJECT_URL=	https://github.com/unittest-cpp/unittest-cpp
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
