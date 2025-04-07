@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
 COMPONENT_VERSION=	1.23.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	GNU troff Text Formatting
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,7 +55,7 @@ COMPONENT_INSTALL_ARGS += appdefdir=/usr/X11/lib/X11/app-defaults
 COMPONENT_INSTALL_ARGS += sys_tmac_prefix=/usr/share/lib/tmac/
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += developer/test/dejagnu
+TEST_REQUIRED_PACKAGES += developer/test/dejagnu
 REQUIRED_PACKAGES += text/doctools
 
 # Manually added dependencies
