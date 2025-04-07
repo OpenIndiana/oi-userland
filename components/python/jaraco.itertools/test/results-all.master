@@ -1,22 +1,12 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 48 items
+collecting ... collected 41 items
 
-::project PASSED
-conftest.py::BLACK PASSED
-conftest.py::mypy PASSED
-conftest.py::mypy-status PASSED
-docs/conf.py::BLACK PASSED
-docs/conf.py::mypy PASSED
-jaraco/itertools.py::BLACK PASSED
 jaraco/itertools.py::jaraco.itertools.Count PASSED
 jaraco/itertools.py::jaraco.itertools.Counter PASSED
 jaraco/itertools.py::jaraco.itertools.FetchingQueue PASSED
@@ -56,11 +46,19 @@ jaraco/itertools.py::jaraco.itertools.summarize PASSED
 jaraco/itertools.py::jaraco.itertools.suppress_exceptions PASSED
 jaraco/itertools.py::jaraco.itertools.takewhile_peek PASSED
 jaraco/itertools.py::jaraco.itertools.window PASSED
-jaraco/itertools.py::mypy PASSED
+.::project PASSED
+.::project PASSED
 
-===================================== mypy =====================================
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
-Success: no issues found in 3 source files
-======== 47 passed ========
+Name                  Stmts   Miss  Cover   Missing
+---------------------------------------------------
+conftest.py               7      2    71%   11-12
+docs/conf.py             14      0   100%
+jaraco/itertools.py     378     29    92%   39-41, 142-143, 224, 232, 264, 274, 309, 339, 396-397, 429, 582, 762-764, 767-769, 801-807, 896-897
+---------------------------------------------------
+TOTAL                   399     31    92%
+======== 41 passed ========
   py$(PYV): OK
   congratulations :)
