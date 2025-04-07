@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libzmq
 COMPONENT_VERSION= 4.3.5
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -44,13 +44,10 @@ COMPONENT_PREP_ACTION = \
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS +=	--with-docs
-CONFIGURE_OPTIONS +=	--enable-static=no
-CONFIGURE_OPTIONS +=	--with-libsodium
-CONFIGURE_OPTIONS +=	--disable-dependency-tracking
-
-# Necessary for tests
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += --with-docs
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --with-libsodium
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Build time dependencies (both needed for documentation)
 REQUIRED_PACKAGES +=text/asciidoc
