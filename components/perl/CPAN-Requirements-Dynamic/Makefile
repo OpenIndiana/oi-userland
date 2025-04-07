@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Requirements-Dynamic
-HUMAN_VERSION =			0.001
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.002
 COMPONENT_SUMMARY =		Dynamic prerequisites in meta files
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4b590e712b9aca680c3631855ee16a50b84fa0227c362e13b237a75a01489ef5
+	sha256:9e290179fd1ab8574f7a2297baf015ea4fef3703a99d48798f61ec9347b4905b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,7 +36,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/extutils-config
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-hascompiler
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/ipc-cmd
-PERL_REQUIRED_PACKAGES += library/perl-5/module-metadata
 PERL_REQUIRED_PACKAGES += library/perl-5/perl-ostype
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
