@@ -21,21 +21,19 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gperf
 COMPONENT_VERSION=      3.1
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         developer/gperf
+COMPONENT_REVISION=     3
 COMPONENT_SUMMARY=      GNU gperf - a perfect hash function generator.
-COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gperf/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/gperf
+COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=      GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
