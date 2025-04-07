@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
 COMPONENT_VERSION=	14.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Sound eXchange, the Swiss Army knife of audio manipulation
 COMPONENT_PROJECT_URL=	https://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -62,6 +62,7 @@ REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/libao
 REQUIRED_PACKAGES += library/audio/pulseaudio
