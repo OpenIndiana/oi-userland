@@ -12,12 +12,12 @@
 # Copyright (c) 2017 - 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsass
 COMPONENT_VERSION=	3.6.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	LibSass is a C/C++ port of the Sass engine
 COMPONENT_PROJECT_URL=	https://github.com/sass/libsass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
