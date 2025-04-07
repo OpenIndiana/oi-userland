@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= taglib
 COMPONENT_VERSION= 1.13.1
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= taglib is a library for reading and editing the meta-data of several popular audio formats
 COMPONENT_PROJECT_URL= https://taglib.github.io/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,6 +35,7 @@ COMPONENT_LICENSE= LGPL
 
 include $(WS_MAKE_RULES)/common.mk
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 
 # Auto-generated dependencies
