@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvisual
 COMPONENT_VERSION =	0.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Libvisual provides a convenient API for writing visualization plugins
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -42,7 +42,6 @@ COMPONENT_PREP_ACTION= ( \
 	automake -c -f -a &&\
 	autoconf )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-shared=yes
 CONFIGURE_OPTIONS += --enable-static=no
 
