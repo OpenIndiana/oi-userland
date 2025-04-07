@@ -13,13 +13,11 @@
 # Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS=64
-
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brasero
 COMPONENT_VERSION=      3.12.3
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=      Gnome CD/DVD burner
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -36,6 +34,8 @@ TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+CFLAGS += -Wno-deprecated-declarations -Wno-incompatible-pointer-types
 
 # Regenerate yelp rules
 COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -vif ) 
@@ -63,8 +63,8 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
@@ -78,4 +78,3 @@ REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += media/cdrtools
 REQUIRED_PACKAGES += media/dvd+rw-tools
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
