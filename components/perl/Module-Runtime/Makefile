@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::Runtime
+#   $WS_TOOLS/perl-integrate-module Module-Runtime
 #
 
-BUILD_STYLE = modulebuild
+BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::Runtime
-HUMAN_VERSION =			0.016
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Module::Runtime - runtime module handling
-COMPONENT_CPAN_AUTHOR =		ZEFRAM
+COMPONENT_NAME =		Module-Runtime
+HUMAN_VERSION =			0.017
+COMPONENT_SUMMARY =		runtime module handling
+COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:68302ec646833547d410be28e09676db75006f4aa58a11f3bdb44ffe99f0f024
+	sha256:0e7cc8f7678ddac12a003e017f04c1d94991468a73b2e37055e76b11628a278d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -33,5 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
