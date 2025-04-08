@@ -21,15 +21,15 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphite2
 COMPONENT_VERSION=	1.3.14
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=		library/c++/graphite2
-COMPONENT_CLASSIFICATION=System/Libraries
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Graphite2 - Library for rendering non-roman scripts
 COMPONENT_PROJECT_URL=	http://graphite.sil.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:f99d1c13aa5fa296898a181dff9b82fb25f6cc0933dbaa7a475d8109bd54209d
 COMPONENT_ARCHIVE_URL=	https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		library/c++/graphite2
+COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1
 
 include $(WS_MAKE_RULES)/common.mk
@@ -39,6 +39,7 @@ PATCH_LEVEL=0
 # need this to use abs(float)
 LDFLAGS += -lm
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DGRAPHITE2_ASAN=OFF
 CMAKE_OPTIONS += -DGRAPHITE2_COMPARE_RENDERER=OFF
@@ -56,7 +57,9 @@ COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]* sec//" '
 
 # Manually added build dependencies
 # For some reason, the SPARC build is needing this, but x86 does not.
+ifeq ($(MACH), sparc)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
