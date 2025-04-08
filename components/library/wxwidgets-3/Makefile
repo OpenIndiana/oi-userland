@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         wxwidgets-3
 COMPONENT_MAJOR_VERSION= 3.2
 COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).7
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      wxWidgets - Cross-Platform GUI Library
 COMPONENT_PROJECT_URL=  https://www.wxwidgets.org/
 COMPONENT_SRC_NAME=     wxWidgets
@@ -81,6 +82,7 @@ REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
