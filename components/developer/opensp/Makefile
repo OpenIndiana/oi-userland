@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opensp
 COMPONENT_VERSION=      1.5.2
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	The OpenJade group's SGML and XML parsing tools
 COMPONENT_PROJECT_URL=  https://openjade.sourceforge.net/
 COMPONENT_SRC=          OpenSP-$(COMPONENT_VERSION)
