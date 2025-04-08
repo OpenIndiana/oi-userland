@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		opendbx
 COMPONENT_VERSION=	1.4.6
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	OpenDBX is an extremely lightweight but extensible database access library
 COMPONENT_DESCRIPTION=	OpenDBX is an extremely lightweight but extensible database access \
 			library written in C. It provides an abstraction layer to all supported \
