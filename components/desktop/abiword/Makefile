@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		AbiWord
 COMPONENT_VERSION=	3.0.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Fully-featured word processor
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/World/AbiWord
 COMPONENT_SRC=		$(COMPONENT_NAME)-release-$(COMPONENT_VERSION)
@@ -42,7 +43,7 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && $(ENV) PATH="$(PATH)" NOCONFIGURE=1 ./autog
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:0
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
