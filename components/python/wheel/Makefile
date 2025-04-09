@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.45.1
-COMPONENT_SUMMARY =		A built-package format for Python
+HUMAN_VERSION =			0.46.1
+COMPONENT_SUMMARY =		Command line tool for manipulating wheel files
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729
+	sha256:fd477efb5da0f7df1d3c76c73c14394002c844451bd63229d8570f376f5e6a38
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,14 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - cachetools (test bootstrap)
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
-# - importlib_metadata
 # - pluggy (test bootstrap)
-# - pytest (test bootstrap)
-# - setuptools-scm
 # - tox-current-env (test bootstrap)
-# - trove-classifiers (test bootstrap)
-# - zipp
-PYTHON_BOOTSTRAP = yes
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,6 +42,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
