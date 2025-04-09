@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zest_releaser
-HUMAN_VERSION =			9.5.0
+HUMAN_VERSION =			9.6.0
 COMPONENT_SUMMARY =		Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fea55cd8ffc9ad6ad4c2bea4090f644bc7384e0fc31615eec9689df060cac01f
+	sha256:5ebfd0187f056b13af1e6d43a390bd2153557817f2f7232c20c9e750e8cf53cf
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
