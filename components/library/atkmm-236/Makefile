@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			atkmm
 HUMAN_VERSION=			2.36.3
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		C++ binding for the ATK library
 COMPONENT_ARCHIVE_HASH=		sha256:6ec264eaa0c4de0adb7202c600170bde9a7fbe4d466bfbe940eaf7faaa6c5974
 COMPONENT_FMRI=			library/desktop/c++/atkmm-236
@@ -34,8 +35,8 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/glibmm-268
 REQUIRED_PACKAGES += library/c++/sigcpp3
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
