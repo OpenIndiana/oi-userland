@@ -24,13 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gperf
-COMPONENT_VERSION=      3.1
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      3.2
 COMPONENT_SUMMARY=      GNU gperf - a perfect hash function generator.
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gperf/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2
+COMPONENT_ARCHIVE_HASH= sha256:e0ddadebb396906a3e3e4cac2f697c8d6ab92dffa5d365a5bc23c7d41d30ef62
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/gperf
 COMPONENT_CLASSIFICATION=Development/GNU
