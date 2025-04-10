@@ -59,21 +59,27 @@ case "$0" in
 
 	if [ ! -f .hushlogin ]
 	then
-		/usr/sbin/quota
+		if [ -x /usr/sbin/quota ]
+		then
+			/usr/sbin/quota
+		fi
 		#	Allow the user to break the Message-Of-The-Day only.
 		trap "trap '' 2"  2
 		/bin/cat -s /etc/motd
 		trap "" 2
 
-		/bin/mail -E
-		case $? in
-		0) 
-			echo "You have new mail."
-		  	;;
-		2) 
-			echo "You have mail."
-		   	;;
-		esac
+		if [ -x /bin/mail ]
+		then
+			/bin/mail -E
+			case $? in
+			0)
+				echo "You have new mail."
+				;;
+			2)
+				echo "You have mail."
+				;;
+			esac
+		fi
 	fi
 
 	if [ -d /etc/profile.d  -a ! -f "${HOME}/.limited_profile" ] 
