@@ -24,13 +24,12 @@
 # Copyright 2020, Aurelien Larcher 
 #
 
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libtorrent
 COMPONENT_VERSION=	0.13.8
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	libtorrent - a Bittorrent library for rtorrent
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
@@ -76,6 +75,6 @@ COMPONENT_TEST_TRANSFORMS = $(CONFIGURE_TEST_TRANSFORMS)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
