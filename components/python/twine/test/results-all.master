@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 209 items
+collecting ... collected 225 items
 
 tests/test_auth.py::test_get_username_keyring_defers_to_prompt PASSED
 tests/test_auth.py::test_get_username_keyring_not_installed_defers_to_prompt PASSED
@@ -33,11 +33,8 @@ tests/test_check.py::TestWarningStream::test_write_match PASSED
 tests/test_check.py::TestWarningStream::test_write_nomatch PASSED
 tests/test_check.py::TestWarningStream::test_str_representation PASSED
 tests/test_check.py::test_fails_no_distributions PASSED
-tests/test_check.py::test_warns_missing_description[False-sdist] PASSED
-tests/test_check.py::test_warns_missing_description[False-wheel] PASSED
-tests/test_check.py::test_warns_missing_description[True-sdist] PASSED
-tests/test_check.py::test_warns_missing_description[True-wheel] PASSED
-tests/test_check.py::test_warns_missing_file PASSED
+tests/test_check.py::test_warns_missing_description[False] PASSED
+tests/test_check.py::test_warns_missing_description[True] PASSED
 tests/test_check.py::test_fails_rst_syntax_error PASSED
 tests/test_check.py::test_fails_rst_no_content PASSED
 tests/test_check.py::test_passes_rst_description PASSED
@@ -69,7 +66,7 @@ tests/test_package.py::test_package_safe_name_is_correct[0123456789-0123456789] 
 tests/test_package.py::test_package_safe_name_is_correct[!"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~--.-] PASSED
 tests/test_package.py::test_package_safe_name_is_correct[mosaik.SimConfig-mosaik.SimConfig] PASSED
 tests/test_package.py::test_package_safe_name_is_correct[mosaik$$$$.SimConfig-mosaik-.SimConfig] PASSED
-tests/test_package.py::test_metadata_dictionary_keys PASSED
+tests/test_package.py::test_metadata_keys_consistency PASSED
 tests/test_package.py::test_metadata_dictionary_values[None-None] PASSED
 tests/test_package.py::test_metadata_dictionary_values[None-gpg_signature1] PASSED
 tests/test_package.py::test_metadata_dictionary_values[attestation1-None] PASSED
@@ -79,16 +76,21 @@ tests/test_package.py::test_fips_hash_manager_md5 PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[TypeError] PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[ValueError] PASSED
 tests/test_package.py::test_fips_metadata_excludes_md5_and_blake2 PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[unsupported Metadata-Version] PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[invalid Version0] PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[invalid Version1] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name and Version0] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name and Version1] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name0] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Name1] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Version0] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[missing Version1] PASSED
-tests/test_package.py::test_pkginfo_unrecognized_version PASSED
-tests/test_package.py::test_pkginfo_returns_no_metadata_py_below_1_11 PASSED
+tests/test_package.py::test_pkginfo_returns_no_metadata[unrecognized field] PASSED
 tests/test_package.py::test_malformed_from_file PASSED
-tests/test_package.py::test_package_from_egg PASSED
+tests/test_package.py::test_package_from_sdist PASSED
+tests/test_package.py::test_package_from_unrecognized_file_error PASSED
+tests/test_package.py::test_setuptools_license_file[invalid License-File] PASSED
+tests/test_package.py::test_setuptools_license_file[valid License-File] PASSED
 tests/test_register.py::test_successful_register PASSED
 tests/test_register.py::test_exception_for_redirect PASSED
 tests/test_register.py::test_non_existent_package PASSED
@@ -96,8 +98,8 @@ tests/test_register.py::test_values_from_env_pypi[pypi] PASSED
 tests/test_register.py::test_values_from_env_pypi[testpypi] PASSED
 tests/test_register.py::test_values_from_env_not_pypi PASSED
 tests/test_repository.py::test_gpg_signature_structure_is_preserved PASSED
-tests/test_repository.py::test_content_structure_is_preserved PASSED
 tests/test_repository.py::test_iterables_are_flattened PASSED
+tests/test_repository.py::test_all_metadata_fields_are_flattened PASSED
 tests/test_repository.py::test_set_client_certificate PASSED
 tests/test_repository.py::test_set_certificate_authority PASSED
 tests/test_repository.py::test_make_user_agent_string PASSED
@@ -120,6 +122,23 @@ tests/test_repository.py::test_package_is_uploaded_incorrect_repo_url PASSED
 tests/test_repository.py::test_logs_username_and_password[None-None-messages0] PASSED
 tests/test_repository.py::test_logs_username_and_password[--messages1] PASSED
 tests/test_repository.py::test_logs_username_and_password[username-password-messages2] PASSED
+tests/test_sdist.py::test_read_example[fixtures/twine-1.5.0.tar.gz] PASSED
+tests/test_sdist.py::test_read_example[fixtures/twine-1.6.5.tar.gz] PASSED
+tests/test_sdist.py::test_read_non_existent PASSED
+tests/test_sdist.py::test_formar_not_supported PASSED
+tests/test_sdist.py::test_read[tar.gz] PASSED
+tests/test_sdist.py::test_read[zip] PASSED
+tests/test_sdist.py::test_missing_pkg_info[tar.gz] PASSED
+tests/test_sdist.py::test_missing_pkg_info[zip] PASSED
+tests/test_sdist.py::test_invalid_pkg_info[tar.gz] PASSED
+tests/test_sdist.py::test_invalid_pkg_info[zip] PASSED
+tests/test_sdist.py::test_pkg_info_directory[tar.gz] PASSED
+tests/test_sdist.py::test_pkg_info_directory[zip] PASSED
+tests/test_sdist.py::test_pkg_info_not_regular_file PASSED
+tests/test_sdist.py::test_multiple_top_level[tar.gz] PASSED
+tests/test_sdist.py::test_multiple_top_level[zip] PASSED
+tests/test_sdist.py::test_py_version[fixtures/twine-1.5.0.tar.gz] PASSED
+tests/test_sdist.py::test_py_version[fixtures/twine-1.6.5.tar.gz] PASSED
 tests/test_settings.py::test_settings_takes_no_positional_arguments PASSED
 tests/test_settings.py::test_settings_transforms_repository_config_pypi PASSED
 tests/test_settings.py::test_settings_transforms_repository_config_non_pypi PASSED
@@ -206,13 +225,10 @@ tests/test_utils.py::test_check_status_code_for_missing_status_code[False-https:
 tests/test_utils.py::test_get_file_size[3704-3.6 KB] PASSED
 tests/test_utils.py::test_get_file_size[1153433-1.1 MB] PASSED
 tests/test_utils.py::test_get_file_size[21412841-20.4 MB] PASSED
-tests/test_wheel.py::test_version_parsing[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
-tests/test_wheel.py::test_version_parsing[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
-tests/test_wheel.py::test_version_parsing_missing_pyver[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
-tests/test_wheel.py::test_version_parsing_missing_pyver[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_version_parsing PASSED
+tests/test_wheel.py::test_version_parsing_missing_pyver PASSED
 tests/test_wheel.py::test_find_metadata_files PASSED
-tests/test_wheel.py::test_read_valid[fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
-tests/test_wheel.py::test_read_valid[alt-fixtures/twine-1.5.0-py2.py3-none-any.whl] PASSED
+tests/test_wheel.py::test_read_valid PASSED
 tests/test_wheel.py::test_read_non_existent_wheel_file_name PASSED
 tests/test_wheel.py::test_read_invalid_wheel_extension PASSED
 tests/test_wheel.py::test_read_wheel_empty_metadata PASSED
@@ -227,27 +243,30 @@ tests/test_auth.py::test_no_password_defers_to_prompt
     result = GnomeKeyring.get_default_keyring_sync()[0]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 209 passed, 2 warnings ========
+======== 225 passed, 2 warnings ========
 py$(PYV): commands[1]> python -m coverage html
 Wrote HTML report to htmlcov/index.html
 py$(PYV): commands[2]> python -m coverage report --skip-covered --show-missing --fail-under 97
 Name                       Stmts   Miss Branch BrPart  Cover   Missing
 ----------------------------------------------------------------------
+tests/helpers.py              31      1     10      1    95%   53
 tests/test_auth.py           139      1      2      1    99%   98
-tests/test_repository.py     109      0      4      1    99%   95->94
-tests/test_upload.py         197      2      2      0    99%   311-312
-tests/test_utils.py           87      1      0      0    99%   331
+tests/test_repository.py     115      0      6      1    99%   105->104
+tests/test_upload.py         199      2      6      0    99%   311-312
+tests/test_utils.py           87      1      2      0    99%   332
 twine/__init__.py             14      1      2      1    88%   37
-twine/cli.py                  34      1      4      2    92%   20, 85->87
+twine/auth.py                117     29     20      1    74%   78-129, 162, 182-186
+twine/cli.py                  41      3      6      2    89%   20, 86->89, 93-94
 twine/commands/upload.py      80      1     34      1    98%   101
-twine/package.py             178      5     48      6    95%   37, 132, 167, 269, 348->exit, 354
-twine/repository.py          117      3     32      3    96%   90, 103->exit, 107->exit, 200, 252
+twine/distribution.py          6      2      0      0    67%   4, 8
+twine/package.py             206      2     46      5    97%   254->252, 274->277, 308, 387->exit, 393
+twine/repository.py          115      3     38      3    96%   60, 87->exit, 91->exit, 177, 229
 twine/settings.py             82      4      4      0    95%   333-341
-twine/utils.py               138      1     40      0    99%   330
-twine/wininst.py              38     26     10      0    25%   15-17, 21-25, 28-57
+twine/utils.py               149      1     42      0    99%   356
+twine/wheel.py                42      1     12      1    96%   53
 ----------------------------------------------------------------------
-TOTAL                       2096     46    254     15    97%
+TOTAL                       2262     52    300     17    97%
 
-18 files skipped due to complete coverage.
+17 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)
