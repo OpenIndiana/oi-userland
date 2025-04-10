@@ -13,13 +13,13 @@
 #
 
 BUILD_STYLE= cmake
-USE_PARALLEL_BUILD = yes
-USE_DEFAULT_TEST_TRANSFORMS = yes
-
+USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenColorIO
 COMPONENT_VERSION=	2.4.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A color management framework for visual effects and animation
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
