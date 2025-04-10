@@ -29,12 +29,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	3.11
+COMPONENT_VERSION=	3.12
 COMPONENT_SUMMARY=	GNU Diffutils is a package of several programs related to finding differences between files
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a73ef05fe37dd585f7d87068e4a0639760419f810138bd75c61ddaa1f9e2131e
+COMPONENT_ARCHIVE_HASH= sha256:7c8b7f9fc8609141fdea9cece85249d308624391ff61dedaf528fcb337727dfd
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-diffutils
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
