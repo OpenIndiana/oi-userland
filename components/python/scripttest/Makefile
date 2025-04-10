@@ -19,19 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scripttest
-HUMAN_VERSION =			2.0
+HUMAN_VERSION =			2.0.post1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Helper to test command-line scripts
 COMPONENT_PROJECT_URL =		https://scripttest.readthedocs.io/en/stable/
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/pypa/scripttest/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:21483f4f07db1ba3f127b67e2b7c5b19bea1d2a4d6069006f124a3a3086a9697
+	sha256:a6067f1feadf4b2ed3e594b0b32e41589640e7fa3974765aa63d508520c0bfdc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	docs/license.rst
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
