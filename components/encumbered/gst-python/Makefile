@@ -32,6 +32,12 @@ COMPONENT_FMRI=	library/python/python-gst
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
+#
+# Reasons for encumbered:
+# - depends on encumbered library/audio/gstreamer/plugin/bad
+#
+
+include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4023
@@ -43,5 +49,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
