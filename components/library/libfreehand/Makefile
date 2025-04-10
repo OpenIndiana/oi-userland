@@ -21,13 +21,12 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libfreehand
 COMPONENT_VERSION=      0.1.2
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=      libfreehand - library for reading Aldus/Macromedia/Adobe FreeHand documents
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libfreehand
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
