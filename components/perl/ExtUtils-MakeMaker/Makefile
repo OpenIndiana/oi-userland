@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-MakeMaker
-HUMAN_VERSION =			7.72
+HUMAN_VERSION =			7.74
 COMPONENT_SUMMARY =		Create a module Makefile
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:38c892019a3bc4e7b78c1c58356eb39aa1dd32a035981c4e7b487d01091a45d2
+	sha256:8ad2be00713b49dcfd386286e0a64ff9297b771a485f2425fbc144794f5a3e8c
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
