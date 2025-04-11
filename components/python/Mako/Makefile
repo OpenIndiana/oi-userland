@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mako
-HUMAN_VERSION =			1.3.9
+HUMAN_VERSION =			1.3.10
 COMPONENT_SUMMARY =		A super-fast templating language that borrows the best ideas from the existing templating languages.
 COMPONENT_PROJECT_URL =		https://www.makotemplates.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b5d65ff3462870feec922dbccf38f6efb44e5714d7b593a656be86663d8600ac
+	sha256:99579a6f39583fa7e5630a28c3c1f440e4e97a414b80372649c0ce338da2ea28
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
