@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			cairomm
 COMPONENT_VERSION=		1.18.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		C++ wrapper for the cairo graphics library
 COMPONENT_PROJECT_URL=		https://cairographics.org/cairomm/
 COMPONENT_FMRI=			library/desktop/c++/cairomm-116
