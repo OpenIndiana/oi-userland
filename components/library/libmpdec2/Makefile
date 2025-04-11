@@ -13,12 +13,12 @@
 # Copyright 2018 Jason Martin
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpdecimal
 COMPONENT_VERSION= 4.0.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Complete implementation of the General Decimal Arithmetic Specification
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
