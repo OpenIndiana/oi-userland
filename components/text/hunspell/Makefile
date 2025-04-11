@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hunspell
 COMPONENT_VERSION=        1.7.2
-COMPONENT_REVISION=       3
+COMPONENT_REVISION=       4
 COMPONENT_SUMMARY=        Hunspell is a free spell checker and morphological analyzer library and command-line tool
 COMPONENT_PROJECT_URL=    https://hunspell.github.io/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -54,13 +54,11 @@ CONFIGURE_OPTIONS += --with-readline
 # Drop 32-bit binaries
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
-unexport SHELLOPTS
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
