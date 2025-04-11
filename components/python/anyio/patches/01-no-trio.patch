@@ -1,8 +1,8 @@
 We have no trio packaged yet.
 https://github.com/python-trio/trio/issues/1437
 
---- anyio-4.2.0/src/anyio/_core/_eventloop.py.orig
-+++ anyio-4.2.0/src/anyio/_core/_eventloop.py
+--- anyio-4.11.0/src/anyio/_core/_eventloop.py.orig
++++ anyio-4.11.0/src/anyio/_core/_eventloop.py
 @@ -19,7 +19,7 @@
      from ..abc import AsyncBackend
  
@@ -12,19 +12,19 @@ https://github.com/python-trio/trio/issues/1437
  
  T_Retval = TypeVar("T_Retval")
  PosArgsT = TypeVarTuple("PosArgsT")
---- anyio-4.2.0/pyproject.toml.orig
-+++ anyio-4.2.0/pyproject.toml
-@@ -43,7 +43,6 @@
- [project.optional-dependencies]
- trio = ["trio >= 0.23"]
+--- anyio-4.11.0/pyproject.toml.orig
++++ anyio-4.11.0/pyproject.toml
+@@ -48,7 +48,6 @@
+ 
+ [dependency-groups]
  test = [
 -    "anyio[trio]",
+     "blockbuster >= 1.5.23",
      "coverage[toml] >= 7",
      "exceptiongroup >= 1.2.0",
-     "hypothesis >= 4.0",
---- anyio-4.2.0/tests/test_taskgroups.py.orig
-+++ anyio-4.2.0/tests/test_taskgroups.py
-@@ -67,7 +67,6 @@
+--- anyio-4.11.0/tests/test_taskgroups.py.orig
++++ anyio-4.11.0/tests/test_taskgroups.py
+@@ -72,7 +72,6 @@
      "module",
      [
          pytest.param(asyncio, id="asyncio"),
@@ -32,13 +32,14 @@ https://github.com/python-trio/trio/issues/1437
      ],
  )
  def test_run_natively(module: Any) -> None:
---- anyio-4.2.0/tests/conftest.py.orig
-+++ anyio-4.2.0/tests/conftest.py
-@@ -40,7 +40,6 @@
-             marks=uvloop_marks,
-             id="asyncio+uvloop",
-         ),
--        pytest.param("trio"),
-     ]
- )
+--- anyio-4.11.0/tests/conftest.py.orig
++++ anyio-4.11.0/tests/conftest.py
+@@ -83,7 +83,7 @@
+         blockbuster.deactivate()
+ 
+ 
+-@pytest.fixture(params=[*asyncio_params, pytest.param("trio")])
++@pytest.fixture(params=[*asyncio_params])
  def anyio_backend(request: SubRequest) -> tuple[str, dict[str, Any]]:
+     return request.param
+ 
