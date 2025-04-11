@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gtkmm
 HUMAN_VERSION=			4.16.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		C++ API for GTK
 COMPONENT_ARCHIVE_HASH=		sha256:3b23fd3abf8fb223b00e9983b6010af2db80e38c89ab6994b8b6230aa85d60f9
 COMPONENT_FMRI=			library/desktop/c++/gtkmm-40
@@ -34,8 +35,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
-COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Auto-generated dependencies
