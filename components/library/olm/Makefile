@@ -12,12 +12,12 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         olm
 COMPONENT_VERSION=      3.2.16
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Implementation of the olm and megolm cryptographic ratchets
 COMPONENT_PROJECT_URL=  https://gitlab.matrix.org/matrix-org/olm
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,8 +32,8 @@ COMPONENT_LICENSE_FILE=	LICENSE
 TEST_TARGET = $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DOLM_TESTS=NO
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
