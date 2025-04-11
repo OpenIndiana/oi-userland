@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfig
 COMPONENT_VERSION=	1.7.3
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	C/C++ library for processing configuration files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://hyperrealm.github.io/libconfig
@@ -38,8 +38,6 @@ COMPONENT_PREP_ACTION= ( \
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_ENV += libtool_execute_magic=
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)
