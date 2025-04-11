@@ -14,13 +14,16 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 64
+# SunRay utaudio needs 32bit library
+BUILD_BITS= 64_and_32
 BUILD_STYLE=meson
+USE_COMMON_TEST_MASTER = no
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pulseaudio
 COMPONENT_VERSION=	17.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Sample Rate Converter for audio
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -36,16 +39,25 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
 
 # MESON_BUILDTYPE = debug
 # COMPONENT_BUILD_ARGS += --verbose
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_OPTIONS += -Dhal-compat=true
+
+CONFIGURE_OPTIONS.32 += -Davahi=disabled
+CONFIGURE_OPTIONS.32 += -Ddbus=disabled
+CONFIGURE_OPTIONS.64 += -Dhal-compat=true
+CONFIGURE_OPTIONS.32 += -Dhal-compat=false
 CONFIGURE_OPTIONS += -Dipv6=true
-CONFIGURE_OPTIONS += -Dopenssl=enabled
-CONFIGURE_OPTIONS += -Dorc=enabled
-CONFIGURE_OPTIONS += -Doss-output=enabled
+CONFIGURE_OPTIONS.64 += -Dopenssl=enabled
+CONFIGURE_OPTIONS.32 += -Dopenssl=disabled
+CONFIGURE_OPTIONS.64 += -Dorc=enabled
+CONFIGURE_OPTIONS.32 += -Dorc=disabled
+CONFIGURE_OPTIONS.64 += -Doss-output=enabled
+CONFIGURE_OPTIONS.32 += -Doss-output=disabled
 CONFIGURE_OPTIONS += -Ddatabase=gdbm
 CONFIGURE_OPTIONS += -Dzshcompletiondir=/usr/share/zsh/5.9/functions/Completion/Unix
 CONFIGURE_OPTIONS += -Dsystem_user=pulse
@@ -53,14 +65,19 @@ CONFIGURE_OPTIONS += -Dsystem_group=pulse
 CONFIGURE_OPTIONS += -Djack=disabled
 CONFIGURE_OPTIONS += -Dlirc=disabled
 CONFIGURE_OPTIONS += -Dbluez5=disabled
-CONFIGURE_OPTIONS += -Dgstreamer=enabled
+CONFIGURE_OPTIONS.64 += -Dgstreamer=enabled
+CONFIGURE_OPTIONS.32 += -Dgstreamer=disabled
 CONFIGURE_OPTIONS += -Dbluez5-gstreamer=disabled
-CONFIGURE_OPTIONS += -Dgsettings=enabled
+CONFIGURE_OPTIONS.64 += -Dgsettings=enabled
+CONFIGURE_OPTIONS.32 += -Dgsettings=disabled
 CONFIGURE_OPTIONS += -Dgtk=disabled
-CONFIGURE_OPTIONS += -Dsoxr=enabled
+CONFIGURE_OPTIONS.64 += -Dsoxr=enabled
+CONFIGURE_OPTIONS.32 += -Dsoxr=disabled
 CONFIGURE_OPTIONS += -Dwebrtc-aec=disabled
 CONFIGURE_OPTIONS += -Dsystemd=disabled
 CONFIGURE_OPTIONS += -Dtests=true
+CONFIGURE_OPTIONS.32 += -Dtcpwrap=disabled
+CONFIGURE_OPTIONS.32 += -Dadrian-aec=false
 
 CONFIGURE_ENV	+= CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV	+= PYTHON=$(PYTHON)
@@ -87,7 +104,9 @@ REQUIRED_PACKAGES += library/audio/soxr
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fftw-3
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += library/libsndfile
+REQUIRED_PACKAGES += library/libsndfile/32
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/speexdsp
