@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1703 items / 10 deselected / 1 skipped / 1693 selected
+collecting ... collected 1705 items / 11 deselected / 1 skipped / 1694 selected
 
 tests/brain/numpy/test_core_einsumfunc.py::test_function_parameters PASSED
 tests/brain/numpy/test_core_function_base.py::BrainNumpyCoreFunctionBaseTest::test_numpy_function_calls_inferred_as_ndarray PASSED
@@ -1067,7 +1067,6 @@ tests/test_manager.py::AstroidManagerTest::test_do_not_expose_main PASSED
 tests/test_manager.py::AstroidManagerTest::test_failed_import_hooks PASSED
 tests/test_manager.py::AstroidManagerTest::test_file_from_module PASSED
 tests/test_manager.py::AstroidManagerTest::test_file_from_module_name_astro_building_exception PASSED
-tests/test_manager.py::AstroidManagerTest::test_identify_old_namespace_package_protocol PASSED
 tests/test_manager.py::AstroidManagerTest::test_implicit_namespace_package PASSED
 tests/test_manager.py::AstroidManagerTest::test_module_is_not_namespace PASSED
 tests/test_manager.py::AstroidManagerTest::test_module_unexpectedly_missing_path PASSED
@@ -1487,8 +1486,10 @@ tests/test_raw_building.py::RawBuildingTC::test_build_function_kwonlyargs PASSED
 tests/test_raw_building.py::RawBuildingTC::test_build_function_posonlyargs PASSED
 tests/test_raw_building.py::RawBuildingTC::test_build_module PASSED
 tests/test_raw_building.py::RawBuildingTC::test_io_is__io PASSED
+tests/test_raw_building.py::RawBuildingTC::test_module_collection_with_object_getattribute PASSED
 tests/test_raw_building.py::RawBuildingTC::test_module_object_with_broken_getattr PASSED
 tests/test_raw_building.py::test_build_module_getattr_catch_output PASSED
+tests/test_raw_building.py::test_missing__dict__ PASSED
 tests/test_regrtest.py::NonRegressionTests::test_ancestors_missing_from_function PASSED
 tests/test_regrtest.py::NonRegressionTests::test_ancestors_patching_class_recursion PASSED
 tests/test_regrtest.py::NonRegressionTests::test_ancestors_yes_in_bases PASSED
@@ -1704,7 +1705,179 @@ tests/test_utils.py::InferenceUtil::test_unpack_infer_uninferable_nodes PASSED [
   coverage._warn(msg, slug="couldnt-parse")
 
 
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
-======== 1643 passed, 35 skipped, 10 deselected, 15 xfailed, 1 xpassed ========
+Name                                                                                        Stmts   Miss  Cover
+---------------------------------------------------------------------------------------------------------------
+astroid/__init__.py                                                                            17      0   100%
+astroid/__pkginfo__.py                                                                          2      0   100%
+astroid/_ast.py                                                                                37      0   100%
+astroid/_backport_stdlib_names.py                                                               7      1    86%
+astroid/arguments.py                                                                          133      1    99%
+astroid/astroid_manager.py                                                                      4      0   100%
+astroid/bases.py                                                                              390     61    84%
+astroid/brain/__init__.py                                                                       0      0   100%
+astroid/brain/brain_argparse.py                                                                24      1    96%
+astroid/brain/brain_attrs.py                                                                   38      0   100%
+astroid/brain/brain_boto3.py                                                                   13      4    69%
+astroid/brain/brain_builtin_inference.py                                                      479     38    92%
+astroid/brain/brain_collections.py                                                             38      3    92%
+astroid/brain/brain_crypt.py                                                                    7      0   100%
+astroid/brain/brain_ctypes.py                                                                  13      0   100%
+astroid/brain/brain_curses.py                                                                   7      0   100%
+astroid/brain/brain_dataclasses.py                                                            316     43    86%
+astroid/brain/brain_datetime.py                                                                 9      2    78%
+astroid/brain/brain_dateutil.py                                                                 8      0   100%
+astroid/brain/brain_functools.py                                                               80      1    99%
+astroid/brain/brain_gi.py                                                                     139    107    23%
+astroid/brain/brain_hashlib.py                                                                 18      0   100%
+astroid/brain/brain_http.py                                                                    12      0   100%
+astroid/brain/brain_hypothesis.py                                                              16      7    56%
+astroid/brain/brain_io.py                                                                      18      0   100%
+astroid/brain/brain_mechanize.py                                                                7      0   100%
+astroid/brain/brain_multiprocessing.py                                                         28      2    93%
+astroid/brain/brain_namedtuple_enum.py                                                        280     21    92%
+astroid/brain/brain_nose.py                                                                    40      2    95%
+astroid/brain/brain_numpy_core_einsumfunc.py                                                    8      0   100%
+astroid/brain/brain_numpy_core_fromnumeric.py                                                   7      0   100%
+astroid/brain/brain_numpy_core_function_base.py                                                10      0   100%
+astroid/brain/brain_numpy_core_multiarray.py                                                   16      0   100%
+astroid/brain/brain_numpy_core_numeric.py                                                      15      0   100%
+astroid/brain/brain_numpy_core_numerictypes.py                                                 11      0   100%
+astroid/brain/brain_numpy_core_umath.py                                                         8      0   100%
+astroid/brain/brain_numpy_ma.py                                                                 7      0   100%
+astroid/brain/brain_numpy_ndarray.py                                                           17      0   100%
+astroid/brain/brain_numpy_random_mtrand.py                                                      7      0   100%
+astroid/brain/brain_numpy_utils.py                                                             25      2    92%
+astroid/brain/brain_pathlib.py                                                                 24      2    92%
+astroid/brain/brain_pkg_resources.py                                                            7      0   100%
+astroid/brain/brain_pytest.py                                                                   8      0   100%
+astroid/brain/brain_qt.py                                                                      29     10    66%
+astroid/brain/brain_random.py                                                                  55      8    85%
+astroid/brain/brain_re.py                                                                      22      1    95%
+astroid/brain/brain_regex.py                                                                   18      0   100%
+astroid/brain/brain_responses.py                                                                7      0   100%
+astroid/brain/brain_scipy_signal.py                                                             7      0   100%
+astroid/brain/brain_signal.py                                                                  23      2    91%
+astroid/brain/brain_six.py                                                                     89      9    90%
+astroid/brain/brain_sqlalchemy.py                                                               7      0   100%
+astroid/brain/brain_ssl.py                                                                     18      2    89%
+astroid/brain/brain_subprocess.py                                                              25      2    92%
+astroid/brain/brain_threading.py                                                                7      0   100%
+astroid/brain/brain_type.py                                                                    18      0   100%
+astroid/brain/brain_typing.py                                                                 159     29    82%
+astroid/brain/brain_unittest.py                                                                 7      0   100%
+astroid/brain/brain_uuid.py                                                                     7      0   100%
+astroid/brain/helpers.py                                                                       65      0   100%
+astroid/builder.py                                                                            225     12    95%
+astroid/const.py                                                                               14      0   100%
+astroid/constraint.py                                                                          68      2    97%
+astroid/context.py                                                                             76      4    95%
+astroid/decorators.py                                                                          94     26    72%
+astroid/exceptions.py                                                                         121      5    96%
+astroid/filter_statements.py                                                                   93      4    96%
+astroid/helpers.py                                                                            154      7    95%
+astroid/inference_tip.py                                                                       45      1    98%
+astroid/interpreter/__init__.py                                                                 0      0   100%
+astroid/interpreter/_import/__init__.py                                                         0      0   100%
+astroid/interpreter/_import/spec.py                                                           207     20    90%
+astroid/interpreter/_import/util.py                                                            47      3    94%
+astroid/interpreter/dunder_lookup.py                                                           33      2    94%
+astroid/interpreter/objectmodel.py                                                            506     48    91%
+astroid/manager.py                                                                            247     31    87%
+astroid/modutils.py                                                                           282     42    85%
+astroid/nodes/__init__.py                                                                       5      0   100%
+astroid/nodes/_base_nodes.py                                                                  261     19    93%
+astroid/nodes/as_string.py                                                                    378     56    85%
+astroid/nodes/const.py                                                                          1      0   100%
+astroid/nodes/node_classes.py                                                                1905    164    91%
+astroid/nodes/node_ng.py                                                                      339     28    92%
+astroid/nodes/scoped_nodes/__init__.py                                                          4      0   100%
+astroid/nodes/scoped_nodes/mixin.py                                                            66      2    97%
+astroid/nodes/scoped_nodes/scoped_nodes.py                                                   1254     99    92%
+astroid/nodes/scoped_nodes/utils.py                                                            19      1    95%
+astroid/nodes/utils.py                                                                          6      0   100%
+astroid/objects.py                                                                            159     10    94%
+astroid/protocols.py                                                                          424     52    88%
+astroid/raw_building.py                                                                       319     28    91%
+astroid/rebuilder.py                                                                          673    216    68%
+astroid/test_utils.py                                                                          48      7    85%
+astroid/transforms.py                                                                          63      3    95%
+astroid/typing.py                                                                              28      4    86%
+astroid/util.py                                                                                83     12    86%
+tests/__init__.py                                                                               0      0   100%
+tests/brain/__init__.py                                                                         0      0   100%
+tests/brain/numpy/__init__.py                                                                   0      0   100%
+tests/brain/numpy/test_core_einsumfunc.py                                                      24      8    67%
+tests/brain/numpy/test_core_fromnumeric.py                                                     20     10    50%
+tests/brain/numpy/test_core_function_base.py                                                   20      2    90%
+tests/brain/numpy/test_core_multiarray.py                                                      55     12    78%
+tests/brain/numpy/test_core_numeric.py                                                         28      2    93%
+tests/brain/numpy/test_core_numerictypes.py                                                    77     19    75%
+tests/brain/numpy/test_core_umath.py                                                           72     20    72%
+tests/brain/numpy/test_ma.py                                                                   20      2    90%
+tests/brain/numpy/test_ndarray.py                                                              38      2    95%
+tests/brain/numpy/test_random_mtrand.py                                                        27      2    93%
+tests/brain/test_argparse.py                                                                    9      0   100%
+tests/brain/test_attr.py                                                                       42      2    95%
+tests/brain/test_brain.py                                                                     770     56    93%
+tests/brain/test_builtin.py                                                                    34      0   100%
+tests/brain/test_ctypes.py                                                                     31      0   100%
+tests/brain/test_dataclasses.py                                                               364     22    94%
+tests/brain/test_dateutil.py                                                                   14      2    86%
+tests/brain/test_enum.py                                                                      204      0   100%
+tests/brain/test_hashlib.py                                                                    35      0   100%
+tests/brain/test_multiprocessing.py                                                            54      2    96%
+tests/brain/test_named_tuple.py                                                               128      0   100%
+tests/brain/test_nose.py                                                                       26      2    92%
+tests/brain/test_pathlib.py                                                                    33      4    88%
+tests/brain/test_pytest.py                                                                      8      0   100%
+tests/brain/test_qt.py                                                                         39     21    46%
+tests/brain/test_regex.py                                                                      25      2    92%
+tests/brain/test_signal.py                                                                     19      1    95%
+tests/brain/test_six.py                                                                        90      2    98%
+tests/brain/test_ssl.py                                                                        28      5    82%
+tests/brain/test_threading.py                                                                  29      0   100%
+tests/brain/test_typing.py                                                                     24      0   100%
+tests/brain/test_typing_extensions.py                                                          19      3    84%
+tests/brain/test_unittest.py                                                                    6      0   100%
+tests/resources.py                                                                             21      0   100%
+tests/test_builder.py                                                                         552      2    99%
+tests/test_constraint.py                                                                      180      0   100%
+tests/test_decorators.py                                                                       68      0   100%
+tests/test_filter_statements.py                                                                 9      0   100%
+tests/test_group_exceptions.py                                                                 60     48    20%
+tests/test_helpers.py                                                                         124      0   100%
+tests/test_inference.py                                                                      2868     67    98%
+tests/test_inference_calls.py                                                                 169      0   100%
+tests/test_lookup.py                                                                          418      0   100%
+tests/test_manager.py                                                                         334      5    99%
+tests/test_modutils.py                                                                        331     10    97%
+tests/test_nodes.py                                                                           959    148    85%
+tests/test_nodes_lineno.py                                                                    829     97    88%
+tests/test_nodes_position.py                                                                   64      0   100%
+tests/test_object_model.py                                                                    394     14    96%
+tests/test_objects.py                                                                         271      0   100%
+tests/test_protocols.py                                                                       243     41    83%
+tests/test_python3.py                                                                         192      0   100%
+tests/test_raw_building.py                                                                    101      0   100%
+tests/test_regrtest.py                                                                        197      5    97%
+tests/test_scoped_nodes.py                                                                   1152      3    99%
+tests/test_stdlib.py                                                                           15      0   100%
+tests/test_transforms.py                                                                      137      8    94%
+tests/test_type_params.py                                                                      52     46    12%
+tests/test_utils.py                                                                            85      0   100%
+tests/testdata/python3/data/__init__.py                                                         1      0   100%
+tests/testdata/python3/data/fake_module_with_broken_getattr.py                                  4      0   100%
+tests/testdata/python3/data/fake_module_with_collection_getattribute.py                         9      4    56%
+tests/testdata/python3/data/fake_module_with_warnings.py                                       10      0   100%
+tests/testdata/python3/data/import_setuptools_pep660/__editable___example_0_1_0_finder.py      52     19    63%
+tests/testdata/python3/data/lmfp/__init__.py                                                    1      0   100%
+tests/testdata/python3/data/lmfp/foo.py                                                         4      0   100%
+tests/testdata/python3/recursion_error.py                                                       1      0   100%
+---------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                       23479   1989    92%
+======== 1644 passed, 35 skipped, 11 deselected, 15 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)

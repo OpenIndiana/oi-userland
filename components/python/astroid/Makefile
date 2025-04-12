@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			3.3.8
+HUMAN_VERSION =			3.3.9
 COMPONENT_SUMMARY =		An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a88c7994f914a4ea8572fac479459f4955eeccc877be3f2d959a33273b0cf40b
+	sha256:622cc8e3048684aa42c820d9d218978021c3c3d174fb03a9f0d615921744f550
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,6 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/pylint-dev/astroid/issues/2392
 PYTEST_ADDOPTS += --deselect tests/brain/test_dataclasses.py::test_pydantic_field
 # fails with tox-current-env
+PYTEST_ADDOPTS += --deselect tests/test_manager.py::AstroidManagerTest::test_identify_old_namespace_package_protocol
 PYTEST_ADDOPTS += --deselect tests/test_modutils.py::GetModulePartTest::test_known_values_get_builtin_module_part
 # https://github.com/pylint-dev/astroid/issues/2442
 PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_einsumfunc.py::test_numpy_function_calls_inferred_as_ndarray
