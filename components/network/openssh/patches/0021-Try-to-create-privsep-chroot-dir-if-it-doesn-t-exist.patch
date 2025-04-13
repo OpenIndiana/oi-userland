@@ -4,11 +4,10 @@ Date: Wed, 5 Aug 2015 12:25:15 -0700
 Subject: [PATCH 21/34] Try to create privsep chroot dir if it doesn't exist
  yet
 
-diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
---- a~/sshd-session.c	1970-01-01 00:00:00
-+++ a/sshd-session.c	1970-01-01 00:00:00
-@@ -303,6 +303,20 @@ privsep_preauth_child(void)
- 
+--- openssh-10.0p1/sshd-auth.c.orig
++++ openssh-10.0p1/sshd-auth.c
+@@ -189,6 +189,20 @@
+ #endif
  	/* Demote the child */
  	if (privsep_chroot) {
 +		struct stat st;
