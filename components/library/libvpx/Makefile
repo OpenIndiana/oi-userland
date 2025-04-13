@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
 COMPONENT_VERSION= 1.15.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
 COMPONENT_PROJECT_URL = https://www.webmproject.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
