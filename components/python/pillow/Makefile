@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pillow
-HUMAN_VERSION =			11.1.0
+HUMAN_VERSION =			11.2.1
 COMPONENT_SUMMARY =		Python Imaging Library (Fork)
 COMPONENT_PROJECT_URL =		https://python-pillow.github.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:368da70808b36d73b4b390a8ffac11069f8a5c85f29eff1f1b01bcf3ef5b2a20
+	sha256:a64dd61998416367b7ef979b73d3a85853ba9bec4c2925f74e588879a58716b6
 COMPONENT_LICENSE =		HPND
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
