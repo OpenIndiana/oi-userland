@@ -49,9 +49,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3517
-GIT_TAG=		sun-v5.0.71
-PLUGIN_REV=		5.0-202503071743
+COMPONENT_VERSION=	5.0.3540
+GIT_TAG=		sun-v5.0.72
+PLUGIN_REV=		5.0-202504061422
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -65,7 +65,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1957e987fe5224b04d154d59eb34fd9de080904aa2731469d2ee44f745726419
+COMPONENT_ARCHIVE_HASH=	sha256:47a1ce62d4e2d0d087489607554261f4fb3376808713d8d4aec6b88f7272b34a
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -108,6 +108,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 # but unfortunately I think some files do not #include "config.h"
 # we have to make sure largefile support is enabled in the 32bit case
 CPPFLAGS += $(CPP_LARGEFILES)
+
+# commit e6108a0cd problem introduced in VMMaker.oscog-eem.3533
+CPPFLAGS += -DOLD_1002_ATTRIBUTE=1
 
 # Spur memory management sometimes not compatible with traditional malloc
 LIBS = "-lmapmalloc"
