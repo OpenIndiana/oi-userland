@@ -13,13 +13,11 @@
 # Copyright 2019, Michal Nowak
 #
 
-BUILD_BITS=64
-
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         brasero
 COMPONENT_VERSION=      3.12.3
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/brasero/
 COMPONENT_SUMMARY=      Gnome CD/DVD burner
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,29 +29,28 @@ COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET=		$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
+
+CFLAGS += -Wno-error=deprecated-declarations
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # Regenerate yelp rules
-COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -vif ) 
+COMPONENT_PREP_ACTION= ( cd $(@D) ; autoreconf -vif ) 
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS.32+=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64+=	--libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS+=	--localstatedir=/var
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--enable-search
-CONFIGURE_OPTIONS+=	--enable-playlist
-CONFIGURE_OPTIONS+=	--disable-nautilus
-CONFIGURE_OPTIONS.64+=	--enable-introspection
-CONFIGURE_OPTIONS+=	--enable-libburnia
-CONFIGURE_OPTIONS+=	--disable-gtk-doc
-CONFIGURE_OPTIONS+=	--disable-inotify
-CONFIGURE_OPTIONS+=	--disable-maintainer-mode
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-search
+CONFIGURE_OPTIONS += --enable-playlist
+CONFIGURE_OPTIONS += --disable-nautilus
+CONFIGURE_OPTIONS += --enable-introspection
+CONFIGURE_OPTIONS += --enable-libburnia
+CONFIGURE_OPTIONS += --disable-gtk-doc
+CONFIGURE_OPTIONS += --disable-inotify
+CONFIGURE_OPTIONS += --disable-maintainer-mode
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
@@ -63,8 +60,8 @@ REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += library/gnome/yelp-tools
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
@@ -78,4 +75,3 @@ REQUIRED_PACKAGES += library/media-player/totem-pl-parser
 REQUIRED_PACKAGES += media/cdrtools
 REQUIRED_PACKAGES += media/dvd+rw-tools
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
