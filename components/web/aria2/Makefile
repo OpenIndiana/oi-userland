@@ -22,12 +22,12 @@
 # Copyright (c) 2020 Michal Nowak
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			aria2
 COMPONENT_VERSION=		1.37.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		aria2 - lightweight multi-protocol and multi-source download utility
 COMPONENT_PROJECT_URL=	https://aria2.github.io/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
