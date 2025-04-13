@@ -17,9 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         toxcore
 COMPONENT_VERSION=      0.2.20
-COMPONENT_REVISION=		1
-COMPONENT_PROJECT_URL=  https://tox.chat
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      Secure, configuration-free, P2P Skype replacement backend
+COMPONENT_PROJECT_URL=  https://tox.chat
 COMPONENT_FMRI=         network/chat/toxcore
 COMPONENT_SRC=          c-toxcore-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      v$(COMPONENT_VERSION).tar.gz
