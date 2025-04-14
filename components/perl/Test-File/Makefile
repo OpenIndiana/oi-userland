@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-File
-HUMAN_VERSION =			1.994
+HUMAN_VERSION =			1.995
 COMPONENT_SUMMARY =		test file attributes
 COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d0b27f62fb15efb91375c145e4ef930df67c3c4ffdab9e262e1a57b656ce4f6
+	sha256:8f1cc36b871493dfdac29bda459763711b5fd828895c0f326b6c8654babd5f09
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,3 +37,4 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/version
