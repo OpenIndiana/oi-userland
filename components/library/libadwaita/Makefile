@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libadwaita
-HUMAN_VERSION=		1.6.5
+HUMAN_VERSION=		1.6.6
 COMPONENT_SUMMARY=	Building blocks for modern GNOME applications.
-COMPONENT_ARCHIVE_HASH=	sha256:d4713cfe5daeb2e537ccb6cb013c153677a3f1c29e5c166c5663e33605eb8ee2
+COMPONENT_ARCHIVE_HASH=	sha256:386f9ed9ab6a61e9b83a07a9f8ef621d8c952e72f25977f43734cea2f13af1cd
 COMPONENT_PROJECT_URL=	https://gnome.pages.gitlab.gnome.org/libadwaita/doc/
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
