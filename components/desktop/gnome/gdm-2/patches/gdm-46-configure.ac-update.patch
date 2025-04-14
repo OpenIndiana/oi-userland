@@ -1,0 +1,174 @@
+diff --git a/configure.ac b/configure.ac
+index 4057d0a..b0db130 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,8 +1,6 @@
+ 
+-AC_PREREQ([2.60])
+-AC_INIT([gdm],
+-        [2.30.7],
+-        [http://bugzilla.gnome.org/enter_bug.cgi?product=gdm])
++AC_PREREQ([2.71])
++AC_INIT([gdm],[2.30.7],[http://bugzilla.gnome.org/enter_bug.cgi?product=gdm])
+ 
+ AC_CONFIG_SRCDIR([daemon/gdm-manager.c])
+ 
+@@ -11,14 +9,30 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+ AM_MAINTAINER_MODE
+ 
+ # for utmpx stuff
+-AC_GNU_SOURCE
++AC_USE_SYSTEM_EXTENSIONS
++
++m4_warn([obsolete],
++[The preprocessor macro `STDC_HEADERS' is obsolete.
++  Except in unusual embedded environments, you can safely include all
++  ISO C90 headers unconditionally.])dnl
++# Autoupdate added the next two lines to ensure that your configure
++# script's behavior did not change.  They are probably safe to remove.
++AC_CHECK_INCLUDES_DEFAULT
++AC_PROG_EGREP
+ 
+-AC_STDC_HEADERS
+ AC_PROG_CXX
+ AM_PROG_CC_C_O
+ AC_PROG_LIBTOOL()
+ 
+-AC_HEADER_STDC
++m4_warn([obsolete],
++[The preprocessor macro `STDC_HEADERS' is obsolete.
++  Except in unusual embedded environments, you can safely include all
++  ISO C90 headers unconditionally.])dnl
++# Autoupdate added the next two lines to ensure that your configure
++# script's behavior did not change.  They are probably safe to remove.
++AC_CHECK_INCLUDES_DEFAULT
++AC_PROG_EGREP
++
+ 
+ AC_SUBST(VERSION)
+ 
+@@ -338,10 +352,10 @@ AC_CHECK_FUNC(gethostbyname,,[
+ 			   EXTRA_CHOOSER_LIBS="$EXTRA_CHOOSER_LIBS -lnsl"
+ 			   EXTRA_TEST_LIBS="$EXTRA_TEST_LIBS -lnsl"])])
+ AC_CHECK_DECL(HOST_NAME_MAX, ,
+-             AC_CHECK_DECL(_POSIX_HOST_NAME_MAX,
++             [AC_CHECK_DECL(_POSIX_HOST_NAME_MAX,
+                            AC_DEFINE(HOST_NAME_MAX, _POSIX_HOST_NAME_MAX, []),
+                            AC_DEFINE(HOST_NAME_MAX, 256, [Define to 256 if neither have HOST_NAME_MAX nor _POSIX_HOST_NAME_MAX]),
+-                           [[#include <limits.h>]]),
++                           [[#include <limits.h>]])],
+              [[#include <limits.h>]])
+ AC_CHECK_FUNC(sched_yield,[
+ 	      AC_DEFINE(HAVE_SCHED_YIELD, 1, [Define if we have sched yield])],[
+@@ -374,15 +388,13 @@ AC_ARG_ENABLE(ipv6,
+               enable_ipv6=no)
+ 
+ if test x$enable_ipv6 = xyes; then
+-  AC_TRY_COMPILE([
++  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+     #include <sys/types.h>
+-    #include <sys/socket.h>],[
++    #include <sys/socket.h>]], [[
+     struct sockaddr_storage ss;
+     socket(AF_INET6, SOCK_STREAM, 0)
+-    ],
+-    have_ipv6=yes,
+-    have_ipv6=no
+-    )
++    ]])],[have_ipv6=yes],[have_ipv6=no
++    ])
+   if test x$have_ipv6 = xyes; then
+     have_getaddrinfo=no
+     have_inet_ntop=no
+@@ -579,13 +591,10 @@ if test "$ac_cv_func_posix_getpwnam_r" = yes; then
+ else
+ 	AC_CACHE_CHECK([for nonposix getpwnam_r],
+ 		ac_cv_func_nonposix_getpwnam_r,
+-		[AC_TRY_LINK([#include <pwd.h>],
+-                      	[char buffer[10000];
++		[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pwd.h>]], [[char buffer[10000];
+                        	struct passwd pwd;
+                        	getpwnam_r ("", &pwd, buffer, 
+-                               		sizeof (buffer));],
+-			[ac_cv_func_nonposix_getpwnam_r=yes],
+-			[ac_cv_func_nonposix_getpwnam_r=no])])
++                               		sizeof (buffer));]])],[ac_cv_func_nonposix_getpwnam_r=yes],[ac_cv_func_nonposix_getpwnam_r=no])])
+ 		if test "$ac_cv_func_nonposix_getpwnam_r" = yes; then
+ 		AC_DEFINE(HAVE_NONPOSIX_GETPWNAM_R,1,
+ 			[Have non-POSIX function getpwnam_r])
+@@ -611,14 +620,12 @@ AC_CHECK_LIB(util, logwtmp, [
+ GDM_CHECK_UTMP
+ 
+ AC_MSG_CHECKING(if utmpx structure has ut_syslen field)
+-AC_TRY_COMPILE([
+-  #include <utmpx.h>],[
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
++  #include <utmpx.h>]], [[
+   struct utmpx record;
+   record.ut_syslen = sizeof (record.ut_host);
+-  ],
+-  have_ut_syslen=yes,
+-  have_ut_syslen=no
+-  )
++  ]])],[have_ut_syslen=yes],[have_ut_syslen=no
++  ])
+ if test x$have_ut_syslen = xyes; then
+   AC_DEFINE(HAVE_UT_SYSLEN, 1, [Define if have ut_syslen record])
+ fi
+@@ -778,7 +785,7 @@ if test "x$XINPUT_LIBS" = x; then
+        XINPUT_RPATH_FLAGS="-R$xinputpath"
+     fi
+     AC_MSG_CHECKING(for -lXi in $xinputpath)
+-    AC_TRY_LINK([], [XOpenDevice()], [
++    AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[XOpenDevice()]])],[
+ 	AC_MSG_RESULT(yes)
+ 	XINPUT_LIBS="$XINPUT_RPATH_FLAGS -L$xinputpath -lXi"
+         LIBS="$save_LIBS"
+@@ -928,8 +935,7 @@ dnl ---------------------------------------------------------------------------
+ 
+ msg_rbac_shutdown=no
+ AC_ARG_ENABLE(rbac-shutdown,
+-              AC_HELP_STRING([--enable-rbac-shutdown=<key>],
+-	                     [Build with RBAC support specifying shutdown/reboot RBAC authentication key]),
++              AS_HELP_STRING([--enable-rbac-shutdown=<key>],[Build with RBAC support specifying shutdown/reboot RBAC authentication key]),
+               enable_rbac_shutdown=$enableval,enable_rbac_shutdown=no)
+ 
+ if test "x$enable_rbac_shutdown" != "xno"; then
+@@ -1225,9 +1231,7 @@ if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
+                 SAVE_CFLAGS="$CFLAGS"
+                 CFLAGS="$CFLAGS $option"
+                 AC_MSG_CHECKING([whether gcc understands $option])
+-                AC_TRY_COMPILE([], [],
+-                        has_option=yes,
+-                        has_option=no,)
++                AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_option=yes],[has_option=no])
+                 if test $has_option = no; then
+                         CFLAGS="$SAVE_CFLAGS"
+                 fi
+diff --git a/configure.ac b/configure.ac
+index 6b6690b..a192801 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -735,20 +735,10 @@ else
+ 		AC_MSG_CHECKING(whether -lwrap also requires -lnsl)
+ 		ORIG_LIBS="$LIBS"
+ 		LIBS="$EXTRA_DAEMON_LIBS $LIBS $LIBWRAP_LIBS"
+-		AC_TRY_LINK([
++		AC_LINK_IFELSE([
+ #include <tcpd.h>
+ int allow_severity, deny_severity;
+-], [return hosts_access;], ,[
+-dnl try with -lnsl
+-OLD_LIBS="$LIBS"
+-LIBS="$LIBS -lnsl"
+-AC_TRY_LINK([
+-#include <tcpd.h>
+-int allow_severity, deny_severity;
+-], [return hosts_access;], LIB_NSL="-lnsl",
+-LIBWRAP_PATH="")
+-LIBS="$OLD_LIBS"
+-])
++], [return hosts_access;], ,)
+ 		LIBS="$ORIG_LIBS"
+ 		if test -n "$LIB_NSL"; then
+ 			AC_MSG_RESULT(yes)

@@ -1,0 +1,226 @@
+diff --git a/acinclude.m4 b/acinclude.m4
+index 3b3bbe3..218e7a7 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -56,7 +56,20 @@ dnl Taken from vte/gnome-pty-helper's GPH_CHECK_UTMP
+ AC_DEFUN([GDM_CHECK_UTMP],[
+ 
+ AC_CHECK_HEADERS(sys/time.h utmp.h utmpx.h)
+-AC_HEADER_TIME
++m4_warn([obsolete],
++[Update your code to rely only on HAVE_SYS_TIME_H,
++then remove this warning and the obsolete code below it.
++All current systems provide time.h; it need not be checked for.
++Not all systems provide sys/time.h, but those that do, all allow
++you to include it and time.h simultaneously.])dnl
++AC_CHECK_HEADERS_ONCE([sys/time.h])
++# Obsolete code to be removed.
++if test $ac_cv_header_sys_time_h = yes; then
++  AC_DEFINE([TIME_WITH_SYS_TIME],[1],[Define to 1 if you can safely include both <sys/time.h>
++	     and <time.h>.  This macro is obsolete.])
++fi
++# End of obsolete code.
++
+ 
+ if test "$ac_cv_header_utmpx_h" = "yes"; then
+     AC_DEFINE(UTMP,[struct utmpx],[Define to the name of a structure which holds utmp data.])
+@@ -66,7 +79,7 @@ fi
+ 
+ dnl some systems (BSD4.4-like) require time.h to be included before utmp.h :/
+ AC_MSG_CHECKING(for ut_host field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -81,14 +94,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; char *p; p=ut.ut_host;],result=yes,result=no)
++#endif]],[[UTMP ut; char *p; p=ut.ut_host;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_HOST,1,[Define if your utmp struct contains a ut_host field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_pid field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -103,14 +116,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; int i; i=ut.ut_pid;],result=yes,result=no)
++#endif]], [[UTMP ut; int i; i=ut.ut_pid;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_PID,1,[Define if your utmp struct contains a ut_pid field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_id field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -125,14 +138,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; char *p; p=ut.ut_id;],result=yes,result=no)
++#endif]], [[UTMP ut; char *p; p=ut.ut_id;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_ID,1,[Define if your utmp struct contains a ut_id field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_name field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -147,14 +160,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; char *p; p=ut.ut_name;],result=yes,result=no)
++#endif]], [[UTMP ut; char *p; p=ut.ut_name;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_NAME,1,[Define if your utmp struct contains a ut_name field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_type field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -169,14 +182,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; int i; i=(int) ut.ut_type;],result=yes,result=no)
++#endif]], [[UTMP ut; int i; i=(int) ut.ut_type;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_TYPE,1,[Define if your utmp struct contains a ut_type field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_exit.e_termination field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -191,14 +204,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; ut.ut_exit.e_termination=0;],result=yes,result=no)
++#endif]], [[UTMP ut; ut.ut_exit.e_termination=0;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_EXIT_E_TERMINATION,1,[Define if your utmp struct contains a ut_exit.e_termination field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_user field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -213,14 +226,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; char *p; p=ut.ut_user;],result=yes,result=no)
++#endif]], [[UTMP ut; char *p; p=ut.ut_user;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_USER,1,[Define if your utmp struct contains a ut_user field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_time field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -235,14 +248,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; ut.ut_time=0;],result=yes,result=no)
++#endif]], [[UTMP ut; ut.ut_time=0;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_TIME,1,[Define if your utmp struct contains a ut_time field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_tv field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -257,14 +270,14 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; ut.ut_tv.tv_sec=0; ut.ut_tv.tv_usec=0; ],result=yes,result=no)
++#endif]], [[UTMP ut; ut.ut_tv.tv_sec=0; ut.ut_tv.tv_usec=0; ]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_TV,1,[Define if your utmp struct contains a ut_tv field.])
+ fi
+ AC_MSG_RESULT($result)
+ 
+ AC_MSG_CHECKING(for ut_syslen field in the utmp structure)
+-AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifdef TIME_WITH_SYS_TIME
+ #include <sys/time.h>
+ #include <time.h>
+ #else
+@@ -279,7 +292,7 @@ AC_TRY_COMPILE([#ifdef TIME_WITH_SYS_TIME
+ #endif
+ #ifdef HAVE_UTMPX_H
+ #include <utmpx.h>
+-#endif],[UTMP ut; ut.ut_syslen=0;],result=yes,result=no)
++#endif]], [[UTMP ut; ut.ut_syslen=0;]])],[result=yes],[result=no])
+ if test "$result" = "yes"; then
+   AC_DEFINE(HAVE_UT_UT_SYSLEN,1,[Define if your utmp struct contains a ut_syslen field.])
+ fi
+@@ -296,7 +309,7 @@ AC_DEFUN([EXTRA_COMPILE_WARNINGS],[
+     dnl ******************************
+ 
+     AC_ARG_ENABLE(compile-warnings,
+-                  AC_HELP_STRING([--enable-compile-warnings=@<:@no/minimum/yes/maximum/error@:>@],
++                  AS_HELP_STRING([--enable-compile-warnings=@<:@no/minimum/yes/maximum/error@:>@],
+                                  [Turn on compiler warnings]),,
+                   [enable_compile_warnings="m4_default([$1],[yes])"])
+ 
+@@ -325,9 +338,7 @@ AC_DEFUN([EXTRA_COMPILE_WARNINGS],[
+ 		SAVE_CFLAGS="$CFLAGS"
+ 		CFLAGS="$CFLAGS $option"
+ 		AC_MSG_CHECKING([whether gcc understands $option])
+-		AC_TRY_COMPILE([], [],
+-			has_option=yes,
+-			has_option=no,)
++		AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_option=yes],[has_option=no])
+ 		CFLAGS="$SAVE_CFLAGS"
+ 		AC_MSG_RESULT($has_option)
+ 		if test $has_option = yes; then
+@@ -350,7 +361,7 @@ AC_DEFUN([EXTRA_COMPILE_WARNINGS],[
+     AC_MSG_RESULT($warning_flags)
+ 
+     AC_ARG_ENABLE(iso-c,
+-                  AC_HELP_STRING([--enable-iso-c],
++                  AS_HELP_STRING([--enable-iso-c],
+                                  [Try to warn if code is not ISO C ]),,
+                   [enable_iso_c=no])
+ 
