@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			sound-juicer
 COMPONENT_VERSION=		3.40.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		CD ripping tool using GTK+ and GStreamer
 COMPONENT_ARCHIVE_HASH= \
 	sha256:2ee882744391beb4c6d64a0f6825fb765510b706ec2b704bfb42e42afaae1de6
@@ -38,12 +39,12 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOETCSECDIR)/exec_attr.d/desktop-cd-ripping-sound-juicer ;
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/good
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/good
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
