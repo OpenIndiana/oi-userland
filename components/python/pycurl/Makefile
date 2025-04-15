@@ -23,11 +23,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycurl
-HUMAN_VERSION =			7.45.4
+HUMAN_VERSION =			7.45.6
 COMPONENT_SUMMARY =		PycURL -- A Python Interface To The cURL library
 COMPONENT_PROJECT_URL =		http://pycurl.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32c8e237069273f4260b6ae13d1e0f99daae938977016021565dc6e11050e803
+	sha256:2b73e66b22719ea48ac08a93fc88e57ef36d46d03cb09d972063c9aa86bb74e6
 COMPONENT_LICENSE =		LGPL-2.1-only
 
 TEST_STYLE = pytest
