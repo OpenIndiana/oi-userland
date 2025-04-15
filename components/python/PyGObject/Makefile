@@ -27,20 +27,17 @@ SINGLE_PYTHON_VERSION = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyGObject
-HUMAN_VERSION =			3.50.0
+HUMAN_VERSION =			3.54.0
 COMPONENT_SUMMARY =		Python bindings for GObject Introspection
 COMPONENT_PROJECT_URL =		https://pygobject.gnome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4500ad3dbf331773d8dedf7212544c999a76fc96b63a91b3dcac1e5925a1d103
+	sha256:4652a7cc7ff950a5099d56ac61a78c144629c20f8855a1306933b46b10f3b417
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
 COMPONENT_SRC =			pygobject-$(HUMAN_VERSION)
-
-# We cannot obsolete pygobject-27 yet because it is needed by gimp and pygtk2-27.
-PYTHON_VERSIONS_OBSOLETING := $(filter-out 2.7, $(PYTHON_VERSIONS_OBSOLETING))
 
 # Bring in usual defaults for the pyproject based Python projects
 include $(WS_MAKE_RULES)/pyproject-defaults.mk
@@ -155,11 +152,10 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS))
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/meson-python
-PYTHON_REQUIRED_PACKAGES += library/python/pycairo
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/desktop/cairo
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/meson-python
+REQUIRED_PACKAGES.python += library/python/pycairo
+REQUIRED_PACKAGES.python += runtime/python
