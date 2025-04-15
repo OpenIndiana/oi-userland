@@ -13,14 +13,13 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uchardet
 COMPONENT_VERSION=	0.0.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	uchardet is an encoding detector library
 COMPONENT_DESCRIPTION=	uchardet is an encoding detector library, which takes a sequence of bytes in an unknown character encoding \
 						without any additional information, and attempts to determine the encoding of the text. \
@@ -38,6 +37,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

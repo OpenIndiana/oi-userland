@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		unearth
-HUMAN_VERSION =			0.17.3
+HUMAN_VERSION =			0.17.5
 COMPONENT_SUMMARY =		A utility to fetch and download python packages
 COMPONENT_PROJECT_URL =		https://github.com/frostming/unearth
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32e96c9df63c563a118d411dfb4f9c672f181a410977f6765c0ed430b0d32784
+	sha256:a19e1c02e64b40518d088079c7416fc41b45a648b81a4128aac02597234ee6ba
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

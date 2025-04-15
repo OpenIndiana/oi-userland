@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Scalar-List-Utils
-HUMAN_VERSION =			1.68
+HUMAN_VERSION =			1.69
 COMPONENT_SUMMARY =		Common Scalar and List utility subroutines
 COMPONENT_CPAN_AUTHOR =		PEVANS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:23317e4346fe8747f0167eccd1881d6369aa71023f014cd6f846988843295906
+	sha256:49108037dc31ba4953aa8be57c1c72f3e922dde1fa328f1eb39a329f1e6314fc
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk

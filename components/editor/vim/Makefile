@@ -31,12 +31,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.1.1263
+COMPONENT_VERSION=	9.1.1291
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b318fbceb42cdcca66fb4b7083d8ec229ccf558dd5fdc4618490dc59d00d3d41
+COMPONENT_ARCHIVE_HASH=	sha256:e34e658b8eaa5a49165e67f23126d297ab11ae3064b5c872f22948bc2ec98852
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -61,7 +61,7 @@ INSTALL_64 = $(VARIANTS:%=%/.installed)
 TEST_64 = $(NOX_VARIANT)/.tested
 
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
-CFLAGS += -std=c99 $(XPG6MODE)
+CFLAGS += -std=c99 $(XPG8MODE)
 
 CONFIGURE_ENV += PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl

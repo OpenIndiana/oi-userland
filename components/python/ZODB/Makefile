@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ZODB
+#   $WS_TOOLS/python-integrate-project -d python/ZODB zodb
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		ZODB
-HUMAN_VERSION =			6.0
-COMPONENT_SUMMARY =		ZODB - ZODB, a Python object-oriented database
+COMPONENT_NAME =		zodb
+HUMAN_VERSION =			6.0.1
+COMPONENT_SUMMARY =		ZODB, a Python object-oriented database
 COMPONENT_PROJECT_URL =		http://zodb-docs.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e51c792115c5daad4e806757bafa2f754c000c23e6babc3be5e40775fe49b5dc
+	sha256:89f70fae1852123e243547909c311441d63405dec26f6ec42f365a2191db9509
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -39,7 +39,6 @@ COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/btrees
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/persistent
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/transaction

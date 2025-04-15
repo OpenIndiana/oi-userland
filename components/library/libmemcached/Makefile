@@ -24,21 +24,22 @@
 # Copyright (c) 2024  Friedrich Kink. All rights reserved.
 #
 
-BUILD_STYLE=	cmake
-
+BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmemcached
 COMPONENT_MAJOR_VERSION=	1.1
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	libmemcached-awesome is an open source C/C++ client library and tools for the memcached server
-COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_DESCRIPTION=	It has been designed to be light on memory usage, thread safe, and provide full access to server side methods.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:c477e1f6510e1dc698e84f3717ce690a8f65b94c616ecaa62306cce0f5e3116a
 COMPONENT_ARCHIVE_URL=	https://github.com/awesomized/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz 
 COMPONENT_PROJECT_URL=  https://awesomized.github.io/libmemcached
+COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE= LICENSE.HEADER
@@ -46,6 +47,8 @@ COMPONENT_LICENSE_FILE= LICENSE.HEADER
 include $(WS_MAKE_RULES)/common.mk
 
 LDFLAGS  += -lsocket -lnsl
+
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 CMAKE_OPTIONS += -DBUILD_DOCS_MAN=ON
@@ -59,17 +62,9 @@ CMAKE_OPTIONS += -DENABLE_DTRACE=OFF
 CMAKE_OPTIONS += -DENABLE_OPENSSL_CRYPTO=OFF
 
 # need some files in $(SOURCE_DIR)/docs during build
-COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 ASLR_MODE = $(ASLR_ENABLE)
-
-COMPONENT_TEST_TRANSFORMS = \
-        '-n ' \
-        '-e "s/Passed.*$$/Passed/p" ' \
-        '-e "s/Failed .*$$/Failed/p" '
-
-COMPONENT_TEST_ARGS += -k -i
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(USRLIBDIR64) -name "*.so.*"`; do \

@@ -1,21 +1,19 @@
-$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:208: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
-The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
-
-  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests
-asyncio: mode=auto, default_loop_scope=None
-collecting ... collected 445 items
+asyncio: mode=auto, asyncio_default_fixture_loop_scope=function
+collecting ... collected 453 items
 
 tests/test_asyncio.py::test_socket_class PASSED
 tests/test_asyncio.py::test_instance_subclass_first PASSED
 tests/test_asyncio.py::test_instance_subclass_second PASSED
 tests/test_asyncio.py::test_recv_multipart PASSED
 tests/test_asyncio.py::test_recv PASSED
+tests/test_asyncio.py::test_recv_into PASSED
+tests/test_asyncio.py::test_recv_into_bad PASSED
 tests/test_asyncio.py::test_recv_timeout PASSED
 tests/test_asyncio.py::test_send_timeout PASSED
 tests/test_asyncio.py::test_recv_string PASSED
@@ -290,24 +288,26 @@ tests/test_multipart.py::TestMultipart::test_basic_multipart PASSED
 tests/test_multipart.py::TestMultipart::test_router_dealer PASSED
 tests/test_multipart.py::TestMultipartGreen::test_basic_multipart PASSED
 tests/test_multipart.py::TestMultipartGreen::test_router_dealer PASSED
-tests/test_mypy.py::test_mypy_example[serialization] PASSED
-tests/test_mypy.py::test_mypy_example[cython] PASSED
-tests/test_mypy.py::test_mypy_example[win32-interrupt] PASSED
-tests/test_mypy.py::test_mypy_example[eventloop] PASSED
-tests/test_mypy.py::test_mypy_example[device] PASSED
-tests/test_mypy.py::test_mypy_example[monitoring] PASSED
-tests/test_mypy.py::test_mypy_example[security] PASSED
-tests/test_mypy.py::test_mypy_example[draft] PASSED
-tests/test_mypy.py::test_mypy_example[logger] PASSED
-tests/test_mypy.py::test_mypy_example[heartbeat] PASSED
-tests/test_mypy.py::test_mypy_example[gevent] PASSED
-tests/test_mypy.py::test_mypy_example[mongodb] PASSED
-tests/test_mypy.py::test_mypy_example[pubsub] PASSED
-tests/test_mypy.py::test_mypy_example[poll] PASSED
-tests/test_mypy.py::test_mypy_example[asyncio] PASSED
-tests/test_mypy.py::test_mypy[test_socket.py] PASSED
-tests/test_mypy.py::test_mypy[test_toplevel.py] PASSED
-tests/test_mypy.py::test_mypy[test_context.py] PASSED
+tests/test_mypy.py::test_mypy_example[draft] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[serialization] SKIPPED (target...)
+tests/test_mypy.py::test_mypy_example[cython] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[mongodb] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[poll] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[asyncio] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[recv_into] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[device] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[eventloop] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[gevent] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[monitoring] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[pubsub] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[win32-interrupt] SKIPPED (targ...)
+tests/test_mypy.py::test_mypy_example[heartbeat] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[security] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[logger] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy[test_socket.py] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy[test_socket_async.py] SKIPPED (targets...)
+tests/test_mypy.py::test_mypy[test_context.py] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy[test_toplevel.py] SKIPPED (targets 3.10)
 tests/test_pair.py::TestPair::test_basic PASSED
 tests/test_pair.py::TestPair::test_json PASSED
 tests/test_pair.py::TestPair::test_multiple PASSED
@@ -387,6 +387,8 @@ tests/test_socket.py::TestSocket::test_ipc_path_no_such_file_or_directory_messag
 tests/test_socket.py::TestSocket::test_large_send PASSED
 tests/test_socket.py::TestSocket::test_mockable PASSED
 tests/test_socket.py::TestSocket::test_poll PASSED
+tests/test_socket.py::TestSocket::test_recv_into PASSED
+tests/test_socket.py::TestSocket::test_recv_into_bad PASSED
 tests/test_socket.py::TestSocket::test_recv_multipart PASSED
 tests/test_socket.py::TestSocket::test_repr PASSED
 tests/test_socket.py::TestSocket::test_send_buffer PASSED
@@ -424,6 +426,8 @@ tests/test_socket.py::TestSocketGreen::test_ipc_path_no_such_file_or_directory_m
 tests/test_socket.py::TestSocketGreen::test_large_send PASSED
 tests/test_socket.py::TestSocketGreen::test_mockable PASSED
 tests/test_socket.py::TestSocketGreen::test_poll PASSED
+tests/test_socket.py::TestSocketGreen::test_recv_into PASSED
+tests/test_socket.py::TestSocketGreen::test_recv_into_bad PASSED
 tests/test_socket.py::TestSocketGreen::test_recv_multipart PASSED
 tests/test_socket.py::TestSocketGreen::test_repr PASSED
 tests/test_socket.py::TestSocketGreen::test_send_buffer PASSED
@@ -458,48 +462,56 @@ tests/test_zmqstream.py::test_shadow_socket PASSED
 tests/test_zmqstream.py::test_shadow_socket_close PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:255
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:255: PytestDeprecationWarning: io_loop is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256: PytestDeprecationWarning: io_loop is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
     warnings.warn(
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:255
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:255: PytestDeprecationWarning: _async_setup is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256: PytestDeprecationWarning: _async_setup is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
     warnings.warn(
 
-tests/test_auth.py:414
-  tests/test_auth.py:414: PytestDeprecationWarning: test_ioloop_authenticator is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
+tests/test_auth.py:410
+  tests/test_auth.py:410: PytestDeprecationWarning: test_ioloop_authenticator is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
     async def test_ioloop_authenticator(context, event_loop, io_loop):
 
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100
-  $(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+  $(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
     "cipher": algorithms.TripleDES,
 
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259
-  $(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from this module in 48.0.0.
+  $(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
     "class": algorithms.TripleDES,
 
-tests/test_asyncio.py: 21 warnings
+tests/test_asyncio.py: 23 warnings
 tests/test_auth.py: 31 warnings
 tests/test_monitor.py: 6 warnings
 tests/test_zmqstream.py: 7 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:783: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:867: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
   $(@D)/tests/conftest.py:73
   Replacing the event_loop fixture with a custom implementation is deprecated
   and will lead to errors in the future.
   If you want to request an asyncio event loop with a scope other than function
-  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  scope, use the "loop_scope" argument to the asyncio mark when marking the tests.
   If you want to return different types of event loops, use the event_loop_policy
   fixture.
   
     warnings.warn(
 
 tests/test_auth.py::test_ioloop_authenticator
-  $(@D)/tests/test_auth.py:418: DeprecationWarning: zmq.auth.ioloop.IOLoopAuthenticator is deprecated. Use zmq.auth.asyncio.AsyncioAuthenticator
+  $(@D)/tests/test_auth.py:414: DeprecationWarning: zmq.auth.ioloop.IOLoopAuthenticator is deprecated. Use zmq.auth.asyncio.AsyncioAuthenticator
     from zmq.auth.ioloop import IOLoopAuthenticator
 
 tests/test_imports.py::test_eventloop
   $(@D)/tests/test_imports.py:52: DeprecationWarning: zmq.eventloop.ioloop is deprecated in pyzmq 17. pyzmq now works with default tornado and asyncio eventloops.
     from zmq.eventloop import ioloop, zmqstream
+
+tests/test_message.py::TestFrame::test_buffer_numpy
+tests/test_message.py::TestFrame::test_buffer_numpy
+tests/test_message.py::TestFrame::test_buffer_numpy
+tests/test_message.py::TestFrame::test_buffer_numpy
+tests/test_message.py::TestFrame::test_buffer_numpy
+  $(@D)/tests/test_message.py:356: DeprecationWarning: Data type alias 'a' was deprecated in NumPy 2.0. Use the 'S' alias instead.
+    A = numpy.empty(shape, dtype=[('a', int), ('b', float), ('c', 'a32')])
 
 tests/test_socket.py::TestSocket::test_int_sockopts
 tests/test_socket.py::TestSocket::test_int_sockopts
@@ -507,13 +519,13 @@ tests/test_socket.py::TestSocket::test_mockable
 tests/test_socket.py::TestSocketGreen::test_int_sockopts
 tests/test_socket.py::TestSocketGreen::test_int_sockopts
 tests/test_socket.py::TestSocketGreen::test_mockable
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/sugar/socket.py:349: DeprecationWarning: Socket.socket_type is deprecated, use Socket.type
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/sugar/socket.py:358: DeprecationWarning: Socket.socket_type is deprecated, use Socket.type
     warn("Socket.socket_type is deprecated, use Socket.type", DeprecationWarning)
 
 tests/test_socket.py::TestSocketGreen::test_mockable
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/green/core.py:290: UserWarning: TIMEO socket options have no effect in zmq.green
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/zmq/green/core.py:307: UserWarning: TIMEO socket options have no effect in zmq.green
     warnings.warn(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 10 durations =============================
-======== 415 passed, 30 skipped, 79 warnings ========
+======== 403 passed, 50 skipped, 86 warnings ========

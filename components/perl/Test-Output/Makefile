@@ -19,17 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Output
-HUMAN_VERSION =			1.035
+HUMAN_VERSION =			1.036
 COMPONENT_SUMMARY =		Utilities to test STDOUT and STDERR messages.
 COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be213597f1b878317dd8ab46f308891d9c68ec0df5d729830011c15bbd9e525a
+	sha256:a3a95cb8c4d387fe079add4490757e69927ef0488bbb18b4d55e7fc6d25f1a63
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Optional test dependencies missing from metadata
+# https://github.com/briandfoy/test-output/issues/18
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
@@ -39,3 +40,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/version

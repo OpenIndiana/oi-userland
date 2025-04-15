@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.11.9
+HUMAN_VERSION =			3.11.16
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a9266644064779840feec0e34f10a89b3ff1d2d6b751fe90017abcad1864fa7c
+	sha256:16f8a2c9538c14a557b4d309ed4d0a7c60f0253e8ed7b6c9a2859a7582f8b1b8
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -62,12 +62,13 @@ PYTEST_ADDOPTS += --ignore tests/test_proxy_functional.py
 # We have no python-on-whales packaged yet.
 PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
 # We have no pytest_codspeed packaged yet so we cannot run benchmark tests.
-PYTEST_ADDOPTS += --ignore tests/test_benchmarks_cookiejar.py
-PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_request.py
-PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_writer.py
-PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_websocket.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_request.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_ws.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_cookiejar.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_websocket.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_writer.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_fileresponse.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_middleware.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_response.py
 PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_urldispatcher.py

@@ -14,24 +14,23 @@
 #   $WS_TOOLS/python-integrate-project -d python/pycryptodome-test-vectors pycryptodome_test_vectors
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodome_test_vectors
-HUMAN_VERSION =			1.0.21
+HUMAN_VERSION =			1.0.22
 COMPONENT_SUMMARY =		Test vectors for PyCryptodome
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:63246c55038093a5de4ffa72c7f8042a55508335bd0f0016b1850499df19c853
+	sha256:d68efef6df0ebb9dd384f3a98387c2d7151d8d98e83611a74d434e7b5d0a76a5
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 TEST_STYLE = none
 
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).zip
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python

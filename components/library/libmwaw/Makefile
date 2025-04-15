@@ -20,12 +20,12 @@
 #
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS= 64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmwaw
 COMPONENT_VERSION=	0.3.22
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	A library for reading various old mac text documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmwaw
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
