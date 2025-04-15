@@ -38,13 +38,13 @@ ESR = esr
 # CANDIDATE_BUILD= 2
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.9.1
+COMPONENT_VERSION =	128.9.2
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:2d6caeb9c958d89d9a789eeaf0e41064f4a8678b493452e89a244f5dc60e952d
+	 sha256:21cbdc12fd2a5c79ce3ae3f23b5c334160b4380858aaa8a92fc1d9c9acfdd5fb
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
 else
@@ -210,7 +210,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # copy distribution.ini to install staging area
 COMPONENT_POST_INSTALL_ACTION += \
-   mkdir $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution ; \
    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/distribution.ini ;
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
