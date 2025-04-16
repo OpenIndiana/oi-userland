@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         re2
 COMPONENT_VERSION=      2024.7.2
 HUMAN_VERSION=          2024-07-02
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Fast, safe, thread-friendly regular expression engine
 COMPONENT_PROJECT_URL=  https://github.com/google/re2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -39,5 +40,6 @@ CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
