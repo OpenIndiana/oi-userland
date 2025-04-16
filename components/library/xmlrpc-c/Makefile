@@ -13,13 +13,11 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xmlrpc-c
 COMPONENT_VERSION=      1.39.12
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      XMLRPC C/C++ Library
 COMPONENT_PROJECT_URL=  http://xmlrpc-c.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,7 +53,6 @@ COMPONENT_BUILD_ENV += $(COMMON_ENV)
 COMPONENT_INSTALL_ENV += $(COMMON_ENV)
 COMPONENT_TEST_ENV += $(COMMON_ENV)
 
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
         '-e "/Running/p" ' \
