@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libde265
 COMPONENT_VERSION=	1.0.15
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libde265 is an open source implementation of the h.265 video codec
 COMPONENT_PROJECT_URL=  https://github.com/strukturag/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
