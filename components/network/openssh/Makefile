@@ -29,19 +29,19 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-COMPONENT_VERSION=	9.9.0.2
-HUMAN_VERSION=		9.9p2
+COMPONENT_VERSION=	10.0.0.2
+HUMAN_VERSION=		10.0p2
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+# OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
+COMPONENT_SRC=		$(COMPONENT_NAME)-10.0p1
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:91aadb603e08cc285eddf965e1199d02585fa94d994d6cae5b41e1721e215673
+COMPONENT_ARCHIVE_HASH=	sha256:021a2e709a0edf4250b1256bd5a9e500411a90dddabea830ed59cef90eb9d85c
 COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
 COMPONENT_LICENSE_FILE=	LICENCE
 
-#TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
@@ -60,7 +60,6 @@ CFLAGS += -DOPTION_DEFAULT_VALUE
 CFLAGS += -DSANDBOX_SOLARIS
 CFLAGS += -DPER_SESSION_XAUTHFILE
 CFLAGS += -I$(OPENSSL_INCDIR)
-#CFLAGS += -DLOAD_ALL_LIBS
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
@@ -87,7 +86,6 @@ CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-#CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/ssh
 
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
