@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= imf-selector
 COMPONENT_VERSION= 0.5.11
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= Input Method Framework startup
 COMPONENT_SRC = src
 COMPONENT_PROJECT_URL = http://www.openindiana.org
@@ -40,6 +40,10 @@ PATH=$(PATH.gnu)
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
 
+# to fix: install: cannot stat 'imf-selector-C.omf.out': No such file or directory
+COMPONENT_POST_BUILD_ACTION =        ($(CP) -p $(SOURCE_DIR)/help/C/imf-selector-C.omf \
+					$(BUILD_DIR_64)/help/C/imf-selector-C.omf.out)
+
 CONFIGURE_SCRIPT = $(@D)/autogen.sh
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
@@ -51,6 +55,6 @@ clean::
 	$(RM) -rf $(BUILD_DIR)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/ksh93
