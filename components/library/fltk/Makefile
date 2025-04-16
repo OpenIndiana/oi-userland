@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			fltk
 COMPONENT_VERSION=		1.3.10
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		fltk - Fast Light Toolkit
 COMPONENT_PROJECT_URL=	https://www.fltk.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
