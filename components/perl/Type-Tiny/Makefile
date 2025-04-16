@@ -20,17 +20,18 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Type-Tiny
-HUMAN_VERSION =			2.008000
+HUMAN_VERSION =			2.008001
 COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:997ea06f1c6b9be37c3456294bdf861e632538c29313cd6869ff2b1b1c44dcb3
+	sha256:4afbe3a25b0e1e58c8a5d818c693856f9cb8919b98618721cb9b20ab25f8f4e0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Optional test dependencies missing from metadata
+# https://github.com/tobyink/p5-type-tiny/issues/171
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
