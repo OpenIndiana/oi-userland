@@ -26,6 +26,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
 COMPONENT_VERSION =		5.40.2
+# Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
+# sure bundled CPAN modules gets distinct version.
+COMPONENT_REVISION =		1
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
