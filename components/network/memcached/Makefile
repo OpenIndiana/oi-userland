@@ -28,7 +28,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.6.23
+COMPONENT_VERSION=	1.6.38
 COMPONENT_SUMMARY=	The memcached memory object cache
 COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
 			key/value cache store intended to be used in a distributed system.
@@ -37,7 +37,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:85b0334904f440296a685ccfda75f0f4517bf8922ab8efa6d0c4b3c92c354d4c
+COMPONENT_ARCHIVE_HASH=	sha256:334d792294e37738796b5b03375c47bb6db283b1152e2ea4ccb720152dd17c66
 COMPONENT_ARCHIVE_URL=	https://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
@@ -50,7 +50,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # otherwise the link with ssl library does not work
 # standard linker path does not make sense anyway
 COMPONENT_POST_CONFIGURE_ACTION = \
-	($(GSED) -i -e 's:-L/usr/lib/amd64::' $(@D)/config.status)
+	($(GSED) -i -e 's:-L$(USRLIBDIR.$(BITS))::' $(@D)/config.status)
 
 COMPONENT_TEST_TARGETS=	test
 
@@ -78,11 +78,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Result/p" '
 
 # Manually added test dependency
-TEST_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl-538
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
