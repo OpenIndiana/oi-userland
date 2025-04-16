@@ -11,26 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Math::Pari
+#   $WS_TOOLS/perl-integrate-module Math-Pari
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Math::Pari
-HUMAN_VERSION =			2.030523
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Math::Pari - Perl interface to PARI.
+COMPONENT_NAME =		Math-Pari
+HUMAN_VERSION =			2.030528
+COMPONENT_SUMMARY =		Perl interface to PARI.
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/I/IL/ILYAZ/modules/Math-Pari-2.030523.tar.gz
+	https://cpan.metacpan.org/authors/id/I/IL/ILYAZ/modules/Math-Pari-2.030528.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed660da310b91f766c5b9f6348415ed7d7c2edddeef8b8bb38c6fe42112c254d
+	sha256:67f74d216c69635ab1c6ea3e27ce19750a94a2b560ae7288bb2d6cf714fce6c8
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
