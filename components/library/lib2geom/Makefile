@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		lib2geom
 COMPONENT_VERSION=	1.4
 HUMAN_VERSION=		1.4.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	easy 2D graphics library
 COMPONENT_PROJECT_URL=	https://gitlab.com/inkscape/lib2geom
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -39,7 +40,6 @@ CMAKE_OPTIONS += -D2GEOM_BUILD_SHARED:BOOL=ON
 # 1. nl-vector-test: fatal: relocation error: file /usr/lib/64/libgsl.so.27: symbol cblas_dcopy: referenced symbol not found
 # This probably happens because cblas_dcopy is in libgslcblas
 # 2.  LineTest.CoincidingIntersect
-COMPONENT_TEST_TRANSFORMS += ' -e "/Subprocess killed/p" '
 
 # Manually added build dependencies
 TEST_REQUIRED_PACKAGES += developer/googletest
