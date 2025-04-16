@@ -27,7 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hyperscan
 COMPONENT_VERSION=	5.4.2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Hyperscan is a high-performance multiple regex matching library.
 COMPONENT_PROJECT_URL=  https://www.hyperscan.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -48,14 +48,16 @@ PATH = $(PATH.gnu)
 # turn on largefile support
 CFLAGS += $(CPP_LARGEFILES)
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 # to avoid to modern CPU's when build automatically on newer hardware
 CMAKE_OPTIONS += -DCMAKE_C_FLAGS="-march=corei7"
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DFAT_RUNTIME=OFF
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 
-# manually added
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/ragel
+REQUIRED_PACKAGES += system/library/libnet
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
