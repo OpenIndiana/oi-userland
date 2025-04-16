@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetonyek
 COMPONENT_VERSION=	0.1.12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libetonyek - library for reading Apple iWork documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libetonyek
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
