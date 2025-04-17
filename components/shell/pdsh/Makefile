@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdsh
 COMPONENT_VERSION=	2.35
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Parallel distributed shell
 COMPONENT_PROJECT_URL=	https://github.com/chaos/pdsh/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,6 +48,6 @@ CONFIGURE_OPTIONS += --with-dshgroups
 #COMPONENT_TEST_TRANSFORMS += '-e "/XPASS:/p"'
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
