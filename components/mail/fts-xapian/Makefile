@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fts-xapian
-COMPONENT_VERSION=      1.7.17
+COMPONENT_VERSION=      1.9.1
 COMPONENT_SUMMARY=      FTS Xapian plugin for Dovecot
 COMPONENT_PROJECT_URL=  https://github.com/grosjo/fts-xapian
 COMPONENT_FMRI=         mail/dovecot/fts-xapian
@@ -23,7 +23,7 @@ COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      dovecot-$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:64163cc758995b4203948c707f3ab48d317f13babd8dea987bf54740d71e7267
+COMPONENT_ARCHIVE_HASH= sha256:f6d6cbf7d3ad4b6fdea826d6301cb3102cb251acc1b66d085d51b8492945f53c
 COMPONENT_LICENSE=      LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -35,7 +35,7 @@ TEST_TARGET= $(NO_TESTS)
 
 CONFIGURE_OPTIONS+= --enable-static=no 
 CONFIGURE_OPTIONS+= --disable-dependency-tracking
-CONFIGURE_OPTIONS+= --with-dovecot=/usr/lib/amd64/dovecot 
+CONFIGURE_OPTIONS+= --with-dovecot=$(USRLIBDIR.$(BITS))/dovecot 
 CONFIGURE_OPTIONS+= --with-dovecot-install-dirs
 
 # manually added dependency
@@ -46,6 +46,7 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/xapian
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
