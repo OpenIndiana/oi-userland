@@ -12,14 +12,12 @@
 # Copyright (c) 2015 Alexander Pyhalov
 #
 
-OPENSSL_VERSION= 3.1
-PREFERRED_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gftp
 COMPONENT_VERSION=	2.9.1
 COMPONENT_VERSION_MNR=	b
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.gftp.org/
 COMPONENT_SUMMARY=	Multithreaded file transfer client for *NIX based machines
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)$(COMPONENT_VERSION_MNR)
