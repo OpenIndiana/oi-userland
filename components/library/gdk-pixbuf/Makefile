@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
 HUMAN_VERSION=		2.42.12
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	GdkPixbuf: Image loading library
 COMPONENT_ARCHIVE_HASH=	sha256:b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
@@ -67,5 +67,6 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)/32
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
