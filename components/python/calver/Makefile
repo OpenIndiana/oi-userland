@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		calver
-HUMAN_VERSION =			2025.4.2
+HUMAN_VERSION =			2025.4.17
 COMPONENT_SUMMARY =		Setuptools extension for CalVer package versions
 COMPONENT_PROJECT_URL =		https://github.com/di/calver
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f854bb865a070da3d45f989f812b2fb6847a10c2d5a7490490ec16832617a463
+	sha256:460702737d620f5c3d4175450485180a1b7f7a422c5db0e6af3e655c7395ec7e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
