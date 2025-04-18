@@ -14,13 +14,12 @@
 # Copyright 2015 Ken Mays
 #
 
-BUILD_BITS = 64
 BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 21.3.9
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= The Mesa 3-D Graphics Library
 COMPONENT_SRC= mesa-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= mesa-$(COMPONENT_VERSION).tar.xz
@@ -65,7 +64,8 @@ CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
-CONFIGURE_OPTIONS += -Ddri-drivers=''
+CONFIGURE_OPTIONS += -Ddri-drivers='i965'
+CONFIGURE_OPTIONS += -Dshader-cache=false
 CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
 
@@ -105,7 +105,6 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/opengl/ogl-select
