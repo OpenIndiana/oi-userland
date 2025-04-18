@@ -22,11 +22,11 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		alpine
 COMPONENT_VERSION=	2.26
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Alternatively Licensed Program for Internet News and Email
 COMPONENT_PROJECT_URL=	https://alpineapp.email/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,7 +42,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CFLAGS += -D_XPG6
+CFLAGS += -D_XPG6 -Wno-incompatible-pointer-types
 LDFLAGS += -lsocket -lnsl -lldap_r
 
 COMPONENT_PRE_CONFIGURE_ACTION += \
@@ -60,7 +60,7 @@ CONFIGURE_OPTIONS += --without-krb5
 CONFIGURE_OPTIONS += --without-tcl
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
