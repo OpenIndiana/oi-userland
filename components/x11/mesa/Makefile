@@ -65,7 +65,8 @@ CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
 CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
 CONFIGURE_OPTIONS += -Dgallium-xa=enabled
-CONFIGURE_OPTIONS += -Ddri-drivers=''
+CONFIGURE_OPTIONS += -Ddri-drivers='i965'
+CONFIGURE_OPTIONS += -Dshader-cache=false
 CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
 
