@@ -12,34 +12,35 @@
 #
 # Copyright 2016 Alexander Pyhalov
 #
-BUILD_BITS=	64
+
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= idzebra
-COMPONENT_VERSION= 2.2.7
+COMPONENT_VERSION= 2.2.8
 COMPONENT_SUMMARY= idzebra - text indexing and retrieval engine
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b465ffeb060f507316e6cfc20ebd46022472076d0d4e96ef7dab63e798066420
-COMPONENT_ARCHIVE_URL=	https://ftp.indexdata.com/pub/zebra/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:879e402b91912e9074275753f24408ed2ac06b3b7c30b2a2d5a70718c869a542
+# The archive of 2.2.8 is missing the contents of the doc/common folder. We provide a patched one in our dlc.
+#COMPONENT_ARCHIVE_URL=	https://github.com/indexdata/idzebra/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL=	https://dlc.openindiana.org/oi-userland/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.indexdata.com/resources/software/zebra/
 COMPONENT_FMRI= text/idzebra
 COMPONENT_CLASSIFICATION = System/Text Tools
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = LICENSE.zebra
+COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= LICENSE.zebra
 
 include $(WS_MAKE_RULES)/common.mk
 
-# For tests to pass we should be very careful about files
-COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
+# For tests to pass we should be very careful about files
+COMPONENT_PRE_CONFIGURE_ACTION = ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fiv )
 
 CONFIGURE_OPTIONS += --enable-static=no
-
-# Without this tests fail
-unexport SHELLOPTS
 
 COMPONENT_POST_INSTALL_ACTION = ( \
 	cd $(PROTO_DIR)/usr/bin && \
