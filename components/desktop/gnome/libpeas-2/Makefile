@@ -21,9 +21,9 @@ include ../../../../make-rules/shared-macros.mk
 # This is libpeas-2 ABI series
 
 COMPONENT_NAME=			libpeas
-HUMAN_VERSION=			2.0.5
+HUMAN_VERSION=			2.0.7
 COMPONENT_SUMMARY=		A GObject-based plugins engine
-COMPONENT_ARCHIVE_HASH=		sha256:376f2f73d731b54e13ddbab1d91b6382cf6a980524def44df62add15489de6dd
+COMPONENT_ARCHIVE_HASH=		sha256:1e9a9d69761d2109eff5b7c11d8c96b4867ccfaca2b921eded49401192769ec9
 COMPONENT_FMRI=			library/desktop/libpeas-2
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
