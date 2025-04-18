@@ -15,13 +15,13 @@
 #
 
 BUILD_STYLE= meson
-
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=	0.8.4
+COMPONENT_VERSION=	0.8.6
 COMPONENT_SUMMARY=      Library for desktop notifications
-COMPONENT_ARCHIVE_HASH=	sha256:8fa04d4ebdc155b0a239df88bd9f09e8f2739d5707a1390b427ab4985f83d25a
+COMPONENT_ARCHIVE_HASH=	sha256:c5540aaefb60e1d63b1c587c05f2284ebe72ece7d0c0e5e4a778cfd5844b6b58
 COMPONENT_FMRI=         library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
@@ -32,6 +32,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 # we miss docbook-xsl-ns
 CONFIGURE_OPTIONS += -Dman=false
+
+# Testing needs an X server
+# The tests work best without a running non-system dbus.
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Manually added build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/gi-docgen
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
