@@ -15,14 +15,12 @@
 # Copyright 2020 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openconnect
 COMPONENT_VERSION=	9.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	An SSL VPN client (intended to be) compatible with Cisco AnyConnect and Juniper Pulse
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
