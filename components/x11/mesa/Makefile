@@ -18,6 +18,8 @@ BUILD_BITS = 64
 BUILD_STYLE = meson
 include ../../../make-rules/shared-macros.mk
 
+CLANG_VERSION = 13
+
 COMPONENT_NAME= mesa
 COMPONENT_VERSION= 21.3.9
 COMPONENT_REVISION= 2
@@ -46,28 +48,30 @@ X11_SERVERLIBS_DIR= /usr/lib/xorg
 
 CONFIGURE_OPTIONS += --libdir='lib/mesa/amd64'
 
-PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
+#PKG_HARDLINKS += usr/lib/xorg/modules/dri/$(MACH64)/kms_swrast_dri.so
 
 # Command line options to GNU autoconf configure script
-CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, i915, r600'
+CONFIGURE_OPTIONS += -Dgallium-drivers='swrast, crocus, iris'
 CONFIGURE_OPTIONS += -Dvulkan-drivers=''
 CONFIGURE_OPTIONS += -Dgbm=enabled
 CONFIGURE_OPTIONS += -Dglvnd=false
 # Wayland currently requires linux specific socket options and epoll for events.
 CONFIGURE_OPTIONS += -Dplatforms='x11'
 # llvm is disabled due to requiring llvm 16 we do not have 16
-CONFIGURE_OPTIONS += -Dllvm=false
+CONFIGURE_OPTIONS += -Dllvm=enabled
 CONFIGURE_OPTIONS += -Dglx='auto'
 CONFIGURE_OPTIONS += -Degl=enabled
 CONFIGURE_OPTIONS += -Dgles1=enabled
 CONFIGURE_OPTIONS += -Dgles2=enabled
 CONFIGURE_OPTIONS += -Dosmesa=true
 CONFIGURE_OPTIONS += -Dshared-glapi=enabled
-CONFIGURE_OPTIONS += -Dgallium-xvmc=enabled
-CONFIGURE_OPTIONS += -Dgallium-xa=enabled
-CONFIGURE_OPTIONS += -Ddri-drivers=''
+CONFIGURE_OPTIONS += -Dgallium-xvmc=disabled
+CONFIGURE_OPTIONS += -Dgallium-xa=disabled
+CONFIGURE_OPTIONS += -Ddri-drivers='i915'
 CONFIGURE_OPTIONS += -Ddri-drivers-path='$(X11_SERVERMODS_DIR)/dri$(SERVERMOD_SUBDIR)'
 CONFIGURE_OPTIONS += -Delf-tls=false
+CONFIGURE_OPTIONS += -Dprefer-crocus=true
+CONFIGURE_OPTIONS += -Dprefer-iris=true
 
 CFLAGS += $(XPG7MODE)
 CFLAGS += -Wno-incompatible-pointer-types -D_POSIX_PTHREAD_SEMANTICS
@@ -88,12 +92,14 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # Add RPATH to xorg lib directory where is libdrm.
 
 COMPONENT_POST_INSTALL_ACTION.64 += \
-	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libxatracker.so.2.5.0 libXvMCr600.so.1.0.0 vdpau/libvdpau_r600.so.1.0.0; do \
-	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
+	for f in libgbm.so.1.0.0 libEGL.so.1.0.0 libGL.so.1.2.0 libOSMesa.so.8.0.0; do \
+	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR):${CLANG_LIBDIR}" \
 	  $(PROTOUSRLIBDIR)/mesa/$(MACH64)/$$f ; \
 	done ; \
-	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR)" \
-	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/i915_dri.so ; \
+	for f in kms_swrast_dri.so i915_dri.so crocus_dri.so iris_dri.so; do \
+	elfedit -e "dyn:runpath /usr/lib/mesa/$(MACH64):/usr/lib/xorg/$(MACH64):$(GCC_LIBDIR):${CLANG_LIBDIR}" \
+	  $(PROTOUSRLIBDIR)/xorg/modules/dri/$(MACH64)/$$f ; \
+	done ; \
 	mv $(PROTOUSRDIR)/include/GL $(PROTOUSRDIR)/include/mesa
 
 # Manually added build dependencies
@@ -105,6 +111,7 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(CLANG_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/zlib
