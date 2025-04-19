@@ -669,10 +669,5 @@ endif
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
 
-# Make it easy to construct a URL for a pypi source download.
-pypi_url_multi = pypi:///$(COMPONENT_NAME_$(1))==$(COMPONENT_VERSION_$(1))
-pypi_url_single = pypi:///$(COMPONENT_NAME)==$(COMPONENT_VERSION)
-pypi_url = $(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
-
 # Use common rules
 USE_COMMON_RULES = yes
