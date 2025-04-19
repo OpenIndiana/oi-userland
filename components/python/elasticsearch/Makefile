@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.17.2
+HUMAN_VERSION =			9.0.0
 COMPONENT_SUMMARY =		Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:18449ba533e9403a86f9cde3d19a22795199c67eac74e6391e1fea08f5309d37
+	sha256:d8c9ecbc340f213fbe988fbf9c1bbe9a603699326740aea8d1407ff4f5d8a0b6
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,10 +41,16 @@ TEST_REQUIREMENTS_EXTRAS += dev
 
 # We do not have orjson
 PYTEST_ADDOPTS += --ignore test_elasticsearch/test_serializer.py
+# We do not have nltk
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/async_examples/vectors.py
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/_async/test_vectors.py
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/_sync/test_vectors.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/elastic-transport
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohttp
 TEST_REQUIRED_PACKAGES.python += library/python/black
@@ -52,12 +58,16 @@ TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/jinja2
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nox
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/requests
+TEST_REQUIRED_PACKAGES.python += library/python/tqdm
 TEST_REQUIRED_PACKAGES.python += library/python/twine
+TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
