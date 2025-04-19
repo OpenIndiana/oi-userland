@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		borgbackup
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.4.1
 COMPONENT_SUMMARY =		Deduplicated, encrypted, authenticated and compressed backups
 COMPONENT_PROJECT_URL =		https://borgbackup.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c54c45155643fa66fed7f9ff2d134ea0a58d0ac197c18781ddc2fb236bf6ed29
+	sha256:b8fbf8f1c19d900b6b32a5a1dc131c5d8665a7c7eea409e9095209100b903839
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
