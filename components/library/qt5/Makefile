@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=			qt
 COMPONENT_VERSION_MJR=	5.15
 COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).16
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=	https://www.qt.io/
 COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
@@ -127,6 +127,7 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/audio/gstreamer
