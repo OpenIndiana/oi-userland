@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/browse-domain.c	2010-08-26 01:51:38.982153000 +0100
-+++ avahi-0.6.28/avahi-core/browse-domain.c	2011-01-20 15:24:22.639202717 +0000
+--- avahi-0.8/avahi-core/browse-domain.c.~1~	2020-02-17 05:41:02.380380789 +0200
++++ avahi-0.8/avahi-core/browse-domain.c	2025-04-19 21:34:06.199677114 +0300
 @@ -26,6 +26,9 @@
  #include <avahi-common/domain.h>
  #include <avahi-common/malloc.h>
@@ -145,7 +145,7 @@
 +}
 +#endif
 +
- AvahiSDomainBrowser *avahi_s_domain_browser_new(
+ AvahiSDomainBrowser *avahi_s_domain_browser_prepare(
      AvahiServer *server,
      AvahiIfIndex interface,
 @@ -191,6 +318,15 @@
@@ -172,7 +172,7 @@
  
      return b;
  
-@@ -225,6 +362,23 @@
+@@ -232,6 +369,23 @@
  
      AVAHI_LLIST_REMOVE(AvahiSDomainBrowser, browser, b->server->domain_browsers, b);
  
@@ -196,3 +196,10 @@
      if (b->record_browser)
          avahi_s_record_browser_free(b->record_browser);
  
+@@ -256,4 +410,4 @@
+         avahi_s_domain_browser_start(b);
+ 
+         return b;
+-}
+\ No newline at end of file
++}
