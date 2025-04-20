@@ -14,25 +14,24 @@
 #   $WS_TOOLS/python-integrate-project identify
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-HUMAN_VERSION =			2.6.9
+HUMAN_VERSION =			2.6.10
 COMPONENT_SUMMARY =		File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pre-commit/identify/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:06f68e7e60e2ec92408d734b3093b6488461e871bdbc21dafc946edf255b741a
+	sha256:289f9d03bdce49af3bdb74f4588cd3af1ce65605e6ecc393abe2e21016ec3ee4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
