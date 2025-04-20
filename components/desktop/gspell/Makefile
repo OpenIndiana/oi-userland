@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gspell
 HUMAN_VERSION=			1.14.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Flexible API to add spell-checking to a GTK application
 COMPONENT_ARCHIVE_HASH=		sha256:64ea1d8e9edc1c25b45a920e80daf67559d1866ffcd7f8432fecfea6d0fe8897
 COMPONENT_FMRI=			library/desktop/gspell-3
@@ -38,8 +39,8 @@ CONFIGURE_OPTIONS += -Dinstall_tests=false
 
 # Testing needs an X server
 TEST_REQUIRED_PACKAGES += x11/server/xvfb
-COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
-COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Replace ABI version number by ABIVER
@@ -51,6 +52,7 @@ COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
