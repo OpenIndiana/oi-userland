@@ -14,13 +14,12 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freerdp
 COMPONENT_VERSION=	2.11.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Remote Desktop Viewer Client
 COMPONENT_PROJECT_URL=	https://www.freerdp.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +37,10 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/FreeRDP/FreeRDP/issues/5504
 CFLAGS += $(XPG6MODE)
 
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
 CFLAGS += -I$(OPENSSL_INCDIR)
 LDFLAGS  += -L$(OPENSSL_LIBDIR)
 
@@ -47,6 +50,7 @@ else
 CMAKE_OPTIONS += -DWITH_SSE2=OFF
 endif
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DCMAKE_SKIP_RPATH=ON
 CMAKE_OPTIONS += -DWITH_ALSA=OFF
 CMAKE_OPTIONS += -DWITH_CAIRO=ON
@@ -105,7 +109,7 @@ REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/lame
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/libusb-1
