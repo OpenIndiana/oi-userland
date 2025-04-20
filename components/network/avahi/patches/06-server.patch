@@ -1,6 +1,6 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/server.c	2010-08-26 01:51:38.993153000 +0100
-+++ avahi-0.6.28/avahi-core/server.c	2011-01-20 12:44:02.347982322 +0000
-@@ -1074,7 +1074,9 @@
+--- avahi-0.8/avahi-core/server.c.~1~	2020-02-17 05:41:24.939967558 +0200
++++ avahi-0.8/avahi-core/server.c	2025-04-19 19:42:47.922974678 +0300
+@@ -1131,7 +1131,9 @@
  
      s->state = state;
  
@@ -10,7 +10,7 @@
  
      if (s->callback)
          s->callback(s, state, s->userdata);
-@@ -1211,9 +1213,11 @@
+@@ -1269,9 +1271,11 @@
      server_set_state(s, AVAHI_SERVER_REGISTERING);
      s->n_host_rr_pending ++; /** Make sure that the state isn't changed tp AVAHI_SERVER_RUNNING too early */
  
@@ -22,7 +22,7 @@
  
      assert(s->n_host_rr_pending > 0);
      s->n_host_rr_pending --;
-@@ -1373,6 +1377,10 @@
+@@ -1431,6 +1435,10 @@
      else
          avahi_server_config_init(&s->config);
  
@@ -33,7 +33,7 @@
      if ((e = setup_sockets(s)) < 0) {
          if (error)
              *error = e;
-@@ -1382,7 +1390,7 @@
+@@ -1440,7 +1448,7 @@
  
          return NULL;
      }
@@ -42,7 +42,7 @@
      s->n_host_rr_pending = 0;
      s->need_entry_cleanup = 0;
      s->need_group_cleanup = 0;
-@@ -1428,6 +1436,12 @@
+@@ -1486,6 +1494,12 @@
          s->local_service_cookie = (uint32_t) rand() * (uint32_t) rand();
      } while (s->local_service_cookie == AVAHI_SERVICE_COOKIE_INVALID);
  
@@ -55,7 +55,7 @@
      if (s->config.enable_wide_area) {
          s->wide_area_lookup_engine = avahi_wide_area_engine_new(s);
          avahi_wide_area_set_servers(s->wide_area_lookup_engine, s->config.wide_area_servers, s->config.n_wide_area_servers);
-@@ -1438,6 +1452,7 @@
+@@ -1496,6 +1510,7 @@
  
      s->monitor = avahi_interface_monitor_new(s);
      avahi_interface_monitor_sync(s->monitor);
@@ -63,7 +63,7 @@
  
      register_localhost(s);
      register_stuff(s);
-@@ -1472,7 +1487,8 @@
+@@ -1530,7 +1545,8 @@
      while(s->entries)
          avahi_entry_free(s, s->entries);
  
@@ -73,7 +73,7 @@
  
      while (s->groups)
          avahi_entry_group_free(s, s->groups);
-@@ -1485,7 +1501,8 @@
+@@ -1543,7 +1559,8 @@
  
      if (s->wide_area_lookup_engine)
          avahi_wide_area_engine_free(s->wide_area_lookup_engine);
@@ -83,7 +83,7 @@
  
      if (s->cleanup_time_event)
          avahi_time_event_free(s->cleanup_time_event);
-@@ -1524,6 +1541,11 @@
+@@ -1582,6 +1599,11 @@
  
      avahi_server_config_free(&s->config);
  

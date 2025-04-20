@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -29,24 +29,20 @@ file path=etc/avahi/hosts
 file path=etc/avahi/services/sftp-ssh.service
 file path=etc/avahi/services/ssh.service
 file path=etc/dbus-1/system.d/avahi-dbus.conf
-file path=usr/bin/$(MACH64)/avahi-bookmarks
-file path=usr/bin/$(MACH64)/avahi-browse
-link path=usr/bin/$(MACH64)/avahi-browse-domains target=avahi-browse
-file path=usr/bin/$(MACH64)/avahi-discover
-file path=usr/bin/$(MACH64)/avahi-discover-standalone
-file path=usr/bin/$(MACH64)/avahi-publish
-link path=usr/bin/$(MACH64)/avahi-publish-address target=avahi-publish
-link path=usr/bin/$(MACH64)/avahi-publish-service target=avahi-publish
-file path=usr/bin/$(MACH64)/avahi-resolve
-link path=usr/bin/$(MACH64)/avahi-resolve-address target=avahi-resolve
-link path=usr/bin/$(MACH64)/avahi-resolve-host-name target=avahi-resolve
-file path=usr/bin/$(MACH64)/avahi-set-host-name
-link path=usr/bin/$(MACH64)/bshell target=bssh
-file path=usr/bin/$(MACH64)/bssh
-link path=usr/bin/$(MACH64)/bvnc target=bssh
+file path=usr/bin/$(MACH32)/avahi-bookmarks
+file path=usr/bin/$(MACH32)/avahi-browse
+link path=usr/bin/$(MACH32)/avahi-browse-domains target=avahi-browse
+file path=usr/bin/$(MACH32)/avahi-publish
+link path=usr/bin/$(MACH32)/avahi-publish-address target=avahi-publish
+link path=usr/bin/$(MACH32)/avahi-publish-service target=avahi-publish
+file path=usr/bin/$(MACH32)/avahi-resolve
+link path=usr/bin/$(MACH32)/avahi-resolve-address target=avahi-resolve
+link path=usr/bin/$(MACH32)/avahi-resolve-host-name target=avahi-resolve
+file path=usr/bin/$(MACH32)/avahi-set-host-name
 file path=usr/bin/avahi-bookmarks
 file path=usr/bin/avahi-browse
 link path=usr/bin/avahi-browse-domains target=avahi-browse
+file path=usr/bin/avahi-discover
 file path=usr/bin/avahi-publish
 link path=usr/bin/avahi-publish-address target=avahi-publish
 link path=usr/bin/avahi-publish-service target=avahi-publish
@@ -86,20 +82,19 @@ file path=usr/include/avahi-gobject/ga-error.h
 file path=usr/include/avahi-gobject/ga-record-browser.h
 file path=usr/include/avahi-gobject/ga-service-browser.h
 file path=usr/include/avahi-gobject/ga-service-resolver.h
-file path=usr/include/avahi-ui/avahi-ui.h
-file path=usr/lib/$(MACH64)/avahi/service-types.db.dir
-file path=usr/lib/$(MACH64)/avahi/service-types.db.pag
+file path=usr/include/avahi-libevent/libevent-watch.h
+file path=usr/include/avahi-qt5/qt-watch.h
 file path=usr/lib/$(MACH64)/girepository-1.0/Avahi-0.6.typelib
 file path=usr/lib/$(MACH64)/girepository-1.0/AvahiCore-0.6.typelib
 link path=usr/lib/$(MACH64)/libavahi-client.so target=libavahi-client.so.3.2.9
 link path=usr/lib/$(MACH64)/libavahi-client.so.3 target=libavahi-client.so.3.2.9
 file path=usr/lib/$(MACH64)/libavahi-client.so.3.2.9
-link path=usr/lib/$(MACH64)/libavahi-common.so target=libavahi-common.so.3.5.3
-link path=usr/lib/$(MACH64)/libavahi-common.so.3 target=libavahi-common.so.3.5.3
-file path=usr/lib/$(MACH64)/libavahi-common.so.3.5.3
-link path=usr/lib/$(MACH64)/libavahi-core.so target=libavahi-core.so.7.0.2
-link path=usr/lib/$(MACH64)/libavahi-core.so.7 target=libavahi-core.so.7.0.2
-file path=usr/lib/$(MACH64)/libavahi-core.so.7.0.2
+link path=usr/lib/$(MACH64)/libavahi-common.so target=libavahi-common.so.3.5.4
+link path=usr/lib/$(MACH64)/libavahi-common.so.3 target=libavahi-common.so.3.5.4
+file path=usr/lib/$(MACH64)/libavahi-common.so.3.5.4
+link path=usr/lib/$(MACH64)/libavahi-core.so target=libavahi-core.so.7.1.0
+link path=usr/lib/$(MACH64)/libavahi-core.so.7 target=libavahi-core.so.7.1.0
+file path=usr/lib/$(MACH64)/libavahi-core.so.7.1.0
 link path=usr/lib/$(MACH64)/libavahi-glib.so target=libavahi-glib.so.1.0.2
 link path=usr/lib/$(MACH64)/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/$(MACH64)/libavahi-glib.so.1.0.2
@@ -107,48 +102,53 @@ link path=usr/lib/$(MACH64)/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
 link path=usr/lib/$(MACH64)/libavahi-gobject.so.0 \
     target=libavahi-gobject.so.0.0.5
 file path=usr/lib/$(MACH64)/libavahi-gobject.so.0.0.5
-link path=usr/lib/$(MACH64)/libavahi-ui.so target=libavahi-ui.so.0.1.4
-link path=usr/lib/$(MACH64)/libavahi-ui.so.0 target=libavahi-ui.so.0.1.4
-file path=usr/lib/$(MACH64)/libavahi-ui.so.0.1.4
+link path=usr/lib/$(MACH64)/libavahi-libevent.so \
+    target=libavahi-libevent.so.1.0.0
+link path=usr/lib/$(MACH64)/libavahi-libevent.so.1 \
+    target=libavahi-libevent.so.1.0.0
+file path=usr/lib/$(MACH64)/libavahi-libevent.so.1.0.0
+link path=usr/lib/$(MACH64)/libavahi-qt5.so target=libavahi-qt5.so.1.0.2
+link path=usr/lib/$(MACH64)/libavahi-qt5.so.1 target=libavahi-qt5.so.1.0.2
+file path=usr/lib/$(MACH64)/libavahi-qt5.so.1.0.2
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-client.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-core.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-glib.pc
 file path=usr/lib/$(MACH64)/pkgconfig/avahi-gobject.pc
-file path=usr/lib/$(MACH64)/pkgconfig/avahi-ui.pc
-file path=usr/lib/avahi/service-types.db.dir
-file path=usr/lib/avahi/service-types.db.pag
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-libevent.pc
+file path=usr/lib/$(MACH64)/pkgconfig/avahi-qt5.pc
 file path=usr/lib/girepository-1.0/Avahi-0.6.typelib
 file path=usr/lib/girepository-1.0/AvahiCore-0.6.typelib
 link path=usr/lib/libavahi-client.so target=libavahi-client.so.3.2.9
 link path=usr/lib/libavahi-client.so.3 target=libavahi-client.so.3.2.9
 file path=usr/lib/libavahi-client.so.3.2.9
-link path=usr/lib/libavahi-common.so target=libavahi-common.so.3.5.3
-link path=usr/lib/libavahi-common.so.3 target=libavahi-common.so.3.5.3
-file path=usr/lib/libavahi-common.so.3.5.3
-link path=usr/lib/libavahi-core.so target=libavahi-core.so.7.0.2
-link path=usr/lib/libavahi-core.so.7 target=libavahi-core.so.7.0.2
-file path=usr/lib/libavahi-core.so.7.0.2
+link path=usr/lib/libavahi-common.so target=libavahi-common.so.3.5.4
+link path=usr/lib/libavahi-common.so.3 target=libavahi-common.so.3.5.4
+file path=usr/lib/libavahi-common.so.3.5.4
+link path=usr/lib/libavahi-core.so target=libavahi-core.so.7.1.0
+link path=usr/lib/libavahi-core.so.7 target=libavahi-core.so.7.1.0
+file path=usr/lib/libavahi-core.so.7.1.0
 link path=usr/lib/libavahi-glib.so target=libavahi-glib.so.1.0.2
 link path=usr/lib/libavahi-glib.so.1 target=libavahi-glib.so.1.0.2
 file path=usr/lib/libavahi-glib.so.1.0.2
 link path=usr/lib/libavahi-gobject.so target=libavahi-gobject.so.0.0.5
 link path=usr/lib/libavahi-gobject.so.0 target=libavahi-gobject.so.0.0.5
 file path=usr/lib/libavahi-gobject.so.0.0.5
+link path=usr/lib/libavahi-libevent.so target=libavahi-libevent.so.1.0.0
+link path=usr/lib/libavahi-libevent.so.1 target=libavahi-libevent.so.1.0.0
+file path=usr/lib/libavahi-libevent.so.1.0.0
 file path=usr/lib/pkgconfig/avahi-client.pc
 file path=usr/lib/pkgconfig/avahi-core.pc
 file path=usr/lib/pkgconfig/avahi-glib.pc
 file path=usr/lib/pkgconfig/avahi-gobject.pc
+file path=usr/lib/pkgconfig/avahi-libevent.pc
 file path=usr/lib/python$(PYVER)/vendor-packages/avahi/ServiceTypeDatabase.py
 file path=usr/lib/python$(PYVER)/vendor-packages/avahi/__init__.py
-file path=usr/sbin/$(MACH64)/avahi-daemon
-file path=usr/sbin/$(MACH64)/avahi-dnsconfd
+file path=usr/sbin/$(MACH32)/avahi-daemon
+file path=usr/sbin/$(MACH32)/avahi-dnsconfd
 file path=usr/sbin/avahi-daemon
 file path=usr/sbin/avahi-dnsconfd
 file path=usr/share/applications/avahi-discover.desktop
-file path=usr/share/applications/bssh.desktop
-file path=usr/share/applications/bvnc.desktop
 file path=usr/share/avahi/avahi-service.dtd
-file path=usr/share/avahi/interfaces/avahi-discover.ui
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
 file path=usr/share/dbus-1/interfaces/org.freedesktop.Avahi.EntryGroup.xml
@@ -207,7 +207,6 @@ file path=usr/share/man/man1/avahi-bookmarks.1
 link path=usr/share/man/man1/avahi-browse-domains.1 target=avahi-browse.1
 file path=usr/share/man/man1/avahi-browse.1
 file path=usr/share/man/man1/avahi-daemon-bridge-dsd.1
-file path=usr/share/man/man1/avahi-discover.1
 link path=usr/share/man/man1/avahi-publish-address.1 target=avahi-publish.1
 link path=usr/share/man/man1/avahi-publish-service.1 target=avahi-publish.1
 file path=usr/share/man/man1/avahi-publish.1
@@ -215,8 +214,6 @@ link path=usr/share/man/man1/avahi-resolve-address.1 target=avahi-resolve.1
 link path=usr/share/man/man1/avahi-resolve-host-name.1 target=avahi-resolve.1
 file path=usr/share/man/man1/avahi-resolve.1
 file path=usr/share/man/man1/avahi-set-host-name.1
-file path=usr/share/man/man1/bssh.1
-link path=usr/share/man/man1/bvnc.1 target=bssh.1
 file path=usr/share/man/man5/avahi-daemon.conf.5
 file path=usr/share/man/man5/avahi.hosts.5
 file path=usr/share/man/man5/avahi.service.5

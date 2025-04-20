@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/resolve-service.c	2010-08-26 01:51:38.991153000 +0100
-+++ avahi-0.6.28/avahi-core/resolve-service.c	2011-01-20 12:36:38.289095469 +0000
+--- avahi-0.8/avahi-core/resolve-service.c.~1~	2020-02-17 05:41:02.380380789 +0200
++++ avahi-0.8/avahi-core/resolve-service.c	2025-04-19 19:42:47.906326273 +0300
 @@ -25,6 +25,10 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -331,15 +331,15 @@
  static void record_browser_callback(
      AvahiSRecordBrowser*rr,
      AvahiIfIndex interface,
-@@ -374,6 +674,7 @@
+@@ -378,6 +678,7 @@
              break;
      }
  }
 +#endif
  
- AvahiSServiceResolver *avahi_s_service_resolver_new(
+ AvahiSServiceResolver *avahi_s_service_resolver_prepare(
      AvahiServer *server,
-@@ -433,6 +734,17 @@
+@@ -437,6 +738,17 @@
      r->time_event = NULL;
      AVAHI_LLIST_PREPEND(AvahiSServiceResolver, resolver, server->service_resolvers, r);
  
@@ -357,7 +357,7 @@
      k = avahi_key_new(n, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_SRV);
      r->record_browser_srv = avahi_s_record_browser_new(server, interface, protocol, k, flags & ~(AVAHI_LOOKUP_NO_TXT|AVAHI_LOOKUP_NO_ADDRESS), record_browser_callback, r);
      avahi_key_unref(k);
-@@ -452,6 +764,7 @@
+@@ -456,6 +768,7 @@
              return NULL;
          }
      }
@@ -365,7 +365,7 @@
  
      start_timeout(r);
  
-@@ -482,6 +795,29 @@
+@@ -499,6 +812,29 @@
      if (r->address_record)
          avahi_record_unref(r->address_record);
  

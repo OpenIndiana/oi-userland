@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/resolve-host-name.c	2010-08-26 01:51:38.991153000 +0100
-+++ avahi-0.6.28/avahi-core/resolve-host-name.c	2011-01-20 15:06:17.971781264 +0000
+--- avahi-0.8/avahi-core/resolve-host-name.c.~1~	2020-02-17 05:41:02.380380789 +0200
++++ avahi-0.8/avahi-core/resolve-host-name.c	2025-04-19 19:57:00.874915786 +0300
 @@ -22,6 +22,7 @@
  #endif
  
@@ -216,7 +216,7 @@
  }
 +#endif
  
- AvahiSHostNameResolver *avahi_s_host_name_resolver_new(
+ AvahiSHostNameResolver *avahi_s_host_name_resolver_prepare(
      AvahiServer *server,
 @@ -246,6 +420,15 @@
  
@@ -233,7 +233,7 @@
 +#else
      if (aprotocol == AVAHI_PROTO_INET || aprotocol == AVAHI_PROTO_UNSPEC) {
          k = avahi_key_new(host_name, AVAHI_DNS_CLASS_IN, AVAHI_DNS_TYPE_A);
-         r->record_browser_a = avahi_s_record_browser_new(server, interface, protocol, k, flags, record_browser_callback, r);
+         r->record_browser_a = avahi_s_record_browser_prepare(server, interface, protocol, k, flags, record_browser_callback, r);
 @@ -265,6 +448,7 @@
      }
  
@@ -242,7 +242,7 @@
  
      start_timeout(r);
  
-@@ -291,6 +475,22 @@
+@@ -301,6 +485,22 @@
  
      if (r->address_record)
          avahi_record_unref(r->address_record);

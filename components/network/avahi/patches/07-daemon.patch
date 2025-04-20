@@ -1,6 +1,6 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-daemon/main.c	2010-08-26 01:51:39.000153000 +0100
-+++ avahi-0.6.28/avahi-daemon/main.c	2011-01-20 14:40:47.924814317 +0000
-@@ -73,7 +73,9 @@
+--- avahi-0.8/avahi-daemon/main.c.~1~	2020-02-17 05:41:02.384380713 +0200
++++ avahi-0.8/avahi-daemon/main.c	2025-04-19 19:42:47.942458101 +0300
+@@ -77,7 +77,9 @@
  
  #include "setproctitle.h"
  #include "main.h"
@@ -10,7 +10,7 @@
  #include "static-services.h"
  #include "static-hosts.h"
  #include "ini-file-parser.h"
-@@ -134,11 +136,13 @@
+@@ -138,11 +140,13 @@
  #define RESOLV_CONF "/etc/resolv.conf"
  #define BROWSE_DOMAINS_MAX 16
  
@@ -24,7 +24,7 @@
  
  static DaemonConfig config;
  
-@@ -150,6 +154,7 @@
+@@ -154,6 +158,7 @@
      return strlen(s) >= l && strncmp(s, prefix, l) == 0;
  }
  
@@ -32,7 +32,7 @@
  static int load_resolv_conf(void) {
      int ret = -1;
      FILE *f;
-@@ -334,6 +339,7 @@
+@@ -338,6 +343,7 @@
      avahi_server_set_browse_domains(avahi_server, l);
      avahi_string_list_free(l);
  }
@@ -40,7 +40,7 @@
  
  static void server_callback(AvahiServer *s, AvahiServerState state, void *userdata) {
      DaemonConfig *c = userdata;
-@@ -359,7 +365,7 @@
+@@ -363,7 +369,7 @@
  
              static_service_add_to_server();
              static_hosts_add_to_server();
@@ -49,7 +49,7 @@
              remove_dns_server_entry_groups();
  
              if (c->publish_resolv_conf && resolv_conf_name_servers && resolv_conf_name_servers[0])
-@@ -369,6 +375,7 @@
+@@ -373,6 +379,7 @@
                  dns_servers_entry_group = add_dns_servers(s, dns_servers_entry_group, c->publish_dns_servers);
  
              simple_protocol_restart_queries();
@@ -57,7 +57,7 @@
              break;
  
          case AVAHI_SERVER_COLLISION: {
-@@ -376,7 +383,9 @@
+@@ -380,7 +387,9 @@
  
              static_service_remove_from_server();
              static_hosts_remove_from_server();
@@ -67,7 +67,7 @@
  
              n = avahi_alternative_host_name(avahi_server_get_host_name(s));
  
-@@ -405,7 +414,9 @@
+@@ -409,7 +418,9 @@
  
              static_service_remove_from_server();
              static_hosts_remove_from_server();
@@ -77,7 +77,7 @@
  
              break;
  
-@@ -425,9 +436,11 @@
+@@ -429,9 +440,11 @@
              "    -r --reload        Request a running daemon to reload static services\n"
              "    -c --check         Return 0 if a daemon is already running\n"
              "    -V --version       Show version\n"
@@ -89,7 +89,7 @@
              "       --no-drop-root  Don't drop privileges\n"
  #ifdef ENABLE_CHROOT
              "       --no-chroot     Don't chroot()\n"
-@@ -456,11 +469,15 @@
+@@ -460,11 +473,15 @@
          { "daemonize",      no_argument,       NULL, 'D' },
          { "kill",           no_argument,       NULL, 'k' },
          { "version",        no_argument,       NULL, 'V' },
@@ -105,7 +105,7 @@
          { "no-drop-root",   no_argument,       NULL, OPTION_NO_DROP_ROOT },
  #ifdef ENABLE_CHROOT
          { "no-chroot",      no_argument,       NULL, OPTION_NO_CHROOT },
-@@ -472,7 +489,11 @@
+@@ -476,7 +493,11 @@
  
      assert(c);
  
@@ -117,7 +117,7 @@
  
          switch(o) {
              case 's':
-@@ -490,6 +511,7 @@
+@@ -494,6 +515,7 @@
              case 'V':
                  c->command = DAEMON_VERSION;
                  break;
@@ -125,7 +125,7 @@
              case 'f':
                  avahi_free(c->config_file);
                  c->config_file = avahi_strdup(optarg);
-@@ -497,12 +519,15 @@
+@@ -501,12 +523,15 @@
              case 'r':
                  c->command = DAEMON_RELOAD;
                  break;
@@ -141,15 +141,15 @@
              case OPTION_NO_DROP_ROOT:
                  c->drop_root = 0;
                  break;
-@@ -576,6 +601,7 @@
-     return 0;
+@@ -606,6 +631,7 @@
+     return avahi_strndup(buf, sizeof buf);
  }
  
 +#ifndef HAVE_BONJOUR
  static int load_config_file(DaemonConfig *c) {
      int r = -1;
      AvahiIniFile *f;
-@@ -845,6 +871,7 @@
+@@ -896,6 +922,7 @@
  
      return r;
  }
@@ -157,7 +157,7 @@
  
  static void log_function(AvahiLogLevel level, const char *txt) {
  
-@@ -965,6 +992,7 @@
+@@ -1016,6 +1043,7 @@
      static_service_add_to_server();
      static_hosts_add_to_server();
  
@@ -165,7 +165,7 @@
      if (resolv_conf_entry_group)
          avahi_s_entry_group_reset(resolv_conf_entry_group);
  
-@@ -975,6 +1003,7 @@
+@@ -1026,6 +1054,7 @@
  
      if (config.publish_resolv_conf && resolv_conf_name_servers && resolv_conf_name_servers[0])
          resolv_conf_entry_group = add_dns_servers(avahi_server, resolv_conf_entry_group, resolv_conf_name_servers);
@@ -173,7 +173,7 @@
  }
  
  #ifdef HAVE_INOTIFY
-@@ -1062,8 +1091,12 @@
+@@ -1111,8 +1140,12 @@
              break;
  
          case SIGUSR1:
@@ -186,7 +186,7 @@
              break;
  
          default:
-@@ -1103,8 +1136,10 @@
+@@ -1152,8 +1185,10 @@
  
      ignore_signal(SIGPIPE);
  
@@ -197,7 +197,7 @@
  
      if (!(simple_poll_api = avahi_simple_poll_new())) {
          avahi_log_error("Failed to create main loop object.");
-@@ -1123,8 +1158,10 @@
+@@ -1172,8 +1207,10 @@
          goto finish;
      }
  
@@ -208,7 +208,7 @@
  
  #ifdef HAVE_DBUS
      if (c->enable_dbus) {
-@@ -1193,7 +1230,9 @@
+@@ -1242,7 +1279,9 @@
      }
  #endif
  
@@ -218,7 +218,7 @@
  #ifdef ENABLE_CHROOT
      static_service_load(config.use_chroot);
      static_hosts_load(config.use_chroot);
-@@ -1207,8 +1246,10 @@
+@@ -1256,8 +1295,10 @@
          goto finish;
      }
  
@@ -229,7 +229,7 @@
  
      if (c->daemonize) {
          daemon_retval_send(0);
-@@ -1238,10 +1279,12 @@
+@@ -1287,10 +1328,12 @@
  
      static_hosts_remove_from_server();
      static_hosts_free_all();
@@ -242,7 +242,7 @@
  
  #ifdef HAVE_DBUS
      if (c->enable_dbus)
-@@ -1555,8 +1598,10 @@
+@@ -1604,8 +1647,10 @@
              goto finish;
          }
  
@@ -253,7 +253,7 @@
  
          if (config.daemonize) {
              daemon_retval_init();
-@@ -1648,9 +1693,13 @@
+@@ -1697,9 +1742,13 @@
  
      avahi_server_config_free(&config.server_config);
      avahi_free(config.config_file);
@@ -267,9 +267,9 @@
  
      if (wrote_pid_file) {
  #ifdef ENABLE_CHROOT
---- avahi-0.6.30/avahi-daemon/static-services.c.orig	2011-08-22 13:40:56.137423950 +0100
-+++ avahi-0.6.30/avahi-daemon/static-services.c	2011-08-22 14:02:55.507416810 +0100
-@@ -711,7 +711,11 @@
+--- avahi-0.8/avahi-daemon/static-services.c.~1~	2020-02-17 05:41:02.384380713 +0200
++++ avahi-0.8/avahi-daemon/static-services.c	2025-04-20 16:10:33.966605076 +0300
+@@ -915,7 +915,11 @@
  	        break;
  #endif
              default:
