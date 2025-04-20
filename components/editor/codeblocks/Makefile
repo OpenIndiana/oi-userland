@@ -15,33 +15,26 @@
 # Copyright 2023 Stephan Althaus
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
-# https://sourceforge.net/projects/codeblocks/files/Sources/20.03/codeblocks-20.03.tar.bz2
-
 COMPONENT_NAME=         codeblocks
-COMPONENT_VERSION=      20.3
-HUMAN_VERSION=          20.03
-COMPONENT_REVISION=     4
-COMPONENT_SUMMARY=      A fast and lightweight C/C++ IDE
-COMPONENT_DESCRIPTION=  Small and fast IDE, with code analysis and refactoring
-#COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
-#COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-#COMPONENT_ARCHIVE_HASH= sha256:9c62817d65b1cbdd926438ea9f0647ca9c3a1e04e1b144fc87bde95f016f091c
-#COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Sources/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_VERSION=	25.03
+IPS_COMPONENT_VERSION=	$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
+COMPONENT_SUMMARY=	Code::Blocks is a free C/C++ and Fortran IDE
+COMPONENT_SRC=		$(COMPONENT_NAME)_$(HUMAN_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:b0f6aa5908d336d7f41f9576b2418ac7d27efbc59282aa8c9171d88cea74049e
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/Sources/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.codeblocks.org
 COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_FMRI=         editor/codeblocks
-COMPONENT_LICENSE=      GPLv2
-
-SVN_REPO=		http://svn.code.sf.net/p/codeblocks/code/trunk
-SVN_REV=		13046
-SVN_SOURCE_INFO_URL = svn://svn.code.sf.net/p/codeblocks/code/trunk@$(SVN_REV)
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-COMPONENT_PRE_CONFIGURE_ACTION = ( cd $(SOURCE_DIR); bash bootstrap )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
