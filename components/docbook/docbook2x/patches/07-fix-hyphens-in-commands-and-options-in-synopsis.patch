@@ -1,0 +1,24 @@
+From 06944d2bf8aa761ec6c145c964e59c3b1f41d7a5 Mon Sep 17 00:00:00 2001
+From: Samuel Thibault <sthibault@debian.org>
+Date: Wed, 6 Sep 2023 21:48:59 +0200
+Subject: man: Fix hyphens in commands and options in synopsis
+
+diff --git a/xslt/man/synop.xsl b/xslt/man/synop.xsl
+index 9713a1b..e535b75 100644
+--- a/xslt/man/synop.xsl
++++ b/xslt/man/synop.xsl
+@@ -107,9 +107,9 @@
+     <xsl:call-template name="cmdsynopsis-gentext-sepchar" />
+   </xsl:if>
+ 
+-  <b>
++  <xsl:call-template name="inline-bold-monospace">
+     <xsl:apply-templates mode="cmdsynopsis" />
+-  </b>
++  </xsl:call-template>
+ </xsl:template>
+ 
+ <xsl:template match="replaceable" mode="cmdsynopsis">
+-- 
+2.34.1
+
