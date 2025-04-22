@@ -13,22 +13,22 @@
 # Copyright 2024, Carsten Grzemba
 #
 BUILD_STYLE= justmake
+PG_VERSION= 16
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	timescaledb
 COMPONENT_VERSION=	2.19.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Timescaledb extension for PostgreSQL
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:ef2c9019f3e292f77e274a95386e550cb8c358ec0e053f6b7097565f61381e01
 COMPONENT_ARCHIVE_URL=	https://github.com/timescale/timescaledb/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	www.timescale.com
+COMPONENT_PROJECT_URL=	https://www.timescale.com/
 COMPONENT_FMRI=	database/postgres-$(PG_VERNUM)/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=	Apache-2.0 TSL
 COMPONENT_LICENSE_FILE=	LICENSE
-
-PG_VERSION= 16
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
