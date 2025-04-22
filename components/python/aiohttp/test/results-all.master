@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3408 items]
+X workers [3412 items]
 
 scheduling tests via LoadScheduling
 
@@ -3354,6 +3354,10 @@ tests/test_websocket_parser.py::test_feed_data_remembers_exception[pyloop] PASSE
 tests/test_websocket_parser.py::test_flow_control_binary[pyloop] PASSED
 tests/test_websocket_parser.py::test_flow_control_multi_byte_text[pyloop] PASSED
 tests/test_websocket_parser.py::test_fragmentation_header[pyloop] PASSED
+tests/test_websocket_parser.py::test_fragmented_masked_message[pyloop] PASSED
+tests/test_websocket_parser.py::test_large_fragmented_masked_message[pyloop] PASSED
+tests/test_websocket_parser.py::test_large_masked_message[pyloop] PASSED
+tests/test_websocket_parser.py::test_large_message[pyloop] PASSED
 tests/test_websocket_parser.py::test_msg_too_large[pyloop] PASSED
 tests/test_websocket_parser.py::test_msg_too_large_not_fin[pyloop] PASSED
 tests/test_websocket_parser.py::test_msgtype_aliases PASSED
@@ -3427,8 +3431,8 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/__init__.py        
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/helpers.py        77      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/models.py         51      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader.py          6      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_c.py      276    276     0%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py     276    229    17%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_c.py      275    275     0%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py     275    228    17%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py         73      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                      113      5    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py             71      0   100%
@@ -3438,7 +3442,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py             16
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py            713     16    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                275      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py         70      6    91%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                775     59    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                777     60    92%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                283      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                  97      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                      94      0   100%
@@ -3474,7 +3478,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_server.py                4
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py        746     12    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                   389      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                   130     13    90%
-tests/conftest.py                                                                                                                                 141     16    89%
+tests/conftest.py                                                                                                                                 152     21    86%
 tests/isolated/check_for_client_response_leak.py                                                                                                   32      0   100%
 tests/isolated/check_for_request_leak.py                                                                                                           29      1    97%
 tests/test_base_protocol.py                                                                                                                       200      0   100%
@@ -3516,7 +3520,7 @@ tests/test_multipart.py                                                         
 tests/test_multipart_helpers.py                                                                                                                   446     19    96%
 tests/test_payload.py                                                                                                                              96      6    94%
 tests/test_proxy.py                                                                                                                               325      0   100%
-tests/test_proxy_functional.py                                                                                                                    462    462     0%
+tests/test_proxy_functional.py                                                                                                                    475    475     0%
 tests/test_pytest_plugin.py                                                                                                                        27      0   100%
 tests/test_resolver.py                                                                                                                            231     90    61%
 tests/test_route_def.py                                                                                                                           210     20    90%
@@ -3544,11 +3548,35 @@ tests/test_web_websocket.py                                                     
 tests/test_web_websocket_functional.py                                                                                                            866     53    94%
 tests/test_websocket_data_queue.py                                                                                                                 23      0   100%
 tests/test_websocket_handshake.py                                                                                                                 152      0   100%
-tests/test_websocket_parser.py                                                                                                                    358      1    99%
+tests/test_websocket_parser.py                                                                                                                    384      0   100%
 tests/test_websocket_writer.py                                                                                                                     97      0   100%
 tests/test_worker.py                                                                                                                              189      4    98%
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                           37957   2911    92%
+TOTAL                                                                                                                                           38007   2927    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3364 passed, 38 skipped, 6 xfailed ========
+======== 3368 passed, 38 skipped, 6 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
