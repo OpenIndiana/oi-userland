@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipdeptree
-HUMAN_VERSION =			2.26.0
+HUMAN_VERSION =			2.26.1
 COMPONENT_SUMMARY =		Command line utility to show dependency tree of packages.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/pipdeptree
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b8f3de54e87509a7e021d30bd39a1a6a1a45dce1489b8e785f2e90da06c3858
+	sha256:92a8f37ab79235dacb46af107e691a1309ca4a429315ba2a1df97d1cd56e27ac
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
