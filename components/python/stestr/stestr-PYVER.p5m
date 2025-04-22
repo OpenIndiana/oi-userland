@@ -24,14 +24,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 file path=usr/bin/stestr-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/PKG-INFO
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/SOURCES.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/dependency_links.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/entry_points.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/not-zip-safe
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/pbr.json
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/requires.txt
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr-$(HUMAN_VERSION).dist-info/licenses/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/bisect_tests.py
@@ -66,9 +62,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/bisect-fail-serial-tests
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/conf.toml
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/failing-tests
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/passing-tests
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/setup.cfg
+file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/setup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/stestr.yaml
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/testr-conf
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/files/tox.ini
@@ -95,7 +93,6 @@ file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/test_user_config_r
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/tests/test_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/user_config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/stestr/utils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/stestr/version.py
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -103,9 +100,7 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # Automatically generated dependencies based on distribution metadata
 depend type=require fmri=pkg:/library/python/cliff-$(PYV)
-depend type=require fmri=pkg:/library/python/extras-$(PYV)
 depend type=require fmri=pkg:/library/python/fixtures-$(PYV)
-depend type=require fmri=pkg:/library/python/pbr-$(PYV)
 depend type=require fmri=pkg:/library/python/python-subunit-$(PYV)
 depend type=require fmri=pkg:/library/python/pyyaml-$(PYV)
 depend type=require fmri=pkg:/library/python/testtools-$(PYV)
