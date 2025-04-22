@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2016, Oracle and/or its affiliates. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,25 +21,11 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
-diff --git a/modules/im/ximcp/imImSw.c b/modules/im/ximcp/imImSw.c
-index 28b1725..327736e 100644
---- a/modules/im/ximcp/imImSw.c
-+++ b/modules/im/ximcp/imImSw.c
-@@ -48,7 +48,9 @@ _XimCheckIfDefault(
- }
- 
- XimImsportSW _XimImSportRec[] = {
-+#ifdef USE_R6_LOCALIM
-     { _XimCheckIfLocalProcessing, _XimLocalOpenIM, _XimLocalIMFree },
-+#endif
-     { _XimCheckIfThaiProcessing,	_XimThaiOpenIM,	 _XimThaiIMFree },
-     { _XimCheckIfDefault,         _XimProtoOpenIM, _XimProtoIMFree },
-     { NULL,                       NULL,		 NULL },
 diff --git a/modules/im/ximcp/imThaiFlt.c b/modules/im/ximcp/imThaiFlt.c
 index f134e84..898fc1f 100644
---- libX11-1.6.2/modules/im/ximcp/imThaiFlt.c.~1~	2013-09-09 05:37:20.000000000 +0400
-+++ libX11-1.6.2/modules/im/ximcp/imThaiFlt.c	2015-02-04 12:03:13.672449821 +0300
-@@ -76,6 +76,12 @@
+--- a/modules/im/ximcp/imThaiFlt.c
++++ b/modules/im/ximcp/imThaiFlt.c
+@@ -76,6 +76,12 @@ SOFTWARE.
  #include "XimThai.h"
  #include "XlcPubI.h"
  
@@ -52,7 +38,7 @@ index f134e84..898fc1f 100644
  
  #define SPACE   32
  
-@@ -516,6 +522,48 @@
+@@ -516,6 +522,47 @@ static Bool ThaiComposeConvert(
       (wchar_t)(c) : \
       ((0x0A1<=(c)) ? ((wchar_t)(c)-0xA0+0x0E00) : 0))
  
@@ -86,7 +72,6 @@ index f134e84..898fc1f 100644
 +        CodeSet GR_codeset = XLC_GENERIC(lcd, initial_state_GR);
 +        if ( 0<=*ch && *ch<=0x7F ) {
 +            *pwc=(wchar_t)*ch;
-+            return 0;
 +        } else {
 +            if (0xA1<=*ch) {
 +                *pwc = (wchar_t)*ch&wc_mask|GR_codeset->wc_encoding;
@@ -101,7 +86,7 @@ index f134e84..898fc1f 100644
  /*
   * Macros to save and recall last input character in XIC
   */
-@@ -1210,6 +1258,42 @@
+@@ -1210,6 +1257,42 @@ static void InitIscMode(Xic ic)
      return;
  }
  
@@ -144,7 +129,7 @@ index f134e84..898fc1f 100644
  /*
   * Helper functions for _XimThaiFilter()
   */
-@@ -1217,8 +1301,20 @@
+@@ -1217,8 +1300,20 @@ static Bool
  ThaiFltAcceptInput(Xic ic, unsigned char new_char, KeySym symbol)
  {
      DefTreeBase *b = &ic->private.local.base;
@@ -165,7 +150,7 @@ index f134e84..898fc1f 100644
  
      if ((new_char <= 0x1f) || (new_char == 0x7f))
          b->tree[ic->private.local.composed].keysym = symbol;
-@@ -1233,9 +1329,23 @@
+@@ -1233,9 +1328,23 @@ ThaiFltReorderInput(Xic ic, unsigned char previous_char, unsigned char new_char)
  {
      DefTreeBase *b = &ic->private.local.base;
      if (!IC_DeletePreviousChar(ic)) return False;
@@ -189,7 +174,7 @@ index f134e84..898fc1f 100644
  
      b->tree[ic->private.local.composed].keysym = NoSymbol;
  
-@@ -1247,8 +1357,20 @@
+@@ -1247,8 +1356,20 @@ ThaiFltReplaceInput(Xic ic, unsigned char new_char, KeySym symbol)
  {
      DefTreeBase *b = &ic->private.local.base;
      if (!IC_DeletePreviousChar(ic)) return False;
@@ -210,7 +195,7 @@ index f134e84..898fc1f 100644
  
      if ((new_char <= 0x1f) || (new_char == 0x7f))
          b->tree[ic->private.local.composed].keysym = symbol;
-@@ -1374,7 +1496,15 @@
+@@ -1374,7 +1495,15 @@ _XimThaiFilter(Display *d, Window w, XEvent *ev, XPointer client_data)
       */
      isc_mode = IC_IscMode(ic);
      if (!(previous_char = IC_GetPreviousChar(ic))) previous_char = ' ';
