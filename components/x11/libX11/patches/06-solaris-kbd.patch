@@ -1,0 +1,103 @@
+###############################################################################
+# Copyright (c) 2008, 2016, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+diff --git a/src/KeyBind.c b/src/KeyBind.c
+index fe6a909..dcd84f5 100644
+--- a/src/KeyBind.c
++++ b/src/KeyBind.c
+@@ -845,6 +845,17 @@ _XTranslateKeySym(
+     hiBytes = symbol >> 8;
+     if (!(nbytes &&
+ 	  ((hiBytes == 0) ||
++#ifdef SUNSOFT_KBD
++/*
++ * The following hard-coded line is to support the euro sign for legacy apps
++ * and single byte codeset locale apps with the euro sign at 0xa4.
++ * For any other codeset locales with properly internationalized apps,
++ * one must have an entry in the Compose file of the locale that will map
++ * the XK_EuroSign keysym to the correct character code value of the locale's
++ * codeset.
++ */
++          (symbol == XK_EuroSign) ||
++#endif /* SUNSOFT_KBD */
+ 	   ((hiBytes == 0xFF) &&
+ 	    (((symbol >= XK_BackSpace) && (symbol <= XK_Clear)) ||
+ 	     (symbol == XK_Return) ||
+@@ -862,10 +873,20 @@ _XTranslateKeySym(
+ 	c = XK_space & 0x7F; /* patch encoding botch */
+     else if (hiBytes == 0xFF)
+ 	c = symbol & 0x7F;
++#ifdef SUNSOFT_KBD
++    else if (symbol == XK_EuroSign)
++       c = (unsigned char)0xa4; /* Latin-9 euro symbol code for legacy apps. */
++#endif /* SUNSOFT_KBD */
+     else
+ 	c = symbol & 0xFF;
+     /* only apply Control key if it makes sense, else ignore it */
+     if (modifiers & ControlMask) {
++#ifdef SUNSOFT_KBD
++    /* Sun: map control characters with high bit set */
++    if ((c >= (unsigned char)'\300' && c <= (unsigned char)'\377')) c &= 0x9F;
++#endif /* SUNSOFT_KBD */
++
++        /* MIT "standard" control character handling */
+ 	if ((c >= '@' && c < '\177') || c == ' ') c &= 0x1F;
+ 	else if (c == '2') c = '\000';
+ 	else if (c >= '3' && c <= '7') c -= ('3' - '\033');
+diff --git a/src/imConv.c b/src/imConv.c
+index 48bc790..2c54fd1 100644
+--- a/src/imConv.c
++++ b/src/imConv.c
+@@ -213,7 +213,9 @@ _XimLookupMBText(
+ 			    args, 1 ) != 0) {
+ 		count = 0;
+ 	    } else {
+-                count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	    }
+ 	}
+     }
+@@ -283,7 +285,9 @@ _XimLookupWCText(
+ 			    args, 1 ) != 0) {
+ 		count = 0;
+ 	    } else {
+-                count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	    }
+ 	}
+     } else
+@@ -344,7 +348,9 @@ _XimLookupUTF8Text(
+                         NULL, 0) != 0) {
+ 	    count = 0;
+ 	} else {
+-            count = nbytes - to_len;
++                if (count != 0){
++                    count = nbytes - to_len;
++                }
+ 	}
+     }
+     /* FIXME:

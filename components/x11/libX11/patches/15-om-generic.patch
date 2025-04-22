@@ -22,10 +22,10 @@
 #
 
 diff --git a/modules/om/generic/omGeneric.c b/modules/om/generic/omGeneric.c
-index 64ef7b7..7b40cb1 100644
+index 61d3069..0ecd6c5 100644
 --- a/modules/om/generic/omGeneric.c
 +++ b/modules/om/generic/omGeneric.c
-@@ -175,6 +175,11 @@ init_fontset(
+@@ -146,6 +146,11 @@ init_fontset(
  	if((font_set->substitute = init_fontdata(data->substitute,
  				   data->substitute_num)) == NULL)
  	    goto err;
@@ -37,7 +37,7 @@ index 64ef7b7..7b40cb1 100644
  	font_set->substitute_num = data->substitute_num;
  	if((font_set->vmap = init_fontdata(data->vmap,
  			     data->vmap_num)) == NULL)
-@@ -283,6 +288,10 @@ load_font(
+@@ -250,6 +255,10 @@ load_font(
  	if (font_set->font_name == NULL)
  	    continue;
  
@@ -48,7 +48,7 @@ index 64ef7b7..7b40cb1 100644
          if (load_fontset_data (oc, font_set) != True)
  	    return False;
  #ifndef TESTVERSION
-@@ -332,12 +341,24 @@ load_font_info(
+@@ -299,12 +308,24 @@ load_font_info(
  	    continue;
  
  	if (font_set->info == NULL) {
@@ -73,7 +73,7 @@ index 64ef7b7..7b40cb1 100644
  	}
      }
  
-@@ -453,7 +474,7 @@ init_core_part(
+@@ -420,7 +441,7 @@ init_core_part(
      count = length = 0;
  
      for ( ; font_set_num-- > 0; font_set++) {
@@ -82,7 +82,7 @@ index 64ef7b7..7b40cb1 100644
  	    continue;
  
  	length += strlen(font_set->font_name) + 1;
-@@ -483,7 +504,7 @@ init_core_part(
+@@ -450,7 +471,7 @@ init_core_part(
      font_set_num = gen->font_set_num;
  
      for (count = 0; font_set_num-- > 0; font_set++) {
@@ -91,7 +91,7 @@ index 64ef7b7..7b40cb1 100644
  	    continue;
  
  	font_set->id = count;
-@@ -1261,7 +1282,7 @@ set_missing_list(
+@@ -1198,7 +1219,7 @@ set_missing_list(
      count = length = 0;
  
      for ( ; font_set_num-- > 0; font_set++) {
@@ -100,7 +100,7 @@ index 64ef7b7..7b40cb1 100644
  	    continue;
  	}
  
-@@ -1308,7 +1329,7 @@ set_missing_list(
+@@ -1245,7 +1266,7 @@ set_missing_list(
      font_set_num = gen->font_set_num;
  
      for ( ; font_set_num-- > 0; font_set++) {
@@ -109,7 +109,7 @@ index 64ef7b7..7b40cb1 100644
  	    continue;
  	}
  
-@@ -2092,6 +2113,20 @@ init_om(
+@@ -2009,6 +2030,20 @@ init_om(
  	}
          read_vw(lcd,data,num);
  	length += strlen(data->font_data->name) + 1;
