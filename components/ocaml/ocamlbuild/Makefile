@@ -13,20 +13,19 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	ocamlbuild
-COMPONENT_VERSION=	0.14.3
-COMPONENT_SUMMARY=	ocamlbuild - OCaml build tool
+COMPONENT_VERSION=	0.16.1
+COMPONENT_SUMMARY=	OCamlbuild is a generic build tool that has built-in rules for building OCaml library and programs
 COMPONENT_PROJECT_URL=	https://github.com/ocaml/ocamlbuild
 COMPONENT_FMRI=	library/ocaml/ocamlbuild
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/ocamlbuild/archive/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ce151bfd2141abc6ee0b3f25ba609e989ff564a48bf795d6fa7138a4db0fc2e1
+COMPONENT_ARCHIVE_HASH=	sha256:2ba6857f2991b7f69368e8db818b163d31cf5a367f15f5953bf8f01a77b3d4fc
 COMPONENT_LICENSE= GPLv2
 COMPONENT_LICENSE_FILE= LICENSE
 
