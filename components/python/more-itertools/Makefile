@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project more-itertools
+#   $WS_TOOLS/python-integrate-project -d python/more-itertools more_itertools
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		more-itertools
-HUMAN_VERSION =			10.6.0
+COMPONENT_NAME =		more_itertools
+HUMAN_VERSION =			10.7.0
 COMPONENT_SUMMARY =		More routines for operating on iterables, beyond itertools
 COMPONENT_PROJECT_URL =		https://github.com/more-itertools/more-itertools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2cd7fad1009c31cc9fb6a035108509e6547547a7a738374f10bd49a09eb3ee3b
+	sha256:9fddd5403be01a94b204faadcff459ec3568cf110265d3c54323e1e866ad29d3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
