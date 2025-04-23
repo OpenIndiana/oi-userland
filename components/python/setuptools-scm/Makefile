@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
-HUMAN_VERSION =			8.2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			8.3.0
 COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a18396a1bc0219c974d1a74612b11f9dce0d5bd8b1dc55c65f6ac7fd609e8c28
+	sha256:360bc58c97e73d3db34f9052937454195ed5c29057a529b324cecbfc324509b3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,12 +36,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - zipp
 PYTHON_BOOTSTRAP = yes
 
-# 8.2.1 was yanked, but IPS cannot downgrade
-COMPONENT_VERSION =		8.2.1
-
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
