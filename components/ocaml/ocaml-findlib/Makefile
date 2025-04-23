@@ -13,19 +13,18 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-findlib
-COMPONENT_VERSION= 1.9.6
-COMPONENT_SUMMARY= ocaml-find - OCaml library manager
-COMPONENT_PROJECT_URL= http://projects.camlcity.org/projects/findlib.html
-COMPONENT_FMRI= library/ocaml/ocaml-findlib
-COMPONENT_CLASSIFICATION= Development/Other Languages
+COMPONENT_VERSION= 1.9.8
+COMPONENT_SUMMARY= OCaml-findlib is a library manager for Objective Caml
+COMPONENT_PROJECT_URL=	https://projects.camlcity.org/projects/findlib.html
 COMPONENT_SRC=		ocamlfind-findlib-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/ocamlfind/archive/findlib-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:caf11884c7fa33175371b1d2cd26334ae36d0aa2733f6651833c57cc86367118
+COMPONENT_ARCHIVE_HASH=	sha256:d6899935ccabf67f067a9af3f3f88d94e310075d13c648fa03ff498769ce039d
+COMPONENT_FMRI= library/ocaml/ocaml-findlib
+COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= MIT
 
 TEST_TARGET=$(NO_TESTS)
@@ -34,9 +33,9 @@ include $(WS_MAKE_RULES)/ocaml.mk
 
 COMPONENT_BUILD_ARGS += -j1
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION  +=  $(CLONEY) $(SOURCE_DIR) $(@D) ;
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
 
 COMPONENT_BUILD_TARGETS = all opt
 
