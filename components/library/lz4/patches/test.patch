@@ -1,0 +1,127 @@
+Disables benchmark tests, avoids use of PID number and other changes to
+get reproducible test results.
+
+Solaris UL specific. Not suitable for upstream.
+
+--- lz4-1.10.0/examples/Makefile
++++ lz4-1.10.0/examples/Makefile
+@@ -86,8 +86,6 @@ $(LZ4) -vt $(TESTFILE).lz4
+ 	@echo "\n=== file compression ==="
+ 	./fileCompress$(EXT) $(TESTFILE)
+ 	$(LZ4) -vt $(TESTFILE).lz4
+-	@echo "\n=== Q&D benchmark ==="
+-	./bench_functions$(EXT) 10000
+ 
+ .PHONY: clean
+ clean:
+--- lz4-1.10.0/tests/Makefile
++++ lz4-1.10.0/tests/Makefile
+@@ -314,7 +314,6 @@ $(QEMU_SYS) $(DATAGEN) -g3GB   | $(QEMU_
+ endif
+ 
+ test-fullbench: fullbench
+-	./fullbench --no-prompt $(NB_LOOPS) $(TEST_FILES)
+ 
+ test-fullbench32: CFLAGS += -m32
+ test-fullbench32: test-fullbench
+--- lz4-1.10.0/tests/fuzzer.c
++++ lz4-1.10.0/tests/fuzzer.c
+@@ -1053,11 +1053,12 @@ }
+ 
+     if (nbCycles<=1) nbCycles = cycleNb;   /* end by time */
+     bytes += !bytes;   /* avoid division by 0 */
+-    printf("\r%7u /%7u   - ", cycleNb, nbCycles);
+     printf("all tests completed successfully \n");
++#if 0 // This tests run for specific time so it doesn't give the same reuslts twice.
+     printf("compression ratio: %0.3f%%\n", (double)cbytes/(double)bytes*100);
+     printf("HC compression ratio: %0.3f%%\n", (double)hcbytes/(double)bytes*100);
+     printf("ratio with dict: %0.3f%%\n", (double)ccbytes/(double)bytes*100);
++#endif
+ 
+     /* release memory */
+     free(CNBuffer);
+--- lz4-1.10.0/tests/test-lz4-basic.sh
++++ lz4-1.10.0/tests/test-lz4-basic.sh
+@@ -62,7 +62,8 @@ lz4 -f $FPREFIX-hw                    #
+ lz4 --list $FPREFIX-hw.lz4            # test --list on valid single-frame file
+ lz4 --list < $FPREFIX-hw.lz4          # test --list from stdin (file only)
+ cat $FPREFIX-hw >> $FPREFIX-hw.lz4
+-lz4 -f $FPREFIX-hw.lz4 && exit 1      # uncompress valid frame followed by invalid data (must fail now)
++# Avoids unpredicable output
++#lz4 -f $FPREFIX-hw.lz4 && exit 1      # uncompress valid frame followed by invalid data (must fail now)
+ lz4 -BX $FPREFIX-hw -c -q | lz4 -tv   # test block checksum
+ # datagen -g20KB generates the same file every single time
+ # cannot save output of datagen -g20KB as input file to lz4 because the following shell commands are run before datagen -g20KB
+--- lz4-1.10.0/tests/test-lz4-dict.sh
++++ lz4-1.10.0/tests/test-lz4-dict.sh
+@@ -37,10 +37,11 @@ lz4 -bi0 -D $FPREFIX $FPREFIX-sample-32k
+ 
+ echo "---- test lz4 dictionary loading ----"
+ datagen -g128KB > $FPREFIX-data-128KB
++MYPID=12345
+ set -e; \
+ for l in 0 1 4 128 32767 32768 32769 65535 65536 65537 98303 98304 98305 131071 131072 131073; do \
+-    datagen -g$$l > $FPREFIX-$$l; \
+-    dd if=$FPREFIX-$$l of=$FPREFIX-$$l-tail bs=1 count=65536 skip=$((l > 65536 ? l - 65536 : 0)); \
+-    < $FPREFIX-$$l      lz4 -D stdin $FPREFIX-data-128KB -c | lz4 -dD $FPREFIX-$$l-tail | diff - $FPREFIX-data-128KB; \
+-    < $FPREFIX-$$l-tail lz4 -D stdin $FPREFIX-data-128KB -c | lz4 -dD $FPREFIX-$$l      | diff - $FPREFIX-data-128KB; \
++    datagen -g${MYPID}l > $FPREFIX-${MYPID}l; \
++    dd if=$FPREFIX-${MYPID}l of=$FPREFIX-${MYPID}l-tail bs=1 count=65536 skip=$((l > 65536 ? l - 65536 : 0)); \
++    < $FPREFIX-${MYPID}l      lz4 -D stdin $FPREFIX-data-128KB -c | lz4 -dD $FPREFIX-${MYPID}l-tail | diff - $FPREFIX-data-128KB; \
++    < $FPREFIX-${MYPID}l-tail lz4 -D stdin $FPREFIX-data-128KB -c | lz4 -dD $FPREFIX-${MYPID}l      | diff - $FPREFIX-data-128KB; \
+ done
+--- lz4-1.10.0/tests/test-lz4-fast-hugefile.sh
++++ lz4-1.10.0/tests/test-lz4-fast-hugefile.sh
+@@ -15,7 +15,7 @@ set -x
+ datagen -g6GB    | lz4 -vB5 | lz4 -qt
+ # test large file size [2-4] GB
+ datagen -g3G -P100 | lz4 -vv | lz4 --decompress --force --sparse - ${FPREFIX}1
+-ls -ls ${FPREFIX}1
++ls -ls ${FPREFIX}1 | awk '{printf "%10.d\t%s\n", $6, $10}'
+ datagen -g3G -P100 | lz4 --quiet --content-size | lz4 --verbose --decompress --force --sparse - ${FPREFIX}2
+-ls -ls ${FPREFIX}2
++ls -ls ${FPREFIX}2 | awk '{printf "%10.d\t%s\n", $6, $10}'
+ diff -s ${FPREFIX}1 ${FPREFIX}2
+--- lz4-1.10.0/tests/test-lz4-sparse.sh
++++ lz4-1.10.0/tests/test-lz4-sparse.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ FPREFIX="tmp-tls"
+ 
+@@ -23,10 +23,10 @@ lz4 -B7D ${FPREFIX}dg5M -c | lz4 -dv --s
+ diff -s ${FPREFIX}dg5M ${FPREFIX}cB7
+ lz4 ${FPREFIX}dg5M -c | lz4 -dv --no-sparse > ${FPREFIX}nosparse
+ diff -s ${FPREFIX}dg5M ${FPREFIX}nosparse
+-ls -ls $FPREFIX*
++ls -ls $FPREFIX* | awk '{printf "%10.d\t%s\n", $6, $10}'
+ datagen -s1 -g1200007 -P100 | lz4 | lz4 -dv --sparse > ${FPREFIX}odd   # Odd size file (to generate non-full last block)
+ datagen -s1 -g1200007 -P100 | diff -s - ${FPREFIX}odd
+-ls -ls ${FPREFIX}odd
++ls -ls ${FPREFIX}odd | awk '{printf "%10.d\t%s\n", $6, $10}'
+ rm $FPREFIX*
+ printf "\n Compatibility with Console :"
+ echo "Hello World 1 !" | lz4 | lz4 -d -c
+@@ -38,5 +38,5 @@ cat ${FPREFIX}dg1M ${FPREFIX}dg1M > ${FP
+ lz4 -B5 -v ${FPREFIX}dg1M ${FPREFIX}c
+ lz4 -d -v ${FPREFIX}c ${FPREFIX}r
+ lz4 -d -v ${FPREFIX}c -c >> ${FPREFIX}r
+-ls -ls $FPREFIX*
++ls -1s $FPREFIX*
+ diff ${FPREFIX}2M ${FPREFIX}r
+--- lz4-1.10.0/tests/test_custom_block_sizes.sh
++++ lz4-1.10.0/tests/test_custom_block_sizes.sh
+@@ -7,9 +7,9 @@ DATAGEN=./datagen
+ 
+ failures=""
+ 
+-TMPFILE=/tmp/test_custom_block_sizes.$$
+-TMPFILE1=/tmp/test_custom_block_sizes1.$$
+-TMPFILE2=/tmp/test_custom_block_sizes2.$$
++TMPFILE=.tmpfile.test_custom_block_sizes
++TMPFILE1=.tmpfile.test_custom_block_sizes1
++TMPFILE2=.tmpfile.test_custom_block_sizes2
+ $DATAGEN -g12345678 > $TMPFILE1
+ $DATAGEN -g12345678 > $TMPFILE2
+ 
