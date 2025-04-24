@@ -1,0 +1,40 @@
+https://gitlab.com/compiz/compiz-core/-/merge_requests/175
+
+--- compiz-0.8.18/src/main.c.orig
++++ compiz-0.8.18/src/main.c
+@@ -271,8 +271,10 @@
+     i += compReadXmlChunk ("</screen></core></compiz>", &offset, buffer + i,
+ 			   length - i);
+ 
+-    if (!offset && length > i)
+-	buffer[i++] = '\0';
++    if (!offset && length > i) {
++	    // buffer[i] = '\0';
++        ctx->offset += 1;
++    }
+ 
+     ctx->offset += i;
+ 
+--- compiz-0.8.18/src/metadata.c.orig
++++ compiz-0.8.18/src/metadata.c
+@@ -31,6 +31,7 @@
+ #include <libxml/xpath.h>
+ #include <libxml/xpathInternals.h>
+ #include <locale.h>
++#include <stdlib.h>
+ 
+ #include <compiz-core.h>
+ 
+@@ -286,8 +287,10 @@
+     i += compReadXmlChunk ("</plugin></compiz>", &offset, buffer + i,
+ 			   length - i);
+ 
+-    if (!offset && length > i)
+-	buffer[i++] = '\0';
++    if (!offset && length > i) {
++	    // buffer[i] = '\0';
++        ctx->offset += 1;
++    }
+ 
+     ctx->offset += i;
+ 
