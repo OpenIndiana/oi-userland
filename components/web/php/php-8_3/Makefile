@@ -16,15 +16,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.3
-COMPONENT_MNR_VERSION=	14
-COMPONENT_REVISION=	2
+COMPONENT_MNR_VERSION=	20
 COMPONENT_SUMMARY=      PHP 8.3
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f56fa669ce4c01452a2921f40034d779d8c2b97d0749493ad4781813b9221cf8
+COMPONENT_ARCHIVE_HASH= sha256:36b4e6a323cd45673a54f296e9d2666b7f5df57641031c77c4fd8137bc4ebeb3
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-83
@@ -50,10 +49,11 @@ PHP_DATADIR=		/var/php/$(COMPONENT_MJR_VERSION)
 
 # -D__solaris__ is very important to trigger TSRM related stuff
 # otherwise mod_php83.so is crashing
-CFLAGS +=        	$(CC_BITS) -D_XPG4_2 -D__EXTENSIONS__ -std=c17 -D__solaris__
-CFLAGS +=		-I/usr/include/openldap
-CPPFLAGS +=      	$(CPP_XPG6MODE) 
-LDFLAGS +=       	-lldap_r
+CFLAGS +=	$(CC_BITS) -D_XPG4_2 -D__EXTENSIONS__ -std=c17 -D__solaris__
+CFLAGS +=	-I/usr/include/openldap
+CFLAGS +=	-Wno-error=incompatible-pointer-types
+CPPFLAGS +=	$(CPP_XPG6MODE) 
+LDFLAGS +=	-lldap_r
 
 # Configure Options
 CONFIGURE_OPTIONS =  --prefix=$(PHP_PREFIX)
@@ -72,6 +72,8 @@ CONFIGURE_OPTIONS += KERBEROS_CFLAGS=-I/usr/include/kerberosv5
 CONFIGURE_OPTIONS += KERBEROS_LIBS="-L/usr/lib/$(MACH64) -lgss -lkrb5"
 CONFIGURE_OPTIONS += PCRE2_CFLAGS="-I/usr/include/pcre"
 CONFIGURE_OPTIONS += ODBC_CFLAGS="-I/usr/include/odbc"
+# IMAP libc-client.so is only 64 bit 
+CONFIGURE_OPTIONS += --with-libdir="lib/amd64"
 
 # SAPI modules
 CONFIGURE_OPTIONS += --with-apxs2=$(AP_PREFIX)/bin/apxs
@@ -84,6 +86,11 @@ else
 CONFIGURE_OPTIONS += --build=sparcv9-sun-solaris$(SOLARIS_VERSION)
 CONFIGURE_OPTIONS += --with-pcre-jit=no
 endif
+
+# Assembler errors in the context of JIT
+CONFIGURE_OPTIONS += --with-pcre-jit=no
+CONFIGURE_OPTIONS += --disable-fiber-asm
+CONFIGURE_OPTIONS += --disable-opcache-jit
 
 CONFIGURE_OPTIONS += --with-config-file-path=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS += --with-config-file-scan-dir=$(PHP_SYSCONFDIR)/conf.d
@@ -111,7 +118,7 @@ CONFIGURE_OPTIONS += --with-mhash=shared
 CONFIGURE_OPTIONS += --with-xsl=shared
 CONFIGURE_OPTIONS += --with-curl=shared
 CONFIGURE_OPTIONS += --with-pspell=shared
-CONFIGURE_OPTIONS += --with-imap=shared
+CONFIGURE_OPTIONS += --with-imap
 CONFIGURE_OPTIONS += --with-imap-ssl
 CONFIGURE_OPTIONS += --with-zip=shared
 CONFIGURE_OPTIONS += --with-sodium=shared
