@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=	    libXft
-COMPONENT_VERSION=  2.3.8
+COMPONENT_VERSION=  2.3.9
 COMPONENT_FMRI=	    x11/library/libxft
 COMPONENT_SUMMARY=  libXft - X FreeType library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5e8c3c4bc2d4c0a40aef6b4b38ed2fb74301640da29f6528154b5009b1c6dd49
+COMPONENT_ARCHIVE_HASH=	sha256:60a25b78945ed6932635b3bb1899a517d31df7456e69867ffba27f89ff3976f5
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
@@ -37,6 +37,8 @@ LD_OPTIONS += -M$(COMPONENT_DIR)/mapfile.scope
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/fontconfig/32
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxrender
