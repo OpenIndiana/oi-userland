@@ -1,0 +1,19 @@
+Oracle Bug 15143893 - SUNBT4810740 vsw512 test XtCallbackReleaseCacheRefList
+    regresses in S10_26
+
+XtCallbackReleaseCacheRefList() should not be calling XtFree(closure) as it
+does not "own" this data.  In the VSW test it points to an automatic array.
+
+Reported upstream:
+https://gitlab.freedesktop.org/xorg/lib/libxt/-/issues/15
+
+--- a/src/Convert.c	2022-11-07 19:06:55.487305676 -0800
++++ b/src/Convert.c	2022-11-07 19:07:08.318327812 -0800
+@@ -1190,7 +1190,6 @@
+ {
+     XtAppReleaseCacheRefs(XtWidgetToApplicationContext(widget),
+                           (XtCacheRef *) closure);
+-    XtFree(closure);
+ }
+ 
+ void

@@ -1,0 +1,29 @@
+Oracle Bug 15187627 - SUNBT4962001 There are some memory leak in motif
+
+Root Cause:
+This bug exists because function "GetResources" will return a copy of resource
+to the function caller in case the caller want to check on the resource and
+the caller has the responsibility to free the returned copy, however some
+functions, such as "XtCreate", "XtGetSubresources", "_XtGetResources",
+"XtGetSubresources", invoked "GetResources" and "XtGetApplicationResources"
+without freeing the returned resource copy.
+
+[This is only one portion of the original fix, which also modified
+ Resources.c - need to determine if this is still correct and then
+ either submit upstream or discard.]
+
+Solution:
+Free the returned resource copy in caller functions.
+
+--- a/src/Create.c	2022-11-07 19:08:15.417832109 -0800
++++ b/src/Create.c	2022-11-07 19:08:57.859305884 -0800
+@@ -405,8 +405,7 @@
+     CompileCallbacks(widget);
+ 
+     if (cache_refs != NULL) {
+-        XtAddCallback(widget, XtNdestroyCallback,
+-                      XtCallbackReleaseCacheRefList, (XtPointer) cache_refs);
++        XtFree(cache_refs);
+     }
+ 
+     wsize = widget_class->core_class.widget_size;

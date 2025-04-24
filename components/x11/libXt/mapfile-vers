@@ -278,6 +278,7 @@ SUNW_1.1 {
 	XtAppNextEvent = NODIRECT;
 	XtGetValues;
 	XtRealloc;
+	XtReallocArray;
 	objectClassRec;
 	XtAppAddTimeOut;
 	XtConvert;
@@ -314,8 +315,17 @@ SUNW_1.1 {
 	*;
 };
 
+# Added in libXt 1.1
+SUNW_1.2 {
+    global:
+	XtAsprintf;
+} SUNW_1.1;
+
 SUNWprivate {
     global:
+	# __XtCalloc and __XtMalloc are needed by gmake test
+	__XtCalloc;
+	__XtMalloc;
 	_XtShellGetCoordinates;
 	_XtGetUserName;
 	_XtRegisterGrabs;
@@ -520,10 +530,3 @@ SUNWprivate {
 	_XtCopyToArg;
 	_XtResourceConfigurationEH;
 };
-
-# Added in libXt 1.1
-SUNW_1.2 {
-    global:
-	XtAsprintf;
-} SUNW_1.1;
-
