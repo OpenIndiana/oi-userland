@@ -1,0 +1,37 @@
+Oracle Bug 14965260 - SUNBT4152296 REGRESSION: setting XmNpacking resource of
+    XmRowColumn widget causes core dump
+
+The reason we are getting a core is that freed memeory is being accessed.
+XmNargv (RCLayout.c) resource has been freed but this only occurs when using
+dtksh.
+
+The problem arises when XtInitialize is passed 0 as argc, and argv value of
+NULL, the XmNargv resource is being set to invalid address.
+
+Do a check in the XtOpenApplication function (Initialize.c) for a valid
+argv before setting XtNargv resource.
+
+Need to evaluate for submission upstream.
+
+--- a/src/Initialize.c	2022-11-07 19:18:10.104481416 -0800
++++ b/src/Initialize.c	2022-11-07 19:18:57.904521930 -0800
+@@ -1025,11 +1025,15 @@
+     LOCK_APP(app_con);
+     XtSetArg(args[num], XtNscreen, DefaultScreenOfDisplay(dpy));
+     num++;
+-    XtSetArg(args[num], XtNargc, saved_argc);
+-    num++;
+-    XtSetArg(args[num], XtNargv, argv_in_out);
+-    num++;
+ 
++    /* only set argc and argv if argv_in_out[0] is not NULL */
++    if (argv_in_out && argv_in_out[0]) {
++       XtSetArg(args[num], XtNargc, saved_argc);
++       num++;
++       XtSetArg(args[num], XtNargv, argv_in_out);
++       num++;
++    }
++
+     merged_args = XtMergeArgLists(args_in, num_args_in, args, num);
+     num += num_args_in;
+ 
