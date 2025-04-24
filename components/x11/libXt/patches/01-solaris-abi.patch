@@ -1,0 +1,17 @@
+Maintain the existing Solaris libXt ABI, by setting the library so-version to 4
+(libXt.so.4) and using the mapfile to control & version exported symbols.
+
+Not suitable for upstream.
+
+--- libXt-1.1.5/src/Makefile.am
++++ libXt-1.1.5/src/Makefile.am
+@@ -74,7 +74,8 @@ DISTCLEANFILES = StringDefs.c
+ 
+ libXt_la_LIBADD = @XT_LIBS@
+ 
+-libXt_la_LDFLAGS = -version-number 6:0:0 -no-undefined
++libXt_la_LDFLAGS = -version-number 4:0:0 -no-undefined \
++	-Wl,-M,$(top_srcdir)/../mapfile-vers -lc
+ 
+ #
+ # The util directory contains a program that builds some of the sources.
