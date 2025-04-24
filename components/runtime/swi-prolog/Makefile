@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
 COMPONENT_VERSION=	9.2.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,9 +32,6 @@ COMPONENT_LICENSE=	BSD-2 license, others
 COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# At the moment open_shared_object/3 fails because of missing PyBool_Type. This probably happens because libpython3.9.so isn't found.
-COMPONENT_POST_UNPACK_ACTION= ( $(RM) -r $(COMPONENT_SRC)/packages/swipy )
 
 PCRE_INCLUDE=/usr/include/pcre
 
@@ -48,9 +46,11 @@ CFLAGS += -Wno-error=implicit-function-declaration
 LDFLAGS += -lsocket -lnsl
 LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR=$(ETCDIR)
 CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=$(USRDIR)
-CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+# At the moment open_shared_object/3 fails because of missing PyBool_Type. This probably happens because libpython3.9.so isn't found.
+CMAKE_OPTIONS += -DSWIPL_PACKAGES_PYTHON=OFF
 CMAKE_OPTIONS += -DSWIPL_PACKAGES_QT=ON
 CMAKE_OPTIONS += -DQt5_DIR=/$(QT5_LIBDIR)/cmake/Qt5
 CMAKE_OPTIONS += -DQt5Widgets_DIR=$(QT5_LIBDIR)/cmake/Qt5Widgets
@@ -78,7 +78,7 @@ REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/java/openjdk17
+REQUIRED_PACKAGES += runtime/java/openjdk21
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
