@@ -19,25 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		h11
-HUMAN_VERSION =			0.14.0
-COMPONENT_SUMMARY =		h11 - A pure-Python, bring-your-own-I/O implementation of HTTP/1.1
+HUMAN_VERSION =			0.16.0
+COMPONENT_SUMMARY =		A pure-Python, bring-your-own-I/O implementation of HTTP/1.1
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/h11
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python-hyper/h11/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d65a85d094b76846653fa7c3b45abdaf8b4f055c643bb6eec623f1311636a474
+	sha256:d164114d09552ea887b5c9ed206d5a8e5bc0bf07d33e07a32622f91f102182c2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:mypy
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
