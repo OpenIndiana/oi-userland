@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libmikmod
-COMPONENT_VERSION=      3.3.12
+COMPONENT_VERSION=      3.3.13
 COMPONENT_SUMMARY=      MOD file playing library
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_PROJECT_URL=  https://mikmod.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:adef6214863516a4a5b44ebf2c71ef84ecdfeb3444973dacbac70911c9bc67e9
+COMPONENT_ARCHIVE_HASH= sha256:9fc1799f7ea6a95c7c5882de98be85fc7d20ba0a4a6fcacae11c8c6b382bb207
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/mikmod/files/libmikmod/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
 COMPONENT_FMRI=         library/audio/libmikmod
 COMPONENT_LICENSE=      LGPLv2
