@@ -11,19 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project RBTools
+#   $WS_TOOLS/python-integrate-project -d python/RBTools rbtools
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		RBTools
-HUMAN_VERSION =			5.0
+COMPONENT_NAME =		rbtools
+HUMAN_VERSION =			5.2.1
 COMPONENT_SUMMARY =		Command line tools and API for working with code and document reviews on Review Board
-COMPONENT_PROJECT_URL =		https://www.reviewboard.org/downloads/rbtools/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:beb373100d0f2d707370a6ce449b6f98110dd0081accffd766d955cea16f08bc
+	sha256:f2863515ef6ff1cfcd3905d5f409ab8c4d12878b364d6f805ba848dcaecb97f2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -36,7 +35,7 @@ COMPONENT_ARCHIVE_1 =		release-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL_1 =	\
 	https://github.com/reviewboard/rbtools/archive/refs/tags/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1 =	\
-	sha256:7efd4efa3966830532b71f8408ff2ed0d11c7aff9fdf6021f261b9380cfcd37a
+	sha256:ccad1c11175be50572200bef2a4ccbb8eb8e4ceab94cf57be642e712ea05827b
 CLEAN_PATHS += $(COMPONENT_SRC_1)
 # https://hellosplat.com/s/beanbag/tickets/4993/
 COMPONENT_POST_UNPACK_ACTION_1 += \
@@ -71,7 +70,9 @@ PYTHON_REQUIRED_PACKAGES += library/python/housekeeping
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/puremagic
 PYTHON_REQUIRED_PACKAGES += library/python/pydiffx
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/texttable
 PYTHON_REQUIRED_PACKAGES += library/python/tqdm
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
