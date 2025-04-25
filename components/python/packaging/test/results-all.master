@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 26921 items
+collecting ... collected 26948 items
 
 tests/test_elffile.py::test_elffile_bad_ident[no-magic] PASSED
 tests/test_elffile.py::test_elffile_bad_ident[unknown-format] PASSED
@@ -88,6 +88,26 @@ tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and 
 tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment7-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment8-False] PASSED
 tests/test_markers.py::TestMarker::test_extra_str_normalization PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[and-in-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[and-in-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[case-sensitive-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[case-sensitive-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[or-in-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[or-in-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[short-circuit-and-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[short-circuit-and-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[short-circuit-or-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[short-circuit-or-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-in-bar-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-in-bar-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-in-foo-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-in-foo-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-in-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-in-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-in-negated-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-in-negated-extras] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups_disallowed[dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_extras_and_dependency_groups_disallowed[extras] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version == "2.7" and os_name == "linux"] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version == "2.7") with random text] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version)] PASSED
@@ -8640,6 +8660,10 @@ tests/test_structures.py::test_negative_infinity_lesser[1] PASSED
 tests/test_structures.py::test_negative_infinity_lesser[a] PASSED
 tests/test_structures.py::test_negative_infinity_lesser[left2] PASSED
 tests/test_structures.py::test_negative_infinity_repr PASSED
+tests/test_tags.py::TestAndroidPlatforms::test_abi PASSED
+tests/test_tags.py::TestAndroidPlatforms::test_api_level PASSED
+tests/test_tags.py::TestAndroidPlatforms::test_detection PASSED
+tests/test_tags.py::TestAndroidPlatforms::test_non_android PASSED
 tests/test_tags.py::TestBitness::test_32bit_interpreter[2147483647-4-True] PASSED
 tests/test_tags.py::TestBitness::test_32bit_interpreter[2147483647-8-False] PASSED
 tests/test_tags.py::TestBitness::test_32bit_interpreter[9223372036854775807-8-False] PASSED
@@ -8809,6 +8833,7 @@ tests/test_tags.py::TestTag::test_hashing PASSED
 tests/test_tags.py::TestTag::test_lowercasing PASSED
 tests/test_tags.py::TestTag::test_repr PASSED
 tests/test_tags.py::TestTag::test_str PASSED
+tests/test_tags.py::test_platform_tags[Android-android_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Darwin-mac_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Generic-_generic_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Linux-_linux_platforms] PASSED
@@ -8858,6 +8883,8 @@ tests/test_utils.py::test_parse_sdist_invalid_filename[foo1.0.tar.gz] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-1000-py3-none-any.whl-foo-version2-build2-tags2] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-1000abc-py3-none-any.whl-foo-version3-build3-tags3] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-py3-none-any.whl-foo-version0-build0-tags0] PASSED
+tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-1000-py3-none-any.whl-foo-b\xe1r-version5-build5-tags5] PASSED
+tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-py3-none-any.whl-foo-b\xe1r-version4-build4-tags4] PASSED
 tests/test_utils.py::test_parse_wheel_filename[some_PACKAGE-1.0-py3-none-any.whl-some-package-version1-build1-tags1] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo#bar-1.0-py3-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-200-py3-none-any-junk.whl] PASSED
@@ -26927,4 +26954,4 @@ tests/test_version.py::TestVersion::test_version_str_repr[7!1.1.dev1-7!1.1.dev1]
 tests/test_version.py::test_parse PASSED
 tests/test_version.py::test_parse_raises PASSED
 
-======== 26920 passed, 1 skipped ========
+======== 26947 passed, 1 skipped ========
