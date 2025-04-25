@@ -22,12 +22,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gstreamer
-COMPONENT_VERSION=	1.26.0
+COMPONENT_VERSION=	1.26.1
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:1b2ee4028010c25b776effa7c396c7e3e1861b60b9417e416f4914abcdff279f
+COMPONENT_ARCHIVE_HASH=	sha256:30a4c4a5e48345583eb596aa265d0f53c0feb93011d93a6aaa70dd6e3c519dc4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/audio/gstreamer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -70,11 +70,11 @@ TEST_REQUIRED_PACKAGES += developer/gsl
 # must be at the same major version as the main gstreamer package to run tests
 # successfully.
 GST_DEVTOOLS_VERSION = \
-	$(shell $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools1/Makefile print-value-COMPONENT_VERSION)
+	$(shell $(ENV) $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools/Makefile print-value-COMPONENT_VERSION)
 ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
-TEST_REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer/devtools
 else
-TEST_CONFLICTING_PACKAGES += library/audio/gstreamer1/devtools
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer/devtools
 endif
 
 # Auto-generated dependencies
