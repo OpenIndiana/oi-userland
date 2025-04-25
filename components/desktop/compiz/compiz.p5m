@@ -25,25 +25,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
-<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
-<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
-<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-
 file files/compiz.png path=usr/share/pixmaps/compiz.png
 file files/compiz-configure path=usr/lib/compiz/compiz-configure
 file files/modify-xorg-conf path=usr/lib/compiz/modify-xorg-conf
 file files/compiz-config.glade path=usr/share/compiz/compiz-config.glade
-file files/compiz path=usr/bin/compiz mode=0555
-file usr/bin/compiz path=usr/bin/compiz-bin mode=0555 pkg.depend.bypass-generate=libGL\.so\.1
+file files/compiz path=usr/bin/compiz
+file usr/bin/compiz path=usr/bin/compiz-bin pkg.depend.bypass-generate=libGL\.so\.1
 
 depend fmri=service/opengl/ogl-select type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/marco type=require
 
-file path=usr/bin/compiz-decorator mode=0555
-file path=usr/bin/gtk-window-decorator mode=0555
+file path=usr/bin/compiz-decorator
+file path=usr/bin/gtk-window-decorator
 file path=usr/include/compiz/compiz-common.h
 file path=usr/include/compiz/compiz-core.h
 file path=usr/include/compiz/compiz-cube.h
@@ -81,7 +74,7 @@ file path=usr/lib/$(MACH64)/compiz/libwobbly.so
 file path=usr/lib/$(MACH64)/compiz/libzoom.so
 link path=usr/lib/$(MACH64)/libdecoration.so target=libdecoration.so.0.0.0
 link path=usr/lib/$(MACH64)/libdecoration.so.0 target=libdecoration.so.0.0.0
-file path=usr/lib/$(MACH64)/libdecoration.so.0.0.0 mode=0555
+file path=usr/lib/$(MACH64)/libdecoration.so.0.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/compiz-cube.pc
 file path=usr/lib/$(MACH64)/pkgconfig/compiz-scale.pc
 file path=usr/lib/$(MACH64)/pkgconfig/compiz.pc

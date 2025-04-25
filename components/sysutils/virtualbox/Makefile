@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.1.4
+COMPONENT_VERSION=      7.1.8
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/

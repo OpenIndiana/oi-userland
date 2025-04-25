@@ -211,19 +211,17 @@ index fe09b6b..22da1c7 100644
  
  #define HELP_BUTTON "helpButton"        /* Name of top help button */
  #define QUIT_BUTTON "quitButton"        /* Name of top quit button */
-diff --git a/handler.c b/handler.c
-index e61687e..351f60f 100644
---- a/handler.c
-+++ b/handler.c
-@@ -41,6 +41,8 @@ from the X Consortium.
+--- xman-1.2.0/handler.c.orig	2024-03-24 18:54:37.000000000 +0100
++++ xman-1.2.0/handler.c	2025-04-24 21:54:16.580745512 +0200
+@@ -41,6 +41,8 @@
  #include <sys/stat.h>
  #include "globals.h"
  #include "vendor.h"
 +#include <libintl.h>
 +#include <X11/Xlocale.h>
- #ifdef INCLUDE_XPRINT_SUPPORT
- #include "printdialog.h"
- #include "print.h"
+
+ #ifdef RELEASE_VERSION
+ #define XMAN_VERSION "Xman Version " PACKAGE_VERSION " - X11R" RELEASE_VERSION
 @@ -309,8 +311,10 @@ SaveFormattedPage(Widget w, XEvent * event, String * params,
      char cmdbuf[BUFSIZ], error_buf[BUFSIZ];
  

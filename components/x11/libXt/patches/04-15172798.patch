@@ -1,0 +1,50 @@
+Oracle Bug 15172798 - SUNBT4907034 XtOverrideTranslations() takes 10x more
+  cycles than 32-bit.
+
+This fix is SPARC-specific and should be reworked to apply to both big- &
+little-endian machines before being sent upstream.
+
+Root cause:
+64bit libXt has worse performance compared with 32bit libXt because current
+libXt construct the converter hash table by using the second byte of address
+member of from data structure. However, in 64bit model, most second byte are
+0, which lower the hash table effeciency.
+
+Solution:
+If current application is 64bit model, use the 7th byte to hash the
+converter. Moreover, add more optimization macro definition.
+
+--- a/src/Convert.c	2022-11-07 18:38:02.582934787 -0800
++++ b/src/Convert.c	2022-11-07 18:39:37.801918875 -0800
+@@ -717,9 +717,13 @@
+     LOCK_PROCESS;
+     /* Try to find cache entry for conversion */
+     hash = HashCode(converter, from);
+-    if (from->size > 1)
+-        hash += ((char *) from->addr)[1];
+-
++    if (from->size > 1) {
++	if (sizeof(long) == 4)
++            hash += ((char *) from->addr)[1];
++        else
++            hash += ((char *) from->addr)[6];
++    }
++        
+     for (p = cacheHashTable[hash & CACHEHASHMASK]; p; p = p->next) {
+         if ((p->hash == hash)
+             && (p->converter == (XtTypeConverter) converter)
+@@ -816,8 +820,12 @@
+     LOCK_PROCESS;
+     /* Try to find cache entry for conversion */
+     hash = HashCode(converter, from);
+-    if (from->size > 1)
+-        hash += ((char *) from->addr)[1];
++    if (from->size > 1) {
++	if (sizeof(long) == 4)
++            hash += ((char *) from->addr)[1];
++        else
++            hash += ((char *) from->addr)[6];
++    }
+ 
+     if (cP->cache_type != XtCacheNone) {
+         for (p = cacheHashTable[hash & CACHEHASHMASK]; p; p = p->next) {

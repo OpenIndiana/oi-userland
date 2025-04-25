@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: rbtools
-collecting ... collected 877 items
+collecting ... collected 976 items
 
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_get_capability PASSED
 rbtools/api/tests/test_capabilities.py::CapabilitiesTests::test_get_capability_with_unknown_capability PASSED
@@ -86,10 +86,17 @@ rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_list_construction
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_no_token_guessing PASSED
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_resource_specific_base_class PASSED
 rbtools/api/tests/test_resource.py::ResourceFactoryTests::test_token_guessing PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_apply_patch PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_apply_patch_with_patch_error PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_apply_patch_with_patch_level PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_apply_patch_with_patch_level_invalid PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_false PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_ids PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_requires_true PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_diff_tool_with_tool_missing PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_patcher PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_patcher_with_legacy_apply_patch PASSED
+rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_get_patcher_with_legacy_apply_patch_and_custom_patcher PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_has_dependencies_after_setup_with_found PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_has_dependencies_after_setup_with_not_found PASSED
 rbtools/clients/tests/test_base_scmclient.py::BaseSCMClientTests::test_has_dependencies_with_expect_checked_and_checked PASSED
@@ -214,6 +221,7 @@ rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_one_
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_one_arg_since_merge PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_one_arg_two_revs PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_two_args PASSED
+rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_with__diff_finding_parent_case_four PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_with_diff_finding_parent PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_with_diff_finding_parent_case_eight PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_parse_revision_spec_with_diff_finding_parent_case_five PASSED
@@ -228,7 +236,6 @@ rbtools/clients/tests/test_git.py::GitClientTests::test_push_upstream_no_push_ex
 rbtools/clients/tests/test_git.py::GitClientTests::test_push_upstream_pull_exception PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_scan_for_server_property PASSED
 rbtools/clients/tests/test_git.py::GitClientTests::test_scan_for_server_simple PASSED
-rbtools/clients/tests/test_git.py::GitClientTests::testparse_revision_spec_with__diff_finding_parent_case_four PASSED
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff SKIPPED
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_exclude_in_subdir SKIPPED
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_with_deletes SKIPPED
@@ -238,7 +245,7 @@ rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_with_multip
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_with_rename SKIPPED
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_with_rename_and_changes SKIPPED
 rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_diff_with_spaces_in_filename SKIPPED
-rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_get_repository_info PASSED
+rbtools/clients/tests/test_git.py::GitPerforceClientTests::test_get_repository_info SKIPPED
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_diff PASSED
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_diff_with_deletes PASSED
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_diff_with_exclude_patterns PASSED
@@ -246,6 +253,17 @@ rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_diff_with_mult
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_diff_with_spaces_in_filename PASSED
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_get_repository_info PASSED
 rbtools/clients/tests/test_git.py::GitSubversionClientTests::test_parse_revision_spec_no_args PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch_with_commit PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch_with_multiple_patches PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch_with_multiple_patches_and_commit PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch_with_revert PASSED
+rbtools/clients/tests/test_git.py::GitPatcherTests::test_patch_with_revert_and_commit PASSED
+rbtools/clients/tests/test_legacy_patcher.py::LegacyPatcherTests::test_init PASSED
+rbtools/clients/tests/test_legacy_patcher.py::LegacyPatcherTests::test_init_with_can_commit PASSED
+rbtools/clients/tests/test_legacy_patcher.py::LegacyPatcherTests::test_init_with_can_patch_empty_files PASSED
+rbtools/clients/tests/test_legacy_patcher.py::LegacyPatcherTests::test_patch PASSED
+rbtools/clients/tests/test_legacy_patcher.py::LegacyPatcherTests::test_patch_with_commit PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_apply_patch PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_apply_patch_with_error PASSED
 rbtools/clients/tests/test_mercurial.py::MercurialClientTests::test_apply_patch_with_p PASSED
@@ -305,6 +323,17 @@ rbtools/clients/tests/test_mercurial.py::MercurialSubversionClientTests::test_di
 rbtools/clients/tests/test_mercurial.py::MercurialSubversionClientTests::test_get_repository_info SKIPPED
 rbtools/clients/tests/test_mercurial.py::MercurialSubversionClientTests::test_scan_for_server_with_property SKIPPED
 rbtools/clients/tests/test_mercurial.py::MercurialSubversionClientTests::test_scan_for_server_with_reviewboardrc SKIPPED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_git PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_git_with_conflicts PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_git_with_empty_files PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_git_with_prefix_level PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_hg PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_hg_with_conflicts PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_hg_with_prefix_level PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_with_commit PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_with_multiple_patches PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_with_multiple_patches_and_commit PASSED
+rbtools/clients/tests/test_mercurial.py::MercurialPatcherTests::test_patch_with_revert PASSED
 rbtools/clients/tests/test_p4.py::P4WrapperTests::test_counters PASSED
 rbtools/clients/tests/test_p4.py::P4WrapperTests::test_info PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_check_dependencies_with_found PASSED
@@ -344,6 +373,10 @@ rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_de
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_replace_changeset_description_with_summary PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_scan_for_server_with_reviewboard_url PASSED
 rbtools/clients/tests/test_p4.py::PerforceClientTests::test_scan_for_server_with_reviewboard_url_encoded PASSED
+rbtools/clients/tests/test_p4.py::PerforcePatcherTests::test_patch PASSED
+rbtools/clients/tests/test_p4.py::PerforcePatcherTests::test_patch_with_empty_files PASSED
+rbtools/clients/tests/test_p4.py::PerforcePatcherTests::test_patch_with_prefix_level PASSED
+rbtools/clients/tests/test_p4.py::PerforcePatcherTests::test_patch_with_revert PASSED
 rbtools/clients/tests/test_plastic.py::PlasticClientTests::test_check_dependencies_with_found PASSED
 rbtools/clients/tests/test_plastic.py::PlasticClientTests::test_check_dependencies_with_missing PASSED
 rbtools/clients/tests/test_scanning.py::ScanningTests::test_scanning_nested_repos_1 PASSED
@@ -447,6 +480,16 @@ rbtools/clients/tests/test_svn.py::SVNClientTests::test_same_diff_multiple_metho
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_disabled PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_disabled_and_no_empty_files_cap PASSED
 rbtools/clients/tests/test_svn.py::SVNClientTests::test_show_copies_as_adds_enabled PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_in_subdirectory PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_applied_and_conflicts PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_conflicts PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_empty_files PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_empty_files_revert PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_no_basedir_overlap PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_not_applied PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_prefix_level PASSED
+rbtools/clients/tests/test_svn.py::SVNPatcherTests::test_patch_with_revert PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_found PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_found_wrong_version PASSED
 rbtools/clients/tests/test_tfs.py::TFExeWrapperTests::test_check_dependencies_with_not_found PASSED
@@ -518,6 +561,9 @@ rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_new_lin
 rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write PASSED
 rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write_with_end PASSED
 rbtools/commands/tests/test_base_output.py::OutputWrapperTests::test_str_write_with_end_empty PASSED
+rbtools/commands/tests/test_command_initialization.py::CommandInitializationTests::test_no_server_url PASSED
+rbtools/commands/tests/test_command_initialization.py::CommandInitializationTests::test_server_url_with_reviewboardrc PASSED
+rbtools/commands/tests/test_command_initialization.py::CommandInitializationTests::test_server_url_with_trees_config PASSED
 rbtools/commands/tests/test_main.py::MainCommandTests::test_help_command PASSED
 rbtools/commands/tests/test_main.py::MainCommandTests::test_help_invalid_command PASSED
 rbtools/commands/tests/test_main.py::MainCommandTests::test_help_multiple_args PASSED
@@ -647,6 +693,10 @@ rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_run_diff_f
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_run_diff_file_with_text_differences PASSED
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_run_diff_file_with_treat_missing_as_empty_false PASSED
 rbtools/diffs/tests/test_apple_diff_tool.py::AppleDiffToolTests::test_run_diff_file_with_trouble_result PASSED
+rbtools/diffs/tests/test_apply_patch_error.py::ApplyPatchErrorTests::test_with_failed_patch_result_multiple_patches PASSED
+rbtools/diffs/tests/test_apply_patch_error.py::ApplyPatchErrorTests::test_with_failed_patch_result_no_patc_range PASSED
+rbtools/diffs/tests/test_apply_patch_error.py::ApplyPatchErrorTests::test_with_failed_patch_result_one_patch PASSED
+rbtools/diffs/tests/test_apply_patch_error.py::ApplyPatchErrorTests::test_without_failed_patch_result PASSED
 rbtools/diffs/tests/test_diff_file_result.py::DiffFileResultTests::test_has_differences_with_binary PASSED
 rbtools/diffs/tests/test_diff_file_result.py::DiffFileResultTests::test_has_differences_with_text_changes PASSED
 rbtools/diffs/tests/test_diff_file_result.py::DiffFileResultTests::test_has_differences_with_text_no_changes PASSED
@@ -707,6 +757,55 @@ rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_run_diff_file_
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_run_diff_file_with_text_differences PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_run_diff_file_with_treat_missing_as_empty_false PASSED
 rbtools/diffs/tests/test_gnu_diff_tool.py::GNUDiffToolTests::test_run_diff_file_with_trouble_result PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_content_not_opened PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_content_with_content_set PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_content_with_path_set PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_content PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_path PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_prefix_level_int_string PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_prefix_level_invalid_string PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_without_content_or_path PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_path_not_opened PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_path_with_content_set PASSED
+rbtools/diffs/tests/test_patch.py::PatchTests::test_path_with_path_set PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_get_default_prefix_level PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_get_default_prefix_level_with_base_dir_equal PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_get_default_prefix_level_with_base_dir_parent PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_get_default_prefix_level_with_base_dir_subdir PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_bsd_with_conflicts PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_bsd_with_conflicts_partial PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_bsd_with_empty_files PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_bsd_with_fatal_error PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_gnu_with_conflicts PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_gnu_with_conflicts_partial PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_gnu_with_empty_files PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_gnu_with_fatal_error PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_with_empty PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_parse_patch_output_with_success PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_bad_filename PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_bad_patch PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_commit PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_commit_squash PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_empty_files PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_empty_files_and_garbage PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_malformed_patch PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_multiple_patches PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_one_patch PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_patch_error PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_patch_error_conflicts PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_patch_error_conflicts_some_hunks PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_patch_revert_error PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_patch_revert_error_conflicts PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_patch_with_revert PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_one_patch_needing_defaults PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_one_patch_no_defaults_needed PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_with_author_message PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_with_revert PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_with_review_request PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_with_review_request_expanded PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_with_squash PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_without_can_commit PASSED
+rbtools/diffs/tests/test_patcher.py::PatcherTests::test_prepare_for_commit_without_defaults PASSED
 rbtools/diffs/tests/test_unified_diff_writer.py::UnifiedDiffWriterTests::test_write_diff_file_result_headers PASSED
 rbtools/diffs/tests/test_unified_diff_writer.py::UnifiedDiffWriterTests::test_write_diff_file_result_headers_no_extra PASSED
 rbtools/diffs/tests/test_unified_diff_writer.py::UnifiedDiffWriterTests::test_write_diff_file_result_headers_with_custom_extra_bytes PASSED
@@ -893,5 +992,21 @@ rbtools/utils/appdirs.py:206
   $(@D)/rbtools/utils/appdirs.py:206: DeprecationWarning: invalid escape sequence \P
     """Return full path to the user-shared data dir for this application.
 
+rbtools/clients/tests/test_git.py: 11 warnings
+  $(@D)/rbtools/clients/git.py:1576: RemovedInRBTools70Warning: PatchAuthor.fullname is deprecated. Please use PatchAuthor.full_name instead. This will be removed in RBTools 7.
+    cmd += ['--author', '%s <%s>' % (author.fullname, author.email)]
+
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_content
+  $(@D)/rbtools/diffs/tests/test_patch.py:42: RemovedInRBTools70Warning: PatchAuthor.fullname is deprecated. Please use PatchAuthor.full_name instead. This will be removed in RBTools 7.
+    self.assertEqual(author.fullname, 'Test User')
+
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_path
+  $(@D)/rbtools/diffs/tests/test_patch.py:62: RemovedInRBTools70Warning: PatchAuthor.fullname is deprecated. Please use PatchAuthor.full_name instead. This will be removed in RBTools 7.
+    self.assertEqual(author.fullname, 'Test User')
+
+rbtools/diffs/tests/test_patch.py::PatchTests::test_init_with_prefix_level_invalid_string
+  $(@D)/rbtools/diffs/tests/test_patch.py:100: RemovedInRBTools70Warning: prefix_level must be an integer, not a string. Support for string prefix levels will be removed in RBTools 7.
+    Patch(author=PatchAuthor(full_name='Test User',
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 841 passed, 36 skipped, 2 warnings ========
+======== 939 passed, 37 skipped, 16 warnings ========

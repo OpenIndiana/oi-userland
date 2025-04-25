@@ -22,15 +22,17 @@
 # Copyright 2025 Klaus Ziegler
 #
 
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		imap
-COMPONENT_VERSION=	2007f
-COMPONENT_REVISION=	2
-IPS_COMPONENT_VERSION=	0.2007.6
+COMPONENT_VERSION=	2007.6
+HUMAN_VERSION=	2007f
+COMPONENT_REVISION=	3
+#IPS_COMPONENT_VERSION=	0.2007.6
 COMPONENT_PROJECT_URL=	http://www.washington.edu/imap/
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:3d9383e3ccb5ac6e273aa76112671b7ffdd8bef6eb7df9b5de7b7e61024f8dc5
 COMPONENT_ARCHIVE_URL=	https://www.mirrorservice.org/sites/ftp.cac.washington.edu/imap/$(COMPONENT_ARCHIVE)
@@ -39,11 +41,10 @@ COMPONENT_SUMMARY=	University of Washington IMAP library
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CFLAGS += -D__EXTENSIONS__
 
@@ -75,12 +76,6 @@ define COMPONENT_INSTALL_ACTION=
 	($(CP) $(BUILD_DIR_64)/c-client/linkage.h $(PROTO_DIR)/usr/include/c-client/) ; \
 	($(CP) $(BUILD_DIR_64)/c-client/osdep.h $(PROTO_DIR)/usr/include/c-client/);
 endef
-
-build:		$(BUILD_64)
-
-install:	build $(INSTALL_64)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
