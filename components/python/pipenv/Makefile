@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipenv
-HUMAN_VERSION =			2024.4.1
+HUMAN_VERSION =			2025.0.1
 COMPONENT_SUMMARY =		Python Development Workflow for Humans.
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pipenv
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pipenv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:23ba41983863ba157f8cefc45daeca0a11b661a277bbccb3ec065b7d2b3d68c6
+	sha256:4526c2876348c51aadab301c59f8f68fa801dbcd4f8e5c1aeac54a387811c518
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
