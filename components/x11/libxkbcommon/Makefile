@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
-COMPONENT_VERSION=		1.7.0
+COMPONENT_VERSION=		1.8.1
 COMPONENT_SUMMARY=		library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:20d5e40dabd927f7a7f4342bebb1e8c7a59241283c978b800ae3bf60394eabc4
+COMPONENT_ARCHIVE_HASH=	sha256:c65c668810db305c4454ba26a10b6d84a96b5469719fe3c729e1c6542b8d0d87
 COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			x11/library/libxkbcommon
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -35,7 +35,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += -Denable-wayland=false
 CONFIGURE_OPTIONS += -Denable-docs=true
+
 CONFIGURE_ENV += $(COMPONENT_BUILD_ENV)
+
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 COMPONENT_TEST_ENV += HOME=/tmp
 
