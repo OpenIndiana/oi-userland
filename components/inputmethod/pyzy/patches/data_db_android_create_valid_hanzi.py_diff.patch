@@ -1,0 +1,27 @@
+diff --git a/data/db/android/create_valid_hanzi.py b/data/db/android/create_valid_hanzi.py
+index 52c473a..4ab0b62 100644
+--- a/data/db/android/create_valid_hanzi.py
++++ b/data/db/android/create_valid_hanzi.py
+@@ -1,17 +1,17 @@
+ 
+ def get_validate_hanzi():
+-    validate_hanzi = file("valid_utf16.txt").read().decode("utf16")
++    validate_hanzi = open("valid_utf16.txt", encoding='utf-16').read()
+     return set(validate_hanzi)
+ 
+ def main():
+     hanzi = get_validate_hanzi()
+     hanzi = list(hanzi)
+     hanzi.sort()
+-    print "# -*- coding: utf-8 -*- "
+-    print "valid_hanzi = set(["
++    print("# -*- coding: utf-8 -*- ")
++    print("valid_hanzi = set([")
+     for c in hanzi:
+-        print "    u\"%s\"," % c.encode("utf8")
+-    print "])"
++        print("    \"%s\"," % c)
++    print("])")
+ 
+ if __name__ == "__main__":
+     main()
