@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project certifi
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		certifi
-HUMAN_VERSION =			2025.1.31
+HUMAN_VERSION =			2025.4.26
 COMPONENT_SUMMARY =		Python package for providing Mozilla's CA Bundle.
 COMPONENT_PROJECT_URL =		https://github.com/certifi/python-certifi
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/certifi/python-certifi/archive/refs/tags/$(GITHUB_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eccc6f210f8abeca6b9eb52a5cd13732fd958ccdf6a8c1b8e82b8806893673a9
+	sha256:328a6aaa6010824fa3f0673331a676ca59ac52af3c036ce39cba315172798cd0
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,4 +39,5 @@ COMPONENT_SRC = python-certifi-$(GITHUB_VERSION)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
