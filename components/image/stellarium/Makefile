@@ -18,13 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=	24.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	25.1
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:03dad30f4031bdc2d200146e7c587249ea75dbdb88c8ae13632829aac5540b08
+COMPONENT_ARCHIVE_HASH=	sha256:610384311455ce75f9b02f0d3d50e5cc127c36e67008817ea8cbab0bdadeaf5a
 COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -36,9 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG8MODE)
 
+# stellarium including version 25.1 are not prepared for cmake 4.0
+COMPONENT_BUILD_ENV += CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 LDFLAGS += -lsocket -lnsl
 LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DENABLE_GPS=ON
 CMAKE_OPTIONS += -DENABLE_SHOWMYSKY=ON
 CMAKE_OPTIONS += -DENABLE_SCRIPTS=ON
