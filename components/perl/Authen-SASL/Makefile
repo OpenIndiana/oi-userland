@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Authen::SASL
+#   $WS_TOOLS/perl-integrate-module Authen-SASL
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Authen::SASL
-HUMAN_VERSION =			2.1700
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Authen::SASL - SASL Authentication framework
+COMPONENT_NAME =		Authen-SASL
+HUMAN_VERSION =			2.1800
+COMPONENT_SUMMARY =		SASL Authentication framework
 COMPONENT_CPAN_AUTHOR =		EHUELS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b86d5a576b8d387aee24f39f47a54afd14bb66b09003db5065001f1de03a8ece
+	sha256:0b03686bddbbf7d5c6548e468d079a4051c9b73851df740ae28cfd2db234e922
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,7 +31,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/pod-coverage-trustpod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
