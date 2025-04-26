@@ -40,6 +40,7 @@ CONFIGURE_OPTIONS += --disable-lua-extension
 # Manually added build dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += developer/build/automake-115
+REQUIRED_PACKAGES += system/library/iconv/utf-8
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
