@@ -1,0 +1,22 @@
+--- stellarium-25.1/src/core/modules/StarMgr.cpp.orig	2025-03-23 06:15:57.000000000 +0100
++++ stellarium-25.1/src/core/modules/StarMgr.cpp	2025-04-26 11:11:18.236401127 +0200
+@@ -1582,7 +1582,7 @@
+ 	int lv12_pix = source_id / 34359738368;
+ 	Vec3d v;
+ 	StelObjectP so;
+-	healpix_pix2vec(pow(2, 12), lv12_pix, v.v);  // search which pixel the source is in and turn to coordinates
++	healpix_pix2vec(pow(static_cast<double>(2), 12), lv12_pix, v.v);  // search which pixel the source is in and turn to coordinates
+ 	Vec3f vf = v.toVec3f();
+ 
+ 	for (const auto* z : gridLevels)
+--- stellarium-25.1/src/core/modules/ZoneArray.cpp.orig	2025-03-23 06:15:57.000000000 +0100
++++ stellarium-25.1/src/core/modules/ZoneArray.cpp	2025-04-26 11:15:59.159247047 +0200
+@@ -615,7 +615,7 @@
+                                                   double &      RV) const
+ {
+    // loop throught each zone in the level which is 20 * 4 ** level + 1 as index
+-   for (int i = 0; i < 20 * pow(4, (level)) + 1; i++) {
++   for (int i = 0; i < 20 * pow(static_cast<double>(4), (level)) + 1; i++) {
+       // get the zone data
+       const SpecialZoneData<Star> * const z = getZones() + i;
+       // loop through the stars in the zone
