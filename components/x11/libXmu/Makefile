@@ -14,15 +14,15 @@
 #
 
 X11_CATEGORY=LIB
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXmu
-COMPONENT_VERSION= 1.1.4
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.2.1
 COMPONENT_SUMMARY= libXmu - miscellaneous utility functions for Xaw and Xt clients
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:210de3ab9c3e9382572c25d17c2518a854ce6e2c62c5f8315deac7579e758244
+COMPONENT_ARCHIVE_HASH= sha256:fcb27793248a39e5fcc5b9c4aec40cc0734b3ca76aac3d7d1c264e7f7e14e8b2
 COMPONENT_FMRI=    x11/library/libxmu
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -38,14 +38,6 @@ CONFIGURE_OPTIONS += --without-lint
 CONFIGURE_OPTIONS += --disable-lint-library
 
 COMPONENT_BUILD_ARGS += V=1
-
-unexport SHELLOPTS
-COMPONENT_TEST_TRANSFORMS += '-e "s/      [0-9].[0-9][0-9] s//" '
-COMPONENT_TEST_TRANSFORMS += \
-        '-n ' \
-        '-e "/OK:/p" ' \
-        '-e "/PASS:/p" ' \
-        '-e "/FAIL:/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
