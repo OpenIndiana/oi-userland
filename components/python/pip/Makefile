@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip
-HUMAN_VERSION =			25.0.1
+HUMAN_VERSION =			25.1
 COMPONENT_SUMMARY =		The PyPA recommended tool for installing Python packages.
 COMPONENT_PROJECT_URL =		https://pip.pypa.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pip/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:334371888f0c679c04e819ddc234562feaea81331658a76842b62dc9dc83a832
+	sha256:990bda6f11b02b4e4cb6bd3581a5dbaed105838e7a4ec765cb3dc0c2bdbef7ca
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
