@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 146 items
+collecting ... collected 148 items
 
 conftest.py::mypy PASSED
 conftest.py::mypy-status PASSED
@@ -36,6 +36,7 @@ importlib_metadata/_itertools.py::importlib_metadata._itertools.bucket PASSED
 importlib_metadata/_meta.py::mypy PASSED
 importlib_metadata/_text.py::mypy PASSED
 importlib_metadata/_text.py::importlib_metadata._text.FoldedCase PASSED
+importlib_metadata/_typing.py::mypy PASSED
 importlib_metadata/compat/__init__.py::mypy PASSED
 importlib_metadata/compat/py311.py::mypy PASSED
 importlib_metadata/compat/py$(PYV).py::mypy PASSED
@@ -111,6 +112,7 @@ tests/test_main.py::ImportTests::test_resolve_without_attr PASSED
 tests/test_main.py::NameNormalizationTests::test_dashes_in_dist_name_found_as_underscores PASSED
 tests/test_main.py::NameNormalizationTests::test_dist_name_found_as_any_case PASSED
 tests/test_main.py::NameNormalizationTests::test_unique_distributions PASSED
+tests/test_main.py::InvalidMetadataTests::test_missing_metadata PASSED
 tests/test_main.py::InvalidMetadataTests::test_valid_dists_preferred PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads PASSED
 tests/test_main.py::NonASCIITests::test_metadata_loads_egg_info PASSED
@@ -153,10 +155,31 @@ tests/test_zip.py::TestEgg::test_one_distribution PASSED
 tests/test_zip.py::TestEgg::test_zip_entry_points PASSED
 tests/test_zip.py::TestEgg::test_zip_version PASSED
 tests/test_zip.py::TestEgg::test_zip_version_does_not_match PASSED
-
 ===================================== mypy =====================================
 
-Success: no issues found in 31 source files
-======== 146 passed ========
+Success: no issues found in 32 source files
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+
+Name                                    Stmts   Miss  Cover   Missing
+---------------------------------------------------------------------
+conftest.py                                 9      0   100%
+docs/__init__.py                            0      0   100%
+docs/conf.py                               18      0   100%
+importlib_metadata/__init__.py            409      1    99%   336
+importlib_metadata/_adapters.py            46      0   100%
+importlib_metadata/_collections.py         13      0   100%
+importlib_metadata/_compat.py              17      2    88%   55-56
+importlib_metadata/_functools.py           17      0   100%
+importlib_metadata/_meta.py                 5      0   100%
+importlib_metadata/_text.py                25      0   100%
+importlib_metadata/_typing.py               5      0   100%
+importlib_metadata/compat/__init__.py       0      0   100%
+importlib_metadata/compat/py$(PYV).py          16      0   100%
+importlib_metadata/compat/py311.py          5      0   100%
+importlib_metadata/diagnose.py             14      9    36%   7-12, 16-17, 21
+---------------------------------------------------------------------
+TOTAL                                     599     12    98%
+======== 148 passed ========
   py$(PYV): OK
   congratulations :)
