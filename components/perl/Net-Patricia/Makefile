@@ -11,26 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::Patricia
+#   $WS_TOOLS/perl-integrate-module Net-Patricia
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::Patricia
-HUMAN_VERSION =			1.22
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Net::Patricia - Patricia Trie perl module for fast IP address lookups
+COMPONENT_NAME =		Net-Patricia
+HUMAN_VERSION =			1.23
+COMPONENT_SUMMARY =		Patricia Trie for fast IP address lookups
 COMPONENT_CPAN_AUTHOR =		GRUBER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70835a926e1c5a8d0324c72fffee82eeb7ec6c141dee04fd446820b64f71c552
+	sha256:3d23c44dfae73da027f02a2f52e5925b99d6f6ef4a005af6b3c65144319c7d52
 COMPONENT_LICENSE =		GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/net-cidr-lite
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += library/perl-5/socket6
+PERL_REQUIRED_PACKAGES += library/perl-5/version
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
