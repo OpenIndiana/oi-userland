@@ -14,22 +14,23 @@
 #   $WS_TOOLS/python-integrate-project elementpath
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elementpath
-HUMAN_VERSION =			4.8.0
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/elementpath
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5822a2560d99e2633d95f78694c7ff9646adaa187db520da200a8e9479dc46ae
+	sha256:932ff1087120eaddf38bc82c6345d547cd29b32c293718cbdd36485c704df861
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/lxml
 TEST_REQUIRED_PACKAGES.python += library/python/lxml-stubs
