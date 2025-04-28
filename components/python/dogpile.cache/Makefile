@@ -19,18 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dogpile_cache
-HUMAN_VERSION =			1.3.4
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		A caching front-end based on the Dogpile lock.
 COMPONENT_PROJECT_URL =		https://github.com/sqlalchemy/dogpile.cache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4f0295575f5fdd3f7e13c84ba8e36656971d1869a2081b4737ec99ede378a8c0
+	sha256:b00a9e2f409cf9bf48c2e7a3e3e68dac5fa75913acbf1a62f827c812d35f3d09
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/decorator
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/stevedore
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/decorator
 TEST_REQUIRED_PACKAGES.python += library/python/mako
