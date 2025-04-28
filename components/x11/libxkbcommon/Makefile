@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
-COMPONENT_VERSION=		1.8.1
+COMPONENT_VERSION=		1.9.0
 COMPONENT_SUMMARY=		library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c65c668810db305c4454ba26a10b6d84a96b5469719fe3c729e1c6542b8d0d87
+COMPONENT_ARCHIVE_HASH=	sha256:c8c4ccf203ff73b647ea70b67afa2fd749cd428cd027fc2e5ca3b9954f1d77a8
 COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			x11/library/libxkbcommon
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -40,6 +40,9 @@ CONFIGURE_ENV += $(COMPONENT_BUILD_ENV)
 
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
 
+# Note that one of the tests fails with a type error; probably because our python-3.9 is too old.
+#     rules: str | None = None
+#	TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
 COMPONENT_TEST_ENV += HOME=/tmp
 
 # Auto-generated dependencies
