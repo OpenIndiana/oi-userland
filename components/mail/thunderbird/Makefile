@@ -30,31 +30,28 @@
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
-# ESR should be set to esr for esr build, or an empty string for other builds
-ESR = esr
-
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 2
+# CANDIDATE_BUILD= 1
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	128.9.2
+COMPONENT_VERSION =	138.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE = 	$(COMPONENT_SRC)$(ESR).source.tar.xz
+COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:21cbdc12fd2a5c79ce3ae3f23b5c334160b4380858aaa8a92fc1d9c9acfdd5fb
+	 sha256:c92ce790e32f29c76162817db5f73a5769e16b7b8c8942fa40b120d261ef8d9b
 ifndef CANDIDATE_BUILD
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
+MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
 endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 
-RUST_VERSION = 1.78.0
+RUST_VERSION = 1.85.1
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -72,10 +69,10 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
 
     ifdef CANDIDATE_BUILD
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
     else
 LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)/linux-x86_64/xpi
+        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
 endif
 
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
@@ -140,21 +137,21 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
         echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
 
-# xpcom uses DEF XP_SOLARIS
-CXXFLAGS += -DXP_SOLARIS -Wno-invalid-offsetof -fpermissive
+CXXFLAGS += -Wno-invalid-offsetof -fpermissive
 
 # 28395728
 LD_MAP_NOEXBSS.sparc=
 
-# libmozgtk needs to link to gtk3 and others
+# libmozgtk needs to link to gtk3 and others; Needed for dynamic linked rust crates
 LD_Z_IGNORE=
-
-# missing symbols from gtk3 during Firefox start
-LD_B_DIRECT=
 
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)
+
+# This is needed to run bins/libs in .rustup
+CONFIGURE_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 $(LANG_FILES): 
 	$(FETCH) --file $@  --url $(LANG_FILES_LOCATION)/$@
@@ -167,10 +164,6 @@ CONFIGURE_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 CONFIGURE_ENV += CARGO_HOME=$(CARGO_HOME)
 COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
-
-# This is needed to run bins/libs in .rustup
-CONFIGURE_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
-COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
@@ -185,7 +178,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
 	);
 
 COMPONENT_POST_INSTALL_ACTION  += \
@@ -195,12 +188,6 @@ COMPONENT_POST_INSTALL_ACTION  += \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(THUNDERBIRD_LIBDIR)/thunderbird:$$ORIGIN"' $$file ; \
     done ;
 
-# generate license file for package by using the contents from license.html   
-COMPONENT_POST_INSTALL_ACTION  += \
-    unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
-    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
-
-
 COMPONENT_POST_INSTALL_ACTION += \
         $(MKDIR) $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/; \
         list1='$(LANG_LIST)' ; for f in $$list1 ; do \
@@ -208,6 +195,11 @@ COMPONENT_POST_INSTALL_ACTION += \
                 $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/extensions/langpack-$$f@thunderbird.mozilla.org.xpi ; \
         done ;
 
+# generate license file for package by using the contents from license.html   
+COMPONENT_POST_INSTALL_ACTION  += \
+     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
+     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
+ 
 # copy distribution.ini to install staging area
 COMPONENT_POST_INSTALL_ACTION += \
    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/distribution.ini ;
