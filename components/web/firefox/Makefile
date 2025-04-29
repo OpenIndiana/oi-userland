@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=10
+# CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	137.0.2
+COMPONENT_VERSION =	138.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     3b3c7a0c930a5451be3b4088ed795ce01ddf002e
+COMPONENT_GIT_HASH=     5fb48bf50516ed2529d533e5dfe49b4752efb8b8
 COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:06fc3abaa822148bfa5ee7b759428d74052493876c053c05379c3f6c302bcd07
+COMPONENT_ARCHIVE_HASH= sha256:04623d7ee88c1b456228dca1aac4d40b18fee82c803b6562a34ce30b46f19b23
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.85.0
+RUST_VERSION = 1.85.1
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -212,7 +212,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
