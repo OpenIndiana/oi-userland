@@ -28,6 +28,11 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=usr/lib/swipl-$(HUMAN_VERSION)/.* -> add pkg.linted.userland.action001.3 true>
 <transform file path=usr/lib/swipl-$(HUMAN_VERSION)/.* -> add pkg.linted.userland.action001.5 true>
 
+# We need to disable userland-mangler for files that are falsely identified as man pages
+# (just because they are located in a folder named man) by it:
+<transform file path=usr/lib/swipl-$(HUMAN_VERSION)/xpce/man/.* -> add mangler.bypass true>
+<transform file path=usr/lib/swipl-$(HUMAN_VERSION)/xpce/prolog/lib/man/.* -> add mangler.bypass true>
+
 link path=usr/bin/swipl \
     target=../lib/swipl-$(HUMAN_VERSION)/bin/amd64-sunos/swipl mediator=swi-prolog mediator-implementation=stable
 link path=usr/bin/swipl-ld \
