@@ -1,6 +1,6 @@
---- swipl-8.4.3/packages/sgml/xsd.c.~1~	2022-05-13 17:12:31.000000000 +0000
-+++ swipl-8.4.3/packages/sgml/xsd.c	2022-09-19 16:09:07.834518880 +0000
-@@ -242,7 +242,7 @@
+--- swipl-9.2.9/packages/sgml/xsd.c.orig
++++ swipl-9.2.9/packages/sgml/xsd.c
+@@ -243,7 +243,7 @@
    { int i;
      double f;
    } second;
@@ -9,7 +9,7 @@
  
  
  static int
-@@ -269,7 +269,7 @@
+@@ -270,7 +270,7 @@
  }
  
  static int
@@ -18,7 +18,7 @@
  { term_t a = PL_new_term_ref();
  
    _PL_get_arg(offset+1, t, a);
-@@ -492,7 +492,7 @@
+@@ -493,7 +493,7 @@
  
  
  static int
@@ -27,7 +27,7 @@
  { if ( t->hour == 24 && t->minute == 0 &&
         (t->sec_is_float ? t->second.f == 0.0 : t->second.i == 0) )
      return TRUE;			/* 24:00:00[.0+] */
-@@ -529,7 +529,7 @@
+@@ -530,7 +530,7 @@
  
  
  static int
@@ -36,7 +36,7 @@
  { if ( av[0] == INT2 && av[2] == COLON &&
         av[3] == INT2 && av[5] == COLON &&
         av[6] == INT2 )
-@@ -555,7 +555,7 @@
+@@ -556,7 +556,7 @@
  
  
  static char *
@@ -45,7 +45,7 @@
  { if ( !t->sec_is_float )
    { sprintf(buf, "%02d", t->second.i);
      return buf;
-@@ -686,7 +686,7 @@
+@@ -687,7 +687,7 @@
        sprintf(buf, "%s%04d-%02d-%02d", sign, v[0],v[1],v[2]);
      } else if ( PL_is_functor(term, FUNCTOR_date_time6) )
      { int v[3];
@@ -54,7 +54,7 @@
        char *sign = "";
  
        if ( !get_int_args(term, 3, v) ||
-@@ -702,7 +702,7 @@
+@@ -703,7 +703,7 @@
  	      sign, v[0], v[1], v[2], t.hour, t.minute, time_sec_chars(&t, b2));
      } else if ( PL_is_functor(term, FUNCTOR_date_time7) )
      { int v[3], tz;
@@ -63,7 +63,7 @@
        char *sign = "";
  
        if ( !get_int_args(term, 3, v) ||
-@@ -727,7 +727,7 @@
+@@ -728,7 +728,7 @@
  	sprintf(out, "%c%02d:%02d", sign, tza/3600, (tza % 3600)/60);
        }
      } else if ( PL_is_functor(term, FUNCTOR_time3) )
@@ -72,7 +72,7 @@
  
        if ( !get_time_args(term, 0, &t) || !valid_time(&t) )
  	return FALSE;
-@@ -793,7 +793,7 @@
+@@ -794,7 +794,7 @@
      size_t len;
      int avb[30];
      int *av = avb;
