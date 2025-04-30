@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
 COMPONENT_VERSION=	9.2.9
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,6 +52,7 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=$(USRDIR)
 # At the moment open_shared_object/3 fails because of missing PyBool_Type. This probably happens because libpython3.9.so isn't found.
 CMAKE_OPTIONS += -DSWIPL_PACKAGES_PYTHON=OFF
 CMAKE_OPTIONS += -DSWIPL_PACKAGES_QT=ON
+CMAKE_OPTIONS += -DSWIPL_VERSIONED_DIR=ON
 CMAKE_OPTIONS += -DQt5_DIR=/$(QT5_LIBDIR)/cmake/Qt5
 CMAKE_OPTIONS += -DQt5Widgets_DIR=$(QT5_LIBDIR)/cmake/Qt5Widgets
 CMAKE_OPTIONS += -DCPYTHON_VERSION="3.9"
