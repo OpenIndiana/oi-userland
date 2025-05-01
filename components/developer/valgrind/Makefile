@@ -24,17 +24,18 @@
 # Copyright (c) 2019 Michal Nowak
 # Copyright (c) 2021 David Stes
 # Copyright (c) 2022,2023 Friedrich Kink
+# Copyright (c) 2025 Paul Floyd
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.22.0
+COMPONENT_VERSION=	3.25.0
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:c811db5add2c5f729944caf47c4e7a65dcaabb9461e472b578765dd7bf6d2d4c
+COMPONENT_ARCHIVE_HASH=	sha256:295f60291d6b64c0d90c1ce645634bdc5361d39b0c50ecf9de6385ee77586ecc
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
@@ -60,7 +61,6 @@ CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --enable-inner
 CONFIGURE_OPTIONS += --enable-tls
 CONFIGURE_OPTIONS += --with-mpicc=$(USRLIBDIR)/openmpi/gcc/bin/mpicc
 
@@ -73,8 +73,8 @@ COMPONENT_POST_BUILD_ACTION += \
 	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
 
 #
-# currently 3.22.0
-# == 835 tests, 62 stderr failures, 14 stdout failures, 0 stderrB failures, 0 stdoutB failures, 6 post failures ==
+# currently 3.25.0
+# == 894 tests, 6 stderr failures, 0 stdout failures, 16 stderrB failures, 3 stdoutB failures, 1 post failure ==
 #
 COMPONENT_TEST_TARGETS = regtest
 # check just overal test results
@@ -82,8 +82,6 @@ COMPONENT_TEST_TRANSFORMS += '-n -e "/^== /p"'
 
 # Build dependencies
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += developer/gcc-13
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
