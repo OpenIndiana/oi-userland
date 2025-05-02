@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		trove_classifiers
-HUMAN_VERSION =			2025.4.28.22
+HUMAN_VERSION =			2025.5.1.12
 COMPONENT_SUMMARY =		Canonical source for classifiers on PyPI (pypi.org).
 COMPONENT_PROJECT_URL =		https://github.com/pypa/trove-classifiers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:42bef4957a74fe7724b8310dafd4b23e0a71406a4812cf4dfd65e2ee34f1943d
+	sha256:28d24c3d043dc6b0459813d6bf4a231e788509b55ee3d54ba08ce72638031182
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
