@@ -28,24 +28,22 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
-COMPONENT_VERSION=	2.14
-COMPONENT_SUMMARY=	libsigsegv - handling page faults in user mode
+COMPONENT_VERSION=	2.15
+COMPONENT_SUMMARY=	libsigsegv - handle page faults in user mode
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libsigsegv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cdac3941803364cf81a908499beb79c200ead60b6b5b40cad124fd1e06caa295
+COMPONENT_ARCHIVE_HASH= sha256:036855660225cb3817a190fc00e6764ce7836051bacb48d35e26444b8c1729d9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libsigsegv
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-
-# Test failure
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
