@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		puremagic
-HUMAN_VERSION =			1.28
+HUMAN_VERSION =			1.29
 COMPONENT_SUMMARY =		Pure python implementation of magic file detection
 COMPONENT_PROJECT_URL =		https://github.com/cdgriffith/puremagic
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:195893fc129657f611b86b959aab337207d6df7f25372209269ed9e303c1a8c0
+	sha256:67c115db3f63d43b13433860917b11e2b767e5eaec696a491be2fb544f224f7a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
