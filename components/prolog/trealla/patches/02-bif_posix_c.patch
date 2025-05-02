@@ -1,0 +1,11 @@
+--- trealla-2.69.10/src/bif_posix.c.orig	2025-05-02 04:04:54.000000000 +0200
++++ trealla-2.69.10/src/bif_posix.c	2025-09-01 16:29:44.963791579 +0200
+@@ -204,7 +204,7 @@
+ 	time_t when = get_smallint(p1);
+ 	char tmpbuf[256];
+ 	cell tmp;
+-	make_cstring(&tmp, ctime_r(&when, tmpbuf));
++	make_cstring(&tmp, ctime_r(&when, tmpbuf, 256));
+ 	bool ok = unify(q, p2, p2_ctx, &tmp, q->st.curr_frame);
+ 	unshare_cell(&tmp);
+ 	return ok;
