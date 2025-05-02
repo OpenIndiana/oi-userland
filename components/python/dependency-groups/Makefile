@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dependency_groups
-HUMAN_VERSION =			1.3.0
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		A tool for resolving PEP 735 Dependency Group data
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b9751d5d98fbd6dfd038a560a69c8382e41afcbf7ffdbcc28a2a3f85498830f
+	sha256:78078301090517fd938c19f64a53ce98c32834dfe0dee6b88004a569a6adfefd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,3 +33,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
