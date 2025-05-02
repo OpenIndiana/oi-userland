@@ -12,10 +12,13 @@
 #
 # Copyright 2025 Bill Sommerfeld.  All rights reserved.
 #
+
+DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdbi
 COMPONENT_VERSION= 0.9.0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Database access library for C
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= http://libdbi.sourceforge.net/
