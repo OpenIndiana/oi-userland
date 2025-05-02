@@ -1,0 +1,14 @@
+#illumos ld does not support gc-sections and version-script.
+--- a/CMakeLists.txt	Sat Oct 26 16:42:34 2024
++++ b/CMakeLists.txt	Sun Apr 27 03:45:46 2025
+@@ -191,8 +191,8 @@
+ if(BUILD_SHARED_LIBS)
+     if(CMAKE_C_COMPILER_ID MATCHES GNU|^Clang)
+         target_link_options(libchewing
+-            PRIVATE LINKER:-version-script,${PROJECT_SOURCE_DIR}/capi/src/symbols-elf.map
+-            PRIVATE LINKER:--gc-sections
++            PRIVATE LINKER:-M,${PROJECT_SOURCE_DIR}/capi/src/symbols-elf.map
++            PRIVATE LINKER:-fvisibility=hidden
+             PRIVATE LINKER:-u,chewing_new
+             PRIVATE LINKER:-u,chewing_version
+         )
