@@ -20,12 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		experimental
-HUMAN_VERSION =			0.034
+HUMAN_VERSION =			0.035
 COMPONENT_SUMMARY =		Experimental features made easy
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b14b9bdc1a40e36d5d3f5a92918d4f5a652a826020ba6af95985bbb5fa0c35e
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+	sha256:d5fae33e28a445dd60fe254ef808f4fcf4affb1192e7d5e99eb253d3bb70d878
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
