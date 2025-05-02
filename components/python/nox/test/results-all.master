@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 634 items / 11 deselected / 623 selected
+collecting ... collected 646 items / 12 deselected / 634 selected
 
 tests/test__cli.py::test_get_dependencies PASSED
 tests/test__cli.py::test_version_check PASSED
@@ -13,6 +13,9 @@ tests/test__cli.py::test_unmatched_specifier PASSED
 tests/test__cli.py::test_invalid_mode PASSED
 tests/test__cli.py::test_invalid_backend_envvar PASSED
 tests/test__cli.py::test_invalid_backend_inline PASSED
+tests/test__cli.py::test_url_dependency PASSED
+tests/test__cli.py::test_dependencies_with_url PASSED
+tests/test__cli.py::test_dependencies_with_version PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace_values PASSED
 tests/test__option_set.py::TestOptionSet::test_namespace_non_existent_options_with_values PASSED
@@ -82,7 +85,7 @@ tests/test_action_helper.py::test_setup_action[] PASSED
 tests/test_action_helper.py::test_setup_action[~3.12.0-0] PASSED
 tests/test_action_helper.py::test_setup_action[3.11.4] PASSED
 tests/test_action_helper.py::test_setup_action[3.9-dev,pypy3.9-nightly] PASSED
-tests/test_action_helper.py::test_setup_action[3.11, 3.10, 3.9, 3.8] PASSED
+tests/test_action_helper.py::test_setup_action[3.12, 3.11, 3.10, 3.9] PASSED
 tests/test_action_helper.py::test_setup_action[3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,3.10,3.11,3.12,3.13,3.14,3.15,3.16,3.17,3.18,3.19] PASSED
 tests/test_action_helper.py::test_setup_action_multiple_pypy PASSED
 tests/test_action_helper.py::test_setup_action_multiple_cpython PASSED
@@ -128,6 +131,7 @@ tests/test_main.py::test_main_no_args PASSED
 tests/test_main.py::test_main_long_form_args PASSED
 tests/test_main.py::test_main_no_venv PASSED
 tests/test_main.py::test_main_no_venv_error PASSED
+tests/test_main.py::test_main_param_force_python PASSED
 tests/test_main.py::test_main_short_form_args PASSED
 tests/test_main.py::test_main_explicit_sessions PASSED
 tests/test_main.py::test_main_explicit_sessions_with_spaces_in_names PASSED
@@ -351,8 +355,8 @@ tests/test_sessions.py::TestSession::test_run_install_no_install[run_install-Tru
 tests/test_sessions.py::TestSession::test_run_install_no_install[run_install-False-True-True] PASSED
 tests/test_sessions.py::TestSession::test_run_install_no_install[run_install-False-False-True] PASSED
 tests/test_sessions.py::TestSession::test_conda_install_bad_args PASSED
-tests/test_sessions.py::TestSession::test_conda_install_bad_args_odd_nb_double_quotes PASSED
-tests/test_sessions.py::TestSession::test_conda_install_bad_args_cannot_escape PASSED
+tests/test_sessions.py::TestSession::test_conda_install_bad_args_odd_nb_double_quotes SKIPPED
+tests/test_sessions.py::TestSession::test_conda_install_bad_args_cannot_escape SKIPPED
 tests/test_sessions.py::TestSession::test_conda_install_not_a_condaenv PASSED
 tests/test_sessions.py::TestSession::test_conda_install[default-conda-offline=False-auto_offline=False] PASSED
 tests/test_sessions.py::TestSession::test_conda_install[default-conda-offline=False-auto_offline=True] PASSED
@@ -569,15 +573,22 @@ tests/test_virtualenv.py::test_stale_environment[conda-virtualenv-False] SKIPPED
 tests/test_virtualenv.py::test_passthrough_environment_venv_backend PASSED
 tests/test_virtualenv.py::test_create_reuse_stale_virtualenv_environment SKIPPED
 tests/test_virtualenv.py::test_create_reuse_uv_environment SKIPPED (...)
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.5.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.6.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-False-uv-0.0.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-/home/user/.local/pipx/venvs/nox/bin/uv-False-uv-0.6.0-1] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-True-uv-0.6.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-False-uv-0.0.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[/usr/bin/uv-None-False-uv-0.6.0-1] PASSED
-tests/test_virtualenv.py::test_find_uv[None-/home/user/.local/pipx/venvs/nox/bin/uv-True-/home/user/.local/pipx/venvs/nox/bin/uv-0.5.0-0] PASSED
-tests/test_virtualenv.py::test_find_uv[None-None-False-uv-0.5.0-0] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_pipx_uv_0.5] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_pipx_uv_0.6] PASSED
+tests/test_virtualenv.py::test_find_uv[UV_pkg_pipx_uv_0.6] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_pipx_uv_0.7] PASSED
+tests/test_virtualenv.py::test_find_uv[UV_pkg_pipx_uv_0.7] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_system_uv_0.0] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_system_uv_0.6_broken] PASSED
+tests/test_virtualenv.py::test_find_uv[pkg_system_uv_0.7_broken] PASSED
+tests/test_virtualenv.py::test_find_uv[system_uv_0.7] PASSED
+tests/test_virtualenv.py::test_find_uv[system_uv_0.6] PASSED
+tests/test_virtualenv.py::test_find_uv[system_uv_0.0] PASSED
+tests/test_virtualenv.py::test_find_uv[system_uv_0.6_broken] PASSED
+tests/test_virtualenv.py::test_find_uv[system_uv_0.7_broken] PASSED
+tests/test_virtualenv.py::test_find_uv[pipx_uv_0.5] PASSED
+tests/test_virtualenv.py::test_find_uv[pipx_uv_0.7] PASSED
+tests/test_virtualenv.py::test_find_uv[no_uv_0.5] PASSED
 tests/test_virtualenv.py::test_uv_version[0-{"version": "0.2.3", "commit_info": null}-0.2.3] PASSED
 tests/test_virtualenv.py::test_uv_version[1-None-0.0] PASSED
 tests/test_virtualenv.py::test_uv_version[1-{"version": "9.9.9", "commit_info": null}-0.0] PASSED
@@ -643,4 +654,4 @@ INFO     nox:test_logger.py:75 bar
 INFO     nox:test_logger.py:84 bar
 OUTPUT   nox:test_logger.py:85 foo
 =========================== short test summary info ============================
-======== 592 passed, 30 skipped, 11 deselected, 1 xpassed ========
+======== 601 passed, 32 skipped, 12 deselected, 1 xpassed ========
