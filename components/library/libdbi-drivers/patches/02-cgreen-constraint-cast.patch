@@ -1,0 +1,24 @@
+Add casts to silence complaints from gcc-14
+
+--- libdbi-drivers-0.9.0/tests/cgreen/src/constraint.c.~1~	Mon Jul 19 14:49:44 2010
++++ libdbi-drivers-0.9.0/tests/cgreen/src/constraint.c	Wed Apr 30 17:04:33 2025
+@@ -101,7 +101,7 @@
+ 
+     constraint->parameter = parameter;
+     constraint->compare = &compare_using_matcher;
+-    constraint->test = &test_with_matcher;
++    constraint->test = (void (*)(Constraint *, const char *, intptr_t, const char *, int, TestReporter *))&test_with_matcher;
+     constraint->name = matcher_name;
+     constraint->expected = (intptr_t)matcher_function;
+     return constraint;
+@@ -164,8 +164,8 @@
+ }
+ 
+ static int compare_using_matcher(Constraint *constraint, intptr_t actual) {
+-	int (*matches)(const void*) = constraint->expected;
+-    return matches(actual);
++	int (*matches)(const void*) = (int (*)(const void*))(constraint->expected);
++	return matches((const void *)actual);
+ }
+ 
+ static void test_with_matcher(Constraint *constraint, const char *function, const char* matcher_name, intptr_t matcher_function, const char *test_file, int test_line, TestReporter *reporter) {
