@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
 COMPONENT_VERSION=	9.3.24
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world. This is the development version.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,13 +44,15 @@ CFLAGS += -Wno-error=builtin-declaration-mismatch
 CFLAGS += -Wno-error=implicit-function-declaration
 
 LDFLAGS += -lsocket -lnsl
+# swipy/janus needs the python library, eg. python3.9.so
+LDFLAGS += -lpython$(PYTHON_VERSION)
+
 LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR=$(ETCDIR)
 CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=$(USRDIR)
-# At the moment open_shared_object/3 fails because of missing _Py_NoneStruct.
-CMAKE_OPTIONS += -DSWIPL_PACKAGES_PYTHON=OFF
+CMAKE_OPTIONS += -DSWIPL_PACKAGES_PYTHON=ON
 CMAKE_OPTIONS += -DSWIPL_PACKAGES_QT=ON
 CMAKE_OPTIONS += -DSWIPL_VERSIONED_DIR=ON
 CMAKE_OPTIONS += -DQt5_DIR=/$(QT5_LIBDIR)/cmake/Qt5
@@ -65,6 +67,7 @@ CMAKE_OPTIONS += -DJAVA_JVM_LIBRARY=$(JAVA_HOME)/lib/server/libjvm.so
 CMAKE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
