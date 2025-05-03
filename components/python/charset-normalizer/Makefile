@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		charset_normalizer
-HUMAN_VERSION =			3.4.1
+HUMAN_VERSION =			3.4.2
 COMPONENT_SUMMARY =		The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:44251f18cd68a75b56585dd00dae26183e102cd5e0f9f1466e6df5da2ed64ea3
+	sha256:5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
