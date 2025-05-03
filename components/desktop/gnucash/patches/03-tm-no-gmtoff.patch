@@ -1,0 +1,36 @@
+Our "struct tm" doesn't have a tm_gmtoff field; work around this
+(including a patch to to avoid an unused variable error)
+
+--- gnucash-5.11/CMakeLists.txt.~1~	Sat Mar 29 21:03:36 2025
++++ gnucash-5.11/CMakeLists.txt	Wed Apr 30 14:16:11 2025
+@@ -808,7 +808,7 @@
+ set (HAVE_SETENV 1)
+ set (HAVE_STPCPY 1)
+ set (HAVE_STRPTIME 1)
+-set (HAVE_STRUCT_TM_GMTOFF 1)
++set (HAVE_STRUCT_TM_GMTOFF 0)
+ set (HAVE_TIMEGM 1)
+ set (HAVE_TOWUPPER 1)
+ set (GNC_PLATFORM_POSIX 1)
+--- gnucash-5.11/common/base-typemaps.i.~1~	Mon Nov 11 18:02:44 2024
++++ gnucash-5.11/common/base-typemaps.i	Wed Apr 30 14:28:17 2025
+@@ -95,6 +95,8 @@
+     SCM zone = SCM_SIMPLE_VECTOR_REF(tm, 10);
+     tzone = SCM_UNBNDP(zone) ? NULL : scm_to_locale_string(zone);
+     t.tm_zone = tzone;
++%#else
++    (void)tzone;
+ %#endif
+     $1 = &t;
+  }
+--- gnucash-5.11/libgnucash/engine/test/test-gnc-date.c.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/engine/test/test-gnc-date.c	Thu May  1 12:18:36 2025
+@@ -1151,7 +1155,7 @@
+     time64 now = gnc_time(NULL);
+     gchar buff[MAX_DATE_LENGTH];
+     struct tm tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0
+-#ifndef G_OS_WIN32
++#ifdef HAVE_STRUCT_TM_GMTOFF
+         , 0, 0
+ #endif
+     };

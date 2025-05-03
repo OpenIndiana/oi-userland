@@ -1,0 +1,33 @@
+When running tests in guile, look for *.scm files in ${DESTDIR}, so we
+do not get a spurious error about running the installed versions.
+
+Adjust the check for legit files to load to allow files out of
+${DESTDIR} in addition to the build directory.
+
+--- gnucash-5.11/common/cmake_modules/GncAddTest.cmake.~1~	Mon Nov 11 18:02:44 2024
++++ gnucash-5.11/common/cmake_modules/GncAddTest.cmake	Thu May  1 16:22:01 2025
+@@ -34,6 +34,8 @@
+   set(guile_load_paths "")
+   list(APPEND guile_load_paths "${CMAKE_BINARY_DIR}/${GUILE_REL_SITEDIR}")
+   list(APPEND guile_load_paths "${CMAKE_BINARY_DIR}/${GUILE_REL_SITEDIR}/gnucash/deprecated") # Path to gnucash' deprecated modules
++  list(APPEND guile_load_paths "$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/${GUILE_REL_SITEDIR}")
++  list(APPEND guile_load_paths "$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/${GUILE_REL_SITEDIR}/gnucash/deprecated")
+   if (GUILE_COVERAGE)
+     list(APPEND guile_load_paths "${CMAKE_BINARY_DIR}/${GUILE_REL_SITEDIR}/gnucash")
+     list(APPEND guile_load_paths "${CMAKE_BINARY_DIR}/${GUILE_REL_SITEDIR}/gnucash/report")
+@@ -119,6 +121,7 @@
+           (lambda (filename)
+               (when (and filename
+                          (string-contains filename \"${GUILE_REL_SITEDIR}\")
++                         (not (string-prefix? \"$ENV{DESTDIR}\" filename))
+                          (not (string-prefix? \"${CMAKE_BINARY_DIR}\" filename)))
+                   (format #t \"%load-path = ~s~%\" %load-path)
+                   (format #t \"%load-compiled-path = ~s~%\" %load-compiled-path)
+@@ -144,6 +147,7 @@
+           (lambda (filename)
+               (when (and filename
+                          (string-contains filename \"${GUILE_REL_SITEDIR}\")
++                         (not (string-prefix? \"$ENV{DESTDIR}\" filename))
+                          (not (string-prefix? \"${CMAKE_BINARY_DIR}\" filename)))
+                   (format #t \"%load-path = ~s~%\" %load-path)
+                   (format #t \"%load-compiled-path = ~s~%\" %load-compiled-path)

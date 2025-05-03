@@ -1,0 +1,54 @@
+The "generic" locale code in GCC's libstdc++ used on openindiana
+throws an exception if it notices a non-"C" locale component; avoid
+crashes by forcing use of the "C" locale for everything.
+
+Disable several test cases which set non-C locales
+
+--- gnucash-5.11/gnucash/gnucash.cpp.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/gnucash/gnucash.cpp	Thu May  1 07:47:54 2025
+@@ -285,6 +285,7 @@
+ int
+ main(int argc, char ** argv)
+ {
++    setenv("LC_ALL", "C", 1);
+     Gnucash::Gnucash application (PROJECT_NAME);
+ #ifdef __MINGW32__
+     boost::nowide::args a(argc, argv); // Fix arguments - make them UTF-8
+--- gnucash-5.11/libgnucash/engine/test/test-gnc-date.c.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/engine/test/test-gnc-date.c	Thu May  1 12:18:36 2025
+@@ -852,6 +852,7 @@
+                      ==, strlen (buff));
+     g_assert_cmpstr (buff, ==, "2045-06-16");
+ 
++#if 0
+     qof_date_format_set (QOF_DATE_FORMAT_LOCALE);
+     test_gnc_setlocale (LC_TIME, "en_US");
+     memset ((gpointer)buff, 0, sizeof (buff));
+@@ -901,6 +902,9 @@
+                      ==, strlen (buff));
+     strftime(ans, MAX_DATE_LENGTH, GNC_D_FMT, &tm3);
+     g_assert_cmpstr (buff, ==, ans);
++#else
++    (void)ans;
++#endif
+ 
+     setlocale (LC_TIME, locale);
+     g_free (locale);
+--- gnucash-5.11/libgnucash/engine/test/gtest-gnc-numeric.cpp.~1~	Sat Mar 29 12:02:57 2025
++++ gnucash-5.11/libgnucash/engine/test/gtest-gnc-numeric.cpp	Thu May  1 12:24:46 2025
+@@ -289,6 +289,7 @@
+     GncNumeric rational_string(123, 456);
+     output << rational_string;
+     EXPECT_EQ("123/456", output.str());
++#if 0
+     try
+     {
+         auto loc = std::locale("fr_FR.utf8");
+@@ -320,6 +321,7 @@
+     output.str("");
+     output << rational_string;
+     EXPECT_EQ("123/456", output.str());
++#endif
+ }
+ 
+ TEST(gncnumeric_stream, input_stream)

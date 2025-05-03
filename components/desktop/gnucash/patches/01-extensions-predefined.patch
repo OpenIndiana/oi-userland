@@ -1,0 +1,39 @@
+Our build environment predefines __EXTENSIONS__, so patch the places
+that define it to tolerate the predefine.
+
+--- gnucash-5.11/libgnucash/engine/gnc-date.cpp.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/engine/gnc-date.cpp	Wed Apr 30 13:58:50 2025
+@@ -25,7 +25,9 @@
+  *                                                                  *
+ \********************************************************************/
+ 
++#ifndef __EXTENSIONS__
+ #define __EXTENSIONS__
++#endif
+ #include <glib.h>
+ 
+ #include <config.h>
+--- gnucash-5.11/libgnucash/backend/xml/sixtp-utils.cpp.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/backend/xml/sixtp-utils.cpp	Wed Apr 30 14:32:53 2025
+@@ -21,7 +21,9 @@
+  *                                                                  *
+  ********************************************************************/
+ 
++#ifndef __EXTENSIONS__
+ #define __EXTENSIONS__
++#endif
+ #include <guid.hpp>
+ #include <config.h>
+ 
+--- gnucash-5.11/libgnucash/backend/xml/sixtp-dom-generators.cpp.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/backend/xml/sixtp-dom-generators.cpp	Wed Apr 30 14:33:12 2025
+@@ -22,7 +22,9 @@
+  ********************************************************************/
+ #include <glib.h>
+ 
++#ifndef __EXTENSIONS__
+ #define __EXTENSIONS__
++#endif
+ 
+ #include <config.h>
+ 
