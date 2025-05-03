@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p18
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
@@ -54,7 +54,10 @@ include $(WS_MAKE_RULES)/common.mk
 # We modified configure.ac and m4 macros
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./bootstrap )
 
-CFLAGS += -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+CFLAGS += -D_XOPEN_SOURCE=800 -D__EXTENSIONS__
+
+# configure needs this for pthread_detach test to work
+CFLAGS += -Wno-error=int-conversion
 
 # This is needed to help debugging https://bugs.ntp.org/show_bug.cgi?id=3552
 # See also https://www.illumos.org/issues/15984#note-6

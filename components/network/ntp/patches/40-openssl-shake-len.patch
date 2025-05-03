@@ -1,0 +1,47 @@
+OpenSSL versions >= 3.4 removed the default digest length for
+SHAKE128; it must now be set as an additional context parameter. 
+
+--- sntp/crypto.c.~1~	Tue May  7 04:21:35 2024
++++ sntp/crypto.c	Sat May  3 12:37:48 2025
+@@ -91,6 +91,19 @@
+ 				macname);
+ 			goto mac_fail;
+ 		}
++#if OPENSSL_VERSION_NUMBER >= 0x30400000L
++		if (key_type == NID_shake128) {
++			OSSL_PARAM params[2];
++			static uint shakelen = SHAKE128_LENGTH;
++			params[0] = OSSL_PARAM_construct_uint("xoflen", &shakelen);
++			params[1] = OSSL_PARAM_construct_end();
++			if (!EVP_MD_CTX_set_params(ctx, params)) {
++				msyslog(LOG_ERR, "make_mac: MAC %s set_params failed.",
++				    macname);
++				goto mac_fail;
++			}
++		}
++#endif
+ 		if (!EVP_DigestUpdate(ctx, key_data, key_size)) {
+ 			msyslog(LOG_ERR, "make_mac: MAC %s Digest Update key failed.",
+ 				macname);
+--- libntp/a_md5encrypt.c.~1~	Tue May  7 04:21:31 2024
++++ libntp/a_md5encrypt.c	Sat May  3 12:56:01 2025
+@@ -65,6 +65,19 @@
+ 		return NULL;
+ 	}
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x30400000L
++	if (nid == NID_shake128) {
++		OSSL_PARAM params[2];
++		static uint shakelen = SHAKE128_LENGTH;
++		params[0] = OSSL_PARAM_construct_uint("xoflen", &shakelen);
++		params[1] = OSSL_PARAM_construct_end();
++		if (!EVP_MD_CTX_set_params(digest_ctx, params)) {
++			msyslog(LOG_ERR, "get_md_ctx: MAC %s set_params failed.",
++			    "shake128");
++			return NULL;
++		}
++	}
++#endif
+ 	return digest_ctx;
+ #endif	/* OPENSSL */
+ }
