@@ -1,0 +1,15 @@
+Fix the non-Linux case so it at least compiles.
+
+--- webkitgtk-2.48.1/Source/WTF/wtf/glib/FileSystemGlib.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/glib/FileSystemGlib.cpp
+@@ -82,7 +82,9 @@
+     ssize_t result = readlink("/proc/curproc/file", readLinkBuffer, PATH_MAX);
+     if (result == -1)
+         return { };
+-    return CString(readLinkBuffer, result);
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
++    return CString({ readLinkBuffer, static_cast<size_t>(result) });
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+ }
+ #elif OS(WINDOWS)
+ CString currentExecutablePath()

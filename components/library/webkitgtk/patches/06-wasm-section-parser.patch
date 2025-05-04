@@ -1,6 +1,6 @@
---- a/Source/JavaScriptCore/wasm/WasmSectionParser.cpp	2023-08-09 09:49:33.123924000 +0000
-+++ b/Source/JavaScriptCore/wasm/WasmSectionParser.cpp	2023-09-15 17:26:32.376874342 +0000
-@@ -93,7 +93,7 @@
+--- webkitgtk-2.48.1/Source/JavaScriptCore/wasm/WasmSectionParser.cpp.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/wasm/WasmSectionParser.cpp
+@@ -90,7 +90,7 @@
              break;
          }
          default:
@@ -8,31 +8,31 @@
 +            return fail(i, "th Type is non-Func, non-Struct, and non-Array ", (signed char)typeKind);
          }
  
-         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's ", i, "th signature");
-@@ -812,7 +812,7 @@
+         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's "_s, i, "th signature"_s);
+@@ -866,7 +866,7 @@
          packedType = static_cast<PackedType>(kind);
          return { };
      }
--    return fail("expected a packed type but got ", kind);
-+    return fail("expected a packed type but got ", (signed char)kind);
+-    return fail("expected a packed type but got "_s, kind);
++    return fail("expected a packed type but got "_s, (signed char)kind);
  }
  
  auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
-@@ -915,7 +915,7 @@
+@@ -961,7 +961,7 @@
              break;
          }
          default:
--            return fail(i, "th Type is non-Func, non-Struct, and non-Array ", typeKind);
-+            return fail(i, "th Type is non-Func, non-Struct, and non-Array ", (signed char)typeKind);
+-            return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, typeKind);
++		return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, (signed char)typeKind);
          }
  
-         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's ", i, "th signature");
-@@ -1076,7 +1076,7 @@
+         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's "_s, i, "th signature"_s);
+@@ -1119,7 +1119,7 @@
          break;
      }
      default:
--        return fail("invalid structural type definition for subtype ", typeKind);
-+        return fail("invalid structural type definition for subtype ", (signed char)typeKind);
+-        return fail("invalid structural type definition for subtype "_s, typeKind);
++	    return fail("invalid structural type definition for subtype "_s, (signed char)typeKind);
      }
  
-     // When no supertypes are specified, we will normalize type definitions to
+     // When no supertypes are specified and the type is final, we will normalize

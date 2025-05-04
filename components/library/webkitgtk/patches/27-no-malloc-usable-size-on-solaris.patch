@@ -1,0 +1,12 @@
+Illumos doesn't have malloc_usable_size; just return the initial size.
+
+--- webkitgtk-2.48.1/Source/ThirdParty/skia/src/ports/SkMemory_malloc.cpp.orig
++++ webkitgtk-2.48.1/Source/ThirdParty/skia/src/ports/SkMemory_malloc.cpp
+@@ -127,7 +127,6 @@
+         completeSize = malloc_usable_size(addr);
+         SkASSERT(completeSize >= size);
+     #elif defined(SK_BUILD_FOR_UNIX)
+-        completeSize = malloc_usable_size(addr);
+         SkASSERT(completeSize >= size);
+     #elif defined(SK_BUILD_FOR_WIN)
+         completeSize = _msize(addr);
