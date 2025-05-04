@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_setuptools
-HUMAN_VERSION =			80.0.0.20250429
+HUMAN_VERSION =			80.1.0.20250503
 COMPONENT_SUMMARY =		Typing stubs for setuptools
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4de44f1110f531e7f9453d72999437a1caa6052609e2c7c859dd6613ab0d593
+	sha256:3cbdbe42c12e1d9179e6e87644a2cf176259411b5a3cc1d0fb0d824dc711d9ed
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
