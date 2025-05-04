@@ -1,0 +1,14 @@
+Something happended with illumos/OpenIndiana between 8 April 2025 and
+3 May 2025 where ALLOW_MISALIGNED now can not be defined
+
+--- unrar/os.hpp.~1~	2025-03-20 06:03:14.000000000 -0400
++++ unrar/os.hpp	2025-05-04 11:54:46.039645743 -0400
+@@ -263,7 +263,7 @@
+   #endif
+ #endif
+ 
+-#if !defined(BIG_ENDIAN) && defined(_WIN_ALL) || defined(__i386__) || defined(__x86_64__) || defined(__aarch64__)
++#if !defined (__illumos__) && ( !defined(BIG_ENDIAN) && defined(_WIN_ALL) || defined(__i386__) || defined(__x86_64__) || defined(__aarch64__) )
+ // Allow unaligned integer access, increases speed in some operations.
+ #define ALLOW_MISALIGNED
+ #endif
