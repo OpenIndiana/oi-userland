@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Harness
-HUMAN_VERSION =			3.50
+HUMAN_VERSION =			3.52
 COMPONENT_SUMMARY =		contributing to TAP::Harness
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:79b6acdc444f1924cd4c2e9ed868bdc6e09580021aca8ff078ede2ffef8a6f54
+	sha256:8fe65cfc0261ed3c8a4395f0524286f5719669fe305f9b03b16cf3684d62cd70
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
