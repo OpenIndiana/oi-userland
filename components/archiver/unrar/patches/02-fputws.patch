@@ -1,0 +1,11 @@
+--- unrar/consio.cpp.~1~	2025-03-20 06:03:13.000000000 -0400
++++ unrar/consio.cpp	2025-05-04 20:07:12.671288792 -0400
+@@ -107,7 +107,7 @@
+   DWORD Written;
+   WriteConsole(hOut,s.data(),(DWORD)s.size(),&Written,NULL);
+ #else
+-  fputws(s.c_str(),dest);
++  fprintf (dest, "%s", s.c_str());
+   // We do not use setbuf(NULL) in Unix (see comments in InitConsole).
+   fflush(dest);
+ #endif
