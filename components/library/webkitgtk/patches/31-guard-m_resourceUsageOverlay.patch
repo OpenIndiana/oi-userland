@@ -1,0 +1,15 @@
+All other references to m_resourceUsageOverlay were guarded this way.
+
+--- webkitgtk-2.48.1/Source/WebCore/page/Page.cpp.orig
++++ webkitgtk-2.48.1/Source/WebCore/page/Page.cpp
+@@ -539,8 +539,10 @@
+     if (RefPtr scrollingCoordinator = m_scrollingCoordinator)
+         scrollingCoordinator->pageDestroyed();
+ 
++#if ENABLE(RESOURCE_USAGE)
+     if (RefPtr resourceUsageOverlay = m_resourceUsageOverlay)
+         resourceUsageOverlay->detachFromPage();
++#endif
+ 
+     checkedBackForward()->close();
+     if (!isUtilityPage())
