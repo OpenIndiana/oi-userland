@@ -1,0 +1,13 @@
+g++-14 doesn't support C23's _Generic
+
+--- webkitgtk-2.48.1/Source/WTF/wtf/simde/arm/sve.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/simde/arm/sve.h
+@@ -7761,7 +7761,7 @@
+ #endif
+ 
+ /* TODO: detect compilers which support this outside of C11 mode */
+-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
++#if !defined(__cplusplus) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+   #define SIMDE_CHECKED_REINTERPRET_CAST(to, from, value) _Generic((value), to: (value), default: (_Generic((value), from: ((to) (value)))))
+   #define SIMDE_CHECKED_STATIC_CAST(to, from, value) _Generic((value), to: (value), default: (_Generic((value), from: ((to) (value)))))
+ #else

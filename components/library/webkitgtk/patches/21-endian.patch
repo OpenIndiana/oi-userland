@@ -1,0 +1,31 @@
+Host endianness was not correctly detected, as exposed by:
+
+[937/6175] Building C object Source/ThirdParty/xdgmime/CMakeFiles/xdgmime.dir/src/xdgmimemagic.c.o
+/z/ws/oi-userland-gnucash/components/library/webkitgtk/webkitgtk-2.42.5/Source/ThirdParty/xdgmime/src/xdgmimemagic.c: In function '_xdg_mime_magic_parse_magic_line':
+/z/ws/oi-userland-gnucash/components/library/webkitgtk/webkitgtk-2.42.5/Source/ThirdParty/xdgmime/src/xdgmimemagic.c:489:5: warning: "LITTLE_ENDIAN" is not defined, evaluates to 0 [-Wundef]
+  489 | #if LITTLE_ENDIAN
+      |     ^~~~~~~~~~~~~
+/z/ws/oi-userland-gnucash/components/library/webkitgtk/webkitgtk-2.42.5/Source/ThirdParty/xdgmime/src/xdgmimemagic.c:482:15: warning: unused variable 'i' [-Wunused-variable]
+  482 |           int i;
+      |               ^
+
+
+--- webkitgtk-2.48.1/Source/ThirdParty/xdgmime/src/xdgmimemagic.c.orig
++++ webkitgtk-2.48.1/Source/ThirdParty/xdgmime/src/xdgmimemagic.c
+@@ -30,6 +30,7 @@
+ #endif
+ 
+ #include <assert.h>
++#include <endian.h>
+ #include "xdgmimemagic.h"
+ #include "xdgmimeint.h"
+ #include <stdio.h>
+@@ -488,7 +489,7 @@
+ 	      return XDG_MIME_MAGIC_ERROR;
+ 	    }
+ 	  /* FIXME: need to get this defined in a <config.h> style file */
+-#if LITTLE_ENDIAN
++#if BYTE_ORDER == LITTLE_ENDIAN
+ 	  for (i = 0; i < matchlet->value_length; i = i + matchlet->word_size)
+ 	    {
+ 	      if (matchlet->word_size == 2)
