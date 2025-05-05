@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPI
-HUMAN_VERSION =			1.281
+HUMAN_VERSION =			1.283
 COMPONENT_SUMMARY =		Parse, Analyze and Manipulate Perl (without perl)
 COMPONENT_CPAN_AUTHOR =		MITHALDU
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1141bc4fa472ae633e222ac0d13b3394db8a4c35f6fb3852ac6ebc97d01275d2
+	sha256:70becc9dfad8a72d231bbe88d20a82acfd31c13ca03c6fb359703a5ac0004059
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
