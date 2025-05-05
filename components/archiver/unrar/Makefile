@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unrar
 COMPONENT_VERSION=		7.1.6
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Rar archives extractor utility
 COMPONENT_SRC=			$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	https://www.rarlabs.com/rar_add.htm
