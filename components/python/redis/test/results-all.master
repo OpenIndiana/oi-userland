@@ -1,17 +1,13 @@
-$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:207: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
-The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
-
-  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-configfile: pytest.ini
-asyncio: mode=auto, asyncio_default_fixture_loop_scope=None
+configfile: pyproject.toml
+asyncio: mode=auto, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 2478 items / 407 deselected / 2071 selected
+collecting ... collected 2695 items / 459 deselected / 2236 selected
 
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[single] PASSED
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[pool] PASSED
@@ -763,6 +759,21 @@ tests/test_asyncio/test_credentials.py::TestUsernamePasswordCredentialProvider::
 tests/test_asyncio/test_credentials.py::TestUsernamePasswordCredentialProvider::test_user_pass_credential_provider_acl_user_and_pass[pool] PASSED
 tests/test_asyncio/test_credentials.py::TestUsernamePasswordCredentialProvider::test_user_pass_provider_only_password[single] PASSED
 tests/test_asyncio/test_credentials.py::TestUsernamePasswordCredentialProvider::test_user_pass_provider_only_password[pool] PASSED
+tests/test_asyncio/test_credentials.py::TestStreamingCredentialProvider::test_async_re_auth_all_connections[credential_provider0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestStreamingCredentialProvider::test_async_re_auth_partial_connections[credential_provider0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestStreamingCredentialProvider::test_re_auth_pub_sub_in_resp3[credential_provider0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestStreamingCredentialProvider::test_do_not_re_auth_pub_sub_in_resp2[credential_provider0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestStreamingCredentialProvider::test_fails_on_token_renewal[credential_provider0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pool_with_credential_provider[single-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pool_with_credential_provider[single-non-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pool_with_credential_provider[pool-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pool_with_credential_provider[pool-non-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_pipeline_with_credential_provider[single-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_pipeline_with_credential_provider[single-non-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_pipeline_with_credential_provider[pool-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_pipeline_with_credential_provider[pool-non-blocked] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pubsub_with_credential_provider[single-r_credential0] SKIPPED
+tests/test_asyncio/test_credentials.py::TestEntraIdCredentialsProvider::test_async_auth_pubsub_with_credential_provider[pool-r_credential0] SKIPPED
 tests/test_asyncio/test_cwe_404.py::test_standalone[0.05] PASSED
 tests/test_asyncio/test_cwe_404.py::test_standalone[0.5] PASSED
 tests/test_asyncio/test_cwe_404.py::test_standalone[1] PASSED
@@ -845,6 +856,28 @@ tests/test_asyncio/test_hash.py::test_ttl_multiple_fields_mixed_conditions[singl
 tests/test_asyncio/test_hash.py::test_ttl_multiple_fields_mixed_conditions[pool] SKIPPED
 tests/test_asyncio/test_hash.py::test_pttl_multiple_fields_mixed_conditions[single] SKIPPED
 tests/test_asyncio/test_hash.py::test_pttl_multiple_fields_mixed_conditions[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetdel[single] SKIPPED (Redis...)
+tests/test_asyncio/test_hash.py::test_hgetdel[pool] SKIPPED (Redis v...)
+tests/test_asyncio/test_hash.py::test_hgetex_no_expiration[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_no_expiration[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_expiration_configs[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_expiration_configs[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_validate_expired_fields_removed[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_validate_expired_fields_removed[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_invalid_inputs[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hgetex_invalid_inputs[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_no_expiration[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_no_expiration[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_ex_and_keepttl[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_ex_and_keepttl[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_px[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_px[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_pxat_and_fnx[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_pxat_and_fnx[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_exat_and_fxx[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_expiration_exat_and_fxx[pool] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_invalid_inputs[single] SKIPPED
+tests/test_asyncio/test_hash.py::test_hsetex_invalid_inputs[pool] SKIPPED
 tests/test_asyncio/test_lock.py::TestLock::test_lock[single] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_lock[pool] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_lock_token[single] PASSED
@@ -871,6 +904,10 @@ tests/test_asyncio/test_lock.py::TestLock::test_context_manager[single] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_context_manager[pool] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_context_manager_raises_when_locked_not_acquired[single] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_context_manager_raises_when_locked_not_acquired[pool] PASSED
+tests/test_asyncio/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_not_owned_error[single] PASSED
+tests/test_asyncio/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_not_owned_error[pool] PASSED
+tests/test_asyncio/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_error[single] PASSED
+tests/test_asyncio/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_error[pool] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_high_sleep_small_blocking_timeout[single] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_high_sleep_small_blocking_timeout[pool] PASSED
 tests/test_asyncio/test_lock.py::TestLock::test_releasing_unlocked_lock_raises_error[single] PASSED
@@ -963,6 +1000,8 @@ tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_no_transac
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_no_transaction_pipeline[pool] PASSED
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_no_transaction_pipeline_unicode_command[single] PASSED
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_no_transaction_pipeline_unicode_command[pool] PASSED
+tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_pipeline_truncated[single] PASSED
+tests/test_asyncio/test_pipeline.py::TestPipeline::test_exec_error_in_pipeline_truncated[pool] PASSED
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_pipeline_with_bitfield[single] PASSED
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_pipeline_with_bitfield[pool] PASSED
 tests/test_asyncio/test_pipeline.py::TestPipeline::test_pipeline_get[single] PASSED
@@ -1168,6 +1207,87 @@ tests/test_asyncio/test_sentinel.py::test_auto_close_pool[master_for] PASSED
 tests/test_asyncio/test_sentinel.py::test_auto_close_pool[slave_for] PASSED
 tests/test_asyncio/test_sentinel.py::test_repr_correctly_represents_connection_object PASSED
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error PASSED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_values[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_values[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_vector[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_vector[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_reduced_dim[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_reduced_dim[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_cas[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_cas[pool] SKIPPED (R...)
+tests/test_asyncio/test_vsets.py::test_add_elem_no_quant[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_no_quant[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_bin_quant[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_bin_quant[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_q8_quant[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_q8_quant[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_ef[single] SKIPPED (...)
+tests/test_asyncio/test_vsets.py::test_add_elem_ef[pool] SKIPPED (Re...)
+tests/test_asyncio/test_vsets.py::test_add_elem_with_attr[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_attr[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_numlinks[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_add_elem_with_numlinks[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_count[single] SKIPPED (R...)
+tests/test_asyncio/test_vsets.py::test_vsim_count[pool] SKIPPED (Red...)
+tests/test_asyncio/test_vsets.py::test_vsim_with_scores[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_with_scores[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_with_different_vector_input_types[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_with_different_vector_input_types[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_unexisting[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_unexisting[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_with_filter[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_with_filter[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_truth_no_thread_enabled[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vsim_truth_no_thread_enabled[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vdim[single] SKIPPED (Redis v...)
+tests/test_asyncio/test_vsets.py::test_vdim[pool] SKIPPED (Redis ver...)
+tests/test_asyncio/test_vsets.py::test_vcard[single] SKIPPED (Redis ...)
+tests/test_asyncio/test_vsets.py::test_vcard[pool] SKIPPED (Redis ve...)
+tests/test_asyncio/test_vsets.py::test_vrem[single] SKIPPED (Redis v...)
+tests/test_asyncio/test_vsets.py::test_vrem[pool] SKIPPED (Redis ver...)
+tests/test_asyncio/test_vsets.py::test_vemb_bin_quantization[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_bin_quantization[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_q8_quantization[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_q8_quantization[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_no_quantization[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_no_quantization[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_default_quantization[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_default_quantization[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_fp32_quantization[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_fp32_quantization[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_unexisting[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vemb_unexisting[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vlinks[single] SKIPPED (Redis...)
+tests/test_asyncio/test_vsets.py::test_vlinks[pool] SKIPPED (Redis v...)
+tests/test_asyncio/test_vsets.py::test_vinfo[single] SKIPPED (Redis ...)
+tests/test_asyncio/test_vsets.py::test_vinfo[pool] SKIPPED (Redis ve...)
+tests/test_asyncio/test_vsets.py::test_vset_vget_attributes[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vset_vget_attributes[pool] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vrandmember[single] SKIPPED (...)
+tests/test_asyncio/test_vsets.py::test_vrandmember[pool] SKIPPED (Re...)
+tests/test_asyncio/test_vsets.py::test_vset_commands_without_decoding_responces[single] SKIPPED
+tests/test_asyncio/test_vsets.py::test_vset_commands_without_decoding_responces[pool] SKIPPED
+tests/test_auth/test_token.py::TestToken::test_simple_token PASSED
+tests/test_auth/test_token.py::TestToken::test_jwt_token PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_success_token_renewal[Refresh ratio = 0.9] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_success_token_renewal[Refresh ratio = 0.28] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_success_token_renewal[Refresh ratio = 0.9] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_success_token_renewal[Refresh ratio = 0.28] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_request_token_blocking_behaviour[Block for initial, callback will triggered once] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_request_token_blocking_behaviour[Non blocked, callback wont be triggered] PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_token_renewal_with_skip_initial PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_token_renewal_with_skip_initial PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_success_token_renewal_with_retry PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_success_token_renewal_with_retry PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_no_token_renewal_on_process_complete PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_no_token_renewal_on_process_complete PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_failed_token_renewal_with_retry PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_failed_token_renewal_with_retry PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_failed_renewal_on_expired_token PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_failed_renewal_on_expired_token PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_failed_renewal_on_callback_error PASSED
+tests/test_auth/test_token_manager.py::TestTokenManager::test_async_failed_renewal_on_callback_error PASSED
+tests/test_backoff.py::test_exponential_with_jitter_backoff PASSED
 tests/test_cache.py::TestCache::test_get_from_given_cache[single] SKIPPED
 tests/test_cache.py::TestCache::test_get_from_given_cache[pool] SKIPPED
 tests/test_cache.py::TestCache::test_get_from_given_cache[decoded] SKIPPED
@@ -1388,9 +1508,6 @@ tests/test_commands.py::TestRedisCommands::test_stralgo_lcs PASSED
 tests/test_commands.py::TestRedisCommands::test_stralgo_negative PASSED
 tests/test_commands.py::TestRedisCommands::test_strlen PASSED
 tests/test_commands.py::TestRedisCommands::test_substr PASSED
-tests/test_commands.py::TestRedisCommands::test_tfunction_load_delete SKIPPED
-tests/test_commands.py::TestRedisCommands::test_tfunction_list SKIPPED
-tests/test_commands.py::TestRedisCommands::test_tfcall SKIPPED (Redi...)
 tests/test_commands.py::TestRedisCommands::test_ttl PASSED
 tests/test_commands.py::TestRedisCommands::test_ttl_nokey PASSED
 tests/test_commands.py::TestRedisCommands::test_type PASSED
@@ -1693,6 +1810,7 @@ tests/test_connection_pool.py::TestConnectionPool::test_closing PASSED
 tests/test_connection_pool.py::TestConnectionPool::test_multiple_connections PASSED
 tests/test_connection_pool.py::TestConnectionPool::test_max_connections PASSED
 tests/test_connection_pool.py::TestConnectionPool::test_reuse_previously_released_connection PASSED
+tests/test_connection_pool.py::TestConnectionPool::test_release_not_owned_connection PASSED
 tests/test_connection_pool.py::TestConnectionPool::test_repr_contains_db_info_tcp PASSED
 tests/test_connection_pool.py::TestConnectionPool::test_repr_contains_db_info_unix PASSED
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_connection_creation PASSED
@@ -1702,6 +1820,7 @@ tests/test_connection_pool.py::TestBlockingConnectionPool::test_connection_pool_
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_reuse_previously_released_connection PASSED
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_tcp PASSED
 tests/test_connection_pool.py::TestBlockingConnectionPool::test_repr_contains_db_info_unix PASSED
+tests/test_connection_pool.py::TestBlockingConnectionPool::test_initialise_pool_with_cache SKIPPED
 tests/test_connection_pool.py::TestConnectionPoolURLParsing::test_hostname PASSED
 tests/test_connection_pool.py::TestConnectionPoolURLParsing::test_quoted_hostname PASSED
 tests/test_connection_pool.py::TestConnectionPoolURLParsing::test_port PASSED
@@ -1769,6 +1888,16 @@ tests/test_credentials.py::TestCredentialsProvider::test_password_and_username_t
 tests/test_credentials.py::TestCredentialsProvider::test_change_username_password_on_existing_connection PASSED
 tests/test_credentials.py::TestUsernamePasswordCredentialProvider::test_user_pass_credential_provider_acl_user_and_pass PASSED
 tests/test_credentials.py::TestUsernamePasswordCredentialProvider::test_user_pass_provider_only_password PASSED
+tests/test_credentials.py::TestStreamingCredentialProvider::test_re_auth_all_connections[credential_provider0] SKIPPED
+tests/test_credentials.py::TestStreamingCredentialProvider::test_re_auth_partial_connections[credential_provider0] SKIPPED
+tests/test_credentials.py::TestStreamingCredentialProvider::test_re_auth_pub_sub_in_resp3[credential_provider0] SKIPPED
+tests/test_credentials.py::TestStreamingCredentialProvider::test_do_not_re_auth_pub_sub_in_resp2[credential_provider0] SKIPPED
+tests/test_credentials.py::TestStreamingCredentialProvider::test_fails_on_token_renewal[credential_provider0] SKIPPED
+tests/test_credentials.py::TestEntraIdCredentialsProvider::test_auth_pool_with_credential_provider[pool] SKIPPED
+tests/test_credentials.py::TestEntraIdCredentialsProvider::test_auth_pool_with_credential_provider[single] SKIPPED
+tests/test_credentials.py::TestEntraIdCredentialsProvider::test_auth_pipeline_with_credential_provider[pool] SKIPPED
+tests/test_credentials.py::TestEntraIdCredentialsProvider::test_auth_pipeline_with_credential_provider[single] SKIPPED
+tests/test_credentials.py::TestEntraIdCredentialsProvider::test_auth_pubsub_with_credential_provider[r_entra0] SKIPPED
 tests/test_encoding.py::TestEncoding::test_simple_encoding PASSED
 tests/test_encoding.py::TestEncoding::test_simple_encoding_and_decoding PASSED
 tests/test_encoding.py::TestEncoding::test_memoryview_encoding PASSED
@@ -1787,18 +1916,6 @@ tests/test_function.py::TestFunction::test_function_list SKIPPED (Re...)
 tests/test_function.py::TestFunction::test_fcall SKIPPED (Redis vers...)
 tests/test_function.py::TestFunction::test_fcall_ro SKIPPED (Redis v...)
 tests/test_function.py::TestFunction::test_function_dump_restore SKIPPED
-tests/test_graph_utils/test_edge.py::test_init PASSED
-tests/test_graph_utils/test_edge.py::test_to_string PASSED
-tests/test_graph_utils/test_edge.py::test_stringify PASSED
-tests/test_graph_utils/test_edge.py::test_comparison PASSED
-tests/test_graph_utils/test_node.py::test_to_string PASSED
-tests/test_graph_utils/test_node.py::test_stringify PASSED
-tests/test_graph_utils/test_node.py::test_comparison PASSED
-tests/test_graph_utils/test_path.py::test_init PASSED
-tests/test_graph_utils/test_path.py::test_new_empty_path PASSED
-tests/test_graph_utils/test_path.py::test_wrong_flows PASSED
-tests/test_graph_utils/test_path.py::test_nodes_and_edges PASSED
-tests/test_graph_utils/test_path.py::test_compare PASSED
 tests/test_hash.py::test_hexpire_basic SKIPPED (Redis version requir...)
 tests/test_hash.py::test_hexpire_with_timedelta SKIPPED (Redis versi...)
 tests/test_hash.py::test_hexpire_conditions SKIPPED (Redis version r...)
@@ -1833,13 +1950,22 @@ tests/test_hash.py::test_httl_multiple_fields_mixed_conditions SKIPPED
 tests/test_hash.py::test_httl_nonexistent_key SKIPPED (Redis version...)
 tests/test_hash.py::test_hpttl_multiple_fields_mixed_conditions SKIPPED
 tests/test_hash.py::test_hpttl_nonexistent_key SKIPPED (Redis versio...)
+tests/test_hash.py::test_hgetdel SKIPPED (Redis version required >= ...)
+tests/test_hash.py::test_hgetex_no_expiration SKIPPED (Redis version...)
+tests/test_hash.py::test_hgetex_expiration_configs SKIPPED (Redis ve...)
+tests/test_hash.py::test_hgetex_validate_expired_fields_removed SKIPPED
+tests/test_hash.py::test_hgetex_invalid_inputs SKIPPED (Redis versio...)
+tests/test_hash.py::test_hsetex_no_expiration SKIPPED (Redis version...)
+tests/test_hash.py::test_hsetex_expiration_ex_and_keepttl SKIPPED (R...)
+tests/test_hash.py::test_hsetex_expiration_px SKIPPED (Redis version...)
+tests/test_hash.py::test_hsetex_expiration_pxat_and_fnx SKIPPED (Red...)
+tests/test_hash.py::test_hsetex_expiration_exat_and_fxx SKIPPED (Red...)
+tests/test_hash.py::test_hsetex_invalid_inputs SKIPPED (Redis versio...)
 tests/test_helpers.py::test_list_or_args PASSED
 tests/test_helpers.py::test_parse_to_list PASSED
-tests/test_helpers.py::test_parse_to_dict PASSED
 tests/test_helpers.py::test_nativestr PASSED
 tests/test_helpers.py::test_delist PASSED
 tests/test_helpers.py::test_random_string PASSED
-tests/test_helpers.py::test_quote_string PASSED
 tests/test_lock.py::TestLock::test_lock PASSED
 tests/test_lock.py::TestLock::test_lock_token PASSED
 tests/test_lock.py::TestLock::test_lock_token_thread_local_false PASSED
@@ -1853,6 +1979,8 @@ tests/test_lock.py::TestLock::test_blocking_timeout PASSED
 tests/test_lock.py::TestLock::test_context_manager PASSED
 tests/test_lock.py::TestLock::test_context_manager_blocking_timeout PASSED
 tests/test_lock.py::TestLock::test_context_manager_raises_when_locked_not_acquired PASSED
+tests/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_not_owned_error PASSED
+tests/test_lock.py::TestLock::test_context_manager_not_raise_on_release_lock_error PASSED
 tests/test_lock.py::TestLock::test_high_sleep_small_blocking_timeout PASSED
 tests/test_lock.py::TestLock::test_releasing_unlocked_lock_raises_error PASSED
 tests/test_lock.py::TestLock::test_releasing_lock_no_longer_owned_raises_error PASSED
@@ -1879,6 +2007,8 @@ tests/test_monitor.py::TestMonitor::test_lua_script PASSED
 tests/test_monitor.py::TestMonitor::test_lua_script_in_enterprise SKIPPED
 tests/test_multiprocessing.py::TestMultiprocessing::test_close_connection_in_child PASSED
 tests/test_multiprocessing.py::TestMultiprocessing::test_close_connection_in_parent PASSED
+tests/test_multiprocessing.py::TestMultiprocessing::test_release_parent_connection_from_pool_in_child_process[2] PASSED
+tests/test_multiprocessing.py::TestMultiprocessing::test_release_parent_connection_from_pool_in_child_process[None] PASSED
 tests/test_multiprocessing.py::TestMultiprocessing::test_pool[1] PASSED
 tests/test_multiprocessing.py::TestMultiprocessing::test_pool[2] PASSED
 tests/test_multiprocessing.py::TestMultiprocessing::test_pool[None] PASSED
@@ -1914,6 +2044,7 @@ tests/test_pipeline.py::TestPipeline::test_transaction_callable PASSED
 tests/test_pipeline.py::TestPipeline::test_transaction_callable_returns_value_from_callable PASSED
 tests/test_pipeline.py::TestPipeline::test_exec_error_in_no_transaction_pipeline PASSED
 tests/test_pipeline.py::TestPipeline::test_exec_error_in_no_transaction_pipeline_unicode_command PASSED
+tests/test_pipeline.py::TestPipeline::test_exec_error_in_pipeline_truncated PASSED
 tests/test_pipeline.py::TestPipeline::test_pipeline_with_bitfield PASSED
 tests/test_pipeline.py::TestPipeline::test_pipeline_discard PASSED
 tests/test_pipeline.py::TestPipeline::test_send_set_commands_over_pipeline PASSED
@@ -2084,26 +2215,65 @@ tests/test_utils.py::test_compare_versions[version1 == version2 - different mino
 tests/test_utils.py::test_compare_versions[version1 > version2 - different minor format] PASSED
 tests/test_utils.py::test_compare_versions[version1 > version2 - major version only] PASSED
 tests/test_utils.py::test_compare_versions[version1 == version2 - major version only] PASSED
+tests/test_vsets.py::test_add_elem_with_values SKIPPED (Redis versio...)
+tests/test_vsets.py::test_add_elem_with_vector SKIPPED (Redis versio...)
+tests/test_vsets.py::test_add_elem_reduced_dim SKIPPED (Redis versio...)
+tests/test_vsets.py::test_add_elem_cas SKIPPED (Redis version requir...)
+tests/test_vsets.py::test_add_elem_no_quant SKIPPED (Redis version r...)
+tests/test_vsets.py::test_add_elem_bin_quant SKIPPED (Redis version ...)
+tests/test_vsets.py::test_add_elem_q8_quant SKIPPED (Redis version r...)
+tests/test_vsets.py::test_add_elem_ef SKIPPED (Redis version require...)
+tests/test_vsets.py::test_add_elem_with_attr SKIPPED (Redis version ...)
+tests/test_vsets.py::test_add_elem_with_numlinks SKIPPED (Redis vers...)
+tests/test_vsets.py::test_vsim_count SKIPPED (Redis version required...)
+tests/test_vsets.py::test_vsim_with_scores SKIPPED (Redis version re...)
+tests/test_vsets.py::test_vsim_with_different_vector_input_types SKIPPED
+tests/test_vsets.py::test_vsim_unexisting SKIPPED (Redis version req...)
+tests/test_vsets.py::test_vsim_with_filter SKIPPED (Redis version re...)
+tests/test_vsets.py::test_vsim_truth_no_thread_enabled SKIPPED (Redi...)
+tests/test_vsets.py::test_vdim SKIPPED (Redis version required >= 7.9.0)
+tests/test_vsets.py::test_vcard SKIPPED (Redis version required >= 7...)
+tests/test_vsets.py::test_vrem SKIPPED (Redis version required >= 7.9.0)
+tests/test_vsets.py::test_vemb_bin_quantization SKIPPED (Redis versi...)
+tests/test_vsets.py::test_vemb_q8_quantization SKIPPED (Redis versio...)
+tests/test_vsets.py::test_vemb_no_quantization SKIPPED (Redis versio...)
+tests/test_vsets.py::test_vemb_default_quantization SKIPPED (Redis v...)
+tests/test_vsets.py::test_vemb_fp32_quantization SKIPPED (Redis vers...)
+tests/test_vsets.py::test_vemb_unexisting SKIPPED (Redis version req...)
+tests/test_vsets.py::test_vlinks SKIPPED (Redis version required >= ...)
+tests/test_vsets.py::test_vinfo SKIPPED (Redis version required >= 7...)
+tests/test_vsets.py::test_vset_vget_attributes SKIPPED (Redis versio...)
+tests/test_vsets.py::test_vrandmember SKIPPED (Redis version require...)
+tests/test_vsets.py::test_vset_commands_without_decoding_responces SKIPPED
 
 =============================== warnings summary ===============================
+tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline_immediate_command[single]
+tests/test_asyncio/test_connection_pool.py::TestConnection::test_read_only_error[single]
+  $(@D)/redis/asyncio/client.py:613: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
+    _warn(f"Unclosed client session {self!r}", ResourceWarning, source=self)
+  
+  Object allocated at:
+    File "$(@D)/redis/asyncio/client.py", line 465
+      return Pipeline(
+
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(@D)/redis/asyncio/connection.py:214: ResourceWarning: unclosed Connection <redis.asyncio.sentinel.SentinelManagedConnection,host=127.0.0.1,port=6379)>
+  $(@D)/redis/asyncio/connection.py:232: ResourceWarning: unclosed Connection <redis.asyncio.sentinel.SentinelManagedConnection,host=127.0.0.1,port=6379)>
     _warnings.warn(
   
   Object allocated at:
-    File "$(@D)/redis/asyncio/connection.py", line 1093
+    File "$(@D)/redis/asyncio/connection.py", line 1172
       return self.connection_class(**self.connection_kwargs)
 
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(PYTHON_DIR)/unittest/mock.py:2058: ResourceWarning: unclosed <socket.socket fd=5, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 57081), raddr=('127.0.0.1', 6379)>
-    setattr(_type, entry, MagicProxy(entry, self))
+  $(PYTHON_DIR)/inspect.py:2096: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 51481), raddr=('127.0.0.1', 6379)>
+    for i, (name, default) in enumerate(reversed(list(iter))):
   
   Object allocated at:
     File "$(PYTHON_DIR)/asyncio/base_events.py", line 944
       sock = socket.socket(family=family, type=type_, proto=proto)
 
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(PYTHON_DIR)/asyncio/selector_events.py:702: ResourceWarning: unclosed transport <_SelectorSocketTransport closing fd=5>
+  $(PYTHON_DIR)/asyncio/selector_events.py:702: ResourceWarning: unclosed transport <_SelectorSocketTransport closing fd=6>
     _warn(f"unclosed transport {self!r}", ResourceWarning, source=self)
   
   Object allocated at:
@@ -2111,16 +2281,4 @@ tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_ti
       return _SelectorSocketTransport(self, sock, protocol, waiter,
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1823 passed, 226 skipped, 407 deselected, 22 xpassed, 3 warnings ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 1842 passed, 372 skipped, 459 deselected, 22 xpassed, 5 warnings ========

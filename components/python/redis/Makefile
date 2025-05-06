@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project redis
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			5.2.1
+HUMAN_VERSION =			6.0.0
 COMPONENT_SUMMARY =		Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/redis/redis-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fdb92ef773faac88c2bf80c47ecddbbdf93bae93363b4e6f9418b5686260420b
+	sha256:5ebdb60dc099960106d40e132d4a5d3454eae2ad318bacc4f0c2b6739589548a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -70,10 +70,10 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/click
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/invoke
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
@@ -82,4 +82,3 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/wheel
