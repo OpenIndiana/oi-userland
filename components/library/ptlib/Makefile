@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.16.2
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_PROJECT_URL = https://sourceforge.net/projects/opalvoip/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -69,7 +69,7 @@ CONFIGURE_OPTIONS += OPENLDAP_LIBS="-llber-2.6 -lldap-2.6"
 CONFIGURE_OPTIONS += OPENLDAP_CFLAGS="-I/usr/include/openldap"
 # to ensure gstreamer-1.0
 CONFIGURE_OPTIONS += GSTREAMER_LIBS="-lgstreamer-1.0 -lgobject-2.0 -lglib-2.0"
-CONFIGURE_OPTIONS += GSTREAMER_CFLAGS="-pthread -DFFI_NO_RAW_API -I/usr/include/gstreamer-1.0 -I/usr/lib/amd64/libffi-3.2.1/include -I/usr/include/glib-2.0 -I/usr/lib/amd64/glib-2.0/include -I/usr/include/pcre"
+CONFIGURE_OPTIONS += GSTREAMER_CFLAGS="-pthread -DFFI_NO_RAW_API -I/usr/include/gstreamer-1.0 -I/usr/lib/$(MACH64)/libffi-3.2.1/include -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include -I/usr/include/pcre"
 
 ENV += -i
 
