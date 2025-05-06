@@ -4,8 +4,9 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 123 items
+collecting ... collected 135 items
 
+tests/test_consistency.py::test_version PASSED
 tests/test_consistency.py::test_pyproject_dependencies PASSED
 tests/test_editable.py::test_walk PASSED
 tests/test_editable.py::test_nodes_tree PASSED
@@ -31,6 +32,8 @@ tests/test_metadata.py::test_package_name_from_pyproject PASSED
 tests/test_metadata.py::test_package_name_invalid PASSED
 tests/test_metadata.py::test_unsupported_dynamic PASSED
 tests/test_metadata.py::test_missing_version PASSED
+tests/test_metadata.py::test_normalize_license PASSED
+tests/test_metadata.py::test_invalid_license PASSED
 tests/test_options.py::test_ndebug[] PASSED
 tests/test_options.py::test_ndebug[-Dbuildtype=release] PASSED
 tests/test_options.py::test_ndebug[-Dbuildtype=debug] PASSED
@@ -65,6 +68,11 @@ tests/test_pep517.py::test_get_meson_command_error PASSED
 tests/test_project.py::test_unsupported_python_version PASSED
 tests/test_project.py::test_missing_meson_version PASSED
 tests/test_project.py::test_missing_dynamic_version PASSED
+tests/test_project.py::test_meson_build_metadata PASSED
+tests/test_project.py::test_dynamic_license PASSED
+tests/test_project.py::test_dynamic_license_list PASSED
+tests/test_project.py::test_dynamic_license_missing PASSED
+tests/test_project.py::test_dynamic_license_files PASSED
 tests/test_project.py::test_user_args PASSED
 tests/test_project.py::test_unknown_user_args[top-level] PASSED
 tests/test_project.py::test_unknown_user_args[meson-args] PASSED
@@ -74,14 +82,14 @@ tests/test_project.py::test_validate_pyproject_config_all PASSED
 tests/test_project.py::test_validate_pyproject_config_unknown PASSED
 tests/test_project.py::test_validate_pyproject_config_empty PASSED
 tests/test_project.py::test_invalid_build_dir PASSED
-tests/test_project.py::test_compiler SKIPPED (Requires MSVC)
+tests/test_project.py::test_compiler SKIPPED (requires MSVC)
 tests/test_project.py::test_archflags_envvar_parsing[-arch x86_64] SKIPPED
 tests/test_project.py::test_archflags_envvar_parsing[-arch arm64] SKIPPED
 tests/test_project.py::test_archflags_envvar_parsing[-arch arm64 -arch arm64] SKIPPED
 tests/test_project.py::test_archflags_envvar_parsing_invalid[-arch arm64 -arch x86_64] SKIPPED
 tests/test_project.py::test_archflags_envvar_parsing_invalid[-arch arm64 -DFOO=1] SKIPPED
-tests/test_sdist.py::test_no_pep621 PASSED
-tests/test_sdist.py::test_pep621 PASSED
+tests/test_sdist.py::test_meson_build_metadata PASSED
+tests/test_sdist.py::test_pep621_metadata PASSED
 tests/test_sdist.py::test_dynamic_version PASSED
 tests/test_sdist.py::test_contents PASSED
 tests/test_sdist.py::test_contents_subdirs PASSED
@@ -90,6 +98,7 @@ tests/test_sdist.py::test_executable_bit PASSED
 tests/test_sdist.py::test_generated_files PASSED
 tests/test_sdist.py::test_long_path PASSED
 tests/test_sdist.py::test_reproducible PASSED
+tests/test_sdist.py::test_symlinks PASSED
 tests/test_tags.py::test_wheel_tag PASSED
 tests/test_tags.py::test_macos_platform_tag SKIPPED (macOS specific ...)
 tests/test_tags.py::test_macos_platform_tag_arm64 SKIPPED (macOS spe...)
@@ -104,8 +113,11 @@ tests/test_wheel.py::test_purelib_and_platlib PASSED
 tests/test_wheel.py::test_pure PASSED
 tests/test_wheel.py::test_configure_data PASSED
 tests/test_wheel.py::test_contents_license_file PASSED
+tests/test_wheel.py::test_license_pep639 PASSED
 tests/test_wheel.py::test_contents PASSED
 tests/test_wheel.py::test_local_lib PASSED
+tests/test_wheel.py::test_sharedlib_in_package PASSED
+tests/test_wheel.py::test_link_library_in_subproject PASSED
 tests/test_wheel.py::test_rpath PASSED
 tests/test_wheel.py::test_uneeded_rpath PASSED
 tests/test_wheel.py::test_executable_bit PASSED
@@ -131,4 +143,4 @@ tests/test_wheelfile.py::test_source_date_epoch PASSED
 tests/test_wheelfile.py::test_compression PASSED
 
 =========================== short test summary info ============================
-======== 112 passed, 11 skipped ========
+======== 124 passed, 11 skipped ========
