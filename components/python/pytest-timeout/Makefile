@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-timeout
+#   $WS_TOOLS/python-integrate-project -d python/pytest-timeout pytest_timeout
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-timeout
-HUMAN_VERSION =			2.3.1
-COMPONENT_SUMMARY =		pytest-timeout - pytest plugin to abort hanging tests
+COMPONENT_NAME =		pytest_timeout
+HUMAN_VERSION =			2.4.0
+COMPONENT_SUMMARY =		pytest plugin to abort hanging tests
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-timeout
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:12397729125c6ecbdaca01035b9e5239d4db97352320af155b3f5de1ba5165d9
+	sha256:7e68e90b01f9eff71332b25001f85c75495fc4e3a836701876183c4bcfd0540a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,14 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 # The xfailures traceback contains random data
 PYTEST_TRACEBACK = --tb=no
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/faker
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/ipdb
 TEST_REQUIRED_PACKAGES.python += library/python/pexpect
