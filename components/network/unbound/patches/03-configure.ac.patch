@@ -5,14 +5,14 @@
  
  # check for libevent
 -AC_ARG_WITH(libevent, AS_HELP_STRING([--with-libevent=pathname],[use libevent (will check /usr/local /opt/local /usr/lib /usr/pkg /usr/sfw /usr  or you can specify an explicit path). Slower, but allows use of large outgoing port ranges.]),
-+AC_ARG_WITH(libevent, AS_HELP_STRING([--with-libevent=pathname],[use libevent (will check /usr/lib /usr/lib/amd64 /usr/sfw /usr  or you can specify an explicit path). Slower, but allows use of large outgoing port ranges.]),
++AC_ARG_WITH(libevent, AS_HELP_STRING([--with-libevent=pathname],[use libevent (will check /usr/lib /usr/lib/MACH64 /usr/sfw /usr  or you can specify an explicit path). Slower, but allows use of large outgoing port ranges.]),
      [ ],[ with_libevent="no" ])
  if test "x_$with_libevent" != x_no; then
          AC_DEFINE([USE_LIBEVENT], [1], [Define if you enable libevent])
          AC_MSG_CHECKING(for libevent)
          if test "x_$with_libevent" = x_ -o "x_$with_libevent" = x_yes; then
 -            with_libevent="/usr/local /opt/local /usr/lib /usr/pkg /usr/sfw /usr"
-+            with_libevent="/usr/lib /usr/lib/amd64 /usr/sfw /usr"
++            with_libevent="/usr/lib /usr/lib/MACH64 /usr/sfw /usr"
          fi
          for dir in $with_libevent; do
              thedir="$dir"

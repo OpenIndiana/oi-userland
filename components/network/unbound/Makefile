@@ -12,6 +12,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unbound
 COMPONENT_VERSION=		1.23.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Unbound is a validating, recursive, caching DNS resolver
 COMPONENT_PROJECT_URL=	https://nlnetlabs.nl/projects/unbound/about/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,9 +31,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_NAME)-release-$(COMPONENT_VERSION) $(COMPONENT_SRC) )
 
-COMPONENT_PREP_ACTION= ( cd $(@D) ; autoreconf -fiv )
+COMPONENT_PREP_ACTION= ( $(GSED) -i -e "s/MACH64/$(MACH64)/g" $(COMPONENT_SRC)/configure.ac ; \
+			 cd $(@D) ; autoreconf -fiv )
 
-# Provide paths for OpenSSL 3.1
+# Provide paths for OpenSSL 3
 CFLAGS  += -I$(OPENSSL_INCDIR)
 LDFLAGS += -L$(OPENSSL_LIBDIR)
 
