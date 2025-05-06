@@ -19,13 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson_python
-HUMAN_VERSION =			0.17.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.18.0
 COMPONENT_SUMMARY =		Meson Python build backend (PEP 517)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:efb91f69f2e19eef7bc9a471ed2a4e730088cc6b39eacaf3e49fc4f930eb5f83
+	sha256:c56a99ec9df669a40662fe46960321af6e4b14106c14db228709c1628e23848d
 COMPONENT_LICENSE =		MIT
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_LICENSE_FILE =	LICENSES/MIT.txt
 
 TEST_STYLE = pytest
 
@@ -44,7 +43,6 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += developer/object-file
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cython
-TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
