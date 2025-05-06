@@ -11,20 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::OpenSSL::RSA
+#   $WS_TOOLS/perl-integrate-module Crypt-OpenSSL-RSA
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::OpenSSL::RSA
-HUMAN_VERSION =			0.33
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Crypt::OpenSSL::RSA - RSA encoding and decoding, using the openSSL libraries
+COMPONENT_NAME =		Crypt-OpenSSL-RSA
+HUMAN_VERSION =			0.34
+COMPONENT_SUMMARY =		RSA encoding and decoding, using the openSSL libraries
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bdbe630f6d6f540325746ad99977272ac8664ff81bd19f0adaba6d6f45efd864
+	sha256:368ed198e1fbaebaa2e681d77dbb3c6f0f94e9bacd97b2674759bfaa75bf4a35
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,6 +36,8 @@ COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-bignum
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-random
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
