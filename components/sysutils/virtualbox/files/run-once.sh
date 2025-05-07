@@ -112,6 +112,10 @@ fi
 # Run the pkginstall.sh --ips
 echo "--PKGINSTALL virtualbox/run-once"
 /opt/VirtualBox/pkginstall.sh --ips
+if [ $? -ne 0 ]; then
+        errorprint "pkginstall.sh failed"
+	abort_error
+fi
 svccfg -s $SMF_FMRI setprop config/assembled = true
 svccfg -s $SMF_FMRI refresh
 echo "--DONE virtualbox/run-once"
