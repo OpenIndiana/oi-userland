@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
-COMPONENT_VERSION=		1.9.0
+COMPONENT_VERSION=		1.9.2
 COMPONENT_SUMMARY=		library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c8c4ccf203ff73b647ea70b67afa2fd749cd428cd027fc2e5ca3b9954f1d77a8
+COMPONENT_ARCHIVE_HASH=	sha256:8d68a8b45796f34f7cace357b9f89b8c92b158557274fef5889b03648b55fe59
 COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			x11/library/libxkbcommon
 COMPONENT_LICENSE_FILE=	LICENSE
