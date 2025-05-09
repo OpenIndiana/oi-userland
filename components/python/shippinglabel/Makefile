@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		shippinglabel
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.3.0
 COMPONENT_SUMMARY =		Utilities for handling packages.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/shippinglabel
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/shippinglabel/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:87c6557dbc8ec691e3000c1e55b32d6c3115d2e7b8704f34c162adc336667bdc
+	sha256:17373b3863b9cafa4766d34ccb2e65028b6b2fe949ab820a72a312013c75b9a8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
