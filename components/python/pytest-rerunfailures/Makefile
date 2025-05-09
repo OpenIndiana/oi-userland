@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-rerunfailures
+#   $WS_TOOLS/python-integrate-project -d python/pytest-rerunfailures pytest_rerunfailures
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-rerunfailures
-HUMAN_VERSION =			15.0
+COMPONENT_NAME =		pytest_rerunfailures
+HUMAN_VERSION =			15.1
 COMPONENT_SUMMARY =		pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d9ac7baf59f4c13ac730b47f6fa80e755d1ba0581da45ce30b72fb3542b4474
+	sha256:c6040368abd7b8138c5b67288be17d6e5611b7368755ce0465dda0362c8ece80
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
