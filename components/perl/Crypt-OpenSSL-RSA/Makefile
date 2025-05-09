@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-OpenSSL-RSA
-HUMAN_VERSION =			0.34
+HUMAN_VERSION =			0.35
 COMPONENT_SUMMARY =		RSA encoding and decoding, using the openSSL libraries
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:368ed198e1fbaebaa2e681d77dbb3c6f0f94e9bacd97b2674759bfaa75bf4a35
+	sha256:5eebd55ac071634c864a8e78f5cfafbaaf43cf84c04323a09b71dd76bf025cc2
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
