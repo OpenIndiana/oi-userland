@@ -11,22 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pyyaml_env_tag
+#   $WS_TOOLS/python-integrate-project -d python/pyyaml_env_tag pyyaml-env-tag
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pyyaml_env_tag
-COMPONENT_VERSION =		0.1
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		pyyaml_env_tag - A custom YAML tag for referencing environment variables in YAML files. 
+COMPONENT_NAME =		pyyaml-env-tag
+HUMAN_VERSION =			1.0
+COMPONENT_SUMMARY =		A custom YAML tag for referencing environment variables in YAML files.
 COMPONENT_PROJECT_URL =		https://github.com/waylan/pyyaml-env-tag
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fb/8e/da1c6c58f751b70f8ceb1eb25bc25d524e8f14fe16edcce3f4e3ba08629c/pyyaml_env_tag-0.1.tar.gz
+	https://github.com/waylan/pyyaml-env-tag/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70092675bda14fdec33b31ba77e7543de9ddc88f2e5b99160396572d11525bdb
+	sha256:f163e9751c9cc6c0ae0228f40871f133d3fb0f9dc08931c2032f4a33da38d67d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,6 +34,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
