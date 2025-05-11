@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		multitail
 COMPONENT_VERSION=	7.1.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Tail multiple files on console with ncurses
 COMPONENT_PROJECT_URL=	https://www.vanheusden.com/multitail/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,7 +43,12 @@ COMPONENT_LICENSE_FILE=		LICENSE
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
+
 CMAKE_OPTIONS += -DUTF8_SUPPORT=Yes -DCURSES_INCLUDE_PATH=/usr/include
+
+COMPONENT_PREP_ACTION= ( $(GSED) -i -e "s/MACH64/$(MACH64)/g" $(COMPONENT_SRC)/CMakeLists.txt )
 
 COMPONENT_POST_INSTALL_ACTION  = \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/gnu/lib/$(MACH64)"' "$(PROTO_DIR)/usr/bin/multitail"; \
@@ -52,13 +58,6 @@ COMPONENT_POST_INSTALL_ACTION  = \
 	rm -Rf "$(PROTO_DIR)/etc"; \
 	mkdir -p "$(PROTO_DIR)/etc"; \
 	mv "$(PROTO_DIR)/usr/etc/multitail.conf.new" "$(PROTO_DIR)/etc/multitail.conf.sample";
-
-# The native Makefile invites patching to set the following, but doing it here
-# instead will keep it working if the build system changes.
-COMPONENT_BUILD_ARGS += CC="$(CC)"
-COMPONENT_BUILD_ARGS += CFLAGS="$(CC_BITS) $(CFLAGS)"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
-COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
