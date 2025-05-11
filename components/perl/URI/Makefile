@@ -18,20 +18,31 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		URI
-HUMAN_VERSION =			5.31
-COMPONENT_SUMMARY =		URI - Uniform Resource Identifiers (absolute and relative)
+COMPONENT_NAME =		URI
+HUMAN_VERSION =			5.32
+COMPONENT_SUMMARY =		Uniform Resource Identifiers (absolute and relative)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b9c4d58b2614b8611ae03a95a6d60ed996f4b311ef3cd5a937b92f1825ecc564
+	sha256:9632067d34e14e0dae2da94631c4f25a387fcc48d06fa29330e8b3c04c4e913d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/libnet
 PERL_REQUIRED_PACKAGES += library/perl-5/mime-base32
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/regexp-ipv6
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
