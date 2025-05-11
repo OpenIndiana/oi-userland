@@ -25,30 +25,32 @@
 
 FONT_TYPE=X11
 BUILD_STYLE=configure
+CONFIGURE_DEFAULT_DIRS=no
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		font-misc-cyrillic
-COMPONENT_VERSION= 	1.0.3
+COMPONENT_NAME=	font-screen-cyrillic
+COMPONENT_VERSION= 	1.0.5
+COMPONENT_ARCHIVE_EXTENSION= .tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:e40fe3e3323c62b738550795457ad555c70c008aa91b5912dfd46f8e745f5e60
+	sha256:8f758bb8cd580c7e655487d1d0db69d319acae54d932b295d96d9d9b83fde5c0
 
 COMPONENT_NAME_1=	font-cronyx-cyrillic
-COMPONENT_VERSION_1= 	1.0.3
+COMPONENT_VERSION_1= 	1.0.4
 COMPONENT_ARCHIVE_HASH_1=	\
-	sha256:6e8631936157677c77ba032b5c7b1fb3cb2ee872dbcea0444f12cd602cd9212a
+	sha256:dc0781ce0dcbffdbf6aae1a00173a13403f92b0de925bca5a9e117e4e2d6b789
 
-COMPONENT_NAME_2=	font-screen-cyrillic
+COMPONENT_NAME_2=		font-misc-cyrillic
 COMPONENT_VERSION_2= 	1.0.4
 COMPONENT_ARCHIVE_HASH_2=	\
-	sha256:824231e8dffe15299454e47259f29d98001c9cf8ad3d6b5171399e4d71705e79
+	sha256:76021a7f53064001914a57fd08efae57f76b68f0a24dca8ab1b245474ee8e993
 
 COMPONENT_NAME_3=	font-winitzki-cyrillic
-COMPONENT_VERSION_3= 	1.0.3
+COMPONENT_VERSION_3= 	1.0.4
 COMPONENT_ARCHIVE_HASH_3=	\
-	sha256:abd13b63d02fcaec488686c23683e5cf640b43bd32f8ca22eeae6f84df0a36a0
+	sha256:3b6d82122dc14776e3afcd877833a7834e1f900c53fc1c7bb2d67c781cfa97a8
 
 # Use font-screen-cyrillic version number as solaris-userland does
-IPS_COMPONENT_VERSION=$(COMPONENT_VERSION_2)
+IPS_COMPONENT_VERSION=$(COMPONENT_VERSION)
 
 LIST = 1 2 3
 
@@ -61,7 +63,7 @@ endef
 
 $(foreach n, $(LIST), \
     $(eval COMPONENT_SRC_$(n) = $(COMPONENT_NAME_$(n))-$(COMPONENT_VERSION_$(n))) \
-    $(eval COMPONENT_ARCHIVE_$(n) = $(COMPONENT_SRC_$(n)).tar.bz2) \
+    $(eval COMPONENT_ARCHIVE_$(n) = $(COMPONENT_SRC_$(n)).tar.xz) \
     $(eval COMPONENT_ARCHIVE_URL_$(n) = $$(COMPONENT_ARCHIVE_URL:$$(COMPONENT_ARCHIVE)=$(COMPONENT_ARCHIVE_$(n)))) \
     $(eval BUILD_DIR_$(n) += $(BUILD_DIR_NO_ARCH)_$(n)) \
     $(eval CONFIGURE_NO_ARCH += $(BUILD_DIR_$(n))/.configured) \
@@ -79,5 +81,4 @@ CYRILLIC_FONT_DIR = $(USRSHAREX11FONTSDIR)/cyrillic
 
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(CYRILLIC_FONT_DIR)
-
-include $(WS_MAKE_RULES)/common.mk
+# Auto-generated dependencies
