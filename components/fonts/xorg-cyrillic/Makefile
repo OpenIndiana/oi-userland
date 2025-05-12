@@ -29,13 +29,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-misc-cyrillic
 COMPONENT_VERSION= 	1.0.3
+COMPONENT_REVISION=	1
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:e40fe3e3323c62b738550795457ad555c70c008aa91b5912dfd46f8e745f5e60
-
-COMPONENT_NAME_1=	font-cronyx-cyrillic
-COMPONENT_VERSION_1= 	1.0.3
-COMPONENT_ARCHIVE_HASH_1=	\
-	sha256:6e8631936157677c77ba032b5c7b1fb3cb2ee872dbcea0444f12cd602cd9212a
 
 COMPONENT_NAME_2=	font-screen-cyrillic
 COMPONENT_VERSION_2= 	1.0.4
@@ -50,7 +46,7 @@ COMPONENT_ARCHIVE_HASH_3=	\
 # Use font-screen-cyrillic version number as solaris-userland does
 IPS_COMPONENT_VERSION=$(COMPONENT_VERSION_2)
 
-LIST = 1 2 3
+LIST = 2 3
 
 BUILD_TARGET = $(BUILD_$(MK_BITS))
 INSTALL_TARGET = $(INSTALL_$(MK_BITS))
@@ -66,13 +62,13 @@ $(foreach n, $(LIST), \
     $(eval BUILD_DIR_$(n) += $(BUILD_DIR_NO_ARCH)_$(n)) \
     $(eval CONFIGURE_NO_ARCH += $(BUILD_DIR_$(n))/.configured) \
     $(eval BUILD_NO_ARCH_$(n) += $(BUILD_DIR_$(n))/.built) \
+    $(eval $(BUILD_DIR_$(n))/.built: BITS=$(PREFERRED_BITS)) \
     $(eval BUILD_TARGET += $(BUILD_NO_ARCH_$(n))) \
     $(eval INSTALL_NO_ARCH_$(n) += $(BUILD_DIR_$(n))/.installed) \
     $(eval INSTALL_TARGET += $(INSTALL_NO_ARCH_$(n))) \
     $(eval $(call extra-target-rules,$(n))) \
 )
 
-include $(WS_MAKE_RULES)/x11.mk
 include $(WS_MAKE_RULES)/font.mk
 
 CYRILLIC_FONT_DIR = $(USRSHAREX11FONTSDIR)/cyrillic
@@ -80,4 +76,4 @@ CYRILLIC_FONT_DIR = $(USRSHAREX11FONTSDIR)/cyrillic
 # Install to separate directory for easier packaging
 CONFIGURE_OPTIONS += --with-fontdir=$(CYRILLIC_FONT_DIR)
 
-include $(WS_MAKE_RULES)/common.mk
+# Auto-generated dependencies
