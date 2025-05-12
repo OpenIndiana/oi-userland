@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/browse.c	2010-08-26 01:51:38.983153000 +0100
-+++ avahi-0.6.28/avahi-core/browse.c	2011-01-20 15:27:33.366236170 +0000
+--- avahi-0.8/avahi-core/browse.c.~1~	2020-02-17 05:41:02.380380789 +0200
++++ avahi-0.8/avahi-core/browse.c	2025-04-19 22:30:11.853450515 +0300
 @@ -22,6 +22,7 @@
  #endif
  
@@ -97,26 +97,10 @@
 +}
 +#endif
 +
- AvahiSRecordBrowser *avahi_s_record_browser_new(
+ AvahiSRecordBrowser *avahi_s_record_browser_prepare(
      AvahiServer *server,
      AvahiIfIndex interface,
-@@ -560,9 +646,15 @@
- 
-     AVAHI_LLIST_PREPEND(AvahiSRecordBrowser, browser, server->record_browsers, b);
- 
-+#ifdef HAVE_BONJOUR
-+    b->watch = NULL;
-+    b->client = NULL;
-+    avahi_browse_record_start(b);
-+#else
-     /* The currently cached entries are scanned a bit later, and than we will start querying, too */
-     b->defer_time_event = avahi_time_event_new(server->time_event_queue, NULL, defer_callback, b);
-     assert(b->defer_time_event);
-+#endif
- 
-     return b;
- }
-@@ -575,6 +667,13 @@
+@@ -587,6 +673,13 @@
      b->server->need_browser_cleanup = 1;
  
      browser_cancel(b);
@@ -130,7 +114,7 @@
  }
  
  void avahi_s_record_browser_destroy(AvahiSRecordBrowser *b) {
-@@ -608,6 +707,8 @@
+@@ -620,7 +713,9 @@
  
      if (server->wide_area_lookup_engine)
          avahi_wide_area_cleanup(server->wide_area_lookup_engine);
@@ -139,7 +123,7 @@
 +#endif
  }
  
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/browse.h	2010-08-26 01:51:38.983153000 +0100
+ AvahiSRecordBrowser *avahi_s_record_browser_new(
 +++ avahi-0.6.28/avahi-core/browse.h	2011-01-21 09:33:14.663164775 +0000
 @@ -50,6 +50,12 @@
      unsigned n_lookups;

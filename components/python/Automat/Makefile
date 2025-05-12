@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		automat
-HUMAN_VERSION =			24.8.1
+HUMAN_VERSION =			25.4.16
 COMPONENT_SUMMARY =		Self-service finite-state machines for the programmer on the go.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b34227cf63f6325b8ad2399ede780675083e439b20c323d376373d8ee6306d88
+	sha256:0017591a5477066e90d26b0e696ddc143baafd87b588cfac8100bc6be9634de0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions

@@ -1,0 +1,15 @@
+--- node-v24.0.0/src/node_process_object.cc.orig
++++ node-v24.0.0/src/node_process_object.cc
+@@ -73,7 +73,11 @@
+ 
+ static void GetParentProcessId(Local<Name> property,
+                                const PropertyCallbackInfo<Value>& info) {
+-  info.GetReturnValue().Set(uv_os_getppid());
++#if defined(__sun__)
++   info.GetReturnValue().Set(static_cast<int32_t>(uv_os_getppid()));
++#else
++   info.GetReturnValue().Set(uv_os_getppid());
++#endif
+ }
+ 
+ static void SetVersions(Isolate* isolate, Local<Object> versions) {

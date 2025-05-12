@@ -20,12 +20,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
-COMPONENT_VERSION=		1.7.0
+COMPONENT_VERSION=		1.9.2
 COMPONENT_SUMMARY=		library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:20d5e40dabd927f7a7f4342bebb1e8c7a59241283c978b800ae3bf60394eabc4
+COMPONENT_ARCHIVE_HASH=	sha256:8d68a8b45796f34f7cace357b9f89b8c92b158557274fef5889b03648b55fe59
 COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			x11/library/libxkbcommon
 COMPONENT_LICENSE_FILE=	LICENSE
@@ -35,8 +35,14 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += -Denable-wayland=false
 CONFIGURE_OPTIONS += -Denable-docs=true
+
 CONFIGURE_ENV += $(COMPONENT_BUILD_ENV)
 
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32) ;
+
+# Note that one of the tests fails with a type error; probably because our python-3.9 is too old.
+#     rules: str | None = None
+#	TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
 COMPONENT_TEST_ENV += HOME=/tmp
 
 # Auto-generated dependencies

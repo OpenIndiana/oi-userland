@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mosh
 COMPONENT_VERSION=	1.4.0
-COMPONENT_REVISION= 3
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY=	Mosh (mobile shell) - Remote terminal application that allows roaming, supports intermittent connectivity, and provides intelligent local echo and line editing of user keystrokes (replacement for SSH).
 COMPONENT_PROJECT_URL=	https://mosh.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,11 +57,13 @@ REQUIRED_PACKAGES += utility/bash-completion
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += library/c++/protobuf-302
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libutempter

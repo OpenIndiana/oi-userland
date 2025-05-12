@@ -21,14 +21,14 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ixion
 COMPONENT_VERSION=	0.19.0
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=      ixion - General purpose formula parser and interpreter
+COMPONENT_REVISION=	2
+COMPONENT_SUMMARY=	ixion - General purpose formula parser and interpreter
 COMPONENT_PROJECT_URL=	https://gitlab.com/ixion/ixion
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -46,11 +46,9 @@ CMAKE_OPTIONS += -DMDDS_INCLUDEDIR=$(USRINCDIR)/mdds-2.1
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_$(BITS))/src
 
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
-
-# Build dependencies
-REQUIRED_PACKAGES+= library/c++/mdds
-REQUIRED_PACKAGES+= library/c++/spdlog
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/c++/mdds
+REQUIRED_PACKAGES += library/c++/spdlog
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

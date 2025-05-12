@@ -1,5 +1,5 @@
---- /usr/tmp/clean/avahi-0.6.28/avahi-core/resolve-address.c	2010-08-26 01:51:38.991153000 +0100
-+++ avahi-0.6.28/avahi-core/resolve-address.c	2011-01-20 15:17:11.922176647 +0000
+--- avahi-0.8/avahi-core/resolve-address.c.~1~	2020-02-17 05:41:02.380380789 +0200
++++ avahi-0.8/avahi-core/resolve-address.c	2025-04-19 19:57:00.891940271 +0300
 @@ -22,6 +22,7 @@
  #endif
  
@@ -131,15 +131,15 @@
  static void record_browser_callback(
      AvahiSRecordBrowser*rr,
      AvahiIfIndex interface,
-@@ -173,6 +276,7 @@
+@@ -174,6 +277,7 @@
              break;
      }
  }
 +#endif
  
- AvahiSAddressResolver *avahi_s_address_resolver_new(
+ AvahiSAddressResolver *avahi_s_address_resolver_prepare(
      AvahiServer *server,
-@@ -225,6 +329,13 @@
+@@ -226,6 +330,13 @@
  
      r->time_event = NULL;
  
@@ -153,7 +153,7 @@
      if (!(flags & (AVAHI_LOOKUP_USE_MULTICAST|AVAHI_LOOKUP_USE_WIDE_AREA))) {
  
          if (!server->wide_area_lookup_engine || !avahi_wide_area_has_servers(server->wide_area_lookup_engine))
-@@ -241,6 +352,7 @@
+@@ -242,6 +353,7 @@
          avahi_s_address_resolver_free(r);
          return NULL;
      }
@@ -161,7 +161,7 @@
  
      start_timeout(r);
  
-@@ -264,5 +376,18 @@
+@@ -272,6 +384,19 @@
      if (r->key)
          avahi_key_unref(r->key);
  
@@ -180,3 +180,4 @@
 +
      avahi_free(r);
  }
+ 

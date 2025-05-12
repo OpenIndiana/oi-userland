@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1440 items]
+X workers [1327 items]
 
 scheduling tests via LoadScheduling
 
@@ -200,6 +200,7 @@ setuptools/_path.py::mypy PASSED
 setuptools/_path.py::setuptools._path.paths_on_pythonpath PASSED
 setuptools/_path.py::setuptools._path.same_path PASSED
 setuptools/_reqs.py::mypy PASSED
+setuptools/_scripts.py::mypy PASSED
 setuptools/_shutil.py::mypy PASSED
 setuptools/_static.py::mypy PASSED
 setuptools/_static.py::setuptools._static.Dict PASSED
@@ -225,7 +226,6 @@ setuptools/command/build_clib.py::mypy PASSED
 setuptools/command/build_ext.py::mypy PASSED
 setuptools/command/build_py.py::mypy PASSED
 setuptools/command/develop.py::mypy PASSED
-setuptools/command/develop.py::setuptools.command.develop.VersionlessRequirement PASSED
 setuptools/command/dist_info.py::mypy PASSED
 setuptools/command/easy_install.py::mypy PASSED
 setuptools/command/editable_wheel.py::mypy PASSED
@@ -278,14 +278,6 @@ setuptools/msvc.py::setuptools.msvc SKIPPED
 setuptools/msvc.py::setuptools.msvc.EnvironmentInfo.VCTools SKIPPED
 setuptools/namespaces.py::mypy PASSED
 setuptools/namespaces.py::setuptools.namespaces.Installer._pkg_names PASSED
-setuptools/package_index.py::mypy PASSED
-setuptools/package_index.py::setuptools.package_index.Credential PASSED
-setuptools/package_index.py::setuptools.package_index.PackageIndex._resolve_vcs PASSED
-setuptools/package_index.py::setuptools.package_index.PackageIndex._vcs_split_rev_from_url PASSED
-setuptools/package_index.py::setuptools.package_index._encode_auth PASSED
-setuptools/package_index.py::setuptools.package_index.htmldecode PASSED
-setuptools/sandbox.py::mypy PASSED
-setuptools/sandbox.py::setuptools.sandbox._needs_hiding PASSED
 setuptools/tests/__init__.py::mypy PASSED
 setuptools/tests/compat/__init__.py::mypy PASSED
 setuptools/tests/compat/py$(PYV).py::mypy PASSED
@@ -479,6 +471,8 @@ setuptools/tests/environment.py::mypy PASSED
 setuptools/tests/fixtures.py::mypy PASSED
 setuptools/tests/integration/__init__.py::mypy PASSED
 setuptools/tests/integration/helpers.py::mypy PASSED
+setuptools/tests/integration/test_pbr.py::mypy PASSED
+setuptools/tests/integration/test_pbr.py::test_pbr_integration PASSED
 setuptools/tests/integration/test_pip_install_sdist.py::mypy PASSED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[botocore-v.LATEST] SKIPPED
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[brotli-v.LATEST] SKIPPED
@@ -492,7 +486,6 @@ setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[pytes
 setuptools/tests/integration/test_pip_install_sdist.py::test_install_sdist[pyyaml-v.LATEST] SKIPPED
 setuptools/tests/namespaces.py::mypy PASSED
 setuptools/tests/script-with-bom.py::mypy PASSED
-setuptools/tests/server.py::mypy PASSED
 setuptools/tests/test_archive_util.py::mypy PASSED
 setuptools/tests/test_archive_util.py::test_unicode_files XPASS
 setuptools/tests/test_bdist_deprecations.py::mypy PASSED
@@ -744,7 +737,6 @@ setuptools/tests/test_build_meta.py::TestBuildMetaLegacyBackend::test_setup_requ
 setuptools/tests/test_build_meta.py::TestBuildMetaLegacyBackend::test_static_metadata_in_pyproject_config PASSED
 setuptools/tests/test_build_meta.py::TestBuildMetaLegacyBackend::test_sys_argv_passthrough PASSED
 setuptools/tests/test_build_meta.py::mypy PASSED
-setuptools/tests/test_build_meta.py::test_legacy_editable_install PASSED
 setuptools/tests/test_build_meta.py::test_sys_exit_0_in_setuppy PASSED
 setuptools/tests/test_build_meta.py::test_system_exit_in_setuppy PASSED
 setuptools/tests/test_build_py.py::TestTypeInfoFiles::test_stub_only_package PASSED
@@ -863,25 +855,6 @@ setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_
 setuptools/tests/test_core_metadata.py::TestPEP643::test_modified_fields_marked_as_dynamic[fields4-setup.cfg] PASSED
 setuptools/tests/test_core_metadata.py::TestPEP643::test_static_config_has_no_dynamic[pyproject.toml] PASSED
 setuptools/tests/test_core_metadata.py::TestPEP643::test_static_config_has_no_dynamic[setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[None] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/aio-libs/aiohttp/raw/5e0e6b7080f2408d5f1dd544c0e1cf88378b7b10/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/django/django/raw/4e249d11a6e56ca8feb4b055b681cec457ef3a3d/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/jaraco/skeleton/raw/d9008b5c510cd6969127a6a2ab6f832edddef296/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/jaraco/zipp/raw/700d3a96390e970b6b962823bfea78b4f7e1c537/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pallets/click/raw/6411f425fae545f42795665af4162006b36c5e4a/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pallets/flask/raw/9486b6cf57bd6a8a261f67091aca8ca78eeec1e3/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pallets/jinja/raw/7d72eb7fefb7dce065193967f31f805180508448/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pandas-dev/pandas/raw/bc17343f934a33dc231c8c74be95d8365537c376/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/platformdirs/platformdirs/raw/7b7852128dd6f07511b618d6edea35046bd0c6ff/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pypa/setuptools/raw/52c990172fec37766b3566679724aa8bf70ae06d/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pypa/virtualenv/raw/f92eda6e3da26a4d28c2663ffb85c4960bdb990c/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pypa/wheel/raw/0acd203cd896afec7f715aa2ff5980a403459a3b/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pyscaffold/pyscaffold/raw/de7aa5dc059fbd04307419c667cc4961bc9df4b8/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pytest-dev/pluggy/raw/461ef63291d13589c4e21aa182cd1529257e9a0a/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/pytest-dev/pytest/raw/c7be96dae487edbd2f55b561b31b68afac1dabe6/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/python/importlib_metadata/raw/2f05392ca980952a6960d82b2f2d2ea10aa53239/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/sqlalchemy/sqlalchemy/raw/533f5718904b620be8d63f2474229945d6f8ba5d/setup.cfg] PASSED
-setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output[https://github.com/tkem/cachetools/raw/2fd87a94b8d3861d80e9e4236cd480bfdd21c90d/setup.cfg] PASSED
 setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_requires_dist PASSED
 setuptools/tests/test_core_metadata.py::mypy PASSED
 setuptools/tests/test_core_metadata.py::test_maintainer_author[Author (e-mail), Maintainer (e-mail)-attrs6] PASSED
@@ -915,12 +888,7 @@ setuptools/tests/test_core_metadata.py::test_rfc822_unescape[remove_leading_whit
 setuptools/tests/test_core_metadata.py::test_rfc822_unescape[single_line] PASSED
 setuptools/tests/test_depends.py::TestGetModuleConstant::test_basic PASSED
 setuptools/tests/test_depends.py::mypy PASSED
-setuptools/tests/test_develop.py::TestDevelop::test_console_scripts SKIPPED
-setuptools/tests/test_develop.py::TestDevelop::test_egg_link_filename SKIPPED
 setuptools/tests/test_develop.py::TestNamespaces::test_namespace_package_importable PASSED
-setuptools/tests/test_develop.py::TestResolver::test_resolve_setup_path_cwd PASSED
-setuptools/tests/test_develop.py::TestResolver::test_resolve_setup_path_one_dir PASSED
-setuptools/tests/test_develop.py::TestResolver::test_resolve_setup_path_one_dir_trailing_slash PASSED
 setuptools/tests/test_develop.py::mypy PASSED
 setuptools/tests/test_dist.py::mypy PASSED
 setuptools/tests/test_dist.py::test_check_package_data[package_data0-None] PASSED
@@ -1005,57 +973,6 @@ setuptools/tests/test_distutils_adoption.py::test_modules_are_not_duplicated_on_
 setuptools/tests/test_distutils_adoption.py::test_modules_are_not_duplicated_on_import[stdlib-dir_util] PASSED
 setuptools/tests/test_distutils_adoption.py::test_modules_are_not_duplicated_on_import[stdlib-file_util] PASSED
 setuptools/tests/test_distutils_adoption.py::test_pip_import PASSED
-setuptools/tests/test_easy_install.py::TestCommandSpec::test_custom_launch_command $(PYTHON_DIR)/vendor-packages/coverage/report_core.py:116: CoverageWarning: Couldn't parse '/tmp/easy_install-2kmume78/setup.py': No source for code: '/tmp/easy_install-2kmume78/setup.py'. (couldnt-parse) PASSED
-setuptools/tests/test_easy_install.py::TestCommandSpec::test_from_environment_with_spaces_in_executable PASSED
-setuptools/tests/test_easy_install.py::TestCommandSpec::test_from_param_for_CommandSpec_is_passthrough PASSED
-setuptools/tests/test_easy_install.py::TestCommandSpec::test_from_param_raises_expected_error PASSED
-setuptools/tests/test_easy_install.py::TestCommandSpec::test_from_simple_string_uses_shlex PASSED
-setuptools/tests/test_easy_install.py::TestDistutilsPackage::test_bdist_egg_available_on_distutils_pkg PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_all_site_dirs PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_all_site_dirs_works_without_getsitepackages PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_get_script_args PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_no_find_links PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_script_install SKIPPED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_unicode_content_in_sdist PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_unicode_filename_in_sdist PASSED
-setuptools/tests/test_easy_install.py::TestEasyInstallTest::test_write_exception PASSED
-setuptools/tests/test_easy_install.py::TestInstallRequires::test_setup_install_includes_dependencies PASSED
-setuptools/tests/test_easy_install.py::TestPTHFileWriter::test_add_from_cwd_site_sets_dirty PASSED
-setuptools/tests/test_easy_install.py::TestPTHFileWriter::test_add_from_site_is_ignored PASSED
-setuptools/tests/test_easy_install.py::TestPTHFileWriter::test_many_pth_distributions_merge_together PASSED
-setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header PASSED
-setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_args PASSED
-setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_exe_with_spaces PASSED
-setuptools/tests/test_easy_install.py::TestScriptHeader::test_get_script_header_non_ascii_exe PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_honors_fetch_params PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_honors_pip_env PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_override_nspkg[use_setup_cfg0] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_override_nspkg[use_setup_cfg1] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_override_nspkg[use_setup_cfg2] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_override_nspkg[use_setup_cfg3] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_overrides_version_conflict[use_setup_cfg0] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_overrides_version_conflict[use_setup_cfg1] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_overrides_version_conflict[use_setup_cfg2] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_overrides_version_conflict[use_setup_cfg3] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_allow_hosts SKIPPED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_attr_version[use_setup_cfg0] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_attr_version[use_setup_cfg1] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_attr_version[use_setup_cfg2] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_attr_version[use_setup_cfg3] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_distutils_command_dep PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_find_links_in_setup_cfg[False] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_find_links_in_setup_cfg[True] PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_pep508_url PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_python_requires PASSED
-setuptools/tests/test_easy_install.py::TestSetupRequires::test_setup_requires_with_transitive_extra_dependency PASSED
-setuptools/tests/test_easy_install.py::TestUserInstallTest::test_local_index PASSED
-setuptools/tests/test_easy_install.py::TestUserInstallTest::test_multiproc_atexit PASSED
-setuptools/tests/test_easy_install.py::TestUserInstallTest::test_user_install_not_implied_user_site_disabled PASSED
-setuptools/tests/test_easy_install.py::TestUserInstallTest::test_user_install_not_implied_user_site_enabled PASSED
-setuptools/tests/test_easy_install.py::TestWindowsScriptWriter::test_header PASSED
-setuptools/tests/test_easy_install.py::mypy PASSED
-setuptools/tests/test_easy_install.py::test_editable_user_and_build_isolation PASSED
-setuptools/tests/test_easy_install.py::test_use_correct_python_version_string PASSED
 setuptools/tests/test_editable_install.py::TestCustomBuildExt::test_distutils_leave_inplace_files SKIPPED
 setuptools/tests/test_editable_install.py::TestCustomBuildPy::test_safeguarded_from_errors PASSED
 setuptools/tests/test_editable_install.py::TestCustomBuildWheel::test_access_plat_name PASSED
@@ -1299,38 +1216,8 @@ setuptools/tests/test_namespaces.py::TestNamespaces::test_namespace_package_inst
 setuptools/tests/test_namespaces.py::TestNamespaces::test_packages_in_the_same_namespace_installed_and_cwd PASSED
 setuptools/tests/test_namespaces.py::TestNamespaces::test_pkg_resources_import PASSED
 setuptools/tests/test_namespaces.py::mypy PASSED
-setuptools/tests/test_packageindex.py::TestContentCheckers::test_blank_md5 PASSED
-setuptools/tests/test_packageindex.py::TestContentCheckers::test_get_hash_name_md5 PASSED
-setuptools/tests/test_packageindex.py::TestContentCheckers::test_md5 PASSED
-setuptools/tests/test_packageindex.py::TestContentCheckers::test_other_fragment PASSED
-setuptools/tests/test_packageindex.py::TestContentCheckers::test_report PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test__vcs_split_rev_from_url PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_bad_url_bad_port PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_bad_url_bad_status_line PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_bad_url_double_scheme PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_bad_url_typo PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_download_git_no_rev PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_download_git_with_rev PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_download_svn PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_egg_fragment PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_local_index PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_parse_bdist_wininst PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_regex PASSED
-setuptools/tests/test_packageindex.py::TestPackageIndex::test_url_ok PASSED
-setuptools/tests/test_packageindex.py::TestPyPIConfig::test_percent_in_password PASSED
-setuptools/tests/test_packageindex.py::mypy PASSED
-setuptools/tests/test_packageindex.py::test_REL_DoS PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_exception_reconstructed PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_exception_resumed PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_exception_trapped PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_no_exception_passes_quietly PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_sandbox_violation_raised_hiding_setuptools PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_unpickleable_exception PASSED
-setuptools/tests/test_sandbox.py::TestExceptionSaver::test_unpickleable_exception_when_hiding_setuptools PASSED
-setuptools/tests/test_sandbox.py::TestSandbox::test_devnull PASSED
-setuptools/tests/test_sandbox.py::TestSandbox::test_setup_py_with_BOM PASSED
-setuptools/tests/test_sandbox.py::TestSandbox::test_setup_py_with_CRLF PASSED
-setuptools/tests/test_sandbox.py::mypy PASSED
+setuptools/tests/test_scripts.py::TestWindowsScriptWriter::test_header PASSED
+setuptools/tests/test_scripts.py::mypy PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[$tmp_path$/external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_external_path_in_extension_depends[../external/dir/file.h] PASSED
 setuptools/tests/test_sdist.py::TestRegressions::test_symlink_in_extension_depends[myheaders/dir/../dir/file.h] PASSED
@@ -1450,10 +1337,7 @@ tools/finalize.py::mypy PASSED
 tools/generate_validation_code.py::mypy PASSED
 tools/vendored.py::mypy PASSED
 
-
-===================================== mypy =====================================
-
-Success: no issues found in 142 source files
-======== 1322 passed, 113 skipped, 4 xfailed, 1 xpassed ========
+Success: no issues found in 139 source files
+======== 1213 passed, 109 skipped, 4 xfailed, 1 xpassed ========
   py$(PYV): OK
   congratulations :)

@@ -14,12 +14,11 @@
 # Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         clutter-gst
 COMPONENT_VERSION=      3.0.27
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=      	library/desktop/clutter/clutter-gst
 COMPONENT_SUMMARY=      gstreamer integration library for clutter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,8 +51,8 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 REQUIRED_PACKAGES += library/desktop/json-glib
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/clutter
 REQUIRED_PACKAGES += library/desktop/cogl
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

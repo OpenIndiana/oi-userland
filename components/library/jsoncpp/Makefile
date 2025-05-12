@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jsoncpp
 COMPONENT_VERSION=	1.9.5
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	A C++ library for interacting with JSON.
 COMPONENT_PROJECT_URL=	https://github.com/open-source-parsers/jsoncpp
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			78.1.0
+HUMAN_VERSION =			80.4.0
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:18fd474d4a82a5f83dac888df697af65afa82dec7323d09c3e37d1f14288da54
+	sha256:5a78f61820bc088c8e4add52932ae6b8cf423da2aff268c23f813cfbb13b4006
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,6 +46,9 @@ include $(WS_MAKE_RULES)/common.mk
 # nose causes the test_pyproject_sets_attribute test to fail
 TEST_CONFLICTING_PACKAGES.python += library/python/nose
 
+# fails with tox-current-env
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
@@ -66,7 +69,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
 TEST_REQUIRED_PACKAGES.python += library/python/pyproject-hooks
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

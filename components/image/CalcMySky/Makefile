@@ -14,10 +14,12 @@
 
 BUILD_STYLE= cmake
 USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		CalcMySky
 COMPONENT_VERSION=	0.3.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	CalcMySky simulates scattering of light by the atmosphere to render daytime and twilight skies (without stars)
 COMPONENT_PROJECT_URL=	https://github.com/10110111/CalcMySky
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -54,13 +56,6 @@ CMAKE_OPTIONS += -DQt5_DIR=$(QT5_LIBDIR)/cmake/Qt5
 #CMAKE_OPTIONS += -DQt5Script_DIR=$(QT5_LIBDIR)/cmake/Qt5Script
 #CMAKE_OPTIONS += -DQt5SerialPort_DIR=$(QT5_LIBDIR)/cmake/Qt5SerialPort
 #CMAKE_OPTIONS += -DQt5Widgets_DIR=$(QT5_LIBDIR)/cmake/Qt5Widgets
-
-COMPONENT_TEST_TRANSFORMS= \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/Passed/p" ' \
-	' -e "/passed/p" ' \
-	' -e "/Failed/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

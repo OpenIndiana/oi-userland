@@ -4,8 +4,8 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-asyncio: mode=strict, asyncio_default_fixture_loop_scope=session
-collecting ... collected 8954 items / 1365 deselected / 7589 selected
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
+collecting ... collected 8963 items / 1365 deselected / 7598 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
@@ -188,6 +188,7 @@ test/asynchronous/test_client.py::TestClient::test_heartbeat_frequency_ms SKIPPE
 test/asynchronous/test_client.py::TestClient::test_host_w_port SKIPPED
 test/asynchronous/test_client.py::TestClient::test_init_disconnected SKIPPED
 test/asynchronous/test_client.py::TestClient::test_init_disconnected_with_auth SKIPPED
+test/asynchronous/test_client.py::TestClient::test_init_disconnected_with_srv SKIPPED
 test/asynchronous/test_client.py::TestClient::test_interrupt_signal SKIPPED
 test/asynchronous/test_client.py::TestClient::test_ipv6 SKIPPED (Can...)
 test/asynchronous/test_client.py::TestClient::test_lazy_auth_raises_operation_failure SKIPPED
@@ -1777,6 +1778,7 @@ test/asynchronous/test_discovery_and_monitoring.py::TestAllScenarios::test_singl
 test/asynchronous/test_discovery_and_monitoring.py::TestClusterTimeComparison::test_cluster_time_comparison PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestHeartbeatStartOrdering::test_heartbeat_start_ordering PASSED
 test/asynchronous/test_discovery_and_monitoring.py::TestIgnoreStaleErrors::test_ignore_stale_connection_errors SKIPPED
+test/asynchronous/test_discovery_and_monitoring.py::TestPoolManagement::test_connection_close_does_not_block_other_operations SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestPoolManagement::test_pool_unpause SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_auto SKIPPED
 test/asynchronous/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_poll SKIPPED
@@ -1884,6 +1886,7 @@ test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_1_allow_srv
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_2_throw_when_return_address_does_not_end_with_srv_domain PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_3_throw_when_return_address_is_identical_to_srv_hostname PASSED
 test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_4_throw_when_return_address_does_not_contain_dot_separating_shared_part_of_domain PASSED
+test/asynchronous/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_when_srv_hostname_has_two_dot_separated_parts_it_is_valid_for_the_returned_hostname_to_be_identical PASSED
 test/asynchronous/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/asynchronous/test_examples.py::TestCausalConsistencyExamples::test_causal_consistency SKIPPED
 test/asynchronous/test_examples.py::TestSampleShellCommands::test_aggregate_examples SKIPPED
@@ -3024,6 +3027,7 @@ test/asynchronous/test_ssl.py::TestSSL::test_cert_ssl_validation_hostname_matchi
 test/asynchronous/test_ssl.py::TestSSL::test_certifi_support SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_connect_with_ca_bundle SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_mongodb_x509_auth SKIPPED
+test/asynchronous/test_ssl.py::TestSSL::test_pyopenssl_ignored_in_async SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_simple_ssl SKIPPED (Can...)
 test/asynchronous/test_ssl.py::TestSSL::test_system_certs_config_error SKIPPED
 test/asynchronous/test_ssl.py::TestSSL::test_tlsCRLFile_support SKIPPED
@@ -3882,6 +3886,7 @@ test/test_client.py::TestClient::test_heartbeat_frequency_ms SKIPPED
 test/test_client.py::TestClient::test_host_w_port SKIPPED (Cannot co...)
 test/test_client.py::TestClient::test_init_disconnected SKIPPED (Can...)
 test/test_client.py::TestClient::test_init_disconnected_with_auth SKIPPED
+test/test_client.py::TestClient::test_init_disconnected_with_srv SKIPPED
 test/test_client.py::TestClient::test_interrupt_signal SKIPPED (Cann...)
 test/test_client.py::TestClient::test_ipv6 SKIPPED (Cannot connect t...)
 test/test_client.py::TestClient::test_lazy_auth_raises_operation_failure SKIPPED
@@ -5328,6 +5333,7 @@ test/test_default_exports.py::TestDefaultExports::test_gridfs PASSED
 test/test_default_exports.py::TestDefaultExports::test_gridfs_imports PASSED
 test/test_default_exports.py::TestDefaultExports::test_pymongo PASSED
 test/test_default_exports.py::TestDefaultExports::test_pymongo_imports PASSED
+test/test_default_exports.py::TestDefaultExports::test_pymongo_submodule_attributes PASSED
 test/test_discovery_and_monitoring.py::TestAllScenarios::test_errors_error_handling_handshake PASSED
 test/test_discovery_and_monitoring.py::TestAllScenarios::test_errors_non-stale-network-error PASSED
 test/test_discovery_and_monitoring.py::TestAllScenarios::test_errors_non-stale-network-timeout-error PASSED
@@ -5513,6 +5519,7 @@ test/test_discovery_and_monitoring.py::TestAllScenarios::test_single_too_old_the
 test/test_discovery_and_monitoring.py::TestClusterTimeComparison::test_cluster_time_comparison PASSED
 test/test_discovery_and_monitoring.py::TestHeartbeatStartOrdering::test_heartbeat_start_ordering PASSED
 test/test_discovery_and_monitoring.py::TestIgnoreStaleErrors::test_ignore_stale_connection_errors SKIPPED
+test/test_discovery_and_monitoring.py::TestPoolManagement::test_connection_close_does_not_block_other_operations SKIPPED
 test/test_discovery_and_monitoring.py::TestPoolManagement::test_pool_unpause SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_auto SKIPPED
 test/test_discovery_and_monitoring.py::TestServerMonitoringMode::test_rtt_connection_is_disabled_poll SKIPPED
@@ -5620,6 +5627,7 @@ test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_1_allow_srv_hosts_with_f
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_2_throw_when_return_address_does_not_end_with_srv_domain PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_3_throw_when_return_address_is_identical_to_srv_hostname PASSED
 test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_4_throw_when_return_address_does_not_contain_dot_separating_shared_part_of_domain PASSED
+test/test_dns.py::TestInitialDnsSeedlistDiscovery::test_5_when_srv_hostname_has_two_dot_separated_parts_it_is_valid_for_the_returned_hostname_to_be_identical PASSED
 test/test_dns.py::TestParsingErrors::test_invalid_host PASSED
 test/test_errors.py::TestErrors::test_not_primary_error PASSED
 test/test_errors.py::TestErrors::test_operation_failure PASSED
@@ -6843,6 +6851,7 @@ test/test_ssl.py::TestSSL::test_cert_ssl_validation_hostname_matching SKIPPED
 test/test_ssl.py::TestSSL::test_certifi_support SKIPPED (Cannot conn...)
 test/test_ssl.py::TestSSL::test_connect_with_ca_bundle SKIPPED (Cann...)
 test/test_ssl.py::TestSSL::test_mongodb_x509_auth SKIPPED (Cannot co...)
+test/test_ssl.py::TestSSL::test_pyopenssl_ignored_in_async SKIPPED (...)
 test/test_ssl.py::TestSSL::test_simple_ssl SKIPPED (Cannot connect t...)
 test/test_ssl.py::TestSSL::test_system_certs_config_error SKIPPED (C...)
 test/test_ssl.py::TestSSL::test_tlsCRLFile_support SKIPPED (Cannot c...)
@@ -7611,4 +7620,4 @@ test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1324 passed, 6267 skipped, 1365 deselected, 2 warnings ========
+======== 1327 passed, 6273 skipped, 1365 deselected, 2 warnings ========

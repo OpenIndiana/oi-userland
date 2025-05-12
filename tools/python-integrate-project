@@ -163,13 +163,14 @@ fi
 
 # Get project homepage if not already provided
 if [[ -z "$HOMEPAGE" ]] ; then
-	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
-	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-		HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
-		if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-			printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-			HOMEPAGE=$(get_PKGINFO_entry "Home-page")
-		fi
+	for field in '.info.home_page' '.info.project_urls.Homepage' '.info.project_urls.homepage' ; do
+		HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r "$field")
+		(($? == 0)) && [[ -n "$HOMEPAGE" && "$HOMEPAGE" != "null" ]] && break
+		HOMEPAGE=
+	done
+	if [[ -z "$HOMEPAGE" ]] ; then
+		printf "WARNING: Failed to get homepage for project %s from PyPI\n" "$PROJECT" >&2
+		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
 	fi
 fi
 

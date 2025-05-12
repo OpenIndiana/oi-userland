@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/types-setuptools types_setuptools
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_setuptools
-HUMAN_VERSION =			78.1.0.20250329
+HUMAN_VERSION =			80.4.0.20250511
 COMPONENT_SUMMARY =		Typing stubs for setuptools
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:31e62950c38b8cc1c5114b077504e36426860a064287cac11b9666ab3a483234
+	sha256:faa4159c9384e45b3b04218ca43ee3829efb6acc303e0ee561e47b3404423d32
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

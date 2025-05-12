@@ -1,0 +1,36 @@
+Oracle Bug 14965635 - SUNBT4153816 XtMakeResizeRequest() should return
+    XtGeometryYes not XtGeometryDone
+
+Need to evaluate for submission upstream.
+
+This bug was found during VSW5 testing ( Testcase: XtMakeResizeRequest
+  Purpose:  9)
+
+The test description is:
+
+Assertion XtMakeResizeRequest-9.(A)
+A call to XtGeometryResult XtMakeResizeRequest(w, width,
+height, width_return, height_return) when the widget w is
+realized, the width field of the widget is not equal to
+width or the height field is not equal to height, and the
+call to the geometry_manager procedure of the widget's
+parent returns XtGeometryDone shall return XtGeometryYes.
+
+
+Under the conditions described above, XtMakeResizeRequest() returns
+XtGeometryDone instead of XtGeometryYes. 
+
+--- a/src/Geometry.c	2022-11-07 19:15:26.274225985 -0800
++++ b/src/Geometry.c	2022-11-07 19:16:12.473217747 -0800
+@@ -336,6 +336,11 @@
+         else {
+             returnCode = (*manager) (widget, request, reply);
+         }
++       /* leob fix for bug 4153816 */
++        if (returnCode == XtGeometryDone && XtIsRealized(widget) &&
++            (widget->core.width != request->width ||
++             widget->core.height != request->height) )
++            return XtGeometryYes;
+     }
+ 
+     /*

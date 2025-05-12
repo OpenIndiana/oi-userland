@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project hypothesis
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.130.5
+HUMAN_VERSION =			6.131.15
 COMPONENT_SUMMARY =		A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4dfaabe86fb2ce14bb5dfe07e92b5aa6cc557728c28e31ebe2616b5c85b83f3c
+	sha256:3b725f4a8a7006a36c4ef4914fbb60c519557307c95bcc1237fb743a3ec34ef7
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,6 +36,9 @@ COMPONENT_SUBDIR =		hypothesis-python
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Fails with tox-current-env
+PYTEST_ADDOPTS += --deselect $(COMPONENT_SUBDIR)/tests/nocover/test_scrutineer.py::test_report_sort
+
 # Contains the date of the test run
 COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
 
@@ -45,9 +48,9 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/sortedcontainers
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/pexpect

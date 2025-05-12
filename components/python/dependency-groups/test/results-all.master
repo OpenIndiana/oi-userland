@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 30 items
+collecting ... collected 39 items
 
 tests/test_lint_cli.py::test_lint_no_groups_ok PASSED
 tests/test_lint_cli.py::test_lint_bad_group_item PASSED
@@ -37,7 +37,16 @@ tests/test_resolver_class.py::test_lookup_with_include_result PASSED
 tests/test_resolver_class.py::test_lookup_does_not_trigger_cyclic_include PASSED
 tests/test_resolver_class.py::test_expand_contract_model_only_does_inner_lookup_once PASSED
 tests/test_resolver_class.py::test_no_double_parse PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo-bar-foo-bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo-bar-foo_bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo-bar-foo..bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo_bar-foo-bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo_bar-foo_bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo_bar-foo..bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo..bar-foo-bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo..bar-foo_bar] PASSED
+tests/test_resolver_class.py::test_normalized_name_is_used_for_include_group_lookups[foo..bar-foo..bar] PASSED
 
-======== 30 passed ========
+======== 39 passed ========
   py$(PYV): OK
   congratulations :)

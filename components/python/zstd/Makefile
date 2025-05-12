@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstd
-HUMAN_VERSION =			1.5.6.7
+HUMAN_VERSION =			1.5.7.0
 COMPONENT_SUMMARY =		ZSTD Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/sergey-dryabzhinsky/python-zstd
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b3fa8f6bfb5e116b950ad633edccae4f65055a213ab4c00c1d4397f4b257b697
+	sha256:afe4f5dc80ffaa3c97be48b2f74065883c4607610f9af3e8f7101c3a5047915a
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
