@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_itertools
-HUMAN_VERSION =			6.4.2
+HUMAN_VERSION =			6.4.3
 COMPONENT_SUMMARY =		jaraco.itertools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:36c98e8bd7906b27021062e2fe141a0b7281dc6e7a59cf605fb70771a4bb4abd
+	sha256:06c8727afcad659e29ce78773870428500f4daf6f13b9c2f5154ddb21cbca90d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/inflect
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
