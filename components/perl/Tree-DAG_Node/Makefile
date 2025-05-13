@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Tree-DAG_Node
-HUMAN_VERSION =			1.34
+HUMAN_VERSION =			1.35
 COMPONENT_SUMMARY =		An N-ary tree
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Tree-DAG_Node-1.34.tgz
+	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Tree-DAG_Node-1.35.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:26845b628872ec1af020ac2e839ae036c59c9e26aab887efb6c75a819c675cb1
+	sha256:27467e3644c8dfbb08e26e6d698a75ef7c1b1a810bda9fca50f922eea5429eb1
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
