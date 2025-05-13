@@ -1,6 +1,6 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python --version
-Python 3.9.20
+Python 3.9.21
 py$(PYV): commands[1]> python -m pytest --cov=consolekit -r aR tests/
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -233,8 +233,25 @@ tests/test_utils.py::test_overtype PASSED
 tests/test_versions.py::test_get_formatted_versions PASSED
 tests/test_versions.py::test_version_callback PASSED
 
-Required test coverage of 90.0% reached. Total coverage: 90.43%
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+consolekit/__init__.py              37      2    95%   135-136
+consolekit/_readline.py              8      2    75%   16-18
+consolekit/_types.py                 4      0   100%
+consolekit/commands.py             105     17    84%   96-99, 129, 209, 252-257, 318-324, 414
+consolekit/input.py                117     31    74%   125, 149-153, 219, 222, 239-268, 279, 281
+consolekit/options.py              110     17    85%   109, 271, 441-446, 450-457, 470-481
+consolekit/terminal_colours.py     200      7    96%   107-108, 164, 308-310, 464
+consolekit/testing.py               62      8    87%   109, 130, 146-147, 170, 201, 236-237
+consolekit/tracebacks.py            58      0   100%
+consolekit/utils.py                122      5    96%   91, 127, 348-349, 508
+consolekit/versions.py              36      1    97%   103
+--------------------------------------------------------------
+TOTAL                              859     90    90%
+FAIL Required test coverage of 90.0% not reached. Total coverage: 89.52%
 ============================= slowest 25 durations =============================
 =========================== short test summary info ============================
 ======== 189 passed, 31 skipped ========
