@@ -36,7 +36,7 @@ ESR =
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	138.0.1
+COMPONENT_VERSION =	138.0.3
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,7 +73,7 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:9894b96203876f847637af20f961cd4494ff1f2d85e4c096a7f358f54d9ecb2b
+COMPONENT_ARCHIVE_HASH= sha256:a27f3ab41d635b2a1d8418289d1dedcd6cb532148c7d63d3f8b97c66445513e4
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
@@ -277,7 +277,7 @@ REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
-REQUIRED_PACKAGES += runtime/nodejs-22
+REQUIRED_PACKAGES += runtime/nodejs-24
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
 
