@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coherent_licensed
-HUMAN_VERSION =			0.1.1
+HUMAN_VERSION =			0.2.0
 COMPONENT_SUMMARY =		License management tooling for Coherent System and skeleton projects
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04f52b4b7c827768cfa4a2d28bab2243174f9f1be5263b4d2bb9d4a94854d1dc
+	sha256:5c4a045960ce975534790482e504568b411421a5305a7bcef9a1b05507d8bce5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,5 +32,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += runtime/python
