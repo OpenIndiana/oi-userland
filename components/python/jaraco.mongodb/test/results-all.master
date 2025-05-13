@@ -1,0 +1,291 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 38 items / 19 deselected / 19 selected
+
+jaraco/mongodb/cli.py::jaraco.mongodb.cli.extract_param PASSED
+jaraco/mongodb/codec.py::jaraco.mongodb.codec PASSED
+jaraco/mongodb/codec.py::jaraco.mongodb.codec.maybe_date PASSED
+jaraco/mongodb/fields.py::jaraco.mongodb.fields PASSED
+jaraco/mongodb/helper.py::jaraco.mongodb.helper.connect_db PASSED
+jaraco/mongodb/migration.py::jaraco.mongodb.migration.Manager PASSED
+jaraco/mongodb/migration.py::jaraco.mongodb.migration.Manager._get_migrate_funcs PASSED
+jaraco/mongodb/oplog.py::jaraco.mongodb.oplog.NiceRepr PASSED
+jaraco/mongodb/oplog.py::jaraco.mongodb.oplog.Renamer PASSED
+jaraco/mongodb/oplog.py::jaraco.mongodb.oplog.build_parser PASSED
+jaraco/mongodb/query.py::jaraco.mongodb.query.project PASSED
+tests/test_oplog.py::TestReplacer::test_rename_index_op_ns PASSED
+tests/test_oplog.py::TestReplacer::test_collection_rename_on_create_cmd PASSED
+tests/test_oplog.py::TestOplogReplication::test_index_deletion SKIPPED
+tests/test_service.py::test_MongoDBReplicaSet_writable XFAIL (#31)
+tests/test_service.py::test_MongoDBReplicaSet_starts_quickly SKIPPED
+tests/test_sessions.py::TestSessions::test_time_conversion PASSED
+tests/test_sessions.py::TestSessions::test_time_conversion2 PASSED
+tests/test_sessions.py::TestSessions::test_numeric_keys XFAIL
+
+=============================== warnings summary ===============================
+jaraco/mongodb/helper.py::jaraco.mongodb.helper.connect_db
+  <doctest jaraco.mongodb.helper.connect_db[3]>:1: ResourceWarning: Unclosed MongoClient opened at:
+    File "$(PYTHON_DIR)/runpy.py", line 197, in _run_module_as_main
+      return _run_code(code, main_globals, None,
+    File "$(PYTHON_DIR)/runpy.py", line 87, in _run_code
+      exec(code, run_globals)
+    File "$(PYTHON_DIR)/vendor-packages/pytest/__main__.py", line 9, in <module>
+      raise SystemExit(pytest.console_main())
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 201, in console_main
+      code = main()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 175, in main
+      ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 330, in pytest_cmdline_main
+      return wrap_session(config, _main)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 283, in wrap_session
+      session.exitstatus = doit(config, session) or 0
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 337, in _main
+      config.hook.pytest_runtestloop(session=session)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 362, in pytest_runtestloop
+      item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 113, in pytest_runtest_protocol
+      runtestprotocol(item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 132, in runtestprotocol
+      reports.append(call_and_report(item, "call", log))
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 241, in call_and_report
+      call = CallInfo.from_call(
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 341, in from_call
+      result: TResult | None = func()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 242, in <lambda>
+      lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+      item.runtest()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/doctest.py", line 301, in runtest
+      self.runner.run(self.dtest, out=failures)  # type: ignore[arg-type]
+    File "$(PYTHON_DIR)/doctest.py", line 1842, in run
+      r = DocTestRunner.run(self, test, compileflags, out, False)
+    File "$(PYTHON_DIR)/doctest.py", line 1481, in run
+      return self.__run(test, compileflags, out)
+    File "$(PYTHON_DIR)/doctest.py", line 1334, in __run
+      exec(compile(example.source, filename, "single",
+    File "<doctest jaraco.mongodb.helper.connect_db[0]>", line 1, in <module>
+      db = connect_db(
+    File "$(@D)/jaraco/mongodb/helper.py", line 42, in connect_db
+      client = factory(uri)
+    File "$(PYTHON_DIR)/vendor-packages/pymongo/synchronous/mongo_client.py", line 875, in __init__
+      self._init_based_on_options(self._seeds, srv_max_hosts, srv_service_name)
+  Call MongoClient.close() to safely shut down your client and free up resources.
+
+jaraco/mongodb/helper.py::jaraco.mongodb.helper.connect_db
+  <doctest jaraco.mongodb.helper.connect_db[5]>:1: ResourceWarning: Unclosed MongoClient opened at:
+    File "$(PYTHON_DIR)/runpy.py", line 197, in _run_module_as_main
+      return _run_code(code, main_globals, None,
+    File "$(PYTHON_DIR)/runpy.py", line 87, in _run_code
+      exec(code, run_globals)
+    File "$(PYTHON_DIR)/vendor-packages/pytest/__main__.py", line 9, in <module>
+      raise SystemExit(pytest.console_main())
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 201, in console_main
+      code = main()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 175, in main
+      ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 330, in pytest_cmdline_main
+      return wrap_session(config, _main)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 283, in wrap_session
+      session.exitstatus = doit(config, session) or 0
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 337, in _main
+      config.hook.pytest_runtestloop(session=session)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 362, in pytest_runtestloop
+      item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 113, in pytest_runtest_protocol
+      runtestprotocol(item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 132, in runtestprotocol
+      reports.append(call_and_report(item, "call", log))
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 241, in call_and_report
+      call = CallInfo.from_call(
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 341, in from_call
+      result: TResult | None = func()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 242, in <lambda>
+      lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+      item.runtest()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/doctest.py", line 301, in runtest
+      self.runner.run(self.dtest, out=failures)  # type: ignore[arg-type]
+    File "$(PYTHON_DIR)/doctest.py", line 1842, in run
+      r = DocTestRunner.run(self, test, compileflags, out, False)
+    File "$(PYTHON_DIR)/doctest.py", line 1481, in run
+      return self.__run(test, compileflags, out)
+    File "$(PYTHON_DIR)/doctest.py", line 1334, in __run
+      exec(compile(example.source, filename, "single",
+    File "<doctest jaraco.mongodb.helper.connect_db[3]>", line 1, in <module>
+      db = connect_db('mongodb://mgo/', 'defaultdb')
+    File "$(@D)/jaraco/mongodb/helper.py", line 42, in connect_db
+      client = factory(uri)
+    File "$(PYTHON_DIR)/vendor-packages/pymongo/synchronous/mongo_client.py", line 875, in __init__
+      self._init_based_on_options(self._seeds, srv_max_hosts, srv_service_name)
+  Call MongoClient.close() to safely shut down your client and free up resources.
+
+jaraco/mongodb/helper.py::jaraco.mongodb.helper.connect_db
+  $(PYTHON_DIR)/doctest.py:1844: ResourceWarning: Unclosed MongoClient opened at:
+    File "$(PYTHON_DIR)/runpy.py", line 197, in _run_module_as_main
+      return _run_code(code, main_globals, None,
+    File "$(PYTHON_DIR)/runpy.py", line 87, in _run_code
+      exec(code, run_globals)
+    File "$(PYTHON_DIR)/vendor-packages/pytest/__main__.py", line 9, in <module>
+      raise SystemExit(pytest.console_main())
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 201, in console_main
+      code = main()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py", line 175, in main
+      ret: ExitCode | int = config.hook.pytest_cmdline_main(config=config)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 330, in pytest_cmdline_main
+      return wrap_session(config, _main)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 283, in wrap_session
+      session.exitstatus = doit(config, session) or 0
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 337, in _main
+      config.hook.pytest_runtestloop(session=session)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/main.py", line 362, in pytest_runtestloop
+      item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 113, in pytest_runtest_protocol
+      runtestprotocol(item, nextitem=nextitem)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 132, in runtestprotocol
+      reports.append(call_and_report(item, "call", log))
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 241, in call_and_report
+      call = CallInfo.from_call(
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 341, in from_call
+      result: TResult | None = func()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 242, in <lambda>
+      lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_hooks.py", line 513, in __call__
+      return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_manager.py", line 120, in _hookexec
+      return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    File "$(PYTHON_DIR)/vendor-packages/pluggy/_callers.py", line 103, in _multicall
+      res = hook_impl.function(*args)
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+      item.runtest()
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/doctest.py", line 301, in runtest
+      self.runner.run(self.dtest, out=failures)  # type: ignore[arg-type]
+    File "$(PYTHON_DIR)/doctest.py", line 1842, in run
+      r = DocTestRunner.run(self, test, compileflags, out, False)
+    File "$(PYTHON_DIR)/doctest.py", line 1481, in run
+      return self.__run(test, compileflags, out)
+    File "$(PYTHON_DIR)/doctest.py", line 1334, in __run
+      exec(compile(example.source, filename, "single",
+    File "<doctest jaraco.mongodb.helper.connect_db[5]>", line 1, in <module>
+      db = connect_db('mongodb://mgo/mydb', 'defaultdb')
+    File "$(@D)/jaraco/mongodb/helper.py", line 42, in connect_db
+      client = factory(uri)
+    File "$(PYTHON_DIR)/vendor-packages/pymongo/synchronous/mongo_client.py", line 875, in __init__
+      self._init_based_on_options(self._seeds, srv_max_hosts, srv_service_name)
+  Call MongoClient.close() to safely shut down your client and free up resources.
+    test.globs.clear()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+
+Name                                       Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------
+conftest.py                                   16      9    44%   18-21, 30-34
+docs/conf.py                                  15      0   100%
+jaraco/mongodb/__init__.py                     0      0   100%
+jaraco/mongodb/check-gridfs.py                40     20    50%   25-26, 29-35, 38-42, 45-46, 56-61
+jaraco/mongodb/cli.py                          6      0   100%
+jaraco/mongodb/codec.py                        9      0   100%
+jaraco/mongodb/compat.py                      12      5    58%   16-19, 48
+jaraco/mongodb/fields.py                      10      0   100%
+jaraco/mongodb/fixtures.py                    37     24    35%   8-9, 15-19, 27-31, 35-38, 42-52, 57
+jaraco/mongodb/helper.py                      13      3    77%   47, 54, 69
+jaraco/mongodb/insert-doc.py                  14      4    71%   13-15, 27
+jaraco/mongodb/install.py                     59     34    42%   16, 22-46, 51-52, 56-57, 61, 65-67, 71-75, 79-82, 87-90
+jaraco/mongodb/manage.py                      18     10    44%   10, 21-22, 30, 39-40, 44, 48-51
+jaraco/mongodb/migration.py                   42      3    93%   83, 140-141
+jaraco/mongodb/monitor-index-creation.py      24     13    46%   15-16, 24-34
+jaraco/mongodb/oplog.py                      253    123    51%   27, 208, 240-247, 294-295, 303, 311, 321-324, 328-330, 334-380, 384, 411, 416-441, 454-456, 461-464, 473-479, 483-484, 491, 498-500, 503, 509-518, 524-525, 539-542, 553-554, 561-567, 575-576, 584-585, 593-594, 600-601, 606, 609, 613
+jaraco/mongodb/query.py                       11      5    55%   26-34, 56
+jaraco/mongodb/repair-gridfs.py               49     30    39%   26-30, 33-39, 42-46, 49-57, 62-67
+jaraco/mongodb/sampling.py                    12      9    25%   27-44
+jaraco/mongodb/service.py                    170     86    49%   64-72, 77-80, 93-107, 117-118, 129-135, 138-153, 156-157, 160, 163, 166, 169-171, 176, 179-180, 183, 199-219, 234-238, 241-243, 246, 251-258, 261, 273, 276, 279-280, 290-292
+jaraco/mongodb/sessions.py                    91     53    42%   52, 55, 79-87, 96, 100, 106, 112, 115-125, 148-165, 168, 177-196, 199-204, 207
+jaraco/mongodb/sharding.py                    26     19    27%   11, 18-38
+jaraco/mongodb/testing.py                     35     27    23%   8-9, 16, 23-26, 34-46, 53-69
+jaraco/mongodb/timers.py                      12      4    67%   6, 15, 22, 25
+jaraco/mongodb/uri.py                         10      5    50%   12-18, 26-27
+tests/test_compat.py                          25     19    24%   5-7, 11-13, 17-22, 29-33, 40-42
+tests/test_fields.py                           8      6    25%   5-10
+tests/test_insert_doc.py                      13      9    31%   7-20
+tests/test_manage.py                           9      7    22%   5-11
+tests/test_oplog.py                           48     17    65%   62-63, 66, 84-99
+tests/test_service.py                         21      9    57%   14-15, 20-25, 30
+tests/test_sessions.py                        54     30    44%   18-20, 41-49, 52-60, 64-72
+tests/test_testing.py                         36     26    28%   10-16, 20-23, 31-33, 41-45, 53-55, 62-65
+------------------------------------------------------------------------
+TOTAL                                       1198    609    49%
+======== 15 passed, 2 skipped, 19 deselected, 2 xfailed, 3 warnings ========
+  py$(PYV): OK
+  congratulations :)
