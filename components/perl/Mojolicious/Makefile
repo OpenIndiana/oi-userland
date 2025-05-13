@@ -18,12 +18,12 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mojolicious
-HUMAN_VERSION =			9.39
-COMPONENT_SUMMARY =		Mojolicious - Real-time web framework
+COMPONENT_NAME =		Mojolicious
+HUMAN_VERSION =			9.40
+COMPONENT_SUMMARY =		Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:130a490d77d76139f734ce1b894d459bae03805fb1f3dfdd58fc44fe82af3cfd
+	sha256:4d45f4b51cce46b3896f2e27b2447e52a8efccb1ebea5e6b3885ea211c08480b
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,4 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/role-tiny
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
