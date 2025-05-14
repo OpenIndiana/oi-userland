@@ -27,12 +27,11 @@
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	4.9.4
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		mod_wsgi plugin for Apache Web Server v2.4
+COMPONENT_VERSION=	5.0.2
+COMPONENT_SUMMARY =	mod_wsgi plugin for Apache Web Server v2.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8e762662ea5b01afc386bbcfbaa079748eb6203ab1d6d3a3dac9237f5666cfc9
+COMPONENT_ARCHIVE_HASH=	sha256:6fe5557c3ef25c184c2c994905fe52be1c06ae5c46235ecafe558e84789e2159
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/m/mod_wsgi/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://pypi.python.org/pypi/mod_wsgi/
 COMPONENT_FMRI =		web/server/apache-24/module/apache-wsgi
