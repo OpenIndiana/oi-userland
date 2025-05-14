@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
+py$(PYV): commands[0]> pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 492 items
+collecting ... collected 489 items
 
 tests/test_appctx.py::test_basic_url_generation PASSED
 tests/test_appctx.py::test_url_generation_requires_server_name PASSED
@@ -338,12 +338,9 @@ tests/test_instance_config.py::test_explicit_instance_paths PASSED
 tests/test_instance_config.py::test_uninstalled_module_paths PASSED
 tests/test_instance_config.py::test_uninstalled_package_paths PASSED
 tests/test_instance_config.py::test_uninstalled_namespace_paths PASSED
-tests/test_instance_config.py::test_installed_module_paths[True] PASSED
-tests/test_instance_config.py::test_installed_module_paths[False] PASSED
-tests/test_instance_config.py::test_installed_package_paths[True] PASSED
-tests/test_instance_config.py::test_installed_package_paths[False] PASSED
-tests/test_instance_config.py::test_prefix_package_paths[True] PASSED
-tests/test_instance_config.py::test_prefix_package_paths[False] PASSED
+tests/test_instance_config.py::test_installed_module_paths PASSED
+tests/test_instance_config.py::test_installed_package_paths PASSED
+tests/test_instance_config.py::test_prefix_package_paths PASSED
 tests/test_json.py::test_bad_request_debug_message[True] PASSED
 tests/test_json.py::test_bad_request_debug_message[False] PASSED
 tests/test_json.py::test_json_bad_requests PASSED
@@ -502,6 +499,6 @@ tests/test_views.py::test_multiple_inheritance PASSED
 tests/test_views.py::test_remove_method_from_parent PASSED
 tests/test_views.py::test_init_once PASSED
 
-======== 491 passed, 1 skipped ========
+======== 488 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
