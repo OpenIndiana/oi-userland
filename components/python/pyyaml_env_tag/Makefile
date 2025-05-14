@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/pyyaml_env_tag pyyaml-env-tag
+#   $WS_TOOLS/python-integrate-project pyyaml_env_tag
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pyyaml-env-tag
-HUMAN_VERSION =			1.0
+COMPONENT_NAME =		pyyaml_env_tag
+HUMAN_VERSION =			1.1
 COMPONENT_SUMMARY =		A custom YAML tag for referencing environment variables in YAML files.
 COMPONENT_PROJECT_URL =		https://github.com/waylan/pyyaml-env-tag
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/waylan/pyyaml-env-tag/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f163e9751c9cc6c0ae0228f40871f133d3fb0f9dc08931c2032f4a33da38d67d
+	sha256:2eb38b75a2d21ee0475d6d97ec19c63287a7e140231e4214969d0eac923cd7ff
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
