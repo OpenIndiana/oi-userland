@@ -7,7 +7,7 @@ asyncio: mode=auto, asyncio_default_fixture_loop_scope=function, asyncio_default
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 2695 items / 459 deselected / 2236 selected
+collecting ... collected 2736 items / 482 deselected / 2254 selected
 
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[single] PASSED
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[pool] PASSED
@@ -2155,6 +2155,24 @@ tests/test_retry.py::TestConnectionConstructorWithRetry::test_retry_on_error_ret
 tests/test_retry.py::TestConnectionConstructorWithRetry::test_retry_on_error_retry[UnixDomainSocketConnection-7] PASSED
 tests/test_retry.py::TestConnectionConstructorWithRetry::test_retry_on_error_retry[UnixDomainSocketConnection-8] PASSED
 tests/test_retry.py::TestConnectionConstructorWithRetry::test_retry_on_error_retry[UnixDomainSocketConnection-9] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args0] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args1] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args2] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args3] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args4] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args5] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args6] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args7] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args8] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args9] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args10] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args11] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args12] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args13] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args14] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args15] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args16] PASSED
+tests/test_retry.py::test_retry_eq_and_hashable[args17] PASSED
 tests/test_retry.py::TestRetry::test_retry[0] PASSED
 tests/test_retry.py::TestRetry::test_retry[1] PASSED
 tests/test_retry.py::TestRetry::test_retry[2] PASSED
@@ -2247,8 +2265,7 @@ tests/test_vsets.py::test_vrandmember SKIPPED (Redis version require...)
 tests/test_vsets.py::test_vset_commands_without_decoding_responces SKIPPED
 
 =============================== warnings summary ===============================
-tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline_immediate_command[single]
-tests/test_asyncio/test_connection_pool.py::TestConnection::test_read_only_error[single]
+tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline[pool]
   $(@D)/redis/asyncio/client.py:613: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
     _warn(f"Unclosed client session {self!r}", ResourceWarning, source=self)
   
@@ -2256,17 +2273,25 @@ tests/test_asyncio/test_connection_pool.py::TestConnection::test_read_only_error
     File "$(@D)/redis/asyncio/client.py", line 465
       return Pipeline(
 
+tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline[pool]
+  $(@D)/redis/asyncio/client.py:613: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
+    _warn(f"Unclosed client session {self!r}", ResourceWarning, source=self)
+  
+  Object allocated at:
+    File "$(PYTHON_DIR)/asyncio/futures.py", line 300
+      get_loop = fut.get_loop
+
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
   $(@D)/redis/asyncio/connection.py:232: ResourceWarning: unclosed Connection <redis.asyncio.sentinel.SentinelManagedConnection,host=127.0.0.1,port=6379)>
     _warnings.warn(
   
   Object allocated at:
-    File "$(@D)/redis/asyncio/connection.py", line 1172
+    File "$(@D)/redis/asyncio/connection.py", line 1174
       return self.connection_class(**self.connection_kwargs)
 
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(PYTHON_DIR)/inspect.py:2096: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 51481), raddr=('127.0.0.1', 6379)>
-    for i, (name, default) in enumerate(reversed(list(iter))):
+  $(PYTHON_DIR)/inspect.py:2055: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 55539), raddr=('127.0.0.1', 6379)>
+    class RewriteSymbolics(ast.NodeTransformer):
   
   Object allocated at:
     File "$(PYTHON_DIR)/asyncio/base_events.py", line 944
@@ -2281,4 +2306,4 @@ tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_ti
       return _SelectorSocketTransport(self, sock, protocol, waiter,
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1842 passed, 372 skipped, 459 deselected, 22 xpassed, 5 warnings ========
+======== 1860 passed, 372 skipped, 482 deselected, 22 xpassed, 5 warnings ========
