@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/types-requests types_requests
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_requests
-HUMAN_VERSION =			2.32.0.20250328
+HUMAN_VERSION =			2.32.0.20250515
 COMPONENT_SUMMARY =		Typing stubs for requests
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9e67228ea103bd811c96984fac36ed2ae8da87a36a633964a21f199d60baf32
+	sha256:09c8b63c11318cb2460813871aaa48b671002e59fda67ca909e9883777787581
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,5 +32,6 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/urllib3
 PYTHON_REQUIRED_PACKAGES += runtime/python
