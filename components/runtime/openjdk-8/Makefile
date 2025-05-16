@@ -21,6 +21,7 @@ COMPONENT_NAME=		jdk8u
 OPENJDK_BUILD_NUMBER=	432
 HUMAN_VERSION=		$(COMPONENT_NAME)$(OPENJDK_BUILD_NUMBER)-ga
 COMPONENT_VERSION=      1.8.$(OPENJDK_BUILD_NUMBER)
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -146,6 +147,14 @@ COMPONENT_BUILD_ARGS = JOBS=$(PARALLEL_JOBS)
 
 COMPONENT_BUILD_TARGETS = images
 
+# set server-release arch depending.
+ifeq ($(MACH), i386)
+JDK-SERVER=solaris-x86_64-normal-server-release
+endif
+ifeq ($(MACH), sparc)
+JDK-SERVER=solaris-sparcv9-normal-server-release
+endif
+
 CACERTS_DIR=$(WS_TOP)/components/openindiana/ca-certificates
 CACERTS_INSTALLED=$(CACERTS_DIR)/build/$(MACH32)/.installed
 CACERTS_PROTO_DIR=$(CACERTS_DIR)/build/prototype/$(MACH)
@@ -170,7 +179,7 @@ $(CACERTS_INSTALLED):
 cacerts.out: $(BUILD_DIR_64)/.built $(CACERTS_INSTALLED)
 	rm -f $@
 	for cert in $(CACERTS_PROTO_DIR)/etc/certs/CA/*.pem; do                 \
-                LC_ALL=en_US.UTF-8 $(BUILD_DIR_64)/build/solaris-x86_64-normal-server-release/jdk/bin/keytool \
+                LC_ALL=en_US.UTF-8 $(BUILD_DIR_64)/build/$(JDK-SERVER)/jdk/bin/keytool \
                   -noprompt					\
                   -importcert                                   \
                   -keystore $@                                  \

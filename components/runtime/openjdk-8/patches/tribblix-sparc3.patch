@@ -1,0 +1,29 @@
+--- jdk/make/lib/Awt2dLibraries.gmk	   :: 
++++ jdk/make/lib/Awt2dLibraries.gmk	   :: 
+@@ -74,7 +74,7 @@
+ 
+ ##########################################################################################
+ 
+-ifeq ($(OPENJDK_TARGET_OS)-$(OPENJDK_TARGET_CPU_ARCH), solaris-sparc)
++ifeq ($(OPENJDK_TARGET_OS)-$(OPENJDK_TARGET_CPU_ARCH), not-really-solaris-sparc)
+ 
+   BUILD_LIBMLIB_IMAGE_V_FILES := \
+       mlib_v_ImageLookUp.c \
+@@ -318,7 +318,7 @@
+   LIBAWT_FILES += awt_LoadLibrary.c
+ endif
+ 
+-ifeq ($(OPENJDK_TARGET_OS)-$(OPENJDK_TARGET_CPU_ARCH), solaris-sparc)
++ifeq ($(OPENJDK_TARGET_OS)-$(OPENJDK_TARGET_CPU_ARCH), not-really-solaris-sparc)
+   LIBAWT_CFLAGS += -DMLIB_ADD_SUFF
+   LIBAWT_CFLAGS += -xarch=sparcvis
+   LIBAWT_CFLAGS += $(JDK_TOPDIR)/src/solaris/native/sun/awt/medialib/vis_$(OPENJDK_TARGET_CPU_BITS).il
+@@ -382,7 +382,7 @@
+   LIBAWT_FILES += MapAccelFunc.c
+ endif
+ 
+-ifneq ($(OPENJDK_TARGET_OS), solaris)
++ifneq ($(OPENJDK_TARGET_OS), not-really-solaris)
+   LIBAWT_CFLAGS += -DMLIB_NO_LIBSUNMATH
+ endif
+ 

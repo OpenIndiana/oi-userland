@@ -1,0 +1,20 @@
+--- hotspot/src/os_cpu/solaris_sparc/vm/vm_version_solaris_sparc.cpp.orig	2024-10-05 03:14:08.000000000 +0200
++++ hotspot/src/os_cpu/solaris_sparc/vm/vm_version_solaris_sparc.cpp	2025-02-07 17:46:47.997218696 +0100
+@@ -34,7 +34,7 @@
+ #include <dlfcn.h>
+ #include <link.h>
+ 
+-extern "C" static int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result);
++extern "C" int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result);
+ 
+ // Functions from the library we need (signatures should match those in picl.h)
+ extern "C" {
+@@ -220,7 +220,7 @@
+ };
+ 
+ 
+-extern "C" static int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result) {
++extern "C" int PICL_visit_cpu_helper(picl_nodehdl_t nodeh, void *result) {
+   return PICL::visit_cpu(nodeh, result);
+ }
+ 
