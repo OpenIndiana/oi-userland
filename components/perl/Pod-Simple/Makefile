@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Simple
-HUMAN_VERSION =			3.46
+HUMAN_VERSION =			3.47
 COMPONENT_SUMMARY =		framework for parsing Pod
 COMPONENT_CPAN_AUTHOR =		KHW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d2b0e844f14a44d8269b38206abdfc07646af3c0db7dad733dddb84d826b9f0
+	sha256:ab3e3845337b78ee14b50fdbc68197c71f5ea66ebdde0870dee4e642c305c514
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
