@@ -13,12 +13,12 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pystring
 COMPONENT_VERSION=	1.1.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	C++ functions matching the interface and behavior of python string methods with std::string
 COMPONENT_PROJECT_URL=	https://github.com/imageworks/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -32,6 +32,8 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
+
+COMPONENT_PREP_ACTION += ( $(GSED) -i -e "s@MACH64@$(MACH64)@g" $(@D)/Makefile )
 
 COMPONENT_TEST_TARGETS= test
 COMPONENT_TEST_TRANSFORMS += \
