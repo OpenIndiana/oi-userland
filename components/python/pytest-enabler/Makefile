@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_enabler
-HUMAN_VERSION =			3.3.0
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		Enable installed pytest plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7780165bf20a1b67230c480e1ac0f3653c0d42947bd6d39505e5d9c883263bd1
+	sha256:45ece0ff22183503804d15307364290bc41fa027c843eb7046ee4f3439c8ba3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
