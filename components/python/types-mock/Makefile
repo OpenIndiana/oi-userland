@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/types-mock types_mock
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_mock
-HUMAN_VERSION =			5.2.0.20250306
+HUMAN_VERSION =			5.2.0.20250516
 COMPONENT_SUMMARY =		Typing stubs for mock
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:15882cb5cf9980587a7607e31890801223801d7997f559686805ce09b6536087
+	sha256:aab7d3d9ad3814f2f8da12cc8e42d9be7d38200c5f214e3c0278c38fa01299d7
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,4 +32,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
