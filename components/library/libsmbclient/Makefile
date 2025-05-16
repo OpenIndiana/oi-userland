@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2023,2024 Friedrich Kink. All rights reserved.
+# Copyright 2023,2025 Friedrich Kink. All rights reserved.
 # Copyright 2025 Klaus Ziegler. All rights reserved.
 #
 
@@ -29,12 +29,12 @@ BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.22.0
+COMPONENT_VERSION=	4.22.1
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b39242e1ac1f5469e634c94b2e472045e5060975c2dd6c4cdcdfce0c5586cd76
+COMPONENT_ARCHIVE_HASH=	sha256:6a1f89f1ab25916e255f1c2c3a4a88235a854af2eca40bb9d9bba7545b684a0a
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -115,6 +115,7 @@ CONFIGURE_ENV +=        PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += database/lmdb
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
