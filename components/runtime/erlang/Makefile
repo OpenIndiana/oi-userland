@@ -108,7 +108,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PROTOUSRLIBDIR64)/erlang/bin/erl \
 		$(PROTOUSRLIBDIR64)/erlang/releases/RELEASES ;
 COMPONENT_POST_INSTALL_ACTION += ( $(MKDIR) $(PROTO_DIR)/usr/share ) ;
-#COMPONENT_POST_INSTALL_ACTION += ( $(MV) $(COMPONENT_SRC_1)/man $(PROTO_DIR)/usr/share/ )
+COMPONENT_POST_INSTALL_ACTION += ( $(MV) $(COMPONENT_SRC_1)/man $(PROTO_DIR)/usr/share/ )
 
 # common targets
 build:    $(BUILD_64)
