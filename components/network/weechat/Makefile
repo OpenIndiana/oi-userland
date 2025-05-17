@@ -18,7 +18,7 @@ SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	4.6.2
+COMPONENT_VERSION=	4.6.3
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
 extensible chat client. Everything can be done with a keyboard. \
@@ -26,7 +26,7 @@ It is customizable and extensible with scripts.
 COMPONENT_PROJECT_URL=	https://weechat.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0fa0242a18116fe27f746dbb822121805da6bb5dbd40750d42c63306e4896628
+COMPONENT_ARCHIVE_HASH=	sha256:5c0b5efa969b873c4be582019b18523ee403e7430b8223825bcdb44a89f5815d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/src/$(COMPONENT_ARCHIVE)
 # The signature is invalid
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
