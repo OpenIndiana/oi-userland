@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coherent_licensed
-HUMAN_VERSION =			0.2.0
+HUMAN_VERSION =			0.4.0
 COMPONENT_SUMMARY =		License management tooling for Coherent System and skeleton projects
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5c4a045960ce975534790482e504568b411421a5305a7bcef9a1b05507d8bce5
+	sha256:1928da8d217139f09aa2dbeff482ff2bc0127adb53b59cd3a7648370e404d74c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
