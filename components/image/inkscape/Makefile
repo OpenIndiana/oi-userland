@@ -20,21 +20,21 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
-COMPONENT_VERSION=	1.4.1
+COMPONENT_VERSION=	1.4.2
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
 # eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz
-#COMPONENT_ITEM_NO=	53679
+COMPONENT_ITEM_NO=	56344
 # COMPONENT_DATE and COMPONENT_HASH are part of the resulting source path:
-COMPONENT_DATE=		2025-03-30
-COMPONENT_HASH=		93de688d07
+COMPONENT_DATE=		2025-05-08
+COMPONENT_HASH=		ebf0e940d0
 COMPONENT_SUMMARY=	Opensource professional vector graphics editor
 COMPONENT_PROJECT_URL=	https://www.inkscape.org/
 COMPONENT_SRC_BASE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_SRC_BASE)_$(COMPONENT_DATE)_$(COMPONENT_HASH)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC_BASE).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:74796a8af4e14a0d5d5c1cc58d3ec1ea6d488a04306dd6e8d32c11f0748d7232
-COMPONENT_ARCHIVE_URL=	https://media.inkscape.org/dl/resources/file/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:2000530c7917e5260c9e8575a7154ff6926643d2006487d714e304a963f0c782
+COMPONENT_ARCHIVE_URL=	https://inkscape.org/gallery/item/$(COMPONENT_ITEM_NO)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/inkscape
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv2, GPLv3
