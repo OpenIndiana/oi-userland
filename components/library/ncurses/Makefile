@@ -26,11 +26,13 @@
 # Copyright (c) 2020  Michal Nowak
 #
 
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
 COMPONENT_VERSION=	6.5
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A CRT screen handling and optimization package.
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
