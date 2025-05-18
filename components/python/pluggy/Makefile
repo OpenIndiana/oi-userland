@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pluggy
-HUMAN_VERSION =			1.5.0
-COMPONENT_SUMMARY =		pluggy - plugin and hook calling mechanisms for python
-COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pluggy
+HUMAN_VERSION =			1.6.0
+COMPONENT_SUMMARY =		plugin and hook calling mechanisms for python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1
+	sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,7 +41,7 @@ COMPONENT_TEST_ENV += _PLUGGY_TOX_CMD="python -m pytest"
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
