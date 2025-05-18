@@ -29,40 +29,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		font-misc-cyrillic
 COMPONENT_VERSION= 	1.0.3
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:e40fe3e3323c62b738550795457ad555c70c008aa91b5912dfd46f8e745f5e60
 
-COMPONENT_NAME_3=	font-winitzki-cyrillic
-COMPONENT_VERSION_3= 	1.0.3
-COMPONENT_ARCHIVE_HASH_3=	\
-	sha256:abd13b63d02fcaec488686c23683e5cf640b43bd32f8ca22eeae6f84df0a36a0
-
 # Use font-screen-cyrillic version number as solaris-userland does
 IPS_COMPONENT_VERSION= 1.0.4
-
-LIST = 3
-
-BUILD_TARGET = $(BUILD_$(MK_BITS))
-INSTALL_TARGET = $(INSTALL_$(MK_BITS))
-
-define extra-target-rules
-$(BUILD_DIR)/%_$(1)/.configured: SOURCE_DIR=$$(SOURCE_DIR_$(1))
-endef
-
-$(foreach n, $(LIST), \
-    $(eval COMPONENT_SRC_$(n) = $(COMPONENT_NAME_$(n))-$(COMPONENT_VERSION_$(n))) \
-    $(eval COMPONENT_ARCHIVE_$(n) = $(COMPONENT_SRC_$(n)).tar.bz2) \
-    $(eval COMPONENT_ARCHIVE_URL_$(n) = $$(COMPONENT_ARCHIVE_URL:$$(COMPONENT_ARCHIVE)=$(COMPONENT_ARCHIVE_$(n)))) \
-    $(eval BUILD_DIR_$(n) += $(BUILD_DIR_NO_ARCH)_$(n)) \
-    $(eval CONFIGURE_NO_ARCH += $(BUILD_DIR_$(n))/.configured) \
-    $(eval BUILD_NO_ARCH_$(n) += $(BUILD_DIR_$(n))/.built) \
-    $(eval $(BUILD_DIR_$(n))/.built: BITS=$(PREFERRED_BITS)) \
-    $(eval BUILD_TARGET += $(BUILD_NO_ARCH_$(n))) \
-    $(eval INSTALL_NO_ARCH_$(n) += $(BUILD_DIR_$(n))/.installed) \
-    $(eval INSTALL_TARGET += $(INSTALL_NO_ARCH_$(n))) \
-    $(eval $(call extra-target-rules,$(n))) \
-)
 
 include $(WS_MAKE_RULES)/font.mk
 
