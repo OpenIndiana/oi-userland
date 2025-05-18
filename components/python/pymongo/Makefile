@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.12.1
-COMPONENT_REVISION =		6
-COMPONENT_SUMMARY =		Python driver for MongoDB <http://www.mongodb.org>
+HUMAN_VERSION =			4.13.0
+COMPONENT_REVISION =		7
+COMPONENT_SUMMARY =		PyMongo - the Official MongoDB Python driver
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8921bac7f98cccb593d76c4d8eaa1447e7d537ba9a2a202973e92372a05bd1eb
+	sha256:92a06e3709e3c7e50820d352d3d4e60015406bcba69808937dac2a6d22226fde
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
