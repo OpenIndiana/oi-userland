@@ -20,27 +20,19 @@
 #
 
 #
-# Copyright (c) 2008, 2019, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2025 Marcel Telka
 #
 
-FONT_TYPE=X11
-BUILD_STYLE=configure
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		font-misc-cyrillic
-COMPONENT_VERSION= 	1.0.3
-COMPONENT_REVISION=	3
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:e40fe3e3323c62b738550795457ad555c70c008aa91b5912dfd46f8e745f5e60
+COMPONENT_NAME =		xorg-cyrillic
+COMPONENT_VERSION = 		2
+COMPONENT_SUMMARY =		Cyrillic bitmap fonts from X.Org Foundation
+COMPONENT_CLASSIFICATION =	System/Fonts
+COMPONENT_FMRI =		system/font/xorg/cyrillic
 
-# Use font-screen-cyrillic version number as solaris-userland does
-IPS_COMPONENT_VERSION= 1.0.4
-
-include $(WS_MAKE_RULES)/font.mk
-
-CYRILLIC_FONT_DIR = $(USRSHAREX11FONTSDIR)/cyrillic
-
-# Install to separate directory for easier packaging
-CONFIGURE_OPTIONS += --with-fontdir=$(CYRILLIC_FONT_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
