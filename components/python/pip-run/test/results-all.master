@@ -1,3 +1,5 @@
+$(PYTHON_DIR)/vendor-packages/coherent/licensed/setuptools.py:18: UserWarning: Avoid installing this plugin for projects that don't depend on it.
+  warnings.warn("Avoid installing this plugin for projects that don't depend on it.")
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
@@ -5,10 +7,9 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 75 items
+collecting ... collected 71 items
 
 conftest.py::mypy PASSED
-conftest.py::mypy-status PASSED
 docs/conf.py::mypy PASSED
 pip-run.py::mypy PASSED
 pip_run/__init__.py::mypy PASSED
@@ -19,7 +20,6 @@ pip_run/commands.py::pip_run.commands._separate_script PASSED
 pip_run/commands.py::pip_run.commands.infer_ipython PASSED
 pip_run/commands.py::pip_run.commands.separate PASSED
 pip_run/compat/py310.py::mypy PASSED
-pip_run/compat/py38.py::mypy PASSED
 pip_run/deps.py::mypy PASSED
 pip_run/deps.py::pip_run.deps.Install.__bool__ PASSED
 pip_run/deps.py::pip_run.deps.empty PASSED
@@ -35,7 +35,7 @@ pip_run/retention/destroy.py::mypy PASSED
 pip_run/retention/persist.py::mypy PASSED
 pip_run/retention/persist.py::pip_run.retention.persist.cache_key PASSED
 pip_run/scripts.py::mypy PASSED
-pip_run/scripts.py::pip_run.scripts.DepsReader.read_comments PASSED
+pip_run/scripts.py::pip_run.scripts.DepsReader.infer PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.read_python PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.read_toml PASSED
 .::project PASSED
@@ -71,9 +71,7 @@ tests/test_scripts.py::test_pkg_imported[#!/usr/bin/env python-.py-dash7] PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_reads_files_with_attribute_assignment PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_duplicate_definition PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_reads_files_with_multiple_assignment PASSED
-tests/test_scripts.py::TestSourceDepsReader::test_single_dep PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_index_url PASSED
-tests/test_scripts.py::TestSourceDepsReader::test_comment_style PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_toml_style PASSED
 tests/test_scripts.py::TestSourceDepsReader::test_search_long_parameter PASSED
 tests/test_scripts.py::TestNotebookDepsReader::test_one_code_block PASSED
@@ -82,10 +80,45 @@ tests/test_scripts.py::TestNotebookDepsReader::test_code_and_markdown PASSED
 tests/test_scripts.py::TestNotebookDepsReader::test_jupyter_directives PASSED
 tests/test_scripts.py::test_pkg_loaded_from_alternate_index PASSED
 tests/test_scripts.py::test_pkg_loaded_from_url PASSED
-
 ===================================== mypy =====================================
 
-Success: no issues found in 19 source files
-======== 74 passed, 1 skipped ========
+Success: no issues found in 18 source files
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+
+Name                                                                           Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------------------------------
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e0/script             2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e1/script             2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e2/script.py          2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e3/script.py          2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___dash1_0/script                 2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___py_dash2_0/script.py           2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___py_dash3_0/script.py           2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_loaded_from_alternate0/script             4      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_pkg_loaded_from_url0/script_dir/script        3      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_with_path0/sitecustomize.py                   2      0   100%
+/tmp/pytest-of-marcel/pytest-27/test_with_path_result_code0/sitecustomize.py       2      0   100%
+conftest.py                                                                       32      0   100%
+docs/conf.py                                                                      16      0   100%
+pip-run.py                                                                         2      0   100%
+pip_run/__init__.py                                                                8      0   100%
+pip_run/__main__.py                                                                2      0   100%
+pip_run/commands.py                                                               34      0   100%
+pip_run/compat/py310.py                                                            4      1    75%   11
+pip_run/deps.py                                                                   49      0   100%
+pip_run/launch.py                                                                 37      0   100%
+pip_run/read-deps.py                                                              11      0   100%
+pip_run/retention/__init__.py                                                      0      0   100%
+pip_run/retention/destroy.py                                                       7      0   100%
+pip_run/retention/persist.py                                                      23      0   100%
+pip_run/scripts.py                                                                93      0   100%
+tests/test_commands.py                                                            19      0   100%
+tests/test_deps.py                                                                14      0   100%
+tests/test_launch.py                                                              30      0   100%
+tests/test_scripts.py                                                            103      0   100%
+------------------------------------------------------------------------------------------------------------
+TOTAL                                                                            509      1    99%
+======== 70 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

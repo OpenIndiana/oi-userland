@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip_run
-HUMAN_VERSION =			13.0.0
+HUMAN_VERSION =			16.0.0
 COMPONENT_SUMMARY =		install packages and run Python with them
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67cf7f0e8eb1fab96e1743128d759f4d9d4a9dff17b7bc20f86f03a3ed73e841
+	sha256:d8c36fd14a37daf9b46d12fc03050c6ea5cdf0d71db38c704cf0ddbda929450d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,14 +33,13 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(subst .,,$(PYTHON_VERSI
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-deps
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-env
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/path
-PYTHON_REQUIRED_PACKAGES += library/python/pip
 PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
