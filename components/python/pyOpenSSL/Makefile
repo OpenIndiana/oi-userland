@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyopenssl
-HUMAN_VERSION =			25.0.0
+HUMAN_VERSION =			25.1.0
 COMPONENT_SUMMARY =		Python wrapper module around the OpenSSL library
 COMPONENT_PROJECT_URL =		https://pyopenssl.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd2cef799efa3936bb08e8ccb9433a575722b9dd986023f1cabc4ae64e9dac16
+	sha256:8d031884482e0c67ee92bf9a4d8cceb08d92aba7136432ffb0703c5280fc205b
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
