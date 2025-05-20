@@ -14,7 +14,8 @@
 #
 
 BUILD_STYLE=	justmake
-
+JAVA_VERSION= 8
+JAVA_HOME= /usr/jdk/openjdk8
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jxrlib
