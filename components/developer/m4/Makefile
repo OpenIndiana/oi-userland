@@ -24,41 +24,38 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		m4
-COMPONENT_VERSION=	1.4.19
-COMPONENT_FMRI=	developer/macro/gnu-m4
+COMPONENT_VERSION=	1.4.20
 COMPONENT_SUMMARY=	GNU m4
-COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/m4/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3be4a26d825ffdfda52a56fc43246456989a3630093cced3fbddf4771ee58a70
+COMPONENT_ARCHIVE_HASH= sha256:6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=	developer/macro/gnu-m4
+COMPONENT_CLASSIFICATION=	Development/GNU
 COMPONENT_LICENSE=	GPLv3, FDLv1.2
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE= $(ASLR_ENABLE)
 
-CONFIGURE_PREFIX =	/usr/gnu
-CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CFLAGS += $(XPG6MODE)
+
+CONFIGURE_PREFIX= /usr/gnu
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
 # Note that stackovf.test may fail on SPARC platform.
 # The update of libsigsegv library might resolve this failure.
-COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-all.master
 
 # The Makefile in the checks directory has different targets for the
 # equivalent of "gmake test" and "gmake system-test".
-COMPONENT_TEST_DIR =            $(@D)/checks
-COMPONENT_TEST_TARGETS =        check-local
-
-COMPONENT_SYSTEM_TEST_DIR =     $(@D)/checks
-COMPONENT_SYSTEM_TEST_TARGETS = installcheck
+COMPONENT_TEST_DIR=     $(@D)/checks
+COMPONENT_TEST_TARGETS= check-local
 
 COMPONENT_TEST_TRANSFORMS += \
 		'-e "/^Making check.*/d"' \
@@ -69,6 +66,9 @@ COMPONENT_TEST_TRANSFORMS += \
     	'-e "/m4-tmp/d"' \
     	'-e "/Killed/d"' \
     	'-e "/^make/d"'
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += library/libsigsegv
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
