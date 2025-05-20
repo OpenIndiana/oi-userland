@@ -29,13 +29,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.7
+COMPONENT_VERSION=      2.4.8
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46
+COMPONENT_ARCHIVE_HASH= sha256:b58c80d79b04d3243ff49c1c3fc6b5f83138eb3784689563bcdd060595318616
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -53,6 +53,9 @@ CFLAGS += -I/usr/include/openldap
 # want that, because we use POSIX threads).
 LDFLAGS += -lc -z defs -lsocket -lnsl
 LD_OPTIONS += -z defs
+
+# This is needed because we disable some failing tests
+COMPONENT_PREP_ACTION= ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
