@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests/
-collecting ... collected 1356 items
+collecting ... collected 1359 items
 
 tests/test_abc.py::test_abc_inheritance PASSED
 tests/test_abc.py::test_multidict_inheritance[case-sensitive-c-extension-module] PASSED
@@ -755,6 +755,7 @@ tests/test_mutable_multidict.py::TestMutableMultiDict::test_extend_from_proxy[pu
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_clear[pure-python-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_del[pure-python-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_set_default[pure-python-module] PASSED
+tests/test_mutable_multidict.py::TestMutableMultiDict::test_set_default_single_arg[pure-python-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_popitem[pure-python-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_popitem_empty_multidict[pure-python-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_pop[pure-python-module] PASSED
@@ -1272,6 +1273,7 @@ tests/test_mutable_multidict.py::TestMutableMultiDict::test_extend_from_proxy[c-
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_clear[c-extension-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_del[c-extension-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_set_default[c-extension-module] PASSED
+tests/test_mutable_multidict.py::TestMutableMultiDict::test_set_default_single_arg[c-extension-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_popitem[c-extension-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_popitem_empty_multidict[c-extension-module] PASSED
 tests/test_mutable_multidict.py::TestMutableMultiDict::test_pop[c-extension-module] PASSED
@@ -1345,6 +1347,7 @@ tests/test_leaks.py::test_leak[multidict_extend_multidict.py] PASSED
 tests/test_leaks.py::test_leak[multidict_extend_tuple.py] PASSED
 tests/test_leaks.py::test_leak[multidict_update_multidict.py] PASSED
 tests/test_multidict.py::test_create_multidict_from_existing_multidict_new_pairs PASSED
+tests/test_multidict.py::test_view_direct_instantiation_segfault PASSED
 tests/test_mypy.py::test_classes_not_abstract PASSED
 tests/test_mypy.py::test_getitem PASSED
 tests/test_mypy.py::test_get PASSED
@@ -1369,17 +1372,17 @@ _______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 Name                                                                                                                                         Stmts   Miss Branch BrPart  Cover   Missing
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/multidict/_compat.py             8      0      2      1    90%   10->exit
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/multidict/_multidict_py.py     607      1    270      3    99%   30, 63->exit, 601->606
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/multidict/_multidict_py.py     636      1    280      2    99%   29, 573->578
 $(PYTHON_DIR)/vendor-packages/multidict/_compat.py                                                                                          8      0      2      1    90%   10->exit
-$(PYTHON_DIR)/vendor-packages/multidict/_multidict_py.py                                                                                  607    607    270      0     0%   1-889
+$(PYTHON_DIR)/vendor-packages/multidict/_multidict_py.py                                                                                  607    607    270      0     0%   1-888
 multidict-RENAMED/__init__.py                                                                                                                   13     13      0      0     0%   8-59
 multidict-RENAMED/_abc.py                                                                                                                       24     24      0      0     0%   1-68
 multidict-RENAMED/_compat.py                                                                                                                     8      8      2      0     0%   1-12
-multidict-RENAMED/_multidict_py.py                                                                                                             607    607    270      0     0%   1-888
+multidict-RENAMED/_multidict_py.py                                                                                                             636    636    280      0     0%   1-947
 tests/conftest.py                                                                                                                               79      8      6      1    87%   190-200
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                         3825   1268    872      6    61%
+TOTAL                                                                                                                                         3967   1297    892      5    62%
 
 22 files skipped due to complete coverage.
 ============================= slowest 10 durations =============================
-======== 1356 passed ========
+======== 1359 passed ========
