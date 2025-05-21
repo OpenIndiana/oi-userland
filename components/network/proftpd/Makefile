@@ -26,14 +26,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
-COMPONENT_VERSION=	1.3.8
-COMPONENT_SUBVERSION=	c
+COMPONENT_VERSION=	1.3.9
 HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=	http://www.proftpd.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2a48f2ca338456e750d2373bf671025ed799e04e0baa16c7bb8dbfd67d8734d2
+    sha256:4a5f13b666226813b4da0ade34535d325e204ab16cf8008c7353b1b5a972f74b
 COMPONENT_ARCHIVE_URL=	ftp://ftp.proftpd.org/distrib/source/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -60,6 +59,9 @@ LDFLAGS +=	$(CC_BITS)
 CFLAGS  += -I$(OPENSSL_INCDIR)
 LDFLAGS += -L$(OPENSSL_LIBDIR)
 
+# Needed for dprintf
+CFLAGS += $(XPG7MODE)
+
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
 # Force immediate binding because of chroot().
@@ -68,7 +70,7 @@ CONFIGURE_OPTIONS +=	install_user=`id -nu`
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=/var/run
-CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBDIR)/proftpd
+CONFIGURE_OPTIONS +=	--libexecdir=$(USRLIBEXECDIR)/proftpd
 CONFIGURE_OPTIONS +=	--enable-ipv6
 CONFIGURE_OPTIONS +=	--enable-ctrls
 CONFIGURE_OPTIONS +=	--enable-facl
@@ -88,7 +90,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	cd $(BUILD_DIR) && \
 	/usr/gnu/bin/tar xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
 	cd $(COMPONENT_SRC_1) && \
-	$(GPATCH) < ../../mod_gss-patches/002.27914767.patch ; \
+	$(GPATCH) < ../../mod_gss-patches/02.27914767.patch ; \
+	$(GPATCH) < ../../mod_gss-patches/end_login.patch ; \
 	$(CP) $(COMPONENT_DIR)/krb5-config $(BUILD_DIR) && \
 	chmod u+x $(BUILD_DIR)/krb5-config && \
 	./configure CC="$(CC)" CFLAGS="$(CC_BITS) -I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
