@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		flex
 COMPONENT_VERSION=	2.6.4
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://github.com/westes/flex/releases
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,9 +37,7 @@ COMPONENT_ARCHIVE_URL=	https://github.com/westes/flex/releases/download/v$(COMPO
 
 LDFLAGS += $(CC_BITS)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -57,14 +56,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/FAIL/p" ' \
 	'-e "/ERROR/p" '
 
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64) 
-
-test:		$(TEST_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += developer/macro/gnu-m4
-REQUIRED_PACKAGES += developer/build/help2man
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
