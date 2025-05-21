@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      30.1
+COMPONENT_REVISION=		1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -55,11 +56,6 @@ $(VARIANTS:%=%/.configured):	BITS=64
 BUILD_64= $(VARIANTS:%=%/.built)
 INSTALL_64= $(VARIANTS:%=%/.installed)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
 CFLAGS += $(shell pkg-config --cflags lcms2)
 
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
@@ -69,6 +65,9 @@ LD_MAP_NOEXDATA.sparc=
 
 # LDFLAGS is defined for emacs to detect ncurses
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
+
+# We have patched configure.ac for newer webkitgtk2 support
+COMPONENT_PREP_ACTION = ( cd ${@D} && NOCONFIGURE=1 ./autogen.sh )
 
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
@@ -116,7 +115,7 @@ LD_OPTIONS+= $(ASLR_MODE)
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
-$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3
+$(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
 # we need to build all variants, but only have to install one in order
 # to get the common files shared by all. We use COMPONENT_POST_INSTALL_ACTION
@@ -233,7 +232,7 @@ install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 clean::
 	$(RM) $(COMPONENT_DIR)/site-start.el
 
-# build dependencies.
+# Manually added build dependencies.
 REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
@@ -249,6 +248,7 @@ REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/pango
+REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
