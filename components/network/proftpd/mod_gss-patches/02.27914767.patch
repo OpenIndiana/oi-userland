@@ -1,0 +1,56 @@
+#
+# This patch combines two fixes found in upstream:
+#	https://github.com/huaraz/gssmod/pull/3
+#	https://github.com/huaraz/gssmod/pull/4
+# Pull request #3 enables IPv6 support in mod_gss Pull request #4 fixes
+# handling of IPv4 address mapped to IPv6 address. Both changes when
+# combined make mod_gss bundled with 1.3.6 to work in the same way
+# like mod_gss bundled with 1.3.5. No configuration workarounds are
+# needed.
+#
+diff --git a/mod_gss/mod_gss/mod_gss.c.in b/mod_gss/mod_gss/mod_gss.c.in
+index 2e02cc9..9538065 100644
+--- a/mod_gss/mod_gss/mod_gss.c.in
++++ b/mod_gss/mod_gss/mod_gss.c.in
+@@ -2825,12 +2825,31 @@ void gss_switch_keytab(char *keytab_file, int sflag){
+     }
+ }
+ 
++static void *get_v4inaddr(const pr_netaddr_t *na) {
++  /*
++   * The function was stolen from proftpd/src/netaadr.c. The proftpd
++   * defines get_v4inaddr() as static, hence we can not expect linker
++   * to see it.
++   * 
++   * This function is specifically for IPv4 clients (when gethostbyname2(2) is
++   * present) that have an IPv4-mapped IPv6 address, when performing reverse
++   * DNS checks.  This function is called iff the given netaddr object is
++   * indeed an IPv4-mapped IPv6 address.  IPv6 address have 128 bits in their
++   * sin6_addr field.  For IPv4-mapped IPv6 addresses, the relevant 32 bits
++   * are the last of those 128 bits (or, alternatively, the last 4 bytes of
++   * those 16 bytes); hence the read of 12 bytes after the start of the
++   * sin6_addr pointer.
++   */
++
++  return (((char *) pr_netaddr_get_inaddr(na)) + 12);
++}
++
+ /* Set channel bindings
+  */
+ static void gss_set_channel_bindings(gss_channel_bindings_t chan,OM_uint32 af_inet6) {
+ 
+ 	switch (pr_netaddr_get_family(session.c->remote_addr)) {
+-#ifdef USE_IPV6
++#ifdef PR_USE_IPV6
+             case AF_INET6:
+                 pr_log_debug(DEBUG9, "GSSAPI Channel Binding: remote %sIPv6 family",pr_netaddr_is_v4mappedv6(session.c->remote_addr)?"IPv4 mapped in ":"");
+                 if (pr_netaddr_is_v4mappedv6(session.c->remote_addr)) {
+@@ -2855,7 +2874,7 @@ static void gss_set_channel_bindings(gss_channel_bindings_t chan,OM_uint32 af_in
+         }
+ 
+         switch (pr_netaddr_get_family(session.c->local_addr)) {
+-#ifdef USE_IPV6
++#ifdef PR_USE_IPV6
+             case AF_INET6:
+                 pr_log_debug(DEBUG9, "GSSAPI Channel Binding: local %sIPv6 family",pr_netaddr_is_v4mappedv6(session.c->local_addr)?"IPv4 mapped in ":"");
+                 if (pr_netaddr_is_v4mappedv6(session.c->remote_addr)) {

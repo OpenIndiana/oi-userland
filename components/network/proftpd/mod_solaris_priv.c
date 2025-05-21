@@ -261,7 +261,7 @@ MODRET solaris_priv_post_passwd(cmd_rec *cmd, unsigned int priv_flags) {
     priv_freeset(i);
     priv_freeset(p);
     pr_signals_unblock();
-    end_login(1);
+    pr_session_end(1);
   }
 
 out:
