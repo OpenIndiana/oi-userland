@@ -20,10 +20,13 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gts
 COMPONENT_VERSION=	0.7.6
+COMPONENT_REVISION=	1
 COMPONENT_SNAPSHOT_VERSION=	121130
 COMPONENT_FMRI=     	library/math/gts
 COMPONENT_SRC=		$(COMPONENT_NAME)-snapshot-$(COMPONENT_SNAPSHOT_VERSION)
@@ -35,9 +38,7 @@ COMPONENT_LICENSE=      GPLv2
 COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_SUMMARY=     	GNU Triangulated Surface Library 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL=0
 
@@ -45,15 +46,9 @@ CONFIGURE_OPTIONS+=	--includedir=$(USRINCDIR)/$(COMPONENT_NAME)
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
 
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
