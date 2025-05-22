@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_inspection
-HUMAN_VERSION =			0.4.0
+HUMAN_VERSION =			0.4.1
 COMPONENT_SUMMARY =		Runtime typing introspection tools
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/typing-inspection
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9765c87de36671694a67904bf2c96e395be9c6439bb6c87b5142569dcdd65122
+	sha256:6ae134cc0203c33377d43188d4064e9b357dba58cff3185f22924610e70a9d28
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
