@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coherent_deps
-HUMAN_VERSION =			1.5.1
+HUMAN_VERSION =			1.6.0
 COMPONENT_SUMMARY =		Utilities for resolving imports to dependencies.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:82e2070811cff37d0901a89634d4836c9d8ffcfe6089b7ff7046d7b94660402d
+	sha256:d833b5a18fdbdf8638af151468eb593d0dca489c838a231d0744b88ce0b63aa9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
