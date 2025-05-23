@@ -500,11 +500,6 @@ PYTEST_ADDOPTS += $(PYTEST_FASTFAIL)
 PYTEST_TRACEBACK = --tb=line
 PYTEST_ADDOPTS += $(PYTEST_TRACEBACK)
 
-# Suppress the unnecessary warning that pollutes the test results and is
-# causing many tests to fail.
-# See also https://github.com/coherent-oss/coherent.licensed/issues/6
-PYTEST_ADDOPTS += -W "ignore:Avoid installing this plugin for projects that don't depend on it.::coherent.licensed.setuptools"
-
 # Normalize pytest test results.  The pytest framework could be used either
 # directly or via tox or setup.py so add these transforms for all test styles
 # unconditionally.

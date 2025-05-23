@@ -1,0 +1,17 @@
+Drop the unnecessary warning.  It causes many tests to fail.  We found no other
+way how to disable it reliably.
+
+See also https://github.com/coherent-oss/coherent.licensed/issues/6
+
+--- coherent_licensed-0.4.1/coherent/licensed/setuptools.py.orig
++++ coherent_licensed-0.4.1/coherent/licensed/setuptools.py
+@@ -8,9 +8,6 @@
+ 
+ 
+ def warn_if_false(enabled):
+-    enabled or warnings.warn(
+-        "Avoid installing this plugin for projects that don't depend on it."
+-    )
+     return enabled
+ 
+ 
