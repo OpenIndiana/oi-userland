@@ -14,13 +14,12 @@
 # Copyright 2023 Karlson2k (Evgeny Grin) <k2k@narod.ru>
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmicrohttpd
 COMPONENT_VERSION=	0.9.77
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GNU libmicrohttpd is a small HTTP server as a C library
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libmicrohttpd/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
