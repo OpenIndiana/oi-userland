@@ -18,12 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xcursorgen
-COMPONENT_VERSION=        1.0.8
+COMPONENT_VERSION=        1.0.9
 COMPONENT_SUMMARY=        xcursorgen - create an X cursor file from a collection of PNG images
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:32b33ce27b4e285e64ff375731806bb7988cc626ff10915c65f1dc4da640cc9b
+COMPONENT_ARCHIVE_HASH=   sha256:0cc9e156ac84ca16ea902710af35e0faffa51d13797071e3b4b6cc7cbd493bbc
 COMPONENT_FMRI=           image/xcursorgen
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
