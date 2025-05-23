@@ -1,0 +1,26 @@
+
+illumos does not have HOST_NAME_MAX, but we have _POSIX_HOST_NAME_MAX, however
+_POSIX_HOST_NAME_MAX i defined to 255 and HOST_NAME_MAX is defined to 64
+
+--- trousers-0.3.15/src/tspi/tsp_tcsi_param.c.orig	2020-05-28 09:01:45.000000000 +0300
++++ trousers-0.3.15/src/tspi/tsp_tcsi_param.c	2025-05-21 22:25:12.489304028 +0300
+@@ -16,7 +16,7 @@
+ #ifndef __APPLE__
+ #include <limits.h>
+ #else
+-#define HOST_NAME_MAX 64
++#define _POSIX_HOST_NAME_MAX 255
+ #endif
+ 
+ #include "trousers/tss.h"
+@@ -116,8 +116,8 @@
+ 
+ 	LogDebug("Environment var %s got value: %s", HOSTNAME_ENV_VAR, tmp_str);
+ 	env_len = strlen(tmp_str);
+-	if (env_len > HOST_NAME_MAX) {
+-		*len = HOST_NAME_MAX + 1;
++	if (env_len > _POSIX_HOST_NAME_MAX) {
++		*len = _POSIX_HOST_NAME_MAX + 1;
+ 	} else {
+ 		*len = env_len + 1;
+ 	}
