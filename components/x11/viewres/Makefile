@@ -18,14 +18,21 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     viewres
-COMPONENT_VERSION=  1.0.7
+COMPONENT_VERSION=  1.0.8
 COMPONENT_SUMMARY=  viewres - Xt widget class browser
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b15a62085b1a10f55ae1cf17b7ded75b72b21be240c68071685db377c4afc628
+COMPONENT_ARCHIVE_HASH= sha256:4b221c2b103390b166633612b9abf8036cbbe90605dbd8a37cf2a377fa2b6cd2
 COMPONENT_FMRI=     x11/viewres
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxmu
+REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
+REQUIRED_PACKAGES += x11/library/toolkit/libxt
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxmu
