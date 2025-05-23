@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         trousers
 COMPONENT_VERSION=      0.3.11.2
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_SUMMARY=	TrouSerS TCG software to access a TPM device
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -50,6 +50,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 LIBS = -lnsl -lsocket -lgen -lscf -lbsm -lresolv
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT
+CFLAGS += -Wno-implicit-function-declaration -Wno-incompatible-pointer-types
 
 LDFLAGS += $(CC_BITS)
 
