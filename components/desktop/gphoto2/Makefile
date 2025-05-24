@@ -13,11 +13,11 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2022 Andreas Wacknitz
 #
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gphoto2
 COMPONENT_VERSION= 2.5.28
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Digital camera utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL = https://github.com/gphoto/
@@ -36,20 +36,13 @@ PATH=$(PATH.gnu)
 
 CFLAGS+= -std=c99 $(CPP_XPG6MODE)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
-
-unexport SHELLOPTS
-
 # test031 fails
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/libgphoto2-2
 REQUIRED_PACKAGES += library/popt
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library
