@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tornado
-HUMAN_VERSION =			6.5
+HUMAN_VERSION =			6.5.1
 COMPONENT_SUMMARY =		Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
 COMPONENT_PROJECT_URL =		http://www.tornadoweb.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c70c0a26d5b2d85440e4debd14a8d0b463a0cf35d92d3af05f5f1ffa8675c826
+	sha256:84ceece391e8eb9b2b95578db65e920d2a61070260594819589609ba9bc6308c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
