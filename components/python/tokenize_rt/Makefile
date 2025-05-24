@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project tokenize_rt
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tokenize_rt
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.2.0
 COMPONENT_SUMMARY =		A wrapper around the stdlib \`tokenize\` which roundtrips.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/tokenize-rt
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/tokenize-rt/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67d25a612c7c08ddfa0ed273c81e9d180142a31b53141b0ee242d16fe5d4b641
+	sha256:31bb2c9c5a954cb6c29d60218f83ea07be08faac5e2f4431d0463f9adb63fb6e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,7 +38,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
