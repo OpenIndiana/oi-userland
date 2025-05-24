@@ -12,18 +12,18 @@
 # Copyright 2016 Andrey Sokolov. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2021 Olaf Bohlen
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2025 Friedrich Kink
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	22.2.0
+COMPONENT_VERSION=	22.4.1
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1e217bc25fa722964d5ae8745da31e6aa77a7b9430b77d1f3520185308490d90
+COMPONENT_ARCHIVE_HASH=	sha256:92a6312edb3db16bbd1126423fb88517dca2408d681d53cf09939cb299b4b894
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -34,10 +34,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS) 
 include $(WS_MAKE_RULES)/common.mk
 
-# Sub-projects fail to build with gcc-14
-GCC_VERSION= 13
-
-CFLAGS += -m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD
+CFLAGS += -m64 -I/usr/include/odbc -I$(OPENSSL_PREFIX)/include -DHAVE_OPENSSL_BIO_METHOD -DHAVE_GETHOSTBYNAME_R_5
 CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap
 LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR)
 
@@ -55,9 +52,12 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
 # contrib/scripts/get_mp3_source.sh
 # therefore exclude
 #	./menuselect/menuselect --enable format_mp3 menuselect.makeopts; \
+# the additional alloca.h includes make gcc14 happy
 
 COMPONENT_POST_CONFIGURE_ACTION += ( \
 	cd $(@D); \
+	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt.c; \
+	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt-openssl.c; \
 	$(GSED) -i -e 's:LDAP_INCLUDE=:LDAP_INCLUDE=-I/usr/include/openldap:' makeopts; \
 	$(GSED) -i -e 's:-L/usr/lib/amd64::g' makeopts; \
 	$(GSED) -i -e 's/ -lldap-2.6//' makeopts; \
