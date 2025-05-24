@@ -11,17 +11,18 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
+CONFIGURE_DEFAULT_DIRS=no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= openjade
-COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 6
+COMPONENT_VERSION= 1.3.3
 COMPONENT_SUMMARY= OpenJade DSSSL-Engine for SGML documents
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)-pre1
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1d2d7996cc94f9b87d0c51cf0e028070ac177c4123ecbfd7ac1cb8d0b7d322d1
+COMPONENT_ARCHIVE_HASH= sha256:a15bbed48a4a6bc50d17abdb5e101eb1c60ba1ed52d5a0aff52f2d3aef9568e4
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/openjade/files/openjade/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjade.sourceforge.net/
 COMPONENT_FMRI=			developer/documentation-tool/openjade
@@ -31,7 +32,6 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 # openjade segfaults in libostyle.so when compiled using gcc 10 or later.
 # This needs to be defined before include common.mk otherwise USERLAND_REQUIRED_PACKAGES won't be correct.
-GCC_VERSION= 7
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,9 +46,6 @@ COMPONENT_PREP_ACTION= ( \
 	aclocal -I config &&\
 	autoconf --force )
 
-# The linker is too agressive
-LD_Z_IGNORE=
-
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
@@ -57,8 +54,8 @@ CONFIGURE_SCRIPT = $(@D)/configure
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-spincludedir=$(USRINCDIR)/OpenSP
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)/sgml/openjade
+CONFIGURE_OPTIONS += --libdir=$(USRLIBDIR64)
 CONFIGURE_OPTIONS += --enable-splibdir=$(USRLIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --disable-http
 CONFIGURE_OPTIONS += --enable-mif
 CONFIGURE_OPTIONS += --enable-default-catalog="CATALOG:/etc/sgml/catalog:$(USRSHAREDIR)/sgml/CATALOG"
 CONFIGURE_OPTIONS += LINKFLAGS="$(LDFLAGS)"
