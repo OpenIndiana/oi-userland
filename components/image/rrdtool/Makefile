@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rrdtool
 COMPONENT_VERSION=	1.9.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Data analysis tool generating graphical representations
 COMPONENT_DESCRIPTION=	RRDtool is the OpenSource industry standard, high performance data \
 			logging and graphing system for time series data. RRDtool can be \
@@ -78,6 +79,7 @@ REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libdbi
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
