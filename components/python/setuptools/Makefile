@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			80.4.0
+HUMAN_VERSION =			80.8.0
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5a78f61820bc088c8e4add52932ae6b8cf423da2aff268c23f813cfbb13b4006
+	sha256:49f7af965996f26d43c8ae34539c8d99c5042fbff34302ea151eaa9c207cd257
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,6 +48,12 @@ TEST_CONFLICTING_PACKAGES.python += library/python/nose
 
 # fails with tox-current-env
 PYTEST_ADDOPTS += --deselect setuptools/tests/test_core_metadata.py::TestParityWithMetadataFromPyPaWheel::test_equivalent_output
+
+# https://github.com/coherent-oss/coherent.licensed/issues/9
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml.py::TestClassifiers::test_dynamic_readme_from_setup_script_args
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_dependencies
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_optional_dependencies
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_mixed_extras_require_optional_dependencies
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
