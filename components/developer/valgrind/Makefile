@@ -30,12 +30,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.25.0
+COMPONENT_VERSION=	3.25.1
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:295f60291d6b64c0d90c1ce645634bdc5361d39b0c50ecf9de6385ee77586ecc
+COMPONENT_ARCHIVE_HASH=	sha256:61deb8d0727b45c268efdc1b3b6c9e679cd97cbf5ee4b28d1dead7c8b7a271af
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
@@ -45,17 +45,16 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Use GNU utilities
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Flags are inferred from CC and tests rely on sigaction
 CFLAGS= -D__EXTENSIONS__
 CXXFLAGS= -D__EXTENSIONS__
 LDFLAGS=
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
@@ -69,8 +68,7 @@ COMPONENT_PREP_ACTION += ( cd $(@D) && ./autogen.sh )
 # config.h is generated in the build directory while it is assumed to live in the source dir
 COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
 
-COMPONENT_POST_BUILD_ACTION += \
-	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
+COMPONENT_POST_BUILD_ACTION += ( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
 
 #
 # currently 3.25.0
