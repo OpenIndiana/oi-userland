@@ -177,7 +177,7 @@ poll_entLastChangeTime()
 		 * after the last trap was sent.  If anything was suppressed,
 		 * a trap will be sent.
 		 */
-		creg = snmp_alarm_register(TRAP_THROTTLE_PERIOD_SECS, NULL,
+		creg = snmp_alarm_register(TRAP_THROTTLE_PERIOD_SECS, 0,
 					   alarm_entLastChangeTime, NULL);
 		/* End of Fix for 4929068 */
 	}
