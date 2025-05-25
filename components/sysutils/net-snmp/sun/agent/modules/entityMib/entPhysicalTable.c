@@ -559,7 +559,7 @@ allocPhysicalEntry(int physidx, entPhysicalEntry_t * newPhysEntry)
 
     /* Fix for 4921309 */
     if (physidx < 0 || physidx > MAX_ENTITY_INDEX)
-        return NULL;
+        return 0;
     /* End of Fix for 4921309 */
 
     /* Fix for 4884681: Check entPhysicalClass and make sure that it
