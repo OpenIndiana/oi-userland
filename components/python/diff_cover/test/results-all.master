@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 307 items
+collecting ... collected 315 items
 
 tests/test_clover_violations_reporter.py::test_get_src_path_clover PASSED
 tests/test_config_parser.py::TestTOMLParser::test_parse_no_toml_file[Tool.DIFF_COVER] PASSED
@@ -26,6 +26,10 @@ tests/test_diff_cover_main.py::test_parse_range_notation PASSED
 tests/test_diff_cover_tool.py::test_parse_with_html_report PASSED
 tests/test_diff_cover_tool.py::test_parse_with_no_report PASSED
 tests/test_diff_cover_tool.py::test_parse_with_multiple_reports PASSED
+tests/test_diff_cover_tool.py::test_parse_with_multiple_old_reports PASSED
+tests/test_diff_cover_tool.py::test_parse_mixing_new_with_old_reports[old_report0-Cannot use along with --format html] PASSED
+tests/test_diff_cover_tool.py::test_parse_mixing_new_with_old_reports[old_report1-Cannot use along with --format json] PASSED
+tests/test_diff_cover_tool.py::test_parse_mixing_new_with_old_reports[old_report2-Cannot use along with --format markdown] PASSED
 tests/test_diff_cover_tool.py::test_parse_with_ignored_unstaged PASSED
 tests/test_diff_cover_tool.py::test_parse_invalid_arg PASSED
 tests/test_diff_cover_tool.py::test_parse_with_include PASSED
@@ -93,6 +97,7 @@ tests/test_git_diff.py::test_untracked[-expected0] PASSED
 tests/test_git_diff.py::test_untracked[\n-expected1] PASSED
 tests/test_git_diff.py::test_untracked[a.py\n-expected2] PASSED
 tests/test_git_diff.py::test_untracked[a.py\nb.py\n-expected3] PASSED
+tests/test_git_diff.py::test_git_diff_tool_untracked_cache PASSED
 tests/test_git_diff_file.py::test_diff_file_not_found PASSED
 tests/test_git_diff_file.py::test_large_diff_file PASSED
 tests/test_git_diff_file.py::test_diff_committed PASSED
@@ -104,6 +109,7 @@ tests/test_git_path.py::test_set_cwd_unicode PASSED
 tests/test_git_path.py::test_set_cwd_unicode_byte_passed_in_for_cwd PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_added_file_html PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_added_file_console PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_all_reports PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_added_file_console_lcov PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_lua_coverage PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_fail_under_console PASSED
@@ -132,6 +138,7 @@ tests/test_integration.py::TestDiffCoverIntegration::test_expand_coverage_report
 tests/test_integration.py::TestDiffCoverIntegration::test_expand_coverage_report_uncomplete_report PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_git_diff_error_diff_quality PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_added_file_pycodestyle_html PASSED
+tests/test_integration.py::TestDiffQualityIntegration::test_all_reports PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_added_file_pyflakes_html PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_added_file_pylint_html PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_fail_under_html PASSED
@@ -312,5 +319,6 @@ tests/test_violations_reporter.py::TestSimpleCommandTestCase::test_run_simple_fa
 tests/test_violations_reporter.py::TestSimpleCommandTestCase::test_run_simple_success PASSED
 tests/test_violations_reporter.py::TestSubprocessErrorTestCase::test_quality_reporter PASSED
 tests/test_violations_reporter.py::TestCppcheckQualityDriverTest::test_parse_report PASSED
+tests/test_violations_reporter.py::TestRuffCheckQualityDriverTest::test_quality PASSED
 
-======== 307 passed ========
+======== 315 passed ========
