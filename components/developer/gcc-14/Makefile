@@ -13,14 +13,14 @@
 #
 
 USE_PARALLEL_BUILD= yes
+BOOTSTRAP_COMPONENT= no
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 14.2.0
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 14.3.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:201c92bf612ab0a357fdbb3db312f720eefaa49d6ce02825bbb5468d5ee1d07a
+COMPONENT_ARCHIVE_HASH= sha256:f96f6dd42443b9920478c9e4de49d3d5609fff36c67d5b490ded2e0101bfc053
 
 MPFR_VERSION= 4.2.1
 MPFR_ARCHIVE_HASH= sha256:b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0
@@ -33,8 +33,13 @@ GMP_ARCHIVE_HASH= sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b0
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
+ifeq ($(COMPONENT_BOOTSTRAP),yes)
 CC=/usr/gcc/13/bin/gcc
 CXX=/usr/gcc/13/bin/g++
+else
+CC=/usr/gcc/$(GCC_MAJOR)/bin/gcc
+CXX=/usr/gcc/$(GCC_MAJOR)/bin/g++
+endif
 
 # Use gcc's default flags
 CFLAGS=
@@ -78,8 +83,9 @@ CONFIGURE_OPTIONS += enable_frame_pointer=yes
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 COMPONEMT_TEST_TRANSFORMS= -n \
+	"-e '/Running/p' " \
 	"-e '/Summary/p' " \
-	"-e '/\# of/p "
+	"-e '/\# of/p' "
 
 PKG_HARDLINKS += usr/gcc/$(GCC_MAJOR)/bin/g++
 PKG_HARDLINKS += usr/gcc/$(GCC_MAJOR)/bin/gcc
