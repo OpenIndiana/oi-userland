@@ -23,8 +23,8 @@
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2022 Friedrich Kink
-# Copyright 2023 Klaus Ziegler
 # Copyright 2023 Niklas Poslovski
+# Copyright 2023-2025 Klaus Ziegler
 #
 
 BUILD_BITS=64_and_32
@@ -34,7 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -62,6 +62,9 @@ PATH= $(PATH.gnu)
 DOXYGEN= /usr/bin/doxygen
 
 CONFIGURE_ENV.64 += PERL=$(PERL)
+
+# make gcc-14 happy.
+CFLAGS += -Wno-incompatible-pointer-types
 
 # Make sure generated files from build dir are used instead of files already
 # installed in /usr/include
@@ -121,7 +124,7 @@ COMPONENT_PRE_CONFIGURE_ACTION= \
 
 ARCH= $(BITS:64=$(MACH64))
 
-CCSMAKE_ARGS= CC="$(CC)" CFLAGS="-I. -fpic $(gcc_OPT)" CFGPREFIX=$(USRDIR)
+CCSMAKE_ARGS= CC="$(CC)" CFLAGS="-I. -fpic $(gcc_OPT) -Wno-implicit-function-declaration" CFGPREFIX=$(USRDIR)
 CCSMAKE_ARGS +=	CFGLIB64=$(USRLIBDIR64) ARCH=$(ARCH) ROOT=$(PROTO_DIR)
 
 COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
@@ -176,9 +179,11 @@ REQUIRED_PACKAGES += system/header/header-picl
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math
