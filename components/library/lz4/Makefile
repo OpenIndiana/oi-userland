@@ -15,36 +15,54 @@
 #
 
 BUILD_STYLE= justmake
-DROP_STATIC_LIBRARIES= yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lz4
 COMPONENT_VERSION=	1.10.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_SUMMARY=	Extremely Fast Compression algorithm
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:537512904744b35e232912055ccf8ec66d768639ff3abe5788d90d792ec5f48b
 COMPONENT_ARCHIVE_URL=	https://github.com/lz4/lz4/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_PROJECT_URL=	https://lz4.github.io/lz4/
+COMPONENT_PROJECT_URL=	https://lz4.org/
 COMPONENT_FMRI=		library/lz4
-COMPONENT_LICENSE=	BSD,GPLv2
+COMPONENT_LICENSE=	BSD-2-Clause AND GPL-2.0-or-later
 COMPONENT_LICENSE_FILE=	lz4.license
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
 
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/LICENSE ; \
+		printf '\n\n--- lib/LICENSE -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/lib/LICENSE ; \
+		printf '\n\n--- programs/COPYING ------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/programs/COPYING \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
+
 PATH= $(PATH.gnu)
 
 # Tests require the full copy of source dir.
-COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
+CLONEY_MODE=copy
+
+# Do not build static library
+COMPONENT_COMMON_ARGS += BUILD_STATIC=no
+# PREFIX and libdir are needed for the pkgconfig file generation
+COMPONENT_COMMON_ARGS += PREFIX=$(USRDIR)
+COMPONENT_COMMON_ARGS += libdir=$(USRLIBDIR.$(BITS))
+
+# Common args used for build and install
+COMPONENT_BUILD_ARGS += $(COMPONENT_COMMON_ARGS)
+COMPONENT_INSTALL_ARGS += $(COMPONENT_COMMON_ARGS)
 
 # Verbose compilation output
 COMPONENT_BUILD_ARGS += Q=
 
 COMPONENT_BUILD_ARGS += CFLAGS='$(CFLAGS)'
-
-COMPONENT_INSTALL_ENV += PREFIX=$(USRDIR)
-COMPONENT_INSTALL_ENV += LIBDIR=$(USRLIBDIR64)
 
 # The test results differ for x86 and SPARC
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH$(BITS)).master
