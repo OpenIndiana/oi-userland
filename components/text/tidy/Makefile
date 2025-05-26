@@ -32,6 +32,7 @@ DROP_STATIC_LIBRARIES = yes
 
 COMPONENT_NAME=		tidy
 COMPONENT_VERSION=	5.8.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://www.html-tidy.org
 COMPONENT_SUMMARY=	The HTML Tidy Library.
 COMPONENT_FMRI=		text/tidy
@@ -47,6 +48,7 @@ include $(WS_MAKE_RULES)/common.mk
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DTIDY_CONSOLE_SHARED=ON
 CMAKE_OPTIONS += -DBUILD_TAB2SPACE=ON
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # For some reason cmake does not install the tab2space binary,
 # distribution 5.8.0 does not come with man-pages for libtidy.3
