@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freealut
 COMPONENT_VERSION=	1.1.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The OpenAL Utility Toolkit
 COMPONENT_DESCRIPTION=	Freealut is a free implementation of OpenAL's ALUT standard.
 COMPONENT_PROJECT_URL=	https://openal.org
@@ -34,6 +34,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal
