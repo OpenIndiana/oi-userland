@@ -11,6 +11,7 @@
 
 #
 # Copyright 2023 Andreas Wacknitz
+# Copyright 2025 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,36 +24,47 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file usr/bin/$(MACH64)/allatency path=usr/bin/allatency
-file usr/bin/$(MACH64)/alloopback path=usr/bin/alloopback
-file usr/bin/$(MACH64)/alreverb path=usr/bin/alreverb
-file usr/bin/$(MACH64)/alstream path=usr/bin/alstream
-file usr/bin/$(MACH64)/altonegen path=usr/bin/altonegen
-file usr/bin/$(MACH64)/bsincgen path=usr/bin/alsincgen
-file usr/bin/$(MACH64)/makehrtf path=usr/bin/makehrtf
-file usr/bin/$(MACH64)/openal-info path=usr/bin/openal-info
-#file path=usr/bin/allatency
-#file path=usr/bin/alloopback
-#file path=usr/bin/alreverb
-#file path=usr/bin/alstream
-#file path=usr/bin/altonegen
-#file path=usr/bin/bsincgen
-#file path=usr/bin/makehrtf
-#file path=usr/bin/openal-info
+# we drop the 32bit binaries.
+#file path=usr/bin/$(MACH32)/alrecord
+#file path=usr/bin/$(MACH32)/altonegen
+#file path=usr/bin/$(MACH32)/openal-info
+file path=usr/bin/alhrtf
+file path=usr/bin/allatency
+file path=usr/bin/alloopback
+file path=usr/bin/almultireverb
+file path=usr/bin/alplay
+file path=usr/bin/alrecord
+file path=usr/bin/alreverb
+file path=usr/bin/alstream
+file path=usr/bin/altonegen
+file path=usr/bin/openal-info
 file path=usr/include/AL/al.h
 file path=usr/include/AL/alc.h
 file path=usr/include/AL/alext.h
 file path=usr/include/AL/efx-creative.h
 file path=usr/include/AL/efx-presets.h
 file path=usr/include/AL/efx.h
+file path=usr/lib/$(MACH64)/cmake/OpenAL/OpenALConfig.cmake
+file path=usr/lib/$(MACH64)/cmake/OpenAL/OpenALTargets-relwithdebinfo.cmake
+file path=usr/lib/$(MACH64)/cmake/OpenAL/OpenALTargets.cmake
 link path=usr/lib/$(MACH64)/libopenal.so target=libopenal.so.1
 file path=usr/lib/$(MACH64)/libopenal.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libopenal.so.1 target=libopenal.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/openal.pc
+file path=usr/lib/cmake/OpenAL/OpenALConfig.cmake
+file path=usr/lib/cmake/OpenAL/OpenALTargets-relwithdebinfo.cmake
+file path=usr/lib/cmake/OpenAL/OpenALTargets.cmake
 link path=usr/lib/libopenal.so target=libopenal.so.1
 file path=usr/lib/libopenal.so.$(HUMAN_VERSION)
 link path=usr/lib/libopenal.so.1 target=libopenal.so.$(HUMAN_VERSION)
 file path=usr/lib/pkgconfig/openal.pc
 file path=usr/share/openal/alsoftrc.sample
-file path=usr/share/openal/hrtf/default-44100.mhr
-file path=usr/share/openal/hrtf/default-48000.mhr
+file path=usr/share/openal/hrtf/Default-HRTF.mhr
+file path=usr/share/openal/presets/3D7.1.ambdec
+file path=usr/share/openal/presets/hex-quad.ambdec
+file path=usr/share/openal/presets/hexagon.ambdec
+file path=usr/share/openal/presets/itu5.1-nocenter.ambdec
+file path=usr/share/openal/presets/itu5.1.ambdec
+file path=usr/share/openal/presets/presets.txt
+file path=usr/share/openal/presets/rectangle.ambdec
+file path=usr/share/openal/presets/square.ambdec
