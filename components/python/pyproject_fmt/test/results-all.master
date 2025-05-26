@@ -1,42 +1,30 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov pyproject_fmt --cov $(@D)/tests --cov-fail-under=100 --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
+py$(PYV): remove tox env folder $(@D)/pyproject-fmt/.tox/py$(PYV)
+py$(PYV): commands[0]> pytest --durations 5 --junitxml $(@D)/pyproject-fmt/.tox/junit.py$(PYV).xml --no-cov-on-fail --cov pyproject_fmt --cov $(@D)/pyproject-fmt/tests --cov-config $(@D)/pyproject-fmt/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/pyproject-fmt/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/pyproject-fmt/.tox/coverage.py$(PYV).xml tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-rootdir: $(@D)
+rootdir: $(@D)/pyproject-fmt
 configfile: pyproject.toml
-collecting ... collected 39 items
+collecting ... collected 27 items
 
-tests/test_cli.py::test_cli_version PASSED
-tests/test_cli.py::test_cli_invalid_version PASSED
-tests/test_cli.py::test_cli_invalid_version_value PASSED
-tests/test_cli.py::test_cli_pyproject_toml_ok PASSED
-tests/test_cli.py::test_cli_inputs_ok PASSED
-tests/test_cli.py::test_cli_pyproject_toml_stdin PASSED
-tests/test_cli.py::test_cli_pyproject_toml_not_exists PASSED
-tests/test_cli.py::test_cli_pyproject_toml_not_file PASSED
-tests/test_cli.py::test_cli_pyproject_toml_permission_fail[256-write] PASSED
-tests/test_cli.py::test_cli_pyproject_toml_permission_fail[128-read] PASSED
-tests/test_cli.py::test_pyproject_toml_resolved PASSED
-tests/test_cli.py::test_pyproject_toml_dir PASSED
-tests/test_main.py::test_version PASSED
-tests/test_main.py::test_color_diff PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-True-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-[build-system]\nrequires = [\n  "hatchling>=0.14",\n]\n-no change for {0}\n-False-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-True-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-True-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-True-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-True-False-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-False-True-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-False-True-False] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-False-False-True] PASSED
-tests/test_main.py::test_main[[build-system]\nrequires = ["hatchling>=0.14.0"]-[build-system]\nrequires = [ "hatchling>=0.14" ]\n---- {0}\n\n+++ {0}\n\n@@ -1,2 +1,2 @@\n\n [build-system]\n-requires = ["hatchling>=0.14.0"]\n+requires = [ "hatchling>=0.14" ]\n-False-False-False] PASSED
+tests/test_lib.py::test_format_toml[expanded] PASSED
+tests/test_lib.py::test_format_toml[collapsed] PASSED
+tests/test_main.py::test_main[formatted-cwd-check-in_place] PASSED
+tests/test_main.py::test_main[formatted-cwd-check-print] PASSED
+tests/test_main.py::test_main[formatted-cwd-no_check-in_place] PASSED
+tests/test_main.py::test_main[formatted-cwd-no_check-print] PASSED
+tests/test_main.py::test_main[formatted-absolute-check-in_place] PASSED
+tests/test_main.py::test_main[formatted-absolute-check-print] PASSED
+tests/test_main.py::test_main[formatted-absolute-no_check-in_place] PASSED
+tests/test_main.py::test_main[formatted-absolute-no_check-print] PASSED
+tests/test_main.py::test_main[format-cwd-check-in_place] PASSED
+tests/test_main.py::test_main[format-cwd-check-print] PASSED
+tests/test_main.py::test_main[format-cwd-no_check-in_place] PASSED
+tests/test_main.py::test_main[format-cwd-no_check-print] PASSED
+tests/test_main.py::test_main[format-absolute-check-in_place] PASSED
+tests/test_main.py::test_main[format-absolute-check-print] PASSED
+tests/test_main.py::test_main[format-absolute-no_check-in_place] PASSED
+tests/test_main.py::test_main[format-absolute-no_check-print] PASSED
 tests/test_main.py::test_indent[0] PASSED
 tests/test_main.py::test_indent[2] PASSED
 tests/test_main.py::test_indent[4] PASSED
@@ -47,13 +35,19 @@ tests/test_main.py::test_pyproject_ftm_api_no_change PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_module PASSED
 tests/test_pyproject_toml_fmt.py::test_help_invocation_as_script PASSED
 
-- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+- generated xml file: $(@D)/pyproject-fmt/.tox/junit.py$(PYV).xml -
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
-7 files skipped due to complete coverage.
-Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
-Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
+Name    Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------
+TOTAL     109      0     12      0   100%
 
-Required test coverage of 100% reached. Total coverage: 100.00%
-======== 39 passed ========
+4 files skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/pyproject-fmt/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/pyproject-fmt/.tox/coverage.py$(PYV).xml
+Required test coverage of 100.0% reached. Total coverage: 100.00%
+============================= slowest 5 durations ==============================
+======== 27 passed ========
   py$(PYV): OK
   congratulations :)
