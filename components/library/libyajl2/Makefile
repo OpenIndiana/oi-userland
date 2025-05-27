@@ -11,15 +11,17 @@
 
 #
 # Copyright 2016 phorcys@126.com.  All rights reserved.
+# Copyright 2025 Klaus Ziegler
 #
 
 BUILD_STYLE=cmake
-BUILD_BITS=32_and_64
+BUILD_BITS=64_and_32
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libyajl2
 COMPONENT_VERSION=      2.1.0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_FMRI=         library/libyajl2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SUMMARY=      YAJL is a small event-driven (SAX-style) JSON parser written in ANSI C, and a small validating JSON generator.
@@ -28,15 +30,12 @@ COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:3fb73364a5a30efe615046d07e6db9d09fd2b41c763c5f7d3bfb121cd5c5ac5a
 COMPONENT_ARCHIVE_URL=  \
-	https://github.com/lloyd/yajl/archive/$(COMPONENT_VERSION).tar.gz
+	https://github.com/lloyd/yajl/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=  https://lloyd.github.io/yajl/
 COMPONENT_LICENSE=      ISC
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
-
-CMAKE_OPTIONS += -DSTATIC_BUILD=NO
-CMAKE_OPTIONS += -DLIB_SUFFIX=/$(ARCHLIBSUBDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
