@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 65 items / 1 skipped
+collecting ... collected 66 items / 1 skipped
 
 .::project PASSED
 .::project PASSED
@@ -51,6 +51,7 @@ tests/test_path.py::TestPath::test_read PASSED
 tests/test_path.py::TestPath::test_read_does_not_close PASSED
 tests/test_path.py::TestPath::test_relative_to PASSED
 tests/test_path.py::TestPath::test_root_name PASSED
+tests/test_path.py::TestPath::test_root_on_disk PASSED
 tests/test_path.py::TestPath::test_root_parent PASSED
 tests/test_path.py::TestPath::test_root_unnamed PASSED
 tests/test_path.py::TestPath::test_stem PASSED
@@ -73,7 +74,31 @@ zipp/glob.py::zipp.glob.Translator.restrict_rglob PASSED
 zipp/glob.py::zipp.glob.Translator.translate_core PASSED
 zipp/glob.py::zipp.glob.separate PASSED
 
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
-======== 64 passed, 2 skipped ========
+Name                       Stmts   Miss  Cover   Missing
+--------------------------------------------------------
+conftest.py                    4      0   100%
+docs/conf.py                  15      0   100%
+tests/__init__.py              0      0   100%
+tests/_support.py              5      0   100%
+tests/_test_params.py         21      0   100%
+tests/compat/__init__.py       0      0   100%
+tests/compat/py38.py           2      0   100%
+tests/compat/py$(PYV).py           4      0   100%
+tests/compat/py310.py          4      1    75%   4
+tests/compat/py313.py         12      0   100%
+tests/test_complexity.py      52     41    21%   16-107
+tests/test_path.py           433      8    98%   189-196
+tests/write-alpharep.py        2      0   100%
+zipp/__init__.py             182     77    58%   10-27, 46, 73-77, 85-91, 94, 97, 102-114, 119, 123, 126, 136, 147-148, 166-167, 177-183, 186-187, 190, 193-194, 198, 208-313, 326, 335, 338, 358, 361-362, 365-366, 369-370, 373-374, 377-378, 381, 386, 390, 393, 396, 399, 402, 405, 411, 414, 422, 431, 434, 437, 440, 443, 447-450
+zipp/_functools.py            11      7    36%   1-14, 20
+zipp/compat/overlay.py        11     10     9%   21-29, 33-37
+zipp/compat/py310.py           3      3     0%   1-9
+zipp/glob.py                  32     14    56%   1-22, 26, 32, 43, 51, 66, 77, 91, 104
+--------------------------------------------------------
+TOTAL                        793    161    80%
+======== 65 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
