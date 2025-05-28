@@ -38,11 +38,9 @@ Originally implemented in:
  create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-mov.c
  create mode 100644 gcc/testsuite/gcc.target/i386/msave-args-push.c
 
-diff --git a/gcc/config/i386/i386-options.cc b/gcc/config/i386/i386-options.cc
-index 6c212a8edeb9..8f330973f028 100644
---- a/gcc/config/i386/i386-options.cc
-+++ b/gcc/config/i386/i386-options.cc
-@@ -2788,6 +2788,9 @@ ix86_option_override_internal (bool main_args_p,
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc
+@@ -2796,6 +2796,9 @@
  	&= ~(OPTION_MASK_ISA2_AVX5124FMAPS | OPTION_MASK_ISA2_AVX5124VNNIW);
      }
  
@@ -52,11 +50,9 @@ index 6c212a8edeb9..8f330973f028 100644
    /* Validate -mpreferred-stack-boundary= value or default it to
       PREFERRED_STACK_BOUNDARY_DEFAULT.  */
    ix86_preferred_stack_boundary = PREFERRED_STACK_BOUNDARY_DEFAULT;
-diff --git a/gcc/config/i386/i386.cc b/gcc/config/i386/i386.cc
-index 92b8fa7b7329..b18ac72dbc9a 100644
---- a/gcc/config/i386/i386.cc
-+++ b/gcc/config/i386/i386.cc
-@@ -433,6 +433,9 @@ static bool i386_asm_output_addr_const_extra (FILE *, rtx);
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386.cc
+@@ -433,6 +433,9 @@
  static bool ix86_can_inline_p (tree, tree);
  static unsigned int ix86_minimum_incoming_stack_boundary (bool);
  
@@ -66,7 +62,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  
  /* Whether -mtune= or -march= were specified */
  int ix86_tune_defaulted;
-@@ -5908,7 +5911,7 @@ ix86_can_use_return_insn_p (void)
+@@ -5932,7 +5935,7 @@
  
    struct ix86_frame &frame = cfun->machine->frame;
    return (frame.stack_pointer_offset == UNITS_PER_WORD
@@ -75,7 +71,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  }
  
  /* Return stack frame size.  get_frame_size () returns used stack slots
-@@ -5945,6 +5948,9 @@ ix86_frame_pointer_required (void)
+@@ -5969,6 +5972,9 @@
    if (TARGET_32BIT_MS_ABI && cfun->calls_setjmp)
      return true;
  
@@ -85,7 +81,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    /* Win64 SEH, very large frames need a frame-pointer as maximum stack
       allocation is 4GB.  */
    if (TARGET_64BIT_MS_ABI && ix86_get_frame_size () > SEH_MAX_FRAME_SIZE)
-@@ -6888,6 +6894,7 @@ ix86_compute_frame_layout (void)
+@@ -6912,6 +6918,7 @@
  
    frame->nregs = ix86_nsaved_regs ();
    frame->nsseregs = ix86_nsaved_sseregs ();
@@ -93,7 +89,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  
    /* 64-bit MS ABI seem to require stack alignment to be always 16,
       except for function prologues, leaf functions and when the defult
-@@ -6973,7 +6980,8 @@ ix86_compute_frame_layout (void)
+@@ -6997,7 +7004,8 @@
      }
  
    frame->save_regs_using_mov
@@ -103,7 +99,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  
    /* Skip return address and error code in exception handler.  */
    offset = INCOMING_FRAME_SP_OFFSET;
-@@ -6990,6 +6998,13 @@ ix86_compute_frame_layout (void)
+@@ -7014,6 +7022,13 @@
    /* The traditional frame pointer location is at the top of the frame.  */
    frame->hard_frame_pointer_offset = offset;
  
@@ -117,7 +113,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    /* Register save area */
    offset += frame->nregs * UNITS_PER_WORD;
    frame->reg_save_offset = offset;
-@@ -7123,7 +7138,7 @@ ix86_compute_frame_layout (void)
+@@ -7147,7 +7162,7 @@
    /* Size prologue needs to allocate.  */
    to_allocate = offset - frame->sse_reg_save_offset;
  
@@ -126,7 +122,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
        || (TARGET_64BIT && to_allocate >= HOST_WIDE_INT_C (0x80000000))
         /* If static stack checking is enabled and done with probes,
  	  the registers need to be saved before allocating the frame.  */
-@@ -7147,7 +7162,11 @@ ix86_compute_frame_layout (void)
+@@ -7171,7 +7186,11 @@
      {
        frame->red_zone_size = to_allocate;
        if (frame->save_regs_using_mov)
@@ -138,7 +134,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
        if (frame->red_zone_size > RED_ZONE_SIZE - RED_ZONE_RESERVE)
  	frame->red_zone_size = RED_ZONE_SIZE - RED_ZONE_RESERVE;
      }
-@@ -7205,6 +7224,22 @@ ix86_compute_frame_layout (void)
+@@ -7229,6 +7248,22 @@
        else
  	frame->hard_frame_pointer_offset = frame->hfp_save_offset;
      }
@@ -161,9 +157,9 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  }
  
  /* This is semi-inlined memory_address_length, but simplified
-@@ -7420,6 +7455,23 @@ ix86_emit_save_regs (void)
-   int regno;
+@@ -7445,6 +7480,23 @@
    rtx_insn *insn;
+   bool use_ppx = TARGET_APX_PPX && !crtl->calls_eh_return;
  
 +  if (TARGET_SAVE_ARGS)
 +    {
@@ -185,7 +181,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    if (!TARGET_APX_PUSH2POP2
        || !ix86_can_use_push2pop2 ()
        || cfun->machine->func_type != TYPE_NORMAL)
-@@ -7585,9 +7637,30 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -7610,9 +7662,30 @@
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -217,7 +213,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
-@@ -8945,7 +9018,7 @@ ix86_expand_prologue (void)
+@@ -8970,7 +9043,7 @@
  	}
      }
  
@@ -226,7 +222,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    sse_registers_saved = (frame.nsseregs == 0);
    save_stub_call_needed = (m->call_ms2sysv);
    gcc_assert (sse_registers_saved || !save_stub_call_needed);
-@@ -8987,7 +9060,7 @@ ix86_expand_prologue (void)
+@@ -9013,7 +9086,7 @@
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -235,7 +231,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  	  cfun->machine->red_zone_used = true;
  	  int_registers_saved = true;
  	}
-@@ -9287,7 +9360,7 @@ ix86_expand_prologue (void)
+@@ -9313,7 +9386,7 @@
      }
  
    if (!int_registers_saved)
@@ -244,7 +240,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
    else if (save_stub_call_needed)
-@@ -9322,6 +9395,7 @@ ix86_expand_prologue (void)
+@@ -9348,6 +9421,7 @@
       relative to the value of the stack pointer at the end of the function
       prologue, and moving instructions that access redzone area via frame
       pointer inside push sequence violates this assumption.  */
@@ -252,7 +248,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -9824,6 +9898,7 @@ ix86_expand_epilogue (int style)
+@@ -9850,6 +9924,7 @@
  
    /* See the comment about red zone and frame
       pointer usage in ix86_expand_prologue.  */
@@ -260,7 +256,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    if (frame_pointer_needed && frame.red_zone_size)
      emit_insn (gen_memory_blockage ());
  
-@@ -10068,6 +10143,35 @@ ix86_expand_epilogue (int style)
+@@ -10097,6 +10172,35 @@
  	ix86_emit_restore_regs_using_pop (TARGET_APX_PPX);
      }
  
@@ -296,7 +292,7 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
    /* If we used a stack pointer and haven't already got rid of it,
       then do so now.  */
    if (m->fs.fp_valid)
-@@ -11232,6 +11336,18 @@ ix86_cannot_force_const_mem (machine_mode mode, rtx x)
+@@ -11261,6 +11365,18 @@
    return !ix86_legitimate_constant_p (mode, x);
  }
  
@@ -315,11 +311,9 @@ index 92b8fa7b7329..b18ac72dbc9a 100644
  /*  Nonzero if the symbol is marked as dllimport, or as stub-variable,
      otherwise zero.  */
  
-diff --git a/gcc/config/i386/i386.h b/gcc/config/i386/i386.h
-index 26e15d2677fb..4b00a785562b 100644
---- a/gcc/config/i386/i386.h
-+++ b/gcc/config/i386/i386.h
-@@ -2597,6 +2597,11 @@ enum avx_u128_state
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386.h.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386.h
+@@ -2623,6 +2623,11 @@
  
     saved frame pointer			if frame_pointer_needed
  					<- HARD_FRAME_POINTER
@@ -331,7 +325,7 @@ index 26e15d2677fb..4b00a785562b 100644
     [saved regs]
  					<- reg_save_offset
     [padding0]
-@@ -2630,6 +2635,7 @@ enum avx_u128_state
+@@ -2656,6 +2661,7 @@
    */
  struct GTY(()) ix86_frame
  {
@@ -339,7 +333,7 @@ index 26e15d2677fb..4b00a785562b 100644
    int nsseregs;
    int nregs;
    int va_arg_size;
-@@ -2641,6 +2647,7 @@ struct GTY(()) ix86_frame
+@@ -2667,6 +2673,7 @@
    HOST_WIDE_INT hard_frame_pointer_offset;
    HOST_WIDE_INT stack_pointer_offset;
    HOST_WIDE_INT hfp_save_offset;
@@ -347,11 +341,9 @@ index 26e15d2677fb..4b00a785562b 100644
    HOST_WIDE_INT reg_save_offset;
    HOST_WIDE_INT stack_realign_allocate;
    HOST_WIDE_INT stack_realign_offset;
-diff --git a/gcc/config/i386/i386.opt b/gcc/config/i386/i386.opt
-index d5f793a9e8b0..c0305bd79703 100644
---- a/gcc/config/i386/i386.opt
-+++ b/gcc/config/i386/i386.opt
-@@ -537,6 +537,16 @@ mtls-direct-seg-refs
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386.opt.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386.opt
+@@ -537,6 +537,16 @@
  Target Mask(TLS_DIRECT_SEG_REFS)
  Use direct references against %gs when accessing tls data.
  
@@ -368,11 +360,9 @@ index d5f793a9e8b0..c0305bd79703 100644
  mtune=
  Target RejectNegative Negative(mtune=) Joined Var(ix86_tune_string)
  Schedule code for given CPU.
-diff --git a/gcc/doc/invoke.texi b/gcc/doc/invoke.texi
-index 2f2f3700057b..36ea22d6ccf0 100644
---- a/gcc/doc/invoke.texi
-+++ b/gcc/doc/invoke.texi
-@@ -21168,6 +21168,10 @@ The default setting is @samp{tpidr_el0}.  It is recommended to compile all
+--- gcc-releases-gcc-14.3.0/gcc/doc/invoke.texi.orig
++++ gcc-releases-gcc-14.3.0/gcc/doc/invoke.texi
+@@ -21257,6 +21257,10 @@
  code intended to interoperate with the same value of this option to avoid
  accessing a different thread pointer from the wrong exception level.
  
@@ -383,11 +373,9 @@ index 2f2f3700057b..36ea22d6ccf0 100644
  @opindex mstrict-align
  @opindex mno-strict-align
  @item -mstrict-align
-diff --git a/gcc/dwarf2out.cc b/gcc/dwarf2out.cc
-index 1b0e8b5a5b29..b1c19db5ce48 100644
---- a/gcc/dwarf2out.cc
-+++ b/gcc/dwarf2out.cc
-@@ -24152,6 +24152,11 @@ gen_subprogram_die (tree decl, dw_die_ref context_die)
+--- gcc-releases-gcc-14.3.0/gcc/dwarf2out.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/dwarf2out.cc
+@@ -24152,6 +24152,11 @@
      /* Add the calling convention attribute if requested.  */
      add_calling_convention_attribute (subr_die, decl);
  
@@ -399,11 +387,8 @@ index 1b0e8b5a5b29..b1c19db5ce48 100644
    /* Output Dwarf info for all of the stuff within the body of the function
       (if it has one - it may be just a declaration).
  
-diff --git a/gcc/testsuite/gcc.target/i386/msave-args-mov.c b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
-new file mode 100644
-index 000000000000..a2ca76752a96
 --- /dev/null
-+++ b/gcc/testsuite/gcc.target/i386/msave-args-mov.c
++++ gcc-releases-gcc-14.3.0/gcc/testsuite/gcc.target/i386/msave-args-mov.c
 @@ -0,0 +1,26 @@
 +/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
 +/* { dg-options "-msave-args -mforce-save-regs-using-mov -save-temps" } */
@@ -431,11 +416,8 @@ index 000000000000..a2ca76752a96
 +/* { dg-final { scan-assembler "movq\t%rcx, -32\\(%rbp\\)" } } */
 +/* { dg-final { scan-assembler "movq\t%r8, -40\\(%rbp\\)" } } */
 +/* { dg-final { cleanup-saved-temps } } */
-diff --git a/gcc/testsuite/gcc.target/i386/msave-args-push.c b/gcc/testsuite/gcc.target/i386/msave-args-push.c
-new file mode 100644
-index 000000000000..fbe053dadc8b
 --- /dev/null
-+++ b/gcc/testsuite/gcc.target/i386/msave-args-push.c
++++ gcc-releases-gcc-14.3.0/gcc/testsuite/gcc.target/i386/msave-args-push.c
 @@ -0,0 +1,26 @@
 +/* { dg-do run { target { { i?86-*-solaris2.* } && lp64 } } } */
 +/* { dg-options "-msave-args -save-temps " } */
@@ -463,11 +445,9 @@ index 000000000000..fbe053dadc8b
 +/* { dg-final { scan-assembler "pushq\t%rcx" } } */
 +/* { dg-final { scan-assembler "pushq\t%r8" } } */
 +/* { dg-final { cleanup-saved-temps } } */
-diff --git a/include/dwarf2.def b/include/dwarf2.def
-index 66c7fa1220f8..9284f3d59c54 100644
---- a/include/dwarf2.def
-+++ b/include/dwarf2.def
-@@ -467,6 +467,8 @@ DW_TAG (DW_AT_GNU_denominator, 0x2304)
+--- gcc-releases-gcc-14.3.0/include/dwarf2.def.orig
++++ gcc-releases-gcc-14.3.0/include/dwarf2.def
+@@ -467,6 +467,8 @@
  /* Biased integer extension.
     See https://gcc.gnu.org/wiki/DW_AT_GNU_bias .  */
  DW_TAG (DW_AT_GNU_bias, 0x2305)
