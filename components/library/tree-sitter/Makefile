@@ -24,22 +24,23 @@
 #
 
 BUILD_STYLE= justmake
+DROP_STATIC_LIBRARIES= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tree-sitter
-COMPONENT_VERSION=      0.24.7
+COMPONENT_VERSION=      0.25.5
 COMPONENT_SUMMARY=      Tree-sitter is a parser generator tool and an incremental parsing library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://tree-sitter.github.io/tree-sitter/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7cbc13c974d6abe978cafc9da12d1e79e07e365c42af75e43ec1b5cdc03ed447
+COMPONENT_ARCHIVE_HASH= sha256:17a72b9dd7525b01d8fabf9ebee0edd3203fe3058ccc73cbc5e2070ccbe26c0d
 COMPONENT_ARCHIVE_URL=  https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= LICENSE
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV += PREFIX=$(USRDIR)
@@ -48,6 +49,8 @@ COMPONENT_INSTALL_ENV += PREFIX=$(USRDIR)
 COMPONENT_INSTALL_ENV += LIBDIR=$(USRLIBDIR64)
 
 PATH= $(PATH.gnu)
+
+COMPONENT_TEST_TARGETS= test
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
