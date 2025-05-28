@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3682 items]
+X workers [3790 items]
 
 scheduling tests via LoadScheduling
 
@@ -186,6 +186,7 @@ tests/test_client_functional.py::test_aiohttp_request_coroutine[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_close_sess_on_error[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_not_found[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ssl[pyloop] PASSED
+tests/test_client_functional.py::test_async_iterable_payload_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_async_payload_generator[pyloop] PASSED
 tests/test_client_functional.py::test_async_with_session[pyloop] PASSED
 tests/test_client_functional.py::test_auth_persist_on_redirect_to_other_host_with_global_auth[pyloop] PASSED
@@ -196,6 +197,9 @@ tests/test_client_functional.py::test_bad_payload_compression[pyloop] PASSED
 tests/test_client_functional.py::test_bad_payload_content_length[pyloop] PASSED
 tests/test_client_functional.py::test_broken_connection[pyloop] XFAIL
 tests/test_client_functional.py::test_broken_connection_2[pyloop] PASSED
+tests/test_client_functional.py::test_buffered_reader_payload_redirect[pyloop] PASSED
+tests/test_client_functional.py::test_bytes_io_payload_redirect[pyloop] PASSED
+tests/test_client_functional.py::test_bytes_payload_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_chunked[pyloop] PASSED
 tests/test_client_functional.py::test_chunked_deprecated[pyloop] PASSED
 tests/test_client_functional.py::test_client_side_network_error_connection_closed[pyloop] PASSED
@@ -234,6 +238,8 @@ tests/test_client_functional.py::test_encoding_gzip_write_by_chunks[zlib-pyloop]
 tests/test_client_functional.py::test_error_in_performing_request[pyloop] PASSED
 tests/test_client_functional.py::test_error_not_overwrote_on_conn_close[pyloop] PASSED
 tests/test_client_functional.py::test_exception_when_read_outside_of_session[pyloop] PASSED
+tests/test_client_functional.py::test_expect100_continue_with_none_payload[pyloop] PASSED
+tests/test_client_functional.py::test_expect100_with_no_body[pyloop] PASSED
 tests/test_client_functional.py::test_expect_continue[pyloop] PASSED
 tests/test_client_functional.py::test_format_task_get[pyloop] PASSED
 tests/test_client_functional.py::test_handle_keepalive_on_closed_connection[pyloop] PASSED
@@ -253,6 +259,7 @@ tests/test_client_functional.py::test_invalid_and_non_http_url[pyloop-slack://in
 tests/test_client_functional.py::test_invalid_and_non_http_url[pyloop-steam:code-steam:code-NonHttpUrlClientError] PASSED
 tests/test_client_functional.py::test_invalid_and_non_http_url[pyloop-twitter://handle-twitter://handle-NonHttpUrlClientError] PASSED
 tests/test_client_functional.py::test_invalid_idna[pyloop] PASSED
+tests/test_client_functional.py::test_invalid_redirect_origin_closes_payload[pyloop] PASSED
 tests/test_client_functional.py::test_invalid_redirect_url[pyloop-bluesky://profile/d:i:d-bluesky://profile/d:i:d-NonHttpUrlRedirectClientError] PASSED
 tests/test_client_functional.py::test_invalid_redirect_url[pyloop-call:+380123456789-call:\\+380123456789-NonHttpUrlRedirectClientError] PASSED
 tests/test_client_functional.py::test_invalid_redirect_url[pyloop-http:/-http:///-InvalidUrlRedirectClientError] PASSED
@@ -275,6 +282,7 @@ tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[py
 tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-slack://instance/room-slack://instance/room-NonHttpUrlRedirectClientError] PASSED
 tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-steam:code-steam:code-NonHttpUrlRedirectClientError] PASSED
 tests/test_client_functional.py::test_invalid_redirect_url_multiple_redirects[pyloop-twitter://handle-twitter://handle-NonHttpUrlRedirectClientError] PASSED
+tests/test_client_functional.py::test_invalid_url_redirect_closes_payload[pyloop] PASSED
 tests/test_client_functional.py::test_json[pyloop] PASSED
 tests/test_client_functional.py::test_json_custom[pyloop] PASSED
 tests/test_client_functional.py::test_keepalive_after_empty_body_status[pyloop-101] PASSED
@@ -300,11 +308,13 @@ tests/test_client_functional.py::test_max_line_size_session_default_fail[pyloop]
 tests/test_client_functional.py::test_max_line_size_session_explicit[pyloop] PASSED
 tests/test_client_functional.py::test_morsel_with_attributes[pyloop] PASSED
 tests/test_client_functional.py::test_multidict_headers[pyloop] PASSED
+tests/test_client_functional.py::test_multiple_redirects_with_bytes_payload[pyloop] PASSED
 tests/test_client_functional.py::test_network_error_connection_closed[pyloop] PASSED
 tests/test_client_functional.py::test_no_error_on_conn_close_if_eof[pyloop] PASSED
 tests/test_client_functional.py::test_no_payload_200_with_chunked_encoding[pyloop] PASSED
 tests/test_client_functional.py::test_no_payload_304_with_chunked_encoding[pyloop] PASSED
 tests/test_client_functional.py::test_non_close_detached_session_on_error_cm[pyloop] PASSED
+tests/test_client_functional.py::test_non_http_redirect_closes_payload[pyloop] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-200-True] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-201-True] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-301-True] PASSED
@@ -313,9 +323,11 @@ tests/test_client_functional.py::test_ok_from_status[pyloop-403-False] PASSED
 tests/test_client_functional.py::test_ok_from_status[pyloop-500-False] PASSED
 tests/test_client_functional.py::test_params_and_query_string[pyloop] PASSED
 tests/test_client_functional.py::test_payload_content_length_by_chunks[pyloop] PASSED
+tests/test_client_functional.py::test_post_bytes_data_content_length_from_body[pyloop] PASSED
 tests/test_client_functional.py::test_post_connection_cleanup_with_bytesio[pyloop] PASSED
 tests/test_client_functional.py::test_post_connection_cleanup_with_file[pyloop] PASSED
 tests/test_client_functional.py::test_post_content_exception_connection_kept[pyloop] PASSED
+tests/test_client_functional.py::test_post_custom_payload_without_content_length[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_bytesio[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_stringio[pyloop] PASSED
 tests/test_client_functional.py::test_post_data_tarfile_filelike[pyloop] PASSED
@@ -342,7 +354,9 @@ tests/test_client_functional.py::test_read_timeout_on_prepared_response[pyloop] 
 tests/test_client_functional.py::test_read_timeout_on_reading_chunks[pyloop] PASSED
 tests/test_client_functional.py::test_read_timeout_on_write[pyloop] PASSED
 tests/test_client_functional.py::test_readline_error_on_conn_close[pyloop] PASSED
+tests/test_client_functional.py::test_redirect_preserves_content_type[pyloop] PASSED
 tests/test_client_functional.py::test_redirect_to_absolute_url[pyloop] PASSED
+tests/test_client_functional.py::test_redirect_with_empty_payload[pyloop] PASSED
 tests/test_client_functional.py::test_redirect_without_location_header[pyloop] PASSED
 tests/test_client_functional.py::test_rejected_upload[pyloop] PASSED
 tests/test_client_functional.py::test_release_early[pyloop] PASSED
@@ -378,6 +392,8 @@ tests/test_client_functional.py::test_ssl_client_alpn[pyloop] PASSED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof_nested[pyloop] PASSED
+tests/test_client_functional.py::test_string_io_payload_redirect[pyloop] PASSED
+tests/test_client_functional.py::test_string_payload_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_tcp_connector_fingerprint_fail[pyloop] PASSED
 tests/test_client_functional.py::test_tcp_connector_fingerprint_ok[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_none[pyloop] PASSED
@@ -386,6 +402,7 @@ tests/test_client_functional.py::test_timeout_on_reading_data[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_on_reading_headers[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_on_session_read_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_timeout_with_full_buffer[pyloop] PASSED
+tests/test_client_functional.py::test_too_many_redirects_closes_payload[pyloop] PASSED
 tests/test_client_functional.py::test_upgrade_connection_not_released_after_read[pyloop] PASSED
 tests/test_client_functional.py::test_wait_for[pyloop] PASSED
 tests/test_client_functional.py::test_yield_from_in_session_request[pyloop] PASSED
@@ -406,6 +423,10 @@ tests/test_client_middleware.py::test_client_middleware_per_request[pyloop] PASS
 tests/test_client_middleware.py::test_client_middleware_retry[pyloop] PASSED
 tests/test_client_middleware.py::test_client_middleware_retry_reuses_connection[pyloop] PASSED
 tests/test_client_middleware.py::test_client_middleware_stateful_retry[pyloop] PASSED
+tests/test_client_middleware.py::test_client_middleware_switch_types[pyloop] PASSED
+tests/test_client_middleware.py::test_client_middleware_update_longer_body[pyloop] PASSED
+tests/test_client_middleware.py::test_client_middleware_update_shorter_body[pyloop] PASSED
+tests/test_client_middleware.py::test_client_middleware_update_string_body[pyloop] PASSED
 tests/test_client_middleware.py::test_middleware_can_check_request_body[pyloop] PASSED
 tests/test_client_middleware.py::test_middleware_uses_session_avoids_recursion_with_disabled_middleware[pyloop] PASSED
 tests/test_client_middleware.py::test_middleware_uses_session_avoids_recursion_with_path_check[pyloop] PASSED
@@ -429,102 +450,102 @@ tests/test_client_middleware_digest_auth.py::test_authenticate_with_malformed_he
 tests/test_client_middleware_digest_auth.py::test_digest_auth_middleware_callable PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_auth_no_qop[pyloop] PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_auth_without_opaque[pyloop] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-MD5-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-256-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-512-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA256-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body0-SHA512-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-MD5-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-256-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-512-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA256-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-SESS-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-SESS-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-SESS-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-SESS-auth] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-auth,auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-auth-int] PASSED
-tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[this is a body-this is a body1-SHA512-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--MD5-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-256-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-512-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA256-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[--SHA512-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-MD5-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-256-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-512-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA256-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-SESS-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-SESS-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-SESS-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-SESS-auth] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-auth,auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-auth-int] PASSED
+tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-auth] PASSED
 tests/test_client_middleware_digest_auth.py::test_direct_success_no_auth_needed[pyloop] PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_digest_with_md5 PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_digest_with_sess_algorithms[MD5-SESS] PASSED
@@ -585,6 +606,9 @@ tests/test_client_request.py::test_basic_auth_utf8[pyloop] PASSED
 tests/test_client_request.py::test_basicauth_from_empty_netrc[pyloop-] PASSED
 tests/test_client_request.py::test_basicauth_from_netrc_present[pyloop-machine example.com login username password pass\n-expected_auth0] PASSED
 tests/test_client_request.py::test_basicauth_from_netrc_present_untrusted_env[pyloop-machine example.com login username password pass\n] PASSED
+tests/test_client_request.py::test_body_payload_with_size_no_content_length[pyloop] PASSED
+tests/test_client_request.py::test_body_setter_closes_previous_payload[pyloop] PASSED
+tests/test_client_request.py::test_body_with_size_sets_content_length[pyloop] PASSED
 tests/test_client_request.py::test_bytes_data[pyloop] PASSED
 tests/test_client_request.py::test_cancel_close[pyloop] SKIPPED
 tests/test_client_request.py::test_chunked2[pyloop] PASSED
@@ -600,6 +624,27 @@ tests/test_client_request.py::test_connection_key_without_proxy PASSED
 tests/test_client_request.py::test_content_encoding[zlib-pyloop] PASSED
 tests/test_client_request.py::test_content_encoding_dont_set_headers_if_no_body[pyloop] PASSED
 tests/test_client_request.py::test_content_encoding_header[zlib-pyloop] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-DELETE-None-0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-DELETE-x-1] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-GET--0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-GET-None-None] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-GET-test-4] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-HEAD--0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-HEAD-None-None] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-OPTIONS-None-None] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-PATCH-None-0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-PATCH-data-4] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-POST--0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-POST-None-0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-POST-test-4] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-PUT--0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-PUT-None-0] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-PUT-hello world-11] PASSED
+tests/test_client_request.py::test_content_length_for_methods[pyloop-TRACE-None-None] PASSED
+tests/test_client_request.py::test_content_length_not_overridden[pyloop] PASSED
+tests/test_client_request.py::test_content_length_with_async_iterable[pyloop] PASSED
+tests/test_client_request.py::test_content_length_with_formdata[pyloop] PASSED
+tests/test_client_request.py::test_content_length_with_string_data[pyloop] PASSED
 tests/test_client_request.py::test_content_type_auto_header_bytes[pyloop] PASSED
 tests/test_client_request.py::test_content_type_auto_header_content_length_no_skip[pyloop] PASSED
 tests/test_client_request.py::test_content_type_auto_header_form[pyloop] PASSED
@@ -622,6 +667,7 @@ tests/test_client_request.py::test_default_headers_useragent[pyloop] PASSED
 tests/test_client_request.py::test_default_headers_useragent_custom[pyloop] PASSED
 tests/test_client_request.py::test_default_loop[pyloop] PASSED
 tests/test_client_request.py::test_expect100[pyloop] PASSED
+tests/test_client_request.py::test_expect100_with_body_becomes_none PASSED
 tests/test_client_request.py::test_expect_100_continue_header[pyloop] PASSED
 tests/test_client_request.py::test_file_upload_force_chunked[pyloop] PASSED
 tests/test_client_request.py::test_file_upload_not_chunked[pyloop] PASSED
@@ -631,6 +677,10 @@ tests/test_client_request.py::test_gen_default_accept_encoding[True-gzip, deflat
 tests/test_client_request.py::test_gen_netloc_all[pyloop] PASSED
 tests/test_client_request.py::test_gen_netloc_no_port[pyloop] PASSED
 tests/test_client_request.py::test_get_content_length[pyloop] PASSED
+tests/test_client_request.py::test_get_methods_classification[GET] PASSED
+tests/test_client_request.py::test_get_methods_classification[HEAD] PASSED
+tests/test_client_request.py::test_get_methods_classification[OPTIONS] PASSED
+tests/test_client_request.py::test_get_methods_classification[TRACE] PASSED
 tests/test_client_request.py::test_get_with_data[pyloop] PASSED
 tests/test_client_request.py::test_headers[pyloop] PASSED
 tests/test_client_request.py::test_headers_default[pyloop] PASSED
@@ -680,7 +730,15 @@ tests/test_client_request.py::test_method3[pyloop] PASSED
 tests/test_client_request.py::test_method_invalid[pyloop] PASSED
 tests/test_client_request.py::test_no_content_length[pyloop] PASSED
 tests/test_client_request.py::test_no_content_length_head[pyloop] PASSED
+tests/test_client_request.py::test_no_content_length_with_chunked[pyloop] PASSED
 tests/test_client_request.py::test_no_path[pyloop] PASSED
+tests/test_client_request.py::test_no_warn_for_autoclose_payload_via_body_setter[pyloop] PASSED
+tests/test_client_request.py::test_no_warn_for_consumed_payload_via_body_setter[pyloop] PASSED
+tests/test_client_request.py::test_no_warn_for_simple_data_via_update_body_from_data[pyloop] PASSED
+tests/test_client_request.py::test_non_get_methods_classification[DELETE] PASSED
+tests/test_client_request.py::test_non_get_methods_classification[PATCH] PASSED
+tests/test_client_request.py::test_non_get_methods_classification[POST] PASSED
+tests/test_client_request.py::test_non_get_methods_classification[PUT] PASSED
 tests/test_client_request.py::test_oserror_on_write_bytes[pyloop] PASSED
 tests/test_client_request.py::test_params_are_added_before_fragment1[pyloop] PASSED
 tests/test_client_request.py::test_params_are_added_before_fragment2[pyloop] PASSED
@@ -712,11 +770,29 @@ tests/test_client_request.py::test_unicode_get1[pyloop] PASSED
 tests/test_client_request.py::test_unicode_get2[pyloop] PASSED
 tests/test_client_request.py::test_unicode_get3[pyloop] PASSED
 tests/test_client_request.py::test_unicode_get4[pyloop] PASSED
+tests/test_client_request.py::test_update_body_closes_previous_payload[pyloop] PASSED
+tests/test_client_request.py::test_update_body_get_method_with_none_body[pyloop] PASSED
+tests/test_client_request.py::test_update_body_none_no_content_length_for_get_methods[pyloop-GET] PASSED
+tests/test_client_request.py::test_update_body_none_no_content_length_for_get_methods[pyloop-HEAD] PASSED
+tests/test_client_request.py::test_update_body_none_no_content_length_for_get_methods[pyloop-OPTIONS] PASSED
+tests/test_client_request.py::test_update_body_none_no_content_length_for_get_methods[pyloop-TRACE] PASSED
+tests/test_client_request.py::test_update_body_none_sets_content_length_zero[pyloop-DELETE] PASSED
+tests/test_client_request.py::test_update_body_none_sets_content_length_zero[pyloop-PATCH] PASSED
+tests/test_client_request.py::test_update_body_none_sets_content_length_zero[pyloop-POST] PASSED
+tests/test_client_request.py::test_update_body_none_sets_content_length_zero[pyloop-PUT] PASSED
+tests/test_client_request.py::test_update_body_updates_content_length[pyloop] PASSED
+tests/test_client_request.py::test_update_body_with_chunked_encoding[pyloop] PASSED
+tests/test_client_request.py::test_update_body_with_different_types[pyloop] PASSED
 tests/test_client_request.py::test_urlencoded_formdata_charset[pyloop] PASSED
 tests/test_client_request.py::test_verify_ssl_false_with_ssl_context[pyloop] PASSED
 tests/test_client_request.py::test_version_1_0[pyloop] PASSED
 tests/test_client_request.py::test_version_default[pyloop] PASSED
 tests/test_client_request.py::test_version_err[pyloop] PASSED
+tests/test_client_request.py::test_warn_if_unclosed_payload_via_body_setter[pyloop] PASSED
+tests/test_client_request.py::test_warn_if_unclosed_payload_via_update_body_from_data[pyloop] PASSED
+tests/test_client_request.py::test_warn_stacklevel_points_to_user_code[pyloop] PASSED
+tests/test_client_request.py::test_warn_stacklevel_update_body_from_data[pyloop] PASSED
+tests/test_client_request.py::test_warn_via_update_with_file_payload[pyloop] PASSED
 tests/test_client_request.py::test_write_bytes_empty_iterable_with_content_length[pyloop] PASSED
 tests/test_client_request.py::test_write_bytes_with_content_length_limit[pyloop] PASSED
 tests/test_client_request.py::test_write_bytes_with_iterable_content_length_limit[pyloop-Part1Part2Part3] PASSED
@@ -1180,7 +1256,12 @@ tests/test_flowcontrol_streams.py::test_stream_reader_eof_when_full PASSED
 tests/test_formdata.py::test_form_data_is_multipart_param PASSED
 tests/test_formdata.py::test_formdata_field_name_is_not_quoted PASSED
 tests/test_formdata.py::test_formdata_field_name_is_quoted PASSED
+tests/test_formdata.py::test_formdata_is_reusable[pyloop] PASSED
 tests/test_formdata.py::test_formdata_multipart PASSED
+tests/test_formdata.py::test_formdata_reusability_after_adding_fields PASSED
+tests/test_formdata.py::test_formdata_reusability_multipart PASSED
+tests/test_formdata.py::test_formdata_reusability_urlencoded PASSED
+tests/test_formdata.py::test_formdata_reusability_with_io_fields PASSED
 tests/test_formdata.py::test_formdata_textio_charset PASSED
 tests/test_formdata.py::test_invalid_formdata_content_transfer_encoding PASSED
 tests/test_formdata.py::test_invalid_formdata_content_type PASSED
@@ -1188,7 +1269,6 @@ tests/test_formdata.py::test_invalid_formdata_filename PASSED
 tests/test_formdata.py::test_invalid_formdata_params PASSED
 tests/test_formdata.py::test_invalid_formdata_params2 PASSED
 tests/test_formdata.py::test_invalid_formdata_payload PASSED
-tests/test_formdata.py::test_mark_formdata_as_processed[pyloop] PASSED
 tests/test_helpers.py::TestChainMapProxy::test_bool PASSED
 tests/test_helpers.py::TestChainMapProxy::test_contains PASSED
 tests/test_helpers.py::TestChainMapProxy::test_get PASSED
@@ -2048,6 +2128,10 @@ tests/test_multipart.py::TestPartReader::test_release_release PASSED
 tests/test_multipart.py::TestPartReader::test_release_respects_content_length PASSED
 tests/test_multipart.py::test_async_for_bodypart PASSED
 tests/test_multipart.py::test_async_for_reader PASSED
+tests/test_multipart.py::test_body_part_reader_payload_as_bytes PASSED
+tests/test_multipart.py::test_multipart_writer_close_with_exceptions PASSED
+tests/test_multipart.py::test_multipart_writer_reusability PASSED
+tests/test_multipart.py::test_multipart_writer_reusability_with_io_payloads PASSED
 tests/test_multipart.py::test_writer PASSED
 tests/test_multipart.py::test_writer_content_transfer_encoding_quote_printable PASSED
 tests/test_multipart.py::test_writer_content_transfer_encoding_unknown PASSED
@@ -2166,20 +2250,32 @@ tests/test_multipart_helpers.py::TestParseContentDisposition::test_inlwithasciif
 tests/test_multipart_helpers.py::TestParseContentDisposition::test_inlwithfnattach PASSED
 tests/test_multipart_helpers.py::TestParseContentDisposition::test_parse_empty PASSED
 tests/test_multipart_helpers.py::TestParseContentDisposition::test_semicolon PASSED
+tests/test_payload.py::test_all_string_payloads_size_is_bytes[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_backwards_compatibility[pyloop] PASSED
+tests/test_payload.py::test_async_iterable_payload_caching[pyloop] PASSED
+tests/test_payload.py::test_async_iterable_payload_decode_without_cache[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_default_content_type[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_explicit_content_type[pyloop] PASSED
+tests/test_payload.py::test_async_iterable_payload_no_reuse_without_cache[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_not_async_iterable[pyloop] PASSED
+tests/test_payload.py::test_async_iterable_payload_reusability_with_cache[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_with_none_iterator[pyloop] PASSED
+tests/test_payload.py::test_async_iterable_payload_write_then_cache[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_write_with_length_exact[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_write_with_length_no_limit[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_write_with_length_truncated_at_chunk[pyloop] PASSED
 tests/test_payload.py::test_async_iterable_payload_write_with_length_truncated_mid_chunk[pyloop] PASSED
+tests/test_payload.py::test_buffered_reader_payload_reusability[pyloop] PASSED
+tests/test_payload.py::test_bytes_io_payload_close_does_not_close_io[pyloop] PASSED
+tests/test_payload.py::test_bytes_io_payload_reusability[pyloop] PASSED
+tests/test_payload.py::test_bytes_io_payload_size[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_backwards_compatibility[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_bad_type[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_default_content_type[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_explicit_content_type[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_memoryview_correct_size[pyloop] PASSED
+tests/test_payload.py::test_bytes_payload_reusability[pyloop] PASSED
+tests/test_payload.py::test_bytes_payload_size[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_write_with_length_exact[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_write_with_length_no_limit[pyloop] PASSED
 tests/test_payload.py::test_bytes_payload_write_with_length_truncated[pyloop] PASSED
@@ -2190,16 +2286,28 @@ tests/test_payload.py::test_bytesio_payload_write_with_length_exact[pyloop] PASS
 tests/test_payload.py::test_bytesio_payload_write_with_length_no_limit[pyloop] PASSED
 tests/test_payload.py::test_bytesio_payload_write_with_length_remaining_zero[pyloop] PASSED
 tests/test_payload.py::test_bytesio_payload_write_with_length_truncated[pyloop] PASSED
+tests/test_payload.py::test_custom_payload_backwards_compat_as_bytes[pyloop] PASSED
+tests/test_payload.py::test_custom_payload_with_encoding_backwards_compat[pyloop] PASSED
+tests/test_payload.py::test_iobase_payload_close_idempotent[pyloop] PASSED
+tests/test_payload.py::test_iobase_payload_decode[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_exact_chunk_size_limit[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_exact[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_no_limit[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_truncated[pyloop] PASSED
+tests/test_payload.py::test_json_payload_size[pyloop] PASSED
 tests/test_payload.py::test_payload_content_type[pyloop] PASSED
 tests/test_payload.py::test_payload_ctor[pyloop] PASSED
 tests/test_payload.py::test_register_type[pyloop] PASSED
 tests/test_payload.py::test_register_unsupported_order[pyloop] PASSED
 tests/test_payload.py::test_string_io_payload[pyloop] PASSED
+tests/test_payload.py::test_string_io_payload_reusability[pyloop] PASSED
+tests/test_payload.py::test_string_io_payload_size[pyloop] PASSED
 tests/test_payload.py::test_string_payload[pyloop] PASSED
+tests/test_payload.py::test_string_payload_reusability[pyloop] PASSED
+tests/test_payload.py::test_string_payload_size[pyloop] PASSED
+tests/test_payload.py::test_text_io_payload_size_matches_file_encoding[pyloop] PASSED
+tests/test_payload.py::test_text_io_payload_size_utf16[pyloop] PASSED
+tests/test_payload.py::test_textio_payload_as_bytes[pyloop] PASSED
 tests/test_payload.py::test_textio_payload_with_encoding[pyloop] PASSED
 tests/test_proxy.py::TestProxy::test_connect PASSED
 tests/test_proxy.py::TestProxy::test_https_auth PASSED
@@ -3706,17 +3814,17 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py       
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py                  72      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               113      5    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py                      71      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            586     24    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            598     24    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     139      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     140      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      166      2    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     734     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     749     16    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                         275      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 131      6    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         782     61    92%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         283      6    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           97      2    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           94      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                               94      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                           484     15    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http.py                               11      0   100%
@@ -3725,8 +3833,8 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py                
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_websocket.py                      6      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py                       217     11    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/log.py                                 7      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         624     16    97%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           309      7    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         648     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           385      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py                   31      1    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     170      8    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          120     68    43%
@@ -3743,19 +3851,19 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_log.py                    
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_middlewares.py                    61      1    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_protocol.py                      385     23    94%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py                       443      9    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py                      499      5    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py                      500      5    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py                      108      3    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py                        213     16    92%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_server.py                         42      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py                 746     12    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                            392      8    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                            392      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                            130     13    90%
 tests/conftest.py                                                                                                                                          184     32    83%
 tests/isolated/check_for_client_response_leak.py                                                                                                            32      0   100%
 tests/isolated/check_for_request_leak.py                                                                                                                    29      1    97%
 tests/test_base_protocol.py                                                                                                                                200      0   100%
 tests/test_benchmarks_client.py                                                                                                                            323    323     0%
-tests/test_benchmarks_client_request.py                                                                                                                     56     56     0%
+tests/test_benchmarks_client_request.py                                                                                                                     79     79     0%
 tests/test_benchmarks_client_ws.py                                                                                                                         113    113     0%
 tests/test_benchmarks_cookiejar.py                                                                                                                          14     14     0%
 tests/test_benchmarks_http_websocket.py                                                                                                                     73     73     0%
@@ -3769,20 +3877,20 @@ tests/test_classbasedview.py                                                    
 tests/test_client_connection.py                                                                                                                             94      0   100%
 tests/test_client_exceptions.py                                                                                                                            199      0   100%
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
-tests/test_client_functional.py                                                                                                                           2815     28    99%
-tests/test_client_middleware.py                                                                                                                            606     13    98%
-tests/test_client_middleware_digest_auth.py                                                                                                                299      1    99%
+tests/test_client_functional.py                                                                                                                           3116     28    99%
+tests/test_client_middleware.py                                                                                                                            666     13    98%
+tests/test_client_middleware_digest_auth.py                                                                                                                301      1    99%
 tests/test_client_proto.py                                                                                                                                 144      0   100%
-tests/test_client_request.py                                                                                                                               876     11    99%
+tests/test_client_request.py                                                                                                                              1114     11    99%
 tests/test_client_response.py                                                                                                                              489      5    99%
-tests/test_client_session.py                                                                                                                               604      5    99%
+tests/test_client_session.py                                                                                                                               610      5    99%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
 tests/test_connector.py                                                                                                                                   2171     54    98%
 tests/test_cookiejar.py                                                                                                                                    467      0   100%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
-tests/test_formdata.py                                                                                                                                      86      0   100%
+tests/test_formdata.py                                                                                                                                     177      0   100%
 tests/test_helpers.py                                                                                                                                      454     39    91%
 tests/test_http_exceptions.py                                                                                                                              109      0   100%
 tests/test_http_parser.py                                                                                                                                 1106     19    98%
@@ -3790,9 +3898,9 @@ tests/test_http_writer.py                                                       
 tests/test_imports.py                                                                                                                                       40     17    58%
 tests/test_leaks.py                                                                                                                                         12      0   100%
 tests/test_loop.py                                                                                                                                          36      2    94%
-tests/test_multipart.py                                                                                                                                    826     37    96%
+tests/test_multipart.py                                                                                                                                    922     37    96%
 tests/test_multipart_helpers.py                                                                                                                            446     19    96%
-tests/test_payload.py                                                                                                                                      272      6    98%
+tests/test_payload.py                                                                                                                                      637      6    99%
 tests/test_proxy.py                                                                                                                                        324      0   100%
 tests/test_proxy_functional.py                                                                                                                             489    489     0%
 tests/test_pytest_plugin.py                                                                                                                                 27      0   100%
@@ -3826,7 +3934,7 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    40627   3160    92%
+TOTAL                                                                                                                                                    41935   3180    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3627 passed, 49 skipped, 6 xfailed ========
+======== 3735 passed, 49 skipped, 6 xfailed ========
