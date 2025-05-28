@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
-HUMAN_VERSION =			0.34.0
+HUMAN_VERSION =			0.35.0
 COMPONENT_SUMMARY =		Python Data Validation for Humans™
 COMPONENT_PROJECT_URL =		https://python-validators.github.io/validators
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:647fe407b45af9a74d245b943b18e6a816acf4926974278f6dd617778e1e781f
+	sha256:992d6c48a4e77c81f1b4daba10d16c3a9bb0dbb79b3a19ea847ff0928e70497a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,6 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # We do not have eth-hash packaged yet.
 PYTEST_ADDOPTS += --ignore tests/crypto_addresses/test_eth_address.py
+PYTEST_ADDOPTS += --ignore src/validators/crypto_addresses/eth_address.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
