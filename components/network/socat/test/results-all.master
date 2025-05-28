@@ -1,10 +1,13 @@
 testing if address array is sorted... ok
 testing if address options are sorted... ok
+testing if help shows option types correctly... ok
+testing if help shows option phases correctly... ok
+testing if help shows option groups correctly...NO RESULT
 test   1 UNISTDIO: unidirectional throughput from stdin to stdout... OK
 test   2 UNPIPESTDIO: stdio with simple echo via internal pipe... OK
 test   3 UNPIPESHORT: short form of stdio ('-') with simple echo via internal pipe... OK
-test   4 DUALSTDIO: splitted form of stdio ('stdin!!stdout') with simple echo via internal pipe... OK
-test   5 DUALSHORTSTDIO: short splitted form of stdio ('-!!-') with simple echo via internal pipe... OK
+test   4 DUALSTDIO: split form of stdio ('stdin!!stdout') with simple echo via internal pipe... OK
+test   5 DUALSHORTSTDIO: short split form of stdio ('-!!-') with simple echo via internal pipe... OK
 test   6 DUALFDS: file descriptors with simple echo via internal pipe... OK
 test   7 NAMEDPIPE: simple echo via named pipe... OK
 test   8 DUALPIPE: simple echo via named pipe, specified twice... OK
@@ -227,7 +230,7 @@ test 223 ABSTRACTRECV: abstract UNIX datagram receive... abstract-unixsocket not
 test 224 ABSTRACT_BIND: abstract bind... only on Linux
 test 225 OPENSSLREAD: socat handles data buffered by openssl... OK
 test 226 READBYTES_EOF: trigger EOF after that many bytes, even when socket idle... OK
-test 227 EXECPTYKILL: exec:...,pty explicitely kills sub process... OK
+test 227 EXECPTYKILL: exec:...,pty explicitly kills sub process... OK
 test 228 TCP4SERVICE: echo via connection to TCP V4 socket... OK
 test 229 EXCEED_FOPEN_MAX: more than FOPEN_MAX FDs in use... only on Linux
 test 230 UDP4LISTEN_SIGCHLD: test if UDP4-LISTEN child becomes zombie... OK
@@ -309,8 +312,8 @@ test 305 SETSOCKOPT: test the setsockopt option... phase 1 failed
 test 306 SETSOCKOPT_LISTEN: test the setsockopt-listen option... OK
 test 307 SCTP4STREAM: echo via connection to SCTP V4 socket... OK
 test 308 SCTP6STREAM: echo via connection to SCTP V6 socket... OK
-test 309 OPENSSLRENEG1: OpenSSL connections survive renogotiation... not with OpenSSL 3.1.6
-test 310 OPENSSLRENEG2: OpenSSL connections do not block after renogotiation... not with OpenSSL 3.1.6
+test 309 OPENSSLRENEG1: OpenSSL connections survive renogotiation... not with OpenSSL 3.5.0
+test 310 OPENSSLRENEG2: OpenSSL connections do not block after renogotiation... not with OpenSSL 3.5.0
 test 311 HOSTNAMEOVFL: stack overflow on overly long host name... OK
 test 312 FILENAMEOVFL: stack overflow on overly long file name... OK
 test 313 NESTEDOVFL: stack overflow on overly long nested arg... OK
@@ -319,13 +322,13 @@ test 315 UNIXLISTEN_KEEPFILE: socat keeps an existing file where it wanted to cr
 test 316 PTY_VOIDARG: check if address params of PTY produce error... OK
 test 317 INCOMPLETE_WRITE: check if incomplete writes are handled properly... OK
 test 318 OPENSSL_ANULL: OpenSSL server with cipher aNULL ... FAILED
-test 319 TCP4MAXCHILDREN: max-children option... OK
-test 320 TCP6MAXCHILDREN: max-children option... OK
-test 321 SCTP4MAXCHILDREN: max-children option... OK
-test 322 SCTP6MAXCHILDREN: max-children option... OK
-test 323 UNIXMAXCHILDREN: max-children option... OK
-test 324 UDP4MAXCHILDREN: max-children option... OK
-test 325 UDP6MAXCHILDREN: max-children option... OK
+test 319 TCP4_L_MAXCHILDREN: max-children option with TCP4-LISTEN... OK
+test 320 TCP6_L_MAXCHILDREN: max-children option with TCP6-LISTEN... OK
+test 321 SCTP4_L_MAXCHILDREN: max-children option with SCTP4-LISTEN... OK
+test 322 SCTP6_L_MAXCHILDREN: max-children option with SCTP6-LISTEN... OK
+test 323 UNIX_L_MAXCHILDREN: max-children option with UNIX-LISTEN... OK
+test 324 UDP4_L_MAXCHILDREN: max-children option with UDP4-LISTEN... OK
+test 325 UDP6_L_MAXCHILDREN: max-children option with UDP6-LISTEN... OK
 test 326 READLINE_OVFL: test for buffer overflow in readline prompt handling... OK
 test 327 FDLEAK: file descriptor leak with range option... OK
 test 328 LISTEN_KEEPALIVE: keepalive option is applied to connection socket... FAILED (KEEPALIVE=8)
@@ -486,30 +489,30 @@ test 482 OPENSSL_6_REUSEADDR: test if option reuseaddr's default is 1 with SSL-L
 test 483 REUSEADDR_NULL: test option reuseaddr without value... NO RESULT
 test 484 TRY_ADDRS_4: try all available TCP4 addresses... use test.sh option --internet
 test 485 TRY_ADDRS_4_6: for TCP try all available IPv4 and IPv6 addresses... use test.sh option --internet
-test 486 NETNS: option netns (net namespace socat-11553-test486)... Only on Linux
-test 487 NETNS_EXEC: option netns with EXEC (net namespace socat-11553-test487)... Only on Linux
+test 486 NETNS: option netns (net namespace socat-270341-test486)... Only on Linux
+test 487 NETNS_EXEC: option netns with EXEC (net namespace socat-270341-test487)... Only on Linux
 test 488 SOCKETPAIR_STREAM: stdio and internal socketpair with stream... OK
 test 489 SOCKETPAIR_DATAGRAM: stdio and internal socketpair with datagram... OK
 test 490 SOCKETPAIR_SEQPACKET: stdio and internal socketpair with seqpacket... OK
 test 491 SOCKETPAIR_BOUNDARIES: Internal socketpair keeps packet boundaries... OK
 test 492 ACCEPT_FD: ACCEPT-FD address... systemd-socket-activate not available
-test 493 LINUX_POSIXMQ_READ_PRIO: POSIX-MQ (Linux) with prio... Only on Linux
-test 494 LINUX_POSIXMQ_RECV_FORK: POSIX-MQ (Linux) RECV with fork... Only on Linux
-test 495 LINUX_POSIXMQ_RECV_MAXCHILDREN: POSIX-MQ (Linux) RECV with fork,max-children... Only on Linux
-test 496 LINUX_POSIXMQ_SEND_MAXCHILDREN: POSIX-MQ (Linux) SEND with fork,max-children... Only on Linux
+test 493 POSIXMQ_READ_PRIO: POSIX-MQ with prio... Feature POSIXMQ not configured in ./socat
+test 494 POSIXMQ_RECV_FORK: POSIX-MQ RECV with fork... Feature POSIXMQ not configured in ./socat
+test 495 POSIXMQ_RECV_MAXCHILDREN: POSIX-MQ RECV with fork,max-children... Feature POSIXMQ not configured in ./socat
+test 496 POSIXMQ_SEND_MAXCHILDREN: POSIX-MQ SEND with fork,max-children... Feature POSIXMQ not configured in ./socat
 test 497 SHELL_SIGINT: sigint option with SHELL... OK
 test 498 SHELL_SOCKETPAIR: simple echo via SHELL of cat with socketpair... FAILED:  ./socat:
 test 499 SHELL_PIPES: simple echo via SHELL of cat with pipes... FAILED:  ./socat:
 test 500 SHELL_PTY: simple echo via SHELL of cat with pty... FAILED:  ./socat:
 test 501 SHELL_SOCKETPAIR_FLUSH: call  od -c  via SHELL using socketpair... FAILED:  ./socat:
 test 502 SHELL_PIPES: call  od -c  via SHELL using pipes... FAILED:  ./socat:
-test 503 SYSTEM_SIGINT: sigint option with SYSTEM... OK
+test 503 SYSTEM_SIGINT: sigint option with SYSTEM... FAILED (shell does not propagate SIGINT?)
 test 504 RES_NSADDR: test the res-nsaddr option... FAILED (due to nscd?)
 test 505 CHDIR_ON_CREATE: restore of pwd after CREAT with chdir option... OK
 test 506 CHDIR_ON_SHELL: restore of pwd after SYSTEM with chdir option... timed out
 FAILED (rc=1)
 test 507 UMASK_ON_CREATE: test restore after CREAT with umask option... OK
-test 508 UMASK_ON_SYSTEM: test restore after SHELL with umask option... /tmp//11553/test508.creat: No such file or directory
+test 508 UMASK_ON_SYSTEM: test restore after SHELL with umask option... /tmp//270341/test508.creat: No such file or directory
 FAILED
 test 509 UNIX_LISTEN_CONNECT_BIND_TEMPNAME: Option unix-bind-tempname... OK
 test 510 UNIX_LISTEN_CLIENT_BIND_TEMPNAME: Option unix-bind-tempname... OK
@@ -523,13 +526,13 @@ test 517 TEMPNAME_SEC: test if a symlink attack works against bind()... OK
 test 518 STDIN_F_SETPIPE_SZ: f-setpipe-sz on STDIN... Option f-setpipe-sz not available in ./socat
 test 519 EXEC_F_SETPIPE_SZ: f-setpipe-sz on EXEC with pipes... Option f-setpipe-sz not available in ./socat
 test 520 DCCP4: DCCP over IPv4... Feature DCCP not configured in ./socat
-test 521 UDPLITE4STREAM: echo via connection to UDP-Lite V4 socket... Feature UDPLITE not configured in ./socat
-test 522 UDPLITE4STREAM: echo via connection to UDP-Lite V4 socket... Feature UDPLITE not configured in ./socat
-test 523 UDPLITE4STREAM: echo via connection to UDP-Lite V4 socket... Feature UDPLITE not configured in ./socat
+test 521 UDPLITE4STREAM: echo via connection to UDP-Lite IPv4 socket... Feature UDPLITE not configured in ./socat
+test 522 UDPLITE4STREAM: echo via connection to UDP-Lite IPv4 socket... Feature UDPLITE not configured in ./socat
+test 523 UDPLITE6STREAM: echo via connection to UDP-Lite IPv6 socket... Feature UDPLITE not configured in ./socat
 test 524 UDPLITE4LISTENENV: UDPLITE4-LISTEN sets environment variables with socket addresses... Feature UDPLITE not configured in ./socat
 test 525 UDPLITE6LISTENENV: UDPLITE6-LISTEN sets environment variables with socket addresses... Feature UDPLITE not configured in ./socat
-test 526 UDPLITE4MAXCHILDREN: max-children option... Feature UDPLITE not configured in ./socat
-test 527 UDPLITE6MAXCHILDREN: max-children option... Feature UDPLITE not configured in ./socat
+test 526 UDPLITE4_L_MAXCHILDREN: max-children option with UDPLITE4-LISTEN... Feature UDPLITE not configured in ./socat
+test 527 UDPLITE6_L_MAXCHILDREN: max-children option with UDPLITE6-LISTEN... Feature UDPLITE not configured in ./socat
 test 528 PROCAN_CTTY: test procan controlling terminal output... FAILED
 test 529 SOCAT_CHAIN_SOCKS4: test socat-chain.sh with SOCKS4 over UNIX-socket... OK
 test 530 SOCAT_CHAIN_SSL_PTY: test socat-chain.sh with SSL over PTY... OK
@@ -564,9 +567,37 @@ test 558 V1800_IP_DATAGRAM_RANGE: test regression of IP-DATAGRAM:1.2.3.4 with IP
 test 559 V1800_IP_DATAGRAM_BIND: test regression of IP-DATAGRAM:1.2.3.4 with IPv4 BIND... Must be root
 test 560 V1800_UDP_SENDTO_RESOLV_6_4: test regression of UDP-SENDTO with IPv6,4 and binding to IPv4... Feature DEVTESTS not configured in ./socat
 test 561 V1800_UDPLITE_SENDTO_RESOLV_6_4: test regression of UDPLITE-SENDTO with IPv6,4 and binding to IPv4... Feature UDPLITE not configured in ./socat
-test 562 V1800_IP_SENDTO_RESOLV_6_4: test regression of IP-SENDTO with IPv6,4 and binding to IPv4... Must be root
+test 562 V1800_IP_SENDTO_RESOLV_6_4: test regression of IP-SENDTO with IPv6,4 and binding to IPv4... Feature DEVTESTS not configured in ./socat
 test 563 V1800_TCP_CONNECT_CONNECT_6_4: test regression of TCP-CONNECT with IPv6,4 and binding to IPv4... Feature DEVTESTS not configured in ./socat
 test 564 V1800_SCTP_CONNECT_CONNECT_6_4: test regression of SCTP-CONNECT with IPv6,4 and binding to IPv4... Feature DEVTESTS not configured in ./socat
 test 565 V1800_DCCP_CONNECT_CONNECT_6_4: test regression of DCCP-CONNECT with IPv6,4 and binding to IPv4... Feature DCCP not configured in ./socat
-CANT:  24 25 26 27 28 29 30 79 137 142 143 166 169 173 174 192 193 194 195 196 197 198 199 200 201 202 212 213 215 218 219 220 221 222 223 224 229 232 235 248 249 250 251 252 253 254 255 256 261 262 263 264 268 280 281 282 283 284 285 286 287 288 292 293 294 304 305 309 310 355 356 357 358 359 360 361 362 372 373 374 375 376 377 378 384 405 406 410 418 480 483 484 485 486 487 492 493 494 495 496 504 513 514 515 516 518 519 520 521 522 523 524 525 526 527 535 542 543 550 551 552 553 556 557 558 559 560 561 562 563 564 565
-FAILED:  102 216 245 246 277 278 296 328 387 396 465 498 499 500 501 502 506 508 528 531 532
+test 566 READLINE_SH_OVERWRITE: Test the readline.sh file overwrite vulnerability... OK
+test 567 SOCKS5CONNECT_TCP4: SOCKS5-CONNECT over TCP/IPv4... OK
+test 568 SOCKS5LISTEN_TCP4: SOCKS5-LISTEN over TCP/IPv4... OK
+test 569 UDP_LISTEN_BIND4: Test UDP-LISTEN with bind to IPv4 addr... OK
+test 570 UNIX_L_BIND: Test if UNIX-L with bind does not fail INTERNAL... OK
+test 571 TCP_CONNECT_BIND_6_4: TCP bind chooses matching IPv... use test.sh option --internet
+test 572 SCTP_CONNECT_BIND_6_4: SCTP bind chooses matching IPv... use test.sh option --internet
+test 573 DCCP_CONNECT_BIND_6_4: DCCP bind chooses matching IPv... Feature DCCP not configured in ./socat
+test 574 OPENSSL_CONNECT_BIND_6_4: OPENSSL bind chooses matching IPv... use test.sh option --internet
+test 575 SOCKS4_BIND_6_4: SOCKS4 bind chooses matching IPv... use test.sh option --internet
+test 576 SOCKS5_CONNECT_BIND_6_4: SOCKS5 bind chooses matching IPv... use test.sh option --internet
+test 577 PROXY_CONNECT_BIND_6_4: PROXY bind chooses matching IPv... use test.sh option --internet
+test 578 TCP_BIND_4: TCP-CONNECT chooses IPv4 from bind... use test.sh option --internet
+test 579 TCP_BIND_6: TCP-CONNECT chooses IPv6 from bind... use test.sh option --internet
+test 580 TCP_CONNECT_RETRY: TCP can retry... OK
+test 581 SCTP_CONNECT_RETRY: SCTP can retry... OK
+test 582 DCCP_CONNECT_RETRY: DCCP can retry... Feature DCCP not configured in ./socat
+test 583 OPENSSL_CONNECT_RETRY: OPENSSL can retry... OK
+test 584 SOCKS4_RETRY: SOCKS4 can retry... OK
+test 585 SOCKS5_CONNECT_RETRY: SOCKS5 can retry... OK
+test 586 PROXY_CONNECT_RETRY: PROXY can retry... OK
+test 587 TCP_CONNECT_MAXCHILDREN: TCP with fork,max-children... FAILED (diff)
+test 588 SCTP_CONNECT_MAXCHILDREN: SCTP with fork,max-children... FAILED (diff)
+test 589 DCCP_CONNECT_MAXCHILDREN: DCCP with fork,max-children... Feature DCCP not configured in ./socat
+test 590 OPENSSL_CONNECT_MAXCHILDREN: OPENSSL with fork,max-children... FAILED (diff)
+test 591 SOCKS4_MAXCHILDREN: SOCKS4 with fork,max-children... FAILED (diff)
+test 592 SOCKS5_CONNECT_MAXCHILDREN: SOCKS5 with fork,max-children... FAILED (diff)
+test 593 PROXY_CONNECT_MAXCHILDREN: PROXY with fork,max-children... FAILED (diff)
+CANT:  24 25 26 27 28 29 30 79 137 142 143 166 169 173 174 192 193 194 195 196 197 198 199 200 201 202 212 213 215 218 219 220 221 222 223 224 229 232 235 248 249 250 251 252 253 254 255 256 261 262 263 264 268 280 281 282 283 284 285 286 287 288 292 293 294 304 305 309 310 355 356 357 358 359 360 361 362 372 373 374 375 376 377 378 384 405 406 410 418 480 483 484 485 486 487 492 493 494 495 496 503 504 513 514 515 516 518 519 520 521 522 523 524 525 526 527 535 542 543 550 551 552 553 556 557 558 559 560 561 562 563 564 565 571 572 573 574 575 576 577 578 579 582 589
+FAILED:  102 216 245 246 277 278 296 328 387 396 465 498 499 500 501 502 506 508 528 531 532 587 588 590 591 592 593
