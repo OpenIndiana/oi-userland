@@ -11,19 +11,14 @@ via __builtin_eh_return().
 
 While here, make the code more readable and conventional.
 ---
- gcc/config/i386/i386.cc | 68 +++++++++++++++++++----------------------
- 1 file changed, 32 insertions(+), 36 deletions(-)
-
-diff --git a/gcc/config/i386/i386.cc b/gcc/config/i386/i386.cc
-index f6f07630a407..4b2df24bcf0b 100644
---- a/gcc/config/i386/i386.cc
-+++ b/gcc/config/i386/i386.cc
-@@ -7453,21 +7453,21 @@ static void
- ix86_emit_save_regs (void)
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386.cc
+@@ -7478,21 +7478,21 @@
  {
    int regno;
-+  struct ix86_frame &frame = cfun->machine->frame;
    rtx_insn *insn;
++  struct ix86_frame &frame = cfun->machine->frame;
+   bool use_ppx = TARGET_APX_PPX && !crtl->calls_eh_return;
  
    if (TARGET_SAVE_ARGS)
      {
@@ -43,7 +38,7 @@ index f6f07630a407..4b2df24bcf0b 100644
  	pro_epilogue_adjust_stack (stack_pointer_rtx, stack_pointer_rtx,
  				   GEN_INT (-UNITS_PER_WORD), -1, false);
      }
-@@ -7637,22 +7637,21 @@ ix86_emit_save_reg_using_mov (machine_mode mode, unsigned int regno,
+@@ -7662,22 +7662,21 @@
  /* Emit code to save registers using MOV insns.
     First register is stored at CFA - CFA_OFFSET.  */
  static void
@@ -70,7 +65,7 @@ index f6f07630a407..4b2df24bcf0b 100644
  	{
  	  regno = x86_64_int_parameter_registers[i];
  	  ix86_emit_save_reg_using_mov(word_mode, regno, cfa_offset);
-@@ -7660,7 +7659,7 @@ ix86_emit_save_regs_using_mov (const struct ix86_frame *frame)
+@@ -7685,7 +7684,7 @@
  	}
      }
  
@@ -79,7 +74,7 @@ index f6f07630a407..4b2df24bcf0b 100644
  
    for (regno = 0; regno < FIRST_PSEUDO_REGISTER; regno++)
      if (GENERAL_REGNO_P (regno) && ix86_save_reg (regno, true, true))
-@@ -9060,7 +9059,7 @@ ix86_expand_prologue (void)
+@@ -9086,7 +9085,7 @@
  	       && (! TARGET_STACK_PROBE
  		   || frame.stack_pointer_offset < CHECK_STACK_LIMIT))
  	{
@@ -88,7 +83,7 @@ index f6f07630a407..4b2df24bcf0b 100644
  	  cfun->machine->red_zone_used = true;
  	  int_registers_saved = true;
  	}
-@@ -9360,7 +9359,7 @@ ix86_expand_prologue (void)
+@@ -9386,7 +9385,7 @@
      }
  
    if (!int_registers_saved)
@@ -97,7 +92,7 @@ index f6f07630a407..4b2df24bcf0b 100644
    if (!sse_registers_saved)
      ix86_emit_save_sse_regs_using_mov (frame.sse_reg_save_offset);
    else if (save_stub_call_needed)
-@@ -10143,33 +10142,30 @@ ix86_expand_epilogue (int style)
+@@ -10172,33 +10171,30 @@
  	ix86_emit_restore_regs_using_pop (TARGET_APX_PPX);
      }
  
