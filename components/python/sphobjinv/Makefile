@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphobjinv
-HUMAN_VERSION =			2.3.1.2
+HUMAN_VERSION =			2.3.1.3
 COMPONENT_SUMMARY =		Sphinx objects.inv Inspection/Manipulation Tool
 COMPONENT_PROJECT_URL =		https://github.com/bskinn/sphobjinv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c874a368460851352d45c92afa172b5c42653b47e2e70d78d61dac93308aa9d
+	sha256:a1d51e4cf3d968b9e0d3ed1cbccea0071e5e5795f24a2d7401a4e37d6bd75717
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
