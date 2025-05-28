@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_xdist
-HUMAN_VERSION =			3.6.1
+HUMAN_VERSION =			3.7.0
 COMPONENT_SUMMARY =		pytest xdist plugin for distributed testing, most importantly across multiple CPUs
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-xdist
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ead156a4db231eec769737f57668ef58a2084a34b2e55c4a8fa20d861107300d
+	sha256:f9248c99a7c15b7d2f90715df93610353a485827bc06eefb6566d23f6400f126
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/execnet
