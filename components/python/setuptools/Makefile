@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			80.8.0
+HUMAN_VERSION =			80.9.0
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:49f7af965996f26d43c8ae34539c8d99c5042fbff34302ea151eaa9c207cd257
+	sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,6 +54,9 @@ PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml.py::Test
 PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_dependencies
 PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_dynamic_optional_dependencies
 PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py::test_mixed_extras_require_optional_dependencies
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
