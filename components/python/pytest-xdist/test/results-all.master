@@ -4,9 +4,9 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: tox.ini
+configfile: pyproject.toml
 testpaths: testing
-collecting ... collected 207 items
+collecting ... collected 211 items
 
 testing/acceptance_test.py::TestDistribution::test_n1_pass PASSED
 testing/acceptance_test.py::TestDistribution::test_n1_fail PASSED
@@ -90,6 +90,8 @@ testing/acceptance_test.py::TestGroupScope::test_by_module PASSED
 testing/acceptance_test.py::TestGroupScope::test_by_class PASSED
 testing/acceptance_test.py::TestGroupScope::test_module_single_start PASSED
 testing/acceptance_test.py::TestGroupScope::test_with_two_group_names PASSED
+testing/acceptance_test.py::TestGroupScope::test_multiple_group_marks PASSED
+testing/acceptance_test.py::TestGroupScope::test_multiple_group_order PASSED
 testing/acceptance_test.py::TestLocking::test_single_file[each] PASSED
 testing/acceptance_test.py::TestLocking::test_single_file[load] PASSED
 testing/acceptance_test.py::TestLocking::test_single_file[loadscope] PASSED
@@ -210,24 +212,57 @@ testing/test_workermanage.py::TestNodeManager::test_init_rsync_roots PASSED
 testing/test_workermanage.py::TestNodeManager::test_rsyncignore PASSED
 testing/test_workermanage.py::TestNodeManager::test_optimise_popen PASSED
 testing/test_workermanage.py::TestNodeManager::test_ssh_setup_nodes SKIPPED
+testing/test_workermanage.py::TestNodeManager::test_proxy_gateway_setup_nodes PASSED
+testing/test_workermanage.py::TestNodeManager::test_proxy_gateway PASSED
 testing/test_workermanage.py::test_unserialize_warning_msg[UserWarning] PASSED
 testing/test_workermanage.py::test_unserialize_warning_msg[MyWarning] PASSED
 testing/test_workermanage.py::test_unserialize_warning_msg[Imported] PASSED
 testing/test_workermanage.py::test_unserialize_warning_msg[Nested] XFAIL
 testing/test_workermanage.py::test_warning_serialization_tweaked_module PASSED
 
-================================== XFAILURES ===================================
-$(PYTHON_DIR)/vendor-packages/_pytest/skipping.py:244: _pytest.outcomes.XFailed: [NOTRUN] other python versions might not have pytest installed
-$(@D)/testing/acceptance_test.py:529: Failed: nomatch: '*killed*my*'
-$(PYTHON_DIR)/vendor-packages/_pytest/skipping.py:244: _pytest.outcomes.XFailed: [NOTRUN] works if run outside test suite
-$(@D)/testing/acceptance_test.py:969: Failed: nomatch: '*Replacing crashed worker*'
-$(@D)/testing/test_dsession.py:498: AttributeError: 'DSession' object has no attribute 'pytest_xdist_rsyncstart'
-$(@D)/testing/test_dsession.py:566: assert 0
-$(@D)/testing/test_looponfail.py:316: AssertionError: assert 1 == 0
-$(@D)/testing/test_remote.py:208: _pytest.outcomes.XFailed: implement a simple test for event production
-$(PYTHON_DIR)/vendor-packages/_pytest/skipping.py:244: _pytest.outcomes.XFailed: [NOTRUN]
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xdist/workermanage.py:463: AttributeError: module 'test_workermanage' has no attribute 'MyWarning2'
+=============================== warnings summary ===============================
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+  <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+  <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+  <class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+  <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
+  <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_1
+  <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6
+  <class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw6'
+    warnings.warn(
+
+testing/acceptance_test.py::TestDistribution::test_n1_pass
+  $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+  <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 195 passed, 2 skipped, 10 xfailed ========
+======== 199 passed, 2 skipped, 10 xfailed, 8 warnings ========
   py$(PYV): OK
   congratulations :)
