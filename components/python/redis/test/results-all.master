@@ -7,7 +7,7 @@ asyncio: mode=auto, asyncio_default_fixture_loop_scope=function, asyncio_default
 timeout: 30.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 2736 items / 482 deselected / 2254 selected
+collecting ... collected 2768 items / 514 deselected / 2254 selected
 
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[single] PASSED
 tests/test_asyncio/test_commands.py::TestResponseCallbacks::test_response_callbacks[pool] PASSED
@@ -2266,44 +2266,69 @@ tests/test_vsets.py::test_vset_commands_without_decoding_responces SKIPPED
 
 =============================== warnings summary ===============================
 tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline[pool]
-  $(@D)/redis/asyncio/client.py:613: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
-    _warn(f"Unclosed client session {self!r}", ResourceWarning, source=self)
-  
-  Object allocated at:
-    File "$(@D)/redis/asyncio/client.py", line 465
-      return Pipeline(
-
 tests/test_asyncio/test_connection_pool.py::TestConnection::test_busy_loading_from_pipeline[pool]
-  $(@D)/redis/asyncio/client.py:613: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
+  $(@D)/redis/asyncio/client.py:612: ResourceWarning: Unclosed client session <redis.asyncio.client.Pipeline(<redis.asyncio.connection.ConnectionPool(<redis.asyncio.connection.Connection(host=localhost,port=6379,db=0)>)>)>
     _warn(f"Unclosed client session {self!r}", ResourceWarning, source=self)
   
   Object allocated at:
-    File "$(PYTHON_DIR)/asyncio/futures.py", line 300
-      get_loop = fut.get_loop
+    File "$(@D)/redis/asyncio/client.py", line 464
+      return Pipeline(
 
 tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
   $(@D)/redis/asyncio/connection.py:232: ResourceWarning: unclosed Connection <redis.asyncio.sentinel.SentinelManagedConnection,host=127.0.0.1,port=6379)>
     _warnings.warn(
   
   Object allocated at:
-    File "$(@D)/redis/asyncio/connection.py", line 1174
-      return self.connection_class(**self.connection_kwargs)
-
-tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(PYTHON_DIR)/inspect.py:2055: ResourceWarning: unclosed <socket.socket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 55539), raddr=('127.0.0.1', 6379)>
-    class RewriteSymbolics(ast.NodeTransformer):
-  
-  Object allocated at:
-    File "$(PYTHON_DIR)/asyncio/base_events.py", line 944
-      sock = socket.socket(family=family, type=type_, proto=proto)
-
-tests/test_asyncio/test_sentinel_managed_connection.py::test_connect_retry_on_timeout_error
-  $(PYTHON_DIR)/asyncio/selector_events.py:702: ResourceWarning: unclosed transport <_SelectorSocketTransport closing fd=6>
-    _warn(f"unclosed transport {self!r}", ResourceWarning, source=self)
-  
-  Object allocated at:
-    File "$(PYTHON_DIR)/asyncio/selector_events.py", line 61
-      return _SelectorSocketTransport(self, sock, protocol, waiter,
+    File "$(PYTHON_DIR)/ast.py", line 50
+      return compile(source, filename, mode, flags,
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1860 passed, 372 skipped, 482 deselected, 22 xpassed, 5 warnings ========
+======== 1860 passed, 372 skipped, 514 deselected, 22 xpassed, 3 warnings ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw6'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(

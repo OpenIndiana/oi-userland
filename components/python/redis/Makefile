@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.2.0
 COMPONENT_SUMMARY =		Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/redis/redis-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72aa3907720de4e3e0e44d64e60791d0d95c4f23dc1602f0a2011d3583a930a2
+	sha256:ce5c31c67e00fb1822b3eaa97ddb17d54bf9b1e86c171b5aa9015f4b8bab4169
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
