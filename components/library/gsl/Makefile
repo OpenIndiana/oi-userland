@@ -12,17 +12,16 @@
 # Copyright (c) 2013-2016 Louis M. Picciano. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsl
-COMPONENT_VERSION=      2.7.1
+COMPONENT_VERSION=      2.8
 COMPONENT_SUMMARY=      GSL - GNU Scientific Library
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gsl/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:dcb0fbd43048832b757ff9942691a8dd70026d5da0ff85601e52687f6deeb34b
+COMPONENT_ARCHIVE_HASH= sha256:6a99eeed15632c6354895b1dd542ed5a855c0f15d9ad1326c6fe2b2c9e423190
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/gsl
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -34,8 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS += --disable-static
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "/test-suite.log/p" ' \
