@@ -1,5 +1,3 @@
-$(PYTHON_DIR)/vendor-packages/coherent/licensed/setuptools.py:18: UserWarning: Avoid installing this plugin for projects that don't depend on it.
-  warnings.warn("Avoid installing this plugin for projects that don't depend on it.")
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
@@ -7,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 71 items
+collecting ... collected 73 items
 
 conftest.py::mypy PASSED
 docs/conf.py::mypy PASSED
@@ -20,8 +18,10 @@ pip_run/commands.py::pip_run.commands._separate_script PASSED
 pip_run/commands.py::pip_run.commands.infer_ipython PASSED
 pip_run/commands.py::pip_run.commands.separate PASSED
 pip_run/compat/py310.py::mypy PASSED
+pip_run/compat/py$(PYV).py::mypy PASSED
 pip_run/deps.py::mypy PASSED
 pip_run/deps.py::pip_run.deps.Install.__bool__ PASSED
+pip_run/deps.py::pip_run.deps.default_quiet PASSED
 pip_run/deps.py::pip_run.deps.empty PASSED
 pip_run/launch.py::mypy PASSED
 pip_run/launch.py::pip_run.launch._build_env PASSED
@@ -82,43 +82,92 @@ tests/test_scripts.py::test_pkg_loaded_from_alternate_index PASSED
 tests/test_scripts.py::test_pkg_loaded_from_url PASSED
 ===================================== mypy =====================================
 
-Success: no issues found in 18 source files
+Success: no issues found in 19 source files
 ================================ tests coverage ================================
 _______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
 
 Name                                                                           Stmts   Miss  Cover   Missing
 ------------------------------------------------------------------------------------------------------------
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e0/script             2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e1/script             2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e2/script.py          2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported____usr_bin_e3/script.py          2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___dash1_0/script                 2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___py_dash2_0/script.py           2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_imported___py_dash3_0/script.py           2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_loaded_from_alternate0/script             4      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_pkg_loaded_from_url0/script_dir/script        3      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_with_path0/sitecustomize.py                   2      0   100%
-/tmp/pytest-of-marcel/pytest-27/test_with_path_result_code0/sitecustomize.py       2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e0/script             2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e1/script             2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e2/script.py          2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e3/script.py          2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___dash1_0/script                 2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___py_dash2_0/script.py           2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___py_dash3_0/script.py           2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_loaded_from_alternate0/script             4      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_pkg_loaded_from_url0/script_dir/script        3      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_with_path0/sitecustomize.py                   2      0   100%
+/tmp/pytest-of-marcel/pytest-61/test_with_path_result_code0/sitecustomize.py       2      0   100%
 conftest.py                                                                       32      0   100%
 docs/conf.py                                                                      16      0   100%
 pip-run.py                                                                         2      0   100%
 pip_run/__init__.py                                                                8      0   100%
 pip_run/__main__.py                                                                2      0   100%
 pip_run/commands.py                                                               34      0   100%
+pip_run/compat/py$(PYV).py                                                             2      0   100%
 pip_run/compat/py310.py                                                            4      1    75%   11
 pip_run/deps.py                                                                   49      0   100%
 pip_run/launch.py                                                                 37      0   100%
 pip_run/read-deps.py                                                              11      0   100%
 pip_run/retention/__init__.py                                                      0      0   100%
-pip_run/retention/destroy.py                                                       7      0   100%
+pip_run/retention/destroy.py                                                       8      0   100%
 pip_run/retention/persist.py                                                      23      0   100%
-pip_run/scripts.py                                                                93      0   100%
+pip_run/scripts.py                                                                97      0   100%
 tests/test_commands.py                                                            19      0   100%
 tests/test_deps.py                                                                14      0   100%
 tests/test_launch.py                                                              30      0   100%
-tests/test_scripts.py                                                            103      0   100%
+tests/test_scripts.py                                                            101      0   100%
 ------------------------------------------------------------------------------------------------------------
-TOTAL                                                                            509      1    99%
-======== 70 passed, 1 skipped ========
+TOTAL                                                                            514      1    99%
+======== 72 passed, 1 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw6'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
