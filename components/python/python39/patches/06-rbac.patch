@@ -71,7 +71,7 @@ new file mode 100644
 +		for(len = 0; len < ret_authattr->attr->length; len++) {
 +			kv_t current = ret_authattr->attr->data[len];
 +
-+			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
 +			char* saveptr;
 +			char* item = strtok_r(current.value, ",", &saveptr);
 +			PyList_Append(set, PyBytes_FromString(item));
@@ -126,8 +126,8 @@ new file mode 100644
 +}
 +
 +static PyObject*
-+pyrbac_authattr_next(PyObject* self, PyObject* args) {
-+	PyObject* retval = pyrbac_getauthattr(self, args);
++pyrbac_authattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getauthattr(self, NULL);
 +	if( retval == Py_None ) {
 +		setauthattr();
 +		return NULL;
@@ -135,7 +135,7 @@ new file mode 100644
 +	return retval;
 +}
 +static PyObject*
-+pyrbac_authattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_authattr__iter__(PyObject* self) {
 +	return self;
 +}
 +
@@ -340,7 +340,7 @@ new file mode 100644
 +			for(len = 0; len < execprof->attr->length; len++) {
 +				kv_t current = execprof->attr->data[len];
 +
-+				PyObject* set = PyList_New(NULL);
++				PyObject* set = PyList_New(0);
 +				char* saveptr;
 +				char* item = strtok_r(current.value, ",", &saveptr);
 +				PyList_Append(set, PyBytes_FromString(item));
@@ -418,8 +418,8 @@ new file mode 100644
 +}
 +
 +static PyObject*
-+pyrbac_execattr_next(PyObject* self, PyObject* args) {
-+	PyObject* retval = pyrbac_getexecattr(self, args);
++pyrbac_execattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getexecattr(self, NULL);
 +	if( retval == Py_None ) {
 +		setexecattr();
 +		return NULL;
@@ -427,7 +427,7 @@ new file mode 100644
 +	return retval;
 +}
 +static PyObject*
-+pyrbac_execattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_execattr__iter__(PyObject* self) {
 +	return self;
 +}
 +
@@ -663,7 +663,7 @@ new file mode 100644
 +	set_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
 +	priv_freeset(set);
 +	
-+	PyObject* set_list = PyList_New(NULL);
++	PyObject* set_list = PyList_New(0);
 +	char* saveptr;
 +	char* item = strtok_r(set_str, ",", &saveptr);
 +	PyList_Append(set_list, PyBytes_FromString(item));
@@ -688,8 +688,8 @@ new file mode 100644
 +	PyObject* set_string = PyList_GetItem(set_list_in, 0);
 +	int i;
 +	for (i = 1; i < PyList_Size(set_list_in); ++i) {
-+		PyBytes_Concat(set_string, PyBytes_FromString(","));
-+		PyBytes_Concat(set_string, PyList_GetItem(set_list_in, i));
++		PyBytes_Concat(&set_string, PyBytes_FromString(","));
++		PyBytes_Concat(&set_string, PyList_GetItem(set_list_in, i));
 +	}
 +
 +	priv_set_t * set = priv_str_to_set(PyBytes_AsString(set_string), ",", NULL);
@@ -699,7 +699,7 @@ new file mode 100644
 +	char * ret_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
 +	priv_freeset(set);
 +	
-+	PyObject* set_list_out = PyList_New(NULL);
++	PyObject* set_list_out = PyList_New(0);
 +	char* saveptr;
 +	char* item = strtok_r(ret_str, ",", &saveptr);
 +	PyList_Append(set_list_out, PyBytes_FromString(item));
@@ -1027,7 +1027,7 @@ new file mode 100644
 +		for(len = 0; len < ret_userattr->attr->length; len++) {
 +			kv_t current = ret_userattr->attr->data[len];
 +
-+			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
 +			char* saveptr;
 +			char* item = strtok_r(current.value, ",", &saveptr);
 +			PyList_Append(set, PyBytes_FromString(item));
@@ -1089,8 +1089,8 @@ new file mode 100644
 +}
 +
 +static PyObject*
-+pyrbac_userattr_next(PyObject* self, PyObject* args) {
-+	PyObject* retval = pyrbac_getuserattr(self, args);
++pyrbac_userattr_next(PyObject* self) {
++	PyObject* retval = pyrbac_getuserattr(self, NULL);
 +	if( retval == Py_None ) {
 +		setuserattr();
 +		return NULL;
@@ -1098,7 +1098,7 @@ new file mode 100644
 +	return retval;
 +}
 +static PyObject*
-+pyrbac_userattr__iter__(PyObject* self, PyObject* args) {
++pyrbac_userattr__iter__(PyObject* self) {
 +	return self;
 +}
 +

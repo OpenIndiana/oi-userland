@@ -30,13 +30,13 @@ USE_CTF=		yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        Python
-COMPONENT_VERSION=      3.9.21
+COMPONENT_VERSION=      3.9.22
 PYTHON_VERSION =	$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 COMPONENT_SUMMARY=      The Python interpreter, libraries and utilities
 COMPONENT_PROJECT_URL=  https://python.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1
+COMPONENT_ARCHIVE_HASH=	sha256:8c136d199d3637a1fce98a16adc809c1d83c922d02d41f3614b34f8b6e7d38ec
 COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			runtime/python-39
 COMPONENT_CLASSIFICATION= Development/Python
@@ -134,7 +134,7 @@ COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python$(PYTHON_VERS
 
 # Simplify the definitions of CC, CXX, CFLAGS and LDFLAGS so they hard-code
 # neither paths from our build systems nor Studio-specific options.
-COMPONENT_PRE_INSTALL_ACTION= \
+COMPONENT_PRE_INSTALL_ACTION += \
     (cd $(@D) ; \
     $(GSED) -i -e 's/^CC=.*/CC=\t\tgcc/' -e 's/^CXX=.*/CXX=\t\tg++/' \
     -e 's/^CFLAGS=.*/CFLAGS=\t\t\$$\(BASECFLAGS) \$$\(OPT) \$$\(EXTRA_CFLAGS)/' \
@@ -154,7 +154,7 @@ COMPONENT_INSTALL_ARGS += -e
 # Note that once Python 3.9 has been integrated and propagated to build
 # machines, then the LD_LIBRARY_PATH setting and PROTO_DIR prefix below
 # can both be removed.
-COMPONENT_POST_INSTALL_ACTION= \
+COMPONENT_POST_INSTALL_ACTION += \
     (cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
      $(GSED) -i -e 's|$(SOURCE_DIR)|.|g' -e 's|$(COMPONENT_DIR)|..|g' \
     -e 's|$(SPRO_VROOT)/bin/||g' _sysconfigdata__sunos5_.py config-$(PYTHON_VERSION)/Makefile; \
@@ -164,7 +164,7 @@ COMPONENT_POST_INSTALL_ACTION= \
 # one test.  For example:
 # $ TESTOPTS_PYTHON_TEST=test_sys
 TESTOPTS_PYTHON_TEST=
-COMPONENT_TEST_ENV= PATH="$(PATH)"
+COMPONENT_TEST_ENV += PATH="$(PATH)"
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
 # The network tests contain many expected failures when run behind a firewall.
