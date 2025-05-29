@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip_run
-HUMAN_VERSION =			16.0.0
+HUMAN_VERSION =			16.0.2
 COMPONENT_SUMMARY =		install packages and run Python with them
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d8c36fd14a37daf9b46d12fc03050c6ea5cdf0d71db38c704cf0ddbda929450d
+	sha256:b54f99ae0beb9de1f16f2c560928c1f9c3e976034f86f7c02f774530631c8525
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,9 +31,13 @@ include $(WS_MAKE_RULES)/common.mk
 # Revert back unneeded PYV normalizations
 COMPONENT_TEST_TRANSFORMS += "-e 's/py\$$(PYV)compat/py$(subst .,,$(PYTHON_VERSION))compat/'"
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/autocommand
 PYTHON_REQUIRED_PACKAGES += library/python/coherent-deps
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-env
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
