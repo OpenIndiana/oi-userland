@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip_run
-HUMAN_VERSION =			16.0.2
+HUMAN_VERSION =			16.1.0
 COMPONENT_SUMMARY =		install packages and run Python with them
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b54f99ae0beb9de1f16f2c560928c1f9c3e976034f86f7c02f774530631c8525
+	sha256:b3eb703851c01d3a33ff30f142d0826e82e8d9c0182c9c87c86ebb39f7e68e95
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,6 +47,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/path
 PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tempora
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flit-core
@@ -56,6 +57,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/nbformat
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezer
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
