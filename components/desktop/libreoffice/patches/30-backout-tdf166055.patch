@@ -1,0 +1,84 @@
+libreoffice-25.2.4.1/avmedia/source/qt6/QtPlayer.cxx: In member function 'virtual com::sun::star::uno::Reference<com::sun::star::media::XFrameGrabber> avmedia::qt::QtPlayer::createFrameGrabber()':
+libreoffice-25.2.4.1/avmedia/source/qt6/QtPlayer.cxx:295:42: error: 'toOUString' was not declared in this scope; did you mean 'toQString'?
+  295 |             = createPlatformFrameGrabber(toOUString(m_xMediaPlayer->source().url()));
+      |                                          ^~~~~~~~~~
+      |                                          toQString
+
+--- libreoffice-25.2.4.1/avmedia/source/qt6/QtPlayer.cxx.~1~	2025-05-20 04:25:45.000000000 -0400
++++ libreoffice-25.2.4.1/avmedia/source/qt6/QtPlayer.cxx	2025-05-23 13:19:02.712156387 -0400
+@@ -17,9 +17,6 @@
+ #include <QtWidgets/QLabel>
+ #include <QtWidgets/QLayout>
+ 
+-#include <com/sun/star/media/XManager.hpp>
+-#include <com/sun/star/uno/XComponentContext.hpp>
+-#include <comphelper/processfactory.hxx>
+ #include <cppuhelper/supportsservice.hxx>
+ #include <sal/log.hxx>
+ #include <rtl/string.hxx>
+@@ -33,7 +30,6 @@
+ #include <vcl/timer.hxx>
+ 
+ #include <gstwindow.hxx>
+-#include <mediamisc.hxx>
+ #include "QtFrameGrabber.hxx"
+ #include "QtPlayer.hxx"
+ 
+@@ -249,55 +245,12 @@
+     return xRet;
+ }
+ 
+-namespace
+-{
+-// see also MediaWindowImpl::createPlayer
+-uno::Reference<media::XFrameGrabber> createPlatformFrameGrabber(const OUString& rUrl)
+-{
+-    const uno::Reference<uno::XComponentContext>& xContext
+-        = comphelper::getProcessComponentContext();
+-    try
+-    {
+-        uno::Reference<css::media::XManager> xManager(
+-            xContext->getServiceManager()->createInstanceWithContext(AVMEDIA_MANAGER_SERVICE_NAME,
+-                                                                     xContext),
+-            uno::UNO_QUERY);
+-        if (!xManager.is())
+-            return nullptr;
+-
+-        uno::Reference<media::XPlayer> xPlayer = xManager->createPlayer(rUrl);
+-        if (!xPlayer.is())
+-            return nullptr;
+-
+-        return xPlayer->createFrameGrabber();
+-    }
+-    catch (const uno::Exception&)
+-    {
+-        SAL_WARN("avmedia", "Exception in createPlatformFrameGrabber");
+-    }
+-
+-    return nullptr;
+-}
+-}
+-
+ uno::Reference<media::XFrameGrabber> SAL_CALL QtPlayer::createFrameGrabber()
+ {
+     osl::MutexGuard aGuard(m_aMutex);
+ 
+-    // use the default platform frame grabber (GStreamer on Linux) by default
+-    // instead of using QtFrameGrabber for now unless overriden by env variable,
+-    // as QtFrameGrabber has issues (see e.g. tdf#166055)
+-    static const bool bPreferQtFrameGrabber
+-        = (getenv("SAL_VCL_QT_USE_QT_FRAME_GRABBER") != nullptr);
+-    if (!bPreferQtFrameGrabber)
+-    {
+-        uno::Reference<media::XFrameGrabber> xFrameGrabber
+-            = createPlatformFrameGrabber(toOUString(m_xMediaPlayer->source().url()));
+-        if (xFrameGrabber.is())
+-            return xFrameGrabber;
+-    }
+-
+-    return new QtFrameGrabber(m_xMediaPlayer->source());
++    rtl::Reference<QtFrameGrabber> xFrameGrabber = new QtFrameGrabber(m_xMediaPlayer->source());
++    return xFrameGrabber;
+ }
+ 
+ OUString SAL_CALL QtPlayer::getImplementationName()
