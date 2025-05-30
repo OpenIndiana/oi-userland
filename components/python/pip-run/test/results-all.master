@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 73 items
+collecting ... collected 79 items
 
 conftest.py::mypy PASSED
 docs/conf.py::mypy PASSED
@@ -31,9 +31,13 @@ pip_run/launch.py::pip_run.launch.inject_sitecustomize PASSED
 pip_run/read-deps.py::mypy PASSED
 pip_run/read-deps.py::pip_run.read-deps.run PASSED
 pip_run/retention/__init__.py::mypy PASSED
+pip_run/retention/__init__.py::pip_run.retention.Strategy.resolve PASSED
 pip_run/retention/destroy.py::mypy PASSED
 pip_run/retention/persist.py::mypy PASSED
+pip_run/retention/persist.py::pip_run.retention.persist.Eternity PASSED
 pip_run/retention/persist.py::pip_run.retention.persist.cache_key PASSED
+pip_run/retention/persist.py::pip_run.retention.persist.clean_if_older PASSED
+pip_run/retention/persist.py::pip_run.retention.persist.parse_duration PASSED
 pip_run/scripts.py::mypy PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.infer PASSED
 pip_run/scripts.py::pip_run.scripts.DepsReader.read_python PASSED
@@ -53,12 +57,14 @@ tests/test_deps.py::TestLoad::test_no_args_passes[persist] PASSED
 tests/test_deps.py::TestLoad::test_no_args_passes[destroy] PASSED
 tests/test_deps.py::TestLoad::test_only_options_passes[persist] PASSED
 tests/test_deps.py::TestLoad::test_only_options_passes[destroy] PASSED
-tests/test_deps.py::test_target_retention_context[persist] PASSED
-tests/test_deps.py::test_target_retention_context[destroy] PASSED
 tests/test_launch.py::mypy PASSED
 tests/test_launch.py::test_with_path PASSED
 tests/test_launch.py::test_with_path_result_code PASSED
 tests/test_launch.py::test_build_env PASSED
+tests/test_launch.py::test_nonexistent_path PASSED
+tests/test_retention.py::mypy PASSED
+tests/test_retention.py::test_target_retention_context[persist] PASSED
+tests/test_retention.py::test_target_retention_context[destroy] PASSED
 tests/test_scripts.py::mypy PASSED
 tests/test_scripts.py::test_pkg_imported[--dash0] SKIPPED (Unable to...)
 tests/test_scripts.py::test_pkg_imported[--dash1] PASSED
@@ -82,45 +88,8 @@ tests/test_scripts.py::test_pkg_loaded_from_alternate_index PASSED
 tests/test_scripts.py::test_pkg_loaded_from_url PASSED
 ===================================== mypy =====================================
 
-Success: no issues found in 19 source files
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
-
-Name                                                                           Stmts   Miss  Cover   Missing
-------------------------------------------------------------------------------------------------------------
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e0/script             2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e1/script             2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e2/script.py          2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported____usr_bin_e3/script.py          2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___dash1_0/script                 2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___py_dash2_0/script.py           2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_imported___py_dash3_0/script.py           2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_loaded_from_alternate0/script             4      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_pkg_loaded_from_url0/script_dir/script        3      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_with_path0/sitecustomize.py                   2      0   100%
-/tmp/pytest-of-marcel/pytest-61/test_with_path_result_code0/sitecustomize.py       2      0   100%
-conftest.py                                                                       32      0   100%
-docs/conf.py                                                                      16      0   100%
-pip-run.py                                                                         2      0   100%
-pip_run/__init__.py                                                                8      0   100%
-pip_run/__main__.py                                                                2      0   100%
-pip_run/commands.py                                                               34      0   100%
-pip_run/compat/py$(PYV).py                                                             2      0   100%
-pip_run/compat/py310.py                                                            4      1    75%   11
-pip_run/deps.py                                                                   49      0   100%
-pip_run/launch.py                                                                 37      0   100%
-pip_run/read-deps.py                                                              11      0   100%
-pip_run/retention/__init__.py                                                      0      0   100%
-pip_run/retention/destroy.py                                                       8      0   100%
-pip_run/retention/persist.py                                                      23      0   100%
-pip_run/scripts.py                                                                97      0   100%
-tests/test_commands.py                                                            19      0   100%
-tests/test_deps.py                                                                14      0   100%
-tests/test_launch.py                                                              30      0   100%
-tests/test_scripts.py                                                            101      0   100%
-------------------------------------------------------------------------------------------------------------
-TOTAL                                                                            514      1    99%
-======== 72 passed, 1 skipped ========
+Success: no issues found in 20 source files
+======== 78 passed, 1 skipped ========
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
   warnings.warn(
