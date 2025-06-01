@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3792 items]
+X workers [3798 items]
 
 scheduling tests via LoadScheduling
 
@@ -389,6 +389,7 @@ tests/test_client_functional.py::test_skip_default_auto_headers_user_agent[pyloo
 tests/test_client_functional.py::test_socket_timeout[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client_alpn[pyloop] PASSED
+tests/test_client_functional.py::test_ssl_client_shutdown_timeout[pyloop] SKIPPED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof_nested[pyloop] PASSED
@@ -582,6 +583,7 @@ tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[with"
 tests/test_client_middleware_digest_auth.py::test_template_based_header_construction PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
 tests/test_client_proto.py::test_client_protocol_readuntil_eof[pyloop] PASSED
+tests/test_client_proto.py::test_connection_lost_exception_is_marked_retrieved[pyloop] PASSED
 tests/test_client_proto.py::test_connection_lost_sets_transport_to_none[pyloop] PASSED
 tests/test_client_proto.py::test_data_received_after_close[pyloop] PASSED
 tests/test_client_proto.py::test_drop_timeout[pyloop] PASSED
@@ -927,6 +929,7 @@ tests/test_client_session.py::test_reraise_os_error[pyloop] PASSED
 tests/test_client_session.py::test_session_context_manager[pyloop] PASSED
 tests/test_client_session.py::test_session_default_version[pyloop] PASSED
 tests/test_client_session.py::test_session_loop[pyloop] PASSED
+tests/test_client_session.py::test_ssl_shutdown_timeout_passed_to_connector PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-http] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-https] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-ws] PASSED
@@ -1174,6 +1177,9 @@ tests/test_connector.py::test_tcp_connector_resolve_host[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_default[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_override[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_socket_factory[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_not_passed_pre_311[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_passed_to_create_connection[pyloop] SKIPPED
 tests/test_connector.py::test_tcp_connector_use_dns_cache_disabled[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_uses_provided_local_addr[pyloop] PASSED
 tests/test_connector.py::test_unix_connector[pyloop] PASSED
@@ -3802,7 +3808,7 @@ tests/test_worker.py::test_run_async_factory[AsyncioWorker-pyloop] PASSED
 tests/test_worker.py::test_run_not_app[AsyncioWorker-pyloop] PASSED
 
 ================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+_______________ coverage: platform sunos5, python 3.9.22-final-0 _______________
 
 Name                                                                                                                                                     Stmts   Miss  Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -3820,12 +3826,12 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                     
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     140      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      171      2    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     749     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      173      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     750     16    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                         275      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 131      6    95%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         803     62    92%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         285      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         808     64    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         286      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           94      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                               94      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                           484     15    97%
@@ -3835,8 +3841,8 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py                
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_websocket.py                      6      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py                       217     11    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/log.py                                 7      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         648     16    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           385      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         649     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           386      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py                   31      1    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     170      8    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          120     68    43%
@@ -3879,17 +3885,17 @@ tests/test_classbasedview.py                                                    
 tests/test_client_connection.py                                                                                                                             94      0   100%
 tests/test_client_exceptions.py                                                                                                                            199      0   100%
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
-tests/test_client_functional.py                                                                                                                           3116     28    99%
+tests/test_client_functional.py                                                                                                                           3145     54    98%
 tests/test_client_middleware.py                                                                                                                            666     13    98%
 tests/test_client_middleware_digest_auth.py                                                                                                                301      1    99%
-tests/test_client_proto.py                                                                                                                                 144      0   100%
+tests/test_client_proto.py                                                                                                                                 154      0   100%
 tests/test_client_request.py                                                                                                                              1119     11    99%
 tests/test_client_response.py                                                                                                                              489      5    99%
-tests/test_client_session.py                                                                                                                               617      5    99%
+tests/test_client_session.py                                                                                                                               632      5    99%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
-tests/test_connector.py                                                                                                                                   2185     54    98%
+tests/test_connector.py                                                                                                                                   2230     75    97%
 tests/test_cookiejar.py                                                                                                                                    489      0   100%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
 tests/test_formdata.py                                                                                                                                     177      0   100%
@@ -3903,7 +3909,7 @@ tests/test_loop.py                                                              
 tests/test_multipart.py                                                                                                                                    922     37    96%
 tests/test_multipart_helpers.py                                                                                                                            446     19    96%
 tests/test_payload.py                                                                                                                                      637      6    99%
-tests/test_proxy.py                                                                                                                                        324      0   100%
+tests/test_proxy.py                                                                                                                                        326      1    99%
 tests/test_proxy_functional.py                                                                                                                             489    489     0%
 tests/test_pytest_plugin.py                                                                                                                                 27      0   100%
 tests/test_resolver.py                                                                                                                                     387    201    48%
@@ -3936,31 +3942,7 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    42012   3183    92%
+TOTAL                                                                                                                                                    42124   3233    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3737 passed, 49 skipped, 6 xfailed ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw6'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 3741 passed, 51 skipped, 6 xfailed ========
