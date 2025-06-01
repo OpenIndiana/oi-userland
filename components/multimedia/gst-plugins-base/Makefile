@@ -21,11 +21,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-base
-COMPONENT_VERSION=	1.26.1
+COMPONENT_VERSION=	1.26.2
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:659553636f84dcf388cad5cf6530e02b0b2d3dc450e76199287ba9db6a6c5226
+COMPONENT_ARCHIVE_HASH=	sha256:f4b9fc0be852fe5f65401d18ae6218e4aea3ff7a3c9f8d265939b9c4704915f7
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/base
@@ -35,6 +35,7 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# without this the elements_multifdsink test fails
 CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += -Dalsa=disabled
@@ -72,11 +73,11 @@ REQUIRED_PACKAGES += x11/library/mesa
 # must be at the same major version as the main gstreamer package to run tests
 # successfully.
 GST_DEVTOOLS_VERSION = \
-	$(shell $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools1/Makefile print-value-COMPONENT_VERSION)
+	$(shell $(ENV) $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools/Makefile print-value-COMPONENT_VERSION)
 ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
-TEST_REQUIRED_PACKAGES += library/audio/gstreamer1/devtools
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer/devtools
 else
-TEST_CONFLICTING_PACKAGES += library/audio/gstreamer1/devtools
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer/devtools
 endif
 
 # Auto-generated dependencies
