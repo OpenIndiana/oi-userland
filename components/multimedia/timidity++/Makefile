@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		timidity++
 COMPONENT_VERSION=	2.15.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Software MIDI player
 COMPONENT_DESCRIPTION=	A software synthesizer, without external instruments, that can play MIDI files without a hardware synthesizer. It can either render to the sound card in real time, or it can save the result to a file, such as a PCM .wav file.
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/timidity
@@ -35,8 +35,13 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-# needed to fix implicit declaration of function 'isupper' and friends.
-CFLAGS += -DSTDC_HEADERS
+# configure does not detect BIG/LITTLE endian correctly.
+ifeq ($(MACH), i386)
+CONFIGURE_ENV += ac_cv_c_bigendian=no
+endif
+
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
 
 CONFIGURE_OPTIONS += --enable-audio=oss,ao,vorbis,flac
 CONFIGURE_OPTIONS += --enable-ncurses
