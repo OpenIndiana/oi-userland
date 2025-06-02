@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 # https://docs.nvidia.com/datacenter/tesla/drivers/index.html
 
 COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-HUMAN_VERSION =			535.230.02
+HUMAN_VERSION =			535.247.01
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_MJR_VERSION =		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
@@ -32,7 +32,7 @@ COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:5a2d5a8de6c147febd76bb3e998c7b311f85ba16eb58716065fa5ebc5182b29b
+COMPONENT_ARCHIVE_HASH =	sha256:9f18ee83fc2f81a285b698ff4c6768736506467802812a2dbbc7017fa015ef48
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 COMPONENT_LICENSE_FILE =	nvidia.license
