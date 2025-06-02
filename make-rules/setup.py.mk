@@ -227,6 +227,11 @@ COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
 # Make sure testing is able to find own installed executables (if any)
 COMPONENT_TEST_ENV +=	PATH=$(PROTOUSRBINDIR):$(PATH)
 
+# Suppress the unnecessary warning that pollutes the test results and is
+# causing many tests to fail.
+# See also https://github.com/coherent-oss/coherent.licensed/issues/6
+COMPONENT_TEST_ENV += COHERENT_LICENSED_UNUSED_ACTION=ignore
+
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
 TEST_32 = $(PYTHON_32_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
