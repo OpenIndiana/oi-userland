@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3798 items]
+X workers [3888 items]
 
 scheduling tests via LoadScheduling
 
@@ -28,6 +28,7 @@ tests/test_base_protocol.py::test_resume_reading_no_transport PASSED
 tests/test_base_protocol.py::test_resume_reading_stub_transport PASSED
 tests/test_base_protocol.py::test_resume_writing_no_waiters PASSED
 tests/test_base_protocol.py::test_resume_writing_waiter_done PASSED
+tests/test_circular_imports.py::test_no_warnings[aiohttp._cookie_helpers] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp._http_parser] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp._http_writer] PASSED
 tests/test_circular_imports.py::test_no_warnings[aiohttp._websocket.helpers] PASSED
@@ -186,6 +187,7 @@ tests/test_client_functional.py::test_aiohttp_request_coroutine[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_close_sess_on_error[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ctx_manager_not_found[pyloop] PASSED
 tests/test_client_functional.py::test_aiohttp_request_ssl[pyloop] PASSED
+tests/test_client_functional.py::test_amazon_like_cookie_scenario[pyloop] PASSED
 tests/test_client_functional.py::test_async_iterable_payload_redirect[pyloop] PASSED
 tests/test_client_functional.py::test_async_payload_generator[pyloop] PASSED
 tests/test_client_functional.py::test_async_with_session[pyloop] PASSED
@@ -381,6 +383,7 @@ tests/test_client_functional.py::test_set_cookies[pyloop] PASSED
 tests/test_client_functional.py::test_set_cookies_expired[pyloop] PASSED
 tests/test_client_functional.py::test_set_cookies_max_age[pyloop] PASSED
 tests/test_client_functional.py::test_set_cookies_max_age_overflow[pyloop] PASSED
+tests/test_client_functional.py::test_set_cookies_with_curly_braces[pyloop] PASSED
 tests/test_client_functional.py::test_set_eof_on_empty_response[pyloop] PASSED
 tests/test_client_functional.py::test_shortcuts[pyloop] PASSED
 tests/test_client_functional.py::test_skip_auto_headers_content_type[pyloop] PASSED
@@ -583,6 +586,8 @@ tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[with"
 tests/test_client_middleware_digest_auth.py::test_template_based_header_construction PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
 tests/test_client_proto.py::test_client_protocol_readuntil_eof[pyloop] PASSED
+tests/test_client_proto.py::test_closed_property_after_connection_lost[pyloop] PASSED
+tests/test_client_proto.py::test_closed_property_lazy_creation[pyloop] PASSED
 tests/test_client_proto.py::test_connection_lost_exception_is_marked_retrieved[pyloop] PASSED
 tests/test_client_proto.py::test_connection_lost_sets_transport_to_none[pyloop] PASSED
 tests/test_client_proto.py::test_data_received_after_close[pyloop] PASSED
@@ -653,6 +658,7 @@ tests/test_client_request.py::test_content_type_auto_header_form[pyloop] PASSED
 tests/test_client_request.py::test_content_type_auto_header_get[pyloop] PASSED
 tests/test_client_request.py::test_content_type_skip_auto_header_bytes[pyloop] PASSED
 tests/test_client_request.py::test_content_type_skip_auto_header_form[pyloop] PASSED
+tests/test_client_request.py::test_cookie_coded_value_preserved[pyloop] PASSED
 tests/test_client_request.py::test_cookies[pyloop] PASSED
 tests/test_client_request.py::test_cookies_is_quoted_with_special_characters[pyloop] PASSED
 tests/test_client_request.py::test_cookies_merge_with_headers[pyloop] PASSED
@@ -785,6 +791,8 @@ tests/test_client_request.py::test_update_body_none_sets_content_length_zero[pyl
 tests/test_client_request.py::test_update_body_updates_content_length[pyloop] PASSED
 tests/test_client_request.py::test_update_body_with_chunked_encoding[pyloop] PASSED
 tests/test_client_request.py::test_update_body_with_different_types[pyloop] PASSED
+tests/test_client_request.py::test_update_cookies_with_quoted_existing_header[pyloop] PASSED
+tests/test_client_request.py::test_update_cookies_with_special_chars_in_existing_header[pyloop] PASSED
 tests/test_client_request.py::test_urlencoded_formdata_charset[pyloop] PASSED
 tests/test_client_request.py::test_verify_ssl_false_with_ssl_context[pyloop] PASSED
 tests/test_client_request.py::test_version_1_0[pyloop] PASSED
@@ -835,6 +843,8 @@ tests/test_client_response.py::test_repr_non_ascii_url PASSED
 tests/test_client_response.py::test_request_info_in_exception PASSED
 tests/test_client_response.py::test_resp_host PASSED
 tests/test_client_response.py::test_response_cookies[pyloop] PASSED
+tests/test_client_response.py::test_response_cookies_setter_updates_raw_headers[pyloop] PASSED
+tests/test_client_response.py::test_response_duplicate_cookie_names[pyloop] PASSED
 tests/test_client_response.py::test_response_eof[pyloop] PASSED
 tests/test_client_response.py::test_response_eof_after_connection_detach[pyloop] PASSED
 tests/test_client_response.py::test_response_eof_upgraded[pyloop] PASSED
@@ -845,6 +855,7 @@ tests/test_client_response.py::test_response_links_no_rel[pyloop] PASSED
 tests/test_client_response.py::test_response_links_quoted[pyloop] PASSED
 tests/test_client_response.py::test_response_links_relative[pyloop] PASSED
 tests/test_client_response.py::test_response_not_closed_after_get_ok PASSED
+tests/test_client_response.py::test_response_raw_cookie_headers_preserved[pyloop] PASSED
 tests/test_client_response.py::test_response_read_triggers_callback[pyloop] PASSED
 tests/test_client_response.py::test_response_real_url[pyloop] PASSED
 tests/test_client_response.py::test_response_request_info PASSED
@@ -1062,6 +1073,7 @@ tests/test_connector.py::test_close_during_connect[pyloop] PASSED
 tests/test_connector.py::test_close_twice[pyloop] PASSED
 tests/test_connector.py::test_close_with_acquired_connection[pyloop] PASSED
 tests/test_connector.py::test_close_with_exception_during_closing[pyloop] PASSED
+tests/test_connector.py::test_close_with_proto_closed_none PASSED
 tests/test_connector.py::test_connect[pyloop] PASSED
 tests/test_connector.py::test_connect_queued_operation_tracing[pyloop] PASSED
 tests/test_connector.py::test_connect_reuseconn_tracing[pyloop] PASSED
@@ -1185,6 +1197,61 @@ tests/test_connector.py::test_tcp_connector_uses_provided_local_addr[pyloop] PAS
 tests/test_connector.py::test_unix_connector[pyloop] PASSED
 tests/test_connector.py::test_unix_connector_not_found[pyloop] PASSED
 tests/test_connector.py::test_unix_connector_permission[pyloop] PASSED
+tests/test_cookie_helpers.py::test_bool_attrs_is_superset_of_morsel_flags PASSED
+tests/test_cookie_helpers.py::test_cookie_helpers_constants_include_partitioned PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ PARTITIONED ] PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ Partitioned ] PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ Partitioned; ] PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ Partitioned= ] PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ Partitioned=true ] PASSED
+tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ partitioned ] PASSED
+tests/test_cookie_helpers.py::test_known_attrs_is_superset_of_morsel_reserved PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_ansi_c_asctime_format PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_after_illegal_cookie PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_before_cookie PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_without_values PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_boolean_attrs PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_boolean_attrs_with_partitioned PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_case_insensitive_attrs PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[complex=value; Domain=.example.com; Path=/app; Max-Age=3600] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[empty=] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[quoted="value with spaces"] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[session=abc123] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[token=xyz; Secure; HttpOnly] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[user=john; Path=/] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_complex_real_world PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_date_formats_with_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_dollar_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_dollar_prefixed_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_edge_cases PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_empty_and_invalid PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_empty_headers PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_encoded_values PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_expires_attribute PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_illegal_cookie_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_invalid_cookie_syntax PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_invalid_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_issue_7993_double_quotes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_multiple_cookies_same_header PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_case_insensitive PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_not_set PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_with_other_attrs_manual PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_quoted_values PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_relaxed_validation_differences PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_rfc2822_timezone_issue_4493 PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_rfc2822_with_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[complex="a=b;c=d"; simple=value] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[data="value;with;multiple;semicolons"; next=cookie] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[session="abc;xyz"; token=123] PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_simple PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_special_chars_in_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_unknown_attrs_ignored PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_unmatched_quotes_compatibility PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_various_date_formats_issue_4327 PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_headers_with_attributes PASSED
+tests/test_cookie_helpers.py::test_preserve_morsel_with_coded_value PASSED
+tests/test_cookie_helpers.py::test_preserve_morsel_with_coded_value_no_coded_value PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_cookie_not_expired_when_added_after_removal PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_domain_filter_diff_host PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_domain_filter_host_only PASSED
@@ -1219,6 +1286,7 @@ tests/test_cookiejar.py::test_domain_filter_ip_cookie_receive PASSED
 tests/test_cookiejar.py::test_domain_filter_ip_cookie_send PASSED
 tests/test_cookiejar.py::test_domain_matching PASSED
 tests/test_cookiejar.py::test_dummy_cookie_jar PASSED
+tests/test_cookiejar.py::test_dummy_cookie_jar_update_cookies_from_headers PASSED
 tests/test_cookiejar.py::test_filter_cookie_with_unicode_domain[pyloop] PASSED
 tests/test_cookiejar.py::test_filter_cookies_does_not_leak_memory PASSED
 tests/test_cookiejar.py::test_filter_cookies_str_deprecated[pyloop] PASSED
@@ -1232,16 +1300,32 @@ tests/test_cookiejar.py::test_loose_cookies_types PASSED
 tests/test_cookiejar.py::test_pickle_format PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-IP domain preserved] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-no shared cookie] PASSED
+tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-pre-quoted cookie with domain] PASSED
+tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-pre-quoted cookie] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-quoted cookie w/o special char] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-quoted cookie with special char] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-unquoted cookie with special char] PASSED
 tests/test_cookiejar.py::test_save_load[pyloop] PASSED
+tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_clear PASSED
+tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_delete PASSED
+tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_update PASSED
+tests/test_cookiejar.py::test_shared_cookie_cache_population PASSED
+tests/test_cookiejar.py::test_shared_cookie_with_multiple_domains PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[http://127.0.0.1/index.html] PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[url1] PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[url2] PASSED
 tests/test_cookiejar.py::test_treat_as_secure_origin_init[url3] PASSED
 tests/test_cookiejar.py::test_update_cookie_with_unicode_domain[pyloop] PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_duplicate_names PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_empty_list PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_invalid_cookies PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_overwrites_same_cookie PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_preserves_existing PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_with_attributes PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_with_curly_braces PASSED
+tests/test_cookiejar.py::test_update_cookies_from_headers_with_special_chars PASSED
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_feed_data[pyloop] PASSED
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_read[pyloop] PASSED
 tests/test_flowcontrol_streams.py::TestFlowControlStreamReader::test_read_nowait[pyloop] PASSED
@@ -3210,6 +3294,12 @@ tests/test_web_request.py::test_remote_peername_unix PASSED
 tests/test_web_request.py::test_remote_with_closed_transport PASSED
 tests/test_web_request.py::test_request_cookie PASSED
 tests/test_web_request.py::test_request_cookie__set_item PASSED
+tests/test_web_request.py::test_request_cookies_edge_cases PASSED
+tests/test_web_request.py::test_request_cookies_no_500_error PASSED
+tests/test_web_request.py::test_request_cookies_quoted_values PASSED
+tests/test_web_request.py::test_request_cookies_real_world_examples PASSED
+tests/test_web_request.py::test_request_cookies_with_attributes PASSED
+tests/test_web_request.py::test_request_cookies_with_special_characters PASSED
 tests/test_web_request.py::test_request_delitem PASSED
 tests/test_web_request.py::test_request_is_mutable_mapping PASSED
 tests/test_web_request.py::test_request_iter PASSED
@@ -3813,6 +3903,7 @@ _______________ coverage: platform sunos5, python 3.9.22-final-0 _______________
 Name                                                                                                                                                     Stmts   Miss  Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/__init__.py                           33      3    91%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_cookie_helpers.py                    65      1    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/__init__.py                 0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/helpers.py                 77      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/models.py                  51      0   100%
@@ -3820,18 +3911,18 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader.py          
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_c.py               274    274     0%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py              274    227    17%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py                  72      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               113      5    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               117      5    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py                      71      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            598     24    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     140      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      173      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      179      2    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     750     16    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                         275      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 131      6    95%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         808     64    92%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         286      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         810     64    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         302      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           94      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                               94      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                           484     15    97%
@@ -3858,7 +3949,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_fileresponse.py           
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_log.py                           103      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_middlewares.py                    61      1    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_protocol.py                      385     24    94%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py                       443      9    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py                       442      9    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py                      500      5    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py                      108      3    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py                        213     16    92%
@@ -3885,18 +3976,19 @@ tests/test_classbasedview.py                                                    
 tests/test_client_connection.py                                                                                                                             94      0   100%
 tests/test_client_exceptions.py                                                                                                                            199      0   100%
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
-tests/test_client_functional.py                                                                                                                           3145     54    98%
+tests/test_client_functional.py                                                                                                                           3197     55    98%
 tests/test_client_middleware.py                                                                                                                            666     13    98%
 tests/test_client_middleware_digest_auth.py                                                                                                                301      1    99%
-tests/test_client_proto.py                                                                                                                                 154      0   100%
-tests/test_client_request.py                                                                                                                              1119     11    99%
-tests/test_client_response.py                                                                                                                              489      5    99%
-tests/test_client_session.py                                                                                                                               632      5    99%
+tests/test_client_proto.py                                                                                                                                 169      0   100%
+tests/test_client_request.py                                                                                                                              1131     11    99%
+tests/test_client_response.py                                                                                                                              532      5    99%
+tests/test_client_session.py                                                                                                                               659      5    99%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
-tests/test_connector.py                                                                                                                                   2230     75    97%
-tests/test_cookiejar.py                                                                                                                                    489      0   100%
+tests/test_connector.py                                                                                                                                   2245     75    97%
+tests/test_cookie_helpers.py                                                                                                                               419      0   100%
+tests/test_cookiejar.py                                                                                                                                    685      0   100%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
 tests/test_formdata.py                                                                                                                                     177      0   100%
 tests/test_helpers.py                                                                                                                                      454     39    91%
@@ -3926,7 +4018,7 @@ tests/test_web_exceptions.py                                                    
 tests/test_web_functional.py                                                                                                                              1635     50    97%
 tests/test_web_log.py                                                                                                                                      144      2    99%
 tests/test_web_middleware.py                                                                                                                               285      4    99%
-tests/test_web_request.py                                                                                                                                  514      0   100%
+tests/test_web_request.py                                                                                                                                  570      0   100%
 tests/test_web_request_handler.py                                                                                                                           41      1    98%
 tests/test_web_response.py                                                                                                                                 987      9    99%
 tests/test_web_runner.py                                                                                                                                   159      9    94%
@@ -3942,7 +4034,31 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    42124   3233    92%
+TOTAL                                                                                                                                                    43051   3235    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3741 passed, 51 skipped, 6 xfailed ========
+======== 3831 passed, 51 skipped, 6 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
