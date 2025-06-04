@@ -28,10 +28,10 @@ file path=usr/bin/mypy-$(PYVER)
 file path=usr/bin/mypyc-$(PYVER)
 file path=usr/bin/stubgen-$(PYVER)
 file path=usr/bin/stubtest-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/METADATA
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/WHEEL
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/licenses/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/__main__.py
@@ -42,6 +42,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypy/binder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/bogus_type.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/build.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/checker.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypy/checker_shared.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/checkexpr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/checkmember.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypy/checkpattern.py
@@ -956,6 +957,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/analysis/blockfreq.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/analysis/dataflow.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/analysis/ircheck.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/analysis/selfleaks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/annotate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/build.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/codegen/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/codegen/cstring.py
@@ -992,6 +994,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/ll_builder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/main.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/mapper.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/match.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/missingtypevisitor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/nonlocalcontrol.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/prebuildvisitor.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/irbuild/prepare.py
@@ -1049,6 +1052,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_alwaysdefined.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_analysis.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_annotate.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_cheader.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_commandline.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_emit.py
@@ -1061,6 +1065,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_irbuild.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_ircheck.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_literals.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_lowering.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_misc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_namegen.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_optimizations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/test/test_pprint.py
@@ -1079,6 +1084,7 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/flag_eliminatio
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/ir_transform.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/lower.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/refcount.py
+file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/spill.py
 file path=usr/lib/python$(PYVER)/vendor-packages/mypyc/transform/uninit.py
 
 # python modules are unusable without python runtime binary
@@ -1087,5 +1093,6 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # Automatically generated dependencies based on distribution metadata
 depend type=require fmri=pkg:/library/python/mypy-extensions-$(PYV)
+depend type=require fmri=pkg:/library/python/pathspec-$(PYV)
 depend type=require fmri=pkg:/library/python/tomli-$(PYV)
 depend type=require fmri=pkg:/library/python/typing-extensions-$(PYV)
