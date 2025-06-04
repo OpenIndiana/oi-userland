@@ -13,11 +13,11 @@
 #
 
 BUILD_STYLE=cmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		domoticz
 COMPONENT_VERSION=	2024.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Open source Home Automation System
 COMPONENT_PROJECT_URL=	http://www.domoticz.com/
 COMPONENT_FMRI=		network/${COMPONENT_NAME}
