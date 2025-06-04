@@ -89,6 +89,9 @@ PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH=               x86_64-unknown-illumos
 
+# Clang 20 does not work with Mozilla patches
+CLANG_VERSION= 19
+
 ifdef DEBUG
 # disable code optimization
 CFLAGS =
