@@ -1,5 +1,6 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0] $(@D)/src> python -m unittest discover --verbose
+test_alias_names_still_exist (test_typing_extensions.AllTests) ... ok
 test_all_names_in___all__ (test_typing_extensions.AllTests) ... ok
 test_drop_in_for_typing (test_typing_extensions.AllTests) ... ok
 test_typing_extensions_compiles_with_opt (test_typing_extensions.AllTests) ... ok
@@ -13,6 +14,7 @@ test_cannot_getattr_typevar (test_typing_extensions.AnnotatedTests) ... ok
 test_cannot_instantiate_forward (test_typing_extensions.AnnotatedTests) ... ok
 test_cannot_instantiate_type_var (test_typing_extensions.AnnotatedTests) ... ok
 test_cannot_subclass (test_typing_extensions.AnnotatedTests) ... ok
+test_compatibility (test_typing_extensions.AnnotatedTests) ... ok
 test_flatten (test_typing_extensions.AnnotatedTests) ... ok
 test_hash_eq (test_typing_extensions.AnnotatedTests) ... ok
 test_instantiate (test_typing_extensions.AnnotatedTests) ... ok
@@ -20,7 +22,7 @@ test_instantiate_generic (test_typing_extensions.AnnotatedTests) ... ok
 test_nested_annotated_with_unhashable_metadata (test_typing_extensions.AnnotatedTests) ... ok
 test_pickle (test_typing_extensions.AnnotatedTests) ... ok
 test_repr (test_typing_extensions.AnnotatedTests) ... ok
-test_special_form_containment (test_typing_extensions.AnnotatedTests) ... skipped 'Waiting for bpo-46491 bugfix.'
+test_special_form_containment (test_typing_extensions.AnnotatedTests) ... ok
 test_specialize (test_typing_extensions.AnnotatedTests) ... ok
 test_subst (test_typing_extensions.AnnotatedTests) ... ok
 test_can_subclass (test_typing_extensions.AnyTests) ... ok
@@ -54,7 +56,7 @@ test_deque_instantiation (test_typing_extensions.CollectionsAbcTests) ... ok
 test_isinstance_collections (test_typing_extensions.CollectionsAbcTests) ... ok
 test_ordereddict_instantiation (test_typing_extensions.CollectionsAbcTests) ... ok
 test_ordereddict_subclass (test_typing_extensions.CollectionsAbcTests) ... ok
-test_alias_subscription_with_ellipsis (test_typing_extensions.ConcatenateTests) ... skipped 'Missing backport to <=3.9. See issue #48'
+test_alias_subscription_with_ellipsis (test_typing_extensions.ConcatenateTests) ... skipped 'Missing backport to 3.9. See issue #48'
 test_basic_introspection (test_typing_extensions.ConcatenateTests) ... ok
 test_basics (test_typing_extensions.ConcatenateTests) ... ok
 test_eq (test_typing_extensions.ConcatenateTests) ... ok
@@ -92,6 +94,25 @@ test_equality (test_typing_extensions.DocTests) ... ok
 test_hashability (test_typing_extensions.DocTests) ... ok
 test_pickle (test_typing_extensions.DocTests) ... ok
 test_repr (test_typing_extensions.DocTests) ... ok
+test_evaluate_forward_ref (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_evaluate_forward_ref_nested (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_evaluate_forward_ref_nested_pep604 (test_typing_extensions.EvaluateForwardRefTests) ... skipped 'Relies on PEP 604'
+test_evaluate_forward_ref_none (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_evaluate_forward_ref_undefined (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_evaluate_with_type_params (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_forward_ref_fallback (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_fwdref_to_builtin (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_fwdref_with_globals (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_fwdref_with_module (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_fwdref_with_owner (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_global_constant (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_globals (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_inherited_owner (test_typing_extensions.EvaluateForwardRefTests) ... skipped 'Not yet implemented in Python < 3.14'
+test_invalid_special_forms (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_name_lookup_without_eval (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_nested_strings (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_owner (test_typing_extensions.EvaluateForwardRefTests) ... ok
+test_partial_evaluation (test_typing_extensions.EvaluateForwardRefTests) ... skipped 'Not yet implemented in Python < 3.14'
 test_dunder_final (test_typing_extensions.FinalDecoratorTests) ... ok
 test_final_unmodified (test_typing_extensions.FinalDecoratorTests) ... ok
 test_basics (test_typing_extensions.FinalTests) ... ok
@@ -170,11 +191,9 @@ test_multiple_inheritance (test_typing_extensions.NamedTupleTests) ... ok
 test_namedtuple_errors (test_typing_extensions.NamedTupleTests) ... ok
 test_namedtuple_keyword_usage (test_typing_extensions.NamedTupleTests) ... ok
 test_namedtuple_special_keyword_names (test_typing_extensions.NamedTupleTests) ... ok
-test_non_generic_subscript_error_message_py38 (test_typing_extensions.NamedTupleTests) ... skipped "Test isn't relevant to 3.9+"
 test_non_generic_subscript_py$(PYV)_plus (test_typing_extensions.NamedTupleTests) ... ok
 test_orig_bases (test_typing_extensions.NamedTupleTests) ... ok
-test_same_as_typing_NamedTuple_38_minus (test_typing_extensions.NamedTupleTests) ... skipped 'tests are only relevant to <=3.8'
-test_same_as_typing_NamedTuple_39_plus (test_typing_extensions.NamedTupleTests) ... ok
+test_same_as_typing_NamedTuple (test_typing_extensions.NamedTupleTests) ... ok
 test_setname_called_on_values_in_class_dictionary (test_typing_extensions.NamedTupleTests) ... ok
 test_setname_raises_the_same_as_on_other_classes_py311_minus (test_typing_extensions.NamedTupleTests) ... ok
 test_setname_raises_the_same_as_on_other_classes_py312_plus (test_typing_extensions.NamedTupleTests) ... skipped '__set_name__ behaviour changed on py312+ to use BaseException.add_note()'
@@ -332,17 +351,8 @@ test_cannot_subscript (test_typing_extensions.SelfTests) ... ok
 test_no_isinstance (test_typing_extensions.SelfTests) ... ok
 test_pickle (test_typing_extensions.SelfTests) ... ok
 test_repr (test_typing_extensions.SelfTests) ... ok
-test_evaluate_with_type_params (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_forward_ref_fallback (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_fwdref_to_builtin (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_fwdref_value_is_cached (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_fwdref_with_globals (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_fwdref_with_module (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_fwdref_with_owner (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_global_constant (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_invalid_special_forms (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_name_lookup_without_eval (test_typing_extensions.TestEvaluateForwardRefs) ... ok
-test_nested_strings (test_typing_extensions.TestEvaluateForwardRefs) ... ok
+test_reader_runtime_checkable (test_typing_extensions.SpecificProtocolTests) ... ok
+test_writer_runtime_checkable (test_typing_extensions.SpecificProtocolTests) ... ok
 test_builtin_type (test_typing_extensions.TestGetAnnotations) ... ok
 test_custom_format_eval_str (test_typing_extensions.TestGetAnnotations) ... ok
 test_custom_object_with_annotations (test_typing_extensions.TestGetAnnotations) ... ok
@@ -367,6 +377,11 @@ test_pep_695_generic_method_with_future_annotations (test_typing_extensions.Test
 test_pep_695_generic_method_with_future_annotations_name_clash_with_global_and_local_vars (test_typing_extensions.TestGetAnnotationsWithPEP695) ... skipped 'PEP 695 has yet to be'
 test_pep_695_generic_method_with_future_annotations_name_clash_with_global_vars (test_typing_extensions.TestGetAnnotationsWithPEP695) ... skipped 'PEP 695 has yet to be'
 test_pep_695_generics_with_future_annotations_nested_in_function (test_typing_extensions.TestGetAnnotationsWithPEP695) ... skipped 'PEP 695 has yet to be'
+test_sentinel_explicit_repr (test_typing_extensions.TestSentinels) ... ok
+test_sentinel_no_repr (test_typing_extensions.TestSentinels) ... ok
+test_sentinel_not_callable (test_typing_extensions.TestSentinels) ... ok
+test_sentinel_not_picklable (test_typing_extensions.TestSentinels) ... ok
+test_sentinel_type_expression_union (test_typing_extensions.TestSentinels) ... skipped 'New unions not available in 3.9'
 test_cannot_instantiate (test_typing_extensions.TypeAliasTests) ... ok
 test_cannot_subclass (test_typing_extensions.TypeAliasTests) ... ok
 test_cannot_subscript (test_typing_extensions.TypeAliasTests) ... ok
@@ -459,6 +474,7 @@ test_no_redefinition (test_typing_extensions.TypeVarTupleTests) ... ok
 test_pickle (test_typing_extensions.TypeVarTupleTests) ... ok
 test_repr (test_typing_extensions.TypeVarTupleTests) ... ok
 test_tuple (test_typing_extensions.TypeVarTupleTests) ... ok
+test_annotations (test_typing_extensions.TypedDictTests) ... ok
 test_backwards_compatibility (test_typing_extensions.TypedDictTests) ... ok
 test_basics_functional_syntax (test_typing_extensions.TypedDictTests) ... ok
 test_basics_keywords_syntax (test_typing_extensions.TypedDictTests) ... ok
@@ -469,6 +485,8 @@ test_closed_inheritance_legacy (test_typing_extensions.TypedDictTests) ... ok
 test_closed_typeddict_compat (test_typing_extensions.TypedDictTests) ... ok
 test_closed_values (test_typing_extensions.TypedDictTests) ... ok
 test_combine_qualifiers (test_typing_extensions.TypedDictTests) ... ok
+test_deferred_evaluation (test_typing_extensions.TypedDictTests) ... skipped 'Only supported on 3.14'
+test_delayed_type_check (test_typing_extensions.TypedDictTests) ... skipped 'Only supported on 3.14'
 test_extra_items_class_arg (test_typing_extensions.TypedDictTests) ... ok
 test_extra_key_required_legacy (test_typing_extensions.TypedDictTests) ... ok
 test_extra_keys_non_readonly_legacy (test_typing_extensions.TypedDictTests) ... ok
@@ -480,6 +498,11 @@ test_get_type_hints_generic (test_typing_extensions.TypedDictTests) ... ok
 test_implicit_any_inheritance (test_typing_extensions.TypedDictTests) ... ok
 test_implicit_extra_items (test_typing_extensions.TypedDictTests) ... ok
 test_implicit_extra_items_before_3_14 (test_typing_extensions.TypedDictTests) ... ok
+test_inheritance_pep563 (test_typing_extensions.TypedDictTests) ... ok
+test_inline (test_typing_extensions.TypedDictTests) ... ok
+test_inline_empty (test_typing_extensions.TypedDictTests) ... ok
+test_inline_not_a_dict (test_typing_extensions.TypedDictTests) ... ok
+test_inline_too_many_arguments (test_typing_extensions.TypedDictTests) ... ok
 test_is_typeddict (test_typing_extensions.TypedDictTests) ... ok
 test_is_typeddict_against_typeddict_from_typing (test_typing_extensions.TypedDictTests) ... ok
 test_keys_inheritance (test_typing_extensions.TypedDictTests) ... ok
@@ -500,6 +523,7 @@ test_required_notrequired_keys (test_typing_extensions.TypedDictTests) ... ok
 test_total (test_typing_extensions.TypedDictTests) ... ok
 test_total_inherits_non_total (test_typing_extensions.TypedDictTests) ... ok
 test_total_with_assigned_value (test_typing_extensions.TypedDictTests) ... ok
+test_typed_dict_signature (test_typing_extensions.TypedDictTests) ... ok
 test_typeddict_create_errors (test_typing_extensions.TypedDictTests) ... ok
 test_typeddict_errors (test_typing_extensions.TypedDictTests) ... ok
 test_typeddict_special_keyword_names (test_typing_extensions.TypedDictTests) ... ok
@@ -517,8 +541,8 @@ test_type_var_inheritance (test_typing_extensions.UnpackTests) ... skipped 'Need
 test_union (test_typing_extensions.UnpackTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 513 tests
+Ran 537 tests
 
-OK (skipped=39)
+OK (skipped=42)
   py$(PYV): OK
   congratulations :)
