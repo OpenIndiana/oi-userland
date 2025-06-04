@@ -11,23 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IO::Socket::SSL
+#   $WS_TOOLS/perl-integrate-module IO-Socket-SSL
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IO::Socket::SSL
-HUMAN_VERSION =			2.089
-COMPONENT_SUMMARY =		IO::Socket::SSL - Nearly transparent SSL encapsulation for IO::Socket::INET.
+COMPONENT_NAME =		IO-Socket-SSL
+HUMAN_VERSION =			2.090
+COMPONENT_SUMMARY =		Nearly transparent SSL encapsulation for IO::Socket::INET.
 COMPONENT_CPAN_AUTHOR =		SULLR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f683112c1642967e9149f51ad553eccd017833b2f22eb23a9055609d2e3a14d1
+	sha256:fdda17888df9f88251b62856f17fcac8f144858c72d7e01d1c4b437d23383d97
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
