@@ -18,9 +18,9 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gnome-desktop
-HUMAN_VERSION=			44.1
+HUMAN_VERSION=			44.3
 COMPONENT_SUMMARY=		Unstable backend library for sharing code between GNOME desktop components
-COMPONENT_ARCHIVE_HASH=		sha256:ae7ca55dc9e08914999741523a17d29ce223915626bd2462a120bf96f47a79ab
+COMPONENT_ARCHIVE_HASH=		sha256:40efa9aa8d50effed9227a3d70671e32e9dc35e20f331cab3b562975978f4f8d
 COMPONENT_FMRI=			library/desktop/gnome-desktop
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		GPL-2.0-only AND LGPL-2.0-only
