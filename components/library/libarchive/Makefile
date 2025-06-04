@@ -29,7 +29,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.8.0
+COMPONENT_VERSION=	3.8.1
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -41,7 +41,7 @@ COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
 COMPONENT_SRC=			libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:191b5b24811499d5c2e5efa3248975fa6daa5e6a227700cc7b8e54d6d7c06eef
+COMPONENT_ARCHIVE_HASH=	sha256:bde832a5e3344dc723cfe9cc37f8e54bde04565bfe6f136bc1bd31ab352e9fab
 COMPONENT_ARCHIVE_URL=	https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libarchive
 COMPONENT_CLASSIFICATION=	System/Libraries
