@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_extensions
-HUMAN_VERSION =			4.13.2
-COMPONENT_SUMMARY =		Backported and Experimental Type Hints for Python 3.8+
+HUMAN_VERSION =			4.14.0
+COMPONENT_SUMMARY =		Backported and Experimental Type Hints for Python 3.9+
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef
+	sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
