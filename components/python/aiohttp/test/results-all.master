@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3888 items]
+X workers [3930 items]
 
 scheduling tests via LoadScheduling
 
@@ -562,6 +562,22 @@ tests/test_client_middleware_digest_auth.py::test_encode_validation_errors[chall
 tests/test_client_middleware_digest_auth.py::test_encode_validation_errors[challenge2-Malformed Digest auth challenge: Missing 'nonce' parameter] PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_validation_errors[challenge3-Security issue: Digest auth challenge contains empty 'nonce' value] PASSED
 tests/test_client_middleware_digest_auth.py::test_escaping_quotes_in_auth_header PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[deep_subpath_match] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[different_host] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[different_port] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[different_scheme] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[exact_match] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[no_match_app123] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[no_match_app1xx] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[path_with_trailing_slash] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[protection_with_slash_exact] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[protection_with_slash_no_match_without] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[protection_with_slash_subpath] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[root_protection_exact] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[root_protection_no_match_without_slash] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[root_protection_subpath] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space[subpath_match] PASSED
+tests/test_client_middleware_digest_auth.py::test_in_protection_space_multiple_spaces PASSED
 tests/test_client_middleware_digest_auth.py::test_invalid_qop_rejected PASSED
 tests/test_client_middleware_digest_auth.py::test_middleware_invalid_login PASSED
 tests/test_client_middleware_digest_auth.py::test_middleware_retry_on_401[pyloop] PASSED
@@ -575,6 +591,12 @@ tests/test_client_middleware_digest_auth.py::test_parse_header_pairs[mixed_quote
 tests/test_client_middleware_digest_auth.py::test_parse_header_pairs[no_spaces_after_commas] PASSED
 tests/test_client_middleware_digest_auth.py::test_parse_header_pairs[single_quotes_as_regular_chars] PASSED
 tests/test_client_middleware_digest_auth.py::test_parse_header_pairs[unquoted_header] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_disabled[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_respects_protection_space[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_updates_nonce_count[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_with_absolute_domain_uris[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_with_stale_nonce[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_preemptive_auth_without_domain_uses_origin[pyloop] PASSED
 tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[""-\\"\\"-Just double quotes] PASSED
 tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions["-\\"-Single double quote] PASSED
 tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[--Empty string] PASSED
@@ -584,6 +606,8 @@ tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[no qu
 tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[value"with"quotes-value\\"with\\"quotes-Basic string with quotes] PASSED
 tests/test_client_middleware_digest_auth.py::test_quote_escaping_functions[with"one"quote-with\\"one\\"quote-String with one quoted segment] PASSED
 tests/test_client_middleware_digest_auth.py::test_template_based_header_construction PASSED
+tests/test_client_proto.py::test_abort[pyloop] PASSED
+tests/test_client_proto.py::test_abort_without_transport[pyloop] PASSED
 tests/test_client_proto.py::test_client_proto_bad_message[pyloop] PASSED
 tests/test_client_proto.py::test_client_protocol_readuntil_eof[pyloop] PASSED
 tests/test_client_proto.py::test_closed_property_after_connection_lost[pyloop] PASSED
@@ -940,7 +964,8 @@ tests/test_client_session.py::test_reraise_os_error[pyloop] PASSED
 tests/test_client_session.py::test_session_context_manager[pyloop] PASSED
 tests/test_client_session.py::test_session_default_version[pyloop] PASSED
 tests/test_client_session.py::test_session_loop[pyloop] PASSED
-tests/test_client_session.py::test_ssl_shutdown_timeout_passed_to_connector PASSED
+tests/test_client_session.py::test_ssl_shutdown_timeout_passed_to_connector SKIPPED
+tests/test_client_session.py::test_ssl_shutdown_timeout_passed_to_connector_pre_311 PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-http] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-https] PASSED
 tests/test_client_session.py::test_ws_connect_allowed_protocols[pyloop-ws] PASSED
@@ -1155,12 +1180,19 @@ tests/test_connector.py::test_release_waiter_skip_done_waiter[pyloop] PASSED
 tests/test_connector.py::test_resolver_not_called_with_address_is_ip[pyloop] PASSED
 tests/test_connector.py::test_ssl_context_once PASSED
 tests/test_connector.py::test_ssl_none PASSED
+tests/test_connector.py::test_start_tls_exception_with_ssl_shutdown_timeout_nonzero[pyloop] SKIPPED
+tests/test_connector.py::test_start_tls_exception_with_ssl_shutdown_timeout_nonzero_pre_311[pyloop] PASSED
+tests/test_connector.py::test_start_tls_exception_with_ssl_shutdown_timeout_zero[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_allowed_protocols[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_cancel_dns_error_captured[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_certificate_error[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_clear_dns_cache[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_clear_dns_cache_bad_args[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_close_abort_ssl_connections_in_conns[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_close_abort_ssl_when_shutdown_timeout_zero[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_close_doesnt_abort_non_ssl_when_shutdown_timeout_zero[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_close_resolver PASSED
 tests/test_connector.py::test_tcp_connector_ctor PASSED
 tests/test_connector.py::test_tcp_connector_ctor_fingerprint_valid[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_dns_cache_forever[pyloop] PASSED
@@ -1189,9 +1221,15 @@ tests/test_connector.py::test_tcp_connector_resolve_host[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_default[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_server_hostname_override[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_socket_factory[pyloop] PASSED
-tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout[pyloop] SKIPPED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_nonzero_passed[pyloop] SKIPPED
 tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_not_passed_pre_311[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_passed_to_create_connection[pyloop] SKIPPED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_pre_311[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_sentinel_no_warning_pre_311[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_warning_pre_311[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_zero_no_warning_pre_311[pyloop] PASSED
+tests/test_connector.py::test_tcp_connector_ssl_shutdown_timeout_zero_not_passed[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_use_dns_cache_disabled[pyloop] PASSED
 tests/test_connector.py::test_tcp_connector_uses_provided_local_addr[pyloop] PASSED
 tests/test_connector.py::test_unix_connector[pyloop] PASSED
@@ -2383,6 +2421,8 @@ tests/test_payload.py::test_custom_payload_with_encoding_backwards_compat[pyloop
 tests/test_payload.py::test_iobase_payload_close_idempotent[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_decode[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_exact_chunk_size_limit[pyloop] PASSED
+tests/test_payload.py::test_iobase_payload_large_content_length[pyloop] PASSED
+tests/test_payload.py::test_iobase_payload_reads_in_chunks[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_exact[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_no_limit[pyloop] PASSED
 tests/test_payload.py::test_iobase_payload_write_with_length_truncated[pyloop] PASSED
@@ -2400,6 +2440,8 @@ tests/test_payload.py::test_string_payload_size[pyloop] PASSED
 tests/test_payload.py::test_text_io_payload_size_matches_file_encoding[pyloop] PASSED
 tests/test_payload.py::test_text_io_payload_size_utf16[pyloop] PASSED
 tests/test_payload.py::test_textio_payload_as_bytes[pyloop] PASSED
+tests/test_payload.py::test_textio_payload_large_content_length[pyloop] PASSED
+tests/test_payload.py::test_textio_payload_reads_in_chunks[pyloop] PASSED
 tests/test_payload.py::test_textio_payload_with_encoding[pyloop] PASSED
 tests/test_proxy.py::TestProxy::test_connect PASSED
 tests/test_proxy.py::TestProxy::test_https_auth PASSED
@@ -3913,15 +3955,15 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py       
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py                  72      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               117      5    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py                      71      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            598     24    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            600     24    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     140      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     163      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      179      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      187      2    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     750     16    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                         275      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 131      6    95%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         810     64    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         831     62    93%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         302      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           94      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                               94      0   100%
@@ -3936,7 +3978,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                  
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           386      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py                   31      1    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     170      8    95%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          120     68    43%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          121     69    43%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/streams.py                           418      5    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tcp_helpers.py                        19      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/test_utils.py                        340     13    96%
@@ -3955,7 +3997,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py               
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py                        213     16    92%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_server.py                         42      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py                 746     12    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                            392      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                            392      8    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                            130     13    90%
 tests/conftest.py                                                                                                                                          185     33    82%
 tests/isolated/check_for_client_response_leak.py                                                                                                            32      0   100%
@@ -3976,17 +4018,17 @@ tests/test_classbasedview.py                                                    
 tests/test_client_connection.py                                                                                                                             94      0   100%
 tests/test_client_exceptions.py                                                                                                                            199      0   100%
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
-tests/test_client_functional.py                                                                                                                           3197     55    98%
+tests/test_client_functional.py                                                                                                                           3198     56    98%
 tests/test_client_middleware.py                                                                                                                            666     13    98%
-tests/test_client_middleware_digest_auth.py                                                                                                                301      1    99%
-tests/test_client_proto.py                                                                                                                                 169      0   100%
+tests/test_client_middleware_digest_auth.py                                                                                                                483      1    99%
+tests/test_client_proto.py                                                                                                                                 187      0   100%
 tests/test_client_request.py                                                                                                                              1131     11    99%
 tests/test_client_response.py                                                                                                                              532      5    99%
-tests/test_client_session.py                                                                                                                               659      5    99%
+tests/test_client_session.py                                                                                                                               687     23    97%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
-tests/test_connector.py                                                                                                                                   2245     75    97%
+tests/test_connector.py                                                                                                                                   2423    112    95%
 tests/test_cookie_helpers.py                                                                                                                               419      0   100%
 tests/test_cookiejar.py                                                                                                                                    685      0   100%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
@@ -4000,8 +4042,8 @@ tests/test_leaks.py                                                             
 tests/test_loop.py                                                                                                                                          36      2    94%
 tests/test_multipart.py                                                                                                                                    922     37    96%
 tests/test_multipart_helpers.py                                                                                                                            446     19    96%
-tests/test_payload.py                                                                                                                                      637      6    99%
-tests/test_proxy.py                                                                                                                                        326      1    99%
+tests/test_payload.py                                                                                                                                      719      6    99%
+tests/test_proxy.py                                                                                                                                        324      0   100%
 tests/test_proxy_functional.py                                                                                                                             489    489     0%
 tests/test_pytest_plugin.py                                                                                                                                 27      0   100%
 tests/test_resolver.py                                                                                                                                     387    201    48%
@@ -4034,10 +4076,46 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    43051   3235    92%
+TOTAL                                                                                                                                                    43593   3291    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3831 passed, 51 skipped, 6 xfailed ========
+======== 3869 passed, 55 skipped, 6 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw7'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
   warnings.warn(
