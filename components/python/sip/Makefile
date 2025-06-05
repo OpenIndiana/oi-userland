@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.11.1
+HUMAN_VERSION =			6.12.0
 COMPONENT_SUMMARY =		A Python bindings generator for C/C++ libraries
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3dae4baaf9e9f781d84bf293e0e2938dc7f44b826837889026eba53bd36c81b5
+	sha256:083ced94f85315493231119a63970b2ba42b1d38b38e730a70e02a99191a89c6
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
