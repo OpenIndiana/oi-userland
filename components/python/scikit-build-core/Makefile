@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build_core
-HUMAN_VERSION =			0.11.3
+HUMAN_VERSION =			0.11.4
 COMPONENT_SUMMARY =		Build backend for CMake based projects
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:74baf7cbc089f8621cc0646d9c5679034d5be1b014c10912dc32a4bcd1092506
+	sha256:5b194bbb04092ae327d294b23e4bbffb6181adce4259440a86c9cf6abb8eaa6c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -49,6 +49,9 @@ TEST_CONFLICTING_PACKAGES.python += library/python/pbr
 # The validate-pyproject causes the
 # tests/test_schema.py::test_valid_schemas_files test to fail.
 TEST_CONFLICTING_PACKAGES.python += library/python/validate-pyproject
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
