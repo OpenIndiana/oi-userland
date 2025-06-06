@@ -71,7 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.20.10
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -166,6 +166,7 @@ CONFIGURE_OPTIONS +=    --without-vm-sound-Sun
 CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
 CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
+CONFIGURE_OPTIONS +=    --without-ScratchPlugin
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
