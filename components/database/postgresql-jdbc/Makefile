@@ -17,11 +17,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	postgresql-jdbc
-COMPONENT_VERSION=	42.7.5
+COMPONENT_VERSION=	42.7.6
 COMPONENT_SUMMARY=	JDBC driver for PostgreSQL
 COMPONENT_SRC=	postgresql-$(COMPONENT_VERSION)-jdbc-src
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:587aded537e5e15e181a83b66b0e0828e496ccf7b1e1b216f4bd5287c01cc7c7
+COMPONENT_ARCHIVE_HASH= sha256:40444a03e6c304743cae6eb6a8605b6b5abb256786ba4cfbc42532418ae077d5
 COMPONENT_ARCHIVE_URL=	https://jdbc.postgresql.org/download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://jdbc.postgresql.org/
 COMPONENT_FMRI=	database/postgres/connector/jdbc
@@ -40,7 +40,7 @@ COMPONENT_INSTALL_ACTION= \
 	$(MKDIR) -p $(PROTO_DIR)/usr/postgres/jdbc && \
 	$(CP) $(BUILD_DIR_64)/target/postgresql-*.jar $(PROTO_DIR)/usr/postgres/jdbc/postgresql-jdbc4.jar
 
-#Manually added build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/maven
 REQUIRED_PACKAGES += runtime/java/openjdk21
 
