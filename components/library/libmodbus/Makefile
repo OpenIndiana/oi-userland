@@ -27,11 +27,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmodbus
-COMPONENT_VERSION=	3.1.10
+COMPONENT_VERSION=	3.1.11
 COMPONENT_SUMMARY=	Cross-platform library to send/receive data according to the Modbus protocol with RTU (serial) and TCP (Ethernet) communications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:899be4e25ab7fe5799d43f9567510d6f063d2e8f56136dd726b6fd976f9b2253
+COMPONENT_ARCHIVE_HASH=	sha256:15b4b2e0f68122c2da9b195de5c330489a9c97d40b4a95d2822378dc14d780e7
 COMPONENT_ARCHIVE_URL=	https://github.com/stephane/libmodbus/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://libmodbus.org/
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
@@ -44,16 +44,16 @@ include $(WS_MAKE_RULES)/common.mk
 # Find issues with undefined symbols in build time
 LD_OPTIONS += $(LD_Z_DEFS)
 
-COMPONENT_PREP_ACTION = ( cd $(@D); $(AUTORECONF) -if )
+COMPONENT_PREP_ACTION = ( cd $(@D); $(AUTORECONF) -vif )
 
-CONFIGURE_OPTIONS +=	--enable-static=no
+# Prevent misdetection of netinet/ip.h (https://illumos.topicbox.com/groups/developer/T9e980e9a64d3cc1b)
+CONFIGURE_ENV += ac_cv_header_netinet_ip_h=yes
+
+CONFIGURE_OPTIONS += --enable-static=no
 
 COMPONENT_BUILD_ARGS +=	"LDFLAGS=$(LDFLAGS) -lsocket"
 COMPONENT_BUILD_ARGS +=	"INSTALL=$(INSTALL)"
 COMPONENT_BUILD_ARGS +=	"MAKE=$(GMAKE)"
-
-# This is needed to make the tests successful:
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
