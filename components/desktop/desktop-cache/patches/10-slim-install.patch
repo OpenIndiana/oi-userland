@@ -1,0 +1,233 @@
+
+This patch is needed to make SMF services happy while installing.
+
+--- desktop-cache-smf-services-0.2.2/input-method/input-method-cache.orig	2025-06-06 21:17:27.883580455 +0300
++++ desktop-cache-smf-services-0.2.2/input-method/input-method-cache	2025-06-06 22:00:26.409319737 +0300
+@@ -42,7 +42,6 @@
+     exit 2
+ fi
+ 
+-
+ #
+ #   if cache file exist 
+ #      get the list of modules newer than the cache file
+@@ -54,15 +53,25 @@
+ 
+ DIR=64
+ 
++# make sure cache file can be written, needed during install.
++RDONLY=`/usr/sbin/mount | grep "/usr" | grep -c "read only"`
++if [ "$RDONLY" -eq "1" ]; then
++	GTK2_CACHE="/tmp/immodules.cache"
++	GTK3_CACHE="/tmp/immodules.cache"
++else
++	GTK2_CACHE="/usr/lib/${DIR}/gtk-2.0/2.10.0/immodules.cache"
++	GTK3_CACHE="/usr/lib/${DIR}/gtk-3.0/3.0.0/immodules.cache"
++fi
++
+ start_input_method_cache ()
+ {
+   test -x /usr/bin/gtk-query-immodules-2.0 || {
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+-  if [ -a "/usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache" ]; then
++  if [ -a $GTK2_CACHE ]; then
+     RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-2.0/*/immodules -follow ! -type d \
+-	-name '*.so' -newer /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache`
++	-name '*.so' -newer $GTK2_CACHE`
+   else
+     RESULT="no cache file"
+   fi
+@@ -70,12 +79,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+-	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
++	> $GTK2_CACHE
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
++      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file $GTK2_CACHE"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
++      echo "input method cache installed in $GTK2_CACHE"
+     fi
+   fi
+ }
+@@ -86,7 +95,7 @@
+       echo "gtk-query-immodules-2.0 not installed"
+       continue
+   }
+-  if [ -a "/usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache" ]; then
++  if [ -a $GTK2_CACHE ]; then
+     RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-2.0/*/immodules/*.so ! -type d \
+ 	    -follow 2>/dev/null`
+   else
+@@ -96,12 +105,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/gtk-query-immodules-2.0 /usr/lib/$DIR/gtk-2.0/*/immodules/*.so \
+-	> /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache
++	> $GTK2_CACHE
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
++      echo "gtk-query-immodules-2.0 exited with an error while generating the cache file $GTK2_CACHE"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /usr/lib/$DIR/gtk-2.0/2.10.0/immodules.cache"
++      echo "input method cache installed in $GTK2_CACHE"
+     fi
+   fi
+ }
+@@ -112,9 +121,9 @@
+       echo "gtk-query-immodules-3.0 not installed"
+       continue
+   }
+-  if [ -a "/usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache" ]; then
++  if [ -a $GTK3_CACHE ]; then
+     RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-3.0/*/immodules -follow ! -type d \
+-	-name '*.so' -newer /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache`
++	-name '*.so' -newer $GTK3_CACHE`
+   else
+     RESULT="no cache file"
+   fi
+@@ -122,12 +131,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
+-	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
++	> $GTK3_CACHE
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file $GTK3_CACHE"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      echo "input method cache installed in $GTK3_CACHE"
+     fi
+   fi
+ }
+@@ -138,7 +147,7 @@
+       echo "gtk-query-immodules-3.0 not installed"
+       continue
+   }
+-  if [ -a "/usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache" ]; then
++  if [ -a $GTK3_CACHE ]; then
+     RESULT=`/usr/bin/find /usr/lib/$DIR/gtk-3.0/*/immodules/*.so ! -type d \
+ 	    -follow 2>/dev/null`
+   else
+@@ -148,12 +157,12 @@
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating im modules cache file"
+     /usr/bin/gtk-query-immodules-3.0 /usr/lib/$DIR/gtk-3.0/*/immodules/*.so \
+-	> /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache
++	> $GTK3_CACHE
+     if [ $? -ne 0 ]; then
+-      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      echo "gtk-query-immodules-3.0 exited with an error while generating the cache file $GTK3_CACHE"
+       exit $SMF_EXIT_ERR_FATAL
+     else
+-      echo "input method cache installed in /usr/lib/$DIR/gtk-3.0/3.0.0/immodules.cache"
++      echo "input method cache installed in $GTK3_CACHE"
+     fi
+   fi
+ }
+--- desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer.orig	2025-06-06 21:17:27.882647366 +0300
++++ desktop-cache-smf-services-0.2.2/pixbuf-loaders/pixbuf-loaders-installer	2025-06-06 22:23:51.091975363 +0300
+@@ -52,12 +52,16 @@
+ #   if list generate loader list     
+ #
+ 
++# make sure cache file can be written, needed during install.
++RDONLY=`/usr/sbin/mount | grep "/usr" | grep -c "read only"`
++
+ pixbuf_loaders_installer ()
+ {
+ for ARCH in $(/bin/isainfo) ; do
+   BINDIR='/usr/bin'
+   DIR="$ARCH"
+   [ "$ARCH" == "i386" ] && BINDIR='/usr/bin/i86' && DIR=''
++  [ "$ARCH" == "sparc" ] && BINDIR='/usr/bin/sparcv7' && DIR=''
+ 
+   test -x $BINDIR/gdk-pixbuf-query-loaders || {
+       echo "gdk-pixbuf-query-loaders not installed"
+@@ -72,7 +76,11 @@
+ 
+   if [ -n "$RESULT" ]; then 
+     echo "updating/creating gdk pixbuf loader file"
+-    $BINDIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
++    if [ "$RDONLY" -eq "1" ]; then
++      $BINDIR/gdk-pixbuf-query-loaders > /tmp/loaders.cache
++    else
++      $BINDIR/gdk-pixbuf-query-loaders > /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache
++    fi
+     if [ $? -ne 0 ]; then
+       echo "gdk-pixbuf-query-loaders exited with an error while generating the installer file /usr/lib/$DIR/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+       exit $SMF_EXIT_ERR_FATAL
+--- desktop-cache-smf-services-0.2.2/mime-types-cache/mime-types-cache.orig	2025-06-07 15:36:40.538102343 +0300
++++ desktop-cache-smf-services-0.2.2/mime-types-cache/mime-types-cache	2025-06-07 16:05:35.143204928 +0300
+@@ -50,9 +50,22 @@
+ # generate the cache
+ #
+ 
++# make sure cache file can be written, needed during install.
++RDONLY=`/usr/sbin/mount | grep "/usr" | grep -c "read only"`
++if [ "$RDONLY" -eq "1" ]; then
++	CACHE_DIR="/tmp/mime"
++	CACHE_FILE="/tmp/mime/mime.cache"
++	mkdir -p /tmp/mime/packages
++	[ -a "/usr/share/mime/mime.cache" ] && cp /usr/share/mime/mime.cache /tmp/mime
++	[ -d "/usr/share/mime/packages" ] && cp -rp /usr/share/mime/packages /tmp/mime
++else
++	CACHE_DIR="/usr/share/mime"
++	CACHE_FILE="/usr/share/mime/mime.cache"
++fi
++
+ start_mime_types_cache ()
+ {
+-if [ -a "/usr/share/mime/mime.cache" ]; then
++if [ -a "$CACHE_FILE" ]; then
+   RESULT=`/usr/bin/find /usr/share/mime/packages -follow ! -type d \
+     -newer /usr/share/mime/mime.cache`
+ else
+@@ -65,19 +78,19 @@
+     return
+   }
+   echo "updating mime type cache" 
+-  /usr/bin/update-mime-database /usr/share/mime
++  /usr/bin/update-mime-database $CACHE_DIR
+   if [ $? -ne 0 ]; then
+-    echo "update-mime-database exited with an error while generating the mime type cache /usr/share/mime/mime.cache"
++    echo "update-mime-database exited with an error while generating the mime type cache $CACHE_FILE"
+     exit $SMF_EXIT_ERR_FATAL
+   else
+-    echo "mime type cache /usr/share/mime/mime.cache generated"
++    echo "mime type cache $CACHE_FILE generated"
+   fi
+ fi
+ }
+ 
+ refresh_mime_types_cache ()
+ {
+-if [ -a "/usr/share/mime/mime.cache" ]; then
++if [ -a "$CACHE_FILE" ]; then
+   RESULT=`/usr/bin/find /usr/share/mime/packages ! -type d -follow 2>/dev/null`
+ else
+   RESULT="no cache found"
+@@ -89,12 +102,12 @@
+     return
+   }
+   echo "updating mime type cache" 
+-  /usr/bin/update-mime-database /usr/share/mime
++  /usr/bin/update-mime-database $CACHE_DIR
+   if [ $? -ne 0 ]; then
+-    echo "update-mime-database exited with an error while generating the mime type cache /usr/share/mime/mime.cache"
++    echo "update-mime-database exited with an error while generating the mime type cache $CACHE_FILE"
+     exit $SMF_EXIT_ERR_FATAL
+   else
+-    echo "mime type cache /usr/share/mime/mime.cache generated"
++    echo "mime type cache $CACHE_FILE generated"
+   fi
+ fi
+ }
