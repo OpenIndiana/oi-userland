@@ -1,0 +1,43 @@
+--- a/src/sunpinyin-dictgen.mk.in	2025-03-16 18:07:04.000000000 +0900
++++ a/src/sunpinyin-dictgen.mk.in	2025-04-29 00:05:54.000000000 +0900
+@@ -22,7 +22,7 @@
+ DICT_AR = $(shell ${W3M} ${DL_LIST} | grep -o ${DICT_PAT} | sort -u | tail -n 1)
+ SLM_AR = $(shell ${W3M} ${DL_LIST} | grep -o ${SLM_PAT} | sort -u | tail -n 1)
+ 
+-all: install
++all: lm_sc.t3g pydict_sc.bin
+ 
+ ${DICT_AR}:
+ 	${WGET} ${DL_ROOT}/$@
+@@ -37,16 +37,16 @@
+ 	${TAR} xmf $^
+ 
+ lm_sc.3gm: lm_sc.3gm.arpa dict.utf8
+-	slmpack $^ $@
++	./slmpack $^ $@
+ 
+ lm_sc.t3g.orig: lm_sc.3gm
+-	slmthread $^ $@
++	./slmthread $^ $@
+ 
+ lm_sc.t3g: lm_sc.t3g.orig
+-	tslmendian -e ${ENDIANNESS} -i $^ -o $@
++	./tslmendian -e ${ENDIANNESS} -i $^ -o $@
+ 
+ pydict_sc.bin: dict.utf8 lm_sc.t3g
+-	genpyt -e ${ENDIANNESS} -i dict.utf8 -s lm_sc.t3g \
++	./genpyt -e ${ENDIANNESS} -i dict.utf8 -s lm_sc.t3g \
+ 		-l pydict_sc.log -o $@
+ 
+ install: lm_sc.t3g pydict_sc.bin
+--- a/SConstruct	2025-04-29 06:20:54.000000000 +0900
++++ a/SConstruct	2025-04-29 06:17:38.000000000 +0900
+@@ -499,7 +499,7 @@
+ 
+ DoInstall()
+ env.Alias('install', [
+-    'install-bin', 'install-man1', 'install-doc', 'install-headers', 'install-lib'
++    'install-headers', 'install-lib'
+ ])
+ 
+ # -*- indent-tabs-mode: nil -*- vim:et:ts=4
