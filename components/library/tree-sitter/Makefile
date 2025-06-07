@@ -25,16 +25,15 @@
 
 BUILD_STYLE= justmake
 DROP_STATIC_LIBRARIES= yes
-USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tree-sitter
-COMPONENT_VERSION=      0.25.5
+COMPONENT_VERSION=      0.25.6
 COMPONENT_SUMMARY=      Tree-sitter is a parser generator tool and an incremental parsing library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://tree-sitter.github.io/tree-sitter/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:17a72b9dd7525b01d8fabf9ebee0edd3203fe3058ccc73cbc5e2070ccbe26c0d
+COMPONENT_ARCHIVE_HASH= sha256:ac6ed919c6d849e8553e246d5cd3fa22661f6c7b6497299264af433f3629957c
 COMPONENT_ARCHIVE_URL=  https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -51,6 +50,26 @@ COMPONENT_INSTALL_ENV += LIBDIR=$(USRLIBDIR64)
 PATH= $(PATH.gnu)
 
 COMPONENT_TEST_TARGETS= test
+
+# By default ignore all lines
+JUSTMAKE_TEST_TRANSFORMS += "-n"
+# drop timing
+JUSTMAKE_TEST_TRANSFORMS += "-e 's/ *[0-9]\{1,\}\.[0-9]\{1,\}s\$$//'"
+# add test results
+JUSTMAKE_TEST_TRANSFORMS += "-e '/test tests/p'"
+# add summary
+JUSTMAKE_TEST_TRANSFORMS += "-e '/test result/p'"
+
+# Sort test results
+JUSTMAKE_TEST_TRANSFORMS += "| ( \
+        $(GSED) -u -e '/^\$$/Q' | $(SORT) | $(COMPONENT_TEST_TRANSFORMER) -e '\$$G' ; \
+        $(CAT) \
+    ) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS+= $(JUSTMAKE_TEST_TRANSFORMS)
+endif
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
