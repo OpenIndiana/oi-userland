@@ -13,16 +13,15 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libdiscid
-COMPONENT_VERSION= 0.6.4
+COMPONENT_VERSION= 0.6.5
 COMPONENT_SUMMARY= Library for creating MusicBrainz DiscIDs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:dd5e8f1c9aead442e23b749a9cc9336372e62e88ad7079a2b62895b0390cb282
+COMPONENT_ARCHIVE_HASH= sha256:72dbb493e07336418fe2056f0ebc7ce544eedb500bb896cc1cc04bd078c2d530
 COMPONENT_ARCHIVE_URL= http://ftp.musicbrainz.org/pub/musicbrainz/libdiscid/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://musicbrainz.org/doc/libdiscid
 COMPONENT_FMRI= library/musicbrainz/libdiscid
@@ -34,10 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-static
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
