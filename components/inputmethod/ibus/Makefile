@@ -17,11 +17,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus
-COMPONENT_VERSION=      1.5.27
+COMPONENT_VERSION=      1.5.29
 COMPONENT_SUMMARY=      iBus - Intelligent Input Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6efbda5adb96f607cf7108d1e270962c0729a59c9ea6d58eea2dde0e3cbb97df
+COMPONENT_ARCHIVE_HASH= sha256:4a457f10e29da0623e96cbbaca89cc529145587141f8e64c305f17dc875d5e6e
 COMPONENT_PROJECT_URL=  https://github.com/ibus/ibus
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			system/input-method/$(COMPONENT_NAME)
@@ -32,6 +32,8 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CFLAGS += -Wno-error=implicit-function-declaration
 
 # Force rebuilding C sources from vala sources to avoid Wayland dependencies
 # Workaround for https://github.com/ibus/ibus/issues/2609
@@ -76,10 +78,12 @@ REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 PYTHON_REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += desktop/library/libdbusmenu
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/graphene
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/gtk4
