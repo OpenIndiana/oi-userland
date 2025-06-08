@@ -1,10 +1,10 @@
 illumos ld does not support --version-script.
 Use -M instead.
 
---- "meson-1.7.2/test cases/linuxlike/3 linker script/meson.build.orig"
-+++ "meson-1.7.2/test cases/linuxlike/3 linker script/meson.build"
+--- "meson-1.8.1/test cases/linuxlike/3 linker script/meson.build.orig"
++++ "meson-1.8.1/test cases/linuxlike/3 linker script/meson.build"
 @@ -1,14 +1,8 @@
- project('linker script', 'c')
+ project('linker script', 'c', default_options : {'prefix': '/tmp'})
  
 -# Solaris 11.4 ld supports --version-script only when you also specify
 -# -z gnu-version-script-compat
@@ -46,8 +46,8 @@ Use -M instead.
  
  l = shared_library('bar', 'bob.c', link_args : vflag, link_depends : mapfile)
  e = executable('prog-bar', 'prog.c', link_with : l)
---- "meson-1.7.2/test cases/linuxlike/3 linker script/sub/meson.build.orig"
-+++ "meson-1.7.2/test cases/linuxlike/3 linker script/sub/meson.build"
+--- "meson-1.8.1/test cases/linuxlike/3 linker script/sub/meson.build.orig"
++++ "meson-1.8.1/test cases/linuxlike/3 linker script/sub/meson.build"
 @@ -1,5 +1,5 @@
  mapfile = 'foo.map'
 -vflag = '-Wl,--version-script,@0@/@1@'.format(meson.current_source_dir(), mapfile)

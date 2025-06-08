@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson
-HUMAN_VERSION =			1.7.2
+HUMAN_VERSION =			1.8.1
 COMPONENT_SUMMARY =		A high performance build system
 COMPONENT_PROJECT_URL =		https://mesonbuild.com
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/mesonbuild/meson/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d40d63aa748a9c139cc41ab9bffe43edd113c5639d78bde81544ca955aea890
+	sha256:b4e3b80e8fa633555abf447a95a700aba1585419467b2710d5e5bf88df0a7011
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
