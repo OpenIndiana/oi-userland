@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-table-others
 COMPONENT_VERSION=        1.3.20
+COMPONENT_REVISION=       1
 COMPONENT_SUMMARY=        ibus-table-others
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
