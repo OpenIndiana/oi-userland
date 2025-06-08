@@ -1,6 +1,6 @@
---- MediaInfoLib-25.03/Project/GNU/Library/Makefile.am.orig	2025-03-21 23:17:32.000000000 +0100
-+++ MediaInfoLib-25.03/Project/GNU/Library/Makefile.am	2025-04-20 12:34:34.778868549 +0200
-@@ -2,298 +2,298 @@
+--- MediaInfoLib-25.04/Project/GNU/Library/Makefile.am.orig	2025-04-30 13:43:55.000000000 +0200
++++ MediaInfoLib-25.04/Project/GNU/Library/Makefile.am	2025-06-08 09:42:29.949235824 +0200
+@@ -2,303 +2,303 @@
  
  lib_LTLIBRARIES = lib@MediaInfoLib_LibName@.la
  lib@MediaInfoLib_LibName@_la_SOURCES = \
@@ -35,6 +35,7 @@
 -                       ../../../Source/MediaInfo/Archive/File_Elf.cpp \
 -                       ../../../Source/MediaInfo/Archive/File_Gzip.cpp \
 -                       ../../../Source/MediaInfo/Archive/File_Iso9660.cpp \
+-                       ../../../Source/MediaInfo/Archive/File_MachO.cpp \
 -                       ../../../Source/MediaInfo/Archive/File_Mz.cpp \
 -                       ../../../Source/MediaInfo/Archive/File_Rar.cpp \
 -                       ../../../Source/MediaInfo/Archive/File_Tar.cpp \
@@ -68,6 +69,7 @@
 -                       ../../../Source/MediaInfo/Audio/File_DolbyE.cpp \
 -                       ../../../Source/MediaInfo/Audio/File_ExtendedModule.cpp \
 -                       ../../../Source/MediaInfo/Audio/File_Flac.cpp \
+-                       ../../../Source/MediaInfo/Audio/File_Iamf.cpp \
 -                       ../../../Source/MediaInfo/Audio/File_Iab.cpp \
 -                       ../../../Source/MediaInfo/Audio/File_ImpulseTracker.cpp \
 -                       ../../../Source/MediaInfo/Audio/File_La.cpp \
@@ -122,6 +124,7 @@
 -                       ../../../Source/MediaInfo/Image/File_Rle.cpp \
 -                       ../../../Source/MediaInfo/Image/File_Tiff.cpp \
 -                       ../../../Source/MediaInfo/Image/File_Tga.cpp \
+-                       ../../../Source/MediaInfo/Image/File_WebP.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper_Resource.cpp \
 -                       ../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper_Sequence.cpp \
@@ -191,6 +194,7 @@
 -                       ../../../Source/MediaInfo/Tag/File_Lyrics3.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_Lyrics3v2.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_PropertyList.cpp \
+-                       ../../../Source/MediaInfo/Tag/File_SphericalVideo.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_VorbisCom.cpp \
 -                       ../../../Source/MediaInfo/Tag/File_Xmp.cpp \
 -                       ../../../Source/MediaInfo/Text/File_Cdp.cpp \
@@ -277,6 +281,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Elf.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Gzip.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Iso9660.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Archive/File_MachO.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Mz.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Rar.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Archive/File_Tar.cpp \
@@ -310,6 +315,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_DolbyE.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_ExtendedModule.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_Flac.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Audio/File_Iamf.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_Iab.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_ImpulseTracker.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Audio/File_La.cpp \
@@ -364,6 +370,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Image/File_Rle.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Image/File_Tiff.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Image/File_Tga.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Image/File_WebP.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper_Resource.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Multiple/File__ReferenceFilesHelper_Sequence.cpp \
@@ -433,6 +440,7 @@
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Lyrics3.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Lyrics3v2.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_PropertyList.cpp \
++                       $(VPATH)/../../../Source/MediaInfo/Tag/File_SphericalVideo.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_VorbisCom.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Tag/File_Xmp.cpp \
 +                       $(VPATH)/../../../Source/MediaInfo/Text/File_Cdp.cpp \
@@ -518,10 +526,12 @@
  if COMPILE_AES
  lib@MediaInfoLib_LibName@_la_SOURCES += \
 -                       ../../../Source/ThirdParty/aes-gladman/aes_modes.c \
+-                       ../../../Source/ThirdParty/aes-gladman/aes_ni.c \
 -                       ../../../Source/ThirdParty/aes-gladman/aescrypt.c \
 -                       ../../../Source/ThirdParty/aes-gladman/aeskey.c \
 -                       ../../../Source/ThirdParty/aes-gladman/aestab.c
 +                       $(VPATH)/../../../Source/ThirdParty/aes-gladman/aes_modes.c \
++                       $(VPATH)/../../../Source/ThirdParty/aes-gladman/aes_ni.c \
 +                       $(VPATH)/../../../Source/ThirdParty/aes-gladman/aescrypt.c \
 +                       $(VPATH)/../../../Source/ThirdParty/aes-gladman/aeskey.c \
 +                       $(VPATH)/../../../Source/ThirdParty/aes-gladman/aestab.c
@@ -558,7 +568,7 @@
  endif
  
  lib@MediaInfoLib_LibName@_la_LDFLAGS     = -no-undefined -version-info 0:0:0
-@@ -302,7 +302,7 @@
+@@ -307,7 +307,7 @@
  pkgconfig_DATA = libmediainfo.pc
  
  AM_CXXFLAGS = -std=c++11
