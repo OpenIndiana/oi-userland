@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zipp
-HUMAN_VERSION =			3.22.0
+HUMAN_VERSION =			3.23.0
 COMPONENT_SUMMARY =		Backport of pathlib-compatible object wrapper for zip files
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd2f28c3ce4bc67507bfd3781d21b7bb2be31103b51a4553ad7d90b84e57ace5
+	sha256:a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
