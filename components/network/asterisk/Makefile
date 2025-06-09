@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	22.4.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,7 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -m64 -I/usr/include/odbc -I$(OPENSSL_PREFIX)/include -DHAVE_OPENSSL_BIO_METHOD -DHAVE_GETHOSTBYNAME_R_5
 CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap
-LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR)
+LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR) -lstdc++
 
 PATH= $(PATH.gnu)
 
@@ -143,6 +144,7 @@ REQUIRED_PACKAGES += library/popt
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
