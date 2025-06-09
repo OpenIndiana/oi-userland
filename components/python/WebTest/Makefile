@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/WebTest webtest
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		webtest
-HUMAN_VERSION =			3.0.4
+HUMAN_VERSION =			3.0.6
 COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94778d19a37e5abd7388dad4d93874410ecced53a1739a8e5ff2dbcba1cfc0c4
+	sha256:4256fd5242448f56c575bcb9afe275e305a6f0723c4b01438dbdd4dd5344944b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	license.rst
 
@@ -34,6 +34,7 @@ PYTEST_ADDOPTS += --deselect tests/test_response.py::TestResponse::test_pyquery
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/beautifulsoup4
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/waitress
 PYTHON_REQUIRED_PACKAGES += library/python/webob
 PYTHON_REQUIRED_PACKAGES += runtime/python
