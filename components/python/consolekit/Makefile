@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		consolekit
-HUMAN_VERSION =			1.8.1
+HUMAN_VERSION =			1.9.0
 COMPONENT_SUMMARY =		Additional utilities for click.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/consolekit
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/consolekit/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7c9edbde4f1880fd4c08a7f6d8b1a26a4030ecdc0464a14b60e4930d0d2a8654
+	sha256:c9e271699018fbbb73e530e7a8dc5ab25f30a539cc451ead0a4fa892a6d77474
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,6 +41,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
