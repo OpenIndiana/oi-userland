@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cmd2
-HUMAN_VERSION =			2.6.0
+HUMAN_VERSION =			2.6.1
 COMPONENT_SUMMARY =		cmd2 - quickly build feature-rich and user-friendly interactive command line applications in Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8cffaba7810526421cab3bfa0101b4907e1298ff2bcd8119615965a2eae5d95f
+	sha256:650a5892bf29b233d3d6775b5e3cc813648cff0d79134f707981f66baaed9f42
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
