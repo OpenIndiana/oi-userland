@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opendkim
 COMPONENT_VERSION=      2.10.3
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_SUMMARY=      OpenDKIM is an open source implementation of the DKIM (Domain Keys Identified Mail) sender authentication system
 COMPONENT_DESCRIPTION=	OpenDKIM is an open source implementation of the DKIM \
 			(Domain Keys Identified Mail) sender authentication system proposed \
@@ -39,6 +39,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=			$(PATH.gnu)
+
+# make gcc14 happy.
+CFLAGS += -Wno-incompatible-pointer-types
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( cd $(SOURCE_DIR) && autoreconf --install )
 
@@ -71,7 +74,7 @@ CONFIGURE_OPTIONS+=	--sysconfdir=/etc/mail \
 			"LIBS=-lnsl -lldap_r -lldap -llber" \
 			"LIBLUA_LIBS=" \
 			"LIBMILTER_LIBDIRS=" \
-			"LDFLAGS=-L$(OPENSSL_PREFIX)/lib/amd64 -lssl -lcrypto" \
+			"LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64) -lssl -lcrypto" \
 			"CPPFLAGS=-I/usr/include/openldap -I$(SOURCE_DIR)/libut"
 
 unexport SHELLOPTS
