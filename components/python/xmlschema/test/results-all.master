@@ -377,6 +377,7 @@ test_fid_with_name_attr (tests.test_resources.TestResources)
 XMLResource gets correct data when passed a file like object ... ok
 test_get_nsmap (tests.test_resources.TestResources) ... ok
 test_get_xmlns (tests.test_resources.TestResources) ... ok
+test_iterfind_parser (tests.test_resources.TestResources) ... ok
 test_iterparse_argument (tests.test_resources.TestResources) ... ok
 test_iterparse_argument_for_html (tests.test_resources.TestResources) ... ok
 test_iterparse_argument_with_lxml (tests.test_resources.TestResources) ... ok
@@ -553,7 +554,6 @@ test_xml_document_validation (xmlschema.testing._builders.TestValidator054) ... 
 test_xml_document_validation (xmlschema.testing._builders.TestValidator055) ... ok
 test_xml_document_validation (xmlschema.testing._builders.TestValidator056) ... ok
 test_xml_document_validation (xmlschema.testing._builders.TestValidator057) ... ok
-test_rel_xpath_boolean (tests.test_xpath.ElementTreeXPathTest) ... ok
 test_bind_parser_method (tests.test_xpath.XMLSchemaProxyTest) ... ok
 test_cast_as_method (tests.test_xpath.XMLSchemaProxyTest) ... ok
 test_find_method (tests.test_xpath.XMLSchemaProxyTest) ... ok
@@ -589,6 +589,10 @@ test_target_namespace (tests.test_xpath.XPathElementTest) ... ok
 test_xpath_node (tests.test_xpath.XPathElementTest) ... ok
 test_xpath_proxy (tests.test_xpath.XPathElementTest) ... ok
 test_xsd_version (tests.test_xpath.XPathElementTest) ... ok
+test_element_selector (tests.test_xpath.XPathSelectorsTest) ... ok
+test_rel_xpath_boolean (tests.test_xpath.XPathSelectorsTest) ... ok
+test_split_path (tests.test_xpath.XPathSelectorsTest) ... ok
+test_split_path_parts (tests.test_xpath.XPathSelectorsTest) ... ok
 test_xsd_file (xmlschema.testing._builders.TestSchema001) ... ok
 test_xsd_file (xmlschema.testing._builders.TestSchema002) ... ok
 test_xsd_file (xmlschema.testing._builders.TestSchema003) ... ok
@@ -998,6 +1002,7 @@ test_boolean_decode (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... o
 test_boolean_encode (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
 test_date_type (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
 test_datetime_type (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
+test_decimal_decode (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
 test_duration_type (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
 test_facet_lists (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
 test_factory (tests.validators.test_builtins.TestXsd10BuiltinTypes) ... ok
@@ -1018,6 +1023,7 @@ test_date_time_stamp (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... 
 test_date_type (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
 test_datetime_type (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
 test_day_time_duration_type (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
+test_decimal_decode (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
 test_duration_type (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
 test_facet_lists (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
 test_factory (tests.validators.test_builtins.TestXsd11BuiltinTypes) ... ok
@@ -1094,11 +1100,13 @@ test_invalid_child_property (tests.validators.test_exceptions.TestValidatorExcep
 test_other_properties (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_parse_error (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_setattr (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
+test_sourceline__issue_456 (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_sourceline_property (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_validation_error_logging (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_validator_error_repr (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_validator_error_repr_no_urls (tests.validators.test_exceptions.TestValidatorExceptions) ... ok
 test_assertion_facet (tests.validators.test_facets.TestXsd11Identities) ... ok
+test_custom_pattern_facets__issue_440 (tests.validators.test_facets.TestXsd11Identities) ... ok
 test_digits_facets_restriction (tests.validators.test_facets.TestXsd11Identities) ... ok
 test_enumeration_facet (tests.validators.test_facets.TestXsd11Identities) ... ok
 test_enumeration_facet_derivation (tests.validators.test_facets.TestXsd11Identities) ... ok
@@ -1129,6 +1137,7 @@ test_total_digits_facet (tests.validators.test_facets.TestXsd11Identities) ... o
 test_use_xpath3 (tests.validators.test_facets.TestXsd11Identities) ... ok
 test_white_space_facet (tests.validators.test_facets.TestXsd11Identities) ... ok
 test_white_space_restriction (tests.validators.test_facets.TestXsd11Identities) ... ok
+test_custom_pattern_facets__issue_440 (tests.validators.test_facets.TestXsdFacets) ... ok
 test_digits_facets_restriction (tests.validators.test_facets.TestXsdFacets) ... ok
 test_enumeration_facet (tests.validators.test_facets.TestXsdFacets) ... ok
 test_enumeration_facet_derivation (tests.validators.test_facets.TestXsdFacets) ... ok
@@ -1320,6 +1329,7 @@ test_is_single (tests.validators.test_particles.TestParticleMixin) ... ok
 test_is_univocal (tests.validators.test_particles.TestParticleMixin) ... ok
 test_occurs_checkers (tests.validators.test_particles.TestParticleMixin) ... ok
 test_occurs_property (tests.validators.test_particles.TestParticleMixin) ... ok
+test_overall_min_and_max_occurs (tests.validators.test_particles.TestParticleMixin) ... ok
 test_parse_particle (tests.validators.test_particles.TestParticleMixin) ... ok
 test_substitution (tests.validators.test_particles.TestParticleMixin) ... ok
 test_add_schema (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1327,12 +1337,12 @@ test_annotation_string (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_annotations (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_base_schemas (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_block_default (tests.validators.test_schemas.TestXMLSchema10) ... ok
+test_build_helpers_api (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_builtin_types (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_change_maps_attribute (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_complex_types (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_components (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_default_namespace_mapping__issue_266 (tests.validators.test_schemas.TestXMLSchema10) ... ok
-test_deprecated_api (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_explicit_locations (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_final_default (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_global_group_definitions (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1340,6 +1350,7 @@ test_global_maps (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_import_dsig_namespace__issue_357 (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_import_mismatch_with_locations__issue_324 (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_include_overlap (tests.validators.test_schemas.TestXMLSchema10) ... ok
+test_invalid_substitution_group__issue_452 (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_is_restriction_method (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_listed_and_reversed_elements (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_logging (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1347,6 +1358,7 @@ test_malformed_schema__issue_404 (tests.validators.test_schemas.TestXMLSchema10)
 Loads an xsd file ... ok
 test_meta_schema_validation (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_multi_schema_initialization (tests.validators.test_schemas.TestXMLSchema10) ... ok
+test_multiple_substitution_groups__issue_452 (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_other_schema_root_attributes (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_pickling_invalid_schema (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_pickling_subclassed_schema__issue_263 (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1361,6 +1373,7 @@ test_schema_string_repr (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_schema_subclasses (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_schema_validation (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_simple_types (tests.validators.test_schemas.TestXMLSchema10) ... ok
+test_substitution_groups_on_refs__issue_452 (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_target_namespace (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_target_prefix (tests.validators.test_schemas.TestXMLSchema10) ... ok
 test_use_fallback (tests.validators.test_schemas.TestXMLSchema10) ... ok
@@ -1376,13 +1389,13 @@ test_annotation_string (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_annotations (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_base_schemas (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_block_default (tests.validators.test_schemas.TestXMLSchema11) ... ok
+test_build_helpers_api (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_builtin_types (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_change_maps_attribute (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_complex_types (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_components (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_default_attributes (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_default_namespace_mapping__issue_266 (tests.validators.test_schemas.TestXMLSchema11) ... ok
-test_deprecated_api (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_explicit_locations (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_final_default (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_global_group_definitions (tests.validators.test_schemas.TestXMLSchema11) ... ok
@@ -1390,6 +1403,7 @@ test_global_maps (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_import_dsig_namespace__issue_357 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_import_mismatch_with_locations__issue_324 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_include_overlap (tests.validators.test_schemas.TestXMLSchema11) ... ok
+test_invalid_substitution_group__issue_452 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_is_restriction_method (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_listed_and_reversed_elements (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_logging (tests.validators.test_schemas.TestXMLSchema11) ... ok
@@ -1397,6 +1411,7 @@ test_malformed_schema__issue_404 (tests.validators.test_schemas.TestXMLSchema11)
 Loads an xsd file ... ok
 test_meta_schema_validation (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_multi_schema_initialization (tests.validators.test_schemas.TestXMLSchema11) ... ok
+test_multiple_substitution_groups__issue_452 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_other_schema_root_attributes (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_pickling_invalid_schema (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_pickling_subclassed_schema__issue_263 (tests.validators.test_schemas.TestXMLSchema11) ... ok
@@ -1411,6 +1426,7 @@ test_schema_string_repr (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_schema_subclasses (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_schema_validation (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_simple_types (tests.validators.test_schemas.TestXMLSchema11) ... ok
+test_substitution_groups_on_refs__issue_452 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_target_namespace (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_target_prefix (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_use_fallback (tests.validators.test_schemas.TestXMLSchema11) ... ok
@@ -1420,6 +1436,7 @@ test_version_control (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_wrong_includes_and_imports (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_wrong_references (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_xmlns_namespace_forbidden (tests.validators.test_schemas.TestXMLSchema11) ... ok
+test_xpath_predicate_selector__issue_454 (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_xsd_version_compatibility_property (tests.validators.test_schemas.TestXMLSchema11) ... ok
 test_dummy_validator_class (tests.validators.test_schemas.TestXMLSchemaMeta) ... ok
 test_from_schema_class (tests.validators.test_schemas.TestXMLSchemaMeta) ... ok
@@ -1434,6 +1451,8 @@ test_facets (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_final_attribute (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_is_empty (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_simple_types (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
+test_union_date_and_datetime (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
+test_union_decode_encode__issue_450 (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_union_restrictions (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_variety_property (tests.validators.test_simple_types.TestXsd11SimpleTypes) ... ok
 test_date_time_facets (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
@@ -1441,6 +1460,8 @@ test_facets (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_final_attribute (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_is_empty (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_simple_types (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
+test_union_date_and_datetime (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
+test_union_decode_encode__issue_450 (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_union_restrictions (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_variety_property (tests.validators.test_simple_types.TestXsdSimpleTypes) ... ok
 test_any_attribute_wildcard (tests.validators.test_wildcards.TestXsd11Wildcards) ... ok
@@ -1536,7 +1557,7 @@ test_string_representation (tests.validators.test_xsdbase.TestXsdValidator) ... 
 test_valid_schema (tests.validators.test_xsdbase.TestXsdValidator) ... ok
 
 ----------------------------------------------------------------------
-Ran 1509 tests
+Ran 1530 tests
 
 OK (skipped=1)
   py$(PYV): OK
