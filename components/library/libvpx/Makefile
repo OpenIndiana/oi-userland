@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
 COMPONENT_VERSION= 1.15.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
 COMPONENT_PROJECT_URL = https://www.webmproject.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,7 +46,13 @@ CONFIGURE_OPTIONS += --enable-runtime-cpu-detect
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-static
+ifeq ($(MACH), i386)
 CONFIGURE_OPTIONS += --target=x86_64-solaris-gcc
+endif
+ifeq ($(MACH), sparc)
+CONFIGURE_OPTIONS += --target=sparc-solaris-gcc
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+endif
 
 COMPONENT_TEST_ARGS += -k -i
 COMPONENT_TEST_TARGETS = test
