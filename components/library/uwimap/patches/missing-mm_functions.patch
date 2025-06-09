@@ -1,0 +1,2032 @@
+--- imap-2007f/src/c-client/mail.c	2025-06-09 21:04:08.366388458 +0200
++++ imap-2007f/src/c-client/mail.c.new	2025-06-09 21:07:43.344138065 +0200
+@@ -6360,3 +6360,196 @@
+ {
+   return (*stream->dtb->localhost) (stream->stream);
+ }
++
++
++int trycreate = NIL;            /* flag saying gotta create before appending */
++int critical = NIL;             /* flag saying in critical code */
++
++/* Co-routines from MAIL library */
++
++
++/* Message matches a search
++ * Accepts: MAIL stream
++ *	    message number
++ */
++
++void mm_searched (MAILSTREAM *stream,unsigned long msgno)
++{
++  fatal ("mm_searched() call");
++}
++
++
++/* Message exists (i.e. there are that many messages in the mailbox)
++ * Accepts: MAIL stream
++ *	    message number
++ */
++
++void mm_exists (MAILSTREAM *stream,unsigned long number)
++{
++  fatal ("mm_exists() call");
++}
++
++
++/* Message expunged
++ * Accepts: MAIL stream
++ *	    message number
++ */
++
++void mm_expunged (MAILSTREAM *stream,unsigned long number)
++{
++  fatal ("mm_expunged() call");
++}
++
++
++/* Message flags update seen
++ * Accepts: MAIL stream
++ *	    message number
++ */
++
++void mm_flags (MAILSTREAM *stream,unsigned long number)
++{
++}
++
++/* Mailbox found
++ * Accepts: MAIL stream
++ *	    delimiter
++ *	    mailbox name
++ *	    mailbox attributes
++ */
++
++void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
++{
++  fatal ("mm_list() call");
++}
++
++
++/* Subscribed mailbox found
++ * Accepts: MAIL stream
++ *	    delimiter
++ *	    mailbox name
++ *	    mailbox attributes
++ */
++
++void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
++{
++  fatal ("mm_lsub() call");
++}
++
++
++/* Mailbox status
++ * Accepts: MAIL stream
++ *	    mailbox name
++ *	    mailbox status
++ */
++
++void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
++{
++  fatal ("mm_status() call");
++}
++
++/* Notification event
++ * Accepts: MAIL stream
++ *	    string to log
++ *	    error flag
++ */
++
++void mm_notify (MAILSTREAM *stream,char *string,long errflg)
++{
++  char tmp[MAILTMPLEN];
++  tmp[11] = '\0';		/* see if TRYCREATE */
++  if (!strcmp (ucase (strncpy (tmp,string,11)),"[TRYCREATE]")) trycreate = T;
++  mm_log (string,errflg);	/* just do mm_log action */
++}
++
++
++/* Log an event for the user to see
++ * Accepts: string to log
++ *	    error flag
++ */
++
++void mm_log (char *string,long errflg)
++{
++  if (trycreate)mm_dlog(string);/* debug logging only if trycreate in effect */
++  else {			/* ordinary logging */
++    fprintf (stderr,"%s\n",string);
++    switch (errflg) {  
++    case NIL:			/* no error */
++      syslog (LOG_INFO,"%s",string);
++      break;
++    case PARSE:			/* parsing problem */
++    case WARN:			/* warning */
++      syslog (LOG_WARNING,"%s",string);
++      break;
++    case ERROR:			/* error */
++    default:
++      syslog (LOG_ERR,"%s",string);
++      break;
++    }
++  }
++}
++
++
++/* Log an event to debugging telemetry
++ * Accepts: string to log
++ */
++
++void mm_dlog (char *string)
++{
++  if (debugsensitive) fprintf (stderr,"%s\n",string);
++  syslog (LOG_DEBUG,"%s",string);
++}
++
++/* Get user name and password for this host
++ * Accepts: parse of network mailbox name
++ *	    where to return user name
++ *	    where to return password
++ *	    trial count
++ */
++
++void mm_login (NETMBX *mb,char *username,char *password,long trial)
++{
++  fatal ("mm_login() call");
++}
++
++
++/* About to enter critical code
++ * Accepts: stream
++ */
++
++void mm_critical (MAILSTREAM *stream)
++{
++  critical = T;			/* note in critical code */
++}
++
++
++/* About to exit critical code
++ * Accepts: stream
++ */
++
++void mm_nocritical (MAILSTREAM *stream)
++{
++  critical = NIL;		/* note not in critical code */
++}
++
++
++/* Disk error found
++ * Accepts: stream
++ *	    system error code
++ *	    flag indicating that mailbox may be clobbered
++ * Returns: T if user wants to abort
++ */
++
++long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
++{
++  return T;
++}
++
++
++/* Log a fatal error event
++ * Accepts: string to log
++ */
++
++void mm_fatal (char *string)
++{
++  printf ("?%s\n",string);	/* shouldn't happen normally */
++}
+--- imap-2007f/src/mtest/mtest.c	2025-06-09 21:32:54.873072583 +0200
++++ imap-2007f/src/mtest/mtest.c.new	2025-06-09 21:34:30.238343926 +0200
+@@ -635,148 +635,6 @@
+     }
+   }
+ }
+-
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  mm_log (string,errflg);
+-}
+-
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *mailbox,long attributes)
+-{
+-  putchar (' ');
+-  if (delimiter) putchar (delimiter);
+-  else fputs ("NIL",stdout);
+-  putchar (' ');
+-  fputs (mailbox,stdout);
+-  if (attributes & LATT_NOINFERIORS) fputs (", no inferiors",stdout);
+-  if (attributes & LATT_NOSELECT) fputs (", no select",stdout);
+-  if (attributes & LATT_MARKED) fputs (", marked",stdout);
+-  if (attributes & LATT_UNMARKED) fputs (", unmarked",stdout);
+-  putchar ('\n');
+-}
+-
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *mailbox,long attributes)
+-{
+-  putchar (' ');
+-  if (delimiter) putchar (delimiter);
+-  else fputs ("NIL",stdout);
+-  putchar (' ');
+-  fputs (mailbox,stdout);
+-  if (attributes & LATT_NOINFERIORS) fputs (", no inferiors",stdout);
+-  if (attributes & LATT_NOSELECT) fputs (", no select",stdout);
+-  if (attributes & LATT_MARKED) fputs (", marked",stdout);
+-  if (attributes & LATT_UNMARKED) fputs (", unmarked",stdout);
+-  putchar ('\n');
+-}
+-
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  printf (" Mailbox %s",mailbox);
+-  if (status->flags & SA_MESSAGES) printf (", %lu messages",status->messages);
+-  if (status->flags & SA_RECENT) printf (", %lu recent",status->recent);
+-  if (status->flags & SA_UNSEEN) printf (", %lu unseen",status->unseen);
+-  if (status->flags & SA_UIDVALIDITY) printf (", %lu UID validity",
+-					      status->uidvalidity);
+-  if (status->flags & SA_UIDNEXT) printf (", %lu next UID",status->uidnext);
+-  printf ("\n");
+-}
+-
+-
+-void mm_log (char *string,long errflg)
+-{
+-  switch ((short) errflg) {
+-  case NIL:
+-    printf ("[%s]\n",string);
+-    break;
+-  case PARSE:
+-  case WARN:
+-    printf ("%%%s\n",string);
+-    break;
+-  case ERROR:
+-    printf ("?%s\n",string);
+-    break;
+-  }
+-}
+-
+-
+-void mm_dlog (char *string)
+-{
+-  puts (string);
+-}
+-
+-
+-void mm_login (NETMBX *mb,char *user,char *pwd,long trial)
+-{
+-  char *s,tmp[MAILTMPLEN];
+-  if (curhst) fs_give ((void **) &curhst);
+-  curhst = (char *) fs_get (1+strlen (mb->host));
+-  strcpy (curhst,mb->host);
+-  sprintf (s = tmp,"{%s/%s",mb->host,mb->service);
+-  if (*mb->user) sprintf (tmp+strlen (tmp),"/user=%s",strcpy (user,mb->user));
+-  if (*mb->authuser) sprintf (tmp+strlen (tmp),"/authuser=%s",mb->authuser);
+-  if (*mb->user) strcat (s = tmp,"} password:");
+-  else {
+-    printf ("%s} username: ",tmp);
+-    fgets (user,NETMAXUSER-1,stdin);
+-    user[NETMAXUSER-1] = '\0';
+-    if (s = strchr (user,'\n')) *s = '\0';
+-    s = "password: ";
+-  }
+-  if (curusr) fs_give ((void **) &curusr);
+-  curusr = cpystr (user);
+-  strcpy (pwd,getpass (s));
+-}
+-
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-}
+-
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-}
+-
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-#if UNIXLIKE
+-  kill (getpid (),SIGSTOP);
+-#else
+-  abort ();
+-#endif
+-  return NIL;
+-}
+-
+-
+-void mm_fatal (char *string)
+-{
+-  printf ("?%s\n",string);
+-}
+ 
+ /* SMTP tester */
+ 
+--- imap-2007f/src/ipopd/ipop2d.c	2011-07-23 02:20:17.000000000 +0200
++++ imap-2007f/src/ipopd/ipop2d.c.new	2025-06-09 21:42:59.387291525 +0200
+@@ -59,7 +59,7 @@
+ 
+ char *version = "75";		/* edit number of this server */
+ short state = LISN;		/* server state */
+-short critical = NIL;		/* non-zero if in critical code */
++short lcritical = NIL;		/* non-zero if in critical code */
+ MAILSTREAM *stream = NIL;	/* mailbox stream */
+ time_t idletime = 0;		/* time we went idle */
+ unsigned long nmsgs = 0;	/* number of messages */
+@@ -213,7 +213,7 @@
+   goodbye = "- Autologout; idle for too long\015\012";
+   logout = "Autologout";
+   state = DONE;			/* mark state done in either case */
+-  if (!critical) {		/* badly host if in critical code */
++  if (!lcritical) {		/* badly host if in critical code */
+     if (stream && !stream->lock) mail_close (stream);
+     stream = NIL;
+     sayonara (1);		/* die die die */
+@@ -233,7 +233,7 @@
+     goodbye = "- Killed (lost mailbox lock)\015\012";
+     logout = "Killed (lost mailbox lock)";
+     state = DONE;		/* mark state done in either case */
+-    if (!critical) {		/* badly host if in critical code */
++    if (!lcritical) {		/* badly host if in critical code */
+       if (stream && !stream->lock) mail_close (stream);
+       stream = NIL;
+       sayonara (1);		/* die die die */
+@@ -252,7 +252,7 @@
+   goodbye = NIL;
+   logout = "Hangup";
+   state = DONE;			/* mark state done in either case */
+-  if (!critical) {		/* badly host if in critical code */
++  if (!lcritical) {		/* badly host if in critical code */
+     if (stream && !stream->lock) mail_close (stream);
+     stream = NIL;
+     sayonara (1);		/* die die die */
+@@ -269,7 +269,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   goodbye = "- Killed (terminated)\015\012";
+   logout = "Killed (terminated)";
+-  if (critical) state = DONE;	/* mark state done in either case */
++  if (lcritical) state = DONE;	/* mark state done in either case */
+   /* Make no attempt at graceful closure since a shutdown may be in
+    * progress, and we won't have any time to do mail_close() actions.
+    */
+@@ -494,218 +494,3 @@
+   }
+   return c_read (NIL);		/* end message reading transaction */
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long msgno)
+-{
+-  /* Never called */
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-  /* Can't use this mechanism.  POP has no means of notifying the client of
+-     new mail during the session. */
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-  if (state != DONE) {		/* ignore if closing */
+-				/* someone else screwed us */
+-    goodbye = "- Mailbox expunged from under me!\015\012";
+-    if (stream && !stream->lock) mail_close (stream);
+-    stream = NIL;
+-    sayonara (1);
+-  }
+-}
+-
+-
+-/* Message status changed
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Subscribe mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  /* This isn't used */
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  mm_log (string,errflg);	/* just do mm_log action */
+-}
+-
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  switch (errflg) {
+-  case NIL:			/* information message */
+-  case PARSE:			/* parse glitch */
+-    break;			/* too many of these to log */
+-  case WARN:			/* warning */
+-    syslog (LOG_DEBUG,"%s",string);
+-    break;
+-  case BYE:			/* driver broke connection */
+-    if (state != DONE) {
+-      char tmp[MAILTMPLEN];
+-      alarm (0);		/* disable all interrupts */
+-      server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+-      sprintf (logout = tmp,"Mailbox closed (%.80s)",string);
+-      sayonara (1);
+-    }
+-    break;
+-  case ERROR:			/* error that broke command */
+-  default:			/* default should never happen */
+-    syslog (LOG_NOTICE,"%s",string);
+-    break;
+-  }
+-}
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  /* Not doing anything here for now */
+-}
+-
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network mailbox name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-				/* set user name */
+-  strncpy (username,*mb->user ? mb->user : user,NETMAXUSER-1);
+-  strncpy (password,pass,255);	/* and password */
+-  username[NETMAXUSER] = password[255] = '\0';
+-}
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-  ++critical;
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-  --critical;
+-}
+-
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: abort flag
+- */
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-  if (serious) {		/* try your damnest if clobberage likely */
+-    syslog (LOG_ALERT,
+-	    "Retrying after disk error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	    user,tcp_clienthost (),
+-	    (stream && stream->mailbox) ? stream->mailbox : "???",
+-	    strerror (errcode));
+-    alarm (0);			/* make damn sure timeout disabled */
+-    sleep (60);			/* give it some time to clear up */
+-    return NIL;
+-  }
+-  syslog (LOG_ALERT,"Fatal disk error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	  user,tcp_clienthost (),
+-	  (stream && stream->mailbox) ? stream->mailbox : "???",
+-	  strerror (errcode));
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  mm_log (string,ERROR);	/* shouldn't happen normally */
+-}
+--- imap-2007f/src/ipopd/ipop3d.c	2011-07-23 02:20:17.000000000 +0200
++++ imap-2007f/src/ipopd/ipop3.c.new	2025-06-09 21:44:34.639740647 +0200
+@@ -61,7 +61,7 @@
+ 
+ char *version = "104";		/* edit number of this server */
+ short state = AUTHORIZATION;	/* server state */
+-short critical = NIL;		/* non-zero if in critical code */
++short lcritical = NIL;		/* non-zero if in critical code */
+ MAILSTREAM *stream = NIL;	/* mailbox stream */
+ time_t idletime = 0;		/* time we went idle */
+ unsigned long nmsgs = 0;	/* current number of messages */
+@@ -568,7 +568,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   goodbye = "-ERR Autologout; idle for too long\015\012";
+   logout = "Autologout";
+-  if (critical) state = LOGOUT;	/* badly hosed if in critical code */
++  if (lcritical) state = LOGOUT;	/* badly hosed if in critical code */
+   else {			/* try to gracefully close the stream */
+     if ((state == TRANSACTION) && !stream->lock) {
+       rset ();
+@@ -592,7 +592,7 @@
+     server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+     goodbye = "-ERR Received Kiss of Death\015\012";
+     logout = "Killed (lost mailbox lock)";
+-    if (critical) state =LOGOUT;/* must defer if in critical code */
++    if (lcritical) state =LOGOUT;/* must defer if in critical code */
+     else {			/* try to gracefully close the stream */
+       if ((state == TRANSACTION) && !stream->lock) {
+ 	rset ();
+@@ -615,7 +615,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   goodbye = NIL;		/* nobody left to talk to */
+   logout = "Hangup";
+-  if (critical) state = LOGOUT;	/* must defer if in critical code */
++  if (lcritical) state = LOGOUT;	/* must defer if in critical code */
+   else {			/* try to gracefully close the stream */
+     if ((state == TRANSACTION) && !stream->lock) {
+       rset ();
+@@ -637,7 +637,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   goodbye = "-ERR Killed\015\012";
+   logout = "Killed";
+-  if (critical) state = LOGOUT;	/* must defer if in critical code */
++  if (lcritical) state = LOGOUT;	/* must defer if in critical code */
+   /* Make no attempt at graceful closure since a shutdown may be in
+    * progress, and we won't have any time to do mail_close() actions.
+    */
+@@ -863,220 +863,3 @@
+   ndele = nseen = 0;		/* no more deleted or seen messages */
+   last = il;			/* restore previous LAST value */
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long msgno)
+-{
+-  /* Never called */
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-  /* Can't use this mechanism.  POP has no means of notifying the client of
+-     new mail during the session. */
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-  unsigned long i = number + 1;
+-  msg[number] = 0;		/* I bet that this will annoy someone */
+-  while (i <= nmsgs) --msg[i++];
+-}
+-
+-
+-/* Message flag status change
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Subscribe mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  /* This isn't used */
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  /* This isn't used */
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  mm_log (string,errflg);	/* just do mm_log action */
+-}
+-
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  switch (errflg) {
+-  case NIL:			/* information message */
+-  case PARSE:			/* parse glitch */
+-    break;			/* too many of these to log */
+-  case WARN:			/* warning */
+-    syslog (LOG_DEBUG,"%s",string);
+-    break;
+-  case BYE:			/* driver broke connection */
+-    if (state != UPDATE) {
+-      char tmp[MAILTMPLEN];
+-      alarm (0);		/* disable all interrupts */
+-      server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+-      sprintf (logout = tmp,"Mailbox closed (%.80s)",string);
+-      goodbye = NIL;
+-      state = LOGOUT;
+-      sayonara (1);
+-    }
+-    break;
+-  case ERROR:			/* error that broke command */
+-  default:			/* default should never happen */
+-    syslog (LOG_NOTICE,"%s",string);
+-    break;
+-  }
+-}    
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  /* Not doing anything here for now */
+-}
+-
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network mailbox name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-				/* set user name */
+-  strncpy (username,*mb->user ? mb->user : user,NETMAXUSER-1);
+-  if (pass) {
+-    strncpy (password,pass,255);/* and password */
+-    fs_give ((void **) &pass);
+-  }
+-  else memset (password,0,256);	/* no password to send, abort login */
+-  username[NETMAXUSER] = password[255] = '\0';
+-}
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-  ++critical;
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-  --critical;
+-}
+-
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: abort flag
+- */
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-  if (serious) {		/* try your damnest if clobberage likely */
+-    syslog (LOG_ALERT,
+-	    "Retrying after disk error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	    user,tcp_clienthost (),
+-	    (stream && stream->mailbox) ? stream->mailbox : "???",
+-	    strerror (errcode));
+-    alarm (0);			/* make damn sure timeout disabled */
+-    sleep (60);			/* give it some time to clear up */
+-    return NIL;
+-  }
+-  syslog (LOG_ALERT,"Fatal disk error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	  user,tcp_clienthost (),
+-	  (stream && stream->mailbox) ? stream->mailbox : "???",
+-	  strerror (errcode));
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  mm_log (string,ERROR);	/* shouldn't happen normally */
+-}
+--- imap-2007f/src/imapd/imapd.c	2011-07-23 02:20:00.000000000 +0200
++++ imap-2007f/src/imapd/imapd.c.new	2025-06-09 22:27:26.241226986 +0200
+@@ -217,10 +217,10 @@
+ time_t shutdowntime = 0;	/* time of last shutdown */
+ int state = LOGIN;		/* server state */
+ int cancelled = NIL;		/* authenticate cancelled */
+-int trycreate = 0;		/* saw a trycreate */
++int ltrycreate = 0;		/* saw a trycreate */
+ int finding = NIL;		/* doing old FIND command */
+ int anonymous = 0;		/* non-zero if anonymous */
+-int critical = NIL;		/* non-zero if in critical code */
++int lcritical = NIL;		/* non-zero if in critical code */
+ int quell_events = NIL;		/* non-zero if in FETCH response */
+ int existsquelled = NIL;	/* non-zero if an EXISTS was quelled */
+ int proxylist = NIL;		/* doing a proxy LIST */
+@@ -680,7 +680,7 @@
+ 	}
+ 	else if (!anonymous &&	/* copy message(s) */
+ 		 (!strcmp (cmd,"COPY") || !strcmp (cmd,"UID COPY"))) {
+-	  trycreate = NIL;	/* no trycreate status */
++	  ltrycreate = NIL;	/* no trycreate status */
+ 	  if (!(arg && (s = strtok (arg," ")) && (arg = strtok(NIL,"\015\012"))
+ 		&& (t = snarf (&arg)))) response = misarg;
+ 	  else if (arg) response = badarg;
+@@ -692,7 +692,7 @@
+ 		     mail_sequence (stream,s))) response = badseq;
+ 				/* try copy */
+ 	  else if (!mail_copy_full (stream,s,t,uid ? CP_UID : NIL)) {
+-	    response = trycreate ? losetry : lose;
++	    response = ltrycreate ? losetry : lose;
+ 	    if (!lsterr) lsterr = cpystr ("No such destination mailbox");
+ 	  }
+ 	}
+@@ -1018,9 +1018,9 @@
+ 				/* no message yet */
+ 	    ad.flags = ad.date = ad.msg = NIL;
+ 	    ad.message = &st;	/* pointer to stringstruct to use */
+-	    trycreate = NIL;	/* no trycreate status */
++	    ltrycreate = NIL;	/* no trycreate status */
+ 	    if (!mail_append_multiple (NIL,s,append_msg,(void *) &ad)) {
+-	      if (response == win) response = trycreate ? losetry : lose;
++	      if (response == win) response = ltrycreate ? losetry : lose;
+ 				/* this can happen with #driver. hack */
+ 	      if (!lsterr) lsterr = cpystr ("No such destination mailbox");
+ 	    }
+@@ -1764,7 +1764,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   logout = "Autologout";
+   goodbye = "Autologout (idle for too long)";
+-  if (critical) {		/* must defer if in critical code(?) */
++  if (lcritical) {		/* must defer if in critical code(?) */
+     close (0);			/* kill stdin */
+     state = LOGOUT;		/* die as soon as we can */
+   }
+@@ -1781,7 +1781,7 @@
+   settimeout (0);		/* disable all interrupts */
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   logout = goodbye = "Killed (lost mailbox lock)";
+-  if (critical) {		/* must defer if in critical code */
++  if (lcritical) {		/* must defer if in critical code */
+     close (0);			/* kill stdin */
+     state = LOGOUT;		/* die as soon as we can */
+   }
+@@ -1798,7 +1798,7 @@
+   server_init (NIL,NIL,NIL,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN,SIG_IGN);
+   logout = "Hangup";
+   goodbye = NIL;		/* other end is already gone */
+-  if (critical) {		/* must defer if in critical code */
++  if (lcritical) {		/* must defer if in critical code */
+     close (0);			/* kill stdin */
+     close (1);			/* and stdout */
+     state = LOGOUT;		/* die as soon as we can */
+@@ -1820,7 +1820,7 @@
+    * progress, and we won't have any time to do mail_close() actions
+    */
+   stream = NIL;
+-  if (critical) {		/* must defer if in critical code */
++  if (lcritical) {		/* must defer if in critical code */
+     close (0);			/* kill stdin */
+     close (1);			/* and stdout */
+     state = LOGOUT;		/* die as soon as we can */
+@@ -2011,7 +2011,7 @@
+ 	   t = logout = msg; *s; *t++ = *s++);
+     for (s = ", while "; *s; *t++ = *s++);
+     for (s = reason; *s; *t++ = *s++);
+-    if (critical) {		/* must defer if in critical code */
++    if (lcritical) {		/* must defer if in critical code */
+       close (0);		/* kill stdin */
+       close (1);		/* and stdout */
+       state = LOGOUT;		/* die as soon as we can */
+@@ -4028,7 +4028,7 @@
+     }
+ 				/* only if at least one message to copy */
+   if (j && !mail_append_multiple (NIL,mailbox,proxy_append,(void *) &md)) {
+-    response = trycreate ? losetry : lose;
++    response = ltrycreate ? losetry : lose;
+     if (set) mail_free_searchset (&set);
+     return NIL;
+   }
+@@ -4215,285 +4215,6 @@
+   if (!lsterr) lsterr = cpystr ("Try referral URL");
+   return NIL;			/* don't chase referrals for now */
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *s,unsigned long msgno)
+-{
+-				/* nothing to do here */
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *s,unsigned long number)
+-{
+-				/* note change in number of messages */
+-  if ((s != tstream) && (nmsgs != number)) {
+-    nmsgs = number;		/* always update number of messages */
+-    if (quell_events) existsquelled = T;
+-    else {
+-      PSOUT ("* ");
+-      pnum (nmsgs);
+-      PSOUT (" EXISTS\015\012");
+-    }
+-    recent = 0xffffffff;	/* make sure update recent too */
+-  }
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *s,unsigned long number)
+-{
+-  if (quell_events) fatal ("Impossible EXPUNGE event");
+-  if (s != tstream) {
+-    PSOUT ("* ");
+-    pnum (number);
+-    PSOUT (" EXPUNGE\015\012");
+-  }
+-  nmsgs--;
+-  existsquelled = T;		/* do EXISTS when command done */
+-}
+-
+-
+-/* Message status changed
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *s,unsigned long number)
+-{
+-  if (s != tstream) mail_elt (s,number)->spare2 = T;
+-}
+-
+-/* Mailbox found
+- * Accepts: hierarchy delimiter
+- *	    mailbox name
+- *	    attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  mm_list_work ("LIST",delimiter,name,attributes);
+-}
+-
+-
+-/* Subscribed mailbox found
+- * Accepts: hierarchy delimiter
+- *	    mailbox name
+- *	    attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  mm_list_work ("LSUB",delimiter,name,attributes);
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  if (!quell_events) {
+-    char tmp[MAILTMPLEN];
+-    tmp[0] = tmp[1] = '\0';
+-    if (status->flags & SA_MESSAGES)
+-      sprintf (tmp + strlen (tmp)," MESSAGES %lu",status->messages);
+-    if (status->flags & SA_RECENT)
+-      sprintf (tmp + strlen (tmp)," RECENT %lu",status->recent);
+-    if (status->flags & SA_UNSEEN)
+-      sprintf (tmp + strlen (tmp)," UNSEEN %lu",status->unseen);
+-    if (status->flags & SA_UIDNEXT)
+-      sprintf (tmp + strlen (tmp)," UIDNEXT %lu",status->uidnext);
+-    if (status->flags & SA_UIDVALIDITY)
+-      sprintf (tmp + strlen(tmp)," UIDVALIDITY %lu",status->uidvalidity);
+-    PSOUT ("* STATUS ");
+-    pastring (mailbox);
+-    PSOUT (" (");
+-    PSOUT (tmp+1);
+-    PBOUT (')');
+-    CRLF;
+-  }
+-}
+-
+-/* Worker routine for LIST and LSUB
+- * Accepts: name of response
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    attributes
+- */
+-
+-void mm_list_work (char *what,int delimiter,char *name,long attributes)
+-{
+-  char *s;
+-  if (!quell_events) {
+-    char tmp[MAILTMPLEN];
+-    if (finding) {
+-      PSOUT ("* MAILBOX ");
+-      PSOUT (name);
+-    }
+-				/* new form */
+-    else if ((cmd[0] == 'R') || !(attributes & LATT_REFERRAL)) {
+-      PSOUT ("* ");
+-      PSOUT (what);
+-      PSOUT (" (");
+-      tmp[0] = tmp[1] = '\0';
+-      if (attributes & LATT_NOINFERIORS) strcat (tmp," \\NoInferiors");
+-      if (attributes & LATT_NOSELECT) strcat (tmp," \\NoSelect");
+-      if (attributes & LATT_MARKED) strcat (tmp," \\Marked");
+-      if (attributes & LATT_UNMARKED) strcat (tmp," \\UnMarked");
+-      if (attributes & LATT_HASCHILDREN) strcat (tmp," \\HasChildren");
+-      if (attributes & LATT_HASNOCHILDREN) strcat (tmp," \\HasNoChildren");
+-      PSOUT (tmp+1);
+-      switch (delimiter) {
+-      case '\\':		/* quoted delimiter */
+-      case '"':
+-	PSOUT (") \"\\");
+-	PBOUT (delimiter);
+-	PBOUT ('"');
+-	break;
+-      case '\0':		/* no delimiter */
+-	PSOUT (") NIL");
+-	break;
+-      default:			/* unquoted delimiter */
+-	PSOUT (") \"");
+-	PBOUT (delimiter);
+-	PBOUT ('"');
+-	break;
+-      }
+-      PBOUT (' ');
+-				/* output mailbox name */
+-      if (proxylist && (s = strchr (name,'}'))) pastring (s+1);
+-      else pastring (name);
+-    }
+-    CRLF;
+-  }
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  SIZEDTEXT msg;
+-  char *s,*code;
+-  if (!quell_events && (!tstream || (stream != tstream))) {
+-    switch (errflg) {
+-    case NIL:			/* information message, set as OK response */
+-      if ((string[0] == '[') &&
+-	  ((string[1] == 'T') || (string[1] == 't')) &&
+-	  ((string[2] == 'R') || (string[2] == 'r')) &&
+-	  ((string[3] == 'Y') || (string[3] == 'y')) &&
+-	  ((string[4] == 'C') || (string[4] == 'c')) &&
+-	  ((string[5] == 'R') || (string[5] == 'r')) &&
+-	  ((string[6] == 'E') || (string[6] == 'e')) &&
+-	  ((string[7] == 'A') || (string[7] == 'a')) &&
+-	  ((string[8] == 'T') || (string[8] == 't')) &&
+-	  ((string[9] == 'E') || (string[9] == 'e')) && (string[10] == ']'))
+-	trycreate = T;
+-    case BYE:			/* some other server signing off */
+-    case PARSE:			/* parse glitch, output unsolicited OK */
+-      code = "* OK ";
+-      break;
+-    case WARN:			/* warning, output unsolicited NO (kludge!) */
+-      code = "* NO ";
+-      break;
+-    case ERROR:			/* error that broke command */
+-    default:			/* default should never happen */
+-      code = "* BAD ";
+-      break;
+-    }
+-    PSOUT (code);
+-    msg.size = (s = strpbrk ((char *) (msg.data = (unsigned char *) string),
+-			     "\015\012")) ?
+-      (s - string) : strlen (string);
+-    PSOUTR (&msg);
+-    CRLF;
+-    PFLUSH ();			/* let client see it immediately */
+-  }
+-}
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  SIZEDTEXT msg;
+-  char *s;
+-  msg.size = 
+-    (s = strpbrk ((char *) (msg.data = (unsigned char *) string),"\015\012")) ?
+-      (s - string) : strlen (string);
+-  switch (errflg) {
+-  case NIL:			/* information message, set as OK response */
+-    if (response == win) {	/* only if no other response yet */
+-      if (lsterr) {		/* if there was a previous message */
+-	if (!quell_events) {
+-	  PSOUT ("* OK ");	/* blat it out */
+-	  PSOUT (lsterr);
+-	  CRLF;
+-	  PFLUSH ();		/* let client see it immediately */
+-	}
+-	fs_give ((void **) &lsterr);
+-      }
+-      lsterr = cpystr (string); /* copy string for later use */
+-      if (s) lsterr[s - string] = NIL;
+-    }
+-    break;
+-  case PARSE:			/* parse glitch, output unsolicited OK */
+-    if (!quell_events) {
+-      PSOUT ("* OK [PARSE] ");
+-      PSOUTR (&msg);
+-      CRLF;
+-      PFLUSH ();		/* let client see it immediately */
+-    }
+-    break;
+-  case WARN:			/* warning, output unsolicited NO */
+-				/* ignore "Mailbox is empty" (KLUDGE!) */
+-    if (strcmp (string,"Mailbox is empty")) {
+-      if (lstwrn) {		/* have previous warning? */
+-	if (!quell_events) {
+-	  PSOUT ("* NO ");
+-	  PSOUT (lstwrn);
+-	  CRLF;
+-	  PFLUSH ();		/* make sure client sees it immediately */
+-	}
+-	fs_give ((void **) &lstwrn);
+-      }
+-      lstwrn = cpystr (string); /* note last warning */
+-      if (s) lstwrn[s - string] = NIL;
+-    }
+-    break;
+-  case ERROR:			/* error that broke command */
+-  default:			/* default should never happen */
+-    response = trycreate ? losetry : lose;
+-    if (lsterr) fs_give ((void **) &lsterr);
+-    lsterr = cpystr (string);	/* note last error */
+-    if (s) lsterr[s - string] = NIL;
+-    break;
+-  }
+-}
+ 
+ /* Return last error
+  */
+@@ -4504,105 +4225,3 @@
+   if (lstwrn) return lstwrn;
+   return "<unknown>";
+ }
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  mm_log (string,WARN);		/* shouldn't happen normally */
+-}
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network user name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-				/* set user name */
+-  strncpy (username,*mb->user ? mb->user : (char *) user,NETMAXUSER);
+-  strncpy (password,pass,256);	/* and password */
+-}
+-
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *s)
+-{
+-  ++critical;
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *s)
+-{
+-				/* go non-critical, pending death? */
+-  if (!--critical && (state == LOGOUT)) {
+-				/* clean up iff needed */
+-    if (s && (stream != s) && !s->lock && (s->dtb->flags & DR_XPOINT))
+-      s = mail_close (s);
+-    longjmp (jmpenv,1);		/* die now */
+-  }
+-}
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: abort flag
+- */
+-
+-long mm_diskerror (MAILSTREAM *s,long errcode,long serious)
+-{
+-  if (serious) {		/* try your damnest if clobberage likely */
+-    mm_notify (s,"Retrying to fix probable mailbox damage!",ERROR);
+-    PFLUSH ();			/* dump output buffer */
+-    syslog (LOG_ALERT,
+-	    "Retrying after disk error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	    user ? (char *) user : "???",tcp_clienthost (),
+-	    (stream && stream->mailbox) ? stream->mailbox : "???",
+-	    strerror (errcode));
+-    settimeout (0);		/* make damn sure timeout disabled */
+-    sleep (60);			/* give it some time to clear up */
+-    return NIL;
+-  }
+-  if (!quell_events) {		/* otherwise die before more damage is done */
+-    PSOUT ("* NO Disk error: ");
+-    PSOUT (strerror (errcode));
+-    CRLF;
+-  }
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  SIZEDTEXT msg;
+-  char *s;
+-  msg.size = 
+-    (s = strpbrk ((char *) (msg.data = (unsigned char *) string),"\015\012")) ?
+-      (s - string) : strlen (string);
+-  if (!quell_events) {
+-    PSOUT ("* BYE [ALERT] IMAP4rev1 server crashing: ");
+-    PSOUTR (&msg);
+-    CRLF;
+-    PFLUSH ();
+-  }
+-  syslog (LOG_ALERT,"Fatal error user=%.80s host=%.80s mbx=%.80s: %.80s",
+-	  user ? (char *) user : "???",tcp_clienthost (),
+-	  (stream && stream->mailbox) ? stream->mailbox : "???",string);
+-}
+--- imap-2007f/src/mailutil/mailutil.c	2011-07-23 02:19:56.000000000 +0200
++++ imap-2007f/src/mailutil/mailutil.c.new	2025-06-09 22:32:09.041145552 +0200
+@@ -41,8 +41,7 @@
+ int rwcopyp = NIL;		/* flag saying readwrite copy (for POP) */
+ int kwcopyp = NIL;		/* flag saying keyword copy */
+ int ignorep = NIL;		/* flag saying ignore keywords */
+-int critical = NIL;		/* flag saying in critical code */
+-int trycreate = NIL;		/* [TRYCREATE] seen */
++int ltrycreate = NIL;		/* [TRYCREATE] seen */
+ char *suffix = NIL;		/* suffer merge mode suffix text */
+ int ddelim = -1;		/* destination delimiter */
+ FILE *f = NIL;
+@@ -583,7 +582,7 @@
+   STRING st;
+   char *ndst = NIL;
+   int ret = NIL;
+-  trycreate = NIL;		/* no TRYCREATE yet */
++  ltrycreate = NIL;		/* no TRYCREATE yet */
+   if (create) while (!mail_create (dest,dst) && (mode != mAPPEND)) {
+     switch (mode) {
+     case mPROMPT:		/* prompt user for new name */
+@@ -668,7 +667,7 @@
+       }
+       ret = T;
+     }
+-    else if ((mode == mAPPEND) && trycreate)
++    else if ((mode == mAPPEND) && ltrycreate)
+       ret = mbxcopy (source,dest,dst,create,del,mPROMPT);
+     else if (verbosep) puts ("[Failed]");
+   }
+@@ -725,218 +724,3 @@
+   else *message = NIL;		/* all done */
+   return LONGT;
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long msgno)
+-{
+-				/* dummy routine */
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-				/* dummy routine */
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-				/* dummy routine */
+-}
+-
+-
+-/* Message flags update seen
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-				/* dummy routine */
+-}
+-
+-/* Mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-				/* note destination delimiter */
+-  if (ddelim < 0) ddelim = delimiter;
+-				/* if got a selectable name */
+-  else if (!(attributes & LATT_NOSELECT) && *name)
+-    fprintf (f,"%c%s\n",delimiter,name);
+-}
+-
+-
+-/* Subscribe mailbox found
+- * Accepts: MAIL stream
+- *	    hierarchy delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-				/* dummy routine */
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  if (status->recent || status->unseen)
+-    printf ("%lu new message(s) (%lu unseen),",status->recent,status->unseen);
+-  else fputs ("No new messages,",stdout);
+-  printf (" %lu total in %s\n",status->messages,mailbox);
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  if (!errflg && (string[0] == '[') &&
+-      ((string[1] == 'T') || (string[1] == 't')) &&
+-      ((string[2] == 'R') || (string[2] == 'r')) &&
+-      ((string[3] == 'Y') || (string[3] == 'y')) &&
+-      ((string[4] == 'C') || (string[4] == 'c')) &&
+-      ((string[5] == 'R') || (string[5] == 'r')) &&
+-      ((string[6] == 'E') || (string[6] == 'e')) &&
+-      ((string[7] == 'A') || (string[7] == 'a')) &&
+-      ((string[8] == 'T') || (string[8] == 't')) &&
+-      ((string[9] == 'E') || (string[9] == 'e')) &&
+-      (string[10] == ']'))
+-    trycreate = T;  
+-  mm_log (string,errflg);	/* just do mm_log action */
+-}
+-
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  switch (errflg) {  
+-  case BYE:
+-  case NIL:			/* no error */
+-    if (verbosep) fprintf (stderr,"[%s]\n",string);
+-    break;
+-  case PARSE:			/* parsing problem */
+-  case WARN:			/* warning */
+-    fprintf (stderr,"warning: %s\n",string);
+-    break;
+-  case ERROR:			/* error */
+-  default:
+-    fprintf (stderr,"%s\n",string);
+-    break;
+-  }
+-}
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  fprintf (stderr,"%s\n",string);
+-}
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network mailbox name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-  char *s,tmp[MAILTMPLEN];
+-  sprintf (s = tmp,"{%s/%s",mb->host,mb->service);
+-  if (*mb->user) sprintf (tmp+strlen (tmp),"/user=%s",
+-			  strcpy (username,mb->user));
+-  if (*mb->authuser) sprintf (tmp+strlen (tmp),"/authuser=%s",mb->authuser);
+-  if (*mb->user) strcat (s = tmp,"} password:");
+-  else {
+-    printf ("%s} username: ",tmp);
+-    fgets (username,NETMAXUSER-1,stdin);
+-    username[NETMAXUSER-1] = '\0';
+-    if (s = strchr (username,'\n')) *s = '\0';
+-    s = "password: ";
+-  }
+-  strcpy (password,getpass (s));
+-}
+-
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-  critical = T;			/* note in critical code */
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-  critical = NIL;		/* note not in critical code */
+-}
+-
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: T if user wants to abort
+- */
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  fprintf (stderr,"FATAL: %s\n",string);
+-}
+--- imap-2007f/src/tmail/tmail.c	2025-06-09 22:32:31.184657578 +0200
++++ imap-2007f/src/tmail/tmail.c.new	2025-06-09 22:36:49.010080229 +0200
+@@ -42,8 +42,6 @@
+ 
+ char *version = "22";		/* tmail edit version */
+ int debug = NIL;		/* debugging (don't fork) */
+-int trycreate = NIL;		/* flag saying gotta create before appending */
+-int critical = NIL;		/* flag saying in critical code */
+ char *sender = NIL;		/* message origin */
+ char *inbox = NIL;		/* inbox file */
+ long precedence = 0;		/* delivery precedence - used by quota hook */
+@@ -610,192 +608,3 @@
+   }
+   return s;			/* return user name */
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long msgno)
+-{
+-  fatal ("mm_searched() call");
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-  fatal ("mm_exists() call");
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-  fatal ("mm_expunged() call");
+-}
+-
+-
+-/* Message flags update seen
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-/* Mailbox found
+- * Accepts: MAIL stream
+- *	    delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  fatal ("mm_list() call");
+-}
+-
+-
+-/* Subscribed mailbox found
+- * Accepts: MAIL stream
+- *	    delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  fatal ("mm_lsub() call");
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  fatal ("mm_status() call");
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  char tmp[MAILTMPLEN];
+-  tmp[11] = '\0';		/* see if TRYCREATE */
+-  if (!strcmp (ucase (strncpy (tmp,string,11)),"[TRYCREATE]")) trycreate = T;
+-  mm_log (string,errflg);	/* just do mm_log action */
+-}
+-
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  if (trycreate)mm_dlog(string);/* debug logging only if trycreate in effect */
+-  else {			/* ordinary logging */
+-    fprintf (stderr,"%s\n",string);
+-    switch (errflg) {  
+-    case NIL:			/* no error */
+-      syslog (LOG_INFO,"%s",string);
+-      break;
+-    case PARSE:			/* parsing problem */
+-    case WARN:			/* warning */
+-      syslog (LOG_WARNING,"%s",string);
+-      break;
+-    case ERROR:			/* error */
+-    default:
+-      syslog (LOG_ERR,"%s",string);
+-      break;
+-    }
+-  }
+-}
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  if (debug) fprintf (stderr,"%s\n",string);
+-  syslog (LOG_DEBUG,"%s",string);
+-}
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network mailbox name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-  fatal ("mm_login() call");
+-}
+-
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-  critical = T;			/* note in critical code */
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-  critical = NIL;		/* note not in critical code */
+-}
+-
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: T if user wants to abort
+- */
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  printf ("?%s\n",string);	/* shouldn't happen normally */
+-}
+--- imap-2007f/src/dmail/dmail.c	2025-06-09 22:40:32.762761566 +0200
++++ imap-2007f/src/dmail/dmail.c.new	2025-06-09 22:43:03.066982532 +0200
+@@ -43,8 +43,6 @@
+ char *version = "18";		/* dmail edit version */
+ int debug = NIL;		/* debugging (don't fork) */
+ int flagseen = NIL;		/* flag message as seen */
+-int trycreate = NIL;		/* flag saying gotta create before appending */
+-int critical = NIL;		/* flag saying in critical code */
+ char *sender = NIL;		/* message origin */
+ char *keywords = NIL;		/* keyword list */
+ long precedence = 0;		/* delivery precedence - used by quota hook */
+@@ -471,192 +469,3 @@
+   }
+   return code;			/* error code to return */
+ }
+-
+-/* Co-routines from MAIL library */
+-
+-
+-/* Message matches a search
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_searched (MAILSTREAM *stream,unsigned long msgno)
+-{
+-  fatal ("mm_searched() call");
+-}
+-
+-
+-/* Message exists (i.e. there are that many messages in the mailbox)
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_exists (MAILSTREAM *stream,unsigned long number)
+-{
+-  fatal ("mm_exists() call");
+-}
+-
+-
+-/* Message expunged
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_expunged (MAILSTREAM *stream,unsigned long number)
+-{
+-  fatal ("mm_expunged() call");
+-}
+-
+-
+-/* Message flags update seen
+- * Accepts: MAIL stream
+- *	    message number
+- */
+-
+-void mm_flags (MAILSTREAM *stream,unsigned long number)
+-{
+-}
+-
+-/* Mailbox found
+- * Accepts: MAIL stream
+- *	    delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_list (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  fatal ("mm_list() call");
+-}
+-
+-
+-/* Subscribed mailbox found
+- * Accepts: MAIL stream
+- *	    delimiter
+- *	    mailbox name
+- *	    mailbox attributes
+- */
+-
+-void mm_lsub (MAILSTREAM *stream,int delimiter,char *name,long attributes)
+-{
+-  fatal ("mm_lsub() call");
+-}
+-
+-
+-/* Mailbox status
+- * Accepts: MAIL stream
+- *	    mailbox name
+- *	    mailbox status
+- */
+-
+-void mm_status (MAILSTREAM *stream,char *mailbox,MAILSTATUS *status)
+-{
+-  fatal ("mm_status() call");
+-}
+-
+-/* Notification event
+- * Accepts: MAIL stream
+- *	    string to log
+- *	    error flag
+- */
+-
+-void mm_notify (MAILSTREAM *stream,char *string,long errflg)
+-{
+-  char tmp[MAILTMPLEN];
+-  tmp[11] = '\0';		/* see if TRYCREATE */
+-  if (!strcmp (ucase (strncpy (tmp,string,11)),"[TRYCREATE]")) trycreate = T;
+-  mm_log (string,errflg);	/* just do mm_log action */
+-}
+-
+-
+-/* Log an event for the user to see
+- * Accepts: string to log
+- *	    error flag
+- */
+-
+-void mm_log (char *string,long errflg)
+-{
+-  if (trycreate)mm_dlog(string);/* debug logging only if trycreate in effect */
+-  else {			/* ordinary logging */
+-    fprintf (stderr,"%s\n",string);
+-    switch (errflg) {  
+-    case NIL:			/* no error */
+-      syslog (LOG_INFO,"%s",string);
+-      break;
+-    case PARSE:			/* parsing problem */
+-    case WARN:			/* warning */
+-      syslog (LOG_WARNING,"%s",string);
+-      break;
+-    case ERROR:			/* error */
+-    default:
+-      syslog (LOG_ERR,"%s",string);
+-      break;
+-    }
+-  }
+-}
+-
+-
+-/* Log an event to debugging telemetry
+- * Accepts: string to log
+- */
+-
+-void mm_dlog (char *string)
+-{
+-  if (debug) fprintf (stderr,"%s\n",string);
+-  syslog (LOG_DEBUG,"%s",string);
+-}
+-
+-/* Get user name and password for this host
+- * Accepts: parse of network mailbox name
+- *	    where to return user name
+- *	    where to return password
+- *	    trial count
+- */
+-
+-void mm_login (NETMBX *mb,char *username,char *password,long trial)
+-{
+-  fatal ("mm_login() call");
+-}
+-
+-
+-/* About to enter critical code
+- * Accepts: stream
+- */
+-
+-void mm_critical (MAILSTREAM *stream)
+-{
+-  critical = T;			/* note in critical code */
+-}
+-
+-
+-/* About to exit critical code
+- * Accepts: stream
+- */
+-
+-void mm_nocritical (MAILSTREAM *stream)
+-{
+-  critical = NIL;		/* note not in critical code */
+-}
+-
+-
+-/* Disk error found
+- * Accepts: stream
+- *	    system error code
+- *	    flag indicating that mailbox may be clobbered
+- * Returns: T if user wants to abort
+- */
+-
+-long mm_diskerror (MAILSTREAM *stream,long errcode,long serious)
+-{
+-  return T;
+-}
+-
+-
+-/* Log a fatal error event
+- * Accepts: string to log
+- */
+-
+-void mm_fatal (char *string)
+-{
+-  printf ("?%s\n",string);	/* shouldn't happen normally */
+-}
