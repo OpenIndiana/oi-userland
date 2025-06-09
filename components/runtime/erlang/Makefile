@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= erlang
 COMPONENT_VERSION= 28.0
+COMPONENT_REVISION= 1
 COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
 COMPONENT_SUMMARY= Erlang programming language and OTP libraries
 COMPONENT_PROJECT_URL= https://erlang.org/
@@ -80,12 +81,17 @@ CONFIGURE_OPTIONS.sparc = --disable-hipe
 CONFIGURE_OPTIONS.sparc += --disable-kernel-poll
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
+ifeq ($(MACH), sparc)
+PKG_MACROS += MACH=sparc32
+endif
+
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
 # leading to segmentation faults in erlc.
 ASLR_MODE =	$(ASLR_DISABLE)
 
-COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR)/. $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR)/. $(@D) ; \
+	$(GSED) -i -e 's/MACH64/$(MACH64)/' $(@D)/lib/crypto/configure )
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
