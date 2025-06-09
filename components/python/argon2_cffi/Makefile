@@ -19,12 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argon2_cffi
-HUMAN_VERSION =			23.1.0
-COMPONENT_SUMMARY =		argon2_cffi - Argon2 for Python
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/fa/57ec2c6d16ecd2ba0cf15f3c7d1c3c2e7b5fcb83555ff56d7ab10888ec8f/argon2_cffi-23.1.0.tar.gz
+HUMAN_VERSION =			25.1.0
+COMPONENT_SUMMARY =		Argon2 for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:879c3e79a2729ce768ebb7d36d4609e3a78a4ca2ec3a9f12286ca057e3d0db08
+	sha256:694ae5cc8a42f4c4e2bf2ca0e64e51e23a040c6a517a85074683d3959e1346c1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
