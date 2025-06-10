@@ -21,17 +21,18 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2025 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
-COMPONENT_VERSION=	3.2.7
+COMPONENT_VERSION=	3.3.0
 COMPONENT_SUMMARY=      NcFTP - client application implementing FTP
 COMPONENT_PROJECT_URL=	https://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d41c5c4d6614a8eae2ed4e4d7ada6b6d3afcc9fb65a4ed9b8711344bef24f7e8
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:7920f884c2adafc82c8e41c46d6f3d22698785c7b3f56f5677a8d5c866396386
 COMPONENT_ARCHIVE_URL=	https://www.ncftp.com/public_ftp/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         network/ftp/ncftp
 COMPONENT_CLASSIFICATION=Applications/Internet
@@ -41,6 +42,9 @@ COMPONENT_LICENSE_FILE=	doc/LICENSE.txt
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# make gcc14 happy.
+CFLAGS += -Wno-implicit-function-declaration
+
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
@@ -49,7 +53,6 @@ CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --srcdir=$(BUILD_DIR_$(BITS)) 
 
 ASLR_MODE = $(ASLR_ENABLE)
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
