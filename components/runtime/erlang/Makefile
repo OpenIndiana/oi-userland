@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= erlang
 COMPONENT_VERSION= 28.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
 COMPONENT_SUMMARY= Erlang programming language and OTP libraries
 COMPONENT_PROJECT_URL= https://erlang.org/
@@ -80,10 +80,6 @@ CONFIGURE_OPTIONS.sparc = --disable-hipe
 # Disable kernel poll on sparc to avoid hangs in erl_child_setup (bug 31443512).
 CONFIGURE_OPTIONS.sparc += --disable-kernel-poll
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
-
-ifeq ($(MACH), sparc)
-PKG_MACROS += MACH=sparc32
-endif
 
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
