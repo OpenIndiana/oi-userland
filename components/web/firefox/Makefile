@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=2
+# CANDIDATE_BUILD=1
 # CANDIDATE_BETA=10
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	139.0.1
+COMPONENT_VERSION =	139.0.4
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,7 +73,7 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:5b716ee9e6339a0de8e42f81c1d7dadca5c03e91ee9b2fa8e78357a631b499b0
+COMPONENT_ARCHIVE_HASH= sha256:535e053fc3f949c6d7dd78a0a0b4997e5e26db7ef1e11d51b2b9a9f4022287f5
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
@@ -126,6 +126,9 @@ PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
+
+# Clang 20 does not work with Mozilla patches
+CLANG_VERSION= 19
 
 ifdef DEBUG
 # disable code optimization
