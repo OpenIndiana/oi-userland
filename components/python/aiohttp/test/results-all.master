@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [3930 items]
+X workers [4008 items]
 
 scheduling tests via LoadScheduling
 
@@ -893,6 +893,7 @@ tests/test_client_response.py::test_text_custom_encoding[pyloop] PASSED
 tests/test_client_response.py::test_url_obj_deprecated PASSED
 tests/test_client_response.py::test_wait_for_100_1[pyloop] PASSED
 tests/test_client_response.py::test_wait_for_100_2[pyloop] PASSED
+tests/test_client_session.py::test_auto_created_connector_uses_session_loop[pyloop] PASSED
 tests/test_client_session.py::test_base_url_without_trailing_slash PASSED
 tests/test_client_session.py::test_borrow_connector_loop[pyloop] PASSED
 tests/test_client_session.py::test_build_url_returns_expected_url[pyloop-base_url='http://example.com' url='/test'] PASSED
@@ -1244,52 +1245,129 @@ tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[
 tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ Partitioned=true ] PASSED
 tests/test_cookie_helpers.py::test_cookie_pattern_matches_partitioned_attribute[ partitioned ] PASSED
 tests/test_cookie_helpers.py::test_known_attrs_is_superset_of_morsel_reserved PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_ansi_c_asctime_format PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_after_illegal_cookie PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_before_cookie PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_attributes_without_values PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_boolean_attrs PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_boolean_attrs_with_partitioned PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_case_insensitive_attrs PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[complex=value; Domain=.example.com; Path=/app; Max-Age=3600] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[empty=] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[quoted="value with spaces"] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[session=abc123] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[token=xyz; Secure; HttpOnly] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_compatibility_with_simple_cookie[user=john; Path=/] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_complex_real_world PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_date_formats_with_attributes PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_dollar_attributes PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_dollar_prefixed_names PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_edge_cases PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_empty_and_invalid PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_empty_headers PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_encoded_values PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_expires_attribute PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_illegal_cookie_names PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_invalid_cookie_syntax PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_invalid_names PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_issue_7993_double_quotes PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_multiple_cookies_same_header PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_case_insensitive PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_not_set PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_partitioned_with_other_attrs_manual PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_quoted_values PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_relaxed_validation_differences PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_rfc2822_timezone_issue_4493 PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_rfc2822_with_attributes PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[complex="a=b;c=d"; simple=value] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[data="value;with;multiple;semicolons"; next=cookie] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_semicolon_in_quoted_values[session="abc;xyz"; token=123] PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_simple PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_special_chars_in_names PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_unknown_attrs_ignored PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_unmatched_quotes_compatibility PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_various_date_formats_issue_4327 PASSED
-tests/test_cookie_helpers.py::test_parse_cookie_headers_with_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_compatibility_with_simple_cookie PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_complex_quoted PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_empty PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_empty_value PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_encoded_values PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_illegal_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_invalid_names PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_issue_7993 PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_malformed PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_no_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_quoted_values PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_real_world_examples PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_simple PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_spaces PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_special_chars PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_unmatched_quotes PASSED
+tests/test_cookie_helpers.py::test_parse_cookie_header_vs_parse_set_cookie_headers PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_ansi_c_asctime_format PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_after_illegal_cookie PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_before_cookie PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_without_values PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_boolean_attrs PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_boolean_attrs_with_partitioned PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_case_insensitive_attrs PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[complex=value; Domain=.example.com; Path=/app; Max-Age=3600] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[empty=] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[quoted="value with spaces"] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[session=abc123] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[token=xyz; Secure; HttpOnly] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[user=john; Path=/] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_complex_real_world PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_date_formats_with_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_dollar_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_dollar_prefixed_names PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_edge_cases PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_empty_and_invalid PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_empty_headers PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_encoded_values PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_expires_attribute PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_illegal_cookie_names PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_invalid_cookie_syntax PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_invalid_names PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_issue_7993_double_quotes PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_multiple_cookies_same_header PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_case_insensitive PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_not_set PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_with_other_attrs_manual PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_quoted_values PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_relaxed_validation_differences PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_rfc2822_timezone_issue_4493 PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_rfc2822_with_attributes PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_semicolon_in_quoted_values[complex="a=b;c=d"; simple=value] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_semicolon_in_quoted_values[data="value;with;multiple;semicolons"; next=cookie] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_semicolon_in_quoted_values[session="abc;xyz"; token=123] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_simple PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_special_chars_in_names PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_unknown_attrs_ignored PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_unmatched_quotes_compatibility PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_uses_unquote_with_octal[complex="\\042quoted\\042 text with \\012 newline"-complex-"quoted" text with \n newline-"\\042quoted\\042 text with \\012 newline"] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_uses_unquote_with_octal[mixed="hello\\040world\\041"-mixed-hello world!-"hello\\040world\\041"] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_uses_unquote_with_octal[name="\\012newline\\012"-name-\nnewline\n-"\\012newline\\012"] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_uses_unquote_with_octal[tab="\\011separated\\011values"-tab-\tseparated\tvalues-"\\011separated\\011values"] PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_various_date_formats_issue_4327 PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_with_attributes PASSED
 tests/test_cookie_helpers.py::test_preserve_morsel_with_coded_value PASSED
 tests/test_cookie_helpers.py::test_preserve_morsel_with_coded_value_no_coded_value PASSED
+tests/test_cookie_helpers.py::test_unquote_basic["-"] PASSED
+tests/test_cookie_helpers.py::test_unquote_basic[-] PASSED
+tests/test_cookie_helpers.py::test_unquote_basic[simple-simple] PASSED
+tests/test_cookie_helpers.py::test_unquote_basic[some"text-some"text] PASSED
+tests/test_cookie_helpers.py::test_unquote_basic[text"with"quotes-text"with"quotes] PASSED
+tests/test_cookie_helpers.py::test_unquote_basic[with spaces-with spaces] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie[""] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["\\012newline"] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["complex\\042quote\\134slash\\012"] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["mixed\\011\\042\\134test"] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["not-quoted] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["simple"] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["with \\"quotes\\""] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie["with \\\\backslash\\\\"] PASSED
+tests/test_cookie_helpers.py::test_unquote_compatibility_with_simplecookie[also-not-quoted"] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases[""""-""] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases["""-"] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases["\\"\\"\\""-"""] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases["ends with\\"-ends with\\] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases["not closed-"not closed] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases["test\\"-test\\] PASSED
+tests/test_cookie_helpers.py::test_unquote_edge_cases[not opened"-not opened"] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_backslashes["end with slash\\\\"-end with slash\\] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_backslashes["path\\\\to\\\\\\"file\\""-path\\to\\"file"] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_backslashes["path\\\\to\\\\file"-path\\to\\file] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_quotes["\\"start\\" middle \\"end\\""-"start" middle "end"] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_quotes["nested \\"quotes\\" here"-nested "quotes" here] PASSED
+tests/test_cookie_helpers.py::test_unquote_escaped_quotes["say \\"hello\\""-say "hello"] PASSED
+tests/test_cookie_helpers.py::test_unquote_mixed_escapes["\\042quoted\\042 and \\134backslash\\134"-"quoted" and \\backslash\\] PASSED
+tests/test_cookie_helpers.py::test_unquote_mixed_escapes["\\a\\b\\c"-abc] PASSED
+tests/test_cookie_helpers.py::test_unquote_mixed_escapes["path\\\\to\\\\file\\011\\011data"-path\\to\\file\t\tdata] PASSED
+tests/test_cookie_helpers.py::test_unquote_mixed_escapes["say \\"hello\\"\\012new line"-say "hello"\nnew line] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\000"-\x00] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\001"-\x01] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\177"-\x7f] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\200"-\x80] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\377"-\xff] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\400"-400] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_full_range["\\777"-777] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["\\011"-\t] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["\\012"-\n] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["\\012\\011\\015"-\n\t\r] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["\\015"-\r] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["\\040"- ] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["hello\\040world\\041"-hello world!] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["line1\\012line2"-line1\nline2] PASSED
+tests/test_cookie_helpers.py::test_unquote_octal_sequences["tab\\011separated"-tab\tseparated] PASSED
+tests/test_cookie_helpers.py::test_unquote_quoted_strings[""-] PASSED
+tests/test_cookie_helpers.py::test_unquote_quoted_strings["hello, world!"-hello, world!] PASSED
+tests/test_cookie_helpers.py::test_unquote_quoted_strings["path=/test"-path=/test] PASSED
+tests/test_cookie_helpers.py::test_unquote_quoted_strings["quoted"-quoted] PASSED
+tests/test_cookie_helpers.py::test_unquote_quoted_strings["with spaces"-with spaces] PASSED
+tests/test_cookie_helpers.py::test_unquote_real_world_examples["C:\\\\Users\\\\John\\\\Documents"-C:\\Users\\John\\Documents] PASSED
+tests/test_cookie_helpers.py::test_unquote_real_world_examples["hello%20world"-hello%20world] PASSED
+tests/test_cookie_helpers.py::test_unquote_real_world_examples["session_data=\\"user123\\";expires=2024"-session_data="user123";expires=2024] PASSED
+tests/test_cookie_helpers.py::test_unquote_real_world_examples["{\\"user\\":\\"john\\",\\"id\\":123}"-{"user":"john","id":123}] PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_cookie_not_expired_when_added_after_removal PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_domain_filter_diff_host PASSED
 tests/test_cookiejar.py::TestCookieJarSafe::test_domain_filter_host_only PASSED
@@ -3940,12 +4018,12 @@ tests/test_worker.py::test_run_async_factory[AsyncioWorker-pyloop] PASSED
 tests/test_worker.py::test_run_not_app[AsyncioWorker-pyloop] PASSED
 
 ================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.22-final-0 _______________
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
 Name                                                                                                                                                     Stmts   Miss  Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/__init__.py                           33      3    91%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_cookie_helpers.py                    65      1    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_cookie_helpers.py                    91      1    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/__init__.py                 0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/helpers.py                 77      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/models.py                  51      0   100%
@@ -4024,12 +4102,12 @@ tests/test_client_middleware_digest_auth.py                                     
 tests/test_client_proto.py                                                                                                                                 187      0   100%
 tests/test_client_request.py                                                                                                                              1131     11    99%
 tests/test_client_response.py                                                                                                                              532      5    99%
-tests/test_client_session.py                                                                                                                               687     23    97%
+tests/test_client_session.py                                                                                                                               694     23    97%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
 tests/test_connector.py                                                                                                                                   2423    112    95%
-tests/test_cookie_helpers.py                                                                                                                               419      0   100%
+tests/test_cookie_helpers.py                                                                                                                               647      0   100%
 tests/test_cookiejar.py                                                                                                                                    685      0   100%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
 tests/test_formdata.py                                                                                                                                     177      0   100%
@@ -4076,67 +4154,7 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    43593   3291    92%
+TOTAL                                                                                                                                                    43854   3291    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3869 passed, 55 skipped, 6 xfailed ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw7
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw7'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 3947 passed, 55 skipped, 6 xfailed ========
