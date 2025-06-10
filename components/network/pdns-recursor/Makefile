@@ -10,15 +10,15 @@
 
 #
 # Copyright 2016 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
-# Copyright 2023 Klaus Ziegler
 # Copyright 2023 Niklas Poslovski
+# Copyright 2025 Klaus Ziegler
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pdns-recursor
 COMPONENT_VERSION=	4.9.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Non-authoritative/recursing DNS server
 COMPONENT_PROJECT_URL=	https://www.powerdns.com/powerdns-recursor
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
