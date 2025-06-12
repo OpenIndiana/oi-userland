@@ -167,6 +167,8 @@ CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
 CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
 CONFIGURE_OPTIONS +=    --without-ScratchPlugin
+# cmake 4.0.2 requires 09-Pluginscmake.patch 10-npsqueak.patch and this -D
+CONFIGURE_OPTIONS +=    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
