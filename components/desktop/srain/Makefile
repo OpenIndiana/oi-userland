@@ -16,13 +16,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         srain
-COMPONENT_VERSION=      1.8.0
+COMPONENT_VERSION=      1.8.1
 COMPONENT_SUMMARY=      Modern IRC client written in GTK.
 COMPONENT_PROJECT_URL=  https://srain.silverrainz.me/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0c9830c79a3d5656bfe6aaf926f091b09b57eaacbfdc98270c40274fdbd680c2
-COMPONENT_ARCHIVE_URL=  https://github.com/SrainApp/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:ce7fc8e50ad2d18c5eca10f72b1e0c060bca5205720b5d51c36c3afc025fd747
+COMPONENT_ARCHIVE_URL=  https://github.com/SrainApp/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         desktop/irc/srain
 COMPONENT_CLASSIFICATION=Applications/Internet
 COMPONENT_LICENSE=      GPLv3
