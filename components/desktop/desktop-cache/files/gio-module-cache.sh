@@ -72,7 +72,7 @@ NEED_COMPILE=0
 # make sure cache file can be written, needed during install.
 RDONLY=`/usr/sbin/mount | grep "/usr" | grep -c "read only"`
 if [ "$RDONLY" -eq "1" ]; then
-	MODULE_DIR="/tmp"
+	MODULE_DIR="/tmp/gio"
 else
 	MODULE_DIR="/usr/lib/64/gio/modules"
 fi
