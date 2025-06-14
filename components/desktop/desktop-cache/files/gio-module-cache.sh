@@ -69,13 +69,7 @@ rm -f /usr/lib/gio/modules/giomodule.cache
 rmdir /usr/lib/gio/modules 2> /dev/null
 
 NEED_COMPILE=0
-# make sure cache file can be written, needed during install.
-RDONLY=`/usr/sbin/mount | grep "/usr" | grep -c "read only"`
-if [ "$RDONLY" -eq "1" ]; then
-	MODULE_DIR="/tmp/gio"
-else
-	MODULE_DIR="/usr/lib/64/gio/modules"
-fi
+MODULE_DIR="/usr/lib/64/gio/modules"
 CACHE_FILE="${MODULE_DIR}/giomodule.cache"
 
 if [[ ! -r "${CACHE_FILE}" ]] ; then
