@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			grilo
-HUMAN_VERSION=			0.3.16
+HUMAN_VERSION=			0.3.19
 COMPONENT_SUMMARY=		Framework for browsing and searching media content from various sources using a single API
-COMPONENT_ARCHIVE_HASH=		sha256:884580e8c5ece280df23aa63ff5234b7d48988a404df7d6bfccd1e77b473bd96
+COMPONENT_ARCHIVE_HASH=		sha256:0869c81d19ab139c667d79567c14ddcb6cb5cbfc0108d04cade287eb29536706
 COMPONENT_FMRI=			library/gnome/grilo
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
