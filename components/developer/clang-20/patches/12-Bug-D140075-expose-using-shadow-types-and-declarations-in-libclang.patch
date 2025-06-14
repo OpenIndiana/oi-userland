@@ -1,5 +1,5 @@
---- llvm-20.1.6.src/tools/clang/include/clang-c/Index.h.orig	2025-05-28 00:33:46.000000000 +0200
-+++ llvm-20.1.6.src/tools/clang/include/clang-c/Index.h	2025-06-03 16:55:44.641899815 +0200
+--- llvm-20.1.7.src/tools/clang/include/clang-c/Index.h.orig
++++ llvm-20.1.7.src/tools/clang/include/clang-c/Index.h
 @@ -3022,7 +3022,9 @@
  
    /* HLSL Types */
@@ -11,11 +11,8 @@
  };
  
  /**
-See https://reviews.llvm.org/D140075
-See https://bugzilla.mozilla.org/show_bug.cgi?id=1795899
-
---- llvm-20.1.6.src/tools/clang/lib/Sema/SemaCodeComplete.cpp.orig
-+++ llvm-20.1.6.src/tools/clang/lib/Sema/SemaCodeComplete.cpp
+--- llvm-20.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp.orig
++++ llvm-20.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp
 @@ -4271,6 +4271,7 @@
      return CXCursor_TranslationUnit;
  
@@ -24,8 +21,8 @@ See https://bugzilla.mozilla.org/show_bug.cgi?id=1795899
    case Decl::UnresolvedUsingValue:
    case Decl::UnresolvedUsingTypename:
      return CXCursor_UsingDeclaration;
---- llvm-20.1.6.src/tools/clang/test/Index/print-type.cpp.orig
-+++ llvm-20.1.6.src/tools/clang/test/Index/print-type.cpp
+--- llvm-20.1.7.src/tools/clang/test/Index/print-type.cpp.orig
++++ llvm-20.1.7.src/tools/clang/test/Index/print-type.cpp
 @@ -92,6 +92,14 @@
  }
  
@@ -47,8 +44,8 @@ See https://bugzilla.mozilla.org/show_bug.cgi?id=1795899
  // CHECK: Namespace=InlineNS:94:18 (Definition) [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0] [isInlineNamespace=1]
 +// CHECK: UsingDeclaration=ToBeExportedType[97:15] [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0]
 +// CHECK: ParmDecl=f:101:39 (Definition) [type=ToBeExportedType] [typekind=Elaborated] [canonicaltype=int] [canonicaltypekind=Int] [isPOD=1] [isAnonRecDecl=0]
---- llvm-20.1.6.src/tools/clang/tools/libclang/CXCursor.cpp.orig
-+++ llvm-20.1.6.src/tools/clang/tools/libclang/CXCursor.cpp
+--- llvm-20.1.7.src/tools/clang/tools/libclang/CXCursor.cpp.orig
++++ llvm-20.1.7.src/tools/clang/tools/libclang/CXCursor.cpp
 @@ -1336,6 +1336,10 @@
      return MakeCursorTypeRef(Tag->getDecl(), Loc, TU);
    if (const TemplateTypeParmType *TemplP = Ty->getAs<TemplateTypeParmType>())
@@ -60,8 +57,8 @@ See https://bugzilla.mozilla.org/show_bug.cgi?id=1795899
  
    return cursor;
  }
---- llvm-20.1.6.src/tools/clang/tools/libclang/CXType.cpp.orig
-+++ llvm-20.1.6.src/tools/clang/tools/libclang/CXType.cpp
+--- llvm-20.1.7.src/tools/clang/tools/libclang/CXType.cpp.orig
++++ llvm-20.1.7.src/tools/clang/tools/libclang/CXType.cpp
 @@ -103,6 +103,7 @@
      TKCASE(Record);
      TKCASE(Enum);
