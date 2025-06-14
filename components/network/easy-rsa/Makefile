@@ -10,7 +10,7 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
-# Copyright 2024 Andreas Wacknitz
+# Copyright 2024, 2025 Andreas Wacknitz
 #
 
 BUILD_STYLE= archive
@@ -19,11 +19,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		easy-rsa
 COMPONENT_FILENAME=	EasyRSA
-COMPONENT_VERSION=	3.2.2
+COMPONENT_VERSION=	3.2.3
 COMPONENT_SUMMARY=	Simple shell based CA utility
 COMPONENT_SRC=		$(COMPONENT_FILENAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:86c5a551566213dac83d402f2a08c897063ef3e12033cd331cb4903280283209
+COMPONENT_ARCHIVE_HASH=	sha256:577d9a0f5205ee74d818af163c2f3447fff8d3dd11b91523db2fe8d99cd851e3
 COMPONENT_PROJECT_URL=	https://github.com/OpenVPN/easy-rsa
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/EasyRSA-$(COMPONENT_VERSION).tgz
 COMPONENT_FMRI=		network/openvpn/easy-rsa
