@@ -15,11 +15,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           m17n-lib
-COMPONENT_VERSION=        1.8.5
+COMPONENT_VERSION=        1.8.6
 COMPONENT_SUMMARY=        m17n-lib - The m17n library is to support various aspects (e.g. input methods, layout engines) of multi-lingual text processing.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:7b6c425f792d06d14e4f5b17204d3627e2c8ebb423ebdae92c0c646710d3d6c7
+COMPONENT_ARCHIVE_HASH=   sha256:7129fe3b7ad500f88b8af8605ef07b96c87a75ec986a695fffc0a409f44a7c86
 COMPONENT_ARCHIVE_URL=    https://download.savannah.nongnu.org/releases/m17n/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/library/m17n
 COMPONENT_CLASSIFICATION= System/Localizations
