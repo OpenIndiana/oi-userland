@@ -15,12 +15,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-table-others
-COMPONENT_VERSION=        1.3.20
-COMPONENT_REVISION=       1
+COMPONENT_VERSION=        1.3.21
 COMPONENT_SUMMARY=        ibus-table-others
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:9a2daf17e387ddcf65816171b30cc26c434295e4d62c7344f1c97365c75cc1f3
+COMPONENT_ARCHIVE_HASH=   sha256:ff764340273fbb61ca94bd3e919d20e066e3ae493efa5de54ab590cfb0afc1a4
 COMPONENT_ARCHIVE_URL=    https://github.com/moebiuscurve/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/ibus/table/others
 COMPONENT_CLASSIFICATION= System/Localizations
