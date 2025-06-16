@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.8.1
+HUMAN_VERSION =			1.8.2
 COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.13 programs.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:423427819409a1d905017bbd51062bd0f1e4795c74c2f9f52a6b63dd67c282d2
+	sha256:66e82cedba95a6176194a817be4232c720312f8be6d2c8f3847f3317d95a0c7f
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -72,6 +72,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
