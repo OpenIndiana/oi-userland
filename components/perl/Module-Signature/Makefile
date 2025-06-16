@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::Signature
+#   $WS_TOOLS/perl-integrate-module Module-Signature
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::Signature
-HUMAN_VERSION =			0.89
-COMPONENT_SUMMARY =		Module::Signature - Module signature file manipulation
+COMPONENT_NAME =		Module-Signature
+HUMAN_VERSION =			0.90
+COMPONENT_SUMMARY =		Module signature file manipulation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cc9215bdba97268565fd2e99bf6398b9364b502652d67fad514708d0f3b61f71
+	sha256:ee641ecec4528f5621173e41765344f906a08d7e8a45492a2bd808e5295dc191
 COMPONENT_LICENSE =		CC0-1.0 AND (Artistic-1.0-Perl OR GPL-1.0-or-later)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -32,5 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openpgp
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/ipc-run
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
