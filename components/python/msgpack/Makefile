@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		msgpack
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.1.1
 COMPONENT_SUMMARY =		MessagePack serializer
 COMPONENT_PROJECT_URL =		https://msgpack.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd432ccc2c72b914e4cb77afce64aab761c1137cc698be3984eee260bcb2896e
+	sha256:77b79ce34a2bdab2594f490c8e80dd62a02d650b91a75159a63ec413b8d104cd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
