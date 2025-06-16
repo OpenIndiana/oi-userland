@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 496 items
+collecting ... collected 494 items
 
 tests/mypy/test_type_annotations.py::test_positive PASSED
 tests/mypy/test_type_annotations.py::test_negative PASSED
@@ -286,6 +286,10 @@ tests/test_instrumentation.py::test_suppress_annotated_assignment[typechecked] P
 tests/test_instrumentation.py::test_suppress_annotated_multi_assignment[typechecked] PASSED
 tests/test_instrumentation.py::TestUsesForwardRef::test_success[typechecked] SKIPPED
 tests/test_instrumentation.py::TestUsesForwardRef::test_failure[typechecked] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_success_func[typechecked] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_success_method[typechecked] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_failure_func[typechecked] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_failure_method[typechecked] SKIPPED
 tests/test_instrumentation.py::test_type_checked_func[importhook] PASSED
 tests/test_instrumentation.py::test_type_checked_func_error[importhook] PASSED
 tests/test_instrumentation.py::test_non_type_checked_func[importhook] PASSED
@@ -338,6 +342,10 @@ tests/test_instrumentation.py::test_suppress_annotated_assignment[importhook] PA
 tests/test_instrumentation.py::test_suppress_annotated_multi_assignment[importhook] PASSED
 tests/test_instrumentation.py::TestUsesForwardRef::test_success[importhook] SKIPPED
 tests/test_instrumentation.py::TestUsesForwardRef::test_failure[importhook] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_success_func[importhook] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_success_method[importhook] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_failure_func[importhook] SKIPPED
+tests/test_instrumentation.py::TestParametrized::test_failure_method[importhook] SKIPPED
 tests/test_plugins.py::test_custom_type_checker PASSED
 tests/test_pytest_plugin.py::test_config_options PASSED
 tests/test_pytest_plugin.py::test_commandline_options PASSED
@@ -487,16 +495,6 @@ tests/test_typechecked.py::test_typechecked_disabled_in_optimized_mode[OO] PASSE
 tests/test_typechecked.py::test_reference_imported_name_from_method PASSED
 tests/test_typechecked.py::test_getter_setter PASSED
 tests/test_typechecked.py::test_duplicate_method PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int-Union[str, int]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | bytes-Union[str, int, bytes]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | Union[int | bytes, set]-Union[str, int, bytes, set]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Callable[..., bytes]-Union[str, int, Callable[..., bytes]]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes]-Union[str, int, Callable[[], bytes]]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Callable[[], bytes | set]-Union[str, int, Callable[[], Union[bytes, set]]]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Literal['foo']-Union[str, int, Literal['foo']]] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Literal[-1]-Union[str, int, Literal[-1]]0] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Literal[-1]-Union[str, int, Literal[-1]]1] PASSED
-tests/test_union_transformer.py::test_union_transformer[str | int | Literal["It's a string '\\""]-Union[str, int, Literal['It\\'s a string \\'"']]] PASSED
 tests/test_utils.py::test_qualified_name[func] PASSED
 tests/test_utils.py::test_qualified_name[instance] PASSED
 tests/test_utils.py::test_qualified_name[builtintype] PASSED
@@ -505,6 +503,30 @@ tests/test_utils.py::test_function_name PASSED
 tests/test_warn_on_error.py::test_check_type PASSED
 tests/test_warn_on_error.py::test_typechecked PASSED
 
-======== 476 passed, 11 skipped, 9 xfailed ========
+======== 466 passed, 19 skipped, 9 xfailed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw1/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw1/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw1
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
