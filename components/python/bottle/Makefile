@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bottle
-HUMAN_VERSION =			0.13.3
+HUMAN_VERSION =			0.13.4
 COMPONENT_SUMMARY =		Fast and simple WSGI-framework for small web-applications.
 COMPONENT_PROJECT_URL =		http://bottlepy.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c23aeb30aa8a13f39c60c0da494530ddd5de3da235bc431b818a50d999de49f
+	sha256:787e78327e12b227938de02248333d788cfe45987edca735f8f88e03472c3f47
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
