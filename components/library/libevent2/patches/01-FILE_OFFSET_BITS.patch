@@ -1,0 +1,12 @@
+--- libevent-2.1.12-stable/configure.orig	2020-07-05 15:04:12.000000000 +0300
++++ libevent-2.1.12-stable/configure	2025-06-12 18:43:12.801351601 +0300
+@@ -16331,6 +16331,9 @@
+   OPENSSL_FALSE=
+ fi
+ 
++case $CFLAGS in
++*-m32*) /usr/gnu/bin/sed -i -e "s@_FILE_OFFSET_BITS 64@_FILE_OFFSET_BITS 32@g" confdefs.h ;;
++esac
+ 
+ # Add some more warnings which we use in development but not in the
+ # released versions.  (Some relevant gcc versions can't handle these.)
