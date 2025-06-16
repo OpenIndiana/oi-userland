@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		lib2geom
 COMPONENT_VERSION=	1.4
 HUMAN_VERSION=		1.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	easy 2D graphics library
 COMPONENT_PROJECT_URL=	https://gitlab.com/inkscape/lib2geom
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -31,6 +31,15 @@ COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	LGPLv2.1, MPL-1.1
 
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING-LGPL-2.1 ------------------------------------------------------\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING-LGPL-2.1 ; \
+		printf -- '--- COPYING-MPL-1.1 -------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING-MPL-1.1 \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -D2GEOM_BUILD_SHARED:BOOL=ON
