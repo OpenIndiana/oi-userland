@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			lldpd
 COMPONENT_VERSION=		1.0.19
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		lldpd is a 802.1AB implementation (LLDP) to help you locate neighbors of all your equipments
 COMPONENT_PROJECT_URL=		https://lldpd.github.io/
 COMPONENT_FMRI=			service/network/lldp
