@@ -11,12 +11,13 @@
 #
 # Copyright (c) 2016, Adam Stevko <adam.stevko@gmail.com>
 # Copyright (c) 2024, Carsten Grzemba
+# Copyright (c) 2025, Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zabbix-server
-COMPONENT_VERSION=	7.0.1
+COMPONENT_VERSION=	7.2.7
 COMPONENT_SUMMARY=	Zabbix server
 COMPONENT_PROJECT_URL=	http://www.zabbix.com/
 COMPONENT_FMRI=		application/management/$(COMPONENT_NAME)
@@ -25,17 +26,22 @@ COMPONENT_FMRI_PROXY=		application/management/zabbix-proxy
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_SRC=		zabbix-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	zabbix-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bbc749cefb296ffdf7ff48cfafd41632113f97225c7966f4e043436fcbef8ea1
+COMPONENT_ARCHIVE_HASH= sha256:323f7c1c2001c029f41c0207fe4493a072c5bde97b60ca3f591529037c0fa56f
 COMPONENT_ARCHIVE_URL=	https://cdn.zabbix.com/zabbix/sources/stable/$(basename $(COMPONENT_VERSION))/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_BUILD_ARGS=	-j50
 
 PKG_VARS += COMPONENT_FMRI_AGENT COMPONENT_FMRI_PROXY
 
 include $(WS_MAKE_RULES)/common.mk
 
+# make gcc-14 happy.
+CFLAGS += -Wno-incompatible-pointer-types
+
 # because we patched an am file
-COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal -I m4 && autoconf && autoheader && automake -a && automake )
+COMPONENT_PREP_ACTION = ($(GSED) -i -e 's/MACH64/$(MACH64)/' $(@D)/m4/ldap.m4 ; \
+	cd $(@D) && aclocal -I m4 && autoconf && autoheader && automake -a && automake )
 
 # Ugly hack for fixing problems with missing files in source directory
 COMPONENT_POST_CONFIGURE_ACTION= $(CP) $(BUILD_DIR_$(BITS))/include/common/config.h $(SOURCE_DIR)/include/common/config.h
@@ -47,7 +53,6 @@ CONFIGURE_OPTIONS +=   --enable-agent
 CONFIGURE_OPTIONS +=   --enable-proxy
 CONFIGURE_OPTIONS +=   --with-postgresql
 CONFIGURE_OPTIONS +=   --with-libevent
-CONFIGURE_OPTIONS +=   --with-libevent-include=/usr/include/libevent2
 CONFIGURE_OPTIONS +=   --with-net-snmp
 CONFIGURE_OPTIONS +=   --with-libcurl
 CONFIGURE_OPTIONS +=   --with-libxml2
