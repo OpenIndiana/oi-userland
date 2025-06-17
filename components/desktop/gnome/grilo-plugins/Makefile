@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			grilo-plugins
-HUMAN_VERSION=			0.3.16
+HUMAN_VERSION=			0.3.17
 COMPONENT_SUMMARY=		Collection of plugins for Grilo implementing Grilo's API for various multimedia content providers
-COMPONENT_ARCHIVE_HASH=		sha256:fe6f4dbe586c6b8ba2406394e202f22d009d642a96eb3a54f32f6a21d084cdcb
+COMPONENT_ARCHIVE_HASH=		sha256:483c03f2ce06f96d42b85768fdc494c076d58474bf8e3c326f5a050fd4a2f03c
 COMPONENT_FMRI=			library/gnome/grilo-plugins
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -47,6 +47,7 @@ LDFLAGS += -lsocket -lnsl
 # Auto-generated dependencies
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/desktop/json-glib
+REQUIRED_PACKAGES += library/desktop/librest
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnome/grilo
 REQUIRED_PACKAGES += library/gnome/libgom
