@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libmemcached
 COMPONENT_MAJOR_VERSION=	1.1
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	libmemcached-awesome is an open source C/C++ client library and tools for the memcached server
 COMPONENT_DESCRIPTION=	It has been designed to be light on memory usage, thread safe, and provide full access to server side methods.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
