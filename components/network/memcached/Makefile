@@ -22,6 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2023, Friedrich Kink. All rights reserved.
+# Copyright (c) 2025, Klaus Ziegler. All rights reserved.
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
@@ -29,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
 COMPONENT_VERSION=	1.6.38
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The memcached memory object cache
 COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
 			key/value cache store intended to be used in a distributed system.
@@ -54,9 +56,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 
 COMPONENT_TEST_TARGETS=	test
 
-CFLAGS += -I/usr/include/libevent2
-
-CONFIGURE_OPTIONS +=	--with-libevent=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-sasl
 CONFIGURE_OPTIONS +=	--enable-werror
