@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coeurl
 COMPONENT_VERSION=      0.3.1
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      A simple async wrapper around CURL for C++
 COMPONENT_PROJECT_URL=  https://nheko.im/nheko-reborn/coeurl
 COMPONENT_FMRI=         web/coeurl
