@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libogg
 COMPONENT_VERSION=      1.3.6
+COMPONENT_REVISION=     1
 COMPONENT_FMRI=         library/libogg
 COMPONENT_SUMMARY=      libogg - general-purpose compressed audio format
 COMPONENT_CLASSIFICATION=System/Libraries
