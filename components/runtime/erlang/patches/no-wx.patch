@@ -1,7 +1,6 @@
-diff -Nuraw otp_src_26.2.2_O/configure otp_src_26.2.2/configure
---- otp_src_26.2.2_O/configure	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/configure	2024-02-20 02:08:26.000000000 +0100
-@@ -321,7 +321,7 @@
+--- otp_src_28.0.1/configure.orig
++++ otp_src_28.0.1/configure
+@@ -323,7 +323,7 @@
  if test $bootstrap_only = no; then
      check_conf_dirs=`echo lib/*`
  else
@@ -10,10 +9,9 @@ diff -Nuraw otp_src_26.2.2_O/configure otp_src_26.2.2/configure
  fi
  
  # 'erts' *needs* to be last in app_dirs! Any apps
-diff -Nuraw otp_src_26.2.2_O/lib/et/test/Makefile otp_src_26.2.2/lib/et/test/Makefile
---- otp_src_26.2.2_O/lib/et/test/Makefile	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/et/test/Makefile	2024-02-20 02:08:26.000000000 +0100
-@@ -27,7 +27,6 @@
+--- otp_src_28.0.1/lib/et/test/Makefile.orig
++++ otp_src_28.0.1/lib/et/test/Makefile
+@@ -29,7 +29,6 @@
  MODULES= \
  	ett \
  	et_SUITE \
@@ -21,10 +19,9 @@ diff -Nuraw otp_src_26.2.2_O/lib/et/test/Makefile otp_src_26.2.2/lib/et/test/Mak
  	et_test_lib
  
  
-diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.erl otp_src_26.2.2/lib/et/test/et_test_lib.erl
---- otp_src_26.2.2_O/lib/et/test/et_test_lib.erl	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/et/test/et_test_lib.erl	2024-02-20 02:18:16.000000000 +0100
-@@ -85,50 +85,6 @@
+--- otp_src_28.0.1/lib/et/test/et_test_lib.erl.orig
++++ otp_src_28.0.1/lib/et/test/et_test_lib.erl
+@@ -87,50 +87,6 @@
      end.
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
@@ -75,7 +72,7 @@ diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.erl otp_src_26.2.2/lib/et/t
  init_per_testcase(_Func, Config) when is_list(Config) ->
      set_kill_timer(Config),
      global:register_name(et_global_logger, group_leader()),
-@@ -206,42 +162,6 @@
+@@ -208,42 +164,6 @@
  user_available(Config) ->
      false /= proplists:get_value(user, Config, false).
     	
@@ -118,10 +115,9 @@ diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.erl otp_src_26.2.2/lib/et/t
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %% A small test server, which can be run standalone in a shell
  
-diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.hrl otp_src_26.2.2/lib/et/test/et_test_lib.hrl
---- otp_src_26.2.2_O/lib/et/test/et_test_lib.hrl	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/et/test/et_test_lib.hrl	2024-02-20 02:10:53.000000000 +0100
-@@ -17,8 +17,6 @@
+--- otp_src_28.0.1/lib/et/test/et_test_lib.hrl.orig
++++ otp_src_28.0.1/lib/et/test/et_test_lib.hrl
+@@ -19,8 +19,6 @@
  %%
  %% %CopyrightEnd%
  
@@ -130,10 +126,9 @@ diff -Nuraw otp_src_26.2.2_O/lib/et/test/et_test_lib.hrl otp_src_26.2.2/lib/et/t
  -define(log(Format,Args), et_test_lib:log(Format,Args,?FILE,?LINE)).
  -define(warning(Format,Args), ?log("<WARNING>\n " ++ Format,Args)).
  -define(error(Format,Args), et_test_lib:error(Format,Args,?FILE,?LINE)).
-diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl otp_src_26.2.2/lib/reltool/test/reltool_test_lib.erl
---- otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/reltool/test/reltool_test_lib.erl	2024-02-20 02:30:18.000000000 +0100
-@@ -95,50 +95,6 @@
+--- otp_src_28.0.1/lib/reltool/test/reltool_test_lib.erl.orig
++++ otp_src_28.0.1/lib/reltool/test/reltool_test_lib.erl
+@@ -97,50 +97,6 @@
      end.
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
@@ -184,7 +179,7 @@ diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl otp_src_26.2.
  init_per_testcase(_Func, Config) when is_list(Config) ->
      set_kill_timer(Config),
      Config.
-@@ -210,40 +166,6 @@
+@@ -212,40 +168,6 @@
  user_available(Config) ->
      false /= proplists:get_value(user, Config, false).
     	
@@ -225,10 +220,9 @@ diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.erl otp_src_26.2.
  erl_libs() ->
      [filename:absname(P) || P<-reltool_utils:erl_libs()].
  
-diff -Nuraw otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.hrl otp_src_26.2.2/lib/reltool/test/reltool_test_lib.hrl
---- otp_src_26.2.2_O/lib/reltool/test/reltool_test_lib.hrl	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/reltool/test/reltool_test_lib.hrl	2024-02-20 02:29:47.000000000 +0100
-@@ -17,8 +17,6 @@
+--- otp_src_28.0.1/lib/reltool/test/reltool_test_lib.hrl.orig
++++ otp_src_28.0.1/lib/reltool/test/reltool_test_lib.hrl
+@@ -19,8 +19,6 @@
  %%
  %% %CopyrightEnd%
  

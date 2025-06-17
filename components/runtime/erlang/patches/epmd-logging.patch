@@ -1,7 +1,6 @@
-diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/epmd.c
---- otp_src_26.2.2_O/erts/epmd/src/epmd.c	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/erts/epmd/src/epmd.c	2024-02-18 03:45:07.000000000 +0100
-@@ -124,6 +124,7 @@
+--- otp_src_28.0.1/erts/epmd/src/epmd.c.orig
++++ otp_src_28.0.1/erts/epmd/src/epmd.c
+@@ -126,6 +126,7 @@
      g->debug          = 0;
  
      g->silent         = 0; 
@@ -9,7 +8,7 @@ diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/e
      g->is_daemon      = 0;
      g->brutal_kill    = check_relaxed();
      g->packet_timeout = CLOSE_TIMEOUT; /* Default timeout */
-@@ -215,6 +216,9 @@
+@@ -217,6 +218,9 @@
              g->is_systemd = 1;
              argv++; argc--;
  #endif /* HAVE_SYSTEMD_DAEMON */
@@ -19,7 +18,7 @@ diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/e
  	} else
  	    usage(g);
      }
-@@ -253,6 +257,7 @@
+@@ -255,6 +259,7 @@
      if (( child_pid = fork()) < 0)
        {
  #ifdef HAVE_SYSLOG_H
@@ -27,7 +26,7 @@ diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/e
  	syslog(LOG_ERR,"erlang mapper daemon can't fork %m");
  #endif
  	epmd_cleanup_exit(g,1);
-@@ -279,6 +284,7 @@
+@@ -281,6 +286,7 @@
      if ((child_pid = fork()) < 0)
        {
  #ifdef HAVE_SYSLOG_H
@@ -35,7 +34,7 @@ diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/e
  	syslog(LOG_ERR,"erlang mapper daemon can't fork 2'nd time %m");
  #endif
  	epmd_cleanup_exit(g,1);
-@@ -448,7 +454,7 @@
+@@ -450,7 +456,7 @@
    if (g->is_daemon)
      {
  #ifdef HAVE_SYSLOG_H
@@ -44,10 +43,9 @@ diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd.c otp_src_26.2.2/erts/epmd/src/e
  	{
  	  erts_vsnprintf(buf, DEBUG_BUFFER_SIZE, format, args);
  	  syslog(LOG_ERR,"epmd: %s",buf);
-diff -Nuraw otp_src_26.2.2_O/erts/epmd/src/epmd_int.h otp_src_26.2.2/erts/epmd/src/epmd_int.h
---- otp_src_26.2.2_O/erts/epmd/src/epmd_int.h	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/erts/epmd/src/epmd_int.h	2024-02-18 03:44:24.000000000 +0100
-@@ -317,6 +317,7 @@
+--- otp_src_28.0.1/erts/epmd/src/epmd_int.h.orig
++++ otp_src_28.0.1/erts/epmd/src/epmd_int.h
+@@ -334,6 +334,7 @@
    int port;
    int debug;
    int silent; 
