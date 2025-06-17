@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		inkscape
 COMPONENT_VERSION=	1.4.2
+COMPONENT_REVISION=	1
 # COMPONENT_ITEM_NO is part of the download path
 # (find it on https://inkscape.org/release/1.3/platforms/ under "Download")
 # eg. https://inkscape.org/gallery/item/42328/inkscape-1.3.tar.xz
@@ -45,26 +46,17 @@ include $(WS_MAKE_RULES)/common.mk
 # iconv will not be found without
 CFLAGS += $(XPG6MODE)
 
-PYV = $(subst .,,$(PYTHON_VERSION))
-PKG_MACROS += PYV=$(PYV)
-
 PATH = $(PATH.gnu)
 
 CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
-CMAKE_OPTIONS += -DCMAKE_ENABLE_LCMS=ON
-CMAKE_OPTIONS += -DLCMS2_INCLUDE_DIR=$(USRINCDIR)/lcms2
-CMAKE_OPTIONS += -DLCMS2_LIBRARY=$(USRLIBDIR.$(BITS))/liblcms2.so
-CMAKE_OPTIONS += -DCMAKE_ENABLE_LCMS=ON
-CMAKE_OPTIONS += -DCMAKE_ENABLE_POPPLER_CAIRO=ON
 # imagemagick version 6 is needed, falls back to graphicsmagick if not found:
 CMAKE_OPTIONS += -DWITH_IMAGE_MAGICK=ON
 CMAKE_OPTIONS += -DWITH_LIBCDR=ON
 CMAKE_OPTIONS += -DWITH_LIBVISIO=ON
 CMAKE_OPTIONS += -DWITH_LIBWPG=ON
-CMAKE_OPTIONS += -DCMAKE_ENABLE_BINRELOC=OFF
+CMAKE_OPTIONS += -DENABLE_BINRELOC=OFF
 CMAKE_OPTIONS += -DWITH_INTERNAL_2GEOM=OFF
-CMAKE_OPTIONS += -DWITH_GNOME_VFS=ON
 CMAKE_OPTIONS += -DWITH_OPENMP=ON
 
 # Auto-generated dependencies
