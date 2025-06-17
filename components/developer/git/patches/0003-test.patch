@@ -4,19 +4,19 @@ up automatically after running the tests, and we can emit those results to
 the master file.  This might be interesting to upstream, but is really
 specific to running the tests in an external framework.
 
---- git-2.49.0/t/Makefile.orig
-+++ git-2.49.0/t/Makefile
-@@ -68,6 +68,9 @@
+--- git-2.50.0/t/Makefile.orig
++++ git-2.50.0/t/Makefile
+@@ -73,6 +73,9 @@
  		sed -n 's/\.counts$$/.sh/p') && \
  	test -z "$$failed" || $(MAKE) $$failed
  
 +test-noclean: pre-clean $(TEST_LINT)
 +	$(MAKE) T
 +
- prove: pre-clean check-chainlint $(TEST_LINT)
+ prove: pre-clean $(TEST_LINT)
  	@echo "*** prove (shell & unit tests) ***"
  	@$(CHAINLINTSUPPRESS) TEST_OPTIONS='$(GIT_TEST_OPTS)' TEST_SHELL_PATH='$(TEST_SHELL_PATH_SQ)' $(PROVE) --exec ./run-test.sh $(GIT_PROVE_OPTS) $(T) $(UNIT_TESTS)
-@@ -151,6 +154,8 @@
+@@ -161,6 +164,8 @@
  test-lint-shell-syntax:
  	@'$(PERL_PATH_SQ)' check-non-portable-shell.pl $(T) $(THELPERS) $(TPERF)
  
