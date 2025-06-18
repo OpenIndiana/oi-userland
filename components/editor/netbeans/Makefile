@@ -18,7 +18,7 @@ BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
-COMPONENT_VERSION= 25
+COMPONENT_VERSION= 26
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -28,7 +28,7 @@ COMPONENT_DESCRIPTION=  IDE for C/C++, Java, PHP, Perl Python, and more \
                         stages of development.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.zip
-COMPONENT_ARCHIVE_HASH=	sha256:a1828c8bbb2c2c50a9cd6daf9f918678fa7f003ef12b861bf1670a719e948183
+COMPONENT_ARCHIVE_HASH=	sha256:84bd3dbc477ef3c1c01da33f0140dd8b11855d5b0188ea8b650877138782276b
 COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE
@@ -58,10 +58,6 @@ $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 
 install: $(BUILD_DIR_64)/.installed
 	$(GSED) -i -e  "1s?.*?$(PYTHON_SHEBANG)?" $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/extide/ant/bin/runant.py;
-
-# Runtime dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk21
-REQUIRED_PACKAGES += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
