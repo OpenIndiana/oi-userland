@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Socket-SSL
-HUMAN_VERSION =			2.091
+HUMAN_VERSION =			2.094
 COMPONENT_SUMMARY =		Nearly transparent SSL encapsulation for IO::Socket::INET.
 COMPONENT_CPAN_AUTHOR =		SULLR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c5996e7335912a5c99e06bdb47ff39df309a857cbd8fd2627a021cefdb53cf54
+	sha256:b2446889cb5e20545d782c4676da1b235673a81c181689aaae2492589d84bf02
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
