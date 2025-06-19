@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		urllib3
-HUMAN_VERSION =			2.4.0
+HUMAN_VERSION =			2.5.0
 COMPONENT_SUMMARY =		HTTP library with thread-safe connection pooling, file post, and more.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:414bc6535b787febd7567804cc015fee39daab8ad86268f1310a9250697de466
+	sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,4 +35,5 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += runtime/python
