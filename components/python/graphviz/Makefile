@@ -14,20 +14,18 @@
 #   $WS_TOOLS/python-integrate-project graphviz
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		graphviz
-HUMAN_VERSION =			0.20.3
-COMPONENT_SUMMARY =		graphviz - Simple Python interface for Graphviz
+HUMAN_VERSION =			0.21
+COMPONENT_SUMMARY =		Simple Python interface for Graphviz
 COMPONENT_PROJECT_URL =		https://github.com/xflr6/graphviz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:09d6bc81e6a9fa392e7ba52135a9d49f1ed62526f96499325930e87ca1b5925d
+	sha256:20743e7183be82aaaa8ad6c93f8893c923bd6658a04c32ee115edb3c8a835f78
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-COMPONENT_ARCHIVE =		$(COMPONENT_SRC).zip
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,6 +34,7 @@ PYTEST_ADDOPTS += --ignore tests/backend/conftest.py
 PYTEST_ADDOPTS += --ignore tests/conftest.py
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
