@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		propcache
-HUMAN_VERSION =			0.3.1
+HUMAN_VERSION =			0.3.2
 COMPONENT_SUMMARY =		Accelerated property cache
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/propcache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:40d980c33765359098837527e18eddefc9a24cea5b45e078a7f3bb5b032c6ecf
+	sha256:20d7d62e4e7ef05f221e0db2856b979540686342e7dd9973b815599c7057e168
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,12 +39,12 @@ TEST_REQUIREMENTS += requirements/test.txt
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/expandvars
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cython
+REQUIRED_PACKAGES.python += library/python/expandvars
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
