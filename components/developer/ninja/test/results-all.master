@@ -1,4 +1,4 @@
-[==========] Running 394 tests from 29 test suites.
+[==========] Running 410 tests from 31 test suites.
 [----------] Global test environment set-up.
 [----------] 10 tests from BuildLogTest
 [ RUN      ] BuildLogTest.WriteRead
@@ -233,10 +233,12 @@
 [       OK ] BuildWithLogTest.DyndepBuildDiscoverRestat
 [----------] 13 tests from BuildWithLogTest
 
-[----------] 1 test from BuildDryRun
+[----------] 2 tests from BuildDryRun
 [ RUN      ] BuildDryRun.AllCommandsShown
 [       OK ] BuildDryRun.AllCommandsShown
-[----------] 1 test from BuildDryRun
+[ RUN      ] BuildDryRun.WithDyndep
+[       OK ] BuildDryRun.WithDyndep
+[----------] 2 tests from BuildDryRun
 
 [----------] 6 tests from BuildWithQueryDepsLogTest
 [ RUN      ] BuildWithQueryDepsLogTest.TwoOutputsDepFileMSVC
@@ -339,13 +341,17 @@
 [       OK ] CLParserTest.DuplicatedHeaderPathConverted
 [----------] 8 tests from CLParserTest
 
-[----------] 27 tests from DepfileParserTest
+[----------] 29 tests from DepfileParserTest
 [ RUN      ] DepfileParserTest.Basic
 [       OK ] DepfileParserTest.Basic
 [ RUN      ] DepfileParserTest.EarlyNewlineAndWhitespace
 [       OK ] DepfileParserTest.EarlyNewlineAndWhitespace
 [ RUN      ] DepfileParserTest.Continuation
 [       OK ] DepfileParserTest.Continuation
+[ RUN      ] DepfileParserTest.WindowsDrivePaths
+[       OK ] DepfileParserTest.WindowsDrivePaths
+[ RUN      ] DepfileParserTest.AmpersandsAndQuotes
+[       OK ] DepfileParserTest.AmpersandsAndQuotes
 [ RUN      ] DepfileParserTest.CarriageReturnContinuation
 [       OK ] DepfileParserTest.CarriageReturnContinuation
 [ RUN      ] DepfileParserTest.BackSlashes
@@ -394,9 +400,9 @@
 [       OK ] DepfileParserTest.EmptyLines
 [ RUN      ] DepfileParserTest.MissingColon
 [       OK ] DepfileParserTest.MissingColon
-[----------] 27 tests from DepfileParserTest
+[----------] 29 tests from DepfileParserTest
 
-[----------] 8 tests from DepsLogTest
+[----------] 9 tests from DepsLogTest
 [ RUN      ] DepsLogTest.WriteRead
 [       OK ] DepsLogTest.WriteRead
 [ RUN      ] DepsLogTest.LotsOfDeps
@@ -413,7 +419,9 @@
 [       OK ] DepsLogTest.TruncatedRecovery
 [ RUN      ] DepsLogTest.ReverseDepsNodes
 [       OK ] DepsLogTest.ReverseDepsNodes
-[----------] 8 tests from DepsLogTest
+[ RUN      ] DepsLogTest.MalformedDepsLog
+[       OK ] DepsLogTest.MalformedDepsLog
+[----------] 9 tests from DepsLogTest
 
 [----------] 9 tests from DiskInterfaceTest
 [ RUN      ] DiskInterfaceTest.StatMissingFile
@@ -545,7 +553,25 @@
 [       OK ] EditDistanceTest.TestBasics
 [----------] 4 tests from EditDistanceTest
 
-[----------] 48 tests from GraphTest
+[----------] 3 tests from ElideMiddle
+[ RUN      ] ElideMiddle.NothingToElide
+[       OK ] ElideMiddle.NothingToElide
+[ RUN      ] ElideMiddle.ElideInTheMiddle
+[       OK ] ElideMiddle.ElideInTheMiddle
+[ RUN      ] ElideMiddle.ElideAnsiEscapeCodes
+[       OK ] ElideMiddle.ElideAnsiEscapeCodes
+[----------] 3 tests from ElideMiddle
+
+[----------] 3 tests from Explanations
+[ RUN      ] Explanations.Explanations
+[       OK ] Explanations.Explanations
+[ RUN      ] Explanations.OptionalExplanationsNonNull
+[       OK ] Explanations.OptionalExplanationsNonNull
+[ RUN      ] Explanations.OptionalExplanationsWithNullPointer
+[       OK ] Explanations.OptionalExplanationsWithNullPointer
+[----------] 3 tests from Explanations
+
+[----------] 50 tests from GraphTest
 [ RUN      ] GraphTest.MissingImplicit
 [       OK ] GraphTest.MissingImplicit
 [ RUN      ] GraphTest.ModifiedImplicit
@@ -570,8 +596,12 @@
 [       OK ] GraphTest.PathWithCurrentDirectory
 [ RUN      ] GraphTest.RootNodes
 [       OK ] GraphTest.RootNodes
-[ RUN      ] GraphTest.CollectInputs
-[       OK ] GraphTest.CollectInputs
+[ RUN      ] GraphTest.InputsCollector
+[       OK ] GraphTest.InputsCollector
+[ RUN      ] GraphTest.InputsCollectorWithEscapes
+[       OK ] GraphTest.InputsCollectorWithEscapes
+[ RUN      ] GraphTest.CommandCollector
+[       OK ] GraphTest.CommandCollector
 [ RUN      ] GraphTest.VarInOutPathEscaping
 [       OK ] GraphTest.VarInOutPathEscaping
 [ RUN      ] GraphTest.DepfileWithCanonicalizablePath
@@ -642,7 +672,22 @@
 [       OK ] GraphTest.PhonyDepsMtimes
 [ RUN      ] GraphTest.EdgeQueuePriority
 [       OK ] GraphTest.EdgeQueuePriority
-[----------] 48 tests from GraphTest
+[----------] 50 tests from GraphTest
+
+[----------] 6 tests from Jobserver
+[ RUN      ] Jobserver.SlotTest
+[       OK ] Jobserver.SlotTest
+[ RUN      ] Jobserver.ParseMakeFlagsValue
+[       OK ] Jobserver.ParseMakeFlagsValue
+[ RUN      ] Jobserver.ParseNativeMakeFlagsValue
+[       OK ] Jobserver.ParseNativeMakeFlagsValue
+[ RUN      ] Jobserver.NullJobserver
+[       OK ] Jobserver.NullJobserver
+[ RUN      ] Jobserver.PosixFifoClient
+[       OK ] Jobserver.PosixFifoClient
+[ RUN      ] Jobserver.PosixFifoClientWithWrongPath
+[       OK ] Jobserver.PosixFifoClientWithWrongPath
+[----------] 6 tests from Jobserver
 
 [----------] 4 tests from JSONTest
 [ RUN      ] JSONTest.RegularAscii
@@ -868,13 +913,6 @@
 [       OK ] StripAnsiEscapeCodes.StripColors
 [----------] 2 tests from StripAnsiEscapeCodes
 
-[----------] 2 tests from ElideMiddle
-[ RUN      ] ElideMiddle.NothingToElide
-[       OK ] ElideMiddle.NothingToElide
-[ RUN      ] ElideMiddle.ElideInTheMiddle
-[       OK ] ElideMiddle.ElideInTheMiddle
-[----------] 2 tests from ElideMiddle
-
 [----------] Global test environment tear-down
-[==========] 394 tests from 29 test suites ran.
-[  PASSED  ] 394 tests.
+[==========] 410 tests from 31 test suites ran.
+[  PASSED  ] 410 tests.
