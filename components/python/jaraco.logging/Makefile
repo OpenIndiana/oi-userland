@@ -11,25 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.logging
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.logging jaraco_logging
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.logging
-HUMAN_VERSION =			3.3.0
+COMPONENT_NAME =		jaraco_logging
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		Support for Python logging facility
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.logging
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f4a7cfbacb86a834c2886c01a3b52bc4cde2728c1d9717c49d4dce1d6248f07b
+	sha256:e7d6dc8368477ce69eb1d6ed851d805896a1ca942ce3fd1773580311b0b775fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
+PYTHON_REQUIRED_PACKAGES += library/python/tempora
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
