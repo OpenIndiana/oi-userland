@@ -77,9 +77,25 @@ COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
-SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3833
-SVN_HASH=  sha256:84f04d012bc7adcb9e617630c47b59ca1f8b8916e3220bca3d1aabef466b489a
+# the svn repository has many files that we do not need
+# and checking out everything often causes timeouts
+# so only check out the following three subdirectories
+SQREPO=                 http://squeakvm.org/svn/squeak/trunk
+SVN_REPO_0=             $(SQREPO)/src
+SVN_REPO_1=             $(SQREPO)/platforms/Cross
+SVN_REPO_2=             $(SQREPO)/platforms/unix
+COMPONENT_NAME_0=	$(COMPONENT_NAME)-src
+COMPONENT_NAME_1=	$(COMPONENT_NAME)-platforms-Cross
+COMPONENT_NAME_2=	$(COMPONENT_NAME)-platforms-unix
+# also update squeak.ips when changing SQREV
+SQREV=                  3834
+SVN_REV_0=              $(SQREV)
+SVN_REV_1=              $(SQREV)
+SVN_REV_2=              $(SQREV)
+# userland-fetch from archives
+SVN_HASH_0=  sha256:4260d79ddb47540b46fc1aefab43113527ab742115bddb298b77ef96019bc59e
+SVN_HASH_1=  sha256:0374a745f05174fb7c100173b0dab08fc79d5082736f2f684449221fe60e3cda
+SVN_HASH_2=  sha256:5493f735a316b1cde78da7d68b75dff70d69456587bb8bfe3f408fabd1ff2a8c
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -100,7 +116,7 @@ COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPON
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
-PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
+PKG_OPTIONS += -DSVN_REV="$(SQREV)"
 
 PATH=$(PATH.gnu)
 
@@ -140,13 +156,15 @@ LDFLAGS  +=     $(JPEG_LDFLAGS)
 CFLAGS   +=     $(CPPFLAGS)
 
 # cleanup the plugin directory
-SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
+SOURCE_JPEG = $(SOURCE_DIR_1)/plugins/JPEGReadWriter2Plugin
 
 # squeak configure looks for .svn or svnversion file, but
 # prep-svn.mk did a svn export and created an unversioned copy of the sources
+# CMakeLists.txt defines cross as unix/../Cross so set a softlink
 COMPONENT_PRE_CONFIGURE_ACTION = \
-( echo $(SVN_REV) > $(SOURCE_DIR)/platforms/unix/svnversion; \
-  find $(SOURCE_JPEG) \
+( echo $(SQREV) > $(SOURCE_DIR_2)/svnversion; \
+  if [ ! -L Cross ]; then ln -s $(SOURCE_DIR_1) Cross;fi ; \
+  find $(SOURCE_JPEG) -type f \
      \! -name JPEGReadWriter2Plugin.h \
      \! -name sqJPEGReadWriter2Plugin.c \
      \! -name Error.c \
@@ -155,12 +173,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
      \! -name jmemdatadst.c \
   -exec rm {} \;)
 
+# clean up symbolic link set in pre configure action
+CLEAN_PATHS+= Cross
+
 # do not build vm-sound-Sun as we only package vm-sound-pulse (bug #17109)
 # do not build Mpeg3Plugin and RePlugin as it uses old copies of those libraries
 # do not build GStreamerPlugin, it uses the GStreamer 0.10 and not GStreamer 1.0 (bug #17111)
  
-CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/cmake/configure
-CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR)/src
+CONFIGURE_SCRIPT= $(SOURCE_DIR_2)/cmake/configure
+CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR_0)
 CONFIGURE_OPTIONS +=    --link-shared-lib
 CONFIGURE_OPTIONS +=    --without-vm-sound-Sun
 CONFIGURE_OPTIONS +=    --without-RePlugin
@@ -194,7 +215,7 @@ rebuild-manifests::
 	cp manifests/squeak-display-X11.p5m squeak-display-X11.p5m
 	cp manifests/squeak-nodisplay.p5m squeak-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
-	tools/subversion.sh $(SVN_REV) <sample-manifest.p5m >sample.p5m
+	tools/subversion.sh $(SQREV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m
 	tools/amd64-p5m.sh
 	rm -f sample-manifest.p5m sample.p5m
