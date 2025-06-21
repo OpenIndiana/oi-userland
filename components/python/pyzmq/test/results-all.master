@@ -4,8 +4,8 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests
-asyncio: mode=auto, asyncio_default_fixture_loop_scope=function
-collecting ... collected 453 items
+asyncio: mode=auto, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 456 items
 
 tests/test_asyncio.py::test_socket_class PASSED
 tests/test_asyncio.py::test_instance_subclass_first PASSED
@@ -31,6 +31,7 @@ tests/test_asyncio.py::test_poll_raw PASSED
 tests/test_asyncio.py::test_multiple_loops PASSED
 tests/test_asyncio.py::test_shadow PASSED
 tests/test_asyncio.py::test_poll_leak PASSED
+tests/test_asyncio.py::test_draft_asyncio SKIPPED (draft API)
 tests/test_asyncio.py::test_process_teardown PASSED
 tests/test_auth.py::TestThreadAuthentication::test_null PASSED
 tests/test_auth.py::TestThreadAuthentication::test_deny PASSED
@@ -186,7 +187,9 @@ tests/test_device.py::TestDevice::test_single_socket_forwarder_bind PASSED
 tests/test_device.py::TestDevice::test_single_socket_forwarder_connect PASSED
 tests/test_device.py::TestDeviceGreen::test_green_device PASSED
 tests/test_draft.py::TestDraftSockets::test_client_server SKIPPED (d...)
+tests/test_draft.py::TestDraftSockets::test_client_server_frame SKIPPED
 tests/test_draft.py::TestDraftSockets::test_radio_dish SKIPPED (draf...)
+tests/test_draft.py::test_draft_fd SKIPPED (draft api unavailable)
 tests/test_error.py::TestZMQError::test_again PASSED
 tests/test_error.py::TestZMQError::test_strerror PASSED
 tests/test_error.py::TestZMQError::test_zmqerror PASSED
@@ -288,26 +291,26 @@ tests/test_multipart.py::TestMultipart::test_basic_multipart PASSED
 tests/test_multipart.py::TestMultipart::test_router_dealer PASSED
 tests/test_multipart.py::TestMultipartGreen::test_basic_multipart PASSED
 tests/test_multipart.py::TestMultipartGreen::test_router_dealer PASSED
-tests/test_mypy.py::test_mypy_example[draft] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[serialization] SKIPPED (target...)
-tests/test_mypy.py::test_mypy_example[cython] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[mongodb] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[poll] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[asyncio] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[recv_into] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[device] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[eventloop] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[gevent] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[monitoring] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy_example[pubsub] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy_example[win32-interrupt] SKIPPED (targ...)
+tests/test_mypy.py::test_mypy_example[recv_into] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[cython] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[eventloop] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy_example[heartbeat] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[serialization] SKIPPED (target...)
+tests/test_mypy.py::test_mypy_example[draft] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[pubsub] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[monitoring] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[gevent] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy_example[security] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[asyncio] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy_example[logger] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy[test_socket.py] SKIPPED (targets 3.10)
-tests/test_mypy.py::test_mypy[test_socket_async.py] SKIPPED (targets...)
+tests/test_mypy.py::test_mypy_example[mongodb] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[device] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy_example[poll] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy[test_context.py] SKIPPED (targets 3.10)
 tests/test_mypy.py::test_mypy[test_toplevel.py] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy[test_socket.py] SKIPPED (targets 3.10)
+tests/test_mypy.py::test_mypy[test_socket_async.py] SKIPPED (targets...)
 tests/test_pair.py::TestPair::test_basic PASSED
 tests/test_pair.py::TestPair::test_json PASSED
 tests/test_pair.py::TestPair::test_multiple PASSED
@@ -462,18 +465,6 @@ tests/test_zmqstream.py::test_shadow_socket PASSED
 tests/test_zmqstream.py::test_shadow_socket_close PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256: PytestDeprecationWarning: io_loop is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
-    warnings.warn(
-
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:256: PytestDeprecationWarning: _async_setup is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
-    warnings.warn(
-
-tests/test_auth.py:410
-  tests/test_auth.py:410: PytestDeprecationWarning: test_ioloop_authenticator is asynchronous and explicitly requests the "event_loop" fixture. Asynchronous fixtures and test functions should use "asyncio.get_running_loop()" instead.
-    async def test_ioloop_authenticator(context, event_loop, io_loop):
-
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100
   $(PYTHON_DIR)/vendor-packages/paramiko/pkey.py:100: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
     "cipher": algorithms.TripleDES,
@@ -481,21 +472,6 @@ tests/test_auth.py:410
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259
   $(PYTHON_DIR)/vendor-packages/paramiko/transport.py:259: CryptographyDeprecationWarning: TripleDES has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.TripleDES and will be removed from cryptography.hazmat.primitives.ciphers.algorithms in 48.0.0.
     "class": algorithms.TripleDES,
-
-tests/test_asyncio.py: 23 warnings
-tests/test_auth.py: 31 warnings
-tests/test_monitor.py: 6 warnings
-tests/test_zmqstream.py: 7 warnings
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:867: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
-  $(@D)/tests/conftest.py:73
-  Replacing the event_loop fixture with a custom implementation is deprecated
-  and will lead to errors in the future.
-  If you want to request an asyncio event loop with a scope other than function
-  scope, use the "loop_scope" argument to the asyncio mark when marking the tests.
-  If you want to return different types of event loops, use the event_loop_policy
-  fixture.
-  
-    warnings.warn(
 
 tests/test_auth.py::test_ioloop_authenticator
   $(@D)/tests/test_auth.py:414: DeprecationWarning: zmq.auth.ioloop.IOLoopAuthenticator is deprecated. Use zmq.auth.asyncio.AsyncioAuthenticator
@@ -510,7 +486,7 @@ tests/test_message.py::TestFrame::test_buffer_numpy
 tests/test_message.py::TestFrame::test_buffer_numpy
 tests/test_message.py::TestFrame::test_buffer_numpy
 tests/test_message.py::TestFrame::test_buffer_numpy
-  $(@D)/tests/test_message.py:356: DeprecationWarning: Data type alias 'a' was deprecated in NumPy 2.0. Use the 'S' alias instead.
+  $(@D)/tests/test_message.py:370: DeprecationWarning: Data type alias 'a' was deprecated in NumPy 2.0. Use the 'S' alias instead.
     A = numpy.empty(shape, dtype=[('a', int), ('b', float), ('c', 'a32')])
 
 tests/test_socket.py::TestSocket::test_int_sockopts
@@ -528,4 +504,4 @@ tests/test_socket.py::TestSocketGreen::test_mockable
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 10 durations =============================
-======== 403 passed, 50 skipped, 86 warnings ========
+======== 403 passed, 53 skipped, 16 warnings ========
