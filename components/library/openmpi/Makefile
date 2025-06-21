@@ -21,13 +21,13 @@ include $(WS_MAKE_RULES)/mpi-macros.mk
 
 COMPONENT_NAME =            openmpi/$(COMPILER)
 OPENMPI_VERSION_MAJOR =     4.1
-COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).7
+COMPONENT_VERSION =         $(OPENMPI_VERSION_MAJOR).8
 COMPONENT_SUMMARY =         OpenMPI - High Performance Message Passing Library
 COMPONENT_PROJECT_URL =     https://www.open-mpi.org
 COMPONENT_SRC_NAME =        openmpi
 COMPONENT_SRC =             $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =         $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH =    sha256:3956daf86e8b570e31155d92ed4b2b1699bc36455ae24a0d98ca376d3e8b4e9d
+COMPONENT_ARCHIVE_HASH =    sha256:fb41086bbed9300baa2f3d7572491facfe5257412fa524ec5a396aa9101d5c62
 COMPONENT_ARCHIVE_URL =     https://www.open-mpi.org/software/ompi/v$(OPENMPI_VERSION_MAJOR)/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =            library/openmpi/$(COMPILER)
 COMPONENT_CLASSIFICATION =  Development/High Performance Computing
@@ -89,6 +89,7 @@ REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += developer/hwloc
+REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += package/environment-modules
 REQUIRED_PACKAGES += runtime/perl
