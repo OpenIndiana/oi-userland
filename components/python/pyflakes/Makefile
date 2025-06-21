@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-HUMAN_VERSION =			3.3.2
+HUMAN_VERSION =			3.4.0
 COMPONENT_SUMMARY =		passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6dfd61d87b97fba5dcfaaf781171ac16be16453be6d816147989e7f6e6a9576b
+	sha256:b24f96fafb7d2ab0ec5075b7350b3d2d2218eab42003821c06344973d3ea2f58
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
