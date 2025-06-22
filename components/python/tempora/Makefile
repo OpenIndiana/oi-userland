@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tempora
-HUMAN_VERSION =			5.8.0
+HUMAN_VERSION =			5.8.1
 COMPONENT_SUMMARY =		Objects and routines pertaining to date and time (tempora)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1e9606e65a3f2063460961d68515dee07bdaca0859305a8d3e6604168175fef1
+	sha256:abb5d9ec790cc5e4f9431778029ba3e3d9ba9bd50cb306dad824824b2b362dcd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
