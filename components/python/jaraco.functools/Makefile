@@ -11,22 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.functools
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.functools jaraco_functools
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.functools
-HUMAN_VERSION =			4.1.0
+COMPONENT_NAME =		jaraco_functools
+HUMAN_VERSION =			4.2.1
 COMPONENT_SUMMARY =		Functools like those found in stdlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70f7e0e2ae076498e212562325e805204fc092d7b4c17e0e86c959e249701a9d
+	sha256:be634abfccabce56fa3053f8c7ebe37b682683a4ee7793670ced17bab0087353
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-COMPONENT_SRC =			jaraco_functools-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -42,6 +40,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
