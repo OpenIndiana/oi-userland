@@ -206,6 +206,7 @@ test_ismount_with_unc_paths (pyfakefs.tests.fake_filesystem_test.FakePathModuleT
 test_join_bytes (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_join_strings (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_lexists (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
+test_realpath_allow_missing (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_realpath_strict (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped "'strict' new in Python 3.10"
 test_realpath_vs_abspath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_relpath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
@@ -263,6 +264,7 @@ test_add_existing_real_paths_read_only (pyfakefs.tests.fake_filesystem_test.Real
 test_add_existing_real_paths_read_write (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_non_existing_real_directory_raises (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_non_existing_real_file_raises (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
+test_add_package_metadata (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... skipped 'pathlib2 may break this test'
 test_add_real_file_to_existing_path (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_real_file_to_non_existing_path (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_cannot_overwrite_file_with_dir (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
@@ -321,6 +323,7 @@ test_move_directory (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModule
 test_move_file_in_same_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_move_file_into_directory (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_move_file_into_other_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
+test_permission_error_message (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree_in_windows (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree_non_existing_dir (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
@@ -357,6 +360,7 @@ test_move_directory (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModule
 test_move_file_in_same_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_move_file_into_directory (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_move_file_into_other_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
+test_permission_error_message (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree_in_windows (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree_non_existing_dir (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
@@ -1785,16 +1789,20 @@ test_open_valid_args (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_valid_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_valid_file_with_cwd (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_append_flag (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_open_with_append_flag_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_linux (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_macos (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_windows (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_wplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_flushes_under_windows_in_python3 (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_with_rplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_read_with_rplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_seek_flushes (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
@@ -1936,16 +1944,20 @@ test_open_valid_args (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skippe
 test_open_valid_file (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_valid_file_with_cwd (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_append_flag (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_open_with_append_flag_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_linux (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_macos (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_windows (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_wplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_flushes_under_windows_in_python3 (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_with_rplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_read_with_rplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_seek_flushes (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
@@ -2082,6 +2094,7 @@ test_open_succeeds (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipN
 test_path_exists (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipNamesTest) ... ok
 test_path_succeeds (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipNamesTest) ... ok
 test_both (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
+test_dynamic_import (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_exec_module_in_fake_fs (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_module (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_path (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
@@ -2124,50 +2137,50 @@ ok
 test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
 test_that_tempfile_is_patched_after_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest)
@@ -2469,6 +2482,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... ok
+test_instantiated_pathlib (pyfakefs.tests.fake_pathlib_test.InstantiatedPathlibTest) ... ok
 test_chmod (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'Only tests fake FS'
 test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
 test_cwd (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'Only tests fake FS'
@@ -2972,9 +2986,9 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2686 tests
+Ran 2700 tests
 
-OK (skipped=1089, expected failures=2)
+OK (skipped=1095, expected failures=2)
 py$(PYV): commands[1]> python -m pyfakefs.tests.all_tests_without_extra_packages
 test_alt_sep (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
 test_collapse_path_with_mixed_separators (pyfakefs.tests.fake_filesystem_test.AlternativePathSeparatorTest) ... ok
@@ -3182,6 +3196,7 @@ test_ismount_with_unc_paths (pyfakefs.tests.fake_filesystem_test.FakePathModuleT
 test_join_bytes (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_join_strings (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_lexists (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
+test_realpath_allow_missing (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_realpath_strict (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... skipped "'strict' new in Python 3.10"
 test_realpath_vs_abspath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
 test_relpath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest) ... ok
@@ -3239,6 +3254,7 @@ test_add_existing_real_paths_read_only (pyfakefs.tests.fake_filesystem_test.Real
 test_add_existing_real_paths_read_write (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_non_existing_real_directory_raises (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_non_existing_real_file_raises (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
+test_add_package_metadata (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... skipped 'pathlib2 may break this test'
 test_add_real_file_to_existing_path (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_add_real_file_to_non_existing_path (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
 test_cannot_overwrite_file_with_dir (pyfakefs.tests.fake_filesystem_test.RealFileSystemAccessTest) ... ok
@@ -3297,6 +3313,7 @@ test_move_directory (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModule
 test_move_file_in_same_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_move_file_into_directory (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_move_file_into_other_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
+test_permission_error_message (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree_in_windows (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
 test_rmtree_non_existing_dir (pyfakefs.tests.fake_filesystem_shutil_test.FakeShutilModuleTest) ... ok
@@ -3333,6 +3350,7 @@ test_move_directory (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModule
 test_move_file_in_same_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_move_file_into_directory (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_move_file_into_other_filesystem (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
+test_permission_error_message (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree_in_windows (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
 test_rmtree_non_existing_dir (pyfakefs.tests.fake_filesystem_shutil_test.RealShutilModuleTest) ... skipped 'Only tests fake FS'
@@ -4761,16 +4779,20 @@ test_open_valid_args (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_valid_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_valid_file_with_cwd (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_append_flag (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_open_with_append_flag_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_linux (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_macos (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_trailing_sep_windows (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_wplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_flushes_under_windows_in_python3 (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_read_with_rplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
+test_read_with_rplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_seek_flushes (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.FakeFileOpenTest) ... ok
@@ -4912,16 +4934,20 @@ test_open_valid_args (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skippe
 test_open_valid_file (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_valid_file_with_cwd (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_append_flag (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_open_with_append_flag_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_linux (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_macos (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_trailing_sep_windows (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_wplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_flushes_under_windows_in_python3 (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_read_with_rplus (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
+test_read_with_rplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_seek_flushes (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.RealFileOpenTest) ... skipped 'Only tests fake FS'
@@ -5058,6 +5084,7 @@ test_open_succeeds (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipN
 test_path_exists (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipNamesTest) ... ok
 test_path_succeeds (pyfakefs.tests.fake_filesystem_unittest_test.AdditionalSkipNamesTest) ... ok
 test_both (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
+test_dynamic_import (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_exec_module_in_fake_fs (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_module (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
 test_run_path (pyfakefs.tests.fake_filesystem_unittest_test.AutoPatchOpenCodeTestCase) ... ok
@@ -5100,50 +5127,50 @@ ok
 test_pause_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_fs_contextmanager (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
 Traceback (most recent call last):
   File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
-  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+  File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
   File "$(PYTHON_DIR)/tempfile.py", line 457, in close
-  File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
-  File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
-  File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
-FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
+  File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
+  File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
 ok
 test_pause_resume_without_patcher (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest) ... ok
 test_that_tempfile_is_patched_after_resume (pyfakefs.tests.fake_filesystem_unittest_test.PauseResumeTest)
@@ -5445,6 +5472,7 @@ test_truncate (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTes
 test_utime (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest) ... ok
 test_walk (pyfakefs.tests.fake_pathlib_test.FakePathlibUsageInOsFunctionsTest)
 Regression test for #915 - walk results shall be strings. ... ok
+test_instantiated_pathlib (pyfakefs.tests.fake_pathlib_test.InstantiatedPathlibTest) ... ok
 test_chmod (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'Only tests fake FS'
 test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'follow_symlinks argument new in Python 3.10'
 test_cwd (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest) ... skipped 'Only tests fake FS'
@@ -5948,9 +5976,9 @@ test_stat_posix (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest)
 test_stat_windows (pyfakefs.tests.fake_legacy_modules_test.RealScandirPackageTest) ... skipped 'The scandir package is not installed'
 
 ----------------------------------------------------------------------
-Ran 2686 tests
+Ran 2700 tests
 
-OK (skipped=1180, expected failures=2)
+OK (skipped=1186, expected failures=2)
 py$(PYV): commands[2]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -5971,11 +5999,15 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_switch_to_macos PASSED
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_updatecache_problem PASSED
 
 =============================== warnings summary ===============================
+pyfakefs/pytest_tests/pytest_plugin_test.py::test_fs_fixture
+  $(@D)/pyfakefs/fake_legacy_modules.py:26: DeprecationWarning: You are using the legacy package 'pathlib2' instead of the built-in module.Patching this package will no longer be supported in pyfakefs >= 6
+    warnings.warn(msg, category=DeprecationWarning)
+
 pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume
   $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
   
   Traceback (most recent call last):
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2181, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
       target_directory.remove_entry(basename)
     File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
       entry = self.get_entry(pathname_name)
@@ -5988,21 +6020,21 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume
   Traceback (most recent call last):
     File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
       self.close()
-    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
       self.tempfile_cleanup(self_, unlink or os.unlink)
     File "$(PYTHON_DIR)/tempfile.py", line 457, in close
       unlink(self.name)
-    File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
+    File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
       return f(*args, **kwargs)
-    File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
+    File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
       self.filesystem.remove(path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
       self.remove_object(norm_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
       self.raise_os_error(errno.ENOENT, file_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
       raise OSError(err_no, message, filename)
-  FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
@@ -6010,7 +6042,7 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume_contextmanager
   $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored in: <function _TemporaryFileCloser.__del__ at $(POINTER)>
   
   Traceback (most recent call last):
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2181, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
       target_directory.remove_entry(basename)
     File "$(@D)/pyfakefs/fake_file.py", line 592, in remove_entry
       entry = self.get_entry(pathname_name)
@@ -6023,25 +6055,25 @@ pyfakefs/pytest_tests/pytest_plugin_test.py::test_pause_resume_contextmanager
   Traceback (most recent call last):
     File "$(PYTHON_DIR)/tempfile.py", line 461, in __del__
       self.close()
-    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 116, in close
+    File "$(@D)/pyfakefs/fake_filesystem_unittest.py", line 115, in close
       self.tempfile_cleanup(self_, unlink or os.unlink)
     File "$(PYTHON_DIR)/tempfile.py", line 457, in close
       unlink(self.name)
-    File "$(@D)/pyfakefs/fake_os.py", line 1476, in wrapped
+    File "$(@D)/pyfakefs/fake_os.py", line 1477, in wrapped
       return f(*args, **kwargs)
-    File "$(@D)/pyfakefs/fake_os.py", line 757, in unlink
+    File "$(@D)/pyfakefs/fake_os.py", line 758, in unlink
       self.filesystem.remove(path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 3101, in remove
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 3127, in remove
       self.remove_object(norm_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 2183, in remove_object
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 2185, in remove_object
       self.raise_os_error(errno.ENOENT, file_path)
-    File "$(@D)/pyfakefs/fake_filesystem.py", line 492, in raise_os_error
+    File "$(@D)/pyfakefs/fake_filesystem.py", line 494, in raise_os_error
       raise OSError(err_no, message, filename)
-  FileNotFoundError: [Errno 2] No such file or directory in the fake filesystem: '/tmp/tmpXXXXXXXX'
+  FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpXXXXXXXX'
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 10 passed, 2 warnings ========
+======== 10 passed, 3 warnings ========
   py$(PYV): OK
   congratulations :)
