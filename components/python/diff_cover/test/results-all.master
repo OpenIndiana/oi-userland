@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 315 items
+collecting ... collected 327 items
 
 tests/test_clover_violations_reporter.py::test_get_src_path_clover PASSED
 tests/test_config_parser.py::TestTOMLParser::test_parse_no_toml_file[Tool.DIFF_COVER] PASSED
@@ -24,6 +24,7 @@ tests/test_config_parser.py::test_get_config[Tool.DIFF_COVER-cli_config2-default
 tests/test_diff_cover_main.py::test_parse_coverage_file PASSED
 tests/test_diff_cover_main.py::test_parse_range_notation PASSED
 tests/test_diff_cover_tool.py::test_parse_with_html_report PASSED
+tests/test_diff_cover_tool.py::test_report_path_with_colon PASSED
 tests/test_diff_cover_tool.py::test_parse_with_no_report PASSED
 tests/test_diff_cover_tool.py::test_parse_with_multiple_reports PASSED
 tests/test_diff_cover_tool.py::test_parse_with_multiple_old_reports PASSED
@@ -134,8 +135,14 @@ tests/test_integration.py::TestDiffCoverIntegration::test_html_with_external_css
 tests/test_integration.py::TestDiffCoverIntegration::test_git_diff_error PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_quiet_mode PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_show_uncovered_lines_console PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_multiple_lcov_xml_reports PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_expand_coverage_report_complete_report PASSED
 tests/test_integration.py::TestDiffCoverIntegration::test_expand_coverage_report_uncomplete_report PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_real_world_cpp_lcov_coverage PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_real_world_python_lcov_coverage PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_real_world_typescript_lcov_coverage PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_real_world_lcov_with_function_coverage PASSED
+tests/test_integration.py::TestDiffCoverIntegration::test_real_world_lcov_with_branch_coverage PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_git_diff_error_diff_quality PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_added_file_pycodestyle_html PASSED
 tests/test_integration.py::TestDiffQualityIntegration::test_all_reports PASSED
@@ -224,6 +231,10 @@ tests/test_snippets.py::test_load_declared_arabic PASSED
 tests/test_snippets.py::test_latin_one_undeclared PASSED
 tests/test_util.py::test_to_unix_path PASSED
 tests/test_util.py::test_to_unescaped_filename PASSED
+tests/test_util.py::test_open_file PASSED
+tests/test_util.py::test_open_file_sys_std PASSED
+tests/test_util.py::test_open_file_encoding PASSED
+tests/test_util.py::test_open_file_encoding_binary PASSED
 tests/test_violations_reporter.py::TestXmlCoverageReporterTest::test_violations PASSED
 tests/test_violations_reporter.py::TestXmlCoverageReporterTest::test_non_python_violations PASSED
 tests/test_violations_reporter.py::TestXmlCoverageReporterTest::test_non_python_violations_empty_path PASSED
@@ -257,6 +268,7 @@ tests/test_violations_reporter.py::TestLcovCoverageReporterTest::test_three_inpu
 tests/test_violations_reporter.py::TestLcovCoverageReporterTest::test_different_files_in_inputs PASSED
 tests/test_violations_reporter.py::TestLcovCoverageReporterTest::test_empty_violations PASSED
 tests/test_violations_reporter.py::TestLcovCoverageReporterTest::test_no_such_file PASSED
+tests/test_violations_reporter.py::TestLcovCoverageReporterTest::test_parse_branch_and_function_coverage PASSED
 tests/test_violations_reporter.py::TestPycodestyleQualityReporterTest::test_quality PASSED
 tests/test_violations_reporter.py::TestPycodestyleQualityReporterTest::test_no_quality_issues_newline PASSED
 tests/test_violations_reporter.py::TestPycodestyleQualityReporterTest::test_no_quality_issues_emptystring PASSED
@@ -321,4 +333,4 @@ tests/test_violations_reporter.py::TestSubprocessErrorTestCase::test_quality_rep
 tests/test_violations_reporter.py::TestCppcheckQualityDriverTest::test_parse_report PASSED
 tests/test_violations_reporter.py::TestRuffCheckQualityDriverTest::test_quality PASSED
 
-======== 315 passed ========
+======== 327 passed ========
