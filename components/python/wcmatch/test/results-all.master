@@ -7,7 +7,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1337 items
+collecting ... collected 1347 items
 
 tests/test_fnmatch.py::TestFnMatch::test_cases[case0] PASSED
 tests/test_fnmatch.py::TestFnMatch::test_cases[case1] PASSED
@@ -172,6 +172,11 @@ tests/test_fnmatch.py::TestExpansionLimit::test_limit_translate PASSED
 tests/test_fnmatch.py::TestTypes::test_match_list PASSED
 tests/test_fnmatch.py::TestTypes::test_match_set PASSED
 tests/test_fnmatch.py::TestTypes::test_match_tuple PASSED
+tests/test_fnmatch.py::TestPrecompile::test_hash PASSED
+tests/test_fnmatch.py::TestPrecompile::test_precompiled_filter PASSED
+tests/test_fnmatch.py::TestPrecompile::test_precompiled_filter_empty PASSED
+tests/test_fnmatch.py::TestPrecompile::test_precompiled_match PASSED
+tests/test_fnmatch.py::TestPrecompile::test_precompiled_match_empty PASSED
 tests/test_glob.py::Testglob::test_glob_cases[case0] PASSED
 tests/test_glob.py::Testglob::test_glob_cases[case1] PASSED
 tests/test_glob.py::Testglob::test_glob_cases[case2] PASSED
@@ -1243,6 +1248,11 @@ tests/test_globmatch.py::TestExcludes::test_exclude_mix PASSED
 tests/test_globmatch.py::TestExcludes::test_filter PASSED
 tests/test_globmatch.py::TestExcludes::test_translate_exclude PASSED
 tests/test_globmatch.py::TestExcludes::test_translate_exclude_mix PASSED
+tests/test_globmatch.py::TestPrecompile::test_hash PASSED
+tests/test_globmatch.py::TestPrecompile::test_precompiled_filter PASSED
+tests/test_globmatch.py::TestPrecompile::test_precompiled_filter_pathlib PASSED
+tests/test_globmatch.py::TestPrecompile::test_precompiled_match PASSED
+tests/test_globmatch.py::TestPrecompile::test_precompiled_match_pathlib PASSED
 tests/test_pathlib.py::TestGlob::test_glob PASSED
 tests/test_pathlib.py::TestGlob::test_integrity PASSED
 tests/test_pathlib.py::TestGlob::test_relative PASSED
@@ -1347,8 +1357,24 @@ tests/test_wcparse.py::TestWcparse::test_translate_expansion_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_translate_unique_optimization_okay PASSED
 tests/test_wcparse.py::TestWcparse::test_unc_pattern PASSED
 
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
-======== 1186 passed, 151 skipped ========
+Name                  Stmts   Miss  Cover
+-----------------------------------------
+wcmatch/__init__.py       1      0   100%
+wcmatch/__meta__.py      69      0   100%
+wcmatch/_wcmatch.py     168      1    99%
+wcmatch/_wcparse.py    1009      2    99%
+wcmatch/fnmatch.py       42      0   100%
+wcmatch/glob.py         513     28    95%
+wcmatch/pathlib.py      101      6    94%
+wcmatch/posix.py          8      0   100%
+wcmatch/util.py          95      4    96%
+wcmatch/wcmatch.py      165      4    98%
+-----------------------------------------
+TOTAL                  2171     45    98%
+======== 1196 passed, 151 skipped ========
 py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
 Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
 py$(PYV): commands[3]> $(PYTHON) -m coverage xml
@@ -1358,15 +1384,15 @@ Name                  Stmts   Miss  Cover   Missing
 ---------------------------------------------------
 wcmatch/__init__.py       1      0   100%
 wcmatch/__meta__.py      69      0   100%
-wcmatch/_wcmatch.py     150      1    99%   196
+wcmatch/_wcmatch.py     168      1    99%   196
 wcmatch/_wcparse.py    1009      2    99%   363, 387
-wcmatch/fnmatch.py       40      0   100%
-wcmatch/glob.py         520     28    95%   113-115, 180-182, 227-229, 260-261, 312-324, 341-342, 824, 842-843
-wcmatch/pathlib.py      101      6    94%   86, 100, 181, 190-192
+wcmatch/fnmatch.py       42      0   100%
+wcmatch/glob.py         513     28    95%   116-118, 183-185, 230-232, 263-264, 315-327, 344-345, 832, 850-851
+wcmatch/pathlib.py      101      6    94%   87, 101, 182, 191-193
 wcmatch/posix.py          8      0   100%
 wcmatch/util.py          95      4    96%   62, 221-223
 wcmatch/wcmatch.py      165      4    98%   103-106, 135
 ---------------------------------------------------
-TOTAL                  2158     45    98%
+TOTAL                  2171     45    98%
   py$(PYV): OK
   congratulations :)
