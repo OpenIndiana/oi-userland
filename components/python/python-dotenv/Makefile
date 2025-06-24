@@ -14,23 +14,25 @@
 #   $WS_TOOLS/python-integrate-project -d python/python-dotenv python_dotenv
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_dotenv
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.1.1
 COMPONENT_SUMMARY =		Read key-value pairs from a .env file and set them as environment variables
 COMPONENT_PROJECT_URL =		https://github.com/theskumar/python-dotenv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5
+	sha256:a8a6399716257f45be6a007360200409fce5cda2661e3dec71d23dc15f6189ab
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/click
