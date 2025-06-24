@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project barman
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		barman
-HUMAN_VERSION =			3.13.2
+HUMAN_VERSION =			3.14.1
 COMPONENT_SUMMARY =		Backup and Recovery Manager for PostgreSQL
 COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b436215fa5365e515fd3079abbb34e881ab810b7f4ec90c7d2d711ff0c84b055
+	sha256:896a57073882c785c18be4b0a875804d59c336b4d859b514e3069d6a45684c06
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -76,11 +76,17 @@ PYTEST_ADDOPTS += --ignore tests/test_cloud_snapshot_interface.py
 PYTEST_ADDOPTS += --ignore tests/test_infofile.py
 PYTEST_ADDOPTS += --ignore tests/test_output.py
 
+# We have no cramjam packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_compressor.py
+
+# https://github.com/EnterpriseDB/barman/issues/869
+PYTEST_ADDOPTS += --deselect tests/test_annotations.py::TestAnnotationManagerFile::test_delete_one_of_many_annotations
+PYTEST_ADDOPTS += --deselect tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_if_oldest_two_nokeep_and_standalone
+
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/psycopg2
 PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
