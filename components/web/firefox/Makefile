@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=10
+# CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	139.0.4
+COMPONENT_VERSION =	140.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,10 +49,10 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     5fb48bf50516ed2529d533e5dfe49b4752efb8b8
-COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
+COMPONENT_GIT_HASH=     4175d192b8aa65bf62fe1067867ff24662337917
+COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
   ifdef USE_HG_REPO
   COMPONENT_HG_HASH=	ff0882e981495f07c521e0b00e1e83b050dfcdc2
   COMPONENT_SRC=	mozilla-central-$(COMPONENT_HG_HASH)
@@ -73,7 +73,7 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:535e053fc3f949c6d7dd78a0a0b4997e5e26db7ef1e11d51b2b9a9f4022287f5
+COMPONENT_ARCHIVE_HASH= sha256:ee1253b49b21241abc5d490df60be1d9f1d3914cdc1a4e3482a8158913f9fd1f
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
@@ -161,7 +161,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
-	echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
