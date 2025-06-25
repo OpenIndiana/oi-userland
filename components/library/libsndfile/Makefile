@@ -22,12 +22,14 @@
 # Copyright (c) 2021 Andreas Wacknitz
 #
 
+# SunRay utaudio needs 32bit library
+BUILD_BITS= 64_and_32
 USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsndfile
 COMPONENT_VERSION=	1.2.2
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	libsndfile - a library for reading/writing sound files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsndfile/
@@ -56,7 +58,9 @@ COMPONENT_TEST_TRANSFORMS += "-e '/Pedantic header test/,\$$p'"	# this is the ac
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += audio/mpg123
+REQUIRED_PACKAGES += audio/mpg123/32
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/opus
