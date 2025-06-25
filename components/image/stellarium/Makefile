@@ -18,13 +18,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=	25.1
+COMPONENT_VERSION=		25.2
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:610384311455ce75f9b02f0d3d50e5cc127c36e67008817ea8cbab0bdadeaf5a
-COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:ebd774d4366c69464c782fa89b2333284004b8eaf96503555ed4bb047d4d8dee
+COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv2.0
@@ -73,6 +73,7 @@ REQUIRED_PACKAGES += image/calcmysky
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/exiv2
+REQUIRED_PACKAGES += library/md4c
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
