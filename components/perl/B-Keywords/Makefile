@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module B::Keywords
+#   $WS_TOOLS/perl-integrate-module B-Keywords
 #
 
 BUILD_STYLE = makemaker
@@ -19,16 +19,16 @@ USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		B::Keywords
-HUMAN_VERSION =			1.27
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		B::Keywords - Lists of reserved barewords and symbol names
+COMPONENT_NAME =		B-Keywords
+HUMAN_VERSION =			1.28
+COMPONENT_SUMMARY =		Lists of reserved barewords and symbol names
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ef10b9085e674eaa417ccb7d692fb6cd98f7bb67de2a127eba3457d8ae587cff
+	sha256:9e7eb67695929487c61aaf2dae8baf9dda1ad87602bb5a094f10744b12765e3e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
