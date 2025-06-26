@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 7359 items / 6134 deselected / 1225 selected
+collecting ... collected 7390 items / 6152 deselected / 1238 selected
 
 test/test_InfoExtractor.py::TestInfoExtractor::test_download_json PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_extract_jwplayer_data_realworld PASSED
@@ -23,6 +23,7 @@ test/test_InfoExtractor.py::TestInfoExtractor::test_parse_xspf PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_response_with_expected_status_returns_content PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_search_json_ld_realworld PASSED
 test/test_InfoExtractor.py::TestInfoExtractor::test_search_nextjs_data PASSED
+test/test_InfoExtractor.py::TestInfoExtractor::test_search_nuxt_json PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_audio_only_extractor_format_selection PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec_with_ffmpeg PASSED
 test/test_YoutubeDL.py::TestFormatSelection::test_default_format_spec_without_ffmpeg PASSED
@@ -110,6 +111,11 @@ test/test_cookies.py::TestCookies::test_pbkdf2_sha1 PASSED
 test/test_cookies.py::TestCookies::test_safari_cookie_parsing PASSED
 test/test_cookies.py::TestLenientSimpleCookie::test_lenient_parsing PASSED
 test/test_cookies.py::TestLenientSimpleCookie::test_parsing PASSED
+test/test_devalue.py::TestDevalue::test_devalue_parse_cyclical PASSED
+test/test_devalue.py::TestDevalue::test_devalue_parse_equals PASSED
+test/test_devalue.py::TestDevalue::test_devalue_parse_invalid PASSED
+test/test_devalue.py::TestDevalue::test_devalue_parse_is PASSED
+test/test_devalue.py::TestDevalue::test_devalue_parse_revivers PASSED
 test/test_downloader_external.py::TestHttpieFD::test_make_cmd PASSED
 test/test_downloader_external.py::TestAxelFD::test_make_cmd PASSED
 test/test_downloader_external.py::TestWgetFD::test_make_cmd PASSED
@@ -671,9 +677,9 @@ test/test_postprocessors.py::TestMetadataFromField::test_metadatafromfield PASSE
 test/test_postprocessors.py::TestConvertThumbnail::test_escaping PASSED
 test/test_postprocessors.py::TestExec::test_parse_cmd PASSED
 test/test_postprocessors.py::TestModifyChaptersPP::test_make_concat_opts_CommonCase PASSED
-test/test_postprocessors.py::TestModifyChaptersPP::test_make_concat_opts_NoZeroDurationChunkAtVideoEnd PASSED
+test/test_postprocessors.py::TestModifyChaptersPP::test_make_concat_opts_NoZeroDurationChunkAtVideoEnd ----------------------------------------
+PASSED
 test/test_postprocessors.py::TestModifyChaptersPP::test_make_concat_opts_NoZeroDurationChunkAtVideoStart PASSED
-----------------------------------------
 test/test_postprocessors.py::TestModifyChaptersPP::test_quote_for_concat_QuotesAtEnd PASSED
 test/test_postprocessors.py::TestModifyChaptersPP::test_quote_for_concat_QuotesAtStart PASSED
 test/test_postprocessors.py::TestModifyChaptersPP::test_quote_for_concat_RunsOfQuotes PASSED
@@ -759,10 +765,14 @@ test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_we
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.PLAYER-False-expected21] PASSED
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.SUBS-False-expected22] PASSED
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.GVS-True-expected23] PASSED
-test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[WEB_REMIX-PoTokenContext.GVS-False-expected24] PASSED
-test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[WEB_REMIX-PoTokenContext.PLAYER-False-expected25] PASSED
-test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[ANDROID-PoTokenContext.GVS-False-expected26] PASSED
-test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[IOS-PoTokenContext.GVS-False-expected27] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY-PoTokenContext.GVS-False-expected24] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY-PoTokenContext.PLAYER-False-expected25] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY-PoTokenContext.SUBS-False-expected26] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[TVHTML5_SIMPLY-PoTokenContext.GVS-True-expected27] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[WEB_REMIX-PoTokenContext.GVS-False-expected28] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[WEB_REMIX-PoTokenContext.PLAYER-False-expected29] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[ANDROID-PoTokenContext.GVS-False-expected30] PASSED
+test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_get_webpo_content_binding[IOS-PoTokenContext.GVS-False-expected31] PASSED
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_extract_visitor_id PASSED
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_invalid_visitor_id PASSED
 test/test_pot/test_pot_builtin_utils.py::TestGetWebPoContentBinding::test_no_visitor_id PASSED
@@ -791,9 +801,12 @@ test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bi
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.GVS-False-example-remote-host-example-source-address-example-request-proxy-expected15] PASSED
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.PLAYER-False-example-remote-host-example-source-address-example-request-proxy-expected16] PASSED
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY_EMBEDDED_PLAYER-PoTokenContext.GVS-True-example-remote-host-example-source-address-example-request-proxy-expected17] PASSED
-test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[WEB_REMIX-PoTokenContext.PLAYER-False-example-remote-host-example-source-address-example-request-proxy-expected18] PASSED
-test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[WEB-PoTokenContext.GVS-False-None-None-None-expected19] PASSED
-test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5-PoTokenContext.PLAYER-False-None-None-http://example.com-expected20] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY-PoTokenContext.GVS-False-example-remote-host-example-source-address-example-request-proxy-expected18] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY-PoTokenContext.PLAYER-False-example-remote-host-example-source-address-example-request-proxy-expected19] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5_SIMPLY-PoTokenContext.GVS-True-example-remote-host-example-source-address-example-request-proxy-expected20] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[WEB_REMIX-PoTokenContext.PLAYER-False-example-remote-host-example-source-address-example-request-proxy-expected21] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[WEB-PoTokenContext.GVS-False-None-None-None-expected22] PASSED
+test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_generate_key_bindings[TVHTML5-PoTokenContext.PLAYER-False-None-None-http://example.com-expected23] PASSED
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_no_bind_visitor_id PASSED
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_default_ttl PASSED
 test/test_pot/test_pot_builtin_webpospec.py::TestWebPoPCSP::test_write_policy PASSED
@@ -1239,6 +1252,6 @@ test/test_websockets.py::TestWebsocketsRequestHandler::test_ws_recv_error_mappin
 test/test_youtube_misc.py::TestYoutubeMisc::test_youtube_extract PASSED
 
 =========================== short test summary info ============================
-======== 1070 passed, 155 skipped, 6134 deselected ========
+======== 1083 passed, 155 skipped, 6152 deselected ========
   py$(PYV): OK
   congratulations :)
