@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Module-Signature
-HUMAN_VERSION =			0.90
+HUMAN_VERSION =			0.92
 COMPONENT_SUMMARY =		Module signature file manipulation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ee641ecec4528f5621173e41765344f906a08d7e8a45492a2bd808e5295dc191
+	sha256:32ca3b414a30a6a330fb9f6acbf7b8fc440942a6bfdccb74e7262a7ec47d98bc
 COMPONENT_LICENSE =		CC0-1.0 AND (Artistic-1.0-Perl OR GPL-1.0-or-later)
 
 include $(WS_MAKE_RULES)/common.mk
