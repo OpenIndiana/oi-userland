@@ -12,13 +12,15 @@
 # Copyright (c) 2016 Jim Klimov
 # Copyright (c) 2020 Andreas Wacknitz
 #
-
+# SunRay utaudio needs 32bit library
+BUILD_BITS= 64_and_32
 USE_PARALLEL_BUILD= yes
 DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2
 COMPONENT_VERSION=	2.32.8
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	libsdl2 - Simple DirectMedia Layer 2.0
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,9 +44,14 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && $(CONFIG_SHELL) autogen.sh );
 CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --enable-year2038
 CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS.32 += --disable-pulseaudio
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/libsamplerate
+# needed to link test objects
+# REQUIRED_PACKAGES += library/audio/pulseaudio
+# REQUIRED_PACKAGES += library/audio/pulseaudio/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
