@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project icecream
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icecream
-HUMAN_VERSION =			2.1.4
+HUMAN_VERSION =			2.1.5
 COMPONENT_SUMMARY =		Never use print() to debug again; inspect variables, expressions, and program execution with a single, simple function call.
 COMPONENT_PROJECT_URL =		https://github.com/gruns/icecream
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gruns/icecream/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:16f2f67243825e1e4c157516169a049213fcd75ed301148e6e1ecb10f82c9bb9
+	sha256:37e6b11e6e7233d3d6b099b8198a298a754d702ed9f3cc9e4ace53c2dc8e5629
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,4 +36,5 @@ PYTHON_REQUIRED_PACKAGES += library/python/asttokens
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
 PYTHON_REQUIRED_PACKAGES += library/python/executing
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
