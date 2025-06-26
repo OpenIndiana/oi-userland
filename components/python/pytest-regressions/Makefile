@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project -d python/pytest-regressions pytest_regressions
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_regressions
-HUMAN_VERSION =			2.7.0
+HUMAN_VERSION =			2.8.0
 COMPONENT_SUMMARY =		Easy to use fixtures to write regression tests.
 COMPONENT_PROJECT_URL =		https://github.com/ESSS/pytest-regressions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c30064e0923929012c94f5d6f35205be06fd8709c7f0dba0228e05c460af05e
+	sha256:775044e17117f5427df2caad3ab1c66889abe770a0ce2bc3f24fdeac99af76fe
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,10 +37,15 @@ PYTEST_ADDOPTS += --ignore tests/test_num_regression.py
 # We have no matplotlib packaged yet
 PYTEST_ADDOPTS += --deselect tests/test_image_regression.py::test_image_regression
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pytest
 PYTHON_REQUIRED_PACKAGES += library/python/pytest-datadir
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
