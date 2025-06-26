@@ -1,0 +1,12 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/plugins/sudoers/auth/pam.c a/plugins/sudoers/auth/pam.c
+--- a~/plugins/sudoers/auth/pam.c	1970-01-01 00:00:00
++++ a/plugins/sudoers/auth/pam.c	1970-01-01 00:00:00
+@@ -64,7 +64,7 @@
+ #include "sudo_auth.h"
+ 
+ /* Only OpenPAM and Linux PAM use const qualifiers. */
+-#ifdef PAM_SUN_CODEBASE
++#if defined(PAM_SUN_CODEBASE) && !defined(__illumos__)
+ # define PAM_CONST
+ #else
+ # define PAM_CONST	const
