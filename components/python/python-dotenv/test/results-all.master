@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-collecting ... collected 152 items
+collecting ... collected 162 items
 
 tests/test_cli.py::test_list[None-x='a b c'-x=a b c\n] PASSED
 tests/test_cli.py::test_list[simple-x='a b c'-x=a b c\n] PASSED
@@ -48,6 +48,16 @@ tests/test_cli.py::test_run_with_version PASSED
 tests/test_ipython.py::test_ipython_existing_variable_no_override PASSED
 tests/test_ipython.py::test_ipython_existing_variable_override PASSED
 tests/test_ipython.py::test_ipython_new_variable PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_with_ps1 PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_with_ps2 PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_main_module_not_found PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_main_without_file PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_main_with_file PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_precedence_ps1_over_main PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_ps1_and_ps2_both_exist PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_main_module_with_file_attribute_none PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_no_ps_attributes_and_normal_execution PASSED
+tests/test_is_interactive.py::TestIsInteractive::test_is_interactive_with_usecwd_override PASSED
 tests/test_main.py::test_set_key_no_file PASSED
 tests/test_main.py::test_set_key[-a--expected0-a=''\n] PASSED
 tests/test_main.py::test_set_key[-a-b-expected1-a='b'\n] PASSED
@@ -159,7 +169,7 @@ tests/test_variables.py::test_parse_variables[${a:-b}-expected3] PASSED
 tests/test_variables.py::test_parse_variables[${a}${b}-expected4] PASSED
 tests/test_variables.py::test_parse_variables[a${b}c${d}e-expected5] PASSED
 tests/test_zip_imports.py::test_load_dotenv_gracefully_handles_zip_imports_when_no_env_file PASSED
-tests/test_zip_imports.py::test_load_dotenv_outside_zip_file_when_called_in_zipfile PASSED [100%]$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:329: CovReportWarning: Failed to generate report: No data to report.
+tests/test_zip_imports.py::test_load_dotenv_outside_zip_file_when_called_in_zipfile PASSED [100%]$(PYTHON_DIR)/vendor-packages/pytest_cov/plugin.py:346: CovReportWarning: Failed to generate report: No data to report.
 
   self.cov_controller.finish()
 
@@ -167,7 +177,15 @@ WARNING: Failed to generate report: No data to report.
 
 
 
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
-======== 152 passed ========
+======== 162 passed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
