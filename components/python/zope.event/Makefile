@@ -11,22 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.event
+#   $WS_TOOLS/python-integrate-project -d python/zope.event zope_event
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.event
-HUMAN_VERSION =			5.0
-COMPONENT_SUMMARY =		zope.event - Very basic event publishing system
+COMPONENT_NAME =		zope_event
+HUMAN_VERSION =			5.1
+COMPONENT_SUMMARY =		Very basic event publishing system
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.event
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/46/c2/427f1867bb96555d1d34342f1dd97f8c420966ab564d58d18469a1db8736/zope.event-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bac440d8d9891b4068e2b5a2c5e2c9765a9df762944bda6955f96bb9b91e67cd
+	sha256:a153660e0c228124655748e990396b9d8295d6e4f546fa1b34f3319e1c666e7f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -37,6 +34,8 @@ COMPONENT_TEST_TARGETS += -- -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
