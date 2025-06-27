@@ -1,12 +1,12 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-installed packages of interest: build==1.2.2.post1 cattrs==24.1.3 exceptiongroup==1.3.0 fastjsonschema==2.21.1 hatch-fancy-pypi-readme==25.1.0 hatchling==1.27.0 importlib-resources==6.5.2 packaging==25.0 pathspec==0.12.1 pip==25.1.1 pybind11==2.13.6 pytest==8.3.3 pytest-cov==6.1.1 pytest-subprocess==1.5.3 pytest-xdist==3.7.0 rich==14.0.0 scikit_build_core==0.11.4 setuptools==80.9.0 setuptools-scm==8.3.1 sphinx==7.4.7 sphinx-autodoc-typehints==2.3.0 tomli==2.2.1 typing-extensions==4.13.2 virtualenv==20.30.0 wheel==0.46.1
+installed packages of interest: build==1.2.2.post1 cattrs==25.1.1 exceptiongroup==1.3.0 fastjsonschema==2.21.1 hatch-fancy-pypi-readme==25.1.0 hatchling==1.27.0 importlib-resources==6.5.2 packaging==25.0 pathspec==0.12.1 pip==25.1.1 pybind11==2.13.6 pytest==8.3.3 pytest-cov==6.2.1 pytest-subprocess==1.5.3 pytest-xdist==3.7.0 rich==14.0.0 scikit_build_core==0.11.5 setuptools==80.9.0 setuptools-scm==8.3.1 sphinx==7.4.7 sphinx-autodoc-typehints==2.3.0 tomli==2.2.1 typing-extensions==4.14.0 virtualenv==20.30.0 wheel==0.46.1
 sysconfig platform: solaris-2.11-i86pc.64bit
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 461 items / 1 skipped
+collecting ... collected 470 items / 1 skipped
 
 tests/test_auto.py::test_auto_requires_pkg_no_spec PASSED
 tests/test_auto.py::test_auto_requires_pkg_version[==1.0-version0] PASSED
@@ -165,6 +165,15 @@ tests/test_editable_unit.py::test_navigate_editable_pkg[abs] XFAIL (...)
 tests/test_editable_unit.py::test_navigate_editable_pkg[rel] XFAIL (...)
 tests/test_file_processor.py::test_on_each_with_symlink PASSED
 tests/test_file_processor.py::test_dot_git_is_a_file PASSED
+tests/test_file_processor.py::test_include_patterns PASSED
+tests/test_file_processor.py::test_exclude_patterns PASSED
+tests/test_file_processor.py::test_include_overrides_exclude PASSED
+tests/test_file_processor.py::test_gitignore_interaction PASSED
+tests/test_file_processor.py::test_nested_gitignore PASSED
+tests/test_file_processor.py::test_build_dir_exclusion PASSED
+tests/test_file_processor.py::test_complex_combinations PASSED
+tests/test_file_processor.py::test_empty_directory PASSED
+tests/test_file_processor.py::test_nonexistent_patterns PASSED
 tests/test_fileapi.py::test_cattrs_comparison PASSED
 tests/test_fileapi.py::test_no_index PASSED
 tests/test_fileapi.py::test_simple_pure PASSED
@@ -254,39 +263,39 @@ tests/test_pyproject_pep660.py::test_pep660_pip_isolated[inplace-isolated] PASSE
 tests/test_pyproject_pep660.py::test_pep660_pip_isolated[inplace-not_isolated] PASSED
 tests/test_pyproject_purelib.py::test_pep517_wheel PASSED
 tests/test_schema.py::test_compare_schemas PASSED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/cython] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/swig] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/abi3] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/downstream/pybind11_example] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/downstream/nanobind_example] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/pybind11] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/nanobind] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/c] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/cython] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/fortran] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/downstream/nanobind_example] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[docs/examples/downstream/pybind11_example] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simplest_c] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_source_dir] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/abi3] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/swig] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[docs/examples/getting_started/c] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/pep639_pure] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_script_with_flags] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_ext] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/filepath_pure] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_setuptools_ext] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/hatchling] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_script_with_flags] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/broken_fallback] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_purelib_package] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/abi3_setuptools_ext] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/navigate_editable] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/importlib_editable] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/custom_cmake] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/custom_cmake/extern] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/sdist_config] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/broken_fallback] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/cmake_defines] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/abi3_pyproject_ext] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/navigate_editable] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/fortran_example] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/toml_setuptools_ext] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/hatchling] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/mixed_setuptools] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_purelib_package] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/cython_pxd_editable/pkg2] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/cython_pxd_editable/pkg1] SKIPPED
-tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_setuptools_ext] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_source_dir] SKIPPED
 tests/test_schema.py::test_valid_schemas_files[tests/packages/dynamic_metadata] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/mixed_setuptools] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simplest_c] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/abi3_pyproject_ext] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/simple_pyproject_ext] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/cython_pxd_editable/pkg1] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/cython_pxd_editable/pkg2] SKIPPED
+tests/test_schema.py::test_valid_schemas_files[tests/packages/cmake_defines] SKIPPED
 tests/test_schema.py::test_invalid_schemas[addition0] SKIPPED (could...)
 tests/test_schema.py::test_invalid_schemas[addition1] SKIPPED (could...)
 tests/test_schema.py::test_invalid_schemas[addition2] SKIPPED (could...)
@@ -471,40 +480,4 @@ tests/test_wheelfile_utils.py::test_wheel_metadata PASSED
 tests/test_wheelfile_utils.py::test_wheel_writer_simple PASSED
 
 =========================== short test summary info ============================
-======== 394 passed, 60 skipped, 8 xfailed ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw2
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw2'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 403 passed, 60 skipped, 8 xfailed ========
