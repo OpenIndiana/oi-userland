@@ -34,11 +34,10 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		rpm2cpio
 # FreeBSD revision 404282
 COMPONENT_VERSION=	1.4
-COMPONENT_PROJECT_URL=	http://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
+COMPONENT_REVISION=	1
+COMPONENT_PROJECT_URL=	https://svnweb.freebsd.org/ports/head/archivers/rpm2cpio
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	utility/rpm
-
-TPNO=			17824
 
 include $(WS_MAKE_RULES)/prep.mk
 
@@ -48,26 +47,28 @@ CLEAN_PATHS=
 
 include $(WS_MAKE_RULES)/ips.mk
 
-CLEAN_PATHS+= $(BUILD_DIR_32)
+CLEAN_PATHS += $(BUILD_DIR)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Common targets
 #
 
-$(BUILD_32):
+$(BUILD_64):
 	# Just create the build directory, which is needed for publishing.
 	# There is nothing to actually build.
 	#
-	$(RM) -r $(BUILD_DIR_32) ; $(MKDIR) $(BUILD_DIR_32)
+	$(RM) -r $(BUILD_DIR_64) ; $(MKDIR) $(BUILD_DIR_64)
 	$(TOUCH) $@
 
-$(INSTALL_32):
+$(INSTALL_64):
 	@echo "Nothing to install."
 	$(TOUCH) $@
 
-build: $(BUILD_32)
-install: $(INSTALL_32)
+build: $(BUILD_64)
+install: $(INSTALL_64)
 test: $(NO_TESTS)
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += shell/ksh93
