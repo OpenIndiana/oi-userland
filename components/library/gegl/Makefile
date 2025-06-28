@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
 COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).62
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
@@ -46,6 +47,15 @@ CONFIGURE_OPTIONS += -Dvapigen=enabled
 CONFIGURE_OPTIONS += -Dworkshop=true
 # libav is from encumbered
 CONFIGURE_OPTIONS += -Dlibav=disabled
+
+# luajit does not link
+# Text relocation remains                         referenced
+#    against symbol                  offset      in file
+#lj_func_closeuv                     0xd15       /usr/lib/amd64/libluajit-5.1.a(lj_vm.o)
+# ...
+# ld: fatal: relocations remain against allocatable but non-writable sections
+# collect2: error: ld returned 1 exit status
+CONFIGURE_OPTIONS += -Dlua=disabled
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
