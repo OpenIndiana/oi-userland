@@ -1,0 +1,22 @@
+
+deactivate this module rtp requires also to disable openssl
+
+diff --git a/src/modules/meson.build b/src/modules/meson.build
+index 3636ce0..d9d50b3 100644
+--- a/src/modules/meson.build
++++ b/src/modules/meson.build
+@@ -1,4 +1,4 @@
+-if host_machine.system() != 'windows'
++if host_machine.system() != 'windows' and cc.sizeof('void *') >= 8
+   subdir('rtp')
+ endif
+ 
+@@ -68,7 +68,7 @@ if host_machine.system() == 'windows'
+   ]
+ endif
+ 
+-if host_machine.system() != 'windows'
++if host_machine.system() != 'windows' and cc.sizeof('void *') >= 8
+   all_modules += [
+     [ 'module-rtp-recv', 'rtp/module-rtp-recv.c', [], [], [libatomic_ops_dep], librtp ],
+     [ 'module-rtp-send', 'rtp/module-rtp-send.c' , [], [], [], librtp ],
