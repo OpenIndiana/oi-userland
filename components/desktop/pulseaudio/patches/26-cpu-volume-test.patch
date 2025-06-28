@@ -1,0 +1,67 @@
+test cores with Signal 11
+https://salsa.debian.org/pulseaudio-team/pulseaudio/-/commit/9e05702770bf05c1745f3475f0ddd6b98e4ad62c
+
+diff --git a/src/tests/cpu-volume-test.c b/src/tests/cpu-volume-test.c
+index 5de8c83..1d7a09c 100644
+--- a/src/tests/cpu-volume-test.c
++++ b/src/tests/cpu-volume-test.c
+@@ -43,6 +43,7 @@ static void run_volume_test(
+         int channels,
+         bool correct,
+         bool perf) {
++    fail_unless(align % channels == 0);
+ 
+     PA_DECLARE_ALIGNED(8, int16_t, s[SAMPLES]) = { 0 };
+     PA_DECLARE_ALIGNED(8, int16_t, s_ref[SAMPLES]) = { 0 };
+@@ -56,8 +57,6 @@ static void run_volume_test(
+     samples_ref = s_ref + (8 - align);
+     samples_orig = s_orig + (8 - align);
+     nsamples = SAMPLES - (8 - align);
+-    if (nsamples % channels)
+-        nsamples -= nsamples % channels;
+     size = nsamples * sizeof(int16_t);
+ 
+     pa_random(samples, size);
+@@ -119,12 +118,12 @@ START_TEST (svolume_mmx_test) {
+ 
+     pa_log_debug("Checking MMX svolume");
+     for (i = 1; i <= 3; i++) {
+-        for (j = 0; j < 7; j++)
+-            run_volume_test(mmx_func, orig_func, j, i, true, false);
++        for (j = 0; j <= 7; j += i)
++            run_volume_test(mmx_func, orig_func, j, i, true, j == 0);
+     }
+     run_volume_test(mmx_func, orig_func, 7, 1, true, true);
+-    run_volume_test(mmx_func, orig_func, 7, 2, true, true);
+-    run_volume_test(mmx_func, orig_func, 7, 3, true, true);
++    run_volume_test(mmx_func, orig_func, 6, 2, true, true);
++    run_volume_test(mmx_func, orig_func, 6, 3, true, true);
+ }
+ END_TEST
+ 
+@@ -146,8 +145,8 @@ START_TEST (svolume_sse_test) {
+ 
+     pa_log_debug("Checking SSE2 svolume");
+     for (i = 1; i <= 3; i++) {
+-        for (j = 0; j < 7; j++)
+-            run_volume_test(sse_func, orig_func, j, i, true, false);
++        for (j = 0; j < 7; j += i)
++            run_volume_test(sse_func, orig_func, j, i, true, j == 0);
+     }
+     run_volume_test(sse_func, orig_func, 7, 1, true, true);
+     run_volume_test(sse_func, orig_func, 7, 2, true, true);
+@@ -207,11 +206,12 @@ START_TEST (svolume_orc_test) {
+ 
+     pa_log_debug("Checking Orc svolume");
+     for (i = 1; i <= 2; i++) {
+-        for (j = 0; j < 7; j++)
+-            run_volume_test(orc_func, orig_func, j, i, true, false);
++        for (j = 0; j < 7; j += i)
++            run_volume_test(orc_func, orig_func, j, i, true, j == 0);
+     }
+     run_volume_test(orc_func, orig_func, 7, 1, true, true);
+     run_volume_test(orc_func, orig_func, 7, 2, true, true);
++    run_volume_test(orc_func, orig_func, 6, 2, true, true);
+ }
+ END_TEST
+ 
