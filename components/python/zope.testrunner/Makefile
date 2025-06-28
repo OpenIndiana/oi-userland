@@ -11,23 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.testrunner
+#   $WS_TOOLS/python-integrate-project -d python/zope.testrunner zope_testrunner
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.testrunner
-HUMAN_VERSION =			7.2
+COMPONENT_NAME =		zope_testrunner
+HUMAN_VERSION =			7.4
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d4fae0ba3b0e287a60591a9e350ddf7cb3150b73951eecfa835f80d0abe61280
+	sha256:8331f765ff4d276b89fc76b2901cc436787ca2686ccb1edd88ed3625939050a7
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
-
-COMPONENT_SRC =			zope_testrunner-$(HUMAN_VERSION)
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
