@@ -13,12 +13,12 @@
 # Copyright 2020 Andreas Wacknitz
 # Copyright 2022 Benjamin S. Osenbach
 #
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmenu
 COMPONENT_VERSION=	5.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	dmenu is a dynamic menu for X, originally designed for dwm
 COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
