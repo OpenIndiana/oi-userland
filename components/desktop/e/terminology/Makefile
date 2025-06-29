@@ -24,32 +24,24 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		terminology
 COMPONENT_VERSION=      1.1.0
-COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY= Enlightenment - The best terminal emulator written with the EFL
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.enlightenment.org/about-terminology
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:8c49f3e5340fe73588f48a3823905cecd9c341c213aed031c2aa752e9ba04551
-COMPONENT_ARCHIVE_URL=  \
-    https://download.enlightenment.org/rel/apps/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:eb9136e487ab9e6ff3c98173919b5ad105626434d096dafecd18392fc40c348f
+COMPONENT_ARCHIVE_URL=  https://download.enlightenment.org/rel/apps/terminology/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	terminal/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=      BSD 2-clause
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_BINDIR.64=$(USRBINDIR)
+CONFIGURE_BINDIR.64= $(USRBINDIR)
 
-COMPONENT_PREP_ACTION= \
-    ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
+COMPONENT_PREP_ACTION= ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/e/efl
