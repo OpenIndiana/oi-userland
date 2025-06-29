@@ -14,7 +14,6 @@
 # Copyright 2022 Marco van Wieringen
 #
 
-BUILD_BITS=64
 BUILD_STYLE=justmake
 
 include ../../../make-rules/shared-macros.mk
@@ -22,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	mysql_fdw
 COMPONENT_VERSION =	REL-2_7_0
 IPS_COMPONENT_VERSION =	2.7.0
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_SUMMARY =	MySQL Foreign Data Wrapper for PostgreSQL $(PG_VERSION)
 COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
@@ -47,5 +46,9 @@ COMPONENT_BUILD_ENV	+=	USE_PGXS=1
 COMPONENT_BUILD_ARGS	+=	MYSQL_LIBNAME=$(MYSQL_LIBDIR)/libmysqlclient.so
 COMPONENT_INSTALL_ENV	+=	USE_PGXS=1
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
