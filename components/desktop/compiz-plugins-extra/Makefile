@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-extra
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SUMMARY=	extra effects plugins for compiz
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -33,6 +33,10 @@ TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
+
 PATH= $(PATH.gnu)
 
 COMPONENT_PREP_ACTION= ( \
@@ -46,7 +50,6 @@ COMPONENT_PREP_ACTION= ( \
 
 CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
 
 # Manually added build dependencies
