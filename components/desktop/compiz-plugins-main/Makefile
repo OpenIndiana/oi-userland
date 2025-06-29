@@ -17,9 +17,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION= 2
-COMPONENT_PROJECT_URL=	http://www.northfield.ws/
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	main effects plugins for compiz
+COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
@@ -28,6 +28,10 @@ COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPO
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 PATH= $(PATH.gnu)
 
@@ -42,7 +46,6 @@ COMPONENT_PREP_ACTION= ( \
 
 CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
 
 # Manually added build dependencies
@@ -54,7 +57,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
