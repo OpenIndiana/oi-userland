@@ -30,7 +30,7 @@ PATH= $(PATH.illumos)
 
 COMPONENT_NAME=		unixODBC
 COMPONENT_VERSION=	2.3.12
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The UnixODBC Subsystem and SDK
 COMPONENT_DESCRIPTION= An Open Source implementation of the ODBC Standard providing a Library Framework for Software Development
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,6 +47,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -fi )
 
+CFLAGS += -Wno-error=incompatible-pointer-types
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
