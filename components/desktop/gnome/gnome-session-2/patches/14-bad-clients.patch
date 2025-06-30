@@ -1,0 +1,45 @@
+diff -urN gnome-session-2.26.1/gnome-session/gsm-session-save.c ../SUNWgnome-session-2.25.91.hacked/gnome-session-2.25.92/gnome-session/gsm-session-save.c
+--- gnome-session-2.26.1/gnome-session/gsm-session-save.c	2009-03-03 16:58:00.000000000 +0000
++++ ../SUNWgnome-session-2.26.1.hacked/gnome-session-2.25.92/gnome-session/gsm-session-save.c	2009-03-13 13:45:06.315378000 +0000
+@@ -37,6 +37,31 @@ typedef struct {
+         GError     **error;
+ } SessionSaveData;
+ 
++char *blacklisted_app[] = {
++	"ospm-applet",
++	"nwam-manager",
++	NULL
++};
++
++static gboolean
++is_client_blacklisted (GsmClient *client)
++{
++	char *name=NULL;
++	int i;
++
++	name = gsm_client_get_app_name (client);
++	if (name)
++		g_debug ("is_client_blacklisted: %s", name);	
++	else
++		return FALSE;
++
++	for (i=0; blacklisted_app[i] != NULL; i++) {
++		if (strcmp (name, blacklisted_app[i]) == 0)
++			return TRUE;
++	}
++	return FALSE;
++}
++
+ static gboolean
+ save_one_client (char            *id,
+                  GObject         *object,
+@@ -53,6 +78,9 @@ save_one_client (char            *id,
+ 
+         client = GSM_CLIENT (object);
+ 
++	if (is_client_blacklisted (client))
++		return FALSE;
++
+         local_error = NULL;
+ 
+         keyfile = gsm_client_save (client, &local_error);
