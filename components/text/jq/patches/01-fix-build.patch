@@ -1,0 +1,20 @@
+Because we build inside our own git clone the build system falsely detects
+a git build and tries to create a version information.
+This fails miserably.
+
+Disable the generation of the updated version.h file.
+--- jq-1.8.0/Makefile.am.orig
++++ jq-1.8.0/Makefile.am
+@@ -102,9 +102,9 @@
+ generate_ver = ver="`{ $(srcdir)/scripts/version || echo '$(VERSION)' ; } | sed 's/.*/\x23define JQ_VERSION \"&\"/'`"
+ .remake-version-h: .FORCE
+ 	@ $(generate_ver); test "x`cat src/version.h 2>/dev/null`" = "x$$ver" || touch .remake-version-h
+-src/version.h: .remake-version-h
+-	mkdir -p src
+-	$(AM_V_GEN) $(generate_ver); echo "$$ver" > $@
++#src/version.h: .remake-version-h
++#	mkdir -p src
++#	$(AM_V_GEN) $(generate_ver); echo "$$ver" > $@
+ src/config_opts.inc:
+ 	mkdir -p src
+ 	$(AM_V_GEN) if test -x ./config.status; then \
