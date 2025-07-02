@@ -1,0 +1,31 @@
+Patch taken from 
+https://github.com/jqlang/jq/commit/023f274ee9d14738ab06d674a9d6fe7725441949
+
+jq 1.8.0 fails to build on Solaris with the error seen in the following 
+bug reports:
+https://github.com/jqlang/jq/issues/3335
+https://github.com/jqlang/jq/issues/3339
+
+From 023f274ee9d14738ab06d674a9d6fe7725441949 Mon Sep 17 00:00:00 2001
+From: Binbin Qian <qianbinbin@hotmail.com>
+Date: Tue, 3 Jun 2025 05:22:20 +0800
+Subject: [PATCH] Fix build on old Macs (#3336)
+
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index b6ac671d3e..f29a4c1ffc 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -99,7 +99,7 @@ endif
+ # Remake the version.h header file if, and only if, the git ID has changed
+ .PHONY: .FORCE
+ .FORCE:
+-generate_ver = ver="`{ $(srcdir)/scripts/version || echo '$(VERSION)' ; } | sed 's/.*/\x23define JQ_VERSION \"&\"/'`"
++generate_ver = ver="`{ $(srcdir)/scripts/version || echo '$(VERSION)' ; } | xargs printf '\043define JQ_VERSION \"%s\"\n'`"
+ .remake-version-h: .FORCE
+ 	@ $(generate_ver); test "x`cat src/version.h 2>/dev/null`" = "x$$ver" || touch .remake-version-h
+ src/version.h: .remake-version-h
+
