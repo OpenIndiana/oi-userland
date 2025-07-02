@@ -1,0 +1,49 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> pytest -v --cov-report lcov --cov src/pytest_run_parallel --cov tests tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default'
+rootdir: $(@D)
+configfile: pyproject.toml
+collecting ... collected 30 items
+Collected 0 items to run in parallel
+
+tests/test_run_parallel.py::test_default_threads PASSED
+tests/test_run_parallel.py::test_marker PASSED
+tests/test_run_parallel.py::test_unittest_compat PASSED
+tests/test_run_parallel.py::test_help_message PASSED
+tests/test_run_parallel.py::test_skip PASSED
+tests/test_run_parallel.py::test_fail PASSED
+tests/test_run_parallel.py::test_exception PASSED
+tests/test_run_parallel.py::test_num_parallel_threads_fixture PASSED
+tests/test_run_parallel.py::test_thread_comp_fixture PASSED
+tests/test_run_parallel.py::test_iterations_marker_one_thread PASSED
+tests/test_run_parallel.py::test_iterations_config_one_thread PASSED
+tests/test_run_parallel.py::test_multiple_iterations_multiple_threads PASSED
+tests/test_run_parallel.py::test_num_iterations_fixture PASSED
+tests/test_run_parallel.py::test_skipif_marker_works PASSED
+tests/test_run_parallel.py::test_thread_unsafe_marker PASSED
+tests/test_run_parallel.py::test_pytest_warns_detection PASSED
+tests/test_run_parallel.py::test_auto_detect_cpus_psutil_affinity PASSED
+tests/test_run_parallel.py::test_auto_detect_cpus_psutil_cpu_count PASSED
+tests/test_run_parallel.py::test_auto_detect_process_cpu_count SKIPPED
+tests/test_run_parallel.py::test_auto_detect_sched_getaffinity SKIPPED
+tests/test_run_parallel.py::test_auto_detect_cpu_count PASSED
+tests/test_run_parallel.py::test_thread_unsafe_fixtures PASSED
+tests/test_run_parallel.py::test_incompatible_test_item PASSED
+tests/test_run_parallel.py::test_known_incompatible_test_item_doesnt_warn PASSED
+tests/test_run_parallel.py::test_thread_unsafe_function_attr PASSED
+tests/test_run_parallel.py::test_detect_hypothesis PASSED
+tests/test_run_parallel.py::test_detect_unittest_mock PASSED
+tests/test_run_parallel.py::test_all_tests_in_parallel PASSED
+tests/test_run_parallel.py::test_recurse_assign PASSED
+tests/test_run_parallel.py::test_failed_thread_unsafe PASSED
+
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
+
+Coverage LCOV written to file coverage.lcov
+======== 28 passed, 2 skipped ========
+  py$(PYV): OK
+  congratulations :)
