@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages
-collecting ... collected 673 items
+collecting ... collected 683 items / 10 deselected / 673 selected
 
 psutil/tests/test_aix.py::AIXSpecificTestCase::test_cpu_count_logical SKIPPED
 psutil/tests/test_aix.py::AIXSpecificTestCase::test_cpu_stats SKIPPED
@@ -67,7 +67,7 @@ psutil/tests/test_connections.py::TestUnconnectedSockets::test_udp_v6 PASSED
 psutil/tests/test_connections.py::TestUnconnectedSockets::test_unix_tcp PASSED
 psutil/tests/test_connections.py::TestUnconnectedSockets::test_unix_udp PASSED
 psutil/tests/test_connections.py::TestConnectedSocket::test_tcp SKIPPED
-psutil/tests/test_connections.py::TestConnectedSocket::test_unix PASSED
+psutil/tests/test_connections.py::TestConnectedSocket::test_unix SKIPPED
 psutil/tests/test_connections.py::TestFilters::test_combos PASSED
 psutil/tests/test_connections.py::TestFilters::test_count PASSED
 psutil/tests/test_connections.py::TestFilters::test_filters PASSED
@@ -151,7 +151,6 @@ psutil/tests/test_linux.py::TestSystemCPUFrequency::test_emulate_multi_cpu SKIPP
 psutil/tests/test_linux.py::TestSystemCPUFrequency::test_emulate_no_scaling_cur_freq_file SKIPPED
 psutil/tests/test_linux.py::TestSystemCPUFrequency::test_emulate_use_cpuinfo SKIPPED
 psutil/tests/test_linux.py::TestSystemCPUFrequency::test_emulate_use_second_file SKIPPED
-psutil/tests/test_linux.py::TestSystemCPUStats::test_ctx_switches SKIPPED
 psutil/tests/test_linux.py::TestSystemCPUStats::test_interrupts SKIPPED
 psutil/tests/test_linux.py::TestLoadAvg::test_getloadavg SKIPPED (LI...)
 psutil/tests/test_linux.py::TestSystemNetIfAddrs::test_ips SKIPPED (...)
@@ -201,6 +200,7 @@ psutil/tests/test_linux.py::TestProcess::test_cmdline_mocked SKIPPED
 psutil/tests/test_linux.py::TestProcess::test_cmdline_spaces_mocked SKIPPED
 psutil/tests/test_linux.py::TestProcess::test_exe_mocked SKIPPED (LI...)
 psutil/tests/test_linux.py::TestProcess::test_issue_1014 SKIPPED (LI...)
+psutil/tests/test_linux.py::TestProcess::test_issue_2418 SKIPPED (LI...)
 psutil/tests/test_linux.py::TestProcess::test_net_connections_enametoolong SKIPPED
 psutil/tests/test_linux.py::TestProcess::test_open_files_enametoolong SKIPPED
 psutil/tests/test_linux.py::TestProcess::test_open_files_fd_gone SKIPPED
@@ -351,7 +351,7 @@ psutil/tests/test_misc.py::TestMemoizeDecorator::test_function PASSED
 psutil/tests/test_misc.py::TestMemoizeDecorator::test_original PASSED
 psutil/tests/test_misc.py::TestMemoizeDecorator::test_staticmethod PASSED
 psutil/tests/test_misc.py::TestCommonModule::test_cat_bcat PASSED
-psutil/tests/test_misc.py::TestCommonModule::test_debug SKIPPED (alw...)
+psutil/tests/test_misc.py::TestCommonModule::test_debug PASSED
 psutil/tests/test_misc.py::TestCommonModule::test_isfile_strict PASSED
 psutil/tests/test_misc.py::TestCommonModule::test_memoize_when_activated PASSED
 psutil/tests/test_misc.py::TestCommonModule::test_parse_environ_block PASSED
@@ -369,30 +369,6 @@ psutil/tests/test_misc.py::TestWrapNumbers::test_increase_but_no_wrap PASSED
 psutil/tests/test_misc.py::TestWrapNumbers::test_input_hasnt_changed PASSED
 psutil/tests/test_misc.py::TestWrapNumbers::test_real_data PASSED
 psutil/tests/test_misc.py::TestWrapNumbers::test_wrap PASSED
-psutil/tests/test_misc.py::TestScripts::test_battery SKIPPED (can't ...)
-psutil/tests/test_misc.py::TestScripts::test_coverage SKIPPED (can't...)
-psutil/tests/test_misc.py::TestScripts::test_cpu_distribution SKIPPED
-psutil/tests/test_misc.py::TestScripts::test_disk_usage SKIPPED (can...)
-psutil/tests/test_misc.py::TestScripts::test_executable SKIPPED (can...)
-psutil/tests/test_misc.py::TestScripts::test_fans SKIPPED (can't loc...)
-psutil/tests/test_misc.py::TestScripts::test_free SKIPPED (can't loc...)
-psutil/tests/test_misc.py::TestScripts::test_ifconfig SKIPPED (can't...)
-psutil/tests/test_misc.py::TestScripts::test_iotop SKIPPED (can't lo...)
-psutil/tests/test_misc.py::TestScripts::test_killall SKIPPED (can't ...)
-psutil/tests/test_misc.py::TestScripts::test_meminfo SKIPPED (can't ...)
-psutil/tests/test_misc.py::TestScripts::test_netstat SKIPPED (can't ...)
-psutil/tests/test_misc.py::TestScripts::test_nettop SKIPPED (can't l...)
-psutil/tests/test_misc.py::TestScripts::test_pidof SKIPPED (can't lo...)
-psutil/tests/test_misc.py::TestScripts::test_pmap SKIPPED (can't loc...)
-psutil/tests/test_misc.py::TestScripts::test_procinfo SKIPPED (can't...)
-psutil/tests/test_misc.py::TestScripts::test_procsmem SKIPPED (can't...)
-psutil/tests/test_misc.py::TestScripts::test_ps SKIPPED (can't locat...)
-psutil/tests/test_misc.py::TestScripts::test_pstree SKIPPED (can't l...)
-psutil/tests/test_misc.py::TestScripts::test_sensors SKIPPED (can't ...)
-psutil/tests/test_misc.py::TestScripts::test_temperatures SKIPPED (c...)
-psutil/tests/test_misc.py::TestScripts::test_top SKIPPED (can't loca...)
-psutil/tests/test_misc.py::TestScripts::test_who SKIPPED (can't loca...)
-psutil/tests/test_misc.py::TestScripts::test_winservices SKIPPED (ca...)
 psutil/tests/test_osx.py::TestProcess::test_process_create_time SKIPPED
 psutil/tests/test_osx.py::TestSystemAPIs::test_cpu_count_cores SKIPPED
 psutil/tests/test_osx.py::TestSystemAPIs::test_cpu_count_logical SKIPPED
@@ -422,7 +398,6 @@ psutil/tests/test_posix.py::TestProcess::test_uid PASSED
 psutil/tests/test_posix.py::TestProcess::test_username PASSED
 psutil/tests/test_posix.py::TestProcess::test_username_no_resolution PASSED
 psutil/tests/test_posix.py::TestProcess::test_vsz_memory PASSED
-psutil/tests/test_posix.py::TestSystemAPIs::test_disk_usage SKIPPED
 psutil/tests/test_posix.py::TestSystemAPIs::test_nic_names SKIPPED (...)
 psutil/tests/test_posix.py::TestSystemAPIs::test_os_waitpid_bad_ret_status PASSED
 psutil/tests/test_posix.py::TestSystemAPIs::test_os_waitpid_eintr PASSED
@@ -430,7 +405,7 @@ psutil/tests/test_posix.py::TestSystemAPIs::test_os_waitpid_let_raise PASSED
 psutil/tests/test_posix.py::TestSystemAPIs::test_pid_exists_let_raise PASSED
 psutil/tests/test_posix.py::TestSystemAPIs::test_pids PASSED
 psutil/tests/test_posix.py::TestSystemAPIs::test_users PASSED
-psutil/tests/test_posix.py::TestSystemAPIs::test_users_started PASSED
+psutil/tests/test_posix.py::TestSystemAPIs::test_users_started SKIPPED
 psutil/tests/test_posix.py::TestMisc::test_getpagesize PASSED
 psutil/tests/test_process.py::TestProcess::test_as_dict PASSED
 psutil/tests/test_process.py::TestProcess::test_children PASSED
@@ -458,7 +433,6 @@ psutil/tests/test_process.py::TestProcess::test_ionice_linux SKIPPED
 psutil/tests/test_process.py::TestProcess::test_ionice_win SKIPPED (...)
 psutil/tests/test_process.py::TestProcess::test_is_running PASSED
 psutil/tests/test_process.py::TestProcess::test_kill PASSED
-psutil/tests/test_process.py::TestProcess::test_long_cmdline SKIPPED
 psutil/tests/test_process.py::TestProcess::test_long_name PASSED
 psutil/tests/test_process.py::TestProcess::test_memory_full_info PASSED
 psutil/tests/test_process.py::TestProcess::test_memory_info PASSED
@@ -466,7 +440,6 @@ psutil/tests/test_process.py::TestProcess::test_memory_maps PASSED
 psutil/tests/test_process.py::TestProcess::test_memory_maps_lists_lib PASSED
 psutil/tests/test_process.py::TestProcess::test_memory_percent PASSED
 psutil/tests/test_process.py::TestProcess::test_name PASSED
-psutil/tests/test_process.py::TestProcess::test_nice SKIPPED (proces...)
 psutil/tests/test_process.py::TestProcess::test_num_ctx_switches PASSED
 psutil/tests/test_process.py::TestProcess::test_num_fds PASSED
 psutil/tests/test_process.py::TestProcess::test_num_handles SKIPPED
@@ -483,8 +456,7 @@ psutil/tests/test_process.py::TestProcess::test_parents_and_children PASSED
 psutil/tests/test_process.py::TestProcess::test_pid PASSED
 psutil/tests/test_process.py::TestProcess::test_pid_0 PASSED
 psutil/tests/test_process.py::TestProcess::test_ppid PASSED
-psutil/tests/test_process.py::TestProcess::test_prog_w_funky_name SKIPPED
-psutil/tests/test_process.py::TestProcess::test_reused_pid SKIPPED (...)
+psutil/tests/test_process.py::TestProcess::test_reused_pid PASSED
 psutil/tests/test_process.py::TestProcess::test_rlimit SKIPPED (not ...)
 psutil/tests/test_process.py::TestProcess::test_rlimit_get SKIPPED (...)
 psutil/tests/test_process.py::TestProcess::test_rlimit_infinity SKIPPED
@@ -494,7 +466,7 @@ psutil/tests/test_process.py::TestProcess::test_send_signal PASSED
 psutil/tests/test_process.py::TestProcess::test_send_signal_mocked PASSED
 psutil/tests/test_process.py::TestProcess::test_status PASSED
 psutil/tests/test_process.py::TestProcess::test_suspend_resume PASSED
-psutil/tests/test_process.py::TestProcess::test_terminal SKIPPED (al...)
+psutil/tests/test_process.py::TestProcess::test_terminal SKIPPED (ca...)
 psutil/tests/test_process.py::TestProcess::test_terminate PASSED
 psutil/tests/test_process.py::TestProcess::test_threads PASSED
 psutil/tests/test_process.py::TestProcess::test_threads_2 PASSED
@@ -506,14 +478,39 @@ psutil/tests/test_process.py::TestProcess::test_wait_stopped PASSED
 psutil/tests/test_process.py::TestProcess::test_wait_timeout PASSED
 psutil/tests/test_process.py::TestProcess::test_wait_timeout_nonblocking PASSED
 psutil/tests/test_process.py::TestProcess::test_weird_environ PASSED
-psutil/tests/test_process.py::TestProcess::test_zombie_process SKIPPED
+psutil/tests/test_process.py::TestProcess::test_zombie_process PASSED
 psutil/tests/test_process.py::TestProcess::test_zombie_process_is_running_w_exc PASSED
 psutil/tests/test_process.py::TestProcess::test_zombie_process_status_w_exc PASSED
+psutil/tests/test_process.py::TestPopen::test__getattribute__ PASSED
 psutil/tests/test_process.py::TestPopen::test_ctx_manager PASSED
 psutil/tests/test_process.py::TestPopen::test_kill_terminate PASSED
 psutil/tests/test_process.py::TestPopen::test_misc PASSED
-psutil/tests/test_process_all.py::TestFetchAllProcesses::test_all SKIPPED
 psutil/tests/test_process_all.py::TestPidsRange::test_it PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_battery SKIPPED
+psutil/tests/test_scripts.py::TestExampleScripts::test_coverage PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_cpu_distribution PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_disk_usage PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_executable PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_fans SKIPPED
+psutil/tests/test_scripts.py::TestExampleScripts::test_free PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_ifconfig PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_iotop PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_killall PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_meminfo PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_netstat PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_nettop PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_pidof PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_pmap PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_procinfo PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_procsmem SKIPPED
+psutil/tests/test_scripts.py::TestExampleScripts::test_ps PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_pstree PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_sensors SKIPPED
+psutil/tests/test_scripts.py::TestExampleScripts::test_temperatures SKIPPED
+psutil/tests/test_scripts.py::TestExampleScripts::test_top PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_who PASSED
+psutil/tests/test_scripts.py::TestExampleScripts::test_winservices SKIPPED
+psutil/tests/test_scripts.py::TestInternalScripts::test_syntax_all PASSED
 psutil/tests/test_sunos.py::SunOSSpecificTestCase::test_cpu_count PASSED
 psutil/tests/test_sunos.py::SunOSSpecificTestCase::test_swap_memory PASSED
 psutil/tests/test_system.py::TestProcessIter::test_attrs PASSED
@@ -528,7 +525,6 @@ psutil/tests/test_system.py::TestProcessAPIs::test_wait_procs PASSED
 psutil/tests/test_system.py::TestProcessAPIs::test_wait_procs_no_timeout PASSED
 psutil/tests/test_system.py::TestMiscAPIs::test_boot_time PASSED
 psutil/tests/test_system.py::TestMiscAPIs::test_os_constants PASSED
-psutil/tests/test_system.py::TestMiscAPIs::test_test PASSED
 psutil/tests/test_system.py::TestMiscAPIs::test_users PASSED
 psutil/tests/test_system.py::TestMemoryAPIs::test_swap_memory PASSED
 psutil/tests/test_system.py::TestMemoryAPIs::test_virtual_memory PASSED
@@ -587,29 +583,33 @@ psutil/tests/test_testutils.py::TestProcessUtils::test_spawn_zombie PASSED
 psutil/tests/test_testutils.py::TestProcessUtils::test_terminate PASSED
 psutil/tests/test_testutils.py::TestNetUtils::test_bind_unix_socket PASSED
 psutil/tests/test_testutils.py::TestNetUtils::test_create_sockets PASSED
-psutil/tests/test_testutils.py::TestNetUtils::test_unix_socketpair PASSED
+psutil/tests/test_testutils.py::TestNetUtils::test_tcp_socketpair PASSED
+psutil/tests/test_testutils.py::TestNetUtils::test_unix_socketpair SKIPPED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_execute_w_exc PASSED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_leak_mem PASSED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_param_err PASSED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_times PASSED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_tolerance PASSED
 psutil/tests/test_testutils.py::TestMemLeakClass::test_unclosed_files PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_main PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_mark PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_raises PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_skip PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_skipif PASSED
+psutil/tests/test_testutils.py::TestFakePytest::test_warns PASSED
 psutil/tests/test_testutils.py::TestTestingUtils::test_process_namespace PASSED
 psutil/tests/test_testutils.py::TestTestingUtils::test_system_namespace PASSED
 psutil/tests/test_testutils.py::TestOtherUtils::test_is_namedtuple PASSED
 psutil/tests/test_unicode.py::TestFSAPIs::test_disk_usage PASSED
-psutil/tests/test_unicode.py::TestFSAPIs::test_memory_maps SKIPPED (...)
 psutil/tests/test_unicode.py::TestFSAPIs::test_net_connections SKIPPED
-psutil/tests/test_unicode.py::TestFSAPIs::test_proc_cmdline SKIPPED
+psutil/tests/test_unicode.py::TestFSAPIs::test_proc_cmdline PASSED
 psutil/tests/test_unicode.py::TestFSAPIs::test_proc_cwd PASSED
 psutil/tests/test_unicode.py::TestFSAPIs::test_proc_exe PASSED
 psutil/tests/test_unicode.py::TestFSAPIs::test_proc_name PASSED
 psutil/tests/test_unicode.py::TestFSAPIs::test_proc_net_connections SKIPPED
 psutil/tests/test_unicode.py::TestFSAPIs::test_proc_open_files PASSED
 psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_disk_usage PASSED
-psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_memory_maps SKIPPED
 psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_net_connections SKIPPED
-psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_cmdline SKIPPED
 psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_cwd PASSED
 psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_exe PASSED
 psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_name PASSED
@@ -678,4 +678,4 @@ psutil/tests/test_windows.py::RemoteProcessTestCase::test_environ_64 SKIPPED
 psutil/tests/test_windows.py::TestServices::test_win_service_get SKIPPED
 psutil/tests/test_windows.py::TestServices::test_win_service_iter SKIPPED
 
-======== 336 passed, 337 skipped ========
+======== 363 passed, 310 skipped, 10 deselected ========
