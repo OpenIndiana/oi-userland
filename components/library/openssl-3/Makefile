@@ -20,13 +20,13 @@ DROP_STATIC_LIBRARIES = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			openssl
-COMPONENT_VERSION=		3.5.0
+COMPONENT_VERSION=		3.5.1
 COMPONENT_SUMMARY=		OpenSSL software library is a robust, commercial-grade, full-featured toolkit for general-purpose cryptography and secure communication
 COMPONENT_PROJECT_URL=		https://openssl-library.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=		https://github.com/openssl/openssl/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:344d0a79f1a9b08029b0744e2cc401a43f9c90acd1044d09a530b4885a8e9fc0
+COMPONENT_ARCHIVE_HASH=		sha256:529043b15cffa5f36077a4d0af83f3de399807181d607441d734196d889b641f
 COMPONENT_FMRI=			library/security/openssl-$(OPENSSL_VERSION)
 COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_LICENSE=		Apache-2.0
