@@ -1,9 +1,9 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) selftest.py
 --------------------------------------------------------------------
-Pillow 11.2.1
-Python 3.9.21 (main, Dec 13 2024, 20:24:16)
-       [GCC 13.3.0]
+Pillow 11.3.0
+Python 3.9.23 (main, Jun  9 2025, 15:00:38)
+       [GCC 14.3.0]
 --------------------------------------------------------------------
 Python executable is $(PYTHON)
 System Python files loaded from /usr
@@ -11,13 +11,13 @@ System Python files loaded from /usr
 Python Pillow modules loaded from $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/PIL
 Binary Pillow modules loaded from $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/PIL
 --------------------------------------------------------------------
---- PIL CORE support ok, compiled for 11.2.1
+--- PIL CORE support ok, compiled for 11.3.0
 --- TKINTER support ok, loaded 8.6
 --- FREETYPE2 support ok, loaded 2.13.3
 --- LITTLECMS2 support ok, loaded 2.17
 --- WEBP support ok, loaded 1.5.0
 *** AVIF support not installed
---- JPEG support ok, compiled for libjpeg-turbo 3.1.0
+--- JPEG support ok, compiled for libjpeg-turbo 3.1.1
 --- OPENJPEG (JPEG2000) support ok, loaded 2.5.3
 --- ZLIB (PNG/ZIP) support ok, loaded 1.3.1
 --- LIBTIFF support ok, loaded 4.7.0
@@ -34,7 +34,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: Tests
-collecting ... collected 4995 items / 1 skipped
+collecting ... collected 5029 items / 1 skipped
 
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_fonts[Tests/fonts/10x20-ISO8859-1-fewer-characters.pcf] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_fonts[Tests/fonts/10x20-ISO8859-1.pcf] PASSED
@@ -600,6 +600,7 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_bad_checksu
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_bad_exif.jpg] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_be.pfm] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_bigtiff.tif] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_bpp2.xpm] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_bw_500.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_draw.ico] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_emboss.bmp] PASSED
@@ -636,6 +637,7 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_orientation
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_orientation_8.webp] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_palette_chunk_second.fli] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_resized.gif] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_rgb.xpm] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_rle8.bmp] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_rle8_grayscale.bmp] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/hopper_rle8_row_overflow.bmp] PASSED
@@ -820,6 +822,7 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/morph_a.png] PASSE
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text_center.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text_justify.png] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text_justify_anchor.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text_right.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multiline_text_spacing.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/multipage-lastframe.tif] PASSED
@@ -839,6 +842,7 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_palette.gif] PA
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_palette_after_rgb.gif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_palette_with_background.gif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_palette_with_transparency.gif] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_palette_with_transparency_after_rgb.gif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/no_rows_per_strip.tif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/not_enough_data.jp2] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/odd_stride.pcx] PASSED
@@ -847,11 +851,13 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/old-style-jpeg-com
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/old-style-jpeg-compression.tif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/oom-225817ca0f8c663be7ab4b9e717b02c661e66834.tif] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/oom-8ed3316a4109213ca96fb8a256a0bfefdece1461.icns] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/op_index.qoi] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/orientation_rectangle.jpg] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/ossfuzz-4836216264589312.pcx] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/ossfuzz-5730089102868480.sgi] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/p_16.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/p_16.tga] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/p_4_planes.pcx] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/p_8.tga] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/p_trns_single.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/padded_idat.png] PASSED
@@ -976,6 +982,7 @@ Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_multi
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_multiline_rm_center.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_multiline_rm_left.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_multiline_rm_right.png] PASSED
+Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_multiline_ttb.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_overline.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_overline_la.png] PASSED
 Tests/oss-fuzz/test_fuzzers.py::test_fuzz_images[Tests/images/test_combine_overline_ra.png] PASSED
@@ -1544,6 +1551,12 @@ Tests/test_file_dds.py::test_save_dx10_bc5 PASSED
 Tests/test_file_dds.py::test_save_dxt1 PASSED
 Tests/test_file_dds.py::test_save_dxt3 PASSED
 Tests/test_file_dds.py::test_save_dxt5 PASSED
+Tests/test_file_dds.py::test_save_large_file[BC2-RGBA] PASSED
+Tests/test_file_dds.py::test_save_large_file[BC3-RGBA] PASSED
+Tests/test_file_dds.py::test_save_large_file[BC5-RGB] PASSED
+Tests/test_file_dds.py::test_save_large_file[DXT1-RGBA] PASSED
+Tests/test_file_dds.py::test_save_large_file[DXT3-RGBA] PASSED
+Tests/test_file_dds.py::test_save_large_file[DXT5-RGBA] PASSED
 Tests/test_file_dds.py::test_save_unsupported_mode PASSED
 Tests/test_file_dds.py::test_save_unsupported_pixel_format PASSED
 Tests/test_file_dds.py::test_short_file PASSED
@@ -1690,6 +1703,7 @@ Tests/test_file_gif.py::test_identical_frames_to_single_frame[duration2] PASSED
 Tests/test_file_gif.py::test_invalid_file PASSED
 Tests/test_file_gif.py::test_l_mode_after_rgb PASSED
 Tests/test_file_gif.py::test_l_mode_transparency PASSED
+Tests/test_file_gif.py::test_l_mode_transparency_after_rgb PASSED
 Tests/test_file_gif.py::test_loading_multiple_palettes[Tests/images/dispose_bgnd.gif-RGB] PASSED
 Tests/test_file_gif.py::test_loading_multiple_palettes[Tests/images/dispose_bgnd_rgba.gif-RGBA] PASSED
 Tests/test_file_gif.py::test_loop_none PASSED
@@ -2182,6 +2196,7 @@ Tests/test_file_pcx.py::test_odd[L] PASSED
 Tests/test_file_pcx.py::test_odd[P] PASSED
 Tests/test_file_pcx.py::test_odd[RGB] PASSED
 Tests/test_file_pcx.py::test_odd_read PASSED
+Tests/test_file_pcx.py::test_p_4_planes PASSED
 Tests/test_file_pcx.py::test_pil184 PASSED
 Tests/test_file_pcx.py::test_sanity PASSED
 Tests/test_file_pcx.py::test_unknown_mode PASSED
@@ -2213,6 +2228,7 @@ Tests/test_file_png.py::TestFilePng::test_bad_text PASSED
 Tests/test_file_png.py::TestFilePng::test_bad_ztxt PASSED
 Tests/test_file_png.py::TestFilePng::test_broken PASSED
 Tests/test_file_png.py::TestFilePng::test_chunk_order PASSED
+Tests/test_file_png.py::TestFilePng::test_deprecation PASSED
 Tests/test_file_png.py::TestFilePng::test_discard_icc_profile PASSED
 Tests/test_file_png.py::TestFilePng::test_exif PASSED
 Tests/test_file_png.py::TestFilePng::test_exif_argument PASSED
@@ -2280,7 +2296,8 @@ Tests/test_file_ppm.py::test_arbitrary_maxval[P5 3 1 257 \x00\x00\x00\x80\x01\x0
 Tests/test_file_ppm.py::test_arbitrary_maxval[P5 3 1 4 \x00\x02\x04-L-pixels4] PASSED
 Tests/test_file_ppm.py::test_arbitrary_maxval[P6 3 1 17 \x00\x01\x02\x08\t\n\x0f\x10\x11-RGB-pixels6] PASSED
 Tests/test_file_ppm.py::test_arbitrary_maxval[P6 3 1 257 \x00\x00\x00\x01\x00\x02\x00\x80\x00\x81\x00\x82\x01\x00\x01\x01\xff\xff-RGB-pixels7] PASSED
-Tests/test_file_ppm.py::test_header_token_too_long PASSED
+Tests/test_file_ppm.py::test_header_token_too_long[P3\x0cAAAAAAAAAA\xee] PASSED
+Tests/test_file_ppm.py::test_header_token_too_long[P6\n 01234567890] PASSED
 Tests/test_file_ppm.py::test_header_with_comments PASSED
 Tests/test_file_ppm.py::test_invalid_maxval[0] PASSED
 Tests/test_file_ppm.py::test_invalid_maxval[65536] PASSED
@@ -2336,7 +2353,9 @@ Tests/test_file_psd.py::test_seek_eoferror PASSED
 Tests/test_file_psd.py::test_seek_tell PASSED
 Tests/test_file_psd.py::test_unclosed_file PASSED
 Tests/test_file_qoi.py::test_invalid_file PASSED
+Tests/test_file_qoi.py::test_op_index PASSED
 Tests/test_file_qoi.py::test_sanity PASSED
+Tests/test_file_qoi.py::test_save PASSED
 Tests/test_file_sgi.py::test_invalid_file PASSED
 Tests/test_file_sgi.py::test_l PASSED
 Tests/test_file_sgi.py::test_rgb PASSED
@@ -2344,7 +2363,9 @@ Tests/test_file_sgi.py::test_rgb16 PASSED
 Tests/test_file_sgi.py::test_rgba PASSED
 Tests/test_file_sgi.py::test_rle PASSED
 Tests/test_file_sgi.py::test_rle16 PASSED
+Tests/test_file_sgi.py::test_unsupported_image_mode PASSED
 Tests/test_file_sgi.py::test_unsupported_mode PASSED
+Tests/test_file_sgi.py::test_unsupported_number_of_bytes_per_pixel PASSED
 Tests/test_file_sgi.py::test_write16 PASSED
 Tests/test_file_sgi.py::test_write[L] PASSED
 Tests/test_file_sgi.py::test_write[RGBA] PASSED
@@ -2450,6 +2471,7 @@ Tests/test_file_tiff.py::TestFileTiff::test_fixoffsets PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_frame_order PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_get_photoshop_blocks PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_getxmp PASSED
+Tests/test_file_tiff.py::TestFileTiff::test_getxmp_undefined PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_gray_semibyte_per_pixel PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_ifd_tag_type PASSED
 Tests/test_file_tiff.py::TestFileTiff::test_int_resolution PASSED
@@ -2598,9 +2620,14 @@ Tests/test_file_xbm.py::test_open PASSED
 Tests/test_file_xbm.py::test_open_filename_with_underscore PASSED
 Tests/test_file_xbm.py::test_pil151 PASSED
 Tests/test_file_xbm.py::test_save_wrong_mode PASSED
+Tests/test_file_xpm.py::test_bpp2 PASSED
+Tests/test_file_xpm.py::test_cannot_read_color PASSED
 Tests/test_file_xpm.py::test_invalid_file PASSED
 Tests/test_file_xpm.py::test_load_read PASSED
+Tests/test_file_xpm.py::test_not_enough_image_data PASSED
+Tests/test_file_xpm.py::test_rgb PASSED
 Tests/test_file_xpm.py::test_sanity PASSED
+Tests/test_file_xpm.py::test_truncated_header PASSED
 Tests/test_file_xvthumb.py::test_invalid_file PASSED
 Tests/test_file_xvthumb.py::test_open PASSED
 Tests/test_file_xvthumb.py::test_unexpected_eof PASSED
@@ -2655,8 +2682,10 @@ Tests/test_image.py::TestImage::test_empty_exif PASSED
 Tests/test_image.py::TestImage::test_empty_get_ifd PASSED
 Tests/test_image.py::TestImage::test_empty_image[size0] PASSED
 Tests/test_image.py::TestImage::test_empty_image[size1] PASSED
+Tests/test_image.py::TestImage::test_empty_path PASSED
 Tests/test_image.py::TestImage::test_empty_xmp PASSED
 Tests/test_image.py::TestImage::test_exception_inheritance PASSED
+Tests/test_image.py::TestImage::test_exif_from_xmp_bytes PASSED
 Tests/test_image.py::TestImage::test_exif_hide_offsets PASSED
 Tests/test_image.py::TestImage::test_exif_ifd PASSED
 Tests/test_image.py::TestImage::test_exif_ifd1 PASSED
@@ -4420,6 +4449,8 @@ Tests/test_imagefont.py::test_render_multiline_text_align[Layout.RAQM-center-_ce
 Tests/test_imagefont.py::test_render_multiline_text_align[Layout.RAQM-justify-_justify] SKIPPED
 Tests/test_imagefont.py::test_render_multiline_text_align[Layout.RAQM-left-] SKIPPED
 Tests/test_imagefont.py::test_render_multiline_text_align[Layout.RAQM-right-_right] SKIPPED
+Tests/test_imagefont.py::test_render_multiline_text_justify_anchor[Layout.BASIC] PASSED
+Tests/test_imagefont.py::test_render_multiline_text_justify_anchor[Layout.RAQM] SKIPPED
 Tests/test_imagefont.py::test_rotated_transposed_font[Layout.BASIC-Transpose.ROTATE_270] PASSED
 Tests/test_imagefont.py::test_rotated_transposed_font[Layout.BASIC-Transpose.ROTATE_90] PASSED
 Tests/test_imagefont.py::test_rotated_transposed_font[Layout.RAQM-Transpose.ROTATE_270] SKIPPED
@@ -4511,6 +4542,7 @@ Tests/test_imagefontctl.py::test_combine_multiline[mm-right] SKIPPED
 Tests/test_imagefontctl.py::test_combine_multiline[rm-center] SKIPPED
 Tests/test_imagefontctl.py::test_combine_multiline[rm-left] SKIPPED
 Tests/test_imagefontctl.py::test_combine_multiline[rm-right] SKIPPED
+Tests/test_imagefontctl.py::test_combine_multiline_ttb SKIPPED (raqm...)
 Tests/test_imagefontctl.py::test_complex_text SKIPPED (raqm not avai...)
 Tests/test_imagefontctl.py::test_complex_unicode_text SKIPPED (raqm ...)
 Tests/test_imagefontctl.py::test_english SKIPPED (raqm not available)
@@ -4888,6 +4920,7 @@ Tests/test_pdfparser.py::test_indirect_refs PASSED
 Tests/test_pdfparser.py::test_parsing PASSED
 Tests/test_pdfparser.py::test_pdf_repr PASSED
 Tests/test_pdfparser.py::test_text_encode_decode PASSED
+Tests/test_pickle.py::test_load_earlier_data PASSED
 Tests/test_pickle.py::test_pickle_font_file[0] PASSED
 Tests/test_pickle.py::test_pickle_font_file[1] PASSED
 Tests/test_pickle.py::test_pickle_font_file[2] PASSED
@@ -5020,6 +5053,7 @@ Tests/test_tiff_crashes.py::test_tiff_crashes[Tests/images/crash-86214e58da443d2
 Tests/test_tiff_crashes.py::test_tiff_crashes[Tests/images/crash-f46f5b2f43c370fe65706c11449f567ecc345e74.tif] PASSED
 Tests/test_tiff_crashes.py::test_tiff_crashes[Tests/images/crash_1.tif] SKIPPED
 Tests/test_tiff_crashes.py::test_tiff_crashes[Tests/images/crash_2.tif] SKIPPED
+Tests/test_tiff_crashes.py::test_tiff_mmap SKIPPED (test image not f...)
 Tests/test_tiff_ifdrational.py::test_ifd_rational_save[False] PASSED
 Tests/test_tiff_ifdrational.py::test_ifd_rational_save[True] PASSED
 Tests/test_tiff_ifdrational.py::test_nonetype PASSED
@@ -5033,6 +5067,6 @@ Tests/test_util.py::test_is_path[test_path2] PASSED
 Tests/test_webp_leaks.py::TestWebPLeaks::test_leak_load PASSED
 
 =========================== short test summary info ============================
-======== 4639 passed, 354 skipped, 3 xfailed ========
+======== 4670 passed, 357 skipped, 3 xfailed ========
   py$(PYV): OK
   congratulations :)
