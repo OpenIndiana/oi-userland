@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           x11-compatibility
 COMPONENT_VERSION=        $(PKG_OS_VERSION)
+COMPONENT_REVISION=	  4
 COMPONENT_SUMMARY=	  X Window System core client libraries and applications group
 COMPONENT_DESCRIPTION= 	  empty package to satisfy installation requirements of SunRay Server Software SUNWkio-libs
 COMPONENT_CLASSIFICATION= Development/X11
