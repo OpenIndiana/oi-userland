@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gi_docgen
-HUMAN_VERSION =			2025.3
+HUMAN_VERSION =			2025.4
 COMPONENT_SUMMARY =		Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2fdb4f0f6b61184ab862fcfb41dafe1a795636de9fd8d21a8ca4feea3b6bf858
+	sha256:7fe066da082a4edcf924063767404f9d04a998f6c0f0c475b180fd9823a72dc5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
 
