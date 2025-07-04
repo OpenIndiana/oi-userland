@@ -10,7 +10,7 @@
 
 #
 # Copyright 2016, Jim Klimov. All rights reserved.
-# Copyright 2023, Friedrich Kink. All rights reserved.
+# Copyright 2023,2025 Friedrich Kink. All rights reserved.
 #
 
 BUILD_STYLE= cmake
@@ -22,7 +22,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.4.2
+COMPONENT_VERSION=	1.4.3
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8c92f8ade2a8f2c9d6688d1d63ee57f6caf965d74dce06d0971c6709c8e6c04c
+COMPONENT_ARCHIVE_HASH=	sha256:d874cabf3d4765b35b518ef535658a1e6ec74802006a1d613f9f124aa1343210
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
@@ -52,14 +52,13 @@ COMPONENT_FETCH_USER_AGENT=	fetch
 include $(WS_MAKE_RULES)/common.mk
 
 # clamav now additionally also depends on rust :-(
-CARGO_HOME=		$(BUILD_DIR)/.cargo
+CARGO_HOME =		$(BUILD_DIR)/.cargo
 
-PATH=			$(PATH.gnu)
+PATH =			$(PATH.gnu)
 
 ENV +=			CARGO_HOME=$(CARGO_HOME)
 
-CONFIGURE_ENV=		$(ENV)
-COMPONENT_BUILD_ENV=	$(ENV)
+COMPONENT_BUILD_ENV =	$(ENV)
 
 # Note: This is done just in case, because according to
 # https://github.com/vrtadmin/clamav-devel/issues/45 currently
@@ -75,16 +74,15 @@ CPPFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 COMPONENT_PREP_ACTION= (cd $(@D) && for f in COPYING/*; do cat $$f >> COPYING.$(COMPONENT_NAME) ; done )
 
 CMAKE_ENV += LDFLAGS="-L$(OPENSSL_LIBDIR) -lsocket -lnsl"
-LDFLAGS+=-L$(OPENSSL_LIBDIR) -lsocket -lnsl
+LDFLAGS   += -L$(OPENSSL_LIBDIR) -lsocket -lnsl
 
 CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
-# clang still does not work
-CMAKE_OPTIONS+= -DBYTECODE_RUNTIME=llvm
-CMAKE_OPTIONS += -DBYTECODE_RUNTIME=interpreter
+# clang still does not work (version too new, even clang-16)
+#CMAKE_OPTIONS += -DBYTECODE_RUNTIME=llvm
 #CMAKE_OPTIONS += -DLLVM_ROOT_DIR=$(CLANG_PREFIX)
+CMAKE_OPTIONS += -DBYTECODE_RUNTIME=interpreter
 CMAKE_OPTIONS += -DAPP_CONFIG_DIRECTORY=/etc/clamav
 CMAKE_OPTIONS += -DCMAKE_SKIP_RPATH=ON
-CMAKE_OPTIONS += -DENABLE_JSON_SHARED=OFF
 CMAKE_OPTIONS += -DENABLE_UNRAR=ON
 CMAKE_OPTIONS += -DENABLE_JSON_SHARED=ON
 CMAKE_OPTIONS += -DENABLE_SYSTEMD=OFF
