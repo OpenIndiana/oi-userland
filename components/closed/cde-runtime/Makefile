@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           cde-runtime
-COMPONENT_VERSION=        $(PKG_OS_VERSION)
+COMPONENT_VERSION=        $(PKG_SOLARIS_VERSION)
 COMPONENT_REVISION=	  2
 COMPONENT_SUMMARY=	  CDE application basic runtime environment
 COMPONENT_DESCRIPTION= 	  for now only an empty package

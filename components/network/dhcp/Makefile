@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          dhcp
-COMPONENT_VERSION=       $(PKG_OS_VERSION)
+COMPONENT_VERSION=       $(PKG_SOLARIS_VERSION)
 COMPONENT_REVISION=	 1
 COMPONENT_SUMMARY=       empty package
 COMPONENT_DESCRIPTION=   empty package to satisfy installation requirements od SunRay Server Software

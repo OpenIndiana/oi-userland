@@ -16,7 +16,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           tooltalk
-COMPONENT_VERSION=        $(PKG_OS_VERSION)
+COMPONENT_VERSION=        $(PKG_SOLARIS_VERSION)
 COMPONENT_REVISION=	  2
 COMPONENT_SUMMARY=	  tooltalk library
 COMPONENT_DESCRIPTION= 	  for now only an empty package to satisfy the SunRay Server install requirements
