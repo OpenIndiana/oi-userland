@@ -1,4 +1,4 @@
-From 1e3883563faf35dea24bdd07d08d5659211bdeb5 Mon Sep 17 00:00:00 2001
+From 6f08fade162303925f5a134226b0a34044d13646 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <illumos@fiddaman.net>
 Date: Fri, 30 Dec 2022 18:06:57 +0000
 Subject: Drop unnecessary privileges
@@ -8,18 +8,18 @@ Subject: Drop unnecessary privileges
  1 file changed, 41 insertions(+)
 
 diff --git a/os-posix.c b/os-posix.c
-index 4858650c3e..26b7741023 100644
+index 52925c23d3..53114fc84b 100644
 --- a/os-posix.c
 +++ b/os-posix.c
-@@ -28,6 +28,7 @@
+@@ -29,6 +29,7 @@
  #include <pwd.h>
  #include <grp.h>
  #include <libgen.h>
 +#include <priv.h>
  
- /* Needed early for CONFIG_BSD etc. */
- #include "net/slirp.h"
-@@ -263,6 +264,45 @@ void os_daemonize(void)
+ #include "qemu/error-report.h"
+ #include "qemu/log.h"
+@@ -282,6 +283,45 @@ void os_setup_limits(void)
      }
  }
  
@@ -65,7 +65,7 @@ index 4858650c3e..26b7741023 100644
  void os_setup_post(void)
  {
      int fd = 0;
-@@ -280,6 +320,7 @@ void os_setup_post(void)
+@@ -299,6 +339,7 @@ void os_setup_post(void)
  
      change_root();
      change_process_uid();

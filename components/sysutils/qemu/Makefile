@@ -14,13 +14,14 @@
 #
 
 BUILD_BITS=		64
+USE_PARALLEL_BUILD=	yes
 
 include ../../../make-rules/shared-macros.mk
 
 PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
-COMPONENT_VERSION=	7.2.0
+COMPONENT_VERSION=	10.0.2
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
@@ -28,9 +29,8 @@ COMPONENT_FMRI=		system/qemu
 COMPONENT_CLASSIFICATION= System/Virtualization
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5b49ce2687744dad494ae90a898c52204a3406e84d072482a1e1be854eeb2157
+COMPONENT_ARCHIVE_HASH=	sha256:ef786f2398cb5184600f69aef4d5d691efd44576a3cff4126d38d4c6fec87759
 COMPONENT_ARCHIVE_URL=	https://download.qemu.org/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_LICENSE= 	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
@@ -47,11 +47,15 @@ CFLAGS		+= $(JPEG_CFLAGS)
 LDFLAGS		+= $(JPEG_LDFLAGS)
 LDFLAGS		+= -lumem
 
+# POSIX sigwait(2) plus strnlen visibility
+CFLAGS		+= -D__EXTENSIONS__=1
+
+CONFIGURE_OPTION += --enable-docs
+
 # Build dependencies
 REQUIRED_PACKAGES += library/libtasn1
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
@@ -65,6 +69,7 @@ REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/lzo
+REQUIRED_PACKAGES += library/network/libslirp
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

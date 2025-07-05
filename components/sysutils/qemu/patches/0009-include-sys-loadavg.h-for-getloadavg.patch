@@ -1,0 +1,24 @@
+From ff22541810af87d25852fb37bc3fa001cb130384 Mon Sep 17 00:00:00 2001
+From: Dominik Hassler <hadfl@omnios.org>
+Date: Sat, 10 May 2025 19:52:04 +0000
+Subject: include sys/loadavg.h for getloadavg
+
+---
+ qga/commands-posix.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/qga/commands-posix.c b/qga/commands-posix.c
+index 12bc086d79..545c18f183 100644
+--- a/qga/commands-posix.c
++++ b/qga/commands-posix.c
+@@ -47,6 +47,10 @@
+ #endif
+ #endif
+ 
++#ifdef __illumos__
++#include <sys/loadavg.h>
++#endif
++
+ static bool ga_wait_child(pid_t pid, int *status, Error **errp)
+ {
+     pid_t rpid;
