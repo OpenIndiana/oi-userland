@@ -16,13 +16,12 @@ USE_PARALLEL_BUILD = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 13.3.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION= 13.4.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:bdc80b99f448888bbf33d0432039391634a7210e7c6d014658856ded0347c731
+  sha256:c1be0251330f238724c564e0ba90972eaf24d356784b7465786f8dd3291151d8
 
 MPFR_VERSION=4.2.1
 MPFR_ARCHIVE_HASH= \
@@ -71,18 +70,22 @@ COMPONENT_POST_INSTALL_ACTION = \
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
-CONFIGURE_OPTIONS+= --with-build-config=no
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,objc
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --with-system-zlib
-CONFIGURE_OPTIONS+= --enable-plugins
-CONFIGURE_OPTIONS+= --enable-__cxa_atexit
-CONFIGURE_OPTIONS+= --enable-initfini-array
-CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
-CONFIGURE_OPTIONS+= enable_frame_pointer=yes
+CONFIGURE_OPTIONS += --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
+CONFIGURE_OPTIONS += --with-build-config=no
+CONFIGURE_OPTIONS += --enable-languages=c,c++,fortran,go,objc
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --with-system-zlib
+CONFIGURE_OPTIONS += --enable-plugins
+CONFIGURE_OPTIONS += --enable-__cxa_atexit
+CONFIGURE_OPTIONS += --enable-initfini-array
+CONFIGURE_OPTIONS += --with-diagnostics-urls=auto-if-env
+CONFIGURE_OPTIONS += enable_frame_pointer=yes
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+COMPONEMT_TEST_TRANSFORMS= -n \
+    "-e '/Running/p' " \
+    "-e '/Summary/p' " \
+    "-e '/\# of/p' "
 
 PKG_HARDLINKS += usr/gcc/13/bin/g++
 PKG_HARDLINKS += usr/gcc/13/bin/gcc
