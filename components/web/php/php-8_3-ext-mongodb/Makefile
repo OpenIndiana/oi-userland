@@ -10,18 +10,18 @@
 
 #
 # Copyright (c) 2019 Alexander Pyhalov
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.3-ext-mongodb
-COMPONENT_VERSION=	1.20.0
+COMPONENT_VERSION=	2.1.1
 COMPONENT_SUMMARY=	MongoDB driver for PHP
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/mongodb
 COMPONENT_SRC=		mongodb-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:01e87973fe7e54aac52054ec4a99cdd439ed5c01f7e5b8ea0a57031850d8e75a
+COMPONENT_ARCHIVE_HASH=	sha256:bea8eb86be7e301b1cd3935ee3ccfa052e410a7cfa404ae5ab4b11e4c99b8899
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_FMRI=		web/php-83/extension/php-mongodb
 COMPONENT_CLASSIFICATION=	Development/PHP
