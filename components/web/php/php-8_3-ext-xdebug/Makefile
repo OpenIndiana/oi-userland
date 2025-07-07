@@ -13,19 +13,19 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2019 Alexander Pyhalov
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xdebug
-COMPONENT_VERSION=	3.4.2
+COMPONENT_VERSION=	3.4.4
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_NAME)
 COMPONENT_SUMMARY=	Xdebug is a debugging and productivity extension for PHP
 COMPONENT_FMRI=		web/php-83/extension/php-xdebug
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:a043888c86e1526ac5ddb220d37ed3a1809e79a16bbb059b9c7e2d2f83b43cc1
+COMPONENT_ARCHIVE_HASH=	sha256:f8e6aaac0c61b466204ed1117456cb1ba788e083229bd1aa7acd8f53dbfeb614
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_LICENSE=	BSD style
 COMPONENT_LICENSE_FILE=	LICENSE
