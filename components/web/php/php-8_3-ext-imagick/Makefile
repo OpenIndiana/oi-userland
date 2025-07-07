@@ -10,18 +10,18 @@
 
 #
 # Copyright (c) 2024 Stephan Althaus
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.3-ext-imagick
-COMPONENT_VERSION=	3.7.0
+COMPONENT_VERSION=	3.8.0
 COMPONENT_SUMMARY=	ImageMagick for PHP
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/imagick
 COMPONENT_SRC=		imagick-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:5a364354109029d224bcbb2e82e15b248be9b641227f45e63425c06531792d3e
+COMPONENT_ARCHIVE_HASH=	sha256:bda67461c854f20d6105782b769c524fc37388b75d4481d951644d2167ffeec6
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/php-83/extension/php-imagick
 COMPONENT_CLASSIFICATION=	Development/PHP
