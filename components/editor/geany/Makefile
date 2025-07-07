@@ -17,13 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany
-COMPONENT_VERSION=      2.0
-COMPONENT_REVISION=	3
-COMPONENT_SUMMARY=      A fast and lightweight IDE
-COMPONENT_DESCRIPTION=	Small and fast IDE, which has only a few dependencies from other package (independent on DE)
+COMPONENT_VERSION=      2.1
+COMPONENT_SUMMARY=		Small and fast IDE, which has only a few dependencies from other packages
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:565b4cd2f0311c1e3a167ec71c4a32dba642e0fe554ae5bb6b8177b7a74ccc92
+COMPONENT_ARCHIVE_HASH= sha256:6b96a8844463300c10b9692a0a5edad8236eec9e84342f575f83d4fc89331228
 COMPONENT_ARCHIVE_URL=  https://download.geany.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.geany.org
 COMPONENT_FMRI=         editor/geany
