@@ -11,17 +11,17 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2019 Alexander Pyhalov
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		redis
-COMPONENT_VERSION=	6.1.0
+COMPONENT_VERSION=	6.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/redis
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:f10405f639fe415e9ed4ec99538e72c90694d8dbd62868edcfcd6a453466b48c
+COMPONENT_ARCHIVE_HASH=	sha256:5069c13dd22bd9e494bb246891052cb6cc0fc9a1b45c6a572a8be61773101363
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	php extension for interfacing with Redis
 COMPONENT_FMRI=		web/php-83/extension/php-redis
