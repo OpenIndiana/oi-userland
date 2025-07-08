@@ -26,6 +26,9 @@ COMPONENT_CLASSIFICATION =	System/Virtualization
 
 include $(WS_MAKE_RULES)/common.mk
 
+# be sure that required packages are installed so the resolver will be successful
+install: component-environment-prep
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += audio/mpg123/32
