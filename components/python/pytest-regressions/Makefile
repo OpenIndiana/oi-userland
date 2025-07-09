@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_regressions
-HUMAN_VERSION =			2.8.0
+HUMAN_VERSION =			2.8.1
 COMPONENT_SUMMARY =		Easy to use fixtures to write regression tests.
 COMPONENT_PROJECT_URL =		https://github.com/ESSS/pytest-regressions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:775044e17117f5427df2caad3ab1c66889abe770a0ce2bc3f24fdeac99af76fe
+	sha256:20080d44cf46b40407956af5e44a7f932cbc3159018de81fb51e62b97e96a5fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
