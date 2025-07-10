@@ -15,16 +15,14 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mm-common
-COMPONENT_VERSION=      1.0.6
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.0.7
 COMPONENT_SUMMARY=      GNOME C++ bindings effort https://www.gtkmm.org support tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b55c46037dbcdabc5cee3b389ea11cc3910adb68ebe883e9477847aa660862e7
+COMPONENT_ARCHIVE_HASH= sha256:494abfce781418259b1e9d8888c73af4de4b6f3be36cc75d9baa8baa0f2a7a39
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI=         library/desktop/c++/mm-common
