@@ -19,11 +19,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 1.5.0
+COMPONENT_VERSION= 1.6.0
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7d6fab70cf844bf6769077bd5d7a74893f8ffd4dfb42861745750c63c2a5c92c
+COMPONENT_ARCHIVE_HASH= sha256:e4ab7009bf0629fd11982d4c2aa83964cf244cffba7347ecd39019a9e38c4564
 COMPONENT_ARCHIVE_URL= https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://developers.google.com/speed/webp/
 COMPONENT_FMRI= library/libwebp
