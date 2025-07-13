@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		expandvars
-HUMAN_VERSION =			1.0.0
+HUMAN_VERSION =			1.1.1
 COMPONENT_SUMMARY =		Expand system variables Unix style
 COMPONENT_PROJECT_URL =		https://github.com/sayanarijit/expandvars
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f04070b8260264185f81142cd85e5df9ceef7229e836c5844302c4ccfa00c30d
+	sha256:98add8268b760dfee457bde1c17bf745795fdebc22b7ddab75fd3278653f1e05
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
