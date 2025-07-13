@@ -18,13 +18,13 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=	1.13.0
+COMPONENT_VERSION=	1.13.1
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_SRC=    		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f08641d00099a9e40d44ec0146f841c472ae58b7e6dd517bee3945cfd923cedf
+COMPONENT_ARCHIVE_HASH=	sha256:f0055ad0369bf2e372955ba55128d000cfcc21777057806015b45e4accbebf23
 COMPONENT_FMRI=         developer/build/ninja
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=	Apache-2.0
