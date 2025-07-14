@@ -1,0 +1,31 @@
+OpenIndiana has a different default location for certificates.
+
+--- swipl-9.3.25/packages/ssl/ssl4pl.c.orig	2025-04-30 14:56:30.000000000 +0200
++++ swipl-9.3.25/packages/ssl/ssl4pl.c	2025-07-14 18:51:59.860882031 +0200
+@@ -68,7 +68,7 @@
+ 
+ #define SSL_CONFIG_MAGIC 0x539dbe3a
+ #ifndef SYSTEM_CACERT_FILENAME
+-#define SYSTEM_CACERT_FILENAME "/etc/ssl/certs/ca-certificates.crt"
++#define SYSTEM_CACERT_FILENAME "/etc/certs/ca-certificates.crt"
+ #endif
+ 
+ #define SSL_MAX_CERT_KEY_PAIRS 12
+--- swipl-9.3.25/packages/ssl/CMakeLists.txt.orig	2025-04-30 14:56:30.000000000 +0200
++++ swipl-9.3.25/packages/ssl/CMakeLists.txt	2025-07-14 19:19:05.564215009 +0200
+@@ -112,13 +112,14 @@
+ 
+ if(NOT DEFINED SYSTEM_CACERT_FILENAME)
+   set(CERT_CANDIDATES
++      /etc/certs/ca-certificates.crt
+       /data/data/com.termux/files/usr/etc/tls/cert.pem
+       /etc/ssl/certs/ca-certificates.crt
+       /etc/pki/tls/certs/ca-bundle.crt
+       /etc/ssl/ca-bundle.pem
+       /etc/ssl/cert.pem)
+ 
+-  set(SYSTEM_CACERT_FILENAME /etc/ssl/certs/ca-certificates.crt)
++  set(SYSTEM_CACERT_FILENAME /etc/certs/ca-certificates.crt)
+   foreach(f ${CERT_CANDIDATES})
+     if(EXISTS ${f})
+       set(SYSTEM_CACERT_FILENAME ${f})
