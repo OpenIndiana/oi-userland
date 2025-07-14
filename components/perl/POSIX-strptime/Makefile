@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module POSIX::strptime
+#   $WS_TOOLS/perl-integrate-module POSIX-strptime
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		POSIX::strptime
+COMPONENT_NAME =		POSIX-strptime
 HUMAN_VERSION =			0.13
-COMPONENT_SUMMARY =		POSIX::strptime - Perl extension to the POSIX date parsing strptime(3) function
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Perl extension to the POSIX date parsing strptime(3) function
 COMPONENT_CPAN_AUTHOR =		GOZER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a818109829e35a4ac79677d68063865f40c87c99ca7f3a20890177a8f8e5c277
@@ -29,5 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
