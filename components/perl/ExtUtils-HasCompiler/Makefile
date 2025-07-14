@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module ExtUtils::HasCompiler
+#   $WS_TOOLS/perl-integrate-module ExtUtils-HasCompiler
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		ExtUtils::HasCompiler
+COMPONENT_NAME =		ExtUtils-HasCompiler
 HUMAN_VERSION =			0.025
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		ExtUtils::HasCompiler - Check for the presence of a compiler
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Check for the presence of a compiler
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:02e1e7275df00682d3ca8ea1c27a30591d6dd08b3e3865c0958afae911635a66
@@ -31,4 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
