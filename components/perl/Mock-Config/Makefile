@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mock-Config
 HUMAN_VERSION =			0.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		temporarily set Config or XSConfig values
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
