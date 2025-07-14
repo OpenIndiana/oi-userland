@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::Random::TESHA2
+#   $WS_TOOLS/perl-integrate-module Crypt-Random-TESHA2
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::Random::TESHA2
+COMPONENT_NAME =		Crypt-Random-TESHA2
 HUMAN_VERSION =			0.01
-COMPONENT_SUMMARY =		Crypt::Random::TESHA2 - Random numbers using timer/schedule entropy
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Random numbers using timer/schedule entropy, aka userspace voodoo entropy
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a0912b42c52be173da528d5527e40d967324bc04ac78d9fc2ddc91ff16fe9633
@@ -30,4 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
