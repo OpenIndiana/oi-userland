@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Digest::HMAC
+#   $WS_TOOLS/perl-integrate-module Digest-HMAC
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Digest::HMAC
+COMPONENT_NAME =		Digest-HMAC
 HUMAN_VERSION =			1.05
-COMPONENT_SUMMARY =		Digest::HMAC - Keyed-Hashing for Message Authentication
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Keyed-Hashing for Message Authentication
 COMPONENT_CPAN_AUTHOR =		ARODLAND
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:215cb59cba610745cfb2d4b3f8ef756d590e57e3ad7986a992e87c4969fcdc7a
@@ -30,4 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
