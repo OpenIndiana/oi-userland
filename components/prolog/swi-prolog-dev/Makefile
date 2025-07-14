@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swipl
 COMPONENT_VERSION=	9.3.25
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Robust, mature, free. Prolog for the real world. This is the development version.
 COMPONENT_PROJECT_URL= https://www.swi-prolog.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
