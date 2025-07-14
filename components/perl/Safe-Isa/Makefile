@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Safe-Isa
 HUMAN_VERSION =			1.000010
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Call isa, can, does and DOES safely on things that may not be objects
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
