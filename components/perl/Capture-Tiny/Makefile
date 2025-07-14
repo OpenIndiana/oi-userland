@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Capture-Tiny
 HUMAN_VERSION =			0.50
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Capture STDOUT and STDERR from Perl, XS or external programs
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
