@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Parallel::Iterator
+#   $WS_TOOLS/perl-integrate-module Parallel-Iterator
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Parallel::Iterator
+COMPONENT_NAME =		Parallel-Iterator
 HUMAN_VERSION =			1.002
-COMPONENT_SUMMARY =		Parallel::Iterator - Simple parallel execution
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Simple parallel execution
 COMPONENT_CPAN_AUTHOR =		ARISTOTLE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:83749a5293cd76c55963cc11b1cfe89ba8c3223e83c8b1b8b52fe9f672e6d931
@@ -31,3 +32,4 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
