@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Curses
 HUMAN_VERSION =			1.45
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		terminal screen handling and optimization
 COMPONENT_CPAN_AUTHOR =		GIRAFFED
 COMPONENT_ARCHIVE_HASH =	\
