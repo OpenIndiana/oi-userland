@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Regexp-IPv6
 HUMAN_VERSION =			0.03
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Regular expression for IPv6 addresses
 COMPONENT_CPAN_AUTHOR =		SALVA
 COMPONENT_ARCHIVE_HASH =	\
