@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Browser::Open
+#   $WS_TOOLS/perl-integrate-module Browser-Open
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Browser::Open
+COMPONENT_NAME =		Browser-Open
 HUMAN_VERSION =			0.04
-COMPONENT_SUMMARY =		Browser::Open - open a browser in a given URL
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		open a browser in a given URL
 COMPONENT_CPAN_AUTHOR =		CFRANKS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:aceb3129782fe06e5b6e3e4b1a97e20c208426e5870ea67fb63b79188b056867
@@ -29,4 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
