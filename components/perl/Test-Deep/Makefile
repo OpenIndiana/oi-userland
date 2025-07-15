@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Deep
 HUMAN_VERSION =			1.205
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Extremely flexible deep comparison
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
