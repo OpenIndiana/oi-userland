@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Perl-Tidy
 HUMAN_VERSION =			20250711
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		indent and reformat perl scripts
 COMPONENT_CPAN_AUTHOR =		SHANCOCK
 COMPONENT_ARCHIVE_HASH =	\
