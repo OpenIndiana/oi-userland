@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Regexp-IPv4
 HUMAN_VERSION =			0.003
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Regular expression for IPv4 addresses
 COMPONENT_CPAN_AUTHOR =		PERLANCAR
 COMPONENT_ARCHIVE_HASH =	\
