@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone-PP
 HUMAN_VERSION =			1.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
