@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Class-ErrorHandler
 HUMAN_VERSION =			0.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Base class for error handling
 COMPONENT_CPAN_AUTHOR =		TOKUHIROM
 COMPONENT_ARCHIVE_HASH =	\
