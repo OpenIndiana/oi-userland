@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Round
 HUMAN_VERSION =			0.08
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl extension for rounding numbers
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
