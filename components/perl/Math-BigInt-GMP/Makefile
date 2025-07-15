@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt-GMP
 HUMAN_VERSION =			1.7003
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		check that a library is available
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
