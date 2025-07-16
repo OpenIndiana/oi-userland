@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Inter
 HUMAN_VERSION =			1.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		framework for more readable interactive test scripts
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
