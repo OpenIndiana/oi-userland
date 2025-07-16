@@ -18,9 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		indirect
+COMPONENT_NAME =		indirect
 HUMAN_VERSION =			0.39
-COMPONENT_SUMMARY =		indirect - Lexically warn about using the indirect method call syntax.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Lexically warn about using the indirect method call syntax.
 COMPONENT_CPAN_AUTHOR =		VPIT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:71733c4c348e98fdd575b44a52042428c39888a18c25656efe59ef3d7d0d27e5
@@ -29,5 +30,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
