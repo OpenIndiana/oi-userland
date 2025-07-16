@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Type::Tiny::XS
+#   $WS_TOOLS/perl-integrate-module Type-Tiny-XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Type::Tiny::XS
+COMPONENT_NAME =		Type-Tiny-XS
 HUMAN_VERSION =			0.025
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Type::Tiny::XS - provides an XS boost for some of Type::Tiny's built-in type constraints
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		provides an XS boost for some of Type::Tiny's built-in type constraints
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9a61450dda90294f606cd7a3fa44f3b1a366bcd88a419917b054ee5e23d148bd
@@ -42,6 +42,8 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_TEST_BOOTSTRAP = yes
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/type-tiny
