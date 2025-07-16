@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		YAML-LibYAML
 HUMAN_VERSION =			v0.904.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl YAML Serialization using XS and libyaml
 COMPONENT_CPAN_AUTHOR =		TINITA
 COMPONENT_ARCHIVE_HASH =	\
