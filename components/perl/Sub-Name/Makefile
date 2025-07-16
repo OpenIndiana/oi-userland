@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Sub-Name
 HUMAN_VERSION =			0.28
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		(Re)name a sub
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
