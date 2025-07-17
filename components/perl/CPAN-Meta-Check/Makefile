@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta-Check
 HUMAN_VERSION =			0.018
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Verify requirements in a CPAN::Meta object
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
