@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module ExtUtils::InstallPaths
+#   $WS_TOOLS/perl-integrate-module ExtUtils-InstallPaths
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		ExtUtils::InstallPaths
+COMPONENT_NAME =		ExtUtils-InstallPaths
 HUMAN_VERSION =			0.014
-COMPONENT_SUMMARY =		ExtUtils::InstallPaths - Build.PL install path logic made easy
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Build.PL install path logic made easy
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ae65d20cc3c7e14b3cd790915c84510f82dfb37a4c9b88aa74b2e843af417d01
@@ -31,4 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-config
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
