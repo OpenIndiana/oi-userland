@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::HomeDir
+#   $WS_TOOLS/perl-integrate-module File-HomeDir
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::HomeDir
+COMPONENT_NAME =		File-HomeDir
 HUMAN_VERSION =			1.006
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		File::HomeDir - Find your home and other directories on any platform
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Find your home and other directories on any platform
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:593737c62df0f6dab5d4122e0b4476417945bb6262c33eedc009665ef1548852
@@ -31,5 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
