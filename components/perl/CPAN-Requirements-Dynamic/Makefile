@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Requirements-Dynamic
 HUMAN_VERSION =			0.002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Dynamic prerequisites in meta files
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
