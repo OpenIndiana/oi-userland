@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PkgConfig
 HUMAN_VERSION =			0.26026
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure-Perl Core-Only replacement for pkg-config
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
