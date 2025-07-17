@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::Random::Seed
+#   $WS_TOOLS/perl-integrate-module Crypt-Random-Seed
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::Random::Seed
+COMPONENT_NAME =		Crypt-Random-Seed
 HUMAN_VERSION =			0.03
-COMPONENT_SUMMARY =		Crypt::Random::Seed - Simple method to get strong randomness
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Provide strong randomness for seeding
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:593da54b522c09cc26bbcc0e4e49c1c8e688a6fd33b0726af801d722a5c8d0f1
@@ -31,4 +32,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-random-tesha2
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
