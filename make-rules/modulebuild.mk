@@ -45,7 +45,9 @@ COMPONENT_TEST_CMD = ./Build
 # Without the workaround we would need to add library/perl-5/module-build as a
 # required package manually to all Perl components with the modulebuild build
 # style.  We do not need the library/perl-5/module-build package to bootstrap
-# the Module::Build module itself.
+# the Module-Build distribution itself.
+ifneq ($(strip $(COMPONENT_NAME)),Module-Build)
 ifneq ($(strip $(COMPONENT_PERL_MODULE)),Module::Build)
 USERLAND_REQUIRED_PACKAGES.perl += library/perl-5/module-build
+endif
 endif
