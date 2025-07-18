@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Socket
-HUMAN_VERSION =			2.039
+HUMAN_VERSION =			2.040
 COMPONENT_SUMMARY =		networking constants and support functions
 COMPONENT_CPAN_AUTHOR =		PEVANS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5dc61ae6e049e50d1052d656341b6091dc9f884464a78e2afdc2b989ff4390bb
+	sha256:be0102fdcea8d43f1b02ef2ef94345ac4bbc7b6c66ece2ddd1a3593d8371ba1b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
