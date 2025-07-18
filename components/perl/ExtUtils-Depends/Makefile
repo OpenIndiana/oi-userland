@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-Depends
 HUMAN_VERSION =			0.8002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Easily build XS extensions that depend on XS extensions
 COMPONENT_CPAN_AUTHOR =		ETJ
 COMPONENT_ARCHIVE_HASH =	\
