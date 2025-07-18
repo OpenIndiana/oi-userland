@@ -65,10 +65,6 @@ find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 
 
 /usr/bin/jq -r '.prereqs|'"$PHASES"'|'"$RELATION"'|to_entries?|.[]|.key+" "+(.value|tostring)' | while read PREREQ VERSION ; do
-	# Convert perl version number to pkg(5) compatible form
-	VER=$("$PERL_VERSION_CONVERT" "$PREREQ" "$VERSION")
-	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
-
 	CACHEFILE="$CACHEDIR/$PREREQ-$PERLVER"
 
 	# Resolve the dependency if not in cache already
@@ -106,6 +102,12 @@ find "$CACHEDIR" -type f -mtime +7 -exec rm -f {} \;
 			[[ ! -e "$CACHEFILE" ]] && > "$CACHEFILE"
 		fi
 	fi
+
+	# Convert the Perl-style version number to pkg(5) compatible format.
+	# Use short form of the cached resolved package name.
+	PKG=$(cat "$CACHEFILE" | grep 'fmri=pkg:/library/perl-5/' | sed -e 's/.*fmri=[^ ]*\/\([^/ ]*\)-\$(PLV) .*/\1/')
+	VER=$("$PERL_VERSION_CONVERT" "$PKG" "$VERSION")
+	[[ "$VER" != "0" ]] && VER="@$VER" || VER=
 
 	# Use cached result, add required version number and drop runtime/perl
 	cat "$CACHEFILE" | sed -e 's/\(fmri=[^ ]*\)/\1'$VER'/g' -e '/fmri=pkg:\/runtime\/perl-\$(PLV)/d'
