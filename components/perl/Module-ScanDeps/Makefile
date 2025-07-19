@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::ScanDeps
+#   $WS_TOOLS/perl-integrate-module Module-ScanDeps
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::ScanDeps
+COMPONENT_NAME =		Module-ScanDeps
 HUMAN_VERSION =			1.37
-COMPONENT_SUMMARY =		Module::ScanDeps - Recursively scan Perl code for dependencies
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Recursively scan Perl code for dependencies
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1f5e119cade1466c39c71e5bc35a8d4f4e672635db03d79a5a0dcf08c4e2b5a3
@@ -33,6 +34,14 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e '/syntax OK$$/d'"
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
+PERL_REQUIRED_PACKAGES += library/perl-5/module-metadata
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/text-parsewords
+PERL_REQUIRED_PACKAGES += library/perl-5/version
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/ipc-run3
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
