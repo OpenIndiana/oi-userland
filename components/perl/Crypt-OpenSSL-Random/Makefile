@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::OpenSSL::Random
+#   $WS_TOOLS/perl-integrate-module Crypt-OpenSSL-Random
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Random
+COMPONENT_NAME =		Crypt-OpenSSL-Random
 HUMAN_VERSION =			0.17
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Crypt::OpenSSL::Random - OpenSSL/LibreSSL pseudo-random number generator access
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		OpenSSL/LibreSSL pseudo-random number generator access
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a571b24181baaa76c96704e92acffc6934ff593e380dade274db4e43c140ad51
@@ -35,7 +35,9 @@ COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
