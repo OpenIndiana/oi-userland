@@ -49,9 +49,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3555
-GIT_TAG=		sun-v5.0.74
-PLUGIN_REV=		5.0-202506081804
+COMPONENT_VERSION=	5.0.3566
+GIT_TAG=		sun-v5.0.75
+PLUGIN_REV=		5.0-202507060821
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -65,7 +65,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9165a043cd9fa032bf5146c5ccd454d0fd70ce8cadacd8a5ec8d0a2781d6bdd5
+COMPONENT_ARCHIVE_HASH=	sha256:905b397597dd7d9f2ff9fbedf6b80b4ec9db7aac96cd5b0ff57fa893f20d2094
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -130,6 +130,7 @@ CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
+CONFIGURE_OPTIONS +=	--without-gl
 CONFIGURE_OPTIONS +=	--without-vm-sound-Sun
 CONFIGURE_OPTIONS +=	--without-vm-sound-OSS
 CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.stack
@@ -173,7 +174,8 @@ rebuild-manifests::
 	tools/classify.pl <sample.p5m
 	rm -f sample-manifest.p5m sample.p5m
 
-REQUIRED_PACKAGES += x11/library/mesa
+# since 5.0.3566 build with --without-gl
+# REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
