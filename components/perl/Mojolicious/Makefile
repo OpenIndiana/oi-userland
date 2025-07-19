@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mojolicious
 HUMAN_VERSION =			9.41
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,8 +30,20 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Mojolicious --> Cpanel-JSON-XS --> Mojolicious
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/role-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpanel-json-xs
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
