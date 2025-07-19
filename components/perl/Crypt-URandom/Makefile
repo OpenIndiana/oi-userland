@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-URandom
 HUMAN_VERSION =			0.54
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Provide non blocking randomness
 COMPONENT_CPAN_AUTHOR =		DDICK
 COMPONENT_ARCHIVE_HASH =	\
