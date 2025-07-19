@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Text::Diff
+#   $WS_TOOLS/perl-integrate-module Text-Diff
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Text::Diff
+COMPONENT_NAME =		Text-Diff
 HUMAN_VERSION =			1.45
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Text::Diff - Perform diffs on files and record sets
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perform diffs on files and record sets
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e8baa07b1b3f53e00af3636898bbf73aec9a0ff38f94536ede1dbe96ef086f04
@@ -32,4 +32,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/algorithm-diff
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
