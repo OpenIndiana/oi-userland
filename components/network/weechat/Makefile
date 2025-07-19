@@ -18,7 +18,7 @@ SINGLE_PERL_VERSION= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		weechat
-COMPONENT_VERSION=	4.6.3
+COMPONENT_VERSION=	4.7.0
 COMPONENT_SUMMARY=	WeeChat - portable, fast, light and extensible IRC client
 COMPONENT_DESCRIPTION=	WeeChat (Wee Enhanced Environment for Chat) is a portable, fast, light and \
 extensible chat client. Everything can be done with a keyboard. \
@@ -26,7 +26,7 @@ It is customizable and extensible with scripts.
 COMPONENT_PROJECT_URL=	https://weechat.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5c0b5efa969b873c4be582019b18523ee403e7430b8223825bcdb44a89f5815d
+COMPONENT_ARCHIVE_HASH=	sha256:45dc0396060c863169868349ec280af1c6f4ac524aa492580e1a065e142c2cd8
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/src/$(COMPONENT_ARCHIVE)
 # The signature is invalid
 #COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
@@ -58,9 +58,11 @@ COMPONENT_POST_INSTALL_ACTION= \
 		$(ELFEDIT) -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(RUBY_LIBDIR)"' $$file ; \
 	done ;
 
+# Manually added build dependencies
+PYTHON_REQUIRED_PACKAGES += runtime/python
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/guile
