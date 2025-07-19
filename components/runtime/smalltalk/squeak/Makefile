@@ -71,7 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.20.10
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -183,13 +183,12 @@ CLEAN_PATHS+= Cross
 CONFIGURE_SCRIPT= $(SOURCE_DIR_2)/cmake/configure
 CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR_0)
 CONFIGURE_OPTIONS +=    --link-shared-lib
+CONFIGURE_OPTIONS +=    --without-gl
 CONFIGURE_OPTIONS +=    --without-vm-sound-Sun
 CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
 CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
 CONFIGURE_OPTIONS +=    --without-ScratchPlugin
-# cmake 4.0.2 requires 09-Pluginscmake.patch 10-npsqueak.patch and this -D
-CONFIGURE_OPTIONS +=    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
@@ -223,7 +222,8 @@ rebuild-manifests::
 # disable pkglint until we find solution for 64bit object in 32-bit path error
 PKGLINT= /bin/true
 
-REQUIRED_PACKAGES += x11/library/mesa
+# avoid mesa , use configure --without-gl
+# REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
