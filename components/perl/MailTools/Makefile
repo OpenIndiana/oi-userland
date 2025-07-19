@@ -18,9 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		MailTools
+COMPONENT_NAME =		MailTools
 HUMAN_VERSION =			2.22
-COMPONENT_SUMMARY =		MailTools - bundle of ancient email modules
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Various ancient e-mail related modules
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3bf68bb212298fa699a52749dddff35583a74f36a92ca89c843b854f29d87c77
@@ -29,5 +30,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/libnet
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/timedate
 PERL_REQUIRED_PACKAGES += runtime/perl
