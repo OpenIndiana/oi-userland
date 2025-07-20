@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::IDN::Encode
+#   $WS_TOOLS/perl-integrate-module Net-IDN-Encode
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::IDN::Encode
+COMPONENT_NAME =		Net-IDN-Encode
 HUMAN_VERSION =			2.500
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Net::IDN::Encode - Internationalizing Domain Names in Applications (IDNA)
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Internationalizing Domain Names in Applications (UTS #46)
 COMPONENT_CPAN_AUTHOR =		CFAERBER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:55453633e3ff24ce325b34bc2c8157b9859962a31ab5cf28bf7ccc1c9b3a3eaa
@@ -35,3 +35,4 @@ PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
