@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-OpenSSL-RSA
 HUMAN_VERSION =			0.35
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		RSA encoding and decoding, using the openSSL libraries
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
