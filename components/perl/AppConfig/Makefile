@@ -18,9 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		AppConfig
+COMPONENT_NAME =		AppConfig
 HUMAN_VERSION =			1.71
-COMPONENT_SUMMARY =		AppConfig - Perl5 module for reading configuration files and parsing command line arguments.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		AppConfig is a bundle of Perl5 modules for reading configuration files and parsing command line arguments.
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1177027025ecb09ee64d9f9f255615c04db5e14f7536c344af632032eb887b0f
@@ -30,5 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
