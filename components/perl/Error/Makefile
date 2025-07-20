@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Error
 HUMAN_VERSION =			0.17030
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Error/exception handling in an OO-ish way
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
