@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Stream-Zstd
 HUMAN_VERSION =			0.206
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl interface to the Zstd (Zstandard) (de)compressor
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
