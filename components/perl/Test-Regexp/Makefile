@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Regexp
+#   $WS_TOOLS/perl-integrate-module Test-Regexp
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Regexp
+COMPONENT_NAME =		Test-Regexp
 HUMAN_VERSION =			2017040101
-COMPONENT_SUMMARY =		Test::Regexp - Test your regular expressions
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Test your regular expressions
 COMPONENT_CPAN_AUTHOR =		ABIGAIL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:35cb41df5c5017835b89b853d5a44e25e6da973b450e1edca51bba70e7041e54
@@ -33,4 +34,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
