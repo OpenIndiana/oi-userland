@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress-Zstd
 HUMAN_VERSION =			2.213
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Write zstd files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
