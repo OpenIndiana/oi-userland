@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Template::Toolkit
+#   $WS_TOOLS/perl-integrate-module Template-Toolkit
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Template::Toolkit
+COMPONENT_NAME =		Template-Toolkit
 HUMAN_VERSION =			3.102
-COMPONENT_SUMMARY =		Template::Toolkit - Template Processing System
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		comprehensive template processing system
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d161c89dee9b213a7c55709ea782e2dd5923dbd1215b9576612889e6e74a2e06
@@ -30,6 +31,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/appconfig
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
