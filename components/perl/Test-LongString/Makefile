@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::LongString
+#   $WS_TOOLS/perl-integrate-module Test-LongString
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::LongString
+COMPONENT_NAME =		Test-LongString
 HUMAN_VERSION =			0.17
-COMPONENT_SUMMARY =		Test::LongString - tests strings for equality, with more helpful failures
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		tests strings for equality, with more helpful failures
 COMPONENT_CPAN_AUTHOR =		RGARCIA
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:abc4349eaf04d1bec1e464166a3018591ea846d8f3c5c9c8af4ac4905d3e974f
@@ -32,4 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
