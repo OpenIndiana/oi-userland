@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Unicode::UTF8
+#   $WS_TOOLS/perl-integrate-module Unicode-UTF8
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Unicode::UTF8
+COMPONENT_NAME =		Unicode-UTF8
 HUMAN_VERSION =			0.62
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Unicode::UTF8 - Encoding and decoding of UTF-8 encoding form
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Encoding and decoding of UTF-8 encoding form
 COMPONENT_CPAN_AUTHOR =		CHANSEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fa8722d0b74696e332fddd442994436ea93d3bfc7982d4babdcedfddd657d0f6
@@ -30,6 +30,9 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
