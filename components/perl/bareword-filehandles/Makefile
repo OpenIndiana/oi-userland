@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module bareword::filehandles
+#   $WS_TOOLS/perl-integrate-module bareword-filehandles
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		bareword::filehandles
+COMPONENT_NAME =		bareword-filehandles
 HUMAN_VERSION =			0.007
-COMPONENT_SUMMARY =		bareword::filehandles - disables bareword filehandles
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		disables bareword filehandles
 COMPONENT_CPAN_AUTHOR =		ILMARI
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4134533716d87af8fff56e250c488ad06df0a7bff48e7cf7de63ff6bc8d9c17f
@@ -32,5 +33,10 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-hooks-op-check
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-depends
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
