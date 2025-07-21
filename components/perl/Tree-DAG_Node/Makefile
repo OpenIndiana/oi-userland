@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Tree-DAG_Node
 HUMAN_VERSION =			1.35
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		An N-ary tree
 COMPONENT_ARCHIVE_URL =		\
 	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Tree-DAG_Node-1.35.tgz
