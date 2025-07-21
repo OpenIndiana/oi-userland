@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Differences
 HUMAN_VERSION =			0.72
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Test strings and data structures and show differences if not ok
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
