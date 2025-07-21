@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.26
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,8 @@ include $(WS_MAKE_RULES)/common.mk
 # Our sed misbehaves during the tests and let msgfilter-2 and msgfilter-4 tests being skipped.
 PATH= $(PATH.gnu)
 
+# libintl collides with illumos-gate
+CONFIGURE_OPTIONS += --disable-nls
 CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --disable-libasprintf
 CONFIGURE_OPTIONS += --disable-openmp
