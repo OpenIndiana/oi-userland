@@ -652,6 +652,22 @@ printf '/%s/\n' "$COMPONENT_SRC" > .gitignore
 git add .gitignore
 
 
+# Cleanup bundled CPAN
+for v in $PERL_VERSIONS_OBSOLETING $PERL_VERSIONS ; do
+	PLV="${v//.}"
+	PERL_DIR="perl/perl-$PLV"
+	if [[ -f "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" ]] ; then
+		printf "WARNING: Removing %s\n" "$PERL_DIR/$DISTRIBUTION.p5m" >&2
+		git rm "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" > /dev/null 2>&1
+	fi
+	if [[ -f "$BASE_DIR/$PERL_DIR/pkg5" ]] && grep -q '"'"$COMPONENT_FMRI-$PLV"'",' "$BASE_DIR/$PERL_DIR/pkg5" ; then
+		printf "WARNING: Updating %s\n" "$PERL_DIR/pkg5" >&2
+		sed -i -e '\|"'"$COMPONENT_FMRI-$PLV"'",|d' "$BASE_DIR/$PERL_DIR/pkg5"
+		git add "$BASE_DIR/$PERL_DIR/pkg5"
+	fi
+done
+
+
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
