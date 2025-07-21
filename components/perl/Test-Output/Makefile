@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Output
 HUMAN_VERSION =			1.036
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Utilities to test STDOUT and STDERR messages.
 COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
