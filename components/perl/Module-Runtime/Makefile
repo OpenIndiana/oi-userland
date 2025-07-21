@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Module-Runtime
 HUMAN_VERSION =			0.018
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		runtime module handling
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
