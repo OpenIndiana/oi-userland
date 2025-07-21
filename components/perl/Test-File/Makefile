@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-File
 HUMAN_VERSION =			1.995
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		test file attributes
 COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
