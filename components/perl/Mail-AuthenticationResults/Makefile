@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-AuthenticationResults
 HUMAN_VERSION =			2.20250709
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Object Oriented Authentication-Results Headers
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
