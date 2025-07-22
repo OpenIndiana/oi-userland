@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-Patricia
 HUMAN_VERSION =			1.23
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Patricia Trie for fast IP address lookups
 COMPONENT_CPAN_AUTHOR =		GRUBER
 COMPONENT_ARCHIVE_HASH =	\
