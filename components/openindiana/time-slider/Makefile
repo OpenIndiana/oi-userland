@@ -13,17 +13,20 @@
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 #
 
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		time-slider
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	0.2.101
+COMPONENT_SUMMARY=	Time Slider ZFS snapshot management for GNOME
+COMPONENT_FMRI=		desktop/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Configuration and Preferences
 COMPONENT_LICENSE=	CDDL
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
-
-COMPONENT_SUMMARY=	Time Slider ZFS snapshot management for GNOME
 
 GIT=git
 GIT_REPO=https://github.com/OpenIndiana/time-slider
@@ -35,15 +38,15 @@ SINGLE_PYTHON_VERSION = yes
 PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_GIT=no
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
-# publish: target should appear before inclusion of ips.mk
+# publish: target should appear before inclusion of common.mk
 publish: update-publish
 
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_TOP)/make-rules/common.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -62,11 +65,14 @@ COMPONENT_BUILD_TARGETS = all
 
 $(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
 download:: $(SOURCE_DIR)/.downloaded
+
+# Python modules are installed in non-default location so make sure pkgdepend
+# is able to find them
+PKGDEPEND_RUNPATH += $(PROTOUSRSHAREDIR)/time-slider/lib
+PKGDEPEND_RUNPATH += $(PROTOUSRSHAREDIR)/time-slider/lib/plugin
+
+CLOBBER_PATHS += $(SOURCE_DIR)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
