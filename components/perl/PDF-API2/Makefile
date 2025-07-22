@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module PDF::API2
+#   $WS_TOOLS/perl-integrate-module PDF-API2
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PDF::API2
+COMPONENT_NAME =		PDF-API2
 HUMAN_VERSION =			2.047
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		PDF::API2 - Create, modify, and examine PDF files
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Create, modify, and examine PDF files
 COMPONENT_CPAN_AUTHOR =		SSIMMS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:84d6318279d77844923e4de4275fe4345cd08b225edd7f9ed6a16f87a91aca39
@@ -31,7 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/font-ttf
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
