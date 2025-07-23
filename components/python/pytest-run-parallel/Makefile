@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_run_parallel
-HUMAN_VERSION =			0.4.4
+HUMAN_VERSION =			0.5.0
 COMPONENT_SUMMARY =		A simple pytest plugin to run tests concurrently
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3a007649ae365c7fabc3beccf716fefeb39040720cac67d85b4004a00235e817
+	sha256:444c62acfcdc33ce896bd339ada400c1df42660351e3c2ec02d876f8ce243345
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
