@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_event
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.1.1
 COMPONENT_SUMMARY =		Very basic event publishing system
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.event
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a153660e0c228124655748e990396b9d8295d6e4f546fa1b34f3319e1c666e7f
+	sha256:c1ac931abf57efba71a2a313c5f4d57768a19b15c37e3f02f50eb1536be12d4e
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
