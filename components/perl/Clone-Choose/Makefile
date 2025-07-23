@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone-Choose
 HUMAN_VERSION =			0.010
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Choose appropriate clone utility
 COMPONENT_CPAN_AUTHOR =		HERMES
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,5 +34,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/clone
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/clone-pp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module
