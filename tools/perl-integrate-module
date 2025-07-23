@@ -171,9 +171,19 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
 
 	# If we were asked to do version upgrade, but we do not have new
-	# version, then we are done.
+	# version, then we are done.  Check versions for bundled CPAN too.
 	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
-	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
+	if ((UPGRADE_ONLY)) ; then while true ; do
+		for v in $($GMAKE print-value-PERL_VERSIONS) ; do
+			if [[ -f "$BASE_DIR/perl/perl-${v//.}/$DISTRIBUTION.p5m" ]] ; then
+				BVER=$($GMAKE print-value-HUMAN_VERSION.$DISTRIBUTION 2>/dev/null)
+				[[ "$BVER" != "$VERSION" ]] && break 2
+				continue
+			fi
+			[[ "$PREV_HVER" != "$VERSION" ]] && break 2
+		done
+		exit 0
+	done ; fi
 
 	# Pre-flight environment checks
 	if ((FORCE == 0)) ; then
