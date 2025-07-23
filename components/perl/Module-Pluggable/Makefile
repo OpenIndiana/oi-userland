@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Module-Pluggable
 HUMAN_VERSION =			6.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		automatically give your module the ability to have plugins
 COMPONENT_CPAN_AUTHOR =		SIMONW
 COMPONENT_ARCHIVE_HASH =	\
