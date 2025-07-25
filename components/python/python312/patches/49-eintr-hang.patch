@@ -1,0 +1,22 @@
+This also hangs on Illumos
+
+--- Python-3.12.1/Lib/test/_test_eintr.py.~1~	Thu Dec  7 12:45:44 2023
++++ Python-3.12.1/Lib/test/_test_eintr.py	Wed Feb  7 10:30:17 2024
+@@ -356,7 +356,7 @@
+         fp = open(path, 'w')
+         fp.close()
+ 
+-    @unittest.skipIf(sys.platform == "darwin",
++    @unittest.skipIf(True,
+                      "hangs under macOS; see bpo-25234, bpo-35363")
+     def test_open(self):
+         self._test_open("fp = open(path, 'r')\nfp.close()",
+@@ -366,7 +366,7 @@
+         fd = os.open(path, os.O_WRONLY)
+         os.close(fd)
+ 
+-    @unittest.skipIf(sys.platform == "darwin",
++    @unittest.skipIf(True,
+                      "hangs under macOS; see bpo-25234, bpo-35363")
+     def test_os_open(self):
+         self._test_open("fd = os.open(path, os.O_RDONLY)\nos.close(fd)",
