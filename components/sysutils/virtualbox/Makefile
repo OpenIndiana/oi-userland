@@ -21,7 +21,7 @@ gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      7.1.10
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
@@ -78,9 +78,8 @@ VBOX_FS_MODULES= vboxfs
 VBOX_BINS= VBoxControl VBoxService VBoxClient
 VBOX_SBINS= vboxmslnk
 
-QT5_ROOT=/usr/lib/qt/6.6
-PATH=$(PATH.gnu):$(QT5_ROOT)/bin/$(MACH64)
-PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_ROOT)/lib/$(MACH64)/pkgconfig
+PATH=$(PATH.gnu):$(QT6_BINDIR)
+PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT6_PKG_CONFIG_PATH)
 
 CONFIGURE_SCRIPT=$(@D)/configure
 
@@ -135,6 +134,9 @@ LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_CC  = $(CC)'
 LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_CXX = $(CXX)'
 LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_AS  = $(CC)'
 LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_LD  = $(CXX)'
+
+# Enable VBoxSDL
+LOCAL_CONFIG += '\nVBOX_WITH_VBOXSDL = 1'
 
 # Set OpenIndiana project as publisher of VirtualBox binaries
 VBOX_BUILD_PUBLISHER=OpenIndiana
@@ -244,6 +246,7 @@ REQUIRED_PACKAGES += library/gsoap
 REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/qt6
+REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
