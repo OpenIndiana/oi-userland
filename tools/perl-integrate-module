@@ -175,8 +175,9 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
 	if ((UPGRADE_ONLY)) ; then while true ; do
 		for v in $($GMAKE print-value-PERL_VERSIONS) ; do
-			if [[ -f "$BASE_DIR/perl/perl-${v//.}/$DISTRIBUTION.p5m" ]] ; then
-				BVER=$($GMAKE print-value-HUMAN_VERSION.$DISTRIBUTION 2>/dev/null)
+			PERL_DIR="perl/perl-${v//.}"
+			if [[ -f "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" ]] ; then
+				BVER=$(cd "$BASE_DIR/$PERL_DIR" ; $GMAKE print-value-HUMAN_VERSION.$DISTRIBUTION 2>/dev/null)
 				[[ "$BVER" != "$VERSION" ]] && break 2
 				continue
 			fi
