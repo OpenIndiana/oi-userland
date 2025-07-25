@@ -17,21 +17,22 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dwdiff
 COMPONENT_VERSION=      2.1.4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      dwdiff - a diff program that operates at the word level
 COMPONENT_PROJECT_URL=  https://os.ghalkes.nl/dwdiff.html
-COMPONENT_FMRI=         text/dwdiff
-COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://os.ghalkes.nl/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=      $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_ARCHIVE_HASH= \
 	sha256:df16fec44dcb467d65a4246a43628f93741996c1773e930b90c6dde22dd58e0a
+COMPONENT_FMRI=         text/dwdiff
+COMPONENT_CLASSIFICATION=System/Text Tools
 COMPONENT_LICENSE=      GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -43,8 +44,9 @@ CONFIGURE_OPTIONS+=	CFLAGS=-D_POSIX_PTHREAD_SEMANTICS
 COMPONENT_PRE_CONFIGURE_ACTION=	( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Build dependencies
-REQUIRED_PACKAGES+= 	text/gnu-gettext
+REQUIRED_PACKAGES += text/gnu-gettext
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += system/library
