@@ -16,31 +16,25 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		murrine
 COMPONENT_VERSION=	0.98.2
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Murrine GTK+ 2.x cairo based engine
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:e9c68ae001b9130d0f9d1b311e8121a94e5c134b82553ba03971088e57d12c89
+COMPONENT_ARCHIVE_HASH=	sha256:e9c68ae001b9130d0f9d1b311e8121a94e5c134b82553ba03971088e57d12c89
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.98/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/theme/gtk2-engines-murrine
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
-COMPONENT_LICENSE = LGPLv2.1
-COMPONENT_LICENSE_FILE = COPYING.2.1
+COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING.2.1
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+CFLAGS += -Wno-error=implicit-function-declaration
 
-# common targets
-build:		$(BUILD_32_and_64)
+PATH= $(PATH.gnu)
 
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
