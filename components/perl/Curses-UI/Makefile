@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Curses-UI
 HUMAN_VERSION =			0.9609
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		A curses based OO user interface framework
 COMPONENT_CPAN_AUTHOR =		MDXI
 COMPONENT_ARCHIVE_HASH =	\
