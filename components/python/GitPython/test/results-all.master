@@ -6,7 +6,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-collecting ... collected 668 items
+collecting ... collected 680 items
 
 test/deprecation/test_basic.py::test_diff_renamed_warns PASSED
 test/deprecation/test_basic.py::test_diff_renamed_file_does_not_warn PASSED
@@ -108,6 +108,12 @@ test/test_config.py::TestBase::test_conditional_includes_from_branch_name_error 
 test/test_config.py::TestBase::test_conditional_includes_from_git_dir PASSED
 test/test_config.py::TestBase::test_config_include PASSED
 test/test_config.py::TestBase::test_config_value_with_trailing_new_line PASSED
+test/test_config.py::TestBase::test_config_with_empty_quotes PASSED
+test/test_config.py::TestBase::test_config_with_extra_whitespace PASSED
+test/test_config.py::TestBase::test_config_with_quotes PASSED
+test/test_config.py::TestBase::test_config_with_quotes_containing_escapes PASSED
+test/test_config.py::TestBase::test_config_with_quotes_with_literal_whitespace PASSED
+test/test_config.py::TestBase::test_config_with_quotes_with_whitespace_outside_value PASSED
 test/test_config.py::TestBase::test_empty_config_value PASSED
 test/test_config.py::TestBase::test_get_values_works_without_requiring_any_other_calls_first PASSED
 test/test_config.py::TestBase::test_includes_order SKIPPED (Known fa...)
@@ -404,6 +410,7 @@ test/test_git.py::TestGit::test_version_info_pickleable PASSED
 test/test_imports.py::test_git_util_attribute_is_git_index_util PASSED
 test/test_imports.py::test_git_index_util_attribute_is_git_index_util PASSED
 test/test_imports.py::test_separate_git_util_module_exists PASSED
+test/test_index.py::TestIndex::test__to_relative_path_absolute_trailing_slash PASSED
 test/test_index.py::TestIndex::test__to_relative_path_at_root PASSED
 test/test_index.py::TestIndex::test_add_a_file_with_wildcard_chars PASSED
 test/test_index.py::TestIndex::test_add_utf8P_path PASSED
@@ -574,6 +581,7 @@ test/test_submodule.py::TestSubmodule::test_submodule_add_unsafe_options PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_add_unsafe_options_allowed PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_add_unsafe_url PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_add_unsafe_url_allowed PASSED
+test/test_submodule.py::TestSubmodule::test_submodule_update_relative_url PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_update_unsafe_options PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_update_unsafe_options_allowed PASSED
 test/test_submodule.py::TestSubmodule::test_submodule_update_unsafe_url PASSED
@@ -581,6 +589,7 @@ test/test_submodule.py::TestSubmodule::test_submodule_update_unsafe_url_allowed 
 test/test_submodule.py::TestSubmodule::test_to_relative_path_with_super_at_root_drive SKIPPED
 test/test_submodule.py::TestSubmodule::test_update_clone_multi_options_argument PASSED
 test/test_submodule.py::TestSubmodule::test_update_no_clone_multi_options_argument PASSED
+test/test_submodule.py::TestSubmodule::test_update_submodule_with_relative_path PASSED
 test/test_tree.py::TestTree::test_serializable PASSED
 test/test_tree.py::TestTree::test_traverse PASSED
 test/test_tree.py::TestTree::test_tree_modifier_ordering PASSED
@@ -660,6 +669,9 @@ test/test_util.py::TestCygpath::test_decygpath[\\\\server\\BAR/-//server/BAR/] S
 test/test_util.py::TestCygpath::test_decygpath[D:/Apps-/cygdrive/d/Apps] SKIPPED
 test/test_util.py::TestCygpath::test_decygpath[D:/Apps\\fOO-/cygdrive/d/Apps/fOO] SKIPPED
 test/test_util.py::TestCygpath::test_decygpath[D:\\Apps/123-/cygdrive/d/Apps/123] SKIPPED
+test/test_util.py::TestIsCygwinGit::test_on_path_executable PASSED
+test/test_util.py::TestIsCygwinGit::test_none_executable PASSED
+test/test_util.py::TestIsCygwinGit::test_with_missing_uname PASSED
 test/test_util.py::TestUtils::test_actor PASSED
 test/test_util.py::TestUtils::test_actor_from_string PASSED
 test/test_util.py::TestUtils::test_actor_get_uid_laziness_called PASSED
@@ -687,8 +699,51 @@ test/test_submodule.py:54
     class TestRootProgress(RootUpdateProgress):
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
+Name                                Stmts   Miss  Cover
+-------------------------------------------------------
+git/__init__.py                        51      6    88%
+git/cmd.py                            604     83    86%
+git/compat.py                          58     15    74%
+git/config.py                         438     47    89%
+git/db.py                              26      1    96%
+git/diff.py                           281      9    97%
+git/exc.py                             65      3    95%
+git/index/__init__.py                   3      0   100%
+git/index/base.py                     505     52    90%
+git/index/fun.py                      187     10    95%
+git/index/typ.py                       76      3    96%
+git/index/util.py                      52      2    96%
+git/objects/__init__.py                 7      0   100%
+git/objects/base.py                    90     10    89%
+git/objects/blob.py                    20      1    95%
+git/objects/commit.py                 316     28    91%
+git/objects/fun.py                     99      3    97%
+git/objects/submodule/__init__.py       3      0   100%
+git/objects/submodule/base.py         583     40    93%
+git/objects/submodule/root.py         136     12    91%
+git/objects/submodule/util.py          50      8    84%
+git/objects/tag.py                     48     12    75%
+git/objects/tree.py                   151     28    81%
+git/objects/util.py                   228     23    90%
+git/refs/__init__.py                    7      0   100%
+git/refs/head.py                       98      6    94%
+git/refs/log.py                       149     10    93%
+git/refs/reference.py                  55      3    95%
+git/refs/remote.py                     32      2    94%
+git/refs/symbolic.py                  381     20    95%
+git/refs/tag.py                        47      5    89%
+git/remote.py                         460     54    88%
+git/repo/__init__.py                    2      0   100%
+git/repo/base.py                      586     34    94%
+git/repo/fun.py                       206     19    91%
+git/types.py                           54      7    87%
+git/util.py                           560    142    75%
+-------------------------------------------------------
+TOTAL                                6714    698    90%
 =========================== short test summary info ============================
-======== 594 passed, 73 skipped, 1 xfailed, 2 warnings ========
+======== 606 passed, 73 skipped, 1 xfailed, 2 warnings ========
   py$(PYV): OK
   congratulations :)
