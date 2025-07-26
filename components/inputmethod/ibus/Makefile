@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus
 COMPONENT_VERSION=      1.5.29
+COMPONENT_REVISION=      1
 COMPONENT_SUMMARY=      iBus - Intelligent Input Bus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
