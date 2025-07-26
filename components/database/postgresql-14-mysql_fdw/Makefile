@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =	mysql_fdw
 COMPONENT_VERSION =	REL-2_7_0
 IPS_COMPONENT_VERSION =	2.7.0
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_SUMMARY =	MySQL Foreign Data Wrapper for PostgreSQL $(PG_VERSION)
 COMPONENT_SRC =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
@@ -39,7 +39,6 @@ PG_VERSION=	14
 PATH=		$(PG_HOME)/bin:$(MYSQL_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
 TEST_TARGET=	$(NO_TESTS)
-
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_BUILD_ENV	+=	USE_PGXS=1
@@ -48,6 +47,8 @@ COMPONENT_INSTALL_ENV	+=	USE_PGXS=1
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+# mysql_config is in the client package
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 
 # Auto-generated dependencies
