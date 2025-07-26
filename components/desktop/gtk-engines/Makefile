@@ -17,32 +17,22 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtk-engines
 COMPONENT_VERSION=	2.20.2
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
+COMPONENT_REVISION=	2
+COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_SUMMARY=	Engines for GTK2 Themes
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:aa65209c824a71feb82c31a6c5bdee22658874cff4fca610d174d983c807c22f
+COMPONENT_ARCHIVE_HASH=	sha256:aa65209c824a71feb82c31a6c5bdee22658874cff4fca610d174d983c807c22f
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/2.20//$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		gnome/theme/gtk2-engines
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Theming
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING
 
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
-
-PATH=$(PATH.gnu)
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+PATH= $(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
