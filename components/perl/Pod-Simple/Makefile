@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Simple
 HUMAN_VERSION =			3.47
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		framework for parsing Pod
 COMPONENT_CPAN_AUTHOR =		KHW
 COMPONENT_ARCHIVE_HASH =	\
