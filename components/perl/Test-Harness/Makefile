@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Harness
 HUMAN_VERSION =			3.52
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		contributing to TAP::Harness
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
