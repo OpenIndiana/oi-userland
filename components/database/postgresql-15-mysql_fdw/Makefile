@@ -13,13 +13,13 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	mysql_fdw
 COMPONENT_VERSION=	2.9.1
 ARCHIVE_VERSION=	REL-2_9_1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	MySQL Foreign Data Wrapper for PostgreSQL $(PG_VERSION)
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(ARCHIVE_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
@@ -45,6 +45,8 @@ COMPONENT_INSTALL_ENV += USE_PGXS=1
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
+# mysql_config is in the client package
+REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 
 # Auto-generated dependencies
