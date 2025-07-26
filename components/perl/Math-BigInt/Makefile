@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt
 HUMAN_VERSION =			2.005003
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure Perl module to test Math::BigInt with scalars
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
