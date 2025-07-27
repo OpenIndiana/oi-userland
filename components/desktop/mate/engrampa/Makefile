@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		engrampa
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=	MATE archive manager
 COMPONENT_ARCHIVE_HASH=	sha256:1e9977c23745bf8843a37f315171d9af97814a0971aeac3d774f017650ac09ef
 COMPONENT_FMRI=		desktop/archive-manager/engrampa
@@ -32,6 +33,10 @@ COMPONENT_LICENSE=	GPLv3
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/caja
