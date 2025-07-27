@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openbox
 COMPONENT_VERSION=      3.6.1
-COMPONENT_REVISION=     6
+COMPONENT_REVISION=     7
 COMPONENT_SUMMARY=      A minimalistic,highly configurable, next generation window manager with extensive standards support.
 COMPONENT_PROJECT_URL=  https://openbox.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -35,7 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_BUILD_ENV=	DEST_DIR=$(PROTO_DIR)
 COMPONENT_INSTALL_ENV=	DEST_DIR=$(PROTO_DIR)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-imlib2
 
@@ -50,6 +49,7 @@ LDFLAGS += -lsocket
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pyxdg
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -61,7 +61,6 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
