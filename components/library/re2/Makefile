@@ -13,28 +13,33 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         re2
-COMPONENT_VERSION=      2024.7.2
-HUMAN_VERSION=          2024-07-02
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2025.7.22
+HUMAN_VERSION=          2025-07-22
 COMPONENT_SUMMARY=      Fast, safe, thread-friendly regular expression engine
 COMPONENT_PROJECT_URL=  https://github.com/google/re2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b
+COMPONENT_ARCHIVE_HASH= sha256:f54c29f1c3e13e12693e3d6d1230554df3ab3a1066b2e1f28c5330bfbf6db1e3
 COMPONENT_ARCHIVE_URL=	https://github.com/google/$(COMPONENT_NAME)/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/re2
 COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
-# Tests require Googletest which we don't have yet.
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+
+COMPONENT_TEST_CMD= ./runtests
+
+# Manually added build dependencies
+TEST_REQUIRED_PACKAGES += developer/googletest
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
