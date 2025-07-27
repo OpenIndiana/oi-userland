@@ -23,7 +23,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=.+/share/info/dir -> drop>
+# ecl depends on the gcc version it has been build with
+depend fmri=__TBD pkg.debug.depend.file=usr/gcc/$(GCC_VERSION)/bin/gcc type=require
 
 file path=usr/bin/ecl
 file path=usr/bin/ecl-config
@@ -321,7 +322,6 @@ link path=usr/lib/$(MACH64)/libecl.so target=libecl.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/libecl.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libecl.so.24 target=libecl.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libecl.so.24.5 target=libecl.so.$(HUMAN_VERSION)
-file path=usr/share/info/dir
 file path=usr/share/info/ecl.info.gz
 file path=usr/share/man/man1/ecl-config.1
 file path=usr/share/man/man1/ecl.1
