@@ -16,48 +16,36 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkspell
 COMPONENT_VERSION=	2.0.16
-COMPONENT_REVISION=	2
-COMPONENT_PROJECT_URL=	http://gtkspell.sourceforge.net/
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	Gtkspell provides word-processor-style highlighting and replacement of misspelled words in a GtkTextView widget
+COMPONENT_PROJECT_URL=	https://gtkspell.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:8fc7dc560167b2cb7193e76aca625a152dc19b0ebf49816b78539cbb90d80d02
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/gtkspell/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_ARCHIVE_HASH=	sha256:8fc7dc560167b2cb7193e76aca625a152dc19b0ebf49816b78539cbb90d80d02
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/gtkspell/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_FMRI= 	library/desktop/gtkspell
+COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
-COMPONENT_CLASSIFICATION=	Applications/Accessories
-COMPONENT_FMRI= 	library/desktop/gtkspell
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION =	( cd $(@D)  && \
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D)  && \
 	libtoolize --copy --force &&\
-	sed -i 's/enchant >=/enchant-2 >=/' configure.ac &&\
-	aclocal -I . &&\
-	automake -c -f -a &&\
-	autoconf )
+	sed -i 's/enchant >=/enchant-2 >=/' configure.ac && \
+	aclocal -I . && \
+	automake -c -f -a && \
+	autoconf -vif )
 
-
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--disable-gtk-doc
-
-# common targets
-build:		$(BUILD_32_and_64)
-
-install:	$(INSTALL_32_and_64)
-
-test:		$(NO_TESTS)
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-gtk-doc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
