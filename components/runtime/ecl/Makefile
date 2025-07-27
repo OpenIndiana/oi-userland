@@ -18,8 +18,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ecl
 COMPONENT_VERSION=	24.5.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ecl - Embeddable Common-Lisp
-COMPONENT_PROJECT_URL=	https://common-lisp.net
+COMPONENT_PROJECT_URL=	https://ecl.common-lisp.dev
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:e4ea65bb1861e0e495386bfa8bc673bd014e96d3cf9d91e9038f91435cbe622b
@@ -31,6 +32,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+GCC_VERSION= 13
+#CFLAGS += -Wno-error=implicit-function-declaration
+
 ECL= $(PROTO_DIR)/usr/bin/ecl
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
@@ -39,10 +43,15 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D)
 COMPONENT_PRE_TEST_ACTION += \
 	$(GSED) -i "s|ECL=/usr//usr/bin/ecl|ECL=/usr/bin/ecl|" $(BUILD_DIR)/$(MACH64)/build/tests/Makefile
 
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
+
 #COMPONENT_TEST_ENV += PATH=$(PROTOUSRBINDIR):$(PATH)
 #COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(PROTOUSRLIBDIR$(BITS))
 
+PKG_MACROS += GCC_VERSION="$(GCC_VERSION)"
+
 # Auto-generated dependencies
+REQUIRED_PACKAGES += developer/gcc-13
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += shell/ksh93
