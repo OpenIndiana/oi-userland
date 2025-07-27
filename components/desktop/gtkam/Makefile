@@ -12,25 +12,23 @@
 # Copyright (c) 2014 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtkam
-COMPONENT_VERSION=	1.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.1
 # Version was bumped in JDS
 GIMP_GTKAM_VERSION=	2.30.0
-COMPONENT_PROJECT_URL=	http://libexif.sourceforge.net/
 COMPONENT_SUMMARY=	A GTK Digital Camera Viewing Tool
+COMPONENT_PROJECT_URL=	http://libexif.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:ab7f50d4654d129cd8b386658249b05ea739a446f08026c7352b829c63382c3d
-COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/gphoto/files/gtkam/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_CLASSIFICATION = Applications/Graphics and Imaging
-COMPONENT_FMRI = desktop/gtkam
-COMPONENT_LICENSE = GPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_ARCHIVE_HASH=	sha256:6832556bb603ce447fe4eee2b38458218786002280e77bf495640c723f2244fe
+COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/gphoto/files/gtkam/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
+COMPONENT_FMRI= desktop/gtkam
+COMPONENT_LICENSE= GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
 
@@ -38,12 +36,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += GIMP_GTKAM_VERSION=$(GIMP_GTKAM_VERSION)
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
+
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --without-gnome
 CONFIGURE_OPTIONS += --without-bonobo
 
-REQUIRED_PACKAGES += image/editor/gimp
+# Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
