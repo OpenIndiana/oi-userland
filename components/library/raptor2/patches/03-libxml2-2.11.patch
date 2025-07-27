@@ -1,0 +1,19 @@
+https://bugs.gentoo.org/906227
+https://github.com/dajobe/raptor/issues/59
+https://github.com/dajobe/raptor/pull/58
+
+--- raptor2-2.0.16/src/raptor_libxml.c.orig
++++ raptor2-2.0.16/src/raptor_libxml.c
+@@ -246,10 +246,11 @@
+     
+     ret->owner = 1;
+ 
+-#if LIBXML_VERSION >= 20627
++#if LIBXML_VERSION >= 20627 && LIBXML_VERSION < 21100
+     /* Checked field was released in 2.6.27 on 2006-10-25
+      * http://git.gnome.org/browse/libxml2/commit/?id=a37a6ad91a61d168ecc4b29263def3363fff4da6
+      *
++     * and was later removed in version 2.11.0
+      */
+ 
+     /* Mark this entity as having been checked - never do this again */

@@ -22,16 +22,13 @@
 # Copyright (c) 2019 Nona Hansel
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		raptor2
 COMPONENT_VERSION=	2.0.16
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	RDF Parser Library - RDF parser utility
-COMPONENT_DESCRIPTION=	Raptor2 provides a set of parsers and serializers that generate Resource Description Framework (RDF)\
-						triples by parsing syntaxes or serialize the triples into a syntax
 COMPONENT_PROJECT_URL=	https://librdf.org/raptor/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -40,26 +37,19 @@ COMPONENT_ARCHIVE_URL=	https://download.librdf.org/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/raptor2
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		Apache 2.0, LGPLv2.1+, GPLv2+, Raptor RDF Syntax Library License
+COMPONENT_LICENSE_FILE=		LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 
-$(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION = \
-	/usr/bin/elfedit -e "dyn:runpath ''" $(PROTOUSRLIBDIR64)/libraptor2.so.0.0.0
-
-COMPONENT_POST_INSTALL_ACTION += \
-	LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 --dump -nolist $(SOURCE_DIR)/LICENSE.html > $(COMPONENT_NAME).license
-
-unexport SHELLOPTS
-
-# the license file is dynamically build, thus we need to remove it:
-clean::
-	$(RM) $(COMPONENT_LICENSE_FILE)
+COMPONENT_POST_INSTALL_ACTION = \
+	$(ELFEDIT) -e "dyn:runpath ''" $(PROTOUSRLIBDIR64)/libraptor2.so.0.0.0
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/libyajl2
