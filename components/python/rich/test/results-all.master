@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: $(@D)/.tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)/tests
 configfile: pytest.ini
-collecting ... collected 876 items / 3 deselected / 873 selected
+collecting ... collected 880 items / 3 deselected / 877 selected
 
 tests/test_align.py::test_bad_align_legal PASSED
 tests/test_align.py::test_repr PASSED
@@ -168,7 +168,6 @@ tests/test_console.py::test_get_time PASSED
 tests/test_console.py::test_console_style PASSED
 tests/test_console.py::test_no_color PASSED
 tests/test_console.py::test_quiet PASSED
-tests/test_console.py::test_no_nested_live PASSED
 tests/test_console.py::test_screen PASSED
 tests/test_console.py::test_screen_update PASSED
 tests/test_console.py::test_height PASSED
@@ -194,6 +193,7 @@ tests/test_console.py::test_force_color_jupyter PASSED
 tests/test_console.py::test_reenable_highlighting PASSED
 tests/test_console.py::test_brokenpipeerror PASSED
 tests/test_console.py::test_capture_and_record PASSED
+tests/test_console.py::test_tty_interactive PASSED
 tests/test_console.py::test_tty_compatible PASSED
 tests/test_constrain.py::test_width_of_none PASSED
 tests/test_containers.py::test_renderables_measure PASSED
@@ -430,6 +430,8 @@ tests/test_panel.py::test_console_width PASSED
 tests/test_panel.py::test_fixed_width PASSED
 tests/test_panel.py::test_render_size PASSED
 tests/test_panel.py::test_title_text PASSED
+tests/test_panel.py::test_title_text_with_border_color PASSED
+tests/test_panel.py::test_title_text_with_panel_background PASSED
 tests/test_pick.py::test_pick_bool PASSED
 tests/test_pretty.py::test_install PASSED
 tests/test_pretty.py::test_install_max_depth PASSED
@@ -694,6 +696,7 @@ tests/test_syntax.py::test_syntax_guess_lexer PASSED
 tests/test_syntax.py::test_syntax_padding PASSED
 tests/test_syntax.py::test_syntax_measure PASSED
 tests/test_syntax.py::test_background_color_override_includes_padding PASSED
+tests/test_syntax.py::test_padding_plus_wrap PASSED
 tests/test_table.py::test_render_table PASSED
 tests/test_table.py::test_not_renderable PASSED
 tests/test_table.py::test_init_append_column PASSED
@@ -854,6 +857,7 @@ tests/test_traceback.py::test_rich_traceback_omit_optional_local_flag[False-4-ex
 tests/test_traceback.py::test_traceback_finely_grained_missing PASSED
 tests/test_traceback.py::test_traceback_finely_grained SKIPPED (Not ...)
 tests/test_traceback.py::test_notes SKIPPED (Not supported before Py...)
+tests/test_traceback.py::test_recursive_exception PASSED
 tests/test_tree.py::test_render_single_node PASSED
 tests/test_tree.py::test_render_single_branch PASSED
 tests/test_tree.py::test_render_double_branch PASSED
@@ -882,7 +886,7 @@ tests/test_windows_renderer.py::test_control_cursor_move_to_column SKIPPED
 tests/test_windows_renderer.py::test_control_set_terminal_window_title SKIPPED
 
 ================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
 Name                        Stmts   Miss  Cover   Missing
 ---------------------------------------------------------
@@ -900,45 +904,45 @@ rich/_loop.py                  33      0   100%
 rich/_null_file.py             42      0   100%
 rich/_palettes.py               4      0   100%
 rich/_pick.py                   7      0   100%
-rich/_ratio.py                 64      0   100%
+rich/_ratio.py                 61      0   100%
 rich/_spinners.py               1      0   100%
 rich/_stack.py                  8      0   100%
 rich/_win32_console.py        199    193     3%   12, 16-572
 rich/_windows_renderer.py      45     45     0%   1-56
 rich/_wrap.py                  41      0   100%
 rich/abc.py                     5      0   100%
-rich/align.py                 128      0   100%
+rich/align.py                 125      0   100%
 rich/ansi.py                   74      0   100%
 rich/bar.py                    42      0   100%
-rich/box.py                   105      0   100%
+rich/box.py                   102      0   100%
 rich/cells.py                  76      1    99%   64
 rich/color.py                 186      0   100%
 rich/color_triplet.py          17      0   100%
 rich/columns.py                98      0   100%
-rich/console.py               974     47    95%   93-94, 97-98, 101-102, 949, 1262, 2053-2098, 2369, 2374, 2376, 2378, 2619
+rich/console.py               979     47    95%   87-88, 91-92, 95-96, 953, 1267, 2058-2103, 2374, 2379, 2381, 2383, 2624
 rich/constrain.py              17      0   100%
 rich/containers.py             82      0   100%
-rich/control.py                62      0   100%
+rich/control.py                59      0   100%
 rich/default_styles.py          3      0   100%
-rich/emoji.py                  33      0   100%
+rich/emoji.py                  31      0   100%
 rich/errors.py                  9      0   100%
 rich/file_proxy.py             40      1    98%   57
 rich/filesize.py               20      0   100%
 rich/highlighter.py            53      1    98%   140
 rich/json.py                   24      0   100%
 rich/layout.py                193      0   100%
-rich/live.py                  145      3    98%   123-129
-rich/live_render.py            50      0   100%
+rich/live.py                  160     11    93%   123-124, 134-140, 153-155, 245-247
+rich/live_render.py            47      0   100%
 rich/logging.py                80      2    98%   179-180
-rich/markdown.py              370      5    99%   243, 473, 483-485
+rich/markdown.py              368      5    99%   238, 468, 478-480
 rich/markup.py                117      0   100%
 rich/measure.py                52      0   100%
 rich/padding.py                67      0   100%
 rich/pager.py                   8      0   100%
 rich/palette.py                32      0   100%
-rich/panel.py                 120      2    98%   183, 199
+rich/panel.py                 119      2    98%   182, 198
 rich/pretty.py                396     13    97%   105-108, 129, 228-250, 676
-rich/progress.py              613     50    92%   43, 87-90, 213, 216-218, 228, 253-255, 258-260, 263-265, 273-275, 278, 281, 284, 395, 420, 760, 768, 770, 805, 909, 998, 1052, 1221, 1266, 1292, 1308, 1345, 1350-1354, 1357, 1359, 1369, 1385, 1464, 1534, 1536, 1596-1597
+rich/progress.py              609     49    92%   83-86, 211, 214-216, 226, 251-253, 256-258, 261-263, 271-273, 276, 279, 282, 393, 418, 758, 766, 768, 803, 907, 996, 1050, 1221, 1266, 1292, 1308, 1345, 1350-1354, 1357, 1359, 1369, 1385, 1464, 1534, 1536, 1596-1597
 rich/progress_bar.py          100      1    99%   64
 rich/prompt.py                102      0   100%
 rich/protocol.py               18      0   100%
@@ -952,16 +956,16 @@ rich/spinner.py                49      0   100%
 rich/status.py                 42      0   100%
 rich/style.py                 429      2    99%   429, 656
 rich/styled.py                 15      0   100%
-rich/syntax.py                334     10    97%   402, 483, 509-510, 565, 667-668, 670, 692, 797
+rich/syntax.py                344     11    97%   237, 417, 498, 524-525, 580, 686-687, 689, 711, 816
 rich/table.py                 387      0   100%
 rich/terminal_theme.py         14      0   100%
 rich/text.py                  603      7    99%   115, 499, 503, 506, 830, 837, 1174
 rich/theme.py                  39      0   100%
 rich/themes.py                  3      0   100%
-rich/traceback.py             295     48    84%   67-79, 462-465, 495-496, 499, 501, 510-530, 562, 660, 663-668, 696-702, 726-727, 818-819, 824-840
+rich/traceback.py             300     51    83%   68-80, 470-476, 507-508, 511, 513, 522-542, 574, 675, 678-683, 711-717, 741-742, 833-834, 839-855
 rich/tree.py                  104      0   100%
 ---------------------------------------------------------
-TOTAL                        8074    436    95%
-======== 848 passed, 25 skipped, 3 deselected ========
+TOTAL                        8085    447    94%
+======== 852 passed, 25 skipped, 3 deselected ========
   py$(PYV): OK
   congratulations :)
