@@ -1,6 +1,6 @@
---- raptor2-2.0.15/src/sort_r.h.orig	2014-10-10 01:00:44.000000000 +0000
-+++ raptor2-2.0.15/src/sort_r.h	2020-10-11 15:42:02.343998167 +0000
-@@ -31,6 +31,8 @@
+--- raptor2-2.0.16/src/sort_r.h.orig
++++ raptor2-2.0.16/src/sort_r.h
+@@ -32,6 +32,8 @@
  #  define _SORT_R_LINUX
  #elif (defined _WIN32 || defined _WIN64 || defined __WINDOWS__)
  #  define _SORT_R_WINDOWS
@@ -9,7 +9,7 @@
  #else
  #  error Cannot detect operating system
  #endif
-@@ -85,6 +87,7 @@
+@@ -86,6 +88,7 @@
      extern void qsort_r(void *base, size_t nel, size_t width,
                          __compar_d_fn_t __compar, void *arg)
        __attribute__((nonnull (1, 4)));
@@ -17,7 +17,7 @@
  
    #endif
  
-@@ -105,6 +108,10 @@
+@@ -106,6 +109,10 @@
        tmp.compar = compar;
        qsort_r(base, nel, width, &tmp, sort_r_arg_swap);
  
@@ -28,7 +28,7 @@
      #else /* defined _SORT_R_WINDOWS */
  
        struct sort_r_data tmp;
-@@ -120,5 +127,6 @@
+@@ -121,5 +128,6 @@
  #undef _SORT_R_WINDOWS
  #undef _SORT_R_LINUX
  #undef _SORT_R_BSD
