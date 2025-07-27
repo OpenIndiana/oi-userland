@@ -1,5 +1,5 @@
---- MEGAsync_ori/src/MEGASync/mega/configure.ac	Wed Mar  9 01:46:53 2022
-+++ MEGAsync_patched/src/MEGASync/mega/configure.ac	Mon Feb 28 22:19:04 2022
+--- MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/configure.ac.orig
++++ MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/configure.ac
 @@ -47,7 +47,7 @@
  AC_INIT([libmega], m4_esyscmd([ grep define < include/mega/version.h | awk '{print $3}' | awk 'BEGIN { RS = "" ; FS = "\n" } {printf $1"."$2"."$3}']), [https://github.com/meganz/sdk])
  
@@ -9,7 +9,7 @@
  
  # Define _GNU_SOURCE
  # AC_GNU_SOURCE
-@@ -448,8 +448,8 @@
+@@ -464,15 +464,15 @@
     *)
  
      # determine if library is installed
@@ -20,7 +20,6 @@
          CXXFLAGS="-I$with_cryptopp/include $CXXFLAGS"
          CPPFLAGS="-I$with_cryptopp/include $CPPFLAGS"
  
-@@ -456,7 +456,7 @@
          AC_CHECK_HEADERS(cryptopp/cryptlib.h,
           CRYPTO_CXXFLAGS="-I$with_cryptopp/include"
           CRYPTO_CPPFLAGS="-I$with_cryptopp/include"
@@ -29,7 +28,7 @@
           AC_MSG_ERROR([cryptopp/cryptlib.h header not found or not usable])
           )
      # assume we are using crypto source directory
-@@ -522,8 +522,8 @@
+@@ -538,15 +538,15 @@
     *)
  
      # determine if library is installed
@@ -40,7 +39,6 @@
          CXXFLAGS="-I$with_sodium/include $CXXFLAGS"
          CPPFLAGS="-I$with_sodium/include $CPPFLAGS"
  
-@@ -530,7 +530,7 @@
          AC_CHECK_HEADERS(sodium.h,
           SODIUM_CXXFLAGS="-I$with_sodium/include"
           SODIUM_CPPFLAGS="-I$with_sodium/include"
@@ -49,7 +47,7 @@
           AC_MSG_ERROR([sodium/sodium.h header not found or not usable])
           )
      # assume we are using sodium source directory
-@@ -612,26 +612,26 @@
+@@ -628,26 +628,26 @@
     *)
  
      # determine if library is installed
@@ -89,7 +87,7 @@
           AC_MSG_ERROR([pcrecpp.h header not found or not usable])
           )
      fi
-@@ -691,8 +691,8 @@
+@@ -707,15 +707,15 @@
     *)
  
      # determine if library is installed
@@ -100,7 +98,6 @@
          CXXFLAGS="-I$with_libraw/include $CXXFLAGS"
          CPPFLAGS="-I$with_libraw/include $CPPFLAGS"
  
-@@ -699,7 +699,7 @@
          AC_CHECK_HEADERS(libraw/libraw.h,
           LIBRAW_CXXFLAGS="-I$with_libraw/include"
           LIBRAW_CPPFLAGS="-I$with_libraw/include"
@@ -109,7 +106,7 @@
           AC_MSG_ERROR([libraw/libraw.h header not found or not usable])
           )
      fi
-@@ -771,21 +771,21 @@
+@@ -787,21 +787,21 @@
       ;;
     *)
  
@@ -137,7 +134,7 @@
           AC_MSG_ERROR([uv.h header not found or not usable])
           )
      # assume we are using libuv source directory
-@@ -883,8 +883,8 @@
+@@ -899,15 +899,15 @@
       ;;
     *)
  
@@ -148,7 +145,6 @@
          CXXFLAGS="-I$with_zlib/include $CXXFLAGS"
          CPPFLAGS="-I$with_zlib/include $CPPFLAGS"
  
-@@ -891,7 +891,7 @@
          AC_CHECK_HEADERS(zlib.h,
           ZLIB_CXXFLAGS="-I$with_zlib/include"
           ZLIB_CPPFLAGS="-I$with_zlib/include"
@@ -157,7 +153,7 @@
           AC_MSG_ERROR([zlib.h header not found or not usable])
           )
  
-@@ -965,12 +965,12 @@
+@@ -981,12 +981,12 @@
     *)
  
      # determine if library is installed
@@ -173,7 +169,7 @@
           DB_CXXFLAGS="-I$with_sqlite/include"
           DB_CPPFLAGS="-I$with_sqlite/include"],
           AC_MSG_ERROR([sqlite3.h header not found or not usable])
-@@ -1046,7 +1046,7 @@
+@@ -1062,7 +1062,7 @@
     yes)
      #ffmpeg-mega
      AC_CHECK_HEADERS([ffmpeg-mega/libavutil/macros.h],
@@ -182,7 +178,7 @@
          CXXFLAGS="-I/usr/include/ffmpeg-mega $CXXFLAGS"
          CPPFLAGS="-I/usr/include/ffmpeg-mega $CPPFLAGS"
  
-@@ -1079,7 +1079,7 @@
+@@ -1095,7 +1095,7 @@
    [AC_MSG_RESULT([--with-ffmpeg not specified])
  
      AC_CHECK_HEADERS([ffmpeg-mega/libavutil/macros.h],
@@ -191,7 +187,7 @@
          CXXFLAGS="-I/usr/include/ffmpeg-mega $CXXFLAGS"
          CPPFLAGS="-I/usr/include/ffmpeg-mega $CPPFLAGS"
  
-@@ -1139,8 +1139,8 @@
+@@ -1155,15 +1155,15 @@
     *)
  
      # determine if library is installed
@@ -202,7 +198,6 @@
          CXXFLAGS="-I$with_libzen/include $CXXFLAGS"
          CPPFLAGS="-I$with_libzen/include $CPPFLAGS"
  
-@@ -1147,7 +1147,7 @@
          AC_CHECK_HEADERS(ZenLib/Ztring.h,
           LIBZEN_CXXFLAGS="-I$with_libzen/include"
           LIBZEN_CPPFLAGS="-I$with_libzen/include"
@@ -211,7 +206,7 @@
           AC_MSG_ERROR([ZenLib/Ztring.h header not found or not usable])
           )
      # assume we are using libzen source directory
-@@ -1233,8 +1233,8 @@
+@@ -1249,15 +1249,15 @@
         *)
  
          # determine if library is installed
@@ -222,7 +217,6 @@
              CXXFLAGS="$LIBZEN_CXXFLAGS $ZLIB_CXXFLAGS -I$with_libmediainfo/include $CXXFLAGS"
              CPPFLAGS="$LIBZEN_CPPFLAGS $ZLIB_CPPFLAGS  -I$with_libmediainfo/include $CPPFLAGS"
  
-@@ -1241,7 +1241,7 @@
              AC_CHECK_HEADERS(MediaInfo/MediaInfo.h,
               LIBMEDIAINFO_CXXFLAGS="$LIBZEN_CXXFLAGS -I$with_libmediainfo/include"
               LIBMEDIAINFO_CPPFLAGS="$LIBZEN_CPPFLAGS -I$with_libmediainfo/include"
@@ -231,7 +225,7 @@
               AC_MSG_ERROR([MediaInfo/MediaInfo.h header not found or not usable])
               )
          # assume we are using libmediainfo source directory
-@@ -1299,32 +1299,7 @@
+@@ -1315,31 +1315,6 @@
       LDFLAGS="$LIBMEDIAINFO_LDFLAGS"
       CXXFLAGS="$LIBMEDIAINFO_CXXFLAGS"
       CPPFLAGS="$LIBMEDIAINFO_CPPFLAGS"
@@ -240,7 +234,7 @@
 -    #include "MediaInfo/MediaInfo.h"
 -    int main () { std::cout << ZenLib::Ztring(MediaInfoLib::MediaInfo::Option_Static(__T("Info_Version")).c_str()).To_Local().c_str() << std::endl; }
 -    '
- 
+-
 -      AC_LINK_IFELSE(
 -        [AC_LANG_SOURCE($lmediainfo_prog)],
 -         AC_MSG_RESULT([libmediainfo worked]),
@@ -260,11 +254,10 @@
 -         unset LIBMEDIAINFO_LIBS
 -         )
 -       )
--
+ 
        #restore
        LDFLAGS=$SAVE_LDFLAGS
-       CXXFLAGS=$SAVE_CXXFLAGS
-@@ -1394,10 +1369,10 @@
+@@ -1410,10 +1385,10 @@
           ;;
         *)
          # determine if library is installed
@@ -277,7 +270,7 @@
          LIBSSL_FLAGS="-I$with_openssl/include"
          SAVE_LIBS=$LIBS
          LIBS="-lcrypto $LIBS"
-@@ -1460,10 +1435,10 @@
+@@ -1476,10 +1451,10 @@
           ;;
         *)
          # determine if library is installed
@@ -290,7 +283,7 @@
          CARES_FLAGS="-I$with_cares/include"
  
          AC_CHECK_HEADERS([ares.h], [],
-@@ -1631,7 +1606,7 @@
+@@ -1647,7 +1622,7 @@
  
  
  # FreeImage
@@ -299,7 +292,7 @@
  AC_MSG_CHECKING(for FreeImage)
  AC_ARG_WITH(freeimage,
    AS_HELP_STRING(--with-freeimage=PATH, base of FreeImage installation),
-@@ -1644,8 +1619,8 @@
+@@ -1660,21 +1635,21 @@
      AC_CHECK_HEADERS([FreeImage.h],, [
          AC_MSG_ERROR([FreeImage.h header not found or not usable])
      ])
@@ -310,7 +303,6 @@
  
       freeimage=true
       ;;
-@@ -1652,13 +1627,13 @@
     *)
  
      # determine if library is installed
@@ -327,7 +319,7 @@
           FI_CXXFLAGS="-I$with_freeimage/include"
           FI_CPPFLAGS="-I$with_freeimage/include"],
           AC_MSG_ERROR([FreeImage.h header not found or not usable])
-@@ -1677,8 +1652,8 @@
+@@ -1693,8 +1668,8 @@
      fi
  
      # check and set FI library
@@ -338,7 +330,7 @@
  
      #restore
      LDFLAGS=$SAVE_LDFLAGS
-@@ -1698,6 +1673,8 @@
+@@ -1714,6 +1689,8 @@
       freeimage=true
    ]
    )
@@ -347,7 +339,7 @@
  AC_SUBST(FI_LDFLAGS)
  AC_SUBST(FI_LIBS)
  if test x$enable_static = xyes; then
-@@ -1734,13 +1711,13 @@
+@@ -1750,13 +1727,13 @@
      ;;
      *)
      # determine if library is installed
@@ -364,7 +356,7 @@
           PDF_CXXFLAGS="-I$with_pdfium/include"
           PDF_CPPFLAGS="-I$with_pdfium/include"],
           AC_MSG_ERROR([fpdfview.h header not found or not usable])
-@@ -1804,13 +1781,13 @@
+@@ -1887,13 +1864,13 @@
         *)
  
          # determine if library is installed
@@ -381,7 +373,7 @@
                  TERMCAP_CXXFLAGS="-I$with_termcap/include"
                  TERMCAP_CPPFLAGS="-I$with_termcap/include"],
                  AC_MSG_NOTICE([termcap.h header not found or not usable])
-@@ -1873,8 +1850,8 @@
+@@ -1956,8 +1933,8 @@
         *)
  
          # determine if library is installed
@@ -392,7 +384,7 @@
              CXXFLAGS="-I$with_readline/include $CXXFLAGS"
              CPPFLAGS="-I$with_readline/include $CPPFLAGS"
              AC_CHECK_HEADERS([readline/readline.h], [
-@@ -1948,7 +1925,7 @@
+@@ -2031,7 +2008,7 @@
           ;;
         *)
  
@@ -401,4 +393,3 @@
          CXXFLAGS="-I$with_fuse/include $CXXFLAGS -D_FILE_OFFSET_BITS=64"
          CPPFLAGS="-I$with_fuse/include $CPPFLAGS -D_FILE_OFFSET_BITS=64"
  
-
