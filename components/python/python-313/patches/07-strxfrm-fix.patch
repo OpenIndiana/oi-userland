@@ -1,0 +1,46 @@
+This patch fixes limitation in python which expects strxfrm function to return
+string with characters with values lower than 10ffff. This is know issue:
+
+https://bugs.python.org/issue16258
+
+This is not for upstream as the idea is from the bug itself and was rejected
+for use on all platforms.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Modules/_localemodule.c a/Modules/_localemodule.c
+--- a~/Modules/_localemodule.c	1970-01-01 00:00:00
++++ a/Modules/_localemodule.c	1970-01-01 00:00:00
+@@ -384,7 +384,7 @@ _locale_strxfrm_impl(PyObject *module, P
+ /*[clinic end generated code: output=3081866ebffc01af input=1378bbe6a88b4780]*/
+ {
+     Py_ssize_t n1;
+-    wchar_t *s = NULL, *buf = NULL;
++    wchar_t *s = NULL, *buf = NULL, *solbuf = NULL;
+     size_t n2;
+     PyObject *result = NULL;
+ 
+@@ -425,8 +425,24 @@ _locale_strxfrm_impl(PyObject *module, P
+             goto exit;
+         }
+     }
+-    result = PyUnicode_FromWideChar(buf, n2);
++
++    /* Split each character in resulting wide string in two
++       parts in order to prevent Python ValueErrors on Solaris. */
++    solbuf = PyMem_New(wchar_t, (n2*2) + 1);
++    if (!solbuf) {
++        PyErr_NoMemory();
++        goto exit;
++    }
++    unsigned int i, j;
++    for (i = 0, j = 0; i < n2; i ++, j+= 2) {
++        solbuf[j] = 0x10000 + (buf[i] >> 16);
++        solbuf[j+1] = buf[i] & 0xffff;
++    }
++    solbuf[j] = 0;
++
++    result = PyUnicode_FromWideChar(solbuf, n2*2);
+ exit:
++    PyMem_Free(solbuf);
+     PyMem_Free(buf);
+     PyMem_Free(s);
+     return result;

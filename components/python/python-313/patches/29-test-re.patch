@@ -1,0 +1,21 @@
+XXX TBD
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_re.py a/Lib/test/test_re.py
+--- a~/Lib/test/test_re.py	1970-01-01 00:00:00
++++ a/Lib/test/test_re.py	1970-01-01 00:00:00
+@@ -2180,6 +2180,7 @@ class ReTests(unittest.TestCase):
+         is_emscripten or is_wasi,
+         "musl libc issue on Emscripten/WASI, bpo-46390"
+     )
++    @unittest.skipIf(sys.platform.startswith("sunos"), "locale")
+     def test_locale_caching(self):
+         # Issue #22410
+         oldlocale = locale.setlocale(locale.LC_CTYPE)
+@@ -2220,6 +2221,7 @@ class ReTests(unittest.TestCase):
+         is_emscripten or is_wasi,
+         "musl libc issue on Emscripten/WASI, bpo-46390"
+     )
++    @unittest.skipIf(sys.platform.startswith("sunos"), "locale")
+     def test_locale_compiled(self):
+         oldlocale = locale.setlocale(locale.LC_CTYPE)
+         self.addCleanup(locale.setlocale, locale.LC_CTYPE, oldlocale)

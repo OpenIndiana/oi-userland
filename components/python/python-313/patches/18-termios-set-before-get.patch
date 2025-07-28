@@ -1,0 +1,42 @@
+See https://github.com/python/cpython/issues/115189
+
+Author: Bill Sommerfeld <sommerfeld@hamachi.org>
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_termios.py a/Lib/test/test_termios.py
+--- a~/Lib/test/test_termios.py	1970-01-01 00:00:00
++++ a/Lib/test/test_termios.py	1970-01-01 00:00:00
+@@ -16,6 +16,16 @@ class TestFunctions(unittest.TestCase):
+ 
+     def setUp(self):
+         self.master_fd, self.fd = os.openpty()
++        # some systems will not let you get the window size unless it's been
++        # set first, so try to set it if we can't get it
++        try:
++            termios.tcgetwinsize(self.fd)
++        except termios.error:
++            try:
++                termios.tcsetwinsize(self.fd, (24, 80))
++            except termios.error:
++                pass
++
+         self.addCleanup(os.close, self.master_fd)
+         self.stream = self.enterContext(open(self.fd, 'wb', buffering=0))
+         tmp = self.enterContext(tempfile.TemporaryFile(mode='wb', buffering=0))
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Modules/termios.c a/Modules/termios.c
+--- a~/Modules/termios.c	1970-01-01 00:00:00
++++ a/Modules/termios.c	1970-01-01 00:00:00
+@@ -518,9 +518,12 @@ termios_tcsetwinsize_impl(PyObject *modu
+ #if defined(TIOCGWINSZ) && defined(TIOCSWINSZ)
+     struct winsize w;
+     /* Get the old winsize because it might have
+-       more fields such as xpixel, ypixel. */
++       more fields such as xpixel, ypixel, but keep going and
++       try to set it even if this fails since on some systems
++       on a new pty you can't get the winsize until it's been
++       set once. */
+     if (ioctl(fd, TIOCGWINSZ, &w) == -1) {
+-        return PyErr_SetFromErrno(state->TermiosError);
++	memset(&w, 0, sizeof(w));
+     }
+ 
+     w.ws_row = (unsigned short) winsz_0;

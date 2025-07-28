@@ -1,0 +1,17 @@
+
+Without this patch, shutil.copyfile() will only use sendfile() on Linux
+It works on illumos too, and this fixes a problem with tests that rely
+on sendfile being involved.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/shutil.py a/Lib/shutil.py
+--- a~/Lib/shutil.py	1970-01-01 00:00:00
++++ a/Lib/shutil.py	1970-01-01 00:00:00
+@@ -48,7 +48,7 @@ COPY_BUFSIZE = 1024 * 1024 if _WINDOWS e
+ # This should never be removed, see rationale in:
+ # https://bugs.python.org/issue43743#msg393429
+ _USE_CP_SENDFILE = (hasattr(os, "sendfile")
+-                    and sys.platform.startswith(("linux", "android")))
++                    and sys.platform.startswith(("linux", "android", "sunos")))
+ _HAS_FCOPYFILE = posix and hasattr(posix, "_fcopyfile")  # macOS
+ 
+ # CMD defaults in Windows 10
