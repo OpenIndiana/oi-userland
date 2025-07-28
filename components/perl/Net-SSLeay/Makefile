@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::SSLeay
+#   $WS_TOOLS/perl-integrate-module Net-SSLeay
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::SSLeay
+COMPONENT_NAME =		Net-SSLeay
 HUMAN_VERSION =			1.94
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Net::SSLeay - Perl bindings for OpenSSL and LibreSSL
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Perl bindings for OpenSSL and LibreSSL
 COMPONENT_CPAN_AUTHOR =		CHRISN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9d7be8a56d1bedda05c425306cc504ba134307e0c09bda4a788c98744ebcd95d
@@ -42,6 +42,12 @@ COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
+PERL_REQUIRED_PACKAGES += library/perl-5/text-tabs+wrap
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
