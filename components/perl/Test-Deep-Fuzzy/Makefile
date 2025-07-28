@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Deep-Fuzzy
 HUMAN_VERSION =			0.01
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		fuzzy number comparison with Test::Deep
 COMPONENT_CPAN_AUTHOR =		KARUPA
 COMPONENT_ARCHIVE_HASH =	\
