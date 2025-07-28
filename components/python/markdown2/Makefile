@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project markdown2
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown2
-HUMAN_VERSION =			2.5.3
+HUMAN_VERSION =			2.5.4
 COMPONENT_SUMMARY =		A fast and complete Python implementation of Markdown
 COMPONENT_PROJECT_URL =		https://github.com/trentm/python-markdown2
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d502953a4633408b0ab3ec503c5d6984d1b14307e32b325ec7d16ea57524895
+	sha256:a09873f0b3c23dbfae589b0080587df52ad75bb09a5fa6559147554736676889
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,6 +32,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
