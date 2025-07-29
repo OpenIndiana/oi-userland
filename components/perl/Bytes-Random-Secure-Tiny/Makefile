@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Bytes-Random-Secure-Tiny
 HUMAN_VERSION =			1.011
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A tiny Perl extension to generate cryptographically-secure random bytes.
 COMPONENT_CPAN_AUTHOR =		DAVIDO
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
