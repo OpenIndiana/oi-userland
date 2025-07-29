@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBI
 HUMAN_VERSION =			1.647
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Database independent interface for Perl
 COMPONENT_ARCHIVE_URL =		\
 	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.647.tgz
@@ -33,6 +34,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # remove lines that changes with every test run
 COMPONENT_TEST_TRANSFORMS += '-e "/^SV =/,/^[^ ]/d"'
+# The hash varies with every run
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(HASH(0x\)[0-9a-f]\{6\})/\1XXXXXX)/g'"
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
