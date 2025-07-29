@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
 COMPONENT_VERSION=	6.0.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.gnuplot.info/
@@ -43,7 +44,9 @@ COMPONENT_BUILD_TARGETS= all info
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= (cd $(@D) && autoreconf -fi)
+COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fiv )
+
+COMPONENT_BUILD_TARGETS= all info
 
 CPPFLAGS += -I/usr/include/gd2
 
@@ -56,7 +59,7 @@ PATH= $(PATH.gnu):$(QT5_BINDIR)
 PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_PKG_CONFIG_PATH)
 LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
 
-CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/gnu
+#CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --without-libcerf
@@ -66,14 +69,19 @@ CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
 
 # We want to deploy the demo files
-DEMOSOURCES=	$(SOURCE_DIR)/demo
-DEMODEST=		$(PROTO_DIR)/usr/demo/gnuplot
+DEMODEST= $(PROTO_DIR)/usr/demo/gnuplot
+# Copy collected demo files into its destination folder.
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MKDIR) $(DEMODEST); \
+	$(CP) -r $(SOURCE_DIR)/demo/* $(DEMODEST); \
+	$(CP) -r $(BUILD_DIR_64)/demo/* $(DEMODEST); \
+	$(CP) $(COMPONENT_DIR)/files/rundemo $(COMPONENT_DIR)/files/runtcldemo $(DEMODEST)/ \
+);
 
-#COMPONENT_TEST_ENV += QT_DEBUG_PLUGINS=1
-
-COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(DEMODEST) && \
-	$(CP) -Rp $(DEMOSOURCES)/* $(DEMODEST)/
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MKDIR) $(PROTOUSRSHAREDIR)/info ; \
+	$(CP) -r $(BUILD_DIR_64)/docs/gnuplot.info $(PROTOUSRSHAREDIR)/info/ \
+);
 
 # Manually added dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs

@@ -20,7 +20,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2021, Oracle and/or its affiliates.
 #
 
 # Unfortunately, the gnuplot demo wants run in the
@@ -49,29 +49,6 @@ GNUPLOT_DEMO_DEFAULT="${GNUPLOT_DEMO_DEFAULT:-all.dem}"
 GNUPLOT_DEMO_GSFONTS="${GNUPLOT_DEMO_GSFONTS:-/usr/share/ghostscript/fonts}"
 GNUPLOT_DEMO_P052003L_PFB="${GNUPLOT_DEMO_P052003L_PFB:-$GNUPLOT_DEMO_GSFONTS/p052003l.pfb}"
 GNUPLOT_DEMO_P052023L_PFB="${GNUPLOT_DEMO_P052023L_PFB:-$GNUPLOT_DEMO_GSFONTS/p052023l.pfb}"
-GNUPLOT_DEMO_TMPDIR="/tmp/gnuplot_demo_`logname`_$$"
-GNUPLOT_DEMO_LIST="$GNUPLOT_DEMO_DIR/*.bin \
-    $GNUPLOT_DEMO_DIR/*.cfg \
-    $GNUPLOT_DEMO_DIR/*.cor \
-    $GNUPLOT_DEMO_DIR/*.csv \
-    $GNUPLOT_DEMO_DIR/*.dat \
-    $GNUPLOT_DEMO_DIR/*.dem \
-    $GNUPLOT_DEMO_DIR/*.edf \
-    $GNUPLOT_DEMO_DIR/*.fnc \
-    $GNUPLOT_DEMO_DIR/*.inc \
-    $GNUPLOT_DEMO_DIR/*.par \
-    $GNUPLOT_DEMO_DIR/*.pdb \
-    $GNUPLOT_DEMO_DIR/*.r3d \
-    $GNUPLOT_DEMO_DIR/*.rgb \
-    $GNUPLOT_DEMO_DIR/*.rot \
-    $GNUPLOT_DEMO_DIR/binary[123] \
-    $GNUPLOT_DEMO_DIR/bldg.png \
-    $GNUPLOT_DEMO_DIR/gnu-valley \
-    $GNUPLOT_DEMO_DIR/random-points \
-    $GNUPLOT_DEMO_P052003L_PFB \
-    $GNUPLOT_DEMO_P052023L_PFB \
-    $GNUPLOT_DEMO_CMMI10_PFB \
-    $GNUPLOT_DEMO_SFRM1000_PFB"
 GNUPLOT_DEMO_SAVE_FILES=${GNUPLOT_DEMO_SAVE_FILES:-n}
 
 if [ "x$1" = "x-save-files" ]
@@ -90,22 +67,21 @@ fi
 
 if [ "$GNUPLOT_DEMO_SAVE_FILES" = "y" ]
 then
-	trap "find $GNUPLOT_DEMO_TMPDIR -type f -a -exec cp -p {} . \; ; rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1" INT TERM
+	trap 'find $GNUPLOT_DEMO_TMPDIR -type f -a -exec cp -p {} . \; ;
+		rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1' INT TERM
 else
-	trap "rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1" INT TERM
+	trap 'rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1' INT TERM
 fi
 
 # Create a writeable temporary directory to run the demo from.
+GNUPLOT_DEMO_TMPDIR=$(mktemp -d -t gnuplot_demo_$(logname)_XXXXXX)
+if [ -z "$GNUPLOT_DEMO_TMPDIR" ]; then
+	print "Couldn't create temporary directory!" 1>&2
+	exit 1
+fi
 
-mkdir $GNUPLOT_DEMO_TMPDIR
-chmod u+rwx $GNUPLOT_DEMO_TMPDIR
-
-# Make symlinks in that directory to the demo sources
-
-for GNUPLOT_DEMO_FILE in $GNUPLOT_DEMO_LIST
-do
-	ln -s $GNUPLOT_DEMO_FILE $GNUPLOT_DEMO_TMPDIR
-done
+# Copy demo files to tmp directory.
+cp -R "${GNUPLOT_DEMO_DIR}/"* "${GNUPLOT_DEMO_TMPDIR}"
 
 # Run the gnuplot demo in that directory.
 

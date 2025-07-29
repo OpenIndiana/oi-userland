@@ -1,0 +1,24 @@
+This is a temporary patch to eliminate two failures of grep invocation. An
+upstream bug was created.
+
+https://sourceforge.net/p/gnuplot/bugs/2806/
+--- gnuplot-6.0.3/docs/Makefile.am
++++ gnuplot-6.0.3/docs/Makefile.am
+@@ -133,7 +133,7 @@
+ endif
+ 
+ allterm.h: $(CORETERM) $(LUA_HELP)
+-	$(AM_V_GEN) for e in `grep -E "^[ 	]*START_HELP" $(CORETERM) |\
++	$(AM_V_GEN) for e in `egrep "^[ 	]*START_HELP" $(CORETERM) |\
+ 	     LC_ALL=C sort -f -t':' -k2` ; do \
+ 	  f=`echo $$e |cut -d\: -f1` ; s=`echo $$e | cut -d\: -f2` ;\
+ 	  sed -n "/^[ 	]*$$s/,/^[ 	]*END_HELP/p" $$f ; \
+@@ -243,7 +243,7 @@
+ 	cp $(top_srcdir)/docs/term-ja.diff ja
+ 	cp -r $(top_srcdir)/term $(TJ)
+ 	-( cd ja ; patch -p0 < term-ja.diff )
+-	$(AM_V_GEN) for e in `grep -E "^[ 	]*START_HELP" $(JATERM) |\
++	$(AM_V_GEN) for e in `egrep "^[ 	]*START_HELP" $(JATERM) |\
+ 	     LC_ALL=C sort -f -t':' -k2` ; do \
+ 	  f=`echo $$e |cut -d\: -f1` ; s=`echo $$e | cut -d\: -f2` ;\
+ 	  LC_ALL=C sed -n "/^[ 	]*$$s/,/^[ 	]*END_HELP/p" $$f ; \
