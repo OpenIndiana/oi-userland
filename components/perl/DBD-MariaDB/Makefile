@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-MariaDB
 HUMAN_VERSION =			1.24
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		MariaDB and MySQL driver for the Perl5 Database Interface (DBI)
 COMPONENT_CPAN_AUTHOR =		PALI
 COMPONENT_ARCHIVE_HASH =	\
