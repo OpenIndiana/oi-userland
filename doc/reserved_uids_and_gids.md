@@ -33,6 +33,7 @@ UID   | User name
 39    | lldp
 40    | puppet
 45    | radmin
+48    | rabbitmq
 50    | gdm
 51    | zfssnap
 52    | upnp
