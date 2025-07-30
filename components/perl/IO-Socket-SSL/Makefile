@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Socket-SSL
 HUMAN_VERSION =			2.095
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Nearly transparent SSL encapsulation for IO::Socket::INET.
 COMPONENT_CPAN_AUTHOR =		SULLR
 COMPONENT_ARCHIVE_HASH =	\
