@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Text-Balanced
 HUMAN_VERSION =			2.06
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Extract delimited text sequences from strings.
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
