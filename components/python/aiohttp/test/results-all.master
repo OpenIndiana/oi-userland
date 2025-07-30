@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [4024 items]
+X workers [4031 items]
 
 scheduling tests via LoadScheduling
 
@@ -460,6 +460,7 @@ tests/test_client_middleware_digest_auth.py::test_authenticate_with_malformed_he
 tests/test_client_middleware_digest_auth.py::test_authenticate_with_malformed_headers[empty_www_authenticate_header] PASSED
 tests/test_client_middleware_digest_auth.py::test_authenticate_with_malformed_headers[malformed_parameters] PASSED
 tests/test_client_middleware_digest_auth.py::test_authenticate_with_malformed_headers[no_space_after_scheme] PASSED
+tests/test_client_middleware_digest_auth.py::test_case_sensitive_algorithm_server[pyloop] PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_auth_middleware_callable PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_auth_no_qop[pyloop] PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_auth_without_opaque[pyloop] PASSED
@@ -560,6 +561,12 @@ tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[bo
 tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-auth-int] PASSED
 tests/test_client_middleware_digest_auth.py::test_digest_response_exact_match[body1-this is a body-SHA512-auth] PASSED
 tests/test_client_middleware_digest_auth.py::test_direct_success_no_auth_needed[pyloop] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_lowercase[MD5-sess] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_lowercase[md5] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_lowercase[sha-256] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_uppercase[MD5-SESS] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_uppercase[MD5] PASSED
+tests/test_client_middleware_digest_auth.py::test_encode_algorithm_case_preservation_uppercase[SHA-256] PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_digest_with_md5 PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_digest_with_sess_algorithms[MD5-SESS] PASSED
 tests/test_client_middleware_digest_auth.py::test_encode_digest_with_sess_algorithms[SHA-256-SESS] PASSED
@@ -4051,7 +4058,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                        
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py                      71      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            601     24    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     163      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     164      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      187      2    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     750     16    98%
@@ -4068,8 +4075,8 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py                
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_websocket.py                      6      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py                       217     11    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/log.py                                 7      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         649     16    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           394      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         650     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           391      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py                   31      1    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     170      8    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          121     69    43%
@@ -4114,7 +4121,7 @@ tests/test_client_exceptions.py                                                 
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
 tests/test_client_functional.py                                                                                                                           3300     56    98%
 tests/test_client_middleware.py                                                                                                                            666     13    98%
-tests/test_client_middleware_digest_auth.py                                                                                                                483      1    99%
+tests/test_client_middleware_digest_auth.py                                                                                                                523      1    99%
 tests/test_client_proto.py                                                                                                                                 187      0   100%
 tests/test_client_request.py                                                                                                                              1131     11    99%
 tests/test_client_response.py                                                                                                                              532      5    99%
@@ -4170,7 +4177,7 @@ tests/test_websocket_parser.py                                                  
 tests/test_websocket_writer.py                                                                                                                              97      0   100%
 tests/test_worker.py                                                                                                                                       189      4    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    44026   3307    92%
+TOTAL                                                                                                                                                    44065   3307    92%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3963 passed, 55 skipped, 6 xfailed ========
+======== 3970 passed, 55 skipped, 6 xfailed ========
