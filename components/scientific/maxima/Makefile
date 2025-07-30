@@ -17,13 +17,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maxima
-COMPONENT_VERSION= 	5.47.0
+COMPONENT_VERSION= 	5.48.0
 COMPONENT_SUMMARY= 	Maxima is a descendant of Macsyma, the legendary computer algebra system
 COMPONENT_PROJECT_URL=	https://maxima.sourceforge.io
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/maxima/files/Maxima-source/$(COMPONENT_VERSION)-source/$(COMPONENT_ARCHIVE)/download
-COMPONENT_ARCHIVE_HASH= sha256:9104021b24fd53e8c03a983509cb42e937a925e8c0c85c335d7709a14fd40f7a
+COMPONENT_ARCHIVE_HASH= sha256:75af2bf1894df2a17aef8a5c378d72d4d53c669b9f47d60ec5ba8c8676c4aaab
 COMPONENT_FMRI=			library/math/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		GPLv2
