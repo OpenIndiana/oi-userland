@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPIx-Utils
 HUMAN_VERSION =			0.004
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Utility functions for PPI
 COMPONENT_CPAN_AUTHOR =		DBOOK
 COMPONENT_ARCHIVE_HASH =	\
