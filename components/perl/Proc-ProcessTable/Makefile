@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Proc-ProcessTable
-HUMAN_VERSION =			0.636
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.637
 COMPONENT_SUMMARY =		Perl extension to access the unix process table
 COMPONENT_CPAN_AUTHOR =		JWB
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:944224ffb00fc1ef35069633770a0afda8623b5c7532d1e4ab48a9df394890fd
+	sha256:d7e688b5f0bd5d38e5bb306f16f904aac93112df8eda098fefef1c810bba6f85
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
