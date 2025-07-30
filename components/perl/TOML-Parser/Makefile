@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		TOML-Parser
 HUMAN_VERSION =			0.91
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		simple toml parser
 COMPONENT_CPAN_AUTHOR =		KARUPA
 COMPONENT_ARCHIVE_HASH =	\
