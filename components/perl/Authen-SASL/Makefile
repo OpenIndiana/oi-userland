@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Authen-SASL
 HUMAN_VERSION =			2.1800
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		SASL Authentication framework
 COMPONENT_CPAN_AUTHOR =		EHUELS
 COMPONENT_ARCHIVE_HASH =	\
