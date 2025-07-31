@@ -18,11 +18,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 2.8.11
+COMPONENT_VERSION= 2.8.12
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fc6694a496848fb1204169c0cc6b844beec49fddd547bbf2bd2a7e33322c55d9
+COMPONENT_ARCHIVE_HASH=	sha256:20e5fab2ca0f95ba9d1ef5052fe5b028e3e1d66d4cdea6b9adfcbd3e524c2a09
 COMPONENT_ARCHIVE_URL=	https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://abiword.github.io/enchant/
 COMPONENT_FMRI=			library/spell-checking/enchant
