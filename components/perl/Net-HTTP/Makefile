@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::HTTP
+#   $WS_TOOLS/perl-integrate-module Net-HTTP
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::HTTP
+COMPONENT_NAME =		Net-HTTP
 HUMAN_VERSION =			6.23
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Net::HTTP - Low-level HTTP connection (client)
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Low-level HTTP connection (client)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0d65c09dd6c8589b2ae1118174d3c1a61703b6ecfc14a3442a8c74af65e0c94e
@@ -31,6 +31,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-zlib
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
