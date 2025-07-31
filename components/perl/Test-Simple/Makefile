@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Simple
 HUMAN_VERSION =			1.302214
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Basic utilities for writing tests.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
