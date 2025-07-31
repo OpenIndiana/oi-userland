@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mail::DKIM
+#   $WS_TOOLS/perl-integrate-module Mail-DKIM
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mail::DKIM
+COMPONENT_NAME =		Mail-DKIM
 HUMAN_VERSION =			1.20240923
-COMPONENT_SUMMARY =		Mail::DKIM - Signs/verifies Internet mail with DKIM/DomainKey signatures
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Signs/verifies Internet mail with DKIM/DomainKey signatures
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:45de46f5dc4d23bcb6ad6401759881dd43968eab20e73f6f79d9557467de20ee
@@ -32,11 +33,15 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-rsa
 PERL_REQUIRED_PACKAGES += library/perl-5/cryptx
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/mail-authenticationresults
 PERL_REQUIRED_PACKAGES += library/perl-5/mailtools
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-mock
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/yaml-libyaml
