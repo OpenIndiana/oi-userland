@@ -1,0 +1,31 @@
+# Solaris-specific patch.  Not appropriate for upstream.
+
+--- gdb-15.1/gdb/Makefile.in
++++ gdb-15.1/gdb/Makefile.in
+@@ -187,7 +187,7 @@ LIBDECNUMBER_CFLAGS = -I$(LIBDECNUMBER_D
+ # Where is the READLINE library?  Typically in ../readline/readline.
+ READLINE_DIR = ../readline/readline
+ READLINE_SRC = $(srcdir)/$(READLINE_DIR)
+-READLINE = @READLINE@
++READLINE = $(READLINE_DIR)/libreadline.a $(READLINE_DIR)/libhistory.a
+ READLINE_DEPS = @READLINE_DEPS@
+ READLINE_CFLAGS = @READLINE_CFLAGS@
+ 
+@@ -230,7 +230,7 @@ DEBUGINFOD_LIBS = @DEBUGINFOD_LIBS@
+ AMD_DBGAPI_CFLAGS = @AMD_DBGAPI_CFLAGS@
+ AMD_DBGAPI_LIBS = @AMD_DBGAPI_LIBS@
+ 
+-RDYNAMIC = @RDYNAMIC@
++RDYNAMIC =
+ 
+ # Where is the INTL library?  Typically in ../intl.
+ INTL = @LIBINTL@
+@@ -583,7 +583,7 @@ SUBDIR_GDBTK_CFLAGS = -DGDBTK
+ CONFIG_OBS = @CONFIG_OBS@
+ CONFIG_SRCS = @CONFIG_SRCS@
+ CONFIG_DEPS = @CONFIG_DEPS@
+-CONFIG_LDFLAGS = @CONFIG_LDFLAGS@
++CONFIG_LDFLAGS =
+ ENABLE_CFLAGS = @ENABLE_CFLAGS@
+ CONFIG_ALL = @CONFIG_ALL@
+ CONFIG_CLEAN = @CONFIG_CLEAN@

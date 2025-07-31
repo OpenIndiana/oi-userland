@@ -1,0 +1,24 @@
+Avoid memory exhaustion during the execution of unit tests.
+The limited number of iterations reduced the memory consumption
+of GNU debugger from hundreds of GBs to hundreds of MBs.
+The test case try to load a core file with many program headers
+(mmap allocations). The hypothesis is that loading this core
+file either hits an edge case of libc allocator, or it exhausts
+the virtual address space as the memory overcommitment is not
+allowed on Solaris; there is a physical storage for each byte
+of allocated memory...
+
+Not suitable for upstream.
+
+--- gdb-13.1/gdb/testsuite/gdb.base/many-headers.c
++++ gdb-13.1/gdb/testsuite/gdb.base/many-headers.c
+@@ -25,7 +25,7 @@ {
+   char *ptr;
+   int ind, cnt;
+ 
+-  cnt = 100000;
++  cnt = 1000;
+   for (ind = 0; ind < cnt; ind++)
+     {
+       ptr = mmap (NULL, 100, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+
