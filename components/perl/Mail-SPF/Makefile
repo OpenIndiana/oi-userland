@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-SPF
 HUMAN_VERSION =			3.20250505
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		An object-oriented implementation of Sender Policy Framework
 COMPONENT_CPAN_AUTHOR =		ADAVIS
 COMPONENT_ARCHIVE_HASH =	\
