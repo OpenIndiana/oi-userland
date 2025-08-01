@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_datadir
-HUMAN_VERSION =			1.7.2
+HUMAN_VERSION =			1.8.0
 COMPONENT_SUMMARY =		pytest plugin for test data directories and files
 COMPONENT_PROJECT_URL =		http://github.com/gabrielcnr/pytest-datadir
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:15f5228a35d0a3205e4968e75d3b9cca91762424e1eafc21eb637d380a48443e
+	sha256:7a15faed76cebe87cc91941dd1920a9a38eba56a09c11e9ddf1434d28a0f78eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
