@@ -1,0 +1,11 @@
+--- Tk-804.036/objGlue.c.orig
++++ Tk-804.036/objGlue.c
+@@ -627,7 +627,7 @@
+  sv_utf8_downgrade(objPtr, 0);
+  if (lengthPtr)
+   {
+-   return (unsigned char *) SvPV(objPtr, *lengthPtr);
++   return (unsigned char *) SvPV(objPtr, *(STRLEN * const)lengthPtr);
+   }
+  else
+   {
