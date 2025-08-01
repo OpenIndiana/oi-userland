@@ -71,7 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.20.10
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -88,14 +88,14 @@ COMPONENT_NAME_0=	$(COMPONENT_NAME)-src
 COMPONENT_NAME_1=	$(COMPONENT_NAME)-platforms-Cross
 COMPONENT_NAME_2=	$(COMPONENT_NAME)-platforms-unix
 # also update squeak.ips when changing SQREV
-SQREV=                  3834
+SQREV=                  3835
 SVN_REV_0=              $(SQREV)
 SVN_REV_1=              $(SQREV)
 SVN_REV_2=              $(SQREV)
 # userland-fetch from archives
-SVN_HASH_0=  sha256:4260d79ddb47540b46fc1aefab43113527ab742115bddb298b77ef96019bc59e
-SVN_HASH_1=  sha256:0374a745f05174fb7c100173b0dab08fc79d5082736f2f684449221fe60e3cda
-SVN_HASH_2=  sha256:5493f735a316b1cde78da7d68b75dff70d69456587bb8bfe3f408fabd1ff2a8c
+SVN_HASH_0=  sha256:5c699133f8c3551bf117944ec32621d88c0a53f2f68eda0795b895edaf5591cd
+SVN_HASH_1=  sha256:e1c9ea1bbdc0f90e8fc21eab2e37d687081fb40c604d4dadeb7256ee2f4ba78e
+SVN_HASH_2=  sha256:af2f8e0c2c76e776223fd7a8da17eebe9556111133c5c5032c59a7a72c22cfba
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -174,7 +174,17 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
   -exec rm {} \;)
 
 # clean up symbolic link set in pre configure action
+# also when we started to use 3 subversion packages, the .prep and .patched files started to appear in the component dir
 CLEAN_PATHS+= Cross
+CLEAN_PATHS+= .prep
+CLEAN_PATHS+= .patched
+CLEAN_PATHS+= .patched-02-openssl-cmake.patch
+CLEAN_PATHS+= .patched-03-cameraconfig.patch
+CLEAN_PATHS+= .patched-04-sqCamera.patch
+CLEAN_PATHS+= .patched-05-jmemdatasrc.patch
+CLEAN_PATHS+= .patched-06-jmemdatadst.patch
+CLEAN_PATHS+= .patched-07-sqJPEGReadWriter2Plugin.patch
+CLEAN_PATHS+= .patched-08-JPEGReadWriter2Plugin.patch
 
 # do not build vm-sound-Sun as we only package vm-sound-pulse (bug #17109)
 # do not build Mpeg3Plugin and RePlugin as it uses old copies of those libraries
@@ -188,6 +198,8 @@ CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
 CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
 CONFIGURE_OPTIONS +=    --without-ScratchPlugin
+# cmake 4.x requires this -D because the CMakeLists.txt indicates cmake 2.x MINVERSION
+CONFIGURE_OPTIONS +=    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
