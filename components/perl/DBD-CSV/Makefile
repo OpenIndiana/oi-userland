@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-CSV
 HUMAN_VERSION =			0.62
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DBI driver for CSV files
 COMPONENT_ARCHIVE_URL =		\
 	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBD-CSV-0.62.tgz
