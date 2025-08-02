@@ -29,12 +29,12 @@ CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.50.3
-TARBALL_VERSION=		3500300
+COMPONENT_VERSION=      3.50.4
+TARBALL_VERSION=		3500400
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:119862654b36e252ac5f8add2b3d41ba03f4f387b48eb024956c36ea91012d3f
+COMPONENT_ARCHIVE_HASH= sha256:b7b4dc060f36053902fb65b344bbbed592e64b2291a26ac06fe77eec097850e9
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2025/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
@@ -92,7 +92,7 @@ COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP)
 COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64) ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64)/ ;
 
 COMPONENT_TEST_TARGETS= test
-
+# Note that the user running the tests needs more privileges in order to run them successfully.
 COMPONENT_TEST_TRANSFORMS= \
 	' -e "s/in [0-9]*\.[0-9]* seconds//" ' \
 	' -e "s/tests on .*/tests/" ' \
