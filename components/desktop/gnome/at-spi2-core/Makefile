@@ -19,10 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../../make-rules/shared-macros.mk
 
+# Odd minor versions are unstable.
+
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.56.3
+HUMAN_VERSION=			2.56.4
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:0e41e1fc6a1961b38b4f9c0bea64bad30efff75949b7cdb988d2f2fdab72267a
+COMPONENT_ARCHIVE_HASH=		sha256:dbe35b951499e1d6f1fb552c2e0a09cea7cba2adf6c2eba0b2c85b6c094a3a02
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
