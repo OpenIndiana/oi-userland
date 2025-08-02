@@ -3,11 +3,11 @@ py$(PYV): commands[0]> python -m pytest -ra -n auto
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-installed packages of interest: build==1.2.2.post1 colorama==0.4.6 filelock==3.16.1 packaging==24.1 pip==24.2 pyproject_hooks==1.2.0 setuptools==75.1.0 tomli==2.0.2 virtualenv==20.26.6 wheel==0.44.0
+installed packages of interest: build==1.3.0 colorama==0.4.6 coverage==7.10.7 filelock==3.18.0 packaging==25.0 pip==25.2 pyproject_hooks==1.2.0 setuptools==80.9.0 tomli==2.2.1 virtualenv==20.30.0 wheel==0.46.1
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-X workers [196 items]
+X workers [201 items]
 
 scheduling tests via LoadScheduling
 
@@ -113,6 +113,9 @@ tests/test_main.py::test_colors[False-True-env1-colors1] PASSED
 tests/test_main.py::test_colors[False-True-env3-colors3] PASSED
 tests/test_main.py::test_colors[False-True-env5-colors5] PASSED
 tests/test_main.py::test_colors_conflict[False] PASSED
+tests/test_main.py::test_config_json_errors[False-cli_args0-not allowed with argument] PASSED
+tests/test_main.py::test_config_json_errors[False-cli_args1-Invalid JSON in --config-json] PASSED
+tests/test_main.py::test_config_json_errors[False-cli_args2---config-json must contain a JSON object] PASSED
 tests/test_main.py::test_output[False-sdist-and-wheel-direct-no-isolation] PASSED
 tests/test_main.py::test_output[False-sdist-direct-no-isolation] PASSED
 tests/test_main.py::test_output[False-via-sdist-isolation] PASSED
@@ -126,6 +129,9 @@ tests/test_main.py::test_parse_args[False-cli_args1-build_args1-build_package_vi
 tests/test_main.py::test_parse_args[False-cli_args10-build_args10-build_package_via_sdist] PASSED
 tests/test_main.py::test_parse_args[False-cli_args11-build_args11-build_package_via_sdist] PASSED
 tests/test_main.py::test_parse_args[False-cli_args12-build_args12-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[False-cli_args13-build_args13-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[False-cli_args14-build_args14-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[False-cli_args15-build_args15-build_package_via_sdist] PASSED
 tests/test_main.py::test_parse_args[False-cli_args2-build_args2-build_package] PASSED
 tests/test_main.py::test_parse_args[False-cli_args3-build_args3-build_package] PASSED
 tests/test_main.py::test_parse_args[False-cli_args4-build_args4-build_package] PASSED
@@ -149,7 +155,6 @@ tests/test_projectbuilder.py::test_build_missing_backend[False-wheel] PASSED
 tests/test_projectbuilder.py::test_build_not_dir_outdir[False] PASSED
 tests/test_projectbuilder.py::test_build_system_typo[False] PASSED
 tests/test_projectbuilder.py::test_build_with_dep_on_console_script[False] PASSED
-tests/test_projectbuilder.py::test_check_dependencies[False] PASSED
 tests/test_projectbuilder.py::test_check_dependency[False-circular_dep-None] PASSED
 tests/test_projectbuilder.py::test_check_dependency[False-extras_dep == 1.0.0-None] PASSED
 tests/test_projectbuilder.py::test_check_dependency[False-extras_dep == 2.0.0-expected12] PASSED
@@ -209,42 +214,6 @@ tests/test_util.py::test_wheel_metadata_isolation[False] SKIPPED
 tests/test_util.py::test_with_get_requires[False] PASSED
 
 =========================== short test summary info ============================
-======== 140 passed, 56 skipped ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_static_directory_without_1
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 145 passed, 56 skipped ========
   py$(PYV): OK
   congratulations :)
