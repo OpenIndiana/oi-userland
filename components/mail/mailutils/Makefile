@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.19
+COMPONENT_VERSION=	3.20
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:50230d20036c5b8ad8c96b0d996177f1f133fba4c7c7e3b462d39eeb30849f45
+COMPONENT_ARCHIVE_HASH=	sha256:a8f3faab1edda5188bb5ca3e4e9c0c5bc72cd0dadf4e1f4799d27fa75c6ae829
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
 COMPONENT_FMRI=		mail/mailutils
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_LICENSE=	GPLv3,LGPLv3
+COMPONENT_LICENSE=	GPLv3, LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,8 +49,8 @@ CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
 # cpp flags.
 CONFIGURE_ENV += CPPFLAGS="-I/usr/include/openldap \
-		-I$(MYSQL_HOME)/include \
-		-I$(PG_HOME)/include"
+	-I$(MYSQL_HOME)/include \
+	-I$(PG_HOME)/include"
 
 # library link flags.
 CONFIGURE_ENV += LIBS="-lldap-2.6"
@@ -58,7 +58,6 @@ CONFIGURE_ENV += LIBS="-lldap-2.6"
 CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_LIBDIR)"
 CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR)"
 
-CONFIGURE_OPTIONS += --libexecdir=/usr/libexec
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-mysql
