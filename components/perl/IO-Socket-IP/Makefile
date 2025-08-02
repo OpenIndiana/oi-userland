@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Socket-IP
 HUMAN_VERSION =			0.43
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Family-neutral IP socket supporting both IPv4 and IPv6
 COMPONENT_CPAN_AUTHOR =		PEVANS
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,4 +34,4 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += runtime/perl
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
