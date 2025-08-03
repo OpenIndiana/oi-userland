@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Alien-Libxml2
 HUMAN_VERSION =			0.20
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Install the C libxml2 library on your system
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,19 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-build
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-build-plugin-download-gitlab
-PERL_REQUIRED_PACKAGES += library/perl-5/archive-tar
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/http-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-lzma
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
-PERL_REQUIRED_PACKAGES += library/perl-5/mozilla-ca
-PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/alien-build
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
