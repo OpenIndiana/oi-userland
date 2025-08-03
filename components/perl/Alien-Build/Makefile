@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Alien-Build
 HUMAN_VERSION =			2.84
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Build external dependencies for use in CPAN
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
