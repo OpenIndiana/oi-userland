@@ -18,15 +18,16 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=      xgc
-COMPONENT_VERSION=   1.0.6
+COMPONENT_VERSION=   1.0.7
 COMPONENT_SUMMARY=   xgc graphics demo
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7b87bbdbce4ec858738a3b81b8a3943aff01036001e2a1d00bb5384392a8b240
+COMPONENT_ARCHIVE_HASH= sha256:d858258c05eaac2d1f48bb44820dc2dce0a68601a14fff97853c72b48d1b7d08
 COMPONENT_FMRI=      x11/xgc
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
