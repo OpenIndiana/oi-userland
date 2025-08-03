@@ -44,14 +44,16 @@ component-environment-check::
 	@/usr/sbin/psrinfo -vp
 	@/usr/sbin/ipadm show-addr
 	$(call separator-line,Required Packages)
-	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%)
+	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) \
+		$(filter-out $(if $(strip $(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%),),$(REQUIRED_PACKAGES:%=/%))
 	$(call separator-line)
 
 component-environment-prep::
 	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
 		while true ; do \
-		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) ; \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_REQUIRED_PACKAGES:%=/%) \
+			$(filter-out $(if $(strip $(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%),),$(REQUIRED_PACKAGES:%=/%)) ; \
 		  RETVAL=$$? ; \
 		  [ $$RETVAL -eq 0 ] && break; \
 		  [ $$RETVAL -eq 4 ] && break; \
