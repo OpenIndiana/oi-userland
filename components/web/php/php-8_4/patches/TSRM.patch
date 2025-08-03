@@ -1,0 +1,11 @@
+--- php-8.4.1/TSRM/TSRM.c	2024-11-20 10:48:35.000000000 +0100
++++ php-8.4.1/TSRM/TSRM.c.orig	2024-11-29 20:39:05.598446180 +0100
+@@ -778,7 +778,7 @@
+ 	return 0;
+ #elif defined(__x86_64__) && defined(__GNUC__) && !defined(__FreeBSD__) && \
+ 	!defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__MUSL__) && \
+-	!defined(__HAIKU__)
++	!defined(__HAIKU__) && !defined(__solaris__)
+ 	size_t ret;
+ 
+ 	asm ("movq _tsrm_ls_cache@gottpoff(%%rip),%0"
