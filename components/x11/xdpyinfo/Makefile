@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xdpyinfo
-COMPONENT_VERSION=  1.3.4
+COMPONENT_VERSION=  1.4.0
 COMPONENT_FMRI=     x11/diagnostic/xdpyinfo
 COMPONENT_SUMMARY=  xdpyinfo − display information utility for X
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a8ada581dbd7266440d7c3794fa89edf6b99b8857fc2e8c31042684f3af4822b
+COMPONENT_ARCHIVE_HASH= sha256:dc1de6e6e091ed46c4837b0ae9811e8182f7be0d2af638cab3e530ff081a48b6
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
@@ -35,6 +35,8 @@ REQUIRED_PACKAGES += x11/library/libxcomposite
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxinerama
+REQUIRED_PACKAGES += x11/library/libxpresent
+REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
 REQUIRED_PACKAGES += x11/library/libxxf86vm
