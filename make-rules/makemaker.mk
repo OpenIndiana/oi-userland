@@ -146,6 +146,10 @@ GENERATE_EXTRA_CMD += | \
 		$(CAT) $(BUILD_DIR)/META.depend-runtime.res $(MANGLE_DEPEND_RUNTIME) | $(PKGFMT) \
 	)
 
+# During bootstrap we need to filter out packages causing circular dependencies.
+MANGLE_DEPEND_RUNTIME += \
+	$(if $(strip $(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES.perl:%= | $(GNU_GREP) -v '^depend type=require fmri=pkg:/%-$(PLV)'))
+
 # Add build dependencies from metadata to REQUIRED_PACKAGES.
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
 
