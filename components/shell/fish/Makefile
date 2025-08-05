@@ -42,6 +42,10 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
 CMAKE_OPTIONS += -DSYS_PCRE2_INCLUDE_DIR=/usr/include/pcre
 CMAKE_OPTIONS += -DFISH_USE_SYSTEM_PCRE2=ON
 CMAKE_OPTIONS += -DWITH_GETTEXT=ON
+# sphinx not functional.
+# Extension error:
+# Could not import extension sphinx.builders.latex (exception: No module named 'roman')
+CMAKE_OPTIONS += -DBUILD_DOCS=OFF
 
 # Need to compile dynamic rust crates. See https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
