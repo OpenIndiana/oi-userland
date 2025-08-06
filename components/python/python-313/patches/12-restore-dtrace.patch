@@ -1,0 +1,280 @@
+See https://github.com/python/cpython/issues/98894
+
+Author: Bill Sommerfeld <sommerfeld@hamachi.org>
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_dtrace.py a/Lib/test/test_dtrace.py
+--- a~/Lib/test/test_dtrace.py	1970-01-01 00:00:00
++++ a/Lib/test/test_dtrace.py	1970-01-01 00:00:00
+@@ -126,7 +126,7 @@ class TraceTests:
+     def test_verify_call_opcodes(self):
+         """Ensure our call stack test hits all function call opcodes"""
+ 
+-        opcodes = set(["CALL_FUNCTION", "CALL_FUNCTION_EX", "CALL_FUNCTION_KW"])
++        opcodes = set(["CALL", "CALL_FUNCTION_EX"])
+ 
+         with open(abspath("call_stack.py")) as f:
+             code_string = f.read()
+@@ -151,6 +151,7 @@ class TraceTests:
+     def test_gc(self):
+         self.run_case("gc")
+ 
++    @unittest.skipIf(True, "not currently implemented")
+     def test_line(self):
+         self.run_case("line")
+ 
+@@ -183,6 +184,8 @@ class CheckDtraceProbes(unittest.TestCas
+                 print(f"readelf version: {readelf_major_version}.{readelf_minor_version}")
+         else:
+             raise unittest.SkipTest("CPython must be configured with the --with-dtrace option.")
++        # These checks are only relevant with the SystemTap backend
++        SystemTapBackend().assert_usable()
+ 
+ 
+     @staticmethod
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Python/bytecodes.c a/Python/bytecodes.c
+--- a~/Python/bytecodes.c	1970-01-01 00:00:00
++++ a/Python/bytecodes.c	1970-01-01 00:00:00
+@@ -834,6 +834,7 @@ dummy_func(
+             SYNC_SP();
+             _PyFrame_SetStackPointer(frame, stack_pointer);
+             assert(EMPTY());
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+             _PyInterpreterFrame *dying = frame;
+@@ -856,6 +857,7 @@ dummy_func(
+             STACK_SHRINK(1);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -880,6 +882,7 @@ dummy_func(
+             Py_INCREF(retval);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -1077,6 +1080,7 @@ dummy_func(
+             assert(oparg == 0 || oparg == 1);
+             gen->gi_frame_state = FRAME_SUSPENDED + oparg;
+             _PyFrame_SetStackPointer(frame, stack_pointer - 1);
++	    DTRACE_FUNCTION_EXIT();
+             int err = _Py_call_instrumentation_arg(
+                     tstate, PY_MONITORING_EVENT_PY_YIELD,
+                     frame, this_instr, retval);
+@@ -1108,6 +1112,7 @@ dummy_func(
+             gen->gi_frame_state = FRAME_SUSPENDED + oparg;
+             SYNC_SP();
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             tstate->exc_info = gen->gi_exc_state.previous_item;
+             gen->gi_exc_state.previous_item = NULL;
+             _Py_LeaveRecursiveCallPy(tstate);
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Python/ceval.c a/Python/ceval.c
+--- a~/Python/ceval.c	1970-01-01 00:00:00
++++ a/Python/ceval.c	1970-01-01 00:00:00
+@@ -105,6 +105,70 @@
+     } while (0)
+ #endif
+ 
++static void
++dtrace_function_entry(_PyInterpreterFrame *frame)
++{
++    const char *filename;
++    const char *funcname;
++    int lineno;
++
++    PyCodeObject *code = _PyFrame_GetCode(frame);
++    filename = PyUnicode_AsUTF8(code->co_filename);
++    funcname = PyUnicode_AsUTF8(code->co_name);
++    lineno = PyUnstable_InterpreterFrame_GetLine(frame),
++
++    PyDTrace_FUNCTION_ENTRY(filename, funcname, lineno);
++}
++
++static void
++dtrace_function_return(_PyInterpreterFrame *frame)
++{
++    const char *filename;
++    const char *funcname;
++    int lineno;
++
++    PyCodeObject *code = _PyFrame_GetCode(frame);
++    filename = PyUnicode_AsUTF8(code->co_filename);
++    funcname = PyUnicode_AsUTF8(code->co_name);
++    lineno = PyUnstable_InterpreterFrame_GetLine(frame),
++
++    PyDTrace_FUNCTION_RETURN(filename, funcname, lineno);
++}
++
++#if 0
++/* DTrace equivalent of maybe_call_line_trace. */
++static void
++maybe_dtrace_line(_PyInterpreterFrame *frame,
++                  PyTraceInfo *trace_info,
++                  int instr_prev)
++{
++    const char *co_filename, *co_name;
++
++    /* If the last instruction executed isn't in the current
++       instruction window, reset the window.
++    */
++    initialize_trace_info(trace_info, frame);
++    int lastline = _PyCode_CheckLineNumber(instr_prev*sizeof(_Py_CODEUNIT), &trace_info->bounds);
++    int addr = _PyInterpreterFrame_LASTI(frame) * sizeof(_Py_CODEUNIT);
++    int line = _PyCode_CheckLineNumber(addr, &trace_info->bounds);
++    if (line != -1) {
++        /* Trace backward edges or first instruction of a new line */
++        if (_PyInterpreterFrame_LASTI(frame) < instr_prev ||
++            (line != lastline && addr == trace_info->bounds.ar_start))
++        {
++            co_filename = PyUnicode_AsUTF8(frame->f_code->co_filename);
++            if (!co_filename) {
++                co_filename = "?";
++            }
++            co_name = PyUnicode_AsUTF8(frame->f_code->co_name);
++            if (!co_name) {
++                co_name = "?";
++            }
++            PyDTrace_LINE(co_filename, co_name, line);
++        }
++    }
++}
++#endif
+ 
+ #ifdef LLTRACE
+ static void
+@@ -735,6 +799,7 @@ _PyEval_EvalFrameDefault(PyThreadState *
+         if (_Py_EnterRecursivePy(tstate)) {
+             goto exit_unwind;
+         }
++	DTRACE_FUNCTION_ENTRY();
+         /* Because this avoids the RESUME,
+          * we need to update instrumentation */
+         _Py_Instrument(_PyFrame_GetCode(frame), tstate->interp);
+@@ -760,6 +825,7 @@ start_frame:
+     }
+ 
+     next_instr = frame->instr_ptr;
++    DTRACE_FUNCTION_ENTRY();
+ resume_frame:
+     stack_pointer = _PyFrame_GetStackPointer(frame);
+ 
+@@ -898,6 +964,7 @@ exception_unwind:
+                 }
+                 assert(STACK_LEVEL() == 0);
+                 _PyFrame_SetStackPointer(frame, stack_pointer);
++		DTRACE_FUNCTION_EXIT();
+                 monitor_unwind(tstate, frame, next_instr-1);
+                 goto exit_unwind;
+             }
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Python/ceval_macros.h a/Python/ceval_macros.h
+--- a~/Python/ceval_macros.h	1970-01-01 00:00:00
++++ a/Python/ceval_macros.h	1970-01-01 00:00:00
+@@ -297,6 +297,11 @@ GETITEM(PyObject *v, Py_ssize_t i) {
+ #define CONSTS() _PyFrame_GetCode(frame)->co_consts
+ #define NAMES() _PyFrame_GetCode(frame)->co_names
+ 
++#define DTRACE_FUNCTION_EXIT() \
++    if (PyDTrace_FUNCTION_RETURN_ENABLED()) { \
++        dtrace_function_return(frame); \
++    }
++
+ #define DTRACE_FUNCTION_ENTRY()  \
+     if (PyDTrace_FUNCTION_ENTRY_ENABLED()) { \
+         dtrace_function_entry(frame); \
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Python/generated_cases.c.h a/Python/generated_cases.c.h
+--- a~/Python/generated_cases.c.h	1970-01-01 00:00:00
++++ a/Python/generated_cases.c.h	1970-01-01 00:00:00
+@@ -996,6 +996,7 @@
+                 new_frame->previous = frame;
+                 CALL_STAT_INC(inlined_py_calls);
+                 frame = tstate->current_frame = new_frame;
++		DTRACE_FUNCTION_ENTRY();
+                 tstate->py_recursion_remaining--;
+                 LOAD_SP();
+                 LOAD_IP(0);
+@@ -1087,6 +1088,7 @@
+                 new_frame->previous = frame;
+                 CALL_STAT_INC(inlined_py_calls);
+                 frame = tstate->current_frame = new_frame;
++		DTRACE_FUNCTION_ENTRY();
+                 tstate->py_recursion_remaining--;
+                 LOAD_SP();
+                 LOAD_IP(0);
+@@ -1925,6 +1927,7 @@
+                 new_frame->previous = frame;
+                 CALL_STAT_INC(inlined_py_calls);
+                 frame = tstate->current_frame = new_frame;
++		DTRACE_FUNCTION_ENTRY();
+                 tstate->py_recursion_remaining--;
+                 LOAD_SP();
+                 LOAD_IP(0);
+@@ -1997,6 +2000,7 @@
+                 new_frame->previous = frame;
+                 CALL_STAT_INC(inlined_py_calls);
+                 frame = tstate->current_frame = new_frame;
++		DTRACE_FUNCTION_ENTRY();
+                 tstate->py_recursion_remaining--;
+                 LOAD_SP();
+                 LOAD_IP(0);
+@@ -2850,6 +2854,7 @@
+                 new_frame->previous = frame;
+                 CALL_STAT_INC(inlined_py_calls);
+                 frame = tstate->current_frame = new_frame;
++		DTRACE_FUNCTION_ENTRY();
+                 tstate->py_recursion_remaining--;
+                 LOAD_SP();
+                 LOAD_IP(0);
+@@ -3501,6 +3506,7 @@
+             Py_INCREF(retval);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -3526,6 +3532,7 @@
+             STACK_SHRINK(1);
+             assert(EMPTY());
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             assert(frame != &entry_frame);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+@@ -3551,6 +3558,7 @@
+             assert(oparg == 0 || oparg == 1);
+             gen->gi_frame_state = FRAME_SUSPENDED + oparg;
+             _PyFrame_SetStackPointer(frame, stack_pointer - 1);
++	    DTRACE_FUNCTION_EXIT();
+             int err = _Py_call_instrumentation_arg(
+                 tstate, PY_MONITORING_EVENT_PY_YIELD,
+                 frame, this_instr, retval);
+@@ -5201,6 +5209,7 @@
+                 #endif
+                 _PyFrame_SetStackPointer(frame, stack_pointer);
+                 assert(EMPTY());
++		DTRACE_FUNCTION_EXIT();
+                 _Py_LeaveRecursiveCallPy(tstate);
+                 // GH-99729: We need to unlink the frame *before* clearing it:
+                 _PyInterpreterFrame *dying = frame;
+@@ -5258,6 +5267,7 @@
+             stack_pointer += -1;
+             _PyFrame_SetStackPointer(frame, stack_pointer);
+             assert(EMPTY());
++	    DTRACE_FUNCTION_EXIT();
+             _Py_LeaveRecursiveCallPy(tstate);
+             // GH-99729: We need to unlink the frame *before* clearing it:
+             _PyInterpreterFrame *dying = frame;
+@@ -6234,6 +6244,7 @@
+             gen->gi_frame_state = FRAME_SUSPENDED + oparg;
+             stack_pointer += -1;
+             _PyFrame_SetStackPointer(frame, stack_pointer);
++	    DTRACE_FUNCTION_EXIT();
+             tstate->exc_info = gen->gi_exc_state.previous_item;
+             gen->gi_exc_state.previous_item = NULL;
+             _Py_LeaveRecursiveCallPy(tstate);

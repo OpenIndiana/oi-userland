@@ -1,0 +1,79 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/ctypes/util.py a/Lib/ctypes/util.py
+--- a~/Lib/ctypes/util.py	1970-01-01 00:00:00
++++ a/Lib/ctypes/util.py	1970-01-01 00:00:00
+@@ -239,43 +239,56 @@ elif os.name == "posix":
+     elif sys.platform == "sunos5":
+ 
+         def _findLib_crle(name, is64):
+-            if not os.path.exists('/usr/bin/crle'):
+-                return None
+-
+             env = dict(os.environ)
+             env['LC_ALL'] = 'C'
+ 
++            paths = []
++
+             if is64:
+-                args = ('/usr/bin/crle', '-64')
++                var = 'LD_LIBRARY_PATH_64'
+             else:
+-                args = ('/usr/bin/crle',)
++                var = 'LD_LIBRARY_PATH_32'
++
++            if (lp := env.get(var)) or (lp := env.get('LD_LIBRARY_PATH')):
++                paths.extend(lp.split(':'))
++
++            if os.path.exists('/usr/bin/crle'):
++                args = ['/usr/bin/crle']
++                if is64:
++                    args.append('-64')
++                    var = 'LD_CONFIG_64'
++                else:
++                    var = 'LD_CONFIG_32'
++
++                if (cfg := env.get(var)) or (cfg := env.get('LD_CONFIG')):
++                        args.extend(['-c', cfg])
+ 
+-            paths = None
+             try:
+-                proc = subprocess.Popen(args,
+-                                        stdout=subprocess.PIPE,
+-                                        stderr=subprocess.DEVNULL,
+-                                        env=env)
++                    with subprocess.Popen(args,
++                      stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
++                      env=env) as proc:
++                        for line in proc.stdout: #WS
++                            line = line.strip() #WS
++                            if line.startswith(
++                              b'Default Library Path (ELF):'):
++                                paths.extend(
++                                    os.fsdecode(line).split()[4].split(':'))
++                                break
+             except OSError:  # E.g. bad executable
+-                return None
+-            with proc:
+-                for line in proc.stdout:
+-                    line = line.strip()
+-                    if line.startswith(b'Default Library Path (ELF):'):
+-                        paths = os.fsdecode(line).split()[4]
++                    pass
+ 
+             if not paths:
+                 return None
+ 
+-            for dir in paths.split(":"):
+-                libfile = os.path.join(dir, "lib%s.so" % name)
++            for dir in paths:
++                libfile = os.path.join(dir, f'lib{name}.so')
+                 if os.path.exists(libfile):
+                     return libfile
+ 
+             return None
+ 
+         def find_library(name, is64 = False):
+-            return _get_soname(_findLib_crle(name, is64) or _findLib_gcc(name))
++            return _get_soname(_findLib_crle(name, is64))
+ 
+     else:
+ 
