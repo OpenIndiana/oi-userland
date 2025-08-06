@@ -15,24 +15,24 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Authen-SASL
-HUMAN_VERSION =			2.1800
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.1900
 COMPONENT_SUMMARY =		SASL Authentication framework
 COMPONENT_CPAN_AUTHOR =		EHUELS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b03686bddbbf7d5c6548e468d079a4051c9b73851df740ae28cfd2db234e922
+	sha256:be3533a6891b2e677150b479c1a0d4bf11c8bbeebed3e7b8eba34053e93923b0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/crypt-urandom
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/pod-coverage-trustpod
