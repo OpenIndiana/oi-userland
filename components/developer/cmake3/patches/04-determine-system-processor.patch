@@ -1,0 +1,15 @@
+--- cmake-3.31.8/Modules/CMakeDetermineSystem.cmake.orig
++++ cmake-3.31.8/Modules/CMakeDetermineSystem.cmake
+@@ -101,6 +101,12 @@
+         RESULT_VARIABLE val
+         OUTPUT_STRIP_TRAILING_WHITESPACE
+         ERROR_QUIET)
++    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "SunOS")
++      execute_process(COMMAND isainfo -n
++        OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_PROCESSOR
++        RESULT_VARIABLE val
++        OUTPUT_STRIP_TRAILING_WHITESPACE
++        ERROR_QUIET)
+     else()
+       execute_process(COMMAND ${CMAKE_UNAME} -p
+         OUTPUT_VARIABLE CMAKE_HOST_SYSTEM_PROCESSOR
