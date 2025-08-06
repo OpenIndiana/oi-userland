@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			27.0.0
+HUMAN_VERSION =			27.0.1
 COMPONENT_SUMMARY =		Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b1f08eeb9ce1510e6939b6e5dcd46a17765e2333daae78ecf4606808442e52cf
+	sha256:45c549204bc20e7484ffd2555f6cf02e572440ecf2f3bdd60d4404b20fddf64b
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
