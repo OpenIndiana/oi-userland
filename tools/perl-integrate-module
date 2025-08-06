@@ -188,9 +188,15 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 
 	# Pre-flight environment checks
 	if ((FORCE == 0)) ; then
-		! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2 && exit 1
+		if ! $GMAKE BOOTSTRAP=yes env-check > /dev/null 2>&1 ; then
+			printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2
+			exit 1
+		fi
 		if [[ "$($GMAKE print-value-PERL_TEST_BOOTSTRAP)" != "yes" ]] ; then
-			! $GMAKE test-env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2 && exit 1
+			if ! $GMAKE BOOTSTRAP=yes test-env-check > /dev/null 2>&1 ; then
+				printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2
+				exit 1
+			fi
 		fi
 	fi
 
@@ -516,10 +522,15 @@ fi
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 
-# Create manifests
-if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
-	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
-else
+# In a case we need to bootstrap we will need to restart the whole process from
+# the sample-manifest step.  We are able to detect the bootstrap mode only
+# after the REQUIRED_PACKAGES generation is completed below.
+for BOOTSTRAP in '' 'BOOTSTRAP=yes' ; do
+	# Create manifests
+	if ! $GMAKE $BOOTSTRAP sample-manifest > /dev/null 2>&1 ; then
+		printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
+		break
+	fi
 	MANIFEST="$DISTRIBUTION-PERLVER.p5m"
 	[[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "yes" ]] && MANIFEST="$DISTRIBUTION.p5m"
 	cat manifests/sample-manifest.p5m \
@@ -534,12 +545,23 @@ else
 	fi
 
 	git add manifests/sample-manifest.p5m $MANIFEST
-fi
 
 
-# Generate REQUIRED_PACKAGES
-$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
-git add Makefile
+	# Generate REQUIRED_PACKAGES
+	$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+	git add Makefile
+
+
+	# If we are already in the bootstrap mode, or everything is okay then
+	# we are done here
+	[[ -n "$BOOTSTRAP" ]] && break
+	$GMAKE env-check > /dev/null 2>&1 && break
+
+	# Otherwise we need to retry with the bootstrap mode enabled
+	printf 'WARNING: Bootstrap mode enabled!\n' >&2
+	# Cleanup before the retry
+	$GMAKE clobber > /dev/null 2>&1
+done
 
 
 # Check for Makefile completeness
