@@ -1,0 +1,17 @@
+
+As of version 3.9.3, python stopped bundling some autoconf m4 macros and
+started relying on the 'autoconf-archive' package being installed and
+in standard system paths. Yes, in a minor release update, really.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -16,6 +16,8 @@ AC_PREREQ([2.71])
+ 
+ AC_INIT([python],[PYTHON_VERSION],[https://github.com/python/cpython/issues/])
+ 
++AC_CONFIG_MACRO_DIRS([/opt/ooce/autoconf-archive/share/aclocal])
++
+ m4_ifdef(
+     [AX_C_FLOAT_WORDS_BIGENDIAN],
+     [],

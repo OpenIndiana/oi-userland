@@ -1,0 +1,26 @@
+
+When packaging python modules along with their compiled source, we
+deliberately set the timestamp attributes for both the source
+and compiled file so that they are not recompiled the first time
+root uses them (via pkg, for example). Doing so causes `pkg validate`
+errors and slows down the initial invocation.
+
+However, the timestamp and size of the .py file is also embedded within
+the .pyc header. This patch allows overriding that embedded timestamp
+with a value of our choosing. See lib/functions.sh for how this is set.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/py_compile.py a/Lib/py_compile.py
+--- a~/Lib/py_compile.py	1970-01-01 00:00:00
++++ a/Lib/py_compile.py	1970-01-01 00:00:00
+@@ -159,6 +159,11 @@ def compile(file, cfile=None, dfile=None
+         pass
+     if invalidation_mode == PycInvalidationMode.TIMESTAMP:
+         source_stats = loader.path_stats(file)
++        if fpepoch := os.environ.get('FORCE_PYC_TIMESTAMP'):
++            try:
++                source_stats['mtime'] = int(fpepoch)
++            except ValueError:
++                raise ValueError("FORCE_PYC_TIMESTAMP is not a valid integer")
+         bytecode = importlib._bootstrap_external._code_to_timestamp_pyc(
+             code, source_stats['mtime'], source_stats['size'])
+     else:

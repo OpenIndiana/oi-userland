@@ -1,0 +1,16 @@
+
+The importlib test checks that there is no package called 'pkg', which is not
+true on OmniOS.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_importlib/metadata/test_api.py a/Lib/test/test_importlib/metadata/test_api.py
+--- a~/Lib/test/test_importlib/metadata/test_api.py	1970-01-01 00:00:00
++++ a/Lib/test/test_importlib/metadata/test_api.py	1970-01-01 00:00:00
+@@ -59,7 +59,7 @@ class APITests(
+                 assert distribution(name).metadata['Name'] == 'pkg.dot'
+ 
+     def test_prefix_not_matched(self):
+-        prefixes = 'p', 'pkg', 'pkg.'
++        prefixes = 'p', 'qkg', 'qkg.'
+         for prefix in prefixes:
+             with self.subTest(prefix):
+                 with self.assertRaises(PackageNotFoundError):
