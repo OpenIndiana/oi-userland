@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Alien-Libxml2
 HUMAN_VERSION =			0.20
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Install the C libxml2 library on your system
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,5 +35,6 @@ PERL_REQUIRED_PACKAGES += library/perl-5/alien-build
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-build-plugin-download-gitlab
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += library/libxml2
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/alien-build
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
