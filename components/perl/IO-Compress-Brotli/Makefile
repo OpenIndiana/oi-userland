@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IO::Compress::Brotli
+#   $WS_TOOLS/perl-integrate-module IO-Compress-Brotli
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IO::Compress::Brotli
+COMPONENT_NAME =		IO-Compress-Brotli
 HUMAN_VERSION =			0.019
-COMPONENT_SUMMARY =		IO::Compress::Brotli - Write Brotli buffers/streams
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Read/write Brotli buffers/streams
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:37f40dd7cee44acea26f2f763a773e61d4ec223305ddeeca4612443cbf288fbf
@@ -31,5 +32,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-cmake3
 PERL_REQUIRED_PACKAGES += library/perl-5/file-slurper
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
