@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Bytes::Random::Secure
+#   $WS_TOOLS/perl-integrate-module Bytes-Random-Secure
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Bytes::Random::Secure
+COMPONENT_NAME =		Bytes-Random-Secure
 HUMAN_VERSION =			0.29
-COMPONENT_SUMMARY =		Bytes::Random::Secure - Perl extension to generate cryptographically-secure random bytes.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Perl extension to generate cryptographically-secure random bytes.
 COMPONENT_CPAN_AUTHOR =		DAVIDO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:53bbd339e6a11efca07c619a615c7c188a68bb2be849a1cb7efc3dd4d9ae85ae
@@ -30,5 +31,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-random-seed
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/math-random-isaac
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
