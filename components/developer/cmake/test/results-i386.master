@@ -3,7 +3,6 @@ Test project $(@D)
 Guessing configuration NoConfig
 Test SystemInformationNew ..............................   Passed
 Test kwsys.testEncode ..................................   Passed
-Test kwsys.testTerminal ................................   Passed
 Test kwsys.testConfigure ...............................   Passed
 Test kwsys.testStatus ..................................   Passed
 Test kwsys.testSystemTools .............................   Passed
@@ -12,7 +11,6 @@ Test kwsys.testCommandLineArguments1 ...................   Passed
 Test kwsys.testDirectory ...............................   Passed
 Test kwsys.testEncoding ................................   Passed
 Test kwsys.testFStream .................................   Passed
-Test kwsys.testConsoleBuf ..............................   Passed
 Test kwsys.testSystemInformation .......................   Passed
 Test kwsys.testDynamicLoader ...........................   Passed
 Test kwsys.testProcess-1 ...............................   Passed
@@ -152,29 +150,6 @@ Test InstallMode-ABS_SYMLINK ...........................   Passed
 Test InstallMode-ABS_SYMLINK_OR_COPY ...................   Passed
 Test InstallMode-SYMLINK ...............................   Passed
 Test InstallMode-SYMLINK_OR_COPY .......................   Passed
-Test TutorialStep2 .....................................   Passed
-Test TutorialStep3 .....................................   Passed
-Test TutorialStep4 .....................................   Passed
-Test TutorialStep5 .....................................   Passed
-Test TutorialStep6 .....................................   Passed
-Test TutorialStep7 .....................................   Passed
-Test TutorialStep8 .....................................   Passed
-Test TutorialStep9 .....................................   Passed
-Test TutorialStep10 ....................................   Passed
-Test TutorialStep11 ....................................   Passed
-Test TutorialStep12 ....................................   Passed
-Test TutorialComplete ..................................   Passed
-Test TutorialStep3_MYMATH ..............................   Passed
-Test TutorialStep4_MYMATH ..............................   Passed
-Test TutorialStep5_MYMATH ..............................   Passed
-Test TutorialStep6_MYMATH ..............................   Passed
-Test TutorialStep7_MYMATH ..............................   Passed
-Test TutorialStep8_MYMATH ..............................   Passed
-Test TutorialStep9_MYMATH ..............................   Passed
-Test TutorialStep10_MYMATH .............................   Passed
-Test TutorialStep11_MYMATH .............................   Passed
-Test TutorialStep12_MYMATH .............................   Passed
-Test TutorialComplete_MYMATH ...........................   Passed
 Test Guide.ImportExport.MyExe ..........................   Passed
 Test Guide.ImportExport.Importing ......................   Passed
 Test Guide.ImportExport.MathFunctions ..................   Passed
@@ -287,6 +262,7 @@ Test CMakeLib.testRST ..................................   Passed
 Test CMakeLib.testRange ................................   Passed
 Test CMakeLib.testOptional .............................   Passed
 Test CMakeLib.testPathResolver .........................   Passed
+Test CMakeLib.testStdIo ................................   Passed
 Test CMakeLib.testString ...............................   Passed
 Test CMakeLib.testStringAlgorithms .....................   Passed
 Test CMakeLib.testSystemTools ..........................   Passed
@@ -369,6 +345,7 @@ Test RunCMake.CMP0169 ..................................   Passed
 Test RunCMake.CMP0170 ..................................   Passed
 Test RunCMake.CMP0171 ..................................   Passed
 Test RunCMake.CMP0173 ..................................   Passed
+Test RunCMake.CMP0187 ..................................   Passed
 Test RunCMake.CMP0065 ..................................   Passed
 Test RunCMake.Make .....................................   Passed
 Test RunCMake.InstallParallel ..........................   Passed
@@ -389,7 +366,8 @@ Test RunCMake.CompilerNotFound .........................   Passed
 Test RunCMake.CompilerId ...............................   Passed
 Test RunCMake.CompilerTest .............................   Passed
 Test RunCMake.Configure ................................   Passed
-Test RunCMake.CpsExportImport ..........................   Passed
+Test RunCMake.CpsExportImportBuild .....................   Passed
+Test RunCMake.CpsExportImportInstall ...................   Passed
 Test RunCMake.DisallowedCommands .......................   Passed
 Test RunCMake.ExportCompileCommands ....................   Passed
 Test RunCMake.ExcludeFromAll ...........................   Passed
@@ -447,6 +425,8 @@ Test RunCMake.TargetArtifacts ..........................   Passed
 Test RunCMake.TargetObjects ............................   Passed
 Test RunCMake.TargetProperties .........................   Passed
 Test RunCMake.ToolchainFile ............................   Passed
+Test RunCMake.Tutorial-NoMath ..........................   Passed
+Test RunCMake.Tutorial-MyMath ..........................   Passed
 Test RunCMake.find_dependency ..........................   Passed
 Test RunCMake.CompileDefinitions .......................   Passed
 Test RunCMake.CompileWarningAsError ....................   Passed
@@ -492,6 +472,7 @@ Test RunCMake.ctest_update .............................   Passed
 Test RunCMake.ctest_upload .............................   Passed
 Test RunCMake.ctest_environment ........................   Passed
 Test RunCMake.ctest_empty_binary_directory .............   Passed
+Test RunCMake.ctest_exit ...............................   Passed
 Test RunCMake.ctest_fixtures ...........................   Passed
 Test RunCMake.ctest_instrumentation ....................   Passed
 Test RunCMake.define_property ..........................   Passed
@@ -614,7 +595,8 @@ Test RunCMake.CPack_STGZ ...............................   Passed
 Test RunCMake.CPack_External ...........................   Passed
 Test RunCMake.AutoExportDll ............................   Passed
 Test RunCMake.AndroidMK ................................   Passed
-Test RunCMake.PackageInfo ..............................   Passed
+Test RunCMake.ExportPackageInfo ........................   Passed
+Test RunCMake.InstallPackageInfo .......................   Passed
 Test RunCMake.CTestCommandExpandLists ..................   Passed
 Test RunCMake.PrecompileHeaders ........................   Passed
 Test RunCMake.UnityBuild ...............................   Passed
@@ -656,18 +638,19 @@ Test CMake.EndStuff ....................................   Passed
 Test CMake.GetPrerequisites ............................   Passed
 Test CMake.PolicyCheck .................................   Passed
 
-99% tests passed, 1 tests failed out of 654
+99% tests passed, 1 tests failed out of 636
 
 Label Time Summary:
 CUDA       =*proc (14 tests)
 Fortran    =*proc (18 tests)
 HIP        =*proc (9 tests)
 ISPC       =*proc (7 tests)
+Swift      =*proc (1 test)
 
 Total Test time (real) =
 
 The following tests FAILED:
-	398 - RunCMake.FileAPI (Failed)
+	376 - RunCMake.FileAPI (Failed)
 Errors while running CTest
 Output from these tests are in: $(@D)/Testing/Temporary/LastTest.log
 Use "--rerun-failed --output-on-failure" to re-run the failed cases verbosely.
