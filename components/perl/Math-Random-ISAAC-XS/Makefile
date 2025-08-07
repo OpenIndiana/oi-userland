@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Math::Random::ISAAC::XS
+#   $WS_TOOLS/perl-integrate-module Math-Random-ISAAC-XS
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Math::Random::ISAAC::XS
+COMPONENT_NAME =		Math-Random-ISAAC-XS
 HUMAN_VERSION =			1.004
-COMPONENT_SUMMARY =		Math::Random::ISAAC::XS - C implementation of the ISAAC PRNG algorithm
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		C implementation of the ISAAC PRNG algorithm
 COMPONENT_CPAN_AUTHOR =		JAWNSY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9af790eb92d1c6330d33c6daa8decf8a9c5dcc87b81779d6b12e14b931c3b87b
@@ -33,5 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/math-random-isaac
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += library/perl-5/test-nowarnings
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
