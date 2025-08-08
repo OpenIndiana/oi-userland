@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTTP::Message
+#   $WS_TOOLS/perl-integrate-module HTTP-Message
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTTP::Message
+COMPONENT_NAME =		HTTP-Message
 HUMAN_VERSION =			7.00
-COMPONENT_SUMMARY =		HTTP::Message - HTTP style message (base class)
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		HTTP style message (base class)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5afa95eb6ed1c632e81656201a2738e2c1bc6cbfae2f6d82728e2bb0b519c1dc
@@ -31,14 +32,26 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/clone
+PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-bzip2
+PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-zlib
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
 PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
 PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
 PERL_REQUIRED_PACKAGES += library/perl-5/io-html
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-compress-brotli
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/time-local
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/uri
