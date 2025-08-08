@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CGI
 HUMAN_VERSION =			4.70
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Handle Common Gateway Interface requests and responses
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
