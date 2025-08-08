@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module namespace::autoclean
+#   $WS_TOOLS/perl-integrate-module namespace-autoclean
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		namespace::autoclean
+COMPONENT_NAME =		namespace-autoclean
 HUMAN_VERSION =			0.31
-COMPONENT_SUMMARY =		namespace::autoclean - Keep imports out of your namespace
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Keep imports out of your namespace
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d3b32c82e1d2caa9d58b8c8075965240e6cab66ab9350bd6f6bea4ca07e938d6
@@ -34,6 +35,12 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-hooks-endofscope
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-clean
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
