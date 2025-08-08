@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Random-ISAAC
 HUMAN_VERSION =			1.004
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Perl interface to the ISAAC PRNG algorithm
 COMPONENT_CPAN_AUTHOR =		JAWNSY
 COMPONENT_ARCHIVE_HASH =	\
@@ -66,6 +66,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/math-random-isaac-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/test-nowarnings
 PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
