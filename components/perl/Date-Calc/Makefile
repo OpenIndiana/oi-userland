@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Date-Calc
 HUMAN_VERSION =			6.4
-COMPONENT_REVISION =		6
+COMPONENT_REVISION =		7
 COMPONENT_SUMMARY =		Gregorian calendar date calculations
 COMPONENT_CPAN_AUTHOR =		STBEY
 COMPONENT_ARCHIVE_HASH =	\
@@ -45,5 +45,6 @@ MANGLE_DEPEND_RUNTIME += | \
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/bit-vector
 PERL_REQUIRED_PACKAGES += library/perl-5/carp-clan
+PERL_REQUIRED_PACKAGES += library/perl-5/date-calc-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
