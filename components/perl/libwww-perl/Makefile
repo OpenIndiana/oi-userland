@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libwww-perl
 HUMAN_VERSION =			6.79
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
