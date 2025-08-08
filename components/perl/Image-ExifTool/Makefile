@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Image-ExifTool
 HUMAN_VERSION =			13.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Read and write meta information
 COMPONENT_CPAN_AUTHOR =		EXIFTOOL
 COMPONENT_ARCHIVE_HASH =	\
