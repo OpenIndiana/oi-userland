@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Type-Tiny
 HUMAN_VERSION =			2.008002
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
