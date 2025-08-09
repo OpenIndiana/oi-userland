@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx
 HUMAN_VERSION =			7.4.7
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python documentation generator
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
 COMPONENT_ARCHIVE_HASH =	\
@@ -43,6 +44,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/requests
+PYTHON_REQUIRED_PACKAGES += library/python/roman-numerals
 PYTHON_REQUIRED_PACKAGES += library/python/snowballstemmer
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-applehelp
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-devhelp
