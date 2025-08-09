@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Specio
-HUMAN_VERSION =			0.51
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.52
 COMPONENT_SUMMARY =		Type constraints and coercions for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:505f5de28bee55545b9ec0c45c1d5e4ae568d4f5dbb5e8eabe9d980cb9b68f93
+	sha256:aa770a8f5f61af37cd34b81b6ea8039e431b0e3b070f251617024abacdfadbdc
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,7 +34,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/clone
-PERL_REQUIRED_PACKAGES += library/perl-5/clone-choose
 PERL_REQUIRED_PACKAGES += library/perl-5/clone-pp
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
