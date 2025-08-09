@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTML-Tree
 HUMAN_VERSION =			5.07
-COMPONENT_REVISION =		6
+COMPONENT_REVISION =		7
 COMPONENT_SUMMARY =		Work with HTML in a DOM-like tree structure
 COMPONENT_CPAN_AUTHOR =		KENTNL
 COMPONENT_ARCHIVE_HASH =	\
@@ -45,6 +45,7 @@ MANGLE_DEPEND_RUNTIME += | \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/html-formatter
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
 PERL_REQUIRED_PACKAGES += library/perl-5/html-tagset
 PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
