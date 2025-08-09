@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_pyyaml
-HUMAN_VERSION =			6.0.12.20250516
+HUMAN_VERSION =			6.0.12.20250809
 COMPONENT_SUMMARY =		Typing stubs for PyYAML
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f21a70216fc0fa1b216a8176db5f9e0af6eb35d2f2932acb87689d03a5bf6ba
+	sha256:af4a1aca028f18e75297da2ee0da465f799627370d74073e96fee876524f61b5
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
