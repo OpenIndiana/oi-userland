@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip
-HUMAN_VERSION =			25.1.1
+HUMAN_VERSION =			25.2
 COMPONENT_SUMMARY =		The PyPA recommended tool for installing Python packages.
 COMPONENT_PROJECT_URL =		https://pip.pypa.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pip/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b25615caeef66bb5049a44e6df257ebae2fcc9dc774d5369a338db29b7f53f1c
+	sha256:d09e469f9c6d829eb5094f8369912519c025868a772077e826afd161abd67aee
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,7 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += tests/requirements.txt
+TEST_REQUIREMENTS_PEP735 += test
 
 # We have no proxy.py packaged yet
 PYTEST_ADDOPTS += --ignore tests/functional/test_proxy.py
