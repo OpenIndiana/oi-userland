@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_mock
-HUMAN_VERSION =			5.2.0.20250516
+HUMAN_VERSION =			5.2.0.20250809
 COMPONENT_SUMMARY =		Typing stubs for mock
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aab7d3d9ad3814f2f8da12cc8e42d9be7d38200c5f214e3c0278c38fa01299d7
+	sha256:9548ebc2fbb3859f0765c8215f0b063897a58a58930f95467a814a9c9de76b16
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
