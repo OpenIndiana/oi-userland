@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Data-Processor
 HUMAN_VERSION =			1.0.9
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Transform Perl Data Structures, Validate Data against a Schema, Produce Data from a Schema, or produce documentation directly from information in the Schema.
 COMPONENT_CPAN_AUTHOR =		MBP
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/type-tiny
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
