@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Specio
 HUMAN_VERSION =			0.51
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Type constraints and coercions for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
