@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project sybil
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
-HUMAN_VERSION =			9.1.0
+HUMAN_VERSION =			9.2.0
 COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/simplistix/sybil/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a64b2bf2925bb995dc94acb6a82c51e916acb90e21c0f0cab48282f86378dbd1
+	sha256:f872f3df3640eb001ce70432aa9d4a90cf068884b482702bdc10e966765a46e7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -52,6 +52,7 @@ TEST_REQUIREMENTS_EXTRAS += test
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
