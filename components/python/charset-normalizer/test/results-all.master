@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 150 items
+collecting ... collected 153 items
 
 tests/test_base_detection.py::test_empty PASSED
 tests/test_base_detection.py::test_bool_matches PASSED
@@ -11,6 +11,8 @@ tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\xfe\xff-utf_16] PA
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\x841\x953-gb18030] PASSED
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\xef\xbb\xbf-utf_8] PASSED
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\xff\xfe\x00\x00-utf_32] PASSED
+tests/test_base_detection.py::test_md_triggered_but_with_bom_or_sig[\xff\xfe\x00\x00\xb6%\x00\x00h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00-utf_32] PASSED
+tests/test_base_detection.py::test_md_triggered_but_with_bom_or_sig[\xff\xfe\xb6%h\x00e\x00l\x00l\x00o\x00-utf_16] PASSED
 tests/test_base_detection.py::test_content_with_bom_or_sig[\x841\x953\xce\xd2\xc3\xbb\xd3\xd0\xc2\xf1\xd4\xb9\xa3\xac\xb4\xe8\xed\xc8\xb5\xc4\xd6\xbb\xca\xc7\xd2\xbb\xd0\xa9\xca\xb1\xbc\xe4\xa1\xa3-gb18030] PASSED
 tests/test_base_detection.py::test_content_with_bom_or_sig[\xff\xfe\x00\x00\x11b\x00\x00\xa1l\x00\x00\tg\x00\x00\xcbW\x00\x00(`\x00\x00\x0c\xff\x00\x00\xcbx\x00\x00#x\x00\x00\x84v\x00\x00\xeaS\x00\x00/f\x00\x00\x00N\x00\x00\x9bN\x00\x00\xf6e\x00\x00\xf4\x95\x00\x00\x020\x00\x00-utf_32] PASSED
 tests/test_base_detection.py::test_content_with_bom_or_sig[\xef\xbb\xbf\xe6\x88\x91\xe6\xb2\xa1\xe6\x9c\x89\xe5\x9f\x8b\xe6\x80\xa8\xef\xbc\x8c\xe7\xa3\x8b\xe7\xa0\xa3\xe7\x9a\x84\xe5\x8f\xaa\xe6\x98\xaf\xe4\xb8\x80\xe4\xba\x9b\xe6\x97\xb6\xe9\x97\xb4\xe3\x80\x82-utf_8] PASSED
@@ -68,6 +70,7 @@ tests/test_coherence_detection.py::test_filter_alt_coherence_matches[matches3-ex
 tests/test_detect_legacy.py::TestDetectLegacy::test_detect_dict_keys PASSED
 tests/test_detect_legacy.py::TestDetectLegacy::test_detect_dict_value PASSED
 tests/test_detect_legacy.py::TestDetectLegacy::test_detect_dict_value_type PASSED
+tests/test_detect_legacy.py::TestDetectLegacy::test_small_payload_confidence_altered PASSED
 tests/test_detect_legacy.py::TestDetectLegacy::test_utf8_sig_not_striped PASSED
 tests/test_edge_case.py::test_unicode_edge_case PASSED
 tests/test_edge_case.py::test_issue_gh520 PASSED
@@ -156,4 +159,4 @@ tests/test_utils.py::test_cp_similarity[latin_1-iso8859_4-True] PASSED
 tests/test_utils.py::test_cp_similarity[latin_1-cp1251-False] PASSED
 tests/test_utils.py::test_cp_similarity[cp1251-mac_turkish-False] PASSED
 
-======== 150 passed ========
+======== 153 passed ========
