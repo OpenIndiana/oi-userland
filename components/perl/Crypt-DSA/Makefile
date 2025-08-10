@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-DSA
 HUMAN_VERSION =			1.19
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		DSA Signatures and Key Generation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
