@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Convert-PEM
 HUMAN_VERSION =			0.13
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Read/write encrypted ASN.1 PEM files
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
