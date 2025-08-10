@@ -1,0 +1,39 @@
+https://github.com/sphinx-doc/sphinx/commit/5f110f0fa05ce7db3de9773e7c2423a73bf12633
+
+--- sphinx-7.4.7/tests/test_builders/test_build_html.py.orig
++++ sphinx-7.4.7/tests/test_builders/test_build_html.py
+@@ -240,7 +240,18 @@
+             not in result)
+ 
+ 
+-@pytest.mark.sphinx('html', testroot='basic')
++@pytest.mark.sphinx(
++    'html',
++    testroot='basic',
++    # alabaster changed default sidebars in 1.0.0
++    confoverrides={'html_sidebars': {'**': [
++        'about.html',
++        'navigation.html',
++        'relations.html',
++        'searchbox.html',
++        'donate.html',
++    ]}},
++)
+ def test_html_sidebar(app, status, warning):
+     ctx = {}
+ 
+--- sphinx-7.4.7/tests/test_intl/test_intl.py.orig
++++ sphinx-7.4.7/tests/test_intl/test_intl.py
+@@ -1684,7 +1684,11 @@
+     assert 'FEATURES' not in content
+ 
+ 
+-@pytest.mark.sphinx('html', testroot='basic', confoverrides={'language': 'de'})
++@pytest.mark.sphinx(
++    'html',
++    testroot='basic',
++    confoverrides={'language': 'de', 'html_sidebars': {'**': ['searchbox.html']}},
++)
+ def test_customize_system_message(make_app, app_params):
+     try:
+         # clear translators cache

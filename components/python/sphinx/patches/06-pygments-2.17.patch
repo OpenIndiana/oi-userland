@@ -1,0 +1,44 @@
+https://github.com/sphinx-doc/sphinx/commit/865b513cf2c88d3e30450718914aa896d90fd14e
+
+--- sphinx-7.4.7/sphinx/highlighting.py.orig
++++ sphinx-7.4.7/sphinx/highlighting.py
+@@ -6,6 +6,7 @@
+ from importlib import import_module
+ from typing import TYPE_CHECKING, Any
+ 
++import pygments
+ from pygments import highlight
+ from pygments.filters import ErrorToken
+ from pygments.formatters import HtmlFormatter, LatexFormatter
+@@ -30,6 +31,11 @@
+     from pygments.lexer import Lexer
+     from pygments.style import Style
+ 
++if tuple(map(int, pygments.__version__.split('.')))[:2] < (2, 18):
++    from pygments.formatter import Formatter
++
++    Formatter.__class_getitem__ = lambda cls, name: cls
++
+ logger = logging.getLogger(__name__)
+ 
+ lexers: dict[str, Lexer] = {}
+--- sphinx-7.4.7/tests/test_highlighting.py.orig
++++ sphinx-7.4.7/tests/test_highlighting.py
+@@ -2,12 +2,17 @@
+ 
+ from unittest import mock
+ 
++import pygments
+ from pygments.formatters.html import HtmlFormatter
+ from pygments.lexer import RegexLexer
+ from pygments.token import Name, Text
+ 
+ from sphinx.highlighting import PygmentsBridge
+ 
++if tuple(map(int, pygments.__version__.split('.')))[:2] < (2, 18):
++    from pygments.formatter import Formatter
++    Formatter.__class_getitem__ = lambda cls, name: cls
++
+ 
+ class MyLexer(RegexLexer):
+     name = 'testlexer'
