@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-HUMAN_VERSION =			2.6.12
+HUMAN_VERSION =			2.6.13
 COMPONENT_SUMMARY =		File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pre-commit/identify/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:234ad1bf7a06a3e44b60d2e9146f5f599b57788589027306baa00677af32947e
+	sha256:93a51afb4721ebbcc46045af64e26b063fd691cfb966b26c21999e028eeeb12e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
