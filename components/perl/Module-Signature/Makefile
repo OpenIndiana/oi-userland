@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Module-Signature
 HUMAN_VERSION =			0.93
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module signature file manipulation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
