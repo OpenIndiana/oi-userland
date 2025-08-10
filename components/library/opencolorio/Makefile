@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenColorIO
 COMPONENT_VERSION=	2.4.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A color management framework for visual effects and animation
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
