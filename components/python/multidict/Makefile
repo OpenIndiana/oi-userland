@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.6.3
+HUMAN_VERSION =			6.6.4
 COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:798a9eb12dab0a6c2e29c1de6f3468af5cb2da6053a20dfa3344907eed0937cc
+	sha256:d2d4e4787672911b48350df02ed3fa3fffdc2f2e8ca06dd6afdf34189b76a9dd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
