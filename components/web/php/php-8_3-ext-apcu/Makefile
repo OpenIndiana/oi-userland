@@ -11,17 +11,17 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2019 Alexander Pyhalov
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apcu
-COMPONENT_VERSION=	5.1.24
+COMPONENT_VERSION=	5.1.26
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/apcu
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:5c28a55b27082c69657e25b7ecf553e2cf6b74ec3fa77d6b76f4fb982e001e43
+COMPONENT_ARCHIVE_HASH=	sha256:aed8d359d98c33723b65e4ba58e5422e5cf794c54fbd2241be31f83a49b44dde
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	php APCu - APC User Cache
 COMPONENT_FMRI=		web/php-83/extension/php-apcu
