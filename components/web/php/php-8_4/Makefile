@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.4
 COMPONENT_MNR_VERSION=	11
+COMPONENT_REVSION=	1
 COMPONENT_SUMMARY=      PHP 8.4
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
@@ -209,6 +210,7 @@ COMPONENT_TEST_TRANSFORMS += \
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
