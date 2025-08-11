@@ -10,18 +10,18 @@
 
 #
 # Copyright (c) 2022 Niklas Poslovski
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.3-ext-yaml
 COMPONENT_REAL_NAME=	yaml
-COMPONENT_VERSION=	2.2.4
+COMPONENT_VERSION=	2.2.5
 COMPONENT_SRC=		$(COMPONENT_REAL_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_REAL_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_REAL_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:8eb353baf87f15b1b62ac6eb71c8b589685958a1fe8b0e3d22ac59560d0e8913
+COMPONENT_ARCHIVE_HASH=	sha256:0c751b489749fbf02071d5b0c6bfeb26c4b863c668ef89711ecf9507391bdf71
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_SUMMARY=	php memcache extension
 COMPONENT_FMRI=		web/php-83/extension/php-yaml
