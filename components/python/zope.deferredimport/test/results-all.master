@@ -1,5 +1,7 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
+$(PYTHON_DIR)/vendor-packages/zope/testrunner/__init__.py:20: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources  # noqa: F401 unused import, see GitHub issue #194
 Running tests at level 1
 Running zope.testrunner.layer.UnitTests tests:
   Set up zope.testrunner.layer.UnitTests.
@@ -14,11 +16,12 @@ Running zope.testrunner.layer.UnitTests tests:
 Tearing down left over layers:
   Tear down zope.testrunner.layer.UnitTests.
 py$(PYV): commands[1]> python -m sphinx.cmd.build -b doctest -d $(@D)/.tox/py$(PYV)/.cache/doctrees docs $(@D)/.tox/py$(PYV)/.cache/doctest
-Running Sphinx v7.3.7
+Running Sphinx v7.4.7
+loading translations [en]... done
 making output directory... done
 WARNING: html_static_path entry '_static' does not exist
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('http://docs.python.org/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-loading intersphinx inventory from http://docs.python.org/objects.inv...
+Converting `source_suffix = '.rst'` to `source_suffix = {'.rst': 'restructuredtext'}`.
+loading intersphinx inventory 'python' from http://docs.python.org/objects.inv...
 intersphinx inventory has moved: http://docs.python.org/objects.inv -> https://docs.python.org/3/objects.inv
 building [mo]: targets for 0 po files that are out of date
 writing output... 
@@ -52,7 +55,7 @@ Doctest summary
     0 failures in tests
     0 failures in setup code
     0 failures in cleanup code
-build succeeded, 2 warnings.
+build succeeded, 1 warning.
 
 Testing of doctests in the sources finished, look at the results in .tox/py$(PYV)/.cache/doctest/output.txt.
   py$(PYV): OK
