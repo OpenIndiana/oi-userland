@@ -1,0 +1,118 @@
+--- rrd-2.0.3/rrd_info.c	2021-04-22 17:01:50.000000000 +0200
++++ rrd-2.0.3/rrd_info.c.new	2025-08-12 18:46:16.940720140 +0200
+@@ -44,7 +44,7 @@
+ 	argv[1] = estrdup("info");
+ 	argv[2] = estrndup(filename, filename_length);
+ 
+-	rrd_info_data = rrd_info(2, &argv[1]);
++	rrd_info_data = rrd_info(2, (const char **) &argv[1]);
+ 
+ 	efree(argv[2]); efree(argv[1]);
+ 
+--- rrd-2.0.3/rrd_update.c	2021-04-22 17:01:50.000000000 +0200
++++ rrd-2.0.3/rrd_update.c.new	2025-08-12 19:05:16.090842476 +0200
+@@ -183,7 +183,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_update and test if fails */
+-	if (rrd_update(update_argv->count - 1, &update_argv->args[1]) == -1) {
++	if (rrd_update(update_argv->count - 1, (const char **) &update_argv->args[1]) == -1) {
+ 		zval_dtor(&zv_update_argv);
+ 		rrd_args_free(update_argv);
+ 
+@@ -225,7 +225,7 @@
+ 
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+-	if (rrd_update(argv->count - 1, &argv->args[1]) == -1 ) {
++	if (rrd_update(argv->count - 1, (const char **) &argv->args[1]) == -1 ) {
+ 		RETVAL_FALSE;
+ 	} else {
+ 		RETVAL_TRUE;
+--- rrd-2.0.3/rrd.c	2021-04-22 17:01:50.000000000 +0200
++++ rrd-2.0.3/rrd.c.new	2025-08-12 19:07:59.788636496 +0200
+@@ -76,7 +76,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_fetch and test if fails */
+-	if (rrd_fetch(argv->count - 1, &argv->args[1], &start, &end, &step, &ds_cnt,
++	if (rrd_fetch(argv->count - 1, (const char **) &argv->args[1], &start, &end, &step, &ds_cnt,
+ 		&ds_namv, &ds_data) == -1 ) {
+ 		rrd_args_free(argv);
+ 		RETURN_FALSE;
+@@ -337,7 +337,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_ restore and test if fails */
+-	if (rrd_restore(argv->count-1, &argv->args[1]) == -1) {
++	if (rrd_restore(argv->count-1, (const char **) &argv->args[1]) == -1) {
+ 		RETVAL_FALSE;
+ 	} else {
+ 		RETVAL_TRUE;
+@@ -377,7 +377,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_tune and test if fails */
+-	if (rrd_tune(argv->count-1, &argv->args[1]) == -1 ) {
++	if (rrd_tune(argv->count-1, (const char **) &argv->args[1]) == -1 ) {
+ 		RETVAL_FALSE;
+ 	} else {
+ 		RETVAL_TRUE;
+@@ -415,7 +415,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_xport and test if fails */
+-	if (rrd_xport(argv->count-1, &argv->args[1], &xxsize, &start, &end, &step,
++	if (rrd_xport(argv->count-1, (const char **) &argv->args[1], &xxsize, &start, &end, &step,
+ 		&outvar_count, &legend_v, &data) == -1) {
+ 		php_printf("rrd_xport failed");
+ 		rrd_args_free(argv);
+--- rrd-2.0.3/rrd_graph.c	2021-04-22 17:01:50.000000000 +0200
++++ rrd-2.0.3/rrd_graph.c.new	2025-08-12 19:10:36.163521412 +0200
+@@ -204,7 +204,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd graph and test if fails */
+-	if (rrd_graph(graph_argv->count - 1, &graph_argv->args[1], &calcpr, &xsize,
++	if (rrd_graph(graph_argv->count - 1, (const char **) &graph_argv->args[1], &calcpr, &xsize,
+ 		&ysize, NULL, &ymin, &ymax) == -1) {
+ 
+ 		/* throw exception with rrd error string */
+@@ -271,7 +271,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd graphv and test if fails */
+-	rrd_info_data = rrd_graph_v(graph_argv->count - 1, &graph_argv->args[1]);
++	rrd_info_data = rrd_graph_v(graph_argv->count - 1, (const char **) &graph_argv->args[1]);
+ 	if (!rrd_info_data) {
+ 		/* throw exception with rrd error string */
+ 		zend_throw_exception(NULL, rrd_get_error(), 0);
+@@ -319,7 +319,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd graph and test if fails */
+-	if (rrd_graph(argv->count - 1, &argv->args[1], &calcpr, &xsize, &ysize,
++	if (rrd_graph(argv->count - 1, (const char **) &argv->args[1], &calcpr, &xsize, &ysize,
+ 		NULL, &ymin, &ymax) == -1) {
+ 
+ 		rrd_args_free(argv);
+--- rrd-2.0.3/rrd_create.c	2021-04-22 17:01:50.000000000 +0200
++++ rrd-2.0.3/rrd_create.c.new	2025-08-12 19:13:27.539784307 +0200
+@@ -262,7 +262,7 @@
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+ 	/* call rrd_create and test if fails */
+-	if (rrd_create(create_argv->count - 1, &create_argv->args[1]) == -1) {
++	if (rrd_create(create_argv->count - 1, (const char **) &create_argv->args[1]) == -1) {
+ 		zval_dtor(&zv_create_argv);
+ 		rrd_args_free(create_argv);
+ 
+@@ -303,7 +303,7 @@
+ 
+ 	if (rrd_test_error()) rrd_clear_error();
+ 
+-	if (rrd_create(argv->count - 1, &argv->args[1]) == -1 ) {
++	if (rrd_create(argv->count - 1, (const char **) &argv->args[1]) == -1 ) {
+ 		RETVAL_FALSE;
+ 	} else {
+ 		RETVAL_TRUE;
