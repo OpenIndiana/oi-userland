@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Locale
 HUMAN_VERSION =			1.45
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Localization support for DateTime.pm
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
