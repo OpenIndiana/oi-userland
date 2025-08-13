@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2024, Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -26,6 +26,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		freeradius
 COMPONENT_VERSION=	3.2.7
 COMPONENT_VERSION_=	$(subst .,_,$(COMPONENT_VERSION))
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -91,6 +92,7 @@ REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += database/hiredis
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/freetds
