@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Format-Builder
 HUMAN_VERSION =			0.83
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Create DateTime parser classes and objects.
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,13 @@ COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Normalize out Perl version
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(perl5/vendor_perl/\)$(shell echo $(PERL_VERSION) | sed -e 's/\./\\\\./')/|\1\$$(PERLVER)/|'"
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-cycle
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/datetime
