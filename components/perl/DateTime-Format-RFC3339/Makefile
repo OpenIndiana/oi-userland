@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Format-RFC3339
 HUMAN_VERSION =			v1.10.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parse and format RFC3339 datetime strings
 COMPONENT_CPAN_AUTHOR =		IKEGAMI
 COMPONENT_ARCHIVE_HASH =	\
