@@ -28,6 +28,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_perl
 COMPONENT_VERSION=	2.0.13
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://perl.apache.org/
 COMPONENT_SUMMARY=	Perl plugin for Apache Web Server V2.4
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
