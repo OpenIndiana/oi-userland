@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		TOML-Tiny
 HUMAN_VERSION =			0.20
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		a minimal, pure perl TOML parser and serializer
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
