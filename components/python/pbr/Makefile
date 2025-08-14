@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pbr
-HUMAN_VERSION =			6.1.1
+HUMAN_VERSION =			7.0.0
 COMPONENT_SUMMARY =		Python Build Reasonableness
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/pbr/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:93ea72ce6989eb2eed99d0f75721474f69ad88128afdef5ac377eb797c4bf76b
+	sha256:cf4127298723dafbce3afd13775ccf3885be5d3c8435751b867f9a6a10b71a39
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +38,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 #
 PYTHON_TEST_BOOTSTRAP = yes
 
+# Random temporary directory
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp/tmp\).\{8\}/tmp.\{8\}|\1XXXXXXXX/tmpXXXXXXXX|'"
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
@@ -45,10 +48,8 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/fixtures
-TEST_REQUIRED_PACKAGES.python += library/python/hacking
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/stestr
-TEST_REQUIRED_PACKAGES.python += library/python/testrepository
 TEST_REQUIRED_PACKAGES.python += library/python/testresources
 TEST_REQUIRED_PACKAGES.python += library/python/testscenarios
 TEST_REQUIRED_PACKAGES.python += library/python/testtools
