@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Format-ISO8601
 HUMAN_VERSION =			0.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parses ISO8601 formats
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
