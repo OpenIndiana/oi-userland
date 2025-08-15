@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2023, Friedrich Kink. All rights reserved.
+# Copyright (c) 2023,2025 Friedrich Kink. All rights reserved.
 # Copyright (c) 2025, Klaus Ziegler. All rights reserved.
 #
 
@@ -29,8 +29,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.6.38
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.6.39
 COMPONENT_SUMMARY=	The memcached memory object cache
 COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
 			key/value cache store intended to be used in a distributed system.
@@ -39,7 +38,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:334d792294e37738796b5b03375c47bb6db283b1152e2ea4ccb720152dd17c66
+COMPONENT_ARCHIVE_HASH=	sha256:23e5507e933b15463161d4c5d3921b0c5f340b542d6edd7f6c5e17c34f11a363
 COMPONENT_ARCHIVE_URL=	https://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
