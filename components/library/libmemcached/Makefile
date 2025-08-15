@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         libmemcached
 COMPONENT_MAJOR_VERSION=	1.1
 COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).4
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=	libmemcached-awesome is an open source C/C++ client library and tools for the memcached server
 COMPONENT_DESCRIPTION=	It has been designed to be light on memory usage, thread safe, and provide full access to server side methods.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,9 +57,9 @@ CMAKE_OPTIONS += -DENABLE_MEMASLAP=ON
 CMAKE_OPTIONS += -DENABLE_HASH_HSIEH=ON
 CMAKE_OPTIONS += -DENABLE_HASH_FNV64=ON
 CMAKE_OPTIONS += -DENABLE_HASH_MURMUR=ON
-CMAKE_OPTIONS += -DENABLE_SASL=OFF
+CMAKE_OPTIONS += -DENABLE_SASL=ON
 CMAKE_OPTIONS += -DENABLE_DTRACE=OFF
-CMAKE_OPTIONS += -DENABLE_OPENSSL_CRYPTO=OFF
+CMAKE_OPTIONS += -DENABLE_OPENSSL_CRYPTO=ON
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
@@ -76,12 +76,17 @@ COMPONENT_POST_INSTALL_ACTION  = \
         /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR)"' $$file ; \
     done ;
 
+# Just retain test result output that's useful.
+COMPONENT_TEST_TRANSFORMS += '-e "/^Test project/d" ' \
+
 # Manually added dependencies
 REQUIRED_PACKAGES += service/memcached
+REQUIRED_PACKAGES += library/python/sphinx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
