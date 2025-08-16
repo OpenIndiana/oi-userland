@@ -23,6 +23,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
 COMPONENT_VERSION=	11.4.8
+COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -41,6 +42,8 @@ MARIADBV = $(subst .,,$(COMPONENT_MAJOR_VERSION))
 AR=/usr/bin/gar
 RANLIB=/usr/bin/granlib
 PCRE_INCLUDE=/usr/include/pcre
+
+COMPONENT_PRE_CMAKE_ACTION += $(GSED) -i -e "s:etc/:etc/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/:" $(SOURCE_DIR)/support-files/rpm/my.cnf
 
 CFLAGS += -fPIC
 CXXFLAGS += -fPIC
