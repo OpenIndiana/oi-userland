@@ -21,17 +21,14 @@
 # Copyright (c) 2013, Louis M. Picciano. All rights reserved.
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         joe
 COMPONENT_VERSION=      4.6
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
+COMPONENT_SUMMARY=		Joe's Own Editor - a full featured terminal-based screen editor
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://joe-editor.sourceforge.net/
-COMPONENT_SUMMARY=      Joe's Own Editor
-COMPONENT_DESCRIPTION=	Joe's Own Editor - a full featured terminal-based screen editor
+COMPONENT_PROJECT_URL=  https://joe-editor.sourceforge.net/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:495a0a61f26404070fe8a719d80406dc7f337623788e445b92a9f6de512ab9de
@@ -43,12 +40,12 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += -Wno-error=incompatible-pointer-types
+
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
 
 # Joe uses incorrect relative paths
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-CONFIGURE_OPTIONS	 +=	--sysconfdir=$(ETCDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
