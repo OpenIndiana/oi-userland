@@ -3,7 +3,7 @@ suite. It would be nice to be complete, but that isn't true yet.
 
 --- a/test/lib/jdk/test/lib/Platform.java	Wed Sep 15 21:15:33 2021
 +++ b/test/lib/jdk/test/lib/Platform.java	Tue Apr  2 11:22:50 2024
-@@ -129,6 +129,10 @@
+@@ -130,6 +130,10 @@
          return isOs("mac");
      }
  
@@ -14,7 +14,7 @@ suite. It would be nice to be complete, but that isn't true yet.
      public static boolean isWindows() {
          return isOs("win");
      }
-@@ -224,6 +228,11 @@
+@@ -225,6 +229,11 @@
          return isArch("s390.*") || isArch("s/390.*") || isArch("zArch_64");
      }
  
@@ -26,7 +26,7 @@ suite. It would be nice to be complete, but that isn't true yet.
      public static boolean isX64() {
          // On OSX it's 'x86_64' and on other (Linux and Windows) platforms it's 'amd64'
          return isArch("(amd64)|(x86_64)");
-@@ -252,6 +261,8 @@
+@@ -253,6 +262,8 @@
          }
          if (isAix()) {
              return false; // SA not implemented.
@@ -35,7 +35,7 @@ suite. It would be nice to be complete, but that isn't true yet.
          } else if (isLinux()) {
              if (isS390x() || isARM()) {
                  return false; // SA not implemented.
-@@ -439,6 +450,7 @@
+@@ -440,6 +451,7 @@
                  isServer() &&
                  (isLinux()   ||
                   isOSX()     ||
@@ -43,7 +43,7 @@ suite. It would be nice to be complete, but that isn't true yet.
                   isWindows()) &&
                  !isZero()    &&
                  !isMinimal() &&
-@@ -449,7 +461,7 @@
+@@ -450,7 +462,7 @@
       * This should match the #if condition in ClassListParser::load_class_from_source().
       */
      public static boolean areCustomLoadersSupportedForCDS() {
@@ -78,7 +78,7 @@ suite. It would be nice to be complete, but that isn't true yet.
              }
 --- a/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Apr  2 12:26:47 2024
-@@ -96,7 +96,7 @@
+@@ -97,7 +97,7 @@
  
          checkPosixShellExitValue("exit 7", 7);
  
@@ -139,32 +139,6 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Thu Apr  4 11:02:00 2024
-@@ -34,6 +34,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Thu Apr  4 11:02:20 2024
-@@ -50,6 +50,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
 --- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
 @@ -52,7 +52,7 @@
@@ -202,7 +176,7 @@ suite. It would be nice to be complete, but that isn't true yet.
          ;;
 --- a/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Thu Apr  4 11:29:40 2024
-@@ -57,6 +57,12 @@
+@@ -58,6 +58,12 @@
  
  OS=`uname -s`
  case "$OS" in
