@@ -4,21 +4,6 @@ Ensure support libraries can be found during build.
 
 --- a/make/autoconf/spec.gmk.in.orig	2019-01-08 09:40:27.000000000 +0000
 +++ b/make/autoconf/spec.gmk.in
-@@ -521,12 +521,12 @@ LD:=@FIXPATH@ @LD@
- SDKROOT:=@SDKROOT@
- 
- # LDFLAGS used to link the jdk native libraries (C-code)
--LDFLAGS_JDKLIB:=@LDFLAGS_JDKLIB@
-+LDFLAGS_JDKLIB:=-Xlinker -R@prefix@/java/openjdk11/lib -Xlinker -R@prefix@/java/openjdk11/lib/jli -Xlinker -R@prefix@/java/openjdk11/lib/server @LDFLAGS_JDKLIB@
- JDKLIB_LIBS:=@JDKLIB_LIBS@
- GLOBAL_LIBS:=@GLOBAL_LIBS@
- 
- # LDFLAGS used to link the jdk native launchers (C-code)
--LDFLAGS_JDKEXE:=@LDFLAGS_JDKEXE@
-+LDFLAGS_JDKEXE:=-Xlinker -R@prefix@/java/openjdk11/lib/jli @LDFLAGS_JDKEXE@
- JDKEXE_LIBS:=@JDKEXE_LIBS@
- 
- # LDFLAGS specific to C++ linking.
 @@ -640,9 +640,9 @@ JAVA_SMALL=@FIXPATH@ $(JAVA_CMD) $(JAVA_
  JAVA_JAVAC = $(JAVA_CMD) $(JAVA_FLAGS_JAVAC) $(JAVA_FLAGS)
  JAVAC = $(JAVAC_CMD)
