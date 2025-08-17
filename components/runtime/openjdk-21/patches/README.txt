@@ -3,6 +3,53 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
+21.0.8
+
+Poller implDeregister() signature change.
+
+Need extra pipewire patch.
+
+Cleanup: remove unused check_addr0_done.
+
+Cleanup: remove the Studio type linkage block from the gcc header.
+
+Cleanup: remove the unshuffle_list.txt hunk.
+
+Cleanup: Correct DTRACE_INSTRUMENTED_OBJS.
+
+Fix: Correct type argument to sema_init.
+
+Cleanup: Duplicate check for SC_CLK_TCK.
+
+21.0.7
+
+Minor patch noise.
+
+Needed to fix up jline due to updates, to match changes in other
+platforms.
+
+Fix incorrect LDFLAGS in TestFilesCompilation.gmk, see
+illumos-port-28.patch
+
+os::print_tos_pc() has been centralized, so remove our copy.
+
+Cleanup: Move the mapfiles (symbol files) to the right place.
+
+Cleanup: Remove the use of lp rather than lpr; all supported systems
+can or even should be using CUPS rather than legacy lp.
+
+Cleanup: Remove /usr/bin/sh override in PrintServiceLookupProvider.java.
+
+Cleanup: Define -D_REENTRANT for non-gcc (ie clang) builds
+
+Cleanup: Remove unused global UseOSErrorReporting.
+
+Cleanup: Remove long unused sysThreadAvailableStackWithSlack()
+
+21.0.6
+
+Minor patch noise.
+
 Cleanup: remove audio solaris 7 compatibility code
 
 Cleanup: use pset_getloadavg() directly
@@ -291,7 +338,7 @@ env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
 --disable-dtrace \
 --disable-warnings-as-errors \
 --with-source-date=current \
---with-jobs=3 \
+--with-jobs=4 \
 DATE=/usr/gnu/bin/date \
 STRIP=/usr/gnu/bin/strip
 

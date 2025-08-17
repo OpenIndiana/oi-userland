@@ -11,3 +11,14 @@
  int DEBUG_SCREENCAST_ENABLED = FALSE;
  
  #define EXCEPTION_CHECK_DESCRIBE() if ((*env)->ExceptionCheck(env)) { \
+--- a/src/java.desktop/unix/native/libpipewire/include/spa/utils/endian.h	Thu Feb 20 02:13:41 2025
++++ b/src/java.desktop/unix/native/libpipewire/include/spa/utils/endian.h	Fri Feb 21 11:45:01 2025
+@@ -22,6 +22,8 @@
+ #include <sys/machine.h>
+ #define __BIG_ENDIAN      BIG_ENDIAN
+ #define __BYTE_ORDER      BIG_ENDIAN
++#elif defined(SOLARIS)
++#include <endian.h>
+ #else
+ #include <endian.h>
+ #include <byteswap.h>

@@ -471,7 +471,7 @@ diff -urN /tmp/a/javaThread_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/jav
 diff -urN /tmp/a/javaThread_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.hpp
 --- /tmp/a/javaThread_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.hpp	2024-10-15 14:59:36.869648787 +0100
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,52 @@
 +/*
 + * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -522,13 +522,6 @@ diff -urN /tmp/a/javaThread_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/jav
 +private:
 +  bool pd_get_top_frame(frame* fr_addr, void* ucontext,
 +    bool isInJava);
-+public:
-+
-+  // These routines are only used on cpu architectures that
-+  // have separate register stacks (Itanium).
-+  static bool register_stack_overflow() { return false; }
-+  static void enable_register_stack_guard() {}
-+  static void disable_register_stack_guard() {}
 +
 +#endif // OS_CPU_SOLARIS_X86_JAVATHREAD_SOLARIS_X86_HPP
 diff -urN /tmp/a/orderAccess_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/orderAccess_solaris_x86.hpp
@@ -596,7 +589,7 @@ diff -urN /tmp/a/orderAccess_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/or
 diff -urN /tmp/a/os_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp
 --- /tmp/a/os_solaris_x86.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	2024-10-15 14:59:36.911042968 +0100
-@@ -0,0 +1,610 @@
+@@ -0,0 +1,592 @@
 +/*
 + * Copyright (c) 1999, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1123,24 +1116,6 @@ diff -urN /tmp/a/os_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_
 +  st->print(", EFLAGS=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EFL]);
 +#endif // AMD64
 +  st->cr();
-+  st->cr();
-+}
-+
-+void os::print_tos_pc(outputStream *st, const void *context) {
-+  if (context == NULL) return;
-+
-+  const ucontext_t* uc = (const ucontext_t*)context;
-+
-+  intptr_t *sp = (intptr_t *)os::Solaris::ucontext_get_sp(uc);
-+  st->print_cr("Top of Stack: (sp=" INTPTR_FORMAT ")", (intptr_t)sp);
-+  print_hex_dump(st, (address)sp, (address)(sp + 8*sizeof(intptr_t)), sizeof(intptr_t));
-+  st->cr();
-+
-+  // Note: it may be unsafe to inspect memory near pc. For example, pc may
-+  // point to garbage if entry point in an nmethod is corrupted. Leave
-+  // this at the end, and hope for the best.
-+  address pc = os::Posix::ucontext_get_pc(uc);
-+  print_instructions(st, pc, sizeof(char));
 +  st->cr();
 +}
 +
