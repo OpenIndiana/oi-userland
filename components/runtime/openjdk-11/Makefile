@@ -13,7 +13,7 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2023-2024 Niklas Poslovski
+# Copyright 2023-2025 Niklas Poslovski
 # Copyright 2023 Franklin Ronald <franklin@wiselabs.com.br>
 #
 
@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	11
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	25
+OPENJDK_BUILD=	28
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
@@ -29,7 +29,7 @@ COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edi
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(COMPONENT_VERSION)-ga
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:fc5a473f4679163b65379adbc92083004f7b3ac2402b4ac6097bba8b65443e8e
+	sha256:c051b84b55a826ff90ac601ff7501449fb6a578a89357bbc7550990a78bb5f1b
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/$(COMPONENT_NAME)/jdk$(OPENJDK_VERSION)u/archive/refs/tags/jdk-$(COMPONENT_VERSION)-ga.tar.gz
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
