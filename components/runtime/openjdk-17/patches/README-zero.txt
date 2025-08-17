@@ -1,7 +1,7 @@
 "Zero is a port of OpenJDK that uses no assembler and therefore can
 trivially be built on any system."
 
-https://openjdk.java.net/projects/zero/
+https://openjdk.org/projects/zero/
 
 The idea here is to potentially have an illumos port of zero. It's not
 so interesting on x86, for which we have a proper port anyway, but if

@@ -1439,7 +1439,7 @@ diff -urN /tmp/a/dtrace/jhelper.d b/src/hotspot/os/solaris/dtrace/jhelper.d
 diff -urN /tmp/a/globals_solaris.hpp b/src/hotspot/os/solaris/globals_solaris.hpp
 --- /tmp/a/globals_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os/solaris/globals_solaris.hpp	2024-12-05 11:44:56.839804759 +0000
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,48 @@
 +/*
 + * Copyright (c) 2005, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1485,7 +1485,6 @@ diff -urN /tmp/a/globals_solaris.hpp b/src/hotspot/os/solaris/globals_solaris.hp
 +define_pd_global(size_t, PreTouchParallelChunkSize, 1 * G);
 +define_pd_global(bool, UseLargePages, true);
 +define_pd_global(bool, UseLargePagesIndividualAllocation, false);
-+define_pd_global(bool, UseOSErrorReporting, false);
 +define_pd_global(bool, UseThreadPriorities, false);
 +
 +#endif // OS_SOLARIS_GLOBALS_SOLARIS_HPP
@@ -2498,7 +2497,7 @@ diff -urN /tmp/a/os_share_solaris.hpp b/src/hotspot/os/solaris/os_share_solaris.
 diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 --- /tmp/a/os_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os/solaris/os_solaris.cpp	2024-12-05 11:44:56.897756134 +0000
-@@ -0,0 +1,3942 @@
+@@ -0,0 +1,3939 @@
 +/*
 + * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -2654,9 +2653,6 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +
 +// System parameters used internally
 +static clock_t clock_tics_per_sec = 100;
-+
-+// For diagnostics to print a message once. see run_periodic_checks
-+static bool check_addr0_done = false;
 +
 +address os::Solaris::handler_start;  // start pc of thr_sighndlrinfo
 +address os::Solaris::handler_end;    // end pc of thr_sighndlrinfo
@@ -5415,7 +5411,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +  // these functions registered and atexit() does not set errno. In Solaris
 +  // 8 and later, there is no limit to the number of functions registered
 +  // and atexit() sets errno. In addition, in Solaris 8 and later, atexit
-+  // functions are called upon dlclose(3DL) in addition to return from main
++  // functions are called upon dlclose(3C) in addition to return from main
 +  // and exit(3C).
 +
 +  if (PerfAllowAtExitRegistration) {

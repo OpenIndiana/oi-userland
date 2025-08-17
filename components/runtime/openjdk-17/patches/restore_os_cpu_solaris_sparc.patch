@@ -165,7 +165,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/count_trailing_zeros_sola
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp b/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp
 --- a/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp	2023-04-16 11:42:17.119590998 +0000
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,38 @@
 +/*
 + * Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -193,10 +193,8 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp
 +#ifndef OS_CPU_SOLARIS_SPARC_GLOBALS_SOLARIS_SPARC_HPP
 +#define OS_CPU_SOLARIS_SPARC_GLOBALS_SOLARIS_SPARC_HPP
 +
-+//
 +// Sets the default values for platform dependent flags used by the runtime system.
 +// (see globals.hpp)
-+//
 +
 +define_pd_global(size_t, JVMInvokeMethodSlack,   12288);
 +
@@ -205,13 +203,11 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/globals_solaris_sparc.hpp
 +// to 4G on Solaris-Sparc. This leaves at least 2G for the native heap.
 +define_pd_global(size_t, HeapBaseMinAddress,     CONST64(6)*G);
 +
-+
-+
 +#endif // OS_CPU_SOLARIS_SPARC_GLOBALS_SOLARIS_SPARC_HPP
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp b/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp
 --- a/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc.hpp	2023-04-16 12:14:52.818840181 +0000
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,54 @@
 +/*
 + * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -246,8 +242,6 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc
 +
 +// Implementation of class OrderAccess.
 +
-+// Assume TSO.
-+
 +// A compiler barrier, forcing the C++ compiler to invalidate all memory assumptions
 +static inline void compiler_barrier() {
 +  __asm__ volatile ("" : : : "memory");
@@ -271,7 +265,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/orderAccess_solaris_sparc
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp
 --- a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp	2023-04-16 12:14:52.819146703 +0000
-@@ -0,0 +1,544 @@
+@@ -0,0 +1,546 @@
 +/*
 + * Copyright (c) 1999, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -353,6 +347,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +# define _STRUCTURED_PROC 1  //  this gets us the new structured proc interfaces of 5.6 & later
 +# include <sys/procfs.h>     //  see comment in <sys/procfs.h>
 +
++
 +#define MAX_PATH (2 * K)
 +
 +// Minimum usable stack sizes required to get to user code. Space for
@@ -381,6 +376,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +  return (char*) 0;
 +}
 +
++//
 +// Validate a ucontext retrieved from walking a uc_link of a ucontext.
 +// There are issues with libthread giving out uc_links for different threads
 +// on the same uc_link chain and bad or circular links.
@@ -526,11 +522,12 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +}
 +
 +bool os::is_allocatable(size_t bytes) {
-+   return true;
++  return true;
 +}
 +
 +bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
 +                                             ucontext_t* uc, JavaThread* thread) {
++
 +  if (info == NULL || info->si_code <= 0 || info->si_code == SI_NOINFO) {
 +    // can't decode this kind of signal
 +    info = NULL;
@@ -547,7 +544,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +  //%note os_trap_1
 +  if (info != NULL && uc != NULL && thread != NULL) {
 +    // factor me: getPCfromContext
-+    pc  = (address) uc->uc_mcontext.gregs[REG_PC];
++    pc = (address) uc->uc_mcontext.gregs[REG_PC];
 +    npc = (address) uc->uc_mcontext.gregs[REG_nPC];
 +
 +    // Handle ALL stack overflow variations here
@@ -563,7 +560,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +
 +
 +    if (thread->thread_state() == _thread_in_vm ||
-+        thread->thread_state() == _thread_in_native) {
++         thread->thread_state() == _thread_in_native) {
 +      if (sig == SIGBUS && thread->doing_unsafe_access()) {
 +        if (UnsafeCopyMemory::contains_pc(pc)) {
 +          npc = UnsafeCopyMemory::page_error_continue_pc(pc);
@@ -577,7 +574,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +      // a fault inside compiled code, the interpreter, or a stub
 +
 +      // Support Safepoint Polling
-+      if (sig == SIGSEGV && SafepointMechanism::is_poll_address((address)info->si_addr)) {
++      if ( sig == SIGSEGV && SafepointMechanism::is_poll_address((address)info->si_addr)) {
 +        stub = SharedRuntime::get_poll_stub(pc);
 +      }
 +
@@ -614,8 +611,8 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +          stub = SharedRuntime::handle_unsafe_access(thread, npc);
 +        }
 +      }
-+
-+      else if (sig == SIGFPE && info->si_code == FPE_INTDIV) {
++      else
++      if (sig == SIGFPE && info->si_code == FPE_INTDIV) {
 +        // integer divide by zero
 +        stub = SharedRuntime::continuation_for_implicit_exception(thread, pc, SharedRuntime::IMPLICIT_DIVIDE_BY_ZERO);
 +      }
@@ -664,7 +661,6 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 +    // simulate a branch to the stub (a "call" in the safepoint stub case)
 +    // factor me: setPC
 +    os::Posix::ucontext_set_pc(uc, stub);
-+
 +    return true;
 +  }
 +
@@ -819,7 +815,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.cpp b/sr
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.hpp b/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.hpp
 --- a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.hpp	2023-04-16 11:42:17.120175611 +0000
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,48 @@
 +/*
 + * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -850,17 +846,16 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/os_solaris_sparc.hpp b/sr
 +  //
 +  // NOTE: we are back in class os here, not Solaris
 +  //
++  static void setup_fpu() {}
 +  static int32_t  (*atomic_xchg_func)        (int32_t,  volatile int32_t*);
-+  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*,  int32_t);
-+  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*,  int64_t);
++  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*, int64_t);
 +  static int32_t  (*atomic_add_func)         (int32_t,  volatile int32_t*);
 +
 +  static int32_t  atomic_xchg_bootstrap        (int32_t,  volatile int32_t*);
-+  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*,  int32_t);
-+  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*,  int64_t);
++  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*, int64_t);
 +  static int32_t  atomic_add_bootstrap         (int32_t,  volatile int32_t*);
-+
-+  static void setup_fpu() {}
 +
 +  static bool is_allocatable(size_t bytes);
 +
@@ -1102,7 +1097,7 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/solaris_sparc.S b/src/hot
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp b/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp
 --- a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp	2023-04-16 11:42:17.120632724 +0000
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,162 @@
 +/*
 + * Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1147,7 +1142,6 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp 
 +//
 +bool JavaThread::pd_get_top_frame_for_signal_handler(frame* fr_addr,
 +  void* ucontext, bool isInJava) {
-+
 +  assert(Thread::current() == this, "caller must be current thread");
 +  return pd_get_top_frame(fr_addr, ucontext, isInJava, true);
 +}
@@ -1160,7 +1154,6 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp 
 +bool JavaThread::pd_get_top_frame(frame* fr_addr,
 +  void* ucontext, bool isInJava, bool makeWalkable) {
 +  assert(this->is_Java_thread(), "must be JavaThread");
-+
 +  JavaThread* jt = (JavaThread *)this;
 +
 +  if (!isInJava && makeWalkable) {
@@ -1263,14 +1256,14 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.cpp 
 +
 +  *fr_addr = ret_frame;
 +  return true;
++
 +}
 +
 +void JavaThread::cache_global_variables() { }
-+
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp b/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp
 --- a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp	2023-04-16 11:42:17.120749608 +0000
-@@ -0,0 +1,88 @@
+@@ -0,0 +1,82 @@
 +/*
 + * Copyright (c) 1998, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1297,8 +1290,8 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp 
 +
 +#ifndef OS_CPU_SOLARIS_SPARC_THREAD_SOLARIS_SPARC_HPP
 +#define OS_CPU_SOLARIS_SPARC_THREAD_SOLARIS_SPARC_HPP
-+private:
 +
++private:
 +  void pd_initialize() {
 +    _anchor.clear();
 +    _base_of_stack_pointer        = NULL;
@@ -1346,17 +1339,11 @@ diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/thread_solaris_sparc.hpp 
 +
 +  bool pd_get_top_frame_for_signal_handler(frame* fr_addr, void* ucontext,
 +    bool isInJava);
-+
-+  bool pd_get_top_frame_for_profiling(frame* fr_addr, void* ucontext, bool isInJava);
++  bool pd_get_top_frame_for_profiling(frame* fr_addr, void* ucontext,
++    bool isInJava);
 +private:
-+  bool pd_get_top_frame(frame* fr_addr, void* ucontext, bool isInJava, bool makeWalkable);
-+public:
-+
-+  // These routines are only used on cpu architectures that
-+  // have separate register stacks (Itanium).
-+  static bool register_stack_overflow() { return false; }
-+  static void enable_register_stack_guard() {}
-+  static void disable_register_stack_guard() {}
++  bool pd_get_top_frame(frame* fr_addr, void* ucontext,
++    bool isInJava, bool makeWalkable);
 +
 +#endif // OS_CPU_SOLARIS_SPARC_THREAD_SOLARIS_SPARC_HPP
 diff -ur --new-file a/src/hotspot/os_cpu/solaris_sparc/vmStructs_solaris_sparc.hpp b/src/hotspot/os_cpu/solaris_sparc/vmStructs_solaris_sparc.hpp
