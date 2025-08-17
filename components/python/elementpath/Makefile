@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elementpath
-HUMAN_VERSION =			5.0.3
+HUMAN_VERSION =			5.0.4
 COMPONENT_SUMMARY =		XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/elementpath
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61040ca014769d507ce19d26521a4bf1c64d2bd0776466e45030dbfe181f7062
+	sha256:85ed93565d6e94aefa160b12f36b12cbe4be6bf9bbde06b80f2c5c94829a25fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
