@@ -102,7 +102,7 @@
 +    }
 +
 +    @Override
-+    void implDeregister(int fdVal) {
++    void implDeregister(int fdVal, boolean polled) {
 +        // Stub
 +        throw new UnsupportedOperationException("Unimplemented on SunOS");
 +    }
@@ -115,7 +115,7 @@
 +}
 --- /dev/null
 +++ a/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPortPoller.java
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,106 @@
 +/*
 +* Copyright (c) 2008, 2020, Oracle and/or its affiliates. All rights reserved.
 +* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -192,11 +192,14 @@
 +    }
 +
 +    @Override
-+    void implDeregister(int fdVal) {
-+        try{
-+            SolarisEventPort.port_dissociate(epid, PORT_SOURCE_FD, fdVal);
-+        } catch (IOException e) {
-+            // Ignore.
++    void implDeregister(int fdVal, boolean polled) {
++        // event is disabled if already polled
++        if (!polled) {
++            try{
++                SolarisEventPort.port_dissociate(epid, PORT_SOURCE_FD, fdVal);
++            } catch (IOException e) {
++                // Ignore.
++            }
 +        }
 +    }
 +

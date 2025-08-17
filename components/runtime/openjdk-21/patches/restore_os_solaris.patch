@@ -354,7 +354,7 @@ diff -urN /tmp/a/attachListener_solaris.cpp b/src/hotspot/os/solaris/attachListe
 +    if (res == 0) {
 +      door_desc_t desc;
 +      // DOOR_RELEASE flag makes sure fd is closed after passing it to
-+      // the client.  See door_return(3DOOR) man page.
++      // the client.  See door_return(3C) man page.
 +      desc.d_attributes = DOOR_DESCRIPTOR | DOOR_RELEASE;
 +      desc.d_data.d_desc.d_descriptor = return_fd;
 +      door_return((char*)&res, sizeof(res), &desc, 1);
@@ -457,7 +457,7 @@ diff -urN /tmp/a/attachListener_solaris.cpp b/src/hotspot/os/solaris/attachListe
 +  int status = pthread_mutex_init(&_mutex, NULL);
 +  assert_status(status==0, status, "mutex_init");
 +
-+  status = ::sema_init(&_wakeup, 0, NULL, NULL);
++  status = ::sema_init(&_wakeup, 0, 0, NULL);
 +  assert_status(status==0, status, "sema_init");
 +
 +  set_head(NULL);
@@ -1427,7 +1427,7 @@ diff -urN /tmp/a/dtrace/jhelper.d b/src/hotspot/os/solaris/dtrace/jhelper.d
 diff -urN /tmp/a/globals_solaris.hpp b/src/hotspot/os/solaris/globals_solaris.hpp
 --- /tmp/a/globals_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os/solaris/globals_solaris.hpp	2024-10-15 14:59:36.866277900 +0100
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,48 @@
 +/*
 + * Copyright (c) 2005, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -1473,7 +1473,6 @@ diff -urN /tmp/a/globals_solaris.hpp b/src/hotspot/os/solaris/globals_solaris.hp
 +define_pd_global(size_t, PreTouchParallelChunkSize, 1 * G);
 +define_pd_global(bool, UseLargePages, true);
 +define_pd_global(bool, UseLargePagesIndividualAllocation, false);
-+define_pd_global(bool, UseOSErrorReporting, false);
 +define_pd_global(bool, UseThreadPriorities, false);
 +
 +#endif // OS_SOLARIS_GLOBALS_SOLARIS_HPP
@@ -2440,7 +2439,7 @@ diff -urN /tmp/a/os_perf_solaris.cpp b/src/hotspot/os/solaris/os_perf_solaris.cp
 diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 --- /tmp/a/os_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os/solaris/os_solaris.cpp	2024-10-15 14:59:36.867779471 +0100
-@@ -0,0 +1,3057 @@
+@@ -0,0 +1,3030 @@
 +/*
 + * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -2595,9 +2594,6 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +
 +// System parameters used internally
 +static clock_t clock_tics_per_sec = 100;
-+
-+// For diagnostics to print a message once. see run_periodic_checks
-+static bool check_addr0_done = false;
 +
 +address os::Solaris::handler_start;  // start pc of thr_sighndlrinfo
 +address os::Solaris::handler_end;    // end pc of thr_sighndlrinfo
@@ -3958,9 +3954,9 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +}
 +
 +size_t os::Solaris::page_size_for_alignment(size_t alignment) {
-+  assert(is_aligned(alignment, (size_t) os::vm_page_size()),
++  assert(is_aligned(alignment, os::vm_page_size()),
 +         SIZE_FORMAT " is not aligned to " SIZE_FORMAT,
-+         alignment, (size_t) os::vm_page_size());
++         alignment, os::vm_page_size());
 +
 +  const int page_sizes_max = 9;
 +  size_t _illumos_page_sizes[page_sizes_max];
@@ -3971,7 +3967,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +    }
 +  }
 +
-+  return (size_t) os::vm_page_size();
++  return os::vm_page_size();
 +}
 +
 +int os::Solaris::commit_memory_impl(char* addr, size_t bytes,
@@ -3983,7 +3979,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +
 +    // The syscall memcntl requires an exact page size (see man memcntl for details).
 +    size_t page_size = page_size_for_alignment(alignment_hint);
-+    if (page_size > (size_t) os::vm_page_size()) {
++    if (page_size > os::vm_page_size()) {
 +      (void)Solaris::setup_large_pages(addr, bytes, page_size);
 +    }
 +  }
@@ -4033,7 +4029,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +  assert((intptr_t)(addr + bytes) % alignment_hint == 0, "End should be aligned.");
 +  if (UseLargePages) {
 +    size_t page_size = Solaris::page_size_for_alignment(alignment_hint);
-+    if (page_size > (size_t) os::vm_page_size()) {
++    if (page_size > os::vm_page_size()) {
 +      Solaris::setup_large_pages(addr, bytes, page_size);
 +    }
 +  }
@@ -4146,7 +4142,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +  uint64_t addrs[MAX_MEMINFO_CNT], outdata[types * MAX_MEMINFO_CNT + 1];
 +  uint_t validity[MAX_MEMINFO_CNT];
 +
-+  size_t page_size = MAX2((size_t)os::vm_page_size(), page_expected->size);
++  size_t page_size = MAX2(os::vm_page_size(), page_expected->size);
 +  uint64_t p = (uint64_t)start;
 +  while (p < (uint64_t)end) {
 +    addrs[0] = p;
@@ -5033,7 +5029,7 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +  // these functions registered and atexit() does not set errno. In Solaris
 +  // 8 and later, there is no limit to the number of functions registered
 +  // and atexit() sets errno. In addition, in Solaris 8 and later, atexit
-+  // functions are called upon dlclose(3DL) in addition to return from main
++  // functions are called upon dlclose(3C) in addition to return from main
 +  // and exit(3C).
 +
 +  if (PerfAllowAtExitRegistration) {
@@ -5327,30 +5323,6 @@ diff -urN /tmp/a/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 +  return false;
 +}
 +
-+// Following function has been added to support HotSparc's libjvm.so running
-+// under Solaris production JDK 1.2.2 / 1.3.0.  These came from
-+// src/solaris/hpi/native_threads in the EVM codebase.
-+//
-+// NOTE: This is no longer needed in the 1.3.1 and 1.4 production release
-+// libraries and should thus be removed. We will leave it behind for a while
-+// until we no longer want to able to run on top of 1.3.0 Solaris production
-+// JDK. See 4341971.
-+
-+#define STACK_SLACK 0x800
-+
-+extern "C" {
-+  intptr_t sysThreadAvailableStackWithSlack() {
-+    stack_t st;
-+    intptr_t retval, stack_top;
-+    retval = thr_stksegment(&st);
-+    assert(retval == 0, "incorrect return value from thr_stksegment");
-+    assert((address)&st < (address)st.ss_sp, "Invalid stack base returned");
-+    assert((address)&st > (address)st.ss_sp-st.ss_size, "Invalid stack size returned");
-+    stack_top=(intptr_t)st.ss_sp-st.ss_size;
-+    return ((intptr_t)&stack_top - stack_top - STACK_SLACK);
-+  }
-+}
-+
 +// ObjectMonitor park-unpark infrastructure ...
 +//
 +// We implement Solaris and Linux PlatformEvents with the
@@ -5533,7 +5505,7 @@ diff -urN /tmp/a/os_solaris.hpp b/src/hotspot/os/solaris/os_solaris.hpp
 +
 +// Solaris_OS defines the interface to Solaris operating systems
 +
-+// see thr_setprio(3T) for the basis of these numbers
++// see thr_setprio(3C) for the basis of these numbers
 +#define MinimumPriority 0
 +#define NormalPriority  64
 +#define MaximumPriority 127
