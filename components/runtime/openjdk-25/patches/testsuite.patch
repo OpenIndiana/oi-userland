@@ -3,7 +3,7 @@ suite. It would be nice to be complete, but that isn't true yet.
 
 --- a/test/lib/jdk/test/lib/Platform.java	Wed Sep 15 21:15:33 2021
 +++ b/test/lib/jdk/test/lib/Platform.java	Tue Apr  2 11:22:50 2024
-@@ -130,6 +130,10 @@
+@@ -126,6 +126,10 @@
          return isOs("mac");
      }
  
@@ -14,7 +14,7 @@ suite. It would be nice to be complete, but that isn't true yet.
      public static boolean isWindows() {
          return isOs("win");
      }
-@@ -225,6 +229,11 @@
+@@ -221,6 +225,11 @@
          return isArch("s390.*") || isArch("s/390.*") || isArch("zArch_64");
      }
  
@@ -26,7 +26,7 @@ suite. It would be nice to be complete, but that isn't true yet.
      public static boolean isX64() {
          // On OSX it's 'x86_64' and on other (Linux and Windows) platforms it's 'amd64'
          return isArch("(amd64)|(x86_64)");
-@@ -253,6 +262,8 @@
+@@ -249,6 +258,8 @@
          }
          if (isAix()) {
              return false; // SA not implemented.
@@ -35,7 +35,7 @@ suite. It would be nice to be complete, but that isn't true yet.
          } else if (isLinux()) {
              if (isS390x() || isARM()) {
                  return false; // SA not implemented.
-@@ -462,6 +473,7 @@
+@@ -458,6 +469,7 @@
                  isServer() &&
                  (isLinux()   ||
                   isOSX()     ||
@@ -43,7 +43,7 @@ suite. It would be nice to be complete, but that isn't true yet.
                   isWindows()) &&
                  !isZero()    &&
                  !isMinimal() &&
-@@ -472,7 +484,7 @@
+@@ -468,7 +480,7 @@
       * This should match the #if condition in ClassListParser::load_class_from_source().
       */
      public static boolean areCustomLoadersSupportedForCDS() {
@@ -111,17 +111,17 @@ suite. It would be nice to be complete, but that isn't true yet.
   * @library /testlibrary
   * @summary Basic test of Thread and ThreadMXBean queries on a natively
   *          attached thread that has failed to detach before terminating.
-- * @comment The native code only supports POSIX so no windows testing
+- * @comment The native code only supports POSIX so no windows testing.
 + * @comment The native code only supports POSIX so no windows testing; also
 + *          we have to skip solaris as a terminating thread that fails to
 + *          detach will hit an infinite loop due to TLS destructor issues - see
 + *          comments in JDK-8156708
-  * @run main/othervm/native TestTerminatedThread
-  */
- 
+  * @comment Disable -Xcheck:jni else NMT can report a fatal error because
+  *          we did not detach before exiting.
+  * @run main/othervm/native -XX:-CheckJNICalls TestTerminatedThread
 --- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
 +++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
-@@ -111,7 +111,7 @@
+@@ -112,7 +112,7 @@
          // We check for that here, but allow it for Aix and Windows slowdebug builds
          // because the compiler ends up not inlining AllocateHeap.
          Boolean okToHaveAllocateHeap = Platform.isSlowDebugBuild() &&
@@ -140,43 +140,6 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Thu Apr  4 11:02:00 2024
-@@ -34,6 +34,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Thu Apr  4 11:02:20 2024
-@@ -50,6 +50,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
---- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
-@@ -52,7 +52,7 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
--  Linux | Darwin )
-+  SunOS | Linux | Darwin )
-     PATHSEP=":"
-     FILESEP="/"
-     NATIVE=true
 --- a/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Thu Apr  4 11:29:40 2024
 @@ -58,6 +58,12 @@
@@ -218,3 +181,25 @@ suite. It would be nice to be complete, but that isn't true yet.
                  Arguments.of(AIX, OperatingSystem.isAix())
          );
      }
+--- a/test/hotspot/gtest/runtime/test_committed_virtualmemory.cpp	Wed Jan  8 20:46:57 2025
++++ b/test/hotspot/gtest/runtime/test_committed_virtualmemory.cpp	Tue Jan 21 10:47:29 2025
+@@ -250,7 +250,7 @@
+ 
+ }
+ 
+-#if !defined(_WINDOWS) && !defined(_AIX)
++#if !defined(_WINDOWS) && !defined(_AIX) && !defined(__sun__)
+ TEST_VM(CommittedVirtualMemory, test_committed_in_range){
+   CommittedVirtualMemoryTest::test_committed_in_range(1024, 1024);
+   CommittedVirtualMemoryTest::test_committed_in_range(2, 1);
+--- a/test/hotspot/gtest/runtime/test_os.cpp	Tue Jun 10 15:58:34 2025
++++ b/test/hotspot/gtest/runtime/test_os.cpp	Tue Jun 10 15:54:10 2025
+@@ -1131,7 +1131,7 @@
+   EXPECT_TRUE(os::release_memory(base, size));
+ }
+ 
+-#if !defined(_AIX)
++#if !defined(_AIX) && !defined(__sun)
+ 
+ TEST_VM(os, map_memory_to_file) {
+   const char* letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
