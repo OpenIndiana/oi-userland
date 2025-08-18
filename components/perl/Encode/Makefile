@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Encode
 HUMAN_VERSION =			3.21
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		character encodings in Perl
 COMPONENT_CPAN_AUTHOR =		DANKOGAI
 COMPONENT_ARCHIVE_HASH =	\
