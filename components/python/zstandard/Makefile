@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstandard
-HUMAN_VERSION =			0.23.0
+HUMAN_VERSION =			0.24.0
 COMPONENT_SUMMARY =		Zstandard bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/indygreg/python-zstandard
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b2d8c62d08e7255f68f7a740bae85b3c9b8e5466baa9cbf7f57f1cde0ac6bc09
+	sha256:fe3198b81c00032326342d973e526803f183f97aa9e9a98e3f897ebafe21178f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,6 +54,7 @@ COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zstandard-RENAMED $(@D)/zstandard ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
