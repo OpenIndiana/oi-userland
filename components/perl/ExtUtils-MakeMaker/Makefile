@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-MakeMaker
 HUMAN_VERSION =			7.76
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Create a module Makefile
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
