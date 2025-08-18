@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bignum
 HUMAN_VERSION =			0.67
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		transparent big floating point number support for Perl
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
