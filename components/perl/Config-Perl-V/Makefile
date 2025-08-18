@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Config-Perl-V
 HUMAN_VERSION =			0.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Structured data retrieval of perl -V output
 COMPONENT_ARCHIVE_URL =		\
 	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Config-Perl-V-0.38.tgz
