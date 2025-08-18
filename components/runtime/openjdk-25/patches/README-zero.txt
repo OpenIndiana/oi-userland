@@ -1,7 +1,7 @@
 "Zero is a port of OpenJDK that uses no assembler and therefore can
 trivially be built on any system."
 
-https://openjdk.java.net/projects/zero/
+https://openjdk.org/projects/zero/
 
 The idea here is to potentially have an illumos port of zero. It's not
 so interesting on x86, for which we have a proper port anyway, but if
@@ -29,7 +29,7 @@ There's a warning:
 
 OpenJDK 64-Bit Zero VM warning: Unsupported locking mode for this CPU.
 
-which you can gt around by passing -XX:LockingMode=0 or -XX:LockingMode=1
+which you can get around by passing -XX:LockingMode=0 or -XX:LockingMode=1
 
 The two patches above are now applied by default, so we at least catch
 any source incompatibilities early.
@@ -37,7 +37,7 @@ any source incompatibilities early.
 Configure:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk22 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk23 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-dtrace \
@@ -46,8 +46,9 @@ env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
 --with-source-date=current \
 --with-jobs=3 \
 DATE=/usr/gnu/bin/date \
+LOCALE=/bin/true \
 STRIP=/usr/gnu/bin/strip
 
 build:
 
-env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin gmake all CONF=solaris-x86_64-zero-release
+env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin gmake product-images CONF=solaris-x86_64-zero-release
