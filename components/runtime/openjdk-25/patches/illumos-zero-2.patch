@@ -270,7 +270,7 @@ diff -ur -N /tmp/g/globals_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/gl
 +define_pd_global(intx, CompilerThreadStackSize,  1024);
 +define_pd_global(intx, ThreadStackSize,          1024); // 0 => use system default
 +define_pd_global(intx, VMThreadStackSize,        1024);
-+define_pd_global(size_t, JVMInvokeMethodSlack,   8*K);
++define_pd_global(size_t, JVMInvokeMethodSlack,   8192);
 +
 +// Used on 64 bit platforms for UseCompressedOops base address
 +define_pd_global(size_t, HeapBaseMinAddress,     2*G);
@@ -361,7 +361,7 @@ diff -ur -N /tmp/g/orderAccess_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zer
 diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp
 --- /tmp/g/os_solaris_zero.cpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp	2020-09-02 13:28:22.493092922 +0000
-@@ -0,0 +1,294 @@
+@@ -0,0 +1,283 @@
 +/*
 + * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
 + * Copyright 2007, 2008, 2009, 2010 Red Hat, Inc.
@@ -389,7 +389,6 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +
 +#include <pthread.h> /* For pthread_attr_get_np */
 +
-+// no precompiled headers
 +#include "jvm.h"
 +#include "assembler_zero.inline.hpp"
 +#include "classfile/classLoader.hpp"
@@ -440,7 +439,7 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  //     set the sp to a close approximation of the real value in
 +  //     order to allow this step to complete.
 +  //   - Step 120 (printing native stack) tries to walk the stack.
-+  //     The frame we create has a NULL pc, which is ignored as an
++  //     The frame we create has a null pc, which is ignored as an
 +  //     invalid frame.
 +  frame dummy = frame();
 +  dummy.set_sp((intptr_t *) current_stack_pointer());
@@ -457,7 +456,7 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +
 +address os::Posix::ucontext_get_pc(const ucontext_t* uc) {
 +  ShouldNotCallThis();
-+  return NULL;
++  return nullptr;
 +}
 +
 +void os::Posix::ucontext_set_pc(ucontext_t * uc, address pc) {
@@ -468,7 +467,7 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +                                     intptr_t** ret_sp,
 +                                     intptr_t** ret_fp) {
 +  ShouldNotCallThis();
-+  return NULL;
++  return nullptr;
 +}
 +
 +frame os::fetch_frame_from_context(const void* ucVoid) {
@@ -476,10 +475,15 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  return frame();
 +}
 +
++intptr_t* os::fetch_bcp_from_context(const void* ucVoid) {
++  ShouldNotCallThis();
++  return nullptr;
++}
++
 +bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
 +                                             ucontext_t* uc, JavaThread* thread) {
 +
-+  if (info != NULL && thread != NULL) {
++  if (info != nullptr && thread != nullptr) {
 +    // Handle ALL stack overflow variations here
 +    if (sig == SIGSEGV || sig == SIGBUS) {
 +      address addr = (address) info->si_addr;
@@ -630,21 +634,6 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  }
 +};
 +
-+/////////////////////////////////////////////////////////////////////////////
-+// Implementations of atomic operations not supported by processors.
-+//  -- http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Atomic-Builtins.html
-+
-+#ifndef _LP64
-+extern "C" {
-+  long long unsigned int __sync_val_compare_and_swap_8(
-+    volatile void *ptr,
-+    long long unsigned int oldval,
-+    long long unsigned int newval) {
-+    ShouldNotCallThis();
-+  }
-+};
-+#endif // !_LP64
-+
 +void os::setup_fpu() {}
 +
 +#ifndef PRODUCT
@@ -659,7 +648,7 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 diff -ur -N /tmp/g/os_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp
 --- /tmp/g/os_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp	2020-09-01 22:01:25.502220121 +0000
-@@ -0,0 +1,62 @@
+@@ -0,0 +1,48 @@
 +/*
 + * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -690,21 +679,7 @@ diff -ur -N /tmp/g/os_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  //
 +  // NOTE: we are back in class os here, not Solaris
 +  //
-+#ifdef AMD64
 +  static void setup_fpu() {}
-+#else
-+  static int32_t  (*atomic_xchg_func)        (int32_t,  volatile int32_t*);
-+  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*, int32_t);
-+  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*, int64_t);
-+  static int32_t  (*atomic_add_func)         (int32_t,  volatile int32_t*);
-+
-+  static int32_t  atomic_xchg_bootstrap        (int32_t,  volatile int32_t*);
-+  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*, int32_t);
-+  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*, int64_t);
-+  static int32_t  atomic_add_bootstrap         (int32_t,  volatile int32_t*);
-+
-+  static void setup_fpu() {}
-+#endif // AMD64
 +
 +  static juint cpu_microcode_revision();
 +
@@ -766,7 +741,7 @@ diff -ur -N /tmp/g/prefetch_solaris_zero.inline.hpp b/src/hotspot/os_cpu/solaris
 diff -ur -N /tmp/g/javaThread_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.cpp
 --- /tmp/g/javaThread_solaris_zero.cpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/javaThread_solaris_zero.cpp	2020-09-01 21:40:25.604734766 +0000
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,36 @@
 +/*
 + * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
 + * Copyright 2009, 2010 Red Hat, Inc.
@@ -792,7 +767,6 @@ diff -ur -N /tmp/g/javaThread_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero
 + *
 + */
 +
-+#include "precompiled.hpp"
 +#include "runtime/frame.inline.hpp"
 +#include "runtime/javaThread.hpp"
 +
@@ -841,7 +815,7 @@ diff -ur -N /tmp/g/javaThread_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero
 +  ZeroFrame* _top_zero_frame;
 +
 +  void pd_initialize() {
-+    _top_zero_frame = NULL;
++    _top_zero_frame = nullptr;
 +  }
 +
 + public:
@@ -878,7 +852,7 @@ diff -ur -N /tmp/g/javaThread_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero
 +    frame_anchor()->zap();
 +  }
 +  void set_last_Java_frame(ZeroFrame* fp, intptr_t* sp) {
-+    frame_anchor()->set(sp, NULL, fp);
++    frame_anchor()->set(sp, nullptr, fp);
 +  }
 +
 + public:
