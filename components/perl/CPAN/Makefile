@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN
 HUMAN_VERSION =			2.38
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		query, download and build perl modules from CPAN sites
 COMPONENT_CPAN_AUTHOR =		ANDK
 COMPONENT_ARCHIVE_HASH =	\
