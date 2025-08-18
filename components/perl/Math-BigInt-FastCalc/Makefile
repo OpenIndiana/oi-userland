@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-BigInt-FastCalc
 HUMAN_VERSION =			0.5020
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Math::BigInt::Calc with some XS for more speed
 COMPONENT_CPAN_AUTHOR =		PJACKLAM
 COMPONENT_ARCHIVE_HASH =	\
