@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Archive-Tar
 HUMAN_VERSION =			3.04
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Manipulates TAR archives
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
