@@ -1,0 +1,56 @@
+ddns-update-style none;
+
+# option definitions common to all supported networks...
+option domain-name "sunray.lan";
+option domain-name-servers 192.168.128.2, 192.168.128.1;
+option subnet-mask 255.255.255.0;
+option broadcast-address 192.168.128.255;
+option routers 192.168.128.1;
+option space SunRay;
+option SunRay.Intf code 33 = text;
+option SunRay.Intf "nge1";
+option SunRay.AuthSrvr code 21 = ip-address;
+option SunRay.AuthSrvr 192.168.128.2;
+option SunRay.AltAuth code 35 = array of ip-address;
+option SunRay.AltAuth 192.168.128.2;
+option SunRay.FWSrvr code 31 = ip-address;
+option SunRay.FWSrvr 192.168.128.2;
+option SunRay.NewTVer code 23 = text;
+option SunRay.NewTVer "11.1.7.0_38_2016.10.27.13.09";
+option SunRay.AuthPort code 22 = integer 16;
+option SunRay.AuthPort 7009;
+option SunRay.LogHost  code 24 = ip-address;
+option SunRay.LogHost 192.168.128.2;
+option SunRay.LogKern code 25 = integer 8;
+option SunRay.LogKern 6;
+option SunRay.LogNet code 26 = integer 8;
+option SunRay.LogNet 6;
+option SunRay.LogUSB code 27 = integer 8;
+option SunRay.LogUSB 6;
+option SunRay.LogVid code 28 = integer 8;
+option SunRay.LogVid 6;
+option SunRay.LogAppl code 29 = integer 8;
+option SunRay.LogAppl 6;
+option SunRay.sunray-servers code 68 = text;
+option SunRay.sunray-servers "oi-sr.sunray.lan";
+option SunRay.sunray-config-servers code 67 = text;
+option SunRay.sunray-config-servers "oi-sr.sunray.lan";
+
+default-lease-time 86400;
+max-lease-time 86400;
+
+class "sun" {
+  match if substring (option vendor-class-identifier, 0, 4) = "SUNW";
+}
+
+log-facility local7;
+
+host sr1.sunray.lan {
+  hardware ethernet 00:14:4f:57:a0:c1;
+  fixed-address 192.168.128.50;
+  vendor-option-space SunRay;
+}
+
+subnet 192.168.128.0 netmask 255.255.255.0 {
+  range 192.168.128.51 192.168.128.59;
+}
