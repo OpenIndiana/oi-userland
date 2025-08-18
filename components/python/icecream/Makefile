@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icecream
-HUMAN_VERSION =			2.1.6
+HUMAN_VERSION =			2.1.7
 COMPONENT_SUMMARY =		Never use print() to debug again; inspect variables, expressions, and program execution with a single, simple function call.
 COMPONENT_PROJECT_URL =		https://github.com/gruns/icecream
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gruns/icecream/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:826e20a40e98b3a25d0119c7ab3011d7c0d7e3284e481da12a61d8c93af6f1f3
+	sha256:28913c55d91999bce499a0448ecb747d3b9c6a4e48726ad109e2dffef9cd3818
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
