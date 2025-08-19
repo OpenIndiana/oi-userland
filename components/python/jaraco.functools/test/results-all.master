@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 43 items
+collecting ... collected 44 items
 
 conftest.py::mypy PASSED
 docs/conf.py::mypy PASSED
@@ -19,6 +19,7 @@ jaraco/functools/__init__.py::jaraco.functools.except_ PASSED
 jaraco/functools/__init__.py::jaraco.functools.identity PASSED
 jaraco/functools/__init__.py::jaraco.functools.invoke PASSED
 jaraco/functools/__init__.py::jaraco.functools.method_cache PASSED
+jaraco/functools/__init__.py::jaraco.functools.none_as PASSED
 jaraco/functools/__init__.py::jaraco.functools.once PASSED
 jaraco/functools/__init__.py::jaraco.functools.pass_none PASSED
 jaraco/functools/__init__.py::jaraco.functools.passthrough PASSED
@@ -50,8 +51,15 @@ test_functools.py::TestRetry::test_infinite_retries PASSED
 test_functools.py::TestRetry::test_with_arg PASSED
 test_functools.py::TestRetry::test_decorator PASSED
 test_functools.py::TestRetry::test_decorator_with_arg PASSED
-===================================== mypy =====================================
 
+=============================== warnings summary ===============================
+.::project
+.::project
+  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
+    parts = docutils.core.publish_parts(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===================================== mypy =====================================
 Success: no issues found in 4 source files
 ================================ tests coverage ================================
 _______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
@@ -60,10 +68,10 @@ Name                           Stmts   Miss  Cover   Missing
 ------------------------------------------------------------
 conftest.py                        5      0   100%
 docs/conf.py                      16      0   100%
-jaraco/functools/__init__.py     173      0   100%
+jaraco/functools/__init__.py     175      0   100%
 test_functools.py                159      0   100%
 ------------------------------------------------------------
-TOTAL                            353      0   100%
-======== 41 passed, 2 xfailed ========
+TOTAL                            355      0   100%
+======== 42 passed, 2 xfailed, 2 warnings ========
   py$(PYV): OK
   congratulations :)
