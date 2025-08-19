@@ -36,7 +36,7 @@ ESR =
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	141.0.3
+COMPONENT_VERSION =	142.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     07d2e10cfad6ad4b8748bc18d7de5862d440f4a1
+COMPONENT_GIT_HASH=     a6e541cb18c2798eb24f8cd9f6e1edf25fe71c42
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:fd28ecf188171376b0a77af26b3a686999ffd45cd03d4c4736a1782a60016123
+COMPONENT_ARCHIVE_HASH= sha256:2808e1f10f3b6c593f96f3745a55d12c98107886daef00f1e354c24203a64b0f
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.87.0
+RUST_VERSION = 1.88.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -250,8 +250,8 @@ COMPONENT_POST_BUILD_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
     done ; \
     mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
