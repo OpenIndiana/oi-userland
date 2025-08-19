@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress
 HUMAN_VERSION =			2.213
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		IO Interface to compressed data files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
