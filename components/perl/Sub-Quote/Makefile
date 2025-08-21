@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Sub-Quote
-HUMAN_VERSION =			2.006008
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			2.006009
 COMPONENT_SUMMARY =		Efficient generation of subroutines via string eval
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94bebd500af55762e83ea2f2bc594d87af828072370c7110c60c238a800d15b2
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:967282d54d2d51b198c67935594f93e4dea3e54d1e5bced158c94e29be868a4b
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
