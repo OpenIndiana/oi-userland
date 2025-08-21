@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libnet
 HUMAN_VERSION =			3.15
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Collection of network protocol modules
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
