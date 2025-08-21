@@ -16,11 +16,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rlwrap
-COMPONENT_VERSION=	0.46.2
+COMPONENT_VERSION=	0.47
 COMPONENT_SUMMARY=	rlwrap is a small utility that uses the GNU Readline library to allow the editing of keyboard input for any command
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9abb0a0dc19e85794d9b8e72e480530563eb4ee1bf243e87c0e0dd05ea4a2f09
+COMPONENT_ARCHIVE_HASH=	sha256:07cd1c52aee96c05bf0db4ed8da63e854f07a1ca134b21b73c5d5d1969b337b5
 COMPONENT_PROJECT_URL=	https://github.com/hanslub42/rlwrap
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI= 		utility/$(COMPONENT_NAME)
@@ -34,8 +34,16 @@ COMPONENT_PREP_ACTION = ( cd $(@D) ; autoreconf -fiv )
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D); )
 
+# Replace "#!/usr/bin/env ..." shebang line with properly versioned one
+COMPONENT_POST_INSTALL_ACTION += \
+	$(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRSHAREDIR)/rlwrap/filters/*.py ;
+
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
+
+# We don't have libptytty yet
+CONFIGURE_OPTIONS += --without-libptytty
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
