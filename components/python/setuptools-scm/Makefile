@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
 HUMAN_VERSION =			9.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6662c9b9497b6c9bf13bead9d7a9084756f68238302c5ed089fb4dbd29d102d7
