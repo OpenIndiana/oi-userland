@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta-YAML
 HUMAN_VERSION =			0.020
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Read and write a subset of YAML for CPAN Meta files
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
