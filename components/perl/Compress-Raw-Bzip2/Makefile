@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Bzip2
 HUMAN_VERSION =			2.213
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Low-Level Interface to bzip2 compression library
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
