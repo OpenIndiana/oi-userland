@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Text-Tabs+Wrap
 HUMAN_VERSION =			2024.001
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Expand tabs and do simple line wrapping
 COMPONENT_CPAN_AUTHOR =		ARISTOTLE
 COMPONENT_ARCHIVE_HASH =	\
