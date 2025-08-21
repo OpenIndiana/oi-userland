@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Checker
 HUMAN_VERSION =			1.77
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Pod::Checker verifies POD documentation contents for compliance with the POD format specifications
 COMPONENT_CPAN_AUTHOR =		MAREKR
 COMPONENT_ARCHIVE_HASH =	\
