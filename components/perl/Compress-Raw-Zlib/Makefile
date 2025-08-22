@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Zlib
 HUMAN_VERSION =			2.213
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl interface to zlib/zlib-ng compression libraries
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
