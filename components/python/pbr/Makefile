@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pbr
-HUMAN_VERSION =			7.0.0
+HUMAN_VERSION =			7.0.1
 COMPONENT_SUMMARY =		Python Build Reasonableness
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/pbr/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cf4127298723dafbce3afd13775ccf3885be5d3c8435751b867f9a6a10b71a39
+	sha256:3ecbcb11d2b8551588ec816b3756b1eb4394186c3b689b17e04850dfc20f7e57
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
