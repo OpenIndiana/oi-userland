@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		requests
-HUMAN_VERSION =			2.32.4
+HUMAN_VERSION =			2.32.5
 COMPONENT_SUMMARY =		Python HTTP for Humans.
 COMPONENT_PROJECT_URL =		https://requests.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/psf/requests/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb4faf6ae4a5a1cee78f08f950c54ef1b03e77dee595ac80f304e96576a48fba
+	sha256:f22e7e83030dbd2685fa0a9bdf0e4efd30b1424b92ff19eb66599decce510a66
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
