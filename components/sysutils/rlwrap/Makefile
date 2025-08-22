@@ -16,11 +16,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rlwrap
-COMPONENT_VERSION=	0.47
+COMPONENT_VERSION=	0.47.1
 COMPONENT_SUMMARY=	rlwrap is a small utility that uses the GNU Readline library to allow the editing of keyboard input for any command
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:07cd1c52aee96c05bf0db4ed8da63e854f07a1ca134b21b73c5d5d1969b337b5
+COMPONENT_ARCHIVE_HASH=	sha256:944bc0e4812e61b2b7c4cd17b1b37b41325deffa0b84192aff8c0eace1a5da4c
 COMPONENT_PROJECT_URL=	https://github.com/hanslub42/rlwrap
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI= 		utility/$(COMPONENT_NAME)
