@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_paramiko
-HUMAN_VERSION =			4.0.0.20250809
+HUMAN_VERSION =			4.0.0.20250821
 COMPONENT_SUMMARY =		Typing stubs for paramiko
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e1fbe847fd2106984fe7aac0c6c15caa93a91b6d4c5e56486f9b84bfb9203f9f
+	sha256:ba3ae973de77126c2d0a1b2741398e34157b7e2a422ab4e2747f7cecea1e22ab
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
