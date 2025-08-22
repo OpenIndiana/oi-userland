@@ -19,7 +19,7 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			AppStream
-COMPONENT_VERSION=		1.0.5
+COMPONENT_VERSION=		1.0.6
 COMPONENT_SUMMARY=		Cross-distribution effort for enhancing the way we interact with the software repositories provided by distributions by standardizing software component metadata
 COMPONENT_PROJECT_URL=		https://www.freedesktop.org/wiki/Distributions/AppStream/
 COMPONENT_FMRI=			desktop/appstream
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION=	System/Packaging
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=		https://www.freedesktop.org/software/appstream/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:ce0ed29e89abd5f0cf790ea87d792f1967c3413060beb30e63a979578d975121
+COMPONENT_ARCHIVE_HASH=		sha256:db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d
 COMPONENT_LICENSE=		LGPL-2.1-only
 COMPONENT_LICENSE_FILE=		COPYING
 
