@@ -29,6 +29,7 @@ UID   | User name
 30    | opendkim
 31    | opendmarc
 32    | spfmilter
+35    | ntp
 37    | listen
 39    | lldp
 40    | puppet
@@ -106,6 +107,7 @@ GID   | Group name
 30    | opendkim
 31    | opendmarc
 32    | spfmilter
+35    | ntp
 39    | lldp
 40    | puppet
 45    | radius
