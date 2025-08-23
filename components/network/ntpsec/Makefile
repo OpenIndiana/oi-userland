@@ -29,13 +29,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntpsec
 COMPONENT_VERSION=	1.2.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntpsec.org/
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:443e54a6149d1b0bf08677d17b18fced9028b101fc2ffd2c81e0834f87eebc7d
-COMPONENT_ARCHIVE_URL=	ftp://ftp.ntpsec.org/pub/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://ftp.ntpsec.org/pub/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	service/network/ntpsec
 COMPONENT_CLASSIFICATION=	System/Services
 COMPONENT_LICENSE=	ntp license
