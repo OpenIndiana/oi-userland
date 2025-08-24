@@ -13,7 +13,6 @@
 #
 
 USE_PARALLEL_BUILD = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 13.4.0
