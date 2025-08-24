@@ -60,7 +60,7 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 CFLAGS +=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto -DHAVE_FREEBSD_SUNACL_H -DACE_INHERITED_ACE
 # make gcc-14 happy.
 CFLAGS +=	-Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion
-CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
+CPPFLAGS +=	$(CPP_LARGEFILES) $(XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
 
 LDFLAGS +=	-R/usr/lib/samba
@@ -138,9 +138,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/perl-5/parse-yapp
-REQUIRED_PACKAGES += library/python/dnspython
-REQUIRED_PACKAGES += library/python/markdown
+PERL_REQUIRED_PACKAGES += library/perl-5/parse-yapp
+PYTHON_REQUIRED_PACKAGES += library/python/dnspython
+PYTHON_REQUIRED_PACKAGES += library/python/markdown
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
