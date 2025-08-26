@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTTP-Tiny
 HUMAN_VERSION =			0.090
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A small, simple, correct HTTP/1.1 client
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
