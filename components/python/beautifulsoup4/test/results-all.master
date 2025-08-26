@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 851 items
+collecting ... collected 858 items
 
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><html>Actually XHTML</html>-False] PASSED
 bs4/tests/test_builder.py::TestDetectsXMLParsedAsHTML::test_warn_if_markup_looks_like_xml[<?xml ><no-html-tag>-True] PASSED
@@ -122,6 +122,7 @@ bs4/tests/test_dammit.py::TestEntitySubstitution::test_xml_quoting_including_amp
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_convert_hebrew PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_detect_utf8 PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_dont_see_smart_quotes_where_there_are_none PASSED
+bs4/tests/test_dammit.py::TestUnicodeDammit::test_empty_input PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_exclude_encodings PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_ignore_inappropriate_codecs PASSED
 bs4/tests/test_dammit.py::TestUnicodeDammit::test_ignore_invalid_codecs PASSED
@@ -191,6 +192,7 @@ bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_default PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_string_deprecated_text_argument PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_constructor_with_overlapping_attributes PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_documentation_examples PASSED
+bs4/tests/test_filter.py::TestSoupStrainer::test_match_against_empty_multi_valued_attribute PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_match_against_multi_valued_attribute PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_match_against_multi_valued_attribute_as_string PASSED
 bs4/tests/test_filter.py::TestSoupStrainer::test_matches_tag_with_only_string PASSED
@@ -318,6 +320,7 @@ bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_nested_formatting_elements
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_nested_inline_elements SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_non_breaking_spaces_converted_on_the_way_in SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_normal_doctypes SKIPPED
+bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_not_really_a_namespace SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_out_of_range_entity SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_p_tag_is_never_empty_element SKIPPED
 bs4/tests/test_html5lib.py::TestHTML5LibBuilder::test_pickle_and_unpickle_bad_markup SKIPPED
@@ -404,6 +407,7 @@ bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_nested_formatting_
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_nested_inline_elements PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_non_breaking_spaces_converted_on_the_way_in PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_normal_doctypes PASSED
+bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_not_really_a_namespace PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_on_duplicate_attribute PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_out_of_range_entity PASSED
 bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_p_tag_is_never_empty_element PASSED
@@ -482,7 +486,10 @@ bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_nested_formatting_elements PAS
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_nested_inline_elements PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_non_breaking_spaces_converted_on_the_way_in PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_normal_doctypes PASSED
-bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_out_of_range_entity PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_not_really_a_namespace PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_out_of_range_entity[&#10000000000000;] PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_out_of_range_entity[&#1000000000;] PASSED
+bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_out_of_range_entity[&#x10000000000000;] PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_p_tag_is_never_empty_element PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_pickle_and_unpickle_bad_markup PASSED
 bs4/tests/test_lxml.py::TestLXMLTreeBuilder::test_pickle_and_unpickle_identity PASSED
@@ -859,6 +866,6 @@ bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previo
 bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previous_sibling] PASSED
 bs4/tests/test_tree.py::TestWarnings::test_suspicious_syntax_warning[find_previous_siblings] PASSED
 
-======== 743 passed, 108 skipped ========
+======== 749 passed, 109 skipped ========
   py$(PYV): OK
   congratulations :)
