@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Usage
 HUMAN_VERSION =			2.05
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		extracts POD documentation and shows usage information
 COMPONENT_CPAN_AUTHOR =		MAREKR
 COMPONENT_ARCHIVE_HASH =	\
