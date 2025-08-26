@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Memoize
 HUMAN_VERSION =			1.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Make functions faster by trading space for time
 COMPONENT_CPAN_AUTHOR =		ARISTOTLE
 COMPONENT_ARCHIVE_HASH =	\
