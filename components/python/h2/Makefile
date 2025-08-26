@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		h2
-HUMAN_VERSION =			4.2.0
+HUMAN_VERSION =			4.3.0
 COMPONENT_SUMMARY =		Pure-Python HTTP/2 protocol implementation
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/h2/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c8a52129695e88b1a0578d8d2cc6842bbd79128ac685463b887ee278126ad01f
+	sha256:6c59efe4323fa18b47a632221a1888bd7fde6249819beda254aeca909f221bf1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
