@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta-Requirements
 HUMAN_VERSION =			2.143
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		a set of version requirements for a CPAN dist
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
