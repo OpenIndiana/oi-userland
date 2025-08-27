@@ -1,6 +1,6 @@
---- vim-8.2.1897/src/help.c	2020-10-24 17:19:16.000000000 +0000
-+++ vim-8.2.1897/src/help.c	2020-10-24 18:42:52.206685850 +0000
-@@ -38,6 +38,8 @@ ex_help(exarg_T *eap)
+--- vim-9.1.1700/src/help.c.orig
++++ vim-9.1.1700/src/help.c
+@@ -38,6 +38,8 @@
  #ifdef FEAT_FOLDING
      int		old_KeyTyped = KeyTyped;
  #endif
@@ -9,7 +9,7 @@
  
      if (ERROR_IF_ANY_POPUP_WINDOW)
  	return;
-@@ -88,6 +90,23 @@ ex_help(exarg_T *eap)
+@@ -88,6 +90,23 @@
      n = find_help_tags(arg, &num_matches, &matches,
  						 eap != NULL && eap->forceit);
  
@@ -33,7 +33,7 @@
      i = 0;
  #ifdef FEAT_MULTI_LANG
      if (n != FAIL && lang != NULL)
-@@ -100,7 +119,7 @@ ex_help(exarg_T *eap)
+@@ -100,7 +119,7 @@
  		break;
  	}
  #endif
@@ -42,7 +42,7 @@
      {
  #ifdef FEAT_MULTI_LANG
  	if (lang != NULL)
-@@ -113,9 +132,11 @@ ex_help(exarg_T *eap)
+@@ -113,9 +132,11 @@
  	return;
      }
  
@@ -57,7 +57,7 @@
  
  #ifdef FEAT_GUI
      need_mouse_correct = TRUE;
-@@ -137,12 +158,14 @@ ex_help(exarg_T *eap)
+@@ -137,12 +158,14 @@
  	{
  	    // There is no help window yet.
  	    // Try to open the file specified by the "helpfile" option.
@@ -77,7 +77,7 @@
  
  	    // Split off help window; put it at far top if no position
  	    // specified, the current window is vertically split and
-@@ -161,7 +184,7 @@ ex_help(exarg_T *eap)
+@@ -161,7 +184,7 @@
  	    // set b_p_ro flag).
  	    // Set the alternate file to the previously edited file.
  	    alt_fnum = curbuf->b_fnum;
@@ -85,8 +85,8 @@
 +	    (void)do_ecmd(0, mhf, NULL, NULL, ECMD_LASTL,
  			  ECMD_HIDE + ECMD_SET_HELP,
  			  NULL);  // buffer is still open, don't store info
- 	    if (!cmdmod.keepalt)
-@@ -179,7 +202,7 @@ ex_help(exarg_T *eap)
+ 	    if ((cmdmod.cmod_flags & CMOD_KEEPALT) == 0)
+@@ -179,7 +202,7 @@
      KeyTyped = old_KeyTyped;
  #endif
  
@@ -95,7 +95,7 @@
  	do_tag(tag, DT_HELP, 1, FALSE, TRUE);
  
      // Delete the empty buffer if we're not using it.  Careful: autocommands
-@@ -197,7 +220,8 @@ ex_help(exarg_T *eap)
+@@ -198,7 +221,8 @@
  	curwin->w_alt_fnum = alt_fnum;
  
  erret:
