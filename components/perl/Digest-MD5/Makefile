@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Digest-MD5
 HUMAN_VERSION =			2.59
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl interface to the MD-5 algorithm
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
