@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
 COMPONENT_VERSION=		12.2.1
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -47,14 +47,35 @@ COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=		EPL1.0
 COMPONENT_LICENSE_FILE=	COPYING
 
+COMPONENT_FMRI.graphviz-go =		$(COMPONENT_FMRI)/graphviz-go
+COMPONENT_SUMMARY.graphviz-go =		Go bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-guile =		$(COMPONENT_FMRI)/graphviz-guile
+COMPONENT_SUMMARY.graphviz-guile =	Guile bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-java =		$(COMPONENT_FMRI)/graphviz-java
+COMPONENT_SUMMARY.graphviz-java =	Java bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-lua =		$(COMPONENT_FMRI)/graphviz-lua
+COMPONENT_SUMMARY.graphviz-lua =	Lua bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-php =		$(COMPONENT_FMRI)/graphviz-php
+COMPONENT_SUMMARY.graphviz-php =	PHP bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-ruby =		$(COMPONENT_FMRI)/graphviz-ruby
+COMPONENT_SUMMARY.graphviz-ruby =	Ruby bindings for Graphviz
+
+COMPONENT_FMRI.graphviz-tcl =		$(COMPONENT_FMRI)/graphviz-tcl
+COMPONENT_SUMMARY.graphviz-tcl =	Tcl bindings for Graphviz
+
 # no usable tests available
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)
 
-RUBY_VERSION= 3.2
-RUBY= /usr/bin/ruby32
+PHP_VERSION = 8.4
+PHPVER = $(subst .,,$(PHP_VERSION))
 
 COMPONENT_PREP_ACTION= ( \
 	cd $(@D) && PATH="$(PATH)" libtoolize -cf && \
@@ -127,11 +148,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(INSTALL) -D $(COMPONENT_DIR)/files/graphviz-configure-plugins $(PROTOLIBDIR)/svc/method/graphviz-configure-plugins ; \
 	$(INSTALL) -D $(COMPONENT_DIR)/files/graphviz-configure-plugins.xml $(PROTOLIBDIR)/svc/manifest/application/graphviz/configure-plugins.xml ;
 
+PKG_VARS += PHP_VERSION
+PKG_VARS += PHPVER
+
 # various build dependencies not detected automatically
-REQUIRED_PACKAGES += runtime/java/openjdk17
 #REQUIRED_PACKAGES += runtime/ocaml
 REQUIRED_PACKAGES += runtime/tcl-8
-REQUIRED_PACKAGES += web/php-82
+REQUIRED_PACKAGES += web/php-$(PHPVER)
 REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
