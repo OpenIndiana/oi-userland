@@ -648,14 +648,8 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	$(error Missing canonical manifest(s))
 endif
 
-# Component variables are expanded directly to PKG_OPTIONS instead of via
-# PKG_MACROS since the values may contain whitespace.
-mkdefine = -D $(1)="$$(strip $(2))"
-
 # Expand PKG_VARS into defines via PKG_OPTIONS.
-$(foreach var, $(PKG_VARS), \
-    $(eval PKG_OPTIONS += $(call mkdefine,$(var),$$($(var)))) \
-)
+PKG_OPTIONS += $(foreach var,$(PKG_VARS),-D $(var)="$($(var))")
 
 # This converts required paths to containing package names for be able to
 # properly setup the build environment for a component.
