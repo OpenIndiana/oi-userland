@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Term-Table
 HUMAN_VERSION =			0.024
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Format a header and rows into a table
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
