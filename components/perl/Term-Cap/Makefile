@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Term-Cap
 HUMAN_VERSION =			1.18
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		Perl termcap interface
 COMPONENT_CPAN_AUTHOR =		JSTOWE
 COMPONENT_ARCHIVE_HASH =	\
