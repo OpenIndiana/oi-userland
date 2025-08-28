@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parent
 HUMAN_VERSION =			0.244
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Establish an ISA relationship with base classes at compile time
 COMPONENT_CPAN_AUTHOR =		CORION
 COMPONENT_ARCHIVE_HASH =	\
