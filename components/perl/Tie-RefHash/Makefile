@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Tie-RefHash
 HUMAN_VERSION =			1.41
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Use references as hash keys
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
