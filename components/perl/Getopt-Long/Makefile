@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Getopt-Long
 HUMAN_VERSION =			2.58
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Module to handle parsing command line options
 COMPONENT_CPAN_AUTHOR =		JV
 COMPONENT_ARCHIVE_HASH =	\
