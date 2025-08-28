@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		version
 HUMAN_VERSION =			0.9933
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Structured version objects
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
