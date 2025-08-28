@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		podlators
 HUMAN_VERSION =			v6.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Convert POD data to various other formats
 COMPONENT_CPAN_AUTHOR =		RRA
 COMPONENT_ARCHIVE_HASH =	\
