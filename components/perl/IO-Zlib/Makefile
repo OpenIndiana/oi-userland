@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Zlib
 HUMAN_VERSION =			1.15
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		IO:: style interface to Compress::Zlib
 COMPONENT_CPAN_AUTHOR =		TOMHUGHES
 COMPONENT_ARCHIVE_HASH =	\
