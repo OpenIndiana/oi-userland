@@ -17,9 +17,9 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwnck
-HUMAN_VERSION=		43.2
+HUMAN_VERSION=		43.3
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
-COMPONENT_ARCHIVE_HASH=	sha256:55a7444ec1fbb95c086d40967388f231b5c0bbc8cffaa086bf9290ae449e51d5
+COMPONENT_ARCHIVE_HASH=	sha256:6af8ac41a8f067ade1d3caaed254a83423b5f61ad3f7a460fcacbac2e192bdf7
 COMPONENT_FMRI=         library/desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=	LGPL-2.0-only
