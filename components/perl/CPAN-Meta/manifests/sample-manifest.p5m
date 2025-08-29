@@ -10,10 +10,10 @@
 #
 
 #
-# Copyright 2024 Marcel Telka
+# Copyright 2025 <contributor>
 #
 
-set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -23,20 +23,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Converter.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Feature.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History/Meta_1_0.pod
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History/Meta_1_1.pod
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History/Meta_1_2.pod
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History/Meta_1_3.pod
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/History/Meta_1_4.pod
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Merge.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Prereqs.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Spec.pm
-file path=usr/perl5/$(PERLVER)/lib/CPAN/Meta/Validator.pm
-file path=usr/perl5/$(PERLVER)/lib/Parse/CPAN/Meta.pm
 file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta::Converter.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta::Feature.3perl
@@ -51,7 +37,29 @@ file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta::Prereqs.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta::Spec.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/CPAN::Meta::Validator.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Parse::CPAN::Meta.3perl
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Converter.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Feature.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History/Meta_1_0.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History/Meta_1_1.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History/Meta_1_2.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History/Meta_1_3.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/History/Meta_1_4.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Merge.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Prereqs.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Spec.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/CPAN/Meta/Validator.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Parse/CPAN/Meta.pm
 
 # perl modules are unusable without perl runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=perl \
     pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/cpan-meta-requirements-$(PLV)@2.121
+depend type=require fmri=pkg:/library/perl-5/cpan-meta-yaml-$(PLV)@0.11
+depend type=require fmri=pkg:/library/perl-5/encode-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/json-pp-$(PLV)@2.27.300
+depend type=require fmri=pkg:/library/perl-5/scalar-list-utils-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/version-$(PLV)@0.88
