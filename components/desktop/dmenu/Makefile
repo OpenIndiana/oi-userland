@@ -17,13 +17,12 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dmenu
-COMPONENT_VERSION=	5.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	5.4
 COMPONENT_SUMMARY=	dmenu is a dynamic menu for X, originally designed for dwm
 COMPONENT_PROJECT_URL=	https://tools.suckless.org/dmenu/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1a8f53e6fd2d749839ec870c5e27b3e14da5c3eeacbfcb945d159e1d5433795f
+COMPONENT_ARCHIVE_HASH= sha256:8fbace2a0847aa80fe861066b118252dcc7b4ca0a0a8f3a93af02da8fb6cd453
 COMPONENT_ARCHIVE_URL=	https://dl.suckless.org/tools/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/dmenu
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
