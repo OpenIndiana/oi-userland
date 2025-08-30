@@ -84,7 +84,6 @@ CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(RUSTC_LIBDIR)
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/rust-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-local-rust
 CONFIGURE_OPTIONS += --local-rust-root=/usr
 CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
