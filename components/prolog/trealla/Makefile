@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
 COMPONENT_VERSION= 2.82.27
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://github.com/trealla-prolog
@@ -45,6 +46,8 @@ COMPONENT_POST_INSTALL_ACTION += ( \
 
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/debug/valgrind
+# xxd is being used
+REQUIRED_PACKAGES += editor/vim
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
