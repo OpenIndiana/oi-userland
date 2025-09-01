@@ -31,12 +31,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.1.1713
+COMPONENT_VERSION=	9.1.1723
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9f29c8f17bd5ae6c7a0cf9969c50e26de80127c179296bf015da6eb2e38125cf
+COMPONENT_ARCHIVE_HASH=	sha256:057b339a2fa78729ff595393333d34a7d25ae77d833f55c2d89b03a2f55203bd
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -44,7 +44,7 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += -Wno-error=incompatible-pointer-types
 
 COMPONENT_POST_UNPACK_ACTION += ( \
-	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
+	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure ; \
 	find $(@D) -name \*.sh -exec chmod +x '{}' ';' ; \
 	rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
 
