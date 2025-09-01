@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
-COMPONENT_VERSION=	10.0.3
+COMPONENT_VERSION=	10.1.0
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
@@ -29,7 +29,7 @@ COMPONENT_FMRI=		system/qemu
 COMPONENT_CLASSIFICATION= System/Virtualization
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5c891267b1534a774465db8b1a0dfcb0c5e6d7ecb6f71345625adf4e0889945b
+COMPONENT_ARCHIVE_HASH=	sha256:e0517349b50ca73ebec2fa85b06050d5c463ca65c738833bd8fc1f15f180be51
 COMPONENT_ARCHIVE_URL=	https://download.qemu.org/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= 	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -51,6 +51,9 @@ LDFLAGS		+= -lumem
 CFLAGS		+= -D__EXTENSIONS__=1
 
 CONFIGURE_OPTION += --enable-docs
+
+# ../../qemu-10.1.0/chardev/char-zconsole.c:64:23: error: initialization of 'void (*)(ObjectClass *, const void *)' from incompatible pointer type 'void (*)(ObjectClass *, void *)' [-Wincompatible-pointer-types]
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 # Build dependencies
 REQUIRED_PACKAGES += library/libtasn1
