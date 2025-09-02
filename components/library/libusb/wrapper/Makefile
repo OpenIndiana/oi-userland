@@ -32,6 +32,7 @@ COMPONENT_BUGDB=	library/libusb
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 $(BUILD_DIR_32)/.built: BITS=32
 $(BUILD_DIR_64)/.built: BITS=64
