@@ -26,6 +26,7 @@ COMPONENT_ARCHIVE_URL=	ftp://sourceware.org/pub/$(COMPONENT_NAME)/$(COMPONENT_AR
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CFLAGS += -DFFI_MMAP_EXEC_WRIT=1
 
