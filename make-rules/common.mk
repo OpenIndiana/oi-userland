@@ -241,4 +241,4 @@ COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
 COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
 endif
 
-include $(WS_MAKE_RULES)/repology.mk
+include $(WS_MAKE_RULES)/forge.mk

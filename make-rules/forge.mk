@@ -8,18 +8,24 @@
 # source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
-
 #
 # Copyright 2023 Till Wegmueller
 #
 
-PKGDEV="/ws/toasty/.cargo/bin/pkgdev"
+# Allow overriding via environment and default to relying on PATH
+PKGDEV ?= pkgdev
 
-generate-pakage-kdl:
+.PHONY: generate-package-kdl generate-pakage-kdl
+
+# Backward compatibility for the old misspelled target name
+generate-pakage-kdl: generate-package-kdl
+
+# Generate package.kdl using pkgdev with component metadata
+generate-package-kdl:
 	@echo "generating package.kdl for $(COMPONENT_NAME)"
 	$(PKGDEV) create $(COMPONENT_FMRI)
 	@for package in $(REQUIRED_PACKAGES) ; do \
-		$(PKGDEV) edit add dependency -- --dev --kind require $$package ;  \
+		$(PKGDEV) edit add dependency -- --dev --kind require $$package ; \
 	done
 	$(PKGDEV) edit set project-name "$(COMPONENT_NAME)"
 	$(PKGDEV) edit set summary "$(COMPONENT_SUMMARY)"
@@ -29,7 +35,7 @@ generate-pakage-kdl:
 	$(PKGDEV) edit set project-url "$(COMPONENT_PROJECT_URL)"
 	$(PKGDEV) edit set maintainer "The OpenIndiana Maintainers"
 	$(PKGDEV) edit add source archive "$(COMPONENT_ARCHIVE_URL)" "$(COMPONENT_ARCHIVE_HASH)"
-	if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches; fi
+	@if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches; fi
 ifeq ($(strip $(BUILD_STYLE)),configure)
-	$(PKGDEV) edit add build configure -- $(foreach var, $(CONFIGURE_OPTIONS), --arg='$(var)')
+	$(PKGDEV) edit add build configure -- $(foreach var,$(CONFIGURE_OPTIONS),--arg="$(var)")
 endif
