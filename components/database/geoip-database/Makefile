@@ -67,6 +67,7 @@ $(foreach suffix,1 2 3 4 5,$(eval $(call switch-source-dir,_$(suffix))) )
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CLEAN_PATHS+= $(BUILD_DIR)
 
