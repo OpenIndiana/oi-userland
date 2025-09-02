@@ -1,0 +1,18 @@
+https://github.com/Perl/perl5/commit/b8097e9479a0aafd1182244c6f9a955c57fb6b1a
+
+--- Locale-Maketext-Simple-0.21/lib/Locale/Maketext/Simple.pm.orig
++++ Locale-Maketext-Simple-0.21/lib/Locale/Maketext/Simple.pm
+@@ -134,7 +134,12 @@
+     my $pkg = join('::', grep { defined and length } $args{Class}, $args{Subclass});
+     return $Loc{$pkg} if exists $Loc{$pkg};
+ 
+-    eval { require Locale::Maketext::Lexicon; 1 }   or return;
++    eval {
++        local @INC = @INC;
++        pop @INC if $INC[-1] eq '.';
++        require Locale::Maketext::Lexicon;
++        1
++    } or return;
+     $Locale::Maketext::Lexicon::VERSION > 0.20	    or return;
+     eval { require File::Spec; 1 }		    or return;
+ 
