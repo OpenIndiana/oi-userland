@@ -47,7 +47,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATCH_LEVEL = 0
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin:$(HOME)/.cargo/bin
 
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
