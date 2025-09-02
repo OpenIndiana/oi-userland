@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		File-Temp
-HUMAN_VERSION =			0.2311
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.2312
 COMPONENT_SUMMARY =		return name and handle of a temporary file safely
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2290d61bf5c39882fc3311da9ce1c7f42dbdf825ae169e552c59fe4598b36f4a
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:6fa961d955cf84d5b87f2f219a723cf77cb44b79282793f6819ccb19e8d0b884
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
