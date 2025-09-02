@@ -38,6 +38,7 @@ COMPONENT_PROJECT_URL=  http://mcrypt.sourceforge.net/
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 LDFLAGS += -lsocket -lnsl
 
