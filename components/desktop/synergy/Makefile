@@ -32,6 +32,7 @@ COMPONENT_CLASSIFICATION=Applications/System Utilities
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/cmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PATH=$(PATH.gnu)
 
