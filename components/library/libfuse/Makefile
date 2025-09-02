@@ -32,6 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYING.LIB
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 GMAKE=/usr/bin/dmake
 
