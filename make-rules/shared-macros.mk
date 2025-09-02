@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
-PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR)
+PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(HOME)/.cargo/bin
+PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(HOME)/.cargo/bin
 
 # Default PATH
 PATH = $(PATH.illumos)
