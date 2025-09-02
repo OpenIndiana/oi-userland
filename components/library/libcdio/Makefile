@@ -35,7 +35,7 @@ COMPONENT_FMRI=         library/audio/libcdio
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=/usr/gnu/bin:/usr/bin:$(HOME)/.cargo/bin
 
 CPPFLAGS += -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/ncurses -DDBUS_API_SUBJECT_TO_CHANGE
 CPPFLAGS += -D_FILE_OFFSET_BITS=64
