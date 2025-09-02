@@ -34,6 +34,7 @@ COMPONENT_BUGDB=	utility/foomatic
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CACHE_FILE=$(PROTOUSRLIBDIR)/lp/caches/SUNWfoomatic.cache
 
