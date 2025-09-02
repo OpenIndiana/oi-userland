@@ -15,10 +15,7 @@
 # Allow overriding via environment and default to relying on PATH
 PKGDEV ?= pkgdev
 
-.PHONY: generate-package-kdl generate-pakage-kdl
-
-# Backward compatibility for the old misspelled target name
-generate-pakage-kdl: generate-package-kdl
+.PHONY: generate-package-kdl
 
 # Generate package.kdl using pkgdev with component metadata
 generate-package-kdl:
