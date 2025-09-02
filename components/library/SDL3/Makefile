@@ -13,6 +13,7 @@
 #
 
 BUILD_STYLE= cmake
+DROP_STATIC_LIBRARIES= yes
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 # At the moment building static libs cannot be switched off and if removed eg. by DROP_STATIC_LIBS it will create problems
@@ -20,12 +21,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL3
-COMPONENT_VERSION=	3.2.20
+COMPONENT_VERSION=	3.2.22
 COMPONENT_SUMMARY=	Simple DirectMedia Layer is a cross-platform library to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:467600ae090dd28616fa37369faf4e3143198ff1da37729b552137e47f751a67
+COMPONENT_ARCHIVE_HASH=	sha256:f29d00cbcee273c0a54f3f32f86bf5c595e8823a96b1d92a145aac40571ebfcc
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl3
 COMPONENT_CLASSIFICATION =	System/Libraries
