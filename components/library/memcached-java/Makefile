@@ -42,6 +42,7 @@ COMPONENT_LICENSE=	BSD-like
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # Make sure we remove unneeded pieces from the source (the test dir)
 # and also the existing source files which will be generated anew 
