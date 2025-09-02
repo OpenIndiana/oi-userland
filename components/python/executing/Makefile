@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		executing
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.2.1
 COMPONENT_SUMMARY =		Get the currently executing AST node of a frame, and other information
 COMPONENT_PROJECT_URL =		https://github.com/alexmojaki/executing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5d108c028108fe2551d1a7b2e8b713341e2cb4fc0aa7dcf966fa4327a5226755
+	sha256:3632cc370565f6648cc328b32435bd120a1e4ebb20c77e3fdde9a13cd1e533c4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
