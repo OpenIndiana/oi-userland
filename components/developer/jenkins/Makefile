@@ -30,6 +30,7 @@ COMPONENT_LICENSE_FILE= jenkins.license
 COMPONENT_SUMMARY=	Jenkins is a Java-based CI automation server
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

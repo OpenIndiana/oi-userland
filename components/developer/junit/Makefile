@@ -39,6 +39,7 @@ COMPONENT_LICENSE=	CPLv1.0, BSD
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ant.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 COMPONENT_BUILD_ARGS=
 
