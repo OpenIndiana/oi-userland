@@ -34,8 +34,9 @@ COMPONENT_LICENSE_FILE=	LICENCE.txt
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
-PATH=$(JAVA_HOME)/bin:/usr/gnu/bin:/usr/bin
+PATH=$(JAVA_HOME)/bin:/usr/gnu/bin:/usr/bin:$(HOME)/.cargo/bin
 
 COMPONENT_BUILD_ARGS += -C $(BUILD_DIR_32)/java
 COMPONENT_INSTALL_ARGS += -C $(BUILD_DIR_32)/java
