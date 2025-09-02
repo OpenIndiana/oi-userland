@@ -1,0 +1,28 @@
+https://github.com/Perl/perl5/commit/f2ee4cb897ec9dd3338abcd0e9a42cb41ce9a173
+
+--- Pod-Perldoc-3.28/lib/Pod/Perldoc.pm.orig
++++ Pod-Perldoc-3.28/lib/Pod/Perldoc.pm
+@@ -486,11 +486,6 @@
+ 
+   $self->opt_M_with('Pod::Perldoc::ToPod');   # the always-there fallthru
+   $self->opt_o_with('text');
+-  $self->opt_o_with('term') 
+-    unless $self->is_mswin32 || $self->is_dos || $self->is_amigaos
+-       || !($ENV{TERM} && (
+-              ($ENV{TERM} || '') !~ /dumb|emacs|none|unknown/i
+-           ));
+ 
+   return;
+ }
+@@ -1937,11 +1932,6 @@
+ 	    } elsif($self->is_amigaos) { 
+                 last if system($pager, $output) == 0;
+             } else {
+-                my $formatter = $self->{'formatter_class'};
+-                if ( $formatter->can('pager_configuration') ) {
+-                  $self->aside("About to call $formatter" . "->pager_configuration(\"$pager\")\n");
+-                  $formatter->pager_configuration($pager, $self);
+-                }
+                 last if system("$pager \"$output\"") == 0;
+             }
+         }
