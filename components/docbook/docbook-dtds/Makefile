@@ -126,6 +126,7 @@ COMPONENT_PREP_ACTION= ( $(GSED) -i -e's,\(NAMELEN\ \ *\)44,\1256,' $(COMPONENT_
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 $(BUILD_DIR)/%/.built:  $(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

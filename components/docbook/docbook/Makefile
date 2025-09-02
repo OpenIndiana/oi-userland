@@ -23,6 +23,7 @@ COMPONENT_FMRI= data/docbook
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Documentation
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 install:
 	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
