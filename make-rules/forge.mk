@@ -31,7 +31,7 @@ generate-package-kdl:
 	$(PKGDEV) edit set project-name "$(COMPONENT_NAME)"
 	$(PKGDEV) edit set summary "$(COMPONENT_SUMMARY)"
 	$(PKGDEV) edit set classification "$(COMPONENT_CLASSIFICATION)"
-	$(PKGDEV) edit set license -- "$(COMPONENT_LICENSE)" -f "$(COMPONENT_LICENSE_FILE)"
+	$(PKGDEV) edit set license "$(COMPONENT_LICENSE)" -f "$(COMPONENT_LICENSE_FILE)"
 	$(PKGDEV) edit set version "$(COMPONENT_VERSION)"
 	$(PKGDEV) edit set project-url "$(COMPONENT_PROJECT_URL)"
 	$(PKGDEV) edit set maintainer "The OpenIndiana Maintainers"
