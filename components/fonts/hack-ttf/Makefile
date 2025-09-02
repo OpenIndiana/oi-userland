@@ -37,6 +37,7 @@ COMPONENT_LICENSE_FILE=	hack.license
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # doesn't extract into its own directory, so pass -r dir to the unpack target
 UNPACK_ARGS+=-r $(COMPONENT_SRC)
