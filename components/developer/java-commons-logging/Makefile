@@ -27,6 +27,7 @@ COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/commons/logging/binaries/$
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 build:
 
