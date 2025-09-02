@@ -55,6 +55,7 @@ COMPONENT_TEST_DIR = $(BUILD_DIR_$(BITS))/nss/tests
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 ### BUILD
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
