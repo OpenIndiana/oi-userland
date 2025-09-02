@@ -15,6 +15,10 @@
 # Allow overriding via environment and default to relying on PATH
 PKGDEV ?= pkgdev
 
+# Ensure Cargo-installed tools (e.g., pkgdev) are on PATH
+PATH := $(PATH):$(HOME)/.cargo/bin
+export PATH
+
 .PHONY: generate-package-kdl
 
 # Generate package.kdl using pkgdev with component metadata
