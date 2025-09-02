@@ -31,7 +31,7 @@ COMPONENT_LICENSE= 	GPLv2
 
 include $(WS_TOP)/make-rules/common.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=/usr/gnu/bin:/usr/bin:$(HOME)/.cargo/bin
 
 LDFLAGS.32 += -L/usr/lib/mps -R/usr/lib/mps
 LDFLAGS += $(LDFLAGS.$(BITS))
