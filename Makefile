@@ -52,7 +52,11 @@ setup: bootstrap-pkgdev $(SUBDIRS)
 
 bootstrap-pkgdev:
 	@echo "Bootstrapping pkgdev via cargo from toasterson/forge"
-	cargo install --git https://github.com/toasterson/forge -p pkgdev --locked
+	cargo install --git https://github.com/toasterson/forge pkgdev
+
+update-pkgdev:
+	@echo "Updating pkgdev via cargo from toasterson/forge"
+	cargo install --git https://github.com/toasterson/forge pkgdev --force
 
 # Generate repology metadata using pkgdev
 .PHONY: repology
