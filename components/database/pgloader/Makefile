@@ -29,10 +29,11 @@ COMPONENT_LICENSE=		PostgreSQL
 COMPONENT_LICENSE_FILE=	LICENSE
 
 # Don't depend on host default pg_config
-PATH= $(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
+PATH= $(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin:$(HOME)/.cargo/bin
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 COMPONENT_BUILD_ARGS=
 
