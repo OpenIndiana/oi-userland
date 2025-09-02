@@ -33,6 +33,7 @@ COMPONENT_LICENSE_FILE=	LICENSE
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CXXFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
 CFLAGS.32=-D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE
