@@ -1,6 +1,6 @@
---- trealla-2.69.10/src/network.c.orig	2025-05-02 04:04:54.000000000 +0200
-+++ trealla-2.69.10/src/network.c	2025-09-01 17:03:12.410016605 +0200
-@@ -43,6 +43,7 @@
+--- trealla-2.82.28/src/network.c.orig
++++ trealla-2.82.28/src/network.c
+@@ -43,10 +43,13 @@
  #endif
  #include <netinet/in.h>
  #include <netinet/tcp.h>
@@ -8,7 +8,13 @@
  #include <sys/ioctl.h>
  #include <sys/socket.h>
  #include <sys/un.h>
-@@ -128,7 +129,7 @@
++#include <sys/types.h>
+ #include <unistd.h>
++#include <fcntl.h>
+ #endif
+ 
+ int net_domain_connect(const char *name, bool udp)
+@@ -128,7 +131,7 @@
  		int flag = 1;
  		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
  		int flag2 = 1;
@@ -17,7 +23,7 @@
  
  		if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
  			break;
-@@ -183,7 +184,7 @@
+@@ -183,7 +186,7 @@
  		int flag = 1;
  		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
  		int flag2 = 1;
@@ -26,7 +32,7 @@
  
  		if (bind(fd, rp->ai_addr, rp->ai_addrlen) == 0)
  			break;
-@@ -263,8 +264,8 @@
+@@ -263,8 +266,8 @@
  void net_set_nonblocking(stream *str)
  {
  #if !defined(_WIN32) && !defined(__wasi__)
