@@ -32,6 +32,7 @@ CONFIGURE_PREFIX=/usr
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 OPENTTD_SHARE_DIR=$(CONFIGURE_PREFIX)/share/openttd
 PKG_OPTIONS +=	-D OPENTTD_SHARE_DIR="$(OPENTTD_SHARE_DIR)"
