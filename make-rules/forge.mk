@@ -26,7 +26,7 @@ generate-package-kdl:
 	@echo "generating package.kdl for $(COMPONENT_NAME)"
 	$(PKGDEV) create $(COMPONENT_FMRI)
 	@for package in $(REQUIRED_PACKAGES) ; do \
-		$(PKGDEV) edit add dependency -- --dev --kind require $$package ; \
+		$(PKGDEV) edit add dependency --dev --kind require $$package ; \
 	done
 	$(PKGDEV) edit set project-name "$(COMPONENT_NAME)"
 	$(PKGDEV) edit set summary "$(COMPONENT_SUMMARY)"
