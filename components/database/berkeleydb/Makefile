@@ -42,7 +42,7 @@ COMPONENT_LICENSE=	berkeleydb license
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
+PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin:$(HOME)/.cargo/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
