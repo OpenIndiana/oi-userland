@@ -37,5 +37,5 @@ generate-package-kdl:
 	$(PKGDEV) edit add source archive "$(COMPONENT_ARCHIVE_URL)" "$(COMPONENT_ARCHIVE_HASH)"
 	@if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches; fi
 ifeq ($(strip $(BUILD_STYLE)),configure)
-	$(PKGDEV) edit add build configure -- $(foreach var,$(CONFIGURE_OPTIONS),--arg="$(var)")
+	$(PKGDEV) edit add build configure $(foreach var,$(CONFIGURE_OPTIONS),--arg="$(var)")
 endif
