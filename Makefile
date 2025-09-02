@@ -37,10 +37,11 @@ clobber:	TARGET = clobber
 setup:		TARGET = setup
 test:		TARGET = test
 component-hook:		TARGET = component-hook
+generate-package-kdl:	TARGET = generate-package-kdl
 
 .DEFAULT:	publish
 
-download prep build install pre-publish publish validate clean clobber test component-hook unpack patch: $(SUBDIRS)
+download prep build install pre-publish publish validate clean clobber test component-hook generate-package-kdl unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(GMAKE) -s -C $@ $(TARGET)

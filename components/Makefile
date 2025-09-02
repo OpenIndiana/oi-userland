@@ -73,6 +73,7 @@ publish-branch:
 
 download:		TARGET = download
 update-metadata:	TARGET = update-metadata
+generate-package-kdl:	TARGET = generate-package-kdl
 prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
@@ -101,6 +102,8 @@ COMPONENT_DIRS.nolog =		$(COMPONENT_DIRS:%=%.nolog)
 download prep:	$(COMPONENT_DIRS.nosetup)
 
 update-metadata:	$(COMPONENT_DIRS.nolog)
+
+generate-package-kdl:	$(COMPONENT_DIRS.nolog)
 
 component-hook:	$(COMPONENT_DIRS.nosetup)
 
