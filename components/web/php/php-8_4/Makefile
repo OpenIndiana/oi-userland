@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.4
 COMPONENT_MNR_VERSION=	12
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      PHP 8.4
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
@@ -87,7 +88,7 @@ endif
 CONFIGURE_OPTIONS += --with-config-file-path=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS += --with-config-file-scan-dir=$(PHP_SYSCONFDIR)/conf.d
 #deprecated
-#CONFIGURE_OPTIONS += --with-pear=$(PHP_PREFIX)/share/PEAR
+CONFIGURE_OPTIONS += --with-pear=$(PHP_PREFIX)/share/PEAR
 
 CONFIGURE_OPTIONS += --with-layout=PHP
 
