@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		more_itertools
-HUMAN_VERSION =			10.7.0
+HUMAN_VERSION =			10.8.0
 COMPONENT_SUMMARY =		More routines for operating on iterables, beyond itertools
 COMPONENT_PROJECT_URL =		https://github.com/more-itertools/more-itertools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fddd5403be01a94b204faadcff459ec3568cf110265d3c54323e1e866ad29d3
+	sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
