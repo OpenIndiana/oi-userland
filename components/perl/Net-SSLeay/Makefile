@@ -19,35 +19,34 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-SSLeay
-HUMAN_VERSION =			1.94
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			1.96
 COMPONENT_SUMMARY =		Perl bindings for OpenSSL and LibreSSL
 COMPONENT_CPAN_AUTHOR =		CHRISN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9d7be8a56d1bedda05c425306cc504ba134307e0c09bda4a788c98744ebcd95d
+	sha256:ab213691685fb2a576c669cbc8d9266f8165a31563ad15b7c4030b94adfc0753
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
-COMPONENT_CONFIGURE_ENV += echo "n" |
+CONFIGURE_ENV += echo "n" |
 
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Set OPENSSL_PREFIX so Makefile.PL is able to find our preferred OpenSSL
-COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
+CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/text-tabs+wrap
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/text-tabs+wrap
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
