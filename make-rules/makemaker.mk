@@ -30,7 +30,7 @@ COMMON_PERL_ENV +=	CFLAGS="$(CC_BITS) $(PERL_OPTIMIZE)"
 COMMON_PERL_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Particular perl runtime is always required (at least to run Makefile.PL)
-PERL_REQUIRED_PACKAGES += runtime/perl
+USERLAND_REQUIRED_PACKAGES.perl += runtime/perl
 
 # Yes.  Perl is just scripts, for now, but we need architecture
 # directories so that it populates all architecture prototype
