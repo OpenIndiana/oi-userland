@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Sereal-Decoder
-HUMAN_VERSION =			5.004
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.005
 COMPONENT_SUMMARY =		Fast, compact, powerful binary deserialization
 COMPONENT_CPAN_AUTHOR =		YVES
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:68ef0314d87d1a6e60bb0f66fcf43eb2cacdeb1754432f5e25e784e39d3e6784
+	sha256:c5a6e58ab9819b562064ca51dd61e30c0cb7bff593fc44ae1410f27336b304c6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -41,25 +40,18 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_TEST_BOOTSTRAP = yes
 
 # To allow unattended installation we need to set few environment variables.
-COMPONENT_CONFIGURE_ENV += USE_UNALIGNED=no
-COMPONENT_CONFIGURE_ENV += NO_ASM=no
+CONFIGURE_ENV += USE_UNALIGNED=no
+CONFIGURE_ENV += NO_ASM=no
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/sereal-encoder
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/devel-checklib
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-path
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
-PERL_REQUIRED_PACKAGES += library/perl-5/test-differences
-PERL_REQUIRED_PACKAGES += library/perl-5/test-longstring
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warn
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/devel-checklib
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-differences
