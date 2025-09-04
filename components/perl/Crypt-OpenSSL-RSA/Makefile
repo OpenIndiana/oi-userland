@@ -19,26 +19,25 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-OpenSSL-RSA
-HUMAN_VERSION =			0.35
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.37
 COMPONENT_SUMMARY =		RSA encoding and decoding, using the openSSL libraries
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5eebd55ac071634c864a8e78f5cfafbaaf43cf84c04323a09b71dd76bf025cc2
+	sha256:917f7312532f8f4af4f3acbf6ba10e0151f8577d2ef1f38e1035229be86eb6f4
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Set OPENSSL_PREFIX so Crypt::OpenSSL::Guess is able to find our preferred OpenSSL
-COMPONENT_CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
+CONFIGURE_ENV += OPENSSL_PREFIX=$(OPENSSL_PREFIX)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-bignum
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-guess
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-openssl-random
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-bignum
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-guess
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-random
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
