@@ -1,0 +1,44 @@
+This patch reverts changes made to `os.makedirs()` in Python 3.7.
+
+Prior to Python 3.7, mode argument also affected newly-created
+intermediate-level directories, and that is not the case anymore [1]. The
+reason was that with mode preventing directory creating, the function fails
+after it creates the first intermediate-level directory.
+
+Since there is Solaris code that depends on the old behavior, this patch brings
+it back. Note that we are not the only ones affected by this; upstream is
+already considering reverting this change [2].
+
+For reference:
+[1] https://github.com/python/cpython/issues/64129
+[2] https://github.com/python/cpython/issues/86533
+
+--- Python-3.14.0/Lib/os.py.orig
++++ Python-3.14.0/Lib/os.py
+@@ -223,7 +223,7 @@
+         head, tail = path.split(head)
+     if head and tail and not path.exists(head):
+         try:
+-            makedirs(head, exist_ok=exist_ok)
++            makedirs(head, mode, exist_ok)
+         except FileExistsError:
+             # Defeats race condition when another thread created the path
+             pass
+--- Python-3.14.0/Lib/test/test_os.py.orig
++++ Python-3.14.0/Lib/test/test_os.py
+@@ -1925,12 +1925,12 @@
+             base = os_helper.TESTFN
+             parent = os.path.join(base, 'dir1')
+             path = os.path.join(parent, 'dir2')
+-            os.makedirs(path, 0o555)
++            os.makedirs(path, 0o755)
+             self.assertTrue(os.path.exists(path))
+             self.assertTrue(os.path.isdir(path))
+             if os.name != 'nt':
+-                self.assertEqual(os.stat(path).st_mode & 0o777, 0o555)
+-                self.assertEqual(os.stat(parent).st_mode & 0o777, 0o775)
++                self.assertEqual(os.stat(path).st_mode & 0o777, 0o755)
++                self.assertEqual(os.stat(parent).st_mode & 0o777, 0o755)
+ 
+     @unittest.skipIf(
+         support.is_wasi,
