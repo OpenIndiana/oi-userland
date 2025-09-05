@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		twine
-HUMAN_VERSION =			6.1.0
+HUMAN_VERSION =			6.2.0
 COMPONENT_SUMMARY =		Collection of utilities for publishing packages on PyPI
 COMPONENT_PROJECT_URL =		https://twine.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be324f6272eff91d07ee93f251edf232fc647935dd585ac003539b42404a8dbd
+	sha256:e5ed0d2fd70c9959770dce51c8f39c8945c574e18173a7b81802dab51b4b75cf
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
