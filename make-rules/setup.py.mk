@@ -114,7 +114,7 @@ PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	packaging
 PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		flit_core
 
 # Particular python runtime is always required (at least to run setup.py)
-PYTHON_REQUIRED_PACKAGES += runtime/python
+USERLAND_REQUIRED_PACKAGES.python += runtime/python
 
 define python-rule
 $(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
