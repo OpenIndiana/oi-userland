@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 225 items
+collecting ... collected 229 items
 
 tests/test_auth.py::test_get_username_keyring_defers_to_prompt PASSED
 tests/test_auth.py::test_get_username_keyring_not_installed_defers_to_prompt PASSED
@@ -29,6 +29,12 @@ tests/test_auth.py::test_warns_for_empty_password[-Your password is empty] PASSE
 tests/test_auth.py::test_warns_for_empty_password[\x16-Your password contains control characters] PASSED
 tests/test_auth.py::test_warns_for_empty_password[entered\x16pw-Your password contains control characters] PASSED
 tests/test_auth.py::test_keyring_module PASSED
+tests/test_auth.py::test_resolver_authenticator_config_authentication PASSED
+tests/test_auth.py::test_resolver_authenticator_credential_input_authentication PASSED
+tests/test_auth.py::test_resolver_authenticator_trusted_publishing_authentication PASSED
+tests/test_auth.py::test_trusted_publish_authenticator_refreshes_token PASSED
+tests/test_auth.py::test_trusted_publish_authenticator_reuses_token PASSED
+tests/test_auth.py::test_inability_to_make_token_raises_error PASSED
 tests/test_check.py::TestWarningStream::test_write_match PASSED
 tests/test_check.py::TestWarningStream::test_write_nomatch PASSED
 tests/test_check.py::TestWarningStream::test_str_representation PASSED
@@ -72,10 +78,9 @@ tests/test_package.py::test_metadata_dictionary_values[None-gpg_signature1] PASS
 tests/test_package.py::test_metadata_dictionary_values[attestation1-None] PASSED
 tests/test_package.py::test_metadata_dictionary_values[attestation1-gpg_signature1] PASSED
 tests/test_package.py::test_hash_manager PASSED
-tests/test_package.py::test_fips_hash_manager_md5 PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[TypeError] PASSED
 tests/test_package.py::test_fips_hash_manager_blake2[ValueError] PASSED
-tests/test_package.py::test_fips_metadata_excludes_md5_and_blake2 PASSED
+tests/test_package.py::test_fips_metadata_excludes_blake2 PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[unsupported Metadata-Version] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[invalid Version0] PASSED
 tests/test_package.py::test_pkginfo_returns_no_metadata[invalid Version1] PASSED
@@ -89,8 +94,8 @@ tests/test_package.py::test_pkginfo_returns_no_metadata[unrecognized field] PASS
 tests/test_package.py::test_malformed_from_file PASSED
 tests/test_package.py::test_package_from_sdist PASSED
 tests/test_package.py::test_package_from_unrecognized_file_error PASSED
-tests/test_package.py::test_setuptools_license_file[invalid License-File] PASSED
-tests/test_package.py::test_setuptools_license_file[valid License-File] PASSED
+tests/test_package.py::test_setuptools_license_file_invalid PASSED
+tests/test_package.py::test_setuptools_license_file_valid PASSED
 tests/test_register.py::test_successful_register PASSED
 tests/test_register.py::test_exception_for_redirect PASSED
 tests/test_register.py::test_non_existent_package PASSED
@@ -142,6 +147,7 @@ tests/test_sdist.py::test_py_version[fixtures/twine-1.6.5.tar.gz] PASSED
 tests/test_settings.py::test_settings_takes_no_positional_arguments PASSED
 tests/test_settings.py::test_settings_transforms_repository_config_pypi PASSED
 tests/test_settings.py::test_settings_transforms_repository_config_non_pypi PASSED
+tests/test_settings.py::test_settings_verify_feature_compatibility PASSED
 tests/test_settings.py::test_setup_logging[True-20] PASSED
 tests/test_settings.py::test_setup_logging[False-30] PASSED
 tests/test_settings.py::test_print_config_path_if_verbose[True] PASSED
@@ -174,12 +180,7 @@ tests/test_upload.py::test_exception_for_redirect[https://test.pypi.org/legacy/-
 tests/test_upload.py::test_prints_skip_message_for_uploaded_package PASSED
 tests/test_upload.py::test_prints_skip_message_for_response PASSED
 tests/test_upload.py::test_skip_existing_skips_files_on_repository[pypi] PASSED
-tests/test_upload.py::test_skip_existing_skips_files_on_repository[nexus] PASSED
-tests/test_upload.py::test_skip_existing_skips_files_on_repository[nexus_new] PASSED
 tests/test_upload.py::test_skip_existing_skips_files_on_repository[pypiserver] PASSED
-tests/test_upload.py::test_skip_existing_skips_files_on_repository[artifactory_old] PASSED
-tests/test_upload.py::test_skip_existing_skips_files_on_repository[artifactory_new] PASSED
-tests/test_upload.py::test_skip_existing_skips_files_on_repository[gitlab_enterprise] PASSED
 tests/test_upload.py::test_skip_upload_doesnt_match[wrong_reason] PASSED
 tests/test_upload.py::test_skip_upload_doesnt_match[wrong_code] PASSED
 tests/test_upload.py::test_skip_upload_respects_skip_existing PASSED
@@ -206,6 +207,9 @@ tests/test_utils.py::test_get_repository_config_with_invalid_url[https:/-host wa
 tests/test_utils.py::test_get_repository_config_with_invalid_url[//test.pypi.org-scheme was required but missing.] PASSED
 tests/test_utils.py::test_get_repository_config_with_invalid_url[foo.bar-host, scheme were required but missing.] PASSED
 tests/test_utils.py::test_get_repository_config_missing_repository PASSED
+tests/test_utils.py::test_get_repository_config_invalid_syntax[\n    username = testuser\n    password = testpassword\n    ] PASSED
+tests/test_utils.py::test_get_repository_config_invalid_syntax[\n    [pypi]\n    pypi-lolololol\n    ] PASSED
+tests/test_utils.py::test_get_repository_config_invalid_syntax[\n    pypi-lolololol\n    ] PASSED
 tests/test_utils.py::test_get_repository_config_missing_file[pypi] PASSED
 tests/test_utils.py::test_get_repository_config_missing_file[missing-repository] PASSED
 tests/test_utils.py::test_get_config_deprecated_pypirc PASSED
@@ -243,30 +247,32 @@ tests/test_auth.py::test_no_password_defers_to_prompt
     result = GnomeKeyring.get_default_keyring_sync()[0]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 225 passed, 2 warnings ========
+======== 229 passed, 2 warnings ========
 py$(PYV): commands[1]> python -m coverage html
 Wrote HTML report to htmlcov/index.html
 py$(PYV): commands[2]> python -m coverage report --skip-covered --show-missing --fail-under 97
 Name                       Stmts   Miss Branch BrPart  Cover   Missing
 ----------------------------------------------------------------------
 tests/helpers.py              31      1     10      1    95%   53
-tests/test_auth.py           139      1      2      1    99%   98
-tests/test_repository.py     115      0      6      1    99%   105->104
+tests/test_auth.py           217      5      4      2    97%   102, 340, 343, 409, 426
+tests/test_package.py        193      1     10      1    99%   183
+tests/test_repository.py     119      1      8      2    98%   68, 111->110
+tests/test_settings.py       102      6      2      0    94%   89-90, 98-99, 111-112
 tests/test_upload.py         199      2      6      0    99%   311-312
-tests/test_utils.py           87      1      2      0    99%   332
-twine/__init__.py             14      1      2      1    88%   37
-twine/auth.py                117     29     20      1    74%   78-129, 162, 182-186
+tests/test_utils.py           92      1      2      0    99%   362
+twine/__init__.py             15      1      2      1    88%   37
+twine/auth.py                166     16     32      5    87%   120, 175-178, 184-191, 204-205, 210-214, 227, 261, 281-285
 twine/cli.py                  41      3      6      2    89%   20, 86->89, 93-94
-twine/commands/upload.py      80      1     34      1    98%   101
+twine/commands/upload.py      81      1     34      1    98%   95
 twine/distribution.py          6      2      0      0    67%   4, 8
-twine/package.py             206      2     46      5    97%   254->252, 274->277, 308, 387->exit, 393
-twine/repository.py          115      3     38      3    96%   60, 87->exit, 91->exit, 177, 229
-twine/settings.py             82      4      4      0    95%   333-341
-twine/utils.py               149      1     42      0    99%   356
+twine/package.py             189      2     40      5    97%   261->259, 281->284, 312, 374->exit, 380
+twine/repository.py          115      3     38      3    96%   60, 87->exit, 91->exit, 177, 246
+twine/settings.py             86      4      6      0    96%   352-360
+twine/utils.py               151      1     42      0    99%   363
 twine/wheel.py                42      1     12      1    96%   53
 ----------------------------------------------------------------------
-TOTAL                       2262     52    300     17    97%
+TOTAL                       2426     51    314     24    97%
 
-17 files skipped due to complete coverage.
+15 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)
