@@ -28,12 +28,12 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.45
+COMPONENT_VERSION=	10.46
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:21547f3516120c75597e5b30a992e27a592a31950b5140e7b8bfde3f192033c4
+COMPONENT_ARCHIVE_HASH= sha256:15fbc5aba6beee0b17aecb04602ae39432393aba1ebd8e39b7cabf7db883299f
 COMPONENT_ARCHIVE_URL=  https://github.com/PhilipHazel/pcre2/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_FMRI=		library/pcre2
@@ -71,15 +71,16 @@ CONFIGURE_OPTIONS += --enable-rebuild-chartables
 CONFIGURE_OPTIONS += --enable-newline-is-any
 CONFIGURE_OPTIONS += --enable-pcre2grep-libz
 CONFIGURE_OPTIONS += --enable-pcre2grep-libbz2
+# Enable Unicode support (was --enable-unicode-properties in pcre(1) configure).
+CONFIGURE_OPTIONS += --enable-unicode
+# Enable UTF8 support    (was --enable-utf8 in pcre(1) configure).
+CONFIGURE_OPTIONS += --enable-pcre2-8
 CONFIGURE_OPTIONS += --enable-pcre2-16
 CONFIGURE_OPTIONS += --enable-pcre2-32
+CONFIGURE_OPTIONS += --enable-valgrind
 CONFIGURE_OPTIONS += --with-link-size=4
 CONFIGURE_OPTIONS += --with-match-limit=10000000
 CONFIGURE_OPTIONS += --with-pic
-# Enable UTF8 support    (was --enable-utf8 in pcre(1) configure).
-CONFIGURE_OPTIONS += --enable-pcre2-8
-# Enable Unicode support (was --enable-unicode-properties in pcre(1) configure).
-CONFIGURE_OPTIONS += --enable-unicode
 
 COMPONENT_BUILD_ENV += "LDFLAGS=$(LDFLAGS)"
 COMPONENT_BUILD_ENV += "INSTALL=$(INSTALL)"
@@ -99,6 +100,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"' \
 	'-e "s|Testsuite summary for PCRE .*|Testsuite summary for PCRE|" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/debug/valgrind
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2
