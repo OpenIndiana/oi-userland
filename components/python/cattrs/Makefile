@@ -19,13 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
-HUMAN_VERSION =			25.1.1
+HUMAN_VERSION =			25.2.0
 COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c914b734e0f2d59e5b720d145ee010f1fd9a13ee93900922a2f3f9d593b8382c
+	sha256:f46c918e955db0177be6aa559068390f71988e877c603ae2e56c71827165cc06
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,12 +61,12 @@ PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_ujson_efficient_enum
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/immutables

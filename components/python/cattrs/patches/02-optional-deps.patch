@@ -1,8 +1,8 @@
 We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
 
---- cattrs-25.1.1/tests/test_preconf.py.orig
-+++ cattrs-25.1.1/tests/test_preconf.py
-@@ -45,12 +45,10 @@
+--- cattrs-25.2.0/tests/test_preconf.py.orig
++++ cattrs-25.2.0/tests/test_preconf.py
+@@ -46,12 +46,10 @@
  )
  from cattrs.fns import identity
  from cattrs.preconf.bson import make_converter as bson_make_converter
@@ -15,7 +15,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  
  NO_MSGSPEC: Final = python_implementation() == "PyPy" or sys.version_info[:2] >= (3, 13)
  NO_ORJSON: Final = python_implementation() == "PyPy"
-@@ -364,6 +362,7 @@
+@@ -367,6 +365,7 @@
          min_int=-9223372036854775808, max_int=9223372036854775807, allow_inf=False
      )
  )
@@ -23,7 +23,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_ujson(everything: Everything):
      from ujson import dumps as ujson_dumps
      from ujson import loads as ujson_loads
-@@ -378,6 +377,7 @@
+@@ -381,6 +380,7 @@
          min_int=-9223372036854775808, max_int=9223372036854775807, allow_inf=False
      )
  )
@@ -31,7 +31,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_ujson_converter(everything: Everything):
      converter = ujson_make_converter()
      raw = converter.dumps(everything)
-@@ -389,6 +389,7 @@
+@@ -392,6 +392,7 @@
          min_int=-9223372036854775808, max_int=9223372036854775807, allow_inf=False
      )
  )
@@ -39,7 +39,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_ujson_converter_unstruct_collection_overrides(everything: Everything):
      converter = ujson_make_converter(unstruct_collection_overrides={Set: sorted})
      raw = converter.unstructure(everything)
-@@ -401,6 +402,7 @@
+@@ -404,6 +405,7 @@
      union_and_val=native_unions(include_bytes=False, include_datetimes=False),
      detailed_validation=...,
  )
@@ -47,7 +47,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_ujson_unions(union_and_val: tuple, detailed_validation: bool):
      """Native union passthrough works."""
      converter = ujson_make_converter(detailed_validation=detailed_validation)
-@@ -442,6 +444,7 @@
+@@ -445,6 +447,7 @@
      ),
      booleans(),
  )
@@ -55,7 +55,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_orjson(everything: Everything, detailed_validation: bool):
      from orjson import dumps as orjson_dumps
      from orjson import loads as orjson_loads
-@@ -460,6 +463,7 @@
+@@ -463,6 +466,7 @@
      ),
      booleans(),
  )
@@ -63,7 +63,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_orjson_converter(everything: Everything, detailed_validation: bool):
      from cattrs.preconf.orjson import make_converter as orjson_make_converter
  
-@@ -474,6 +478,7 @@
+@@ -477,6 +481,7 @@
          min_int=-9223372036854775808, max_int=9223372036854775807, allow_inf=False
      )
  )
@@ -71,7 +71,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_orjson_converter_unstruct_collection_overrides(everything: Everything):
      from cattrs.preconf.orjson import make_converter as orjson_make_converter
  
-@@ -489,6 +494,7 @@
+@@ -492,6 +497,7 @@
      union_and_val=native_unions(include_bytes=False, include_datetimes=False),
      detailed_validation=...,
  )
@@ -79,7 +79,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_orjson_unions(union_and_val: tuple, detailed_validation: bool):
      """Native union passthrough works."""
      from cattrs.preconf.orjson import make_converter as orjson_make_converter
-@@ -766,6 +772,7 @@
+@@ -769,6 +775,7 @@
  
  
  @given(everythings(min_int=-9223372036854775808, max_int=18446744073709551615))
@@ -87,7 +87,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_cbor2(everything: Everything):
      from cbor2 import dumps as cbor2_dumps
      from cbor2 import loads as cbor2_loads
-@@ -776,6 +783,7 @@
+@@ -779,6 +786,7 @@
  
  
  @given(everythings(min_int=-9223372036854775808, max_int=18446744073709551615))
@@ -95,7 +95,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_cbor2_converter(everything: Everything):
      converter = cbor2_make_converter()
      raw = converter.dumps(everything)
-@@ -783,6 +791,7 @@
+@@ -786,6 +794,7 @@
  
  
  @given(everythings(min_int=-9223372036854775808, max_int=18446744073709551615))
@@ -103,7 +103,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_cbor2_converter_unstruct_collection_overrides(everything: Everything):
      converter = cbor2_make_converter(unstruct_collection_overrides={Set: sorted})
      raw = converter.unstructure(everything)
-@@ -792,6 +801,7 @@
+@@ -795,6 +804,7 @@
  
  
  @given(union_and_val=native_unions(include_datetimes=False), detailed_validation=...)
@@ -111,7 +111,7 @@ We have no ujson, orjson, and cbor2 optional dependencies packaged yet.
  def test_cbor2_unions(union_and_val: tuple, detailed_validation: bool):
      """Native union passthrough works."""
      converter = cbor2_make_converter(detailed_validation=detailed_validation)
-@@ -902,11 +912,9 @@
+@@ -905,11 +915,9 @@
      "converter_factory",
      [
          bson_make_converter,
