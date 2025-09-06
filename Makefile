@@ -49,6 +49,8 @@ $(SUBDIRS):	FORCE
 
 FORCE:
 
+.PHONY: bootstrap-pkgdev update-pkgdev
+
 # Bootstrap pkgdev before running component setup
 setup: bootstrap-pkgdev $(SUBDIRS)
 
