@@ -32,6 +32,7 @@ COMPONENT_LICENSE= GPLv3
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CDEFS+= -DNO_SOCKADDR_SA_LEN
 CDEFS+= -D_POSIX_PTHREAD_SEMANTICS

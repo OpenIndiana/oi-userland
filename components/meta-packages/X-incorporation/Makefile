@@ -23,5 +23,6 @@ COMPONENT_DESCRIPTION=	empty package to satisfy install requirements of SunRay S
 COMPONENT_FMRI=		consolidation/X/X-incorporation
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 #PKGLINT=/bin/true

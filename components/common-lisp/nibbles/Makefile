@@ -30,6 +30,7 @@ COMPONENT_SUMMARY=	nibbles is a library for accessing multibyte integers from oc
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 build:		$(BUILD_32)
 

@@ -30,6 +30,7 @@ COMPONENT_PROJECT_URL = http://www.freedesktop.org
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 gcc_OPT = -O2
 

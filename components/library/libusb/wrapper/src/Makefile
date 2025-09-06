@@ -22,6 +22,7 @@
 #
 
 include ../../../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 incdir =	/usr/include
 libdir =	/usr/lib

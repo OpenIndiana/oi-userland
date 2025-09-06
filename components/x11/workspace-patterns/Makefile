@@ -26,6 +26,7 @@ COMPONENT_LICENSE=      Oracle
 COMPONENT_LICENSE_FILE= workspace-patterns.license
 
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

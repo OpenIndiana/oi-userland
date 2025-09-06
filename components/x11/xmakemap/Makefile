@@ -27,6 +27,7 @@ COMPONENT_LICENSE_FILE= xmakemap.license
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 

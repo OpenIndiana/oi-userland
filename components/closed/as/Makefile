@@ -29,6 +29,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:1758eb4721981d76c86dfe05b20d8dbccadc5938800554d2d
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 build:	prep
 

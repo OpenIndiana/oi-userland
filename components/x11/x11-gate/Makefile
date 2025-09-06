@@ -9,7 +9,7 @@ FULL_BUILD?=1
 ifeq ($(FULL_BUILD), 1)
 include components.mk 
 else
-include xorg.mk 
+include xorg.mk
 endif
 
 clobber:

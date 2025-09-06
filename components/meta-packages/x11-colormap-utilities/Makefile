@@ -21,6 +21,7 @@ COMPONENT_CLASSIFICATION= Meta Packages/Group Packages
 COMPONENT_SUMMARY=	      X Colormap Utilities
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

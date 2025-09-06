@@ -35,6 +35,7 @@ GMP_ARCHIVE_HASH= \
   sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb
 
 include $(WS_MAKE_RULES)/gcc-component.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CC=/usr/gcc/12/bin/gcc
 CXX=/usr/gcc/12/bin/g++

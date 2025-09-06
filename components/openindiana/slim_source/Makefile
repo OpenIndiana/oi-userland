@@ -39,6 +39,7 @@ CLOBBER_PATHS += $(SOURCE_DIR)
 
 COMPONENT_PREP_GIT=no
 include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 $(SOURCE_DIR):
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)

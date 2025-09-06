@@ -23,3 +23,4 @@ COMPONENT_DESCRIPTION=   empty package to satisfy installation requirements od S
 COMPONENT_FMRI=          service/network/dhcp
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk

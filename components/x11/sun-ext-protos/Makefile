@@ -25,6 +25,7 @@ COMPONENT_CLASSIFICATION= Development/X11
 
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

@@ -34,6 +34,7 @@ COMPONENT_LICENSE= LGPLv2.1
 COMPONENT_SUMMARY= Common items for hacluster components.
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

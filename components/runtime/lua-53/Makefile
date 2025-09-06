@@ -49,6 +49,7 @@ CLEAN_PATHS += $(LUA_TESTS)
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # This is because lua uses $(CC) to build it's shared libraries.
 CC +=           $(CC_BITS)

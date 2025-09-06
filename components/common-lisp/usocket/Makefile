@@ -30,6 +30,7 @@ COMPONENT_SUMMARY=	A portable TCP/IP and UDP/IP socket interface for Common Lisp
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 build:		$(BUILD_32)
 

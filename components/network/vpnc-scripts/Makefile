@@ -35,6 +35,7 @@ COMPONENT_SUMMARY=	Connect scripts for use with vpnc and openconnect (and simila
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # This is an archive with scripts, nothing to build
 $(BUILD_$(BITS)): $(SOURCE_DIR)/.prep

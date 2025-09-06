@@ -30,6 +30,7 @@ COMPONENT_SUMMARY=	cl-base64 provides base64 (RFC 1521) encoding and decoding.
 include ../../../make-rules/prep.mk
 include ../../../make-rules/common-lisp.mk
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 build:		$(BUILD_32)
 

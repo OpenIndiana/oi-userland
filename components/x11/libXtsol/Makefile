@@ -30,6 +30,7 @@ COMPONENT_FMRI = x11/trusted/libxtsol
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CPPFLAGS += -I/usr/include/xorg
 

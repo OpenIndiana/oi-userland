@@ -30,6 +30,7 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
 		($(CLONEY) $(SOURCE_DIR) $(@D))

@@ -22,6 +22,7 @@
 #
 
 include ../../../../../../make-rules/shared-macros.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 LIBNAME =	libusbugen.so.1
 SRCS =		libusbugen.c

@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=     sic_team-incorporation
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PKGLINT=    true
 

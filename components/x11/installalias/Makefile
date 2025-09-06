@@ -27,6 +27,7 @@ COMPONENT_CLASSIFICATION= System/X11
 
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 LDFLAGS += -L/usr/lib/xorg -R/usr/lib/xorg
 

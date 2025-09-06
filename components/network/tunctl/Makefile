@@ -31,6 +31,7 @@ COMPONENT_SUMMARY=	The tunctl command enables administrators to preconfigure a T
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # The sources include a copy of the header. As of 2016, they are identical
 # to those that come with tuntap drivers - and future-wise, they should match.

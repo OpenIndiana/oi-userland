@@ -25,6 +25,7 @@ COMPONENT_LICENSE = CDDL
 COMPONENT_LICENSE_FILE = opensolaris.license
 
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

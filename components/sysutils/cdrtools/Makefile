@@ -41,6 +41,7 @@ COMPONENT_LICENSE=      CDDLv1.0, GPLv2, LGPLv2.1, BSD 2 clause
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PATH=	$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
 

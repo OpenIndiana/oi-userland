@@ -25,6 +25,7 @@ COMPONENT_LICENSE=        CDDLv1.0
 COMPONENT_LICENSE_FILE=   $(COMPONENT_NAME).license	
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 RELEASE_DATE=$(shell LC_ALL=C date +'%d %B %Y')
 

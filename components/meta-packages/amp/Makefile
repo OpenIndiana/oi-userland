@@ -20,6 +20,7 @@ COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	Cluster containing an AMP (Apache, MySQL, PHP) deployment kit
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 #PKGLINT=/bin/true
 

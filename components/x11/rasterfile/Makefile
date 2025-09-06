@@ -26,6 +26,7 @@ COMPONENT_LICENSE=      	Oracle
 COMPONENT_LICENSE_FILE= 	rasterfile.license
 
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 rasterfile_INCDIR=$(PROTO_DIR)$(USRINCDIR)/pixrect
 rasterfile_MANDIR=$(PROTO_DIR)$(USRSHAREMAN5DIR)

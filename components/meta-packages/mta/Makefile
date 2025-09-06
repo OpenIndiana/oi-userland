@@ -21,6 +21,7 @@ COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	System MTA daemon
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

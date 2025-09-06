@@ -35,6 +35,7 @@ COMPONENT_LICENSE= LGPLv2.1
 COMPONENT_SUMMARY= SMF service for HA cluster, managing corosync and pacemaker
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

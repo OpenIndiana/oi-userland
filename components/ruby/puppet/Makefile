@@ -40,6 +40,7 @@ COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/install.rb.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
 # puppet requires facter and hiera as part of the install phase

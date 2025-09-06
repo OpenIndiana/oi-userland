@@ -49,6 +49,7 @@ GMP_ARCHIVE_HASH= \
 GCC_VERSION = 7
 
 include $(WS_MAKE_RULES)/gcc-component.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc

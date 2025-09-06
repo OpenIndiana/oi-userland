@@ -18,6 +18,7 @@ COMPONENT_NAME=		gnu-common
 COMPONENT_VERSION=	0.5.11
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 $(BUILD_32):	$(MAKEFILE_PREREQ)
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)

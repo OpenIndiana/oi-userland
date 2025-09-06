@@ -32,6 +32,7 @@ COMPONENT_LICENSE=	GPLv2
 
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 PKG_OPTIONS += -D SF2_SHARE_DIR="/usr/share/sounds/sf2"
 

@@ -35,6 +35,7 @@ COMPONENT_LICENSE= GPLv2
 COMPONENT_SUMMARY= SMF service for HA cluster remote, managing pacemaker-remote
 
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 download:
 

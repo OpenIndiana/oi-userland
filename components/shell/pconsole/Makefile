@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE_URL= https://github.com/walterdejong/pconsole/archive/v$(COMPO
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \

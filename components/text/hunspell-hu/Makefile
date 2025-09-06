@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_URL=   https://sourceforge.net/projects/magyarispell/files/Mag
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 DESTDIR=/usr/share/spell/hunspell
 LINKDIR=/usr/share/spell/myspell

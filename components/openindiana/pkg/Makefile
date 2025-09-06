@@ -35,6 +35,7 @@ CLOBBER_PATHS += $(SOURCE_DIR)
 
 COMPONENT_PREP_GIT=no
 include $(WS_TOP)/make-rules/prep.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 $(SOURCE_DIR)/.downloaded: component-environment-prep $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \

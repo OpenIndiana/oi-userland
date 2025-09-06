@@ -28,6 +28,7 @@ COMPONENT_FMRI = x11/server/xorg/driver/xorg-input-hotkey
 
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 SERVERMOD_SUBDIR.64=/$(MACH64)
 SERVERMOD_SUBDIR=$(SERVERMOD_SUBDIR.$(BITS))

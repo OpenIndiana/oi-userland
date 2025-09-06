@@ -40,6 +40,7 @@ COMPONENT_LICENSE=      GPLv3
 include $(WS_MAKE_RULES)/prep.mk
 include $(WS_MAKE_RULES)/configure.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 CONFIGURE_OPTIONS +=	CC="$(CC) $(CC_BITS)"
 CONFIGURE_OPTIONS +=	--enable-experimental

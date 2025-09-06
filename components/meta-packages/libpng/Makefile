@@ -19,6 +19,7 @@ COMPONENT_VERSION=	1.6.27
 COMPONENT_SUMMARY=	Portable Network Graphics library
 
 include ../../../make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 #PKGLINT=/bin/true
 
