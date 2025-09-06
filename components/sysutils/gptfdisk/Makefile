@@ -36,7 +36,7 @@ include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_MAKE_RULES)/forge.mk
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH=/usr/gnu/bin:/usr/bin:$(HOME)/.cargo/bin
 
 COMPONENT_PRE_BUILD_ACTION= \
   $(CP) $(COMPONENT_DIR)/files/Makefile.solaris $(BUILD_DIR_$(BITS))

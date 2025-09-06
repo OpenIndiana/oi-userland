@@ -43,7 +43,7 @@ include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
 include $(WS_MAKE_RULES)/forge.mk
 
-PATH=	$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=	$(GCC_ROOT)/bin:/usr/bin:/usr/gnu/bin:$(HOME)/.cargo/bin
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true

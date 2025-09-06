@@ -71,3 +71,9 @@ clean-package-kdl:
 	@echo "Cleaning generated package.kdl files and components.missing-metadata"
 	@/usr/bin/find components -type f -name package.kdl -exec rm -f {} +
 	@rm -f $(WS_TOP)/components.missing-metadata components.missing-metadata
+
+# List components missing a package.kdl file
+.PHONY: missing-package-kdl list-missing-package-kdl
+missing-package-kdl list-missing-package-kdl:
+	@echo "Scanning for component directories missing package.kdl..."
+	@/bin/sh tools/find-missing-package-kdl.sh
