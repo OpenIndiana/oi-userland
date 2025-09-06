@@ -19,7 +19,11 @@ print-required-packages::
 	done | LANG=C LC_ALL=C sort -u
 
 # update the metadata for current component
-update-metadata:
+update-metadata: generate-package-kdl
 	@echo "generating metadata: $(CURDIR:$(WS_TOP)/components/%=%)"
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --pkg5
+
+# Alias for developer convenience
+.PHONY: metadata
+metadata: update-metadata
 
