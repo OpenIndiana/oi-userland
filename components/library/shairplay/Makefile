@@ -34,6 +34,7 @@ COMPONENT_LICENSE = MIT
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 COMPONENT_PREP_ACTION= \
     ( cd  $(COMPONENT_DIR)/$(COMPONENT_SRC) && sh autogen.sh )
