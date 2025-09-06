@@ -31,6 +31,7 @@ COMPONENT_BUGDB=	utility/apache
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/forge.mk
 
 APXS = /usr/apache2/2.4/bin/apxs
 
