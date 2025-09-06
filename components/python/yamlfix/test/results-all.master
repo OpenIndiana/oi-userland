@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-X workers [139 items]
+X workers [152 items]
 
 scheduling tests via LoadScheduling
 
@@ -16,6 +16,8 @@ tests/e2e/test_cli.py::test_corrects_one_file PASSED
 tests/e2e/test_cli.py::test_corrects_three_files PASSED
 tests/e2e/test_cli.py::test_do_not_read_folders_as_files PASSED
 tests/e2e/test_cli.py::test_find_files PASSED
+tests/e2e/test_cli.py::test_glob_cache_excludes_slow PASSED
+tests/e2e/test_cli.py::test_glob_cache_is_fast PASSED
 tests/e2e/test_cli.py::test_ignores_correct_files PASSED
 tests/e2e/test_cli.py::test_include_exclude_files PASSED
 tests/e2e/test_cli.py::test_no_yaml_files PASSED
@@ -63,6 +65,17 @@ tests/unit/test_adapter_yaml.py::TestYamlAdapter::test_sequence_keep_style_confi
 tests/unit/test_adapter_yaml.py::TestYamlAdapter::test_whitelines_adjusted_to_value PASSED
 tests/unit/test_adapter_yaml.py::TestYamlAdapter::test_whitelines_collapsed PASSED
 tests/unit/test_adapter_yaml.py::TestYamlAdapter::test_whitelines_higher_than_secion_whitelines PASSED
+tests/unit/test_cli_cache.py::TestCacheClear::test_clear_glob_cache_allows_fresh_caching PASSED
+tests/unit/test_cli_cache.py::TestCacheClear::test_clear_glob_cache_empties_cache PASSED
+tests/unit/test_cli_cache.py::TestCacheKeyConstruction::test_cache_key_distinguishes_glob_vs_rglob PASSED
+tests/unit/test_cli_cache.py::TestCacheKeyConstruction::test_cache_key_includes_directory_path PASSED
+tests/unit/test_cli_cache.py::TestGlobCache::test_glob_cache_basic_functionality PASSED
+tests/unit/test_cli_cache.py::TestGlobCache::test_glob_cache_different_directories_create_separate_entries PASSED
+tests/unit/test_cli_cache.py::TestGlobCache::test_glob_cache_different_patterns_create_separate_entries PASSED
+tests/unit/test_cli_cache.py::TestGlobCache::test_glob_cache_uses_cache_on_repeat_calls PASSED
+tests/unit/test_cli_cache.py::TestRglobCache::test_rglob_cache_basic_functionality PASSED
+tests/unit/test_cli_cache.py::TestRglobCache::test_rglob_cache_uses_cache_on_repeat_calls PASSED
+tests/unit/test_cli_cache.py::TestRglobCache::test_rglob_cache_vs_glob_cache_different_keys PASSED
 tests/unit/test_services.py::TestFixCode::test_anchors_and_aliases_with_duplicate_merge_keys PASSED
 tests/unit/test_services.py::TestFixCode::test_fix_code_add_extra_space_inline_comment PASSED
 tests/unit/test_services.py::TestFixCode::test_fix_code_add_space_inline_comment PASSED
@@ -148,4 +161,4 @@ tests/unit/test_services.py::TestFixFiles::test_fix_files_can_process_string_arg
 tests/unit/test_services.py::TestFixFiles::test_fix_files_issues_warning PASSED
 tests/unit/test_version.py::test_version PASSED
 
-======== 139 passed ========
+======== 152 passed ========
