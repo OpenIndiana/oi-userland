@@ -59,6 +59,6 @@ generate-package-kdl:
 		$(PKGDEV) edit add source archive "$(COMPONENT_ARCHIVE_URL)" "$(COMPONENT_ARCHIVE_HASH)"; \
 		if [ -d "patches" ]; then $(PKGDEV) edit add source patch patches; fi; \
 		if [ "$(strip $(BUILD_STYLE))" = "configure" ]; then \
-			$(PKGDEV) edit add build --gate $(WS_TOP)/userland-gate.kdl configure $(foreach var,$(CONFIGURE_OPTIONS),"$(var)"); \
+			$(PKGDEV) edit add build --gate $(WS_TOP)/userland-gate.kdl configure $(strip $(CONFIGURE_OPTIONS)); \
 		fi; \
 	fi
