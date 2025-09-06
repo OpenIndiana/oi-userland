@@ -26,8 +26,8 @@
 # whenever PATH is to be defined there:
 #     PATH = $(PATH.illumos)
 #     PATH = $(PATH.gnu)
-PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(USRBINDIR$(BITS)):$(USRBINDIR):$(GNUBIN):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(HOME)/.cargo/bin
-PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(USRBINDIR$(BITS)):$(USRBINDIR):$(USRSBINDIR$(BITS)):$(USRSBINDIR):$(HOME)/.cargo/bin
+PATH.illumos =	$(subst $(space),:,$(strip $(PATH.prepend))):$(or $(USRBINDIR$(BITS)),$(USRBINDIR64)):$(USRBINDIR):$(GNUBIN):$(or $(USRSBINDIR$(BITS)),$(USRSBINDIR64)):$(USRSBINDIR):$(HOME)/.cargo/bin
+PATH.gnu =	$(subst $(space),:,$(strip $(PATH.prepend))):$(GNUBIN):$(or $(USRBINDIR$(BITS)),$(USRBINDIR64)):$(USRBINDIR):$(or $(USRSBINDIR$(BITS)),$(USRSBINDIR64)):$(USRSBINDIR):$(HOME)/.cargo/bin
 
 # Default PATH
 PATH = $(PATH.illumos)
@@ -252,7 +252,7 @@ PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
 ARCHLIBSUBDIR32	=
 ARCHLIBSUBDIR64	= $(MACH64)
-ARCHLIBSUBDIR	= $(ARCHLIBSUBDIR$(BITS))
+ARCHLIBSUBDIR	= $(if $(filter 32,$(BITS)),$(ARCHLIBSUBDIR32),$(ARCHLIBSUBDIR64))
 
 ETCDIR =		/etc
 USRDIR =		/usr
@@ -688,7 +688,7 @@ GCC_GNU_TRIPLET  = $(GNU_TRIPLET)
 GCC_BINDIR =	$(GCC_ROOT)/bin
 GCC_LIBDIR.32 =	$(GCC_ROOT)/lib
 GCC_LIBDIR.64 =	$(GCC_ROOT)/lib/$(MACH64)
-GCC_LIBDIR =	$(GCC_LIBDIR.$(BITS))
+GCC_LIBDIR =	$(or $(GCC_LIBDIR.$(BITS)),$(GCC_LIBDIR.64))
 GCC_INCDIR =	$(GCC_ROOT)/include
 GCC_LIBGCCDIR =	$(GCC_ROOT)/lib/gcc
 GCC_INCGXXDIR =	$(GCC_ROOT)/include/c++/$(GCC_FULL_VERSION)
@@ -742,10 +742,10 @@ PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
 PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
 
-CC =		$(CC.$(COMPILER).$(BITS))
-CXX =		$(CXX.$(COMPILER).$(BITS))
-F77 =		$(F77.$(COMPILER).$(BITS))
-FC =		$(FC.$(COMPILER).$(BITS))
+CC =		$(or $(CC.$(COMPILER).$(BITS)),$(CC.$(COMPILER).64))
+CXX =		$(or $(CXX.$(COMPILER).$(BITS)),$(CXX.$(COMPILER).64))
+F77 =		$(or $(F77.$(COMPILER).$(BITS)),$(F77.$(COMPILER).64))
+FC =		$(or $(FC.$(COMPILER).$(BITS)),$(FC.$(COMPILER).64))
 
 #
 # We will start to obsolete major Ruby versions according the following table:
@@ -864,8 +864,8 @@ QT5_BINDIR.32 = $(QT5_BASEDIR)/bin
 QT5_LIBDIR.32 = $(QT5_BASEDIR)/lib
 QT5_BINDIR.64 = $(QT5_BASEDIR)/bin/$(MACH64)
 QT5_LIBDIR.64 = $(QT5_BASEDIR)/lib/$(MACH64)
-QT5_BINDIR = $(QT5_BINDIR.$(BITS))
-QT5_LIBDIR = $(QT5_LIBDIR.$(BITS))
+QT5_BINDIR = $(or $(QT5_BINDIR.$(BITS)),$(QT5_BINDIR.64))
+QT5_LIBDIR = $(or $(QT5_LIBDIR.$(BITS)),$(QT5_LIBDIR.64))
 QT5_INCDIR = $(QT5_BASEDIR)/include
 QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
 
@@ -986,17 +986,17 @@ REQUIRED_PACKAGES_SUBST+= PG_SERVICE_PKG
 PG_HOME =       $(USRDIR)/$(PG_IMPLEM)/$(PG_VERSION)
 PG_BINDIR.32 =  $(PG_HOME)/bin/$(MACH32)
 PG_BINDIR.64 =  $(PG_HOME)/bin
-PG_BINDIR =     $(PG_BINDIR.$(BITS))
+PG_BINDIR =     $(or $(PG_BINDIR.$(BITS)),$(PG_BINDIR.64))
 PG_INCDIR =     $(PG_HOME)/include
 PG_MANDIR =     $(PG_HOME)/man
 PG_SHAREDIR =   $(PG_HOME)/share
 PG_DOCDIR =     $(PG_HOME)/doc
 PG_LIBDIR.32 =  $(PG_HOME)/lib
 PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
-PG_LIBDIR =     $(PG_LIBDIR.$(BITS))
+PG_LIBDIR =     $(or $(PG_LIBDIR.$(BITS)),$(PG_LIBDIR.64))
 PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
 PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
-PG_CONFIG =     $(PG_CONFIG.$(BITS))
+PG_CONFIG =     $(or $(PG_CONFIG.$(BITS)),$(PG_CONFIG.64))
 PATH.prepend +=	$(PG_BINDIR)
 
 PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
@@ -1049,10 +1049,10 @@ MYSQL_SHAREDIR =   $(MYSQL_HOME)/share
 MYSQL_DOCDIR =     $(MYSQL_HOME)/doc
 MYSQL_LIBDIR.32 =  $(MYSQL_HOME)/lib
 MYSQL_LIBDIR.64 =  $(MYSQL_HOME)/lib/$(MACH64)
-MYSQL_LIBDIR =     $(MYSQL_LIBDIR.$(BITS))
+MYSQL_LIBDIR =     $(or $(MYSQL_LIBDIR.$(BITS)),$(MYSQL_LIBDIR.64))
 MYSQL_CONFIG.32 =  $(MYSQL_BINDIR.32)/mysql_config
 MYSQL_CONFIG.64 =  $(MYSQL_BINDIR.64)/mysql_config
-MYSQL_CONFIG =     $(MYSQL_CONFIG.$(BITS))
+MYSQL_CONFIG =     $(or $(MYSQL_CONFIG.$(BITS)),$(MYSQL_CONFIG.64))
 MYSQL_PKG_CONFIG_PATH =	$(MYSQL_LIBDIR)/pkgconfig
 PATH.prepend +=		$(MYSQL_BINDIR)
 PKG_CONFIG_PATH.prepend +=	$(MYSQL_PKG_CONFIG_PATH)
@@ -1176,13 +1176,13 @@ PATH.prepend+=$(OPENSSL_BINDIR)
 OPENSSL_PREFIX= $(USRDIR)/openssl/$(OPENSSL_VERSION)
 OPENSSL_BINDIR.64= $(OPENSSL_PREFIX)/bin
 OPENSSL_BINDIR.32= $(OPENSSL_PREFIX)/bin/$(MACH32)
-OPENSSL_BINDIR= $(OPENSSL_BINDIR.$(BITS))
+OPENSSL_BINDIR= $(or $(OPENSSL_BINDIR.$(BITS)),$(OPENSSL_BINDIR.64))
 OPENSSL_LIBDIR.64= $(OPENSSL_PREFIX)/lib/$(MACH64)
 OPENSSL_LIBDIR.32= $(OPENSSL_PREFIX)/lib
-OPENSSL_LIBDIR= $(OPENSSL_LIBDIR.$(BITS))
+OPENSSL_LIBDIR= $(or $(OPENSSL_LIBDIR.$(BITS)),$(OPENSSL_LIBDIR.64))
 OPENSSL_PKG_CONFIG_PATH.32= $(OPENSSL_PREFIX)/lib/pkgconfig
 OPENSSL_PKG_CONFIG_PATH.64= $(OPENSSL_PREFIX)/lib/$(MACH64)/pkgconfig
-OPENSSL_PKG_CONFIG_PATH= $(OPENSSL_PKG_CONFIG_PATH.$(BITS))
+OPENSSL_PKG_CONFIG_PATH= $(or $(OPENSSL_PKG_CONFIG_PATH.$(BITS)),$(OPENSSL_PKG_CONFIG_PATH.64))
 OPENSSL_INCDIR=$(OPENSSL_PREFIX)/include
 OPENSSL_ETCDIR=$(ETCDIR)/openssl/$(OPENSSL_VERSION)
 
@@ -1214,7 +1214,7 @@ COMPONENT_TEST_ENV += CARGO_HOME="$(CARGO_HOME)"
 # Pkg-config paths
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = $(subst $(space),:,$(strip $(PKG_CONFIG_PATH.prepend))):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
+PKG_CONFIG_PATH = $(subst $(space),:,$(strip $(PKG_CONFIG_PATH.prepend))):$(or $(PKG_CONFIG_PATH.$(BITS)),$(PKG_CONFIG_PATH.64)):$(PKG_CONFIG_PATH.32)
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
@@ -1399,7 +1399,7 @@ FCFLAGS +=	$(FCFLAGS.$(COMPILER))
 ccs.ld.64 = -64
 gcc.ld.32 = -m32
 gcc.ld.64 = -m64
-LD_BITS =      $($(LINKER).ld.$(BITS))
+LD_BITS =      $(or $($(LINKER).ld.$(BITS)),$($(LINKER).ld.64))
 LDFLAGS =      $(LD_BITS)
 
 # Reduce the symbol table size, effectively conflicting with -g.  We should
@@ -1439,7 +1439,7 @@ LD_Z_ASLR =		$(ASLR_MODE)
 # Define SSP library link flag for 32-bit objects
 LD_SSP.32 = -lssp_ns
 LD_SSP.64 =
-LD_SSP = $(LD_SSP.$(BITS))
+LD_SSP = $(or $(LD_SSP.$(BITS)),$(LD_SSP.64))
 
 #
 # More Solaris linker flags that we want to be sure that everyone gets.  This
