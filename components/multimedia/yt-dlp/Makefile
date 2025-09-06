@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt_dlp
-HUMAN_VERSION =			2025.8.27
+HUMAN_VERSION =			2025.9.5
 COMPONENT_SUMMARY =		A feature-rich command-line audio/video downloader
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ed74768d2a93b29933ab14099da19497ef571637f7aa375140dd3d882b9c1854
+	sha256:9ce080f80b2258e872fe8a75f4707ea2c644e697477186e20b9a04d9a9ea37cf
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,13 +47,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) default >> $(@D)/.depend-runtime ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/brotli
-PYTHON_REQUIRED_PACKAGES += library/python/certifi
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/mutagen
-PYTHON_REQUIRED_PACKAGES += library/python/pycryptodomex
-PYTHON_REQUIRED_PACKAGES += library/python/requests
-PYTHON_REQUIRED_PACKAGES += library/python/urllib3
-PYTHON_REQUIRED_PACKAGES += library/python/websockets
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/brotli
+REQUIRED_PACKAGES.python += library/python/certifi
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/mutagen
+REQUIRED_PACKAGES.python += library/python/pycryptodomex
+REQUIRED_PACKAGES.python += library/python/requests
+REQUIRED_PACKAGES.python += library/python/urllib3
+REQUIRED_PACKAGES.python += library/python/websockets
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
