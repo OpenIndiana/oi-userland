@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yamlfix
-HUMAN_VERSION =			1.17.0
+HUMAN_VERSION =			1.18.0
 COMPONENT_SUMMARY =		A simple opionated yaml formatter that keeps your comments!
 COMPONENT_PROJECT_URL =		https://github.com/lyz-code/yamlfix
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:81d7220b62798d1dda580e1574b3d3d6926701ae8cd79588c4e0b33f2e345d85
+	sha256:ae35891e08aa830e7be7abed6ca25e020aa5998551e4d76e2dc8909bf3c35d7e
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,12 +39,12 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_PDM += test
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/click
-PYTHON_REQUIRED_PACKAGES += library/python/maison
-PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
-PYTHON_REQUIRED_PACKAGES += library/python/pydantic
-PYTHON_REQUIRED_PACKAGES += library/python/ruyaml
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/click
+REQUIRED_PACKAGES.python += library/python/maison
+REQUIRED_PACKAGES.python += library/python/pdm-backend
+REQUIRED_PACKAGES.python += library/python/pydantic
+REQUIRED_PACKAGES.python += library/python/ruyaml
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
