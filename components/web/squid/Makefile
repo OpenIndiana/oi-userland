@@ -28,14 +28,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      6.14
+COMPONENT_VERSION=      7.1
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=  https://github.com/squid-cache/$(COMPONENT_NAME)/releases/download/SQUID_6_14/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:9eafe06f58a199b918e79d33d8aa03afb9ae0c11d18974dca0b44c2669cab6dd
+COMPONENT_ARCHIVE_URL=  https://github.com/squid-cache/$(COMPONENT_NAME)/releases/download/SQUID_7_1/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:763b5a78561cedc4e47634fa42b8e6b8d46c87c949a151b4e7ac2396d2f97dea
 COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20240307.tar.gz
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= sha256:5cd2ac5c5aa718090487909d623fa20b076f0bb628a4eff96842c8fa1dd5427f
@@ -59,7 +59,7 @@ CONFIGURE_PREFIX =	/usr/squid
 CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/sbin
 
-CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6 -lsocket"
 CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/openldap"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
@@ -95,7 +95,6 @@ CONFIGURE_OPTIONS += --enable-ntlm-fail-open
 CONFIGURE_OPTIONS += --enable-referer-log
 CONFIGURE_OPTIONS += --enable-removal-policies='heap,lru'
 CONFIGURE_OPTIONS += --enable-snmp
-CONFIGURE_OPTIONS += --enable-esi
 CONFIGURE_OPTIONS += --enable-ssl
 CONFIGURE_OPTIONS += --enable-ssl-crtd
 #CONFIGURE_OPTIONS += --enable-devpoll
@@ -126,7 +125,7 @@ CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-cap
 CONFIGURE_OPTIONS += --without-heimdal-krb5
 CONFIGURE_OPTIONS += --without-mit-krb5
-CONFIGURE_OPTIONS += --without-gnugss
+CONFIGURE_OPTIONS += --without-gss
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += --without-gnutls
 # These are needed for Cisco integration
@@ -152,16 +151,11 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/library/security/libsasl
