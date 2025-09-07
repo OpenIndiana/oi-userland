@@ -19,24 +19,23 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Image-ExifTool
-HUMAN_VERSION =			13.30
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			13.35
 COMPONENT_SUMMARY =		Read and write meta information
 COMPONENT_CPAN_AUTHOR =		EXIFTOOL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:885afd06c4efcc60d1df703cc88ba7ddc3bb6fed854cfbaa9e6cd72adfbe8da9
+	sha256:03ef47e8b38add4801082fd6b399b9d7d9d77eaea03f7bca175537931563cd16
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/archive-zip
-PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-lzma
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
-PERL_REQUIRED_PACKAGES += library/perl-5/posix-strptime
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES.perl += library/perl-5/archive-zip
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-lzma
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress-brotli
+REQUIRED_PACKAGES.perl += library/perl-5/posix-strptime
+REQUIRED_PACKAGES.perl += runtime/perl
