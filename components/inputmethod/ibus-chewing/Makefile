@@ -16,13 +16,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-chewing
-COMPONENT_VERSION=        2.1.4
+COMPONENT_VERSION=        2.1.5
 COMPONENT_SUMMARY=        ibus-chewing - The Chewing engine for IBus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-Source
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:dfa73f177c059280609174d7bdac9a90fe87a46a0d3d1b2b4ab8500f3013a29e
+COMPONENT_ARCHIVE_HASH=   sha256:b6bd6a29a84fd0103ed202067651a1abc795846371563e8fe1445cbffac477d8
 COMPONENT_ARCHIVE_URL=    https://github.com/chewing/$(COMPONENT_NAME)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-
 COMPONENT_FMRI=           system/input-method/ibus/chewing
 COMPONENT_CLASSIFICATION= System/Localizations
 COMPONENT_LICENSE=        GPL v2
