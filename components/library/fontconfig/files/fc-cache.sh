@@ -1,6 +1,6 @@
-#!/bin/ksh
+#!/usr/bin/ksh
 #
-# Copyright (c) 2008, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2025, Oracle and/or its affiliates.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -29,28 +29,9 @@ PATH=/usr/bin:/usr/sbin
 
 . /lib/svc/share/smf_include.sh
 
-USAGE="Usage: $0 <method>"
-
-if [ $# -ne 1 ] ; then
-    echo $USAGE
-    exit 2
+if ! is_self_assembly_boot; then
+	exit $SMF_EXIT_OK
 fi
-
-METHOD=$1
-
-case $METHOD in
-    start)
-	# Continue with rest of script
-	;;
-    -*)
-	echo $USAGE
-	exit 2
-	;;
-    *)
-	echo "Invalid method $METHOD"
-	exit 2
-	;;
-esac
 
 getprop() {
     PROPVAL=""
@@ -75,7 +56,29 @@ if [ "$PROPVAL" = "true" ] ; then
     POSTCMD="svccfg -s application/font/fc-cache setprop options/force_rebuild=false"
 fi
 
-/usr/bin/fc-cache $ARGS
+case "$(uname -p)" in
+    sparc)	ARCH32="sparcv7" ARCH64="sparcv9" ;;
+    i386)	ARCH32="i86" ARCH64="amd64" ;;
+    *)		echo "Unknown architecture $(uname -p)"
+    		exit $SMF_EXIT_ERR_FATAL ;;
+esac
+
+# Clean out obsolete cache-file versions - current version is *.cache-9
+/usr/bin/find /var/cache/fontconfig -name '*.cache-[2-8]' -exec /bin/rm \{\} \+
+
+# Run 32-bit & 64-bit cache builds in parallel
+/usr/bin/${ARCH32}/fc-cache $ARGS &
+pid32=$!
+
+/usr/bin/fc-cache $ARGS &
+pid64=$!
+
+wait $pid32
+if [ $? -ne 0 ] ; then
+    RETVAL=$SMF_EXIT_MON_DEGRADE
+fi
+
+wait $pid64
 if [ $? -ne 0 ] ; then
     RETVAL=$SMF_EXIT_MON_DEGRADE
 fi
