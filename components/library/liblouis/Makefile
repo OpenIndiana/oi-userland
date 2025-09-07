@@ -19,17 +19,16 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
-COMPONENT_VERSION= 3.34.0
+COMPONENT_VERSION= 3.35.0
 COMPONENT_SUMMARY= The Liblouis software suite provides an open-source braille translator, back-translator and formatter for a large number of languages and braille codes
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4c3f334973376fcced38c14e178d57329cbfd3f0df904826e3a4590221754e4b
+COMPONENT_ARCHIVE_HASH=	sha256:1bb4308d94d31e9650b05cb196240499df83bf1f5a97faa3a1fd28b8aa3b515f
 COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://liblouis.io/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
-COMPONENT_LICENSE_FILE = liblouis.license
 
 include $(WS_MAKE_RULES)/common.mk
 
