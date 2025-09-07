@@ -1,0 +1,17 @@
+illumos lacks support for Type of Service in ip.h
+We need to add missing defines
+
+--- ngtcp2-1.15.1/examples/shared.cc.orig	2025-08-31 10:32:32.431072168 +0200
++++ ngtcp2-1.15.1/examples/shared.cc	2025-09-07 18:30:00.110096007 +0200
+@@ -54,6 +54,11 @@
+ 
+ namespace ngtcp2 {
+ 
++#ifdef __illumos__
++    #define	IPTOS_ECN_MASK		0x03
++    #define	IPTOS_ECN(x)		((x) & IPTOS_ECN_MASK)
++#endif
++
+ uint8_t msghdr_get_ecn(msghdr *msg, int family) {
+   switch (family) {
+   case AF_INET:
