@@ -16,17 +16,17 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-table-chinese
-COMPONENT_VERSION=        1.8.13
+COMPONENT_VERSION=        1.8.14
 COMPONENT_SUMMARY=        ibus-table-chinese - Chinese tables for IBus-Table
+COMPONENT_PROJECT_URL=    https://github.com/mike-fabian/ibus-table-chinese
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:447d12d257b12f31d479260ec34936965efaba64887ddc9ea05910a8480f6963
+COMPONENT_ARCHIVE_HASH=   sha256:6c2b0071d2d24494476e80c52a0d7979efac739797f63ffeaf5338254fb92572
 COMPONENT_ARCHIVE_URL=    https://github.com/mike-fabian/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/ibus/table/chinese
 COMPONENT_CLASSIFICATION= System/Localizations
 COMPONENT_LICENSE=        GPLv3
 COMPONENT_LICENSE_FILE=   COPYING
-COMPONENT_PROJECT_URL=    https://github.com/mike-fabian/ibus-table-chinese
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
