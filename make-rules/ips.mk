@@ -330,7 +330,8 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
 			-e '/\.la$$/d' \
-			-e 's/$(subst .,\.,$(GNU_TRIPLET))/$$(GNU_TRIPLET)/g' | \
+			-e 's/$(subst .,\.,$(GNU_TRIPLET))/$$(GNU_TRIPLET)/g' \
+			$(GENERATE_EXTRA_SED) | \
 		$(PKGFMT) -u | \
 		uniq | \
 		$(PKGFMT) | \
