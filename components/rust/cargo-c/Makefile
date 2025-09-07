@@ -18,10 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cargo-c
-HUMAN_VERSION =			0.10.14+cargo-0.89.0
+HUMAN_VERSION =			0.10.15+cargo-0.90.0
 COMPONENT_SUMMARY =		Helper program to build and install c-like libraries
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fe82742019f0e5c1a9f8549b0f41b20f1bc834f5ed0626c47019f15be566b321
+	sha256:32a05aa20690ce4b2ce5f8cf409ba112f7f11161f017e8430f549af3890dc948
 COMPONENT_FMRI =		developer/cargo-c
 COMPONENT_CLASSIFICATION =	Development/Other Languages
 COMPONENT_LICENSE =		MIT
