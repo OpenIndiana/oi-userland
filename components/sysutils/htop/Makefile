@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		htop
 COMPONENT_VERSION=	3.4.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	htop - an interactive process viewer for Unix
 COMPONENT_PROJECT_URL=	https://htop.dev/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
