@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mock-Config
-HUMAN_VERSION =			0.04
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.05
 COMPONENT_SUMMARY =		temporarily set Config or XSConfig values
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:affa28b42a84a087c93ee70769104d80a34ca2e1dc496230cc4caca66f1ea502
+	sha256:20017096c6464fbd59ae7549fbc663bfb0c9014d7ac3a457a81a7e408268f62c
 COMPONENT_LICENSE =		Artistic-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
