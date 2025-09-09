@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			27.0.2
+HUMAN_VERSION =			27.1.0
 COMPONENT_SUMMARY =		Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b398dd713b18de89730447347e96a0240225e154db56e35b6bb8447ffdb07798
+	sha256:ac0765e3d44455adb6ddbf4417dcce460fc40a05978c08efdf2948072f6db540
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -62,12 +62,12 @@ COMPONENT_POST_TEST_ACTION +=	$(RM) -r $(@D)/zmq ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zmq-RENAMED $(@D)/zmq ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/scikit-build-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/c++/zeromq
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cython
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/scikit-build-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
