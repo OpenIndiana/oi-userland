@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Filter
-HUMAN_VERSION =			1.64
-COMPONENT_REVISION =		5
+HUMAN_VERSION =			1.65
 COMPONENT_SUMMARY =		Source Filters
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:13e7fb7e1d326598e3660103cf1974bee9f690ac5b43b339f2c022f2b5fcef2c
+	sha256:cb70da7ae5e19138a0b22fb3b6387c3ae697a3cd3f3f6ecde425152e9124d1e6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
