@@ -25,19 +25,18 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.25.5
+COMPONENT_VERSION=	0.25.6
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:04d0a86450cdb1be018f26af6699857171a188ac6d5b8c90786a60854e1198e5
+COMPONENT_ARCHIVE_HASH= sha256:304b4b25e4ad87fe838f7c4eedce36bbe8ad7b0042e866a084ebcec5e3e3b54b
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE= COPYING
@@ -55,8 +54,6 @@ COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
 
 CONFIGURE_OPTIONS    += --enable-doc
 CONFIGURE_OPTIONS    += --disable-doc-html
-CONFIGURE_OPTIONS    += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS    += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS    += --with-module-path=/usr/lib/security/$(MACH64)
 CONFIGURE_OPTIONS    += --with-trust-paths=/etc/certs/ca-certificates.crt
 
