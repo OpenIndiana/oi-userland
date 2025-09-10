@@ -1,0 +1,31 @@
+This patch add cidfmap for japanese fonts (Enh 30673122). It fixes regression
+from Solaris 10 for Japanese documents.
+
+diff --git a/Resource/Init/cidfmap b/Resource/Init/cidfmap
+index bed221a..6587972 100644
+--- a/Resource/Init/cidfmap
++++ b/Resource/Init/cidfmap
+@@ -46,3 +46,23 @@ %  (Century Gothic) << /FileType /TrueTy
+ %
+ %  Note the use of a string to cope with the name containing a space.
+ %
++
++%
++% Mapping for Japanese Language Fonts
++%
++
++/HG-MinchoL <<
++       /FileType /TrueType
++       /Path (/usr/share/fonts/TrueType/ipafont/ipam.ttf)
++       /SubfontID 0
++       /CSI [(Japan1) 1] >> ;
++/Ryumin-Light           /HG-MinchoL     ;
++/Adobe-Japan1           /HG-MinchoL     ;
++/Adobe-Japan2           /HG-MinchoL     ;
++
++/HG-GothicB <<
++       /FileType /TrueType
++       /Path (/usr/share/fonts/TrueType/ipafont/ipag.ttf)
++       /SubfontID 0
++       /CSI [(Japan1) 1] >> ;
++/GothicBBB-Medium       /HG-GothicB     ;
