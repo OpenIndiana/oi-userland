@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.14.1
-COMPONENT_REVISION =		11
+HUMAN_VERSION =			4.15.0
+COMPONENT_REVISION =		12
 COMPONENT_SUMMARY =		PyMongo - the Official MongoDB Python driver
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d78f5b0b569f4320e2485599d89b088aa6d750aad17cc98fd81a323b544ed3d0
+	sha256:430a6dc088355209e5755f77d85ddea2f1da0bb6123185952a573e7cf25a250a
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,11 +45,11 @@ TEST_REQUIREMENTS += requirements/test.txt
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/dnspython
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/dnspython
+REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

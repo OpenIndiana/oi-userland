@@ -5,7 +5,7 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 8980 items / 1431 deselected / 7549 selected
+collecting ... collected 9006 items / 1463 deselected / 7543 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
@@ -1417,9 +1417,13 @@ test/asynchronous/test_csot.py::TestCsotSessionsOverrideTimeoutMS::test_timeoutM
 test/asynchronous/test_csot.py::TestCsotSessionsOverrideTimeoutMS::test_timeoutMS_applied_to_withTransaction SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_apply_maxAwaitTimeMS_if_less_than_remaining_timeout SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_apply_remaining_timeoutMS_if_less_than_maxAwaitTimeMS SKIPPED
-test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
-test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_if_timeoutMode_is_cursor_lifetime SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_aggregate_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_aggregate_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_find_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_find_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_watch_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_error_on_watch_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_applied_to_find SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_is_refreshed_for_getMore_-_failure SKIPPED
 test/asynchronous/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_is_refreshed_for_getMore_if_maxAwaitTimeMS_is_not_set SKIPPED
@@ -2983,6 +2987,7 @@ test/asynchronous/test_srv_polling.py::TestSrvPolling::test_11_all_dns_selected 
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_12_new_dns_randomly_selected PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_addition PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_dns_failures PASSED
+test/asynchronous/test_srv_polling.py::TestSrvPolling::test_dns_failures_logging PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_dns_record_lookup_empty PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_does_not_flipflop PASSED
 test/asynchronous/test_srv_polling.py::TestSrvPolling::test_import_dns_resolver PASSED
@@ -3306,10 +3311,6 @@ test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailEntityFi
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailEntitySessionClientUndefined::test_foo SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailIgnoreResultAndError::test_operation_errors_are_not_ignored_if_ignoreResultAndError_is_false SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailIgnoreResultAndErrorMalformed::test_malformed_operation_fails_if_ignoreResultAndError_is_true SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingAwsKmsCredentials::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingAzureKmsCredentials::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingGcpKmsCredentials::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersNoKms::test_ SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailOperationFailure::test_Unsupported_command SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailOperationFailure::test_Unsupported_query_operator SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidFailOperationUnsupported::test_Unsupported_operation SKIPPED
@@ -3341,10 +3342,6 @@ test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassExpected
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientIgnoreExtraEvents::test_ignoreExtraEvents_defaults_to_false_if_unset SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientTopologyDescriptionChangedEvent::test_can_assert_on_values_of_newDescription_and_previousDescription_fields SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassIgnoreResultAndError::test_operation_errors_are_ignored_if_ignoreResultAndError_is_true SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersExplicitKmsCredentials::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersMixedKmsCredentialFields::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersPlaceholderKmsCredentials::test_ SKIPPED
-test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersUnconfiguredKms::test_ SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_not_observed_by_default SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_not_observed_with_observeSensitiveCommands=false SKIPPED
 test/asynchronous/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_observed_with_observeSensitiveCommands=true SKIPPED
@@ -5109,9 +5106,13 @@ test/test_csot.py::TestCsotSessionsOverrideTimeoutMS::test_timeoutMS_applied_to_
 test/test_csot.py::TestCsotSessionsOverrideTimeoutMS::test_timeoutMS_applied_to_withTransaction SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_apply_maxAwaitTimeMS_if_less_than_remaining_timeout SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_apply_remaining_timeoutMS_if_less_than_maxAwaitTimeMS SKIPPED
-test/test_csot.py::TestCsotTailableAwaitData::test_error_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
-test/test_csot.py::TestCsotTailableAwaitData::test_error_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_error_if_timeoutMode_is_cursor_lifetime SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_aggregate_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_aggregate_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_find_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_find_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_watch_if_maxAwaitTimeMS_is_equal_to_timeoutMS SKIPPED
+test/test_csot.py::TestCsotTailableAwaitData::test_error_on_watch_if_maxAwaitTimeMS_is_greater_than_timeoutMS SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_applied_to_find SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_is_refreshed_for_getMore_-_failure SKIPPED
 test/test_csot.py::TestCsotTailableAwaitData::test_timeoutMS_is_refreshed_for_getMore_if_maxAwaitTimeMS_is_not_set SKIPPED
@@ -6780,6 +6781,7 @@ test/test_srv_polling.py::TestSrvPolling::test_11_all_dns_selected PASSED
 test/test_srv_polling.py::TestSrvPolling::test_12_new_dns_randomly_selected PASSED
 test/test_srv_polling.py::TestSrvPolling::test_addition PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_failures PASSED
+test/test_srv_polling.py::TestSrvPolling::test_dns_failures_logging PASSED
 test/test_srv_polling.py::TestSrvPolling::test_dns_record_lookup_empty PASSED
 test/test_srv_polling.py::TestSrvPolling::test_does_not_flipflop PASSED
 test/test_srv_polling.py::TestSrvPolling::test_import_dns_resolver PASSED
@@ -7186,10 +7188,6 @@ test/test_unified_format.py::TestUnifiedTestFormatValidFailEntityFindCursorMalfo
 test/test_unified_format.py::TestUnifiedTestFormatValidFailEntitySessionClientUndefined::test_foo SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidFailIgnoreResultAndError::test_operation_errors_are_not_ignored_if_ignoreResultAndError_is_false SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidFailIgnoreResultAndErrorMalformed::test_malformed_operation_fails_if_ignoreResultAndError_is_true SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingAwsKmsCredentials::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingAzureKmsCredentials::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersMissingGcpKmsCredentials::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidFailKmsProvidersNoKms::test_ SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidFailOperationFailure::test_Unsupported_command SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidFailOperationFailure::test_Unsupported_query_operator SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidFailOperationUnsupported::test_Unsupported_operation SKIPPED
@@ -7221,10 +7219,6 @@ test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClie
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientIgnoreExtraEvents::test_ignoreExtraEvents_defaults_to_false_if_unset SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassExpectedEventsForClientTopologyDescriptionChangedEvent::test_can_assert_on_values_of_newDescription_and_previousDescription_fields SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassIgnoreResultAndError::test_operation_errors_are_ignored_if_ignoreResultAndError_is_true SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersExplicitKmsCredentials::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersMixedKmsCredentialFields::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersPlaceholderKmsCredentials::test_ SKIPPED
-test/test_unified_format.py::TestUnifiedTestFormatValidPassKmsProvidersUnconfiguredKms::test_ SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_not_observed_by_default SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_not_observed_with_observeSensitiveCommands=false SKIPPED
 test/test_unified_format.py::TestUnifiedTestFormatValidPassObserveSensitiveCommands::test_getnonce_is_observed_with_observeSensitiveCommands=true SKIPPED
@@ -7571,4 +7565,4 @@ test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1318 passed, 6233 skipped, 1431 deselected, 2 warnings ========
+======== 1320 passed, 6225 skipped, 1463 deselected, 2 warnings ========
