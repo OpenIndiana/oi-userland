@@ -11,39 +11,41 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyNaCl
+#   $WS_TOOLS/python-integrate-project -d python/PyNaCl pynacl
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyNaCl
-HUMAN_VERSION =			1.5.0
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		PyNaCl - Python binding to the Networking and Cryptography (NaCl) library
+COMPONENT_NAME =		pynacl
+HUMAN_VERSION =			1.6.0
+COMPONENT_SUMMARY =		Python binding to the Networking and Cryptography (NaCl) library
 COMPONENT_PROJECT_URL =		https://github.com/pyca/pynacl/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a7/22/27582568be639dfe22ddb3902225f91f2f17ceff88ce80e4db396c8986da/PyNaCl-1.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8ac7448f09ab85811607bdd21ec2464495ac8b7c66d146bf545b0f08fb9220ba
+	sha256:cb36deafe6e2bce3b286e5d1f3e1c246e0ccdb8808ddb4550bb2792f2df298f2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Use system libsodium
 PYTHON_ENV += SODIUM_INSTALL=system
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += tests
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
