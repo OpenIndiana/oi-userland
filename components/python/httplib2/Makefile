@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httplib2
-HUMAN_VERSION =			0.30.0
+HUMAN_VERSION =			0.30.2
 COMPONENT_SUMMARY =		A comprehensive HTTP client library.
 COMPONENT_PROJECT_URL =		https://github.com/httplib2/httplib2
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d5b23c11fcf8e57e00ff91b7008656af0f6242c8886fd97065c97509e4e548c5
+	sha256:050bde6a332824b05a3deef5238f2b0372f71af46f8ca2190c2cb1f66aa376cd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,10 +36,10 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += requirements-test.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyparsing
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pyparsing
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/pysocks
