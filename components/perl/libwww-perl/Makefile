@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libwww-perl
-HUMAN_VERSION =			6.79
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			6.80
 COMPONENT_SUMMARY =		The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f2526e9a33ac96715cc47fbf5b4bec1a8c51720330b24e3974c2c5ae07a9c5e7
+	sha256:5ba3fc5a00836e61cb428bcd91bf69d8d74eaee6d78e44c3a414f78076af0a98
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,29 +41,29 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_TEST_BOOTSTRAP = yes
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-listing
-PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
-PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
-PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
-PERL_REQUIRED_PACKAGES += library/perl-5/http-cookies
-PERL_REQUIRED_PACKAGES += library/perl-5/http-date
-PERL_REQUIRED_PACKAGES += library/perl-5/http-message
-PERL_REQUIRED_PACKAGES += library/perl-5/http-negotiate
-PERL_REQUIRED_PACKAGES += library/perl-5/libnet
-PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/module-load
-PERL_REQUIRED_PACKAGES += library/perl-5/net-http
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/encode-locale
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-listing
+REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
+REQUIRED_PACKAGES.perl += library/perl-5/html-parser
+REQUIRED_PACKAGES.perl += library/perl-5/http-cookies
+REQUIRED_PACKAGES.perl += library/perl-5/http-date
+REQUIRED_PACKAGES.perl += library/perl-5/http-message
+REQUIRED_PACKAGES.perl += library/perl-5/http-negotiate
+REQUIRED_PACKAGES.perl += library/perl-5/libnet
+REQUIRED_PACKAGES.perl += library/perl-5/lwp-mediatypes
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/module-load
+REQUIRED_PACKAGES.perl += library/perl-5/net-http
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += library/perl-5/www-robotrules
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/data-dump
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
