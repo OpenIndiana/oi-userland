@@ -15,20 +15,18 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
-ENV=/usr/bin/env
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	4.0.2
+COMPONENT_VERSION=	4.0.6
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6e1ecdb164285fc057b2f35acbdc20815c1623099e7bb47bbfc011120adf7e83
+COMPONENT_ARCHIVE_HASH=	sha256:125d9ce0dd8a3704dc0782925df34f0208bffc42af5f34914449d14c34b5dae1
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -42,10 +40,6 @@ CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
 CMAKE_OPTIONS += -DSYS_PCRE2_INCLUDE_DIR=/usr/include/pcre
 CMAKE_OPTIONS += -DFISH_USE_SYSTEM_PCRE2=ON
 CMAKE_OPTIONS += -DWITH_GETTEXT=ON
-# sphinx not functional.
-# Extension error:
-# Could not import extension sphinx.builders.latex (exception: No module named 'roman')
-CMAKE_OPTIONS += -DBUILD_DOCS=OFF
 
 # Need to compile dynamic rust crates. See https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
