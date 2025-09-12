@@ -19,8 +19,8 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		slim_source
-COMPONENT_SRC=		$(COMPONENT_NAME)
+COMPONENT_NAME=	slim_source
+COMPONENT_SRC=	$(COMPONENT_NAME)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
