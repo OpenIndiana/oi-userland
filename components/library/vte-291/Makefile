@@ -22,10 +22,10 @@ include ../../../make-rules/shared-macros.mk
 ABIVER = 2.91
 
 COMPONENT_NAME=			vte
-HUMAN_VERSION=			0.80.3
+HUMAN_VERSION=			0.82.0
 COMPONENT_SUMMARY=		Virtual terminal widget for GTK applications
 COMPONENT_ARCHIVE_HASH= \
-	sha256:2e596fd3fbeabb71531662224e71f6a2c37f684426136d62854627276ef4f699
+	sha256:b0718db3254730701b43bf5e113cbf8cdb2c14715d32ee1e8a707dc6eb70535f
 COMPONENT_FMRI=			library/desktop/vte-291
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		CC-BY-4.0 AND GPL-3.0-only AND LGPL-3.0-only AND MIT
@@ -55,7 +55,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOETCDIR)/profile.d ;
 
 # Replace ABI version number by ABIVER
 ABIVER_RE = $(subst .,\.,$(ABIVER))
-GENERATE_EXTRA_CMD += | $(GSED) -e 's/\([Vv]te-\)$(ABIVER_RE)/\1$$(ABIVER)/g'
+GENERATE_EXTRA_SED += -e 's/\([Vv]te-\)$(ABIVER_RE)/\1$$(ABIVER)/g'
 
 # ABIVER is needed for manifest processing
 PKG_MACROS += ABIVER=$(ABIVER)
