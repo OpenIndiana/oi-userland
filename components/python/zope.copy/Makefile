@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.copy
+#   $WS_TOOLS/python-integrate-project -d python/zope.copy zope_copy
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.copy
-HUMAN_VERSION =			5.0
+COMPONENT_NAME =		zope_copy
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		Pluggable object copying mechanism
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.copy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:395e2a43480faa632ce05ea71c4a272ffd2b7c14aabe1cc97f19a8ca26d155d2
+	sha256:9a1d98c9814fe275478832811854763e2f84a8e0deaf980a2464aa5cb5e0b5ac
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,10 +44,11 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zodbpickle
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zodbpickle
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
