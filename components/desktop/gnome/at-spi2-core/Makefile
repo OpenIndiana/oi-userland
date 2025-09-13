@@ -22,9 +22,9 @@ include ../../../../make-rules/shared-macros.mk
 # Odd minor versions are unstable.
 
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.56.5
+HUMAN_VERSION=			2.58.0
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:0d5bbf324c1d9d89cef4e80879b149c12aa2f4ab9614348b9e6c172261f0fcdd
+COMPONENT_ARCHIVE_HASH=		sha256:dfdd3300da2783a21969ffade2889817fb7c1906a4ef92497eba65969b3dab5a
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -36,11 +36,13 @@ COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# We do not need the systemd support (obviously)
+CONFIGURE_OPTIONS += -Duse_systemd=false
 # There is no 32-bit introspection
 CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 
-# We do not need the systemd service file (obviously)
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRLIBDIR)/systemd/user/at-spi-dbus-bus.service ;
+# to get declaration of timersub()
+CPPFLAGS += -D__EXTENSIONS__
 
 # Drop etc files installed for 32-bit build
 COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
@@ -48,6 +50,13 @@ COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
 COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRINCDIR) ;
 # Drop share files installed for 32-bit build
 COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREDIR) ;
+# Drop Python support installed for 32-bit build
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTO_DIR)/$(PYTHON_DIR) ;
+
+# Move all modules from default site-packages directory to vendor-packages
+# directory where we place modules shipped by the OS but not included in the
+# core Python distribution.
+COMPONENT_POST_INSTALL_ACTION.64 += $(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
 
 # Testing needs dbus up and running
 TEST_REQUIRED_PACKAGES += system/library/dbus/dbus-x11
