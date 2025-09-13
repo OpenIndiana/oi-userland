@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.exceptions
+#   $WS_TOOLS/python-integrate-project -d python/zope.exceptions zope_exceptions
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.exceptions
-HUMAN_VERSION =			5.2
+COMPONENT_NAME =		zope_exceptions
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		Zope Exceptions
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.exceptions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4cba3248678773bbac6faa3ae3537df09a843881b89fb9e81aca282f3b92b2f3
+	sha256:0ac0e078ecdd8acb5da231c39fc6454bdf3249216fd1c06d0578bf8ea6bf3299
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,9 +44,10 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx

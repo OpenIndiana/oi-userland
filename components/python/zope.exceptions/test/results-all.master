@@ -1,5 +1,7 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
+$(PYTHON_DIR)/vendor-packages/zope/testrunner/__init__.py:20: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources  # noqa: F401 unused import, see GitHub issue #194
 Running tests at level 1
 Running zope.testrunner.layer.UnitTests tests:
   Set up zope.testrunner.layer.UnitTests.
@@ -106,9 +108,9 @@ reading sources... [ 50%] hacking
 reading sources... [ 75%] index
 reading sources... [100%] narr
 
+looking for now-outdated files... none found
 $(@D)/docs/api.rst:13: ERROR: An option to autointerface is either unknown or has an invalid value: (option: "member-order"; value: 'source')
 invalid value for member-order option: source
-looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
 running tests...
