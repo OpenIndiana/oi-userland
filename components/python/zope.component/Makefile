@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_component
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			7.0
 COMPONENT_SUMMARY =		Zope Component Architecture
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:79b807f29d82576e59d82187239549d5715759ab797b60a5bd69cc36e0449c09
+	sha256:1256ca091ccd7e368ec4faaede45211c824038546d6961776223d99db79896a9
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -41,7 +41,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-TOX_POSARGS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
