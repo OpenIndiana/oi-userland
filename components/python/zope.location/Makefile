@@ -11,23 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.location
+#   $WS_TOOLS/python-integrate-project -d python/zope.location zope_location
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.location
-HUMAN_VERSION =			5.1
+COMPONENT_NAME =		zope_location
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		Zope Location
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.location/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4e01d4ef46253a8e07fd59dcbd7bb0b81819bffe5d0dc2d5843bc201afa4ad9
+	sha256:baa3e0e8eab734ff908ffd9860185c8de458025d49eae62f11ba3b16579ee6ce
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-COMPONENT_SRC =			zope_location-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -35,11 +33,12 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += library/python/zope-proxy
-PYTHON_REQUIRED_PACKAGES += library/python/zope-schema
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += library/python/zope-proxy
+REQUIRED_PACKAGES.python += library/python/zope-schema
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
