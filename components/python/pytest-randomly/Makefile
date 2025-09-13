@@ -19,22 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-randomly
-HUMAN_VERSION =			3.16.0
+HUMAN_VERSION =			4.0.1
 COMPONENT_SUMMARY =		Pytest plugin to randomly order tests and control random.seed.
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pytest-dev/pytest-randomly/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cc4b415f7eb81f8f8f0d09591ed90a76a1d8b03544d73c2d0e718c2a8f7f3bc0
+	sha256:dc0ad4fc1ff37344b37026063b9587596052215c670094439d68e0eab72cd684
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/factory-boy
 TEST_REQUIRED_PACKAGES.python += library/python/faker
