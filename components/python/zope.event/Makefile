@@ -19,23 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_event
-HUMAN_VERSION =			5.1.1
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		Very basic event publishing system
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.event
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c1ac931abf57efba71a2a313c5f4d57768a19b15c37e3f02f50eb1536be12d4e
+	sha256:0ebac894fa7c5f8b7a89141c272133d8c1de6ddc75ea4b1f327f00d1f890df92
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
