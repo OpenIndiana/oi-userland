@@ -24,9 +24,9 @@ include ../../../make-rules/shared-macros.mk
 # https://gi.readthedocs.io/en/latest/changelog.html
 
 COMPONENT_NAME =		gobject-introspection
-HUMAN_VERSION =			1.84.0
+HUMAN_VERSION =			1.86.0
 COMPONENT_SUMMARY =		Introspection for GObject libraries
-COMPONENT_ARCHIVE_HASH =	sha256:945b57da7ec262e5c266b89e091d14be800cc424277d82a02872b7d794a84779
+COMPONENT_ARCHIVE_HASH =	sha256:920d1a3fcedeadc32acff95c2e203b319039dd4b4a08dd1a2dfd283d19c0b9ae
 COMPONENT_FMRI =		library/desktop/gobject/gobject-introspection
 COMPONENT_CLASSIFICATION =	Development/GNOME and GTK+
 COMPONENT_LICENSE =		GPL-2.0-or-later AND LGPL-2.0-or-later AND MIT
@@ -52,12 +52,12 @@ PYTHON_SCRIPTS += usr/bin/g-ir-scanner
 
 # Build dependencies
 # Both mako and markdown are needed for doctool (see meson.build)
-PYTHON_REQUIRED_PACKAGES += library/python/mako
-PYTHON_REQUIRED_PACKAGES += library/python/markdown
+REQUIRED_PACKAGES.python += library/python/mako
+REQUIRED_PACKAGES.python += library/python/markdown
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
