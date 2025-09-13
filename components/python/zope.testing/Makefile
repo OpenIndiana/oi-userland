@@ -11,23 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.testing
+#   $WS_TOOLS/python-integrate-project -d python/zope.testing zope_testing
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.testing
-HUMAN_VERSION =			5.1
+COMPONENT_NAME =		zope_testing
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		Zope testing helpers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7135ebaaec3d38796e491a9adb127a3651aa0e3b20128de6c778451fa11acc47
+	sha256:7b34133a8f4a7135f3732fa5ba31d9968e9b9029881157d2a24493356d7fd54a
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-COMPONENT_SRC =			zope_testing-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -39,8 +37,9 @@ COMPONENT_TEST_ENV +=	PYTHONPATH=$(@D)/src
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
