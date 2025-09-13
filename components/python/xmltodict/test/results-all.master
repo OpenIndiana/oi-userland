@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 76 items
+collecting ... collected 98 items
 
 tests/test_dicttoxml.py::DictToXMLTestCase::test_attr_order_roundtrip PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_attrib PASSED
@@ -10,6 +10,10 @@ tests/test_dicttoxml.py::DictToXMLTestCase::test_attrib_and_cdata PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_attribute_values_with_angle_brackets_are_escaped PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_boolean_unparse PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_cdata PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_comment_roundtrip_limited PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_empty_dict_vs_empty_list_behavior PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_empty_list_filtering PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_empty_list_filtering_with_short_empty_elements_false PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_encoding PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_fulldoc PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_generator PASSED
@@ -21,11 +25,14 @@ tests/test_dicttoxml.py::DictToXMLTestCase::test_namespace_support PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_nested PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_no_root PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_no_root_nofulldoc PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_non_empty_lists_are_not_filtered PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_non_string_attr PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_non_string_text_with_attributes PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_non_string_value PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_preprocessor PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_preprocessor_skipkey PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_pretty_print PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_pretty_print_and_short_empty_elements_consistency PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_pretty_print_with_int_indent PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_rejects_attribute_name_starting_with_bang PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_rejects_attribute_name_starting_with_question PASSED
@@ -46,6 +53,10 @@ tests/test_dicttoxml.py::DictToXMLTestCase::test_root PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_semistructured PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_short_empty_elements PASSED
 tests/test_dicttoxml.py::DictToXMLTestCase::test_simple_cdata PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_unparse_with_element_comment PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_unparse_with_multiple_element_comments PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_unparse_with_multiple_top_level_comments PASSED
+tests/test_dicttoxml.py::DictToXMLTestCase::test_unparse_with_top_level_comment PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_attrib PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_attrib_and_cdata PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_comments PASSED
@@ -65,11 +76,19 @@ tests/test_xmltodict.py::XMLToDictTestCase::test_minimal PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_namespace_collapse PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_namespace_collapse_all PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_namespace_ignore PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_namespace_on_root_without_other_attrs PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_namespace_support PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_nested_semi_structured PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_postprocessor PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_postprocessor_attribute PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_postprocessor_skip PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_backwards_compatibility PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_callable PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_empty_tuple PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_nested_elements PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_single_element PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_tuple PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_selective_force_cdata_with_attributes PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_semi_structured PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_simple PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_skip_attrib PASSED
@@ -78,7 +97,10 @@ tests/test_xmltodict.py::XMLToDictTestCase::test_streaming PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_attrs PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_generator PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_interrupt PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_memory_usage PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_returns_none PASSED
+tests/test_xmltodict.py::XMLToDictTestCase::test_streaming_with_comments_and_attrs PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_string_vs_file PASSED
 tests/test_xmltodict.py::XMLToDictTestCase::test_unicode PASSED
 
-======== 76 passed ========
+======== 98 passed ========
