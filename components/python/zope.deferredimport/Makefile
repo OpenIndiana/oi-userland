@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_deferredimport
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			6.0
 COMPONENT_SUMMARY =		zope.deferredimport allows you to perform imports names that will only be resolved when used in the code.
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.deferredimport
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a4781b4382cbdb53f661a2b45a0acca8c22b5af835a49f99b548ac9c16d06ef
+	sha256:dcceab59470497adb1bf32051a12355cde4e7f629ae1d21ac16ba830bc717fed
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,10 +33,10 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += library/python/zope-proxy
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-proxy
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
