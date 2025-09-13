@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-HUMAN_VERSION=		1.56.3
+HUMAN_VERSION=		1.57.0
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_ARCHIVE_HASH=	sha256:2606252bc25cd8d24e1b7f7e92c3a272b37acd6734347b73b47a482834ba2491
+COMPONENT_ARCHIVE_HASH=	sha256:890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -31,6 +31,13 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
+
+# statvfs64_t is used
+CFLAGS += $(XPG8MODE)
 
 # Testing needs GNU tools
 PATH= $(PATH.gnu)
