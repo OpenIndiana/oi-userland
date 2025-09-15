@@ -14,16 +14,20 @@
 #   $WS_TOOLS/python-integrate-project -d python/Cython cython
 #
 
+BUILD_STYLE = pyproject
+# Force setup.py build style because with the default PEP 517 build style we
+# are unable to generate the list of required packages.
+# See also https://github.com/cython/cython/issues/6305
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cython
-HUMAN_VERSION =			3.0.12
+HUMAN_VERSION =			3.1.3
 COMPONENT_SUMMARY =		The Cython compiler for writing C extensions in the Python language.
 COMPONENT_PROJECT_URL =		https://cython.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc
+	sha256:10ee785e42328924b78f75a74f66a813cb956b4a9bc91c44816d089d5934c089
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -56,10 +60,10 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\(_cython_inline_\).\{40\}\.pyx/\1XXXXXXXX.p
 TEST_REQUIREMENTS += test-requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
