@@ -11,23 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.security
+#   $WS_TOOLS/python-integrate-project -d python/zope.security zope_security
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.security
-HUMAN_VERSION =			7.3
+COMPONENT_NAME =		zope_security
+HUMAN_VERSION =			8.0
 COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.security
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5db5f79195321f2450ba49b3e1e47ba54364f966fdfc6d39df723043fe6c5549
+	sha256:bc17238f47f4a87ce82f522ee3df47a86f3dd723c89bfbb86136058271ef2306
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
-
-COMPONENT_SRC =			zope_security-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -35,15 +33,16 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-component
-PYTHON_REQUIRED_PACKAGES += library/python/zope-i18nmessageid
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += library/python/zope-location
-PYTHON_REQUIRED_PACKAGES += library/python/zope-proxy
-PYTHON_REQUIRED_PACKAGES += library/python/zope-schema
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-component
+REQUIRED_PACKAGES.python += library/python/zope-i18nmessageid
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += library/python/zope-location
+REQUIRED_PACKAGES.python += library/python/zope-proxy
+REQUIRED_PACKAGES.python += library/python/zope-schema
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/btrees
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
