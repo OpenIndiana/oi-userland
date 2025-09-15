@@ -1,30 +1,12 @@
-$(PYTHON_DIR)/vendor-packages/coherent/licensed/setuptools.py:18: UserWarning: Avoid installing this plugin for projects that don't depend on it.
-  warnings.warn("Avoid installing this plugin for projects that don't depend on it.")
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> openssl version
-OpenSSL 1.0.2u  20 Dec 2019
-py$(PYV): commands[1]> python -m coverage run --parallel -m OpenSSL.debug
-pyOpenSSL: 25.1.0
-cryptography: 44.0.3
-cffi: 1.17.1
-cryptography's compiled against OpenSSL: OpenSSL 3.5.0 8 Apr 2025
-cryptography's linked OpenSSL: OpenSSL 3.5.0 8 Apr 2025
-Python's OpenSSL: OpenSSL 3.5.0 8 Apr 2025
-Python executable: $(@D)/.tox/py$(PYV)/bin/python
-Python version: 3.9.21 (main, Dec 13 2024, 20:24:16) 
-[GCC 13.3.0]
-Platform: sunos5
-sys.path: ['$(@D)', '$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages', '/usr/lib/python39.zip', '$(PYTHON_DIR)', '$(PYTHON_DIR)/lib-dynload', '$(PYTHON_DIR)/site-packages', '$(PYTHON_DIR)/vendor-packages']
-py$(PYV): commands[2]> python -m coverage run --parallel -m pytest -v
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
-cachedir: .tox/py$(PYV)/.pytest_cache
-OpenSSL: b'OpenSSL 3.5.0 8 Apr 2025'
-cryptography: 44.0.3
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+OpenSSL: b'OpenSSL 3.5.2 5 Aug 2025'
+cryptography: 45.0.7
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 465 items
+collecting ... collected 469 items
 
 tests/test_crypto.py::TestX509Ext::test_str PASSED
 tests/test_crypto.py::TestX509Ext::test_construction PASSED
@@ -251,6 +233,7 @@ tests/test_ssl.py::TestVersion::test_OPENSSL_VERSION_NUMBER PASSED
 tests/test_ssl.py::TestVersion::test_SSLeay_version PASSED
 tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA0] PASSED
 tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1] PASSED
+tests/test_ssl.py::TestContext::test_set_tls13_ciphersuites PASSED
 tests/test_ssl.py::TestContext::test_set_cipher_list_wrong_type PASSED
 tests/test_ssl.py::TestContext::test_set_cipher_list_no_cipher_match PASSED
 tests/test_ssl.py::TestContext::test_load_client_ca PASSED
@@ -299,7 +282,7 @@ tests/test_ssl.py::TestContext::test_load_verify_directory_capath[bytes_arg-unic
 tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-ascii_path] PASSED
 tests/test_ssl.py::TestContext::test_load_verify_directory_capath[unicode_arg-unicode_path] PASSED
 tests/test_ssl.py::TestContext::test_load_verify_locations_wrong_args PASSED
-tests/test_ssl.py::TestContext::test_fallback_default_verify_paths SKIPPEDa/cryptography manylinux wheels)
+tests/test_ssl.py::TestContext::test_fallback_default_verify_paths SKIPPED
 tests/test_ssl.py::TestContext::test_check_env_vars PASSED
 tests/test_ssl.py::TestContext::test_verify_no_fallback_if_env_vars_set PASSED
 tests/test_ssl.py::TestContext::test_set_default_verify_paths PASSED
@@ -375,8 +358,7 @@ tests/test_ssl.py::TestConnection::test_peek PASSED
 tests/test_ssl.py::TestConnection::test_connect_wrong_args PASSED
 tests/test_ssl.py::TestConnection::test_connect_refused PASSED
 tests/test_ssl.py::TestConnection::test_connect PASSED
-tests/test_ssl.py::TestConnection::test_connect_ex SKIPPED (usually
-fails: https://github.com/pyca/pyopenssl/issues/1192)
+tests/test_ssl.py::TestConnection::test_connect_ex SKIPPED (usually ...)
 tests/test_ssl.py::TestConnection::test_accept PASSED
 tests/test_ssl.py::TestConnection::test_shutdown_wrong_args PASSED
 tests/test_ssl.py::TestConnection::test_shutdown PASSED
@@ -402,6 +384,8 @@ tests/test_ssl.py::TestConnection::test_set_session_wrong_args PASSED
 tests/test_ssl.py::TestConnection::test_client_set_session PASSED
 tests/test_ssl.py::TestConnection::test_set_session_wrong_method PASSED
 tests/test_ssl.py::TestConnection::test_wantWriteError PASSED
+tests/test_ssl.py::TestConnection::test_moving_buffer_behavior[ssl_connection_setup0] PASSED
+tests/test_ssl.py::TestConnection::test_moving_buffer_behavior[ssl_connection_setup1] PASSED
 tests/test_ssl.py::TestConnection::test_get_finished_before_connect PASSED
 tests/test_ssl.py::TestConnection::test_get_peer_finished_before_connect PASSED
 tests/test_ssl.py::TestConnection::test_get_finished PASSED
@@ -421,6 +405,7 @@ tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[None] PASSED
 tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[bufsize2] PASSED
 tests/test_ssl.py::TestConnection::test_bio_read_wrong_args[bufsize] PASSED
 tests/test_ssl.py::TestConnection::test_buffer_size PASSED
+tests/test_ssl.py::TestConnection::test_connection_set_info_callback PASSED
 tests/test_ssl.py::TestConnectionGetCipherList::test_result PASSED
 tests/test_ssl.py::TestConnectionSend::test_wrong_args PASSED
 tests/test_ssl.py::TestConnectionSend::test_short_bytes PASSED
@@ -804,115 +789,41 @@ tests/test_crypto.py::TestEllipticCurveHash::test_does_not_contain
     all_curves = list(get_elliptic_curves())
 
 tests/test_ssl.py::TestContext::test_set_cipher_list[hello world:AES128-SHA1]
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:845: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:846: DeprecationWarning: str for cipher_list is no longer accepted, use bytes
     return f(self, *args, **kwargs)
 
-tests/test_ssl.py: 109 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:845: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+tests/test_ssl.py: 112 warnings
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:846: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
     return f(self, *args, **kwargs)
 
-tests/test_ssl.py: 118 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:845: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+tests/test_ssl.py: 121 warnings
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/OpenSSL/SSL.py:846: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
     return f(self, *args, **kwargs)
-
-tests/test_ssl.py::TestContext::test_set_proto_version
-  $(@D)/tests/test_ssl.py:1066: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    client_context.set_max_proto_version(0)
-
-tests/test_ssl.py::TestContext::test_set_verify_callback_reference
-tests/test_ssl.py::TestContext::test_set_verify_callback_reference
-tests/test_ssl.py::TestContext::test_set_verify_callback_reference
-tests/test_ssl.py::TestContext::test_set_verify_callback_reference
-tests/test_ssl.py::TestContext::test_set_verify_callback_reference
-  $(@D)/tests/test_ssl.py:1494: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    clientContext.set_verify(VERIFY_PEER, verify_callback)
 
 tests/test_ssl.py::TestContext::test_set_tmp_ecdh
-  $(@D)/tests/test_ssl.py:1748: DeprecationWarning: get_elliptic_curves is deprecated. You should use the APIs in cryptography instead.
+  $(@D)/tests/test_ssl.py:1850: DeprecationWarning: get_elliptic_curves is deprecated. You should use the APIs in cryptography instead.
     for curve in get_elliptic_curves():
 
 tests/test_ssl.py::TestContextConnection::test_use_privatekey[connection]
-  $(@D)/tests/test_ssl.py:2251: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+  $(@D)/tests/test_ssl.py:2353: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
     ctx_or_conn.use_privatekey(key)
 
 tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[connection]
-  $(@D)/tests/test_ssl.py:2268: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+  $(@D)/tests/test_ssl.py:2370: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
     ctx_or_conn.use_certificate(
 
 tests/test_ssl.py::TestContextConnection::test_use_privatekey_wrong_key[connection]
-  $(@D)/tests/test_ssl.py:2272: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
+  $(@D)/tests/test_ssl.py:2374: DeprecationWarning: Passing pyOpenSSL PKey objects is deprecated. You should use a cryptography private key instead.
     ctx_or_conn.use_privatekey(key)
 
 tests/test_ssl.py::TestContextConnection::test_use_certificate[connection]
-  $(@D)/tests/test_ssl.py:2283: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+  $(@D)/tests/test_ssl.py:2385: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
     ctx_or_conn.use_certificate(
 
 tests/test_ssl.py::TestContextConnection::test_use_certificate_uninitialized[connection]
-  $(@D)/tests/test_ssl.py:2309: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
+  $(@D)/tests/test_ssl.py:2411: DeprecationWarning: Passing pyOpenSSL X509 objects is deprecated. You should use a cryptography.x509.Certificate instead.
     ctx_or_conn.use_certificate(X509())
-
-tests/test_ssl.py::TestConnection::test_set_verify_callback_reference
-  $(@D)/tests/test_ssl.py:2825: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    context.set_verify(VERIFY_NONE)
-
-tests/test_ssl.py::TestMemoryBIO::test_set_empty_ca_list
-  $(@D)/tests/test_ssl.py:3961: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([])
-
-tests/test_ssl.py::TestMemoryBIO::test_set_one_ca_list
-  $(@D)/tests/test_ssl.py:3978: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([cadesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_set_multiple_ca_list
-  $(@D)/tests/test_ssl.py:3999: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list(L)
-
-tests/test_ssl.py::TestMemoryBIO::test_reset_ca_list
-  $(@D)/tests/test_ssl.py:4019: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([sedesc, cldesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_reset_ca_list
-  $(@D)/tests/test_ssl.py:4020: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([cadesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_mutated_ca_list
-  $(@D)/tests/test_ssl.py:4039: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([cadesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_one_add_client_ca
-  $(@D)/tests/test_ssl.py:4063: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(cacert)
-
-tests/test_ssl.py::TestMemoryBIO::test_multiple_add_client_ca
-  $(@D)/tests/test_ssl.py:4080: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(cacert)
-
-tests/test_ssl.py::TestMemoryBIO::test_multiple_add_client_ca
-  $(@D)/tests/test_ssl.py:4081: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(secert.to_cryptography())
-
-tests/test_ssl.py::TestMemoryBIO::test_set_and_add_client_ca
-  $(@D)/tests/test_ssl.py:4101: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([cadesc, sedesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_set_and_add_client_ca
-  $(@D)/tests/test_ssl.py:4102: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(clcert)
-
-tests/test_ssl.py::TestMemoryBIO::test_set_after_add_client_ca
-  $(@D)/tests/test_ssl.py:4121: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(clcert.to_cryptography())
-
-tests/test_ssl.py::TestMemoryBIO::test_set_after_add_client_ca
-  $(@D)/tests/test_ssl.py:4122: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.set_client_ca_list([cadesc])
-
-tests/test_ssl.py::TestMemoryBIO::test_set_after_add_client_ca
-  $(@D)/tests/test_ssl.py:4123: DeprecationWarning: Attempting to mutate a Context after a Connection was created. In the future, this will raise an exception
-    ctx.add_client_ca(secert)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 463 passed, 2 skipped, 365 warnings ========
-  py$(PYV): OK
-  congratulations :)
+======== 467 passed, 2 skipped, 350 warnings ========
