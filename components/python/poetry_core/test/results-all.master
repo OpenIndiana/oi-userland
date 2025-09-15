@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2653 items / 9 deselected / 2644 selected
+collecting ... collected 2802 items / 9 deselected / 2793 selected
 
 tests/constraints/generic/test_constraint.py::test_allows[constraint10-constraint20-True] PASSED
 tests/constraints/generic/test_constraint.py::test_allows[constraint11-constraint21-False] PASSED
@@ -189,6 +189,7 @@ tests/constraints/generic/test_constraint.py::test_union[constraint140-constrain
 tests/constraints/generic/test_constraint.py::test_union[constraint141-constraint241-expected41] PASSED
 tests/constraints/generic/test_constraint.py::test_union[constraint142-constraint242-expected42] PASSED
 tests/constraints/generic/test_constraint.py::test_union[constraint143-constraint243-expected43] PASSED
+tests/constraints/generic/test_constraint.py::test_union[constraint144-constraint244-expected44] PASSED
 tests/constraints/generic/test_constraint.py::test_union[constraint15-constraint25-expected5] PASSED
 tests/constraints/generic/test_constraint.py::test_union[constraint16-constraint26-expected6] PASSED
 tests/constraints/generic/test_constraint.py::test_union[constraint17-constraint27-expected7] PASSED
@@ -976,14 +977,21 @@ tests/masonry/builders/test_builder.py::test_builder_convert_script_files[script
 tests/masonry/builders/test_builder.py::test_builder_convert_script_files[script_reference_file-result2] PASSED
 tests/masonry/builders/test_builder.py::test_builder_find_case_sensitive_excluded_files PASSED
 tests/masonry/builders/test_builder.py::test_builder_find_excluded_files PASSED
+tests/masonry/builders/test_builder.py::test_builder_find_excluded_files_dirs PASSED
 tests/masonry/builders/test_builder.py::test_builder_find_invalid_case_sensitive_excluded_files PASSED
 tests/masonry/builders/test_builder.py::test_building_not_possible_in_non_package_mode PASSED
-tests/masonry/builders/test_builder.py::test_get_metadata_content PASSED
+tests/masonry/builders/test_builder.py::test_get_metadata_content[complete] PASSED
+tests/masonry/builders/test_builder.py::test_get_metadata_content[complete_dynamic] PASSED
+tests/masonry/builders/test_builder.py::test_get_metadata_content[complete_new] PASSED
 tests/masonry/builders/test_builder.py::test_invalid_script_files_definition PASSED
 tests/masonry/builders/test_builder.py::test_metadata_homepage_default PASSED
 tests/masonry/builders/test_builder.py::test_metadata_license_type_file[file] PASSED
+tests/masonry/builders/test_builder.py::test_metadata_license_type_file[none] PASSED
 tests/masonry/builders/test_builder.py::test_metadata_license_type_file[str] PASSED
+tests/masonry/builders/test_builder.py::test_metadata_license_type_file[str_empty] PASSED
+tests/masonry/builders/test_builder.py::test_metadata_license_type_file[str_no_spdx] PASSED
 tests/masonry/builders/test_builder.py::test_metadata_license_type_file[text] PASSED
+tests/masonry/builders/test_builder.py::test_metadata_license_type_file[text_spdx] PASSED
 tests/masonry/builders/test_builder.py::test_metadata_pretty_name PASSED
 tests/masonry/builders/test_builder.py::test_metadata_with_readme_files PASSED
 tests/masonry/builders/test_builder.py::test_metadata_with_url_dependencies PASSED
@@ -1004,9 +1012,6 @@ tests/masonry/builders/test_complete.py::test_split_source PASSED
 tests/masonry/builders/test_complete.py::test_wheel_c_extension[extended-extended] PASSED
 tests/masonry/builders/test_complete.py::test_wheel_c_extension[extended_with_no_setup-extended] PASSED
 tests/masonry/builders/test_complete.py::test_wheel_c_extension[src_extended-src/extended] PASSED
-tests/masonry/builders/test_metadata.py::test_requires_python[>=3.8-None->=3.8] PASSED
-tests/masonry/builders/test_metadata.py::test_requires_python[>=3.8-^3.8->=3.8] PASSED
-tests/masonry/builders/test_metadata.py::test_requires_python[None-^3.8->=3.8,<4.0] PASSED
 tests/masonry/builders/test_sdist.py::test_convert_dependencies PASSED
 tests/masonry/builders/test_sdist.py::test_default_with_excluded_data PASSED
 tests/masonry/builders/test_sdist.py::test_excluded_subpackage PASSED
@@ -1082,7 +1087,9 @@ tests/masonry/builders/test_wheel.py::test_wheel_excluded_data PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_excluded_nested_data PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_file_is_closed PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_include_formats PASSED
-tests/masonry/builders/test_wheel.py::test_wheel_includes_licenses_in_correct_paths PASSED
+tests/masonry/builders/test_wheel.py::test_wheel_includes_licenses_in_correct_paths[None-expected0] PASSED
+tests/masonry/builders/test_wheel.py::test_wheel_includes_licenses_in_correct_paths[license_files1-expected1] PASSED
+tests/masonry/builders/test_wheel.py::test_wheel_includes_licenses_in_correct_paths[license_files2-expected2] PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_localversionlabel PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_module PASSED
 tests/masonry/builders/test_wheel.py::test_wheel_module_src PASSED
@@ -1138,11 +1145,26 @@ tests/masonry/test_api.py::test_prepare_metadata_for_build_wheel[complete_new] P
 tests/masonry/test_api.py::test_prepare_metadata_for_build_wheel_with_bad_path_dep_succeeds PASSED
 tests/masonry/test_api.py::test_prepare_metadata_for_build_wheel_with_bad_path_dev_dep_succeeds PASSED
 tests/masonry/test_api.py::test_prepare_metadata_for_build_wheel_with_local_version PASSED
+tests/masonry/test_metadata.py::test_from_package_license PASSED
+tests/masonry/test_metadata.py::test_from_package_license_expression[Apache-2.0 OR BSD-2-Clause] PASSED
+tests/masonry/test_metadata.py::test_from_package_license_expression[LicenseRef-MyProprietaryLicense] PASSED
+tests/masonry/test_metadata.py::test_from_package_license_expression[MIT] PASSED
+tests/masonry/test_metadata.py::test_from_package_license_expression[None] PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_explicitly_no_files PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_glob_patterns PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_no_file_for_pattern PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_not_set_default_files PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_not_set_no_files PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_path PASSED
+tests/masonry/test_metadata.py::test_from_package_license_files_path_and_default_files PASSED
 tests/masonry/test_metadata.py::test_from_package_multiple_readmes PASSED
 tests/masonry/test_metadata.py::test_from_package_readme PASSED
 tests/masonry/test_metadata.py::test_from_package_readme_issues[FileNotFoundError-Readme path `MyReadme.md` does not exist.] PASSED
 tests/masonry/test_metadata.py::test_from_package_readme_issues[IsADirectoryError-Readme path `MyReadme.md` is a directory.] PASSED
 tests/masonry/test_metadata.py::test_from_package_readme_issues[PermissionError-Readme path `MyReadme.md` is not readable.] PASSED
+tests/masonry/test_metadata.py::test_from_package_requires_python[>=3.8-None->=3.8] PASSED
+tests/masonry/test_metadata.py::test_from_package_requires_python[>=3.8-^3.8->=3.8] PASSED
+tests/masonry/test_metadata.py::test_from_package_requires_python[None-^3.8->=3.8,<4.0] PASSED
 tests/masonry/utils/test_package_include.py::test_package_include_with_multiple_dirs PASSED
 tests/masonry/utils/test_package_include.py::test_package_include_with_nested_dir PASSED
 tests/masonry/utils/test_package_include.py::test_package_include_with_no_python_files_in_dir PASSED
@@ -1255,6 +1277,7 @@ tests/packages/test_dependency.py::test_to_pep_508_with_patch_python_version[>=3
 tests/packages/test_dependency.py::test_to_pep_508_with_patch_python_version[>=3.5.4,<3.6-python_full_version >= "3.5.4" and python_version < "3.6"] PASSED
 tests/packages/test_dependency.py::test_to_pep_508_with_patch_python_version[>=3.5.4-python_full_version >= "3.5.4"] PASSED
 tests/packages/test_dependency.py::test_with_constraint PASSED
+tests/packages/test_dependency.py::test_with_groups PASSED
 tests/packages/test_dependency_group.py::test_add_dependency_adds_to_correct_list[initial_dependencies0-initial_poetry_dependencies0-expected_dependencies0-expected_poetry_dependencies0] PASSED
 tests/packages/test_dependency_group.py::test_add_dependency_adds_to_correct_list[initial_dependencies1-initial_poetry_dependencies1-expected_dependencies1-expected_poetry_dependencies1] PASSED
 tests/packages/test_dependency_group.py::test_add_dependency_adds_to_correct_list[initial_dependencies2-initial_poetry_dependencies2-expected_dependencies2-expected_poetry_dependencies2] PASSED
@@ -1333,6 +1356,17 @@ tests/packages/test_dependency_group.py::test_dependencies_for_locking[dependenc
 tests/packages/test_dependency_group.py::test_dependencies_for_locking[dependencies9-poetry_dependencies9-expected_dependencies9-True] PASSED
 tests/packages/test_dependency_group.py::test_dependencies_for_locking_failure[dependencies0-poetry_dependencies0] PASSED
 tests/packages/test_dependency_group.py::test_dependencies_for_locking_failure[dependencies1-poetry_dependencies1] PASSED
+tests/packages/test_dependency_group.py::test_dependency_group_use_canonicalize_name[Foo-Bar-foo-bar] PASSED
+tests/packages/test_dependency_group.py::test_dependency_group_use_canonicalize_name[Group-group] PASSED
+tests/packages/test_dependency_group.py::test_dependency_group_use_canonicalize_name[foo_bar-foo-bar] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_already_included[Group-2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_already_included[group-2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_already_included[group_2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_including_itself[Group-2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_including_itself[group-2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_group_raise_if_including_itself[group_2] PASSED
+tests/packages/test_dependency_group.py::test_include_dependency_groups PASSED
+tests/packages/test_dependency_group.py::test_include_empty_dependency_group PASSED
 tests/packages/test_dependency_group.py::test_remove_dependency_removes_from_both_lists PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_does_not_exist PASSED
 tests/packages/test_directory_dependency.py::test_directory_dependency_is_file PASSED
@@ -1388,6 +1422,11 @@ tests/packages/test_main.py::test_dependency_python_version_in_[3.3 3.4 3.5] PAS
 tests/packages/test_main.py::test_dependency_python_version_in_[3.3, 3.4, 3.5] PASSED
 tests/packages/test_main.py::test_dependency_python_version_in_[3.3|3.4|3.5] PASSED
 tests/packages/test_main.py::test_dependency_with_extra PASSED
+tests/packages/test_package.py::test_all_classifiers_no_license_classifiers_if_spdx[Apache-2.0 OR BSD-2-clause] PASSED
+tests/packages/test_package.py::test_all_classifiers_no_license_classifiers_if_spdx[LicenseRef-MyProprietaryLicense] PASSED
+tests/packages/test_package.py::test_all_classifiers_no_license_classifiers_if_spdx[MIT] PASSED
+tests/packages/test_package.py::test_all_classifiers_no_license_classifiers_if_spdx[None] PASSED
+tests/packages/test_package.py::test_all_classifiers_with_license_classifiers_if_no_spdx PASSED
 tests/packages/test_package.py::test_cannot_update_package_version PASSED
 tests/packages/test_package.py::test_complete_name PASSED
 tests/packages/test_package.py::test_dependency_groups PASSED
@@ -1395,6 +1434,9 @@ tests/packages/test_package.py::test_only_with_dependency_groups PASSED
 tests/packages/test_package.py::test_package_add_dependency_vcs_groups[groups0] PASSED
 tests/packages/test_package.py::test_package_add_dependency_vcs_groups[groups1] PASSED
 tests/packages/test_package.py::test_package_add_dependency_vcs_groups_default_main PASSED
+tests/packages/test_package.py::test_package_add_to_dependency_group[OpTiOnAl] PASSED
+tests/packages/test_package.py::test_package_add_to_dependency_group[Optional] PASSED
+tests/packages/test_package.py::test_package_add_to_dependency_group[optional] PASSED
 tests/packages/test_package.py::test_package_author_names_invalid[<John Doe] PASSED
 tests/packages/test_package.py::test_package_author_names_invalid[<john@john.doe>] PASSED
 tests/packages/test_package.py::test_package_author_names_invalid[<john@john.doe] PASSED
@@ -1419,12 +1461,20 @@ tests/packages/test_package.py::test_package_authors_valid[S\xe9bastien Eustace-
 tests/packages/test_package.py::test_package_authors_valid[Some Company\u2019s-None] PASSED
 tests/packages/test_package.py::test_package_authors_valid[Surname, Given Name [Department]-None] PASSED
 tests/packages/test_package.py::test_package_clone PASSED
+tests/packages/test_package.py::test_package_dependency_group_names PASSED
 tests/packages/test_package.py::test_package_empty_python_versions PASSED
 tests/packages/test_package.py::test_package_equality_simple PASSED
 tests/packages/test_package.py::test_package_equality_source_reference PASSED
 tests/packages/test_package.py::test_package_equality_source_subdirectory PASSED
 tests/packages/test_package.py::test_package_equality_source_type PASSED
 tests/packages/test_package.py::test_package_equality_source_url PASSED
+tests/packages/test_package.py::test_package_get_dependency_group[OpTiOnAl] PASSED
+tests/packages/test_package.py::test_package_get_dependency_group[Optional] PASSED
+tests/packages/test_package.py::test_package_get_dependency_group[optional] PASSED
+tests/packages/test_package.py::test_package_has_dependency_group[OpTiOnAl-True] PASSED
+tests/packages/test_package.py::test_package_has_dependency_group[Optional-True] PASSED
+tests/packages/test_package.py::test_package_has_dependency_group[optional-True] PASSED
+tests/packages/test_package.py::test_package_has_dependency_group[other-False] PASSED
 tests/packages/test_package.py::test_package_invalid_python_versions PASSED
 tests/packages/test_package.py::test_package_invalid_version PASSED
 tests/packages/test_package.py::test_package_pep592_default_not_yanked PASSED
@@ -1460,7 +1510,9 @@ tests/packages/test_package.py::test_to_dependency_for_vcs PASSED
 tests/packages/test_package.py::test_to_dependency_with_features PASSED
 tests/packages/test_package.py::test_to_dependency_with_python_constraint PASSED
 tests/packages/test_package.py::test_with_dependency_groups PASSED
+tests/packages/test_package.py::test_with_dependency_groups_uses_normalized_names PASSED
 tests/packages/test_package.py::test_without_dependency_groups PASSED
+tests/packages/test_package.py::test_without_dependency_groups_uses_normalized_names PASSED
 tests/packages/test_package.py::test_without_optional_dependency_groups PASSED
 tests/packages/test_specification.py::test_equal_specifications_have_same_hash[spec10-spec20] PASSED
 tests/packages/test_specification.py::test_equal_specifications_have_same_hash[spec11-spec21] PASSED
@@ -1635,6 +1687,8 @@ tests/packages/utils/test_utils_urls.py::test_url_to_path[file://somehost/tmp/fi
 tests/packages/utils/test_utils_urls.py::test_url_to_path[file:/path/to/file-\\path\\to\\file-/path/to/file] PASSED
 tests/packages/utils/test_utils_urls.py::test_url_to_path[file:c:/path/to/file-C:\\path\\to\\file-c:/path/to/file] PASSED
 tests/packages/utils/test_utils_urls.py::test_url_to_path[file:tmp-tmp-tmp] PASSED
+tests/packages/utils/test_utils_urls.py::test_url_to_path_deprecated SKIPPED
+tests/packages/utils/test_utils_urls.py::test_url_to_path_deprecated_localhost SKIPPED
 tests/packages/utils/test_utils_urls.py::test_url_to_path_path_to_url_symmetry_win SKIPPED
 tests/pyproject/test_pyproject_toml.py::test_pyproject_toml_build_requires_as_dependencies PASSED
 tests/pyproject/test_pyproject_toml.py::test_pyproject_toml_no_build_system_defaults PASSED
@@ -1691,16 +1745,91 @@ tests/test_factory.py::test_create_poetry_python_version[>=3.8-None->=3.8->=3.8]
 tests/test_factory.py::test_create_poetry_python_version[>=3.8-^3.8-^3.8->=3.8,<4.0] PASSED
 tests/test_factory.py::test_create_poetry_python_version[None-^3.8-^3.8->=3.8,<4.0] PASSED
 tests/test_factory.py::test_create_poetry_python_version_not_compatible PASSED
+tests/test_factory.py::test_create_poetry_with_complicated_cyclic_diamond_dependency_groups PASSED
 tests/test_factory.py::test_create_poetry_with_dependencies_with_subdirectory PASSED
+tests/test_factory.py::test_create_poetry_with_dependency_groups_missing_include PASSED
+tests/test_factory.py::test_create_poetry_with_dependency_groups_simple_cycle[project_with_dependency_groups_complex_cycle-expected1] PASSED
+tests/test_factory.py::test_create_poetry_with_dependency_groups_simple_cycle[project_with_dependency_groups_simple_cycle-expected0] PASSED
+tests/test_factory.py::test_create_poetry_with_direct_cyclic_dependency_groups PASSED
+tests/test_factory.py::test_create_poetry_with_duplicated_dependency_groups PASSED
+tests/test_factory.py::test_create_poetry_with_groups[sample_project_with_groups] PASSED
+tests/test_factory.py::test_create_poetry_with_groups[sample_project_with_groups_new] PASSED
 tests/test_factory.py::test_create_poetry_with_groups_and_explicit_main PASSED
 tests/test_factory.py::test_create_poetry_with_groups_and_legacy_dev PASSED
+tests/test_factory.py::test_create_poetry_with_included_groups_only PASSED
+tests/test_factory.py::test_create_poetry_with_indirect_full_cyclic_dependency_groups PASSED
+tests/test_factory.py::test_create_poetry_with_indirect_partial_cyclic_dependency_groups PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_dependency_groups[False] PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_dependency_groups[True] PASSED
 tests/test_factory.py::test_create_poetry_with_invalid_dev_dependencies PASSED
-tests/test_factory.py::test_create_poetry_with_license_type_file[file] PASSED
-tests/test_factory.py::test_create_poetry_with_license_type_file[str] PASSED
-tests/test_factory.py::test_create_poetry_with_license_type_file[text] PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_license_files_glob[../LICENSE-Invalid entry in [project.license-files]: '../LICENSE' ('..' must not be used.)] PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_license_files_glob[./../LICENSE-Invalid entry in [project.license-files]: './../LICENSE' ('..' must not be used.)] PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_license_files_glob[sub/../../LICENSE-Invalid entry in [project.license-files]: 'sub/../../LICENSE' ('..' must not be used.)] PASSED
+tests/test_factory.py::test_create_poetry_with_invalid_license_files_glob[sub\\\\LICENSE-Invalid entry in [project.license-files]: 'sub\\LICENSE' (Path delimiters must be forward slashes.)] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-file] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-none] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-str] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-str_empty] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-str_no_spdx] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-text] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[False-text_spdx] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-file] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-none] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-str] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-str_empty] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-str_no_spdx] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-text] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[True-text_spdx] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-file] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-none] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-str] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-str_empty] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-str_no_spdx] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-text] PASSED
+tests/test_factory.py::test_create_poetry_with_license_type[empty-text_spdx] PASSED
 tests/test_factory.py::test_create_poetry_with_markers_and_extras PASSED
 tests/test_factory.py::test_create_poetry_with_multi_constraints_dependency PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[FRIENDLY-BARD-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[FRIENDLY-BARD-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[FrIeNdLy-._.-bArD-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[FrIeNdLy-._.-bArD-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly--bard-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly--bard-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-Bard-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-Bard-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-FRIENDLY-BARD-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-FRIENDLY-BARD-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-FrIeNdLy-._.-bArD-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-FrIeNdLy-._.-bArD-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-Friendly-Bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-Friendly-Bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly--bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly--bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly.bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly.bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly_bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly-bard-friendly_bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly.bard-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly.bard-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly_bard-friendly-bard-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[friendly_bard-friendly-bard-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[group_a-group-a-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[group_a-group-a-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[testing-TESTING-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[testing-TESTING-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[testing-testing-False] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_dependency_groups[testing-testing-True] PASSED
+tests/test_factory.py::test_create_poetry_with_nested_similar_dependencies PASSED
+tests/test_factory.py::test_create_poetry_with_noncanonical_names_cyclic_dependency_groups PASSED
 tests/test_factory.py::test_create_poetry_with_packages_and_includes PASSED
+tests/test_factory.py::test_create_poetry_with_self_referenced_dependency_groups[Testing-Group] PASSED
+tests/test_factory.py::test_create_poetry_with_self_referenced_dependency_groups[testing-group] PASSED
+tests/test_factory.py::test_create_poetry_with_self_referenced_dependency_groups[testing_group] PASSED
+tests/test_factory.py::test_create_poetry_with_shared_dependency_groups PASSED
+tests/test_factory.py::test_create_poetry_with_shared_dependency_groups_more_complicated PASSED
+tests/test_factory.py::test_create_poetry_with_unknown_nested_dependency_groups PASSED
 tests/test_factory.py::test_poetry_build_system_dependencies[requires0-expected0] PASSED
 tests/test_factory.py::test_poetry_build_system_dependencies[requires1-expected1] PASSED
 tests/test_factory.py::test_poetry_build_system_dependencies[requires2-expected2] PASSED
@@ -1714,6 +1843,10 @@ tests/test_factory.py::test_strict_validation_success_on_multiple_readme_files P
 tests/test_factory.py::test_validate PASSED
 tests/test_factory.py::test_validate_dependencies_non_package_mode[False] PASSED
 tests/test_factory.py::test_validate_dependencies_non_package_mode[True] PASSED
+tests/test_factory.py::test_validate_deprecated_license_classifiers[False-poetry] PASSED
+tests/test_factory.py::test_validate_deprecated_license_classifiers[False-project] PASSED
+tests/test_factory.py::test_validate_deprecated_license_classifiers[True-poetry] PASSED
+tests/test_factory.py::test_validate_deprecated_license_classifiers[True-project] PASSED
 tests/test_factory.py::test_validate_fails PASSED
 tests/test_factory.py::test_validate_local_version PASSED
 tests/test_factory.py::test_validate_python_non_package_mode[False] PASSED
@@ -1723,6 +1856,20 @@ tests/test_factory.py::test_validate_strict_fails_strict_and_non_strict PASSED
 tests/test_factory.py::test_validate_strict_legacy_duplicate_warnings PASSED
 tests/test_factory.py::test_validate_strict_legacy_warnings PASSED
 tests/test_factory.py::test_validate_strict_new_no_warnings PASSED
+tests/test_factory.py::test_validate_with_license_type[False-file] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-none] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-str] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-str_empty] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-str_no_spdx] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-text] PASSED
+tests/test_factory.py::test_validate_with_license_type[False-text_spdx] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-file] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-none] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-str] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-str_empty] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-str_no_spdx] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-text] PASSED
+tests/test_factory.py::test_validate_with_license_type[True-text_spdx] PASSED
 tests/test_factory.py::test_validate_without_strict_fails_only_non_strict PASSED
 tests/utils/test_helpers.py::test_parse_requires PASSED
 tests/utils/test_helpers.py::test_robust_rmtree PASSED
@@ -2110,6 +2257,8 @@ tests/version/pep440/test_version.py::test_without_local[9!1.2.3a1.post2.dev3+lo
 tests/version/pep440/test_version.py::test_without_postrelease[1-1] PASSED
 tests/version/pep440/test_version.py::test_without_postrelease[1.dev0-1.dev0] PASSED
 tests/version/pep440/test_version.py::test_without_postrelease[9!1.2.3a1.post2.dev3-9!1.2.3a1] PASSED
+tests/version/test_markers.py::test_atomic_marker_union_is_any PASSED
+tests/version/test_markers.py::test_atomic_marker_union_is_single PASSED
 tests/version/test_markers.py::test_cnf[(A+B(C+D))(E+F)_(A+B)(A+C+D)(E+F)-marker8-expected8] PASSED
 tests/version/test_markers.py::test_cnf[(A+B)(C+D)_-marker5-expected5] PASSED
 tests/version/test_markers.py::test_cnf[A(B+C)+(D+E)(F+G)_(A+D+E)(B+C+D+E)(A+F+G)(B+C+F+G)-marker9-expected9] PASSED
@@ -2650,4 +2799,4 @@ tests/version/test_requirements.py::test_requirement[name>=2,<3-expected12] PASS
 tests/version/test_requirements.py::test_requirement[name>=3-expected4] PASSED
 tests/version/test_requirements.py::test_requirement[name>=3.*-expected5] PASSED
 
-======== 2639 passed, 5 skipped, 9 deselected ========
+======== 2786 passed, 7 skipped, 9 deselected ========
