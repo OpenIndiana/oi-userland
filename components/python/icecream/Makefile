@@ -19,22 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icecream
-HUMAN_VERSION =			2.1.7
-COMPONENT_SUMMARY =		Never use print() to debug again; inspect variables, expressions, and program execution with a single, simple function call.
+HUMAN_VERSION =			2.1.8
+COMPONENT_SUMMARY =		Never use print() to debug again: inspect variables, expressions, and program execution with a single, simple function call.
 COMPONENT_PROJECT_URL =		https://github.com/gruns/icecream
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gruns/icecream/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:28913c55d91999bce499a0448ecb747d3b9c6a4e48726ad109e2dffef9cd3818
+	sha256:de2bf7b6d43216e518281d4057f88c457fe8486ba8f1b3d35d51b42a811b67f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/asttokens
-PYTHON_REQUIRED_PACKAGES += library/python/colorama
-PYTHON_REQUIRED_PACKAGES += library/python/executing
-PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/asttokens
+REQUIRED_PACKAGES.python += library/python/colorama
+REQUIRED_PACKAGES.python += library/python/executing
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
