@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
-HUMAN_VERSION =			5.4.0
+HUMAN_VERSION =			6.0.1
 COMPONENT_SUMMARY =		Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d12832e1dbea4be280b22fd0ea7c9b87f0d8fc51ba06e92dc62d52f804f78ebd
+	sha256:2b3a882ebf27dd026df3801a87cf49ff791336e0f94b0fad195db77e01240690
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -70,11 +70,10 @@ COMPONENT_TEST_TRANSFORMS += \
 TEST_REQUIREMENTS_EXTRAS += html-clean
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cython
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/lxml-html-clean
