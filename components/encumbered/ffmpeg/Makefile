@@ -18,12 +18,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.1.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	7.1.2
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:733984395e0dbbe5c046abda2dc49a5544e7e0e1e2366bba849222ae9e3a03b1
+COMPONENT_ARCHIVE_HASH=	sha256:089bc60fb59d6aecc5d994ff530fd0dcb3ee39aa55867849a2bbc4e555f9c304
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -56,9 +55,6 @@ update-license-file: patch
 		$(CAT) $(SOURCE_DIR)/COPYING.GPLv3 \
 	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
-# ISO C23 functions are needed, for example stdc_count_ones().
-CPPFLAGS += $($(COMPILER)_C23_ENABLE)
-
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
@@ -66,7 +62,6 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
 CONFIGURE_OPTIONS += --enable-runtime-cpudetect
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
-# force additional new CPU instruction enablement
 CONFIGURE_OPTIONS += --enable-avx
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
@@ -87,8 +82,6 @@ CONFIGURE_OPTIONS += --enable-libtheora
 CONFIGURE_OPTIONS += --enable-libmp3lame
 CONFIGURE_OPTIONS += --enable-libvorbis
 CONFIGURE_OPTIONS += --enable-libvpx
-# x11grab has been replaced by the x11xcb options
-#CONFIGURE_OPTIONS += --enable-x11grab
 CONFIGURE_OPTIONS += --enable-libxcb
 CONFIGURE_OPTIONS += --enable-libspeex
 CONFIGURE_OPTIONS += --enable-pthreads
@@ -97,14 +90,9 @@ CONFIGURE_OPTIONS += --enable-pthreads
 CONFIGURE_OPTIONS += --enable-libass
 CONFIGURE_OPTIONS += --enable-openssl
 CONFIGURE_OPTIONS += --enable-openal
-# don't enable avresample any more, it's long-deprecated.  Use swresample
-# instead
-#CONFIGURE_OPTIONS += --enable-avresample
 CONFIGURE_OPTIONS += --enable-swresample
 # Incompatible with GPLv2
 #CONFIGURE_OPTIONS += --enable-libopencore-amrwb
-# libschroedinger support was removed in 3.4.x
-#CONFIGURE_OPTIONS += --enable-libschroedinger
 CONFIGURE_OPTIONS += --enable-libopenjpeg
 CONFIGURE_OPTIONS += --enable-librtmp
 CONFIGURE_OPTIONS += --enable-vdpau
