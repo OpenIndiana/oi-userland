@@ -1,5 +1,7 @@
   self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
   self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
+  self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
+  self.assertEqual(summarize_list(etree.ElementTree(elem).findall("/tag")),
   summarize_list(ElementTree.ElementTree(elem).findall("/tag"))
   summarize_list(ElementTree.ElementTree(elem).findall("/tag"))
 $(@D)/doc/FAQ.txt
@@ -76,17 +78,17 @@ Doctest: element_classes.txt ... ok
 Doctest: extensions.txt ... ok
 Doctest: lxml.cssselect.CSSSelector ... ok
 Doctest: lxml.etree.CDATA ... ok
+Doctest: lxml.etree.Element ... ok
 Doctest: lxml.etree.ElementNamespaceClassLookup ... ok
 Doctest: lxml.etree.FunctionNamespace ... ok
 Doctest: lxml.etree.Schematron ... ok
 Doctest: lxml.etree.XML ... ok
 Doctest: lxml.etree.__test__.FunctionNamespace (line 207) ... ok
-Doctest: lxml.etree.__test__.XML (line 3261) ... ok
+Doctest: lxml.etree.__test__.XML (line 3382) ... ok
 Doctest: lxml.html.Classes ... ok
 Doctest: lxml.html.HtmlMixin.drop_tag ... ok
 Doctest: lxml.html.XHTMLParser ... ok
 Doctest: lxml.html.diff.html_annotate ... ok
-Doctest: lxml.html.diff.locate_unbalanced_start ... ok
 Doctest: lxml.html.tostring ... ok
 Doctest: lxml.isoschematron.Schematron ... ok
 Doctest: lxml.objectify.ElementMaker ... ok
@@ -138,6 +140,7 @@ Doctest: validation.txt ... ok
 Doctest: validation.txt ... ok
 Doctest: xpathxslt.txt ... ok
 Doctest: xpathxslt.txt ... ok
+Element (lxml.etree)
 ElementMaker (lxml.objectify)
 ElementNamespaceClassLookup (lxml.etree)
 FunctionNamespace (line 207) (lxml.etree.__test__)
@@ -146,11 +149,13 @@ ObjectifiedElement (lxml.objectify)
 Regression test to fix memory allocation issues (use 3+ inclusive NS spaces) ... ok
 Schematron (lxml.etree)
 Schematron (lxml.isoschematron)
-Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:271: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
-Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:271: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:311: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:311: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:311: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
+Test find methods (including xpath syntax). ... $(@D)/src/lxml/tests/test_elementpath.py:311: FutureWarning: This search incorrectly ignores the root element, and will be fixed in a future version.  If you rely on the current behaviour, change it to './tag'
 We don't have a guarantee that there will always be a path ... ok
 XHTMLParser (lxml.html)
-XML (line 3261) (lxml.etree.__test__)
+XML (line 3382) (lxml.etree.__test__)
 XML (lxml.etree)
 attrib (lxml.tests.selftest2)
 bad_find (lxml.tests.selftest)
@@ -168,9 +173,10 @@ html_annotate (lxml.html.diff)
 interface (lxml.tests.selftest)
 iterators (lxml.tests.selftest)
 iterparse (lxml.tests.selftest)
-locate_unbalanced_start (lxml.html.diff)
 makeelement (lxml.tests.selftest2)
 namespace (lxml.tests.selftest)
+ok
+ok
 ok
 ok
 ok
@@ -456,10 +462,17 @@ test_c14n_tostring_with_comments (lxml.tests.test_etree.ETreeC14NTestCase) ... o
 test_c14n_with_comments (lxml.tests.test_etree.ETreeC14NTestCase) ... ok
 test_c_api (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cache (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... skipped 'lxml-only'
+test_cache (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_cache (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
 test_cache (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_cdata (lxml.tests.test_builder.BuilderTestCase) ... ok
 test_cdata (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_errors (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_cdata_escaping (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_cdata_escaping (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_cdata_escaping (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_cdata_escaping (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_cdata_escaping (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_cdata_parser (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_cdata_solo (lxml.tests.test_builder.BuilderTestCase) ... ok
 test_cdata_split_cdend (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -479,6 +492,7 @@ test_child_nonexistant (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_ns_nons (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_set_ro (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_child_special (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
+test_class_hierarchy (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_class_lookup (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
 test_class_lookup_reentry (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
 test_class_lookup_type_mismatch (lxml.tests.test_classlookup.ClassLookupTestCase) ... ok
@@ -714,6 +728,8 @@ test_element_contains (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_element_contains (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_element_creation (lxml.tests.test_nsclasses.ETreeNamespaceClassesTestCase) ... ok
 test_element_cyclic_gc_none (lxml.tests.test_errors.ErrorTestCase) ... ok
+test_element_head_body (lxml.html.tests.test_basic.TestBasicFeatures) ... ok
+test_element_head_body_empty (lxml.html.tests.test_basic.TestBasicFeatures) ... ok
 test_element_indexing_negative (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_element_indexing_negative (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_element_indexing_only_text (lxml.tests.test_elementtree.ETreeTestCase) ... ok
@@ -732,6 +748,11 @@ test_element_nested (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... o
 test_element_nested (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_element_nested (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
 test_element_nested (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
+test_element_nested_with_cdata (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_element_nested_with_cdata (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_element_nested_with_cdata (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_element_nested_with_cdata (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_element_nested_with_cdata (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_element_nested_with_text (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_element_nested_with_text (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_element_nested_with_text (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -758,6 +779,11 @@ test_element_with_attributes_keywords (lxml.tests.test_elementtree.ETreeTestCase
 test_element_with_attributes_keywords (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_element_with_attributes_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_element_with_attributes_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_element_write_cdata (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_element_write_cdata (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_element_write_cdata (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_element_write_cdata (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_element_write_cdata (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_element_write_empty (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_element_write_empty (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_element_write_empty (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -827,6 +853,7 @@ test_entity_parse (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_parse_external (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_parse_external_no_resolve (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_parse_no_external_default (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_entity_parse_xxe (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_restructure (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_entity_system_url (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
 test_entity_system_url_none (lxml.tests.test_dtd.ETreeDtdTestCase) ... ok
@@ -896,6 +923,11 @@ test_extensions_nsmap (lxml.tests.test_xslt.ETreeXSLTExtElementTestCase) ... ok
 test_external_document_adoption (lxml.tests.test_external_document.ExternalDocumentTestCase) ... ok
 test_extra_attributes (lxml.tests.test_doctestcompare.DoctestCompareTest) ... ok
 test_extra_children (lxml.tests.test_doctestcompare.DoctestCompareTest) ... ok
+test_failure_preceding_cdata (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_failure_preceding_cdata (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_failure_preceding_cdata (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_failure_preceding_cdata (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_failure_preceding_cdata (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_failure_preceding_text (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_failure_preceding_text (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_failure_preceding_text (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -906,6 +938,11 @@ test_failure_trailing_Element (lxml.tests.test_incremental_xmlfile.HtmlFileTestC
 test_failure_trailing_Element (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_failure_trailing_Element (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
 test_failure_trailing_Element (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
+test_failure_trailing_cdata (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
+test_failure_trailing_cdata (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
+test_failure_trailing_cdata (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
+test_failure_trailing_cdata (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ok
+test_failure_trailing_cdata (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_failure_trailing_text (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase) ... ok
 test_failure_trailing_text (lxml.tests.test_incremental_xmlfile.HtmlFileTestCase) ... ok
 test_failure_trailing_text (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
@@ -935,8 +972,12 @@ test_filelike_close (lxml.tests.test_incremental_xmlfile.BytesIOXmlFileTestCase)
 test_filelike_close (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_filelike_not_closing (lxml.tests.test_incremental_xmlfile.SimpleFileLikeXmlFileTestCase) ... ok
 test_find (lxml.tests.test_elementpath.ElementTreeElementPathTestCase)
+test_find (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase)
+test_find (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase)
 test_find (lxml.tests.test_elementpath.EtreeElementPathTestCase)
 test_find_warning (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
+test_find_warning (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_find_warning (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
 test_find_warning (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_findall (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_findall (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
@@ -957,6 +998,12 @@ test_flush (lxml.tests.test_incremental_xmlfile.TempPathXmlFileTestCase) ... ski
 test_flush (lxml.tests.test_incremental_xmlfile.TempXmlFileTestCase) ... ok
 test_fromstring (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_fromstring (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_fromstring_char_array (lxml.tests.test_elementtree.ETreeTestCase) ... ok
+test_fromstring_char_array (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_fromstring_memoryview (lxml.tests.test_elementtree.ETreeTestCase) ... ok
+test_fromstring_memoryview (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_fromstring_uchar_array (lxml.tests.test_elementtree.ETreeTestCase) ... ok
+test_fromstring_uchar_array (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_fromstringlist (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_fromstringlist (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_fromstringlist_characters (lxml.tests.test_elementtree.ETreeTestCase) ... ok
@@ -1203,6 +1250,8 @@ test_late_tail (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_late_tail (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_late_tail_mix_pi_comments (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_late_tail_mix_pi_comments (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_libxml_compiled_features (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
+test_libxml_features (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_lookup (lxml.tests.test_pyclasslookup.PyClassLookupTestCase) ... ok
 test_lookup_attrib (lxml.tests.test_pyclasslookup.PyClassLookupTestCase) ... ok
 test_lookup_bool (lxml.tests.test_pyclasslookup.PyClassLookupTestCase) ... ok
@@ -1405,6 +1454,8 @@ test_parse_file_object_encoding (lxml.tests.test_elementtree.ElementTreeTestCase
 test_parse_fileobject_unicode (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_parse_fragments_fromstring (lxml.html.tests.test_frames.FrameTest) ... ok
 test_parse_fromstring (lxml.html.tests.test_frames.FrameTest) ... ok
+test_parse_gzip_file_decompress (lxml.tests.test_io.ETreeIOTestCase) ... ok
+test_parse_gzip_file_default_no_unzip (lxml.tests.test_io.ETreeIOTestCase) ... ok
 test_parse_parser_type_error (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_parse_premature_end (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
 test_parse_premature_end_with_target (lxml.tests.test_etree.ETreeOnlyTestCase) ... ok
@@ -1586,6 +1637,7 @@ test_returns_whole_doc_if_input_contains_doctype (lxml.html.tests.test_html5pars
 test_returns_whole_doc_if_input_contains_html_tag (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
 test_returns_whole_doc_if_input_is_encoded (lxml.html.tests.test_html5parser.Test_fromstring) ... skipped 'html5lib is not installed'
 test_root (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
+test_sax_non_html (lxml.tests.test_sax.ETreeSaxTestCase) ... ok
 test_sax_to_pulldom (lxml.tests.test_sax.ETreeSaxTestCase) ... ok
 test_sax_to_pulldom_multiple_namespaces (lxml.tests.test_sax.ETreeSaxTestCase) ... ok
 test_schema_types (lxml.tests.test_objectify.ObjectifyTestCase) ... ok
@@ -1763,6 +1815,7 @@ test_subelement_with_attributes (lxml.tests.test_elementtree.ETreeTestCase) ... 
 test_subelement_with_attributes (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
 test_subelement_with_attributes_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_subelement_with_attributes_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
+test_subscripted_generic (lxml.tests.test_annotations.TypingTestCase) ... ok
 test_subtree_copy_thread (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_tag_reset_ns (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_tag_reset_ns (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
@@ -1813,8 +1866,16 @@ test_thread_xslt_apply_error_log (lxml.tests.test_threading.ThreadingTestCase) .
 test_thread_xslt_attr_replace (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_thread_xslt_parsing_error_log (lxml.tests.test_threading.ThreadingTestCase) ... ok
 test_tokenizer (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... skipped 'lxml-only'
+test_tokenizer (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_tokenizer (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
 test_tokenizer (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
+test_tokenizer_index (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... skipped 'lxml-only'
+test_tokenizer_index (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_tokenizer_index (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
+test_tokenizer_index (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_tokenizer_predicates (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
+test_tokenizer_predicates (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_tokenizer_predicates (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
 test_tokenizer_predicates (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_tostring (lxml.tests.test_elementtree.ETreeTestCase) ... ok
 test_tostring (lxml.tests.test_elementtree.ElementTreeTestCase) ... ok
@@ -2075,6 +2136,8 @@ test_xpath_prefix_error (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... 
 test_xpath_string (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_text_from_other_document (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_tokenizer (lxml.tests.test_elementpath.ElementTreeElementPathTestCase) ... ok
+test_xpath_tokenizer (lxml.tests.test_elementpath.EtreeElementPathEmptyNamespacesTestCase) ... ok
+test_xpath_tokenizer (lxml.tests.test_elementpath.EtreeElementPathNonEmptyNamespacesTestCase) ... ok
 test_xpath_tokenizer (lxml.tests.test_elementpath.EtreeElementPathTestCase) ... ok
 test_xpath_variables (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
 test_xpath_variables_nodeset (lxml.tests.test_xpathevaluator.ETreeXPathTestCase) ... ok
@@ -2155,16 +2218,18 @@ xpath (lxml.tests.test_xpathevaluator)
 xpath_tokenizer (lxml.tests.selftest)
 
 ----------------------------------------------------------------------
-Ran 2000 tests
+Ran 2057 tests
 
 OK
 Comparing with ElementTree 1.3.0
 
-TESTED VERSION: 5.4.0
-    Python:           (3, 9, 21, 'final', 0)
-    lxml.etree:       (5, 4, 0, 0)
-    libxml used:      (2, 13, 7)
-    libxml compiled:  (2, 13, 7)
+TESTED VERSION: 6.0.1
+    Python:           (3, 9, 23, 'final', 0)
+    lxml.etree:       (6, 0, 1, 0)
+    libxml used:      (2, 13, 8)
+           features:  catalog ftp html http iconv lzma regexp schematron xmlschema xpath zlib
+    libxml compiled:  (2, 13, 8)
+           features:  catalog ftp html http iconv lzma regexp schematron xmlschema xpath zlib
     libxslt used:     (1, 1, 43)
     libxslt compiled: (1, 1, 43)
     iconv compiled:   (0, 0)
