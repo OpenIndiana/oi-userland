@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		MIME-Types
-HUMAN_VERSION =			2.28
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.29
 COMPONENT_SUMMARY =		Definition of MIME types
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7099cb5133401acc92d8fb0fd398cac682140be0680e7dfcb4aaf40315a2dfca
+	sha256:4a6d4ec9b3aa0df2f935d4d74f7dc809fd523d508cd0e9966b5b257c02c03414
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,7 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/mojolicious
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
