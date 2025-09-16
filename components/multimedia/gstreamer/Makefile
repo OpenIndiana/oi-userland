@@ -22,12 +22,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gstreamer
-COMPONENT_VERSION=	1.26.5
+COMPONENT_VERSION=	1.26.6
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0a7edb0e7b42dbe6b575fce61a4808a3f6b20e085a1eaecbc025d0ec21f1e774
+COMPONENT_ARCHIVE_HASH=	sha256:42cde77277f1eee253449da213cb6e49f7fd2f792308e5579a8294c1518becac
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/audio/gstreamer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -78,8 +78,8 @@ TEST_CONFLICTING_PACKAGES += library/audio/gstreamer/devtools
 endif
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
