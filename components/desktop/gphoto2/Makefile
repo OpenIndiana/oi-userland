@@ -13,16 +13,17 @@
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2022 Andreas Wacknitz
 #
+
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gphoto2
-COMPONENT_VERSION= 2.5.28
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.5.32
 COMPONENT_SUMMARY= Digital camera utility
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL = https://github.com/gphoto/
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:54097ee429f57a9f076a814590f777cebbc837879fe7b16e41b2615e347f6ae0
+COMPONENT_ARCHIVE_HASH= sha256:4b87dc03a0eb0677ac9158f2d38c6857da65f14514820743e8eef40350d5a3f6
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/gphoto/files/gphoto/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 $(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_CLASSIFICATION = Applications/Graphics and Imaging
@@ -32,11 +33,11 @@ COMPONENT_LICENSE_FILE = COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CFLAGS+= -std=c99 $(CPP_XPG6MODE)
+CFLAGS += -std=c99 $(XPG6MODE)
 
-# test031 fails
+# test021 fails because it tries to access files only accessible by root
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
