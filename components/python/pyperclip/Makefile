@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project pyperclip
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyperclip
-HUMAN_VERSION =			1.9.0
+HUMAN_VERSION =			1.10.0
 COMPONENT_SUMMARY =		A cross-platform clipboard module for Python. (Only handles plain text for now.)
 COMPONENT_PROJECT_URL =		https://github.com/asweigart/pyperclip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b7de0142ddc81bfc5c7507eea19da920b92252b548b96186caf94a5e2527d310
+	sha256:180c8346b1186921c75dfd14d9048a6b5d46bfc499778811952c6dd6eb1ca6be
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -46,4 +46,5 @@ COMPONENT_POST_TEST_ACTION += $(RM) -r $(COMPONENT_TEST_BUILD_DIR)/runtime ;
 COMPONENT_TEST_TRANSFORMS += "-e 's/TEST//g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
