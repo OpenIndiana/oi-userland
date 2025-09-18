@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
-HUMAN_VERSION =			0.22
+HUMAN_VERSION =			0.22.2
 COMPONENT_SUMMARY =		Docutils -- Python Documentation Utilities
 COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ba9d57750e92331ebe7c08a1bbf7a7f8143b86c476acd51528b042216a6aad0f
+	sha256:9fdb771707c8784c8f2728b67cb2c691305933d68137ef95a75db5f4dfbc213d
 COMPONENT_LICENSE =		CC-PDDC AND BSD-3-Clause AND BSD-2-Clause
 COMPONENT_LICENSE_FILE =	COPYING.rst
 
@@ -35,5 +35,5 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^OS:/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Elapsed time:/d'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
