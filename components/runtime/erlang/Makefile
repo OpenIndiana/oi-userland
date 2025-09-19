@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= erlang
 COMPONENT_VERSION= 28.1
+COMPONENT_REVISION= 1
 COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
 COMPONENT_SUMMARY= Erlang programming language and OTP libraries
 COMPONENT_PROJECT_URL= https://erlang.org/
@@ -66,19 +67,10 @@ CXXFLAGS += -finline-functions -funroll-loops -fno-exceptions -fno-rtti
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
-CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/amd64
+CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/$(MACH64)
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 CONFIGURE_OPTIONS += --disable-silent-rules
 CONFIGURE_OPTIONS += --without-javac
-
-# The HiPE portion is a bit sensitive, and only seems to work 64-bit on
-# amd64 (thus the variant.arch tagging in erlang.p5m). erts/config.log
-# can be very interesting if issues occur.
-CONFIGURE_OPTIONS.i386  = --enable-hipe
-CONFIGURE_OPTIONS.sparc = --disable-hipe
-# Disable kernel poll on sparc to avoid hangs in erl_child_setup (bug 31443512).
-CONFIGURE_OPTIONS.sparc += --disable-kernel-poll
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
