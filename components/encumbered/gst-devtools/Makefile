@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-devtools
-COMPONENT_VERSION=	1.26.5
+COMPONENT_VERSION=	1.26.6
 COMPONENT_SUMMARY=      Multimedia graph framework - devtools
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:63d46a8effa8a225e25a464ba7538ace853fe0dc1e70366b27c208135e5401ce
+COMPONENT_ARCHIVE_HASH=	sha256:dec8fc56d578d65c498e65e56efe44994c5d3f4e85dbbdff0242b441b32e19b2
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/devtools
@@ -67,7 +67,6 @@ COMPONENT_PRE_BUILD_ACTION= \
 REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
@@ -79,3 +78,4 @@ REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
