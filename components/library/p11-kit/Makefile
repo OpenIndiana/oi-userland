@@ -25,18 +25,19 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
+BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.25.8
+COMPONENT_VERSION=	0.25.9
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2fd4073ee2a47edafaae2c8affa2bcca64e0697f8881f68f580801ef43cab0ce
+COMPONENT_ARCHIVE_HASH= sha256:98a96f6602a70206f8073deb5e894b1c8efd76ef53c629ab88815d58273f2561
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE= COPYING
@@ -49,13 +50,9 @@ CFLAGS += $(XPG7MODE)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 LDFLAGS += -lsocket -lnsl
 
-# Needed due to patch to automake-related files.
-COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
-
-CONFIGURE_OPTIONS    += --enable-doc
-CONFIGURE_OPTIONS    += --disable-doc-html
-CONFIGURE_OPTIONS    += --with-module-path=/usr/lib/security/$(MACH64)
-CONFIGURE_OPTIONS    += --with-trust-paths=/etc/certs/ca-certificates.crt
+CONFIGURE_OPTIONS += -Dmodule_path=/usr/lib/security/$(MACH64)
+CONFIGURE_OPTIONS += -Dtrust_paths=/etc/certs/ca-certificates.crtA
+CONFIGURE_OPTIONS += -Dman=true
 
 COMPONENT_BUILD_ENV += PATH=$(PATH)
 COMPONENT_TEST_ENV += PATH=$(PATH)
@@ -65,10 +62,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/is up to date/d" ' \
 	'-e "/ok/p" ' 
 
-# bash-completion is needed to get the following two files installed into proto area:
-# - usr/share/bash-completion/completions/p11-kit
-# - usr/share/bash-completion/completions/trust
+# Manually added build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
+REQUIRED_PACKAGES += utility/zsh-completions
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi
