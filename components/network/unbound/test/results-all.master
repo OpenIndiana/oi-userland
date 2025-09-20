@@ -1,4 +1,4 @@
-Start of unbound 1.23.1+libevent unit test.
+Start of unbound 1.24.0+libevent unit test.
 test authzone functions
 test negative cache functions
 test ub_random functions
@@ -27,6 +27,7 @@ test util/net_help.c:str_is_ip6
 test util/net_help.c:is_pow2
 test util/net_help.c:addr_mask
 test util/net_help.c:addr_in_common
+test util/net_help.c:netblockstrtoaddr
 test util/net_help.c:sockaddr_cmp_addr
 test util/net_help.c:addr_is_ip4mapped
 test util/net_help.c:addr_is_any
@@ -44,6 +45,7 @@ test util/data/dname.c:dname_strict_subdomain
 test util/data/dname.c:dname_subdomain
 test util/data/dname.c:dname_isroot
 test util/data/dname.c:dname_remove_label
+test util/data/dname.c:dname_remove_label_limit_len
 test util/data/dname.c:dname_signame_label_count
 test util/data/dname.c:dname_iswild
 test util/data/dname.c:dname_canonical_compare
@@ -99,7 +101,9 @@ for x in $(SOURCE_DIR)/testdata/*.rpl; do \
 done
 $(SOURCE_DIR)/testdata/acl.rpl  OK
 $(SOURCE_DIR)/testdata/auth_nsec3_ent.rpl  OK
+$(SOURCE_DIR)/testdata/auth_nsec3_ent_with_out_of_zone_data.rpl  OK
 $(SOURCE_DIR)/testdata/auth_nsec3_wild.rpl  OK
+$(SOURCE_DIR)/testdata/auth_nsec3_wild_with_out_of_zone_data.rpl  OK
 $(SOURCE_DIR)/testdata/auth_xfr.rpl  OK
 $(SOURCE_DIR)/testdata/auth_xfr_host.rpl  OK
 $(SOURCE_DIR)/testdata/auth_xfr_ixfr.rpl  OK
@@ -236,6 +240,7 @@ $(SOURCE_DIR)/testdata/iter_emptydp_for_glue.rpl  OK
 $(SOURCE_DIR)/testdata/iter_failreply.rpl  OK
 $(SOURCE_DIR)/testdata/iter_fwdfirst.rpl  OK
 $(SOURCE_DIR)/testdata/iter_fwdfirstequal.rpl  OK
+$(SOURCE_DIR)/testdata/iter_fwdfirstequaltcp.rpl  OK
 $(SOURCE_DIR)/testdata/iter_fwdstub.rpl  OK
 $(SOURCE_DIR)/testdata/iter_fwdstubauth.rpl  OK
 $(SOURCE_DIR)/testdata/iter_fwdstubroot.rpl  OK
@@ -250,6 +255,7 @@ $(SOURCE_DIR)/testdata/iter_lame_noaa.rpl  OK
 $(SOURCE_DIR)/testdata/iter_lame_nosoa.rpl  OK
 $(SOURCE_DIR)/testdata/iter_lamescrub.rpl  OK
 $(SOURCE_DIR)/testdata/iter_max_global_quota.rpl  OK
+$(SOURCE_DIR)/testdata/iter_minimise_chain.rpl  OK
 $(SOURCE_DIR)/testdata/iter_mod.rpl  OK
 $(SOURCE_DIR)/testdata/iter_nat64.rpl  OK
 $(SOURCE_DIR)/testdata/iter_nat64_prefix.rpl  OK
@@ -327,6 +333,7 @@ $(SOURCE_DIR)/testdata/rpz_clientip.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_clientip_override.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_cname_handle.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_cname_tag.rpl  OK
+$(SOURCE_DIR)/testdata/rpz_cname_wild.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_ixfr.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_nsdname.rpl  OK
 $(SOURCE_DIR)/testdata/rpz_nsdname_override.rpl  OK
