@@ -1,0 +1,21 @@
+diff --git a/Makefile b/Makefile
+index ccc2c2e1..2fb7bd49 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,6 +1,6 @@
+ PWD := $(shell pwd)
+ GOPATH := $(shell go env GOPATH)
+-LDFLAGS := $(shell go run buildscripts/gen-ldflags.go)
++LDFLAGS ?= $(shell go run buildscripts/gen-ldflags.go)
+ 
+ TARGET_GOARCH ?= $(shell go env GOARCH)
+ TARGET_GOOS ?= $(shell go env GOOS)
+@@ -64,7 +64,7 @@ verify:
+ # Builds mc locally.
+ build: checks
+ 	@echo "Building mc binary to './mc'"
+-	@GO111MODULE=on GOOS=$(TARGET_GOOS) GOARCH=$(TARGET_GOARCH) CGO_ENABLED=0 go build -trimpath -tags kqueue --ldflags "$(LDFLAGS)" -o $(PWD)/mc
++	@GO111MODULE=on GOOS=$(TARGET_GOOS) GOARCH=$(TARGET_GOARCH) CGO_ENABLED=1 go build -trimpath -tags kqueue --ldflags "$(LDFLAGS)" -o $(PWD)/mc
+ 
+ hotfix-vars:
+ 	$(eval LDFLAGS := $(shell MC_RELEASE="RELEASE" MC_HOTFIX="hotfix.$(shell git rev-parse --short HEAD)" go run buildscripts/gen-ldflags.go $(shell git describe --tags --abbrev=0 | \
