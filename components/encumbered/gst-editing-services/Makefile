@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services
-COMPONENT_VERSION=	1.26.5
+COMPONENT_VERSION=	1.26.6
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:734900944f90ece5e2f3983c335178fda50023fe342aa75ecd9d8a9c38b64d9e
+COMPONENT_ARCHIVE_HASH=	sha256:ccab1a5a4ec1b2f21adcd5e44ebbf94627b44f3f64e029193dd473f471947a19
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -59,7 +59,6 @@ REQUIRED_PACKAGES += library/audio/gstreamer/plugin/bad
 REQUIRED_PACKAGES += utility/bash-completion
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/devtools
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
@@ -67,3 +66,4 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
