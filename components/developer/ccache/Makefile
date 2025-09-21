@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ccache
 COMPONENT_VERSION=	4.11.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      ccache - cacher of GCC-compiled files to avoid doing the same job twice
 COMPONENT_PROJECT_URL=  https://ccache.dev
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
