@@ -19,21 +19,20 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPIx-Regexp
-HUMAN_VERSION =			0.089
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.090
 COMPONENT_SUMMARY =		Parse regular expressions
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9865f61f59da3b8aa32492580a8ecc9e24d251c00a5eb685678569928a2f8881
+	sha256:41b13c6474cc19e9c604ff8ef0881e21866948b6d55c2f5c666279f8d9649352
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
-PERL_REQUIRED_PACKAGES += library/perl-5/ppi
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/task-weaken
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/module-build
+REQUIRED_PACKAGES.perl += library/perl-5/ppi
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/task-weaken
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
