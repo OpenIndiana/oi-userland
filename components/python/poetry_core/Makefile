@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.2.1
 COMPONENT_SUMMARY =		Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b4033b71b99717a942030e074fec7e3082e5fde7a8ed10f02cd2413bdf940b1f
+	sha256:97e50d8593c8729d3f49364b428583e044087ee3def1e010c6496db76bd65ac5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
