@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_docutils
-HUMAN_VERSION =			0.22.0.20250919
+HUMAN_VERSION =			0.22.1.20250923
 COMPONENT_SUMMARY =		Typing stubs for docutils
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2b4e08d811e08e851f17808afbcf767bbf65f195be7e0080009cf983dc4312f0
+	sha256:f7754c7eeab44144095e287bb3afcb96d6936dc3fa332cff4e5ef5533baa198f
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
