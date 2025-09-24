@@ -23,6 +23,10 @@
 
 -include ../make-rules/shared-macros.mk
 
+# If we need to build incorporations on the build system where the final repo is
+# not the same as the our local repo, we need to specify the INCORPORATION_REPO variable.
+INCORPORATION_REPO ?= $(PKG_REPO)
+
 # for now, the assumption is we build any directory with a Makefile.  This may
 # not always be the case. If we build a new make-like tool to drive the upper
 # level build, it may make different decisions and will need to include
@@ -161,7 +165,7 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 
 incorporation:
 	$(eval COMPONENT_REVISION := $(shell git rev-list HEAD --count))
-	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
+	$(WS_TOOLS)/userland-incorporator --repository $(INCORPORATION_REPO) \
 	  --version=0.$(OS_VERSION),$(BUILD_VERSION) -p $(PUBLISHER) \
 	  -c $(CONSOLIDATION) --destdir=$(WS_MACH) $(INCORPORATE_WERROR)
 	for incorporation in $(WS_MACH)/*.p5m ; do \
