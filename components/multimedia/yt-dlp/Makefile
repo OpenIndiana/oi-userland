@@ -19,12 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt_dlp
-HUMAN_VERSION =			2025.9.5
+HUMAN_VERSION =			2025.9.23
 COMPONENT_SUMMARY =		A feature-rich command-line audio/video downloader
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ce080f80b2258e872fe8a75f4707ea2c644e697477186e20b9a04d9a9ea37cf
+	sha256:9282ad1deadb4c90b2e6d3bcf9f360abf88c5f2e4ba836dad7b51387b086d757
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 COMPONENT_FMRI =		multimedia/yt-dlp
 COMPONENT_CLASSIFICATION =	Applications/Sound and Video
@@ -46,6 +48,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) default >> $(@D)/.depend-runtime ;
 
+# avoid downloads during testing
+PYTEST_ADDOPTS += -m 'not download'
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/brotli
 REQUIRED_PACKAGES.python += library/python/certifi
@@ -56,4 +61,3 @@ REQUIRED_PACKAGES.python += library/python/requests
 REQUIRED_PACKAGES.python += library/python/urllib3
 REQUIRED_PACKAGES.python += library/python/websockets
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
