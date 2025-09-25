@@ -23,11 +23,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycurl
-HUMAN_VERSION =			7.45.6
+HUMAN_VERSION =			7.45.7
 COMPONENT_SUMMARY =		PycURL -- A Python Interface To The cURL library
 COMPONENT_PROJECT_URL =		http://pycurl.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2b73e66b22719ea48ac08a93fc88e57ef36d46d03cb09d972063c9aa86bb74e6
+	sha256:9d43013002eab2fd6d0dcc671cd1e9149e2fc1c56d5e796fad94d076d6cb69ef
 COMPONENT_LICENSE =		LGPL-2.1-only
 
 TEST_STYLE = pytest
@@ -58,7 +58,7 @@ GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/\(usr\/share\/doc\/pycurl-\)3\.[0-9]*/\1$$(PYVER)/' | uniq
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES.python += runtime/python
