@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsoup
 HUMAN_VERSION=		3.6.4
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
 COMPONENT_ARCHIVE_HASH=	sha256:9b54c76f5276b05bebcaf2b6c2a141a188fc7bb1d0624eda259dac13a6665c8a
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/libsoup
