@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		diff_cover
-HUMAN_VERSION =			9.6.0
+HUMAN_VERSION =			9.7.1
 COMPONENT_SUMMARY =		Run coverage and linting reports on diffs
 COMPONENT_PROJECT_URL =		https://github.com/Bachmann1234/diff-cover
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:75e5bc056dcaa68c6c87c9fb4e07c9e60daef15b6e8d034d56d2da9e2c84a872
+	sha256:a03b78bc64b7dc27dda7f11c46bc6d44f4e121c8fb9a5068d41f20a05d463548
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,14 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_POETRY += dev
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/chardet
-PYTHON_REQUIRED_PACKAGES += library/python/jinja2
-PYTHON_REQUIRED_PACKAGES += library/python/pluggy
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/chardet
+REQUIRED_PACKAGES.python += library/python/jinja2
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
 TEST_REQUIRED_PACKAGES.python += library/python/pyflakes
