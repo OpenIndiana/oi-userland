@@ -19,10 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bcrypt
-HUMAN_VERSION =			4.3.0
+HUMAN_VERSION =			5.0.0
 COMPONENT_SUMMARY =		Modern password hashing for your software and your servers
+COMPONENT_PROJECT_URL =		https://github.com/pyca/bcrypt/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3a3fd2204178b6d2adcf09cb4f6426ffef54762577a7c9b54c159008cb288c18
+	sha256:f748f7c2d6fd375cc93d3fba7ef4a9e3a092421b8dbf34d8d4dc06be9492dfdd
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,10 +39,10 @@ LD_Z_IGNORE=
 TEST_REQUIREMENTS_EXTRAS += tests
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-rust
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
