@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project simplejson
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		simplejson
-HUMAN_VERSION =			3.20.1
+HUMAN_VERSION =			3.20.2
 COMPONENT_SUMMARY =		Simple, fast, extensible JSON encoder/decoder for Python
 COMPONENT_PROJECT_URL =		https://github.com/simplejson/simplejson
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e64139b4ec4f1f24c142ff7dcafe55a22b811a74d86d66560c8815687143037d
+	sha256:5fe7a6ce14d1c300d80d08695b7f7e633de6cd72c80644021874d985b3393649
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,5 +32,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
