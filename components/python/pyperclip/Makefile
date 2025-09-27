@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyperclip
-HUMAN_VERSION =			1.10.0
+HUMAN_VERSION =			1.11.0
 COMPONENT_SUMMARY =		A cross-platform clipboard module for Python. (Only handles plain text for now.)
 COMPONENT_PROJECT_URL =		https://github.com/asweigart/pyperclip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:180c8346b1186921c75dfd14d9048a6b5d46bfc499778811952c6dd6eb1ca6be
+	sha256:244035963e4428530d9e3a6101a1ef97209c6825edab1567beac148ccc1db1b6
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
