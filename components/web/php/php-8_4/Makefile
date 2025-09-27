@@ -16,15 +16,14 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.4
-COMPONENT_MNR_VERSION=	12
-COMPONENT_REVISION=	1
+COMPONENT_MNR_VERSION=	13
 COMPONENT_SUMMARY=      PHP 8.4
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:2ebd5382eb090d603087da649ed21de64b079616bc9a02abbc532b89b17e3468
+COMPONENT_ARCHIVE_HASH= sha256:85181ddca7b3e03f148521b043bd62411950d468c667db6400479f1b10812194
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-84
@@ -33,11 +32,6 @@ COMPONENT_LICENSE=      PHP License
 COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# remove syntactically wrong options
-COMPONENT_POST_CONFIGURE_ACTION+= \
-        (cd $(@D) ; \
-        $(GSED) -i -e 's:-Wl,-Wl,::' Makefile )
 
 # Apache Paths
 AP_PREFIX=		/usr/apache2/2.4
