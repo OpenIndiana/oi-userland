@@ -20,23 +20,8 @@
 # packages and their dependencies.
 #
 
-# Common Cargo home used as a cache for downloaded crates
-CARGO_ARCHIVES ?= $(USERLAND_ARCHIVES)/.cargo
-
-# The full path to the cargo binary.  It lives in the rustc package.
-CARGO = /usr/bin/cargo
-USERLAND_REQUIRED_PACKAGES += developer/lang/rustc
-
-# Fetch all dependencies and vendor them locally
-CARGO_VENDOR_DIR = $(BUILD_DIR)/cargo-vendor
-COMPONENT_PREP_ACTION += [ -f $(SOURCE_DIR)/Cargo.toml ] || exit 1 ;
-COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
-	$(CARGO) fetch --manifest-path $(SOURCE_DIR)/Cargo.toml || exit 1 ;
-COMPONENT_PREP_ACTION += $(MKDIR) $(SOURCE_DIR)/.cargo ;
-COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
-	$(CARGO) vendor --manifest-path $(SOURCE_DIR)/Cargo.toml \
-		--versioned-dirs --offline $(CARGO_VENDOR_DIR) \
-	| $(TEE) $(SOURCE_DIR)/.cargo/config.toml ;
+# Use the generic cargo vendor support
+CARGO_VENDOR = yes
 
 # Common cargo environment
 CARGO_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
@@ -52,9 +37,6 @@ COMPONENT_BUILD_CMD = $(CARGO) build
 COMPONENT_BUILD_ARGS += --release
 COMPONENT_BUILD_ARGS += --offline
 COMPONENT_BUILD_ENV += $(CARGO_ENV)
-
-# https://www.illumos.org/issues/15767
-LD_Z_IGNORE=
 
 # Install
 COMPONENT_INSTALL_CMD = $(CARGO) install
