@@ -40,10 +40,5 @@ CMAKE_OPTIONS += -DOPTIMIZE=ACCURACY
 
 COMPONENT_POST_UNPACK_ACTION += ( $(MV) $(COMPONENT_NAME) $(COMPONENT_SRC) )
 
-COMPONENT_POST_INSTALL_ACTION= \
-	( $(GSED) -e "s:%LIBDIR%:$(CONFIGURE_LIBDIR.$(BITS)):g" \
-		-e "s:%VERSION%:$(COMPONENT_VERSION):g" \
-		< $(COMPONENT_DIR)/files/mad.pc > $(BUILD_DIR)/mad.pc.$(BITS) )
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
