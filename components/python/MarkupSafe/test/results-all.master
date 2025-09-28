@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
+py$(PYV): commands[0]> pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 78 items
+collecting ... collected 80 items
 
 tests/test_escape.py::test_escape[markupsafe._native--] PASSED
 tests/test_escape.py::test_escape[markupsafe._native-abcd&><'"efgh-abcd&amp;&gt;&lt;&#39;&#34;efgh] PASSED
@@ -21,6 +21,7 @@ tests/test_escape.py::test_escape[markupsafe._native-\U0001f363\U0001f362&><'"-\
 tests/test_escape.py::test_proxy[markupsafe._native] PASSED
 tests/test_escape.py::test_subclass[markupsafe._native] PASSED
 tests/test_exception_custom_html.py::test_exception_custom_html[markupsafe._native] PASSED
+tests/test_ext_init.py::test_ext_init[markupsafe._native] SKIPPED
 tests/test_leak.py::test_markup_leaks[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_adding[markupsafe._native] PASSED
 tests/test_markupsafe.py::test_string_interpolation[markupsafe._native-<em>%s</em>-<bad user>-<em>&lt;bad user&gt;</em>] PASSED
@@ -60,6 +61,7 @@ tests/test_escape.py::test_escape[markupsafe._speedups-\U0001f363\U0001f362&><'"
 tests/test_escape.py::test_proxy[markupsafe._speedups] PASSED
 tests/test_escape.py::test_subclass[markupsafe._speedups] PASSED
 tests/test_exception_custom_html.py::test_exception_custom_html[markupsafe._speedups] PASSED
+tests/test_ext_init.py::test_ext_init[markupsafe._speedups] PASSED
 tests/test_leak.py::test_markup_leaks[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_adding[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_string_interpolation[markupsafe._speedups-<em>%s</em>-<bad user>-<em>&lt;bad user&gt;</em>] PASSED
@@ -87,6 +89,6 @@ tests/test_markupsafe.py::test_mul[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_escape_return_type[markupsafe._speedups] PASSED
 tests/test_markupsafe.py::test_soft_str[markupsafe._speedups] PASSED
 
-======== 78 passed ========
+======== 79 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

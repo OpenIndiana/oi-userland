@@ -19,20 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markupsafe
-HUMAN_VERSION =			3.0.2
+HUMAN_VERSION =			3.0.3
 COMPONENT_SUMMARY =		Safely add untrusted strings to HTML/XML markup.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0
+	sha256:722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
-TEST_REQUIRED_PACKAGES.python += library/python/packaging
-TEST_REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
