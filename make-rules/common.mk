@@ -77,6 +77,13 @@ ifneq ($(strip $(BUILD_STYLE)),archive)
 ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
 
+# Include the generic cargo vendor support used by build styles or components
+# that opted to use it
+CARGO_VENDOR ?= no
+ifneq ($(strip $(CARGO_VENDOR)),no)
+include $(WS_MAKE_RULES)/cargo-vendor.mk
+endif
+
 # Include common rules used by build styles that opted to use them
 USE_COMMON_RULES ?= no
 ifneq ($(strip $(USE_COMMON_RULES)),no)
