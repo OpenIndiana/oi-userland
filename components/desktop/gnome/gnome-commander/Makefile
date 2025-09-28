@@ -17,10 +17,10 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
-HUMAN_VERSION=		1.18.3
+HUMAN_VERSION=		1.18.4
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
-COMPONENT_ARCHIVE_HASH=	sha256:1f832c891415263363e02b2bb94415bfaec00f2406ea96c0aeb4495f7f3f9b83
+COMPONENT_ARCHIVE_HASH=	sha256:fb54300fbc2f14a45dd7202317cb8136e8a2253b43df2351df65aa58bdd6fbca
 COMPONENT_FMRI=		desktop/file-manager/gnome-commander
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPL-2.0-only
