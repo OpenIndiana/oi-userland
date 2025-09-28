@@ -12,7 +12,7 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2018 Michal Nowak
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2026 Friedrich Kink
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
@@ -20,14 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.59.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.61.3
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597
+COMPONENT_ARCHIVE_HASH= sha256:a56d2c80d744ad2f2718f85df466fe71d24ff1f9bc3e5ef588bde4d7e87815f2
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -40,6 +39,8 @@ RUST_ARCH=              x86_64-unknown-illumos
 CARGO_HOME=             $(@D)/.cargo
 # if -z ignore is added to LD_OPTIONS the build will fail
 LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld/map.pagealign -Bdirect
+
+COMPONENT_PRE_CONFIGURE_ACTION = $(GSED) -i -e 's/= .*version-script.*$$/= []/' $(SOURCE_DIR)/rsvg/meson.build
 
 PATH=                   $(PATH.gnu)
 
@@ -55,11 +56,12 @@ PYTHON_REQUIRED_PACKAGES += library/python/docutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += service/gnome/desktop-cache
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/math
