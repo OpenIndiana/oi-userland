@@ -27,11 +27,11 @@ SINGLE_PYTHON_VERSION = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PyGObject
-HUMAN_VERSION =			3.54.2
+HUMAN_VERSION =			3.54.3
 COMPONENT_SUMMARY =		Python bindings for GObject Introspection
 COMPONENT_PROJECT_URL =		https://pygobject.gnome.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:03cffeb49d8a1879b621d8f606ac904218019a0ae699b1cd3780a8ee611e696b
+	sha256:a8da09134a0f7d56491cf2412145e35aa74e91d760e8f337096a1cda0b92bae7
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	COPYING
 
