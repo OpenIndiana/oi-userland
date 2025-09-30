@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gtk
-HUMAN_VERSION=		3.24.50
+HUMAN_VERSION=		3.24.51
 COMPONENT_SUMMARY=      GTK+ - GIMP Toolkit Library for creation of graphical user interfaces
-COMPONENT_ARCHIVE_HASH=	sha256:399118a5699314622165a11b769ea9b6ed68e037b6d46d57cfcf4851dec07529
+COMPONENT_ARCHIVE_HASH=	sha256:0013877c6bd23c2dbe42ad7c70a053d0e449be66736574e37867c49c5f905a4f
 COMPONENT_PROJECT_URL=  https://www.gtk.org/
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_FMRI=         library/desktop/gtk3
