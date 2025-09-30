@@ -19,23 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cheroot
-HUMAN_VERSION =			10.0.1
-COMPONENT_SUMMARY =		cheroot - Highly-optimized, pure-python HTTP server
+HUMAN_VERSION =			11.0.0
+COMPONENT_SUMMARY =		Highly-optimized, pure-python HTTP server
 COMPONENT_PROJECT_URL =		https://cheroot.cherrypy.dev
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e0b82f797658d26b8613ec8eb563c3b08e6bd6a7921e9d5089bd1175ad1b1740
+	sha256:dd414eda6bdb15140e864bc1d1c9625030375d14cbe0b290092867368924a52f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Avoid rewrite failure with xdist
+PYTEST_ADDOPTS += --assert=plain
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
-PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/jaraco-functools
+REQUIRED_PACKAGES.python += library/python/more-itertools
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/chardet
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-context
@@ -44,11 +46,9 @@ TEST_REQUIRED_PACKAGES.python += library/python/portend
 TEST_REQUIRED_PACKAGES.python += library/python/pyopenssl
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/requests-toolbelt
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
-TEST_REQUIRED_PACKAGES.python += library/python/urllib3
