@@ -31,7 +31,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	10.0.0.2
 HUMAN_VERSION=		10.0p2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 # OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
 COMPONENT_SRC=		$(COMPONENT_NAME)-10.0p1
