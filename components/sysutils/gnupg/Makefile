@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
 COMPONENT_VERSION=      2.4.8
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# Enable C99 mode
+CC += -std=gnu99
+
+# builtins have been known to be buggy
+CFLAGS += -fno-builtin
+CFLAGS += $(XPG6MODE)
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += -I/usr/include/openldap
 
@@ -56,6 +64,9 @@ LD_OPTIONS += -z defs
 
 # This is needed because we disable some failing tests
 COMPONENT_PREP_ACTION= ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+
+# Make sure development_version is not set
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(GSED) -i -e 's:development_version=yes:development_version=no:' $(SOURCE_DIR)/configure );
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
@@ -77,6 +88,10 @@ CONFIGURE_OPTIONS += --with-libintl-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-readline=$(CONFIGURE_PREFIX)
+
+# The 'doc' directory uses CC_FOR_BUILD which does not respect our compilation
+# flags. This is a workaround to make gnupg use PIC build.
+COMPONENT_BUILD_ARGS += CC_FOR_BUILD='$(CC) $(CONFIGURE_CPPFLAGS) $(CC_PIC_ENABLE)'
 
 COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
