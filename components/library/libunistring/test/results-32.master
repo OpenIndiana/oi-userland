@@ -1,11 +1,12 @@
 PASS: test-accept
 PASS: test-alignasof
 PASS: test-alloca-opt
-PASS: test-arpa_inet
+PASS: test-arpa_inet-h
 PASS: test-array-mergesort
 PASS: test-assert
 PASS: test-binary-io.sh
 PASS: test-bind
+PASS: test-bool
 PASS: test-btoc32-1.sh
 PASS: test-btoc32-2.sh
 PASS: test-btoc32-3.sh
@@ -13,7 +14,7 @@ PASS: test-btowc-1.sh
 PASS: test-btowc-2.sh
 PASS: test-btowc-3.sh
 PASS: test-c-ctype
-PASS: test-c-strcase.sh
+PASS: test-c-strcasecmp.sh
 PASS: test-c32isalnum.sh
 PASS: test-c32isalpha.sh
 PASS: test-c32isblank.sh
@@ -37,25 +38,19 @@ SKIP: test-c32rtomb-w32-8.sh
 PASS: test-c32tolower.sh
 PASS: test-c32width
 PASS: test-calloc-gnu
-PASS: test-chdir
+SKIP: test-calloc-posix
 PASS: test-cloexec
 PASS: test-close
 PASS: test-connect
-PASS: test-ctype
-PASS: test-dirent
-PASS: test-dirfd
-PASS: test-dup
+PASS: test-ctype-h
 PASS: test-dup2
 PASS: test-environ
-PASS: test-errno
+PASS: test-errno-h
 PASS: test-error.sh
-PASS: test-fchdir
 PASS: test-fcntl-h
 PASS: test-fcntl
 PASS: test-fdopen
-PASS: test-fdopendir
 PASS: test-fgetc
-PASS: test-float
 PASS: test-fputc
 PASS: test-fread
 PASS: test-free
@@ -63,13 +58,12 @@ PASS: test-frexp-nolibm
 PASS: test-frexpl-nolibm
 PASS: test-fseterr
 PASS: test-fstat
-PASS: test-fstatat
 PASS: test-ftruncate.sh
 PASS: test-fwrite
 PASS: test-getcwd-lgpl
-PASS: test-getcwd.sh
 PASS: test-getdtablesize
 PASS: test-getprogname
+PASS: test-gettext-h
 PASS: test-gettimeofday
 PASS: test-hard-locale
 PASS: test-iconv-h
@@ -77,7 +71,7 @@ PASS: test-iconv
 PASS: test-ignore-value
 PASS: test-inet_pton
 PASS: test-intprops
-PASS: test-inttypes
+PASS: test-inttypes-h
 PASS: test-ioctl
 PASS: test-isblank
 PASS: test-isnand-nolibm
@@ -87,23 +81,25 @@ PASS: test-iswblank
 PASS: test-iswdigit.sh
 PASS: test-iswpunct.sh
 PASS: test-iswxdigit.sh
-PASS: test-langinfo
 PASS: test-largefile
 PASS: test-limits-h
 PASS: test-listen
-PASS: test-locale
+PASS: test-locale-h
+PASS: test-localeconv
+PASS: test-localeconv-mt
 PASS: test-localename
 PASS: test-rwlock1
 PASS: test-lock
 PASS: test-lstat
 PASS: test-malloc-gnu
+SKIP: test-malloc-posix
 PASS: test-malloca
-PASS: test-math
+PASS: test-math-h
 PASS: test-mbrtoc32-1.sh
 PASS: test-mbrtoc32-2.sh
 PASS: test-mbrtoc32-3.sh
 SKIP: test-mbrtoc32-4.sh
-PASS: test-mbrtoc32-5.sh
+SKIP: test-mbrtoc32-5.sh
 SKIP: test-mbrtoc32-w32-2.sh
 SKIP: test-mbrtoc32-w32-3.sh
 SKIP: test-mbrtoc32-w32-4.sh
@@ -115,7 +111,7 @@ PASS: test-mbrtowc-1.sh
 PASS: test-mbrtowc-2.sh
 PASS: test-mbrtowc-3.sh
 SKIP: test-mbrtowc-4.sh
-PASS: test-mbrtowc-5.sh
+SKIP: test-mbrtowc-5.sh
 SKIP: test-mbrtowc-w32-2.sh
 SKIP: test-mbrtowc-w32-3.sh
 SKIP: test-mbrtowc-w32-4.sh
@@ -126,13 +122,12 @@ SKIP: test-mbrtowc-w32-8.sh
 PASS: test-mbsinit.sh
 PASS: test-mbsnlen.sh
 PASS: test-memchr
-PASS: test-memrchr
+PASS: test-mkfifo
 PASS: test-nanosleep
-PASS: test-netinet_in
+PASS: test-netinet_in-h
 PASS: test-once1
 PASS: test-once2
 PASS: test-open
-PASS: test-openat
 PASS: test-pathmax
 PASS: test-perror.sh
 PASS: test-perror2
@@ -155,9 +150,9 @@ PASS: test-raise
 PASS: test-random
 PASS: test-random-mt
 PASS: test-random_r
-PASS: test-realloc-gnu
+PASS: test-realloc-posix
 PASS: test-reallocarray
-PASS: test-sched
+PASS: test-sched-h
 PASS: test-select
 PASS: test-select-in.sh
 PASS: test-select-out.sh
@@ -168,6 +163,7 @@ PASS: test-setlocale_null-mt-all
 PASS: test-setlocale_null-unlocked
 PASS: test-setlocale1.sh
 PASS: test-setlocale2.sh
+SKIP: test-setlocale-w32
 PASS: test-setsockopt
 PASS: test-signal-h
 PASS: test-signbit
@@ -176,33 +172,34 @@ PASS: test-sleep
 PASS: test-sockets
 PASS: test-stat
 PASS: test-stat-time
-PASS: test-stdbool
-PASS: test-stdckdint
-PASS: test-stddef
-PASS: test-stdint
-PASS: test-stdio
-PASS: test-stdlib
+PASS: test-stdckdint-h
+PASS: test-stddef-h
+PASS: test-stdint-h
+PASS: test-stdio-h
+PASS: test-stdlib-h
+PASS: test-str_endswith
+PASS: test-str_startswith
 PASS: test-strerror
 PASS: test-strerror_r
 PASS: test-striconveh
 PASS: test-striconveha
-PASS: test-string
+PASS: test-string-h
 PASS: test-strncat
 PASS: test-strstr
 PASS: test-symlink
-PASS: test-sys_ioctl
-PASS: test-sys_select
-PASS: test-sys_socket
-PASS: test-sys_stat
-PASS: test-sys_time
-PASS: test-sys_types
-PASS: test-sys_uio
+PASS: test-sys_ioctl-h
+PASS: test-sys_select-h
+PASS: test-sys_socket-h
+PASS: test-sys_stat-h
+PASS: test-sys_time-h
+PASS: test-sys_types-h
+PASS: test-sys_uio-h
 PASS: test-init.sh
 PASS: test-thread_self
 PASS: test-thread_create
 PASS: test-time-h
 PASS: test-time
-PASS: test-uchar
+PASS: test-uchar-h
 PASS: test-cased
 PASS: test-ignorable
 PASS: unicase/test-locale-language.sh
@@ -492,8 +489,7 @@ PASS: test-u32-normcmp
 PASS: test-u32-normcoll
 PASS: test-u8-normcmp
 PASS: test-u8-normcoll
-PASS: test-dup-safer
-PASS: test-unistd
+PASS: test-unistd-h
 PASS: test-u16-asnprintf1
 PASS: test-u16-vasnprintf1
 PASS: unistdio/test-u16-vasnprintf2.sh
@@ -647,7 +643,7 @@ PASS: test-unsetenv
 PASS: test-usleep
 PASS: test-verify
 PASS: test-verify.sh
-PASS: test-wchar
+PASS: test-wchar-h
 PASS: test-wcrtomb.sh
 SKIP: test-wcrtomb-w32-2.sh
 SKIP: test-wcrtomb-w32-3.sh
@@ -663,9 +659,9 @@ SKIP: test-windows-recmutex-type
 SKIP: test-windows-timedmutex-type
 SKIP: test-windows-timedrecmutex-type
 PASS: test-xalloc-die.sh
-# TOTAL: 665
-# PASS:  630
-# SKIP:  35
+# TOTAL: 661
+# PASS:  621
+# SKIP:  40
 # XFAIL: 0
 # FAIL:  0
 # XPASS: 0
