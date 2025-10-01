@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_inspection
-HUMAN_VERSION =			0.4.1
+HUMAN_VERSION =			0.4.2
 COMPONENT_SUMMARY =		Runtime typing introspection tools
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/typing-inspection
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6ae134cc0203c33377d43188d4064e9b357dba58cff3185f22924610e70a9d28
+	sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,6 +32,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
