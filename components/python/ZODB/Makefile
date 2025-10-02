@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodb
-HUMAN_VERSION =			6.0.1
+HUMAN_VERSION =			6.1
 COMPONENT_SUMMARY =		ZODB, a Python object-oriented database
 COMPONENT_PROJECT_URL =		http://zodb-docs.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:89f70fae1852123e243547909c311441d63405dec26f6ec42f365a2191db9509
+	sha256:854a269f78977cdfda06aff08e93a8aa512c214202caae301222db2ef98ba365
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,18 +35,20 @@ COMPONENT_POST_UNPACK_ACTION += \
 	$(RM) $(SOURCE_DIR)/src/ZODB/tests/testdocumentation.py ;
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/btrees
-PYTHON_REQUIRED_PACKAGES += library/python/persistent
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/transaction
-PYTHON_REQUIRED_PACKAGES += library/python/zc-lockfile
-PYTHON_REQUIRED_PACKAGES += library/python/zconfig
-PYTHON_REQUIRED_PACKAGES += library/python/zodbpickle
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/btrees
+REQUIRED_PACKAGES.python += library/python/persistent
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/transaction
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zc-lockfile
+REQUIRED_PACKAGES.python += library/python/zconfig
+REQUIRED_PACKAGES.python += library/python/zodbpickle
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
