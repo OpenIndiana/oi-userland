@@ -25,12 +25,14 @@
 
 BUILD_STYLE= meson
 BUILD_BITS= 64_and_32
-USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
 COMPONENT_VERSION= 1.16.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_PROJECT_URL= https://dbus.freedesktop.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,6 +44,15 @@ COMPONENT_FMRI= system/library/dbus
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_LICENSE= dbus, GPLv2
 
+COMPONENT_FMRI.dbus-x11 =	$(COMPONENT_FMRI)/dbus-x11
+COMPONENT_SUMMARY.dbus-x11 =	$(COMPONENT_SUMMARY) - X11
+
+COMPONENT_FMRI.libdbus =	system/library/libdbus
+COMPONENT_SUMMARY.libdbus =	$(COMPONENT_SUMMARY)
+
+COMPONENT_FMRI.libdbus-32 =	$(COMPONENT_FMRI.libdbus)/32
+COMPONENT_SUMMARY.libdbus-32 =	$(COMPONENT_SUMMARY.libdbus) (32-bit)
+
 # https://release-monitoring.org/api/project/$(COMPONENT_ANITYA_ID) will answer a JSON object with project information
 COMPONENT_ANITYA_ID= 5356
 
@@ -50,18 +61,36 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += $(XPG6MODE)
 CPPFLAGS += -D_REENTRANT
 
-# Will break parallel 32/64-bit builds; needs update when that happens.
-CONFIGURE_BINDIR.32 = $(CONFIGURE_PREFIX)/bin
-
-CONFIGURE_OPTIONS += -Ddbus_daemondir=$(USRLIBEXECDIR)
-CONFIGURE_OPTIONS += -Druntime_dir=/var/run
+CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
 CONFIGURE_OPTIONS += -Ddbus_user=root
 CONFIGURE_OPTIONS += -Depoll=disabled
 CONFIGURE_OPTIONS += -Dinotify=disabled
 CONFIGURE_OPTIONS += -Dc_link_args=-lsocket
 
+# We do not need to build these for 32-bit.  They are either overwritten by the
+# 64-bit build, or unused.
+CONFIGURE_OPTIONS.32 += -Ddoxygen_docs=disabled
+CONFIGURE_OPTIONS.32 += -Dtools=false
+CONFIGURE_OPTIONS.32 += -Dtraditional_activation=false
+CONFIGURE_OPTIONS.32 += -Dxml_docs=disabled
+
 # enable-tests activates more tests but is said to be unsafe for deployments. Thus, we don't use it here.
 #CONFIGURE_OPTIONS += --enable-tests
+
+# Drop 32-bit binaries and files that will be overwritten by 64-bit build
+# anyway.
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRINCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREDIR) ;
+
+# Install additional files
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOETCDIR)/X11/xinit/xinitrc.d $(COMPONENT_DIR)/files/0070.dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -D $(COMPONENT_DIR)/files/auth_attr $(PROTOETCSECDIR)/auth_attr.d/system:library:dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -D $(COMPONENT_DIR)/files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/system:library:dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOLIBDIR)/svc/manifest/system $(COMPONENT_DIR)/files/dbus.xml ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOLIBDIR)/svc/method $(COMPONENT_DIR)/files/svc-dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOUSRSHAREMANDIR)/man3lib $(COMPONENT_DIR)/files/libdbus-1.3lib ;
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
@@ -71,7 +100,6 @@ REQUIRED_PACKAGES += text/xmlto
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
-REQUIRED_PACKAGES += library/expat/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
