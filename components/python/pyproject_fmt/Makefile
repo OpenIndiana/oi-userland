@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			2.6.0
+HUMAN_VERSION =			2.7.0
 COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/tox-dev/toml-fmt/archive/refs/tags/pyproject-fmt/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bfb1dd041ad265a8f65e3dc23fa2827195c8c506f9a23451a7b068c0fb1bb9f1
+	sha256:3dbe43d000a3f267e5b4365bc0eb144a6690de86b046b6ff903655bd71f830f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -47,11 +47,11 @@ TEST_CONFLICTING_PACKAGES.python += library/python/pyproject-fmt
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/maturin
-PYTHON_REQUIRED_PACKAGES += library/python/toml-fmt-common
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/maturin
+REQUIRED_PACKAGES.python += library/python/toml-fmt-common
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
