@@ -19,9 +19,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=	0.8.6
+COMPONENT_VERSION=	0.8.7
 COMPONENT_SUMMARY=      Library for desktop notifications
-COMPONENT_ARCHIVE_HASH=	sha256:c5540aaefb60e1d63b1c587c05f2284ebe72ece7d0c0e5e4a778cfd5844b6b58
+COMPONENT_ARCHIVE_HASH=	sha256:4be15202ec4184fce1ac15997ece5530d2be32fe9573875aeb10e3b573858748
 COMPONENT_FMRI=         library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
@@ -41,7 +41,9 @@ COMPONENT_TEST_ENV += DISPLAY=:1
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Manually added build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/gi-docgen
+REQUIRED_PACKAGES.python += library/python/gi-docgen
+# python-dbusmock is needed to build tests
+REQUIRED_PACKAGES.python += library/python/python-dbusmock
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
