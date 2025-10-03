@@ -1,0 +1,19 @@
+Brackets are removed by autoconf leading to invalid syntax in configure.
+
+--- hplip-3.25.6/configure.in.orig
++++ hplip-3.25.6/configure.in
+@@ -632,12 +632,12 @@
+ 
+ SAVE_CPPFLAGS="$CPPFLAGS"
+ CFLAGS=`python-config --includes`
+-if [ $? -eq 0 ] 
++if test $? -eq 0
+ then
+    echo $FLAGS
+ else
+ CFLAGS=`python3-config --includes`
+-   if [ $? -eq 0 ]
++   if test $? -eq 0
+    then
+    echo $FLAGS
+    fi
