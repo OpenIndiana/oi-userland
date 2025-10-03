@@ -1,0 +1,23 @@
+https://www.illumos.org/issues/17636
+
+--- hplip-3.25.6/prnt/hpcups/HPCupsFilter.cpp.orig
++++ hplip-3.25.6/prnt/hpcups/HPCupsFilter.cpp
+@@ -42,6 +42,8 @@
+ #include <time.h>
+ #include "utils.h"
+ 
++extern "C" int getdomainname(char*, int);
++
+ #define HP_FILE_VERSION_STR    "03.09.08.0"
+ 
+ static HPCupsFilter    filter;
+--- hplip-3.25.6/prnt/hpps/hppsfilter.c.orig
++++ hplip-3.25.6/prnt/hpps/hppsfilter.c
+@@ -32,6 +32,7 @@
+ \*****************************************************************************/
+ #include "hppsfilter.h"
+ 
++int getdomainname(char*, int);
+ 
+ /*  save final output ps file: in cupsd.conf file  value #hpLogLevel 15  */
+ static int g_savepsfile = 0;
