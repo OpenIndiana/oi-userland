@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			6.1.1
+HUMAN_VERSION =			6.2
 COMPONENT_SUMMARY =		Translucent persistent objects
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d321b60eb07ef900f85a96cf071ff8c3b9aee6e679becc48c46f3457e8d9d2f
+	sha256:a1d0e7b9e9c985b3fa368478d44153753e1592c4e6147469bf613c57412beb9f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,12 +33,13 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-deferredimport
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-deferredimport
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
