@@ -150,24 +150,19 @@ CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
 # during ./configure).
 COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-MESON = 	/usr/bin/meson
+MESON = /usr/bin/meson
+USERLAND_REQUIRED_PACKAGES += developer/build/meson
 
-# configure the unpacked source for building 32 and 64 bit version
-# meson insists on separate source & build directories, so no cloney here.
-$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
-	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
-	$(COMPONENT_PRE_CONFIGURE_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(CONFIGURE_ENV) $(MESON) setup $(@D) \
-		$(CONFIGURE_OPTIONS))
-	$(COMPONENT_POST_CONFIGURE_ACTION)
-	$(TOUCH) $@
+# Configure
+CLONEY_MODE = none
+COMPONENT_CONFIGURE_ACTION = \
+	cd $(SOURCE_DIR) ; $(ENV) $(CONFIGURE_ENV) \
+		$(MESON) setup $(@D) $(CONFIGURE_OPTIONS)
 
 # If BUILD_STYLE is set, provide a default configure target.
 ifeq   ($(strip $(BUILD_STYLE)),meson)
 configure:	$(CONFIGURE_$(MK_BITS))
 endif
-
-USERLAND_REQUIRED_PACKAGES += developer/build/meson
 
 # Remove the empty line after the 'Summary of Failures:'
 MESON_TEST_TRANSFORMS += "-e '/^Summary of Failures:/{n; N; D; }' | $(COMPONENT_TEST_TRANSFORMER)"
