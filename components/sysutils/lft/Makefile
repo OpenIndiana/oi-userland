@@ -11,30 +11,28 @@
 #
 # Copyright 2014 (c) Aurelien Larcher. All rights reserved.
 #
-BUILD_BITS=				64
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         lft
-COMPONENT_VERSION=      3.91
+COMPONENT_VERSION=      3.93
 COMPONENT_SUMMARY=      Layer Four Traceroute (LFT) and WhoB
 COMPONENT_PROJECT_URL=  https://pwhois.org/lft/
-COMPONENT_FMRI=         diagnostic/lft
-COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:aad13e671adcfc471ab99417161964882d147893a54664f3f465ec5c8398e6af
-COMPONENT_ARCHIVE_URL= \
-	https://pwhois.org/dl/index.who?file=$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:132d74c1a8cf56023a16ddd39d10c89b4dfa0acdbd7c472e45ccc8521d8aaddd
+COMPONENT_ARCHIVE_URL=	https://pwhois.org/dl/index.who?file=$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         diagnostic/lft
+COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=      VOSTROM Public License for Open Source
 
-TEST_TARGET=			$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Work around broken Makefile not supporting out of source build
 COMPONENT_POST_CONFIGURE_ACTION= $(CP) $(SOURCE_DIR)/*.c $(SOURCE_DIR)/*.h $(SOURCE_DIR)/*.8 $(BUILD_DIR_$(BITS))/
 
-COMPONENT_INSTALL_ARGS=DESTDIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ARGS= DESTDIR=$(PROTO_DIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
