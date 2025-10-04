@@ -15,10 +15,13 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      2.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Plugins for Geany editor
 COMPONENT_DESCRIPTION=	Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -30,7 +33,7 @@ COMPONENT_FMRI=         editor/geany/plugins
 COMPONENT_CLASSIFICATION= System/Text Tools
 COMPONENT_LICENSE=      GPLv2
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && rm ltmain.sh; autoreconf -fi )
+COMPONENT_PREP_ACTION += ( cd $(@D) && $(RM) ltmain.sh; $(ENV) PATH="$(PATH)" autoreconf -fi )
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -43,7 +46,6 @@ CFLAGS += -D_FILE_OFFSET_BITS=64
 CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_ENV += CHECK_CFLAGS="-I/usr/include/check"
-CONFIGURE_ENV += PYTHON=$(PYTHON.3.9.64)
 
 # requires libutil
 CONFIGURE_OPTIONS += --disable-debugger
