@@ -4,7 +4,7 @@ py$(PYV): commands[0]> python -m py.test tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1539 items / 2 deselected / 1537 selected
+collecting ... collected 1578 items / 2 deselected / 1576 selected
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -90,6 +90,7 @@ tests/test_backup.py::TestBackup::test_encrypt_backup PASSED
 tests/test_backup.py::TestBackup::test_encrypt_tar_backup PASSED
 tests/test_backup.py::TestBackup::test_recover_check_pgdata_directory_is_empty PASSED
 tests/test_backup.py::TestBackup::test_recover_check_tablespace_directory_is_empty PASSED
+tests/test_backup.py::TestBackup::test_recover_with_delta_restore_recovery_option PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_no_wal_cleanup_if_not_oldest_backup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup PASSED
 tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_last_backup PASSED
@@ -166,8 +167,6 @@ tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_back
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_name_set_when_hook_script PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDeleteArguments::test_fails_if_no_backup_id_or_policy_is_provided PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDeleteArguments::test_exits_on_connectivity_test PASSED
-tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_fails_on_connectivity_test_failure PASSED
-tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_fails_if_bucket_not_found PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_delete_single_backup[20210723T095432] PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_delete_single_backup[backup name] PASSED
 tests/test_barman_cloud_backup_delete.py::TestCloudBackupDelete::test_keep_single_backup_minimum_redundancy PASSED
@@ -236,8 +235,7 @@ tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_fails
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_add_keep_fails_if_no_target_release_or_status_is_provided PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_exits_on_connectivity_test PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_exits_on_unsupported_target PASSED
-tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_fails_on_connectivity_test_failure PASSED
-tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_fails_if_bucket_not_found PASSED
+tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_exits_on_connectivity_test_with_code_error_0_when_test_flag_is_passed PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_target PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_backup_name PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_fails_if_backup_status_not_done PASSED
@@ -282,12 +280,11 @@ tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_down
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_download_backup_preconditions_failed[None-None-None-None-The following snapshots are not attached to recovery instance {recovery_instance}: {snapshot_name}] PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_download_backup_preconditions_failed[snapshot0-/opt/disk1-rw,noatime-None-Error checking mount points: Disk {disk_name} cloned from snapshot {snapshot_name} is mounted at /opt/disk1 but {mount_point} was expected.] PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_download_backup_preconditions_failed[snapshot0-/opt/disk0-rw,noatime-False-Recovery directory '{recovery_dir}' does not exist on the recovery instance. Check all required disks have been created, attached and mounted.] PASSED
-tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_on_connectivity_test_failure PASSED
+tests/test_barman_cloud_wal_restore.py::TestMain::test_exits_on_connectivity_test PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_succeeds_if_wal_is_found PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_succeeds_if_wal_is_found_partial PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_if_wal_is_found_partial_but_nopartial PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_if_wal_not_found PASSED
-tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_if_bucket_not_found PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_on_invalid_wal_name PASSED
 tests/test_barman_cloud_wal_restore.py::TestMain::test_fails_on_download_exception PASSED
 tests/test_barman_wal_archive.py::TestMain::test_ok[sha256-SHA256SUMS-] PASSED
@@ -336,7 +333,25 @@ tests/test_barman_wal_restore.py::TestRemoteGetWal::test_ssh_connectivity_error 
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_ssh_exit_code_is_passed_through PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_exit_code_if_wal_dest_is_dir PASSED
 tests/test_barman_wal_restore.py::TestRemoteGetWal::test_exit_code_if_wal_dest_not_writable PASSED
-tests/test_barman_wal_restore.py::TestRemoteGetWal::test_decompression PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_fetch_uncompressed_file PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_fetch_compressed_file PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_dest_file_is_string PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_returncode[0] PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_returncode[1] PASSED
+tests/test_barman_wal_restore.py::TestRemoteGetWal::test_returncode[255] PASSED
+tests/test_barman_wal_restore.py::test_spawn_additional_process PASSED
+tests/test_barman_wal_restore.py::test_peek_additional_files[None] PASSED
+tests/test_barman_wal_restore.py::test_peek_additional_files[3] PASSED
+tests/test_barman_wal_restore.py::test_peek_additional_files[10] PASSED
+tests/test_barman_wal_restore.py::test_peek_additional_files_spool_dir_is_created PASSED
+tests/test_barman_wal_restore.py::test_build_ssh_command[config0-000000010000000000000001-None-expected_command0] PASSED
+tests/test_barman_wal_restore.py::test_build_ssh_command[config1-000000010000000000000001-None-expected_command1] PASSED
+tests/test_barman_wal_restore.py::test_build_ssh_command[config2-000000010000000000000001-None-expected_command2] PASSED
+tests/test_barman_wal_restore.py::test_build_ssh_command[config3-000000010000000000000001-None-expected_command3] PASSED
+tests/test_barman_wal_restore.py::test_build_ssh_command[config4-000000010000000000000001-10-expected_command4] PASSED
+tests/test_barman_wal_restore.py::test_execute_peek PASSED
+tests/test_barman_wal_restore.py::test_execute_peek_failed PASSED
+tests/test_barman_wal_restore.py::test_try_deliver_from_spool PASSED
 tests/test_cli.py::TestCli::test_get_server PASSED
 tests/test_cli.py::TestCli::test_get_server_with_conflicts PASSED
 tests/test_cli.py::TestCli::test_get_server_inactive PASSED
@@ -369,6 +384,13 @@ tests/test_cli.py::TestCli::test_restore_get_wal[-True-False-True] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-False-True] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-True-False] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[-False-False-False] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[-False-True-False] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[delta-restore-False-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[delta-restore-False-True-False] PASSED
+tests/test_cli.py::TestCli::test_restore_delta_restore[delta-restore-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_no_delta_restore_will_error_out PASSED
 tests/test_cli.py::TestCli::test_restore_staging_path PASSED
 tests/test_cli.py::TestCli::test_restore_staging_location PASSED
 tests/test_cli.py::TestCli::test_restore_staging_path_supports_deprecated_options[None-None-None-False-gzip-None-False-False] PASSED
@@ -545,6 +567,11 @@ tests/test_command_wrappers.py::TestPgCombineBackup::test_init_args PASSED
 tests/test_command_wrappers.py::TestPgCombineBackup::test_simple_invocation PASSED
 tests/test_command_wrappers.py::TestPgCombineBackup::test_tablespace_mapping[tbs_mapping0-expected_args0] PASSED
 tests/test_command_wrappers.py::TestPgCombineBackup::test_tablespace_mapping[tbs_mapping1-expected_args1] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_combine_mode[None] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_combine_mode[copy] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_combine_mode[link] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_combine_mode[clone] PASSED
+tests/test_command_wrappers.py::TestPgCombineBackup::test_combine_mode[copy-file-range] PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_init_minimal_cmd PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_init_args PASSED
 tests/test_command_wrappers.py::TestBarmanSubProcess::test_simple_invocation PASSED
@@ -801,6 +828,7 @@ tests/test_fs.py::TestUnixLocalCommand::test_dir_if_not_exists PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_delete_if_exists PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_check_directory_exists PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_get_file_mode PASSED
+tests/test_fs.py::TestUnixLocalCommand::test_get_path_device_number PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_check_write_permission PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_create_symbolic_link PASSED
 tests/test_fs.py::TestUnixLocalCommand::test_get_file_content PASSED
@@ -1064,6 +1092,7 @@ tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup[remote] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_failed[local] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_failed[remote] PASSED
+tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_error_out_when_client_differs_backup_pg_version PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_get_tablespace_mapping[True-None-expected_result0] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_get_tablespace_mapping[False-None-expected_result1] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_get_tablespace_mapping[True-tablespaces_relocation2-expected_result2] PASSED
@@ -1074,6 +1103,7 @@ tests/test_recovery_executor.py::TestCombineOperation::test_fetch_remote_status_
 tests/test_recovery_executor.py::TestCombineOperation::test_fetch_remote_status_staging_remote PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_fetch_remote_status_fail[local] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_fetch_remote_status_fail[remote] PASSED
+tests/test_recovery_executor.py::TestCombineOperation::test__fallback_to_copy_if_link_is_not_supported PASSED
 tests/test_recovery_executor.py::TestDecryptOperation::test__execute_returns_volatile PASSED
 tests/test_recovery_executor.py::TestDecryptOperation::test__execute_calls__decrypt_backup PASSED
 tests/test_recovery_executor.py::TestDecryptOperation::test__decrypt_backup PASSED
@@ -1452,6 +1482,15 @@ tests/test_utils.py::TestIsSubdirectory::test_not_a_subdirectory PASSED
 tests/test_utils.py::TestIsSubdirectory::test_relative_paths PASSED
 tests/test_utils.py::TestIsSubdirectory::test_root_and_subdirectory PASSED
 tests/test_utils.py::TestIsSubdirectory::test_empty_paths PASSED
+tests/test_utils.py::TestGetMajorVersion::test_none_input PASSED
+tests/test_utils.py::TestGetMajorVersion::test_no_version_in_string PASSED
+tests/test_utils.py::TestGetMajorVersion::test_integer_version PASSED
+tests/test_utils.py::TestGetMajorVersion::test_decimal_version PASSED
+tests/test_utils.py::TestGetMajorVersion::test_version_embedded_in_text PASSED
+tests/test_utils.py::TestGetMajorVersion::test_multiple_numbers PASSED
+tests/test_utils.py::TestGetMajorVersion::test_leading_text PASSED
+tests/test_utils.py::TestGetMajorVersion::test_trailing_text PASSED
+tests/test_utils.py::TestGetMajorVersion::test_leading_client_name_text PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_init PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_get_remote_status PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_check PASSED
@@ -1563,34 +1602,34 @@ tests/test_backup.py::TestBackup::test_keyboard_interrupt
   
     warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
 
-tests/test_command_wrappers.py: 36 warnings
-  $(@D)/barman/command_wrappers.py:770: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+tests/test_command_wrappers.py: 41 warnings
+  $(@D)/barman/command_wrappers.py:776: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("9.3"):
 
-tests/test_command_wrappers.py: 83 warnings
+tests/test_command_wrappers.py: 88 warnings
 tests/test_executor.py: 15 warnings
 tests/test_wal_archiver.py: 14 warnings
   $(PYTHON_DIR)/vendor-packages/setuptools/_distutils/version.py:336: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     other = LooseVersion(other)
 
 tests/test_command_wrappers.py: 26 warnings
-  $(@D)/barman/command_wrappers.py:962: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:968: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("10"):
 
 tests/test_command_wrappers.py: 17 warnings
-  $(@D)/barman/command_wrappers.py:1017: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:1023: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     if version and version >= Version("15"):
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
 tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:897: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:903: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["full_version"] = Version(full_version)
 
 tests/test_command_wrappers.py: 2 warnings
 tests/test_executor.py: 3 warnings
 tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:898: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+  $(@D)/barman/command_wrappers.py:904: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     version_info["major_version"] = Version(
 
 tests/test_executor.py::TestPostgresBackupExecutor::test_check
@@ -1605,9 +1644,9 @@ tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
   $(@D)/barman/backup_executor.py:559: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
     pg_version = Version(pg_version)
 
-tests/test_executor.py::TestSnapshotBackupExecutor::test_find_missing_and_unmounted_disks_resolve_exception
-  $(@D)/barman/backup_executor.py:1703: DeprecationWarning: The 'warn' function is deprecated, use 'warning' instead
-    logging.warn("Error resolving mount point: {}".format(exc))
+tests/test_recovery_executor.py: 10 warnings
+  $(@D)/barman/recovery_executor.py:3135: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
+    elif Version(pg_combinebackup_major_version) < Version("18"):
 
 tests/test_utils.py::TestBarmanEncoder::test_version_objects
   $(@D)/tests/test_utils.py:557: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
@@ -1626,6 +1665,6 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_
     pg_version = Version(pg_version)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1515 passed, 22 skipped, 2 deselected, 229 warnings ========
+======== 1554 passed, 22 skipped, 2 deselected, 248 warnings ========
   py$(PYV): OK
   congratulations :)

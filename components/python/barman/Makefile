@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		barman
-HUMAN_VERSION =			3.15.0
+HUMAN_VERSION =			3.16.0
 COMPONENT_SUMMARY =		Backup and Recovery Manager for PostgreSQL
 COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b2e086b0bdb6b45bd2ecef4ee95f551e2d77a05fbccf44b90eebd2b8be1112fa
+	sha256:083f65f8d75cb0ae65b075aedfe59bb13e5388be6e3f096def1e5b0a86965d9a
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -87,10 +87,10 @@ PYTEST_ADDOPTS += --deselect tests/test_backup.py::TestWalCleanup::test_delete_w
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/psycopg2
-PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/psycopg2
+REQUIRED_PACKAGES.python += library/python/python-dateutil
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/lz4
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/py
