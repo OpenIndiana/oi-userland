@@ -1,0 +1,34 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2025 Till Wegmueller
+#
+
+BUILD_STYLE = cargo
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		ripgrep
+COMPONENT_VERSION =     14.1.1
+COMPONENT_SUMMARY =		ripgrep is a line-oriented search tool that recursively searches the current directory for a regex pattern while respecting gitignore rules.
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f77b8032dc584527975f34aa5a897d0ef5a785573fda778771a614ff9da501d9
+COMPONENT_FMRI =		text/ripgrep
+COMPONENT_CLASSIFICATION =	Applications/System Utilities
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE-MIT
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
