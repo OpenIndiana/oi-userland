@@ -29,14 +29,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.5.5
+COMPONENT_VERSION=	6.5.6
 COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
 COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
 to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
 	the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:888f4ace30a553dda6c17200f5043eeead1dd95b4bb051e081ae69eeba928260
+COMPONENT_ARCHIVE_HASH=	sha256:a1d88b7a419fa97094008f169feba44e3e9acc40bc142811788211dad76ac763
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/fetchmail/fetchmail/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
