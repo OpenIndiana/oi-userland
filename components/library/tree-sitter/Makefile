@@ -28,12 +28,12 @@ DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tree-sitter
-COMPONENT_VERSION=      0.25.9
+COMPONENT_VERSION=      0.25.10
 COMPONENT_SUMMARY=      Tree-sitter is a parser generator tool and an incremental parsing library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://tree-sitter.github.io/tree-sitter/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:024a2478579acebbb8882d7c2c0f0e07fc0aa19a459b48d10469e4abb96cf16e
+COMPONENT_ARCHIVE_HASH= sha256:ad5040537537012b16ef6e1210a572b927c7cdc2b99d1ee88d44a7dcdc3ff44c
 COMPONENT_ARCHIVE_URL=  https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
