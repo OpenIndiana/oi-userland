@@ -61,6 +61,8 @@ COMPONENT_TEST_ENV += $(CARGO_ENV)
 COMPONENT_TEST_TRANSFORMS += "-e '0,/Finished/d'"
 # remove timing
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(finished\) in [0-9]\{1,\}\.[0-9]\{2\}s\$$/\1/g'"
+# normalize variable hash in filename
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Running .* (.*-\)[0-9a-f]\{16\})/\1XXXXXXXXXXXXXXXX)/'"
 # sort tests
 COMPONENT_TEST_TRANSFORMS += "| ( while true ; do \
 		$(GSED) -u -e '/^running [0-9]\{1,\} tests\$$/q1' && break ; \
