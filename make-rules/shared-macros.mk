@@ -198,9 +198,12 @@ endif
 # See https://devguide.python.org/versions/
 #
 
+# This is the default version of Python
 PYTHON_VERSION = 3.9
-PYTHON_VERSIONS = 3.9
 
+# The PYTHON_VERSIONS list should always be in ascending order (newest version
+# last)
+PYTHON_VERSIONS = 3.9
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
 # 64-bit only.
@@ -215,6 +218,18 @@ PYTHON_64_ONLY_VERSIONS = $(PYTHON_VERSIONS)
 # This list should be usually empty.  Intersection of
 # PYTHON_VERSIONS_OBSOLETING and PYTHON_VERSIONS lists MUST be always empty.
 PYTHON_VERSIONS_OBSOLETING = 3.7
+
+# Python definitions
+PYTHON = /usr/bin/python$(PYTHON_VERSION)
+TOX = /usr/bin/tox-$(PYTHON_VERSION)
+
+# The default is site-packages, but that directory belongs to the end-user.
+# Modules which are shipped by the OS but not with the core Python distribution
+# belong in vendor-packages.
+PYTHON_DIR = /usr/lib/python$(PYTHON_VERSION)
+PYTHON_LIB = $(PYTHON_DIR)/vendor-packages
+PYTHON_DATA = $(PYTHON_LIB)
+PYTHON_VENDOR_PACKAGES = $(PYTHON_LIB)
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
@@ -737,11 +752,6 @@ PATH.prepend +=		$(CLANG_BINDIR)
 USERLAND_REQUIRED_PACKAGES += $(if $(filter-out clang,$(COMPONENT_NAME)), \
 	$(if $(filter-out $(CLANG_DEFAULT),$(CLANG_VERSION)),$(CLANG_DEVELOPER_PKG)))
 
-# Python definitions
-PYTHON.3.9.VENDOR_PACKAGES.64 = /usr/lib/python3.9/vendor-packages
-PYTHON.3.9.VENDOR_PACKAGES.32 = /usr/lib/python3.9/vendor-packages
-PYTHON.3.9.VENDOR_PACKAGES = $(PYTHON.3.9.VENDOR_PACKAGES.$(BITS))
-
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
 F77 =		$(F77.$(COMPILER).$(BITS))
@@ -784,29 +794,6 @@ RUBY_SCRIPT_FIX_FUNC = \
 # need to get built.  This is done because during package transformations
 # both the ruby version and the ruby library version are needed.
 RUBY_VERSIONS = $(RUBY_LIB_VERSION)
-
-PYTHON_VENDOR_PACKAGES.32 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.32)
-PYTHON_VENDOR_PACKAGES.64 = $(PYTHON.$(PYTHON_VERSION).VENDOR_PACKAGES.64)
-PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
-
-# python2 was built for both 32- and 64-bits.
-# python3 is built for 64-bits only.
-
-PYTHON.3.9 =	/usr/bin/python3.9
-PYTHON.3.9.64 =	$(PYTHON.3.9)
-
-PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
-PYTHON =	$(PYTHON.$(PYTHON_VERSION))
-
-TOX.3.9 =	/usr/bin/tox-3.9
-TOX =		$(TOX.$(PYTHON_VERSION))
-
-# The default is site-packages, but that directory belongs to the end-user.
-# Modules which are shipped by the OS but not with the core Python distribution
-# belong in vendor-packages.
-PYTHON_DIR= /usr/lib/python$(PYTHON_VERSION)
-PYTHON_LIB= $(PYTHON_DIR)/vendor-packages
-PYTHON_DATA= $(PYTHON_LIB)
 
 # If the component has python scripts then the first line should probably
 # point at the python version currently set by the $(PYTHON) variable so
