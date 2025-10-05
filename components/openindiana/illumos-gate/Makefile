@@ -28,7 +28,7 @@ FETCH=$(WS_TOOLS)/userland-fetch
 DEBUG=no
 
 ifeq ($(DEBUG),yes)
-NIGHTLY_OPTIONS=-nCDmp
+NIGHTLY_OPTIONS=-FnCDAmpr
 else
 NIGHTLY_OPTIONS=-nmpL
 endif
