@@ -102,6 +102,14 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched $(BUILD_DIR)/runtime-perl.p5
 	  echo export PERL_PKGVERS=\"-$(subst .,,$(PERL_VERSION))\"; \
 	  echo export DEP_RUNTIME_PERL="$(BUILD_DIR)/runtime-perl.p5m"; \
 	  echo export BUILDPERL32=\"#\"; \
+	  echo export PYTHON3_VERSION=$(PYTHON_VERSION) ; \
+	  echo export PYTHON3_PKGVERS=-$(subst .,,$(PYTHON_VERSION)) ; \
+	  $(if $(filter-out $(PYTHON_VERSION),$(lastword $(PYTHON_VERSIONS))), \
+	    echo export BUILDPY3b= ; \
+	    echo export PYTHON3b_VERSION=$(lastword $(PYTHON_VERSIONS)) ; \
+	    echo export PYTHON3b_PKGVERS=-$(subst .,,$(lastword $(PYTHON_VERSIONS))) ; \
+	    echo export PYTHON3b_SUFFIX= ; \
+	  ) \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
 	  illumos.sh && \
