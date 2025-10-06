@@ -20,13 +20,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL3
-COMPONENT_VERSION=	3.2.22
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.2.24
 COMPONENT_SUMMARY=	Simple DirectMedia Layer is a cross-platform library to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f29d00cbcee273c0a54f3f32f86bf5c595e8823a96b1d92a145aac40571ebfcc
+COMPONENT_ARCHIVE_HASH=	sha256:81cc0fc17e5bf2c1754eeca9af9c47a76789ac5efdd165b3b91cbbe4b90bfb76
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl3
 COMPONENT_CLASSIFICATION =	System/Libraries
@@ -37,9 +36,14 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-CFLAGS += $(XPG8MODE)
+CFLAGS += $(XPG7MODE)
 
 CMAKE_OPTIONS += -DSDL_TESTS=ON
+CMAKE_OPTIONS += -DSDL_X11_XRANDR=ON
+CMAKE_OPTIONS += -DSDL_X11_XINPUT=ON
+
+COMPONENT_TEST_ENV += TZ=UTC
+COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/audio/pulseaudio
