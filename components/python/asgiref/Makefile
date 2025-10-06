@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asgiref
-HUMAN_VERSION =			3.9.2
+HUMAN_VERSION =			3.10.0
 COMPONENT_SUMMARY =		ASGI specs, helper code, and adapters
 COMPONENT_PROJECT_URL =		https://github.com/django/asgiref/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0249afacb66688ef258ffe503528360443e2b9a8d8c4581b6ebefa58c841ef1
+	sha256:d89f2d8cd8b56dada7d52fa7dc8075baa08fb836560710d38c292a7a3f78c04e
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
