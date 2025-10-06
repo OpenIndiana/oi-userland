@@ -2,9 +2,9 @@ Modifies --cflags output so that it can be used for both 32/64 bits builds.
 But still we seem to need to deliver both odbc_config versions for other potential use cases.
 Solaris/illumos specific. Not suitable for upstream.
 
---- unixODBC-2.3.11/exe/odbc-config.c
-+++ unixODBC-2.3.11/exe/odbc-config.c
-@@ -50,6 +50,7 @@ }
+--- unixODBC-2.3.13/exe/odbc-config.c.orig
++++ unixODBC-2.3.13/exe/odbc-config.c
+@@ -50,6 +50,7 @@
  
  static void cInc( void )
  {
@@ -12,7 +12,7 @@ Solaris/illumos specific. Not suitable for upstream.
  #ifdef HAVE_UNISTD_H
      printf( "#ifndef HAVE_UNISTD_H\n #define HAVE_UNISTD_H\n#endif\n" );
  #endif
-@@ -83,11 +84,11 @@ printf( "#ifndef HAVE_LONG_LONG\n #defin
+@@ -83,11 +84,11 @@
  #endif
  
  #ifdef ODBCINT64_TYPE
@@ -26,7 +26,7 @@ Solaris/illumos specific. Not suitable for upstream.
  #endif
  
  #ifdef DISABLE_INI_CACHING
-@@ -95,7 +96,7 @@ printf( "#ifndef DISABLE_INI_CACHING\n #
+@@ -95,7 +96,7 @@
  #endif
  
  #ifdef SIZEOF_LONG_INT
@@ -35,7 +35,7 @@ Solaris/illumos specific. Not suitable for upstream.
  #endif
  
  #ifdef ALREADY_HAVE_WINDOWS_TYPE
-@@ -129,6 +130,7 @@ #endif
+@@ -129,6 +130,7 @@
  #ifdef ENABLE_DRIVER_ICONV
      printf( "#ifndef ENABLE_DRIVER_ICONV\n #define ENABLE_DRIVER_ICONV\n#endif\n" );
  #endif
