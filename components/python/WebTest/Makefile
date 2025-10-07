@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		webtest
-HUMAN_VERSION =			3.0.6
+HUMAN_VERSION =			3.0.7
 COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4256fd5242448f56c575bcb9afe275e305a6f0723c4b01438dbdd4dd5344944b
+	sha256:7aeab50f970d46c068e7a36dd162cb242591edf72a1d04efd21374772b931741
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	license.rst
 
@@ -33,11 +33,11 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_ADDOPTS += --deselect tests/test_response.py::TestResponse::test_pyquery
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/beautifulsoup4
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/waitress
-PYTHON_REQUIRED_PACKAGES += library/python/webob
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/beautifulsoup4
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/waitress
+REQUIRED_PACKAGES.python += library/python/webob
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pastedeploy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
