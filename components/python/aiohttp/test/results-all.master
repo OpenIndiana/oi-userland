@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests/
-X workers [4031 items]
+X workers [4165 items]
 
 scheduling tests via LoadScheduling
 
@@ -232,11 +232,21 @@ tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-] PAS
 tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-params2] PASSED
 tests/test_client_functional.py::test_empty_params_and_query_string[pyloop-params3] PASSED
 tests/test_client_functional.py::test_empty_response_non_chunked[pyloop] PASSED
+tests/test_client_functional.py::test_encoding_deflate[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_functional.py::test_encoding_deflate[zlib-pyloop] PASSED
+tests/test_client_functional.py::test_encoding_deflate[zlib_ng.zlib_ng-pyloop] SKIPPED
+tests/test_client_functional.py::test_encoding_deflate_nochunk[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_functional.py::test_encoding_deflate_nochunk[zlib-pyloop] PASSED
+tests/test_client_functional.py::test_encoding_deflate_nochunk[zlib_ng.zlib_ng-pyloop] SKIPPED
+tests/test_client_functional.py::test_encoding_gzip[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_functional.py::test_encoding_gzip[zlib-pyloop] PASSED
+tests/test_client_functional.py::test_encoding_gzip[zlib_ng.zlib_ng-pyloop] SKIPPED
+tests/test_client_functional.py::test_encoding_gzip_nochunk[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_functional.py::test_encoding_gzip_nochunk[zlib-pyloop] PASSED
+tests/test_client_functional.py::test_encoding_gzip_nochunk[zlib_ng.zlib_ng-pyloop] SKIPPED
+tests/test_client_functional.py::test_encoding_gzip_write_by_chunks[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_functional.py::test_encoding_gzip_write_by_chunks[zlib-pyloop] PASSED
+tests/test_client_functional.py::test_encoding_gzip_write_by_chunks[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_functional.py::test_error_in_performing_request[pyloop] PASSED
 tests/test_client_functional.py::test_error_not_overwrote_on_conn_close[pyloop] PASSED
 tests/test_client_functional.py::test_exception_when_read_outside_of_session[pyloop] PASSED
@@ -403,6 +413,7 @@ tests/test_client_functional.py::test_ssl_client[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client_alpn[pyloop] PASSED
 tests/test_client_functional.py::test_ssl_client_shutdown_timeout[pyloop] SKIPPED
 tests/test_client_functional.py::test_str_params[pyloop] PASSED
+tests/test_client_functional.py::test_stream_reader_total_raw_bytes[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof[pyloop] PASSED
 tests/test_client_functional.py::test_stream_request_on_server_eof_nested[pyloop] PASSED
 tests/test_client_functional.py::test_string_io_payload_redirect[pyloop] PASSED
@@ -668,9 +679,13 @@ tests/test_client_request.py::test_compress_and_content_encoding[pyloop] PASSED
 tests/test_client_request.py::test_connection_header[pyloop] PASSED
 tests/test_client_request.py::test_connection_key_with_proxy PASSED
 tests/test_client_request.py::test_connection_key_without_proxy PASSED
+tests/test_client_request.py::test_content_encoding[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_request.py::test_content_encoding[zlib-pyloop] PASSED
+tests/test_client_request.py::test_content_encoding[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_request.py::test_content_encoding_dont_set_headers_if_no_body[pyloop] PASSED
+tests/test_client_request.py::test_content_encoding_header[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_request.py::test_content_encoding_header[zlib-pyloop] PASSED
+tests/test_client_request.py::test_content_encoding_header[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_request.py::test_content_length_for_methods[pyloop-DELETE-None-0] PASSED
 tests/test_client_request.py::test_content_length_for_methods[pyloop-DELETE-x-1] PASSED
 tests/test_client_request.py::test_content_length_for_methods[pyloop-GET--0] PASSED
@@ -720,8 +735,10 @@ tests/test_client_request.py::test_expect_100_continue_header[pyloop] PASSED
 tests/test_client_request.py::test_file_upload_force_chunked[pyloop] PASSED
 tests/test_client_request.py::test_file_upload_not_chunked[pyloop] PASSED
 tests/test_client_request.py::test_file_upload_not_chunked_seek[pyloop] PASSED
-tests/test_client_request.py::test_gen_default_accept_encoding[False-gzip, deflate] PASSED
-tests/test_client_request.py::test_gen_default_accept_encoding[True-gzip, deflate, br] PASSED
+tests/test_client_request.py::test_gen_default_accept_encoding[False-False-gzip, deflate] PASSED
+tests/test_client_request.py::test_gen_default_accept_encoding[False-True-gzip, deflate, zstd] PASSED
+tests/test_client_request.py::test_gen_default_accept_encoding[True-False-gzip, deflate, br] PASSED
+tests/test_client_request.py::test_gen_default_accept_encoding[True-True-gzip, deflate, br, zstd] PASSED
 tests/test_client_request.py::test_gen_netloc_all[pyloop] PASSED
 tests/test_client_request.py::test_gen_netloc_no_port[pyloop] PASSED
 tests/test_client_request.py::test_get_content_length[pyloop] PASSED
@@ -801,7 +818,9 @@ tests/test_client_request.py::test_path_not_contain_fragment1[pyloop] PASSED
 tests/test_client_request.py::test_path_not_contain_fragment2[pyloop] PASSED
 tests/test_client_request.py::test_path_safe_chars_preserved[pyloop] PASSED
 tests/test_client_request.py::test_post_data[pyloop] PASSED
+tests/test_client_request.py::test_precompressed_data_stays_intact[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_request.py::test_precompressed_data_stays_intact[zlib-pyloop] PASSED
+tests/test_client_request.py::test_precompressed_data_stays_intact[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_request.py::test_query_bytes_param_raises[pyloop] PASSED
 tests/test_client_request.py::test_query_multivalued_param[pyloop] PASSED
 tests/test_client_request.py::test_query_str_param[pyloop] PASSED
@@ -851,6 +870,8 @@ tests/test_client_response.py::test_charset PASSED
 tests/test_client_response.py::test_charset_no_charset PASSED
 tests/test_client_response.py::test_charset_no_header PASSED
 tests/test_client_response.py::test_close[pyloop] PASSED
+tests/test_client_response.py::test_content_disposition_empty_parts[attachment; filename="archive.tar.gz";] PASSED
+tests/test_client_response.py::test_content_disposition_empty_parts[attachment;; filename="archive.tar.gz"] PASSED
 tests/test_client_response.py::test_content_disposition_full PASSED
 tests/test_client_response.py::test_content_disposition_no_header PASSED
 tests/test_client_response.py::test_content_disposition_no_parameters PASSED
@@ -1056,9 +1077,13 @@ tests/test_client_ws_functional.py::test_recv_text_after_close[pyloop] PASSED
 tests/test_client_ws_functional.py::test_recv_timeout[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_bytes[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_bytes_bad_type[pyloop] PASSED
+tests/test_client_ws_functional.py::test_send_recv_compress[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_ws_functional.py::test_send_recv_compress[zlib-pyloop] PASSED
+tests/test_client_ws_functional.py::test_send_recv_compress[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbit_error[pyloop] PASSED
+tests/test_client_ws_functional.py::test_send_recv_compress_wbits[isal.isal_zlib-pyloop] SKIPPED
 tests/test_client_ws_functional.py::test_send_recv_compress_wbits[zlib-pyloop] PASSED
+tests/test_client_ws_functional.py::test_send_recv_compress_wbits[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_client_ws_functional.py::test_send_recv_frame[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_json[pyloop] PASSED
 tests/test_client_ws_functional.py::test_send_recv_text[pyloop] PASSED
@@ -1070,8 +1095,12 @@ tests/test_client_ws_functional.py::test_ws_async_with_send[pyloop] PASSED
 tests/test_client_ws_functional.py::test_ws_async_with_shortcut[pyloop] PASSED
 tests/test_client_ws_functional.py::test_ws_client_async_for[pyloop] PASSED
 tests/test_client_ws_functional.py::test_ws_connect_with_wrong_ssl_type[pyloop] PASSED
+tests/test_compression_utils.py::test_compression_round_trip_in_event_loop[isal.isal_zlib] SKIPPED
 tests/test_compression_utils.py::test_compression_round_trip_in_event_loop[zlib] PASSED
+tests/test_compression_utils.py::test_compression_round_trip_in_event_loop[zlib_ng.zlib_ng] SKIPPED
+tests/test_compression_utils.py::test_compression_round_trip_in_executor[isal.isal_zlib] SKIPPED
 tests/test_compression_utils.py::test_compression_round_trip_in_executor[zlib] PASSED
+tests/test_compression_utils.py::test_compression_round_trip_in_executor[zlib_ng.zlib_ng] SKIPPED
 tests/test_connector.py::TestDNSCacheTable::test_always_expire PASSED
 tests/test_connector.py::TestDNSCacheTable::test_clear PASSED
 tests/test_connector.py::TestDNSCacheTable::test_expired_ttl PASSED
@@ -1284,7 +1313,7 @@ tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_after_ill
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_before_cookie PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_attributes_without_values PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_boolean_attrs PASSED
-tests/test_cookie_helpers.py::test_parse_set_cookie_headers_boolean_attrs_with_partitioned PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_boolean_attrs_with_partitioned SKIPPED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_case_insensitive_attrs PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[complex=value; Domain=.example.com; Path=/app; Max-Age=3600] PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_compatibility_with_simple_cookie[empty=] PASSED
@@ -1306,9 +1335,10 @@ tests/test_cookie_helpers.py::test_parse_set_cookie_headers_invalid_cookie_synta
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_invalid_names PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_issue_7993_double_quotes PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_multiple_cookies_same_header PASSED
-tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned PASSED
-tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_case_insensitive PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned SKIPPED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_case_insensitive SKIPPED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_not_set PASSED
+tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_not_set_if_no_support PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_partitioned_with_other_attrs_manual PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_quoted_values PASSED
 tests/test_cookie_helpers.py::test_parse_set_cookie_headers_relaxed_validation_differences PASSED
@@ -1439,6 +1469,7 @@ tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-quoted cook
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-quoted cookie with special char] PASSED
 tests/test_cookiejar.py::test_quotes_correctly_based_on_input[pyloop-unquoted cookie with special char] PASSED
 tests/test_cookiejar.py::test_save_load[pyloop] PASSED
+tests/test_cookiejar.py::test_save_load_partitioned_cookies[pyloop] PASSED
 tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_clear PASSED
 tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_delete PASSED
 tests/test_cookiejar.py::test_shared_cookie_cache_clearing_on_update PASSED
@@ -1630,6 +1661,7 @@ tests/test_http_parser.py::TestDeflateBuffer::test_feed_eof PASSED
 tests/test_http_parser.py::TestDeflateBuffer::test_feed_eof_err_deflate PASSED
 tests/test_http_parser.py::TestDeflateBuffer::test_feed_eof_no_err_brotli PASSED
 tests/test_http_parser.py::TestDeflateBuffer::test_feed_eof_no_err_gzip PASSED
+tests/test_http_parser.py::TestDeflateBuffer::test_feed_eof_no_err_zstandard PASSED
 tests/test_http_parser.py::TestParsePayload::test_http_payload_brotli PASSED
 tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_deflate PASSED
 tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_deflate_light PASSED
@@ -1638,6 +1670,7 @@ tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_deflate_sp
 tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_deflate_split_err PASSED
 tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_length PASSED
 tests/test_http_parser.py::TestParsePayload::test_http_payload_parser_length_zero PASSED
+tests/test_http_parser.py::TestParsePayload::test_http_payload_zstandard PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_chunked_payload_size_error PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_chunked_payload_split_end PASSED
 tests/test_http_parser.py::TestParsePayload::test_parse_chunked_payload_split_end2 PASSED
@@ -1716,6 +1749,8 @@ tests/test_http_parser.py::test_compression_gzip[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_compression_gzip[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_compression_unknown[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_compression_unknown[py-parser-pyloop] PASSED
+tests/test_http_parser.py::test_compression_zstd[c-parser-pyloop] PASSED
+tests/test_http_parser.py::test_compression_zstd[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_conn_close[c-parser-pyloop] PASSED
 tests/test_http_parser.py::test_conn_close[py-parser-pyloop] PASSED
 tests/test_http_parser.py::test_conn_close_1_0[c-parser-pyloop] PASSED
@@ -2217,13 +2252,21 @@ tests/test_http_writer.py::test_write_headers_does_not_write_immediately[pyloop]
 tests/test_http_writer.py::test_write_headers_prevents_injection[pyloop] PASSED
 tests/test_http_writer.py::test_write_headers_with_compression_coalescing[pyloop] PASSED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_writelines[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_writelines[pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_writelines_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_writelines_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_large_payload_deflate_compression_data_in_eof_writelines_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_multiple_compressed_chunks_after_headers_sent[pyloop] PASSED
 tests/test_http_writer.py::test_write_no_drain_with_large_buffer[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_2d_shape_memoryview[pyloop] PASSED
@@ -2233,19 +2276,33 @@ tests/test_http_writer.py::test_write_payload_chunked_filter[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_chunked_filter_multiple_chunks[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_chunked_multiple[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_deflate_and_chunked[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_and_chunked_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_and_chunked_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_and_chunked_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_connection_lost[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_connection_lost_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_connection_lost_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_connection_lost_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_writelines[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_data_in_eof_writelines_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_writelines[pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_writelines_all_zlib[isal.isal_zlib-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_writelines_all_zlib[zlib-pyloop] PASSED
+tests/test_http_writer.py::test_write_payload_deflate_compression_chunked_writelines_all_zlib[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_http_writer.py::test_write_payload_eof[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_length[pyloop] PASSED
 tests/test_http_writer.py::test_write_payload_short_ints_memoryview[pyloop] PASSED
@@ -2256,7 +2313,6 @@ tests/test_imports.py::test___all__ PASSED
 tests/test_imports.py::test_web___all__ PASSED
 tests/test_leaks.py::test_leak[check_for_client_response_leak.py-ClientResponse leaked] PASSED
 tests/test_leaks.py::test_leak[check_for_request_leak.py-Request leaked] PASSED
-tests/test_loop.py::TestCase::test_default_loop PASSED
 tests/test_loop.py::TestCase::test_on_startup_hook PASSED
 tests/test_loop.py::test_default_loop[pyloop] PASSED
 tests/test_loop.py::test_setup_loop_non_main_thread PASSED
@@ -2369,7 +2425,9 @@ tests/test_multipart.py::test_writer_serialize_form_dict PASSED
 tests/test_multipart.py::test_writer_serialize_io_chunk PASSED
 tests/test_multipart.py::test_writer_serialize_json PASSED
 tests/test_multipart.py::test_writer_serialize_with_content_encoding_deflate PASSED
+tests/test_multipart.py::test_writer_serialize_with_content_encoding_gzip[isal.isal_zlib] SKIPPED
 tests/test_multipart.py::test_writer_serialize_with_content_encoding_gzip[zlib] PASSED
+tests/test_multipart.py::test_writer_serialize_with_content_encoding_gzip[zlib_ng.zlib_ng] SKIPPED
 tests/test_multipart.py::test_writer_serialize_with_content_encoding_identity PASSED
 tests/test_multipart.py::test_writer_serialize_with_content_encoding_unknown PASSED
 tests/test_multipart.py::test_writer_with_content_transfer_encoding_base64 PASSED
@@ -3105,8 +3163,12 @@ tests/test_web_functional.py::test_app_add_routes[pyloop] PASSED
 tests/test_web_functional.py::test_app_max_client_size[pyloop] PASSED
 tests/test_web_functional.py::test_app_max_client_size_adjusted[pyloop] PASSED
 tests/test_web_functional.py::test_app_max_client_size_none[pyloop] PASSED
+tests/test_web_functional.py::test_auto_decompress[isal.isal_zlib-pyloop-False-compressed] SKIPPED
+tests/test_web_functional.py::test_auto_decompress[isal.isal_zlib-pyloop-True-uncompressed] SKIPPED
 tests/test_web_functional.py::test_auto_decompress[zlib-pyloop-False-compressed] PASSED
 tests/test_web_functional.py::test_auto_decompress[zlib-pyloop-True-uncompressed] PASSED
+tests/test_web_functional.py::test_auto_decompress[zlib_ng.zlib_ng-pyloop-False-compressed] SKIPPED
+tests/test_web_functional.py::test_auto_decompress[zlib_ng.zlib_ng-pyloop-True-uncompressed] SKIPPED
 tests/test_web_functional.py::test_await[pyloop] PASSED
 tests/test_web_functional.py::test_bad_method_for_c_http_parser_not_hangs[pyloop] PASSED
 tests/test_web_functional.py::test_bad_request_payload[pyloop] PASSED
@@ -3185,9 +3247,15 @@ tests/test_web_functional.py::test_response_with_file[pyloop] PASSED
 tests/test_web_functional.py::test_response_with_file_ctype[pyloop] PASSED
 tests/test_web_functional.py::test_response_with_payload_disp[pyloop] PASSED
 tests/test_web_functional.py::test_response_with_payload_stringio[pyloop] PASSED
+tests/test_web_functional.py::test_response_with_precompressed_body[deflate-isal.isal_zlib-pyloop] SKIPPED
+tests/test_web_functional.py::test_response_with_precompressed_body[deflate-raw-isal.isal_zlib-pyloop] SKIPPED
 tests/test_web_functional.py::test_response_with_precompressed_body[deflate-raw-zlib-pyloop] PASSED
+tests/test_web_functional.py::test_response_with_precompressed_body[deflate-raw-zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_web_functional.py::test_response_with_precompressed_body[deflate-zlib-pyloop] PASSED
+tests/test_web_functional.py::test_response_with_precompressed_body[deflate-zlib_ng.zlib_ng-pyloop] SKIPPED
+tests/test_web_functional.py::test_response_with_precompressed_body[gzip-isal.isal_zlib-pyloop] SKIPPED
 tests/test_web_functional.py::test_response_with_precompressed_body[gzip-zlib-pyloop] PASSED
+tests/test_web_functional.py::test_response_with_precompressed_body[gzip-zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_web_functional.py::test_response_with_precompressed_body_brotli[pyloop] PASSED
 tests/test_web_functional.py::test_response_with_streamer[pyloop] PASSED
 tests/test_web_functional.py::test_response_with_streamer_no_params[pyloop] PASSED
@@ -3485,16 +3553,26 @@ tests/test_web_response.py::test_body_in_ctor_with_content_type_header_multidict
 tests/test_web_response.py::test_cannot_write_after_eof PASSED
 tests/test_web_response.py::test_cannot_write_eof_before_headers PASSED
 tests/test_web_response.py::test_cannot_write_eof_twice PASSED
+tests/test_web_response.py::test_change_content_length_if_compression_enabled[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_change_content_length_if_compression_enabled[zlib] PASSED
+tests/test_web_response.py::test_change_content_length_if_compression_enabled[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_change_content_threaded_compression_enabled[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_change_content_threaded_compression_enabled[zlib] PASSED
+tests/test_web_response.py::test_change_content_threaded_compression_enabled[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_change_content_threaded_compression_enabled_explicit[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_change_content_threaded_compression_enabled_explicit[zlib] PASSED
+tests/test_web_response.py::test_change_content_threaded_compression_enabled_explicit[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_changing_status_after_prepare_raises PASSED
 tests/test_web_response.py::test_charset_without_content_type PASSED
 tests/test_web_response.py::test_chunk_size PASSED
 tests/test_web_response.py::test_chunked_encoding PASSED
 tests/test_web_response.py::test_chunked_encoding_forbidden_for_http_10 PASSED
+tests/test_web_response.py::test_compression_default_coding[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_compression_default_coding[zlib] PASSED
+tests/test_web_response.py::test_compression_default_coding[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_compression_no_accept[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_compression_no_accept[zlib] PASSED
+tests/test_web_response.py::test_compression_no_accept[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_consecutive_write_eof PASSED
 tests/test_web_response.py::test_content_length PASSED
 tests/test_web_response.py::test_content_length_on_chunked PASSED
@@ -3537,15 +3615,29 @@ tests/test_web_response.py::test_etag_invalid_value_set[invalid_value3] PASSED
 tests/test_web_response.py::test_etag_reset PASSED
 tests/test_web_response.py::test_etag_string PASSED
 tests/test_web_response.py::test_force_close PASSED
+tests/test_web_response.py::test_force_compression_deflate[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_deflate[zlib] PASSED
+tests/test_web_response.py::test_force_compression_deflate[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_force_compression_deflate_large_payload[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_deflate_large_payload[zlib] PASSED
+tests/test_web_response.py::test_force_compression_deflate_large_payload[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_force_compression_false_backwards_compat PASSED
+tests/test_web_response.py::test_force_compression_gzip[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_gzip[zlib] PASSED
+tests/test_web_response.py::test_force_compression_gzip[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_force_compression_identity[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_identity[zlib] PASSED
+tests/test_web_response.py::test_force_compression_identity[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_force_compression_identity_response[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_identity_response[zlib] PASSED
+tests/test_web_response.py::test_force_compression_identity_response[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_force_compression_no_accept_backwards_compat PASSED
+tests/test_web_response.py::test_force_compression_no_accept_deflate[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_no_accept_deflate[zlib] PASSED
+tests/test_web_response.py::test_force_compression_no_accept_deflate[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_force_compression_no_accept_gzip[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_force_compression_no_accept_gzip[zlib] PASSED
+tests/test_web_response.py::test_force_compression_no_accept_gzip[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_head_response_keeps_content_length_of_original_body PASSED
 tests/test_web_response.py::test_head_response_omits_content_length_when_body_unset PASSED
 tests/test_web_response.py::test_invalid_content_type_parses_to_text_plain PASSED
@@ -3580,8 +3672,12 @@ tests/test_web_response.py::test_prepare_twice PASSED
 tests/test_web_response.py::test_prepared_after_eof PASSED
 tests/test_web_response.py::test_prepared_when_not_started PASSED
 tests/test_web_response.py::test_prepared_when_started PASSED
+tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http10[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http10[zlib] PASSED
+tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http10[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http11[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http11[zlib] PASSED
+tests/test_web_response.py::test_remove_content_length_if_compression_enabled_http11[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_render_with_body PASSED
 tests/test_web_response.py::test_request_iter PASSED
 tests/test_web_response.py::test_reset_charset PASSED
@@ -3603,15 +3699,21 @@ tests/test_web_response.py::test_rm_content_length_1xx_204_304_responses[102] PA
 tests/test_web_response.py::test_rm_content_length_1xx_204_304_responses[204] PASSED
 tests/test_web_response.py::test_rm_content_length_1xx_204_304_responses[304] PASSED
 tests/test_web_response.py::test_rm_content_length_if_204 PASSED
+tests/test_web_response.py::test_rm_content_length_if_compression_http10[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_rm_content_length_if_compression_http10[zlib] PASSED
+tests/test_web_response.py::test_rm_content_length_if_compression_http10[zlib_ng.zlib_ng] SKIPPED
+tests/test_web_response.py::test_rm_content_length_if_compression_http11[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_rm_content_length_if_compression_http11[zlib] PASSED
+tests/test_web_response.py::test_rm_content_length_if_compression_http11[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[100] PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[101] PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[204] PASSED
 tests/test_web_response.py::test_rm_transfer_encoding_rfc_9112_6_3_http_11[304] PASSED
 tests/test_web_response.py::test_send_headers_for_empty_body PASSED
 tests/test_web_response.py::test_send_set_cookie_header PASSED
+tests/test_web_response.py::test_set_content_length_if_compression_enabled[isal.isal_zlib] SKIPPED
 tests/test_web_response.py::test_set_content_length_if_compression_enabled[zlib] PASSED
+tests/test_web_response.py::test_set_content_length_if_compression_enabled[zlib_ng.zlib_ng] SKIPPED
 tests/test_web_response.py::test_set_content_length_to_None_on_non_set PASSED
 tests/test_web_response.py::test_set_status_with_empty_reason PASSED
 tests/test_web_response.py::test_set_status_with_reason PASSED
@@ -3659,8 +3761,12 @@ tests/test_web_sendfile.py::test_gzip_if_header_not_present_and_file_not_availab
 tests/test_web_sendfile.py::test_gzip_if_header_present_and_file_not_available[pyloop] PASSED
 tests/test_web_sendfile.py::test_status_controlled_by_user[pyloop] PASSED
 tests/test_web_sendfile.py::test_using_gzip_if_header_present_and_file_available[pyloop] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_compression[isal.isal_zlib-no_sendfile-pyloop] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_compression[isal.isal_zlib-sendfile-pyloop] SKIPPED
 tests/test_web_sendfile_functional.py::test_static_file_compression[zlib-no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_compression[zlib-sendfile-pyloop] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_compression[zlib_ng.zlib_ng-no_sendfile-pyloop] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_compression[zlib_ng.zlib_ng-sendfile-pyloop] SKIPPED
 tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[no_sendfile-pyloop-br] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[no_sendfile-pyloop-gzip] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_custom_content_type[sendfile-pyloop-br] PASSED
@@ -3753,6 +3859,14 @@ tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[se
 tests/test_web_sendfile_functional.py::test_static_file_with_content_encoding[sendfile-pyloop-gzip-application/gzip] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_content_type[no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_content_type[sendfile-pyloop] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-no_sendfile-pyloop-None-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-no_sendfile-pyloop-None-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-sendfile-pyloop-None-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[isal.isal_zlib-sendfile-pyloop-None-gzip, deflate-gzip] SKIPPED
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-no_sendfile-pyloop-None-gzip, deflate, br-br] PASSED
@@ -3761,6 +3875,14 @@ tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-sendfile-pyloop-None-gzip, deflate, br-br] PASSED
 tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib-sendfile-pyloop-None-gzip, deflate-gzip] PASSED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-no_sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-no_sendfile-pyloop-None-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-no_sendfile-pyloop-None-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-sendfile-pyloop-ContentCoding.gzip-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-sendfile-pyloop-ContentCoding.gzip-gzip, deflate-gzip] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-sendfile-pyloop-None-gzip, deflate, br-br] SKIPPED
+tests/test_web_sendfile_functional.py::test_static_file_with_encoding_and_enable_compression[zlib_ng.zlib_ng-sendfile-pyloop-None-gzip, deflate-gzip] SKIPPED
 tests/test_web_sendfile_functional.py::test_zero_bytes_file_mocked_native_sendfile[pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_zero_bytes_file_ok[no_sendfile-pyloop] PASSED
 tests/test_web_sendfile_functional.py::test_zero_bytes_file_ok[sendfile-pyloop] PASSED
@@ -3995,7 +4117,9 @@ tests/test_websocket_parser.py::test_parse_frame_length2_multi_byte[pyloop] PASS
 tests/test_websocket_parser.py::test_parse_frame_length2_multi_byte_multi_packet[pyloop] PASSED
 tests/test_websocket_parser.py::test_parse_frame_length4[pyloop] PASSED
 tests/test_websocket_parser.py::test_parse_frame_mask[pyloop] PASSED
+tests/test_websocket_parser.py::test_parse_no_compress_frame_single[isal.isal_zlib-pyloop] SKIPPED
 tests/test_websocket_parser.py::test_parse_no_compress_frame_single[zlib-pyloop] PASSED
+tests/test_websocket_parser.py::test_parse_no_compress_frame_single[zlib_ng.zlib_ng-pyloop] SKIPPED
 tests/test_websocket_parser.py::test_ping_frame[pyloop-bytearray] PASSED
 tests/test_websocket_parser.py::test_ping_frame[pyloop-bytes] PASSED
 tests/test_websocket_parser.py::test_ping_frame[pyloop-memoryview] PASSED
@@ -4009,16 +4133,26 @@ tests/test_websocket_parser.py::test_websocket_mask_cython_empty PASSED
 tests/test_websocket_parser.py::test_websocket_mask_python PASSED
 tests/test_websocket_parser.py::test_websocket_mask_python_empty PASSED
 tests/test_websocket_writer.py::test_close PASSED
+tests/test_websocket_writer.py::test_concurrent_messages[isal.isal_zlib-16-<lambda>] SKIPPED
+tests/test_websocket_writer.py::test_concurrent_messages[isal.isal_zlib-32-<lambda>] SKIPPED
+tests/test_websocket_writer.py::test_concurrent_messages[isal.isal_zlib-4096-<lambda>] SKIPPED
 tests/test_websocket_writer.py::test_concurrent_messages[zlib-16-<lambda>] PASSED
 tests/test_websocket_writer.py::test_concurrent_messages[zlib-32-<lambda>] PASSED
 tests/test_websocket_writer.py::test_concurrent_messages[zlib-4096-<lambda>] PASSED
+tests/test_websocket_writer.py::test_concurrent_messages[zlib_ng.zlib_ng-16-<lambda>] SKIPPED
+tests/test_websocket_writer.py::test_concurrent_messages[zlib_ng.zlib_ng-32-<lambda>] SKIPPED
+tests/test_websocket_writer.py::test_concurrent_messages[zlib_ng.zlib_ng-4096-<lambda>] SKIPPED
 tests/test_websocket_writer.py::test_ping PASSED
 tests/test_websocket_writer.py::test_pong PASSED
 tests/test_websocket_writer.py::test_send_binary PASSED
 tests/test_websocket_writer.py::test_send_binary_long PASSED
 tests/test_websocket_writer.py::test_send_binary_very_long PASSED
-tests/test_websocket_writer.py::test_send_compress_text PASSED
-tests/test_websocket_writer.py::test_send_compress_text_notakeover PASSED
+tests/test_websocket_writer.py::test_send_compress_text[isal.isal_zlib] SKIPPED
+tests/test_websocket_writer.py::test_send_compress_text[zlib] PASSED
+tests/test_websocket_writer.py::test_send_compress_text[zlib_ng.zlib_ng] SKIPPED
+tests/test_websocket_writer.py::test_send_compress_text_notakeover[isal.isal_zlib] SKIPPED
+tests/test_websocket_writer.py::test_send_compress_text_notakeover[zlib] PASSED
+tests/test_websocket_writer.py::test_send_compress_text_notakeover[zlib_ng.zlib_ng] SKIPPED
 tests/test_websocket_writer.py::test_send_compress_text_per_message PASSED
 tests/test_websocket_writer.py::test_send_text PASSED
 tests/test_websocket_writer.py::test_send_text_masked PASSED
@@ -4045,8 +4179,8 @@ _______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
 
 Name                                                                                                                                                     Stmts   Miss  Cover
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/__init__.py                           33      3    91%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_cookie_helpers.py                    91      1    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/__init__.py                           31      2    94%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_cookie_helpers.py                    88      1    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/__init__.py                 0      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/helpers.py                 77      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/models.py                  51      0   100%
@@ -4054,53 +4188,53 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader.py          
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_c.py               274    274     0%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/reader_py.py              274    227    17%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/_websocket/writer.py                  72      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               117      5    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/abc.py                               110      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/base_protocol.py                      71      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            601     24    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 162      6    96%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client.py                            590     14    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_exceptions.py                 156      2    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middleware_digest_auth.py     164      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_middlewares.py                 19      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_proto.py                      187      2    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     750     16    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_reqrep.py                     746     10    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/client_ws.py                         275      6    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 131      6    95%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         833     62    93%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/compression_utils.py                 140     12    91%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/connector.py                         824     56    93%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/cookiejar.py                         302      6    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/formdata.py                           94      2    98%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/hdrs.py                               94      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                           484     15    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/helpers.py                           474     15    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http.py                               11      0   100%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_exceptions.py                    53      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py                       518     15    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_parser.py                       520     16    97%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_websocket.py                      6      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py                       217     11    95%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/http_writer.py                       211      8    96%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/log.py                                 7      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         650     16    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           391      6    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/multipart.py                         651     15    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload.py                           387      3    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/payload_streamer.py                   31      1    97%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     170      8    95%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/pytest_plugin.py                     160      8    95%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/resolver.py                          121     69    43%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/streams.py                           418      5    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/streams.py                           424      5    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tcp_helpers.py                        19      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/test_utils.py                        340     13    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tracing.py                           195      3    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/typedefs.py                           32      6    81%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web.py                               128      1    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_app.py                           316      8    97%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/test_utils.py                        326      4    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/tracing.py                           191      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/typedefs.py                           24      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web.py                               126      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_app.py                           292      1    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_exceptions.py                    157      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_fileresponse.py                  188      2    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_fileresponse.py                  186      1    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_log.py                           103      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_middlewares.py                    61      1    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_protocol.py                      385     24    94%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py                       442      9    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py                      500      5    99%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py                      108      3    97%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py                        213     16    92%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_middlewares.py                    59      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_protocol.py                      380     21    94%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_request.py                       438      6    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_response.py                      497      3    99%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_routedef.py                      100      0   100%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_runner.py                        211     15    93%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_server.py                         42      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py                 746     12    98%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_urldispatcher.py                 743     10    99%
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/web_ws.py                            392      8    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                            130     13    90%
-tests/conftest.py                                                                                                                                          185     33    82%
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/aiohttp/worker.py                            127     11    91%
+tests/conftest.py                                                                                                                                          191     39    80%
 tests/isolated/check_for_client_response_leak.py                                                                                                            32      0   100%
 tests/isolated/check_for_request_leak.py                                                                                                                    29      1    97%
 tests/test_base_protocol.py                                                                                                                                200      0   100%
@@ -4114,33 +4248,33 @@ tests/test_benchmarks_web_fileresponse.py                                       
 tests/test_benchmarks_web_middleware.py                                                                                                                     25     25     0%
 tests/test_benchmarks_web_response.py                                                                                                                       33     33     0%
 tests/test_benchmarks_web_urldispatcher.py                                                                                                                 320    320     0%
-tests/test_circular_imports.py                                                                                                                              31      1    97%
+tests/test_circular_imports.py                                                                                                                              29      0   100%
 tests/test_classbasedview.py                                                                                                                                39      2    95%
 tests/test_client_connection.py                                                                                                                             94      0   100%
 tests/test_client_exceptions.py                                                                                                                            199      0   100%
 tests/test_client_fingerprint.py                                                                                                                            59      0   100%
-tests/test_client_functional.py                                                                                                                           3300     56    98%
+tests/test_client_functional.py                                                                                                                           3325     56    98%
 tests/test_client_middleware.py                                                                                                                            666     13    98%
 tests/test_client_middleware_digest_auth.py                                                                                                                523      1    99%
 tests/test_client_proto.py                                                                                                                                 187      0   100%
 tests/test_client_request.py                                                                                                                              1131     11    99%
-tests/test_client_response.py                                                                                                                              532      5    99%
+tests/test_client_response.py                                                                                                                              542      5    99%
 tests/test_client_session.py                                                                                                                               694     23    97%
 tests/test_client_ws.py                                                                                                                                    488      0   100%
 tests/test_client_ws_functional.py                                                                                                                         881     20    98%
 tests/test_compression_utils.py                                                                                                                             22      0   100%
-tests/test_connector.py                                                                                                                                   2433    112    95%
-tests/test_cookie_helpers.py                                                                                                                               647      0   100%
-tests/test_cookiejar.py                                                                                                                                    685      0   100%
+tests/test_connector.py                                                                                                                                   2435    112    95%
+tests/test_cookie_helpers.py                                                                                                                               658     31    95%
+tests/test_cookiejar.py                                                                                                                                    696      1    99%
 tests/test_flowcontrol_streams.py                                                                                                                          143      0   100%
 tests/test_formdata.py                                                                                                                                     177      0   100%
 tests/test_helpers.py                                                                                                                                      454     39    91%
 tests/test_http_exceptions.py                                                                                                                              109      0   100%
-tests/test_http_parser.py                                                                                                                                 1100     19    98%
+tests/test_http_parser.py                                                                                                                                 1130     23    98%
 tests/test_http_writer.py                                                                                                                                  826      1    99%
 tests/test_imports.py                                                                                                                                       40     17    58%
 tests/test_leaks.py                                                                                                                                         12      0   100%
-tests/test_loop.py                                                                                                                                          36      2    94%
+tests/test_loop.py                                                                                                                                          34      2    94%
 tests/test_multipart.py                                                                                                                                    922     37    96%
 tests/test_multipart_helpers.py                                                                                                                            446     19    96%
 tests/test_payload.py                                                                                                                                      756      6    99%
@@ -4149,7 +4283,7 @@ tests/test_proxy_functional.py                                                  
 tests/test_pytest_plugin.py                                                                                                                                 27      0   100%
 tests/test_resolver.py                                                                                                                                     387    201    48%
 tests/test_route_def.py                                                                                                                                    210     20    90%
-tests/test_run_app.py                                                                                                                                      576     10    98%
+tests/test_run_app.py                                                                                                                                      575     10    98%
 tests/test_streams.py                                                                                                                                     1079      0   100%
 tests/test_tcp_helpers.py                                                                                                                                   52      2    96%
 tests/test_test_utils.py                                                                                                                                   274      5    98%
@@ -4158,7 +4292,7 @@ tests/test_urldispatch.py                                                       
 tests/test_web_app.py                                                                                                                                      458      5    99%
 tests/test_web_cli.py                                                                                                                                       94      0   100%
 tests/test_web_exceptions.py                                                                                                                               179      0   100%
-tests/test_web_functional.py                                                                                                                              1635     50    97%
+tests/test_web_functional.py                                                                                                                              1636     50    97%
 tests/test_web_log.py                                                                                                                                      144      2    99%
 tests/test_web_middleware.py                                                                                                                               285      4    99%
 tests/test_web_request.py                                                                                                                                  570      0   100%
@@ -4174,10 +4308,10 @@ tests/test_web_websocket_functional.py                                          
 tests/test_websocket_data_queue.py                                                                                                                          23      0   100%
 tests/test_websocket_handshake.py                                                                                                                          152      0   100%
 tests/test_websocket_parser.py                                                                                                                             387      0   100%
-tests/test_websocket_writer.py                                                                                                                              97      0   100%
-tests/test_worker.py                                                                                                                                       189      4    98%
+tests/test_websocket_writer.py                                                                                                                             105      0   100%
+tests/test_worker.py                                                                                                                                       187      3    98%
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                    44065   3307    92%
+TOTAL                                                                                                                                                    44024   3271    93%
 ============================= slowest 10 durations =============================
 =========================== short test summary info ============================
-======== 3970 passed, 55 skipped, 6 xfailed ========
+======== 3977 passed, 182 skipped, 6 xfailed ========

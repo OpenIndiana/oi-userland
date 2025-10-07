@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.12.15
+HUMAN_VERSION =			3.13.0
 COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4fc61385e9c98d72fcdf47e6dd81833f47b2f77c114c29cd64a361be57a763a2
+	sha256:378dbc57dd8cf341ce243f13fa1fa5394d68e2e02c15cd5f28eae35a70ec7f67
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -77,18 +77,18 @@ PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_urldispatcher.py
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/aiohappyeyeballs
-PYTHON_REQUIRED_PACKAGES += library/python/aiosignal
-PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/frozenlist
-PYTHON_REQUIRED_PACKAGES += library/python/multidict
-PYTHON_REQUIRED_PACKAGES += library/python/pkgconfig
-PYTHON_REQUIRED_PACKAGES += library/python/propcache
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/yarl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/aiohappyeyeballs
+REQUIRED_PACKAGES.python += library/python/aiosignal
+REQUIRED_PACKAGES.python += library/python/async-timeout
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/frozenlist
+REQUIRED_PACKAGES.python += library/python/multidict
+REQUIRED_PACKAGES.python += library/python/pkgconfig
+REQUIRED_PACKAGES.python += library/python/propcache
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/yarl
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohappyeyeballs
 TEST_REQUIRED_PACKAGES.python += library/python/aiosignal
 TEST_REQUIRED_PACKAGES.python += library/python/async-timeout
@@ -109,3 +109,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
 TEST_REQUIRED_PACKAGES.python += library/python/yarl
+TEST_REQUIRED_PACKAGES.python += library/python/zstandard
