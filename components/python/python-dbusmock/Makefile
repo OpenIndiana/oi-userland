@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_dbusmock
-HUMAN_VERSION =			0.37.0
+HUMAN_VERSION =			0.37.1
 COMPONENT_SUMMARY =		Mock D-Bus objects
 COMPONENT_PROJECT_URL =		https://github.com/martinpitt/python-dbusmock
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:38754c5ad2ad8f3936ff67d4b058bca416588a72bc094e91ded9f8f401b06310
+	sha256:a65aeedc17d8bbc1f0bf3f0b295988914c48619882d77b9afa4117eed95fc594
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -31,8 +31,6 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/martinpitt/python-dbusmock/issues/247
-PYTEST_ADDOPTS += --deselect tests/test_code.py::StaticCodeTests::test_black
 # https://github.com/martinpitt/python-dbusmock/issues/246
 PYTEST_ADDOPTS += --deselect tests/test_code.py::StaticCodeTests::test_pylint
 
