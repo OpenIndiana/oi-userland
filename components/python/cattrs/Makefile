@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
-HUMAN_VERSION =			25.2.0
+HUMAN_VERSION =			25.3.0
 COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f46c918e955db0177be6aa559068390f71988e877c603ae2e56c71827165cc06
+	sha256:1ac88d9e5eda10436c4517e390a4142d88638fe682c436c93db7ce4a277b884a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
