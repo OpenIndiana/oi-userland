@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mojolicious
-HUMAN_VERSION =			9.41
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			9.42
 COMPONENT_SUMMARY =		Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c13db80169698fa3d76901cf03a06ef78fb496ed0b9275b4f558f6e878c281c6
+	sha256:2328b51da0371e416a85372b9acd04433f5213e997cbfae4ec84d4c63ee36c8a
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,7 +45,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/role-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpanel-json-xs
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += runtime/perl
