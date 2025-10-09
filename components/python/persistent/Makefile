@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			6.2
+HUMAN_VERSION =			6.3
 COMPONENT_SUMMARY =		Translucent persistent objects
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a1d0e7b9e9c985b3fa368478d44153753e1592c4e6147469bf613c57412beb9f
+	sha256:01d94668b54d3d5fbab9eb41d81f41e3d8407a7233fd2a928a6417e4dc11d429
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,6 +35,7 @@ TOX_POSARGS += -vv
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/pycparser
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zope-deferredimport
