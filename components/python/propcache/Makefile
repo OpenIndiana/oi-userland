@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		propcache
-HUMAN_VERSION =			0.4.0
+HUMAN_VERSION =			0.4.1
 COMPONENT_SUMMARY =		Accelerated property cache
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/propcache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c1ad731253eb738f9cadd9fa1844e019576c70bca6a534252e97cf33a57da529
+	sha256:f48107a8c637e80362555f37ecf49abe20370e557cc4ab374f04ec4423c97c3d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
