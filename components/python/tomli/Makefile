@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.3.0
 COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/hukkin/tomli/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3af7c4b571d1ccddaba020c558da0ce5b5e24edc830e478a903d82dc2d9013ae
+	sha256:438851e2e43c7b5c43f211bd40fefdf9e59eb733477dc48525e61de09eb33339
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,5 +46,5 @@ include $(WS_MAKE_RULES)/common.mk
 TOX_POSARGS += -v
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
