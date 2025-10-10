@@ -80,10 +80,6 @@ $$(SOURCE_DIR$(1))/.patched-%:	$(PATCH_DIR)/% $(MAKEFILE_PREREQ)
 	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
 	$(TOUCH) $$(@)
 
-$$(SOURCE_DIR$(1))/.patched-%:	$(MAKEFILE_PREREQ)
-	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
-	$(TOUCH) $$(@)
-
 $$(SOURCE_DIR$(1))/.patched:	$$(PATCH_STAMPS$(1))
 	$(TOUCH) $$(@)
 
