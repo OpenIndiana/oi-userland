@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project flake8_typing_imports
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8_typing_imports
-HUMAN_VERSION =			1.16.0
+HUMAN_VERSION =			1.17.0
 COMPONENT_SUMMARY =		flake8 plugin which checks that typing imports are properly guarded
 COMPONENT_PROJECT_URL =		https://github.com/asottile/flake8-typing-imports
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:06d84504734026bfb914bc8d172e23559784055701f8d8c4880458698e98d3ca
+	sha256:ac7a328eca24ad5662bab58994cd1440412a5ca768cdf2d0705fbac767243ab2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,5 +32,6 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flake8
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flake8
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
