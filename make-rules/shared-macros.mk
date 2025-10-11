@@ -193,6 +193,7 @@ endif
 # | Python version | Obsolete after |
 # +----------------+----------------+
 # |      3.9       |   2025-10      |
+# |      3.14      |   2030-10      |
 # +----------------+----------------+
 #
 # See https://devguide.python.org/versions/
