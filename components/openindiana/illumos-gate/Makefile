@@ -273,7 +273,7 @@ print-package-names:
 
 #
 # The build-essential package almost always brings superset of packages needed
-# to build illumos-gate.  The only known exception is described below.
+# to build illumos-gate.  The only known exceptions are described below.
 #
 REQUIRED_PACKAGES += metapackages/build-essential
 
@@ -293,3 +293,13 @@ REQUIRED_PACKAGES += metapackages/build-essential
 # rest of oi-userland.
 #
 REQUIRED_PACKAGES += runtime/perl-$(subst .,,$(PERL_VERSION))
+
+#
+# When we are in the process of changing the default Python version we need to
+# make sure that both the old and the new Python versions are installed during
+# the illumos-gate build.  We need to specify the new version explicitly here
+# because the unversioned runtime/python required by build-essential still
+# points to the old Python runtime version.
+#
+REQUIRED_PACKAGES += \
+	$(if $(filter-out $(PYTHON_VERSION),$(lastword $(PYTHON_VERSIONS))),runtime/python-$(subst .,,$(lastword $(PYTHON_VERSIONS))))

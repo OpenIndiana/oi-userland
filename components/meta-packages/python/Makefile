@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python
 COMPONENT_VERSION =		$(PYTHON_VERSION)
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python - Interpreted, interactive, object-oriented programming language
 COMPONENT_PROJECT_URL =		https://www.python.org/
 COMPONENT_FMRI =		runtime/python
