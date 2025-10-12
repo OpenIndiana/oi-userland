@@ -31,7 +31,7 @@ COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 # pyproject_installer does not bytecompile after the install.  Since we need
 # pyc files we need to force that.
 COMPONENT_POST_INSTALL_ACTION += \
-	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+	$(PYTHON) -m compileall $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ;
 else
 COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 COMPONENT_BUILD_ARGS =
@@ -51,9 +51,9 @@ endif
 # directory where we place modules shipped by the OS but not included in the
 # core Python distribution.
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -d $(PROTO_DIR)/$(PYTHON_DIR)/site-packages ] ; then \
-		$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB) ; \
-		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
+	if [ -d $(PROTOPYTHONSITEDIR) ] ; then \
+		$(RM) -r $(PROTOPYTHONVENDORDIR) ; \
+		$(MV) $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ; \
 	fi ;
 
 # Generate raw list of hatch, pdm, pep735, pipenv, and poetry test dependencies
@@ -75,7 +75,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
 	done ; \
 	if [ "$(strip $(TEST_STYLE))" == "tox" -a -x "$(TOX)" ] ; then \
-		for p in $$(PATH=$(PATH) PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		for p in $$(PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
 				$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
 		done ; \

@@ -231,6 +231,9 @@ PYTHON_DIR = /usr/lib/python$(PYTHON_VERSION)
 PYTHON_LIB = $(PYTHON_DIR)/vendor-packages
 PYTHON_DATA = $(PYTHON_LIB)
 PYTHON_VENDOR_PACKAGES = $(PYTHON_LIB)
+PYTHON_SITE_PACKAGES = $(PYTHON_DIR)/site-packages
+PROTOPYTHONVENDORDIR = $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
+PROTOPYTHONSITEDIR = $(PROTO_DIR)/$(PYTHON_SITE_PACKAGES)
 
 # PYTHON3_SOABI variable defines the naming scheme
 # of python3 extension libraries: cpython or abi3.
