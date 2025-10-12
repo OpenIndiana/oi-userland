@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Python
 COMPONENT_VERSION =		3.14.0
+COMPONENT_REVISION =		1
 PYTHON_VERSION =		$(basename $(COMPONENT_VERSION))
 PYV =				$(subst .,,$(PYTHON_VERSION))
 COMPONENT_SUMMARY =		The Python interpreter, libraries and utilities
@@ -66,6 +67,11 @@ CONFIGURE_OPTIONS += --without-ensurepip
 
 # Make sure dynamic libraries are placed at their usual location
 COMPONENT_INSTALL_ARGS += BINLIBDEST=$(PYTHON_DIR)
+
+# Support for the vendor-packages directory.
+# https://github.com/python/cpython/issues/42401
+COMPONENT_POST_INSTALL_ACTION += \
+	echo "import site; site.addsitedir('$(PYTHON_VENDOR_PACKAGES)')" > $(PROTOPYTHONSITEDIR)/vendor-packages.pth ;
 
 # Strip build machine paths from _sysconfigdata.py & config/Makefile,
 # then (re)compile _sysconfigdata.py since we just updated it.
