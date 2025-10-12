@@ -22,10 +22,10 @@ include ../../../make-rules/shared-macros.mk
 ABIVER = 2.91
 
 COMPONENT_NAME=			vte
-HUMAN_VERSION=			0.82.0
+HUMAN_VERSION=			0.82.1
 COMPONENT_SUMMARY=		Virtual terminal widget for GTK applications
 COMPONENT_ARCHIVE_HASH= \
-	sha256:b0718db3254730701b43bf5e113cbf8cdb2c14715d32ee1e8a707dc6eb70535f
+	sha256:79376d70402d271e2d38424418e1aea72357934d272e321e3906b71706a78e3a
 COMPONENT_FMRI=			library/desktop/vte-291
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		CC-BY-4.0 AND GPL-3.0-only AND LGPL-3.0-only AND MIT
@@ -58,17 +58,17 @@ ABIVER_RE = $(subst .,\.,$(ABIVER))
 GENERATE_EXTRA_SED += -e 's/\([Vv]te-\)$(ABIVER_RE)/\1$$(ABIVER)/g'
 
 # ABIVER is needed for manifest processing
-PKG_MACROS += ABIVER=$(ABIVER)
+PKG_VARS += ABIVER
 
 # Dynamic library version number
 SOVER := $(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
 SOVER_RE = $(subst .,\.,$(SOVER))
 
 # Replace library version number by SOVER
-GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+GENERATE_EXTRA_SED += -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # SOVER is needed for manifest processing
-PKG_MACROS += SOVER=$(SOVER)
+PKG_VARS += SOVER
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += library/fast_float
