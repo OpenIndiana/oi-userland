@@ -24,35 +24,42 @@
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+BUILD_STYLE=archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		antlr4
 COMPONENT_VERSION=	4.13.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	ANother Tool for Language Recognition
 COMPONENT_DESCRIPTION=	ANTLR, ANother Tool for Language Recognition, (formerly PCCTS) is a language tool that provides a framework \
-						for constructing recognizers, compilers, and translators from grammatical descriptions containing C++ or \
-						Java actions [You can use PCCTS 1.xx to generate C-based parsers].
+			for constructing recognizers, compilers, and translators from grammatical descriptions containing C++ or \
+			Java actions [You can use PCCTS 1.xx to generate C-based parsers].
 COMPONENT_PROJECT_URL=	https://www.antlr.org/
 COMPONENT_SRC=		antlr-$(COMPONENT_VERSION)-complete
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).jar
 COMPONENT_ARCHIVE_HASH= sha256:eae2dfa119a64327444672aff63e9ec35a20180dc5b8090b7a6ab85125df4d76
 COMPONENT_ARCHIVE_URL=	https://www.antlr.org/download/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			developer/parser/antlr4
-COMPONENT_CLASSIFICATION=	Development/Other Languages
-COMPONENT_LICENSE=		BSD-3-Clause
+COMPONENT_FMRI=		developer/parser/antlr4
+COMPONENT_CLASSIFICATION= Development/Other Languages
+COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	LICENSE.txt
 
 # Needed for GNU ln
 PATH=$(PATH.gnu)
 
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
+
+# The source is not an archive to unpack.  Replace UNPACK functionality since
+# it can not be disabled.  mkdir is needed since $(SOURCE_DIR) assumes to be
+# created by UNPACK.  The appended arguments for UNPACK can not be removed so
+# do something with them like print them with echo.
+UNPACK= mkdir -p $(SOURCE_DIR) && echo
 
 build:
 
-install:
-	mkdir -p $(SOURCE_DIR)
+install: prep
 	mkdir -p $(PROTO_DIR)/usr/share/java
-	mkdir -p /$(PROTO_DIR)/usr/bin
+	mkdir -p $(PROTO_DIR)/usr/bin
 	cp $(USERLAND_ARCHIVES)/$(COMPONENT_ARCHIVE) $(PROTO_DIR)/usr/share/java
 	ln -frs $(PROTO_DIR)/usr/share/$(COMPONENT_ARCHIVE) $(PROTO_DIR)/usr/share/java/antlr-complete.jar
 	cp $(COMPONENT_DIR)/files/antlr4 $(PROTO_DIR)/usr/bin
