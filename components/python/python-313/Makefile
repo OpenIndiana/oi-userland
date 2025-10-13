@@ -256,6 +256,7 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libffi
+REQUIRED_PACKAGES += library/math/libmpdec2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
