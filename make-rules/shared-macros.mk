@@ -205,6 +205,7 @@ PYTHON_VERSION = 3.9
 # The PYTHON_VERSIONS list should always be in ascending order (newest version
 # last)
 PYTHON_VERSIONS = 3.9
+PYTHON_VERSIONS += 3.14
 # Python up to 2.7 was built both 32-bit and 64-bit.  Starting with Python 3.x
 # the python package is built 64-bit only.  So now all PYTHON_VERSIONS are
 # 64-bit only.
