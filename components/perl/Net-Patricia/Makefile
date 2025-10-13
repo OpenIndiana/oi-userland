@@ -19,22 +19,23 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-Patricia
-HUMAN_VERSION =			1.23
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.24
 COMPONENT_SUMMARY =		Patricia Trie for fast IP address lookups
 COMPONENT_CPAN_AUTHOR =		GRUBER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3d23c44dfae73da027f02a2f52e5925b99d6f6ef4a005af6b3c65144319c7d52
+	sha256:d94f520804e2541b1cd20e73366720a973caf5dd2d2623838fc8d6398afd7edb
 COMPONENT_LICENSE =		GPL-2.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/net-cidr-lite
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/socket6
-PERL_REQUIRED_PACKAGES += library/perl-5/version
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/net-cidr-lite
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/socket6
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
