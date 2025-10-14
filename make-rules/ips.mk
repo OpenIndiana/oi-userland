@@ -499,7 +499,7 @@ PKGDEPEND_GENERATE_OPTIONS += -m
 PKGDEPEND_GENERATE_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGDEPEND_GENERATE_OPTIONS += $(PKGDEPEND_RUNPATH:%=-k %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
-	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
+	$(PKGDEPEND_GENERATE_ENV) $(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # pkgdepend resolve builds a map of all installed packages by default.  This
 # makes dependency resolution particularly slow.  We can dramatically improve
