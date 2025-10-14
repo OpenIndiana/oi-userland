@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_extensions
 HUMAN_VERSION =			4.15.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Backported and Experimental Type Hints for Python 3.9+
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466
@@ -34,5 +35,5 @@ PYTHON_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
