@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Python
 COMPONENT_VERSION =		3.14.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 PYTHON_VERSION =		$(basename $(COMPONENT_VERSION))
 PYV =				$(subst .,,$(PYTHON_VERSION))
 COMPONENT_SUMMARY =		The Python interpreter, libraries and utilities
@@ -56,6 +56,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Without this several tests fails
 CFLAGS += $(XPG6MODE)
+
+# This is needed to make sure our Setup.local is really used
+CLONEY_MODE = copy
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --enable-optimizations
@@ -120,6 +123,10 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^    /s/\([^ ]\) /\\1\\\\n    /g'"
 COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += "-e '/^== Test/,/OK/p'"
 
+# Allow 'pkgdepend generate' to run the currently built Python
+PKGDEPEND_GENERATE_ENV += PATH="$(PROTOUSRBINDIR):$(PATH)"
+PKGDEPEND_GENERATE_ENV += LD_LIBRARY_PATH=$(PROTOUSRLIBDIR.64)
+
 # Replace Python version by $(PYVER) really everywhere.  The default transforms
 # misses some occurrences.  Also replace the stripped down Python version by
 # $(PYV).
@@ -150,5 +157,6 @@ REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += runtime/tk-8
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

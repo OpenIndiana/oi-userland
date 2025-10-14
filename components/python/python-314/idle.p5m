@@ -23,19 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-depend fmri=pkg:/library/python/tkinter-$(PYV) type=require
-
 <transform file path=.*/(idle_)?tests?/.* -> default facet.optional.test true>
-
-# Dependency resolution works only if the version is already installed in the build zone
-<transform file path=.+\.py$ -> \
-    default pkg.depend.bypass-generate .* >
-<transform file path=.+\.pyc$ -> \
-    default pkg.depend.bypass-generate .* >
-<transform file path=usr/bin.*$ -> \
-    default pkg.depend.bypass-generate .* >
-<transform file path=.+/idle_test/example_noext$ -> \
-    default pkg.depend.bypass-generate .* >
 
 # All symlinks with unversioned path should be mediated
 <transform link path=(?!.*$(PYVER_RE)) -> default mediator python>
