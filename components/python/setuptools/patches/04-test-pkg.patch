@@ -1,0 +1,34 @@
+The pkg package is always installed on OpenIndiana so test with different one.
+
+--- setuptools-80.9.0/setuptools/tests/test_editable_install.py.orig
++++ setuptools-80.9.0/setuptools/tests/test_editable_install.py
+@@ -613,23 +613,23 @@
+     def test_no_recursion(self, tmp_path):
+         # See issue #3550
+         files = {
+-            "pkg": {
+-                "__init__.py": "from . import pkg",
++            "_pkg": {
++                "__init__.py": "from . import _pkg",
+             },
+         }
+         jaraco.path.build(files, prefix=tmp_path)
+ 
+         mapping = {
+-            "pkg": str(tmp_path / "pkg"),
++            "_pkg": str(tmp_path / "_pkg"),
+         }
+         template = _finder_template(str(uuid4()), mapping, {})
+ 
+         with contexts.save_paths(), contexts.save_sys_modules():
+-            sys.modules.pop("pkg", None)
++            sys.modules.pop("_pkg", None)
+ 
+             self.install_finder(template)
+-            with pytest.raises(ImportError, match="pkg"):
+-                import_module("pkg")
++            with pytest.raises(ImportError, match="_pkg"):
++                import_module("_pkg")
+ 
+     def test_similar_name(self, tmp_path):
+         files = {
