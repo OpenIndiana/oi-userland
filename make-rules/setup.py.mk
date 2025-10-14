@@ -352,8 +352,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 
 # tox package together with the tox-current-env plugin is needed
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
 # Please note we set PATH below five times for tox to workaround
@@ -388,7 +388,7 @@ COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
 COMPONENT_TEST_TARGETS =
 
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/pytest
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),unittest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m unittest
 COMPONENT_TEST_ARGS =

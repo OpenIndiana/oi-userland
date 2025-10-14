@@ -1563,6 +1563,7 @@ USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(USERLAND_REQUIR
 REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
 REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(PYTHON_REQUIRED_PACKAGES:%=%-$(subst .,,$(ver))))
 BOOTSTRAP_SKIP_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
+USERLAND_TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(USERLAND_TEST_REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PYTHON_VERSIONS),$(TEST_REQUIRED_PACKAGES.python:%=%-$(subst .,,$(ver))))
 
 # Generate requirements on all built perl version variants for given packages
@@ -1570,6 +1571,7 @@ USERLAND_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(USERLAND_REQUIRED
 REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
 REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(PERL_REQUIRED_PACKAGES:%=%-$(subst .,,$(ver))))
 BOOTSTRAP_SKIP_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
+USERLAND_TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(USERLAND_TEST_REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
 TEST_REQUIRED_PACKAGES += $(foreach ver,$(PERL_VERSIONS),$(TEST_REQUIRED_PACKAGES.perl:%=%-$(subst .,,$(ver))))
 
 # Generate conflicting packages for all built python version variants for given package
