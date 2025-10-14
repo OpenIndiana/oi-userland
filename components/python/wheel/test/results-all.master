@@ -1,44 +1,88 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest
+py$(PYV): commands[0]> $(PYTHON) -b -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 52 items / 1 skipped
+collecting ... collected 101 items / 5 deselected / 1 skipped / 96 selected
 
-tests/commands/test_convert.py::test_egg_re PASSED
-tests/commands/test_convert.py::test_convert_egg_file[win32] PASSED
-tests/commands/test_convert.py::test_convert_egg_file[amd64] PASSED
-tests/commands/test_convert.py::test_convert_egg_file[pure] PASSED
-tests/commands/test_convert.py::test_convert_egg_directory[win32] PASSED
-tests/commands/test_convert.py::test_convert_egg_directory[amd64] PASSED
-tests/commands/test_convert.py::test_convert_egg_directory[pure] PASSED
-tests/commands/test_convert.py::test_convert_bdist_wininst[win32] PASSED
-tests/commands/test_convert.py::test_convert_bdist_wininst[amd64] PASSED
-tests/commands/test_convert.py::test_convert_bdist_wininst[pure] PASSED
-tests/commands/test_convert.py::test_convert_pkg_info_with_empty_description PASSED
-tests/commands/test_convert.py::test_convert_pkg_info_with_one_line_description PASSED
-tests/commands/test_pack.py::test_pack[nobuildnum] PASSED
-tests/commands/test_pack.py::test_pack[newbuildarg] PASSED
-tests/commands/test_pack.py::test_pack[oldbuildnum] PASSED
-tests/commands/test_pack.py::test_pack[erasebuildnum] PASSED
-tests/commands/test_tags.py::test_tags_no_args PASSED
-tests/commands/test_tags.py::test_python_tags PASSED
-tests/commands/test_tags.py::test_abi_tags PASSED
-tests/commands/test_tags.py::test_plat_tags PASSED
-tests/commands/test_tags.py::test_build_tag PASSED
-tests/commands/test_tags.py::test_invalid_build_tag[digitstart] PASSED
-tests/commands/test_tags.py::test_invalid_build_tag[hyphen] PASSED
-tests/commands/test_tags.py::test_multi_tags PASSED
-tests/commands/test_tags.py::test_tags_command PASSED
-tests/commands/test_tags.py::test_tags_command_del PASSED
-tests/commands/test_tags.py::test_permission_bits PASSED
-tests/commands/test_unpack.py::test_unpack PASSED
-tests/commands/test_unpack.py::test_unpack_executable_bit PASSED
-tests/test_bdist_wheel.py::test_import_bdist_wheel PASSED
+tests/cli/test_convert.py::test_egg_re PASSED
+tests/cli/test_convert.py::test_convert_egg_file[win32] PASSED
+tests/cli/test_convert.py::test_convert_egg_file[amd64] PASSED
+tests/cli/test_convert.py::test_convert_egg_file[pure] PASSED
+tests/cli/test_convert.py::test_convert_egg_directory[win32] PASSED
+tests/cli/test_convert.py::test_convert_egg_directory[amd64] PASSED
+tests/cli/test_convert.py::test_convert_egg_directory[pure] PASSED
+tests/cli/test_convert.py::test_convert_bdist_wininst[win32] PASSED
+tests/cli/test_convert.py::test_convert_bdist_wininst[amd64] PASSED
+tests/cli/test_convert.py::test_convert_bdist_wininst[pure] PASSED
+tests/cli/test_pack.py::test_pack[nobuildnum] PASSED
+tests/cli/test_pack.py::test_pack[newbuildarg] PASSED
+tests/cli/test_pack.py::test_pack[oldbuildnum] PASSED
+tests/cli/test_pack.py::test_pack[erasebuildnum] PASSED
+tests/cli/test_tags.py::test_tags_no_args PASSED
+tests/cli/test_tags.py::test_python_tags PASSED
+tests/cli/test_tags.py::test_abi_tags PASSED
+tests/cli/test_tags.py::test_plat_tags PASSED
+tests/cli/test_tags.py::test_build_tag PASSED
+tests/cli/test_tags.py::test_invalid_build_tag[digitstart] PASSED
+tests/cli/test_tags.py::test_invalid_build_tag[hyphen] PASSED
+tests/cli/test_tags.py::test_multi_tags PASSED
+tests/cli/test_tags.py::test_tags_command PASSED
+tests/cli/test_tags.py::test_tags_command_del PASSED
+tests/cli/test_tags.py::test_permission_bits PASSED
+tests/cli/test_unpack.py::test_unpack PASSED
+tests/cli/test_unpack.py::test_unpack_executable_bit PASSED
+tests/test_bdist_wheel.py::test_no_scripts PASSED
+tests/test_bdist_wheel.py::test_unicode_record PASSED
+tests/test_bdist_wheel.py::test_preserve_unicode_metadata PASSED
+tests/test_bdist_wheel.py::test_licenses_disabled PASSED
+tests/test_bdist_wheel.py::test_build_number PASSED
+tests/test_bdist_wheel.py::test_limited_abi PASSED
+tests/test_bdist_wheel.py::test_build_from_readonly_tree PASSED
+tests/test_bdist_wheel.py::test_compression[stored] PASSED
+tests/test_bdist_wheel.py::test_compression[deflated] PASSED
+tests/test_bdist_wheel.py::test_wheelfile_line_endings PASSED
+tests/test_bdist_wheel.py::test_unix_epoch_timestamps PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_windows PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_pypy_old PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_pypy_new PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_graalpy PASSED
+tests/test_bdist_wheel.py::test_get_abi_tag_fallback PASSED
+tests/test_bdist_wheel.py::test_platform_with_space PASSED
+tests/test_bdist_wheel.py::test_rmtree_readonly PASSED
+tests/test_bdist_wheel.py::test_data_dir_with_tag_build PASSED
+tests/test_bdist_wheel.py::test_platform_linux32[linux-x86_64-linux_i686] SKIPPED
+tests/test_bdist_wheel.py::test_platform_linux32[linux-aarch64-linux_armv7l] SKIPPED
+tests/test_bdist_wheel.py::test_no_ctypes PASSED
+tests/test_bdist_wheel.py::test_deprecated_import PASSED
+tests/test_macosx_libfile.py::test_read_from_dylib PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_simple PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_version_bump PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_information_about_problematic_files_python_version PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_information_about_problematic_files_env_variable PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_bump_platform_tag_by_env_variable PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_bugfix_release_platform_tag PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_warning_on_to_low_env_variable PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_get_platform_bigsur_env PASSED
+tests/test_macosx_libfile.py::TestGetPlatformMacosx::test_get_platform_bigsur_platform PASSED
+tests/test_macosx_libfile.py::test_get_platform_linux32[linux-x86_64-linux_i686] PASSED
+tests/test_macosx_libfile.py::test_get_platform_linux32[linux-aarch64-linux_armv7l] PASSED
 tests/test_metadata.py::test_pkginfo_to_metadata PASSED
-tests/test_metadata.py::test_metadata_deprecated PASSED
+tests/test_tagopt.py::test_nocompile_skips[temp_pkg0] SKIPPED (Canno...)
+tests/test_tagopt.py::test_default_tag PASSED
+tests/test_tagopt.py::test_build_number PASSED
+tests/test_tagopt.py::test_explicit_tag PASSED
+tests/test_tagopt.py::test_universal_tag PASSED
+tests/test_tagopt.py::test_universal_beats_explicit_tag PASSED
+tests/test_tagopt.py::test_universal_in_setup_cfg PASSED
+tests/test_tagopt.py::test_pythontag_in_setup_cfg PASSED
+tests/test_tagopt.py::test_legacy_wheel_section_in_setup_cfg PASSED
+tests/test_tagopt.py::test_plat_name_purepy PASSED
+tests/test_tagopt.py::test_plat_name_ext[temp_pkg0] PASSED
+tests/test_tagopt.py::test_plat_name_purepy_in_setupcfg PASSED
+tests/test_tagopt.py::test_plat_name_ext_in_setupcfg[temp_pkg0] PASSED
 tests/test_wheelfile.py::test_wheelfile_re[foo-2-py3-none-any.whl] PASSED
 tests/test_wheelfile.py::test_wheelfile_re[foo-2-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl] PASSED
 tests/test_wheelfile.py::test_bad_wheel_filename[test.whl] PASSED
@@ -61,6 +105,6 @@ tests/test_wheelfile.py::test_timestamp PASSED
 tests/test_wheelfile.py::test_attributes PASSED
 
 =========================== short test summary info ============================
-======== 52 passed, 1 skipped ========
+======== 93 passed, 4 skipped, 5 deselected ========
   py$(PYV): OK
   congratulations :)
