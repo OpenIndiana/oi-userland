@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	143.0.4
+COMPONENT_VERSION =	144.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     c0927f7f515e97a6d32f072882dcc69392273ec3
+COMPONENT_GIT_HASH=     16f979184458f531fce47706d2fa7f2902e75ad3
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:9e47c9f24c0e01a67f7fb03349ac8021a692f088f54bd127c356be0835c8b61a
+COMPONENT_ARCHIVE_HASH= sha256:612064a55610f0dfddfbff681930bea16f7593b40bd70c86e0518dc85d096b1f
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.88.0
+RUST_VERSION = 1.89.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -128,7 +128,7 @@ MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
 # Clang 20 does not work with Mozilla patches
-CLANG_VERSION= 19
+# CLANG_VERSION= 19
 
 ifdef DEBUG
 # disable code optimization
