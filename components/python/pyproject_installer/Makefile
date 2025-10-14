@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
 HUMAN_VERSION =			0.5.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pyproject installer
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5dc7daffc556156fcb7c8d2837e7edabad70c7437d8ea1e4c83022f09d4844b1
@@ -39,4 +40,4 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python
