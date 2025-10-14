@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
 HUMAN_VERSION =			2.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
