@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
 HUMAN_VERSION =			3.12.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2
@@ -31,16 +32,17 @@ TEST_STYLE = pytest
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - build
+# - coherent.licensed
 # - flit_scm (test bootstrap)
 # - installer
 # - packaging
 # - pathspec (test bootstrap)
 # - pyproject_hooks
 # - typing_extensions
-# - wheel
+# - wheel (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python
