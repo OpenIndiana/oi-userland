@@ -19,7 +19,7 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			AppStream
-COMPONENT_VERSION=		1.0.6
+COMPONENT_VERSION=		1.1.1
 COMPONENT_SUMMARY=		Cross-distribution effort for enhancing the way we interact with the software repositories provided by distributions by standardizing software component metadata
 COMPONENT_PROJECT_URL=		https://www.freedesktop.org/wiki/Distributions/AppStream/
 COMPONENT_FMRI=			desktop/appstream
@@ -27,7 +27,7 @@ COMPONENT_CLASSIFICATION=	System/Packaging
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=		https://www.freedesktop.org/software/appstream/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:db4439db6a33de3ca1041473501610844ddf1b72ae23016c05242c681c380b4d
+COMPONENT_ARCHIVE_HASH=		sha256:3b9d325074ede328eed4746d0c4fbfc3b8f6f4fdbc9c173ed70e40569a79b117
 COMPONENT_LICENSE=		LGPL-2.1-only
 COMPONENT_LICENSE_FILE=		COPYING
 
@@ -53,8 +53,8 @@ TEST_CONFLICTING_PACKAGES += image/editor/inkscape
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/libfyaml
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxmlb
-REQUIRED_PACKAGES += library/libyaml
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
