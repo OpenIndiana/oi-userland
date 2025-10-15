@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		coherent_licensed
 HUMAN_VERSION =			0.5.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		License management tooling for Coherent System and skeleton projects
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d8071403ce742d3ac3592ddc4fb7057a46caffb415b928b4d52802e5f208416d
@@ -36,5 +37,5 @@ PYTHON_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
