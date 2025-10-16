@@ -22,9 +22,9 @@ include ../../../../make-rules/shared-macros.mk
 # Odd minor versions are unstable.
 
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.58.0
+HUMAN_VERSION=			2.58.1
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:dfdd3300da2783a21969ffade2889817fb7c1906a4ef92497eba65969b3dab5a
+COMPONENT_ARCHIVE_HASH=		sha256:7f374a6a38cd70ff4b32c9d3a0310bfa804d946fed4c9e69a7d49facdcb95e9c
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -69,6 +69,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus/32
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxtst
