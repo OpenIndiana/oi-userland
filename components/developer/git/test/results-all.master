@@ -1053,10 +1053,14 @@ ok 1 - test-sha1 detects shattered pdf
 ok 1 - nested aliases - internal execution
 ok 2 - nested aliases - mixed execution
 ok 3 - looping aliases - internal execution
-ok 4 - run-command formats empty args properly
-ok 5 - tracing a shell alias with arguments shows trace of prepared command
-# passed all 5 test(s)
-1..5
+ok 4 - looping aliases - deprecated builtins
+ok 5 - run-command formats empty args properly
+ok 6 - tracing a shell alias with arguments shows trace of prepared command
+ok 7 - can alias-shadow deprecated builtins
+ok 8 - can alias-shadow via two deprecated builtins
+ok 9 - cannot alias-shadow a sample of regular builtins
+# passed all 9 test(s)
+1..9
 *** t0017-env-helper.sh ***
 ok 1 - test-tool env-helper usage
 ok 2 - test-tool env-helper bad default values
@@ -4313,14 +4317,14 @@ ok 8 - run_command passes over non-executable file
 ok 9 - run_command reports EACCES
 ok 10 - unreadable directory in PATH
 ok 11 - run_command runs in parallel with more jobs available than tasks
-not ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
+ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
+ok 13 - run_command runs in parallel with as many jobs as tasks
+not ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
 #	
-#		test-tool run-command --ungroup run-command-parallel 5 sh -c "printf \"%s\n%s\n\" Hello World" >out 2>err &&
+#		test-tool run-command --ungroup run-command-parallel 4 sh -c "printf \"%s\n%s\n\" Hello World" >out 2>err &&
 #		test_line_count = 8 out &&
 #		test_line_count = 4 err
 #	
-ok 13 - run_command runs in parallel with as many jobs as tasks
-ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
 ok 15 - run_command runs in parallel with more tasks than jobs available
 ok 16 - run_command runs ungrouped in parallel with more tasks than jobs available
 ok 17 - run_command is asked to abort gracefully
@@ -8143,71 +8147,75 @@ ok 241 - stdin  batch-updates with invalid old_oid
 ok 242 - stdin  batch-updates with incorrect old oid
 ok 243 - stdin  batch-updates refname conflict
 ok 244 - stdin  batch-updates refname conflict new ref
-ok 245 - stdin  batch-updates delete incorrect symbolic ref
-ok 246 - stdin  batch-updates delete with incorrect old_oid
-ok 247 - stdin  batch-updates delete non-existent ref
-ok 248 - stdin -z symref-verify fails without --no-deref
-ok 249 - stdin -z symref-verify fails with too many arguments
-ok 250 - stdin -z symref-verify succeeds for correct value
-ok 251 - stdin -z symref-verify fails with no value
-ok 252 - stdin -z symref-verify succeeds for dangling reference
-ok 253 - stdin -z symref-verify fails for missing reference
-ok 254 - stdin -z symref-verify fails for wrong value
-ok 255 - stdin -z symref-verify fails for mistaken null value
-ok 256 - stdin -z symref-delete fails without --no-deref
-ok 257 - stdin -z symref-delete fails with no ref
-ok 258 - stdin -z symref-delete fails deleting regular ref
-ok 259 - stdin -z symref-delete fails with too many arguments
-ok 260 - stdin -z symref-delete fails with wrong old value
-ok 261 - stdin -z symref-delete works with right old value
-ok 262 - stdin -z symref-delete works with empty old value
-ok 263 - stdin -z symref-delete succeeds for dangling reference
-ok 264 - stdin -z symref-delete deletes regular ref without target
-ok 265 - stdin -z symref-create fails with too many arguments
-ok 266 - stdin -z symref-create fails with no target
-ok 267 - stdin -z symref-create fails with empty target
-ok 268 - stdin -z symref-create works
-ok 269 - stdin -z symref-create works with --no-deref
-ok 270 - stdin -z create dangling symref ref works
-ok 271 - stdin -z symref-create does not create reflogs by default
-ok 272 - stdin -z symref-create reflogs with --create-reflog
-ok 273 - stdin -z symref-update fails with too many arguments
-ok 274 - stdin -z symref-update fails with wrong old value argument
-ok 275 - stdin -z symref-update creates with zero old value
-ok 276 - stdin -z symref-update creates with no old value
-ok 277 - stdin -z symref-update creates dangling
-ok 278 - stdin -z symref-update fails with wrong old value
-ok 279 - stdin -z symref-update updates dangling ref
-ok 280 - stdin -z symref-update updates dangling ref with old value
-ok 281 - stdin -z symref-update fails update dangling ref with wrong old value
-ok 282 - stdin -z symref-update works with right old value
-ok 283 - stdin -z symref-update works with no old value
-ok 284 - stdin -z symref-update fails with empty old ref-target
-ok 285 - stdin -z symref-update creates (with deref)
-ok 286 - stdin -z symref-update regular ref to symref with correct old-oid
-ok 287 - stdin -z symref-update regular ref to symref fails with wrong old-oid
-ok 288 - stdin -z symref-update regular ref to symref fails with invalid old-oid
-ok 289 - stdin -z symref-update existing symref with zero old-oid
-ok 290 - stdin -z symref-update regular ref to symref (with deref)
-ok 291 - stdin -z symref-update regular ref to symref
-ok 292 - stdin -z batch-updates
-ok 293 - stdin -z batch-updates with invalid new_oid
-ok 294 - stdin -z batch-updates with non-commit new_oid
-ok 295 - stdin -z batch-updates with non-existent ref
-ok 296 - stdin -z batch-updates with dangling symref
-ok 297 - stdin -z batch-updates with regular ref as symref
-ok 298 - stdin -z batch-updates with invalid old_oid
-ok 299 - stdin -z batch-updates with incorrect old oid
-ok 300 - stdin -z batch-updates refname conflict
-ok 301 - stdin -z batch-updates refname conflict new ref
-ok 302 - stdin -z batch-updates delete incorrect symbolic ref
-ok 303 - stdin -z batch-updates delete with incorrect old_oid
-ok 304 - stdin -z batch-updates delete non-existent ref
-ok 305 - update-ref should also create reflog for HEAD
-ok 306 - empty directories are pruned when aborting a transaction
-ok 307 - empty directories are pruned when not committing
-# passed all 307 test(s)
-1..307
+ok 245 # skip stdin  batch-updates existing reference (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
+ok 246 # skip stdin  batch-updates existing reference (missing CASE_INSENSITIVE_FS)
+ok 247 - stdin  batch-updates delete incorrect symbolic ref
+ok 248 - stdin  batch-updates delete with incorrect old_oid
+ok 249 - stdin  batch-updates delete non-existent ref
+ok 250 - stdin -z symref-verify fails without --no-deref
+ok 251 - stdin -z symref-verify fails with too many arguments
+ok 252 - stdin -z symref-verify succeeds for correct value
+ok 253 - stdin -z symref-verify fails with no value
+ok 254 - stdin -z symref-verify succeeds for dangling reference
+ok 255 - stdin -z symref-verify fails for missing reference
+ok 256 - stdin -z symref-verify fails for wrong value
+ok 257 - stdin -z symref-verify fails for mistaken null value
+ok 258 - stdin -z symref-delete fails without --no-deref
+ok 259 - stdin -z symref-delete fails with no ref
+ok 260 - stdin -z symref-delete fails deleting regular ref
+ok 261 - stdin -z symref-delete fails with too many arguments
+ok 262 - stdin -z symref-delete fails with wrong old value
+ok 263 - stdin -z symref-delete works with right old value
+ok 264 - stdin -z symref-delete works with empty old value
+ok 265 - stdin -z symref-delete succeeds for dangling reference
+ok 266 - stdin -z symref-delete deletes regular ref without target
+ok 267 - stdin -z symref-create fails with too many arguments
+ok 268 - stdin -z symref-create fails with no target
+ok 269 - stdin -z symref-create fails with empty target
+ok 270 - stdin -z symref-create works
+ok 271 - stdin -z symref-create works with --no-deref
+ok 272 - stdin -z create dangling symref ref works
+ok 273 - stdin -z symref-create does not create reflogs by default
+ok 274 - stdin -z symref-create reflogs with --create-reflog
+ok 275 - stdin -z symref-update fails with too many arguments
+ok 276 - stdin -z symref-update fails with wrong old value argument
+ok 277 - stdin -z symref-update creates with zero old value
+ok 278 - stdin -z symref-update creates with no old value
+ok 279 - stdin -z symref-update creates dangling
+ok 280 - stdin -z symref-update fails with wrong old value
+ok 281 - stdin -z symref-update updates dangling ref
+ok 282 - stdin -z symref-update updates dangling ref with old value
+ok 283 - stdin -z symref-update fails update dangling ref with wrong old value
+ok 284 - stdin -z symref-update works with right old value
+ok 285 - stdin -z symref-update works with no old value
+ok 286 - stdin -z symref-update fails with empty old ref-target
+ok 287 - stdin -z symref-update creates (with deref)
+ok 288 - stdin -z symref-update regular ref to symref with correct old-oid
+ok 289 - stdin -z symref-update regular ref to symref fails with wrong old-oid
+ok 290 - stdin -z symref-update regular ref to symref fails with invalid old-oid
+ok 291 - stdin -z symref-update existing symref with zero old-oid
+ok 292 - stdin -z symref-update regular ref to symref (with deref)
+ok 293 - stdin -z symref-update regular ref to symref
+ok 294 - stdin -z batch-updates
+ok 295 - stdin -z batch-updates with invalid new_oid
+ok 296 - stdin -z batch-updates with non-commit new_oid
+ok 297 - stdin -z batch-updates with non-existent ref
+ok 298 - stdin -z batch-updates with dangling symref
+ok 299 - stdin -z batch-updates with regular ref as symref
+ok 300 - stdin -z batch-updates with invalid old_oid
+ok 301 - stdin -z batch-updates with incorrect old oid
+ok 302 - stdin -z batch-updates refname conflict
+ok 303 - stdin -z batch-updates refname conflict new ref
+ok 304 # skip stdin -z batch-updates existing reference (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
+ok 305 # skip stdin -z batch-updates existing reference (missing CASE_INSENSITIVE_FS)
+ok 306 - stdin -z batch-updates delete incorrect symbolic ref
+ok 307 - stdin -z batch-updates delete with incorrect old_oid
+ok 308 - stdin -z batch-updates delete non-existent ref
+ok 309 - update-ref should also create reflog for HEAD
+ok 310 - empty directories are pruned when aborting a transaction
+ok 311 - empty directories are pruned when not committing
+# passed all 311 test(s)
+1..311
 *** t1401-symbolic-ref.sh ***
 ok 1 - setup
 ok 2 - symbolic-ref read/write roundtrip
@@ -8645,6 +8653,17 @@ ok 1 - setup
 ok 2 - lost and found something
 # passed all 2 test(s)
 1..2
+*** t1421-reflog-write.sh ***
+ok 1 - invalid number of arguments
+ok 2 - invalid refname
+ok 3 - unqualified refname is rejected
+ok 4 - nonexistent object IDs
+ok 5 - abbreviated object IDs
+ok 6 - reflog message gets normalized
+ok 7 - simple writes
+ok 8 - can write to root ref
+# passed all 8 test(s)
+1..8
 *** t1430-bad-ref-name.sh ***
 ok 1 - setup
 ok 2 - fast-import: fail on invalid branch name ".badbranchname"
@@ -14209,7 +14228,7 @@ ok 24 - extra spaces after fixup!
 ok 25 - wrapped original subject
 ok 26 - abort last squash
 ok 27 - fixup a fixup
-ok 28 - fixup does not clean up commit message
+ok 28 - pick and fixup respect commit.cleanup
 # passed all 28 test(s)
 1..28
 *** t3416-rebase-onto-threedots.sh ***
@@ -15481,47 +15500,57 @@ ok 59 - colors can be overridden
 ok 60 - brackets appear without color
 ok 61 - colors can be skipped with color.ui=false
 ok 62 - colorized diffs respect diff.wsErrorHighlight
-ok 63 - diffFilter filters diff
-ok 64 - detect bogus diffFilter output
-ok 65 - handle iffy colored hunk headers
-ok 66 - handle very large filtered diff
-ok 67 - diff.algorithm is passed to `git diff-files`
-ok 68 - patch-mode via -i prompts for files
-ok 69 - add -p handles globs
-ok 70 - add -p handles relative paths
-ok 71 - add -p does not expand argument lists
-ok 72 - hunk-editing handles custom comment char
-ok 73 - add -p works even with color.ui=always
-ok 74 - setup different kinds of dirty submodules
-ok 75 - status ignores dirty submodules (except HEAD)
-ok 76 - handle submodules
-ok 77 - set up pathological context
-ok 78 - add -p works with pathological context lines
-ok 79 - add -p patch editing works with pathological context lines
-ok 80 - checkout -p works with pathological context lines
-ok 81 - add -N followed by add -p patch editing
-ok 82 - checkout -p patch editing of added file
-ok 83 - show help from add--helper
-ok 84 - reset -p with unmerged files
-ok 85 - hunk splitting works with diff.suppressBlankEmpty
-ok 86 - add -p respects diff.context
-ok 87 - add -p respects diff.interHunkContext
-ok 88 - add -p rejects negative diff.context
-ok 89 - add accepts -U and --inter-hunk-context
-ok 90 - checkout accepts -U and --inter-hunk-context
-ok 91 - restore accepts -U and --inter-hunk-context
-ok 92 - commit accepts -U and --inter-hunk-context
-ok 93 - reset accepts -U and --inter-hunk-context
-ok 94 - stash accepts -U and --inter-hunk-context
-ok 95 - add rejects invalid context options
-ok 96 - checkout rejects invalid context options
-ok 97 - commit rejects invalid context options
-ok 98 - reset rejects invalid context options
-ok 99 - restore rejects invalid context options
-ok 100 - stash save rejects invalid context options
-ok 101 - stash push rejects invalid context options
-# passed all 101 test(s)
-1..101
+ok 63 - diff color respects color.diff
+ok 64 - re-coloring diff without color.interactive
+ok 65 - diffFilter filters diff
+ok 66 - detect bogus diffFilter output
+ok 67 - handle iffy colored hunk headers
+ok 68 - handle very large filtered diff
+ok 69 - diff.algorithm is passed to `git diff-files`
+ok 70 - patch-mode via -i prompts for files
+ok 71 - add -p handles globs
+ok 72 - add -p handles relative paths
+ok 73 - add -p does not expand argument lists
+ok 74 - hunk-editing handles custom comment char
+ok 75 - add -p works even with color.ui=always
+ok 76 - setup different kinds of dirty submodules
+ok 77 - status ignores dirty submodules (except HEAD)
+ok 78 - handle submodules
+ok 79 - set up pathological context
+ok 80 - add -p works with pathological context lines
+ok 81 - add -p patch editing works with pathological context lines
+ok 82 - checkout -p works with pathological context lines
+ok 83 - add -N followed by add -p patch editing
+ok 84 - checkout -p patch editing of added file
+ok 85 - show help from add--helper
+ok 86 - reset -p with unmerged files
+ok 87 - hunk splitting works with diff.suppressBlankEmpty
+ok 88 - add -p respects diff.context
+ok 89 - add -p respects diff.interHunkContext
+ok 90 - add -p rejects negative diff.context
+ok 91 - add accepts -U and --inter-hunk-context
+ok 92 - checkout accepts -U and --inter-hunk-context
+ok 93 - restore accepts -U and --inter-hunk-context
+ok 94 - commit accepts -U and --inter-hunk-context
+ok 95 - reset accepts -U and --inter-hunk-context
+ok 96 - stash accepts -U and --inter-hunk-context
+ok 97 - set up base for -p color tests
+ok 98 - add rejects invalid context options
+ok 99 - add falls back to color.ui
+ok 100 - checkout rejects invalid context options
+ok 101 - checkout falls back to color.ui
+ok 102 - commit rejects invalid context options
+ok 103 - commit falls back to color.ui
+ok 104 - reset rejects invalid context options
+ok 105 - reset falls back to color.ui
+ok 106 - restore rejects invalid context options
+ok 107 - restore falls back to color.ui
+ok 108 - stash save rejects invalid context options
+ok 109 - stash save falls back to color.ui
+ok 110 - stash push rejects invalid context options
+ok 111 - stash push falls back to color.ui
+# passed all 111 test(s)
+1..111
 *** t3702-add-edit.sh ***
 ok 1 - setup
 ok 2 - add -e
@@ -15958,8 +15987,10 @@ ok 5 - git stash --no-keep-index -p
 ok 6 - stash -p --no-keep-index -- <pathspec> does not unstage other files
 ok 7 - none of this moved HEAD
 ok 8 - stash -p with split hunk
-# passed all 8 test(s)
-1..8
+ok 9 - stash -p not confused by GIT_PAGER_IN_USE
+ok 10 - index push not confused by GIT_PAGER_IN_USE
+# passed all 10 test(s)
+1..10
 *** t3905-stash-include-untracked.sh ***
 ok 1 - stash save --include-untracked some dirty working directory
 ok 2 - stash save --include-untracked cleaned the untracked files
@@ -16536,22 +16567,23 @@ ok 211 - diff -I<regex>: setup
 ok 212 - diff -I<regex>
 ok 213 - diff -I<regex> --stat
 ok 214 - diff -I<regex>: detect malformed regex
-ok 215 - diff-files does not respect diff.noPrefix
-ok 216 - diff-files respects --no-prefix
-ok 217 - diff respects diff.noPrefix
-ok 218 - diff --default-prefix overrides diff.noPrefix
-ok 219 - diff respects diff.mnemonicPrefix
-ok 220 - diff --default-prefix overrides diff.mnemonicPrefix
-ok 221 - diff respects diff.srcPrefix
-ok 222 - diff respects diff.dstPrefix
-ok 223 - diff --src-prefix overrides diff.srcPrefix
-ok 224 - diff --dst-prefix overrides diff.dstPrefix
-ok 225 - diff.{src,dst}Prefix ignored with diff.noPrefix
-ok 226 - diff.{src,dst}Prefix ignored with diff.mnemonicPrefix
-ok 227 - diff.{src,dst}Prefix ignored with --default-prefix
-ok 228 - diff --no-renames cannot be abbreviated
-# passed all 228 test(s)
-1..228
+ok 215 - diff -I<regex>: ignore matching file
+ok 216 - diff-files does not respect diff.noPrefix
+ok 217 - diff-files respects --no-prefix
+ok 218 - diff respects diff.noPrefix
+ok 219 - diff --default-prefix overrides diff.noPrefix
+ok 220 - diff respects diff.mnemonicPrefix
+ok 221 - diff --default-prefix overrides diff.mnemonicPrefix
+ok 222 - diff respects diff.srcPrefix
+ok 223 - diff respects diff.dstPrefix
+ok 224 - diff --src-prefix overrides diff.srcPrefix
+ok 225 - diff --dst-prefix overrides diff.dstPrefix
+ok 226 - diff.{src,dst}Prefix ignored with diff.noPrefix
+ok 227 - diff.{src,dst}Prefix ignored with diff.mnemonicPrefix
+ok 228 - diff.{src,dst}Prefix ignored with --default-prefix
+ok 229 - diff --no-renames cannot be abbreviated
+# passed all 229 test(s)
+1..229
 *** t4014-format-patch.sh ***
 ok 1 - setup
 ok 2 - format-patch --ignore-if-in-upstream
@@ -16769,42 +16801,42 @@ ok 212 - format-patch --default-prefix overrides format.noprefix
 # passed all remaining 207 test(s)
 1..212
 *** t4015-diff-whitespace.sh ***
-ok 1 - status with --patch (different)
-ok 2 - status with --patch (mode differs)
-ok 3 - status with --patch (removing an empty file)
-ok 4 - status with --patch (different but equivalent)
-ok 5 - status with --quiet (different)
-ok 6 - status with --quiet (mode differs)
-ok 7 - status with --quiet (removing an empty file)
-ok 8 - status with --quiet (different but equivalent)
-ok 9 - status with -s (different)
-ok 10 - status with -s (mode differs)
-ok 11 - status with -s (removing an empty file)
-ok 12 - status with -s (different but equivalent)
-ok 13 - status with --stat (different)
-ok 14 - status with --stat (mode differs)
-ok 15 - status with --stat (removing an empty file)
-ok 16 - status with --stat (different but equivalent)
-ok 17 - status with --shortstat (different)
-ok 18 - status with --shortstat (mode differs)
-ok 19 - status with --shortstat (removing an empty file)
-ok 20 - status with --shortstat (different but equivalent)
-ok 21 - status with --dirstat=lines (different)
-ok 22 - status with --dirstat=lines (mode differs)
-ok 23 - status with --dirstat=lines (removing an empty file)
-ok 24 - status with --dirstat=lines (different but equivalent)
-ok 25 - status with --raw (different)
-ok 26 - status with --raw (mode differs)
-ok 27 - status with --raw (removing an empty file)
-ok 28 - status with --raw (different but equivalent)
-ok 29 - status with --name-only (different)
-ok 30 - status with --name-only (mode differs)
-ok 31 - status with --name-only (removing an empty file)
-ok 32 - status with --name-only (different but equivalent)
-ok 33 - status with --name-status (different)
-ok 34 - status with --name-status (mode differs)
-ok 35 - status with --name-status (removing an empty file)
-ok 36 - status with --name-status (different but equivalent)
+ok 1 - status with  (different)
+ok 2 - status with  (mode differs)
+ok 3 - status with  (removing an empty file)
+ok 4 - status with  (different but equivalent)
+ok 5 - status with  (different)
+ok 6 - status with  (mode differs)
+ok 7 - status with  (removing an empty file)
+ok 8 - status with  (different but equivalent)
+ok 9 - status with  (different)
+ok 10 - status with  (mode differs)
+ok 11 - status with  (removing an empty file)
+ok 12 - status with  (different but equivalent)
+ok 13 - status with  (different)
+ok 14 - status with  (mode differs)
+ok 15 - status with  (removing an empty file)
+ok 16 - status with  (different but equivalent)
+ok 17 - status with  (different)
+ok 18 - status with  (mode differs)
+ok 19 - status with  (removing an empty file)
+ok 20 - status with  (different but equivalent)
+ok 21 - status with  (different)
+ok 22 - status with  (mode differs)
+ok 23 - status with  (removing an empty file)
+ok 24 - status with  (different but equivalent)
+ok 25 - status with  (different)
+ok 26 - status with  (mode differs)
+ok 27 - status with  (removing an empty file)
+ok 28 - status with  (different but equivalent)
+ok 29 - status with  (different)
+ok 30 - status with  (mode differs)
+ok 31 - status with  (removing an empty file)
+ok 32 - status with  (different but equivalent)
+ok 33 - status with  (different)
+ok 34 - status with  (mode differs)
+ok 35 - status with  (removing an empty file)
+ok 36 - status with  (different but equivalent)
 ok 37 - Ray Lehtiniemi's example
 ok 38 - another test, without options
 ok 39 - ignore-blank-lines: only new lines
@@ -18049,42 +18081,43 @@ ok 88 - merge --stat respects COLUMNS with long name
 ok 1 - setup
 ok 2 - git diff --no-index --exit-code
 ok 3 - git diff --no-index directories
-ok 4 - git diff --no-index relative path outside repo
-ok 5 - git diff --no-index with broken index
-ok 6 - git diff outside repo with broken index
-ok 7 - git diff --no-index executed outside repo gives correct error message
-ok 8 - diff D F and diff F D
-ok 9 - turning a file into a directory
-ok 10 - diff from repo subdir shows real paths (explicit)
-ok 11 - diff from repo subdir shows real paths (implicit)
-ok 12 - diff --no-index from repo subdir respects config (explicit)
-ok 13 - diff --no-index from repo subdir respects config (implicit)
-ok 14 - diff --no-index from repo subdir with absolute paths
-ok 15 - diff --no-index allows external diff
-ok 16 - diff --no-index normalizes mode: no changes
-ok 17 - diff --no-index normalizes mode: chmod +x
-ok 18 - diff --no-index normalizes: mode not like git mode
-ok 19 - diff --no-index normalizes: mode not like git mode (symlink)
-ok 20 - external diff with mode-only change
-ok 21 - diff --no-index treats '-' as stdin
-ok 22 - diff --no-index -R treats '-' as stdin
-ok 23 - diff --no-index refuses to diff stdin and a directory
-ok 24 - diff --no-index refuses to diff a named pipe and a directory
-ok 25 - diff --no-index reads from pipes
-ok 26 - diff --no-index F F rejects pathspecs
-ok 27 - diff --no-index D F rejects pathspecs
-ok 28 - diff --no-index F D rejects pathspecs
-ok 29 - diff --no-index rejects absolute pathspec
-ok 30 - diff --no-index with pathspec
-ok 31 - diff --no-index with pathspec no matches
-ok 32 - diff --no-index with negative pathspec
-ok 33 - setup nested
-ok 34 - diff --no-index with pathspec nested negative pathspec
-ok 35 - diff --no-index with pathspec nested pathspec
-ok 36 - diff --no-index with pathspec glob
-ok 37 - diff --no-index with pathspec glob and exclude
-# passed all 37 test(s)
-1..37
+ok 4 - git diff --no-index with -
+ok 5 - git diff --no-index relative path outside repo
+ok 6 - git diff --no-index with broken index
+ok 7 - git diff outside repo with broken index
+ok 8 - git diff --no-index executed outside repo gives correct error message
+ok 9 - diff D F and diff F D
+ok 10 - turning a file into a directory
+ok 11 - diff from repo subdir shows real paths (explicit)
+ok 12 - diff from repo subdir shows real paths (implicit)
+ok 13 - diff --no-index from repo subdir respects config (explicit)
+ok 14 - diff --no-index from repo subdir respects config (implicit)
+ok 15 - diff --no-index from repo subdir with absolute paths
+ok 16 - diff --no-index allows external diff
+ok 17 - diff --no-index normalizes mode: no changes
+ok 18 - diff --no-index normalizes mode: chmod +x
+ok 19 - diff --no-index normalizes: mode not like git mode
+ok 20 - diff --no-index normalizes: mode not like git mode (symlink)
+ok 21 - external diff with mode-only change
+ok 22 - diff --no-index treats '-' as stdin
+ok 23 - diff --no-index -R treats '-' as stdin
+ok 24 - diff --no-index refuses to diff stdin and a directory
+ok 25 - diff --no-index refuses to diff a named pipe and a directory
+ok 26 - diff --no-index reads from pipes
+ok 27 - diff --no-index F F rejects pathspecs
+ok 28 - diff --no-index D F rejects pathspecs
+ok 29 - diff --no-index F D rejects pathspecs
+ok 30 - diff --no-index rejects absolute pathspec
+ok 31 - diff --no-index with pathspec
+ok 32 - diff --no-index with pathspec no matches
+ok 33 - diff --no-index with negative pathspec
+ok 34 - setup nested
+ok 35 - diff --no-index with pathspec nested negative pathspec
+ok 36 - diff --no-index with pathspec nested pathspec
+ok 37 - diff --no-index with pathspec glob
+ok 38 - diff --no-index with pathspec glob and exclude
+# passed all 38 test(s)
+1..38
 *** t4054-diff-bogus-tree.sh ***
 ok 1 - create bogus tree
 ok 2 - create tree with matching file
@@ -19715,41 +19748,42 @@ ok 16 - -L 4,18:a.c -L ^:main:a.c simple
 ok 17 - -L :main:a.c -L 4,18:a.c simple
 ok 18 - -L 4:a.c -L 8,12:a.c simple
 ok 19 - -L 8,12:a.c -L 4:a.c simple
-ok 20 - invalid args: -L
-ok 21 - invalid args: -L b.c
-ok 22 - invalid args: -L 1:
-ok 23 - invalid args: -L 1:nonexistent
-ok 24 - invalid args: -L 1:simple
-ok 25 - invalid args: -L '/foo:b.c'
-ok 26 - invalid args: -L 1000:b.c
-ok 27 - invalid args: -L :b.c
-ok 28 - invalid args: -L :foo:b.c
-ok 29 - -L X (X == nlines)
-ok 30 - -L X (X == nlines + 1)
-ok 31 - -L X (X == nlines + 2)
-ok 32 - -L ,Y (Y == nlines)
-ok 33 - -L ,Y (Y == nlines + 1)
-ok 34 - -L ,Y (Y == nlines + 2)
-ok 35 - -L with --first-parent and a merge
-ok 36 - -L with --output
-ok 37 - range_set_union
-ok 38 - -s shows only line-log commits
-ok 39 - -p shows the default patch output
-ok 40 - --raw is forbidden
-ok 41 - setup for checking fancy rename following
-ok 42 - fancy rename following #1
-ok 43 - fancy rename following #2
-ok 44 - setup for checking line-log and parent oids
-ok 45 - parent oids without parent rewriting
-ok 46 - parent oids with parent rewriting
-ok 47 - line-log with --before
-ok 48 - setup tests for zero-width regular expressions
-ok 49 - zero-width regex $ matches any function name
-ok 50 - zero-width regex ^ matches any function name
-ok 51 - zero-width regex .* matches any function name
-ok 52 - show line-log with graph
-# passed all 52 test(s)
-1..52
+ok 20 - -L 10,16:b.c -L 18,26:b.c main
+ok 21 - invalid args: -L
+ok 22 - invalid args: -L b.c
+ok 23 - invalid args: -L 1:
+ok 24 - invalid args: -L 1:nonexistent
+ok 25 - invalid args: -L 1:simple
+ok 26 - invalid args: -L '/foo:b.c'
+ok 27 - invalid args: -L 1000:b.c
+ok 28 - invalid args: -L :b.c
+ok 29 - invalid args: -L :foo:b.c
+ok 30 - -L X (X == nlines)
+ok 31 - -L X (X == nlines + 1)
+ok 32 - -L X (X == nlines + 2)
+ok 33 - -L ,Y (Y == nlines)
+ok 34 - -L ,Y (Y == nlines + 1)
+ok 35 - -L ,Y (Y == nlines + 2)
+ok 36 - -L with --first-parent and a merge
+ok 37 - -L with --output
+ok 38 - range_set_union
+ok 39 - -s shows only line-log commits
+ok 40 - -p shows the default patch output
+ok 41 - --raw is forbidden
+ok 42 - setup for checking fancy rename following
+ok 43 - fancy rename following #1
+ok 44 - fancy rename following #2
+ok 45 - setup for checking line-log and parent oids
+ok 46 - parent oids without parent rewriting
+ok 47 - parent oids with parent rewriting
+ok 48 - line-log with --before
+ok 49 - setup tests for zero-width regular expressions
+ok 50 - zero-width regex $ matches any function name
+ok 51 - zero-width regex ^ matches any function name
+ok 52 - zero-width regex .* matches any function name
+ok 53 - show line-log with graph
+# passed all 53 test(s)
+1..53
 *** t4212-log-corrupt.sh ***
 ok 1 - setup
 ok 2 - fsck notices broken commit
@@ -21283,23 +21317,24 @@ ok 75 - expire works when adding new packs
 ok 76 - expire respects .keep files
 ok 77 - expiring unreferenced cruft pack retains pack
 ok 78 - repack --batch-size=0 repacks everything
-ok 79 - repack --batch-size=<large> repacks everything
-ok 80 - repack/expire loop
-ok 81 - load reverse index when missing .idx, .pack
-ok 82 - usage shown without sub-command
-ok 83 - complains when run outside of a repository
-ok 84 - repack with delta islands
-ok 85 - reader notices too-small oid fanout chunk
-ok 86 - reader notices too-small oid lookup chunk
-ok 87 - reader notices too-small pack names chunk
-ok 88 - reader handles unaligned chunks
-ok 89 - reader notices too-small object offset chunk
-ok 90 - reader bounds-checks large offset table
-ok 91 - reader notices too-small revindex chunk
-ok 92 - reader notices out-of-bounds fanout
-ok 93 - bitmapped packs are stored via the BTMP chunk
-# passed all 93 test(s)
-1..93
+ok 79 # skip repack/expire with many packs (missing EXPENSIVE)
+ok 80 - repack --batch-size=<large> repacks everything
+ok 81 - repack/expire loop
+ok 82 - load reverse index when missing .idx, .pack
+ok 83 - usage shown without sub-command
+ok 84 - complains when run outside of a repository
+ok 85 - repack with delta islands
+ok 86 - reader notices too-small oid fanout chunk
+ok 87 - reader notices too-small oid lookup chunk
+ok 88 - reader notices too-small pack names chunk
+ok 89 - reader handles unaligned chunks
+ok 90 - reader notices too-small object offset chunk
+ok 91 - reader bounds-checks large offset table
+ok 92 - reader notices too-small revindex chunk
+ok 93 - reader notices out-of-bounds fanout
+ok 94 - bitmapped packs are stored via the BTMP chunk
+# passed all 94 test(s)
+1..94
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
 ok 2 - vanilla repack deltas one against two
@@ -23361,9 +23396,14 @@ ok 198 - --negotiation-tip understands globs
 ok 199 - --negotiation-tip understands abbreviated SHA-1
 ok 200 - --negotiation-tip rejects missing OIDs
 ok 201 - clone does not get confused by a D/F conflict
-# passed all 201 test(s)
+ok 202 # skip existing references in a case insensitive filesystem (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
+ok 203 - existing reference lock in repo
+ok 204 # skip F/D conflict on case insensitive filesystem (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
+ok 205 # skip D/F conflict on case insensitive filesystem (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
+ok 206 - D/F conflict on case sensitive filesystem with lock
+# passed all 206 test(s)
 # SKIP no web server found at ''
-1..201
+1..206
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -23598,91 +23638,92 @@ ok 36 - push head with non-existent, incomplete dest
 ok 37 - push tag with non-existent, incomplete dest
 ok 38 - push oid with non-existent, incomplete dest
 ok 39 - push ref expression with non-existent, incomplete dest
-ok 40 - push with HEAD
-ok 41 - push with HEAD nonexisting at remote
-ok 42 - push with +HEAD
-ok 43 - push HEAD with non-existent, incomplete dest
-ok 44 - push with config remote.*.push = HEAD
-ok 45 - push with @
-ok 46 - push with @ nonexisting at remote
-ok 47 - push with +@
-ok 48 - push @ with non-existent, incomplete dest
-ok 49 - push with config remote.*.push = @
-ok 50 - push to remote with no explicit refspec and config remote.*.push = src:dest
-ok 51 - push with remote.pushdefault
-ok 52 - push with config remote.*.pushurl
-ok 53 - push with config branch.*.pushremote
-ok 54 - branch.*.pushremote config order is irrelevant
-ok 55 - push rejects empty branch name entries
-ok 56 - push ignores "branch." config without subsection
-ok 57 - push with dry-run
-ok 58 - push updates local refs
-ok 59 - push updates up-to-date local refs
-ok 60 - push preserves up-to-date packed refs
-ok 61 - push does not update local refs on failure
-ok 62 - allow deleting an invalid remote ref
-ok 63 - pushing valid refs triggers post-receive and post-update hooks
-ok 64 - deleting dangling ref triggers hooks with correct args
-ok 65 - deletion of a non-existent ref is not fed to post-receive and post-update hooks
-ok 66 - deletion of a non-existent ref alone does trigger post-receive and post-update hooks
-ok 67 - mixed ref updates, deletes, invalid deletes trigger hooks with correct input
-ok 68 - allow deleting a ref using --delete
-ok 69 - allow deleting a tag using --delete
-ok 70 - push --delete without args aborts
-ok 71 - push --delete refuses src:dest refspecs
-ok 72 - push --delete refuses empty string
-ok 73 - push --delete onelevel refspecs
-ok 74 - warn on push to HEAD of non-bare repository
-ok 75 - deny push to HEAD of non-bare repository
-ok 76 - allow push to HEAD of bare repository (bare)
-ok 77 - allow push to HEAD of non-bare repository (config)
-ok 78 - fetch with branches
-ok 79 - fetch with branches containing #
-ok 80 - push with branches
-ok 81 - push with branches containing #
-ok 82 - push into aliased refs (consistent)
-ok 83 - push into aliased refs (inconsistent)
-ok 84 - force pushing required to update lightweight tag
-ok 85 - force pushing required to update annotated tag
-ok 86 - fetch will not clobber an existing lightweight tag without --force
-ok 87 - fetch will not clobber an existing annotated tag without --force
-ok 88 - push --porcelain
-ok 89 - push --porcelain bad url
-ok 90 - push --porcelain rejected
-ok 91 - push --porcelain --dry-run rejected
-ok 92 - push --prune
-ok 93 - push --prune refspec
-ok 94 - push to update a ref hidden by transfer.hiderefs
-ok 95 - push to update a ref hidden by receive.hiderefs
-ok 96 - fetch exact oid
-ok 97 - fetch exact oid in protocol v2
-ok 98 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=true
-ok 99 - deny fetch unreachable SHA1, allowtipsha1inwant=true
-ok 100 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=false
-ok 101 - deny fetch unreachable SHA1, allowtipsha1inwant=false
-ok 102 - fetch follows tags by default
-ok 103 - peeled advertisements are not considered ref tips
-ok 104 - pushing a specific ref applies remote.$name.push as refmap
-ok 105 - with no remote.$name.push, it is not used as refmap
-ok 106 - with no remote.$name.push, upstream mapping is used
-ok 107 - push does not follow tags by default
-ok 108 - push --follow-tags only pushes relevant tags
-ok 109 - push --no-thin must produce non-thin pack
-ok 110 - pushing a tag pushes the tagged object
-ok 111 - push into bare respects core.logallrefupdates
-ok 112 - fetch into bare respects core.logallrefupdates
-ok 113 - receive.denyCurrentBranch = updateInstead
-ok 114 - updateInstead with push-to-checkout hook
-ok 115 - denyCurrentBranch and worktrees
-ok 116 - denyCurrentBranch and bare repository worktrees
-ok 117 - refuse fetch to current branch of worktree
-ok 118 - refuse fetch to current branch of bare repository worktree
-ok 119 - refuse to push a hidden ref, and make sure do not pollute the repository
-ok 120 - push with config push.useBitmaps
-ok 121 - push with config pack.usePathWalk=true
-ok 122 - push with F/D conflict with deletion and creation
-# passed all 122 test(s)
-1..122
+ok 40 - push ref expression with non-existent oid src
+ok 41 - push with HEAD
+ok 42 - push with HEAD nonexisting at remote
+ok 43 - push with +HEAD
+ok 44 - push HEAD with non-existent, incomplete dest
+ok 45 - push with config remote.*.push = HEAD
+ok 46 - push with @
+ok 47 - push with @ nonexisting at remote
+ok 48 - push with +@
+ok 49 - push @ with non-existent, incomplete dest
+ok 50 - push with config remote.*.push = @
+ok 51 - push to remote with no explicit refspec and config remote.*.push = src:dest
+ok 52 - push with remote.pushdefault
+ok 53 - push with config remote.*.pushurl
+ok 54 - push with config branch.*.pushremote
+ok 55 - branch.*.pushremote config order is irrelevant
+ok 56 - push rejects empty branch name entries
+ok 57 - push ignores "branch." config without subsection
+ok 58 - push with dry-run
+ok 59 - push updates local refs
+ok 60 - push updates up-to-date local refs
+ok 61 - push preserves up-to-date packed refs
+ok 62 - push does not update local refs on failure
+ok 63 - allow deleting an invalid remote ref
+ok 64 - pushing valid refs triggers post-receive and post-update hooks
+ok 65 - deleting dangling ref triggers hooks with correct args
+ok 66 - deletion of a non-existent ref is not fed to post-receive and post-update hooks
+ok 67 - deletion of a non-existent ref alone does trigger post-receive and post-update hooks
+ok 68 - mixed ref updates, deletes, invalid deletes trigger hooks with correct input
+ok 69 - allow deleting a ref using --delete
+ok 70 - allow deleting a tag using --delete
+ok 71 - push --delete without args aborts
+ok 72 - push --delete refuses src:dest refspecs
+ok 73 - push --delete refuses empty string
+ok 74 - push --delete onelevel refspecs
+ok 75 - warn on push to HEAD of non-bare repository
+ok 76 - deny push to HEAD of non-bare repository
+ok 77 - allow push to HEAD of bare repository (bare)
+ok 78 - allow push to HEAD of non-bare repository (config)
+ok 79 - fetch with branches
+ok 80 - fetch with branches containing #
+ok 81 - push with branches
+ok 82 - push with branches containing #
+ok 83 - push into aliased refs (consistent)
+ok 84 - push into aliased refs (inconsistent)
+ok 85 - force pushing required to update lightweight tag
+ok 86 - force pushing required to update annotated tag
+ok 87 - fetch will not clobber an existing lightweight tag without --force
+ok 88 - fetch will not clobber an existing annotated tag without --force
+ok 89 - push --porcelain
+ok 90 - push --porcelain bad url
+ok 91 - push --porcelain rejected
+ok 92 - push --porcelain --dry-run rejected
+ok 93 - push --prune
+ok 94 - push --prune refspec
+ok 95 - push to update a ref hidden by transfer.hiderefs
+ok 96 - push to update a ref hidden by receive.hiderefs
+ok 97 - fetch exact oid
+ok 98 - fetch exact oid in protocol v2
+ok 99 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=true
+ok 100 - deny fetch unreachable SHA1, allowtipsha1inwant=true
+ok 101 - shallow fetch reachable SHA1 (but not a ref), allowtipsha1inwant=false
+ok 102 - deny fetch unreachable SHA1, allowtipsha1inwant=false
+ok 103 - fetch follows tags by default
+ok 104 - peeled advertisements are not considered ref tips
+ok 105 - pushing a specific ref applies remote.$name.push as refmap
+ok 106 - with no remote.$name.push, it is not used as refmap
+ok 107 - with no remote.$name.push, upstream mapping is used
+ok 108 - push does not follow tags by default
+ok 109 - push --follow-tags only pushes relevant tags
+ok 110 - push --no-thin must produce non-thin pack
+ok 111 - pushing a tag pushes the tagged object
+ok 112 - push into bare respects core.logallrefupdates
+ok 113 - fetch into bare respects core.logallrefupdates
+ok 114 - receive.denyCurrentBranch = updateInstead
+ok 115 - updateInstead with push-to-checkout hook
+ok 116 - denyCurrentBranch and worktrees
+ok 117 - denyCurrentBranch and bare repository worktrees
+ok 118 - refuse fetch to current branch of worktree
+ok 119 - refuse fetch to current branch of bare repository worktree
+ok 120 - refuse to push a hidden ref, and make sure do not pollute the repository
+ok 121 - push with config push.useBitmaps
+ok 122 - push with config pack.usePathWalk=true
+ok 123 - push with F/D conflict with deletion and creation
+# passed all 123 test(s)
+1..123
 *** t5517-push-mirror.sh ***
 ok 1 - push mirror creates new branches
 ok 2 - push mirror updates existing branches
@@ -23979,19 +24020,18 @@ ok 8 - detect ambiguous refs early
 1..8
 *** t5530-upload-pack-error.sh ***
 ok 1 - setup and corrupt repository
-ok 2 - fsck fails
-ok 3 - upload-pack fails due to error in pack-objects packing
-ok 4 - corrupt repo differently
-ok 5 - fsck fails
-ok 6 - upload-pack fails due to error in rev-list
-ok 7 - upload-pack fails due to bad want (no object)
-ok 8 - upload-pack fails due to bad want (not tip)
-ok 9 - upload-pack fails due to error in pack-objects enumeration
-ok 10 - upload-pack tolerates EOF just after stateless client wants
-ok 11 - create empty repository
-ok 12 - fetch fails
-# passed all 12 test(s)
-1..12
+ok 2 - upload-pack fails due to error in pack-objects packing
+ok 3 - corrupt repo differently
+ok 4 - upload-pack fails due to error in rev-list
+ok 5 - upload-pack fails due to bad want (no object)
+ok 6 - upload-pack fails due to bad want (not tip)
+ok 7 - upload-pack fails due to error in pack-objects enumeration
+ok 8 - upload-pack tolerates EOF just after stateless client wants
+ok 9 - fetch fails
+ok 10 - upload-pack ACKs repeated non-commit objects repeatedly (protocol v0)
+ok 11 - upload-pack ACKs repeated non-commit objects once only (protocol v2)
+# passed all 11 test(s)
+1..11
 *** t5531-deep-submodule-push.sh ***
 ok 1 - setup
 ok 2 - push works with recorded gitlink
@@ -26926,16 +26966,16 @@ ok 7 - add literal f\*
 ok 8 - add wildcard f**
 ok 9 - add literal f\*\*
 ok 10 - add wildcard f?z
-ok 11 - add literal \? literal
+ok 11 - add literal \?
 ok 12 - add wildcard foo*bar
 ok 13 - add wildcard hello?world
 ok 14 - add literal hello\?world
-ok 15 - add literal [abc]
+ok 15 - add literal \[abc\]
 ok 16 - commit: wildcard *
-ok 17 - commit: literal *
+ok 17 - commit: literal \*
 ok 18 - commit: wildcard f*
 ok 19 - commit: literal f\*
-ok 20 - commit: wildcard pathspec limits commit
+ok 20 - commit: wildcard f**
 ok 21 - commit: literal f\*\*
 ok 22 - commit: wildcard ?
 ok 23 - commit: literal \?
@@ -27902,24 +27942,29 @@ ok 59 - 12f: Trivial directory resolve, caching, all kinds of fun
 ok 60 - 12g: Testcase with two kinds of "relevant" renames
 not ok 61 - 12h: renaming a file within a renamed directory # TODO known breakage
 ok 62 - 12i: Directory rename causes rename-to-self
-ok 63 - 12j: Directory rename to root causes rename-to-self
-ok 64 - 12k: Directory rename with sibling causes rename-to-self
-ok 65 - 12l (B into A): Rename into each other + add/add conflict
-ok 66 - 12l (A into B): Rename into each other + add/add conflict
-ok 67 - 12m: Change parent of renamed-dir to symlink on other side
-ok 68 - 12n: Directory rename transitively makes rename back to self
-ok 69 - 13a(conflict): messages for newly added files
-ok 70 - 13a(info): messages for newly added files
-ok 71 - 13b(conflict): messages for transitive rename with conflicted content
-ok 72 - 13b(info): messages for transitive rename with conflicted content
-ok 73 - 13c(conflict): messages for rename/rename(1to1) via transitive rename
-ok 74 - 13c(info): messages for rename/rename(1to1) via transitive rename
-ok 75 - 13d(conflict): messages for rename/rename(1to1) via dual transitive rename
-ok 76 - 13d(info): messages for rename/rename(1to1) via dual transitive rename
-ok 77 - 13e: directory rename detection in recursive case
+ok 63 - 12i2: Directory rename causes rename-to-self
+ok 64 - 12j: Directory rename to root causes rename-to-self
+ok 65 - 12k: Directory rename with sibling causes rename-to-self
+ok 66 - 12l (B into A): Rename into each other + add/add conflict
+ok 67 - 12l (A into B): Rename into each other + add/add conflict
+ok 68 - 12m: Change parent of renamed-dir to symlink on other side
+ok 69 - 12n: Directory rename transitively makes rename back to self
+ok 70 - 12n2: Directory rename transitively makes rename back to self
+ok 71 - 12o: Directory rename hits other rename source; file still in way on same side
+ok 72 - 12p: Directory rename hits other rename source; file still in way on other side
+ok 73 - 12q: Directory rename hits other rename source; file removed though
+ok 74 - 13a(conflict): messages for newly added files
+ok 75 - 13a(info): messages for newly added files
+ok 76 - 13b(conflict): messages for transitive rename with conflicted content
+ok 77 - 13b(info): messages for transitive rename with conflicted content
+ok 78 - 13c(conflict): messages for rename/rename(1to1) via transitive rename
+ok 79 - 13c(info): messages for rename/rename(1to1) via transitive rename
+ok 80 - 13d(conflict): messages for rename/rename(1to1) via dual transitive rename
+ok 81 - 13d(info): messages for rename/rename(1to1) via dual transitive rename
+ok 82 - 13e: directory rename detection in recursive case
 # still have 2 known breakage(s)
-# passed all remaining 75 test(s)
-1..77
+# passed all remaining 80 test(s)
+1..82
 *** t6424-merge-unrelated-index-changes.sh ***
 ok 1 - setup trivial merges
 ok 2 - ff update
@@ -31364,8 +31409,9 @@ ok 43 - -n skips updating server info
 ok 44 - repack.updateServerInfo=true updates server info
 ok 45 - repack.updateServerInfo=false skips updating server info
 ok 46 - -n overrides repack.updateServerInfo=true
-# passed all 46 test(s)
-1..46
+ok 47 - pending objects are repacked appropriately
+# passed all 47 test(s)
+1..47
 *** t7701-repack-unpack-unreachable.sh ***
 ok 1 - -A with -d option leaves unreachable objects unpacked
 ok 2 - -A without -d option leaves unreachable objects packed
@@ -32927,657 +32973,143 @@ ok 10 - autocorrect works in work tree created from bare repo
 # passed all 10 test(s)
 1..10
 *** t9100-git-svn-basic.sh ***
-ok 1 - git svn --version works anywhere
-ok 2 - git svn help works anywhere
-ok 3 - initialize git svn
-ok 4 - import an SVN revision into git
-ok 5 - checkout from svn
-ok 6 - try a deep --rmdir with a commit
-ok 7 - detect node change from file to directory #1
-ok 8 - detect node change from directory to file #1
-ok 9 - detect node change from file to directory #2
-ok 10 - detect node change from directory to file #2
-ok 11 - remove executable bit from a file
-ok 12 - add executable bit back file
-ok 13 - executable file becomes a symlink to file
-ok 14 - new symlink is added to a file that was also just made executable
-ok 15 - modify a symlink to become a file
-ok 16 - commit with UTF-8 message: locale: C.UTF-8
-ok 17 - test fetch functionality (svn => git) with alternate GIT_SVN_ID
-ok 18 - check imported tree checksums expected tree checksums
-ok 19 - exit if remote refs are ambigious
-ok 20 - exit if init-ing a would clobber a URL
-ok 21 - init allows us to connect to another directory in the same repo
-ok 22 - dcommit $rev does not clobber current branch
-ok 23 - able to dcommit to a subdirectory
-ok 24 - dcommit should not fail with a touched file
-ok 25 - rebase should not fail with a touched file
-ok 26 - able to set-tree to a subdirectory
-ok 27 - git-svn works in a bare repository
-ok 28 - git-svn works in a repository with a gitdir: link
-# passed all 28 test(s)
-1..28
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9101-git-svn-props.sh ***
-ok 1 - checkout working copy from svn
-ok 2 - setup some commits to svn
-ok 3 - initialize git svn
-ok 4 - fetch revisions from svn
-ok 5 - test svn:keywords ignoring
-ok 6 - raw $Id$ found in kw.c
-ok 7 - propset CR on crlf files
-ok 8 - fetch and pull latest from svn and checkout a new wc
-ok 9 - Comparing crlf
-ok 10 - Comparing ne_crlf
-ok 11 - Comparing lf
-ok 12 - Comparing ne_lf
-ok 13 - Comparing cr
-ok 14 - Comparing ne_cr
-ok 15 - Comparing empty_cr
-ok 16 - Comparing empty_lf
-ok 17 - Comparing empty
-ok 18 - Comparing empty_crlf
-ok 19 - Set CRLF on cr files
-ok 20 - fetch and pull latest from svn
-ok 21 - CRLF + $Id$
-ok 22 - CRLF + $Id$ (no newline)
-ok 23 - test show-ignore
-ok 24 - test create-ignore
-ok 25 - test propget
-ok 26 - test proplist
-# passed all 26 test(s)
-1..26
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9102-git-svn-deep-rmdir.sh ***
-ok 1 - initialize repo
-ok 2 - mirror via git svn
-ok 3 - Try a commit on rmdir
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9103-git-svn-tracked-directory-removed.sh ***
-ok 1 - make history for tracking
-ok 2 - clone repo with git
-ok 3 - make sure r2 still has old file
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9104-git-svn-follow-parent.sh ***
-ok 1 - initialize repo
-ok 2 - init and fetch a moved directory
-ok 3 - init and fetch from one svn-remote
-ok 4 - follow deleted parent
-ok 5 - follow larger parent
-ok 6 - follow higher-level parent
-ok 7 - follow deleted directory
-ok 8 - follow-parent avoids deleting relevant info
-ok 9 - track initial change if it was only made to parent
-ok 10 - follow-parent is atomic
-ok 11 - track multi-parent paths
-ok 12 - multi-fetch continues to work
-ok 13 - multi-fetch works off a 'clean' repository
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9105-git-svn-commit-diff.sh ***
-ok 1 - initialize repo
-ok 2 - test the commit-diff command
-ok 3 - commit-diff to a sub-directory (with git svn config)
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9106-git-svn-commit-diff-clobber.sh ***
-ok 1 - initialize repo
-ok 2 - commit change from svn side
-ok 3 - commit conflicting change from git
-ok 4 - commit complementing change from git
-ok 5 - dcommit fails to commit because of conflict
-ok 6 - dcommit does the svn equivalent of an index merge
-ok 7 - commit another change from svn side
-ok 8 - multiple dcommit from git svn will not clobber svn
-ok 9 - check that rebase really failed
-ok 10 - resolve, continue the rebase and dcommit
-# passed all 10 test(s)
-1..10
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9107-git-svn-migrate.sh ***
-ok 1 - setup old-looking metadata
-ok 2 - git-svn-HEAD is a real HEAD
-ok 3 - initialize old-style (v0) git svn layout
-ok 4 - initialize a multi-repository repo
-ok 5 - multi-fetch works on partial urls + paths
-ok 6 - migrate --minimize on old inited layout
-ok 7 - .rev_db auto-converted to .rev_map.UUID
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9108-git-svn-glob.sh ***
-ok 1 - test refspec globbing
-ok 2 - test left-hand-side only globbing
-ok 3 - prepare test disallow multi-globs
-ok 4 - test disallow multi-globs
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9109-git-svn-multi-glob.sh ***
-ok 1 - test refspec globbing
-ok 2 - test left-hand-side only globbing
-ok 3 - test another branch
-ok 4 - prepare test disallow multiple globs
-ok 5 - test disallow multiple globs
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9110-git-svn-use-svm-props.sh ***
-ok 1 - load svm repo
-ok 2 - verify metadata for /bar
-ok 3 - verify metadata for /dir/a/b/c/d/e
-ok 4 - verify metadata for /dir
-ok 5 - find commit based on SVN revision number
-ok 6 - empty rebase
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9111-git-svn-use-svnsync-props.sh ***
-ok 1 - load svnsync repo
-ok 2 - verify metadata for /bar
-ok 3 - verify metadata for /dir/a/b/c/d/e
-ok 4 - verify metadata for /dir
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9112-git-svn-md5less-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - initialize git svn
-ok 3 - fetch revisions from svn
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9113-git-svn-dcommit-new-file.sh ***
-1..0 # SKIP skipping svnserve test. (set $GIT_TEST_SVNSERVE to enable)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9114-git-svn-dcommit-merge.sh ***
-ok 1 - setup svn repository
-ok 2 - setup git mirror and merge
-ok 3 - verify pre-merge ancestry
-ok 4 - git svn dcommit merges
-ok 5 - verify post-merge ancestry
-ok 6 - verify merge commit message
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9115-git-svn-dcommit-funky-renames.sh ***
-ok 1 - load repository with strange names
-ok 2 - init and fetch repository
-ok 3 - create file in existing ugly and empty dir
-ok 4 - rename ugly file
-ok 5 - rename pretty file
-ok 6 - rename pretty file into ugly one
-ok 7 - add a file with plus signs
-ok 8 - clone the repository to test rebase
-ok 9 - make a commit to test rebase
-ok 10 - git svn rebase works inside a fresh-cloned repository
-ok 11 - svn.pathnameencoding=cp932 new file on dcommit
-ok 12 - svn.pathnameencoding=cp932 rename on dcommit
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9116-git-svn-log.sh ***
-ok 1 - setup repository and import
-ok 2 - run log
-ok 3 - run log against a from trunk
-ok 4 - test ascending revision range
-ok 5 - test ascending revision range with --show-commit
-ok 6 - test ascending revision range with --show-commit (sha1)
-ok 7 - test descending revision range
-ok 8 - test ascending revision range with unreachable revision
-ok 9 - test descending revision range with unreachable revision
-ok 10 - test ascending revision range with unreachable upper boundary revision and 1 commit
-ok 11 - test descending revision range with unreachable upper boundary revision and 1 commit
-ok 12 - test ascending revision range with unreachable lower boundary revision and 1 commit
-ok 13 - test descending revision range with unreachable lower boundary revision and 1 commit
-ok 14 - test ascending revision range with unreachable boundary revisions and no commits
-ok 15 - test descending revision range with unreachable boundary revisions and no commits
-ok 16 - test ascending revision range with unreachable boundary revisions and 1 commit
-ok 17 - test descending revision range with unreachable boundary revisions and 1 commit
-# passed all 17 test(s)
-1..17
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9117-git-svn-init-clone.sh ***
-ok 1 - setup svnrepo
-ok 2 - basic clone
-ok 3 - clone to target directory
-ok 4 - clone with --stdlayout
-ok 5 - clone to target directory with --stdlayout
-ok 6 - init without -s/-T/-b/-t does not warn
-ok 7 - clone without -s/-T/-b/-t does not warn
-ok 8 - init with -s/-T/-b/-t assumes --prefix=origin/
-ok 9 - clone with -s/-T/-b/-t assumes --prefix=origin/
-ok 10 - init with -s/-T/-b/-t and --prefix "" still works
-ok 11 - clone with -s/-T/-b/-t and --prefix "" still works
-ok 12 - init with -T as a full url works
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9118-git-svn-funky-branch-names.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with funky branch names
-ok 3 - test dcommit to funky branch
-ok 4 - test dcommit to scary branch
-ok 5 - test dcommit to trailing_dotlock branch
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9119-git-svn-info.sh ***
-1..0 # SKIP skipping svn-info test (SVN version: 1.14.2 not supported)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9120-git-svn-clone-with-percent-escapes.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with percent escapes
-ok 3 - svn checkout with percent escapes
-ok 4 - svn checkout with space
-ok 5 - test clone trunk with percent escapes and minimize-url
-ok 6 - test clone trunk with percent escapes
-ok 7 - test clone --stdlayout with percent escapes
-ok 8 - test clone -s with unescaped space
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9121-git-svn-fetch-renamed-dir.sh ***
-ok 1 - load repository with renamed directory
-ok 2 - init and fetch repository
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9122-git-svn-author.sh ***
-ok 1 - setup svn repository
-ok 2 - interact with it via git svn
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9123-git-svn-rebuild-with-rewriteroot.sh ***
-ok 1 - init, fetch and checkout repository
-ok 2 - remove rev_map
-ok 3 - rebuild rev_map
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9124-git-svn-dcommit-auto-props.sh ***
-ok 1 - initialize git svn
-ok 2 - enable auto-props config
-ok 3 - add files matching auto-props
-ok 4 - disable auto-props config
-ok 5 - add files matching disabled auto-props
-ok 6 - check resulting svn repository
-ok 7 - check renamed file
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9125-git-svn-multi-glob-branch-names.sh ***
-ok 1 - setup svnrepo
-ok 2 - test clone with multi-glob in branch names
-ok 3 - test dcommit to multi-globbed branch
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9126-git-svn-follow-deleted-readded-directory.sh ***
-1..0 # SKIP skipping svnserve test. (set $GIT_TEST_SVNSERVE to enable)
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9127-git-svn-partial-rebuild.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import an early SVN revision into git
-ok 3 - make full git mirror of SVN
-ok 4 - fetch from git mirror and partial-rebuild
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9128-git-svn-cmd-branch.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import into git
-ok 3 - git svn branch tests
-ok 4 - branch uses correct svn-remote
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9129-git-svn-i18n-commitencoding.sh ***
-ok 1 - ISO8859-1 setup
-ok 2 - eucJP setup
-ok 3 - ISO-2022-JP setup
-ok 4 - ISO8859-1 commit on git side
-ok 5 - eucJP commit on git side
-ok 6 - ISO-2022-JP commit on git side
-ok 7 - ISO8859-1 dcommit to svn
-ok 8 - eucJP dcommit to svn
-ok 9 - ISO-2022-JP dcommit to svn
-ok 10 - ISO-8859-1 should match UTF-8 in svn
-ok 11 - eucJP should match UTF-8 in svn
-ok 12 - ISO-2022-JP should match UTF-8 in svn
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9130-git-svn-authors-file.sh ***
-ok 1 - setup svnrepo
-ok 2 - start import with incomplete authors file
-ok 3 - imported 2 revisions successfully
-ok 4 - continues to import once authors have been added
-ok 5 - authors-file against globs
-ok 6 - fetch fails on ee
-ok 7 - failure happened without negative side effects
-ok 8 - fetch continues after authors-file is fixed
-ok 9 - fresh clone with svn.authors-file in config
-ok 10 - authors-file imported user without email
-# passed all 10 test(s)
-1..10
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9131-git-svn-empty-symlink.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - enable broken symlink workaround
-ok 4 - "bar" is an empty file
-ok 5 - get "bar" => symlink fix from svn
-ok 6 - "bar" becomes a symlink
-ok 7 - clone using git svn
-ok 8 - disable broken symlink workaround
-ok 9 - "bar" is an empty file
-ok 10 - get "bar" => symlink fix from svn
-ok 11 - "bar" does not become a symlink
-ok 12 - clone using git svn
-ok 13 - "bar" is an empty file
-ok 14 - get "bar" => symlink fix from svn
-ok 15 - "bar" does not become a symlink
-# passed all 15 test(s)
-1..15
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9132-git-svn-broken-symlink.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - "bar" is a symlink that points to "asdf"
-ok 4 - get "bar" => symlink fix from svn
-ok 5 - "bar" remains a proper symlink
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9133-git-svn-nested-git-repo.sh ***
-ok 1 - setup repo with a git repo inside it
-ok 2 - clone an SVN repo containing a git repo
-ok 3 - SVN-side change outside of .git
-ok 4 - update git svn-cloned repo
-ok 5 - SVN-side change inside of .git
-ok 6 - update git svn-cloned repo
-ok 7 - SVN-side change in and out of .git
-ok 8 - update git svn-cloned repo again
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9134-git-svn-ignore-paths.sh ***
-ok 1 - setup test repository
-ok 2 - clone an SVN repository with ignored www directory
-ok 3 - init+fetch an SVN repository with ignored www directory
-ok 4 - verify ignore-paths config saved by clone
-ok 5 - SVN-side change outside of www
-ok 6 - update git svn-cloned repo (config ignore)
-ok 7 - update git svn-cloned repo (option ignore)
-ok 8 - SVN-side change inside of ignored www
-ok 9 - update git svn-cloned repo (config ignore)
-ok 10 - update git svn-cloned repo (option ignore)
-ok 11 - SVN-side change in and out of ignored www
-ok 12 - update git svn-cloned repo again (config ignore)
-ok 13 - update git svn-cloned repo again (option ignore)
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9135-git-svn-moved-branch-empty-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-ok 3 - test that b1 exists and is empty
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9136-git-svn-recreated-branch-empty-file.sh ***
-ok 1 - load svn dumpfile
-ok 2 - clone using git svn
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9137-git-svn-dcommit-clobber-series.sh ***
-ok 1 - initialize repo
-ok 2 - (supposedly) non-conflicting change from SVN
-ok 3 - some unrelated changes to git
-ok 4 - change file but in unrelated area
-ok 5 - attempt to dcommit with a dirty index
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9138-git-svn-authors-prog.sh ***
-ok 1 - svn-authors setup
-ok 2 - setup svnrepo
-ok 3 - import authors with prog and file
-ok 4 - imported 6 revisions successfully
-ok 5 - authors-prog ran correctly
-ok 6 - authors-file overrode authors-prog
-ok 7 - authors-prog imported user without email
-ok 8 - imported without authors-prog and authors-file
-ok 9 - authors-prog handled special characters in username
-# passed all 9 test(s)
-1..9
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9139-git-svn-non-utf8-commitencoding.sh ***
-ok 1 - ISO8859-1 setup
-ok 2 - eucJP setup
-ok 3 - ISO8859-1 commit on git side
-ok 4 - eucJP commit on git side
-ok 5 - ISO8859-1 dcommit to svn
-ok 6 - eucJP dcommit to svn
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9140-git-svn-reset.sh ***
-ok 1 - setup test repository
-ok 2 - clone SVN repository with hidden directory
-ok 3 - modify hidden file in SVN repo
-ok 4 - fetch fails on modified hidden file
-ok 5 - reset unwinds back to r1
-ok 6 - refetch succeeds not ignoring any files
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9141-git-svn-multiple-branches.sh ***
-ok 1 - setup svnrepo
-ok 2 - clone multiple branch and tag paths
-ok 3 - Multiple branch or tag paths require -d
-ok 4 - create new branches and tags
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9142-git-svn-shallow-clone.sh ***
-ok 1 - setup test repository
-ok 2 - clone trunk with "-r HEAD"
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9143-git-svn-gc.sh ***
-ok 1 - setup directories and test repo
-ok 2 - checkout working copy from svn
-ok 3 - set some properties to create an unhandled.log file
-ok 4 - Setup repo
-ok 5 - Fetch repo
-ok 6 - make backup copy of unhandled.log
-ok 7 - create leftover index
-ok 8 - git svn gc runs
-ok 9 - git svn index removed
-ok 10 - git svn gc produces a valid gzip file
-ok 11 - git svn gc does not change unhandled.log files
-# passed all 11 test(s)
-1..11
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9144-git-svn-old-rev_map.sh ***
-ok 1 - setup test repository with old layout
-ok 2 - old layout continues to work
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9145-git-svn-master-branch.sh ***
-ok 1 - setup test repository
-ok 2 - git svn clone --stdlayout sets up trunk as main
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9146-git-svn-empty-dirs.sh ***
-ok 1 - initialize repo
-ok 2 - clone
-ok 3 - empty directories exist
-ok 4 - option automkdirs set to false
-ok 5 - more emptiness
-ok 6 - git svn rebase creates empty directory
-ok 7 - git svn mkdirs recreates empty directories
-ok 8 - git svn mkdirs -r works
-ok 9 - initialize trunk
-ok 10 - clone trunk
-ok 11 - empty directories in trunk exist
-ok 12 - remove a top-level directory from svn
-ok 13 - removed top-level directory does not exist
-ok 14 - git svn gc-ed files work
-# passed all 14 test(s)
-1..14
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9147-git-svn-include-paths.sh ***
-ok 1 - setup test repository
-ok 2 - clone an SVN repository with filter to include qqq directory
-ok 3 - init+fetch an SVN repository with included qqq directory
-ok 4 - verify include-paths config saved by clone
-ok 5 - SVN-side change outside of www
-ok 6 - update git svn-cloned repo (config include)
-ok 7 - update git svn-cloned repo (option include)
-ok 8 - SVN-side change inside of ignored www
-ok 9 - update git svn-cloned repo (config include)
-ok 10 - update git svn-cloned repo (option include)
-ok 11 - SVN-side change in and out of included qqq
-ok 12 - update git svn-cloned repo again (config include)
-ok 13 - update git svn-cloned repo again (option include)
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9148-git-svn-propset.sh ***
-ok 1 - setup propset via import
-ok 2 - initialize git svn
-ok 3 - fetch revisions from svn
-ok 4 - add props top level
-ok 5 - add multiple props
-ok 6 - add props subdir
-ok 7 - add props relative
-# passed all 7 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9150-svk-mergetickets.sh ***
-ok 1 - load svk depot
-ok 2 - svk merges were represented coming in
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9151-svn-mergeinfo.sh ***
-ok 1 - load svn dump
-ok 2 - all svn merges became git merge commits
-ok 3 - cherry picks did not become git merge commits
-ok 4 - svn non-merge merge commits did not become git merge commits
-ok 5 - commit made to merged branch is reachable from the merge
-ok 6 - merging two branches in one commit is detected correctly
-not ok 7 - everything got merged in the end # TODO known breakage
-# still have 1 known breakage(s)
-# passed all remaining 6 test(s)
-1..7
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9152-svn-empty-dirs-after-gc.sh ***
-ok 1 - initialize repo
-ok 2 - clone
-ok 3 - git svn gc runs
-ok 4 - git svn mkdirs recreates empty directories after git svn gc
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9153-git-svn-rewrite-uuid.sh ***
-ok 1 - load svn repo
-ok 2 - verify uuid
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9154-git-svn-fancy-glob.sh ***
-ok 1 - load svn repo
-ok 2 - add red branch
-ok 3 - add gre branch
-ok 4 - add green branch
-ok 5 - add all branches
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9155-git-svn-fetch-deleted-tag.sh ***
-ok 1 - setup svn repo
-ok 2 - fetch deleted tags from same revision with checksum error
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9156-git-svn-fetch-deleted-tag-2.sh ***
-ok 1 - setup svn repo
-ok 2 - fetch deleted tags from same revision with no checksum error
-# passed all 2 test(s)
-1..2
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9157-git-svn-fetch-merge.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9158-git-svn-mergeinfo.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - change svn:mergeinfo
-ok 4 - verify svn:mergeinfo
-ok 5 - change svn:mergeinfo multiline
-ok 6 - verify svn:mergeinfo multiline
-# passed all 6 test(s)
-1..6
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9159-git-svn-no-parent-mergeinfo.sh ***
-ok 1 - test handling of root commits in merge ranges
-# passed all 1 test(s)
-1..1
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9160-git-svn-preserve-empty-dirs.sh ***
-ok 1 - initialize source svn repo containing empty dirs
-ok 2 - clone svn repo with --preserve-empty-dirs
-ok 3 - directory empty from inception
-ok 4 - directory empty from subsequent svn commit
-ok 5 - add entry to previously empty directory
-ok 6 - remove non-last entry from directory
-ok 7 - clone svn repo with --placeholder-file specified
-ok 8 - placeholder namespace conflict with file
-ok 9 - placeholder namespace conflict with directory
-ok 10 - second set of svn commits and rebase
-ok 11 - flag persistence during subsqeuent rebase
-ok 12 - placeholder list persistence during subsqeuent rebase
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9161-git-svn-mergeinfo-push.sh ***
-ok 1 - load svn dump
-ok 2 - propagate merge information
-ok 3 - check svn:mergeinfo
-ok 4 - merge another branch
-ok 5 - check primary parent mergeinfo respected
-ok 6 - merge existing merge
-ok 7 - check both parents' mergeinfo respected
-ok 8 - make further commits to branch
-ok 9 - second forward merge
-ok 10 - check new mergeinfo added
-ok 11 - reintegration merge
-ok 12 - check reintegration mergeinfo
-ok 13 - dcommit a merge at the top of a stack
-# passed all 13 test(s)
-1..13
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9162-git-svn-dcommit-interactive.sh ***
-ok 1 - initialize repo
-ok 2 - answers: y [\n] yes
-ok 3 - answers: yes yes no
-ok 4 - answers: yes quit
-ok 5 - answers: all
-# passed all 5 test(s)
-1..5
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9163-git-svn-reset-clears-caches.sh ***
-ok 1 - initialize source svn repo
-ok 2 - fetch to merge-base (a)
-ok 3 - rebase looses SVN merge (m)
-ok 4 - reset and fetch gets the SVN merge (m) correctly
-# passed all 4 test(s)
-1..4
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9164-git-svn-dcommit-concurrent.sh ***
-ok 1 - setup svn repository
-ok 2 - check if post-commit hook creates a concurrent commit
-ok 3 - check if pre-commit hook fails
-ok 4 - dcommit error handling
-ok 5 - dcommit concurrent change in non-changed file
-ok 6 - dcommit concurrent non-conflicting change
-ok 7 - dcommit --no-rebase concurrent non-conflicting change
-ok 8 - dcommit fails on concurrent conflicting change
-# passed all 8 test(s)
-1..8
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9165-git-svn-fetch-merge-branch-of-branch.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9166-git-svn-fetch-merge-branch-of-branch2.sh ***
-ok 1 - initialize source svn repo
-ok 2 - clone svn repo
-ok 3 - verify merge commit
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9167-git-svn-cmd-branch-subproject.sh ***
-ok 1 - initialize svnrepo
-ok 2 - import into git
-ok 3 - git svn branch tests
-# passed all 3 test(s)
-1..3
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9168-git-svn-partially-globbed-names.sh ***
-ok 1 - prepare test refspec prefixed globbing
-ok 2 - test refspec prefixed globbing
-ok 3 - prepare test left-hand-side only prefixed globbing
-ok 4 - test left-hand-side only prefixed globbing
-ok 5 - prepare test prefixed globs match just prefix
-ok 6 - test prefixed globs match just prefix
-ok 7 - prepare test disallow prefixed multi-globs
-ok 8 - test disallow prefixed multi-globs
-ok 9 - prepare test globbing in the middle of the word
-ok 10 - test globbing in the middle of the word
-ok 11 - prepare test disallow multiple asterisks in one word
-ok 12 - test disallow multiple asterisks in one word
-# passed all 12 test(s)
-1..12
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9169-git-svn-dcommit-crlf.sh ***
-ok 1 - setup commit repository
-# passed all 1 test(s)
-1..1
+1..0 # SKIP Perl SVN libraries not found or unusable
 *** t9200-git-cvsexportcommit.sh ***
 ok 1 - New file
 ok 2 - Remove two files, add two and update two
@@ -34796,7 +34328,7 @@ missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SYMLINKS AUTOIDENT BUILTIN_ADOC_
 failed test(s): t0061 t0200 t0204 t5303 t5701 t6011 t9400
 
 fixed   1
-success 30793
+success 30382
 failed  25
-broken  269
-total   31555
+broken  268
+total   31151
