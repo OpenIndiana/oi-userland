@@ -18,7 +18,7 @@ BUILD_BITS = NO_ARCH
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= oi-adaptions
-COMPONENT_VERSION= 0.9
+COMPONENT_VERSION= 1.0
 COMPONENT_SUMMARY=	script to patch SunRay Server for use on Openindiana
 COMPONENT_FMRI=		sunray/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=      System/Virtualization
@@ -30,3 +30,6 @@ include $(WS_MAKE_RULES)/common.mk
 install:
 	mkdir -p $(PROTO_DIR)/opt/SUNWut/utils
 	cp -rp $(COMPONENT_DIR)/files/* $(PROTO_DIR)/opt/SUNWut/utils
+# Auto-generated dependencies
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES.python += runtime/python
