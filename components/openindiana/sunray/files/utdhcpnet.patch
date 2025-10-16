@@ -1,5 +1,5 @@
---- ./lib/dhcp/edhcp/utdhcpnet	Mi. Juli  9 12:46:47 2025
-+++ ./lib/dhcp/isc/utdhcpnet	Fr. Juli 11 14:23:59 2025
+--- ./lib/dhcp/edhcp/utdhcpnet	Do. Okt. 16 11:49:36 2025
++++ ./lib/dhcp/isc/utdhcpnet	Do. Okt. 16 12:01:28 2025
 @@ -1,21 +1,42 @@
  #!/bin/ksh -p
  #
@@ -84,7 +84,7 @@
 +						SUBNETFILE=$SUBNETFILEPATHPREFIX$SUBNET
 +						if [[ -f $SUBNETFILE ]] &&
 +						   ! isDummySubnet $SUBNETFILE; then
-+                					print -u2 "DHCP subnet configuration for $SUBNET already exists."
++                					print -u2 "DHCP subnet configuration for $SUBNET already exists. $SUBNETFILE"
 +                					return 1
 +        					fi
 +						checkDummySubnet=$SUBNET
@@ -668,7 +668,7 @@
  	if [[ $? != 0 ]]; then
  		return 0
  	fi
-@@ -427,56 +499,252 @@
+@@ -427,56 +499,243 @@
  	rm -f $UTDHCPFILE 2>/dev/null
  }
  
@@ -872,23 +872,14 @@
  
 +# generate the list of available interfaces on the system.
 +# it includes the inteface name, IP address, and netmasks
-+ifconfig -a | awk '
-+	BEGIN	{ list=0 }
-+	/Link encap:/		{ if ($3 == "encap:Ethernet") {
-+				    list=1;
-+				    intf=$1;
-+				  } else {
-+				    list=0;
-+				  }
-+				}
-+	/inet addr:/		{ z = split($2, addr, ":");
-+				  z = split($4, mask, ":");
-+				}
-+	/UP BROADCAST RUNNING/	{ if (list == 1) {
-+				     printf ("%s %s %s\n", intf, addr[2], mask[2]);
-+				   }
-+				}
-+	' > ${DHCPALLINTF}
++ifconfig -a | grep -v "::" | awk '
++        /flags/    {
++                        split($1,intf,":");
++                                }
++        /inet/ { addr = $2; mask = $4;
++                 printf ("%s %s %s\n", intf[1], addr, mask);
++                                }
++        '  > ${DHCPALLINTF}
 +
  case $1 in
  (add)

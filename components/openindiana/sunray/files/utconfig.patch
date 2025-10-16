@@ -1,0 +1,34 @@
+--- sbin/utconfig.orig	Do. Okt. 16 15:17:19 2025
++++ ./sbin/utconfig	Do. Okt. 16 15:47:29 2025
+@@ -240,7 +240,7 @@
+   SunOS)
+     # Define Solaris specific LDAP variables
+     #
+-    LCL_PACKAGE="SUNWlldap"
++    LCL_PACKAGE="naming/ldap"
+ 
+     # Define Linux versions of LDAP client commands
+     #
+@@ -254,8 +254,11 @@
+     # Define Solaris specific filenames
+     #
+     ETCSERVICES="/etc/inet/services"
+-    DHCPCONFIG="/var/dhcp/dhcptab"
+-	;;
++    DHCPCONFIG="/etc/inet/dhcpd4.conf"
++    if [[ ! -f $DHCPCONFIG ]]; then
++	echo "log-facility local7;" > $DHCPCONFIG
++    fi
++    ;;
+ 
+   Linux)
+     # Define Linux specific LDAP variables
+@@ -315,7 +318,7 @@
+ }
+ 
+ SRDSVersion() {
+-  INSTALLED_VERSION="$(${G_MEDIA_DIR}/utprodinfo -p $SRDS_PACKAGE PRODVERS)"
++  INSTALLED_VERSION="$(${G_MEDIA_DIR}/utprodinfo -p $SRDS_PACKAGE PRODVERS | tail -1)"
+   #
+   # above var is global, used in calling func error msg
+ 

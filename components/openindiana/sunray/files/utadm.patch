@@ -1,5 +1,5 @@
---- ./sbin/utadm.orig	Fri Jul 11 16:22:10 2025
-+++ ./sbin/utadm	Mon Jul 21 15:38:50 2025
+--- ./sbin/utadm.orig	Do. Okt. 16 15:17:19 2025
++++ ./sbin/utadm	Do. Okt. 16 15:18:59 2025
 @@ -116,7 +116,7 @@
  UTDHCPSERVICE_DISABLED=3
  
@@ -17,7 +17,15 @@
  		fi
  
  		;;	# end case SunOS
-@@ -1642,7 +1643,7 @@
+@@ -1086,6 +1087,7 @@
+ # makes sure the Sun Ray options are defined in DHCP
+ #
+ function SetupDHCPOptions {
++  print "### SetupDHCPOptions"
+   typeset TMPOPTIONS=${TMPDIR}/utdhcpoptions-out.$$
+   rm -f ${TMPOPTIONS} 2> /dev/null
+ 
+@@ -1642,7 +1644,7 @@
      mv ${NETWORKS}.$$ ${NETWORKS}
  
      if ! IntfConfigured ${INTF}; then
@@ -26,7 +34,7 @@
  	return 1
      fi
      print "### Removing ${CORONA_TITLE} interface configuration for \"${INTF}\"";
-@@ -1783,14 +1784,6 @@
+@@ -1783,14 +1785,6 @@
  	DHCPONLY="N"
  	for test in ${INTF_ALL}; do
  	    if [ "${INTF}" = "${test}" -a -f "${HOSTNAME_C}${INTF}" ]; then
@@ -41,7 +49,7 @@
  		if [[ $OS == "SunOS" ]]; then
  			NAME=`getIfname ${INTF}`
  			if [ -z "${NAME}" ]; then
-@@ -2567,8 +2560,8 @@
+@@ -2567,8 +2561,8 @@
  	    fi
  	    # Clear any pre-existing state on interface, then create
  	    # new persistent configuration
@@ -52,7 +60,7 @@
  	    ipadm create-addr -T static -a local=${IPADDR}/${MASKBITS} ${INTF}/v4static
  	  else
  	    # ifconfig the new interface
-@@ -2710,7 +2703,7 @@
+@@ -2710,7 +2704,7 @@
  	if [[ $BLOCKTYPE = "interface" ]] ; then
  	  if Intf=${UT_DHCP_INTERFACE} ; then
  	    if [[ ! -s ${HOSTNAME_R}.${Intf} ]]; then
@@ -61,7 +69,7 @@
  	    else
  	    	typeset H=`getIfname ${Intf}`
  	    	IntfAddr=`getent hosts $H | awk '{ print $1 }'`
-@@ -3151,14 +3144,6 @@
+@@ -3151,14 +3145,6 @@
  
  	INTF=${UT_DHCP_INTERFACE}
  
@@ -76,7 +84,7 @@
  	H=`getIfname ${INTF}`
  	if [ -z "${H}" ]; then
  	    print -u2 "Error: interface ${INTF} is partially configured.  Hostname not" \
-@@ -3452,19 +3437,7 @@
+@@ -3452,19 +3438,7 @@
  	awk '{print $1 ; exit}' "${HOSTNAME_R}.$1"
  	return
      else
@@ -97,7 +105,7 @@
  	if [ -z "$IPADDR" ]; then
  	    print -u2 "Error in parsing of ifconfig addresses"
  	    exit 2
-@@ -3513,7 +3486,7 @@
+@@ -3513,7 +3487,7 @@
    exit 1
  fi
  GetCurrentCfg;
@@ -106,7 +114,7 @@
      DHCP_RUNNING=true
  fi
  
-@@ -3748,7 +3721,7 @@
+@@ -3748,7 +3722,7 @@
      else
      	print "${CORONA_TITLE} interconnect framework is not configured" | tee -a $LOGFILE
      fi
