@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
 HUMAN_VERSION =			3.12.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2
@@ -38,11 +39,16 @@ TEST_STYLE = pytest
 # - packaging
 # - pathspec (test bootstrap)
 # - pyproject_hooks
+# - tomli
 # - typing_extensions
 # - wheel (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/testpath
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += runtime/python
