@@ -19,14 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_scm
-COMPONENT_VERSION =		1.7.0
-COMPONENT_SUMMARY =		flit_scm - A PEP 518 build backend that uses setuptools_scm to generate a version file from your version control system, then flit to build the package.
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e2/99/961b062461652435b6ad9042d2ffdd75e327b36936987c2073aa784334d5/flit_scm-1.7.0.tar.gz
+HUMAN_VERSION =			1.7.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A PEP 518 build backend that uses setuptools_scm to generate a version file from your version control system, then flit to build the package.
+COMPONENT_PROJECT_URL =		https://gitlab.com/WillDaSilva/flit_scm
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:961bd6fb24f31bba75333c234145fff88e6de0a90fc0f7e5e7c79deca69f6bb2
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = none
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
@@ -36,7 +38,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
