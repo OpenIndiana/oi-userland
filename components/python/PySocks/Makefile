@@ -14,16 +14,15 @@
 #   $WS_TOOLS/python-integrate-project PySocks
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PySocks
-COMPONENT_VERSION =		1.7.1
-COMPONENT_SUMMARY =		PySocks - A Python SOCKS client module. See https://github.com/Anorov/PySocks for more information.
+HUMAN_VERSION =			1.7.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A Python SOCKS client module. See https://github.com/Anorov/PySocks for more information.
 COMPONENT_PROJECT_URL =		https://github.com/Anorov/PySocks
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bd/11/293dd436aea955d45fc4e8a35b6ae7270f5b8e00b53cf6c024c83b657a11/PySocks-1.7.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3f8804571ebe159c380ac6de37643bb4685970655d3bba243530d6558b799aa0
 COMPONENT_LICENSE =		BSD-3-Clause
@@ -36,4 +35,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
