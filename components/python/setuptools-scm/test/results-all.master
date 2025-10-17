@@ -1,20 +1,25 @@
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/_integration/deprecation.py:7: UserWarning: pyproject.toml: at [tool.setuptools.dynamic]
+version = {attr = ...} is forcing setuptools to override the version setuptools-scm did already set
+When using setuptools-scm it's invalid to use setuptools dynamic version as well, please remove it.
+Setuptools-scm is responsible for setting the version, forcing setuptools to override creates errors.
+  warnings.warn(
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -X warn_default_encoding -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 setuptools version 80.9.0 from $(PYTHON_DIR)/vendor-packages/setuptools/__init__.py
-setuptools_scm version 9.2.0 from $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py
+setuptools_scm version 9.2.1 from $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/setuptools_scm/__init__.py
 packaging version 25.0 from $(PYTHON_DIR)/vendor-packages/packaging/__init__.py
-build version 1.2.2.post1 from $(PYTHON_DIR)/vendor-packages/build/__init__.py
-wheel version 0.46.1 from $(PYTHON_DIR)/vendor-packages/wheel/__init__.py
+build version 1.3.0 from $(PYTHON_DIR)/vendor-packages/build/__init__.py
+wheel version 0.45.1 from $(PYTHON_DIR)/vendor-packages/wheel/__init__.py
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: testing
 timeout: 300.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 404 items / 1 deselected / 403 selected
+collecting ... collected 408 items / 1 deselected / 407 selected
 
 testing/test_basic_api.py::test_run_plain PASSED
 testing/test_basic_api.py::test_data_from_mime PASSED
@@ -73,6 +78,7 @@ testing/test_config.py::test_config_overrides PASSED
 testing/test_config.py::test_config_bad_regex[.*] PASSED
 testing/test_config.py::test_config_bad_regex[(.+)(.+)] PASSED
 testing/test_config.py::test_config_bad_regex[((.*))] PASSED
+testing/test_deprecation.py::test_warn_dynamic_version_full_text PASSED
 testing/test_file_finder.py::test_basic[git] PASSED
 testing/test_file_finder.py::test_basic[hg] PASSED
 testing/test_file_finder.py::test_whitespace[git] PASSED
@@ -241,6 +247,7 @@ testing/test_integration.py::test_git_tag_with_local_build_data_preserved_with_d
 testing/test_integration.py::testwarn_on_broken_setuptools PASSED
 testing/test_integration.py::test_distribution_provides_extras PASSED
 testing/test_integration.py::test_unicode_in_setup_cfg PASSED
+testing/test_integration.py::test_setup_cfg_dynamic_version_warns_and_ignores PASSED
 testing/test_integration.py::test_setup_cfg_version_prevents_inference_version_keyword PASSED
 testing/test_integration.py::test_setuptools_version_keyword_ensures_regex PASSED
 testing/test_integration.py::test_git_archival_plugin_ignored[setuptools_scm.parse_scm] SKIPPED
@@ -314,6 +321,8 @@ testing/test_pyproject_reading.py::TestBuildPackageWithExtra::test_version_speci
 testing/test_pyproject_reading.py::TestBuildPackageWithExtra::test_complex_requirement_with_extra PASSED
 testing/test_pyproject_reading.py::TestBuildPackageWithExtra::test_empty_requires_list PASSED
 testing/test_pyproject_reading.py::TestBuildPackageWithExtra::test_invalid_requirement_string PASSED
+testing/test_pyproject_reading.py::test_read_pyproject_with_given_definition PASSED
+testing/test_pyproject_reading.py::test_read_pyproject_with_setuptools_dynamic_version_warns PASSED
 testing/test_regressions.py::test_data_from_mime_ignores_body PASSED
 testing/test_regressions.py::test_pkginfo_noscmroot PASSED
 testing/test_regressions.py::test_pip_download PASSED
@@ -421,6 +430,6 @@ testing/test_version_inference.py::TestVersionInferenceDecision::test_simple_ext
 testing/test_version_inference.py::TestVersionInferenceDecision::test_simple_extra_with_version_warns PASSED
 
 =========================== short test summary info ============================
-======== 389 passed, 13 skipped, 1 deselected, 1 xfailed ========
+======== 393 passed, 13 skipped, 1 deselected, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
