@@ -5,10 +5,9 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 148 items
+collecting ... collected 147 items
 
 conftest.py::mypy PASSED
-conftest.py::mypy-status PASSED
 docs/__init__.py::mypy PASSED
 docs/conf.py::mypy PASSED
 exercises.py::mypy PASSED
@@ -155,11 +154,23 @@ tests/test_zip.py::TestEgg::test_one_distribution PASSED
 tests/test_zip.py::TestEgg::test_zip_entry_points PASSED
 tests/test_zip.py::TestEgg::test_zip_version PASSED
 tests/test_zip.py::TestEgg::test_zip_version_does_not_match PASSED
-===================================== mypy =====================================
 
+=============================== warnings summary ===============================
+.::project
+.::project
+tests/data/sources/example2::project
+  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
+    parts = docutils.core.publish_parts(
+
+tests/test_main.py::InaccessibleSysPath::test_discovery
+  $(PYTHON_DIR)/vendor-packages/pyfakefs/fake_legacy_modules.py:26: DeprecationWarning: You are using the legacy package 'pathlib2' instead of the built-in module.Patching this package will no longer be supported in pyfakefs >= 6
+    warnings.warn(msg, category=DeprecationWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===================================== mypy =====================================
 Success: no issues found in 32 source files
 ================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
 
 Name                                    Stmts   Miss  Cover   Missing
 ---------------------------------------------------------------------
@@ -180,6 +191,6 @@ importlib_metadata/compat/py311.py          5      0   100%
 importlib_metadata/diagnose.py             14      9    36%   7-12, 16-17, 21
 ---------------------------------------------------------------------
 TOTAL                                     599     12    98%
-======== 148 passed ========
+======== 147 passed, 4 warnings ========
   py$(PYV): OK
   congratulations :)
