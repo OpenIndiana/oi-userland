@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		calver
 HUMAN_VERSION =			2025.4.17
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Setuptools extension for CalVer package versions
 COMPONENT_PROJECT_URL =		https://github.com/di/calver
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,7 +36,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
