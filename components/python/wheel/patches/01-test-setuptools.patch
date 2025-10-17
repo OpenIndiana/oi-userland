@@ -1,0 +1,110 @@
+https://github.com/pypa/wheel/pull/651
+
+--- wheel-0.45.1/tests/test_bdist_wheel.py.orig
++++ wheel-0.45.1/tests/test_bdist_wheel.py
+@@ -79,9 +79,9 @@
+ 
+ 
+ def test_unicode_record(wheel_paths):
+-    path = next(path for path in wheel_paths if "unicode.dist" in path)
++    path = next(path for path in wheel_paths if "unicode_dist" in path)
+     with ZipFile(path) as zf:
+-        record = zf.read("unicode.dist-0.1.dist-info/RECORD")
++        record = zf.read("unicode_dist-0.1.dist-info/RECORD")
+ 
+     assert "åäö_日本語.py".encode() in record
+ 
+--- wheel-0.45.1/tests/test_tagopt.py.orig
++++ wheel-0.45.1/tests/test_tagopt.py
+@@ -14,7 +14,7 @@
+ from setuptools import setup, Extension
+ 
+ setup(
+-    name="Test",
++    name="test",
+     version="1.0",
+     author_email="author@example.com",
+     py_modules=["test"],
+@@ -63,7 +63,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name == f"Test-1.0-py{sys.version_info[0]}-none-any.whl"
++    assert wheels[0].name == f"test-1.0-py{sys.version_info[0]}-none-any.whl"
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -76,7 +76,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name == f"Test-1.0-1-py{sys.version_info[0]}-none-any.whl"
++    assert wheels[0].name == f"test-1.0-1-py{sys.version_info[0]}-none-any.whl"
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -89,7 +89,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py32-")
++    assert wheels[0].name.startswith("test-1.0-py32-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -101,7 +101,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py2.py3-")
++    assert wheels[0].name.startswith("test-1.0-py2.py3-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -114,7 +114,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py2.py3-")
++    assert wheels[0].name.startswith("test-1.0-py2.py3-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -129,7 +129,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py2.py3-")
++    assert wheels[0].name.startswith("test-1.0-py2.py3-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -144,7 +144,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py32-")
++    assert wheels[0].name.startswith("test-1.0-py32-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+@@ -157,7 +157,7 @@
+     assert dist_dir.is_dir()
+     wheels = list(dist_dir.iterdir())
+     assert len(wheels) == 1
+-    assert wheels[0].name.startswith("Test-1.0-py2.py3-")
++    assert wheels[0].name.startswith("test-1.0-py2.py3-")
+     assert wheels[0].suffix == ".whl"
+ 
+ 
+--- wheel-0.45.1/tests/testdata/unicode.dist/setup.py.orig
++++ wheel-0.45.1/tests/testdata/unicode.dist/setup.py
+@@ -3,7 +3,7 @@
+ from setuptools import setup
+ 
+ setup(
+-    name="unicode.dist",
++    name="unicode_dist",
+     version="0.1",
+     description="A testing distribution \N{SNOWMAN}",
+     packages=["unicodedist"],
