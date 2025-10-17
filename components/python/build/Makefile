@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		build
 HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A simple, correct Python build frontend
 COMPONENT_PROJECT_URL =		https://build.pypa.io
 COMPONENT_ARCHIVE_HASH =	\
