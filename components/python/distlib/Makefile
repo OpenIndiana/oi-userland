@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
 HUMAN_VERSION =			0.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,6 +36,6 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
