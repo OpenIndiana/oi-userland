@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		B-Keywords
-HUMAN_VERSION =			1.28
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.29
 COMPONENT_SUMMARY =		Lists of reserved barewords and symbol names
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9e7eb67695929487c61aaf2dae8baf9dda1ad87602bb5a094f10744b12765e3e
+	sha256:e0aa19d3390409f0ece7342ab041c5b432c31d7cf1abf182c134b6aab78784b0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -34,5 +33,5 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
