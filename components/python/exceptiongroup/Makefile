@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		exceptiongroup
 HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Backport of PEP 654 (exception groups)
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88
@@ -34,7 +35,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-scm
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-scm
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
