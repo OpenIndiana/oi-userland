@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pygments
 HUMAN_VERSION =			2.19.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pygments is a syntax highlighting package written in Python.
 COMPONENT_PROJECT_URL =		https://pygments.org
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,11 +28,16 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - pytest (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
