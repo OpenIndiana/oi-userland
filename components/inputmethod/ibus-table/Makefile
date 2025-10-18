@@ -15,11 +15,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           ibus-table
-COMPONENT_VERSION=        1.17.15
+COMPONENT_VERSION=        1.17.16
 COMPONENT_SUMMARY=        ibus-table - The tables engines for IBus
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:de2a7f1b0269e905599c280aa00c5485ae13124bcbcd9f960bb2249567e00ecd
+COMPONENT_ARCHIVE_HASH=   sha256:c1040d4928308b85b3576a418c5cbd6622f199208f80d4a153d1b829ee8508b8
 COMPONENT_ARCHIVE_URL=    https://github.com/mike-fabian/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           system/input-method/ibus/table
 COMPONENT_CLASSIFICATION= System/Localizations
