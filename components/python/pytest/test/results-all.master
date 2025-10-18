@@ -3,11 +3,11 @@ py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(PosixPath('$(@D)/.hypothesis/examples'))
+hypothesis profile 'default'
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: testing
-collecting ... collected 3745 items
+collecting ... collected 3918 items
 
 testing/_py/test_local.py::TestLocalPath::test_constructor_equality PASSED
 testing/_py/test_local.py::TestLocalPath::test_eq_nonstring PASSED
@@ -243,6 +243,11 @@ testing/code/test_excinfo.py::test_excinfo_no_python_sourcecode PASSED
 testing/code/test_excinfo.py::test_entrysource_Queue_example PASSED
 testing/code/test_excinfo.py::test_codepath_Queue_example PASSED
 testing/code/test_excinfo.py::test_match_succeeds PASSED
+testing/code/test_excinfo.py::test_raises_accepts_generic_group PASSED
+testing/code/test_excinfo.py::test_raises_accepts_generic_base_group PASSED
+testing/code/test_excinfo.py::test_raises_rejects_specific_generic_group PASSED
+testing/code/test_excinfo.py::test_raises_accepts_generic_group_in_tuple PASSED
+testing/code/test_excinfo.py::test_raises_exception_escapes_generic_group PASSED
 testing/code/test_excinfo.py::TestGroupContains::test_contains_exception_type PASSED
 testing/code/test_excinfo.py::TestGroupContains::test_doesnt_contain_exception_type PASSED
 testing/code/test_excinfo.py::TestGroupContains::test_contains_exception_match PASSED
@@ -270,6 +275,7 @@ testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lin
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2 PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short PASSED
+testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_entry_short_carets SKIPPED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source PASSED
@@ -284,6 +290,7 @@ testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames PASSED
+testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_value PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[style=long,showlocals=True,funcargs=True,tbfilter=True] PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[style=long,showlocals=True,funcargs=False,tbfilter=True] PASSED
 testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[style=long,showlocals=True,funcargs=True,tbfilter=False] PASSED
@@ -587,6 +594,7 @@ testing/python/approx.py::TestApprox::test_repr_nd_array[value2-approx([[5.0 \xb
 testing/python/approx.py::TestApprox::test_repr_nd_array[value3-approx([[5.0 \xb1 5.0e-06, 6.0 \xb1 6.0e-06]])] PASSED
 testing/python/approx.py::TestApprox::test_repr_nd_array[value4-approx([[5.0 \xb1 5.0e-06], [6.0 \xb1 6.0e-06]])] PASSED
 testing/python/approx.py::TestApprox::test_bool PASSED
+testing/python/approx.py::TestApprox::test_mixed_sequence PASSED
 testing/python/approx.py::TestApprox::test_operator_overloading PASSED
 testing/python/approx.py::TestApprox::test_exactly_equal PASSED
 testing/python/approx.py::TestApprox::test_opposite_sign PASSED
@@ -612,6 +620,8 @@ testing/python/approx.py::TestApprox::test_int PASSED
 testing/python/approx.py::TestApprox::test_decimal PASSED
 testing/python/approx.py::TestApprox::test_fraction PASSED
 testing/python/approx.py::TestApprox::test_complex PASSED
+testing/python/approx.py::TestApprox::test_expecting_bool PASSED
+testing/python/approx.py::TestApprox::test_expecting_bool_numpy PASSED
 testing/python/approx.py::TestApprox::test_list PASSED
 testing/python/approx.py::TestApprox::test_list_decimal PASSED
 testing/python/approx.py::TestApprox::test_list_wrong_len PASSED
@@ -650,6 +660,7 @@ testing/python/approx.py::TestApprox::test_comparison_operator_type_error[>] PAS
 testing/python/approx.py::TestApprox::test_numpy_array_with_scalar PASSED
 testing/python/approx.py::TestApprox::test_numpy_scalar_with_array PASSED
 testing/python/approx.py::TestApprox::test_generic_ordered_sequence PASSED
+testing/python/approx.py::TestApprox::test_decimal_approx_repr PASSED
 testing/python/approx.py::TestApprox::test_allow_ordered_sequences_only PASSED
 testing/python/approx.py::TestApprox::test_strange_sequence PASSED
 testing/python/approx.py::TestRecursiveSequenceMap::test_map_over_scalar PASSED
@@ -704,6 +715,7 @@ testing/python/metafunc.py::TestMetafunc::test_idmaker_idfn PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_idfn_unique_names PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_with_idfn_and_config PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_with_ids_and_config PASSED
+testing/python/metafunc.py::TestMetafunc::test_idmaker_with_param_id_and_config PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_duplicated_empty_str PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_with_ids PASSED
 testing/python/metafunc.py::TestMetafunc::test_idmaker_with_paramset_id PASSED
@@ -717,10 +729,12 @@ testing/python/metafunc.py::TestMetafunc::test_parametrize_indirect_list_error P
 testing/python/metafunc.py::TestMetafunc::test_parametrize_onearg PASSED
 testing/python/metafunc.py::TestMetafunc::test_parametrize_onearg_indirect PASSED
 testing/python/metafunc.py::TestMetafunc::test_parametrize_twoargs PASSED
+testing/python/metafunc.py::TestHiddenParam::test_multiple_hidden_param_is_forbidden_idmaker PASSED
 testing/python/raises.py::TestRaises::test_check_callable PASSED
 testing/python/raises.py::TestRaises::test_raises PASSED
 testing/python/raises.py::TestRaises::test_raises_function PASSED
 testing/python/raises.py::TestRaises::test_raises_does_not_allow_none PASSED
+testing/python/raises.py::TestRaises::test_raises_false_and_arg PASSED
 testing/python/raises.py::TestRaises::test_raises_does_not_allow_empty_tuple PASSED
 testing/python/raises.py::TestRaises::test_raises_callable_no_exception PASSED
 testing/python/raises.py::TestRaises::test_raises_falsey_type_error PASSED
@@ -732,6 +746,8 @@ testing/python/raises.py::TestRaises::test_no_raise_message PASSED
 testing/python/raises.py::TestRaises::test_raises_cyclic_reference[function] PASSED
 testing/python/raises.py::TestRaises::test_raises_cyclic_reference[function_match] PASSED
 testing/python/raises.py::TestRaises::test_raises_cyclic_reference[with] PASSED
+testing/python/raises.py::TestRaises::test_raises_cyclic_reference[with_raisesexc] PASSED
+testing/python/raises.py::TestRaises::test_raises_cyclic_reference[with_group] PASSED
 testing/python/raises.py::TestRaises::test_raises_match PASSED
 testing/python/raises.py::TestRaises::test_match_failure_string_quoting PASSED
 testing/python/raises.py::TestRaises::test_match_failure_exact_string_message PASSED
@@ -741,6 +757,33 @@ testing/python/raises.py::TestRaises::test_raises_with_raising_dunder_class PASS
 testing/python/raises.py::TestRaises::test_raises_context_manager_with_kwargs PASSED
 testing/python/raises.py::TestRaises::test_expected_exception_is_not_a_baseexception PASSED
 testing/python/raises.py::TestRaises::test_issue_11872 PASSED
+testing/python/raises_group.py::test_raises_group PASSED
+testing/python/raises_group.py::test_incorrect_number_exceptions PASSED
+testing/python/raises_group.py::test_flatten_subgroups PASSED
+testing/python/raises_group.py::test_catch_unwrapped_exceptions PASSED
+testing/python/raises_group.py::test_match PASSED
+testing/python/raises_group.py::test_check PASSED
+testing/python/raises_group.py::test_unwrapped_match_check PASSED
+testing/python/raises_group.py::test_matches PASSED
+testing/python/raises_group.py::test_message PASSED
+testing/python/raises_group.py::test_assert_message PASSED
+testing/python/raises_group.py::test_message_indent PASSED
+testing/python/raises_group.py::test_suggestion_on_nested_and_brief_error PASSED
+testing/python/raises_group.py::test_assert_message_nested PASSED
+testing/python/raises_group.py::test_check_no_patched_repr SKIPPED (...)
+testing/python/raises_group.py::test_misordering_example PASSED
+testing/python/raises_group.py::test_brief_error_on_one_fail PASSED
+testing/python/raises_group.py::test_identity_oopsies PASSED
+testing/python/raises_group.py::test_raisesexc PASSED
+testing/python/raises_group.py::test_raisesexc_match PASSED
+testing/python/raises_group.py::test_RaisesExc_check PASSED
+testing/python/raises_group.py::test_raisesexc_tostring PASSED
+testing/python/raises_group.py::test_raisesgroup_tostring PASSED
+testing/python/raises_group.py::test_assert_matches PASSED
+testing/python/raises_group.py::test_parametrizing_conditional_raisesgroup[False-handler0] PASSED
+testing/python/raises_group.py::test_parametrizing_conditional_raisesgroup[True-handler1] PASSED
+testing/python/raises_group.py::test_annotated_group PASSED
+testing/python/raises_group.py::test_tuples PASSED
 testing/test_argcomplete.py::TestArgComplete::test_compare_with_compgen PASSED
 testing/test_argcomplete.py::TestArgComplete::test_remove_dir_prefix PASSED
 testing/test_assertion.py::TestMockConfig::test_verbose_exposes_value PASSED
@@ -818,6 +861,7 @@ testing/test_assertion.py::test_exit_from_assertrepr_compare PASSED
 testing/test_assertion.py::test_reprcompare_verbose_long PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_place_initial_imports PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_location_is_set PASSED
+testing/test_assertrewrite.py::TestAssertionRewrite::test_positions_are_preserved PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_dont_rewrite PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_name PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assertrepr_compare_same_width PASSED
@@ -929,7 +973,6 @@ testing/test_capture.py::test_stderr_write_returns_len PASSED
 testing/test_capture.py::test__get_multicapture PASSED
 testing/test_collection.py::TestCollector::test_collect_versus_item PASSED
 testing/test_collection.py::test_class_from_parent PASSED
-testing/test_compat.py::test_is_generator PASSED
 testing/test_compat.py::test_real_func_loop_limit PASSED
 testing/test_compat.py::test_get_real_func PASSED
 testing/test_compat.py::test_get_real_func_partial PASSED
@@ -1049,6 +1092,11 @@ testing/test_findpaths.py::test_is_fs_root[/-True] PASSED
 testing/test_findpaths.py::test_is_fs_root[e:/projects-False] PASSED
 testing/test_findpaths.py::test_is_fs_root[/projects-False] PASSED
 testing/test_helpconfig.py::test_versions PASSED
+testing/test_junitxml.py::TestJunitHelpers::test_uc_root PASSED
+testing/test_junitxml.py::TestJunitHelpers::test_node_assert_attr PASSED
+testing/test_junitxml.py::TestJunitHelpers::test_node_getitem PASSED
+testing/test_junitxml.py::TestJunitHelpers::test_node_get_first_lookup PASSED
+testing/test_junitxml.py::TestJunitHelpers::test_node_repr PASSED
 testing/test_junitxml.py::test_mangle_test_address PASSED
 testing/test_junitxml.py::test_dont_configure_on_workers PASSED
 testing/test_junitxml.py::test_invalid_xml_escape PASSED
@@ -1282,6 +1330,7 @@ testing/test_parseopt.py::TestParser::test_drop_short_help1 PASSED
 testing/test_parseopt.py::TestParser::test_multiple_metavar_help PASSED
 testing/test_pastebin.py::TestPaste::test_pastebin_invalid_url PASSED
 testing/test_pastebin.py::TestPaste::test_pastebin_http_error PASSED
+testing/test_pastebin.py::TestPaste::test_pastebin_url_error PASSED
 testing/test_pastebin.py::TestPaste::test_create_new_paste PASSED
 testing/test_pastebin.py::TestPaste::test_create_new_paste_failure PASSED
 testing/test_pluginmanager.py::TestPytestPluginInteractions::test_hook_tracing PASSED
@@ -1428,6 +1477,16 @@ testing/test_terminal.py::test_format_session_duration[59.99-59.99s] PASSED
 testing/test_terminal.py::test_format_session_duration[60.55-60.55s (0:01:00)] PASSED
 testing/test_terminal.py::test_format_session_duration[123.55-123.55s (0:02:03)] PASSED
 testing/test_terminal.py::test_format_session_duration[3600.5-3600.50s (1:00:00)] PASSED
+testing/test_terminal.py::test_format_node_duration[359940- 99h 59m] PASSED
+testing/test_terminal.py::test_format_node_duration[1859- 30m 59s] PASSED
+testing/test_terminal.py::test_format_node_duration[10.1236- 10.124s] PASSED
+testing/test_terminal.py::test_format_node_duration[9.1236- 9.124s] PASSED
+testing/test_terminal.py::test_format_node_duration[0.1236- 123.6ms] PASSED
+testing/test_terminal.py::test_format_node_duration[0.01236- 12.36ms] PASSED
+testing/test_terminal.py::test_format_node_duration[0.001236- 1.236ms] PASSED
+testing/test_terminal.py::test_format_node_duration[0.0001236- 123.6us] PASSED
+testing/test_terminal.py::test_format_node_duration[1.236e-05- 12.36us] PASSED
+testing/test_terminal.py::test_format_node_duration[1.236e-06- 1.236us] PASSED
 testing/test_terminal.py::test_raw_skip_reason_skipped PASSED
 testing/test_terminal.py::test_raw_skip_reason_xfail PASSED
 testing/test_terminal.py::test_format_trimmed PASSED
@@ -1457,12 +1516,12 @@ testing/test_warning_types.py::test_warning_types[PytestConfigWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestCollectionWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestDeprecationWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestRemovedIn9Warning] PASSED
-testing/test_warning_types.py::test_warning_types[PytestReturnNotNoneWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestExperimentalApiWarning] PASSED
-testing/test_warning_types.py::test_warning_types[PytestUnhandledCoroutineWarning] PASSED
+testing/test_warning_types.py::test_warning_types[PytestReturnNotNoneWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestUnknownMarkWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestUnraisableExceptionWarning] PASSED
 testing/test_warning_types.py::test_warning_types[PytestUnhandledThreadExceptionWarning] PASSED
+testing/test_warning_types.py::test_warning_types[PytestFDWarning] PASSED
 testing/test_warning_types.py::test_warn_explicit_for_annotates_errors_with_location PASSED
 testing/test_warnings.py::test_warnings_checker_twice PASSED
 testing/acceptance_test.py::TestGeneralUsage::test_config_error PASSED
@@ -1515,7 +1574,7 @@ testing/acceptance_test.py::TestInvocationVariants::test_pyargs_importerror PASS
 testing/acceptance_test.py::TestInvocationVariants::test_pyargs_only_imported_once PASSED
 testing/acceptance_test.py::TestInvocationVariants::test_pyargs_filename_looks_like_module PASSED
 testing/acceptance_test.py::TestInvocationVariants::test_cmdline_python_package PASSED
-testing/acceptance_test.py::TestInvocationVariants::test_cmdline_python_namespace_package PASSED
+testing/acceptance_test.py::TestInvocationVariants::test_cmdline_python_legacy_namespace_package SKIPPED
 testing/acceptance_test.py::TestInvocationVariants::test_invoke_test_and_doctestmodules PASSED
 testing/acceptance_test.py::TestInvocationVariants::test_cmdline_python_package_symlink PASSED
 testing/acceptance_test.py::TestInvocationVariants::test_cmdline_python_package_not_exists PASSED
@@ -1525,6 +1584,8 @@ testing/acceptance_test.py::TestDurations::test_calls PASSED
 testing/acceptance_test.py::TestDurations::test_calls_show_2 PASSED
 testing/acceptance_test.py::TestDurations::test_calls_showall PASSED
 testing/acceptance_test.py::TestDurations::test_calls_showall_verbose PASSED
+testing/acceptance_test.py::TestDurations::test_calls_showall_durationsmin PASSED
+testing/acceptance_test.py::TestDurations::test_calls_showall_durationsmin_verbose PASSED
 testing/acceptance_test.py::TestDurations::test_with_deselected PASSED
 testing/acceptance_test.py::TestDurations::test_with_failing_collection PASSED
 testing/acceptance_test.py::TestDurations::test_with_not PASSED
@@ -1536,12 +1597,17 @@ testing/acceptance_test.py::test_deferred_hook_checking PASSED
 testing/acceptance_test.py::test_fixture_order_respects_scope PASSED
 testing/acceptance_test.py::test_fixture_mock_integration PASSED
 testing/acceptance_test.py::test_usage_error_code PASSED
-testing/acceptance_test.py::test_warn_on_async_function PASSED
-testing/acceptance_test.py::test_warn_on_async_gen_function PASSED
+testing/acceptance_test.py::test_error_on_async_function PASSED
+testing/acceptance_test.py::test_error_on_async_gen_function PASSED
+testing/acceptance_test.py::test_warning_on_sync_test_async_fixture PASSED
+testing/acceptance_test.py::test_warning_on_sync_test_async_fixture_gen PASSED
+testing/acceptance_test.py::test_warning_on_sync_test_async_autouse_fixture PASSED
 testing/acceptance_test.py::test_no_brokenpipeerror_message PASSED
 testing/acceptance_test.py::test_function_return_non_none_warning PASSED
 testing/acceptance_test.py::test_issue_9765 SKIPPED (Test is not iso...)
 testing/acceptance_test.py::test_no_terminal_plugin PASSED
+testing/acceptance_test.py::test_stop_iteration_from_collect PASSED
+testing/acceptance_test.py::test_stop_iteration_runtest_protocol PASSED
 testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath PASSED
 testing/code/test_excinfo.py::test_match_raises_error PASSED
 testing/code/test_excinfo.py::test_cwd_deleted PASSED
@@ -1564,6 +1630,7 @@ testing/code/test_excinfo.py::test_exceptiongroup[from-another] PASSED
 testing/code/test_excinfo.py::test_exceptiongroup[another-none] PASSED
 testing/code/test_excinfo.py::test_exceptiongroup[another-from] PASSED
 testing/code/test_excinfo.py::test_exceptiongroup[another-another] PASSED
+testing/code/test_excinfo.py::test_exceptiongroup_short_summary_info PASSED
 testing/code/test_excinfo.py::test_all_entries_hidden[long] PASSED
 testing/code/test_excinfo.py::test_all_entries_hidden[short] PASSED
 testing/code/test_excinfo.py::test_all_entries_hidden[auto] PASSED
@@ -1769,12 +1836,15 @@ testing/python/fixtures.py::TestFixtureUsages::test_funcarg_parametrized_and_use
 testing/python/fixtures.py::TestFixtureUsages::test_factory_uses_unknown_funcarg_as_dependency_error PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_factory_setup_as_classes_fails PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_usefixtures_marker PASSED
+testing/python/fixtures.py::TestFixtureUsages::test_empty_usefixtures_marker PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_usefixtures_ini PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_usefixtures_seen_in_showmarkers PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_request_instance_issue203 PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_fixture_parametrized_with_iterator PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_setup_functions_as_fixtures PASSED
 testing/python/fixtures.py::TestFixtureUsages::test_parameterized_fixture_caching PASSED
+testing/python/fixtures.py::TestFixtureUsages::test_unwrapping_pytest_fixture PASSED
+testing/python/fixtures.py::TestFixtureUsages::test_fixture_wrapped_looks_liked_wrapped_function PASSED
 testing/python/fixtures.py::TestFixtureManagerParseFactories::test_parsefactories_evil_objects_issue214 PASSED
 testing/python/fixtures.py::TestFixtureManagerParseFactories::test_parsefactories_conftest PASSED
 testing/python/fixtures.py::TestFixtureManagerParseFactories::test_parsefactories_conftest_and_module_and_class PASSED
@@ -1887,6 +1957,7 @@ testing/python/fixtures.py::TestScopeOrdering::test_parametrized_package_scope_r
 testing/python/fixtures.py::TestScopeOrdering::test_multiple_packages PASSED
 testing/python/fixtures.py::TestScopeOrdering::test_class_fixture_self_instance PASSED
 testing/python/fixtures.py::test_fixture_double_decorator PASSED
+testing/python/fixtures.py::test_fixture_class PASSED
 testing/python/fixtures.py::test_fixture_param_shadowing PASSED
 testing/python/fixtures.py::test_fixture_named_request PASSED
 testing/python/fixtures.py::test_indirect_fixture_does_not_break_scope PASSED
@@ -1898,6 +1969,8 @@ testing/python/fixtures.py::test_scoped_fixture_caching PASSED
 testing/python/fixtures.py::test_scoped_fixture_caching_exception PASSED
 testing/python/fixtures.py::test_scoped_fixture_teardown_order PASSED
 testing/python/fixtures.py::test_subfixture_teardown_order PASSED
+testing/python/fixtures.py::test_parametrized_fixture_scope_allowed PASSED
+testing/python/fixtures.py::test_collect_positional_only PASSED
 testing/python/integration.py::TestMockDecoration::test_unittest_mock PASSED
 testing/python/integration.py::TestMockDecoration::test_unittest_mock_and_fixture PASSED
 testing/python/integration.py::TestMockDecoration::test_unittest_mock_and_pypi_mock PASSED
@@ -1912,6 +1985,7 @@ testing/python/integration.py::TestNoselikeTestAttribute::test_unittest_class PA
 testing/python/integration.py::TestNoselikeTestAttribute::test_class_with_nasty_getattr PASSED
 testing/python/integration.py::TestParameterize::test_idfn_marker PASSED
 testing/python/integration.py::TestParameterize::test_idfn_fixture PASSED
+testing/python/integration.py::TestParameterize::test_param_rejects_usefixtures PASSED
 testing/python/integration.py::test_function_instance PASSED
 testing/python/metafunc.py::TestMetafunc::test_parametrize_request_name PASSED
 testing/python/metafunc.py::TestMetafunc::test_parametrize_ids_exception PASSED
@@ -1978,10 +2052,16 @@ testing/python/metafunc.py::TestMarkersWithParametrization::test_pytest_make_par
 testing/python/metafunc.py::TestMarkersWithParametrization::test_pytest_make_parametrize_id_with_argname PASSED
 testing/python/metafunc.py::TestMarkersWithParametrization::test_parametrize_positional_args PASSED
 testing/python/metafunc.py::TestMarkersWithParametrization::test_parametrize_iterator PASSED
+testing/python/metafunc.py::TestHiddenParam::test_parametrize_ids PASSED
+testing/python/metafunc.py::TestHiddenParam::test_param_id PASSED
+testing/python/metafunc.py::TestHiddenParam::test_multiple_hidden_param_is_forbidden PASSED
+testing/python/metafunc.py::TestHiddenParam::test_multiple_parametrize PASSED
 testing/python/raises.py::TestRaises::test_raises_as_contextmanager PASSED
 testing/python/raises.py::TestRaises::test_does_not_raise PASSED
 testing/python/raises.py::TestRaises::test_does_not_raise_does_raise PASSED
 testing/python/raises.py::TestRaises::test_raises_with_invalid_regex PASSED
+testing/python/raises_group.py::test_xfail_raisesgroup PASSED
+testing/python/raises_group.py::test_xfail_RaisesExc PASSED
 testing/python/show_fixtures_per_test.py::test_no_items_should_not_show_output PASSED
 testing/python/show_fixtures_per_test.py::test_fixtures_in_module PASSED
 testing/python/show_fixtures_per_test.py::test_fixtures_in_conftest PASSED
@@ -1990,8 +2070,24 @@ testing/python/show_fixtures_per_test.py::test_verbose_include_private_fixtures_
 testing/python/show_fixtures_per_test.py::test_doctest_items PASSED
 testing/python/show_fixtures_per_test.py::test_multiline_docstring_in_module PASSED
 testing/python/show_fixtures_per_test.py::test_verbose_include_multiline_docstring PASSED
-testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[plain] PASSED
-testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var-env_var-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var-env_var-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var-cli-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var-cli-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var--plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[env_var--rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli-env_var-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli-env_var-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli-cli-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli-cli-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli--plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[cli--rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[-env_var-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[-env_var-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[-cli-plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[-cli-rewrite] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[--plain] PASSED
+testing/test_assertion.py::TestImportHookInstallation::test_installed_plugin_rewrite[--rewrite] PASSED
 testing/test_assertion.py::TestBinReprIntegration::test_pytest_assertrepr_compare_called PASSED
 testing/test_assertion.py::TestAssert_reprcompare::test_iterable_full_diff_ci PASSED
 testing/test_assertion.py::TestAssert_reprcompare_dataclass::test_dataclasses PASSED
@@ -2004,6 +2100,15 @@ testing/test_assertion.py::TestAssert_reprcompare_dataclass::test_data_classes_w
 testing/test_assertion.py::TestAssert_reprcompare_dataclass::test_data_classes_with_initvar PASSED
 testing/test_assertion.py::TestFormatExplanation::test_special_chars_full PASSED
 testing/test_assertion.py::TestTruncateExplanation::test_full_output_truncated PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[3-None-3] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[4-None-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[0-None-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[None-8-6] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[None-9-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[None-0-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[0-0-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[0-1000-0] PASSED
+testing/test_assertion.py::TestTruncateExplanation::test_truncation_with_ini[1000-0-0] PASSED
 testing/test_assertion.py::test_python25_compile_issue257 PASSED
 testing/test_assertion.py::test_rewritten PASSED
 testing/test_assertion.py::TestSetAssertions::test_set_extra_item[>=] PASSED
@@ -2036,6 +2141,8 @@ testing/test_assertion.py::test_comparisons_handle_colors[\n            def test
 testing/test_assertion.py::test_comparisons_handle_colors[\n            def test():\n                assert [0, 1] == [0, 2]\n            -expected_lines0-False] PASSED
 testing/test_assertion.py::test_comparisons_handle_colors[\n            def test():\n                assert {f"number-is-{i}": i for i in range(1, 6)} == {\n                    f"number-is-{i}": i for i in range(5)\n                }\n            -expected_lines1-True] PASSED
 testing/test_assertion.py::test_comparisons_handle_colors[\n            def test():\n                assert {f"number-is-{i}": i for i in range(1, 6)} == {\n                    f"number-is-{i}": i for i in range(5)\n                }\n            -expected_lines1-False] PASSED
+testing/test_assertion.py::test_comparisons_handle_colors[\n            def test():\n                assert "abcd" == "abce"\n            -expected_lines2-True] PASSED
+testing/test_assertion.py::test_comparisons_handle_colors[\n            def test():\n                assert "abcd" == "abce"\n            -expected_lines2-False] PASSED
 testing/test_assertion.py::test_fine_grained_assertion_verbosity PASSED
 testing/test_assertion.py::test_full_output_vvv PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_rewrites_plugin_as_a_package PASSED
@@ -2050,6 +2157,7 @@ testing/test_assertrewrite.py::TestAssertionRewrite::test_assertion_message_verb
 testing/test_assertrewrite.py::TestAssertionRewrite::test_at_operator_issue1290 PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_starred_with_side_effect PASSED
 testing/test_assertrewrite.py::TestAssertionRewrite::test_assert_handling_raise_in__iter__ PASSED
+testing/test_assertrewrite.py::TestAssertionRewrite::test_assert_fixture PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_pycache_is_a_file PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_pycache_is_readonly PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_zipfile PASSED
@@ -2174,6 +2282,7 @@ testing/test_capture.py::TestPerTestCapturing::test_teardown_capturing_final PAS
 testing/test_capture.py::TestPerTestCapturing::test_capturing_outerr PASSED
 testing/test_capture.py::TestCaptureFixture::test_std_functional[opt0] PASSED
 testing/test_capture.py::TestCaptureFixture::test_std_functional[opt1] PASSED
+testing/test_capture.py::TestCaptureFixture::test_capteesys PASSED
 testing/test_capture.py::TestCaptureFixture::test_capsyscapfd PASSED
 testing/test_capture.py::TestCaptureFixture::test_capturing_getfixturevalue PASSED
 testing/test_capture.py::TestCaptureFixture::test_capsyscapfdbinary PASSED
@@ -2204,6 +2313,9 @@ testing/test_capture.py::test_error_attribute_issue555 PASSED
 testing/test_capture.py::test_dontreadfrominput_has_encoding PASSED
 testing/test_capture.py::test_typeerror_encodedfile_write PASSED
 testing/test_capture.py::test_encodedfile_writelines PASSED
+testing/test_collect_imported_tests.py::test_collect_imports_disabled PASSED
+testing/test_collect_imported_tests.py::test_collect_imports_enabled[False] PASSED
+testing/test_collect_imported_tests.py::test_collect_imports_enabled[True] PASSED
 testing/test_collection.py::TestCollector::test_check_equality PASSED
 testing/test_collection.py::TestCollector::test_getparent_and_accessors PASSED
 testing/test_collection.py::TestCollector::test_getcustomfile_roundtrip PASSED
@@ -2285,8 +2397,9 @@ testing/test_collection.py::test_does_not_crash_on_recursive_symlink PASSED
 testing/test_collection.py::test_collect_short_file_windows SKIPPED
 testing/test_collection.py::test_pyargs_collection_tree PASSED
 testing/test_collection.py::test_do_not_collect_symlink_siblings PASSED
-testing/test_compat.py::test_is_generator_async_syntax PASSED
-testing/test_compat.py::test_is_generator_async_gen_syntax PASSED
+testing/test_collection.py::test_yield_disallowed_in_tests PASSED
+testing/test_collection.py::test_annotations_deferred_future PASSED
+testing/test_collection.py::test_annotations_deferred_314 SKIPPED (A...)
 testing/test_config.py::TestParseIni::test_getcfg_and_config[pytest-pytest.ini] PASSED
 testing/test_config.py::TestParseIni::test_getcfg_and_config[tool:pytest-setup.cfg] PASSED
 testing/test_config.py::TestParseIni::test_setupcfg_uses_toolpytest_with_pytest PASSED
@@ -2330,11 +2443,11 @@ testing/test_config.py::TestConfigCmdlineParsing::test_parsing_again_fails PASSE
 testing/test_config.py::TestConfigCmdlineParsing::test_explicitly_specified_config_file_is_loaded PASSED
 testing/test_config.py::TestConfigCmdlineParsing::test_absolute_win32_path PASSED
 testing/test_config.py::TestConfigAPI::test_config_trace PASSED
-testing/test_config.py::TestConfigAPI::test_config_getoption PASSED
+testing/test_config.py::TestConfigAPI::test_config_getoption_declared_option_name PASSED
+testing/test_config.py::TestConfigAPI::test_config_getoption_undeclared_option_name PASSED
 testing/test_config.py::TestConfigAPI::test_config_getoption_unicode PASSED
 testing/test_config.py::TestConfigAPI::test_config_getvalueorskip PASSED
 testing/test_config.py::TestConfigAPI::test_config_getvalueorskip_None PASSED
-testing/test_config.py::TestConfigAPI::test_getoption PASSED
 testing/test_config.py::TestConfigAPI::test_getconftest_pathlist PASSED
 testing/test_config.py::TestConfigAPI::test_addini[not passed] PASSED
 testing/test_config.py::TestConfigAPI::test_addini[None] PASSED
@@ -2348,18 +2461,32 @@ testing/test_config.py::TestConfigAPI::test_addini_linelist_pprojecttoml PASSED
 testing/test_config.py::TestConfigAPI::test_addini_bool[True-True] PASSED
 testing/test_config.py::TestConfigAPI::test_addini_bool[no-False] PASSED
 testing/test_config.py::TestConfigAPI::test_addini_bool[no-ini-True] PASSED
+testing/test_config.py::TestConfigAPI::test_addini_int[10-10] PASSED
+testing/test_config.py::TestConfigAPI::test_addini_int[no-ini-2] PASSED
+testing/test_config.py::TestConfigAPI::test_addini_int_invalid PASSED
+testing/test_config.py::TestConfigAPI::test_addini_float[10.5-10.5] PASSED
+testing/test_config.py::TestConfigAPI::test_addini_float[no-ini-2.2] PASSED
+testing/test_config.py::TestConfigAPI::test_addini_float_invalid PASSED
 testing/test_config.py::TestConfigAPI::test_addinivalue_line_existing PASSED
 testing/test_config.py::TestConfigAPI::test_addinivalue_line_new PASSED
 testing/test_config.py::TestConfigAPI::test_addini_default_values PASSED
 testing/test_config.py::TestConfigAPI::test_confcutdir_check_isdir PASSED
+testing/test_config.py::TestConfigAPI::test_add_cleanup PASSED
 testing/test_config.py::test_options_on_small_file_do_not_blow_up PASSED
 testing/test_config.py::test_preparse_ordering_with_setuptools PASSED
 testing/test_config.py::test_setuptools_importerror_issue1479 PASSED
 testing/test_config.py::test_importlib_metadata_broken_distribution PASSED
 testing/test_config.py::test_plugin_preparse_prevents_setuptools_loading[True] PASSED
 testing/test_config.py::test_plugin_preparse_prevents_setuptools_loading[False] PASSED
-testing/test_config.py::test_disable_plugin_autoload[parse_args0-True] PASSED
-testing/test_config.py::test_disable_plugin_autoload[parse_args1-False] PASSED
+testing/test_config.py::test_disable_plugin_autoload[env_var-env_var] PASSED
+testing/test_config.py::test_disable_plugin_autoload[env_var-flag] PASSED
+testing/test_config.py::test_disable_plugin_autoload[env_var-] PASSED
+testing/test_config.py::test_disable_plugin_autoload[flag-env_var] PASSED
+testing/test_config.py::test_disable_plugin_autoload[flag-flag] PASSED
+testing/test_config.py::test_disable_plugin_autoload[flag-] PASSED
+testing/test_config.py::test_disable_plugin_autoload[-env_var] PASSED
+testing/test_config.py::test_disable_plugin_autoload[-flag] PASSED
+testing/test_config.py::test_disable_plugin_autoload[-] PASSED
 testing/test_config.py::test_plugin_loading_order PASSED
 testing/test_config.py::test_invalid_options_show_extra_information PASSED
 testing/test_config.py::test_consider_args_after_options_for_rootdir[args0] PASSED
@@ -2405,12 +2532,11 @@ testing/test_config.py::test_config_blocked_default_plugins[freeze_support] PASS
 testing/test_config.py::test_config_blocked_default_plugins[setuponly] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[setupplan] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[stepwise] PASSED
+testing/test_config.py::test_config_blocked_default_plugins[unraisableexception] PASSED
+testing/test_config.py::test_config_blocked_default_plugins[threadexception] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[warnings] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[logging] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[reports] PASSED
-testing/test_config.py::test_config_blocked_default_plugins[python_path] PASSED
-testing/test_config.py::test_config_blocked_default_plugins[unraisableexception] PASSED
-testing/test_config.py::test_config_blocked_default_plugins[threadexception] PASSED
 testing/test_config.py::test_config_blocked_default_plugins[faulthandler] PASSED
 testing/test_config.py::TestSetupCfg::test_pytest_setup_cfg_unsupported PASSED
 testing/test_config.py::TestSetupCfg::test_pytest_custom_cfg_unsupported PASSED
@@ -2863,6 +2989,7 @@ testing/test_mark.py::test_parameterset_for_parametrize_marks[] PASSED
 testing/test_mark.py::test_parameterset_for_parametrize_marks[skip] PASSED
 testing/test_mark.py::test_parameterset_for_parametrize_marks[xfail] PASSED
 testing/test_mark.py::test_parameterset_for_fail_at_collect PASSED
+testing/test_mark.py::test_paramset_empty_no_idfunc PASSED
 testing/test_mark.py::test_parameterset_for_parametrize_bad_markname PASSED
 testing/test_mark.py::test_mark_expressions_no_smear PASSED
 testing/test_mark.py::test_addmarker_order PASSED
@@ -2871,10 +2998,11 @@ testing/test_mark.py::test_marker_expr_eval_failure_handling[NOT internal_err] P
 testing/test_mark.py::test_marker_expr_eval_failure_handling[NOT (internal_err)] PASSED
 testing/test_mark.py::test_marker_expr_eval_failure_handling[bogus=] PASSED
 testing/test_mark.py::test_mark_fixture_order_mro PASSED
+testing/test_mark.py::test_mark_parametrize_over_staticmethod PASSED
 testing/test_monkeypatch.py::test_monkeypatch_plugin PASSED
 testing/test_monkeypatch.py::test_issue185_time_breaks PASSED
 testing/test_monkeypatch.py::test_importerror PASSED
-testing/test_monkeypatch.py::test_syspath_prepend_with_namespace_packages PASSED
+testing/test_monkeypatch.py::test_syspath_prepend_with_namespace_packages SKIPPED
 testing/test_nodes.py::test_node_warn_is_no_longer_only_pytest_warnings[DeprecationWarning-deprecated] PASSED
 testing/test_nodes.py::test_node_warn_is_no_longer_only_pytest_warnings[PytestWarning-pytest] PASSED
 testing/test_nodes.py::test_node_warning_enforces_warning_types PASSED
@@ -2944,6 +3072,8 @@ testing/test_pathlib.py::test_bestrelpath PASSED
 testing/test_pathlib.py::test_commonpath PASSED
 testing/test_pathlib.py::test_visit_ignores_errors PASSED
 testing/test_pathlib.py::test_samefile_false_negatives SKIPPED (Wind...)
+testing/test_pathlib.py::test_scandir_with_non_existent_directory PASSED
+testing/test_pathlib.py::test_scandir_handles_os_error PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importmode_importlib_with_dataclass[True] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importmode_importlib_with_dataclass[False] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importmode_importlib_with_pickle[True] PASSED
@@ -2953,10 +3083,20 @@ testing/test_pathlib.py::TestImportLibMode::test_importmode_importlib_with_pickl
 testing/test_pathlib.py::TestImportLibMode::test_module_name_from_path PASSED
 testing/test_pathlib.py::TestImportLibMode::test_resolve_pkg_root_and_module_name PASSED
 testing/test_pathlib.py::TestImportLibMode::test_insert_missing_modules PASSED
+testing/test_pathlib.py::TestImportLibMode::test_import_module_using_spec[True-True] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_import_module_using_spec[True-False] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_import_module_using_spec[False-True] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_import_module_using_spec[False-False] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_parent_contains_child_module_attribute PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importlib_package[True] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importlib_package[False] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_importlib_root_is_package PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[True-code] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[True-time] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[True-math] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[False-code] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[False-time] PASSED
+testing/test_pathlib.py::TestImportLibMode::test_importlib_same_name_as_stl[False-math] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_import_using_normal_mechanism_first[True] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_import_using_normal_mechanism_first[False] PASSED
 testing/test_pathlib.py::TestImportLibMode::test_import_using_normal_mechanism_first_integration[True] PASSED
@@ -2972,12 +3112,14 @@ testing/test_pathlib.py::TestNamespacePackages::test_resolve_pkg_root_and_module
 testing/test_pathlib.py::TestNamespacePackages::test_resolve_pkg_root_and_module_name_ns_multiple_levels[append] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_resolve_pkg_root_and_module_name_ns_multiple_levels[importlib] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_ns_multiple_levels_import_rewrite_assertions PASSED
+testing/test_pathlib.py::TestNamespacePackages::test_ns_multiple_levels_import_error PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_incorrect_namespace_package[prepend] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_incorrect_namespace_package[append] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_incorrect_namespace_package[importlib] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_detect_meta_path PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_full_ns_packages_without_init_files[True] PASSED
 testing/test_pathlib.py::TestNamespacePackages::test_full_ns_packages_without_init_files[False] PASSED
+testing/test_pathlib.py::test_ns_import_same_name_directory_12592 PASSED
 testing/test_pathlib.py::test_is_importable PASSED
 testing/test_pathlib.py::test_compute_module_name PASSED
 testing/test_pluginmanager.py::TestPytestPluginInteractions::test_addhooks_conftestplugin PASSED
@@ -3024,6 +3166,7 @@ testing/test_pytester.py::test_pytester_assert_outcomes_warnings PASSED
 testing/test_pytester.py::test_pytester_outcomes_deselected PASSED
 testing/test_python_path.py::test_one_dir PASSED
 testing/test_python_path.py::test_two_dirs PASSED
+testing/test_python_path.py::test_local_plugin PASSED
 testing/test_python_path.py::test_module_not_found PASSED
 testing/test_python_path.py::test_no_ini PASSED
 testing/test_python_path.py::test_clean_up PASSED
@@ -3273,9 +3416,14 @@ testing/test_stepwise.py::test_stepwise_skip_is_independent PASSED
 testing/test_stepwise.py::test_sw_skip_help PASSED
 testing/test_stepwise.py::test_stepwise_xdist_dont_store_lastfailed PASSED
 testing/test_stepwise.py::test_disabled_stepwise_xdist_dont_clear_cache PASSED
+testing/test_stepwise.py::test_do_not_reset_cache_if_disabled PASSED
+testing/test_stepwise.py::test_reset PASSED
+testing/test_stepwise.py::test_change_test_count PASSED
+testing/test_stepwise.py::test_cache_error PASSED
 testing/test_terminal.py::TestTerminal::test_pass_skip_fail[default] PASSED
 testing/test_terminal.py::TestTerminal::test_pass_skip_fail[verbose] PASSED
 testing/test_terminal.py::TestTerminal::test_pass_skip_fail[quiet] PASSED
+testing/test_terminal.py::TestTerminal::test_console_output_style_times_with_skipped_and_passed PASSED
 testing/test_terminal.py::TestTerminal::test_internalerror PASSED
 testing/test_terminal.py::TestTerminal::test_writeline PASSED
 testing/test_terminal.py::TestTerminal::test_show_runtest_logstart PASSED
@@ -3291,6 +3439,8 @@ testing/test_terminal.py::TestTerminal::test_report_teststatus_explicit_markup[f
 testing/test_terminal.py::TestTerminal::test_report_teststatus_explicit_markup[error] PASSED
 testing/test_terminal.py::TestTerminal::test_report_teststatus_explicit_markup[passed] PASSED
 testing/test_terminal.py::TestTerminal::test_verbose_skip_reason PASSED
+testing/test_terminal.py::TestTerminal::test_isatty[True] PASSED
+testing/test_terminal.py::TestTerminal::test_isatty[False] PASSED
 testing/test_terminal.py::TestCollectonly::test_collectonly_basic PASSED
 testing/test_terminal.py::TestCollectonly::test_collectonly_skipped_module PASSED
 testing/test_terminal.py::TestCollectonly::test_collectonly_displays_test_description PASSED
@@ -3378,11 +3528,16 @@ testing/test_terminal.py::TestProgressOutputStyle::test_zero_tests_collected PAS
 testing/test_terminal.py::TestProgressOutputStyle::test_normal PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_colored_progress PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_count PASSED
+testing/test_terminal.py::TestProgressOutputStyle::test_times PASSED
+testing/test_terminal.py::TestProgressOutputStyle::test_times_multiline PASSED
+testing/test_terminal.py::TestProgressOutputStyle::test_times_none_collected PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_verbose PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_verbose_count PASSED
+testing/test_terminal.py::TestProgressOutputStyle::test_verbose_times PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_xdist_normal SKIPPED
 testing/test_terminal.py::TestProgressOutputStyle::test_xdist_normal_count SKIPPED
 testing/test_terminal.py::TestProgressOutputStyle::test_xdist_verbose SKIPPED
+testing/test_terminal.py::TestProgressOutputStyle::test_xdist_times PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_capture_no PASSED
 testing/test_terminal.py::TestProgressOutputStyle::test_capture_no_progress_enabled PASSED
 testing/test_terminal.py::TestProgressWithTeardown::test_teardown_simple PASSED
@@ -3391,6 +3546,8 @@ testing/test_terminal.py::TestProgressWithTeardown::test_teardown_many PASSED
 testing/test_terminal.py::TestProgressWithTeardown::test_teardown_many_verbose PASSED
 testing/test_terminal.py::TestProgressWithTeardown::test_xdist_normal SKIPPED
 testing/test_terminal.py::test_short_summary_with_verbose PASSED
+testing/test_terminal.py::test_full_sequence_print_with_vv PASSED
+testing/test_terminal.py::test_force_short_summary PASSED
 testing/test_terminal.py::test_collecterror PASSED
 testing/test_terminal.py::test_no_summary_collecterror PASSED
 testing/test_terminal.py::test_via_exec PASSED
@@ -3423,6 +3580,10 @@ testing/test_threadexception.py::test_unhandled_thread_exception PASSED
 testing/test_threadexception.py::test_unhandled_thread_exception_in_setup PASSED
 testing/test_threadexception.py::test_unhandled_thread_exception_in_teardown PASSED
 testing/test_threadexception.py::test_unhandled_thread_exception_warning_error PASSED
+testing/test_threadexception.py::test_threadexception_warning_multiple_errors PASSED
+testing/test_threadexception.py::test_unraisable_collection_failure PASSED
+testing/test_threadexception.py::test_unhandled_thread_exception_after_teardown PASSED
+testing/test_threadexception.py::test_possibly_none_excinfo PASSED
 testing/test_tmpdir.py::test_tmp_path_fixture PASSED
 testing/test_tmpdir.py::TestConfigTmpPath::test_getbasetemp_custom_removes_old PASSED
 testing/test_tmpdir.py::TestConfigTmpPath::test_policy_failed_removes_only_passed_dir PASSED
@@ -3522,13 +3683,16 @@ testing/test_unraisableexception.py::test_unraisable PASSED
 testing/test_unraisableexception.py::test_unraisable_in_setup PASSED
 testing/test_unraisableexception.py::test_unraisable_in_teardown PASSED
 testing/test_unraisableexception.py::test_unraisable_warning_error PASSED
+testing/test_unraisableexception.py::test_unraisable_warning_multiple_errors PASSED
+testing/test_unraisableexception.py::test_unraisable_collection_failure PASSED
+testing/test_unraisableexception.py::test_possibly_none_excinfo PASSED
 testing/test_warning_types.py::test_pytest_warnings_repr_integration_test PASSED
 testing/test_warnings.py::test_normal_flow PASSED
 testing/test_warnings.py::test_setup_teardown_warnings PASSED
 testing/test_warnings.py::test_ignore[cmdline] PASSED
 testing/test_warnings.py::test_ignore[ini] PASSED
 testing/test_warnings.py::test_unicode PASSED
-testing/test_warnings.py::test_works_with_filterwarnings PASSED
+testing/test_warnings.py::test_works_with_filterwarnings SKIPPED (is...)
 testing/test_warnings.py::test_filterwarnings_mark[ini] PASSED
 testing/test_warnings.py::test_filterwarnings_mark[cmdline] PASSED
 testing/test_warnings.py::test_non_string_warning_argument PASSED
@@ -3580,6 +3744,7 @@ testing/test_assertrewrite.py::TestRewriteOnImport::test_dont_write_bytecode PAS
 testing/test_assertrewrite.py::TestRewriteOnImport::test_cached_pyc_includes_pytest_version PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_pyc_vs_pyo PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_rewrite_warning PASSED
+testing/test_assertrewrite.py::TestRewriteOnImport::test_rewrite_warning_ignore PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_rewrite_module_imported_from_conftest PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_rewrite_warning_using_pytest_plugins PASSED
 testing/test_assertrewrite.py::TestRewriteOnImport::test_rewrite_warning_using_pytest_plugins_env_var PASSED
@@ -3608,10 +3773,10 @@ testing/test_capture.py::test_global_capture_with_live_logging PASSED
 testing/test_capture.py::test_capture_with_live_logging[capsys] PASSED
 testing/test_capture.py::test_capture_with_live_logging[capfd] PASSED
 testing/test_capture.py::test_logging_while_collecting PASSED
+testing/test_capture.py::test_libedit_workaround PASSED
 testing/test_collection.py::test_collect_pyargs_with_testpaths PASSED
 testing/test_collection.py::test_respect_system_exceptions[KeyboardInterrupt-*!!! KeyboardInterrupt !!!*] PASSED
 testing/test_collection.py::test_respect_system_exceptions[SystemExit-INTERNALERROR> SystemExit] PASSED
-testing/test_compat.py::test_is_generator_asyncio PASSED
 testing/test_config.py::TestPytestPluginsVariable::test_pytest_plugins_in_non_top_level_conftest_unsupported_no_top_level_conftest PASSED
 testing/test_config.py::TestPytestPluginsVariable::test_pytest_plugins_in_non_top_level_conftest_unsupported_no_false_positives PASSED
 testing/test_debugging.py::TestPDB::test_pdb_unittest_postmortem PASSED
@@ -3646,6 +3811,8 @@ testing/test_debugging.py::TestPDB::test_pdb_collection_failure_is_shown PASSED
 testing/test_debugging.py::TestPDB::test_enter_leave_pdb_hooks_are_called[False] PASSED
 testing/test_debugging.py::TestPDB::test_enter_leave_pdb_hooks_are_called[True] PASSED
 testing/test_debugging.py::TestPDB::test_pdb_custom_cls_with_set_trace PASSED
+testing/test_debugging.py::TestPDB::test_pdb_exception_chain_navigation SKIPPED
+testing/test_debugging.py::TestPDB::test_pdb_wrapped_commands_docstrings PASSED
 testing/test_debugging.py::TestDebuggingBreakpoints::test_sys_breakpointhook_configure_and_unconfigure[--pdb] PASSED
 testing/test_debugging.py::TestDebuggingBreakpoints::test_sys_breakpointhook_configure_and_unconfigure[] PASSED
 testing/test_debugging.py::TestDebuggingBreakpoints::test_environ_custom_class[--pdb] PASSED
@@ -3714,7 +3881,7 @@ testing/test_meta.py::test_no_warnings[_pytest.pytester] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.pytester_assertions] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.python] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.python_api] PASSED
-testing/test_meta.py::test_no_warnings[_pytest.python_path] PASSED
+testing/test_meta.py::test_no_warnings[_pytest.raises] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.recwarn] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.reports] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.runner] PASSED
@@ -3728,6 +3895,7 @@ testing/test_meta.py::test_no_warnings[_pytest.terminal] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.threadexception] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.timing] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.tmpdir] PASSED
+testing/test_meta.py::test_no_warnings[_pytest.tracemalloc] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.unittest] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.unraisableexception] PASSED
 testing/test_meta.py::test_no_warnings[_pytest.warning_types] PASSED
@@ -3745,6 +3913,10 @@ testing/test_terminal.py::TestCodeHighlight::test_code_highlight_invalid_theme P
 testing/test_terminal.py::TestCodeHighlight::test_code_highlight_invalid_theme_mode PASSED
 testing/test_unittest.py::TestTrialUnittest::test_trial_pdb PASSED
 testing/test_unittest.py::test_plain_unittest_does_not_support_async PASSED
+testing/test_unraisableexception.py::test_refcycle_unraisable PASSED
+testing/test_unraisableexception.py::test_refcycle_unraisable_warning_filter PASSED
+testing/test_unraisableexception.py::test_create_task_raises_unraisable_warning_filter PASSED
+testing/test_unraisableexception.py::test_refcycle_unraisable_warning_filter_default PASSED
 testing/test_warnings.py::test_as_errors[cmdline] PASSED
 testing/test_warnings.py::test_as_errors[ini] PASSED
 testing/test_warnings.py::TestDeprecationWarningsByDefault::test_shown_by_default[True] PASSED
@@ -3753,10 +3925,11 @@ testing/test_warnings.py::TestDeprecationWarningsByDefault::test_hidden_by_ini P
 testing/test_warnings.py::TestDeprecationWarningsByDefault::test_hidden_by_mark PASSED
 testing/test_warnings.py::TestDeprecationWarningsByDefault::test_hidden_by_cmdline PASSED
 testing/test_warnings.py::TestDeprecationWarningsByDefault::test_hidden_by_system PASSED
+testing/test_warnings.py::TestDeprecationWarningsByDefault::test_invalid_regex_in_filterwarning PASSED
 testing/test_warnings.py::TestStackLevel::test_issue4445_issue5928_mark_generator PASSED
 
 =================================== XPASSES ====================================
 =========================== short test summary info ============================
-======== 3674 passed, 52 skipped, 12 xfailed, 7 xpassed ========
+======== 3840 passed, 59 skipped, 12 xfailed, 7 xpassed ========
   py$(PYV): OK
   congratulations :)
