@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Type-Tiny
-HUMAN_VERSION =			2.008003
+HUMAN_VERSION =			2.008004
 COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47e76a2c09a6508a0f65bc88954a6e26172d92978cfde5edb8ddaa2013cf06e7
+	sha256:27f9cadd91d15217be2748d612fef78d22474d3f6554ccfca4171cbcde1ab34e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,17 +37,17 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-requirements
-PERL_REQUIRED_PACKAGES += library/perl-5/devel-lexalias
-PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
-PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/ref-util-xs
-PERL_REQUIRED_PACKAGES += library/perl-5/regexp-util
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny-xs
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/class-xsaccessor
+REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
+REQUIRED_PACKAGES.perl += library/perl-5/devel-lexalias
+REQUIRED_PACKAGES.perl += library/perl-5/devel-stacktrace
+REQUIRED_PACKAGES.perl += library/perl-5/exporter-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/ref-util-xs
+REQUIRED_PACKAGES.perl += library/perl-5/regexp-util
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/type-tiny-xs
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
