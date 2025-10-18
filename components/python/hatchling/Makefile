@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
 HUMAN_VERSION =			1.27.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_HASH =	\
@@ -47,9 +48,9 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pathspec
-PYTHON_REQUIRED_PACKAGES += library/python/pluggy
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/trove-classifiers
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pathspec
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/trove-classifiers
+REQUIRED_PACKAGES.python += runtime/python
