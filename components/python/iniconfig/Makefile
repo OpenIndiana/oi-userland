@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
 HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		brain-dead simple config-ini parsing
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/iniconfig
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,6 +30,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
+# The sdist is missing tests:
+# https://github.com/pytest-dev/iniconfig/issues/67
+# ... and building from github tarball fails
+
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - pytest (test bootstrap)
@@ -37,6 +42,6 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
