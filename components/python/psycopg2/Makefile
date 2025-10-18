@@ -15,6 +15,7 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 # Force setup.py build style because with the default PEP 517 build style we
 # are unable to generate the list of required packages.
 # See also https://github.com/psycopg/psycopg2/issues/1788
@@ -24,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psycopg2
 HUMAN_VERSION =			2.9.11
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		psycopg2 - Python-PostgreSQL Database Adapter
 COMPONENT_PROJECT_URL =		https://psycopg.org/
 COMPONENT_ARCHIVE_HASH =	\
