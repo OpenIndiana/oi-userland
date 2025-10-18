@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		filelock
-HUMAN_VERSION =			3.18.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.19.1
 COMPONENT_SUMMARY =		A platform independent file lock.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:adbc88eabb99d2fec8c9c1b229b171f18afa655400173ddc653d5d01501fb9f2
+	sha256:66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,19 +35,17 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_EXTRAS += testing
-
 # Normalize pointers
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
