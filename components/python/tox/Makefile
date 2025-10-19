@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.25.0
+HUMAN_VERSION =			4.30.3
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd67f030317b80722cf52b246ff42aafd3ed27ddf331c415612d084304cf5e52
+	sha256:f3dd0735f1cd4e8fbea5a3661b77f517456b5f0031a6256432533900e34b90bf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,31 +35,36 @@ PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This test fails with tox-current-env
+PYTEST_ADDOPTS += --deselect tests/tox_env/python/test_python_api.py::test_build_wheel_in_non_base_pkg_env
+
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cachetools
-PYTHON_REQUIRED_PACKAGES += library/python/chardet
-PYTHON_REQUIRED_PACKAGES += library/python/colorama
-PYTHON_REQUIRED_PACKAGES += library/python/filelock
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
-PYTHON_REQUIRED_PACKAGES += library/python/pluggy
-PYTHON_REQUIRED_PACKAGES += library/python/pyproject-api
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/cachetools
+REQUIRED_PACKAGES.python += library/python/chardet
+REQUIRED_PACKAGES.python += library/python/colorama
+REQUIRED_PACKAGES.python += library/python/filelock
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/platformdirs
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/pyproject-api
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += library/python/virtualenv
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
 TEST_REQUIRED_PACKAGES.python += library/python/distlib
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
 TEST_REQUIRED_PACKAGES.python += library/python/hatchling
+TEST_REQUIRED_PACKAGES.python += library/python/pdm-backend
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
