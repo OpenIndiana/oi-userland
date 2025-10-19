@@ -397,6 +397,8 @@ while true ; do
 	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
+	python -m unittest discover 2>&1 | grep '^Ran' | grep -q -v '^Ran 0 ' && TEST_STYLE='unittest' && break
+
 	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
 
 	TEST_STYLE="none"
