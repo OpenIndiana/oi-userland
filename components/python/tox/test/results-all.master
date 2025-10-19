@@ -5,7 +5,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1844 items]
+X workers [1908 items]
 
 scheduling tests via LoadScheduling
 
@@ -28,6 +28,7 @@ tests/config/cli/test_cli_ini.py::test_ini_empty[[tox]] PASSED
 tests/config/cli/test_cli_ini.py::test_ini_empty[] PASSED
 tests/config/cli/test_cli_ini.py::test_ini_exhaustive_parallel_values PASSED
 tests/config/cli/test_cli_ini.py::test_ini_help PASSED
+tests/config/cli/test_cli_ini.py::test_ini_loader_corrupt_default_config_file PASSED
 tests/config/cli/test_parse.py::test_help_does_not_default_cmd PASSED
 tests/config/cli/test_parse.py::test_verbosity[-av] PASSED
 tests/config/cli/test_parse.py::test_verbosity[-va] PASSED
@@ -1114,6 +1115,7 @@ tests/config/test_set_env.py::test_set_env_environment_file_combined_with_normal
 tests/config/test_set_env.py::test_set_env_environment_file_combined_with_normal_setting[toml-env] PASSED
 tests/config/test_set_env.py::test_set_env_environment_file_combined_with_normal_setting[toml] PASSED
 tests/config/test_set_env.py::test_set_env_environment_file_missing PASSED
+tests/config/test_set_env.py::test_set_env_environment_with_file_and_expanded_substitution PASSED
 tests/config/test_set_env.py::test_set_env_explicit PASSED
 tests/config/test_set_env.py::test_set_env_honor_override PASSED
 tests/config/test_set_env.py::test_set_env_invalid_lines PASSED
@@ -1208,6 +1210,11 @@ tests/journal/test_main_journal.py::test_env_journal_enabled PASSED
 tests/journal/test_main_journal.py::test_journal_disabled_default PASSED
 tests/journal/test_main_journal.py::test_journal_enabled_default PASSED
 tests/plugin/test_inline.py::test_inline_tox_py PASSED
+tests/plugin/test_inline.py::test_toxfile_py_w_ephemeral_envs PASSED
+tests/plugin/test_plugin.py::test_disable_external_plugins[both_disabled] PASSED
+tests/plugin/test_plugin.py::test_disable_external_plugins[none_disabled] PASSED
+tests/plugin/test_plugin.py::test_disable_external_plugins[only_a_disabled] PASSED
+tests/plugin/test_plugin.py::test_disable_external_plugins[only_b_disabled] PASSED
 tests/plugin/test_plugin.py::test_plugin_can_read_env_list PASSED
 tests/plugin/test_plugin.py::test_plugin_can_read_sections PASSED
 tests/plugin/test_plugin.py::test_plugin_can_set_core_conf[temp_dir] PASSED
@@ -1387,10 +1394,15 @@ tests/session/test_env_select.py::test_clienv_is_all[All-False] PASSED
 tests/session/test_env_select.py::test_clienv_is_all[a,ALL,b-True] PASSED
 tests/session/test_env_select.py::test_clienv_is_all[all-False] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[3.12.0] PASSED
+tests/session/test_env_select.py::test_dynamic_env_factors_match[3.12.0t] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[3.12] PASSED
+tests/session/test_env_select.py::test_dynamic_env_factors_match[3.12t] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[3] PASSED
+tests/session/test_env_select.py::test_dynamic_env_factors_match[3t] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[py3.12] PASSED
+tests/session/test_env_select.py::test_dynamic_env_factors_match[py3.12t] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[py312] PASSED
+tests/session/test_env_select.py::test_dynamic_env_factors_match[py312t] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[py3] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[py] PASSED
 tests/session/test_env_select.py::test_dynamic_env_factors_match[pypy3.12] PASSED
@@ -1598,11 +1610,16 @@ tests/tox_env/python/pip/test_pip_install.py::test_constrain_package_deps[requir
 tests/tox_env/python/pip/test_pip_install.py::test_deps_remove_recreate PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_bad_type[arg1] PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_bad_type[object] PASSED
-tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_create_change PASSED
-tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_new PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_create_change[False] PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_create_change[True] PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_new[False] PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_constraint_file_new[True] PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_empty_command_error PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_empty_list PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_flags_only_error PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_invalid_constraints_error[constraints flag is unnecessary] PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_invalid_constraints_error[constraints must be specified in a file] PASSED
+tests/tox_env/python/pip/test_pip_install.py::test_pip_install_invalid_constraints_error[requirements file are not constraints files] PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_new_flag_recreates PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_path PASSED
 tests/tox_env/python/pip/test_pip_install.py::test_pip_install_req_file_req_like[long editable] PASSED
@@ -1646,35 +1663,60 @@ tests/tox_env/python/test_python_api.py::test_base_python_env_no_conflict[magic-
 tests/tox_env/python/test_python_api.py::test_base_python_env_no_conflict[magic-py$(PYV)-True] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_no_conflict[magic-pypy-False] PASSED
 tests/tox_env/python/test_python_api.py::test_base_python_env_no_conflict[magic-pypy-True] PASSED
-tests/tox_env/python/test_python_api.py::test_build_wheel_in_non_base_pkg_env PASSED
 tests/tox_env/python/test_python_api.py::test_conflicting_base_python_factor PASSED
 tests/tox_env/python/test_python_api.py::test_diff_msg_added_removed_changed PASSED
 tests/tox_env/python/test_python_api.py::test_diff_msg_no_diff PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[2.7-2.7] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[2.7t-2.7t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[2000-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[2000t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[3.10-3.10] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[3.10t-3.10t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[3.9-3.9] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[3.9t-3.9t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[310-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[310t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[4.foo-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[4.foot-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[4000-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[4000t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[5-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[5t-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[bar-foo2t-py2-py2] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[bar-pypy2-foo-pypy2] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[bar-pypy2t-foo-pypy2t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[cpython3.8-cpython3.8] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[cpython3.8t-cpython3.8t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[django-32-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[django-32t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[eslint-8.3-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[eslint-8.3t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[functional-py310-py310] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[functional-py310t-py310t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[graalpy-graalpy] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[graalpyt-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[ironpython2.7-ironpython2.7] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[ironpython2.7t-ironpython2.7t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[jython-jython] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[jythont-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py-310-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[py-310t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3-py3] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3.12-py3.12] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[py3.12t-py3.12t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py3000-None] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[py3000t-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[py311-py311] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[py311t-py311t] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[py3t-py3t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy-3.10-pypy3.10] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy-3.10t-pypy3.10t] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy2-pypy2] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[pypy2t-pypy2t] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[pyt-None] PASSED
 tests/tox_env/python/test_python_api.py::test_extract_base_python[rustpython3-rustpython3] PASSED
+tests/tox_env/python/test_python_api.py::test_extract_base_python[rustpython3t-rustpython3t] PASSED
 tests/tox_env/python/test_python_api.py::test_list_installed_deps[False] PASSED
 tests/tox_env/python/test_python_api.py::test_list_installed_deps[True] PASSED
 tests/tox_env/python/test_python_api.py::test_list_installed_deps_explicit_cli[False---list-dependencies] PASSED
@@ -1690,8 +1732,10 @@ tests/tox_env/python/test_python_api.py::test_python_keep_hash_seed PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed_incorrect PASSED
 tests/tox_env/python/test_python_api.py::test_python_set_hash_seed_negative PASSED
-tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[cpython-3-12-64] PASSED
-tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[pypy-3-9-32] PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[cpython-3-12-64-None] PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[cpython-3-13-64-False] PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[cpython-3-13-64-True] PASSED
+tests/tox_env/python/test_python_api.py::test_python_spec_for_sys_executable[pypy-3-9-32-None] PASSED
 tests/tox_env/python/test_python_api.py::test_python_use_hash_seed_from_env PASSED
 tests/tox_env/python/test_python_api.py::test_requirements_txt PASSED
 tests/tox_env/python/test_python_api.py::test_usedevelop_with_nonexistent_basepython PASSED
@@ -1761,6 +1805,7 @@ tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproje
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproject_deps_static_with_dynamic[deps] PASSED
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproject_deps_static_with_dynamic[deps_extra] PASSED
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproject_deps_static_with_dynamic[deps_extra_dynamic_opt] PASSED
+tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproject_installpkg_pep517_envs PASSED
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_pyproject_no_build_editable_fallback PASSED
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_tox_ini_package_type_invalid PASSED
 tests/tox_env/python/virtual_env/package/test_package_pyproject.py::test_tox_ini_package_type_valid[editable-legacy] PASSED
@@ -1787,7 +1832,26 @@ tests/tox_env/python/virtual_env/test_virtualenv_api.py::test_virtualenv_env_use
 tests/tox_env/python/virtual_env/test_virtualenv_api.py::test_virtualenv_flipped_settings PASSED
 tests/tox_env/test_api.py::test_dont_cleanup_temp_dir PASSED
 tests/tox_env/test_api.py::test_ensure_temp_dir_exists PASSED
+tests/tox_env/test_api.py::test_redact[access] PASSED
+tests/tox_env/test_api.py::test_redact[api] PASSED
+tests/tox_env/test_api.py::test_redact[auth] PASSED
+tests/tox_env/test_api.py::test_redact[client] PASSED
+tests/tox_env/test_api.py::test_redact[cred] PASSED
+tests/tox_env/test_api.py::test_redact[foo] PASSED
+tests/tox_env/test_api.py::test_redact[key] PASSED
+tests/tox_env/test_api.py::test_redact[other] PASSED
+tests/tox_env/test_api.py::test_redact[passwd] PASSED
+tests/tox_env/test_api.py::test_redact[password] PASSED
+tests/tox_env/test_api.py::test_redact[private] PASSED
+tests/tox_env/test_api.py::test_redact[pwd] PASSED
+tests/tox_env/test_api.py::test_redact[secret] PASSED
+tests/tox_env/test_api.py::test_redact[token] PASSED
 tests/tox_env/test_api.py::test_setenv_section_substitution PASSED
+tests/tox_env/test_ci_passthrough.py::test_ci_passthrough_absent PASSED
+tests/tox_env/test_ci_passthrough.py::test_ci_passthrough_present[0] PASSED
+tests/tox_env/test_ci_passthrough.py::test_ci_passthrough_present[1] PASSED
+tests/tox_env/test_ci_passthrough.py::test_ci_passthrough_present[] PASSED
+tests/tox_env/test_ci_passthrough.py::test_ci_passthrough_present[arbitrary_value] PASSED
 tests/tox_env/test_info.py::test_info_repr PASSED
 tests/tox_env/test_register.py::test_register_set_new_default_no_register PASSED
 tests/tox_env/test_register.py::test_register_set_new_default_with_register PASSED
@@ -1855,14 +1919,101 @@ tests/util/test_spinner.py::test_td_human_readable[60-1 minute] PASSED
 tests/util/test_spinner.py::test_td_human_readable[61-1 minute 1 second] PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
 
-180 files skipped due to complete coverage.
+Name                                                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/cli/parse.py                                    56      1      2      0    98%   89
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/cli/parser.py                                  227      0     78      1    99%   113->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/loader/api.py                                   88      1     20      1    98%   156
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/loader/convert.py                               93      0     40      1    99%   34->46
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/loader/toml/_replace.py                         97      5     46      5    93%   82, 113-114, 120-121
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/source/api.py                                   50      0     12      1    98%   57->exit
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/source/discover.py                              73      7     24      2    91%   43->50, 51-52, 69-71, 89-90
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/source/legacy_toml.py                           19      1      2      1    90%   26
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/config/source/toml_pyproject.py                        83      1     16      1    98%   76
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/execute/api.py                                        143      8      8      0    93%   55, 59, 63, 130-131, 265-267
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/execute/local_sub_process/__init__.py                 171     20     44      1    90%   72-94, 101-102, 129, 309, 315, 320->324
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/execute/pep517_backend.py                              67      1     10      1    97%   46
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/execute/request.py                                     40      1      4      0    98%   67
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/plugin/spec.py                                         25      1      0      0    96%   49
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/provision.py                                           78      9     10      1    86%   112-123, 156-157
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/pytest.py                                             311      2     52      2    99%   149, 288
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/depends.py                                 34      2      8      0    95%   42-43
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/legacy.py                                  82      0     34      3    97%   131->133, 133->135, 135->129
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/run/common.py                             203     22     74      2    91%   182-200, 214, 265-268, 280-283
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/run/single.py                              85      1     14      1    98%   116
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/schema.py                                  72      8     32      3    88%   41-45, 51, 59-60
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/cmd/version_flag.py                            32      0      4      1    97%   44->51
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/session/env_select.py                                 283      3    110      2    99%   191, 287-288, 429->432
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/api.py                                        300      4     54      0    98%   434-437
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/package.py                                     61      0      8      1    99%   100->103
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/api.py                                 190      4     48      1    97%   194-198
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/dependency_groups.py                    69      4     26      3    93%   27, 55, 57-58
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/package.py                              64      2     16      1    96%   135-136
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/pip/pip_install.py                     179      0     54      1    99%   250->253
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/pip/req/util.py                         35      0     12      1    98%   41->36
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/pip/req_file.py                        161     12     56      8    90%   51, 151->153, 158, 166, 172, 202-203, 219-221, 228-229, 244
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/virtual_env/api.py                     106      3     10      1    97%   125->127, 184-185, 197
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/virtual_env/package/cmd_builder.py     118      0     22      1    99%   112->118
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/virtual_env/package/pyproject.py       295      7     74      5    96%   124->127, 132, 229->228, 272-273, 338-342, 343->346
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/python/virtual_env/package/util.py             50      0     22      1    99%   33->27
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/tox_env/runner.py                                     112      2     28      0    99%   88-89
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/tox/util/file_view.py                                      28      3      4      2    84%   28->34, 32-33, 35
+tests/config/cli/test_cli_ini.py                                                                                                                                     93      0      2      1    99%   163->167
+tests/config/loader/test_str_convert.py                                                                                                                              66      1      8      2    96%   63->77, 180
+tests/conftest.py                                                                                                                                                    93      1      6      1    98%   43
+tests/execute/local_subprocess/test_local_subprocess.py                                                                                                             277      2     18      0    99%   333-334
+tests/session/cmd/test_legacy.py                                                                                                                                     88      0      4      1    99%   159->158
+tests/session/cmd/test_sequential.py                                                                                                                                286      1      2      1    99%   120
+tests/test_provision.py                                                                                                                                              82     40      8      0    51%   30-34, 43-54, 61-72, 78-101
+tests/test_version.py                                                                                                                                                23      4      0      0    83%   23-26
+tests/tox_env/python/test_python_api.py                                                                                                                             167     10     12      1    94%   53-61, 340
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                             12454    194   2102     63    98%
+
+173 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
 Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
-
-Required test coverage of 88.0% reached. Total coverage: 98.42%
+Required test coverage of 88.0% reached. Total coverage: 98.10%
 ============================= slowest 15 durations =============================
-=========================== short test summary info ============================
-======== 1843 passed, 1 skipped ========
+======== 1907 passed, 1 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
