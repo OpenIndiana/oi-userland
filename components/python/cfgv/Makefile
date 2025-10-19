@@ -14,24 +14,25 @@
 #   $WS_TOOLS/python-integrate-project cfgv
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cfgv
 HUMAN_VERSION =			3.4.0
-COMPONENT_SUMMARY =		cfgv - Validate configuration and produce human readable error messages.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Validate configuration and produce human readable error messages.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/cfgv
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/11/74/539e56497d9bd1d484fd863dd69cbbfa653cd2aa27abfe35653494d85e94/cfgv-3.4.0.tar.gz
+	https://github.com/asottile/cfgv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e52591d4c5f5dead8e0f673fb16db7949d2cfb3f7da4582893288f0ded8fe560
+	sha256:a8a4e4ad5618b6e65af563b14f46ccb1e45f5725c3b733d0ba15bb2a3b5bf9fd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
