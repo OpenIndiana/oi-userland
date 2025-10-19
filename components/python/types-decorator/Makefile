@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project -d python/types-decorator types_decorator
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_decorator
 HUMAN_VERSION =			5.2.0.20250324
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Typing stubs for decorator
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,4 +33,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
