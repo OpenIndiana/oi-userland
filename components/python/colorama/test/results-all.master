@@ -1,18 +1,61 @@
 ============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
 rootdir: $(@D)
-asyncio: mode=legacy
-collected 52 items
+configfile: pyproject.toml
+collecting ... collected 52 items
 
-colorama/tests/ansi_test.py ...
-colorama/tests/ansitowin32_test.py .......................
-colorama/tests/initialise_test.py .ssssssssss
-colorama/tests/isatty_test.py .......
-colorama/tests/winterm_test.py ....ssss
+colorama/tests/ansi_test.py::AnsiTest::testBackAttributes PASSED
+colorama/tests/ansi_test.py::AnsiTest::testForeAttributes PASSED
+colorama/tests/ansi_test.py::AnsiTest::testStyleAttributes PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::testDelegatesContext PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::testDelegatesWrite PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::testIsAProxy PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::testProxyNoContextManager PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::test_closed_shouldnt_raise_on_closed_stream PASSED
+colorama/tests/ansitowin32_test.py::StreamWrapperTest::test_closed_shouldnt_raise_on_detached_stream PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testCallWin32UsesLookup PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testExtractParams PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testInit PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testStripIsFalseOffWindows PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testStripIsTrueOnWindows PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteAndConvertCallsWin32WithParamsAndCommand PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteAndConvertSkipsEmptySnippets PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteAndConvertStripsAllValidAnsi PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteAndConvertWritesPlainText PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteAutoresets PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteDoesNotStripAnsi PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::testWriteStripsAnsi PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::test_native_windows_ansi PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::test_osc_codes PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::test_reset_all_shouldnt_raise_on_closed_orig_stdout PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::test_wrap_shouldnt_raise_on_closed_orig_stdout PASSED
+colorama/tests/ansitowin32_test.py::AnsiToWin32Test::test_wrap_shouldnt_raise_on_missing_closed_attr PASSED
+colorama/tests/initialise_test.py::InitTest::testAtexitRegisteredOnlyOnce SKIPPED
+colorama/tests/initialise_test.py::InitTest::testAutoResetChangeable SKIPPED
+colorama/tests/initialise_test.py::InitTest::testAutoResetPassedOn SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitAutoresetOnWrapsOnAllPlatforms SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitDoesntWrapIfNone SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitDoesntWrapOnEmulatedWindows SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitDoesntWrapOnNonWindows SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitWrapOffDoesntWrapOnWindows SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitWrapOffIncompatibleWithAutoresetOn SKIPPED
+colorama/tests/initialise_test.py::InitTest::testInitWrapsOnWindows SKIPPED
+colorama/tests/initialise_test.py::JustFixWindowsConsoleTest::testJustFixWindowsConsole PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_TTY PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_nonTTY PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_withPycharm PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_withPycharmNonTTYOverride PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_withPycharmNoneOverride PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_withPycharmStreamWrapped PASSED
+colorama/tests/isatty_test.py::IsattyTest::test_withPycharmTTYOverride PASSED
+colorama/tests/winterm_test.py::WinTermTest::testBack SKIPPED (requi...)
+colorama/tests/winterm_test.py::WinTermTest::testFore SKIPPED (requi...)
+colorama/tests/winterm_test.py::WinTermTest::testGetAttrs SKIPPED (r...)
+colorama/tests/winterm_test.py::WinTermTest::testInit PASSED
+colorama/tests/winterm_test.py::WinTermTest::testResetAll PASSED
+colorama/tests/winterm_test.py::WinTermTest::testSetConsole PASSED
+colorama/tests/winterm_test.py::WinTermTest::testSetConsoleOnStderr PASSED
+colorama/tests/winterm_test.py::WinTermTest::testStyle SKIPPED (requ...)
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191: DeprecationWarning: The 'asyncio_mode' default value will change to 'strict' in future, please explicitly use 'asyncio_mode=strict' or 'asyncio_mode=auto' in pytest configuration file.
-    config.issue_config_time_warning(LEGACY_MODE, stacklevel=2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 38 passed, 14 skipped, 1 warning ========
+======== 38 passed, 14 skipped ========
