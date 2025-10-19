@@ -310,7 +310,7 @@ COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
 git add Makefile
 
 # Calculate sham256 sum for source package
-$GMAKE fetch > /dev/null 2>&1
+$GMAKE DLC_ARCHIVE_MIRROR= fetch > /dev/null 2>&1
 USERLAND_ARCHIVES=$($GMAKE print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$($GMAKE print-value-COMPONENT_ARCHIVE)
 [[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
