@@ -70,6 +70,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
+		} elsif (/PseudoTTYPlugin/) {
+			print NODISPLAY $_;
 		} elsif (/VectorEnginePlugin/) {
 			print VEP $_;
 		} elsif (/XDisplayControlPlugin/) {

@@ -71,6 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.21.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -138,6 +139,8 @@ gcc_OPT+=		-Wno-error=incompatible-pointer-types
 gcc_OPT+=		-Wno-error=return-mismatch
 gcc_OPT+=		-Wno-error=int-to-pointer-cast
 gcc_OPT+=		-Wno-error=int-conversion
+# for PseudoTTYPlugin svn revision 3837
+gcc_OPT+=		-Wno-error=implicit-int
 
 # add -D_FILE_OFFSET_BITS=64 to CPPFLAGS but unlike OpenSmalltalk,
 # must also add this to CFLAGS because Squeak configure is not using CPPFLAGS
@@ -159,9 +162,12 @@ SOURCE_JPEG = $(SOURCE_DIR_1)/plugins/JPEGReadWriter2Plugin
 
 # squeak configure looks for .svn or svnversion file, but
 # prep-svn.mk did a svn export and created an unversioned copy of the sources
+# override plugins.ext and plugins.int to enable PseudoTTYPlugin
 # CMakeLists.txt defines cross as unix/../Cross so set a softlink
 COMPONENT_PRE_CONFIGURE_ACTION = \
 ( echo $(SQREV) > $(SOURCE_DIR_2)/svnversion; \
+  cp plugins.ext plugins.int $(SOURCE_DIR_0); \
+  cp -r PseudoTTYPlugin $(SOURCE_DIR_0)/plugins; \
   if [ ! -L Cross ]; then ln -s $(SOURCE_DIR_1) Cross;fi ; \
   find $(SOURCE_JPEG) -type f \
      \! -name JPEGReadWriter2Plugin.h \
