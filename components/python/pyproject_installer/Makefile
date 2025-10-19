@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-HUMAN_VERSION =			0.5.5
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.5.6
 COMPONENT_SUMMARY =		Pyproject installer
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5dc7daffc556156fcb7c8d2837e7edabad70c7437d8ea1e4c83022f09d4844b1
+	sha256:4e97bf3de9bdb915aa4dd4156ab6e626ec16982dc91ec7873afd5d0ecb180670
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,7 +36,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIREMENTS_PEP735 += test
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
