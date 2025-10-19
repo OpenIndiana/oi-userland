@@ -14,21 +14,23 @@
 #   $WS_TOOLS/python-integrate-project types-toml
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types-toml
 HUMAN_VERSION =			0.10.8.20240310
-COMPONENT_SUMMARY =		types-toml - Typing stubs for toml
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for toml
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3d41501302972436a6b8b239c850b26689657e25281b48ff0ec06345b8830331
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
