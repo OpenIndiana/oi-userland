@@ -1,0 +1,29 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --durations 25
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 3 items
+
+tests/test_jsmath.py::test_basic PASSED
+tests/test_jsmath.py::test_numfig_enabled PASSED
+tests/test_jsmath.py::test_disabled_when_equations_not_found PASSED
+
+=============================== warnings summary ===============================
+tests/conftest.py:11
+  $(@D)/tests/conftest.py:11: RemovedInSphinx90Warning: 'sphinx.testing.path' is deprecated. Use 'os.path' or 'pathlib' instead.
+    from sphinx.testing.path import path
+
+tests/test_jsmath.py::test_basic
+tests/test_jsmath.py::test_numfig_enabled
+tests/test_jsmath.py::test_disabled_when_equations_not_found
+  $(PYTHON_DIR)/vendor-packages/sphinx/builders/html/__init__.py:204: PendingDeprecationWarning: Argument "parser_name" will be removed in Docutils 2.0.
+    Specify parser name in the "parser" argument.
+    reader: Reader[DocTreeInput] = docutils.readers.doctree.Reader(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================= slowest 25 durations =============================
+======== 3 passed, 4 warnings ========
+  py$(PYV): OK
+  congratulations :)
