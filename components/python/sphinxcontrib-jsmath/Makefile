@@ -14,31 +14,36 @@
 #   $WS_TOOLS/python-integrate-project sphinxcontrib-jsmath
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib-jsmath
-COMPONENT_VERSION =		1.0.1
-COMPONENT_SUMMARY =		sphinxcontrib-jsmath - A sphinx extension which renders display math in HTML via JavaScript
+HUMAN_VERSION =			1.0.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A sphinx extension which renders display math in HTML via JavaScript
 COMPONENT_PROJECT_URL =		http://sphinx-doc.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b2/e8/9ed3830aeed71f17c026a07a5097edcf44b692850ef215b161b8ad875729/sphinxcontrib-jsmath-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a9925e4a4587247ed2191a22df5f6970656cb8ca2bd6284309578f2153e0c4b8
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# sphinxcontrib-jsmath needs sphinx to run tests, but sphinx needs
-# sphinxcontrib-jsmath to build itself.  This is special case when we need to
-# set PYTHON_TEST_BOOTSTRAP to make sure the sphinxcontrib-jsmath tests are not
-# run when there is no sphinx available yet.
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# sphinxcontrib-jsmath --> sphinx ==> sphinxcontrib-jsmath
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
