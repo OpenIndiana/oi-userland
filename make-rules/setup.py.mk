@@ -302,6 +302,7 @@ TOX_TESTENV = -e py$(subst .,,$(PYTHON_VERSION))
 
 # Make sure following tools are called indirectly to properly support tox-current-env
 TOX_CALL_INDIRECTLY += py.test
+TOX_CALL_INDIRECTLY.py.test += pytest
 TOX_CALL_INDIRECTLY += pytest
 TOX_CALL_INDIRECTLY += coverage
 TOX_CALL_INDIRECTLY += zope-testrunner
