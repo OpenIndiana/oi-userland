@@ -1,16 +1,55 @@
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-running egg_info
-writing pretend.egg-info/PKG-INFO
-writing dependency_links to pretend.egg-info/dependency_links.txt
-writing top-level names to pretend.egg-info/top_level.txt
-reading manifest file 'pretend.egg-info/SOURCES.txt'
-reading manifest template 'MANIFEST.in'
-adding license file 'LICENSE.rst'
-writing manifest file 'pretend.egg-info/SOURCES.txt'
-running build_ext
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 43 items
 
-----------------------------------------------------------------------
-Ran 0 tests
+test_pretend.py::TestStub::test_attribute PASSED
+test_pretend.py::TestStub::test_function PASSED
+test_pretend.py::TestStub::test_iter PASSED
+test_pretend.py::TestStub::test_next PASSED
+test_pretend.py::TestStub::test_contains PASSED
+test_pretend.py::TestStub::test_nonzero SKIPPED (condition: PY3K)
+test_pretend.py::TestStub::test_bool PASSED
+test_pretend.py::TestStub::test_len PASSED
+test_pretend.py::TestStub::test_special_binops[lt-__lt__] PASSED
+test_pretend.py::TestStub::test_special_binops[le-__le__] PASSED
+test_pretend.py::TestStub::test_special_binops[eq-__eq__] PASSED
+test_pretend.py::TestStub::test_special_binops[ne-__ne__] PASSED
+test_pretend.py::TestStub::test_special_binops[gt-__gt__] PASSED
+test_pretend.py::TestStub::test_special_binops[ge-__ge__] PASSED
+test_pretend.py::TestStub::test_special_binops[add-__add__] PASSED
+test_pretend.py::TestStub::test_special_binops[and_-__and__] PASSED
+test_pretend.py::TestStub::test_special_binops[divmod-__divmod__] PASSED
+test_pretend.py::TestStub::test_special_binops[floordiv-__floordiv__] PASSED
+test_pretend.py::TestStub::test_special_binops[lshift-__lshift__] PASSED
+test_pretend.py::TestStub::test_special_binops[mod-__mod__] PASSED
+test_pretend.py::TestStub::test_special_binops[mul-__mul__] PASSED
+test_pretend.py::TestStub::test_special_binops[or_-__or__] PASSED
+test_pretend.py::TestStub::test_special_binops[pow-__pow__] PASSED
+test_pretend.py::TestStub::test_special_binops[rshift-__rshift__] PASSED
+test_pretend.py::TestStub::test_special_binops[sub-__sub__] PASSED
+test_pretend.py::TestStub::test_special_binops[truediv-__truediv__] PASSED
+test_pretend.py::TestStub::test_special_binops[xor-__xor__] PASSED
+test_pretend.py::TestStub::test_div SKIPPED (condition: PY3K)
+test_pretend.py::TestStub::test_missing_op_error PASSED
+test_pretend.py::TestStub::test_subscript PASSED
+test_pretend.py::TestStub::test_setitem PASSED
+test_pretend.py::TestStub::test_delitem PASSED
+test_pretend.py::TestStub::test_context_manager PASSED
+test_pretend.py::TestStub::test_default_repr PASSED
+test_pretend.py::TestStub::test_custom_repr PASSED
+test_pretend.py::TestStub::test_callable PASSED
+test_pretend.py::TestRaiser::test_call_raiser PASSED
+test_pretend.py::TestRaiser::test_call_raiser_exc_value PASSED
+test_pretend.py::TestRaiser::test_non_exc_raiser PASSED
+test_pretend.py::TestCallRecorder::test_call_eq PASSED
+test_pretend.py::TestCallRecorder::test_call_repr PASSED
+test_pretend.py::TestCallRecorder::test_call_hash PASSED
+test_pretend.py::TestCallRecorder::test_simple PASSED
 
-OK
+======== 41 passed, 2 skipped ========
+  py$(PYV): OK
+  congratulations :)
