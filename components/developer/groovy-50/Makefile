@@ -12,12 +12,12 @@
 # Copyright 2016-2017 Jim Klimov
 #
 
-BUILD_STYLE=justmake
+BUILD_STYLE=archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groovy
 COMPONENT_MAJOR_VERSION=	5.0
-COMPONENT_MINOR_VERSION=	1
+COMPONENT_MINOR_VERSION=	2
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_ARCHIVE=	apache-$(COMPONENT_NAME)-binary-$(COMPONENT_VERSION).zip
 COMPONENT_FMRI=		developer/groovy-50
@@ -25,7 +25,7 @@ COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://groovy-lang.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:be66a17f34f69f473b23958ebee0770e88aaf735d79ba962454375c38d2854a5
+	sha256:70f82f11b1b764e207dcf5568882c78dc77293f307816242394a3f7a74f20e81
 COMPONENT_ARCHIVE_URL=\
 	https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		Apache-2.0, BSD, MIT, Eclipse 1.0, Eclipse 2.0, Public Domain, 3-clause BSD, JSR223
@@ -37,13 +37,22 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION += ($(CP) $(COMPONENT_DIR)/files/Makefile $(SOURCE_DIR))
+build:
 
-COMPONENT_COPY_ACTION = $(CP) -r $(SOURCE_DIR)/* $(@D)/
+install: prep
+	mkdir -p $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)
+	mkdir -p $(PROTO_DIR)/usr/bin
+	cp -rf $(SOURCE_DIR)/bin $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)
+	cp -rf $(SOURCE_DIR)/conf $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)
+	cp -rf $(SOURCE_DIR)/grooid $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)
+	cp -rf $(SOURCE_DIR)/lib $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)
+	ln -frs $(PROTO_DIR)/usr/share/groovy-$(COMPONENT_MAJOR_VERSION)/bin/* $(PROTO_DIR)/usr/bin
+	find $(PROTO_DIR) -name \*.bat -delete
 
-COMPONENT_INSTALL_ENV += GROOVY_MAJOR_VERSION=$(COMPONENT_MAJOR_VERSION)
+clean::
+	rm -rf $(BUILD_DIR)
+	rm -rf $(SOURCE_DIR)
 
-COMPONENT_POST_INSTALL_ACTION = $(FIND) $(PROTO_DIR) -name \*.bat -delete
 
 # JDK does not get picked up by gmake REQUIRED_PACKAGES
 REQUIRED_PACKAGES += runtime/java/openjdk21
