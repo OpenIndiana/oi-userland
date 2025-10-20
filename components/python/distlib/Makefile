@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
 HUMAN_VERSION =			0.4.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
 COMPONENT_ARCHIVE_HASH =	\
