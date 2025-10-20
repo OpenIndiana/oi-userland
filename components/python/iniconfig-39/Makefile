@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project iniconfig
+#   $WS_TOOLS/python-integrate-project -d python/iniconfig-39 iniconfig
 #
 
 BUILD_STYLE = pyproject
@@ -19,30 +19,32 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
-HUMAN_VERSION =			2.3.0
+HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		brain-dead simple config-ini parsing
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/iniconfig
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730
+	sha256:3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+TEST_STYLE = none
+
+# The sdist is missing tests:
+# https://github.com/pytest-dev/iniconfig/issues/67
+# ... and building from github tarball fails
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - pytest (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
-# Python 3.9 is not supported by iniconfig >= 2.2.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# iniconfig >= 2.2.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
