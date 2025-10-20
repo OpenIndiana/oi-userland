@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox_current_env
 HUMAN_VERSION =			0.0.16
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Use current environment instead of virtualenv for tox testenvs
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/tox-current-env
 COMPONENT_ARCHIVE_HASH =	\
@@ -41,15 +42,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
 		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
 		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e '/^$$/Q' | $(SORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(GSED) -u -e '/^$$/Q' | $(SORT) | $(GSED) -e '\$$a\'\$$'\\\n\\\n' ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tox
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tox
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
