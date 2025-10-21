@@ -1,7 +1,7 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest --durations 15 -n auto --junitxml $(@D)/.tox/junit.py$(PYV).xml --no-cov-on-fail --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests --run-integration
+py$(PYV): commands[0]> python -m pytest --durations 15 -n auto --junitxml $(@D)/.tox/junit.py$(PYV).xml --no-cov-on-fail --cov $(PROTO_DIR)/$(PYTHON_DIR)/vendor-packages/tox --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests --run-integration
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
@@ -1979,6 +1979,18 @@ Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
 Required test coverage of 88.0% reached. Total coverage: 98.10%
 ============================= slowest 15 durations =============================
 ======== 1907 passed, 1 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
 <class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
