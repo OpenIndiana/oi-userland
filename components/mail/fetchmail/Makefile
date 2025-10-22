@@ -29,14 +29,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.5.6
+COMPONENT_VERSION=	6.5.7
 COMPONENT_SUMMARY=	fetch mail from a POP, IMAP, ETRN, or ODMR-capable server
 COMPONENT_DESCRIPTION=	Fetchmail is a full-featured, robust, well-documented remote-mail retrieval and forwarding utility intended \
 to be used over on-demand TCP/IP links (such as SLIP or PPP connections). It supports every remote-mail protocol now in use on \
 	the Internet: POP2, POP3, RPOP, APOP, KPOP, all flavors of IMAP, ETRN, and ODMR. It can even support IPv6 and IPsec.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:a1d88b7a419fa97094008f169feba44e3e9acc40bc142811788211dad76ac763
+COMPONENT_ARCHIVE_HASH=	sha256:c3e72254ef29933e582d7a0e4c2910bd421207b02b1dcad85d3616112171b81d
 COMPONENT_ARCHIVE_URL=	https://gitlab.com/fetchmail/fetchmail/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.fetchmail.info/
 COMPONENT_FMRI=		mail/fetchmail
@@ -67,6 +67,7 @@ COMPONENT_POST_INSTALL_ACTION += \
         $(PYTHON) -m compileall $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages ; \
     fi ;
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS += --enable-NTLM
