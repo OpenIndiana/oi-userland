@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project tox
+#   $WS_TOOLS/python-integrate-project -d python/tox-39 tox
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.31.0
+HUMAN_VERSION =			4.30.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:266381ffef35615ec0d40ae4969a9e43b506017597c0413d6545a603cc8c7561
+	sha256:f3dd0735f1cd4e8fbea5a3661b77f517456b5f0031a6256432533900e34b90bf
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox-current-env (test bootstrap)
-# - Userland testing framework (see setup.py.mk)
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by tox >= 4.31.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# tox >= 4.31.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -55,6 +50,8 @@ REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/platformdirs
 REQUIRED_PACKAGES.python += library/python/pluggy
 REQUIRED_PACKAGES.python += library/python/pyproject-api
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += library/python/virtualenv
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build

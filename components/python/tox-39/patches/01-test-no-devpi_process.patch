@@ -1,17 +1,17 @@
 We do not have devpi_process available (yet)
 
---- tox-4.31.0/pyproject.toml.orig
-+++ tox-4.31.0/pyproject.toml
-@@ -79,7 +79,6 @@
+--- tox-4.30.3/pyproject.toml.orig
++++ tox-4.30.3/pyproject.toml
+@@ -80,7 +80,6 @@
    "covdefaults>=2.3",
-   "coverage>=7.10.7",
+   "coverage>=7.9.2",
    "detect-test-pollution>=1.2",
 -  "devpi-process>=1.0.2",
-   "diff-cover>=9.7.1",
+   "diff-cover>=9.6",
    "distlib>=0.4",
    "flaky>=3.8.1",
---- tox-4.31.0/src/tox/pytest.py.orig
-+++ tox-4.31.0/src/tox/pytest.py
+--- tox-4.30.3/src/tox/pytest.py.orig
++++ tox-4.30.3/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -20,7 +20,7 @@ We do not have devpi_process available (yet)
  from virtualenv.info import fs_supports_symlink
  
  import tox.run
-@@ -480,15 +479,6 @@
+@@ -481,15 +480,6 @@
  
  
  @pytest.fixture(scope="session")
@@ -36,17 +36,17 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.31.0/tests/test_provision.py.orig
-+++ tox-4.31.0/tests/test_provision.py
-@@ -19,7 +19,6 @@
-     from collections.abc import Callable, Iterator, Sequence
+--- tox-4.30.3/tests/test_provision.py.orig
++++ tox-4.30.3/tests/test_provision.py
+@@ -17,7 +17,6 @@
  
+ if TYPE_CHECKING:
      from build import DistributionType
 -    from devpi_process import Index, IndexServer
  
      from tox.pytest import MonkeyPatch, TempPathFactory, ToxProjectCreator
  
-@@ -104,39 +103,6 @@
+@@ -102,39 +101,6 @@
          return result
  
  
@@ -86,7 +86,7 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -150,96 +116,6 @@
+@@ -148,96 +114,6 @@
  
  
  @pytest.mark.integration
@@ -183,7 +183,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -248,17 +124,6 @@
+@@ -246,17 +122,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -201,7 +201,7 @@ We do not have devpi_process available (yet)
  @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
  def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
      ini = r"""
-@@ -273,33 +138,3 @@
+@@ -271,33 +136,3 @@
      outcome = project.run(subcommand)
      for argument in ["result_json", "hash_seed", "discover", "list_dependencies"]:
          assert hasattr(outcome.state.conf.options, argument)
