@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		alabaster
 HUMAN_VERSION =			1.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A light, configurable Sphinx theme
 COMPONENT_PROJECT_URL =		https://alabaster.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,11 +28,10 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
-# This project does not contain tests
 TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
