@@ -1,0 +1,11 @@
+--- firefox-144.0/xpcom/ds/nsTArray.h.old	2025-10-22 07:16:20.287293598 -0400
++++ firefox-144.0/xpcom/ds/nsTArray.h	2025-10-22 07:17:17.412372680 -0400
+@@ -2972,7 +2972,7 @@
+       char mStorage[sizeof(value_type) * N];
+     };
+     AutoBuffer() : mHdr{.mLength = 0, .mCapacity = N, .mIsAutoArray = true} {}
+-    ~AutoBuffer() {}
++    ~AutoBuffer() = default;
+   } mAutoBuf;
+   static_assert(offsetof(AutoBuffer, mStorage) == sizeof(nsTArrayHeader),
+                 "Shouldn't have padding");
