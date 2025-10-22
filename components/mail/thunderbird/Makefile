@@ -32,16 +32,16 @@ include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 2
+# CANDIDATE_BUILD= 1
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	143.0.1
+COMPONENT_VERSION =	144.0.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:0e6da9f07d380fe00f03c45238a3b999a01e95d5af0910d023675fe9ac13a85a
+	 sha256:62dd606308ee0c3298e052c05a8fce321df3a1012628511c7aacdf7ef6b7e965
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -51,7 +51,7 @@ COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 
-RUST_VERSION = 1.88.0
+RUST_VERSION = 1.89.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -88,9 +88,6 @@ PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH=               x86_64-unknown-illumos
-
-# Clang 20 does not work with Mozilla patches
-CLANG_VERSION= 19
 
 ifdef DEBUG
 # disable code optimization

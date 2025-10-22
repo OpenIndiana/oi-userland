@@ -1,0 +1,14 @@
+Let libc load on Illumos
+
+--- thunderbird-144.0/comm/chat/modules/CLib.sys.mjs.~1~	2025-10-10 15:53:49.000000000 -0400
++++ thunderbird-144.0/comm/chat/modules/CLib.sys.mjs	2025-10-19 15:14:51.314797379 -0400
+@@ -42,7 +42,8 @@
+     libcPath = "libc.so.6";
+     break;
+   default:
+-    throw new Error("Unknown OS");
++    libcAbi = ctypes.default_abi;
++    libcPath = "libc.so.1";
+ }
+ 
+ var libc = ctypes.open(libcPath);
