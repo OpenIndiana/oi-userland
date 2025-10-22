@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --junitxml $(@D)/.tox/junit.py$(PYV).xml --cov filelock --cov $(@D)/tests --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/coverage.py$(PYV).xml tests
+py$(PYV): commands[0]> python -m pytest --durations 10 --junitxml $(@D)/.tox/py$(PYV)/tmp/junit.xml --no-cov-on-fail --cov filelock --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/py$(PYV)/tmp/coverage.xml tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=strict, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 155 items
+collecting ... collected 170 items
 
 tests/test_async_filelock.py::test_simple[a-str-AsyncUnixFileLock] PASSED
 tests/test_async_filelock.py::test_simple[a-str-AsyncSoftFileLock] PASSED
@@ -51,6 +51,19 @@ tests/test_async_filelock.py::test_non_executor[True-AsyncSoftFileLock] PASSED
 tests/test_async_filelock.py::test_non_executor[False-AsyncUnixFileLock] PASSED
 tests/test_async_filelock.py::test_non_executor[False-AsyncSoftFileLock] PASSED
 tests/test_async_filelock.py::test_coroutine_function PASSED
+tests/test_async_filelock.py::test_wait_message_logged[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_wait_message_logged[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire_branch[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire_branch[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_thread_local_run_in_executor PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_release[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_release[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_early_exit_when_unlocked[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_early_exit_when_unlocked[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_release_nonzero_counter_exit[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_nonzero_counter_exit[AsyncSoftFileLock] PASSED
 tests/test_error.py::test_timeout_str PASSED
 tests/test_error.py::test_timeout_repr PASSED
 tests/test_error.py::test_timeout_lock_file PASSED
@@ -162,27 +175,69 @@ tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[
 tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[SoftFileLock] PASSED
 tests/test_filelock.py::test_singleton_locks_when_inheriting_init_is_called_once PASSED
 tests/test_filelock.py::test_file_lock_positional_argument PASSED
+tests/test_filelock.py::test_mtime_zero_exit_branch[SoftFileLock-TimeoutError] PASSED
+tests/test_filelock.py::test_mtime_zero_exit_branch[UnixFileLock-PermissionError] PASSED
 tests/test_virtualenv.py::test_virtualenv PASSED
 
-- generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
+- generated xml file: $(@D)/.tox/py$(PYV)/tmp/junit.xml -
 ================================ tests coverage ================================
 _______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
 
 Name                                                                                                                                  Stmts   Miss Branch BrPart  Cover   Missing
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/__init__.py      22      4      2      1    79%   41-44
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_api.py         143      1     28      0    99%   237
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_unix.py         38      2      4      0    95%   31-32
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_util.py         19      0      4      1    96%   26->exit
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/asyncio.py      107      5     22      5    92%   85-86, 214->217, 228->231, 240-242, 259->exit
-tests/test_filelock.py                                                                                                                  504      1     22      1    99%   546
+tests/test_filelock.py                                                                                                                  514      1     22      1    99%   546
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                  1039     13     82      8    98%
+TOTAL                                                                                                                                  1110      7     82      2    99%
 
-7 files skipped due to complete coverage.
+10 files skipped due to complete coverage.
 Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
-Coverage XML written to file $(@D)/.tox/coverage.py$(PYV).xml
-Required test coverage of 76.0% reached. Total coverage: 98.13%
-======== 135 passed, 20 skipped ========
+Coverage XML written to file $(@D)/.tox/py$(PYV)/tmp/coverage.xml
+Required test coverage of 76.0% reached. Total coverage: 99.24%
+============================= slowest 10 durations =============================
+======== 150 passed, 20 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)
