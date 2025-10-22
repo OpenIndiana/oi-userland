@@ -382,11 +382,14 @@ fi
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 
+PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
+
+
 # detect TEST_STYLE
 TEST_STYLE=
 cd "$SOURCE_DIR$COMPONENT_SUBDIR"
 while true ; do
-	TOX_OUT=$(tox -l)
+	TOX_OUT=$(tox-${PYTHON_VERSIONS%% *} -l)
 	TOX_RET=$?
 	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
 
@@ -394,12 +397,12 @@ while true ; do
 	# always collects tests to run even there are no pytest tests available
 	# otherwise.  Some other plugins could do the opposite: prevent tests
 	# collection even there are pytest tests available.
-	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest --setup-plan
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest-${PYTHON_VERSIONS%% *} --setup-plan
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
-	python -m unittest discover 2>&1 | grep '^Ran' | grep -q -v '^Ran 0 ' && TEST_STYLE='unittest' && break
+	python-${PYTHON_VERSIONS%% *} -m unittest discover 2>&1 | grep '^Ran' | grep -q -v '^Ran 0 ' && TEST_STYLE='unittest' && break
 
-	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
+	[[ -f setup.py ]] && python-${PYTHON_VERSIONS%% *} setup.py test --help && TEST_STYLE="setup.py" && break
 
 	TEST_STYLE="none"
 	break
@@ -508,7 +511,6 @@ $GMAKE publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5 2>/dev/null
 
 
-PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
 PYTHON_TEST_BOOTSTRAP=$($GMAKE print-value-PYTHON_TEST_BOOTSTRAP)
 
 
