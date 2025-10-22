@@ -13,12 +13,6 @@
 # Copyright (c) 2018, 2021, Oracle and/or its affiliates.
 #
 
-#
-<transform file path=usr/share/man/.+$ -> default mangler.man.stability "pass-through volatile">
-#
-<transform file path=.*lib/.*\.app$ -> default mode 0444>
-<transform file path=.*lib/.*\.beam$ -> default mode 0444>
-#
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
@@ -28,6 +22,10 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/share/man/.+$ -> default mangler.man.stability "pass-through volatile">
+<transform file path=.*lib/.*\.app$ -> default mode 0444>
+<transform file path=.*lib/.*\.beam$ -> default mode 0444>
 
 link path=usr/bin/elixir target=../lib/elixir/bin/elixir
 link path=usr/bin/elixirc target=../lib/elixir/bin/elixirc
@@ -124,7 +122,6 @@ file path=usr/lib/elixir/lib/elixir/ebin/Elixir.GenServer.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.HashDict.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.HashSet.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.IO.ANSI.Docs.beam
-file path=usr/lib/elixir/lib/elixir/ebin/Elixir.IO.ANSI.Sequence.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.IO.ANSI.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.IO.Stream.beam
 file path=usr/lib/elixir/lib/elixir/ebin/Elixir.IO.StreamError.beam
@@ -348,7 +345,6 @@ file path=usr/lib/elixir/lib/ex_unit/ebin/ex_unit.app
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.App.beam
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.Autocomplete.beam
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.Broker.beam
-file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.CLI.beam
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.Config.beam
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.Evaluator.beam
 file path=usr/lib/elixir/lib/iex/ebin/Elixir.IEx.Helpers.beam
@@ -395,6 +391,7 @@ file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.AppLoader.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.CLI.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Compilers.Elixir.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Compilers.Erlang.beam
+file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Compilers.Protocol.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Compilers.Test.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Config.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Dep.Converger.beam
@@ -455,6 +452,7 @@ file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Clean.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Compile.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Get.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Loadpaths.beam
+file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Partition.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Precompile.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Tree.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Deps.Unlock.beam
@@ -472,7 +470,6 @@ file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Iex.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Loadconfig.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Loadpaths.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Local.Hex.beam
-file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Local.PublicKeys.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Local.Rebar.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.Local.beam
 file path=usr/lib/elixir/lib/mix/ebin/Elixir.Mix.Tasks.New.beam

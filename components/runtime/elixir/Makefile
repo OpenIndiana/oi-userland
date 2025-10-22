@@ -25,16 +25,14 @@
 
 # Only executable scripts and bytecode files.
 BUILD_BITS= NO_ARCH
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
-PATH=$(PATH.gnu)
-
 COMPONENT_NAME=		elixir
-COMPONENT_VERSION=	1.18.4
+COMPONENT_VERSION=	1.19.1
 COMPONENT_SUMMARY= Elixir is a functional programming language for building highly scalable and maintainable applications.
 COMPONENT_PROJECT_URL=	https://elixir-lang.org/
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:8e136c0a92160cdad8daa74560e0e9c6810486bd232fbce1709d40fcc426b5e0
+COMPONENT_ARCHIVE_HASH=	sha256:4dfbfa2d0863bb3809109757a599b453e78ea890f31fa54456a2d81b40bc930f
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= ${COMPONENT_SRC}.tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/elixir-lang/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -43,10 +41,9 @@ COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE=	Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
-
-BUILD_STYLE= justmake
-
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 # Elixir does not like cloney, so a simple copy is used instead.
 CLONEY_MODE = copy
@@ -73,7 +70,7 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^hint/d"'
 # there's a difference between i386 and sparc
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
-
+# Manually added build dependencies
 REQUIRED_PACKAGES += runtime/erlang
 
 # Auto-generated dependencies
