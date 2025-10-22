@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		annotated_types
 HUMAN_VERSION =			0.7.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Reusable constraint types to use with typing.Annotated
 COMPONENT_PROJECT_URL =		https://github.com/annotated-types/annotated-types
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,5 +36,5 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12,\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
