@@ -68,7 +68,6 @@ COMPONENT_SUMMARY.graphviz-ruby =	Ruby bindings for Graphviz
 COMPONENT_FMRI.graphviz-tcl =		$(COMPONENT_FMRI)/graphviz-tcl
 COMPONENT_SUMMARY.graphviz-tcl =	Tcl bindings for Graphviz
 
-# no usable tests available
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
