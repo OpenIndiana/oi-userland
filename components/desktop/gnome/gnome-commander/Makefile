@@ -18,6 +18,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
 HUMAN_VERSION=		1.18.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
 COMPONENT_ARCHIVE_HASH=	sha256:fb54300fbc2f14a45dd7202317cb8136e8a2253b43df2351df65aa58bdd6fbca
