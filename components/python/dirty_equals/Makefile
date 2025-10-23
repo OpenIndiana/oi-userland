@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dirty_equals
 HUMAN_VERSION =			0.10.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Doing dirty (but extremely useful) things with equals.
 COMPONENT_PROJECT_URL =		https://github.com/samuelcolvin/dirty-equals
 COMPONENT_ARCHIVE_HASH =	\
@@ -53,6 +54,9 @@ PYTEST_ADDOPTS += --ignore tests/test_docs.py
 # This is needed for few tests to pass
 # See also https://github.com/samuelcolvin/dirty-equals/issues/97
 COMPONENT_TEST_ENV += TZ=UTC
+
+# Normalize random uuids
+COMPONENT_TEST_TRANSFORMS += "-e 's/\[[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}-/[\$$(UUID)-/g'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
