@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fixtures
 HUMAN_VERSION =			4.2.6
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Fixtures, reusable state for writing clean tests and more.
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/fixtures
 COMPONENT_ARCHIVE_HASH =	\
@@ -40,8 +41,8 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/testtools
