@@ -18,13 +18,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenColorIO
-COMPONENT_VERSION=	2.4.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.5.0
 COMPONENT_SUMMARY=	A color management framework for visual effects and animation
 COMPONENT_PROJECT_URL=	https://github.com/AcademySoftwareFoundation/$(COMPONENT_NAME)
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2d8f2c47c40476d6e8cea9d878f6601d04f6d5642b47018eaafa9e9f833f3690
+COMPONENT_ARCHIVE_HASH=	sha256:124e2bfa8a9071959d6ddbb64ffbf78d3f6fe3c923ae23e96a6bbadde1af55b6
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/opencolorio
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -40,7 +39,7 @@ CMAKE_OPTIONS += -DCMAKE_SKIP_RPATH=TRUE
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_$(BITS))/src/OpenColorIO
 
 # Manually added optional build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pybind11
+REQUIRED_PACKAGES.python += library/python/pybind11
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
