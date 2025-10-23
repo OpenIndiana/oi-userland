@@ -23,7 +23,7 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	141.0.3
+COMPONENT_MAJOR_VERSION =	144.0
 COMPONENT_MINOR_VERSION =	1
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
@@ -32,12 +32,12 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a42535781168f3b2f398125a16ea925aaa31f07e0739bf41c12efc2cd39ccdce
+COMPONENT_ARCHIVE_HASH= sha256:7dbf8ebee436fd3efc5895b5151af0e23063ef1d3a47ff3da6d55dfcc1b047c6
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.87.0
+RUST_VERSION= 1.89.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -53,7 +53,7 @@ MOZCONFIG= $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
 # Clang 20 does not work with Mozilla patches
-CLANG_VERSION= 19
+# CLANG_VERSION= 19
 
 ifdef DEBUG
 # disable code optimization
@@ -153,8 +153,8 @@ COMPONENT_POST_BUILD_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf:/usr/lib/mps/amd64"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf"' $$file ; \
     done ; \
     mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution/distribution.ini ; \
