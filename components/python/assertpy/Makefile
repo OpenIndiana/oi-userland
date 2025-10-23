@@ -14,13 +14,14 @@
 #   $WS_TOOLS/python-integrate-project assertpy
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		assertpy
 HUMAN_VERSION =			1.1
-COMPONENT_SUMMARY =		assertpy - Simple assertion library for unit testing in python with a fluent API
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Simple assertion library for unit testing in python with a fluent API
 COMPONENT_PROJECT_URL =		https://github.com/assertpy/assertpy
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/assertpy/assertpy/archive/refs/tags/$(HUMAN_VERSION).tar.gz
@@ -34,4 +35,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
