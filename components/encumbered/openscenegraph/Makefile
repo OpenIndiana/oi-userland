@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		OpenSceneGraph
 COMPONENT_VERSION=	3.6.5
-COMPONENT_REVISION= 9
+COMPONENT_REVISION= 10
 COMPONENT_PROJECT_URL=	https://www.openscenegraph.com
 COMPONENT_SUMMARY=	OpenSceneGraph - High performance 3D graphics toolkit.
 COMPONENT_SRC=		OpenSceneGraph-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -40,6 +40,7 @@ CMAKE_OPTIONS += -DLIB_POSTFIX=/$(MACH64)
 # OpenSceneGraph doesn't yet support FFmpeg 5 or higher, we have FFmpeg 6, so disable it for now
 # https://github.com/openscenegraph/OpenSceneGraph/issues/1111
 CMAKE_OPTIONS += -DCMAKE_DISABLE_FIND_PACKAGE_FFmpeg=1
+CMAKE_OPTIONS += -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
