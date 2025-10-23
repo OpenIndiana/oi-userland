@@ -14,25 +14,25 @@
 #   $WS_TOOLS/python-integrate-project pytest-custom_exit_code
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-custom_exit_code
 HUMAN_VERSION =			0.3.0
-COMPONENT_SUMMARY =		pytest-custom_exit_code - Exit pytest test session with custom exit code in different scenarios
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Exit pytest test session with custom exit code in different scenarios
 COMPONENT_PROJECT_URL =		https://github.com/yashtodi94/pytest-custom_exit_code
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/92/9d/e1eb0af5e96a5c34f59b9aa69dfb680764420fe60f2ec28cfbc5339f99f8/pytest-custom_exit_code-0.3.0.tar.gz
+	https://github.com/yashtodi94/pytest-custom_exit_code/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:51ffff0ee2c1ddcc1242e2ddb2a5fd02482717e33a2326ef330e3aa430244635
+	sha256:3dce729cb7edcdfb07956719507995bc66d0223f1f4b24ae9842a9fa3ea9ceb9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = setup.py
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
