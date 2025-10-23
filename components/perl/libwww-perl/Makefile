@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libwww-perl
-HUMAN_VERSION =			6.80
+HUMAN_VERSION =			6.81
 COMPONENT_SUMMARY =		The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5ba3fc5a00836e61cb428bcd91bf69d8d74eaee6d78e44c3a414f78076af0a98
+	sha256:ab30552f194e8b5ae3ac0885132fd1d4ea04c4c7fe6555765b98f01af70c1736
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
