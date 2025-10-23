@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tracker
 COMPONENT_VERSION=      1.8.3
-COMPONENT_REVISION=     17
+COMPONENT_REVISION=     18
 COMPONENT_SUMMARY=      Desktop search tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -116,6 +116,7 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libexif
 REQUIRED_PACKAGES += image/library/libpng16
