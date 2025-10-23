@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			graphviz
 COMPONENT_VERSION=		12.2.1
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_DESCRIPTION=	The Graphviz layout programs take descriptions of graphs in a \
             simple text language, and make diagrams in useful formats, such as images and SVG \
             for web pages, PDF or PostScript for inclusion in other documents; or display in an \
@@ -158,8 +158,6 @@ REQUIRED_PACKAGES += web/php-$(PHPVER)
 REQUIRED_PACKAGES += developer/golang
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
@@ -184,3 +182,5 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES.perl += runtime/perl
+REQUIRED_PACKAGES.python += runtime/python
