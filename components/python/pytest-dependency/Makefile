@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project pytest-dependency
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-dependency
 HUMAN_VERSION =			0.6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Manage dependencies of tests
 COMPONENT_PROJECT_URL =		https://github.com/RKrahl/pytest-dependency
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
