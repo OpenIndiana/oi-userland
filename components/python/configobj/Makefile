@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		configobj
 HUMAN_VERSION =			5.0.9
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Config file reading, writing and validation.
 COMPONENT_PROJECT_URL =		https://github.com/DiffSK/configobj
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
