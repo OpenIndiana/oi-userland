@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pure_eval
 HUMAN_VERSION =			0.2.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Safely evaluate AST nodes without side effects
 COMPONENT_PROJECT_URL =		http://github.com/alexmojaki/pure_eval
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,8 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
