@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_mock
 HUMAN_VERSION =			5.2.0.20250924
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Typing stubs for mock
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
