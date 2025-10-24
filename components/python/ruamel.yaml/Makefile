@@ -15,16 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml
-HUMAN_VERSION =			0.18.15
+HUMAN_VERSION =			0.18.16
 COMPONENT_SUMMARY =		ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order
 COMPONENT_ARCHIVE_URL =		\
 	https://sourceforge.net/projects/ruamel-dl-tagged-releases/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:175b3a605b045249c3452a9be451cec906cfe3706d925c74e00d1861d921d75b
+	sha256:445f2df91259938e5940d9368f07e20004bd22858f7b381e627a926b1b402e10
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,7 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
