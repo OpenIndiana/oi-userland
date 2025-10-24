@@ -20,7 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_metadata
 HUMAN_VERSION =			0.9.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PEP 621 metadata parsing
+COMPONENT_PROJECT_URL =		https://github.com/pypa/pyproject-metadata
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b8b2253dd1b7062b78cf949a115f02ba7fa4114aabe63fa10528e9e1a954a816
 COMPONENT_LICENSE =		MIT
@@ -34,6 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += runtime/python
