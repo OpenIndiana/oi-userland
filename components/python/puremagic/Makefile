@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		puremagic
 HUMAN_VERSION =			1.30
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure python implementation of magic file detection
 COMPONENT_PROJECT_URL =		https://github.com/cdgriffith/puremagic
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +34,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
