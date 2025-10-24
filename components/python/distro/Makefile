@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distro
 HUMAN_VERSION =			1.9.0
-COMPONENT_SUMMARY =		distro - Distro - an OS platform information API
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Distro - an OS platform information API
 COMPONENT_PROJECT_URL =		https://github.com/python-distro/distro
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/fc/f8/98eea607f65de6527f8a2e8885fc8015d3e6f5775df186e443e0964a11c3/distro-1.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed
 COMPONENT_LICENSE =		Apache-2.0
@@ -34,6 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
