@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pdm_backend
 HUMAN_VERSION =			2.4.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The build backend used by PDM that supports latest packaging standards
 COMPONENT_PROJECT_URL =		https://github.com/pdm-project/pdm-backend
 COMPONENT_ARCHIVE_HASH =	\
@@ -37,5 +38,5 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/d$(shell /usr/bin/date +%Y%m%d)]/d\$$(DATE)]
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += runtime/python
