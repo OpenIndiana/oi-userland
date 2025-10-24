@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
 HUMAN_VERSION =			0.22.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Docutils -- Python Documentation Utilities
 COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
