@@ -360,30 +360,31 @@ USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox-current-env
 # Please note we set PATH below five times for tox to workaround
 # https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -x "$(TOX)" ] ; then \
+	if $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
-		PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
-		PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing dependency groups:" ; \
-		PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
-		( PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
+		( PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
 				PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-		for e in $$(PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
+		for e in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 		done \
 		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
 	fi ;
+# Both tox and tox-current-env are needed to generate the list of test
+# dependencies.  During the bootstrap they might be not available so depend on
+# them conditionally.  Additionally, the python-requires script requires
+# packaging, but this dependency is already handled separately (see below).
+USERLAND_REQUIRED_PACKAGES.python += $(if $(filter yes,$(PYTHON_TEST_BOOTSTRAP)),,library/python/tox)
+USERLAND_REQUIRED_PACKAGES.python += $(if $(filter yes,$(PYTHON_TEST_BOOTSTRAP)),,library/python/tox-current-env)
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
