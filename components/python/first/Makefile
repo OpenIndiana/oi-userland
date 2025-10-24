@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project first
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		first
 HUMAN_VERSION =			2.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Return the first true value of an iterable.
 COMPONENT_PROJECT_URL =		http://github.com/hynek/first/
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,5 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
