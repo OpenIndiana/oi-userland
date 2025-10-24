@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project smmap
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		smmap
 HUMAN_VERSION =			5.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A pure Python implementation of a sliding window memory map manager
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/smmap
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,4 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
