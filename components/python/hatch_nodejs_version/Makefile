@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch_nodejs_version
 HUMAN_VERSION =			0.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Hatch plugin for versioning from a package.json file
 COMPONENT_PROJECT_URL =		https://github.com/agoose77/hatch-nodejs-version
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
