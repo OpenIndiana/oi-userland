@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycparser
 HUMAN_VERSION =			2.23
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		C parser in Python
 COMPONENT_PROJECT_URL =		https://github.com/eliben/pycparser
 COMPONENT_ARCHIVE_HASH =	\
