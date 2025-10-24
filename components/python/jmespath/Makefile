@@ -14,16 +14,15 @@
 #   $WS_TOOLS/python-integrate-project jmespath
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jmespath
 HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		jmespath - JSON Matching Expressions
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		JSON Matching Expressions
 COMPONENT_PROJECT_URL =		https://github.com/jmespath/jmespath.py
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/00/2a/e867e8531cf3e36b41201936b7fa7ba7b5702dbef42922193f05c8976cd6/jmespath-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe
 COMPONENT_LICENSE =		MIT
@@ -34,4 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
