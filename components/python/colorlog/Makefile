@@ -14,16 +14,17 @@
 #   $WS_TOOLS/python-integrate-project colorlog
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		colorlog
-HUMAN_VERSION =			6.9.0
+HUMAN_VERSION =			6.10.1
 COMPONENT_SUMMARY =		Add colours to the output of Python's logging module.
 COMPONENT_PROJECT_URL =		https://github.com/borntyping/python-colorlog
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bfba54a1b93b94f54e1f4fe48395725a3d92fd2a4af702f6bd70946bdc0c6ac2
+	sha256:eb4ae5cb65fe7fec7773c2306061a8e63e02efc2c72eba9d27b0fa23c94f1321
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,4 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
