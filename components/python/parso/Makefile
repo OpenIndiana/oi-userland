@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parso
 HUMAN_VERSION =			0.8.5
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A Python Parser
 COMPONENT_PROJECT_URL =		https://github.com/davidhalter/parso
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +33,9 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
