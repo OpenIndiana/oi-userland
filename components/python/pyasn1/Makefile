@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1
 HUMAN_VERSION =			0.6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)
 COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
