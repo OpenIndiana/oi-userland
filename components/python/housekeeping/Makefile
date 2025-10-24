@@ -20,7 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		housekeeping
 HUMAN_VERSION =			1.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python utilities for helping deprecate and remove code.
+COMPONENT_PROJECT_URL =		https://github.com/beanbaginc/housekeeping
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:75e71f1cc501885406f6be81410c9b05361871a3ecccde3891336da1e92426b5
 COMPONENT_LICENSE =		MIT
@@ -31,7 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
