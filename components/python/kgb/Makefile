@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		kgb
 HUMAN_VERSION =			7.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Utilities for spying on function calls in unit tests.
 COMPONENT_PROJECT_URL =		https://github.com/beanbaginc/kgb
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,6 +32,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
