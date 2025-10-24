@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project mock
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mock
 HUMAN_VERSION =			5.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Rolling backport of unittest.mock for all Pythons
 COMPONENT_PROJECT_URL =		http://mock.readthedocs.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,4 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
