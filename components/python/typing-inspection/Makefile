@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_inspection
 HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Runtime typing introspection tools
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/typing-inspection
 COMPONENT_ARCHIVE_HASH =	\
