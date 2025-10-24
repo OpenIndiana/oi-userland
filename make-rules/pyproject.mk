@@ -74,9 +74,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	for p in $(TEST_REQUIREMENTS_PEP735) ; do \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
 	done ; \
-	if [ "$(strip $(TEST_STYLE))" == "tox" -a -x "$(TOX)" ] ; then \
-		for p in $$(PATH=$(PATH) PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
+	if [ "$(strip $(TEST_STYLE))" == "tox" ] && $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
+		for p in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
 				$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
 		done ; \
 	fi ; \
