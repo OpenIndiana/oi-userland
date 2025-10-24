@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytimeparse
 HUMAN_VERSION =			1.1.8
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Time expression parser
 COMPONENT_PROJECT_URL =		https://github.com/wroberts/pytimeparse
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +34,5 @@ TEST_STYLE = unittest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
