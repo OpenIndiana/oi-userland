@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_scm
-HUMAN_VERSION =			9.2.1
+HUMAN_VERSION =			9.2.2
 COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2f5b21e45205e47ed3976e58bc29c38f49bb9b6f07c625c7fd2823871694b244
+	sha256:1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,6 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - flit_scm (test bootstrap)
 # - hatch_vcs (test bootstrap)
 # - importlib_metadata
+# - iniconfig (test bootstrap)
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
 # - zipp
