@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
 HUMAN_VERSION =			9.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
@@ -52,8 +53,8 @@ TEST_REQUIREMENTS_EXTRAS += test
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
