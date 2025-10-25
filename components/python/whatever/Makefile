@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project whatever
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		whatever
 HUMAN_VERSION =			0.7
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Easy way to make anonymous functions by partial application of operators.
 COMPONENT_PROJECT_URL =		http://github.com/Suor/whatever
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,5 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
