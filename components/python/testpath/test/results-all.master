@@ -1,16 +1,23 @@
 ============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
 rootdir: $(@D)
-asyncio: mode=legacy
-collected 14 items
+configfile: pyproject.toml
+collecting ... collected 14 items
 
-tests/test_asserts.py .......
-tests/test_commands.py ....
-tests/test_env.py ...
+tests/test_asserts.py::TestAssertFunctions::test_exists PASSED
+tests/test_asserts.py::TestAssertFunctions::test_isdir PASSED
+tests/test_asserts.py::TestAssertFunctions::test_isfile PASSED
+tests/test_asserts.py::TestAssertFunctions::test_isfile_symlink PASSED
+tests/test_asserts.py::TestAssertFunctions::test_islink PASSED
+tests/test_asserts.py::TestAssertFunctions::test_ispipe PASSED
+tests/test_asserts.py::TestAssertFunctions::test_issocket PASSED
+tests/test_commands.py::CommandsTests::test_assert_calls PASSED
+tests/test_commands.py::CommandsTests::test_assert_calls_twice PASSED
+tests/test_commands.py::CommandsTests::test_assert_calls_with_args PASSED
+tests/test_commands.py::test_fixed_output PASSED
+tests/test_env.py::EnvironmentUtilsTests::test_modified_env PASSED
+tests/test_env.py::EnvironmentUtilsTests::test_modified_env_nosnapshot PASSED
+tests/test_env.py::EnvironmentUtilsTests::test_temporary_env PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191
-  $(PYTHON_DIR)/vendor-packages/pytest_asyncio/plugin.py:191: DeprecationWarning: The 'asyncio_mode' default value will change to 'strict' in future, please explicitly use 'asyncio_mode=strict' or 'asyncio_mode=auto' in pytest configuration file.
-    config.issue_config_time_warning(LEGACY_MODE, stacklevel=2)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 14 passed, 1 warning ========
+======== 14 passed ========
