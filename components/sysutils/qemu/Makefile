@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
-COMPONENT_VERSION=	10.1.0
+COMPONENT_VERSION=	10.1.1
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
@@ -29,7 +29,7 @@ COMPONENT_FMRI=		system/qemu
 COMPONENT_CLASSIFICATION= System/Virtualization
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e0517349b50ca73ebec2fa85b06050d5c463ca65c738833bd8fc1f15f180be51
+COMPONENT_ARCHIVE_HASH=	sha256:e56b93d95953a9b6a64d1985dbcedfb07dc54d92c50b7912526693536c589923
 COMPONENT_ARCHIVE_URL=	https://download.qemu.org/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= 	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
@@ -57,6 +57,7 @@ CFLAGS += -Wno-error=incompatible-pointer-types
 
 # Build dependencies
 REQUIRED_PACKAGES += library/libtasn1
+PYTHON_REQUIRED_PACKAGES += library/python/sphinx-rtd-theme
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
