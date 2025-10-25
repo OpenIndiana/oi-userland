@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstd
 HUMAN_VERSION =			1.5.7.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ZSTD Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/sergey-dryabzhinsky/python-zstd
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
