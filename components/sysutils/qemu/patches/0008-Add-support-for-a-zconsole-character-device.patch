@@ -1,4 +1,4 @@
-From 2096da69b5b18139bcea5aad55eaa009143656a6 Mon Sep 17 00:00:00 2001
+From e6a513f0f2408570114ea13e956db75cbb6078c6 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <illumos@fiddaman.net>
 Date: Mon, 22 May 2023 20:31:38 +0000
 Subject: Add support for a zconsole character device
@@ -14,7 +14,7 @@ Subject: Add support for a zconsole character device
 
 diff --git a/chardev/char-zconsole.c b/chardev/char-zconsole.c
 new file mode 100644
-index 0000000000..86d0df36e2
+index 0000000000..9648fbf1d5
 --- /dev/null
 +++ b/chardev/char-zconsole.c
 @@ -0,0 +1,74 @@
@@ -71,7 +71,7 @@ index 0000000000..86d0df36e2
 +}
 +
 +static void
-+char_zconsole_init(ObjectClass *oc, void *data)
++char_zconsole_init(ObjectClass *oc, const void *data)
 +{
 +	ChardevClass *cc = CHARDEV_CLASS(oc);
 +
@@ -122,10 +122,10 @@ index 429852f8d9..eb55c9e862 100644
  #define TYPE_CHARDEV_UDP "chardev-udp"
  
 diff --git a/include/qemu/osdep.h b/include/qemu/osdep.h
-index 4397a90680..088f6f87a1 100644
+index 96fe51bc39..4c01c862e3 100644
 --- a/include/qemu/osdep.h
 +++ b/include/qemu/osdep.h
-@@ -526,6 +526,10 @@ int qemu_shm_alloc(size_t size, Error **errp);
+@@ -530,6 +530,10 @@ int qemu_shm_alloc(size_t size, Error **errp);
  #endif
  #endif
  
@@ -137,10 +137,10 @@ index 4397a90680..088f6f87a1 100644
  #define SIGIO SIGPOLL
  #endif
 diff --git a/qapi/char.json b/qapi/char.json
-index dde2f9538f..4461db49ef 100644
+index f0a53f742c..514a9ffc4c 100644
 --- a/qapi/char.json
 +++ b/qapi/char.json
-@@ -480,6 +480,8 @@
+@@ -478,6 +478,8 @@
  #
  # @parallel: parallel host device
  #
@@ -149,7 +149,7 @@ index dde2f9538f..4461db49ef 100644
  # @pipe: pipes (since 1.5)
  #
  # @socket: stream socket
-@@ -530,6 +532,7 @@
+@@ -528,6 +530,7 @@
    'data': [ 'file',
              { 'name': 'serial', 'if': 'HAVE_CHARDEV_SERIAL' },
              { 'name': 'parallel', 'if': 'HAVE_CHARDEV_PARALLEL' },
@@ -157,7 +157,7 @@ index dde2f9538f..4461db49ef 100644
              'pipe',
              'socket',
              'udp',
-@@ -723,6 +726,7 @@
+@@ -721,6 +724,7 @@
                          'if': 'HAVE_CHARDEV_SERIAL' },
              'parallel': { 'type': 'ChardevHostdevWrapper',
                            'if': 'HAVE_CHARDEV_PARALLEL' },
