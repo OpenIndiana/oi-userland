@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1_modules
 HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A collection of ASN.1-based protocols modules
 COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1-modules
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyasn1
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pyasn1
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
