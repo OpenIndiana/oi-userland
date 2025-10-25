@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
 HUMAN_VERSION =			25.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
@@ -37,10 +38,13 @@ TEST_STYLE = pytest
 # - setuptools-scm
 # - tox (test bootstrap)
 # - Userland build framework (see setup.py.mk)
-# - wheel (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += tests/requirements.txt
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
@@ -48,3 +52,5 @@ PYTEST_SORT_TESTS = yes
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pretend
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
