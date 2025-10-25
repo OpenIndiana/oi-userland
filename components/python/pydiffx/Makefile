@@ -14,17 +14,15 @@
 #   $WS_TOOLS/python-integrate-project pydiffx
 #
 
-BUILD_STYLE = setup.py
-USE_COMMON_TEST_MASTER = no
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydiffx
 HUMAN_VERSION =			1.1
-COMPONENT_SUMMARY =		pydiffx - Python module for reading and writing DiffX files.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Python module for reading and writing DiffX files.
 COMPONENT_PROJECT_URL =		https://diffx.org/pydiffx/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d3/76/ad0677d82b7c75deb4da63151d463a9f90e97f3817b83f4e3f74034eb384/pydiffx-1.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0986dbb0a87cbf79e244e2f1c0e2b696d8e86b3861ea2955757a61d38e139228
 COMPONENT_LICENSE =		MIT
@@ -34,9 +32,7 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/beanbaginc/diffx/issues/3
-PYTEST_ADDOPTS += -p no:checkdocs
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/six
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/six
+REQUIRED_PACKAGES.python += runtime/python
