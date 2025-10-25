@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyqt_builder
 HUMAN_VERSION =			1.19.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The PyQt build system
 COMPONENT_PROJECT_URL =		https://github.com/Python-PyQt/PyQt-builder
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,6 +29,9 @@ COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
+
+# This project is missing tests
+# https://github.com/Python-PyQt/PyQt-builder/issues/35
 
 include $(WS_MAKE_RULES)/common.mk
 
