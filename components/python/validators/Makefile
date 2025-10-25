@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		validators
 HUMAN_VERSION =			0.35.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python Data Validation for Humans™
 COMPONENT_PROJECT_URL =		https://python-validators.github.io/validators
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,6 +35,6 @@ PYTEST_ADDOPTS += --ignore tests/crypto_addresses/test_eth_address.py
 PYTEST_ADDOPTS += --ignore src/validators/crypto_addresses/eth_address.py
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
