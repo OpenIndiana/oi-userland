@@ -9,19 +9,26 @@
 #
 
 #
-# Copyright (c) 2021,2022 David Stes
-# Copyright (c) 2023 Andreas Wacknitz
+# Copyright (c) 2025 David Stes
+# Copyright (c) 2025 Andreas Wacknitz
 # Copyright (c) 2024 David Stes
+# Copyright (c) 2023 Andreas Wacknitz
+# Copyright (c) 2021,2022 David Stes
 
 #
-# The manifest pari.p5m holds no license and copyright info per explicit request from 
-# Bill Allombert from the PARI team
+# IPS mediator "pari" mediator-implementation set to "gmp".
+# An alternative is the pari-native package (which can be optionally installed) for mediator-implementation "native".
+# The native or classical PARI kernel does not use GNU gmp.
+#
+# NOTE: the PARI manifest files are NOT covered by the CDDL.
+# The manifest files hold no license and copyright info per explicit request from Bill Allombert from the PARI team.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
 COMPONENT_VERSION=	2.17.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The PARI Computer Algebra System
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
@@ -79,3 +86,4 @@ REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+

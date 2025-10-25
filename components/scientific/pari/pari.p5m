@@ -9,8 +9,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-link path=usr/bin/gp target=gp-2.17
-file path=usr/bin/gp-2.17
+link path=usr/bin/gp target=gp-gmp-2.17 \
+    mediator=pari mediator-implementation=gmp
+file usr/bin/gp-2.17 path=usr/bin/gp-gmp-2.17
 file path=usr/bin/gphelp
 file path=usr/bin/tex2mail
 link path=usr/include/pari/genpari.h target=pari.h
@@ -34,7 +35,8 @@ file path=usr/include/pari/paritune.h
 file path=usr/lib/$(MACH64)/libpari-gmp-tls.so.$(HUMAN_VERSION)
 link path=usr/lib/$(MACH64)/libpari-gmp-tls.so.9 \
     target=libpari-gmp-tls.so.$(HUMAN_VERSION)
-link path=usr/lib/$(MACH64)/libpari.so target=libpari-gmp-tls.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libpari.so target=libpari-gmp-tls.so.$(HUMAN_VERSION) \
+    mediator=pari mediator-implementation=gmp
 file path=usr/lib/pari/pari.cfg
 file path=usr/share/man/man1/gp-2.17.1
 link path=usr/share/man/man1/gp.1 target=gp-2.17.1
