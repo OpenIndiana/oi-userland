@@ -34,7 +34,7 @@ ENV = /usr/bin/env
 COMPONENT_NAME=         libreoffice
 COMPONENT_VERSION=      25.8.2
 COMPONENT_RC_VERSION=	2
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -519,6 +519,10 @@ clean::
 # Filter out test result lines with truncated $(BUILD_DIR) paths
 COMPONENT_TEST_TRANSFORMS +=    "-e 's|$(COMPONENT_DIR)|\$$(COMPONENT_DIR)|g'"
 COMPONENT_TEST_TRANSFORMS +=    '-e "s/ [0-9]*ms//g"'
+
+# Filter out filenames that begin with /tmp/ and end with .tmp. These names
+# change every time test is run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/\/tmp\/.*\.tmp//g"'
 
 # debug specific test
 testtrace:
