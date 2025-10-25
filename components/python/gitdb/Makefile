@@ -14,12 +14,14 @@
 #   $WS_TOOLS/python-integrate-project gitdb
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gitdb
 HUMAN_VERSION =			4.0.12
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Git Object Database
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/gitdb
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +33,16 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# See https://github.com/gitpython-developers/gitdb/issues/70
+COMPONENT_PRE_TEST_ACTION += ( \
+	$(RM) -r $(COMPONENT_TEST_DIR)/.git-test-tree ; \
+	$(GIT) clone https://github.com/gitpython-developers/gitdb.git $(COMPONENT_TEST_DIR)/.git-test-tree ; \
+	cd $(COMPONENT_TEST_DIR)/.git-test-tree ; \
+	$(GIT) reset --hard $(HUMAN_VERSION) ; \
+) ;
+COMPONENT_TEST_ENV += GITDB_TEST_GIT_REPO_BASE=$(COMPONENT_TEST_DIR)/.git-test-tree/.git
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/smmap
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/smmap
+REQUIRED_PACKAGES.python += runtime/python
