@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Lzma
-HUMAN_VERSION =			2.213
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.214
 COMPONENT_SUMMARY =		Low-Level Perl Interface to lzma compression library
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b979a8347701ced3ac26123d428c1f202b7999850444da19c4aedbb7c862cb7
+	sha256:1dcc4448969acad4550376476e3fcd2ed96bfaaae7d9622958fd8f9a1ab4c87d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,7 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
