@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project frozendict
+#   $WS_TOOLS/python-integrate-project -d python/frozendict-39 frozendict
 #
 
 BUILD_STYLE = pyproject
@@ -30,11 +30,12 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
-# deliverables differs for Python < 3.11
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# deliverables differs for Python >= 3.11
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
