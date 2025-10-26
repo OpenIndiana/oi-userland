@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		decorator
 HUMAN_VERSION =			5.2.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Decorators for Humans
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360
@@ -37,5 +39,5 @@ COMPONENT_TEST_ARGS = -v
 COMPONENT_TEST_TARGETS =
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
