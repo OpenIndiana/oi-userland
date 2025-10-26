@@ -1,17 +1,200 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
 rootdir: $(@D)
 configfile: pyproject.toml
-asyncio: mode=strict
-collecting ... collected 1 item
+collecting ... collected 188 items
 
-::project PASSED
+tests/test_decode.py::test_decode_multi_byte PASSED
+tests/test_encode.py::test_encode[should encode percent] PASSED
+tests/test_encode.py::test_encode[should encode control chars] PASSED
+tests/test_encode.py::test_encode[should not encode parts of an url] PASSED
+tests/test_encode.py::test_encode[should not encode []^ - commonmark tests] PASSED
+tests/test_encode.py::test_encode[should encode spaces] PASSED
+tests/test_encode.py::test_encode[should encode unicode] PASSED
+tests/test_encode.py::test_encode[should encode % if it doesn't start a valid escape seq] PASSED
+tests/test_encode.py::test_encode[should preserve non-utf8 encoded characters] PASSED
+tests/test_encode.py::test_encode[should encode characters on the cache borders] PASSED
+tests/test_encode.py::test_encode_arguments PASSED
+tests/test_encode.py::test_encode_surrogates PASSED
+tests/test_format.py::test_format[//some_path] PASSED
+tests/test_format.py::test_format[HTTP://www.example.com/] PASSED
+tests/test_format.py::test_format[HTTP://www.example.com] PASSED
+tests/test_format.py::test_format[http://www.ExAmPlE.com/] PASSED
+tests/test_format.py::test_format[http://user:pw@www.ExAmPlE.com/] PASSED
+tests/test_format.py::test_format[http://USER:PW@www.ExAmPlE.com/] PASSED
+tests/test_format.py::test_format[http://user@www.example.com/] PASSED
+tests/test_format.py::test_format[http://user%3Apw@www.example.com/] PASSED
+tests/test_format.py::test_format[http://x.com/path?that's#all, folks] PASSED
+tests/test_format.py::test_format[HTTP://X.COM/Y] PASSED
+tests/test_format.py::test_format[http://x.y.com+a/b/c] PASSED
+tests/test_format.py::test_format[HtTp://x.y.cOm;a/b/c?d=e#f g<h>i] PASSED
+tests/test_format.py::test_format[HtTp://x.y.cOm;A/b/c?d=e#f g<h>i] PASSED
+tests/test_format.py::test_format[http://x...y...#p] PASSED
+tests/test_format.py::test_format[http://x/p/"quoted"] PASSED
+tests/test_format.py::test_format[<http://goo.corn/bread> Is a URL!] PASSED
+tests/test_format.py::test_format[http://www.narwhaljs.org/blog/categories?id=news] PASSED
+tests/test_format.py::test_format[http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=] PASSED
+tests/test_format.py::test_format[http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=] PASSED
+tests/test_format.py::test_format[http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=] PASSED
+tests/test_format.py::test_format[file:///etc/passwd] PASSED
+tests/test_format.py::test_format[file://localhost/etc/passwd] PASSED
+tests/test_format.py::test_format[file://foo/etc/passwd] PASSED
+tests/test_format.py::test_format[file:///etc/node/] PASSED
+tests/test_format.py::test_format[file://localhost/etc/node/] PASSED
+tests/test_format.py::test_format[file://foo/etc/node/] PASSED
+tests/test_format.py::test_format[http:/baz/../foo/bar] PASSED
+tests/test_format.py::test_format[http://user:pass@example.com:8000/foo/bar?baz=quux#frag] PASSED
+tests/test_format.py::test_format[//user:pass@example.com:8000/foo/bar?baz=quux#frag] PASSED
+tests/test_format.py::test_format[/foo/bar?baz=quux#frag] PASSED
+tests/test_format.py::test_format[http:/foo/bar?baz=quux#frag] PASSED
+tests/test_format.py::test_format[mailto:foo@bar.com?subject=hello] PASSED
+tests/test_format.py::test_format[javascript:alert('hello');] PASSED
+tests/test_format.py::test_format[xmpp:isaacschlueter@jabber.org] PASSED
+tests/test_format.py::test_format[http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar] PASSED
+tests/test_format.py::test_format[svn+ssh://foo/bar] PASSED
+tests/test_format.py::test_format[dash-test://foo/bar] PASSED
+tests/test_format.py::test_format[dash-test:foo/bar] PASSED
+tests/test_format.py::test_format[dot.test://foo/bar] PASSED
+tests/test_format.py::test_format[dot.test:foo/bar] PASSED
+tests/test_format.py::test_format[http://www.\u65e5\u672c\u8a9e.com/] PASSED
+tests/test_format.py::test_format[http://example.B\xfccher.com/] PASSED
+tests/test_format.py::test_format[http://www.\xc4ffchen.com/] PASSED
+tests/test_format.py::test_format[http://www.\xc4ffchen.cOm;A/b/c?d=e#f g<h>i] PASSED
+tests/test_format.py::test_format[http://S\xc9LIER.COM/] PASSED
+tests/test_format.py::test_format[http://\u0644\u064a\u0647\u0645\u0627\u0628\u062a\u0643\u0644\u0645\u0648\u0634\u0639\u0631\u0628\u064a\u061f.\u064a\u061f/] PASSED
+tests/test_format.py::test_format[http://\u27a1.ws/\u27a1] PASSED
+tests/test_format.py::test_format[http://bucket_name.s3.amazonaws.com/image.jpg] PASSED
+tests/test_format.py::test_format[git+http://github.com/joyent/node.git] PASSED
+tests/test_format.py::test_format[local1@domain1] PASSED
+tests/test_format.py::test_format[www.example.com] PASSED
+tests/test_format.py::test_format[[fe80::1]] PASSED
+tests/test_format.py::test_format[coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]] PASSED
+tests/test_format.py::test_format[coap://[1080:0:0:0:8:800:200C:417A]:61616/] PASSED
+tests/test_format.py::test_format[http://user:password@[3ffe:2a00:100:7031::1]:8080] PASSED
+tests/test_format.py::test_format[coap://u:p@[::192.9.5.5]:61616/.well-known/r?n=Temperature] PASSED
+tests/test_format.py::test_format[http://example.com:] PASSED
+tests/test_format.py::test_format[http://example.com:/a/b.html] PASSED
+tests/test_format.py::test_format[http://example.com:?a=b] PASSED
+tests/test_format.py::test_format[http://example.com:#abc] PASSED
+tests/test_format.py::test_format[http://[fe80::1]:/a/b?a=b#abc] PASSED
+tests/test_format.py::test_format[http://-lovemonsterz.tumblr.com/rss] PASSED
+tests/test_format.py::test_format[http://-lovemonsterz.tumblr.com:80/rss] PASSED
+tests/test_format.py::test_format[http://user:pass@-lovemonsterz.tumblr.com/rss] PASSED
+tests/test_format.py::test_format[http://user:pass@-lovemonsterz.tumblr.com:80/rss] PASSED
+tests/test_format.py::test_format[http://_jabber._tcp.google.com/test] PASSED
+tests/test_format.py::test_format[http://user:pass@_jabber._tcp.google.com/test] PASSED
+tests/test_format.py::test_format[http://_jabber._tcp.google.com:80/test] PASSED
+tests/test_format.py::test_format[http://user:pass@_jabber._tcp.google.com:80/test] PASSED
+tests/test_format.py::test_format[http://x:1/' <>"`/{}|\\^~`/] PASSED
+tests/test_format.py::test_format[http://a@b@c/] PASSED
+tests/test_format.py::test_format[http://a@b?@c] PASSED
+tests/test_format.py::test_format[http://a\r" \t\n<'b:b@c\r\nd/e?f] PASSED
+tests/test_format.py::test_format[git+ssh://git@github.com:npm/npm] PASSED
+tests/test_format.py::test_format[http://example.com?foo=bar#frag] PASSED
+tests/test_format.py::test_format[http://example.com?foo=@bar#frag] PASSED
+tests/test_format.py::test_format[http://example.com?foo=/bar/#frag] PASSED
+tests/test_format.py::test_format[http://example.com?foo=?bar/#frag] PASSED
+tests/test_format.py::test_format[http://example.com#frag=?bar/#frag] PASSED
+tests/test_format.py::test_format[http://google.com" onload="alert(42)/] PASSED
+tests/test_format.py::test_format[http://a.com/a/b/c?s#h] PASSED
+tests/test_format.py::test_format[http://atpass:foo%40bar@127.0.0.1/] PASSED
+tests/test_format.py::test_format[http://atslash%2F%40:%2F%40@foo/] PASSED
+tests/test_format.py::test_format[coap:u:p@[::1]:61616/.well-known/r?n=Temperature] PASSED
+tests/test_format.py::test_format[coap:[fedc:ba98:7654:3210:fedc:ba98:7654:3210]:61616/s/stopButton] PASSED
+tests/test_format.py::test_format[http://ex.com/foo%3F100%m%23r?abc=the%231?&foo=bar#frag] PASSED
+tests/test_format.py::test_format[http://ex.com/fooA100%mBr?abc=the%231?&foo=bar#frag] PASSED
+tests/test_format.py::test_format[http://] PASSED
+tests/test_parse.py::test_parse[//some_path-expected_dict0] PASSED
+tests/test_parse.py::test_parse[HTTP://www.example.com/-expected_dict1] PASSED
+tests/test_parse.py::test_parse[HTTP://www.example.com-expected_dict2] PASSED
+tests/test_parse.py::test_parse[http://www.ExAmPlE.com/-expected_dict3] PASSED
+tests/test_parse.py::test_parse[http://user:pw@www.ExAmPlE.com/-expected_dict4] PASSED
+tests/test_parse.py::test_parse[http://USER:PW@www.ExAmPlE.com/-expected_dict5] PASSED
+tests/test_parse.py::test_parse[http://user@www.example.com/-expected_dict6] PASSED
+tests/test_parse.py::test_parse[http://user%3Apw@www.example.com/-expected_dict7] PASSED
+tests/test_parse.py::test_parse[http://x.com/path?that's#all, folks-expected_dict8] PASSED
+tests/test_parse.py::test_parse[HTTP://X.COM/Y-expected_dict9] PASSED
+tests/test_parse.py::test_parse[http://x.y.com+a/b/c-expected_dict10] PASSED
+tests/test_parse.py::test_parse[HtTp://x.y.cOm;a/b/c?d=e#f g<h>i-expected_dict11] PASSED
+tests/test_parse.py::test_parse[HtTp://x.y.cOm;A/b/c?d=e#f g<h>i-expected_dict12] PASSED
+tests/test_parse.py::test_parse[http://x...y...#p-expected_dict13] PASSED
+tests/test_parse.py::test_parse[http://x/p/"quoted"-expected_dict14] PASSED
+tests/test_parse.py::test_parse[<http://goo.corn/bread> Is a URL!-expected_dict15] PASSED
+tests/test_parse.py::test_parse[http://www.narwhaljs.org/blog/categories?id=news-expected_dict16] PASSED
+tests/test_parse.py::test_parse[http://mt0.google.com/vt/lyrs=m@114&hl=en&src=api&x=2&y=2&z=3&s=-expected_dict17] PASSED
+tests/test_parse.py::test_parse[http://mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=-expected_dict18] PASSED
+tests/test_parse.py::test_parse[http://user:pass@mt0.google.com/vt/lyrs=m@114???&hl=en&src=api&x=2&y=2&z=3&s=-expected_dict19] PASSED
+tests/test_parse.py::test_parse[file:///etc/passwd-expected_dict20] PASSED
+tests/test_parse.py::test_parse[file://localhost/etc/passwd-expected_dict21] PASSED
+tests/test_parse.py::test_parse[file://foo/etc/passwd-expected_dict22] PASSED
+tests/test_parse.py::test_parse[file:///etc/node/-expected_dict23] PASSED
+tests/test_parse.py::test_parse[file://localhost/etc/node/-expected_dict24] PASSED
+tests/test_parse.py::test_parse[file://foo/etc/node/-expected_dict25] PASSED
+tests/test_parse.py::test_parse[http:/baz/../foo/bar-expected_dict26] PASSED
+tests/test_parse.py::test_parse[http://user:pass@example.com:8000/foo/bar?baz=quux#frag-expected_dict27] PASSED
+tests/test_parse.py::test_parse[//user:pass@example.com:8000/foo/bar?baz=quux#frag-expected_dict28] PASSED
+tests/test_parse.py::test_parse[/foo/bar?baz=quux#frag-expected_dict29] PASSED
+tests/test_parse.py::test_parse[http:/foo/bar?baz=quux#frag-expected_dict30] PASSED
+tests/test_parse.py::test_parse[mailto:foo@bar.com?subject=hello-expected_dict31] PASSED
+tests/test_parse.py::test_parse[javascript:alert('hello');-expected_dict32] PASSED
+tests/test_parse.py::test_parse[xmpp:isaacschlueter@jabber.org-expected_dict33] PASSED
+tests/test_parse.py::test_parse[http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar-expected_dict34] PASSED
+tests/test_parse.py::test_parse[svn+ssh://foo/bar-expected_dict35] PASSED
+tests/test_parse.py::test_parse[dash-test://foo/bar-expected_dict36] PASSED
+tests/test_parse.py::test_parse[dash-test:foo/bar-expected_dict37] PASSED
+tests/test_parse.py::test_parse[dot.test://foo/bar-expected_dict38] PASSED
+tests/test_parse.py::test_parse[dot.test:foo/bar-expected_dict39] PASSED
+tests/test_parse.py::test_parse[http://www.\u65e5\u672c\u8a9e.com/-expected_dict40] PASSED
+tests/test_parse.py::test_parse[http://example.B\xfccher.com/-expected_dict41] PASSED
+tests/test_parse.py::test_parse[http://www.\xc4ffchen.com/-expected_dict42] PASSED
+tests/test_parse.py::test_parse[http://www.\xc4ffchen.cOm;A/b/c?d=e#f g<h>i-expected_dict43] PASSED
+tests/test_parse.py::test_parse[http://S\xc9LIER.COM/-expected_dict44] PASSED
+tests/test_parse.py::test_parse[http://\u0644\u064a\u0647\u0645\u0627\u0628\u062a\u0643\u0644\u0645\u0648\u0634\u0639\u0631\u0628\u064a\u061f.\u064a\u061f/-expected_dict45] PASSED
+tests/test_parse.py::test_parse[http://\u27a1.ws/\u27a1-expected_dict46] PASSED
+tests/test_parse.py::test_parse[http://bucket_name.s3.amazonaws.com/image.jpg-expected_dict47] PASSED
+tests/test_parse.py::test_parse[git+http://github.com/joyent/node.git-expected_dict48] PASSED
+tests/test_parse.py::test_parse[local1@domain1-expected_dict49] PASSED
+tests/test_parse.py::test_parse[www.example.com-expected_dict50] PASSED
+tests/test_parse.py::test_parse[[fe80::1]-expected_dict51] PASSED
+tests/test_parse.py::test_parse[coap://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]-expected_dict52] PASSED
+tests/test_parse.py::test_parse[coap://[1080:0:0:0:8:800:200C:417A]:61616/-expected_dict53] PASSED
+tests/test_parse.py::test_parse[http://user:password@[3ffe:2a00:100:7031::1]:8080-expected_dict54] PASSED
+tests/test_parse.py::test_parse[coap://u:p@[::192.9.5.5]:61616/.well-known/r?n=Temperature-expected_dict55] PASSED
+tests/test_parse.py::test_parse[http://example.com:-expected_dict56] PASSED
+tests/test_parse.py::test_parse[http://example.com:/a/b.html-expected_dict57] PASSED
+tests/test_parse.py::test_parse[http://example.com:?a=b-expected_dict58] PASSED
+tests/test_parse.py::test_parse[http://example.com:#abc-expected_dict59] PASSED
+tests/test_parse.py::test_parse[http://[fe80::1]:/a/b?a=b#abc-expected_dict60] PASSED
+tests/test_parse.py::test_parse[http://-lovemonsterz.tumblr.com/rss-expected_dict61] PASSED
+tests/test_parse.py::test_parse[http://-lovemonsterz.tumblr.com:80/rss-expected_dict62] PASSED
+tests/test_parse.py::test_parse[http://user:pass@-lovemonsterz.tumblr.com/rss-expected_dict63] PASSED
+tests/test_parse.py::test_parse[http://user:pass@-lovemonsterz.tumblr.com:80/rss-expected_dict64] PASSED
+tests/test_parse.py::test_parse[http://_jabber._tcp.google.com/test-expected_dict65] PASSED
+tests/test_parse.py::test_parse[http://user:pass@_jabber._tcp.google.com/test-expected_dict66] PASSED
+tests/test_parse.py::test_parse[http://_jabber._tcp.google.com:80/test-expected_dict67] PASSED
+tests/test_parse.py::test_parse[http://user:pass@_jabber._tcp.google.com:80/test-expected_dict68] PASSED
+tests/test_parse.py::test_parse[http://x:1/' <>"`/{}|\\^~`/-expected_dict69] PASSED
+tests/test_parse.py::test_parse[http://a@b@c/-expected_dict70] PASSED
+tests/test_parse.py::test_parse[http://a@b?@c-expected_dict71] PASSED
+tests/test_parse.py::test_parse[http://a\r" \t\n<'b:b@c\r\nd/e?f-expected_dict72] PASSED
+tests/test_parse.py::test_parse[git+ssh://git@github.com:npm/npm-expected_dict73] PASSED
+tests/test_parse.py::test_parse[http://example.com?foo=bar#frag-expected_dict74] PASSED
+tests/test_parse.py::test_parse[http://example.com?foo=@bar#frag-expected_dict75] PASSED
+tests/test_parse.py::test_parse[http://example.com?foo=/bar/#frag-expected_dict76] PASSED
+tests/test_parse.py::test_parse[http://example.com?foo=?bar/#frag-expected_dict77] PASSED
+tests/test_parse.py::test_parse[http://example.com#frag=?bar/#frag-expected_dict78] PASSED
+tests/test_parse.py::test_parse[http://google.com" onload="alert(42)/-expected_dict79] PASSED
+tests/test_parse.py::test_parse[http://a.com/a/b/c?s#h-expected_dict80] PASSED
+tests/test_parse.py::test_parse[http://atpass:foo%40bar@127.0.0.1/-expected_dict81] PASSED
+tests/test_parse.py::test_parse[http://atslash%2F%40:%2F%40@foo/-expected_dict82] PASSED
+tests/test_parse.py::test_parse[coap:u:p@[::1]:61616/.well-known/r?n=Temperature-expected_dict83] PASSED
+tests/test_parse.py::test_parse[coap:[fedc:ba98:7654:3210:fedc:ba98:7654:3210]:61616/s/stopButton-expected_dict84] PASSED
+tests/test_parse.py::test_parse[http://ex.com/foo%3F100%m%23r?abc=the%231?&foo=bar#frag-expected_dict85] PASSED
+tests/test_parse.py::test_parse[http://ex.com/fooA100%mBr?abc=the%231?&foo=bar#frag-expected_dict86] PASSED
+tests/test_parse.py::test_parse[http://-expected_dict87] PASSED
 
-======== 1 passed ========
+======== 188 passed ========
   py$(PYV): OK
   congratulations :)

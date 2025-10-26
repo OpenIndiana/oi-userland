@@ -20,17 +20,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mdurl
 HUMAN_VERSION =			0.1.2
-COMPONENT_SUMMARY =		mdurl - Markdown URL utilities
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Markdown URL utilities
 COMPONENT_PROJECT_URL =		https://github.com/executablebooks/mdurl
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz
+	https://github.com/executablebooks/mdurl/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
+	sha256:99d4fabddab7ee4a05fa458deb1a6f0d009966e4631c50d1b875767a1cd3896d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
