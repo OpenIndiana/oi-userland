@@ -14,12 +14,14 @@
 #   $WS_TOOLS/python-integrate-project pytest-fixture-config
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-fixture-config
 HUMAN_VERSION =			1.8.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Fixture configuration utils for py.test
 COMPONENT_PROJECT_URL =		https://github.com/man-group/pytest-plugins
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,5 +34,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
