@@ -1,17 +1,38 @@
+py$(PYV): commands[0]> python -m pytest test.py
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default'
 rootdir: $(@D)
-collecting ... collected 1 item
+collecting ... collected 26 items
 
-::project PASSED
+test.py::test_contrast[rgb10-rgb20-21.0] PASSED
+test.py::test_contrast[rgb11-rgb21-1.0] PASSED
+test.py::test_contrast[rgb12-rgb22-5.000229313902297] PASSED
+test.py::test_passes_AA[0.0-False-False] PASSED
+test.py::test_passes_AA[2.9-False-False] PASSED
+test.py::test_passes_AA[3.0-False-True] PASSED
+test.py::test_passes_AA[3.1-False-True] PASSED
+test.py::test_passes_AA[4.4-False-True] PASSED
+test.py::test_passes_AA[4.5-True-True] PASSED
+test.py::test_passes_AA[4.6-True-True] PASSED
+test.py::test_passes_AA[6.9-True-True] PASSED
+test.py::test_passes_AA[7.0-True-True] PASSED
+test.py::test_passes_AA[7.1-True-True] PASSED
+test.py::test_passes_AA[21.0-True-True] PASSED
+test.py::test_passes_AAA[0.0-False-False] PASSED
+test.py::test_passes_AAA[2.9-False-False] PASSED
+test.py::test_passes_AAA[3.0-False-False] PASSED
+test.py::test_passes_AAA[3.1-False-False] PASSED
+test.py::test_passes_AAA[4.4-False-False] PASSED
+test.py::test_passes_AAA[4.5-False-True] PASSED
+test.py::test_passes_AAA[4.6-False-True] PASSED
+test.py::test_passes_AAA[6.9-False-True] PASSED
+test.py::test_passes_AAA[7.0-True-True] PASSED
+test.py::test_passes_AAA[7.1-True-True] PASSED
+test.py::test_passes_AAA[21.0-True-True] PASSED
+test.py::test_hypothesis_contrast PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1 passed, 2 warnings ========
+======== 26 passed ========
+  py$(PYV): OK
+  congratulations :)

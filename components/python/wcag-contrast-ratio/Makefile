@@ -14,23 +14,26 @@
 #   $WS_TOOLS/python-integrate-project wcag-contrast-ratio
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wcag-contrast-ratio
 HUMAN_VERSION =			0.9
-COMPONENT_SUMMARY =		wcag-contrast-ratio - A library for computing contrast ratios, as required by WCAG 2.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A library for computing contrast ratios, as required by WCAG 2.0
 COMPONENT_PROJECT_URL =		https://github.com/gsnedders/wcag-contrast-ratio
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1f/ec/faf3e7ee407a00081372632cdd9858302c8a9bb071e3767f8dac2ac3f9e2/wcag-contrast-ratio-0.9.tar.gz
+	https://github.com/gsnedders/wcag-contrast-ratio/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:69192b8e5c0a7d0dc5ff1187eeb3e398141633a4bde51c69c87f58fe87ed361c
+	sha256:5263b7b2d0f5a8de2eb409421284947df6229b67bca0055fa10da38153835815
 COMPONENT_LICENSE =		MIT
-
-TEST_STYLE = pytest
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
