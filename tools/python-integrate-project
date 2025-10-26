@@ -389,24 +389,26 @@ PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
 TEST_STYLE=
 cd "$SOURCE_DIR$COMPONENT_SUBDIR"
 while true ; do
-	TOX_OUT=$(tox-${PYTHON_VERSIONS%% *} -l)
+	TOX_OUT=$(tox-${PYTHON_VERSIONS%% *} -l --no-provision 2>&1)
 	TOX_RET=$?
 	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
+	((TOX_RET == 254)) && printf '%s' "$TOX_OUT" | grep -q 'provisioning explicitly disabled' \
+		&& printf 'ERROR: tox test style needs provisioning\n' >&2
 
 	# Disable autoload of all pytest plugins because some of them almost
 	# always collects tests to run even there are no pytest tests available
 	# otherwise.  Some other plugins could do the opposite: prevent tests
 	# collection even there are pytest tests available.
-	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest-${PYTHON_VERSIONS%% *} --setup-plan
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest-${PYTHON_VERSIONS%% *} --setup-plan > /dev/null 2>&1
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
 	python-${PYTHON_VERSIONS%% *} -m unittest discover 2>&1 | grep '^Ran' | grep -q -v '^Ran 0 ' && TEST_STYLE='unittest' && break
 
-	[[ -f setup.py ]] && python-${PYTHON_VERSIONS%% *} setup.py test --help && TEST_STYLE="setup.py" && break
+	[[ -f setup.py ]] && python-${PYTHON_VERSIONS%% *} setup.py test --help > /dev/null 2>&1 && TEST_STYLE='setup.py' && break
 
 	TEST_STYLE="none"
 	break
-done > /dev/null 2>&1
+done
 cd "$DIR"
 
 if [[ "$TEST_STYLE" == "$($GMAKE print-value-TEST_STYLE)" ]] ; then
