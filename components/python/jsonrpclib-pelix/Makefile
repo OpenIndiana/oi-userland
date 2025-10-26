@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonrpclib_pelix
 HUMAN_VERSION =			0.4.3.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		JSON-RPC v2.0 client and server for Python 2.7 and Python 3.6+ usable with Pelix/iPOPO remote services.
 COMPONENT_PROJECT_URL =		http://github.com/tcalmant/jsonrpclib/
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,5 +37,5 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION += $(CHMOD) +x $(SOURCE_DIR)/tests/cgi-bin/cgi_server.py ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
