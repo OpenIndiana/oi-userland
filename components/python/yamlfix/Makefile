@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yamlfix
-HUMAN_VERSION =			1.18.0
+HUMAN_VERSION =			1.19.0
 COMPONENT_SUMMARY =		A simple opionated yaml formatter that keeps your comments!
 COMPONENT_PROJECT_URL =		https://github.com/lyz-code/yamlfix
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ae35891e08aa830e7be7abed6ca25e020aa5998551e4d76e2dc8909bf3c35d7e
+	sha256:22f95ed2a5b88f46f06cf7922c616b6706d3596f23a0553138796ab909e5fa96
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
