@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project marshmallow
+#   $WS_TOOLS/python-integrate-project -d python/marshmallow-39 marshmallow
 #
 
 BUILD_STYLE = pyproject
@@ -27,20 +27,19 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# runtime dependencies differs for Python < 3.11
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# runtime dependencies differs for Python >= 3.11
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/marshmallow-code/marshmallow/issues/2862
-PYTEST_ADDOPTS += --deselect tests/test_utils.py::test_from_timestamp_with_overflow_value
 
 # Normalize timetstamps that change with every run
 COMPONENT_TEST_TRANSFORMS += "-e 's/\[..-..-.... ..:..:..\]/[XX-XX-XXXX XX:XX:XX]/'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/\[..:..:.. ....-..-..\]/[XX:XX:XX XXXX-XX-XX]/'"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/backports-datetime-fromisoformat
 REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/simplejson
