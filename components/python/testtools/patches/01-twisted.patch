@@ -1,0 +1,31 @@
+https://github.com/testing-cabal/testtools/pull/387
+
+--- testtools-2.7.2/testtools/tests/twistedsupport/test_runtest.py.orig
++++ testtools-2.7.2/testtools/tests/twistedsupport/test_runtest.py
+@@ -16,7 +16,6 @@
+     Contains,
+     ContainsAll,
+     ContainsDict,
+-    EndsWith,
+     Equals,
+     Is,
+     KeysEqual,
+@@ -749,7 +748,7 @@
+                     test,
+                     {
+                         "traceback": Not(Is(None)),
+-                        "twisted-log": AsText(EndsWith(" foo\n")),
++                        "twisted-log": AsText(Contains(" foo\n")),
+                     },
+                 ),
+                 ("stopTest", test),
+@@ -790,7 +789,8 @@
+         result = self.make_result()
+         runner.run(result)
+         self.assertThat(
+-            messages, MatchesListwise([ContainsDict({"message": Equals(("foo",))})])
++            messages[0:1],
++            MatchesListwise([ContainsDict({"message": Equals(("foo",))})]),
+         )
+ 
+     def test_restore_observers(self):

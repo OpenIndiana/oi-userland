@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testtools
 HUMAN_VERSION =			2.7.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Extensions to the Python standard library unit testing framework
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/testtools
 COMPONENT_ARCHIVE_HASH =	\
@@ -44,10 +45,10 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(laddr=('\''127.0.0.1'\'', \)[0-9]\{1,\})/\1\$$(PORT))/'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/testresources
 TEST_REQUIRED_PACKAGES.python += library/python/testscenarios
