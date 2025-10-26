@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project funcy
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		funcy
 HUMAN_VERSION =			2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A fancy and practical functional tools
 COMPONENT_PROJECT_URL =		http://github.com/Suor/funcy
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,6 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/whatever
