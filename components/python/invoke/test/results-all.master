@@ -1,0 +1,1598 @@
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+testpaths: tests
+collecting ... collected 979 items / 15 deselected / 964 selected
+
+CLIParsing
+
+    underscored flags can be given as dashed
+    leading underscores are ignored
+    trailing underscores are ignored
+    inverse boolean flags
+    namespaced task
+    aliases
+    subcollection aliases
+    subcollection default tasks
+    boolean args
+    flag then space then value
+    flag then equals sign then value
+    short boolean flag
+    short flag then space then value
+    short flag then equals sign then value
+    short flag with adjacent value
+    flag value then task
+    flag value same as task name
+    three tasks with args
+    tasks with duplicately named kwargs
+    multiple short flags adjacent
+    list type flag can be given N times building a list
+    incrementable type flag can be used as a switch or counter
+
+Collection 
+
+    init
+
+        can accept task varargs
+        can accept collections as varargs too
+        kwargs act as name args for given objects
+        initial string arg acts as name
+        initial string arg meshes with varargs and kwargs
+        accepts load path kwarg
+        accepts auto dash names kwarg
+
+    useful special methods
+
+        repr 
+        equality consists of name tasks and collections
+        boolean is equivalent to tasks and or collections
+
+    from module
+
+        parameters
+
+            name override
+            inline configuration
+            name and config simultaneously
+            auto dash names passed to constructor
+        adds tasks
+        derives collection name from module name
+        copies docstring from module
+        works great with subclassing
+        submodule names are stripped to last chunk
+        honors explicit collections
+        allows tasks with explicit names to override bound name
+        returns unique Collection objects for same input module
+
+        explicit root ns
+
+            inline config with root namespaces overrides builtin
+            inline config overrides via merge not replacement
+            config override merges recursively
+            inline name overrides root namespace object name
+            root namespace object name overrides module name
+            docstring still copied from module
+
+    add task
+
+        associates given callable with given name
+        uses function name as implicit name
+        prefers name kwarg over task name attr
+        prefers task name attr over function name
+        raises ValueError if no name found
+        raises ValueError on multiple defaults
+        raises ValueError if task added mirrors subcollection name
+        allows specifying task defaultness
+        specifying default False overrides task setting
+        allows specifying aliases
+        aliases are merged
+
+    add collection
+
+        adds collection as subcollection of self
+        can take module objects
+        allows specifying defaultness
+        raises ValueError if collection without name
+        raises ValueError if collection named same as task
+        raises ValueError on multiple defaults
+
+    getitem
+
+        finds own tasks by name
+        finds subcollection tasks by dotted name
+        honors aliases in own tasks
+        honors subcollection task aliases
+        honors own default task with no args
+        honors own default subcollection
+        honors subcollection default tasks on subcollection name
+        raises ValueError for no name and no default
+        ValueError for empty subcol task name and no default
+
+    to contexts
+
+        returns iterable of Contexts corresponding to tasks
+
+        auto dash names
+
+            context names automatically become dashed
+            percolates to subcollection tasks
+            percolates to subcollection names
+            aliases are dashed too
+            leading and trailing underscores are not affected
+            honors init setting on topmost namespace
+            transforms are applied to explicit module namespaces
+        allows flaglike access via flags
+        positional arglist preserves order given
+        exposes namespaced task names
+        exposes namespaced task aliases
+        exposes subcollection default tasks
+        exposes aliases
+
+    task names
+
+        returns all task names including subtasks
+        includes aliases and defaults as values
+
+    configuration
+
+        basic set and get
+        configure performs merging
+        configure merging is recursive for nested dicts
+        configure allows overwriting
+        call returns dict
+        access merges from subcollections
+        parents overwrite children in path
+        sibling subcollections ignored
+        subcollection paths may be dotted
+        invalid subcollection paths result in KeyError
+        keys dont have to exist in full path
+
+    subcollection from path
+
+        top level path
+        nested path
+        invalid path
+
+    serialized
+
+        empty collection
+        empty named collection
+        empty named docstringed collection
+        name docstring default and tasks
+        name docstring default tasks and collections
+        unnamed subcollections
+
+CompletionScriptPrinter
+
+    only accepts certain shells
+    prints for custom binary names
+    default binary names is completing argv 0
+    bash works
+    fish works
+
+ShellCompletion
+
+    no input means just task names
+    custom binary name completes
+    aliased custom binary name completes
+    no input with no tasks yields empty response
+    task name completion includes aliases
+    top level with dash means core options
+    bare double dash shows only long core options
+    task names only complete other task names
+    task name completion includes tasks already seen
+    per task flags complete with single dashes
+    per task flags complete with double dashes
+    flag completion includes inverse booleans
+    tasks with positional args complete with flags
+    core flags taking values have no completion output
+    per task flags taking values have no completion output
+    core bool flags have task name completion
+    per task bool flags have task name completion
+    core partial or invalid flags print all flags
+    per task partial or invalid flags print all flags
+    completion given parser by program
+
+ExceptionHandlingThread 
+
+    via target
+
+        base case
+        catches exceptions
+        exhibits is dead flag
+
+    via subclassing
+
+        base case
+        catches exceptions
+        exhibits is dead flag
+
+Config 
+
+    class attrs
+
+        prefix
+
+            defaults to invoke
+            informs config filenames
+            informs env var prefix
+
+        file prefix
+
+            defaults to None
+            informs config filenames
+
+        env prefix
+
+            defaults to None
+            informs env vars loaded
+
+    global defaults
+
+        basic settings
+
+    init
+
+        can be empty
+        configure global location prefix
+        default system prefix is etc
+        configure user location prefix
+        default user prefix is homedir plus dot
+        configure project location
+        configure runtime path
+        accepts defaults dict kwarg
+        overrides dict is first posarg
+        overrides dict is also a kwarg
+        system and user files loaded automatically
+        can defer loading system and user files
+
+    basic API
+
+        can be used directly after init
+        allows dict and attr access
+        nested dict values also allow dual access
+        attr access has useful error msg
+        subkeys get merged not overwritten
+        is iterable like dict
+        supports readonly dict protocols
+
+        runtime loading of defaults and overrides
+
+            defaults can be given via method
+            defaults can skip merging
+            overrides can be given via method
+            overrides can skip merging
+
+        deletion methods
+
+            pop
+            delitem
+            delattr
+            clear
+            popitem
+
+        modification methods
+
+            setitem
+            setdefault
+            update
+        reinstatement of deleted values works ok
+        deleting parent keys of deleted keys subsumes them
+        supports mutation via attribute access
+        supports nested mutation via attribute access
+        real attrs and methods win over attr proxying
+        config itself stored as private name
+        inherited real attrs also win over config keys
+        nonexistent attrs can be set to create new top level configs
+        nonexistent attr setting works nested too
+        string display
+        merging does not wipe user modifications or deletions
+
+    config file loading
+
+        system global
+        system can skip merging
+        user specific
+        user can skip merging
+        project specific
+        project can skip merging
+        loads no project specific file if no project location given
+        project location can be set after init
+        runtime conf via cli flag
+        runtime can skip merging
+        unknown suffix in runtime path raises useful error
+        python modules dont load special vars
+        python modules except usefully on unpicklable modules
+        nonexistent files are skipped and logged
+        non missing file IOErrors are raised
+
+    collection level config loading
+
+        performed explicitly and directly
+        merging can be deferred
+
+    comparison and hashing
+
+        comparison looks at merged config
+        allows comparison with real dicts
+        is explicitly not hashable
+
+    env vars
+
+        base case defaults to INVOKE prefix
+        non predeclared settings do not get consumed
+        underscores top level
+        underscores nested
+        both types of underscores mixed
+        ambiguous underscores dont guess
+
+        type casting
+
+            strings replaced with env value
+            None replaced
+            booleans
+            boolean type inputs with non boolean defaults
+            numeric types become casted
+            arbitrary types work too
+
+            uncastable types
+
+                lists
+                tuples
+
+    hierarchy
+
+        collection overrides defaults
+        systemwide overrides collection
+        user overrides systemwide
+        user overrides collection
+        project overrides user
+        project overrides systemwide
+        project overrides collection
+        env vars override project
+        env vars override user
+        env vars override systemwide
+        env vars override collection
+        runtime overrides env vars
+        runtime overrides project
+        runtime overrides user
+        runtime overrides systemwide
+        runtime overrides collection
+        cli overrides override all
+        yaml prevents yml json or python
+        yml prevents json or python
+        json prevents python
+
+    clone
+
+        preserves basic members
+        preserves merged config
+        preserves file data
+        does not reload file data
+        preserves env data
+        works correctly when subclassed
+
+        into kwarg
+
+            is not required
+            resulting clones are typed as new class
+            non conflicting values are merged
+        does not deepcopy
+    can be pickled
+
+Context 
+
+    init
+
+        takes optional config arg
+
+    methods exposed
+
+        run
+
+            exists
+            defaults to Local
+            honors runner config setting
+        sudo
+
+    configuration proxy
+
+        direct access allowed
+        config attr may be overwritten at runtime
+        getitem
+        getattr
+        get
+        pop
+        popitem
+        del 
+        clear
+        setdefault
+        update
+
+    cwd
+
+        simple
+        nested absolute path
+        multiple absolute paths
+        home
+
+    cd
+
+        should apply to run
+        should apply to sudo
+        should occur before prefixes
+        should use finally to revert changes on exceptions
+        cd should accept any stringable object
+
+    prefix
+
+        prefixes should apply to run
+        prefixes should apply to sudo
+        nesting should retain order
+        should use finally to revert changes on exceptions
+
+    sudo
+
+        prefixes command with sudo
+        optional user argument adds u and H flags
+        honors config for user value
+        user kwarg wins over config
+        echo hides extra sudo flags
+        honors config for prompt value
+        prompt value is properly shell escaped
+        explicit env vars are preserved
+        autoresponds with password kwarg
+        honors configured sudo password
+        sudo password kwarg wins over config
+
+        auto response merges with other responses
+
+            kwarg only adds to kwarg
+            config only
+            config use does not modify config
+            both kwarg and config
+        passes through other run kwargs
+        returns run result
+        raises auth failure when failure detected
+    can be pickled
+
+MockContext 
+
+    init still acts like superclass init
+    non config init kwargs used as return values for methods
+    return value kwargs can take iterables too
+    return value kwargs may be command string maps
+    return value map kwargs may take iterables too
+    regexen return value map keys match on command
+
+    boolean result shorthand
+
+        as singleton args
+        as iterables
+        as dict values
+
+    string result shorthand
+
+        as singleton args
+        as iterables
+        as dict values
+
+    commands injected into Result
+
+        when not set or falsey[kwargs0]
+        when not set or falsey[kwargs1]
+        when not set or falsey[kwargs2]
+        does not occur when truthy
+    methods with no kwarg values raise NotImplementedError
+    does not consume results by default
+    consumes singleton results when repeat False
+    sudo also covered
+
+    exhausted nonrepeating return values also raise NotImplementedError
+
+        single value
+        iterable
+        mapping to single value
+        mapping to iterable
+    unexpected kwarg type yields TypeError
+
+    can modify return value maps after instantiation
+
+        non dict type instantiation values yield TypeErrors
+
+            no stored result
+
+                run
+                sudo
+
+            single result
+
+                run
+                sudo
+
+            iterable result
+
+                run
+                sudo
+        run
+        sudo
+    wraps run and sudo with Mock
+
+Executor 
+
+    init
+
+        allows collection and config
+        uses blank config by default
+        can grant access to core arg parse result
+        core arg parse result defaults to None
+
+    execute
+
+        base case
+        kwargs
+        contextualized tasks are given parser context arg
+        default tasks called when no tasks specified
+
+    basic pre post
+
+        pre tasks
+        post tasks
+        calls default to empty args always
+        call objs play well with context args
+
+    deduping and chaining
+
+        chaining is depth first
+
+        adjacent hooks
+
+            deduping
+            no deduping
+
+        non adjacent hooks
+
+            deduping
+            no deduping
+
+        adjacent top level tasks
+
+            deduping
+            no deduping
+
+        non adjacent top level tasks
+
+            deduping
+            no deduping
+        deduping treats different calls to same task differently
+
+    collection driven config
+
+        hands collection configuration to context
+        hands task specific configuration to context
+        subcollection config works with default tasks
+
+    returns return value of specified task
+
+        base case
+        with pre tasks
+        with post tasks
+
+    autoprinting
+
+        defaults to off and no output
+        prints return value to stdout when on
+        prints return value to stdout when on and in collection
+        does not fire on pre tasks
+        does not fire on post tasks
+
+    inter task context and config sharing
+
+        context is new but config is same
+        new config data is preserved between tasks
+        config mutation is preserved between tasks
+        config deletion is preserved between tasks
+
+Init
+
+    dunder version info
+    dunder version
+    dunder version looks generated from dunder version info
+
+    exposes bindings
+
+        task decorator
+        task class
+        collection class
+        context class
+        mock context class
+        config class
+        pty size function
+        local class
+        runner class
+        promise class
+        failure class
+        exceptions
+        runner result
+        watchers
+        program
+        filesystemloader
+        argument
+        parsercontext
+        parser
+        parseresult
+        executor
+        call
+        Call
+
+    offers singletons
+
+        run
+        sudo
+
+Loader 
+
+    exhibits default config object
+    returns module and location
+    may configure config via constructor
+    adds module parent dir to sys path
+    doesnt duplicate parent dir addition
+    can load package
+    load name defaults to config tasks collection name
+
+FilesystemLoader 
+
+    discovery start point defaults to cwd
+    exposes start point as attribute
+    start point is configurable via kwarg
+    start point is configurable via config
+    raises CollectionNotFound if not found
+    raises ImportError if found collection cannot be imported
+    searches towards root of filesystem
+
+merge dicts 
+
+    merging data onto empty dict
+    updating with None acts like merging empty dict
+    orthogonal data merges
+    updates arg values win
+    non dict type mismatch overwrites ok
+    merging dict into nondict raises error
+    merging nondict into dict raises error
+    nested leaf values merge ok
+    mixed branch levels merges ok
+    dict value merges are not references
+    merge file types by reference
+
+copy dict 
+
+    returns deep copy of given dict
+
+Argument 
+
+    init
+
+        may take names list
+        may take name arg
+        must get at least one name
+        default arg is name not names
+        can declare positional
+        positional is False by default
+        can set attr name to control name attr
+
+    repr
+
+        shows useful info
+        does not show nickname parens if no nicknames
+        shows positionalness
+        shows optionalness
+        positionalness and optionalness stick together
+        shows kind if not str
+        all the things together
+
+    kind kwarg
+
+        is optional
+        defaults to str
+        non bool implies value needed
+        bool implies no value needed
+        bool implies default False not None
+        may validate on set
+        list implies initial value of empty list
+
+    names
+
+        returns tuple of all names
+        is normalized to a tuple
+
+    name
+
+        returns first name
+
+    nicknames
+
+        returns rest of names
+
+    takes value
+
+        True by default
+        False if kind is bool
+
+    value set
+
+        available as dot raw value
+        untransformed appears as dot value
+        transformed appears as dot value with original as raw value
+        list kind triggers append instead of overwrite
+        incrementable True triggers increment of default
+
+    value
+
+        returns default if not set
+
+    raw value
+
+        is None when no value was actually seen
+
+    got value
+
+        non list kind tests for None value
+        list kind test for empty list value
+
+    set value
+
+        casts by default
+        allows setting value without casting
+    may have a name
+    may have aliases
+    may give arg list at init time
+
+    args
+
+        exposed as dict
+        exposed as Lexicon
+        args dict includes all arg names
+        argument attr names appear in args but not flags
+
+    add arg
+
+        can take Argument instance
+        can take name arg
+        can take kwargs for single Argument
+        raises ValueError on duplicate
+        adds flaglike name to dot flags
+        adds all names to dot flags
+        adds true bools to inverse flags
+        inverse flags works right with task driven underscored names
+        turns single character names into short flags
+        adds positional args to positional args
+        positional args empty when none given
+        positional args filled in order
+        positional arg modifications affect args copy
+
+    deepcopy
+
+        returns correct copy
+        includes arguments
+        modifications to copied arguments do not touch originals
+
+    help for
+
+        raises ValueError for non flag values
+        vanilla no helpstr
+        vanilla with helpstr
+        task driven with helpstr
+        task driven no helpstr
+        short form before long form
+        equals sign for long form only
+        kind to placeholder map
+        shortflag inputs work too
+        optional values use brackets
+        underscored args
+        true default args
+
+    help tuples
+
+        returns list of help tuples
+        sorts alphabetically by shortflag first
+        case ignored during sorting
+        lowercase wins when values identical otherwise
+        sorts alphabetically by longflag when no shortflag
+        sorts heterogenous help output with longflag only options first
+        mixed corelike options
+
+    missing positional args
+
+        represents positional args missing values
+
+    str
+
+        with no args output is simple
+        args show as repr
+
+Parser 
+
+    can take initial context
+    can take initial and other contexts
+    can take just other contexts
+    can take just contexts as non keyword arg
+    raises ValueError for unnamed Contexts in contexts
+    raises error for context name clashes
+    raises error for context alias and name clashes
+    raises error for context name and alias clashes
+    takes ignore unknown kwarg
+    ignore unknown defaults to False
+
+    parse argv
+
+        parses sys argv style list of strings
+        returns only contexts mentioned
+        raises error if unknown contexts found
+        unparsed does not share state
+        ignore unknown returns unparsed argv instead
+        ignore unknown does not mutate rest of argv
+        always includes initial context if one was given
+        returned contexts are in order given
+        returned context member arguments contain given values
+        inverse bools get set correctly
+        arguments which take values get defaults overridden correctly
+        returned arguments not given contain default values
+        returns remainder
+        clones initial context
+        clones noninitial contexts
+
+        parsing errors
+
+            missing flag values raise ParseError
+            attaches context to ParseErrors
+            attached context is None outside contexts
+
+        positional arguments
+
+            single positional arg
+            omitted positional arg raises ParseError
+            omitted positional args raises ParseError
+            positional args eat otherwise valid context names
+            positional args can still be given as flags
+
+        equals signs
+
+            handles equals style long flags
+            handles equals style short flags
+            does not require escaping equals signs in value
+        handles multiple boolean flags per context
+
+    optional arg values
+
+        no value becomes True not default value
+        value given gets preserved normally
+        not given at all uses default value
+
+        ambiguity sanity checks
+
+            unfilled posargs
+            no ambiguity if option val already given
+            valid argument is NOT ambiguous
+            valid flaglike argument is NOT ambiguous
+            invalid flaglike value is stored as value
+            task name
+
+    list type arguments
+
+        can be given no times resulting in default empty list
+        given once becomes single item list
+        given N times becomes list of len N
+        iterables work correctly outside a vacuum
+
+    task repetition
+
+        is happy to handle same task multiple times
+        task args work correctly
+
+    per task core flags
+
+        general
+
+            core flags work normally when no conflict
+            when conflict per task args win out
+            value requiring core flags also work correctly
+
+        edge cases
+
+            core bool but per task string
+
+        help treats context name as its value
+
+            by itself base case
+            other tokens afterwards raise parse errors
+
+ParseResult 
+
+    acts as a list of parsed contexts
+    exhibits remainder attribute
+
+Program 
+
+    init
+
+        may specify version
+        default version is unknown
+        may specify namespace
+        may specify name
+        may specify binary
+        loader class defaults to FilesystemLoader
+        may specify loader class
+        executor class defaults to Executor
+        may specify executor class
+        config class defaults to Config
+        may specify config class
+
+    miscellaneous
+
+        debug flag activates logging
+        debug honored as env var too
+        bytecode skipped by default
+        write pyc explicitly enables bytecode writing
+
+    normalize argv
+
+        defaults to sys argv
+        uses a list unaltered
+        splits a string
+
+    name
+
+        defaults to capitalized binary when None
+        benefits from binary absolute behavior
+        uses overridden value when given
+
+    binary
+
+        defaults to argv when None
+        uses overridden value when given
+        use binary basename when invoked absolutely
+
+    called as
+
+        is the whole deal when just a name
+        is basename when given a path
+
+    binary names
+
+        defaults to argv when None
+        can be given directly
+
+    print version
+
+        displays name and version
+
+    initial context
+
+        contains truly core arguments regardless of namespace value
+        null namespace triggers task related args
+        non null namespace does not trigger task related args
+
+    load collection
+
+        complains when default collection not found
+        complains when explicit collection not found
+        uses loader class given
+        config location correct for package type task trees
+
+    execute
+
+        uses executor class given
+        executor class may be overridden via configured string
+        executor is given access to core args and remainder
+
+    core args
+
+        returns core args list
+
+    args property
+
+        shorthand for self core args
+
+    core args from task contexts
+
+        core context gets updated with core flags from tasks
+        copying from task context does not set empty list values
+        copying from task context does not overwrite good values
+
+    run
+
+        seeks and loads tasks module by default
+        does not seek tasks module if namespace was given
+        explicit namespace works correctly
+        allows explicit task module specification
+        handles task arguments
+        can change collection search root
+        can change collection search root with explicit module name
+        ParseErrors display message and exit 1
+        UnexpectedExit exits with code when no hiding
+        shows UnexpectedExit str when streams hidden
+        UnexpectedExit str encodes stdout and err
+
+        Exit 
+
+            defaults to exiting 0
+            prints message exiting 1 if message given
+            may explicitly supply code with message
+            may explicitly supply code without message
+        should show core usage on core parse failures
+        should show context usage on context parse failures
+        turns KeyboardInterrupt into exit code 1
+
+    help 
+
+        core
+
+            empty invocation with no default task prints help
+            core help option prints core help
+            bundled namespace help includes subcommand listing
+            core help doesnt get mad if loading fails
+
+        per task
+
+            prints help for task only
+            works for unparameterized tasks
+            honors program binary
+            displays docstrings if given
+            dedents correctly
+            dedents correctly for alt docstring style
+            exits after printing
+            complains if given invalid task name
+
+    task list
+
+        simple output
+        namespacing
+        top level tasks listed first
+        aliases sorted alphabetically
+        default tasks
+        docstrings shown alongside
+        docstrings are wrapped to terminal width
+        empty collections say no tasks
+        nontrivial trees are sorted by namespace and depth
+
+        namespace limiting
+
+            argument limits display to given namespace
+            argument may be a nested namespace
+            empty namespaces say no tasks in namespace
+            invalid namespaces exit with message
+
+        depth limiting
+
+            limits display to given depth
+            non base case
+            depth can be deeper than real depth
+            works with explicit namespace
+            short flag is D
+            depth of zero is same as max depth
+
+        format
+
+            flat is legacy default format
+
+            nested
+
+                base case
+                honors namespace arg to list
+                honors depth arg
+                depth arg deeper than real depth
+                all possible options
+                empty namespaces say no tasks in namespace
+                invalid namespaces exit with message
+
+            json
+
+                base case
+                honors namespace arg to list
+                does not honor depth arg
+                does not honor depth arg even with namespace
+                empty namespaces say no tasks in namespace
+                invalid namespaces exit with message
+
+    run options
+
+        warn only
+        pty
+        hide
+        echo
+        timeout
+
+    configuration
+
+        config class init kwarg is honored
+        config attribute is memoized
+        per project config files are loaded before task parsing
+        per project config files load with explicit ns
+
+        runtime config file
+
+            can be set via cli option
+            can be set via env
+            cli option wins over env
+        tasks dedupe honors configuration
+        env vars load with prefix
+        env var prefix can be overridden
+
+    other behavior
+
+        sudo prompt up front
+
+Runner 
+
+    init
+
+        takes a context instance
+        context instance is required
+
+    run
+
+        handles invalid kwargs like any other function
+
+    warn
+
+        honors config
+        kwarg beats config
+        does not apply to watcher errors
+        does not apply to timeout errors
+
+    hide
+
+        honors config
+        kwarg beats config
+
+    pty
+
+        pty defaults to off
+        honors config
+        kwarg beats config
+
+    shell
+
+        defaults to bash or cmdexe when pty True
+        defaults to bash or cmdexe when pty False
+        may be overridden
+        may be configured
+        kwarg beats config
+
+    env
+
+        defaults to os environ
+        updates when dict given
+        replaces when replace env True
+        config can be used
+        kwarg wins over config
+
+    return value
+
+        return code
+        ok attr indicates success
+        ok attr indicates failure
+        failed attr indicates success
+        failed attr indicates failure
+        stdout attribute contains stdout
+        stderr attribute contains stderr
+        whether pty was used
+        command executed
+        shell used
+        hide param exposed and normalized
+
+    command echoing
+
+        off by default
+        enabled via kwarg
+        enabled via config
+        kwarg beats config
+        uses ansi bold
+        uses custom format
+
+    dry running
+
+        sets echo to True
+        short circuits with dummy result
+
+    encoding
+
+        defaults to encoding method result
+        honors config
+        honors kwarg
+        uses locale module for default encoding
+        falls back to defaultlocale when preferredencoding is None
+
+    output hiding
+
+        both hides everything
+        True hides everything
+        out only hides stdout
+        err only hides stderr
+        accepts stdout alias for out
+        accepts stderr alias for err
+        None hides nothing
+        False hides nothing
+        unknown vals raises ValueError
+        unknown vals mention value given in error
+        does not affect capturing
+        overrides echoing
+
+    output stream overrides
+
+        out defaults to sys stdout
+        err defaults to sys stderr
+        out can be overridden
+        overridden out is never hidden
+        err can be overridden
+        overridden err is never hidden
+        pty defaults to sys
+        pty out can be overridden
+
+    output stream handling
+
+        writes and flushes to stdout
+        writes and flushes to stderr
+
+    input stream handling
+
+        defaults to sys stdin
+        can be overridden
+        can be disabled entirely
+        exceptions get logged
+        EOF triggers closing of proc stdin
+        EOF does not close proc stdin when pty True
+        EBADF on stdin read ignored
+        non EBADF on stdin read not ignored
+
+    failure handling
+
+        fast failures
+        non 1 return codes still act as failure
+
+        Failure repr
+
+            defaults to just class and command
+            subclasses may add more kv pairs
+
+        UnexpectedExit repr
+
+            similar to just the result repr
+
+        UnexpectedExit str
+
+            displays command and exit code by default
+            does not display stderr when pty True
+            pty stderr message wins over hidden stderr
+            explicit hidden stream tail display
+            displays tails of streams only when hidden
+
+        reason
+
+            is None for regular nonzero exits
+            is None for custom command exits
+            is exception when WatcherError raised internally
+
+        wrapped result
+
+            most attrs are always present
+
+            shell exit failure
+
+                exited is integer
+                ok bool etc are falsey
+                stringrep notes exit status
+
+            watcher failure
+
+                exited is None
+                ok and bool still are falsey
+                stringrep lacks exit status
+
+    threading
+
+        errors within io thread body bubble up
+        io thread errors str has details
+
+    watchers
+
+        nothing is written to stdin by default
+        watchers responses get written to proc stdin
+        multiple hits yields multiple responses
+        chunk sizes smaller than patterns still work ok
+        both out and err are scanned
+        multiple patterns works as expected
+        multiple patterns across both streams
+        honors watchers config option
+        kwarg overrides config
+
+    io sleeping
+
+        input sleep attribute defaults to hundredth of second
+        subclasses can override input sleep
+
+    stdin mirroring
+
+        when pty is True no mirroring occurs
+        when pty is False we write in stream back to out stream
+        mirroring is skipped when our input is not a tty
+        mirroring can be forced on
+        mirroring can be forced off
+        mirroring honors configuration
+        reads FIONREAD bytes from stdin when fileno
+
+    character buffered stdin
+
+        setcbreak called on tty stdins
+        setcbreak not called on non tty stdins
+        setcbreak not called if process not foregrounded
+        tty stdins have settings restored by default
+        tty stdins have settings restored on KeyboardInterrupt
+        setcbreak not called if terminal seems already cbroken
+
+    send interrupt
+
+        called on KeyboardInterrupt
+        not called for other exceptions
+        sends escape byte sequence
+
+    timeout
+
+        start timer called with config value
+        run kwarg honored
+        kwarg wins over config
+        raises CommandTimedOut with timeout info
+        start timer gives its timer the kill method
+        run always stops timer
+        timer aliveness is test of timing out
+        timeout specified but no timer means no exception
+
+    stop
+
+        always runs no matter what
+        cancels timer
+
+    asynchronous
+
+        returns Promise immediately and finishes on join
+        hides output
+        does not forward stdin
+        leaves overridden streams alone
+
+    disown
+
+        starts and returns None but does nothing else
+        cannot be given alongside asynchronous
+
+Local 
+
+    stop
+
+        calls super
+
+    pty
+
+        warning only fires once
+        replaced stdin objects dont explode
+
+        fallback
+
+            affects result pty value
+
+    shell
+
+        defaults to bash or cmdexe when pty False
+        may be overridden when pty False
+
+    env
+
+        uses Popen kwarg for pty False
+
+    close proc stdin
+
+        raises SubprocessPipeError when pty in use
+        closes process stdin
+
+    timeout
+
+        kill uses self pid when pty
+        kill uses self process pid when not pty
+
+Result 
+
+    nothing is required
+    first posarg is stdout
+    command defaults to empty string
+    shell defaults to empty string
+    encoding defaults to local default encoding
+    env defaults to empty dict
+    stdout defaults to empty string
+    stderr defaults to empty string
+    exited defaults to zero
+    pty defaults to False
+    repr contains useful info
+
+    tail
+
+        returns last 10 lines of given stream plus whitespace
+        line count is configurable
+        works for stderr too
+
+Promise 
+
+    exposes read only run params
+
+    join
+
+        returns Result on success
+        raises main thread exception on kaboom
+        raises subthread exception on their kaboom
+        raises Failure on failure
+
+    context manager
+
+        calls join or wait on close of block
+        yields self
+
+task 
+
+    allows access to wrapped object
+    allows alias specification
+    allows multiple aliases
+    allows default specification
+    has autoprint option
+    raises ValueError on multiple defaults
+    sets arg kind
+    sets which args are optional
+    allows annotating args as positional
+    allows annotating args as iterable
+    allows annotating args as incrementable
+    when positional arg missing all non default args are positional
+    context arguments should not appear in implicit positional list
+    pre tasks stored directly
+    allows star args as shortcut for pre
+    disallows ambiguity between star args and pre kwarg
+    sets name
+    returns Task instances by default
+    klass kwarg allows overriding class used
+    klass kwarg works for subclassers without kwargs
+    unknown kwargs get mad at Task level
+
+Task 
+
+    has useful repr
+    equality testing
+    equality testing false for non task objects
+
+    function like behavior
+
+        inherits module from body
+
+    attributes
+
+        has default flag
+        name defaults to body name
+        can override name
+
+    callability
+
+        dunder call wraps body call
+        errors if first arg not Context
+        errors if no first arg at all
+        tracks times called
+        wraps body docstring
+        wraps body name
+
+    get arguments
+
+        positional args come first
+        kinds are preserved
+        positional flag is preserved
+        optional flag is preserved
+        optional prevents bool defaults from affecting kind
+        optional plus nonbool default does not override kind
+        turns function signature into Arguments
+        shortflags created by default
+        shortflags dont care about positionals
+        autocreated short flags can be disabled
+        autocreated shortflags dont collide
+        early auto shortflags shouldnt lock out real shortflags
+        context arguments are not returned
+        underscores become dashes
+
+        help
+
+            base case
+            underscored name via underscores
+            underscored name via dashes
+            raises ValueError on keys not found in task args
+            no ValueError on unfound keys when configured otherwise
+            arg value is copied to avoid state bleed when shared
+
+Call 
+
+    init
+
+        task
+
+            is required
+            is first posarg
+
+        called as
+
+            defaults to None
+            may be given
+
+        args
+
+            defaults to empty tuple
+            may be given
+
+        kwargs
+
+            defaults to empty dict
+            may be given
+
+    stringrep
+
+        includes task name
+        works for subclasses
+        includes args and kwargs
+        includes aka if explicit name given
+        skips aka if explicit name same as task name
+
+    make context
+
+        requires config argument
+        creates a new Context from given config
+
+    clone
+
+        returns new but equivalent object
+        can clone into a subclass
+        can be given extra kwargs to clone with
+
+terminals
+
+    pty size
+
+        calls fcntl with TIOCGWINSZ
+        defaults to 80x24 when stdout not a tty
+        uses default when stdout lacks fileno
+        uses default when stdout triggers ioctl error
+
+    bytes to read 
+
+        returns 1 when stream lacks fileno
+        returns 1 when stream has fileno but is not a tty
+        returns FIONREAD result when stream is a tty
+        returns 1 on windows
+
+util
+
+    helpline
+
+        is None if no docstring
+        is None if whitespace only docstring
+        is entire thing if docstring one liner
+        left strips newline bearing one liners
+        is first line in multiline docstrings
+        is None if docstring matches object type
+        instance attached docstring is still displayed
+
+Responder 
+
+    keeps track of seen index per thread
+    yields response when regular string pattern seen
+    yields response when regex seen
+    multiple hits within stream yield multiple responses
+    patterns span multiple lines
+
+FailingResponder 
+
+    behaves like regular responder by default
+    raises failure exception when sentinel detected
+
+======== 953 passed, 11 skipped, 15 deselected ========
