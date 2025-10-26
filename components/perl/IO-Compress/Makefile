@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress
-HUMAN_VERSION =			2.213
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.214
 COMPONENT_SUMMARY =		IO Interface to compressed data files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ae4d01ae574e4568c5f2fb0573e74631e2720b71ad3bc5a3ffe9480f1cb9a851
+	sha256:0cfbc4b4ac9b28f7cbf22f114e09c9a49ace9e0b6c3778432afa2cde55512d69
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-bzip2
-PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-zlib
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/time-local
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-bzip2
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-zlib
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/time-local
+REQUIRED_PACKAGES.perl += runtime/perl
