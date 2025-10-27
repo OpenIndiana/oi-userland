@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress-Lzma
-HUMAN_VERSION =			2.213
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.214
 COMPONENT_SUMMARY =		Write lzma files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:daa63c3fa1f7708aa55b97a4d189820f5e849f8e4583dc24b5cceebd06a493eb
+	sha256:f4ee89f3af99e59ad0742fd7b6358f9159ef513f1f6943d7140fb1bfa550dd38
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-lzma
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-lzma
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += runtime/perl
