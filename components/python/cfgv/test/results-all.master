@@ -1,45 +1,107 @@
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:194: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 95 items
 
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
+tests/cfgv_test.py::test_ValidationError_simple_str PASSED
+tests/cfgv_test.py::test_ValidationError_nested PASSED
+tests/cfgv_test.py::test_check_one_of PASSED
+tests/cfgv_test.py::test_check_one_of_ok PASSED
+tests/cfgv_test.py::test_check_regex PASSED
+tests/cfgv_test.py::test_check_regex_ok PASSED
+tests/cfgv_test.py::test_check_array_failed_inner_check PASSED
+tests/cfgv_test.py::test_check_array_ok PASSED
+tests/cfgv_test.py::test_check_and PASSED
+tests/cfgv_test.py::test_check_and_ok PASSED
+tests/cfgv_test.py::test_not[bar-True] PASSED
+tests/cfgv_test.py::test_not[foo-False] PASSED
+tests/cfgv_test.py::test_not[val2-False] PASSED
+tests/cfgv_test.py::test_not_in[bar-True] PASSED
+tests/cfgv_test.py::test_not_in[foo-False] PASSED
+tests/cfgv_test.py::test_not_in[values2-False] PASSED
+tests/cfgv_test.py::test_in[bar-False] PASSED
+tests/cfgv_test.py::test_in[foo-True] PASSED
+tests/cfgv_test.py::test_in[baz-True] PASSED
+tests/cfgv_test.py::test_in[values3-False] PASSED
+tests/cfgv_test.py::test_validate_top_level_array_not_an_array PASSED
+tests/cfgv_test.py::test_validate_top_level_array_no_objects PASSED
+tests/cfgv_test.py::test_trivial_array_schema_ok_empty PASSED
+tests/cfgv_test.py::test_ok_both_types[v0] PASSED
+tests/cfgv_test.py::test_ok_both_types[v1] PASSED
+tests/cfgv_test.py::test_map_wrong_type PASSED
+tests/cfgv_test.py::test_required_missing_key PASSED
+tests/cfgv_test.py::test_map_value_wrong_type[schema0] PASSED
+tests/cfgv_test.py::test_map_value_wrong_type[schema1] PASSED
+tests/cfgv_test.py::test_map_value_wrong_type[schema2] PASSED
+tests/cfgv_test.py::test_map_value_correct_type[schema0] PASSED
+tests/cfgv_test.py::test_map_value_correct_type[schema1] PASSED
+tests/cfgv_test.py::test_map_value_correct_type[schema2] PASSED
+tests/cfgv_test.py::test_optional_key_missing[schema0] PASSED
+tests/cfgv_test.py::test_optional_key_missing[schema1] PASSED
+tests/cfgv_test.py::test_error_message_no_id_key PASSED
+tests/cfgv_test.py::test_ok_conditional_schemas[v0-schema0] PASSED
+tests/cfgv_test.py::test_ok_conditional_schemas[v0-schema1] PASSED
+tests/cfgv_test.py::test_ok_conditional_schemas[v1-schema0] PASSED
+tests/cfgv_test.py::test_ok_conditional_schemas[v1-schema1] PASSED
+tests/cfgv_test.py::test_not_ok_conditional_schemas[schema0] PASSED
+tests/cfgv_test.py::test_not_ok_conditional_schemas[schema1] PASSED
+tests/cfgv_test.py::test_ensure_absent_conditional PASSED
+tests/cfgv_test.py::test_ensure_absent_conditional_not PASSED
+tests/cfgv_test.py::test_ensure_absent_conditional_not_in PASSED
+tests/cfgv_test.py::test_ensure_absent_conditional_in PASSED
+tests/cfgv_test.py::test_no_error_conditional_absent PASSED
+tests/cfgv_test.py::test_apply_defaults_copies_object PASSED
+tests/cfgv_test.py::test_apply_defaults_sets_default PASSED
+tests/cfgv_test.py::test_apply_defaults_does_not_change_non_default PASSED
+tests/cfgv_test.py::test_apply_defaults_does_nothing_on_non_optional PASSED
+tests/cfgv_test.py::test_apply_defaults_map_in_list PASSED
+tests/cfgv_test.py::test_remove_defaults_copies_object PASSED
+tests/cfgv_test.py::test_remove_defaults_removes_defaults PASSED
+tests/cfgv_test.py::test_remove_defaults_nothing_to_remove PASSED
+tests/cfgv_test.py::test_remove_defaults_does_not_change_non_default PASSED
+tests/cfgv_test.py::test_remove_defaults_map_in_list PASSED
+tests/cfgv_test.py::test_remove_defaults_does_nothing_on_non_optional PASSED
+tests/cfgv_test.py::test_validate_failure_nested PASSED
+tests/cfgv_test.py::test_apply_defaults_nested PASSED
+tests/cfgv_test.py::test_remove_defaults_nested PASSED
+tests/cfgv_test.py::test_validate_failure_optional_recurse PASSED
+tests/cfgv_test.py::test_optional_recurse_ok_missing PASSED
+tests/cfgv_test.py::test_apply_defaults_optional_recurse_missing PASSED
+tests/cfgv_test.py::test_apply_defaults_optional_recurse_already_present PASSED
+tests/cfgv_test.py::test_remove_defaults_optional_recurse_not_present PASSED
+tests/cfgv_test.py::test_remove_defaults_optional_recurse_present_at_default PASSED
+tests/cfgv_test.py::test_remove_defaults_optional_recurse_non_default PASSED
+tests/cfgv_test.py::test_optional_optional_apply_defaults PASSED
+tests/cfgv_test.py::test_optional_optional_remove_defaults PASSED
+tests/cfgv_test.py::test_conditional_recurse_ok[val0] PASSED
+tests/cfgv_test.py::test_conditional_recurse_ok[val1] PASSED
+tests/cfgv_test.py::test_conditional_recurse_ok[val2] PASSED
+tests/cfgv_test.py::test_conditional_recurse_error PASSED
+tests/cfgv_test.py::test_load_from_filename_file_does_not_exist PASSED
+tests/cfgv_test.py::test_load_from_filename_not_a_file PASSED
+tests/cfgv_test.py::test_load_from_filename_unicode_error PASSED
+tests/cfgv_test.py::test_load_from_filename_fails_load_strategy PASSED
+tests/cfgv_test.py::test_load_from_filename_validation_error PASSED
+tests/cfgv_test.py::test_load_from_filename_applies_defaults PASSED
+tests/cfgv_test.py::test_load_from_filename_custom_display_no_file PASSED
+tests/cfgv_test.py::test_load_from_filename_custom_display_error PASSED
+tests/cfgv_test.py::test_conditional_recurse_apply_defaults[True] PASSED
+tests/cfgv_test.py::test_conditional_recurse_apply_defaults[False] PASSED
+tests/cfgv_test.py::test_conditional_recurse_remove_defaults[True] PASSED
+tests/cfgv_test.py::test_conditional_recurse_remove_defaults[False] PASSED
+tests/cfgv_test.py::test_conditional_optional_check[True] PASSED
+tests/cfgv_test.py::test_conditional_optional_check[False] PASSED
+tests/cfgv_test.py::test_conditional_optional_apply_default[True] PASSED
+tests/cfgv_test.py::test_conditional_optional_apply_default[False] PASSED
+tests/cfgv_test.py::test_conditional_optional_remove_default[True] PASSED
+tests/cfgv_test.py::test_conditional_optional_remove_default[False] PASSED
+tests/cfgv_test.py::test_no_additional_keys PASSED
+tests/cfgv_test.py::test_warn_additional_keys_when_has_extra_keys PASSED
+tests/cfgv_test.py::test_warn_additional_keys_when_no_extra_keys PASSED
 
-!!
-  ir_d = dist.fetch_build_eggs(dist.install_requires)
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:195: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
-
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
-
-!!
-  tr_d = dist.fetch_build_eggs(dist.tests_require or [])
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:196: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
-
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
-
-!!
-  er_d = dist.fetch_build_eggs(
-running egg_info
-writing cfgv.egg-info/PKG-INFO
-writing dependency_links to cfgv.egg-info/dependency_links.txt
-writing top-level names to cfgv.egg-info/top_level.txt
-reading manifest file 'cfgv.egg-info/SOURCES.txt'
-adding license file 'LICENSE'
-writing manifest file 'cfgv.egg-info/SOURCES.txt'
-running build_ext
-
-----------------------------------------------------------------------
-Ran 0 tests
-
-OK
+======== 95 passed ========
+  py$(PYV): OK
+  congratulations :)
