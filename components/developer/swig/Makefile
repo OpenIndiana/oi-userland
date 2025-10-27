@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         swig
-COMPONENT_VERSION=	4.3.0
+COMPONENT_VERSION=	4.4.0
 COMPONENT_SUMMARY=      Simplified Wrapper and Interface Generator
 COMPONENT_PROJECT_URL=  https://www.swig.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f7203ef796f61af986c70c05816236cbd0d31b7aa9631e5ab53020ab7804aa9e
+COMPONENT_ARCHIVE_HASH=	sha256:c3f8e5dcd68c18aa19847b33b0a1bb92f07e904c53ae9cf5ae4ff8727a72927e
 COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/swig/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/swig
 COMPONENT_CLASSIFICATION= Development/Other Languages
@@ -96,9 +96,9 @@ COMPONENT_TEST_TARGETS = \
         partialcheck-python-test-suite \
         partialcheck-ruby-test-suite
 
-# Build dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-PERL_REQUIRED_PACKAGES += runtime/perl
+# Manually added build dependencies
+REQUIRED_PACKAGES.python += runtime/python
+REQUIRED_PACKAGES.perl += runtime/perl
 REQUIRED_PACKAGES += developer/parser/bison-37
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/ocaml
