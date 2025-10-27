@@ -20,19 +20,25 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		attrs
 HUMAN_VERSION =			25.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Classes Without Boilerplate
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-include $(WS_MAKE_RULES)/common.mk
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# attrs --> hypothesis ==> attrs
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
-# Filter out test loop dependency.  The loop is caused by complex project's
-# test dependency hierarchy involving extras (see pyproject.toml).
-REQUIRED_PACKAGES_TRANSFORM += \
-	| $(GSED) -e '/^TEST_REQUIRED_PACKAGES\.python += library\/python\/attrs$$/d' \
-	| $(COMPONENT_TEST_TRANSFORMER) -e ''
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
