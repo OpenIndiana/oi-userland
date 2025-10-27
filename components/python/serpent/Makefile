@@ -14,18 +14,17 @@
 #   $WS_TOOLS/python-integrate-project serpent
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		serpent
-HUMAN_VERSION =			1.41
-COMPONENT_SUMMARY =		serpent - Serialization based on ast.literal_eval
+HUMAN_VERSION =			1.42
+COMPONENT_SUMMARY =		Serialization based on ast.literal_eval
 COMPONENT_PROJECT_URL =		https://github.com/irmen/Serpent
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5c/b4/6dee78c531270d98b4166971c0d8b1432af05e10f887d52dbf536aaa23e3/serpent-1.41.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0407035fe3c6644387d48cff1467d5aa9feff814d07372b78677ed0ee3ed7095
+	sha256:8ea082b01f8ba07ecd74e34a9118ac4521bc4594938d912b808c89f1da425506
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,5 +32,12 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += test-requirements.txt
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/pytz
