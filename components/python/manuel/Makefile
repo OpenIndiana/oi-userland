@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project manuel
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		manuel
 HUMAN_VERSION =			1.13.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Manuel lets you build tested documentation.
 COMPONENT_PROJECT_URL =		http://pypi.python.org/pypi/manuel
 COMPONENT_ARCHIVE_HASH =	\
@@ -35,6 +36,11 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/benji-york/manuel/issues/34#issuecomment-2016443027
 COMPONENT_TEST_TARGETS += manuel.tests.test_suite
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += tests
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
