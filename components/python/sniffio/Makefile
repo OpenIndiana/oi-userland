@@ -20,7 +20,8 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sniffio
 HUMAN_VERSION =			1.3.1
-COMPONENT_SUMMARY =		sniffio - Sniff out which async library your code is running under
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Sniff out which async library your code is running under
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/sniffio
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc
@@ -35,10 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += test-requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/curio
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
