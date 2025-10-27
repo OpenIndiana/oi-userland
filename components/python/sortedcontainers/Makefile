@@ -14,24 +14,27 @@
 #   $WS_TOOLS/python-integrate-project sortedcontainers
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sortedcontainers
 HUMAN_VERSION =			2.4.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		sortedcontainers - Sorted Containers -- Sorted List, Sorted Dict, Sorted Set
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Sorted Containers -- Sorted List, Sorted Dict, Sorted Set
 COMPONENT_PROJECT_URL =		http://www.grantjenks.com/docs/sortedcontainers/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e8/c4/ba2f8066cceb6f23394729afe52f3bf7adec04bf9ed2c820b39e19299111/sortedcontainers-2.4.0.tar.gz
+	https://github.com/grantjenks/python-sortedcontainers/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:25caa5a06cc30b6b83d11423433f65d1f9d76c4c6a0c90e3379eaa43b9bfdb88
+	sha256:70e22f4fd29b204f75f989e3c1e847aa1de267a028aab4233c0db783aaff78c1
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			python-sortedcontainers-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
