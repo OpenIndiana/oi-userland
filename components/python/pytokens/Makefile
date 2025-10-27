@@ -19,21 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytokens
-HUMAN_VERSION =			0.1.10
-COMPONENT_SUMMARY =		A Fast, spec compliant Python 3.12+ tokenizer that runs on older Pythons.
+HUMAN_VERSION =			0.2.0
+COMPONENT_SUMMARY =		A Fast, spec compliant Python 3.13+ tokenizer that runs on older Pythons.
 COMPONENT_PROJECT_URL =		https://github.com/tusharsadhwani/pytokens
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/tusharsadhwani/pytokens/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9a4bfa0be1d26aebce03e6884ba454e842f186a59ea43a6d3b25af58223c044
+	sha256:74f119c46e07e1dbf6b0a09e5516d54b1773cfbbeef9bd4ceb1b83e17f794fef
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# We cannot run tests because
-# https://github.com/tusharsadhwani/pytokens/issues/3
-# https://github.com/tusharsadhwani/pytokens/issues/4
-TEST_STYLE = none
-
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/tusharsadhwani/pytokens/issues/10
+TEST_REQUIREMENTS_EXTRAS += dev
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/tox
+TEST_REQUIRED_PACKAGES.python += library/python/wheel
