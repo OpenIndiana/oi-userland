@@ -11,28 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project re_assert
+#   $WS_TOOLS/python-integrate-project -d python/re_assert re-assert
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		re_assert
-COMPONENT_VERSION =		1.1.0
-COMPONENT_SUMMARY =		re_assert - show where your regex match assertion failed!
+COMPONENT_NAME =		re-assert
+HUMAN_VERSION =			1.1.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		show where your regex match assertion failed!
 COMPONENT_PROJECT_URL =		https://github.com/asottile/re-assert
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/72/89/5801de335fa7a9cd9f402f66680b14be076d2084dd8244e3a3136a743262/re_assert-1.1.0.tar.gz
+	https://github.com/asottile/re-assert/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5172dfbd2047a15dff2347735dea7e495479cc7e58841199a4a4973256b20464
+	sha256:01c4a849ed520923e4bab9afdf73b5f2698c4f92ad7f580ccb3f68ea79c69c0c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/regex
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/regex
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

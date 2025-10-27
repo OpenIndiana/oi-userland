@@ -1,10 +1,24 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 2 items
+collecting ... collected 12 items
 
-::project PASSED
+tests/re_assert_test.py::test_typeerror_equality_different_type PASSED
+tests/re_assert_test.py::test_matches_repr_plain PASSED
+tests/re_assert_test.py::test_matches_repr_with_flags PASSED
+tests/re_assert_test.py::test_repr_with_failure PASSED
+tests/re_assert_test.py::test_assert_success PASSED
+tests/re_assert_test.py::test_fail_at_beginning PASSED
+tests/re_assert_test.py::test_fail_at_end_of_line PASSED
+tests/re_assert_test.py::test_fail_multiple_lines PASSED
+tests/re_assert_test.py::test_fail_end_of_line_with_newline PASSED
+tests/re_assert_test.py::test_fail_at_end_of_line_mismatching_newline PASSED
+tests/re_assert_test.py::test_match_with_tabs PASSED
+tests/re_assert_test.py::test_from_pattern PASSED
 
-======== 1 passed ========
+======== 12 passed ========
+  py$(PYV): OK
+  congratulations :)
