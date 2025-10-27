@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		smartypants
 HUMAN_VERSION =			2.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python with the SmartyPants
 COMPONENT_PROJECT_URL =		https://github.com/justinmayer/smartypants.py
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +32,12 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+# See https://github.com/justinmayer/smartypants.py/blob/main/.github/workflows/ci.yml
+TEST_REQUIRED_PACKAGES.python += library/python/docutils
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
