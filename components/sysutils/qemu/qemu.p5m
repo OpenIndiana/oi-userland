@@ -48,6 +48,13 @@ depend type=require fmri=system/qemu/kvm
 <transform path=usr/share/qemu/vgabios-vmware.bin -> drop>
 <transform path=usr/share/qemu/vgabios.bin -> drop>
 
+# Do not include libfdt subproject
+<transform path=usr/include/fdt.h -> drop>
+<transform path=usr/include/libfdt.h -> drop>
+<transform path=usr/include/libfdt_env.h -> drop>
+<transform path=usr/lib/$(MACH64)/libfdt.a -> drop>
+<transform path=usr/lib/$(MACH64)/pkgconfig/libfdt.pc -> drop>
+
 # Add linkes to files in system/qemu/kvm package
 # (Comment out files in lower section of file)
 link path=usr/share/qemu/dtb/bamboo.dtb target=usr/share/qemu/bamboo.dtb pkg.linted.userland.action002.0=true
