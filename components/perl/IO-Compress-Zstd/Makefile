@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress-Zstd
-HUMAN_VERSION =			2.213
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.214
 COMPONENT_SUMMARY =		Write zstd files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc91b4dd872ace46d4f810739392b89c4313b504daf12de4246a83c3946cf03e
+	sha256:cd18b6cdf98711fc3d251139bf6481a5ccd3c45ce5de94e6c36855291ebea18e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/compress-stream-zstd
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/compress-stream-zstd
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += runtime/perl
