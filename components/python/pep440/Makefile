@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pep440
 HUMAN_VERSION =			0.1.2
-COMPONENT_SUMMARY =		pep440 - A simple package with utils to check whether versions number match PEP 440.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A simple package with utils to check whether versions number match PEP 440.
 COMPONENT_PROJECT_URL =		https://github.com/Carreau/pep440
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9c/9f/6934fbe88a573c91e4715ec2e6e346cf994460154dbc0d66db6a4096fa5d/pep440-0.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:58b37246cc2b13fee1ca2a3c092cb3704d21ecf621a5bdbb168e44e697f6d04d
 COMPONENT_LICENSE =		MIT
@@ -33,11 +32,12 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing needs access to pep440 binary
-COMPONENT_PRE_TEST_ACTION += $(LN) -s pep440-$(PYTHON_VERSION) $(PROTO_DIR)/usr/bin/pep440 ;
-COMPONENT_POST_TEST_ACTION += $(RM) $(PROTO_DIR)/usr/bin/pep440 ;
-COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/usr/bin:$(PATH)
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-console-scripts
