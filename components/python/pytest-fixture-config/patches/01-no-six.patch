@@ -1,0 +1,31 @@
+https://github.com/man-group/pytest-plugins/pull/254
+
+--- pytest-fixture-config-1.8.0/setup.py.orig
++++ pytest-fixture-config-1.8.0/setup.py
+@@ -20,8 +20,7 @@
+ 
+ install_requires = ['pytest']
+ 
+-tests_require = ['six',
+-                 ]
++tests_require = []
+ 
+ if __name__ == '__main__':
+     kwargs = common_setup('pytest_fixture_config')
+--- pytest-fixture-config-1.8.0/tests/unit/test_fixture_config.py.orig
++++ pytest-fixture-config-1.8.0/tests/unit/test_fixture_config.py
+@@ -1,11 +1,12 @@
++import importlib
++
+ import pytest
+-from six.moves import reload_module
+ 
+ # HACK: if the plugin is imported before the coverage plugin then all
+ # the top-level code will be omitted from coverage, so force it to be
+ # reloaded within this unit test under coverage
+ import pytest_fixture_config
+-reload_module(pytest_fixture_config)
++importlib.reload(pytest_fixture_config)
+ 
+ from pytest_fixture_config import Config, requires_config, yield_requires_config
+ 
