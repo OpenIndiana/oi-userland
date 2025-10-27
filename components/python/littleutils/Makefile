@@ -14,21 +14,23 @@
 #   $WS_TOOLS/python-integrate-project littleutils
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		littleutils
-HUMAN_VERSION =			0.2.2
-COMPONENT_SUMMARY =		littleutils - Small personal collection of python utility functions
+HUMAN_VERSION =			0.2.4
+COMPONENT_SUMMARY =		Small personal collection of python utility functions
 COMPONENT_PROJECT_URL =		https://github.com/alexmojaki/littleutils
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4e/b1/bb4e06f010947d67349f863b6a2ad71577f85590180a935f60543f622652/littleutils-0.2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e6cae3a4203e530d51c9667ed310ffe3b1948f2876e3d69605b3de4b7d96916f
+	sha256:c7835b01020ced42e291118b7d78fb16bc2d9a1b4f3f42f3cb3787bb4da53d19
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
