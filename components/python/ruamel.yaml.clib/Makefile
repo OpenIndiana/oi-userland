@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml.clib
 HUMAN_VERSION =			0.2.14
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		C version of reader, parser and emitter for ruamel.yaml derived from libyaml
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:803f5044b13602d58ea378576dd75aa759f52116a0232608e8fdada4da33752e
