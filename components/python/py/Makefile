@@ -19,25 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		py
-COMPONENT_VERSION =		1.11.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		py - library with cross-python path, ini-parsing, io, code, log facilities
+HUMAN_VERSION =			1.11.0
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		library with cross-python path, ini-parsing, io, code, log facilities
 COMPONENT_PROJECT_URL =		https://py.readthedocs.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/98/ff/fec109ceb715d2a6b4c4a85a61af3b40c723a961e8828319fbcb15b868dc/py-1.11.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
+# Testing is known to fail: https://github.com/pytest-dev/py/issues/281
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
