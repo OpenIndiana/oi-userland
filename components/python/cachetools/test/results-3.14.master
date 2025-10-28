@@ -1,10 +1,5 @@
-$(PYTHON_DIR)/vendor-packages/setuptools_scm/_integration/deprecation.py:7: UserWarning: setup.cfg: at [metadata]
-version = attr: ... is forcing setuptools to override the version setuptools-scm did already set
-When using setuptools-scm it's invalid to use setuptools dynamic version as well, please remove it.
-Setuptools-scm is responsible for setting the version, forcing setuptools to override creates errors.
-  warnings.warn(
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m py.test --basetemp=$(@D)/.tox/py$(PYV)/tmp --cov=cachetools --cov-report term-missing
+py$(PYV): commands[0]> python -m pytest --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -233,18 +228,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_lru PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
-
-Name                                                                                                                                           Stmts   Miss  Cover   Missing
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/cachetools/__init__.py          492      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/cachetools/_cached.py           187      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/cachetools/_cachedmethod.py      99      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/cachetools/func.py               52      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/cachetools/keys.py               28      0   100%
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                            858      0   100%
 ======== 220 passed ========
   py$(PYV): OK
   congratulations :)
