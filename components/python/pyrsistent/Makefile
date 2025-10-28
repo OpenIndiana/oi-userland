@@ -15,26 +15,27 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyrsistent
 HUMAN_VERSION =			0.20.0
-COMPONENT_SUMMARY =		pyrsistent - Persistent/Functional/Immutable data structures
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Persistent/Functional/Immutable data structures
 COMPONENT_PROJECT_URL =		https://github.com/tobgu/pyrsistent/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ce/3a/5031723c09068e9c8c2f0bc25c3a9245f2b1d1aea8396c787a408f2b95ca/pyrsistent-0.20.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4c48f78f62ab596c679086084d0dd13254ae4f3d6c72a83ffdf5ebdef8f265a4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.mit
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
