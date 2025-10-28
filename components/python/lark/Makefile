@@ -20,13 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lark
-HUMAN_VERSION =			1.3.0
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		a modern parsing library
 COMPONENT_PROJECT_URL =		https://github.com/lark-parser/lark
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/lark-parser/lark/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5207a244c4877d45617d47c730e1c5612431fc608334cfafa6e528370add2f3d
+	sha256:b426a7a6d6d53189d318f2b6236ab5d6429eaf09259f1ca33eb716eed10d2905
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,5 +35,6 @@ TOX_POSARGS += --verbose
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/regex
