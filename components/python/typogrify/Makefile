@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typogrify
 HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Filters to enhance web typography, including support for Django & Jinja templates
 COMPONENT_PROJECT_URL =		https://github.com/justinmayer/typogrify
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,9 +30,12 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = none
 
+# This project is missing tests.
+# https://github.com/justinmayer/typogrify/issues/4
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/smartypants
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/smartypants
+REQUIRED_PACKAGES.python += runtime/python
