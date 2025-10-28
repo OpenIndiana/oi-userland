@@ -24,8 +24,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycurl
 HUMAN_VERSION =			7.45.7
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		PycURL -- A Python Interface To The cURL library
-COMPONENT_PROJECT_URL =		http://pycurl.io/
+COMPONENT_PROJECT_URL =		https://pycurl.github.io/
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9d43013002eab2fd6d0dcc671cd1e9149e2fc1c56d5e796fad94d076d6cb69ef
 COMPONENT_LICENSE =		LGPL-2.1-only
@@ -53,12 +54,22 @@ COMPONENT_PRE_TEST_ACTION += PATH=$(PATH.gnu) make -C $(@D)/tests/fake-curl/libc
 PYTEST_ADDOPTS += --deselect tests/pause_test.py::PauseTest::test_pause_via_call
 PYTEST_ADDOPTS += --deselect tests/pause_test.py::PauseTest::test_pause_via_return
 
+# see https://curl.se/libcurl/c/CURLOPT_KRBLEVEL.html
+PYTEST_ADDOPTS += --deselect tests/option_constants_test.py::OptionConstantsTest::test_krb4level
+PYTEST_ADDOPTS += --deselect tests/option_constants_test.py::OptionConstantsTest::test_krblevel
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements-dev.txt
+
 # Replace Python version in pycurl documentation directory name
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/\(usr\/share\/doc\/pycurl-\)3\.[0-9]*/\1$$(PYVER)/' | uniq
+GENERATE_EXTRA_SED += -e 's/\(usr\/share\/doc\/pycurl-\)3\.[0-9]*/\1$$(PYVER)/'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flask
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
