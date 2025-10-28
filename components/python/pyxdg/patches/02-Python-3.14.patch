@@ -1,0 +1,64 @@
+https://gitlab.freedesktop.org/xdg/pyxdg/-/merge_requests/17
+
+--- pyxdg-0.28/test/test_basedirectory.py.orig
++++ pyxdg-0.28/test/test_basedirectory.py
+@@ -9,7 +9,7 @@
+ try:
+     reload
+ except NameError:
+-    from imp import reload
++    from importlib import reload
+ 
+ class BaseDirectoryTest(unittest.TestCase):
+     def setUp(self):
+--- pyxdg-0.28/xdg/Menu.py.orig
++++ pyxdg-0.28/xdg/Menu.py
+@@ -411,7 +411,7 @@
+     def fromFilename(cls, type, filename):
+         tree = ast.Expression(
+             body=ast.Compare(
+-                left=ast.Str(filename),
++                left=ast.Constant(filename),
+                 ops=[ast.Eq()],
+                 comparators=[ast.Attribute(
+                     value=ast.Name(id='menuentry', ctx=ast.Load()),
+@@ -419,7 +419,6 @@
+                     ctx=ast.Load()
+                 )]
+             ),
+-            lineno=1, col_offset=0
+         )
+         ast.fix_missing_locations(tree)
+         rule = Rule(type, tree)
+@@ -763,12 +762,10 @@
+ 
+     def parse_rule(self, node):
+         type = Rule.TYPE_INCLUDE if node.tag == 'Include' else Rule.TYPE_EXCLUDE
+-        tree = ast.Expression(lineno=1, col_offset=0)
++        tree = ast.Expression(body=_ast_const('False'))
+         expr = self.parse_bool_op(node, ast.Or())
+         if expr:
+             tree.body = expr
+-        else:
+-            tree.body = _ast_const('False')
+         ast.fix_missing_locations(tree)
+         return Rule(type, tree)
+ 
+@@ -799,7 +796,7 @@
+         elif tag == 'Category':
+             category = node.text
+             return ast.Compare(
+-                left=ast.Str(category),
++                left=ast.Constant(category),
+                 ops=[ast.In()],
+                 comparators=[ast.Attribute(
+                     value=ast.Name(id='menuentry', ctx=ast.Load()),
+@@ -810,7 +807,7 @@
+         elif tag == 'Filename':
+             filename = node.text
+             return ast.Compare(
+-                left=ast.Str(filename),
++                left=ast.Constant(filename),
+                 ops=[ast.Eq()],
+                 comparators=[ast.Attribute(
+                     value=ast.Name(id='menuentry', ctx=ast.Load()),
