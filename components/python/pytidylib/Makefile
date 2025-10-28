@@ -14,16 +14,15 @@
 #   $WS_TOOLS/python-integrate-project pytidylib
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytidylib
 HUMAN_VERSION =			0.3.2
-COMPONENT_SUMMARY =		pytidylib - Python wrapper for HTML Tidy (tidylib) on Python 2 and 3
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Python wrapper for HTML Tidy (tidylib) on Python 2 and 3
 COMPONENT_PROJECT_URL =		http://countergram.com/open-source/pytidylib/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2d/5e/4d2b5e2d443d56f444e2a3618eb6d044c97d14bf47cab0028872c0a468e0/pytidylib-0.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:22b1c8d75970d8064ff999c2369e98af1d0685417eda4c829a5c9f56764b0af3
 COMPONENT_LICENSE =		MIT
@@ -33,8 +32,6 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing fails with the checkdocs plugin installed
-PYTEST_ADDOPTS += -p no:checkdocs
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
