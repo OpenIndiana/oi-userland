@@ -1,0 +1,32 @@
+We do not need to check typing for this project.
+
+--- immutables-0.21/pyproject.toml.orig
++++ immutables-0.21/pyproject.toml
+@@ -39,7 +39,6 @@
+ test = [
+     'flake8~=5.0',
+     'pycodestyle~=2.9',
+-    'mypy~=1.4',
+     'pytest~=7.4',
+ ]
+ 
+--- immutables-0.21/tests/conftest.py.orig
++++ immutables-0.21/tests/conftest.py
+@@ -1,17 +1,4 @@
+ import sys
+-# We need the mypy pytest plugin to do the test collection for our
+-# typing tests.
+-
+-# mypy demands that its test-data be present for mypy.test.config to be
+-# imported, so thwart that check. mypy PR #10919 fixes this.
+-import unittest.mock
+-with unittest.mock.patch('os.path.isdir') as isdir:
+-    isdir.return_value = True
+-    import mypy.test.config  # noqa
+-
+-pytest_plugins = [
+-    'mypy.test.data',
+-]
+ 
+ if sys.version_info < (3, 10):
+     collect_ignore = ["test_pattern_matching.py"]
