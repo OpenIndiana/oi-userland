@@ -223,7 +223,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
 # Testing depends on install target because we want to test installed modules
 COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 # Point Python to the proto area so it is able to find installed modules there
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTOPYTHONVENDORDIR)
 # Make sure testing is able to find own installed executables (if any)
 COMPONENT_TEST_ENV +=	PATH=$(PROTOUSRBINDIR):$(PATH)
 
