@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		resolvelib
 HUMAN_VERSION =			1.2.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Resolve abstract dependencies into concrete ones
 COMPONENT_PROJECT_URL =		https://github.com/sarugaku/resolvelib
 COMPONENT_ARCHIVE_URL =		\
@@ -32,6 +33,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
