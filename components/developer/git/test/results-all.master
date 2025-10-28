@@ -1094,7 +1094,7 @@ ok 12 - pretty nested inline object and array 2
 ok 13 - inline object with no members
 ok 14 - inline array with no members
 ok 15 - larger empty example
-ok 16 # skip parse JSON using Perl (missing PERLJSON)
+ok 16 - parse JSON using Perl
 # passed all 16 test(s)
 1..16
 *** t0020-crlf.sh ***
@@ -4319,12 +4319,7 @@ ok 10 - unreadable directory in PATH
 ok 11 - run_command runs in parallel with more jobs available than tasks
 ok 12 - run_command runs ungrouped in parallel with more jobs available than tasks
 ok 13 - run_command runs in parallel with as many jobs as tasks
-not ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
-#	
-#		test-tool run-command --ungroup run-command-parallel 4 sh -c "printf \"%s\n%s\n\" Hello World" >out 2>err &&
-#		test_line_count = 8 out &&
-#		test_line_count = 4 err
-#	
+ok 14 - run_command runs ungrouped in parallel with as many jobs as tasks
 ok 15 - run_command runs in parallel with more tasks than jobs available
 ok 16 - run_command runs ungrouped in parallel with more tasks than jobs available
 ok 17 - run_command is asked to abort gracefully
@@ -4334,7 +4329,7 @@ ok 20 - run_command outputs (ungroup)
 ok 21 - GIT_TRACE with environment variables
 ok 22 # skip verify curlies are quoted properly (missing MINGW)
 ok 23 # skip can spawn .bat with argv[0] containing spaces (missing MINGW)
-# failed 1 among 23 test(s)
+# passed all 23 test(s)
 1..23
 *** t0062-revision-walking.sh ***
 ok 1 - setup
@@ -17652,24 +17647,25 @@ ok 3 - git diff-tree HEAD^ HEAD -- a
 ok 4 - git diff-tree HEAD^ HEAD -- b
 ok 5 - echo HEAD | git diff-tree --stdin
 ok 6 - git diff-tree HEAD HEAD
-ok 7 - git diff-files
-ok 8 - git diff-index --cached HEAD
-ok 9 - git diff-index --cached HEAD^
+ok 7 - git diff-tree -w HEAD^ HEAD
+ok 8 - git diff-files
+ok 9 - git diff-index --cached HEAD
 ok 10 - git diff-index --cached HEAD^
-ok 11 - git diff-tree -Stext HEAD^ HEAD -- b
-ok 12 - git diff-tree -Snot-found HEAD^ HEAD -- b
-ok 13 - git diff-files
-ok 14 - git diff-index --cached HEAD
-ok 15 - git diff, one file outside repo
-ok 16 - git diff, both files outside repo
-ok 17 - git diff --ignore-space-at-eol, one file outside repo
-ok 18 - git diff --ignore-space-at-eol, both files outside repo
-ok 19 - git diff --ignore-all-space, one file outside repo
-ok 20 - git diff --ignore-all-space, both files outside repo
-ok 21 - git diff --quiet ignores stat-change only entries
-ok 22 - git diff --quiet on a path that need conversion
-# passed all 22 test(s)
-1..22
+ok 11 - git diff-index --cached HEAD^
+ok 12 - git diff-tree -Stext HEAD^ HEAD -- b
+ok 13 - git diff-tree -Snot-found HEAD^ HEAD -- b
+ok 14 - git diff-files
+ok 15 - git diff-index --cached HEAD
+ok 16 - git diff, one file outside repo
+ok 17 - git diff, both files outside repo
+ok 18 - git diff --ignore-space-at-eol, one file outside repo
+ok 19 - git diff --ignore-space-at-eol, both files outside repo
+ok 20 - git diff --ignore-all-space, one file outside repo
+ok 21 - git diff --ignore-all-space, both files outside repo
+ok 22 - git diff --quiet ignores stat-change only entries
+ok 23 - git diff --quiet on a path that need conversion
+# passed all 23 test(s)
+1..23
 *** t4036-format-patch-signer-mime.sh ***
 ok 1 - setup
 ok 2 - format normally
@@ -18109,15 +18105,17 @@ ok 28 - diff --no-index D F rejects pathspecs
 ok 29 - diff --no-index F D rejects pathspecs
 ok 30 - diff --no-index rejects absolute pathspec
 ok 31 - diff --no-index with pathspec
-ok 32 - diff --no-index with pathspec no matches
-ok 33 - diff --no-index with negative pathspec
-ok 34 - setup nested
-ok 35 - diff --no-index with pathspec nested negative pathspec
-ok 36 - diff --no-index with pathspec nested pathspec
-ok 37 - diff --no-index with pathspec glob
-ok 38 - diff --no-index with pathspec glob and exclude
-# passed all 38 test(s)
-1..38
+ok 32 - diff --no-index first path ending in slash with pathspec
+ok 33 - diff --no-index second path ending in slash with pathspec
+ok 34 - diff --no-index with pathspec no matches
+ok 35 - diff --no-index with negative pathspec
+ok 36 - setup nested
+ok 37 - diff --no-index with pathspec nested negative pathspec
+ok 38 - diff --no-index with pathspec nested pathspec
+ok 39 - diff --no-index with pathspec glob
+ok 40 - diff --no-index with pathspec glob and exclude
+# passed all 40 test(s)
+1..40
 *** t4054-diff-bogus-tree.sh ***
 ok 1 - create bogus tree
 ok 2 - create tree with matching file
@@ -30571,87 +30569,88 @@ ok 43 - status with color.ui
 ok 44 - status with color.status
 ok 45 - status -s with color.ui
 ok 46 - status -s with color.status
-ok 47 - status -s -b with color.status
-ok 48 - status --porcelain ignores color.ui
-ok 49 - status --porcelain ignores color.status
-ok 50 - status --porcelain respects -b
-ok 51 - status without relative paths
-ok 52 - status -s without relative paths
+ok 47 - status -s keeps colors with -z
+ok 48 - status -s -b with color.status
+ok 49 - status --porcelain ignores color.ui
+ok 50 - status --porcelain ignores color.status
+ok 51 - status --porcelain respects -b
+ok 52 - status without relative paths
 ok 53 - status -s without relative paths
-ok 54 - dry-run of partial commit excluding new file in index
-ok 55 - status refreshes the index
-ok 56 - status shows detached HEAD properly after checking out non-local upstream branch
-ok 57 - setup status submodule summary
-ok 58 - status submodule summary is disabled by default
-ok 59 - status --untracked-files=all does not show submodule
-ok 60 - status -s submodule summary is disabled by default
-ok 61 - status -s --untracked-files=all does not show submodule
-ok 62 - status submodule summary
-ok 63 - status submodule summary with status.displayCommentPrefix=false
-ok 64 - commit with submodule summary ignores status.displayCommentPrefix
-ok 65 - status -s submodule summary
-ok 66 - status submodule summary (clean submodule): commit
-ok 67 - status -s submodule summary (clean submodule)
-ok 68 - status -z implies porcelain
-ok 69 - commit --dry-run submodule summary (--amend)
-ok 70 - status succeeds in a read-only repository
-ok 71 - --ignore-submodules=untracked suppresses submodules with untracked content
-ok 72 - .gitmodules ignore=untracked suppresses submodules with untracked content
-ok 73 - .git/config ignore=untracked suppresses submodules with untracked content
-ok 74 - --ignore-submodules=dirty suppresses submodules with untracked content
-ok 75 - .gitmodules ignore=dirty suppresses submodules with untracked content
-ok 76 - .git/config ignore=dirty suppresses submodules with untracked content
-ok 77 - --ignore-submodules=dirty suppresses submodules with modified content
-ok 78 - .gitmodules ignore=dirty suppresses submodules with modified content
-ok 79 - .git/config ignore=dirty suppresses submodules with modified content
-ok 80 - --ignore-submodules=untracked doesn't suppress submodules with modified content
-ok 81 - .gitmodules ignore=untracked doesn't suppress submodules with modified content
-ok 82 - .git/config ignore=untracked doesn't suppress submodules with modified content
-ok 83 - --ignore-submodules=untracked doesn't suppress submodule summary
-ok 84 - .gitmodules ignore=untracked doesn't suppress submodule summary
-ok 85 - .git/config ignore=untracked doesn't suppress submodule summary
-ok 86 - --ignore-submodules=dirty doesn't suppress submodule summary
-ok 87 - .gitmodules ignore=dirty doesn't suppress submodule summary
-ok 88 - .git/config ignore=dirty doesn't suppress submodule summary
-ok 89 - status (core.commentchar with submodule summary)
-ok 90 - status (core.commentchar with two chars with submodule summary)
-ok 91 - --ignore-submodules=all suppresses submodule summary
-ok 92 - .gitmodules ignore=all suppresses unstaged submodule summary
-ok 93 - .git/config ignore=all suppresses unstaged submodule summary
-ok 94 - setup of test environment
-ok 95 - "status.short=true" same as "-s"
-ok 96 - "status.short=true" weaker than "--no-short"
-ok 97 - "status.short=false" same as "--no-short"
-ok 98 - "status.short=false" weaker than "-s"
-ok 99 - "status.branch=true" same as "-b"
-ok 100 - "status.branch=true" different from "--no-branch"
-ok 101 - "status.branch=true" weaker than "--no-branch"
-ok 102 - "status.branch=true" weaker than "--porcelain"
-ok 103 - "status.branch=false" same as "--no-branch"
-ok 104 - "status.branch=false" weaker than "-b"
-ok 105 - Restore default test environment
-ok 106 - git commit will commit a staged but ignored submodule
-ok 107 - git commit --dry-run will show a staged but ignored submodule
-ok 108 - git commit -m will commit a staged but ignored submodule
-ok 109 - show stash info with "--show-stash"
-ok 110 - no stash info with "--show-stash --no-show-stash"
-ok 111 - "status.showStash=false" weaker than "--show-stash"
-ok 112 - "status.showStash=true" weaker than "--no-show-stash"
-ok 113 - no additional info if no stash entries
-ok 114 - "No commits yet" should be noted in status output
-ok 115 - "No commits yet" should not be noted in status output
-ok 116 - "Initial commit" should be noted in commit template
-ok 117 - "Initial commit" should not be noted in commit template
-ok 118 - --no-optional-locks prevents index update
-ok 119 - racy timestamps will be fixed for clean worktree
-ok 120 - racy timestamps will be fixed for dirty worktree
-ok 121 - setup slow status advice
-ok 122 - slow status advice when core.untrackedCache and fsmonitor are unset
-ok 123 - slow status advice when core.untrackedCache true, but not fsmonitor
-ok 124 - slow status advice when core.untrackedCache true, and fsmonitor
-ok 125 # skip status does not re-read unchanged 4 or 8 GiB file (missing EXPENSIVE)
-# passed all 125 test(s)
-1..125
+ok 54 - status -s without relative paths
+ok 55 - dry-run of partial commit excluding new file in index
+ok 56 - status refreshes the index
+ok 57 - status shows detached HEAD properly after checking out non-local upstream branch
+ok 58 - setup status submodule summary
+ok 59 - status submodule summary is disabled by default
+ok 60 - status --untracked-files=all does not show submodule
+ok 61 - status -s submodule summary is disabled by default
+ok 62 - status -s --untracked-files=all does not show submodule
+ok 63 - status submodule summary
+ok 64 - status submodule summary with status.displayCommentPrefix=false
+ok 65 - commit with submodule summary ignores status.displayCommentPrefix
+ok 66 - status -s submodule summary
+ok 67 - status submodule summary (clean submodule): commit
+ok 68 - status -s submodule summary (clean submodule)
+ok 69 - status -z implies porcelain
+ok 70 - commit --dry-run submodule summary (--amend)
+ok 71 - status succeeds in a read-only repository
+ok 72 - --ignore-submodules=untracked suppresses submodules with untracked content
+ok 73 - .gitmodules ignore=untracked suppresses submodules with untracked content
+ok 74 - .git/config ignore=untracked suppresses submodules with untracked content
+ok 75 - --ignore-submodules=dirty suppresses submodules with untracked content
+ok 76 - .gitmodules ignore=dirty suppresses submodules with untracked content
+ok 77 - .git/config ignore=dirty suppresses submodules with untracked content
+ok 78 - --ignore-submodules=dirty suppresses submodules with modified content
+ok 79 - .gitmodules ignore=dirty suppresses submodules with modified content
+ok 80 - .git/config ignore=dirty suppresses submodules with modified content
+ok 81 - --ignore-submodules=untracked doesn't suppress submodules with modified content
+ok 82 - .gitmodules ignore=untracked doesn't suppress submodules with modified content
+ok 83 - .git/config ignore=untracked doesn't suppress submodules with modified content
+ok 84 - --ignore-submodules=untracked doesn't suppress submodule summary
+ok 85 - .gitmodules ignore=untracked doesn't suppress submodule summary
+ok 86 - .git/config ignore=untracked doesn't suppress submodule summary
+ok 87 - --ignore-submodules=dirty doesn't suppress submodule summary
+ok 88 - .gitmodules ignore=dirty doesn't suppress submodule summary
+ok 89 - .git/config ignore=dirty doesn't suppress submodule summary
+ok 90 - status (core.commentchar with submodule summary)
+ok 91 - status (core.commentchar with two chars with submodule summary)
+ok 92 - --ignore-submodules=all suppresses submodule summary
+ok 93 - .gitmodules ignore=all suppresses unstaged submodule summary
+ok 94 - .git/config ignore=all suppresses unstaged submodule summary
+ok 95 - setup of test environment
+ok 96 - "status.short=true" same as "-s"
+ok 97 - "status.short=true" weaker than "--no-short"
+ok 98 - "status.short=false" same as "--no-short"
+ok 99 - "status.short=false" weaker than "-s"
+ok 100 - "status.branch=true" same as "-b"
+ok 101 - "status.branch=true" different from "--no-branch"
+ok 102 - "status.branch=true" weaker than "--no-branch"
+ok 103 - "status.branch=true" weaker than "--porcelain"
+ok 104 - "status.branch=false" same as "--no-branch"
+ok 105 - "status.branch=false" weaker than "-b"
+ok 106 - Restore default test environment
+ok 107 - git commit will commit a staged but ignored submodule
+ok 108 - git commit --dry-run will show a staged but ignored submodule
+ok 109 - git commit -m will commit a staged but ignored submodule
+ok 110 - show stash info with "--show-stash"
+ok 111 - no stash info with "--show-stash --no-show-stash"
+ok 112 - "status.showStash=false" weaker than "--show-stash"
+ok 113 - "status.showStash=true" weaker than "--no-show-stash"
+ok 114 - no additional info if no stash entries
+ok 115 - "No commits yet" should be noted in status output
+ok 116 - "No commits yet" should not be noted in status output
+ok 117 - "Initial commit" should be noted in commit template
+ok 118 - "Initial commit" should not be noted in commit template
+ok 119 - --no-optional-locks prevents index update
+ok 120 - racy timestamps will be fixed for clean worktree
+ok 121 - racy timestamps will be fixed for dirty worktree
+ok 122 - setup slow status advice
+ok 123 - slow status advice when core.untrackedCache and fsmonitor are unset
+ok 124 - slow status advice when core.untrackedCache true, but not fsmonitor
+ok 125 - slow status advice when core.untrackedCache true, and fsmonitor
+ok 126 # skip status does not re-read unchanged 4 or 8 GiB file (missing EXPENSIVE)
+# passed all 126 test(s)
+1..126
 *** t7509-commit-authorship.sh ***
 ok 1 - -C option copies authorship and message
 ok 2 - -C option copies only the message with --reset-author
@@ -34322,13 +34321,13 @@ ok 67 - prompt - conflict indicator
 # passed all 67 test(s)
 1..67
 
-missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SYMLINKS AUTOIDENT BUILTIN_ADOC_CHECKOUT__WORKER BUILTIN_ADOC_MERGE_OURS BUILTIN_ADOC_MERGE_RECURSIVE BUILTIN_ADOC_MERGE_RECURSIVE_OURS BUILTIN_ADOC_MERGE_RECURSIVE_THEIRS BUILTIN_ADOC_MERGE_SUBTREE BUILTIN_ADOC_PICKAXE BUILTIN_ADOC_SUBMODULE__HELPER BUILTIN_ADOC_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
+missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SYMLINKS AUTOIDENT BUILTIN_ADOC_CHECKOUT__WORKER BUILTIN_ADOC_MERGE_OURS BUILTIN_ADOC_MERGE_RECURSIVE BUILTIN_ADOC_MERGE_RECURSIVE_OURS BUILTIN_ADOC_MERGE_RECURSIVE_THEIRS BUILTIN_ADOC_MERGE_SUBTREE BUILTIN_ADOC_PICKAXE BUILTIN_ADOC_SUBMODULE__HELPER BUILTIN_ADOC_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF RFC1991 RUNTIME_PREFIX SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS
 
 
-failed test(s): t0061 t0200 t0204 t5303 t5701 t6011 t9400
+failed test(s): t0200 t0204 t5303 t5701 t6011 t9400
 
 fixed   1
-success 30382
-failed  25
+success 30388
+failed  24
 broken  268
-total   31151
+total   31155
