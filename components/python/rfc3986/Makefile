@@ -14,25 +14,28 @@
 #   $WS_TOOLS/python-integrate-project rfc3986
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rfc3986
 HUMAN_VERSION =			2.0.0
-COMPONENT_SUMMARY =		rfc3986 - Validating URI References per RFC 3986
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Validating URI References per RFC 3986
 COMPONENT_PROJECT_URL =		http://rfc3986.readthedocs.io
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/85/40/1520d68bfa07ab5a6f065a186815fb6610c86fe957bc065754e47f7b0840/rfc3986-2.0.0.tar.gz
+	https://github.com/python-hyper/rfc3986/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:97aacf9dbd4bfd829baad6e6309fa6573aaf1be3f6fa735c8ab05e46cecb261c
+	sha256:013d6e63898c4bcb96a2ebea75e9c511ec71c83d58c88721e532a7d2528ca638
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/idna
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
