@@ -19,29 +19,28 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPI
-HUMAN_VERSION =			1.283
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.284
 COMPONENT_SUMMARY =		Parse, Analyze and Manipulate Perl (without perl)
-COMPONENT_CPAN_AUTHOR =		MITHALDU
+COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70becc9dfad8a72d231bbe88d20a82acfd31c13ca03c6fb359703a5ac0004059
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:8d91e66d910d3096ad4a1fabd884a770c6aede2f034d4d5e5600617ec833bbd3
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/clone
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-path
-PERL_REQUIRED_PACKAGES += library/perl-5/params-util
-PERL_REQUIRED_PACKAGES += library/perl-5/safe-isa
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/task-weaken
-PERL_REQUIRED_PACKAGES += library/perl-5/version
-PERL_REQUIRED_PACKAGES += library/perl-5/yaml-pp
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/clone
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-path
+REQUIRED_PACKAGES.perl += library/perl-5/params-util
+REQUIRED_PACKAGES.perl += library/perl-5/safe-isa
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/task-weaken
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += library/perl-5/yaml-pp
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/class-inspector
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
