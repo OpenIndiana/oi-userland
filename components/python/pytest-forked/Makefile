@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-forked
 HUMAN_VERSION =			1.6.0
-COMPONENT_SUMMARY =		pytest-forked - run tests in isolated forked subprocesses
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		run tests in isolated forked subprocesses
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-forked
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8c/c9/93ad2ba2413057ee694884b88cf7467a46c50c438977720aeac26e73fdb7/pytest-forked-1.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4dafd46a9a600f65d822b8f605133ecf5b3e1941ebb3588e943b4e3eb71a5a3f
 COMPONENT_LICENSE =		MIT
@@ -31,15 +30,12 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pytest-forked/issues/52
-PYTEST_ADDOPTS += -p no:flaky
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/py
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pycmd
+REQUIRED_PACKAGES.python += library/python/py
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
