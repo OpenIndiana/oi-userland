@@ -1,72 +1,114 @@
---- clamav-1.1.0/libfreshclam/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
-+++ clamav-1.1.0/libfreshclam/CMakeLists.txt.new	2023-05-03 21:16:52.477856750 +0200
-@@ -56,11 +56,11 @@
+--- clamav-1.5.1/libfreshclam/CMakeLists.txt.~1~	2025-10-15 18:30:47.000000000 -0400
++++ clamav-1.5.1/libfreshclam/CMakeLists.txt	2025-10-27 18:12:27.003198624 -0400
+@@ -60,15 +60,15 @@
          endif()
      endif()
  
 -    if(WIN32)
 -        set_target_properties(freshclam PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
--    elseif(UNIX AND NOT APPLE)
+-    elseif(UNIX AND NOT APPLE AND NOT AIX)
 -        target_link_options(freshclam PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map")
+-        if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+-            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
+-            target_link_options(freshclam PRIVATE "-Wl,-z,gnu-version-script-compat")
+-        endif()
 -    endif()
 +#    if(WIN32)
 +#        set_target_properties(freshclam PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-+#    elseif(UNIX AND NOT APPLE)
++#    elseif(UNIX AND NOT APPLE AND NOT AIX)
 +#        target_link_options(freshclam PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map")
++#        if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++#            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
++#            target_link_options(freshclam PRIVATE "-Wl,-z,gnu-version-script-compat")
++#        endif()
 +#    endif()
      set_target_properties(freshclam PROPERTIES
          COMPILE_FLAGS "${WARNCFLAGS}"
-         VERSION ${LIBFRESHCLAM_VERSION} SOVERSION ${LIBFRESHCLAM_SOVERSION})
---- clamav-1.1.0/libclamunrar_iface/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
-+++ clamav-1.1.0/libclamunrar_iface/CMakeLists.txt.new	2023-05-03 21:18:38.193681771 +0200
-@@ -60,11 +60,11 @@
+         VERSION ${LIBFRESHCLAM_VERSION} SOVERSION ${LIBFRESHCLAM_SOVERSION}
+--- clamav-1.5.1/libclamav/CMakeLists.txt.old	2025-10-27 17:24:49.583545798 -0400
++++ clamav-1.5.1/libclamav/CMakeLists.txt	2025-10-27 17:26:02.315284059 -0400
+@@ -470,18 +470,18 @@
+         )
+     endif()
+ 
+-    if(WIN32)
+-        set_target_properties( clamav PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON )
+-    else()
+-        target_link_libraries( clamav PUBLIC Iconv::Iconv )
+-    endif()
+-    if(UNIX AND NOT APPLE AND NOT AIX)
+-        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
+-        if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+-            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
+-            target_link_options( clamav PRIVATE "-Wl,-z,gnu-version-script-compat")
+-        endif()
+-    endif()
++#    if(WIN32)
++#        set_target_properties( clamav PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON )
++#    else()
++#        target_link_libraries( clamav PUBLIC Iconv::Iconv )
++#    endif()
++#    if(UNIX AND NOT APPLE AND NOT AIX)
++#        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
++#        if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++#            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
++#            target_link_options( clamav PRIVATE "-Wl,-z,gnu-version-script-compat")
++#        endif()
++#    endif()
+     if(WIN32)
+         install( TARGETS clamav DESTINATION . COMPONENT libraries )
+         install( FILES $<TARGET_PDB_FILE:clamav> DESTINATION . OPTIONAL COMPONENT libraries )
+--- clamav-1.5.1/libclamunrar_iface/CMakeLists.txt.old	2025-10-27 17:24:59.496493573 -0400
++++ clamav-1.5.1/libclamunrar_iface/CMakeLists.txt	2025-10-27 17:28:23.126304950 -0400
+@@ -62,15 +62,15 @@
              )
          endif()
  
 -        if(WIN32)
 -            set_target_properties(clamunrar_iface PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
--        elseif(UNIX AND NOT APPLE)
+-        elseif(UNIX AND NOT APPLE AND NOT AIX)
 -            target_link_options(clamunrar_iface PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar_iface.map")
+-            if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+-                # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
+-                target_link_options(clamunrar_iface PRIVATE "-Wl,-z,gnu-version-script-compat")
+-            endif()
 -        endif()
 +#        if(WIN32)
 +#            set_target_properties(clamunrar_iface PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-+#        elseif(UNIX AND NOT APPLE)
++#        elseif(UNIX AND NOT APPLE AND NOT AIX)
 +#            target_link_options(clamunrar_iface PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar_iface.map")
++#            if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++#                # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
++#                target_link_options(clamunrar_iface PRIVATE "-Wl,-z,gnu-version-script-compat")
++#            endif()
 +#        endif()
  
          # Private (internal-only) dependencies.
          target_link_libraries( clamunrar_iface
---- clamav-1.1.0/libclamunrar/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
-+++ clamav-1.1.0/libclamunrar/CMakeLists.txt.new	2023-05-03 21:18:01.082163255 +0200
-@@ -93,11 +93,11 @@
+--- clamav-1.5.1/libclamunrar/CMakeLists.txt.old	2025-10-27 17:25:08.350455183 -0400
++++ clamav-1.5.1/libclamunrar/CMakeLists.txt	2025-10-27 17:29:14.636094696 -0400
+@@ -95,15 +95,15 @@
          )
      endif()
  
 -    if(WIN32)
 -        set_target_properties(clamunrar PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
--    elseif(UNIX AND NOT APPLE)
+-    elseif(UNIX AND NOT APPLE AND NOT AIX)
 -        target_link_options(clamunrar PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar.map")
+-        if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+-            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
+-            target_link_options(clamunrar PRIVATE "-Wl,-z,gnu-version-script-compat")
+-        endif()
 -    endif()
 +#    if(WIN32)
 +#        set_target_properties(clamunrar PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-+#    elseif(UNIX AND NOT APPLE)
++#    elseif(UNIX AND NOT APPLE AND NOT AIX)
 +#        target_link_options(clamunrar PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamunrar.map")
++#        if (${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++#            # Solaris 11.4 linker supports a subset of GNU ld version scripts, but requires a special option to enable
++#            target_link_options(clamunrar PRIVATE "-Wl,-z,gnu-version-script-compat")
++#        endif()
 +#    endif()
  
      if(WIN32)
          install(TARGETS clamunrar DESTINATION . COMPONENT libraries)
---- clamav-1.1.0/libclamav/CMakeLists.txt	2023-04-28 22:54:01.000000000 +0200
-+++ clamav-1.1.0/libclamav/CMakeLists.txt.new	2023-05-03 21:21:47.935900574 +0200
-@@ -464,9 +464,9 @@
-     else()
-         target_link_libraries( clamav PUBLIC Iconv::Iconv )
-     endif()
--    if(UNIX AND NOT APPLE)
--        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
--    endif()
-+#    if(UNIX AND NOT APPLE)
-+#        target_link_options( clamav PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libclamav.map")
-+#    endif()
-     if(WIN32)
-         install( TARGETS clamav DESTINATION . COMPONENT libraries )
-         install( FILES $<TARGET_PDB_FILE:clamav> DESTINATION . OPTIONAL COMPONENT libraries )
