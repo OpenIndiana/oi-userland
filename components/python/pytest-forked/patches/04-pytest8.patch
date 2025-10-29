@@ -1,0 +1,29 @@
+https://github.com/pytest-dev/pytest-forked/pull/90
+
+--- pytest-forked-1.6.0/testing/test_xfail_behavior.py.orig
++++ pytest-forked-1.6.0/testing/test_xfail_behavior.py
+@@ -7,6 +7,7 @@
+ IS_PYTEST4_PLUS = int(pytest.__version__[0]) >= 4  # noqa: WPS609
+ FAILED_WORD = "FAILED" if IS_PYTEST4_PLUS else "FAIL"
+ PYTEST_GTE_7_2 = hasattr(pytest, "version_tuple") and pytest.version_tuple >= (7, 2)  # type: ignore[attr-defined]
++PYTEST_GTE_8_0 = hasattr(pytest, "version_tuple") and pytest.version_tuple >= (8, 0)  # type: ignore[attr-defined]
+ 
+ pytestmark = pytest.mark.skipif(  # pylint: disable=invalid-name
+     not hasattr(os, "fork"),  # noqa: WPS421
+@@ -60,12 +61,10 @@
+     if expected_lowercase == "xpassed":
+         # XPASS wouldn't have the crash message from
+         # pytest-forked because the crash doesn't happen
+-        short_test_summary = " ".join(
+-            (
+-                short_test_summary,
+-                "The process gets terminated",
+-            )
+-        )
++        if PYTEST_GTE_8_0:
++            short_test_summary += " -"
++        short_test_summary += " The process gets terminated"
++
+     reason_string = (
+         f"reason: The process gets terminated; "
+         f"pytest-forked reason: "
