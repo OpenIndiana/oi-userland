@@ -22,7 +22,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.4.3
+COMPONENT_VERSION=	1.5.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d874cabf3d4765b35b518ef535658a1e6ec74802006a1d613f9f124aa1343210
+COMPONENT_ARCHIVE_HASH=	sha256:64fe4a16a5622c1d71efe9ed7f2c2fbd37f8f237da9f11ff66b73038df71db91
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
@@ -57,6 +57,11 @@ CARGO_HOME =		$(BUILD_DIR)/.cargo
 PATH =			$(PATH.gnu)
 
 ENV +=			CARGO_HOME=$(CARGO_HOME)
+
+# Set CC to fix this build failure:
+# warning: openssl-sys@0.9.109: Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit status: 1): "gcc" "-E" "oi-userland/components/sysutils/clamav-1.5.1/build/amd64/x86_64-unknown-illumos/release/build/openssl-sys-4163889af58add68/out/1973174887749336979detect_compiler_family.c"
+# warning: openssl-sys@0.9.109: gcc: fatal error: cannot execute 'cc1': execvp: No such file or directory
+ENV +=			CC=/usr/bin/gcc
 
 COMPONENT_BUILD_ENV =	$(ENV)
 
