@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		email_validator
 HUMAN_VERSION =			2.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A robust email address syntax and deliverability validation library.
 COMPONENT_PROJECT_URL =		https://github.com/JoshData/python-email-validator
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,7 +33,7 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/dnspython
-PYTHON_REQUIRED_PACKAGES += library/python/idna
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/dnspython
+REQUIRED_PACKAGES.python += library/python/idna
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
