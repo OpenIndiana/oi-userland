@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      7.2
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
@@ -48,7 +49,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH   = $(PATH.gnu)
 # -march option needed to guarantee working code on older CPU architectures
+ifeq ($(MACH), i386)
 CFLAGS += $(CPP_LARGEFILES) -march=nehalem
+endif
 
 #incorporate official translations
 COMPONENT_PREP_ACTION=	( cd $(COMPONENT_SRC)/errors; $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
