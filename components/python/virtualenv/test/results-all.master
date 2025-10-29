@@ -9,9 +9,10 @@ configfile: pyproject.toml
 timeout: 600.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 395 items / 2 deselected / 393 selected
+collecting ... collected 398 items / 2 deselected / 396 selected
 
 tests/integration/test_cachedir_tag.py::test_cachedir_tag_ignored_by_tag PASSED
+tests/integration/test_race_condition_simulation.py::test_race_condition_simulation PASSED
 tests/integration/test_run_int.py::test_app_data_pinning PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[app-data] PASSED
 tests/integration/test_zipapp.py::test_zipapp_create[pip] PASSED
@@ -147,6 +148,8 @@ tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_debian_pypy37_
 tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_debian_pypy38_virtualenvs_exclude_usr[deb_pypy38] PASSED
 tests/unit/create/via_global_ref/builtin/pypy/test_pypy3.py::test_portable_pypy3_virtualenvs_get_their_libs[portable_pypy38] PASSED
 tests/unit/create/via_global_ref/test_api.py::test_can_symlink_when_symlinks_not_enabled PASSED
+tests/unit/create/via_global_ref/test_race_condition.py::test_virtualenv_py_normal_operation PASSED
+tests/unit/create/via_global_ref/test_race_condition.py::test_virtualenv_py_race_condition_find_spec PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_bad_exe_py_info_no_raise PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
 tests/unit/discovery/py_info/test_py_info.py::test_current_as_json PASSED
@@ -406,47 +409,11 @@ tests/unit/test_util.py::test_reentrant_file_lock_is_thread_safe PASSED
 tests/unit/test_util.py::test_run_fail PASSED
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 358 passed, 35 skipped, 2 deselected ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 361 passed, 35 skipped, 2 deselected ========
 py$(PYV): commands[2]> python -m coverage combine
 py$(PYV): commands[3]> python -m coverage report --skip-covered --show-missing
-Name                                                                                                                                                                           Stmts   Miss Branch BrPart  Cover   Missing
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Name                                                                                                                                                                              Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/nushell/__init__.py                           19      2      4      1    87%   24-25
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/python/activate_this.py                       20     20      2      0     0%   10-38
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/activation/via_template.py                               50      3     10      1    93%   11-14
@@ -462,7 +429,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/creator.py          
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/debug.py                                          49     49      8      0     0%   3-94
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/describe.py                                       73      3      6      2    91%   45->47, 51-53, 57->59
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/pyenv_cfg.py                                      50      1      4      0    98%   63
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/_virtualenv.py                     58     58     18      0     0%   3-103
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/_virtualenv.py                     73     73     18      0     0%   3-123
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/api.py                             78      2     22      6    92%   47, 52, 66->68, 68->70, 81->exit, 96->exit
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/common.py          44      1      6      2    94%   42->44, 57
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/create/via_global_ref/builtin/cpython/cpython3.py        94     21     32      3    71%   33, 54-56, 75-99, 133
@@ -489,7 +456,7 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/plugin/creators.py     
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/run/session.py                                           58      1      6      0    98%   28
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/base_embed.py                                 69      3     24      4    92%   36->45, 46, 92, 133
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/pip_invoke.py                                 44      6     12      4    82%   20, 32-33, 40, 54-55
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/base.py             150     11     38      4    90%   61-71, 111, 126->135, 175->174, 182-183
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/base.py             150     11     38      3    90%   61-71, 111, 126->135, 182-183
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/pip_install/symlink.py           41      6      8      1    82%   25-27, 51-53
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/embed/via_app_data/via_app_data.py                 104     19     32      4    79%   43, 83->101, 98-100, 102-115, 129-130
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/acquire.py                                   61      1     22      2    96%   47->50, 99
@@ -498,38 +465,40 @@ $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/periodic_update
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/seed/wheels/util.py                                      79      0     20      1    99%   59->57
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/lock.py                                            117      1     18      4    96%   31->37, 42->44, 45->exit, 60, 100->exit
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_permission.py                                 20      2      8      1    89%   10->exit, 17-18
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_sync.py                                       56      8     16      3    82%   20-21, 25-26, 49->51, 59-63
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_sync.py                                       56      6     16      2    86%   20-21, 49->51, 59-63
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/path/_win.py                                        14     11      2      0    19%   6-18
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/subprocess/__init__.py                              14      1      2      1    88%   23
 $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/virtualenv/util/zipapp.py                                           28     18      4      0    31%   13-15, 19-24, 28-37
-tests/conftest.py                                                                                                                                                                258     36     74     18    79%   31->exit, 41, 46-48, 51-53, 65-70, 77, 90-91, 95, 122, 141, 166-167, 173->192, 183-190, 237, 248->277, 272->271, 287-288, 296->293, 298-299, 340, 360->exit, 366-368
-tests/integration/test_run_int.py                                                                                                                                                 18      1      4      1    91%   27
-tests/integration/test_zipapp.py                                                                                                                                                  79     19     14      2    67%   24-55, 58
-tests/unit/activation/conftest.py                                                                                                                                                161     11     18      3    92%   52, 69, 82-85, 185-190
-tests/unit/activation/test_batch.py                                                                                                                                               82     15      6      0    78%   71, 74-77, 80, 107-109, 118, 121-124, 127
-tests/unit/activation/test_csh.py                                                                                                                                                 47      6      6      2    85%   64-73
-tests/unit/activation/test_nushell.py                                                                                                                                             46      5      2      1    88%   51, 59, 63-65
-tests/unit/activation/test_powershell.py                                                                                                                                          59      8      2      0    87%   71, 74, 77, 85-86, 90-92
-tests/unit/create/conftest.py                                                                                                                                                     25      7      6      3    68%   29-35, 48, 50
-tests/unit/create/test_creator.py                                                                                                                                                442     48     98     19    85%   68, 87, 100->104, 102, 104->98, 143, 175->181, 182, 191, 209-211, 214-218, 222, 278, 348, 381-383, 389, 456-464, 471-490, 529->531, 596-597, 699, 727->737, 751
-tests/unit/create/via_global_ref/builtin/testing/path.py                                                                                                                          62      4      8      3    90%   20, 50->55, 57, 73-74
-tests/unit/create/via_global_ref/builtin/testing/py_info.py                                                                                                                       14      3      0      0    79%   13-16
-tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                              40     23      6      0    37%   19-26, 41-75
-tests/unit/discovery/py_info/test_py_info.py                                                                                                                                     259     32     24      5    87%   183, 213, 337, 346, 366-373, 381, 408, 443-461, 467-531
-tests/unit/discovery/py_info/test_py_info_exe_based_of.py                                                                                                                         45      3      6      2    90%   41, 47-48
-tests/unit/discovery/test_discovery.py                                                                                                                                           187      1     12      2    98%   39->43, 51
-tests/unit/discovery/test_py_spec.py                                                                                                                                              96      2     20      2    97%   91, 117
-tests/unit/discovery/windows/conftest.py                                                                                                                                          68     59     12      0    11%   11-65, 70-79, 85-105
-tests/unit/discovery/windows/test_windows.py                                                                                                                                      13      4      0      0    69%   36-40
-tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                               22     12      0      0    45%   12-15, 90-123
-tests/unit/seed/embed/test_base_embed.py                                                                                                                                          42      6      6      3    81%   28, 52-54, 60, 64
-tests/unit/seed/embed/test_bootstrap_link_via_app_data.py                                                                                                                        164      3     32      4    96%   49, 119->exit, 221, 253
-tests/unit/seed/embed/test_pip_invoke.py                                                                                                                                          65      1     22      1    98%   54
-tests/unit/seed/wheels/test_periodic_update.py                                                                                                                                   336      1      8      1    99%   320
-tests/unit/test_file_limit.py                                                                                                                                                     34      9      6      1    70%   25-29, 37-39, 46
-tests/unit/test_util.py                                                                                                                                                           27      2      2      0    93%   35-36
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                                           7805   1122   1504    213    82%
+tests/conftest.py                                                                                                                                                                   258     36     74     18    79%   31->exit, 41, 46-48, 51-53, 65-70, 77, 90-91, 95, 122, 141, 166-167, 173->192, 183-190, 237, 248->277, 272->271, 287-288, 296->293, 298-299, 340, 360->exit, 366-368
+tests/integration/test_race_condition_simulation.py                                                                                                                                  26      3      8      1    82%   43-45, 47->31
+tests/integration/test_run_int.py                                                                                                                                                    18      1      4      1    91%   27
+tests/integration/test_zipapp.py                                                                                                                                                     79     19     14      2    67%   24-55, 58
+tests/unit/activation/conftest.py                                                                                                                                                   161     11     18      3    92%   52, 69, 82-85, 185-190
+tests/unit/activation/test_batch.py                                                                                                                                                  82     15      6      0    78%   71, 74-77, 80, 107-109, 118, 121-124, 127
+tests/unit/activation/test_csh.py                                                                                                                                                    47      6      6      2    85%   64-73
+tests/unit/activation/test_nushell.py                                                                                                                                                46      5      2      1    88%   51, 59, 63-65
+tests/unit/activation/test_powershell.py                                                                                                                                             59      8      2      0    87%   71, 74, 77, 85-86, 90-92
+tests/unit/create/conftest.py                                                                                                                                                        25      7      6      3    68%   29-35, 48, 50
+tests/unit/create/test_creator.py                                                                                                                                                   442     48     98     19    85%   68, 87, 100->104, 102, 104->98, 143, 175->181, 182, 191, 209-211, 214-218, 222, 278, 348, 381-383, 389, 455-463, 470-489, 528->530, 595-596, 698, 726->736, 750
+tests/unit/create/via_global_ref/builtin/testing/path.py                                                                                                                             62      4      8      3    90%   20, 50->55, 57, 73-74
+tests/unit/create/via_global_ref/builtin/testing/py_info.py                                                                                                                          14      3      0      0    79%   13-16
+tests/unit/create/via_global_ref/test_build_c_ext.py                                                                                                                                 40     23      6      0    37%   19-26, 41-75
+tests/unit/create/via_global_ref/test_race_condition.py                                                                                                                              35      1      4      2    92%   48->exit, 65
+tests/unit/discovery/py_info/test_py_info.py                                                                                                                                        259     32     24      5    87%   183, 213, 337, 346, 366-373, 381, 408, 443-461, 467-531
+tests/unit/discovery/py_info/test_py_info_exe_based_of.py                                                                                                                            45      3      6      2    90%   41, 47-48
+tests/unit/discovery/test_discovery.py                                                                                                                                              187      1     12      2    98%   39->43, 51
+tests/unit/discovery/test_py_spec.py                                                                                                                                                 96      2     20      2    97%   91, 117
+tests/unit/discovery/windows/conftest.py                                                                                                                                             68     59     12      0    11%   11-65, 70-79, 85-105
+tests/unit/discovery/windows/test_windows.py                                                                                                                                         13      4      0      0    69%   36-40
+tests/unit/discovery/windows/test_windows_pep514.py                                                                                                                                  22     12      0      0    45%   12-15, 90-123
+tests/unit/seed/embed/test_base_embed.py                                                                                                                                             42      6      6      3    81%   28, 52-54, 60, 64
+tests/unit/seed/embed/test_bootstrap_link_via_app_data.py                                                                                                                           164      3     32      4    96%   49, 119->exit, 221, 253
+tests/unit/seed/embed/test_pip_invoke.py                                                                                                                                             65      1     22      1    98%   54
+tests/unit/seed/wheels/test_periodic_update.py                                                                                                                                      336      1      8      1    99%   320
+tests/unit/test_file_limit.py                                                                                                                                                        34      9      6      1    70%   25-29, 37-39, 46
+tests/unit/test_util.py                                                                                                                                                              27      2      2      0    93%   35-36
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                                                              7881   1139   1516    214    82%
 
 58 files skipped due to complete coverage.
 py$(PYV): commands[4]> python -m coverage xml -o $(@D)/.tox/coverage.py$(PYV).xml
