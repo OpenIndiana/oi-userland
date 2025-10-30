@@ -29,7 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
 COMPONENT_VERSION=	10.47
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -82,7 +82,9 @@ CONFIGURE_OPTIONS += --enable-valgrind
 CONFIGURE_OPTIONS += --with-link-size=4
 CONFIGURE_OPTIONS += --with-match-limit=10000000
 CONFIGURE_OPTIONS += --with-pic
+ifeq ($(MACH), i386)
 CONFIGURE_OPTIONS += --enable-jit
+endif
 
 COMPONENT_BUILD_ENV += "LDFLAGS=$(LDFLAGS)"
 COMPONENT_BUILD_ENV += "INSTALL=$(INSTALL)"
