@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.2.17
+COMPONENT_VERSION=	2.2.18
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_PROJECT_URL=	https://bluefish.openoffice.nl/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:3a79f6425e14939ea134f96c1424e3aac05bee95904be434581883078a7b7253
+COMPONENT_ARCHIVE_HASH= sha256:c5bc69e5154c0bfe2ead5adb8dd9abb8a67185d4f9b1ae2fce7b2094dd8b27bd
 COMPONENT_ARCHIVE_URL=	https://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/editor/bluefish
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -40,7 +40,6 @@ CONFIGURE_OPTIONS += --disable-update-databases
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -51,3 +50,4 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
