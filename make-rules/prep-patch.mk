@@ -61,9 +61,7 @@ PATCH_PATTERN$(1) ?=	%.patch$(1)
 PATCHES$(1) = $(filter %.patch$(1),$(PATCHES))
 endif
 
-ifneq ($(strip $(ADDITIONAL_PATCHES$(1))),)
 PATCHES$(1) += $(ADDITIONAL_PATCHES$(1))
-endif
 
 ifneq ($$(PATCHES$(1)),)
 PATCH_STAMPS$(1) += $$(PATCHES$(1):$(PATCH_DIR)/%=$$(SOURCE_DIR$(1))/.patched-%)
