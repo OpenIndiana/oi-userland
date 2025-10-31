@@ -32,9 +32,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      25.8.2
-COMPONENT_RC_VERSION=	2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=      25.8.3
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -59,7 +58,7 @@ else
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:002ca2eec3df818d3655bc5ab5702263194febc0212f02e12df1eee11bd7c15e
+COMPONENT_ARCHIVE_HASH= sha256:f56e0633b937f97563c262c2c95e13f1ebd6e32460102ff0b56c10ce61d1f213
 # COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 endif
 COMPONENT_FMRI=         desktop/office/libreoffice
@@ -103,8 +102,8 @@ COMPONENT_ARCHIVE_9 = mythes-1.2.5.tar.xz
 COMPONENT_ARCHIVE_HASH_9 = sha256:19279f70707bbe5ffa619f2dc319f888cec0c4a8d339dc0a21330517bd6f521d
 COMPONENT_ARCHIVE_URL_9 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_9)
 
-COMPONENT_ARCHIVE_10 = glm-1.0.1.zip
-COMPONENT_ARCHIVE_HASH_10 = sha256:09c5716296787e1f7fcb87b1cbdbf26814ec1288ed6259ccd30d5d9795809fa5
+COMPONENT_ARCHIVE_10 = glm-1.0.2.zip
+COMPONENT_ARCHIVE_HASH_10 = sha256:be64032585415ca7dbea0d614915bb8eec012adf7b4d4fea7ff6b5bd3e0b906a
 COMPONENT_ARCHIVE_URL_10 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_10)
 
 COMPONENT_ARCHIVE_11 = CoinMP-1.8.4.tgz
@@ -135,8 +134,8 @@ COMPONENT_ARCHIVE_17 = QR-Code-generator-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH_17 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
 COMPONENT_ARCHIVE_URL_17 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_17)
 
-COMPONENT_ARCHIVE_18 = xmlsec1-1.3.7.tar.gz
-COMPONENT_ARCHIVE_HASH_18 = sha256:d82e93b69b8aa205a616b62917a269322bf63a3eaafb3775014e61752b2013ea
+COMPONENT_ARCHIVE_18 = xmlsec1-1.3.8.tar.gz
+COMPONENT_ARCHIVE_HASH_18 = sha256:d0180916ae71be28415a6fa919a0684433ec9ec3ba1cc0866910b02e5e13f5bd
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 #libreoffice-translations
@@ -148,7 +147,7 @@ COMPONENT_ARCHIVE_URL_19 = https://github.com/LibreOffice/translations/archive/$
 else
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
-COMPONENT_ARCHIVE_HASH_19 = sha256:fb01188fd7258b4da36782618d790e4073769097c0597e103eb814963e272830
+COMPONENT_ARCHIVE_HASH_19 = sha256:13f8bd29eb573631a23d3f8cfd473951ee846c57f1b47f4e3916ccc0594c27dd
 # COMPONENT_SIG_URL_19= $(COMPONENT_ARCHIVE_URL_19).asc
 endif
 
@@ -161,7 +160,7 @@ COMPONENT_ARCHIVE_URL_20 = https://github.com/LibreOffice/dictionaries/archive/$
 else
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
-COMPONENT_ARCHIVE_HASH_20 = sha256:1fc67d410c48c8215562d9fd84d27b1cab67b1fb2502a457e6fbbd91c3298516
+COMPONENT_ARCHIVE_HASH_20 = sha256:33d5752cc3906eecd10157678e2e52491d2d2d2adbb83acddb8ebfd479f7d107
 # COMPONENT_SIG_URL_20= $(COMPONENT_ARCHIVE_URL_20).asc
 endif
 
@@ -202,8 +201,8 @@ COMPONENT_ARCHIVE_29 = libassuan-3.0.2.tar.bz2
 COMPONENT_ARCHIVE_HASH_29 = sha256:d2931cdad266e633510f9970e1a2f346055e351bb19f9b78912475b8074c36f6
 COMPONENT_ARCHIVE_URL_29 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_29)
 
-COMPONENT_ARCHIVE_30 = libgpg-error-1.55.tar.bz2
-COMPONENT_ARCHIVE_HASH_30 = sha256:95b178148863f07d45df0cea67e880a79b9ef71f5d230baddc0071128516ef78
+COMPONENT_ARCHIVE_30 = libgpg-error-1.56.tar.bz2
+COMPONENT_ARCHIVE_HASH_30 = sha256:82c3d2deb4ad96ad3925d6f9f124fe7205716055ab50e291116ef27975d169c0
 COMPONENT_ARCHIVE_URL_30 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_30)
 
 COMPONENT_ARCHIVE_31 = frozen-1.2.0.tar.gz
@@ -303,7 +302,7 @@ COMPONENT_ARCHIVE_URL_53 = https://github.com/LibreOffice/help/archive/$(COMPONE
 else
 COMPONENT_ARCHIVE_53 = libreoffice-help-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_53 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_53)
-COMPONENT_ARCHIVE_HASH_53 = sha256:bb9fde2c035c757581f49545ccbfb046fc31f72968b53b28d0987f1c5547eb5f
+COMPONENT_ARCHIVE_HASH_53 = sha256:4ba4de3aa3a20fe47eba948eba3a73de63a416d3c1dec3c88b06c13006f5381d
 # COMPONENT_SIG_URL_53= $(COMPONENT_ARCHIVE_URL_53).asc
 endif
 
@@ -511,7 +510,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
     LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 --dump -nolist $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/LICENSE.html > $(COMPONENT_NAME).license ;
 
-
 # the license file is dynamically built, thus we need to remove it:
 clean::
 	$(RM) $(COMPONENT_LICENSE_FILE)
@@ -523,6 +521,15 @@ COMPONENT_TEST_TRANSFORMS +=    '-e "s/ [0-9]*ms//g"'
 # Filter out filenames that begin with /tmp/ and end with .tmp. These names
 # change every time test is run
 COMPONENT_TEST_TRANSFORMS +=    '-e "s/\/tmp\/.*\.tmp//g"'
+
+# Filter out some lines from core dumps. Memory addresses change everyy
+# times tests are run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\\\#[0-9].*$$//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\/bin\/sh:.*$$//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^rdx.*$$//g"'
+
+# Filter out PIDs.  These change every run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/\"pid\":[0-9]*//g"'
 
 # debug specific test
 testtrace:

@@ -1,5 +1,7 @@
---- libreoffice-25.8.2.2/sdext/source/pdfimport/xpdfwrapper/wrapper_gpl.cxx.old	2025-10-24 17:19:54.938594521 -0400
-+++ libreoffice-25.8.2.2/sdext/source/pdfimport/xpdfwrapper/wrapper_gpl.cxx	2025-10-24 17:20:54.332801875 -0400
+Fix memory leak when poppler 25.10.0 support got added to libreoffice
+
+--- libreoffice-25.8.3.1/sdext/source/pdfimport/xpdfwrapper/wrapper_gpl.cxx.~1~	2025-10-22 08:04:25.000000000 -0400
++++ libreoffice-25.8.3.1/sdext/source/pdfimport/xpdfwrapper/wrapper_gpl.cxx	2025-10-28 19:49:41.641374066 -0400
 @@ -203,6 +203,22 @@
                      // PDFDoc takes over ownership for all strings below
                      GooString* pFileName = new GooString(myStringToStdString(argv[1]));
@@ -23,11 +25,19 @@
                      // check for password string(s)
                      GooString* pOwnerPasswordStr(aPwBuf[0] != 0
                                                   ? new GooString(aPwBuf)
-@@ -214,12 +230,6 @@
+@@ -214,20 +230,6 @@
                                                  : (userPassword
                                                    ? new GooString(myStringToStdString(userPassword))
                                                    : nullptr));
--#if POPPLER_CHECK_VERSION(22, 6, 0)
+-#if POPPLER_CHECK_VERSION(25, 10, 0)
+-                    std::string sFileName(pFileName ? pFileName->toStr() : std::string());
+-                    std::string sOwnerPasswordStr(pOwnerPasswordStr ? pOwnerPasswordStr->toStr() : std::string());
+-                    std::string sUserPasswordStr(pUserPasswordStr ? pUserPasswordStr->toStr() : std::string());
+-                    pDocUnique = std::unique_ptr<PDFDoc>(
+-                        new PDFDoc(std::make_unique<GooString>(sFileName),
+-                                   std::optional<GooString>(sOwnerPasswordStr),
+-                                   std::optional<GooString>(sUserPasswordStr)));
+-#elif POPPLER_CHECK_VERSION(22, 6, 0)
 -                    pDocUnique = std::unique_ptr<PDFDoc>(
 -                        new PDFDoc(std::make_unique<GooString>(pFileName),
 -                                   std::optional<GooString>(pOwnerPasswordStr),
