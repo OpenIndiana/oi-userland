@@ -47,18 +47,18 @@ PATCH_PATTERN ?=	*.patch*
 
 PATCH_DIR ?=		patches
 
-PATCHES =	$(wildcard $(PATCH_DIR)/$(PATCH_PATTERN))
+ALL_PATCHES =	$(wildcard $(PATCH_DIR)/$(PATCH_PATTERN))
 
-PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
+PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(ALL_PATCHES))))
 
 define patch-rule
 
 ifeq ($(1),_0)
 PATCH_PATTERN$(1) ?=	%.patch
-PATCHES$(1) = $(filter %.patch,$(PATCHES))
+PATCHES$(1) = $(filter %.patch,$(ALL_PATCHES))
 else
 PATCH_PATTERN$(1) ?=	%.patch$(1)
-PATCHES$(1) = $(filter %.patch$(1),$(PATCHES))
+PATCHES$(1) = $(filter %.patch$(1),$(ALL_PATCHES))
 endif
 
 PATCHES$(1) += $(ADDITIONAL_PATCHES$(1))
