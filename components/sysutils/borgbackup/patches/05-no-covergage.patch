@@ -1,0 +1,23 @@
+We do not need to check coverage for this project.
+
+--- borgbackup-1.4.2/requirements.d/development.txt.orig
++++ borgbackup-1.4.2/requirements.d/development.txt
+@@ -7,7 +7,5 @@
+ tox
+ pytest
+ pytest-xdist
+-coverage[toml]
+-pytest-cov
+ pytest-benchmark
+ Cython
+--- borgbackup-1.4.2/pyproject.toml.orig
++++ borgbackup-1.4.2/pyproject.toml
+@@ -183,7 +183,7 @@
+ package = "editable-legacy"  # without this it does not find setup_docs when running under fakeroot
+ deps = ["-rrequirements.d/development.txt"]
+ commands = [
+-    ["python", "-m", "pytest", "-v", "-n", "{env:XDISTN:1}", "-rs", "--cov=borg", "--cov-config=pyproject.toml", "--benchmark-skip", "--pyargs", "{posargs:borg.testsuite}"]
++    ["python", "-m", "pytest", "-v", "-n", "{env:XDISTN:1}", "-rs", "--benchmark-skip", "--pyargs", "{posargs:borg.testsuite}"]
+ ]
+ pass_env = ["*"]  # fakeroot -u needs some env vars
+ labels = ["test"]

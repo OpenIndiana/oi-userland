@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m py.test -v -n auto -rs --cov=borg --cov-config=.coveragerc --benchmark-skip --pyargs borg.testsuite
+py$(PYV): commands[0]> python -m pytest -v -n auto -rs --benchmark-skip --pyargs borg.testsuite
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1621 items]
+X workers [1649 items]
 
 scheduling tests via LoadScheduling
 
@@ -46,7 +46,8 @@ archive.py::test_stats_progress_json <- ../prototype/i386$(PYTHON_DIR)/vendor-pa
 archive.py::test_valid_msgpacked_items[empty-values] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
 archive.py::test_valid_msgpacked_items[long-values] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
 archive.py::test_valid_msgpacked_items[minimal] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
-archive.py::tests_stats_progress <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
+archive.py::tests_stats_progress_file <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
+archive.py::tests_stats_progress_tty <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archive.py PASSED
 archiver.py::ArchiveAuthenticationTest::test_check_rebuild_manifest <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiveAuthenticationTest::test_check_rebuild_refcounts <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiveAuthenticationTest::test_upgrade_archives_tam <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -159,6 +160,7 @@ archiver.py::ArchiverTestCase::test_extract_include_exclude_regex_from_file <- .
 archiver.py::ArchiverTestCase::test_extract_list_output <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_extract_pattern_opt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_extract_progress <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_extract_restores_append_flag <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_extract_with_pattern <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_extract_xattrs_errors <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_extract_xattrs_resourcefork <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -177,10 +179,13 @@ archiver.py::ArchiverTestCase::test_import_concatenated_tar_with_ignore_zeros <-
 archiver.py::ArchiverTestCase::test_import_concatenated_tar_without_ignore_zeros <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_import_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_import_tar_gz <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_import_tar_with_dotslash_paths <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_info_and_create_stats <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_info_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_info_json_of_empty_archive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_init_interrupt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_init_keyfile_same_path_creates_new_keys <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_init_nested_repositories <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_init_parent_dirs <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_init_refuse_to_overwrite_keyfile <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -200,11 +205,13 @@ archiver.py::ArchiverTestCase::test_list_glob <- ../prototype/i386$(PYTHON_DIR)/
 archiver.py::ArchiverTestCase::test_list_hash <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_list_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_list_json_args <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_list_json_lines_includes_archive_keys_in_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_list_repository_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_list_size <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_log_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_migrate_lock_alive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_nobirthtime <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_original_size_stable_across_recreate <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_overwrite <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_path_normalization <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_progress_off <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -216,12 +223,12 @@ archiver.py::ArchiverTestCase::test_prune_repository_glob <- ../prototype/i386$(
 archiver.py::ArchiverTestCase::test_prune_repository_prefix <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_prune_repository_save_space <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_prune_retain_and_expire_oldest <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_check <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_diff <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_export_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_extract <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::ArchiverTestCase::test_readonly_list <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::ArchiverTestCase::test_readonly_check <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_readonly_diff <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_readonly_export_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_readonly_extract <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_readonly_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCase::test_readonly_list <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_readonly_mount <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCase::test_recovery_from_deleted_repo_nonce <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ArchiverTestCase::test_recreate_basic <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -359,6 +366,7 @@ archiver.py::ArchiverTestCaseBinary::test_extract_include_exclude_regex_from_fil
 archiver.py::ArchiverTestCaseBinary::test_extract_list_output <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_extract_pattern_opt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_extract_progress <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_extract_restores_append_flag <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_extract_with_pattern <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_extract_xattrs_errors <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_extract_xattrs_resourcefork <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -377,10 +385,13 @@ archiver.py::ArchiverTestCaseBinary::test_import_concatenated_tar_with_ignore_ze
 archiver.py::ArchiverTestCaseBinary::test_import_concatenated_tar_without_ignore_zeros <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_import_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_import_tar_gz <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_import_tar_with_dotslash_paths <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_info_and_create_stats <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_info_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_info_json_of_empty_archive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_init_interrupt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_init_keyfile_same_path_creates_new_keys <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_init_nested_repositories <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_init_parent_dirs <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_init_refuse_to_overwrite_keyfile <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -400,11 +411,13 @@ archiver.py::ArchiverTestCaseBinary::test_list_glob <- ../prototype/i386$(PYTHON
 archiver.py::ArchiverTestCaseBinary::test_list_hash <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_list_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_list_json_args <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_list_json_lines_includes_archive_keys_in_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_list_repository_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_list_size <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_log_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_migrate_lock_alive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_nobirthtime <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::ArchiverTestCaseBinary::test_original_size_stable_across_recreate <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_overwrite <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_path_normalization <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_progress_off <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -470,6 +483,7 @@ archiver.py::ArchiverTestCaseBinary::test_with_lock_non_existent_command <- ../p
 archiver.py::DiffArchiverTestCase::test_basic_functionality <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::DiffArchiverTestCase::test_multiple_link_exclusion <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::DiffArchiverTestCase::test_sort_option <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::DiffArchiverTestCase::test_sort_validation <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::DiffArchiverTestCase::test_time_diffs <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ManifestAuthenticationTest::test_disable <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::ManifestAuthenticationTest::test_disable2 <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -567,6 +581,7 @@ archiver.py::RemoteArchiverTestCase::test_extract_include_exclude_regex_from_fil
 archiver.py::RemoteArchiverTestCase::test_extract_list_output <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_extract_pattern_opt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_extract_progress <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_extract_restores_append_flag <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_extract_with_pattern <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_extract_xattrs_errors <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_extract_xattrs_resourcefork <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
@@ -585,10 +600,13 @@ archiver.py::RemoteArchiverTestCase::test_import_concatenated_tar_with_ignore_ze
 archiver.py::RemoteArchiverTestCase::test_import_concatenated_tar_without_ignore_zeros <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_import_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_import_tar_gz <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_import_tar_with_dotslash_paths <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_info_and_create_stats <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_info_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_info_json_of_empty_archive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_init_interrupt <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_init_keyfile_same_path_creates_new_keys <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_init_nested_repositories <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_init_parent_dirs <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_init_refuse_to_overwrite_keyfile <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -608,11 +626,13 @@ archiver.py::RemoteArchiverTestCase::test_list_glob <- ../prototype/i386$(PYTHON
 archiver.py::RemoteArchiverTestCase::test_list_hash <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_list_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_list_json_args <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_list_json_lines_includes_archive_keys_in_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_list_repository_format <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_list_size <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_log_json <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_migrate_lock_alive <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_nobirthtime <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_original_size_stable_across_recreate <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_overwrite <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_path_normalization <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_progress_off <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -624,12 +644,12 @@ archiver.py::RemoteArchiverTestCase::test_prune_repository_glob <- ../prototype/
 archiver.py::RemoteArchiverTestCase::test_prune_repository_prefix <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_prune_repository_save_space <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_prune_retain_and_expire_oldest <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_check <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_diff <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_export_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_extract <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::RemoteArchiverTestCase::test_readonly_list <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
+archiver.py::RemoteArchiverTestCase::test_readonly_check <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_readonly_diff <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_readonly_export_tar <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_readonly_extract <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_readonly_info <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
+archiver.py::RemoteArchiverTestCase::test_readonly_list <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_readonly_mount <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::RemoteArchiverTestCase::test_recovery_from_deleted_repo_nonce <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::RemoteArchiverTestCase::test_recreate_basic <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -896,6 +916,14 @@ chunker_pytest.py::test_chunkify_sparse[sparse2-sparse_map4-0-False] <- ../proto
 chunker_pytest.py::test_chunkify_sparse[sparse2-sparse_map5-0-True] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
 chunker_pytest.py::test_chunkify_sparse[sparse2-sparse_map6-4096-False] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
 chunker_pytest.py::test_chunkify_sparse[sparse2-sparse_map7-4096-True] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[0] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[1] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[4] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[5] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[6] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
+chunker_pytest.py::test_fuzz_chunkify[7] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
 chunker_pytest.py::test_sparsemap[notsparse-sparse_map3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
 chunker_pytest.py::test_sparsemap[onlysparse-sparse_map2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
 chunker_pytest.py::test_sparsemap[sparse1-sparse_map0] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/chunker_pytest.py SKIPPED
@@ -1632,54 +1660,7 @@ xattr.py::test_split_lstring[\x00-splitted1] <- ../prototype/i386$(PYTHON_DIR)/v
 xattr.py::test_split_lstring[\x01a-splitted2] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/xattr.py PASSED
 xattr.py::test_split_lstring[\x01a\x02cd-splitted3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/xattr.py PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
-
-Name                                                                                                                                               Stmts   Miss Branch BrPart  Cover
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/algorithms/__init__.py         0      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/archive.py                  1694    232    622    107    83%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/archiver.py                 2214    349    718    121    81%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/cache.py                     843     84    204     33    88%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/constants.py                  46      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/crypto/__init__.py             0      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/crypto/file_integrity.py     152      2     28      1    98%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/crypto/key.py                693     83    172     36    85%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/crypto/keymanager.py         175     13     48      9    90%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/crypto/nonces.py              57      3      6      1    94%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/fuse_impl.py                  26      9      8      1    65%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/__init__.py           85      3     32      4    94%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/checks.py             26      8     16      8    62%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/datastruct.py         65      0     20      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/errors.py             72      5      4      2    91%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/fs.py                204     41     60      9    78%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/manifest.py          178      6     52      7    94%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/misc.py              210     34     74     14    82%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/msgpack.py            95     12      8      1    87%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/parseformat.py       634     45    214     30    90%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/process.py           203     91     44      9    54%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/progress.py          121      4     36      3    96%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/time.py               75      8     22      5    87%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/helpers/yes.py                61      8     38      6    86%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/locking.py                   298     27     84     10    89%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/logger.py                    120     26     36      8    78%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/lrucache.py                   42      0      6      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/nanorst.py                   158     16     60      7    87%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/patterns.py                  198     11     44      6    93%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/platform/__init__.py          34     14     10      5    57%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/platform/base.py             125     18     20      8    81%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/platform/xattr.py             61     39     12      0    33%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/platformflags.py               5      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/remote.py                    669    100    280     57    81%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/repository.py               1121    130    370     57    86%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/selftest.py                   48      7     12      4    82%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/shellpattern.py               36      0     22      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/upgrader.py                  174     54     50     12    62%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/version.py                    25      0      8      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/borg/xattr.py                      72     35     26      4    46%
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                              11115   1517   3466    585    84%
 =========================== short test summary info ============================
-======== 1289 passed, 332 skipped ========
+======== 1287 passed, 362 skipped ========
   py$(PYV): OK
   congratulations :)
