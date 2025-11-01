@@ -16,7 +16,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		yara
-COMPONENT_VERSION=	4.5.4
+COMPONENT_VERSION=	4.5.5
 COMPONENT_SUMMARY=	YARA is a tool aimed at (but not limited to) helping malware \
 	researchers to identify and classify malware samples.
 COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families \
@@ -25,7 +25,7 @@ COMPONENT_DESCRIPTION=	With YARA you can create descriptions of malware families
 	which determine its logic.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:586c9c21878f8b4d1b9423b89ac937f21f8057b03e3e9706f310549d453966fa
+COMPONENT_ARCHIVE_HASH=	sha256:d38e30fd9c1e1c7921d1c4568262d94f5c2d6b5da139fe49572a43ffbc5c53f6
 COMPONENT_PROJECT_URL=	https://virustotal.github.io/yara/
 COMPONENT_ARCHIVE_URL=	https://github.com/VirusTotal/yara/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
