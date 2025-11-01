@@ -20,9 +20,6 @@
 # packages and their dependencies.
 #
 
-# Use the generic cargo vendor support
-CARGO_VENDOR = yes
-
 # Common cargo environment
 CARGO_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 CARGO_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"

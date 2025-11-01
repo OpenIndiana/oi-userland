@@ -19,8 +19,8 @@
 # To use it in a component set CARGO_VENDOR to yes before the common.mk
 # include.
 #
-# To use it in a build style set CARGO_VENDOR to yes anywhere in the build
-# style .mk file.  See cargo.mk for an example.
+# To use it in a build style set CARGO_VENDOR to yes in the
+# $(BUILD_STYLE)-defaults.mk file.  See cargo-defaults.mk for an example.
 #
 
 # Common Cargo home used as a cache for downloaded crates
@@ -30,16 +30,86 @@ CARGO_ARCHIVES ?= $(USERLAND_ARCHIVES)/.cargo
 CARGO = /usr/bin/cargo
 USERLAND_REQUIRED_PACKAGES += developer/lang/rustc
 
-# Fetch all dependencies and vendor them locally
-CARGO_VENDOR_DIR = $(BUILD_DIR)/cargo-vendor
-COMPONENT_PREP_ACTION += [ -f $(SOURCE_DIR)/Cargo.toml ] || exit 1 ;
-COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
-	$(CARGO) fetch --manifest-path $(SOURCE_DIR)/Cargo.toml || exit 1 ;
-COMPONENT_PREP_ACTION += $(MKDIR) $(SOURCE_DIR)/.cargo ;
-COMPONENT_PREP_ACTION += $(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
-	$(CARGO) vendor --manifest-path $(SOURCE_DIR)/Cargo.toml \
-		--versioned-dirs --offline $(CARGO_VENDOR_DIR) \
-	| $(TEE) $(SOURCE_DIR)/.cargo/config.toml ;
+# Directory for vendored dependencies
+CARGO_VENDOR_DIR = $(SOURCE_DIR)-cargo-vendor
+
+# Directory with the Cargo.toml manifest
+CARGO_TOML_DIR = $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%)
+
+# Cargo.toml is available only after we unpack sources
+$(CARGO_TOML_DIR)/Cargo.toml: unpack
+
+# Download all dependencies
+$(SOURCE_DIR)/.cargo-fetched: $(CARGO_TOML_DIR)/Cargo.toml
+	$(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
+		$(CARGO) fetch --manifest-path $(CARGO_TOML_DIR)/Cargo.toml
+	$(TOUCH) $@
+
+# Vendor all dependencies locally
+$(SOURCE_DIR)/.cargo-vendored: $(SOURCE_DIR)/.cargo-fetched $(CARGO_TOML_DIR)/Cargo.toml
+	$(RM) -r $(CARGO_VENDOR_DIR)
+	$(RM) -r $(CARGO_TOML_DIR)/.cargo ; $(MKDIR) $(CARGO_TOML_DIR)/.cargo
+	$(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
+		$(CARGO) vendor --manifest-path $(CARGO_TOML_DIR)/Cargo.toml \
+			--versioned-dirs --offline $(CARGO_VENDOR_DIR) \
+		| $(TEE) $(CARGO_TOML_DIR)/.cargo/config.toml
+	$(TOUCH) $@
+
+# Vendor Cargo dependencies during the patch step
+patch:: $(SOURCE_DIR)/.cargo-vendored
+
+#
+# Few convenient targets.
+#
+# Please note that the cargo-patch target will be enhanced below to do the
+# actual patching (if we do have any cargo vendor patches).
+#
+cargo-fetch: $(SOURCE_DIR)/.cargo-fetched
+cargo-vendor: $(SOURCE_DIR)/.cargo-vendored
+cargo-patch: cargo-vendor
+
+.PHONY: cargo-fetch cargo-vendor cargo-patch
+
+# Apply patches (if any) to vendored dependencies (we need to set
+# SOURCE_DIR_cargo before we include the prep.mk file)
+SOURCE_DIR_cargo = $(CARGO_VENDOR_DIR)
+
+# Include prep.mk.  See common.mk for more details.
+include $(WS_MAKE_RULES)/prep.mk
+
+ifneq ($(strip $(PATCHES)),)
+# If we do have some generic patches then Cargo.toml is available only after we
+# patch sources
+$(CARGO_TOML_DIR)/Cargo.toml: $(SOURCE_DIR)/.patched
+endif
+
+# Patching of vendored sources needs additional care
+ifneq ($(strip $(PATCHES_cargo)),)
+# Force zero patch level to root patches into $(CARGO_VENDOR_DIR)
+$(SOURCE_DIR_cargo)/.patched: PATCH_LEVEL = 0
+
+#
+# Vendored sources are considered read-only by Cargo and so should not be
+# modified.  Since we need to patch them we need to fool Cargo to do not check
+# vendored checksums.
+#
+# See also https://github.com/rust-lang/cargo/issues/11063
+#
+$(SOURCE_DIR_cargo)/.patched: $(SOURCE_DIR_cargo)/.cargo-checksum
+$(SOURCE_DIR_cargo)/.cargo-checksum: $(SOURCE_DIR)/.cargo-vendored
+	$(FIND) $(@D) -name .cargo-checksum.json \
+		  -exec $(GSED) -i -e 's/\("files":{\)[^}]*}/\1 }/' '{}' '+'
+	$(TOUCH) $@
+
+# Make sure we patch vendored sources only after they are actually vendored
+$(PATCH_STAMPS_cargo): $(SOURCE_DIR)/.cargo-vendored
+
+# Additional prerequisite for the cargo-patch target
+cargo-patch: $(SOURCE_DIR_cargo)/.patched
+endif
+
+# Cleanup
+CLEAN_PATHS += $(CARGO_VENDOR_DIR)
 
 # https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
