@@ -2,7 +2,7 @@
 <!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
 <service_bundle type='manifest' name='export'>
   <service name='site/wsdd' type='service' version='0'>
-    <create_default_instance enabled='true'/>
+    <create_default_instance enabled='false'/>
     <single_instance/>
     <dependency name='smb_server' grouping='require_all' restart_on='error' type='service'>
       <service_fmri value='svc:/network/smb/server:default'/>
@@ -18,7 +18,7 @@
     <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'/>
     <property_group name='config' type='application'>
       <propval name='domain' type='astring' value='example.lan'/>
-      <propval name='interface' type='astring' value='vnic_smb1'/>
+      <propval name='interface' type='astring' value='igb0'/>
       <propval name='debug' type='astring' value='-v'/>
     </property_group>
     <property_group name='application' type='application'/>

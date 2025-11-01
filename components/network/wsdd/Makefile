@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wsdd
 COMPONENT_VERSION=	0.9
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Web Service Discovery host daemon
 COMPONENT_DESCRIPTION=	This enables SMB server to be found by Web Service Discovery Clients like Windows.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
