@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		borgbackup
-HUMAN_VERSION =			1.4.1
+HUMAN_VERSION =			1.4.2
 COMPONENT_SUMMARY =		Deduplicated, encrypted, authenticated and compressed backups
 COMPONENT_PROJECT_URL =		https://borgbackup.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8fbf8f1c19d900b6b32a5a1dc131c5d8665a7c7eea409e9095209100b903839
+	sha256:8923f5e953205d81138d1d7276c8a1c864215e230994d620c397635568ed376f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,26 +40,25 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV += XDISTN=auto
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/msgpack
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pkgconfig
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cython
+REQUIRED_PACKAGES.python += library/python/msgpack
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pkgconfig
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pkgconfig
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm
