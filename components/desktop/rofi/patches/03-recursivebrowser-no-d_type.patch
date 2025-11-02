@@ -1,0 +1,113 @@
+--- rofi-2.0.0/source/modes/recursivebrowser.c.orig	2025-09-01 20:22:18.000000000 +0200
++++ rofi-2.0.0/source/modes/recursivebrowser.c	2025-11-02 14:05:58.762645225 +0100
+@@ -183,6 +183,8 @@
+   GQueue *dirs_to_scan = g_queue_new();
+   g_queue_push_tail(dirs_to_scan, g_object_ref(path));
+   GFile *dir_to_scan = NULL;
++  struct stat st;
++
+   while ((dir_to_scan = g_queue_pop_head(dirs_to_scan)) != NULL) {
+     char *cdir = g_file_get_path(dir_to_scan);
+     DIR *dir = opendir(cdir);
+@@ -200,45 +202,42 @@
+             g_regex_match(pd->filter_regex, rd->d_name, 0, NULL)) {
+           continue;
+         }
+-        switch (rd->d_type) {
+-        case DT_BLK:
+-        case DT_CHR:
+-        case DT_FIFO:
+-        case DT_SOCK:
+-        default:
+-          break;
+-        case DT_REG: {
+-          FBFile *f = g_malloc0(sizeof(FBFile));
+-          // Rofi expects utf-8, so lets convert the filename.
+-          f->path = g_build_filename(cdir, rd->d_name, NULL);
+-          f->name = g_filename_to_utf8(f->path, -1, NULL, NULL, NULL);
+-          if (f->name == NULL) {
+-            f->name = rofi_force_utf8(rd->d_name, -1);
+-          }
+-          if (f->name == NULL) {
+-            f->name = g_strdup("n/a");
+-          }
+-          f->type = (rd->d_type == DT_DIR) ? DIRECTORY : RFILE;
+-          f->icon_fetch_uid = 0;
+-          f->icon_fetch_size = 0;
+-          f->icon_fetch_scale = 0;
+-          f->link = FALSE;
++        if (stat(rd->d_name, &st) == 0) {
++          if (S_ISBLK(st.st_mode) || S_ISCHR(st.st_mode) || S_ISFIFO(st.st_mode) || S_ISSOCK(st.st_mode)) {
++                // Nothing
++          }
++          if (S_ISREG(st.st_mode)) {
++            FBFile *f = g_malloc0(sizeof(FBFile));
++            // Rofi expects utf-8, so lets convert the filename.
++            f->path = g_build_filename(cdir, rd->d_name, NULL);
++            f->name = g_filename_to_utf8(f->path, -1, NULL, NULL, NULL);
++            if (f->name == NULL) {
++              f->name = rofi_force_utf8(rd->d_name, -1);
++            }
++            if (f->name == NULL) {
++              f->name = g_strdup("n/a");
++            }
++            f->type = (S_ISDIR(st.st_mode)) ? DIRECTORY : RFILE;
++            f->icon_fetch_uid = 0;
++            f->icon_fetch_size = 0;
++            f->icon_fetch_scale = 0;
++            f->link = FALSE;
+ 
+-          g_async_queue_push(pd->async_queue, f);
+-          if (g_async_queue_length(pd->async_queue) > 10000) {
+-            write(pd->pipefd2[1], "r", 1);
+-          }
+-          break;
+-        }
+-        case DT_DIR: {
++            g_async_queue_push(pd->async_queue, f);
++            if (g_async_queue_length(pd->async_queue) > 10000) {
++              write(pd->pipefd2[1], "r", 1);
++            }
++          }  // if (S_ISREG())
++
++        if (S_ISDIR(st.st_mode)) {
+           char *d = g_build_filename(cdir, rd->d_name, NULL);
+           GFile *dirp = g_file_new_for_path(d);
+           g_queue_push_tail(dirs_to_scan, dirp);
+           g_free(d);
+-          break;
+         }
+-        case DT_UNKNOWN:
+-        case DT_LNK: {
++
++        /* I don't know how to replace case DT_UNKNOWN: */
++        if (S_ISLNK(st.st_mode)) {
+           FBFile *f = g_malloc0(sizeof(FBFile));
+           // Rofi expects utf-8, so lets convert the filename.
+           f->path = g_build_filename(cdir, rd->d_name, NULL);
+@@ -254,7 +253,7 @@
+           f->icon_fetch_scale = 0;
+           // Default to file.
+           f->type = RFILE;
+-          if (rd->d_type == DT_LNK) {
++          if (S_ISLNK(st.st_mode)) {
+             f->link = TRUE;
+           } else {
+             f->link = FALSE;
+@@ -301,12 +300,11 @@
+               write(pd->pipefd2[1], "r", 1);
+             }
+           }
+-          break;
+-        }
+-        }
+-      }
++        }  // if (S_ISLNK())
++        }  // if (stat())
++      }  // while()
+       closedir(dir);
+-    }
++    }  // if (dir)
+     g_free(cdir);
+   }
+ 
