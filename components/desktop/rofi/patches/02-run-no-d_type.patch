@@ -1,0 +1,33 @@
+--- rofi-2.0.0/source/modes/run.c.orig	2025-09-01 20:22:18.000000000 +0200
++++ rofi-2.0.0/source/modes/run.c	2025-11-02 13:05:47.587255997 +0100
+@@ -43,6 +43,7 @@
+ #include <signal.h>
+ #include <string.h>
+ #include <strings.h>
++#include <sys/stat.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ 
+@@ -297,6 +298,7 @@
+ 
+     if (dir != NULL) {
+       struct dirent *dent;
++      struct stat st;
+       gsize dirn_len = 0;
+       gchar *dirn = g_locale_to_utf8(dirname, -1, NULL, &dirn_len, &error);
+       if (error != NULL) {
+@@ -310,9 +312,11 @@
+       g_free(dirn);
+ 
+       while ((dent = readdir(dir)) != NULL) {
+-        if (dent->d_type != DT_REG && dent->d_type != DT_LNK &&
+-            dent->d_type != DT_UNKNOWN) {
+-          continue;
++        if (stat(dent->d_name, &st) == 0) {
++          /* I don't know how to replace DT_UNKNOWN */
++          if (!(S_ISREG(st.st_mode)) && !(S_ISLNK(st.st_mode))) { 
++            continue;
++          }
+         }
+         // Skip dot files.
+         if (dent->d_name[0] == '.') {
