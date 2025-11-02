@@ -173,7 +173,7 @@ $(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call
 
 # We need to copy the source dir to avoid its modification by install target
 # where egg-info is re-generated
-CLONEY_ARGS = CLONEY_MODE="copy"
+CLONEY_MODE = copy
 
 COMPONENT_CONFIGURE_ACTION = true
 
