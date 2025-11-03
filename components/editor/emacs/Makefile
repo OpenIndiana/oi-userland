@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
 COMPONENT_VERSION=      30.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -112,7 +113,7 @@ ASLR_MODE = $(ASLR_DISABLE)
 LD_OPTIONS+= $(ASLR_MODE)
 
 # variant specific configure options
-$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
+$(BUILD_DIR)/%-nox/.configured:  CONFIGURE_OPTIONS +=	--without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
 $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
