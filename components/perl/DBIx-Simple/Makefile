@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module DBIx::Simple
+#   $WS_TOOLS/perl-integrate-module DBIx-Simple
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DBIx::Simple
+COMPONENT_NAME =		DBIx-Simple
 HUMAN_VERSION =			1.37
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		DBIx::Simple - Very complete easy-to-use OO interface to DBI
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Very complete easy-to-use OO interface to DBI
 COMPONENT_CPAN_AUTHOR =		JUERD
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:46d311aa2ce08907401c56119658426dbb044c5a40de73d9a7b79bf50390cae3
@@ -29,6 +29,10 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbd-sqlite
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

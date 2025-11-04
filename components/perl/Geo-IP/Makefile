@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Geo::IP
+#   $WS_TOOLS/perl-integrate-module Geo-IP
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Geo::IP
+COMPONENT_NAME =		Geo-IP
 HUMAN_VERSION =			1.51
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Geo::IP - Look up location and network information by IP Address
+COMPONENT_REVISION =		5
+COMPONENT_SUMMARY =		Look up location and network information by IP Address
 COMPONENT_CPAN_AUTHOR =		MAXMIND
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:163020315d5c5441836ac79e08a77b428f277fd090bea4fa80da7077b2436aba
@@ -31,6 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += database/geoip
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

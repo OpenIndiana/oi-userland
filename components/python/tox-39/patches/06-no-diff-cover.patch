@@ -1,0 +1,27 @@
+We cannot compare against origin/main branch because we build from sdist, not git.
+
+--- tox-4.30.3/tox.toml.orig
++++ tox-4.30.3/tox.toml
+@@ -41,12 +41,6 @@
+       "--run-integration",
+     ] },
+   ],
+-  [
+-    "diff-cover",
+-    "--compare-branch",
+-    { replace = "env", name = "DIFF_AGAINST", default = "origin/main" },
+-    "{work_dir}{/}coverage.{env_name}.xml",
+-  ],
+ ]
+ 
+ [env.fix]
+--- tox-4.30.3/pyproject.toml.orig
++++ tox-4.30.3/pyproject.toml
+@@ -80,7 +80,6 @@
+   "covdefaults>=2.3",
+   "coverage>=7.9.2",
+   "detect-test-pollution>=1.2",
+-  "diff-cover>=9.6",
+   "distlib>=0.4",
+   "flaky>=3.8.1",
+   "hatch-vcs>=0.5",

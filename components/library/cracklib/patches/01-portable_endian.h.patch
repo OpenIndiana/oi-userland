@@ -1,0 +1,18 @@
+--- cracklib-2.10.2/lib/portable_endian.h.orig	2024-07-30 01:14:17.000000000 +0200
++++ cracklib-2.10.2/lib/portable_endian.h	2024-08-15 19:35:27.072548798 +0200
+@@ -164,6 +164,15 @@
+ #	define le32toh(x) ENDIAN_LE32(x)
+ #	define le64toh(x) ENDIAN_LE64(x)
+ 
++#elif defined(__illumos__)
++
++#	include <endian.h>
++
++#	define __BYTE_ORDER    BYTE_ORDER
++#	define __BIG_ENDIAN    BIG_ENDIAN
++#	define __LITTLE_ENDIAN LITTLE_ENDIAN
++#	define __PDP_ENDIAN    PDP_ENDIAN
++
+ #else
+ 
+ #	error platform not supported

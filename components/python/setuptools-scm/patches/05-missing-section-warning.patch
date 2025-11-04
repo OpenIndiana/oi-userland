@@ -1,0 +1,18 @@
+https://github.com/pypa/setuptools-scm/issues/1201
+
+--- setuptools_scm-9.2.2/src/setuptools_scm/_integration/pyproject_reading.py.orig
++++ setuptools_scm-9.2.2/src/setuptools_scm/_integration/pyproject_reading.py
+@@ -211,13 +211,6 @@
+     section = tool_section.get(tool_name, {})
+     section_present = tool_name in tool_section
+ 
+-    if not section_present:
+-        log.warning(
+-            "toml section missing %r does not contain a tool.%s section",
+-            path,
+-            tool_name,
+-        )
+-
+     project = defn.get("project", {})
+     project_present = "project" in defn
+     pyproject_data = PyProjectData(

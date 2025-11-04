@@ -30,39 +30,29 @@ USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-HUMAN_VERSION=		2.12.6
+HUMAN_VERSION=		2.13.9
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
-COMPONENT_ARCHIVE_HASH=	sha256:889c593a881a3db5fdd96cc9318c87df34eb648edfc458272ad46fd607353fbb
+COMPONENT_ARCHIVE_HASH=	sha256:a2c9ae7b770da34860050c309f903221c67830c86e4a7e760692b803df95143a
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	Copyright
 
+COMPONENT_FMRI.libxml2-32=	$(COMPONENT_FMRI)/32
+
 # W3C XML Conformance Test Suites
-COMPONENT_ARCHIVE_1= xmlts20080827.tar.gz
-COMPONENT_ARCHIVE_HASH_1= sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
+COMPONENT_ARCHIVE_1= xmlts20130923.tar.gz
+COMPONENT_ARCHIVE_HASH_1= sha256:9b61db9f5dbffa545f4b8d78422167083a8568c59bd1129f94138f936cf6fc1f
 COMPONENT_ARCHIVE_URL_1= https://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
+CFLAGS += $(XPG7MODE)
 
-COMPONENT_PRE_CONFIGURE_ACTION += ( \
-	cd $(SOURCE_DIR); \
-	$(CLONEY) $(SOURCE_DIR) $(@D); \
-	);
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --localstatedir="$(VARDIR)"
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-# during updates of ICU this configure option breaks the
-# packaging system: pkg, furthermore it introduces additional
-# dependencies in OpenSSH through the configure option:
-# --with-solaris-projects which pulls in libproject, which
-# in turn needs libxml2.
-# CONFIGURE_OPTIONS += --with-icu
 CONFIGURE_OPTIONS += --with-ftp
 CONFIGURE_OPTIONS += --with-xptr-locs
 CONFIGURE_OPTIONS += --with-history
@@ -79,10 +69,10 @@ COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; PATH="$(PATH)"
 # support for python (only 64 bit is available)
 COMPONENT_POST_INSTALL_ACTION.64 = ( \
 	cd $(@D)/python; \
-	 $(GMAKE) pythondir=$(PYTHON_VENDOR_PACKAGES) \
-	pyexecdir=$(PYTHON_VENDOR_PACKAGES) \
-	DESTDIR=$(PROTO_DIR) \
-	install ; \
+	$(GMAKE) pythondir=$(PYTHON_VENDOR_PACKAGES) \
+		pyexecdir=$(PYTHON_VENDOR_PACKAGES) \
+		DESTDIR=$(PROTO_DIR) \
+		install ; \
 	$(MV) $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxml2mod.so $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/libxml2mod.cpython-$(subst .,,$(PYTHON_VERSION)).so; \
 	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES); \
 );
@@ -102,8 +92,9 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)/32
 REQUIRED_PACKAGES += compress/xz
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

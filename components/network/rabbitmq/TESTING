@@ -1,0 +1,94 @@
+############################## RabbitMQ TEST ##############################
+
+# In order to verify that the RabbitMQ server can accept and
+# forward messages, we will need the following (virtual) machines:
+# 1) RabbitMQ server (require a public IP address)
+# 2) Client 1
+# 3) Client 2
+
+# Execute on: RabbitMQ server, Client 1, Client 2
+# Install the same version of Erlang package (runtime/erlang).
+sudo pkg install runtime/erlang
+
+# Execute on: RabbitMQ server
+# Compile the rabbitmq component and execute the automated test.
+# Note that we disable rabbitmq service otherwise the test may fail.
+sudo svcadm disable -s rabbitmq
+cd ${RABBITMQ_WORKSPACE}/components/rabbitmq
+gmake test
+
+# Execute on: RabbitMQ server
+# Create a special user for testing purposes since
+# the default user "guest" can be used only for localhost.
+# The created user is assigned all the conf, write, and read permissions.
+sudo svcadm enable -rs rabbitmq
+sudo rabbitmqctl add_user "${RABBIT_USER}" "${RABBIT_PASSWD}"
+sudo rabbitmqctl set_user_tags "${RABBIT_USER}" administrator
+sudo rabbitmqctl set_permissions -p / "${RABBIT_USER}" ".*" ".*" ".*"
+
+# Execute on: RabbitMQ server
+# Start the RabbitMQ management website.
+sudo rabbitmq-plugins enable rabbitmq_management
+sudo rabbitmq-plugins enable rabbitmq_stomp
+
+# Execute on: Machine with a web browser
+# Check that the created user can log in and monitor RabbitMQ instance.
+# RABBITMQ_HOST is a host name or IP address of RabbitMQ server.
+firefox http://${RABBITMQ_HOST}:15672
+
+# Execute on: RabbitMQ server
+# Copy the archive, which was created by the 'gmake test' command,
+# with Erlang clients to a directory accessible from the client machines.
+cp build/${MACH64}/test-rabbit/pingpong_test.tar.bz "${SHARED_FOLDER}"
+
+# Execute on: Client 1, Client 2
+# To prepare client applications, we extract the archive
+# that already contains all the bytecode (+source code) required.
+cp "${SHARED_FOLDER}/pingpong_test.tar.bz" "${CLIENT_APP_DIR}/"
+cd "${CLIENT_APP_DIR}"
+gtar -xf pingpong_test.tar.bz
+cd pingpong_test
+
+# Testing scenario:
+# 1) Client 1 sends "ping" message to RabbitMQ server ('ping_queue')
+# 2) Client 2 receives "ping" message from RabbitMQ server ('ping_queue')
+# 3) Client 2 sends "pong" message to RabbitMQ server ('pong_queue')
+# 4) Client 1 receives "pong" message" from RabbitMQ server ('pong_queue')
+
+# Execute on: Client 1
+# Start the "ping" application and go to the next step.
+erl -noshell -run ping main "${RABBITMQ_HOST}" "${RABBIT_USER}" "${RABBIT_PASSWD}" -s init stop
+
+# Execute on: Client 2
+# Start the "pong" application.
+erl -noshell -run pong main "${RABBITMQ_HOST}" "${RABBIT_USER}" "${RABBIT_PASSWD}" -s init stop
+
+# Expected output on Client 1:
+# > client 1: Message '<<"ping">>' sent!
+# > client 1: Received '<<"pong">>' message!
+# Expected output on Client 2:
+# > client 2: Received '<<"ping">>' message!
+# > client 2: Message '<<"pong">>' sent!
+
+############################## TEST COMPONENTS USING RABBITMQ ##############################
+
+# Currently, the following components require RabbitMQ server:
+# 1) ruby/mcollective (https://github.com/puppetlabs/marionette-collective)
+#    -> Please test mcollective component according to its TESTING file.
+# 2) python/amqp (https://github.com/celery/py-amqp/)
+#    -> Run the automated tests and check the results.
+# 3) python/librabbitmq (https://github.com/celery/librabbitmq)
+#    -> Run the automated tests and check the results.
+# 4) puppet/puppetlabs-rabbitmq (https://github.com/voxpupuli/puppet-rabbitmq)
+#    -> cd /usr/puppetlabs/puppet/modules/rabbitmq/examples
+#    -> Use 'puppet apply' command to test the application of example configurations.
+# 5) python/pyrabbit (https://github.com/bkjones/pyrabbit)
+#    -> Visit the github page, clone the repository, and checkout the right version.
+#    -> Go to the 'tests' directory and install python dependencies (pip install $(DEPS) --user).
+#    -> Execute test_pyrabbit.py for each python version and check test_out.log file.
+# 6) ruby/stomp (https://github.com/stompgem/stomp)
+#    -> STOMP plugin is used in Puppet MCollective, so it was indirectly verified in 1).
+
+# To get more information about RabbitMQ you can also see, for example:
+# https://www.cloudamqp.com/blog/2015-05-18-part1-rabbitmq-for-beginners-what-is-rabbitmq.html
+# https://github.com/rabbitmq/rabbitmq-tutorials

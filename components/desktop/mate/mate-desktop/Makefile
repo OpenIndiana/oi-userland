@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-desktop
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Additional UI API for MATE Desktop
 COMPONENT_ARCHIVE_HASH= sha256:32bb4b792014b391c1e1b8ae9c18a82b4d447650984b4cba7d28e95564964aa2
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -39,8 +40,8 @@ REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += gnome/config/dconf/dconf-editor
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

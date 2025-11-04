@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Log::Dispatch::FileRotate
+#   $WS_TOOLS/perl-integrate-module Log-Dispatch-FileRotate
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Log::Dispatch::FileRotate
+COMPONENT_NAME =		Log-Dispatch-FileRotate
 HUMAN_VERSION =			1.38
-COMPONENT_SUMMARY =		Log::Dispatch::FileRotate - Log to Files that Archive/Rotate Themselves
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Log to Files that Archive/Rotate Themselves
 COMPONENT_CPAN_AUTHOR =		MSCHOUT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b55d6cede3f0a06426488fbfa554f4561320b014c1023893ced29508e5bce4ec
@@ -31,8 +32,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/date-manip
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/log-dispatch
+PERL_REQUIRED_PACKAGES += library/perl-5/version
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/log-dispatch
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn

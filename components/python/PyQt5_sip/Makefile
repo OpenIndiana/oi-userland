@@ -11,33 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyQt5_sip
+#   $WS_TOOLS/python-integrate-project -d python/PyQt5_sip pyqt5_sip
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyQt5_sip
-HUMAN_VERSION =			12.13.0
-COMPONENT_SUMMARY =		PyQt5_sip - The sip module support for PyQt5
-COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/sip/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ee/81/fce2a475aa56c1f49707d9306b930695b6ff078c2242c9f2fd72a3214e1f/PyQt5_sip-12.13.0.tar.gz
+COMPONENT_NAME =		pyqt5_sip
+HUMAN_VERSION =			12.17.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		The sip module support for PyQt5
+COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f321daf84b9c9dbca61b80e1ef37bdaffc0e93312edae2cd7da25b953971d91
-COMPONENT_LICENSE =		GPL-3.0-only
-COMPONENT_LICENSE_FILE =	LICENSE-GPL3
+	sha256:0eab72bcb628f1926bf5b9ac51259d4fa18e8b2a81d199071135458f7d087ea8
+COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing fails without this, although there are no tests to run.
-COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(@D)/PyQt5 ;
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

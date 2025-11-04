@@ -20,40 +20,45 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 #
+
+BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gts
 COMPONENT_VERSION=	0.7.6
+COMPONENT_REVISION=	1
 COMPONENT_SNAPSHOT_VERSION=	121130
-COMPONENT_FMRI=     	library/math/gts
+COMPONENT_SUMMARY=     	GNU Triangulated Surface Library 
 COMPONENT_SRC=		$(COMPONENT_NAME)-snapshot-$(COMPONENT_SNAPSHOT_VERSION)
 COMPONENT_PROJECT_URL=	http://gts.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:c23f72ab74bbf65599f8c0b599d6336fabe1ec2a09c19b70544eeefdc069b73b
 COMPONENT_ARCHIVE_URL=	http://gts.sourceforge.net/tarballs/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=     	library/math/gts
+COMPONENT_CLASSIFICATION=	Development/High Performance Computing
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
-COMPONENT_SUMMARY=     	GNU Triangulated Surface Library 
+COMPONENT_LICENSE_FILE= COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATCH_LEVEL=0
+PATCH_LEVEL= 0
 
-CONFIGURE_OPTIONS+=	--includedir=$(USRINCDIR)/$(COMPONENT_NAME)
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/$(COMPONENT_NAME)
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR32);
 
-build: $(BUILD_32_and_64)
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
 
-install: $(INSTALL_32_and_64)
-
-test: $(NO_TESTS)
+COMPONENT_POST_UNPACK_ACTION += $(CHMOD) 755 $(SOURCE_DIR)/test/boolean/test.sh;
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
+REQUIRED_PACKAGES += library/netpbm
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

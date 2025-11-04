@@ -18,24 +18,33 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libX11
-COMPONENT_VERSION=  1.7.5
-COMPONENT_REVISION =	1
+COMPONENT_VERSION=  1.8.12
+COMPONENT_REVISION=	1
 COMPONENT_FMRI =    x11/library/libx11
 COMPONENT_SUMMARY=  libX11 - X11 core protocol client library
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5a1847e2e2c248e1a203a24a1338a5586d6f48472eac58f6f08539110a965151
+COMPONENT_ARCHIVE_HASH=	sha256:fa026f9bb0124f4d6c808f9aef4057aad65e7b35d8ff43951cef0abe06bb9a9a
+OMPONENT_ANITYA_ID=	1764
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I/usr/include/freetype2  -I/usr/include/X11  -I/usr/include/xcb
+# -DSUNSOFT enables Solaris extensions
+# -DMOTIFBC enables compatibility with bugs in Motif & other apps
+# -DSUNSOFT_KBD enables Solaris traditional keyboard handling
 CPPFLAGS += -DSUNSOFT -DMOTIFBC -DSUNSOFT_KBD
 
+CFLAGS += $(XPG6MODE)
+
+# Silence gcc-14
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=missing-braces
+CFLAGS += -Wno-error=missing-prototypes
+CFLAGS += -Wno-error=return-type
+
 COMPONENT_PREP_ACTION = ( cp -r $(COMPONENT_DIR)/srcs/* $(SOURCE_DIR) && \
-                          cd $(@D) && PATH=$(PATH) libtoolize --copy --force && \
-                          aclocal -I m4 &&\
-                          automake -c -f -a &&\
-                          autoconf )
+                          cd $(@D) && PATH=$(PATH) autoreconf -fiv )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -47,10 +56,15 @@ CONFIGURE_ENV += LIB_MAN_SUFFIX=3x11
 CONFIGURE_ENV += XLOCALEDIR="/usr/share/X11/locale:/usr/X11/share/X11/locale"
 CONFIGURE_ENV += XLOCALELIBDIR="$(LOCALE_LIB_DIR.$(BITS))"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+
+CONFIGURE_OPTIONS += --disable-xf86bigfont
+CONFIGURE_OPTIONS += --disable-secure-rpc
+CONFIGURE_OPTIONS += --with-xcb=yes
+CONFIGURE_OPTIONS += --enable-man-pages
 
 CONFIGURE_OPTIONS +=  --without-xmlto 
 CONFIGURE_OPTIONS +=  --without-fop
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --without-lint
@@ -68,6 +82,7 @@ CONFIGURE_OPTIONS +=  --with-locale-lib-dir="$(LOCALE_LIB_DIR.$(BITS))"
 COMPONENT_BUILD_ARGS.64=ADD_libX11_LDFLAGS="-Wl,-M$(COMPONENT_DIR)/mapfile-vers-64"
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 
+# Manually added dependencies
 REQUIRED_PACKAGES += x11/library/xtrans
 
 # Auto-generated dependencies

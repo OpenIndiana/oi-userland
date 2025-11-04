@@ -23,18 +23,19 @@
 # Copyright (c) 2023, Jonathan Schleifer. All rights reserved.
 #
 
-BUILD_BITS = 64
+# localedir is unknown because configure is just a small wrapper over a tcl script
+CONFIGURE_DEFAULT_DIRS=no
 USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = fossil
-COMPONENT_VERSION = 2.23
+COMPONENT_VERSION = 2.27
 COMPONENT_SUMMARY = Distributed SCM with bug tracking and wiki
 COMPONENT_SRC = $(COMPONENT_NAME)-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:a94aec2609331cd6890c6725b55aea43041011863f3d84fdc380415af75233e4
-COMPONENT_ARCHIVE_URL = https://fossil-scm.org/home/tarball/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH = sha256:0405a96ba4d286b46fb5c3217d6c13391a2c637da90c51a927ee0c31c58f9064
 COMPONENT_PROJECT_URL = https://www.fossil-scm.org/
+COMPONENT_ARCHIVE_URL = https://fossil-scm.org/home/tarball/version-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = developer/versioning/fossil
 COMPONENT_CLASSIFICATION = Development/Source Code Management
 COMPONENT_LICENSE = BSD 2-clause
@@ -46,8 +47,8 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_ENV += CPPFLAGS=-I/usr/include/fuse
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/libfuse
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

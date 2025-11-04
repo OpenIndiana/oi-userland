@@ -21,17 +21,16 @@
 # Copyright (c) 2017-2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
-COMPONENT_VERSION=      0.1.7
-COMPONENT_REVISION=		4
+COMPONENT_VERSION=      0.1.10
 COMPONENT_SUMMARY=      libvisio - library for reading Microsoft Visio documents
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8faf8df870cb27b09a787a1959d6c646faa44d0d8ab151883df408b7166bea4c
+COMPONENT_ARCHIVE_HASH= sha256:9e9eff75112d4d92d92262ad7fc2599c21e26f8fc5ba54900efdc83c0501e472
 COMPONENT_ARCHIVE_URL=  https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/c++/libvisio
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -40,18 +39,14 @@ COMPONENT_LICENSE_FILE= COPYING.MPL
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Fix threading detection issue with boost 1.64
-CXXFLAGS += -std=c++11 -pthread
-
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
-
-unexport SHELLOPTS
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library

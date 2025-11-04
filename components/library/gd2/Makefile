@@ -28,12 +28,13 @@
 
 BUILD_BITS= 64_and_32
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gd2
 COMPONENT_VERSION=	2.3.3
-COMPONENT_REVISION =	4
+COMPONENT_REVISION =	5
 COMPONENT_SUMMARY=	The Graphics Draw Library
 COMPONENT_PROJECT_URL=	https://libgd.github.io/
 COMPONENT_SRC_NAME=	gd
@@ -49,6 +50,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+# make the build work using gcc-14.
+CFLAGS     += -Wno-incompatible-pointer-types
 
 CFLAGS     += $(CPP_LARGEFILES)
 CPPFLAGS   += $(CPP_LARGEFILES)
@@ -103,12 +107,15 @@ REQUIRED_PACKAGES += library/zlib
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)/32
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
+REQUIRED_PACKAGES += system/library/fontconfig/32
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libxpm

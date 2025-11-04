@@ -19,23 +19,34 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rich
-HUMAN_VERSION =			13.7.1
-COMPONENT_SUMMARY =		rich - Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
+HUMAN_VERSION =			14.2.0
+COMPONENT_SUMMARY =		Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal
 COMPONENT_PROJECT_URL =		https://github.com/Textualize/rich
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/Textualize/rich/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94f7240312afb70f1055bd434fed7df0bda086533c93e04bf161b159fcc9fcf7
+	sha256:589ddd6a66adbffb9d0e406da9d529a886d2c040177da4b72fad4a8563ff5afc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Test dependencies we are unable to detect automatically
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += dev
+
+# https://github.com/Textualize/rich/issues/3612
+PYTEST_ADDOPTS += --deselect test_markdown.py::test_inline_code
+PYTEST_ADDOPTS += --deselect test_syntax.py::test_blank_lines
+PYTEST_ADDOPTS += --deselect test_syntax.py::test_python_render_simple_indent_guides
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/markdown-it-py
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/markdown-it-py
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

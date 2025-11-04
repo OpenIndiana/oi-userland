@@ -1,0 +1,18 @@
+With a Studio build, it needs to use the Sun as assembler. With a gcc build,
+using the Sun assembler does work, but if that's not installed it will try
+and use the gnu as directly, which doesn't work as it doesn't understand
+the -m64 flag. The solution is to make this a toolchain switch rather than
+an OS switch, and compile assembler with the compiler the same way other
+platforms do with the gcc toolchain.
+
+--- a/make/autoconf/toolchain.m4	Wed Apr 24 10:36:35 2024
++++ b/make/autoconf/toolchain.m4	Wed Apr 24 11:39:03 2024
+@@ -740,7 +740,7 @@
+   #
+   # Setup the assembler (AS)
+   #
+-  if test "x$OPENJDK_TARGET_OS" = xsolaris; then
++  if test "x$TOOLCHAIN_TYPE" = xsolstudio; then
+     UTIL_LOOKUP_PROGS(AS, as)
+     if test "x$AS" = x; then
+       AC_MSG_ERROR([Solaris assembler (as) is required. Please install via "pkg install pkg:/developer/assembler".])

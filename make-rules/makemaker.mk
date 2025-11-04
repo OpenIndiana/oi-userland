@@ -27,9 +27,10 @@ COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(PATH)
 COMMON_PERL_ENV +=	LANG=""
 COMMON_PERL_ENV +=	CC="$(CC)"
 COMMON_PERL_ENV +=	CFLAGS="$(CC_BITS) $(PERL_OPTIMIZE)"
+COMMON_PERL_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 # Particular perl runtime is always required (at least to run Makefile.PL)
-PERL_REQUIRED_PACKAGES += runtime/perl
+USERLAND_REQUIRED_PACKAGES.perl += runtime/perl
 
 # Yes.  Perl is just scripts, for now, but we need architecture
 # directories so that it populates all architecture prototype
@@ -73,40 +74,29 @@ INSTALL_32 = $(PERL_32_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
 
-COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
+# Configure
+CONFIGURE_ENV += $(COMMON_PERL_ENV)
 # Avoid interactive behaviour for Module::AutoInstall
-COMPONENT_CONFIGURE_ENV +=	PERL_AUTOINSTALL=--skipdeps
-COMPONENT_CONFIGURE_ENV +=	PERL="$(PERL)"
-$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
-	($(RM) -r $(@D) ; $(MKDIR) $(@D))
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
-	$(COMPONENT_PRE_CONFIGURE_ACTION)
-	(cd $(@D) ; $(COMPONENT_CONFIGURE_ENV) $(PERL) $(PERL_FLAGS) \
-				Makefile.PL $(CONFIGURE_OPTIONS))
-	$(COMPONENT_POST_CONFIGURE_ACTION)
-	$(TOUCH) $@
+CONFIGURE_ENV += PERL_AUTOINSTALL=--skipdeps
+CONFIGURE_ENV += PERL="$(PERL)"
+# Some components are still using COMPONENT_CONFIGURE_ENV instead of CONFIGURE_ENV.
+# This should be removed once all components are converted to use CONFIGURE_ENV.
+CONFIGURE_ENV += $(COMPONENT_CONFIGURE_ENV)
+CONFIG_SHELL = $(PERL)
+CONFIGURE_SCRIPT = Makefile.PL
 
-
+# Build
 COMPONENT_BUILD_ENV +=	$(COMMON_PERL_ENV)
-$(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
-	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
-		$(COMPONENT_BUILD_TARGETS))
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
+COMPONENT_BUILD_CMD = $(GMAKE)
+COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_GMAKE_ARGS)
 
-
+# Install
+COMPONENT_INSTALL_CMD = $(GMAKE)
 COMPONENT_INSTALL_ARGS +=	DESTDIR="$(PROTO_DIR)"
 COMPONENT_INSTALL_TARGETS =	install_vendor
 COMPONENT_INSTALL_ENV +=	$(COMMON_PERL_ENV)
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) \
-			$(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
 
+# Test
 # Define Perl version specific filenames for tests.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(PERL_VERSION).master
@@ -142,40 +132,6 @@ TEST_64 =	$(PERL_64_ONLY_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested-and-compare
 TEST_NO_ARCH = $(PERL_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested-and-compared)
 endif
 
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-
 # We need to add -$(PLV) to package fmri and add runtime dependencies from metadata to generated manifest
 GENERATE_EXTRA_DEPS += $(BUILD_DIR)/META.depend-runtime.res
 GENERATE_EXTRA_CMD += | \
@@ -189,6 +145,10 @@ GENERATE_EXTRA_CMD += | \
 		echo "\# Automatically generated dependencies based on distribution metadata" ; \
 		$(CAT) $(BUILD_DIR)/META.depend-runtime.res $(MANGLE_DEPEND_RUNTIME) | $(PKGFMT) \
 	)
+
+# During bootstrap we need to filter out packages causing circular dependencies.
+MANGLE_DEPEND_RUNTIME += \
+	$(if $(strip $(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES.perl:%= | $(GNU_GREP) -v '^depend type=require fmri=pkg:/%-$(PLV)'))
 
 # Add build dependencies from metadata to REQUIRED_PACKAGES.
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-build.res
@@ -250,3 +210,6 @@ USERLAND_REQUIRED_PACKAGES += library/python/pyyaml
 
 clean:: 
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Use common rules
+USE_COMMON_RULES = yes

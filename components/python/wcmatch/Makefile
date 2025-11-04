@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wcmatch
-HUMAN_VERSION =			8.5.1
-COMPONENT_SUMMARY =		wcmatch - Wildcard/glob file name matcher.
+HUMAN_VERSION =			10.1
+COMPONENT_SUMMARY =		Wildcard/glob file name matcher.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/wcmatch
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c0088c7f6426cf6bf27e530e2b7b734031905f7e490475fd83c7c5008ab581b3
+	sha256:f11f94208c8c8484a16f4f48638a85d771d9513f4ab3f37595978801cb9465af
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 

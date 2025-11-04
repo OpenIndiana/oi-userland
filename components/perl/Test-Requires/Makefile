@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Requires
+#   $WS_TOOLS/perl-integrate-module Test-Requires
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Requires
+COMPONENT_NAME =		Test-Requires
 HUMAN_VERSION =			0.11
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::Requires - Checks to see if the module can be loaded
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Checks to see if the module can be loaded
 COMPONENT_CPAN_AUTHOR =		TOKUHIROM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4b88de549597eecddf7c3c38a4d0204a16f59ad804577b671896ac04e24e040f
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

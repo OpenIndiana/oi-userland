@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::Simple
+#   $WS_TOOLS/perl-integrate-module XML-Simple
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::Simple
+COMPONENT_NAME =		XML-Simple
 HUMAN_VERSION =			2.25
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		XML::Simple - An API for simple XML files
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		An API for simple XML files
 COMPONENT_CPAN_AUTHOR =		GRANTM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:531fddaebea2416743eb5c4fdfab028f502123d9a220405a4100e68fc480dbf8
@@ -31,7 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax-expat
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

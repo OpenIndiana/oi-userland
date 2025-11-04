@@ -1,0 +1,16 @@
+#
+# We want to override default (potentially weak) ciphers for mod_tls.  This
+# change explicitly asks SSL library to use at least 128-bit encryption
+# keys.
+#
+--- a/contrib/mod_tls.c
++++ b/contrib/mod_tls.c
+@@ -549,7 +549,7 @@ typedef struct tls_pkey_obj {
+ static tls_pkey_t *tls_pkey_list = NULL;
+ static unsigned int tls_npkeys = 0;
+ 
+-#define TLS_DEFAULT_CIPHER_SUITE	"DEFAULT:!ADH:!EXPORT:!DES"
++#define TLS_DEFAULT_CIPHER_SUITE	"HIGH:!aNULL:!eNULL:!EXPORT:!LOW:!MD5:!DES:!RC2:!RC4:!PSK"
+ #define TLS_DEFAULT_NEXT_PROTO		"ftp"
+ 
+ /* Module variables */

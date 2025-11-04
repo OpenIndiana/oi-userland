@@ -1,0 +1,16 @@
+https://github.com/Lucretiel/autocommand/pull/40
+
+--- autocommand-2.2.2/test/test_autoasync.py.orig
++++ autocommand-2.2.2/test/test_autoasync.py
+@@ -32,7 +32,10 @@
+     Set the given loop as the context loop (that is, the loop returned by
+     asyncio.get_event_loop() for the duration of the context)
+     '''
+-    old_loop = asyncio.get_event_loop()
++    try:
++        old_loop = asyncio.get_event_loop()
++    except RuntimeError:
++        old_loop = None
+     asyncio.set_event_loop(loop)
+     try:
+         yield loop

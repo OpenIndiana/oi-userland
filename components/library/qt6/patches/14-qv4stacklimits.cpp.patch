@@ -1,12 +1,11 @@
-diff -Nru qt-everywhere-src-6.5.1.orig/qtdeclarative/src/qml/memory/qv4stacklimits.cpp qt-everywhere-src-6.5.1/qtdeclarative/src/qml/memory/qv4stacklimits.cpp
---- qt-everywhere-src-6.5.1.orig/qtdeclarative/src/qml/memory/qv4stacklimits.cpp	2023-05-16 09:17:22.000000000 +0200
-+++ qt-everywhere-src-6.5.1/qtdeclarative/src/qml/memory/qv4stacklimits.cpp	2023-06-12 19:02:06.160995926 +0200
-@@ -235,7 +235,7 @@
+--- qt-everywhere-src-6.6.3/qtdeclarative/src/qml/memory/qv4stacklimits.cpp.orig	2024-03-18 18:59:15.000000000 +0100
++++ qt-everywhere-src-6.6.3/qtdeclarative/src/qml/memory/qv4stacklimits.cpp	2024-04-20 17:41:10.116487377 +0200
+@@ -234,7 +234,7 @@
  
      pthread_t thread = pthread_self();
      pthread_attr_t sattr;
 -#  if defined(PTHREAD_NP_H) || defined(_PTHREAD_NP_H_) || defined(Q_OS_NETBSD)
 +#  if defined(PTHREAD_NP_H) || defined(_PTHREAD_NP_H_) || defined(Q_OS_NETBSD) || defined(Q_OS_SOLARIS)
+     pthread_attr_init(&sattr);
      pthread_attr_get_np(thread, &sattr);
  #  else
-     pthread_getattr_np(thread, &sattr);

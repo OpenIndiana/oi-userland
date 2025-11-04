@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Font::TTF
+#   $WS_TOOLS/perl-integrate-module Font-TTF
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Font::TTF
+COMPONENT_NAME =		Font-TTF
 HUMAN_VERSION =			1.06
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Font::TTF - Perl module for TrueType Font hacking
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		TTF font support for Perl
 COMPONENT_CPAN_AUTHOR =		BHALLISSY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4b697d444259759ea02d2c442c9bffe5ffe14c9214084a01f743693a944cc293
@@ -31,5 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/io-string
 PERL_REQUIRED_PACKAGES += runtime/perl

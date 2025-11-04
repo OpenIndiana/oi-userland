@@ -14,18 +14,16 @@
 # Copyright (c) 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         desktop-file-utils
-COMPONENT_VERSION=      0.27
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      0.28
 COMPONENT_SUMMARY=      A few command line utilities for working with desktop entries
 COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/desktop-file-utils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a0817df39ce385b6621880407c56f1f298168c040c2032cedf88d5b76affe836
+COMPONENT_ARCHIVE_HASH= sha256:4401d4e231d842c2de8242395a74a395ca468cd96f5f610d822df33594898a70
 COMPONENT_ARCHIVE_URL=  https://www.freedesktop.org/software/desktop-file-utils/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/desktop/desktop-file-utils
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Scripts

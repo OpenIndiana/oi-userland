@@ -1,0 +1,17 @@
+--- gdl-v1.0.6/src/saverestore.cpp.orig	2024-05-23 16:36:39.000000000 +0200
++++ gdl-v1.0.6/src/saverestore.cpp	2024-05-30 11:09:57.914642658 +0200
+@@ -113,7 +113,13 @@
+ #define xdr_uint32_t xdr_u_int32_t
+ #define xdr_uint64_t xdr_u_int64_t
+ #endif
+-  
++
++#ifdef __illumos__
++#define u_int16_t uint16_t
++#define u_int32_t uint32_t
++#define u_int64_t uint64_t
++#endif
++
+   static u_int64_t ENDOFLIST =   0xFFFFFFFFFFFFFFFF;
+ //  void writeCData(XDR *xdrs, BaseGDL* var);
+ //  BaseGDL* readCData(EnvT* e, XDR *xdrs);

@@ -1,0 +1,56 @@
+From: "Bernhard M. Wiedemann" <bwiedemann@suse.de>
+Date: Thu, 18 Feb 2021 09:13:40 +0100
+Subject: Extend test cert to 2049
+
+used certtool -u \
+  --load-ca-privkey     ./tests/test-key.pem \
+  --load-ca-certificate ./tests/test-cert.pem \
+  --load-certificate    ./tests/test-cert.pem
+
+Without this patch, 3 tests failed in 2027
+ 11/29 misc-test                FAIL           0.67s (exit status 1)
+ 21/29 server-test              FAIL           0.12s (exit status 1)
+ 25/29 timeout-test             FAIL           4.08s (killed by signal 5 SIGTRAP)
+
+Background:
+As part of my work on reproducible builds for openSUSE, I check that software still gives identical build results in the future.
+The usual offset is +15 years, because that is how long I expect some software will be used in some places.
+This showed up failing tests in our package build.
+See https://reproducible-builds.org/ for why this matters.
+
+(cherry picked from commit 38a65f080a3168e8af78bdd3e4928debeea2dbd8)
+---
+ tests/test-cert.pem | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/tests/test-cert.pem b/tests/test-cert.pem
+index ff863b4..4b8b180 100644
+--- a/tests/test-cert.pem
++++ b/tests/test-cert.pem
+@@ -1,6 +1,6 @@
+ -----BEGIN CERTIFICATE-----
+ MIIC2zCCAcOgAwIBAgIJALRbg2WnuAAqMA0GCSqGSIb3DQEBCwUAMBQxEjAQBgNV
+-BAMMCTEyNy4wLjAuMTAeFw0xNzA2MjAxNDI3MzBaFw0yNzA2MTgxNDI3MzBaMBQx
++BAMMCTEyNy4wLjAuMTAeFw0yMTAyMTgwODA3MzBaFw00OTEyMzEwODA3MzRaMBQx
+ EjAQBgNVBAMMCTEyNy4wLjAuMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ ggEBAKs4fuRuW77nORhOT9kbbU6BsjKW3GEsMc+ZSmXjINQWpfkES2hV+DQyzhm5
+ qh4OLi1vYtXoSbdQNDCbA8ybZJqR8m9F3ed8vobdSSQGxWpPdXTgz27x+TpiAc9P
+@@ -8,11 +8,11 @@ w83UuPvlu/0AxHJBFXVAg+id0yFu3wmGWYJHoAtvFi2xeRtAXurNuPtjZyO+gfM9
+ BKTRCkGsRSmPpJyGbU2Q96fjxnVfV9oYvQXeugUcSx/pTUCM/kDgD9QZCxG2rflX
+ NWcqDFY3uO6ZR68Qwi/KouOa8rzrgAcwhFUI6Wz0Zwi1rzRtWK5WqC24aBUYz/tK
+ hl8i88UDXSMh7spChdYDBGLhZyUCAwEAAaMwMC4wLAYDVR0RBCUwI4IJbG9jYWxo
+-b3N0hwR/AAABhxAAAAAAAAAAAAAAAAAAAAABMA0GCSqGSIb3DQEBCwUAA4IBAQBj
+-+U8tebwg5/pof5Rht6TMHqeg6Fcr4OJkL2ph2g+T/AMTS7kEGeFIKJN5AZ+S/qIY
+-cdoDKHwc8+bCK/mG6DPmJ4z/2Eamb85YhplOLVrLRwfxRebTK9CtnjcjnflAiU9H
+-7vPVwXIvkwebhBSQNKTdkBlPXKaTNWXuygeFG2OVQkPf/KAxSdtg2R+owv/s802Z
+-HISk26wY9oFIQz6AiXWdrY1QqNOltZ7rlU5iofAH7X+9ryZlxPWj/gHg2YQRvvLl
+-dq6nCF+ED0ke7h0lg5nU0beKEygwli8DlLVbu0JK0PkARFp5t7wUtzC9DCjzvfOc
+-gxR44PyZX7/2oaTDm4PS
++b3N0hwR/AAABhxAAAAAAAAAAAAAAAAAAAAABMA0GCSqGSIb3DQEBCwUAA4IBAQAz
++/qYTUuBGHgp7T1cfaJPnhx6U1SMfdJRtFoWOXDx+MNCK9GYkdMEabzRGUP5uNHO+
++PiZP/bMIHlpsbRA5AyyVf9Xv8JCujvYh24qYcBbwgZrfvNTm0D52P9JJm0SalTXS
++kwwTj00DWGVfVzJR+wiwYGHRIlyXbHqQSRzv6+z9f/xY5gXw/KpCNYTuOJcXW7w6
++JfMrUnc9pphRUpcLkuuzOMKuB0dtWRc0mZIr7PZHt+0gitNZWA0bDYI3JI9tlK17
++nxBUSpGtJwDgH//b8ek/P0P9a5VzQbBC6lXtQUMdxg7ovfAI//IS8ekBoRKI0Wde
++r2IpM9hKSBU3c2gGXcJC
+ -----END CERTIFICATE-----

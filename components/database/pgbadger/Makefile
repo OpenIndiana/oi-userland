@@ -18,11 +18,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
-COMPONENT_VERSION= 	12.4
+COMPONENT_VERSION= 	13.1
 COMPONENT_SUMMARY= 	A fast PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:25456f0ea76e1de946d2bf09d937e9e830ca953ae4544a72bb9b747f11b4711a
+COMPONENT_ARCHIVE_HASH= sha256:9658ff222ed7b387d3cb76c3e3d90d1862b885c13b26aa9ff652e133f5d018f1
 COMPONENT_ARCHIVE_URL=	https://github.com/darold/pgbadger/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://dalibo.github.io/pgbadger/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)

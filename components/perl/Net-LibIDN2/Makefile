@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::LibIDN2
+#   $WS_TOOLS/perl-integrate-module Net-LibIDN2
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::LibIDN2
+COMPONENT_NAME =		Net-LibIDN2
 HUMAN_VERSION =			1.02
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Net::LibIDN2 - Perl bindings for GNU Libidn2
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Perl bindings for GNU Libidn2
 COMPONENT_CPAN_AUTHOR =		THOR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d1f30afc6acfa6541b00c09a7e4c74e7d8e4ba49e3277c0bbc41ae35c1390d07
@@ -31,9 +31,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # add include path
-COMPONENT_CONFIGURE_ARGS = --extra_compiler_flags=-I/usr/include/idn2 --installdirs=vendor
+CONFIGURE_OPTIONS += --extra_compiler_flags=-I/usr/include/idn2
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += system/library

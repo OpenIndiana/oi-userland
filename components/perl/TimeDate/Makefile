@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		TimeDate
+COMPONENT_NAME =		TimeDate
 HUMAN_VERSION =			2.33
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		TimeDate - Parse date strings into time values
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		miscellaneous timezone manipulations routines
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c0b69c4b039de6f501b0d9f13ec58c86b040c1f7e9b27ef249651c143d605eb2
@@ -32,4 +32,5 @@ COMPONENT_PROJECT_URL =		https://metacpan.org/dist/TimeDate
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

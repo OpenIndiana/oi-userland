@@ -19,10 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mysqlclient
-HUMAN_VERSION =			2.2.4
-COMPONENT_SUMMARY =		mysqlclient - Python interface to MySQL
+HUMAN_VERSION =			2.2.7
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Python interface to MySQL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:33bc9fb3464e7d7c10b1eaf7336c5ff8f2a3d3b88bab432116ad2490beb3bf41
+	sha256:24ae22b59416d5fcce7e99c9d37548350b4565baac82f95e149cac6ce4163845
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -57,8 +58,7 @@ REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 TEST_REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

@@ -16,14 +16,15 @@
 #
 
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cairo
-COMPONENT_VERSION=      1.18.0
+COMPONENT_VERSION=      1.18.4
 COMPONENT_SUMMARY=      Vector graphics library
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64
+COMPONENT_ARCHIVE_HASH= sha256:445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb
 COMPONENT_ARCHIVE_URL=  https://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://cairographics.org/
 COMPONENT_FMRI=         library/desktop/cairo
@@ -33,14 +34,18 @@ COMPONENT_LICENSE_FILE= COPYING-LGPL-2.1
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 # to avoid the following error
 # ld: fatal: recording name conflict: file 'src/libcairo.so.2.11800.0' and file '/usr/lib/amd64/libcairo.so' provide identical dependency names: libcairo.so.2
 # ld: fatal: file processing errors. No output written to test/any2ppm
-COMPONENT_POST_CONFIGURE_ACTION = $(GSED) -i -e '/^ LINK_ARGS/s:/usr/lib/amd64/libcairo.so :$(@D)/src/libcairo.so :'  $(@D)/build.ninja
+COMPONENT_POST_CONFIGURE_ACTION= $(GSED) -i -e '/^ LINK_ARGS/s:/usr/lib/amd64/libcairo.so :$(@D)/src/libcairo.so :' -e "s/\/usr\/lib\/amd64\/pkgconfig\/..\/..\/..\/lib\/amd64\/libcairo.so//g" $(@D)/build.ninja
+
 COMPONENT_BUILD_ARGS= -j1
 
 LDFLAGS += -lsocket
+
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]\.[0-9]*s//" '
+COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9]*\.[0-9]*s//" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += image/library/libpng16
@@ -48,6 +53,7 @@ REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/lzo
 REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

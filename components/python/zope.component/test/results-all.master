@@ -1,6 +1,7 @@
-ROOT: tox-gh-actions won't override envlist because tox is not running in GitHub Actions
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -vv
+$(PYTHON_DIR)/vendor-packages/zope/testrunner/__init__.py:20: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources  # noqa: F401 unused import, see GitHub issue #194
 Running tests at level 1
 Running zope.testrunner.layer.UnitTests tests:
   Set up zope.testrunner.layer.UnitTests.
@@ -322,24 +323,45 @@ Running zope.testrunner.layer.UnitTests tests:
 Tearing down left over layers:
   Tear down zope.testrunner.layer.UnitTests.
 py$(PYV): commands[1]> python -m sphinx.cmd.build -b doctest -d $(@D)/.tox/py$(PYV)/.cache/doctrees docs $(@D)/.tox/py$(PYV)/.cache/doctest
-Running Sphinx v7.1.2
+Running Sphinx v7.4.7
+$(@D)/docs/conf.py:17: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+loading translations [en]... done
 making output directory... done
 WARNING: html_static_path entry '_static' does not exist
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('https://docs.python.org/3/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('https://zopeinterface.readthedocs.io/en/latest/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('https://zopesecurity.readthedocs.io/en/latest/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('https://zopeevent.readthedocs.io/en/latest/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-WARNING: The pre-Sphinx 1.0 'intersphinx_mapping' format is deprecated and will be removed in Sphinx 8. Update to the current format as described in the documentation. Hint: "intersphinx_mapping = {'<name>': ('https://persistent.readthedocs.io/en/latest/', None)}".https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html#confval-intersphinx_mapping
-loading intersphinx inventory from https://docs.python.org/3/objects.inv...
-loading intersphinx inventory from https://zopeinterface.readthedocs.io/en/latest/objects.inv...
-loading intersphinx inventory from https://zopesecurity.readthedocs.io/en/latest/objects.inv...
-loading intersphinx inventory from https://zopeevent.readthedocs.io/en/latest/objects.inv...
-loading intersphinx inventory from https://persistent.readthedocs.io/en/latest/objects.inv...
+loading intersphinx inventory 'python' from https://docs.python.org/3/objects.inv...
+loading intersphinx inventory 'zopeinterface' from https://zopeinterface.readthedocs.io/en/latest/objects.inv...
+loading intersphinx inventory 'zopesecurity' from https://zopesecurity.readthedocs.io/en/latest/objects.inv...
+loading intersphinx inventory 'zopeevent' from https://zopeevent.readthedocs.io/en/latest/objects.inv...
+loading intersphinx inventory 'persistent' from https://persistent.readthedocs.io/en/latest/objects.inv...
 building [mo]: targets for 0 po files that are out of date
 writing output... 
 building [doctest]: targets for 23 source files that are out of date
 updating environment: [new config] 23 added, 0 changed, 0 removed
-[2Kreading sources... [  4%] api[2Kreading sources... [  9%] api/adapter[2Kreading sources... [ 13%] api/factory[2Kreading sources... [ 17%] api/hooks[2Kreading sources... [ 22%] api/interface[2Kreading sources... [ 26%] api/interfaces[2Kreading sources... [ 30%] api/module[2Kreading sources... [ 35%] api/persistent[2Kreading sources... [ 39%] api/security[2Kreading sources... [ 43%] api/sitemanager[2Kreading sources... [ 48%] api/utility[2Kreading sources... [ 52%] changelog[2Kreading sources... [ 57%] configure[2Kreading sources... [ 61%] event[2Kreading sources... [ 65%] factory[2Kreading sources... [ 70%] hacking[2Kreading sources... [ 74%] hooks[2Kreading sources... [ 78%] index[2Kreading sources... [ 83%] narr[2Kreading sources... [ 87%] persistentregistry[2Kreading sources... [ 91%] socketexample[2Kreading sources... [ 96%] testlayer[2Kreading sources... [100%] zcml
+reading sources... [  4%] api
+reading sources... [  9%] api/adapter
+reading sources... [ 13%] api/factory
+reading sources... [ 17%] api/hooks
+reading sources... [ 22%] api/interface
+reading sources... [ 26%] api/interfaces
+reading sources... [ 30%] api/module
+reading sources... [ 35%] api/persistent
+reading sources... [ 39%] api/security
+reading sources... [ 43%] api/sitemanager
+reading sources... [ 48%] api/utility
+reading sources... [ 52%] changelog
+reading sources... [ 57%] configure
+reading sources... [ 61%] event
+reading sources... [ 65%] factory
+reading sources... [ 70%] hacking
+reading sources... [ 74%] hooks
+reading sources... [ 78%] index
+reading sources... [ 83%] narr
+reading sources... [ 87%] persistentregistry
+reading sources... [ 91%] socketexample
+reading sources... [ 96%] testlayer
+reading sources... [100%] zcml
+
 looking for now-outdated files... none found
 pickling environment... done
 checking consistency... done
@@ -488,7 +510,7 @@ Doctest summary
     0 failures in tests
     0 failures in setup code
     0 failures in cleanup code
-build succeeded, 6 warnings.
+build succeeded, 1 warning.
 
 Testing of doctests in the sources finished, look at the results in .tox/py$(PYV)/.cache/doctest/output.txt.
   py$(PYV): OK

@@ -12,20 +12,18 @@
 # Copyright 2016 Andrey Sokolov. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2021 Olaf Bohlen
-# Copyright 2023 Friedrich Kink
+# Copyright 2023,2025 Friedrich Kink
 #
 
-OPENSSL_VERSION= 3.1
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	21.2.0
+COMPONENT_VERSION=	22.6.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5737a976e9252e2d5e87d2e8176b1e07415057291c656b7547d0a79e0e8c3969
+COMPONENT_ARCHIVE_HASH=	sha256:e5b33b9b6fd6fb2bbbe748bd34f517d9c634afbbd6c53bbbdd3214ec8a6a7749
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -36,20 +34,32 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS) 
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += -m64 -I/usr/include/odbc -I$(OPENSSL_PREFIX)/include -DHAVE_OPENSSL_BIO_METHOD -DHAVE_GETHOSTBYNAME_R_5
+CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap
+LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR) -lstdc++
+
 PATH= $(PATH.gnu)
 
 PATCH_LEVEL= 0
 
-COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D));
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
 
-#
 # res_geolocation does not build with the illumos linker due to missing capabilities/options
 # no workaround known so far
 # also remove deprecated functions
 #
+# does not work currently
+# contrib/scripts/get_mp3_source.sh
+# therefore exclude
+#	./menuselect/menuselect --enable format_mp3 menuselect.makeopts; \
+# the additional alloca.h includes make gcc14 happy
+
 COMPONENT_POST_CONFIGURE_ACTION += ( \
 	cd $(@D); \
+	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt.c; \
+	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt-openssl.c; \
 	$(GSED) -i -e 's:LDAP_INCLUDE=:LDAP_INCLUDE=-I/usr/include/openldap:' makeopts; \
+	$(GSED) -i -e 's:-L/usr/lib/amd64::g' makeopts; \
 	$(GSED) -i -e 's/ -lldap-2.6//' makeopts; \
 	$(GSED) -i -e 's/LDAP_LIB= -lldap/LDAP_LIB= -lldap-2.6/' makeopts; \
 	$(GSED) -i -e "s:-L$(OPENSSL_PREFIX)/lib :-L$(OPENSSL_LIBDIR.$(BITS)) :" makeopts; \
@@ -58,9 +68,15 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	$(GSED) -i -e "s:-L$(PG_LIBDIR.$(BITS)):-L$(PG_LIBDIR.$(BITS)) -R$(PG_LIBDIR.$(BITS)):" makeopts; \
 	$(GMAKE) menuselect.makeopts; \
 	./menuselect/menuselect --disable res_geolocation menuselect.makeopts; \
-	./menuselect/menuselect --enable format_mp3 menuselect.makeopts; \
 	./menuselect/menuselect --enable res_config_mysql menuselect.makeopts; \
+	./menuselect/menuselect --enable cdr_radius menuselect.makeopts; \
+	./menuselect/menuselect --enable cel_radius menuselect.makeopts; \
 	./menuselect/menuselect --enable res_mwi_external menuselect.makeopts; \
+	./menuselect/menuselect --enable res_ari_mailboxes menuselect.makeopts; \
+	./menuselect/menuselect --enable res_cliexec menuselect.makeopts; \
+	./menuselect/menuselect --enable check_expr menuselect.makeopts; \
+	./menuselect/menuselect --enable check_expr2 menuselect.makeopts; \
+	./menuselect/menuselect --enable stereorize menuselect.makeopts; \
 	./menuselect/menuselect --enable res_chan_stats menuselect.makeopts; \
 	./menuselect/menuselect --enable res_endpoint_stats menuselect.makeopts; \
 	./menuselect/menuselect --enable res_stasis_mailbox menuselect.makeopts; \
@@ -84,7 +100,7 @@ CONFIGURE_OPTIONS +=    --with-gnu-ld=no
 CONFIGURE_OPTIONS +=	--with-crypto=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-ssl=$(OPENSSL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-pjproject-bundled
-#CONFIGURE_OPTIONS +=	--with-libjwt-bundled
+CONFIGURE_OPTIONS +=	--with-libjwt-bundled
 CONFIGURE_OPTIONS +=	--with-gsm=internal
 CONFIGURE_OPTIONS +=	--with-ilbc=internal
 CONFIGURE_OPTIONS +=	--with-unixodbc
@@ -113,11 +129,10 @@ CONFIGURE_OPTIONS +=	--with-mysqlclient=$(MYSQL_HOME)
 CONFIGURE_OPTIONS +=	--with-postgres=$(PG_HOME)
 CONFIGURE_OPTIONS +=	NOISY_BUILD=yes
 CONFIGURE_OPTIONS +=	PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS))
-CONFIGURE_OPTIONS +=	LDFLAGS="-m64 -lldap-2.6 -L$(JPEG_LIBDIR)"
-CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 # HAVE_OPENSSL_BIO_METHOD not properly recognised by configure therefore expiclitly set
-CONFIGURE_OPTIONS +=	CFLAGS="-m64 -I/usr/include/odbc -DHAVE_OPENSSL_BIO_METHOD $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="-m64 $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)"
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS += samples
 
@@ -127,7 +142,10 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 REQUIRED_PACKAGES += library/popt
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/speex
@@ -144,16 +162,15 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/neon
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/spandsp
 REQUIRED_PACKAGES += library/speexdsp
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-54
+REQUIRED_PACKAGES += service/network/unbound
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libupnp
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/management/snmp/net-snmp
 REQUIRED_PACKAGES += web/curl

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Task::Weaken
+#   $WS_TOOLS/perl-integrate-module Task-Weaken
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Task::Weaken
+COMPONENT_NAME =		Task-Weaken
 HUMAN_VERSION =			1.06
-COMPONENT_SUMMARY =		Task::Weaken - Ensure that a platform has weaken support
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Ensure that a platform has weaken support
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2383fedb9dbaef646468ea824afbf7c801076720cfba0df2a7a074726dcd66be
@@ -30,4 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

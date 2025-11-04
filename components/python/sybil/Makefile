@@ -14,19 +14,19 @@
 #   $WS_TOOLS/python-integrate-project sybil
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
-HUMAN_VERSION =			6.0.3
+HUMAN_VERSION =			9.2.0
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		sybil - Automated testing for the examples in your code and documentation.
+COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/simplistix/sybil/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:435e528114acf5b6ff603b885aed428801b8b837e7f27f041f629decbed07e3e
+	sha256:f872f3df3640eb001ce70432aa9d4a90cf068884b482702bdc10e966765a46e7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,7 +36,7 @@ TEST_STYLE = pytest
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
 # run tests', and 'A ==> B' means 'A needs B for build and/or run'):
 #
-# sybil --> testfixtures ==> sybil
+# sybil --> testfixtures --> sybil
 #
 # To break loops we need to allow this project to integrate without testing in
 # a case the required projects are not available yet (bootstrap).
@@ -49,15 +49,12 @@ include $(WS_MAKE_RULES)/common.mk
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/faker
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

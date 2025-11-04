@@ -1,13 +1,13 @@
 We test in proto area not in site-packages.
 
---- pipdeptree-2.17.0/tox.ini.orig
-+++ pipdeptree-2.17.0/tox.ini
-@@ -25,7 +25,7 @@
-     _COVERAGE_SRC = {envsitepackagesdir}/sphinx_argparse_cli
- commands =
-     python -m pytest {tty:--color=yes} {posargs: \
--      --cov {envsitepackagesdir}{/}pipdeptree --cov {toxinidir}{/}tests \
-+      --cov pipdeptree --cov {toxinidir}{/}tests \
-       --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
-       --cov-report html:{envtmpdir}{/}htmlcov --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
-       --junitxml {toxworkdir}{/}junit.{envname}.xml \
+--- pipdeptree-2.26.1/tox.toml.orig
++++ pipdeptree-2.26.1/tox.toml
+@@ -26,7 +26,7 @@
+     "{tty:--color=yes}",
+     { replace = "posargs", extend = true, default = [
+       "--cov",
+-      "{env_site_packages_dir}{/}pipdeptree",
++      "pipdeptree",
+       "--cov",
+       "{tox_root}{/}tests",
+       "--cov-config=pyproject.toml",

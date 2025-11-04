@@ -22,14 +22,14 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS=		32_and_64
+BUILD_BITS=		64_and_32
 
 USE_OPENSSL11=          yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         trousers
 COMPONENT_VERSION=      0.3.11.2
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	TrouSerS TCG software to access a TPM device
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -42,6 +42,9 @@ COMPONENT_CLASSIFICATION=	System/Security
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE=	LICENSE
 
+COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
+
 DROP_STATIC_LIBRARIES = yes
 
 TEST_TARGET=		$(NO_TESTS)
@@ -50,6 +53,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 LIBS = -lnsl -lsocket -lgen -lscf -lbsm -lresolv
 CFLAGS += -DSOLARIS -DBI_OPENSSL -D_REENTRANT
+CFLAGS += -Wno-implicit-function-declaration -Wno-incompatible-pointer-types
 
 LDFLAGS += $(CC_BITS)
 
@@ -59,6 +63,9 @@ LD_OPTIONS += $(LD_Z_DEFS)
 # deliver tcsd in /usr/lib*
 CONFIGURE_SBINDIR.32 = $(CONFIGURE_LIBDIR.32)
 CONFIGURE_SBINDIR.64 = $(CONFIGURE_LIBDIR.64)
+
+# deliver tcsd.conf in /etc/security
+CONFIGURE_SYSCONFDIR = $(ETCDIR)/security
 
 COMPONENT_PREP_ACTION= ( cd $(@D); PATH="$(PATH)" autoreconf -vif )
 
@@ -76,6 +83,22 @@ COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	for f in `ls src/include/*.h` ; do \
 		/usr/bin/dos2unix $$f $$f; \
 	done;)
+
+# Drop files installed for the 32-bit build that overlaps with files installed
+# for the 64-bit build.
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRINCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREMANDIR) ;
+
+# Install additional files
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(INSTALL) -D $(SOURCE_DIR)/dist/system.data.auth $(PROTOVARDIR)/tpm/system/system.data.auth ; \
+	$(INSTALL) -D $(SOURCE_DIR)/dist/system.data.noauth $(PROTOVARDIR)/tpm/system/system.data.noauth ; \
+	$(SYMLINK) system.data.auth $(PROTOVARDIR)/tpm/system/system.data ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/files/auth_attr $(PROTOETCSECDIR)/auth_attr.d/trousers ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/trousers ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/files/tcsd.xml $(PROTOLIBDIR)/svc/manifest/application/security/tcsd.xml ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/files/tcsd.sh $(PROTOLIBDIR)/svc/method/tcsd.sh ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

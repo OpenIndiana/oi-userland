@@ -1,0 +1,39 @@
+From 64ba9e2b65c4de514f95c469691d7fcdae171b1a Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Wed, 26 Oct 2022 12:53:51 +0000
+Subject: Add -fforce-omit-frame-pointer
+
+---
+ gcc/common.opt                  | 4 ++++
+ gcc/config/i386/i386-options.cc | 7 +++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+--- gcc-releases-gcc-14.3.0/gcc/common.opt.orig
++++ gcc-releases-gcc-14.3.0/gcc/common.opt
+@@ -2348,6 +2348,10 @@
+ Common Var(flag_omit_frame_pointer) Optimization
+ When possible do not generate stack frames.
+ 
++fforce-omit-frame-pointer
++Common Var(flag_force_omit_frame_pointer) Optimization
++When possible, do not generate stack frames. Hinders debugging with mdb and dtrace.
++
+ fopenmp-target-simd-clone
+ Common Alias(fopenmp-target-simd-clone=,any,none)
+ 
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc
+@@ -3272,8 +3272,11 @@
+    * questionable benefit anyway, even on i386.
+    */
+ 
+-  flag_omit_frame_pointer = 0;
+-  opts->x_flag_omit_frame_pointer = 0;
++  if (flag_force_omit_frame_pointer == 0)
++    {
++      flag_omit_frame_pointer = 0;
++      opts->x_flag_omit_frame_pointer = 0;
++    }
+ 
+   /* Save the initial options in case the user does function specific
+      options.  */

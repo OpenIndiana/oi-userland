@@ -1,0 +1,13 @@
+diff -wpruN '--exclude=*.orig' a~/lib/Driver/ToolChains/CommonArgs.cpp a/lib/Driver/ToolChains/CommonArgs.cpp
+--- llvm-16.0.6.src~/tools/clang/lib/Driver/ToolChains/CommonArgs.cpp     1970-01-01 00:00:00
++++ llvm-16.0.6.src/tools/clang/lib/Driver/ToolChains/CommonArgs.cpp      1970-01-01 00:00:00
+@@ -823,6 +823,9 @@ const char *tools::getAsNeededOption(con
+ 
+ void tools::linkSanitizerRuntimeDeps(const ToolChain &TC,
+                                      ArgStringList &CmdArgs) {
++  if (TC.getTriple().isOSSolaris())
++    return;
++
+   // Force linking against the system libraries sanitizers depends on
+   // (see PR15823 why this is necessary).
+   CmdArgs.push_back(getAsNeededOption(TC, false));

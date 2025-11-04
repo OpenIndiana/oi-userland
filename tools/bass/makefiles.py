@@ -1,4 +1,3 @@
-#!/usr/bin/python3.5
 #
 # CDDL HEADER START
 #
@@ -378,7 +377,7 @@ class Makefile(object):
             return False
         is_py = (self.build_style() == 'setup.py')
         urlnone = (not self.has_variable('COMPONENT_ARCHIVE_URL'))
-        urlpipy = urlnone or (self.variable('COMPONENT_ARCHIVE_URL').value() == '$(call pypi_url)')
+        urlpipy = urlnone
         return is_py and urlpipy
 
     def get_pypi_data(self):

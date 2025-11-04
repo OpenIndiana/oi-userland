@@ -11,25 +11,24 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
-# Copyright 2023 Andreas Wacknitz
+# Copyright 2024 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
-USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libvpx
-COMPONENT_VERSION= 1.13.1
+COMPONENT_VERSION= 1.15.2
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= The WebM VP8/VP9 Codec SDK
-COMPONENT_PROJECT_URL = http://www.webmproject.org/
+COMPONENT_PROJECT_URL = https://www.webmproject.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:00dae80465567272abd077f59355f95ac91d7809a2d3006f9ace2637dd429d14
+COMPONENT_ARCHIVE_HASH=	sha256:26fcd3db88045dee380e581862a6ef106f49b74b6396ee95c2993a260b4636aa
 COMPONENT_ARCHIVE_URL=	https://github.com/webmproject/libvpx/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_FMRI = library/video/libvpx
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE = BSD
-COMPONENT_LICENSE_FILE = LICENSE
+COMPONENT_FMRI= library/video/libvpx
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
+COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE_FILE= LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,9 +36,6 @@ PATH= $(PATH.gnu)
 
 # Required for 64-bit builds.
 LDFLAGS += $(CC_BITS)
-
-TARGET.32 = x86-solaris-gcc
-TARGET.64 = x86_64-solaris-gcc
 
 CONFIGURE_OPTIONS = --prefix=/usr
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
@@ -50,15 +46,18 @@ CONFIGURE_OPTIONS += --enable-runtime-cpu-detect
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-examples
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --target=$(TARGET.$(BITS))
+ifeq ($(MACH), i386)
+CONFIGURE_OPTIONS += --target=x86_64-solaris-gcc
+endif
+ifeq ($(MACH), sparc)
+CONFIGURE_OPTIONS += --target=sparc-solaris-gcc
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+endif
 
-unexport SHELLOPTS
 COMPONENT_TEST_ARGS += -k -i
 COMPONENT_TEST_TARGETS = test
 # Ensure that test_libvpx is linked to libvpx.so from the proto area.
-TEST_LIBPATH.32 =   $(PROTOUSRLIBDIR)
-TEST_LIBPATH.64 =   $(PROTOUSRLIBDIR64)
-COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(PROTOUSRLIBDIR64)
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \
 	'-e "/PASSED/p" '

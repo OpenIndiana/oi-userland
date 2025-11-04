@@ -21,14 +21,15 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2023, Friedrich Kink. All rights reserved.
+# Copyright (c) 2023,2025 Friedrich Kink. All rights reserved.
+# Copyright (c) 2025, Klaus Ziegler. All rights reserved.
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.6.23
+COMPONENT_VERSION=	1.6.39
 COMPONENT_SUMMARY=	The memcached memory object cache
 COMPONENT_DESCRIPTION=	Memcached is a high performance multithreaded event-based \
 			key/value cache store intended to be used in a distributed system.
@@ -37,7 +38,7 @@ COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:85b0334904f440296a685ccfda75f0f4517bf8922ab8efa6d0c4b3c92c354d4c
+COMPONENT_ARCHIVE_HASH=	sha256:23e5507e933b15463161d4c5d3921b0c5f340b542d6edd7f6c5e17c34f11a363
 COMPONENT_ARCHIVE_URL=	https://www.memcached.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	COPYING
@@ -50,13 +51,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # otherwise the link with ssl library does not work
 # standard linker path does not make sense anyway
 COMPONENT_POST_CONFIGURE_ACTION = \
-	($(GSED) -i -e 's:-L/usr/lib/amd64::' $(@D)/config.status)
+	($(GSED) -i -e 's:-L$(USRLIBDIR.$(BITS))::' $(@D)/config.status)
 
 COMPONENT_TEST_TARGETS=	test
 
-CFLAGS += -I/usr/include/libevent2
-
-CONFIGURE_OPTIONS +=	--with-libevent=$(USRLIBDIR64)
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--disable-sasl
 CONFIGURE_OPTIONS +=	--enable-werror
@@ -78,11 +76,11 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/^Result/p" '
 
 # Manually added test dependency
-TEST_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl-538
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

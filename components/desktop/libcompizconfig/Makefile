@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=          libcompizconfig
 COMPONENT_VERSION=       0.8.18
-COMPONENT_REVISION=      2
+COMPONENT_REVISION=      4
 COMPONENT_SUMMARY=       compizconfig libraries - is an alternative configuration system for compiz
 COMPONENT_PROJECT_URL=   https://compiz-fusion.org/
 COMPONENT_SRC=           $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -55,7 +55,9 @@ REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += library/c++/protobuf
+REQUIRED_PACKAGES += library/c++/protobuf-302
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

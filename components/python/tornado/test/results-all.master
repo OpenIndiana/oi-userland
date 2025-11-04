@@ -35,6 +35,7 @@ test_asyncio_future (tornado.test.asyncio_test.AsyncIOLoopTest) ... ok
 test_asyncio_yield_from (tornado.test.asyncio_test.AsyncIOLoopTest) ... ok
 test_asyncio_close_leak (tornado.test.asyncio_test.LeakTest) ... ok
 test_ioloop_close_leak (tornado.test.asyncio_test.LeakTest) ... ok
+test_context_vars (tornado.test.asyncio_test.SelectorThreadContextvarsTest) ... ok
 test_asyncio_manual (tornado.test.asyncio_test.SelectorThreadLeakTest) ... ok
 test_asyncio_run (tornado.test.asyncio_test.SelectorThreadLeakTest) ... ok
 test_tornado (tornado.test.asyncio_test.SelectorThreadLeakTest) ... ok
@@ -67,10 +68,12 @@ test_finish_exception_handler (tornado.test.circlerefs_test.CircleRefsTest) ... 
 test_known_leak (tornado.test.circlerefs_test.CircleRefsTest) ... ok
 test_run_on_executor (tornado.test.circlerefs_test.CircleRefsTest) ... ok
 test_sync_handler (tornado.test.circlerefs_test.CircleRefsTest) ... ok
-test_future (tornado.test.concurrent_test.GeneratorClientTest) ... ok
-test_future_error (tornado.test.concurrent_test.GeneratorClientTest) ... ok
-test_generator (tornado.test.concurrent_test.GeneratorClientTest) ... ok
-test_generator_error (tornado.test.concurrent_test.GeneratorClientTest) ... ok
+test_asyncio_futures (tornado.test.concurrent_test.ChainFutureTest) ... ok
+test_concurrent_futures (tornado.test.concurrent_test.ChainFutureTest) ... ok
+test_future (tornado.test.concurrent_test.GeneratorCapClientTest) ... ok
+test_future_error (tornado.test.concurrent_test.GeneratorCapClientTest) ... ok
+test_generator (tornado.test.concurrent_test.GeneratorCapClientTest) ... ok
+test_generator_error (tornado.test.concurrent_test.GeneratorCapClientTest) ... ok
 test_future_set_result_unless_cancelled (tornado.test.concurrent_test.MiscFutureTest) ... ok
 test_async_await (tornado.test.concurrent_test.RunOnExecutorTest) ... ok
 test_call_with_executor (tornado.test.concurrent_test.RunOnExecutorTest) ... ok
@@ -95,6 +98,8 @@ test_future_http_error_no_raise (tornado.test.curl_httpclient_test.CurlHTTPClien
 test_future_interface (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
+test_header_callback_to_parse_line (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.curl_httpclient_test.CurlHTTPClientCommonTestCase) ... ok
@@ -221,6 +226,8 @@ test_future_http_error_no_raise (tornado.test.httpclient_test.HTTPClientCommonTe
 test_future_interface (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
+test_header_callback_to_parse_line (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.httpclient_test.HTTPClientCommonTestCase) ... ok
@@ -282,10 +289,15 @@ test_100_continue (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_multipart_form (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_newlines (tornado.test.httpserver_test.HTTPConnectionTest) ... ok
 test_chunked_request_body (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_duplicate_header (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_chunked_request_body_invalid_size (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_transfer_encoding_and_content_length (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_chunked_request_body_unsupported_transfer_encoding (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_chunked_request_uppercase (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_empty_request (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_invalid_content_length (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_invalid_host_header_with_whitespace (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
+test_invalid_methods (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_malformed_first_line_log (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_malformed_first_line_response (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
 test_malformed_headers (tornado.test.httpserver_test.HTTPServerRawTest) ... ok
@@ -313,29 +325,17 @@ test_legacy_interface (tornado.test.httpserver_test.LegacyInterfaceTest) ... ok
 test_manual_protocol (tornado.test.httpserver_test.ManualProtocolTest) ... ok
 test_large_headers (tornado.test.httpserver_test.MaxHeaderSizeTest) ... ok
 test_small_headers (tornado.test.httpserver_test.MaxHeaderSizeTest) ... ok
-test_error_logging (tornado.test.httpserver_test.SSLContextTest) ... ok
-test_large_post (tornado.test.httpserver_test.SSLContextTest) ... ok
-test_non_ssl_request (tornado.test.httpserver_test.SSLContextTest) ... ok
-test_ssl (tornado.test.httpserver_test.SSLContextTest) ... ok
+test_error_logging (tornado.test.httpserver_test.SSLTest) ... ok
+test_large_post (tornado.test.httpserver_test.SSLTest) ... ok
+test_non_ssl_request (tornado.test.httpserver_test.SSLTest) ... ok
+test_ssl (tornado.test.httpserver_test.SSLTest) ... ok
 test_request_without_xprotocol (tornado.test.httpserver_test.SSLXHeaderTest) ... ok
-test_error_logging (tornado.test.httpserver_test.SSLv23Test) ... ok
-test_large_post (tornado.test.httpserver_test.SSLv23Test) ... ok
-test_non_ssl_request (tornado.test.httpserver_test.SSLv23Test) ... ok
-test_ssl (tornado.test.httpserver_test.SSLv23Test) ... ok
-test_error_logging (tornado.test.httpserver_test.SSLv3Test) ... ok
-test_large_post (tornado.test.httpserver_test.SSLv3Test) ... ok
-test_non_ssl_request (tornado.test.httpserver_test.SSLv3Test) ... ok
-test_ssl (tornado.test.httpserver_test.SSLv3Test) ... ok
 test_chunked_body (tornado.test.httpserver_test.StreamingChunkSizeTest) ... ok
 test_chunked_compressed (tornado.test.httpserver_test.StreamingChunkSizeTest) ... ok
 test_compressed_body (tornado.test.httpserver_test.StreamingChunkSizeTest) ... ok
 test_regular_body (tornado.test.httpserver_test.StreamingChunkSizeTest) ... ok
-test_error_logging (tornado.test.httpserver_test.TLSv1Test) ... ok
-test_large_post (tornado.test.httpserver_test.TLSv1Test) ... ok
-test_non_ssl_request (tornado.test.httpserver_test.TLSv1Test) ... ok
-test_ssl (tornado.test.httpserver_test.TLSv1Test) ... ok
-test_unix_socket (tornado.test.httpserver_test.UnixSocketTest) ... ok
-test_unix_socket_bad_request (tornado.test.httpserver_test.UnixSocketTest) ... ok
+test_unix_socket (tornado.test.httpserver_test.UnixSocketTestFile) ... ok
+test_unix_socket_bad_request (tornado.test.httpserver_test.UnixSocketTestFile) ... ok
 test_ip_headers (tornado.test.httpserver_test.XHeaderTest) ... ok
 test_scheme_headers (tornado.test.httpserver_test.XHeaderTest) ... ok
 test_trusted_downstream (tornado.test.httpserver_test.XHeaderTest) ... ok
@@ -347,14 +347,17 @@ test_unix_time_int (tornado.test.httputil_test.FormatTimestampTest) ... ok
 test_utc_aware_datetime (tornado.test.httputil_test.FormatTimestampTest) ... ok
 test_utc_naive_datetime (tornado.test.httputil_test.FormatTimestampTest) ... ok
 test_utc_naive_datetime_deprecated (tornado.test.httputil_test.FormatTimestampTest) ... ok
+test_continuation (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_copy (tornado.test.httputil_test.HTTPHeadersTest) ... ok
-test_malformed_continuation (tornado.test.httputil_test.HTTPHeadersTest) ... ok
+test_forbidden_ascii_characters (tornado.test.httputil_test.HTTPHeadersTest) ... ok
+test_invalid_header_names (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_multi_line (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_optional_cr (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_pickle_roundtrip (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_setdefault (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_string (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_unicode_newlines (tornado.test.httputil_test.HTTPHeadersTest) ... ok
+test_unicode_whitespace (tornado.test.httputil_test.HTTPHeadersTest) ... ok
 test_body_is_a_byte_string (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
 test_default_constructor (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
 test_repr_does_not_contain_headers (tornado.test.httputil_test.HTTPServerRequestTest) ... ok
@@ -365,7 +368,8 @@ test_file_upload (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_invalid_content_disposition (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_line_does_not_end_with_correct_line_break (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_missing_headers (tornado.test.httputil_test.MultipartFormDataTest) ... ok
-test_non_ascii_filename (tornado.test.httputil_test.MultipartFormDataTest) ... ok
+test_non_ascii_filename_raw (tornado.test.httputil_test.MultipartFormDataTest) ... ok
+test_non_ascii_filename_rfc5987 (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_special_filenames (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_unquoted_names (tornado.test.httputil_test.MultipartFormDataTest) ... ok
 test_cookie_edgecases (tornado.test.httputil_test.ParseCookieTest) ... ok
@@ -373,6 +377,8 @@ test_invalid_cookies (tornado.test.httputil_test.ParseCookieTest)
 Cookie strings that go against RFC6265 but browsers will send if set ... ok
 test_python_cookies (tornado.test.httputil_test.ParseCookieTest)
 Test cases copied from Python's Lib/test/test_http_cookies.py ... ok
+test_unquote (tornado.test.httputil_test.ParseCookieTest) ... ok
+test_unquote_large (tornado.test.httputil_test.ParseCookieTest) ... ok
 test_parse_request_start_line (tornado.test.httputil_test.ParseRequestStartLineTest) ... ok
 test_parsing (tornado.test.httputil_test.QsParseTest) ... ok
 test_url_concat_dict_params (tornado.test.httputil_test.TestUrlConcat) ... ok
@@ -438,6 +444,7 @@ test_async_exception (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_async_result (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_current (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_native_coroutine (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
+test_stop_no_timeout (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_sync_exception (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_sync_result (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
 test_timeout (tornado.test.ioloop_test.TestIOLoopRunSync) ... ok
@@ -655,7 +662,6 @@ test_same_port_allocation (tornado.test.netutil_test.TestPortAllocation) ... ok
 test_bad_host (tornado.test.netutil_test.ThreadedResolverErrorTest) ... ok
 test_import (tornado.test.netutil_test.ThreadedResolverImportTest) ... ok
 test_localhost (tornado.test.netutil_test.ThreadedResolverTest) ... ok
-test_localhost (tornado.test.netutil_test.TwistedResolverTest) ... ok
 test_log_file (tornado.test.log_test.EnablePrettyLoggingTest) ... ok
 test_log_file_with_timed_rotating (tornado.test.log_test.EnablePrettyLoggingTest) ... ok
 test_wrong_rotate_mode_value (tornado.test.log_test.EnablePrettyLoggingTest) ... ok
@@ -783,6 +789,8 @@ test_future_http_error_no_raise (tornado.test.simple_httpclient_test.SimpleHTTPC
 test_future_interface (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_gzip (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_callback (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
+test_header_callback_to_parse_line (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
+test_header_crlf (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_encoding (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_header_types (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
 test_hello_world (tornado.test.simple_httpclient_test.SimpleHTTPClientCommonTestCase) ... ok
@@ -948,14 +956,13 @@ test_unicode_template (tornado.test.template_test.TemplateTest) ... ok
 test_tear_down_releases_app_and_http_server (tornado.test.testing_test.AsyncHTTPTestCaseSetUpTearDownTest) ... ok
 test_fetch_full_http_url (tornado.test.testing_test.AsyncHTTPTestCaseTest) ... ok
 test_fetch_segment (tornado.test.testing_test.AsyncHTTPTestCaseTest) ... ok
+test_other_return (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_coroutine (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_generator (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
+test_undecorated_generator_with_skip (tornado.test.testing_test.AsyncTestCaseReturnAssertionsTest) ... ok
 test_subsequent_wait_calls (tornado.test.testing_test.AsyncTestCaseTest)
 This test makes sure that a second call to wait() ... ok
 test_wait_timeout (tornado.test.testing_test.AsyncTestCaseTest) ... ok
-test_other_return (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_coroutine (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_generator (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_undecorated_generator_with_skip (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
-test_unwrap (tornado.test.testing_test.AsyncTestCaseWrapperTest) ... ok
 test_async (tornado.test.testing_test.GenTest) ... ok
 test_native_coroutine (tornado.test.testing_test.GenTest) ... ok
 test_native_coroutine_timeout (tornado.test.testing_test.GenTest) ... ok
@@ -981,17 +988,18 @@ test_config_inner_level (tornado.test.util_test.ConfigurableTest) ... ok
 test_config_multi_level (tornado.test.util_test.ConfigurableTest) ... ok
 test_config_str (tornado.test.util_test.ConfigurableTest) ... ok
 test_default (tornado.test.util_test.ConfigurableTest) ... ok
-test_no_inherit_future (tornado.test.util_test.ExecInTest) ... skipped 'no testable future imports'
+test_no_inherit_future (tornado.test.util_test.ExecInTest) ... ok
 test_import_member (tornado.test.util_test.ImportObjectTest) ... ok
 test_import_member_unicode (tornado.test.util_test.ImportObjectTest) ... ok
 test_import_module (tornado.test.util_test.ImportObjectTest) ... ok
 test_import_module_unicode (tornado.test.util_test.ImportObjectTest) ... ok
-test_basic (tornado.test.util_test.IsFinalizingTest) ... ok
 test_two_arg_exception (tornado.test.util_test.RaiseExcInfoTest) ... ok
 test_re_unescape (tornado.test.util_test.ReUnescapeTest) ... ok
 test_re_unescape_raises_error_on_invalid_input (tornado.test.util_test.ReUnescapeTest) ... ok
 test_timedelta_to_seconds (tornado.test.util_test.TimedeltaToSecondsTest) ... ok
 test_unicode_escapes (tornado.test.util_test.UnicodeLiteralTest) ... ok
+test_current_version (tornado.test.util_test.VersionInfoTest) ... ok
+test_version_info_compatible (tornado.test.util_test.VersionInfoTest) ... ok
 test_accept_language (tornado.test.web_test.AcceptLanguageTest) ... ok
 test_accept_language_ignore (tornado.test.web_test.AcceptLanguageTest) ... ok
 test_accept_language_invalid (tornado.test.web_test.AcceptLanguageTest) ... ok
@@ -1114,6 +1122,7 @@ test_relative_version_exclusion (tornado.test.web_test.StaticFileTest) ... ok
 test_root_static_path (tornado.test.web_test.StaticFileTest) ... ok
 test_static_304_etag_modified_bug (tornado.test.web_test.StaticFileTest) ... ok
 test_static_304_if_modified_since (tornado.test.web_test.StaticFileTest) ... ok
+test_static_304_if_modified_since_invalid (tornado.test.web_test.StaticFileTest) ... ok
 test_static_304_if_none_match (tornado.test.web_test.StaticFileTest) ... ok
 test_static_404 (tornado.test.web_test.StaticFileTest) ... ok
 test_static_compressed_files (tornado.test.web_test.StaticFileTest) ... ok
@@ -1162,6 +1171,7 @@ test_no_gzip (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_optional_path (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_redirect (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_reverse_url (tornado.test.web_test.WSGISafeWebTest) ... ok
+test_set_header (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_types (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_uimodule_resources (tornado.test.web_test.WSGISafeWebTest) ... ok
 test_uimodule_unescaped (tornado.test.web_test.WSGISafeWebTest) ... ok
@@ -1195,10 +1205,12 @@ test_manual_ping (tornado.test.websocket_test.ManualPingTest) ... ok
 test_large_message (tornado.test.websocket_test.MaxMessageSizeTest) ... ok
 test_message_sizes (tornado.test.websocket_test.NoCompressionTest) ... ok
 test_size_limit (tornado.test.websocket_test.NoCompressionTest) ... ok
+test_ping_sleep_time (tornado.test.websocket_test.PingCalculationTest) ... ok
 test_mask (tornado.test.websocket_test.PythonMaskFunctionTest) ... ok
 test_message_sizes (tornado.test.websocket_test.ServerOnlyCompressionTest) ... ok
 test_size_limit (tornado.test.websocket_test.ServerOnlyCompressionTest) ... ok
 test_server_ping (tornado.test.websocket_test.ServerPeriodicPingTest) ... ok
+test_client_ping_timeout (tornado.test.websocket_test.ServerPingTimeoutTest) ... ok
 test_native_coroutine (tornado.test.websocket_test.WebSocketNativeCoroutineTest) ... ok
 test_async_prepare (tornado.test.websocket_test.WebSocketTest) ... ok
 test_bad_websocket_version (tornado.test.websocket_test.WebSocketTest) ... ok
@@ -1242,9 +1254,9 @@ test_concurrent_streaming_barrier (tornado.test.wsgi_test.WSGIContainerThreadPoo
 test_simple (tornado.test.wsgi_test.WSGIContainerThreadPoolTest) ... ok
 
 ----------------------------------------------------------------------
-Ran 1208 tests
+Ran 1220 tests
 
-OK (skipped=6)
+OK (skipped=5)
 Some tests were skipped because: No SO_REUSEPORT support, SO_REUSEPORT
 is not supported, needs fix, no testable future imports, pycares
 module not present

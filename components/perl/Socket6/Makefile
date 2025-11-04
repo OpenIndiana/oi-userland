@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Socket6
+COMPONENT_NAME =		Socket6
 HUMAN_VERSION =			0.29
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Socket6 - IPv6 related part of the C socket.h defines and structure manipulators
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		IPv6 related part of the C socket.h defines and structure manipulators
 COMPONENT_CPAN_AUTHOR =		UMEMOTO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:468915fa3a04dcf6574fc957eff495915e24569434970c91ee8e4e1459fc9114
@@ -30,5 +30,6 @@ COMPONENT_LICENSE =		BSD-3-Clause
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

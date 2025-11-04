@@ -4,10 +4,9 @@ correct location.
 This patch comes from in-house.  It has not been submitted upstream; plans
 unclear.
 
-diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/module.c a/MagickCore/module.c
---- a~/MagickCore/module.c	1970-01-01 00:00:00
-+++ a/MagickCore/module.c	1970-01-01 00:00:00
-@@ -77,7 +77,7 @@ typedef void *ModuleHandle;
+--- ImageMagick-7.1.1-43/MagickCore/module.c.orig
++++ ImageMagick-7.1.1-43/MagickCore/module.c
+@@ -78,7 +78,7 @@
    Define declarations.
  */
  #if defined(MAGICKCORE_LTDL_DELEGATE)
@@ -16,7 +15,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/module.c a/MagickC
  #else
  #  if defined(_DEBUG)
  #    define ModuleGlobExpression "IM_MOD_DB_*.dll"
-@@ -1473,7 +1473,7 @@ static void TagToCoderModuleName(const c
+@@ -1475,7 +1475,7 @@
    if (IsEventLogging() != MagickFalse)
      (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
  #if defined(MAGICKCORE_LTDL_DELEGATE)
@@ -25,7 +24,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/module.c a/MagickC
    (void) LocaleLower(name);
  #else
  #if defined(MAGICKCORE_WINDOWS_SUPPORT)
-@@ -1527,7 +1527,7 @@ static void TagToFilterModuleName(const
+@@ -1529,7 +1529,7 @@
  #elif !defined(MAGICKCORE_LTDL_DELEGATE)
    (void) FormatLocaleString(name,MagickPathExtent,"%s.dll",tag);
  #else
@@ -34,10 +33,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/MagickCore/module.c a/MagickC
  #endif
  }
  
-diff -wpruN --no-dereference '--exclude=*.orig' a~/common.shi.in a/common.shi.in
---- a~/common.shi.in	1970-01-01 00:00:00
-+++ a/common.shi.in	1970-01-01 00:00:00
-@@ -19,9 +19,9 @@ VALIDATE="@abs_top_builddir@/tests/valid
+--- ImageMagick-7.1.1-43/common.shi.in.orig
++++ ImageMagick-7.1.1-43/common.shi.in
+@@ -19,9 +19,9 @@
  DRAWTEST="@abs_top_builddir@/tests/drawtest"
  WANDTEST="@abs_top_builddir@/tests/wandtest"
  LD_LIBRARY_PATH="@abs_top_builddir@/MagickCore/.libs:@abs_top_builddir@/MagickWand/.libs:${LD_LIBRARY_PATH}"
@@ -47,5 +45,5 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/common.shi.in a/common.shi.in
 -MAGICK_FILTER_MODULE_PATH="@abs_top_builddir@/filters"
 +MAGICK_FILTER_MODULE_PATH="@abs_top_builddir@/filters/.libs"
  MAGICK_FONT="@abs_top_srcdir@/PerlMagick/demo/Generic.ttf"
+ MAGICK_THREAD_LIMIT=2
  PATH="@abs_top_builddir@/utilities:@abs_top_builddir@/tests:${PATH}"
- set +a

@@ -12,13 +12,12 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libesmtp
 COMPONENT_VERSION=      1.1.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      libESMTP is a brary for posting electronic mail
 COMPONENT_PROJECT_URL=  https://libesmtp.github.io/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,10 +36,9 @@ CFLAGS += $(XPG6MODE)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS += -DNAME_MAX=255 -DHOST_NAME_MAX=255
 LDFLAGS += -lnsl -lsocket
-LDFLAGS += -L$(OPENSSL_LIBDIR) -R$(OPENSSL_LIBDIR)
 
 COMPONENT_POST_UNPACK_ACTION= ( $(MV) libESMTP-$(COMPONENT_VERSION) $(COMPONENT_SRC) )
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library

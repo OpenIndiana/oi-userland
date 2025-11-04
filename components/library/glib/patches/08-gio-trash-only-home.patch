@@ -1,16 +1,14 @@
---- glib-2.66.4/gio/glocalfile.c.orig	2020-12-17 12:47:11.417608000 +0000
-+++ glib-2.66.4/gio/glocalfile.c	2020-12-20 11:49:17.686916141 +0000
-@@ -1956,6 +1956,7 @@
+--- glib-2.82.0/gio/glocalfile.c.orig
++++ glib-2.82.0/gio/glocalfile.c
+@@ -2000,6 +2000,7 @@
    char *dirname, *globaldir;
    GVfsClass *class;
    GVfs *vfs;
 +  GFile *trash;
    int errsv;
- 
-   if (glib_should_use_portal ())
---- a/gio/glocalfile.c
-+++ b/gio/glocalfile.c
-@@ -2039,146 +2039,25 @@ g_local_file_trash (GFile         *file,
+   size_t basename_len;
+   GError *my_error = NULL;
+@@ -2057,146 +2058,25 @@
        g_free (path);
      }
  
@@ -173,7 +171,7 @@
  
    /* Trashdir points to the trash dir with the "info" and "files" subdirectories */
  
-@@ -2213,8 +2117,8 @@
+@@ -2366,8 +2246,8 @@
    trashfile = g_build_filename (filesdir, trashname, NULL);
  
    g_free (filesdir);
@@ -184,7 +182,7 @@
      {
        errsv = errno;
  
-@@ -2223,6 +2127,7 @@
+@@ -2376,6 +2256,7 @@
        g_free (trashname);
        g_free (infofile);
        g_free (trashfile);
@@ -192,7 +190,7 @@
  
        if (errsv == EXDEV)
  	/* The trash dir was actually on another fs anyway!?
-@@ -2245,6 +2150,7 @@
+@@ -2398,6 +2279,7 @@
      class->local_file_moved (vfs, local->filename, trashfile);
  
    g_free (trashfile);

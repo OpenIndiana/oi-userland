@@ -15,18 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycryptodomex
-HUMAN_VERSION =			3.20.0
-COMPONENT_SUMMARY =		pycryptodomex - Cryptographic library for Python
+HUMAN_VERSION =			3.23.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Cryptographic library for Python
 COMPONENT_PROJECT_URL =		https://www.pycryptodome.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/a4/b03a16637574312c1b54c55aedeed8a4cb7d101d44058d46a0e5706c63e1/pycryptodomex-3.20.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7a710b79baddd65b806402e14766c721aee8fb83381769c27920f26476276c1e
+	sha256:71909758f010c82bc99b0abf4ea12012c98962fbf0583c2164f8b84533c2e4da
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
@@ -43,8 +42,7 @@ COMPONENT_TEST_TARGETS += -vv
 TEST_REQUIREMENTS += requirements-test.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome-test-vectors

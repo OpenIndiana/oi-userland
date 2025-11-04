@@ -11,19 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module DBD::MariaDB
+#   $WS_TOOLS/perl-integrate-module DBD-MariaDB
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DBD::MariaDB
-HUMAN_VERSION =			1.23
-COMPONENT_SUMMARY =		DBD::MariaDB - MariaDB and MySQL driver for the Perl5 Database Interface (DBI)
+COMPONENT_NAME =		DBD-MariaDB
+HUMAN_VERSION =			1.24
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		MariaDB and MySQL driver for the Perl5 Database Interface (DBI)
 COMPONENT_CPAN_AUTHOR =		PALI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d0c76c660ddd55570e48f3e2fdea8f621a69ac0ed48190e8cfcafcb5e9b859d
+	sha256:f977a25b4116a0a95a7c8a894fd37097abe19af9a6a9ed4d800604ec17873fe4
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,20 +36,25 @@ LD_OPTIONS += -R$(MYSQL_LIBDIR)
 # Configure needs to find mysqlclient library
 COMPONENT_CONFIGURE_ENV += LD_LIBRARY_PATH=$(MYSQL_LIBDIR)
 
-# https://www.illumos.org/issues/15423
-CONFIGURE_OPTIONS += --testsocket=/tmp/mariadb106.sock
-
 # need mysql_config at build time
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/dbi
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-checklib
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/bignum
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-yaml
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/dbi
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-ssleay
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/proc-processtable
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-harness
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

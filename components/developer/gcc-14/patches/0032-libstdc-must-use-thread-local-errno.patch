@@ -1,0 +1,39 @@
+From 09e1d8748f9321bae39811e0f51683d330098cf0 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Tue, 31 Aug 2021 21:40:48 +0000
+Subject: libstdc++ must use thread-local errno
+
+---
+ libstdc++-v3/configure    | 6 ++++++
+ libstdc++-v3/configure.ac | 5 +++++
+ 2 files changed, 11 insertions(+)
+
+--- gcc-releases-gcc-14.3.0/libstdc++-v3/configure.orig
++++ gcc-releases-gcc-14.3.0/libstdc++-v3/configure
+@@ -55105,6 +55105,12 @@
+ tmake_file="${tmake_file_}"
+ 
+ 
++case "${target}" in *-*-solaris2*)
++	EXTRA_CFLAGS="$EXTRA_CFLAGS -D_TS_ERRNO"
++	EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS -D_TS_ERRNO"
++esac
++
++
+ # Add CET specific flags if Intel CET is enabled.
+  # Check whether --enable-cet was given.
+ if test "${enable_cet+set}" = set; then :
+--- gcc-releases-gcc-14.3.0/libstdc++-v3/configure.ac.orig
++++ gcc-releases-gcc-14.3.0/libstdc++-v3/configure.ac
+@@ -658,6 +658,11 @@
+ tmake_file="${tmake_file_}"
+ AC_SUBST(tmake_file)
+ 
++case "${target}" in *-*-solaris2*)
++	EXTRA_CFLAGS="$EXTRA_CFLAGS -D_TS_ERRNO"
++	EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS -D_TS_ERRNO"
++esac
++
+ # Add CET specific flags if Intel CET is enabled.
+ GCC_CET_FLAGS(CET_FLAGS)
+ EXTRA_CXX_FLAGS="$EXTRA_CXX_FLAGS $CET_FLAGS"

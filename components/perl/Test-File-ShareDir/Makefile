@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::File::ShareDir
+#   $WS_TOOLS/perl-integrate-module Test-File-ShareDir
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::File::ShareDir
+COMPONENT_NAME =		Test-File-ShareDir
 HUMAN_VERSION =			1.001002
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::File::ShareDir - Create a Fake ShareDir for your modules for testing.
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Create a Fake ShareDir for your modules for testing.
 COMPONENT_CPAN_AUTHOR =		KENTNL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b33647cbb4b2f2fcfbde4f8bb4383d0ac95c2f89c4c5770eb691f1643a337aad
@@ -32,10 +32,15 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-copy-recursive
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += library/perl-5/path-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/scope-guard
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

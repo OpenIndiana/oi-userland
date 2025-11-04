@@ -1,0 +1,117 @@
+Fix ordering of C++ vs C detection; g++ 14 doesn't like _Alignof but
+does like alignof.
+
+Silence some repeated warnings about signed vs unsigned comparisons by
+casting narrow unsigned constants to wider signed types.
+
+--- webkitgtk-2.48.1/Source/WTF/wtf/simde/arm/neon.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/simde/arm/neon.h
+@@ -6812,14 +6812,14 @@
+  * you may need to sprinkle some ifdefs into your code.
+  */
+ #if \
+-    (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)) || \
+-    (0 && HEDLEY_HAS_FEATURE(c_alignof))
+-  #define SIMDE_ALIGN_OF(Type) _Alignof(Type)
+-#elif \
+     (defined(__cplusplus) && (__cplusplus >= 201103L)) || \
+     (0 && HEDLEY_HAS_FEATURE(cxx_alignof))
+   #define SIMDE_ALIGN_OF(Type) alignof(Type)
+ #elif \
++    (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)) || \
++    (0 && HEDLEY_HAS_FEATURE(c_alignof))
++  #define SIMDE_ALIGN_OF(Type) _Alignof(Type)
++#elif \
+     HEDLEY_GCC_VERSION_CHECK(2,95,0) || \
+     HEDLEY_ARM_VERSION_CHECK(4,1,0) || \
+     HEDLEY_INTEL_VERSION_CHECK(13,0,0) || \
+@@ -7744,7 +7744,7 @@
+ #endif
+ 
+ /* TODO: detect compilers which support this outside of C11 mode */
+-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
++#if !defined(__cplusplus) && defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+   #define SIMDE_CHECKED_REINTERPRET_CAST(to, from, value) _Generic((value), to: (value), default: (_Generic((value), from: ((to) (value)))))
+   #define SIMDE_CHECKED_STATIC_CAST(to, from, value) _Generic((value), to: (value), default: (_Generic((value), from: ((to) (value)))))
+ #else
+@@ -121126,7 +121126,7 @@
+   SIMDE_VECTORIZE
+   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+     int16_t tmp = HEDLEY_STATIC_CAST(int16_t, (a_.values[i] + (1 << (n - 1))) >> n);
+-    if (tmp > UINT8_MAX) tmp = UINT8_MAX;
++    if (tmp > (int16_t)UINT8_MAX) tmp = UINT8_MAX;
+     else if (tmp < 0) tmp = 0;
+     r_.values[i] = HEDLEY_STATIC_CAST(uint8_t, tmp);
+   }
+@@ -121150,7 +121150,7 @@
+   SIMDE_VECTORIZE
+   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+     int32_t tmp = (a_.values[i] >> ((n == 32) ? 31 : n)) + ((a_.values[i] & HEDLEY_STATIC_CAST(int32_t, UINT32_C(1) << (n - 1))) != 0);
+-    if (tmp > UINT16_MAX) tmp = UINT16_MAX;
++    if (tmp > (int32_t)UINT16_MAX) tmp = UINT16_MAX;
+     else if (tmp < 0) tmp = 0;
+     r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, tmp);
+   }
+@@ -121284,7 +121284,7 @@
+   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
+     return HEDLEY_STATIC_CAST(uint8_t, vqmovunh_s16(a));
+   #else
+-    return (a > UINT8_MAX) ? UINT8_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint8_t, a));
++    return (a > (int16_t)UINT8_MAX) ? UINT8_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint8_t, a));
+   #endif
+ }
+ #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
+@@ -121298,7 +121298,7 @@
+   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
+     return HEDLEY_STATIC_CAST(uint16_t, vqmovuns_s32(a));
+   #else
+-    return (a > UINT16_MAX) ? UINT16_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint16_t, a));
++    return (a > (int32_t)UINT16_MAX) ? UINT16_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint16_t, a));
+   #endif
+ }
+ #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
+@@ -121312,7 +121312,7 @@
+   #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
+     return HEDLEY_STATIC_CAST(uint32_t, vqmovund_s64(a));
+   #else
+-    return (a > UINT32_MAX) ? UINT32_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint32_t, a));
++    return (a > (int64_t)UINT32_MAX) ? UINT32_MAX : ((a < 0) ? 0 : HEDLEY_STATIC_CAST(uint32_t, a));
+   #endif
+ }
+ #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
+@@ -124106,7 +124106,7 @@
+   SIMDE_VECTORIZE
+   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+     int16_t tmp = (a_.values[i]) >> n;
+-    if (tmp > UINT8_MAX) tmp = UINT8_MAX;
++    if (tmp > (int16_t)UINT8_MAX) tmp = UINT8_MAX;
+     else if (tmp < 0) tmp = 0;
+     r_.values[i] = HEDLEY_STATIC_CAST(uint8_t, tmp);
+   }
+@@ -124130,7 +124130,7 @@
+   SIMDE_VECTORIZE
+   for (size_t i = 0 ; i < (sizeof(r_.values) / sizeof(r_.values[0])) ; i++) {
+     int32_t tmp = (a_.values[i] >> n);
+-    if (tmp > UINT16_MAX) tmp = UINT16_MAX;
++    if (tmp > (int32_t)UINT16_MAX) tmp = UINT16_MAX;
+     else if (tmp < 0) tmp = 0;
+     r_.values[i] = HEDLEY_STATIC_CAST(uint16_t, tmp);
+   }
+@@ -136823,7 +136823,7 @@
+     #endif
+   #else
+     int16_t r_ = HEDLEY_STATIC_CAST(int16_t, a) + HEDLEY_STATIC_CAST(int16_t, b);
+-    return (r_ < 0) ? 0 : ((r_ > UINT8_MAX) ? UINT8_MAX : HEDLEY_STATIC_CAST(uint8_t, r_));
++    return (r_ < 0) ? 0 : ((r_ > (int16_t)UINT8_MAX) ? UINT8_MAX : HEDLEY_STATIC_CAST(uint8_t, r_));
+   #endif
+ }
+ #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)
+@@ -136842,7 +136842,7 @@
+     #endif
+   #else
+     int32_t r_ = HEDLEY_STATIC_CAST(int32_t, a) + HEDLEY_STATIC_CAST(int32_t, b);
+-    return (r_ < 0) ? 0 : ((r_ > UINT16_MAX) ? UINT16_MAX : HEDLEY_STATIC_CAST(uint16_t, r_));
++    return (r_ < 0) ? 0 : ((r_ > (int32_t)UINT16_MAX) ? UINT16_MAX : HEDLEY_STATIC_CAST(uint16_t, r_));
+   #endif
+ }
+ #if defined(SIMDE_ARM_NEON_A64V8_ENABLE_NATIVE_ALIASES)

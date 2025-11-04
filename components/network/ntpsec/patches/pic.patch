@@ -1,0 +1,22 @@
+--- ntpsec-1.2.3/wscript	2023-12-29 05:53:56.000000000 +0100
++++ ntpsec-1.2.3/wscript.new	2025-01-02 20:25:46.641772609 +0100
+@@ -299,7 +299,6 @@
+ 
+     cc_test_flags = [
+         ('PIC', '-fPIC'),
+-        ('PIE', '-pie -fPIE'),
+         # this quiets most of macOS warnings on -fpie
+         ('unused', '-Qunused-arguments'),
+         # This is a useless warning on any architecture with a barrel
+@@ -421,9 +420,9 @@
+ 
+     if ctx.env.HAS_PIE:
+         ctx.env.LINKFLAGS_NTPD += [
+-            "-pie",
++            "-fpic",
+             ]
+-        ctx.env.CFLAGS_bin = ["-fPIE", "-pie"] + ctx.env.CFLAGS
++        ctx.env.CFLAGS_bin = ["-fpic"] + ctx.env.CFLAGS
+         ld_hardening_flags += [
+             ('relro', "-Wl,-z,relro"),  # hardening, marks some read only,
+             ]

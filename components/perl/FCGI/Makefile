@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		FCGI
+COMPONENT_NAME =		FCGI
 HUMAN_VERSION =			0.82
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		FCGI - Fast CGI module
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Fast CGI module
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4c7d60e26da2c07f058a4e345021e92505273b33c9542215977e084611f09ecf
@@ -30,6 +30,9 @@ COMPONENT_LICENSE =		OML
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/fcgi-client
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

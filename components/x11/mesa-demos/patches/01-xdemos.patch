@@ -1,0 +1,41 @@
+We just build and deliver glxinfo and glxgears
+
+--- a/src/meson.build	2023-03-02 09:32:40.781537018 -0800
++++ b/src/meson.build	2023-03-02 09:40:29.033966687 -0800
+@@ -22,36 +22,10 @@
+ 
+ subdir('util')
+ 
+-if dep_glut.found()
+-  subdir('demos')
+-  subdir('tests')
+-  subdir('trivial')
+-  subdir('redbook')
+-  subdir('samples')
+-  subdir('perf')
+-  subdir('objviewer')
+-
+-  subdir('glsl')
+-  subdir('fp')
+-  subdir('fpglsl')
+-  subdir('vp')
+-  subdir('vpglsl')
+-  subdir('gs')
+-  subdir('tools')
+-endif
+-
+-if dep_egl.found()
+-  subdir('egl')
+-endif
+-
+ if dep_x11.found()
+   subdir('xdemos')
+ endif
+ 
+-if dep_osmesa.found()
+-  subdir('osdemos')
+-endif
+-
+ if host_machine.system() == 'windows'
+   subdir('wgl')
+ endif

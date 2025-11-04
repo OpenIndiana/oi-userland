@@ -11,22 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Math::Base::Convert
+#   $WS_TOOLS/perl-integrate-module Math-Base-Convert
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Math::Base::Convert
-HUMAN_VERSION =			0.11
-COMPONENT_SUMMARY =		Math::Base::Convert - very fast base to base conversion
+COMPONENT_NAME =		Math-Base-Convert
+HUMAN_VERSION =			0.13
+COMPONENT_SUMMARY =		pregenerated bit pattern to base power of 2 translation tables
 COMPONENT_CPAN_AUTHOR =		MIKER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c0971355f24c93b79e77ad54a4570090a1a598fcb9b86f5c17eba42f38b40e0
+	sha256:289c0c33bc9886db3dc2cf949d8e0ab24e36c67b9e833355941d70aaf3519ed2
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl

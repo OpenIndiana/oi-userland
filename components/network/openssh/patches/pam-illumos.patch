@@ -1,0 +1,11 @@
+--- openssh-10.0p1/auth-pam.c.orig
++++ openssh-10.0p1/auth-pam.c
+@@ -68,7 +68,7 @@
+ #endif
+ 
+ /* OpenGroup RFC86.0 and XSSO specify no "const" on arguments */
+-#ifdef PAM_SUN_CODEBASE
++#if defined(PAM_SUN_CODEBASE) && !defined(__illumos__)
+ # define sshpam_const		/* Solaris, HP-UX, SunOS */
+ #else
+ # define sshpam_const	const	/* LinuxPAM, OpenPAM, AIX */

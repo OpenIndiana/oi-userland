@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Lingua::EN::Inflect
+#   $WS_TOOLS/perl-integrate-module Lingua-EN-Inflect
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Lingua::EN::Inflect
+COMPONENT_NAME =		Lingua-EN-Inflect
 HUMAN_VERSION =			1.905
-COMPONENT_SUMMARY =		Lingua::EN::Inflect - Convert singular to plural. Select \\\\\\\"a\\\\\\\" or \\\\\\\"an\\\\\\\".
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Convert singular to plural. Select \\\\\\\"a\\\\\\\" or \\\\\\\"an\\\\\\\".
 COMPONENT_CPAN_AUTHOR =		DCONWAY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:05c29ec3482e572313a60da2181b0b30c5db7cf01f8ae7616ad67e1b66263296
@@ -29,4 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

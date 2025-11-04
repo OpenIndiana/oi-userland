@@ -11,22 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Convert::ASCII::Armour
+#   $WS_TOOLS/perl-integrate-module Convert-ASCII-Armour
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Convert::ASCII::Armour
+COMPONENT_NAME =		Convert-ASCII-Armour
 HUMAN_VERSION =			1.4
-COMPONENT_SUMMARY =		Convert::ASCII::Armour - Convert binary octets into ASCII armoured messages.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Convert binary octets into ASCII armoured messages.
 COMPONENT_CPAN_AUTHOR =		VIPUL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:97e8acb6eb2a2a91af7d6cf0d2dff6fa42aaf939fc7d6d1c6057a4f0df52c904
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0
+COMPONENT_LICENSE_FILE =	ARTISTIC
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += runtime/perl

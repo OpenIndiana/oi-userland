@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Exporter::Progressive
+#   $WS_TOOLS/perl-integrate-module Sub-Exporter-Progressive
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Exporter::Progressive
+COMPONENT_NAME =		Sub-Exporter-Progressive
 HUMAN_VERSION =			0.001013
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Sub::Exporter::Progressive - Only use Sub::Exporter if you need it
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Only use Sub::Exporter if you need it
 COMPONENT_CPAN_AUTHOR =		FREW
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d535b7954d64da1ac1305b1fadf98202769e3599376854b2ced90c382beac056
@@ -34,4 +34,6 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/sub-exporter
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

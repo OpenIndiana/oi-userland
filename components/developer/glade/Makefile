@@ -12,14 +12,13 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glade
 COMPONENT_MJR_VERSION=	3.40
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GLADE User Interface Builder for GNOME
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Apps/Glade
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +48,7 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 # Build dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
 
 # Auto-generated dependencies

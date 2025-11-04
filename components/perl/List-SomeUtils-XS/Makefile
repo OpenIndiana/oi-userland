@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module List::SomeUtils::XS
+#   $WS_TOOLS/perl-integrate-module List-SomeUtils-XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		List::SomeUtils::XS
+COMPONENT_NAME =		List-SomeUtils-XS
 HUMAN_VERSION =			0.58
-COMPONENT_SUMMARY =		List::SomeUtils::XS - XS implementation for List::SomeUtils
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		XS implementation for List::SomeUtils
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4f9e4d2622481b79cc298e8e29de8a30943aff9f4be7992c0ebb7b22e5b4b297
@@ -29,8 +30,27 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# List-SomeUtils-XS --> List-SomeUtils ==> List-SomeUtils-XS
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/list-someutils
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings

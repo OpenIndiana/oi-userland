@@ -1,0 +1,32 @@
+From ff1f611a0d84b84a06b100a3b6901fc6d8957ff5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Marko=20M=C3=A4kel=C3=A4?= <marko.makela@mariadb.com>
+Date: Fri, 10 Jan 2025 06:50:50 +0200
+Subject: [PATCH] Avoid assert()
+
+By default, CMAKE_BUILD_TYPE RelWithDebInfo or Release implies -DNDEBUG,
+which disables the assert() macro. MariaDB is deviating from that.
+Let us be explicit to use assert() only in debug builds.
+
+This fixes up 1b8358d9438c01c083fe4c66bcd43d755c3e2d7d
+diff -wpruN --no-dereference '--exclude=*.orig' a~/storage/innobase/include/trx0trx.h a/storage/innobase/include/trx0trx.h
+--- a~/storage/innobase/include/trx0trx.h	1970-01-01 00:00:00
++++ a/storage/innobase/include/trx0trx.h	1970-01-01 00:00:00
+@@ -671,14 +671,14 @@ public:
+   {
+     ut_ad(!mutex_is_owner());
+     mutex.wr_lock();
+-    assert(!mutex_owner.exchange(pthread_self(),
+-                                 std::memory_order_relaxed));
++    ut_d(assert(!mutex_owner.exchange(pthread_self(),
++                                      std::memory_order_relaxed)));
+   }
+   /** Release the mutex */
+   void mutex_unlock()
+   {
+-    assert(mutex_owner.exchange(0, std::memory_order_relaxed) ==
+-           pthread_self());
++    ut_d(assert(mutex_owner.exchange(0, std::memory_order_relaxed) ==
++                pthread_self()));
+     mutex.wr_unlock();
+   }
+ #ifndef SUX_LOCK_GENERIC

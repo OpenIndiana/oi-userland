@@ -11,18 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Term::ReadKey
+#   $WS_TOOLS/perl-integrate-module TermReadKey
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Term::ReadKey
-COMPONENT_PERL_DISTRIBUTION =	TermReadKey
+COMPONENT_NAME =		TermReadKey
 HUMAN_VERSION =			2.38
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Term::ReadKey - A perl module for simple terminal control
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Change terminal modes, and perform non-blocking reads.
 COMPONENT_CPAN_AUTHOR =		JSTOWE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5a645878dc570ac33661581fbb090ff24ebce17d43ea53fd22e105a856a47290
@@ -31,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

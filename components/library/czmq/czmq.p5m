@@ -12,6 +12,7 @@
 #
 # Copyright 2016 Jim Klimov
 # Copyright 2020 Alexander Pyhalov
+# Copyright 2024 Klaus Ziegler
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,7 +24,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-#file path=usr/bin/$(MACH32)/zmakecert
 file path=usr/bin/zmakecert
 file path=usr/include/czmq.h
 file path=usr/include/czmq_library.h
@@ -68,14 +68,10 @@ file path=usr/include/zsys.h
 file path=usr/include/ztimerset.h
 file path=usr/include/ztrie.h
 file path=usr/include/zuuid.h
-link path=usr/lib/$(MACH64)/libczmq.so target=libczmq.so.$(COMPONENT_VERSION)
-file path=usr/lib/$(MACH64)/libczmq.so.$(COMPONENT_VERSION)
-link path=usr/lib/$(MACH64)/libczmq.so.4 target=libczmq.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libczmq.so target=libczmq.so.$(HUMAN_VERSION)
+file path=usr/lib/$(MACH64)/libczmq.so.$(HUMAN_VERSION)
+link path=usr/lib/$(MACH64)/libczmq.so.4 target=libczmq.so.$(HUMAN_VERSION)
 file path=usr/lib/$(MACH64)/pkgconfig/libczmq.pc
-link path=usr/lib/libczmq.so target=libczmq.so.$(COMPONENT_VERSION)
-file path=usr/lib/libczmq.so.$(COMPONENT_VERSION)
-link path=usr/lib/libczmq.so.4 target=libczmq.so.$(COMPONENT_VERSION)
-file path=usr/lib/pkgconfig/libczmq.pc
 file path=usr/share/man/man1/zmakecert.1
 file path=usr/share/man/man3/zactor.3
 file path=usr/share/man/man3/zargs.3

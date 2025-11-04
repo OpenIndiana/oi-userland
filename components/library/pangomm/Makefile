@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pangomm
 COMPONENT_MAJOR_VERSION=	2.46
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	pangomm - C++ Wrapper for the pango Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -44,7 +44,7 @@ CXXFLAGS += -std=c++17
 # So we won't build documentation for now as it increases the package size significantely. 
 CONFIGURE_OPTIONS += -Dbuild-documentation=false
 
-# Build dependency
+# Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/pkg-config
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/macro/gnu-m4

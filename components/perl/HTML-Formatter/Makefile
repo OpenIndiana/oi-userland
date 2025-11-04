@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTML::Formatter
+#   $WS_TOOLS/perl-integrate-module HTML-Formatter
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTML::Formatter
+COMPONENT_NAME =		HTML-Formatter
 HUMAN_VERSION =			2.16
-COMPONENT_SUMMARY =		HTML::Formatter - Base class for HTML formatters
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Base class for HTML formatters
 COMPONENT_CPAN_AUTHOR =		NIGELM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:cb0a0dd8aa5e8ba9ca214ce451bf4df33aa09c13e907e8d3082ddafeb30151cc
@@ -30,8 +31,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/font-afm
 PERL_REQUIRED_PACKAGES += library/perl-5/html-tree
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-slurper
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings

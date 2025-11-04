@@ -11,35 +11,42 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-regressions
+#   $WS_TOOLS/python-integrate-project -d python/pytest-regressions pytest_regressions
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-regressions
-HUMAN_VERSION =			2.5.0
-COMPONENT_SUMMARY =		pytest-regressions - Easy to use fixtures to write regression tests.
+COMPONENT_NAME =		pytest_regressions
+HUMAN_VERSION =			2.8.3
+COMPONENT_SUMMARY =		Easy to use fixtures to write regression tests.
 COMPONENT_PROJECT_URL =		https://github.com/ESSS/pytest-regressions
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/33/c6/2b6088711d0a9d87b82a7e6ac84c6cb59aab3bf37778bb25645590a5729c/pytest-regressions-2.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:818c7884c1cff3babf89eebb02cbc27b307856b1985427c24d52cb812a106fd9
+	sha256:1ad90708bee02a3d36c78ef0b6f9692a9a30d312dd828680fd6d2a7235fcd221
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# We have no pandas packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_dataframe_regression.py
+PYTEST_ADDOPTS += --ignore tests/test_filenames.py
+PYTEST_ADDOPTS += --ignore tests/test_num_regression.py
+
+# We have no matplotlib packaged yet
+PYTEST_ADDOPTS += --deselect tests/test_image_regression.py::test_image_regression
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/pytest-datadir
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/matplotlib
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/pytest-datadir
+REQUIRED_PACKAGES.python += library/python/pyyaml
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
-TEST_REQUIRED_PACKAGES.python += library/python/pandas
 TEST_REQUIRED_PACKAGES.python += library/python/pillow
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
-TEST_REQUIRED_PACKAGES.python += library/python/restructuredtext-lint

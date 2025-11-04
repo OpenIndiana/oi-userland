@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module BSD::Resource
+#   $WS_TOOLS/perl-integrate-module BSD-Resource
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		BSD::Resource
+COMPONENT_NAME =		BSD-Resource
 HUMAN_VERSION =			1.2911
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		BSD::Resource - BSD process resource limit and priority functions
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		BSD process resource limit and priority functions
 COMPONENT_CPAN_AUTHOR =		JHI
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9d1cfba063cc18f72427a22451f7908836b7331ac8785dbe07553c5b043a0c3d
@@ -34,5 +34,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

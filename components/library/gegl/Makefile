@@ -21,12 +21,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gegl
 COMPONENT_MJR_VERSION= 0.4
-COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).48
+COMPONENT_VERSION= $(COMPONENT_MJR_VERSION).64
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GEGL (Generic Graphics Library) is a graph based image processing framework
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:418c26d94be8805d7d98f6de0c6825ca26bd74fcacb6c188da47533d9ee28247
+COMPONENT_ARCHIVE_HASH= sha256:0de1c9dd22c160d5e4bdfc388d292f03447cca6258541b9a12fed783d0cf7c60
 COMPONENT_ARCHIVE_URL= https://download.gimp.org/pub/gegl/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://www.gegl.org/
 COMPONENT_FMRI=	image/library/$(COMPONENT_NAME)
@@ -38,33 +38,33 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 # strptime needs this:
-CFLAGS += -D_XOPEN_SOURCE_EXTENDED=1
-CFLAGS += $(CFLAGS.$(BITS))
+CFLAGS += $(XPG6MODE)
 
-# build with the distribution default libjpeg
-CFLAGS		+=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS	+=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS		+=    $(JPEG_LDFLAGS)
-
-CONFIGURE_OPTIONS+= --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS+= -Ddocs=false
-CONFIGURE_OPTIONS+= -Dgi-docgen=disabled
-CONFIGURE_OPTIONS+= -Dvapigen=disabled
-CONFIGURE_OPTIONS+= -Dworkshop=true
+CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
+CONFIGURE_OPTIONS += -Ddocs=false
+CONFIGURE_OPTIONS += -Dgi-docgen=disabled
+CONFIGURE_OPTIONS += -Dvapigen=enabled
+CONFIGURE_OPTIONS += -Dworkshop=true
 # libav is from encumbered
-CONFIGURE_OPTIONS+= -Dlibav=disabled
+CONFIGURE_OPTIONS += -Dlibav=disabled
+
+# luajit does not link
+# Text relocation remains                         referenced
+#    against symbol                  offset      in file
+#lj_func_closeuv                     0xd15       /usr/lib/amd64/libluajit-5.1.a(lj_vm.o)
+# ...
+# ld: fatal: relocations remain against allocatable but non-writable sections
+# collect2: error: ld returned 1 exit status
+CONFIGURE_OPTIONS += -Dlua=disabled
 
 # gobject-introspection requires this
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(BUILD_DIR_64)/gegl
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/[0-9]*\.[0-9]*s//" ' \
-	' -e "/OK/p" ' \
-	' -e "/SKIP/p" ' \
-	' -e "/FAIL/p" ' \
-	' -e "/Summary/p" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -73,7 +73,6 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/lensfun
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg

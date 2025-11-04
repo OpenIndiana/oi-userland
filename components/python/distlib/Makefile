@@ -15,17 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
-HUMAN_VERSION =			0.3.8
-COMPONENT_SUMMARY =		distlib - Distribution utilities
+HUMAN_VERSION =			0.4.0
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/91/e2df406fb4efacdf46871c25cde65d3c6ee5e173b7e5a4547a47bae91920/distlib-0.3.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1530ea13e350031b6312d8580ddb6b27a104275a31106523b8f123787f494f64
+	sha256:feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -37,6 +37,6 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python

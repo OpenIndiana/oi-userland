@@ -4,15 +4,15 @@ Support SunOS/gcc.  XXX: retain solstudio support.
 
 --- a/make/lib/Awt2dLibraries.gmk.orig	2019-01-08 09:40:28.000000000 +0000
 +++ b/make/lib/Awt2dLibraries.gmk
-@@ -384,7 +384,6 @@ $(eval $(call SetupJdkLibrary, BUILD_LIB
+@@ -382,7 +382,6 @@ $(eval $(call SetupJdkLibrary, BUILD_LIB
      OPTIMIZATION := HIGHEST, \
-     CFLAGS := $(LCMS_CFLAGS_JDKLIB) \
+     CFLAGS := $(CFLAGS_JDKLIB) \
          $(LCMS_CFLAGS), \
 -    CFLAGS_solaris := -xc99=no_lib, \
      CFLAGS_windows := -DCMS_IS_WINDOWS_, \
      EXTRA_HEADER_DIRS := \
          common/awt/debug \
-@@ -557,7 +556,11 @@ ifneq (, $(findstring $(OPENJDK_TARGET_O
+@@ -553,7 +552,11 @@ ifneq (, $(findstring $(OPENJDK_TARGET_O
      HARFBUZZ_CFLAGS += -DHAVE_INTEL_ATOMIC_PRIMITIVES -DHB_NO_VISIBILITY
    endif
    ifeq ($(call isTargetOs, solaris), true)

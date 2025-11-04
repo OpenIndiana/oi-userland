@@ -23,21 +23,25 @@
 #
 
 BUILD_BITS= 64_and_32
+ENV=/usr/bin/env
+USE_PARALLEL_BUILD= yes
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         sqlite
-COMPONENT_VERSION=      3.45.2
-TARBALL_VERSION=		3450200
+COMPONENT_VERSION=      3.50.4
+TARBALL_VERSION=		3500400
 COMPONENT_SUMMARY=		in-process SQL database engine library
 COMPONENT_SRC=          sqlite-src-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:4a45a3577cc8af683c4bd4c6e81a7c782c5b7d5daa06175ea2cb971ca71691b1
+COMPONENT_ARCHIVE_HASH= sha256:b7b4dc060f36053902fb65b344bbbed592e64b2291a26ac06fe77eec097850e9
 COMPONENT_PROJECT_URL=  https://www.sqlite.org
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2024/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/2025/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         database/sqlite-3
 COMPONENT_CLASSIFICATION=	Development/Databases
 COMPONENT_LICENSE=      Public Domain
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 # 'oserror' test has too low threshold for file descriptor depletion. When it's
@@ -65,18 +69,15 @@ CFLAGS			+= -DSQLITE_ENABLE_COLUMN_METADATA
 
 CONFIGURE_OPTIONS.32	+= --disable-tcl
 CONFIGURE_OPTIONS.64	+= --with-tcl="$(USRLIBDIR64)"
-CONFIGURE_OPTIONS		+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS		+= --disable-static
 CONFIGURE_OPTIONS		+= --enable-readline
 CONFIGURE_OPTIONS		+= --enable-fts3
 CONFIGURE_OPTIONS		+= --enable-fts4
 CONFIGURE_OPTIONS		+= --enable-fts5
-CONFIGURE_OPTIONS		+= --enable-json1
 CONFIGURE_OPTIONS		+= --enable-update-limit
 CONFIGURE_OPTIONS		+= --enable-rtree
 CONFIGURE_OPTIONS		+= --enable-threadsafe 
 CONFIGURE_OPTIONS		+= --enable-shared
-CONFIGURE_OPTIONS		+= --enable-dynamic-extensions
 
 CONFIGURE_ENV.64 += TCLLIBDIR=$(USRLIBDIR)/tcl8.6/sqlite3/$(MACH64)
 
@@ -85,10 +86,13 @@ COMPONENT_BUILD_ENV += PATH=$(PATH)
 COMPONENT_INSTALL_ENV += PATH=$(PATH)
 
 # Install sqlite3(1) man page
-COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PROTO_DIR)$(USRSHAREMAN1DIR) ; $(CP) $(SOURCE_DIR)/sqlite3.1 $(PROTO_DIR)$(USRSHAREMAN1DIR)/ ;
+
+# Move tcl components to expected location
+COMPONENT_POST_INSTALL_ACTION.64 += $(MKDIR) $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64) ; /usr/bin/mv $(PROTOUSRLIBDIR.64)/sqlite$(COMPONENT_VERSION)/* $(PROTO_DIR)/usr/lib/tcl8.6/sqlite3/$(MACH64)/ ;
 
 COMPONENT_TEST_TARGETS= test
-
+# Note that the user running the tests needs more privileges in order to run them successfully.
 COMPONENT_TEST_TRANSFORMS= \
 	' -e "s/in [0-9]*\.[0-9]* seconds//" ' \
 	' -e "s/tests on .*/tests/" ' \
@@ -100,7 +104,7 @@ COMPONENT_TEST_TRANSFORMS= \
 	' -e "/^Number of malloc/p" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/libedit
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

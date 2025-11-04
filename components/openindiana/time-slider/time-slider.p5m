@@ -13,24 +13,20 @@
 # Copyright 2023 Klaus Ziegler. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/desktop/$(COMPONENT_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Configuration and Preferences"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/share/icons/.* ->  default restart_fmri svc:/application/desktop-cache/icon-cache:default>
-<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
 <transform file path=usr/lib/.* -> default mode 0555>
-<transform file path=usr/.* -> default pkg.depend.runpath $PKGDEPEND_RUNPATH:usr/share/time-slider/lib>
-<transform file path=usr/lib/time-slider/plugins/.* -> default pkg.depend.bypass-generate .*>
 
 depend fmri=desktop/gksu type=require
 depend fmri=gnome/zenity type=require
-depend fmri=library/python/pygobject-3-39 type=require
-depend fmri=library/python/python-dbus-39 type=require
+depend fmri=library/python/pygobject-39 type=require
+depend fmri=library/python/dbus-python-39 type=require
 depend fmri=library/python/notify2-39 type=require
 depend fmri=service/gnome/desktop-cache type=require
 

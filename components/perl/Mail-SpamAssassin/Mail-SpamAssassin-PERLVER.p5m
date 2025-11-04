@@ -59,6 +59,9 @@ file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Conf::Parser.3pe
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Conf::SQL.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::DnsResolver.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::GeoDB.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::HTML::Color.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Header.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Header::ParameterHeader.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Logger.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Logger::File.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Logger::Stderr.3perl
@@ -89,6 +92,7 @@ file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::ExtractT
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::FreeMail.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::FromNameSpoof.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::HashBL.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::HeaderEval.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::MIMEEval.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::MIMEHeader.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::OLEVBMacro.3perl
@@ -98,6 +102,7 @@ file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::PhishTag
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::Phishing.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::Pyzor.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::Razor2.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::Redirectors.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::RelayCountry.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::ReplaceTags.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::ResourceLimits.3perl
@@ -113,6 +118,7 @@ file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::URIDNSBL
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::URIDetail.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::URILocalBL.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::VBounce.3perl
+file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::WLBLEval.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Plugin::WelcomeListSubject.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::PluginHandler.3perl
 file path=usr/perl5/$(PERLVER)/man/man3perl/Mail::SpamAssassin::Pyzor.3perl
@@ -155,6 +161,9 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Dns.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/DnsResolver.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/GeoDB.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/HTML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/HTML/Color.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Header.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Header/ParameterHeader.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Locales.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Locker.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Locker/Flock.pm
@@ -207,6 +216,7 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/PhishTag.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/Phishing.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/Pyzor.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/Razor2.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/Redirectors.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/RelayCountry.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/RelayEval.pm
 file path=usr/perl5/vendor_perl/$(PERLVER)/Mail/SpamAssassin/Plugin/ReplaceTags.pm
@@ -251,27 +261,35 @@ depend type=require fmri=__TBD pkg.debug.depend.file=perl \
     pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
 
 # Automatically generated dependencies based on distribution metadata
+depend type=require fmri=pkg:/library/perl-5/archive-tar-$(PLV)@1.23
 depend type=require fmri=pkg:/library/perl-5/archive-zip-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/bsd-resource-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/db_file-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/dbd-sqlite-$(PLV)@1.59.1
 depend type=require fmri=pkg:/library/perl-5/dbi-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/email-address-xs-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/encode-detect-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/geo-ip-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/html-parser-$(PLV)@3.43
-depend type=require fmri=pkg:/library/perl-5/io-socket-inet6-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/io-compress-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/io-socket-ip-$(PLV)@0.9
 depend type=require fmri=pkg:/library/perl-5/io-socket-ssl-$(PLV)@1.76
 depend type=require fmri=pkg:/library/perl-5/io-string-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/io-zlib-$(PLV)@1.4
 depend type=require fmri=pkg:/library/perl-5/ip-country-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/ip-country-db_file-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/libnet-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/lwp-protocol-https-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/mail-dkim-$(PLV)@0.37
 depend type=require fmri=pkg:/library/perl-5/mail-dmarc-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/mail-spf-$(PLV)
+depend type=require fmri=pkg:/library/perl-5/mime-base64-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/net-cidr-lite-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/net-dns-$(PLV)@1.1
 depend type=require fmri=pkg:/library/perl-5/net-libidn-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/net-libidn2-$(PLV)
 depend type=require fmri=pkg:/library/perl-5/net-patricia-$(PLV)@1.16
 depend type=require fmri=pkg:/library/perl-5/netaddr-ip-$(PLV)@4.1
+depend type=require fmri=pkg:/library/perl-5/pod-usage-$(PLV)@1.1
 depend type=require fmri=pkg:/library/perl-5/razor2-client-agent-$(PLV)@2.61
+depend type=require fmri=pkg:/library/perl-5/time-local-$(PLV)

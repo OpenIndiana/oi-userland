@@ -1,0 +1,51 @@
+Oracle Bug 15028407 - SUNBT4344557 setting XmNpacking resource of XmRowColumn
+   widget causes core dump
+
+What happens is that when _XtAppInit is called it saves a backup of the
+argv_in_out value passed into it.  The backup value is initially created with
+space for the arguments, and one extra item so that the list may be NULL
+terminated.
+
+The argv_in_out list is then traversed and all values are copied before
+finally NULL terminating the list.
+
+At the end of the function, the argv_in_out value is in theory restored to
+its original value, albeit with the contents in a new memory location(safe
+from being freed by the shell or anyone else).  In this case, it has been
+given a value that it didn't have in the first place.
+
+When a NULL value is passed in to _XtAppInit, memory is allocated for one
+item which is NULL.  The address of this memory is saved back to the
+argv_in_out value instead of NULL.  Subsequent functions see a real value
+instead of NULL and it is this value that is stored in the XtNargv resource
+of the shell.  
+
+When the value of XtNargv is retrieved it is not-null, but its value doesn't
+make sense.
+
+Need to evaluate for submission upstream.
+
+--- a/src/Display.c	2022-11-07 19:09:53.543560261 -0800
++++ b/src/Display.c	2022-11-07 19:11:41.337732726 -0800
+@@ -346,12 +346,16 @@
+     /*
+      * Save away argv and argc so we can set the properties later
+      */
+-    saved_argv = XtMallocArray((Cardinal) *argc_in_out + 1,
+-                               (Cardinal) sizeof(_XtString));
++    if (*argv_in_out != NULL) {
++       saved_argv = (String *)
++               __XtMalloc( (Cardinal)((*argc_in_out + 1) * sizeof(String)) );
+ 
+-    for (i = 0; i < *argc_in_out; i++)
+-        saved_argv[i] = (*argv_in_out)[i];
+-    saved_argv[i] = NULL;       /* NULL terminate that sucker. */
++    for (i = 0 ; i < *argc_in_out ; i++)
++               saved_argv[i] = (*argv_in_out)[i];
++       saved_argv[i] = NULL;   /* NULL terminate that sucker. */
++    } else {
++       saved_argv = NULL;
++    }
+ 
+     *app_context_return = XtCreateApplicationContext();
+ 

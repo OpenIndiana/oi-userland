@@ -1,0 +1,82 @@
+#
+# This patch allows active data transfer sessions to bind
+# local port 20 even though each session is being handled
+# by different process id. Patch solves fixes two issues:
+#      - in order to allow more processes to bind the same
+#        port we must set SO_REUSEPORT socket option,
+#        see tcp(4p) for details
+#
+#      - also SO_REUSEPORT itself is not sufficient, because
+#        same port can be bound by different processes if
+#        and only if those processes belong to the same uid.
+#        Only FTP anonymous sessions are being handled by ftp
+#        user. For regular users each session process runs
+#        under respective uid. Therefore we explicitly ask
+#        for PRIV_PROC_SETID to allow session process to
+#        switch from uid to ftp user in order to be able
+#        to bind port 20. As soon as port is bound we switch
+#        back to uid.
+#
+# perhaps we can send SO_REUSEPORT to upstream, however seteuid()
+# mechanism depends on mod_solaris_priv.c, which is specific
+# to Solaris.
+#
+# 2024-01-09 `gmake check` failed to link as `daemon_uid` added
+#             by this patch file is not defined within test suit.
+#             Added static global declaration to tests/api/tests.c.
+#
+--- a/src/inet.c
++++ b/src/inet.c
+@@ -461,9 +461,29 @@ static conn_t *init_conn(pool *p, int fd, const pr_netaddr_t *bind_addr,
+      * second) if the port being bound to is INPORT_ANY.
+      */
+     for (i = 10; i; i--) {
++#ifdef	SOLARIS2
++      if (session.priv_aware && session.uid != daemon_uid) {
++        if (seteuid(daemon_uid) != 0) {
++            pr_log_pri(PR_LOG_DEBUG, "%s unable to switch from %u to %u\n",
++              __func__, session.uid, daemon_uid);
++	} else {
++          pr_log_pri(PR_LOG_DEBUG, "%s switched from %u to %u\n",
++            __func__, session.uid, session.ouid);
++        }
++      } else {
++        pr_log_pri(PR_LOG_DEBUG, "%s no uid switch\n", __func__);
++      }
++#endif	/* SOLARIS2 */
+       res = bind(fd, pr_netaddr_get_sockaddr(&na),
+         pr_netaddr_get_sockaddr_len(&na));
+       hold_errno = errno;
++#ifdef	SOLARIS2
++      if (session.priv_aware && session.uid != daemon_uid) {
++        if (seteuid(session.uid) != 0)
++          pr_log_pri(PR_LOG_DEBUG, "%s unable to switch back from %u to %u\n",
++            __func__, session.ouid, session.uid);
++      }
++#endif	/* SOLARIS2 */
+ 
+       if (res == -1 &&
+           hold_errno == EINTR) {
+@@ -494,6 +514,7 @@ static conn_t *init_conn(pool *p, int fd, const pr_netaddr_t *bind_addr,
+       }
+ 
+       pr_timer_sleep(1);
++      pr_signals_handle();
+ 
+       if (port != INPORT_ANY &&
+           port < 1024) {
+diff -r cfdfd79bd0b7 tests/api/tests.c
+--- a/tests/api/tests.c Tue Jan 09 02:20:37 2024 -0800
++++ b/tests/api/tests.c Tue Jan 09 02:42:14 2024 -0800
+@@ -90,6 +90,11 @@
+   return NULL;
+ }
+ 
++/* Hack for Solaris 34022757 */
++#ifdef SOLARIS2
++uid_t daemon_uid;
++#endif
++
+ int main(int argc, char *argv[]) {
+   const char *log_file = "api-tests.log";
+   const char *xml_file = "api-tests.xml";

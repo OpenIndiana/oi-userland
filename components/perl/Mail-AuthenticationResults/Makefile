@@ -11,26 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mail::AuthenticationResults
+#   $WS_TOOLS/perl-integrate-module Mail-AuthenticationResults
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mail::AuthenticationResults
-HUMAN_VERSION =			2.20231031
-COMPONENT_SUMMARY =		Mail::AuthenticationResults - Object Oriented Authentication-Results Headers
+COMPONENT_NAME =		Mail-AuthenticationResults
+HUMAN_VERSION =			2.20250709
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Object Oriented Authentication-Results Headers
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6cf2cfaa3368401ad9d9013cb75a8a9c61db6c3444b1ef1d4b424b6a06a2ed6b
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:ca8568638a7839417e04332c6915d4c7a55496bef212faff4d59a93ba9eb4ec0
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/clone
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/json
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

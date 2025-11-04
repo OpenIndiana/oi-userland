@@ -14,19 +14,18 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
-COMPONENT_VERSION= 0.7
-COMPONENT_REVISION= 7
+COMPONENT_VERSION= 0.8
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_PROJECT_URL=	https://avahi.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:57a99b5dfe7fdae794e3d1ee7a62973a368e91e414bd0dfa5d84434de5b14804
+COMPONENT_ARCHIVE_URL=	https://github.com/lathiat/avahi/releases/download/v0.8/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:060309d7a333d38d951bc27598c677af1796934dbd98e1024e7ad8de798fedda
 COMPONENT_FMRI=			system/network/avahi
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=		LGPLv2.1
@@ -62,9 +61,11 @@ CONFIGURE_OPTIONS += --disable-compat-libdns_sd
 CONFIGURE_OPTIONS += --disable-autoipd
 CONFIGURE_OPTIONS += --disable-gdbm
 CONFIGURE_OPTIONS += --enable-dbm
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 # We don't want 32 bit gui
 CONFIGURE_OPTIONS.32 += --disable-gtk
 CONFIGURE_OPTIONS.32 += --disable-gtk3
+CONFIGURE_OPTIONS.32 += --disable-qt5
 CONFIGURE_OPTIONS.32 += --disable-pygobject
 
 CONFIGURE_ENV += XGETTEXT=/usr/gnu/bin/xgettext
@@ -73,26 +74,33 @@ CONFIGURE_ENV += MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV += am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
+# to get link dependencies for QT5 right.
+CONFIGURE_ENV += QT5_LIBS="-L/usr/lib/qt/5.15/lib/$(MACH64)"
+# to find Qt5Core.pc
+PKG_CONFIG_PATH.prepend += $(QT5_PKG_CONFIG_PATH)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
-unexport SHELLOPTS
+# make gcc-14 happy
+CFLAGS += -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatible-pointer-types
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += text/xmltoman
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
 PYTHON_REQUIRED_PACKAGES += library/python/pygobject
-PYTHON_REQUIRED_PACKAGES += library/python/python-dbus
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += library/libdaemon
+REQUIRED_PACKAGES += library/libevent2
 REQUIRED_PACKAGES += service/network/dns/mdns
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

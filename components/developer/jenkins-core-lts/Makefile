@@ -13,6 +13,8 @@
 # Copyright 2016-2021 Jim Klimov
 # Copyright 2022 Till Wegmueller
 #
+
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 # NOTE: Before bumping to the new core version, take a look at
@@ -28,9 +30,9 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=				jenkins
 JENKINS_RELEASE=			lts
 COMPONENT_MAJOR_VERSION=	2
-COMPONENT_MINOR_VERSION=	440
-COMPONENT_PATCH_VERSION=	2
-COMPONENT_ARCHIVE_HASH=		sha256:8126628e9e2f8ee2f807d489ec0a6e37fc9f5d6ba84fa8f3718e7f3e2a27312e
+COMPONENT_MINOR_VERSION=	528
+COMPONENT_PATCH_VERSION=	1
+COMPONENT_ARCHIVE_HASH=		sha256:d630dca265f75a8d581f127a9234f1679d4b0800a8f370d03ad4a154ceb7295b
 # See $(COMPONENT_ARCHIVE_URL).sha256 e.g. for current weekly release, run
 #   wget -O - http://mirrors.jenkins-ci.org/war/latest/jenkins.war.sha256
 # or for LTS
@@ -48,13 +50,14 @@ COMPONENT_LICENSE_FILE= 	jenkins.license
 COMPONENT_SUMMARY=			Jenkins is a Java-based CI automation server
 
 # Note: for the core, we only download a WAR - no unpacking, no building...
-include $(WS_MAKE_RULES)/prep-download.mk
-include $(WS_MAKE_RULES)/justmake.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 CLEAN_PATHS += $(SOURCE_DIR)
+CLEAN_PATHS += $(COMPONENT_NAME)-$(JENKINS_RELEASE)-$(COMPONENT_VERSION)
+
+COMPONENT_POST_UNPACK_ACTION += ( $(MKDIR) $(SOURCE_DIR) );
 
 download::
 
@@ -80,11 +83,11 @@ COMPONENT_COPY_ACTION = ( $(CLONEY) $(SOURCE_DIR)/ $(@D)/ )
 COMPONENT_INSTALL_ENV += JENKINS_VERSION=$(COMPONENT_VERSION)
 COMPONENT_INSTALL_ENV += JENKINS_RELEASE=$(JENKINS_RELEASE)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 
 test: $(NO_TESTS)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += runtime/java/openjdk17
+REQUIRED_PACKAGES += runtime/java/openjdk21

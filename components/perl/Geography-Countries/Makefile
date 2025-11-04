@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Geography::Countries
+#   $WS_TOOLS/perl-integrate-module Geography-Countries
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Geography::Countries
+COMPONENT_NAME =		Geography-Countries
 HUMAN_VERSION =			2009041301
-COMPONENT_SUMMARY =		Geography::Countries - 2-letter, 3-letter, and numerical codes for countries.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		2-letter, 3-letter, and numerical codes for countries.
 COMPONENT_CPAN_AUTHOR =		ABIGAIL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:48c42e40e8281ba7c981743a854c48e6def2d51eb0925ea6c96e25c74497f20f
@@ -29,4 +30,5 @@ COMPONENT_LICENSE =		MIT
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

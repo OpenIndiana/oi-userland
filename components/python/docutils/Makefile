@@ -14,20 +14,20 @@
 #   $WS_TOOLS/python-integrate-project docutils
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
-HUMAN_VERSION =			0.20.1
-COMPONENT_SUMMARY =		docutils - Docutils -- Python Documentation Utilities
-COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1f/53/a5da4f2c5739cf66290fac1431ee52aff6851c7c8ffd8264f13affd7bcdd/docutils-0.20.1.tar.gz
+HUMAN_VERSION =			0.22.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Docutils -- Python Documentation Utilities
+COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f08a4e276c3a1583a86dce3e34aba3fe04d02bba2dd51ed16106244e8a923e3b
+	sha256:9fdb771707c8784c8f2728b67cb2c691305933d68137ef95a75db5f4dfbc213d
 COMPONENT_LICENSE =		CC-PDDC AND BSD-3-Clause AND BSD-2-Clause
-COMPONENT_LICENSE_FILE =	COPYING.txt
+COMPONENT_LICENSE_FILE =	COPYING.rst
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,6 +37,5 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^OS:/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^Elapsed time:/d'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python

@@ -12,12 +12,11 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gmtp
 COMPONENT_VERSION=	1.3.11
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	A simple MP3 and Media player client for UNIX and UNIX like systems
 COMPONENT_PROJECT_URL=	https://gmtp.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,6 +36,7 @@ CONFIGURE_OPTIONS += --with-gtk3
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += library/audio/libid3tag
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

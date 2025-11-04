@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Razor2::Client::Agent
+#   $WS_TOOLS/perl-integrate-module Razor2-Client-Agent
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Razor2::Client::Agent
+COMPONENT_NAME =		Razor2-Client-Agent
 HUMAN_VERSION =			2.86
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Razor2::Client::Agent - Collaborative, content-based spam filtering network agent.
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Collaborative, content-based spam filtering network agent.
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5e062e02ebb65e24b708e7eefa5300c43d6f657bf20d08fec4ca8a0a3b94845f
@@ -32,6 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha1
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,44 @@
+echo -n is not portable
+
+--- totem-pl-parser-3.26.6/plparse/tests/videosite-tester.sh.orig
++++ totem-pl-parser-3.26.6/plparse/tests/videosite-tester.sh
+@@ -7,13 +7,13 @@
+ 
+ # test_videosite
+ if [ $1 = "--check" ] && [ $2 = "--url" ] && [ $3 = "http://www.youtube.com/watch?v=oMLCrzy9TEs" ]; then
+-	echo -n "TRUE"
++	printf "TRUE"
+ 	exit 0
+ fi
+ 
+ # test_no_url_podcast
+ if [ $1 = "--check" ] && [ $2 = "--url" ] && [ $3 = "http://www.guardian.co.uk/sport/video/2012/jul/26/london-2012-north-korea-flag-video" ]; then
+-	echo -n "TRUE"
++	printf "TRUE"
+ 	exit 0
+ fi
+ 
+@@ -22,7 +22,7 @@
+ 	if [ $3 = "http://www.youtube.com/watch?v=Fk2bUvrv-Uc#t=2m30s" ] ||
+ 		[ $3 = "http://www.youtube.com/watch?v=Fk2bUvrv-Uc&t=2m30s" ] ||
+ 		[ $3 = "http://www.youtube.com/embed/Nc9xq-TVyHI?start=110" ]; then
+-		echo -n "TRUE"
++		printf "TRUE"
+ 		exit 0
+ 	fi
+ fi
+@@ -58,7 +58,7 @@
+ 
+ # test_parsing_rss_link
+ if [ $1 = "--check" ] && [ $2 = "--url" ] && [ $3 = "http://www.guardian.co.uk/technology/audio/2011/may/03/tech-weekly-art-love-bin-laden" ]; then
+-	echo -n "TRUE"
++	printf "TRUE"
+ 	exit 0
+ fi
+ 
+@@ -67,4 +67,4 @@
+ 	sleep 1
+ fi
+ 
+-echo -n "FALSE"
++printf "FALSE"

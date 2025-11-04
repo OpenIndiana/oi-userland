@@ -18,14 +18,15 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-sgml-doctools
-COMPONENT_VERSION=      1.12
-COMPONENT_FMRI=         x11/documentation/xorg-sgml-doctools
+COMPONENT_VERSION=      1.12.1
 COMPONENT_SUMMARY=      Stylesheets and other data files used to generate X.Org documentation
-COMPONENT_ARCHIVE_HASH= \
-  sha256:65a9fdddedc17bd5e9c0b00d904960f03f047c3a62de5458989d493c29fec806
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:0a5d54c0706b4e89d5acd4d455db3745ab4ad26be627cce015b90ad403b56d6f
+COMPONENT_FMRI=         x11/documentation/xorg-sgml-doctools
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_INSTALL_ARGS += pkgconfigdir=$(PKG_CONFIG_PATH.32)
+COMPONENT_INSTALL_ARGS += pkgconfigdir=$(PKG_CONFIG_PATH.64)
 
 # Auto-generated dependencies

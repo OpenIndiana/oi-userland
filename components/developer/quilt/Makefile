@@ -24,16 +24,15 @@
 # Copyright 2017, Aurelien Larcher.
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
-COMPONENT_VERSION=      0.68
+COMPONENT_VERSION=      0.69
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fe8c09de03c106e85b3737c8f03ade147c956b79ed7af485a1c8a3858db38426
+COMPONENT_ARCHIVE_HASH=	sha256:555ddffde22da3c86d1caf5a9c1fb8a152ac2b84730437bd39cc08849c9f4852
 COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/quilt
 COMPONENT_CLASSIFICATION= Development/Source Code Management
@@ -44,19 +43,16 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-COMPONENT_PREP_ACTION = \
-    (cd $(@D) ; autoconf )
+COMPONENT_PREP_ACTION= ( cd $(@D) ; autoconf )
 
 PATCH_LEVEL= 0
 
 # without this, some make messages end up in the
 # generated README and man pages.
-COMPONENT_BUILD_ARGS+=	--no-print-directory
+COMPONENT_BUILD_ARGS += --no-print-directory
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-cp=$(GNUBIN)/cp
 CONFIGURE_OPTIONS += --with-date=$(GNUBIN)/date
 CONFIGURE_OPTIONS += --with-getopt=$(GNUBIN)/getopt
@@ -93,6 +89,7 @@ REQUIRED_PACKAGES += service/network/smtp/postfix
 REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/network/mailwrapper
 REQUIRED_PACKAGES += text/diffstat
 REQUIRED_PACKAGES += text/gawk

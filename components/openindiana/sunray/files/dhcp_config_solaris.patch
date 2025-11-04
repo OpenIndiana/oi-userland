@@ -1,0 +1,1390 @@
+--- ./lib/dhcp/edhcp/edhcp/dhcp_config_solaris	Mi. Juli  9 12:46:47 2025
++++ ./lib/dhcp/isc/dhcp_config_solaris	Fr. Juli 11 14:16:29 2025
+@@ -6,766 +6,682 @@
+ # Use is subject to license terms.
+ #
+ 
+-export PATH=/usr/bin:/sbin:/usr/sbin
+-UTLIB="$(/bin/pkginfo -r SUNWuto)/SUNWut/lib"
+-UTSBIN="$(/bin/pkginfo -r SUNWuto)/SUNWut/sbin"
+-PROGRAM_ID=$(basename $0)
+-LOGFILE="/var/adm/log/${PROGRAM_ID}.$(date '+%Y_%m_%d_%H:%M:%S').log"
+-ETCDIR="/etc/opt/SUNWut"
+ UTDHCPDIR="$ETCDIR"/net/dhcp
+-VARDIR=/var/opt/SUNWut
+-TMPDIR="$VARDIR"/tmp
+-UTDHCPFILE="$TMPDIR"/utdhcp.$$
+-HOSTNAME=`hostname`
+-HOSTIP=`getent hosts ${HOSTNAME} | awk '{print $1}'`
++DHCPDCONF="/etc/inet/dhcpd4.conf"
++UTDHCPFILE="$UTDHCPDIR"/utdhcp
++SUNRAYFILEPATHPREFIX=/etc/opt/SUNWut/net/dhcp/SunRay-
++OPTIONSFILENAME="SunRay-options"
++OPTIONSFILE="$UTDHCPDIR"/"$OPTIONSFILENAME"
++SUBNETFILEPREFIX="SunRay-subnet-"
++SUBNETFILEPATHPREFIX="$UTDHCPDIR"/"$SUBNETFILEPREFIX"
++INTFILEPREFIX="SunRay-interface-"
++INTFILEPATHPREFIX="$UTDHCPDIR"/"$INTFILEPREFIX"
++ETHERFILEPREFIX="SunRay-ether-"
++ETHERFILEPATHPREFIX="$UTDHCPDIR"/"$ETHERFILEPREFIX"
++TMPLISTFILE="/var/opt/SUNWut/tmp/$$.files"
+ 
+-#
+-# This variable is used as a flag during dhcp configuration.
+-# If it is "true" then it means that prior to S8U5 there
+-# was no mechanism of using dhcpconfig non-interactively.
+-# So we manipulate the /etc/default/dhcp file directly.
+-# If it "false" then we know that this is a post S8U5
+-# machine and so we have a mechanism for non-interactive
+-# dhcpconfig. In this case we do not depend on the
+-# location of the dhcp files.
+-#
+-USE_FILES=true
++SYSDHCPD="/etc/default/isc-dhcp-server"
++INCLUDEKEY="DHCPD_CONF_INCLUDE_FILES"
++INTKEY="DHCPD_INTERFACE"
++CHROOTKEY="DHCPD_RUN_CHROOTED"
++CHROOTED=false
+ 
+-# names of files and directories that will be touched by this script
+-#
+-DHCP_DIR="/var/dhcp";
+-HOSTNAME_R="/etc/hostname";     # with suffix .{hme,qfe,vge}
+-HOSTS="/etc/inet/hosts";
+-NETWORKS="/etc/inet/networks";
+-INIT_DHCP="/etc/init.d/dhcp";
+-CORONA_NAME="SunRay";
+-CORONA_TITLE="Sun Ray";
+-GREP=/usr/xpg4/bin/grep
+-DHTADM_P="${TMPDIR}/dhtadm-P.$$"
++# remote subnet comment line
++DUMMY_SUBNET_COMMENT="# Sun Ray: dummy subnet to support DHCP clients on remote subnets"
+ 
+-#
+-# Variables that will be used ONLY if USE_FILES=true
+-#
+-DHCPTAB="${DHCP_DIR}/dhcptab";
+-DHCP_CONFIG="/etc/default/dhcp";
++CheckChrooted() {
++	grep $CHROOTKEY $SYSDHCPD | grep -i yes 2>/dev/null 1>&2
++	if [[ $? -eq 0 ]]; then
++		CHROOTED=true
++	else
++		CHROOTED=false
++	fi	
++}
+ 
+-#
+-# initialize various dhcp network tables.
+-#  usage:  BuildNetworkTables
+-#  builds the network tables for all of the newtnet interfaces in ${NEWT_INTFS}
+-#  returns 0 on success, and 1 on failure
+-#
+-function BuildNetworkTables {
+-    mode=$1
+-
+-    if [[ $mode = "subnet" ]]; then
+-        INTF_NET=${UT_DHCP_NETWORK}
+-        INTF_NETNAME=${CORONA_NAME}-${UT_DHCP_NETWORK}
+-    else
+-	INTF_NET=${UT_DHCP_NETWORK}
+-	INTF_NETNAME=${CORONA_NAME}-${UT_DHCP_INTERFACE}
+-    fi
+-
+-    if [[ -z $UT_DHCP_RANGE ]]; then
+-	START_NUM=0
+-	END_NUM=0
+-    else
+-	START_NUM=${UT_DHCP_RANGE% *}
+-	END_NUM=${UT_DHCP_RANGE#* }
+-	IP2Host "${START_NUM}" ${UT_DHCP_NETMASK}
+-	if [[ $? != 0 ]]; then
+-		print -u2 "Error: could not get host number from ${START_NUM}"
+-		exit 1
+-	fi
+-	if [[ $H = $MAXHOST ]]; then
+-		print -u2 "Error: new first address is subnet broadcast address";
+-		exit 1
+-	fi
+-	if [[ $H = 0 ]]; then
+-		print -u2 "Error: new first address is subnet address";
+-		exit 1
+-	fi
+-       	START_NUM=$H
+-	IP2Host "${END_NUM}" ${UT_DHCP_NETMASK}
+-	if [[ $? != 0 ]]; then
+-		print -u2 "Error: could not get host number from ${END_NUM}"
+-                exit 1
++GenerateOptionsDHCPDBlock() {
++	if [[ -n $UT_DHCP_AUTHPORT ]]; then
++                print "	option NewT.AuthPort $UT_DHCP_AUTHPORT;"
+         fi
+-	if [[ $H = $MAXHOST ]]; then
+-                print -u2 "Error: new last address is subnet broadcast address";
+-                exit 1
++        if [[ -n $UT_DHCP_NEWTVER ]]; then
++                print "	option NewT.NewTVer \"$UT_DHCP_NEWTVER\";"
+         fi
+-        if [[ $H = 0 ]]; then
+-                print -u2 "Error: new last address is subnet address";
+-                exit 1
++        if [[ -n $UT_DHCP_LOGHOST ]]; then
++                print "	option NewT.LogHost $UT_DHCP_LOGHOST;"
+         fi
+-	END_NUM=$H
+-    fi
+-
+-    if [[ ${START_NUM} = "0" ]]; then
+-        # in order to support DHCPINFORM, an empty network table must
+-        # be created.
+-        pntadm -C ${INTF_NET} 2> ${TMPDIR}/Err.$$
+-        if [[ ${?} != "0" ]]; then
+-            print -u2 "Error:  cannot create DHCP network table for \"${INTF_NET}\":\n     `cat ${TMPDIR}/Err.$$`"
+-            rm -f ${TMPDIR}/Err.$$;
+-            return 1
++        if [[ -n $UT_DHCP_LOGKERNEL ]]; then
++                print "	option NewT.LogKern $UT_DHCP_LOGKERNEL;"
+         fi
+-        rm -f ${TMPDIR}/Err.$$;
+-        return 0
+-    fi
+-
+-    if [[ "${MULTINET}" = "N" ]]; then
+-        pntadm -C ${INTF_NET} 2> ${TMPDIR}/Err.$$
+-        if [[ ${?} -ne 0 ]]; then
+-            print -u2 "Error:  cannot create DHCP network table for \"${INTF_NET}\":\n    `cat ${TMPDIR}/Err.$$`"
+-            rm -f ${TMPDIR}/Err.$$;
+-            return 1;
+-        else
+-            rm -f ${TMPDIR}/Err.$$;
++        if [[ -n $UT_DHCP_LOGNET ]]; then
++                print "	option NewT.LogNet $UT_DHCP_LOGNET;"
+         fi
+-    fi
++        if [[ -n $UT_DHCP_LOGUSB ]]; then
++                print "	option NewT.LogUSB $UT_DHCP_LOGUSB;"
++        fi
++        if [[ -n $UT_DHCP_LOGVIDEO ]]; then
++                print "	option NewT.LogVid $UT_DHCP_LOGVIDEO;"
++        fi
++        if [[ -n $UT_DHCP_LOGAPPLICATION ]]; then
++                print "	option NewT.LogAppl $UT_DHCP_LOGAPPLICATION;"
++        fi
++        if [[ -n $UT_DHCP_NEWTBANDWIDTH ]]; then
++                print "	option NewT.NewTBW $UT_DHCP_NEWTBANDWIDTH;"
++        fi
++        if [[ -n $UT_DHCP_BARRIERLEVEL ]]; then
++                print "	option NewT.BarrierLevel $UT_DHCP_BARRIERLEVEL;"
++        fi
++        if [[ -n $UT_DHCP_NEWTFLAGS ]]; then
++                print "	option NewT.NewTFlags $UT_DHCP_NEWTFLAGS"
++        fi
++        if [[ -n $UT_DHCP_NEWTDISPINDEX ]]; then
++                print "	option NewT.NewTDispIndx $UT_DHCP_NEWTDISPINDEX"
++        fi
++}
+ 
+-    # add entries to the dhcp network table
+-    NUM=${START_NUM};
+-    INPOOL=0;
+-    typeset TMPBATCH=${TMPDIR}/pntadm-batch.$$
+-    rm -f $TMPBATCH
+-    touch $TMPBATCH
+-    MaxHostNum ${UT_DHCP_NETMASK}
+-    MAXHOST=$H
+-    while [ ${NUM} -le ${END_NUM} ]; do
+-      NET=$UT_DHCP_NETWORK
+-      NetPlusHost ${NET} ${NUM} ${MAXHOST}
+-      ADDR=$IP
+-      if [[ ${UT_DHCP_IP} = ${ADDR} ]]; then
+-        print "### Skipping host address ${UT_DHCP_IP} in IP address pool";
+-        let NUM=${NUM}+1;
+-	continue;
+-      fi
+-      if [[ ${UT_DHCP_FIRMWARESRVR} = ${ADDR} ]]; then
+-        print "### Skipping firmware server address ${UT_DHCP_FIRMWARESRVR} in IP address pool";
+-        let NUM=${NUM}+1;
+-        continue;
+-      fi
+-      let INPOOL=${INPOOL}+1;
+-      print "pntadm -A ${ADDR} -m ${INTF_NETNAME} -s ${HOSTNAME} ${INTF_NET}" \
+-        >> $TMPBATCH
+-      let NUM=${NUM}+1;
+-    done
++DeleteGenericInclude() {
++	typeset DELKEY=$1
++	typeset INTF=${2:-}
++	/usr/gnu/bin/sed -e "/^include.*$DELKEY/d" $DHCPDCONF > $DHCPDCONF.$$
++	GenerateSysconfigDHCPD delete $DELKEY $INTF
++	rm -f $DHCPDCONF 2>/dev/null
++	mv $DHCPDCONF.$$ $DHCPDCONF 2>/dev/null
++	rm -f $SYSDHCPD 2>/dev/null
++        mv $SYSDHCPD.$$ $SYSDHCPD 2>/dev/null
++}
+ 
+-    # CR 6217989 - dhtadm -B errors on Solaris x86
+-    DoDhcpBatch pntadm $TMPBATCH 2> ${TMPDIR}/Err.$$;
+-    if [ ${?} -ne 0 ]; then
+-        print -u2 "Error:  failed to add the following IP addresses to network\
+-                \ntable for \"${INTF_NET}\":\n    `cat ${TMPDIR}/Err.$$`"
+-        rm -f ${TMPBATCH} ${TMPDIR}/Err.$$;
+-        return 1;
+-    fi
+-    rm -f ${TMPBATCH} ${TMPDIR}/Err.$$;
++InsertGenericInclude() {
++	typeset INSKEY=$1
++	typeset INTF=${2:-}
++	if $CHROOTED; then
++		OPTGREP="/etc/$OPTIONSFILENAME"
++	else
++		OPTGREP="$OPTIONSFILE"
++	fi
++	ls $DHCPDCONF | xargs grep "$OPTGREP" >/dev/null
++	if [[ $? != 0 ]]; then
++		/usr/gnu/bin/sed -e "1i\
++		include \"$INSKEY\";" $DHCPDCONF > $DHCPDCONF.$$
++	else		
++		/usr/gnu/bin/sed -e "/^include.*SunRay-options/a\
++		include \"$INSKEY\";" $DHCPDCONF > $DHCPDCONF.$$
++	fi
++	GenerateSysconfigDHCPD add $INSKEY $INTF
++	rm -f $SYSDHCPD 2>/dev/null
++	mv $SYSDHCPD.$$ $SYSDHCPD 2>/dev/null
++	rm -f $DHCPDCONF 2>/dev/null
++        mv $DHCPDCONF.$$ $DHCPDCONF 2>/dev/null
++}
+ 
+-    if [ ${INPOOL} -eq 0 ]; then
+-      print -u2 "Warning: IP address pool for network ${INTF_NET} is empty";
+-    fi
++InsertOptionsInclude() {
++	INSKEY=$1
++        /usr/gnu/bin/sed -e "1i\
++        include \"$INSKEY\";" $DHCPDCONF > $DHCPDCONF.$$
++	GenerateSysconfigDHCPD add $INSKEY
++	rm -f $SYSDHCPD 2>/dev/null
++        mv $SYSDHCPD.$$ $SYSDHCPD 2>/dev/null
++        rm -f $DHCPDCONF 2>/dev/null
++        mv $DHCPDCONF.$$ $DHCPDCONF 2>/dev/null
++}
+ 
+-    return 0;
++GenerateSysconfigDHCPD() {
++	typeset INTF=${3:-}
++	INCLUDELINE=""
++	DHCPDINT=""
++	INTLINE=""
++	if [[ ! -f $SYSDHCPD ]]; then
++		return 0
++	fi
++	. $SYSDHCPD
++	typeset file=${2#*\"}
++	typeset file=${file%\"*}
++	DHCPDINT=${file##*/}
++	INCLUDELINE="$DHCPD_CONF_INCLUDE_FILES"
++	INTLINE="$DHCPD_INTERFACE"
++	case $1 in
++	(add)
++		print $DHCPD_CONF_INCLUDE_FILES | grep $2 2>/dev/null 1>&2
++		if [[ $? -ne 0 ]]; then
++			INCLUDELINE="$DHCPD_CONF_INCLUDE_FILES $2"
++		fi
++		case $DHCPDINT in
++		(*subnet*)
++			if [[ -n $INTF ]]; then
++				print $DHCPD_INTERFACE | grep "$INTF" 2>/dev/null 1>&2
++				if [[ $? -ne 0 ]]; then
++					INTLINE="$DHCPD_INTERFACE $INTF"
++				fi
++			fi
++			;;
++		(*interface*)
++			print $DHCPD_INTERFACE | grep "${DHCPDINT##*-}" 2>/dev/null 1>&2
++			if [[ $? -ne 0 ]]; then
++				INTLINE="$DHCPD_INTERFACE ${DHCPDINT##*-}"
++			fi
++			;;
++		esac	
++		;;
++	(delete)
++		print $DHCPD_CONF_INCLUDE_FILES | grep $2 2>/dev/null 1>&2
++		if [[ $? -eq 0 ]]; then
++			OLDLINE="$DHCPD_CONF_INCLUDE_FILES"
++			RemoveEntryFromLine $2
++			INCLUDELINE="$NEWLINE"
++		fi
++		case $DHCPDINT in
++		(*subnet*)
++                        print $INCLUDELINE | grep "SunRay-subnet" 2>/dev/null 1>&2
++  			if [[ $? != 0 ]] && [[ -n $INTF ]]; then
++				print $DHCPD_INTERFACE | grep $INTF 2>/dev/null 1>&2
++     				if [[ $? -eq 0 ]]; then
++                                        OLDLINE="$DHCPD_INTERFACE"
++                                        RemoveEntryFromLine $INTF
++                                        INTLINE="$NEWLINE"
++				fi
++			fi
++                        ;;
++		(*interface*)
++			print $DHCPD_INTERFACE | grep "${DHCPDINT##*-}" 2>/dev/null 1>&2
++			if [[ $? -eq 0 ]]; then
++				OLDLINE="$DHCPD_INTERFACE"
++				RemoveEntryFromLine "${DHCPDINT##*-}"
++				INTLINE="$NEWLINE"
++			fi
++			;;
++		esac
++		;;
++	esac
++	# exists and is not empty ?
++	[ ! -s $SYSDHCPD ] && echo "#SUNRAY isc-dhcpd options" > $SYSDHCPD
++	cp $SYSDHCPD $SYSDHCPD.$$
++	ed - $SYSDHCPD.$$ <<-! 2>/dev/null 1>&2
++1,\$g/^$INCLUDEKEY/d
++i
++$INCLUDEKEY="$INCLUDELINE"
++.
++w
++q
++!
++	if [[ $? -ne 0 ]]; then
++		print -us "Error: unable to edit $SYSDHCPD"
++		return 1
++	fi
++	ed - $SYSDHCPD.$$ <<-! 2>/dev/null 1>&2
++1,\$g/^$INTKEY/d
++i
++$INTKEY="$INTLINE"
++.
++w
++q
++!
++	if [[ $? -ne 0 ]]; then
++                print -us "Error: unable to edit $SYSDHCPD"
++                return 1
++        fi
+ }
+ 
+-#
+-# generic routine to retrieve a macro from dhcp table
+-# DHTADM_P is the file containing dhtadm -P output generated from function
+-# GetCurrentCfg
+-# Parameter $1: is the macro to desired
+-#
+-GetDHCPMacro() {
+-    if [[ -s $DHTADM_P ]]; then
+-        cat ${DHTADM_P} |
+-            nawk '
+-                {
+-                    if (($1 == macro) && ($2 == "Macro")) {
+-                        for (i = 3; i <= NF; ++i) printf ("%s ", $i)
+-                        printf ("\n")
+-                    }
+-                }
+-                ' macro=${1} - | \
+-                tr ':' '\012'
+-    fi
++RemoveEntryFromLine() {
++	NEWLINE=`print "$1 $OLDLINE" | awk -v ol="$OLDLINE" '{
++					n = split(ol, a, " ")
++					out = ""
++					for (i = 1; i <= n; i++) {
++						if (match(a[i], $1) == 0) {
++							out = out " " a[i]
++						}
++      					}
++					printf "%s", out
++				}'`
+ }
+ 
+-#
+-# generic routine to retrieve a symbol from a macro file that's generated
+-# by GetDHCPMacro.
+-# Parameter $1: is the symbol to extract
+-#           $2: the filename containing fields for the macro
+-#
+-GetDHCPSymbol() {
++ProcessOptions() {
++        VALUE=""
++        INARG="$1"
+ 
+-    if [ $# -ne 2 -o ! -s "$2" ]; then
+-        return 1
+-    fi
+-    typeset VAL=`grep "^${1}\>" $2`
+-    if [ -n "$VAL" ]; then
+-        print $VAL | sed -e "s/^${1}=\"*\(.*[^\"]\)\"*$/\1/"
++        case $INARG in
++                (option*NewT.AuthPort*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.AuthPort }
++                                VALUE=${VALUE%;}
++                                print "authport=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.NewTVer*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.NewTVer }
++                                VALUE=${VALUE%;}
++				# strip imbedded quotes if any
++				VALUE=${VALUE#\"}
++				VALUE=${VALUE%\"}
++                                print "newtver=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.NewTBW*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.NewTBW }
++                                VALUE=${VALUE%;}
++                                print "newtbandwidth=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.LogHost*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogHost }
++                                VALUE=${VALUE%;}
++                                print "loghost=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.LogKern*)
++			if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogKern }
++                                VALUE=${VALUE%;}
++                                print "logkernel=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.LogNet*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogNet }
++                                VALUE=${VALUE%;}
++                                print "lognet=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (option*NewT.LogUSB*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogUSB }
++                                VALUE=${VALUE%;}
++                                print "logusb=$VALUE" >> $UTDHCPFILE
++                        fi    
++                        ;;
++                (option*NewT.LogVid*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogVid }
++                                VALUE=${VALUE%;}
++                                print "logvideo=$VALUE" >> $UTDHCPFILE
++                        fi   
++                        ;;
++                (option*NewT.LogAppl*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.LogAppl }
++                                VALUE=${VALUE%;}
++                                print "logapplication=$VALUE" >> $UTDHCPFILE
++                        fi   
++                        ;;
++                (option*NewT.NewtDispIndx*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.NewtDispIndx }
++                                VALUE=${VALUE%;}
++                                print "newtdispindex=$VALUE" >> $UTDHCPFILE
++                        fi  
++                        ;;
++                (option*NewT.NewtFlags*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.NewtFlags }
++                                VALUE=${VALUE%;}
++                                print "newtflags=$VALUE" >> $UTDHCPFILE
++                        fi
++			;;
++                (option*NewT.BarrierLevel*)
++                        if $BEGAN; then
++                                VALUE=${INARG#option NewT.BarrierLevel }
++                                VALUE=${VALUE%;}
++                                print "barrierlevel=$VALUE" >> $UTDHCPFILE
++                        fi  
++                        ;;
++                esac
+         return 0
+-    fi
+-    return 1
+ }
+ 
+-# get the current default SunRay macro parameters
+-GetSRDefaultMacro() {
++TranslateDHCPDConf() {
+ 
+-    rm -f ${TMPDIR}/srdefaults.$$ 
+-    GetDHCPMacro ${CORONA_NAME} > ${TMPDIR}/srdefaults.$$
++	rm -f $UTDHCPFILE 2>/dev/null
++	if [[ ! -f $DHCPDCONF ]]; then
++		return 1
++        fi
++        TranslateOptions
++	TranslateEther
++        TranslateSubnet
++	TranslateInterface
++	return 0
+ }
+ 
++TranslateOptions() {
++        BEGAN=false
+ 
+-#
+-# get the value for the specified symbol from the srdefaults.$$ file
+-# it prints the value and reutrn status 0 if found.  Else, returns 1.
+-# $1 the specified symbol
+-#
+-GetSRDefaultSym() {
++        if [[ ! -f $OPTIONSFILE ]]; then
++                return 1
++        fi
+ 
+-    if [[ -z "$1" ]]; then
+-        print ""
+-        return 1
+-    fi
+-    GetDHCPSymbol "$1" "${TMPDIR}/srdefaults.$$"
+-    return $?
++        while read OPTIONS
++        do
++                case $OPTIONS in
++                (subclass*SunRay*SUNW.NewT.SUNW*)
++                        if $BEGAN; then
++                                rm -f $UTDHCPFILE
++                                return 2
++                        fi
++                        print "begin options" >> $UTDHCPFILE
++                        BEGAN=true
++                        ;;
++                (\})
++                        if $BEGAN; then
++                                BEGAN=false
++                                print "end" >> $UTDHCPFILE
++                        fi
++                        ;;
++                (*)
++                        if $BEGAN; then
++                                ProcessOptions "$OPTIONS"
++                                if [[ $? != 0 ]]; then
++                                        return 2
++                                fi
++                        fi
++                        ;;
++                esac
++        done < $OPTIONSFILE
++
++        return 0
+ }
+ 
+-#
+-# removes the DHCP info
+-#
+-DoRemoveDHCP() {
++ProcessSubnet() {
++	subnetoptions="$1"
++	if [[ -z $subnetoptions ]]; then
++		return 1
++	fi
+ 
+-    if $SUBNETMODE; then
+-        # deleting subnetwork
+-        INTF_NETNAME=${CORONA_NAME}-${SUBNET_DEL}
+-        INTF_NET=${SUBNET_DEL}
+-    else
+-        # deleting interface
+-        INTF_NETNAME=${CORONA_NAME}-${DHCP_DEL}
+-        INTF_NET=`awk '{ if ($1 == interface) { print $2 } }' interface=${INTF_NETNAME} ${NETWORKS}`
+-        if [ -z "${INTF_NET}" ]; then
+-            # not defined in the networks file, try checking in dhtadm
+-            INTF_NET=`$GREP -s ":Include=${INTF_NETNAME}:" $DHTADM_P | awk '{print $1}'`
+-            if [ -z "${INTF_NET}" ]; then
+-                print -u2 "Error: Cannot translate interface \"${DHCP_DEL}\" to a network number"
+-                return 1
+-            fi
+-        fi
+-    fi
++	case $subnetoptions in
++		(option*routers*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option routers }
++				VALUE=${VALUE%;}
++				print "routers=$VALUE" >> $UTDHCPFILE
++			fi
++			;;
++		(option*subnet-mask*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option subnet-mask }
++				VALUE=${VALUE%;}
++				print "subnetmask=$VALUE" >> $UTDHCPFILE
++			fi
++			;;
++		(option*broadcast-address*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option broadcast-address }
++				VALUE=${VALUE%;}
++				print "broadcast=$VALUE" >> $UTDHCPFILE
++			fi
++			;;
++		(option*interface-mtu*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option interface-mtu }
++				VALUE=${VALUE%;}
++				print "mtu=$VALUE" >> $UTDHCPFILE
++			fi
++			;;
++		(range*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#range }
++				VALUE=${VALUE%;}
++				print "range=$VALUE" >> $UTDHCPFILE
++			fi
++			;;
++		(option*NewT.AuthSrvr*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option NewT.AuthSrvr }
++				VALUE=${VALUE%;}
++				print "authsrvr=$VALUE" >> $UTDHCPFILE
++			fi
++                        ;;
++		(option*NewT.FWSrvr*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option NewT.FWSrvr }
++				VALUE=${VALUE%;}
++				print "firmwaresrvr=$VALUE" >> $UTDHCPFILE
++			fi
++                        ;;
++		(option*NewT.AltAuth*)
++			if $BEGAN; then
++				VALUE=${subnetoptions#option NewT.AltAuth }
++				VALUE=${VALUE%;}
++				print "altauthlist=$VALUE" >> $UTDHCPFILE
++			fi
++                        ;;
++		(*)
++                   	if $BEGAN; then
++				ProcessOptions "$subnetoptions"
++                                if [[ $? != 0 ]]; then
++					rm -f $UTDHCPFILE
++					rm -f $TMPLISTFILE 2>/dev/null
++                                        return 2
++                                fi
++                        fi
++                        ;;
++		esac
++	return 0	
++}
+ 
+-    typeset MULTINET=N
+-    typeset TMPFILE=${TMPDIR}/pntadm-multi.$$
+-    typeset retcode=0
+-    typeset pntstat
++TranslateEther() {
++	BEGAN=false
++	VALUE=""
+ 
+-    rm -f ${TMPFILE} 2> /dev/null
+-    pntadm -P ${INTF_NET} | sed -e '1,2d' > ${TMPFILE}
+-    pntstat=${?}
+-    # check for MULTINET by looking into the network table, not the networks file
+-    if $GREP -q -s -v "${INTF_NETNAME}" ${TMPFILE}; then
+-        MULTINET=Y
+-    fi
++	ls $UTDHCPDIR | /usr/gnu/bin/sort -g | grep "SunRay-ether" > $TMPLISTFILE
++	if [[ $? != 0 ]]; then
++		rm -f $TMPLISTFILE 2>/dev/null
++		return 1
++	fi
+ 
+-    if $SUBNETMODE; then
+-        print "### Removing ${CORONA_TITLE} information for subnetwork \"${SUBNET_DEL}\""
+-    else
+-        print "### Removing ${CORONA_TITLE} information for interface \"${DHCP_DEL}\""
+-    fi
+-    if [ $MULTINET = "N" ]; then
+-        dhtadm -D -m "${INTF_NET}";
+-        if [[ $pntstat -eq  0 ]]; then
+-            # remove the network table.
+-            pntadm -R "${INTF_NET}"
+-        fi
+-    else
+-        typeset TMPBATCH=${TMPDIR}/pntadm-rm-batch.$$
+-        rm -f $TMPBATCH 2> /dev/null
+-        awk "/${INTF_NETNAME}/ { print \"pntadm -D \" \$3 \" ${INTF_NET}\" }" ${TMPFILE} \
+-                > $TMPBATCH
+-        if [[ -s $TMPBATCH ]]; then
+-	    # CR 6217989 - dhtadm -B errors on Solaris x86
+-	    DoDhcpBatch pntadm $TMPBATCH 2> ${TMPDIR}/Err.$$;
+-            if [[ ${?} != 0 ]]; then
+-                print -u2 "Error:  failed to remove the entries for subnetwork \"${INTF_NET}\":\n\
+-                        `cat ${TMPDIR}/Err.$$`"
+-                # even when it failed, continue with the removal
+-		retcode=1
+-            fi
+-            rm -f $TMPBATCH ${TMPDIR}/Err.$$ 2> /dev/null
+-        fi
+-    fi
+-    rm ${TMPFILE}
+-    if ! dhtadm -D -m ${INTF_NETNAME}; then
+-        retcode=1
+-    fi
+-    return $retcode
++        while read etherfile
++	do
++          	while read eth
++		do
++                case $eth in
++                (subclass*SunRayEther*)
++			if $BEGAN; then
++				rm -f $UTDHCPFILE
++				rm -f $TMPLISTFILE 2>/dev/null
++				return 2
++			fi
++			print "begin ether" >> $UTDHCPFILE
++			ETHER=${eth#subclass \"SunRayEther\" 1:}
++			ETHER=${ETHER% \{}
++			normalizeEther
++			print "macaddress=$ETHER" >> $UTDHCPFILE
++			BEGAN=true
++			;;
++		(\})
++                    	if $BEGAN; then
++				print "end" >> $UTDHCPFILE
++				BEGAN=false
++			fi
++                        ;;
++		(*)
++                   	if $BEGAN; then
++				ProcessOptions "$eth"
++				if [[ $? != 0 ]]; then
++                                        rm -f $UTDHCPFILE
++                                        rm -f $TMPLISTFILE 2>/dev/null
++                                        return 2
++				fi
++			fi
++                        ;;
++		esac
++		done < $UTDHCPDIR/$etherfile
++	done < $TMPLISTFILE
++	rm -f $TMPLISTFILE 2>/dev/null
++	return 0
+ }
+ 
+ #
+-# get parameter in the following order:
+-# 1. macro referenced from network table (eg. SunRay-hme0)
+-# 2. macro included from referenced macro (eg. SunRay)
+-# 3. network macro (eg. 192.168.129.0)
+-# The caller is to provide the files generated from GetDHCPMacro and they
+-# should be specified in the order specified above.
++# isDummySubnet(): checks for the Sun Ray dummy subnet line in the subnet file
++# specified.  The dummy subnet line is defined in $DUMMY_SUBNET_COMMENT.
++#
+ # Parameters:
+-# $1 the symbol to retrieve
+-# $2 the file containing info for #1
+-# $3 the file containing info for #2
+-# $4 the file containing info for #3
++#	$1 file name
+ #
+-# Returns 0 if found, else 1
++# Returns:
++#	0 if dummy line found.
++#	1 otherwise
+ #
+-getDHCPSymbolFromList() {
++isDummySubnet() {
+ 
+-    typeset value
+-    if value=`GetDHCPSymbol $1 $2`; then
+-        print $value
+-        return 0
+-    fi
+-    if value=`GetDHCPSymbol $1 $3`; then
+-        print $value
+-        return 0
+-    fi
+-    if value=`GetDHCPSymbol $1 $4`; then
+-        print $value
+-        return 0
+-    fi
+-    return 1
++	FILE=$1
++	if [ ! -f $FILE ]; then
++		return 1
++	fi
++	grep -q "^${DUMMY_SUBNET_COMMENT}" $FILE 2> /dev/null
++	return $?
+ }
+ 
++
+ #
+-# get a list of current Sunray interfaces and subnetworks.
+-# This routine also create many output files which will be used later on.
+-# This is done to avoid having to call java commands like dhtadm again.
+-# Here are a list of files created under the ${TMPDIR} directory.
+-#	dhtadm-P.$$ contains the current dhtadm -P output without the first
+-#		2 header lines.
+-#	newtifs.$$ contains the list of sunray interfaces currently defined in
+-#		the /etc/networks file.
+-#	dhcpifs.$$ contains the list of sunray interfaces that are listed by
+-#		the SunRay-<intfs> macros in the dhcp table.
+-#	allifs.$$ contains all the interfaces for SunRay network.
+-#	allnets.$$ contains the list of sunray subnetworks that are listed
+-#		by the SunRay-<subnet> macros in the dhcp table.
+-#	allSRnets.$$ contains the list of all sunray subnets, both subnetworks
+-#		and interfaces.
+-#	allethers.$$ contains the list of sunray macaddresses.
++# TranslateSubnet() - translates the subnet files from DHCP format to
++# utadm format.
+ #
+-function GetCurrentCfg {
+-
+-    rm -f $DHTADM_P 2> /dev/null
+-    dhtadm -P 2>/dev/null | sed -e "1,2d" > $DHTADM_P
+-
+-    # get interfaces that currently configure to support SunRay
+-    sed -n "s/^${CORONA_NAME}-\([^0-9 	][^ 	]*\)[ 	].*$/\1/p" ${NETWORKS} \
+-	>${TMPDIR}/newtifs.$$
+-    sed -n "s/.*${CORONA_NAME}-\([^0-9 	][^\": 	]*\).*$/\1/p" \
+-	$DHTADM_P | sort -u >${TMPDIR}/dhcpifs.$$
+-    sort -u ${TMPDIR}/newtifs.$$ ${TMPDIR}/dhcpifs.$$ >${TMPDIR}/allifs.$$
+-
+-    # get subnetworks that are currently configured for SunRay
+-    # this does not include the networks for interfaces.
+-    sed -n -e \
+-	"s/.*${CORONA_NAME}-\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\)[^0-9].*$/\1/p" \
+-      	$DHTADM_P | sort -u >${TMPDIR}/allnets.$$
+-
+-    # get all sunray networks, including the ones for the interfaces
+-    egrep "${CORONA_NAME}|Intf=" $DHTADM_P | \
+-    awk '/^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*/ { print $1 }' \
+-	>${TMPDIR}/dhcpallnets.$$
+-    sort -u ${TMPDIR}/dhcpallnets.$$ ${TMPDIR}/allnets.$$ \
+-	> ${TMPDIR}/allSRnets.$$
+-
+-    sed -n "s/^\(01[0-9a-zA-Z]*\).*$/\1/p" $DHTADM_P > ${TMPDIR}/allethers.$$
+-
+-    rm ${TMPDIR}/dhcpallnets.$$ 2> /dev/null
+-}
+-
+-ConstructOptionsMacro() {
+-    CORONA_MACRO=":"
+-    if [[ -n $UT_DHCP_AUTHPORT ]]; then
+-		CORONA_MACRO="${CORONA_MACRO}AuthPort=${UT_DHCP_AUTHPORT}:"
+-    fi
+-    if [[ -n $UT_DHCP_NEWTVER ]]; then
+-		CORONA_MACRO="${CORONA_MACRO}NewTVer=\"${UT_DHCP_NEWTVER}\":"
+-    fi
+-    if [[ -n $UT_DHCP_LOGHOST ]]; then
+-		CORONA_MACRO="${CORONA_MACRO}LogHost=${UT_DHCP_LOGHOST}:"
+-    fi
+-    if [[ -n $UT_DHCP_LOGKERNEL ]]; then
+-		CORONA_MACRO="${CORONA_MACRO}LogKern=${UT_DHCP_LOGKERNEL}:"
+-    fi
+-    if [[ -n $UT_DHCP_LOGNET ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}LogNet=${UT_DHCP_LOGNET}:"
+-    fi
+-    if [[ -n $UT_DHCP_LOGUSB ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}LogUSB=${UT_DHCP_LOGUSB}:"
+-    fi
+-    if [[ -n $UT_DHCP_LOGVIDEO ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}LogVid=${UT_DHCP_LOGVIDEO}:"
+-    fi
+-    if [[ -n $UT_DHCP_LOGAPPLICATION ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}LogAppl=${UT_DHCP_LOGAPPLICATION}:"
+-    fi
+-    if [[ -n $UT_DHCP_NEWTBANDWIDTH ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}NewTBW=${UT_DHCP_NEWTBANDWIDTH}:"
+-    fi
+-    if [[ -n $UT_DHCP_BARRIERLEVEL ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}BarrierLevel=${UT_DHCP_BARRIERLEVEL}:"
+-    fi
+-    if [[ -n $UT_DHCP_NEWTFLAGS ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}NewTFlags=${UT_DHCP_NEWTFLAGS}:"
+-    fi
+-    if [[ -n $UT_DHCP_NEWTDISPINDEX ]]; then
+-    		CORONA_MACRO="${CORONA_MACRO}NewTDispIndx=${UT_DHCP_NEWTDISPINDEX}:"
+-    fi
+-}
+-
++# Parameters:
++#	$1 if specified, the input subnet file in DHCP format
+ #
+-# list all the SR subnetworks currently configured
++# Returns:
++#	0 if successful
++#	1 otherwise
+ #
+-TranslateDhtadmP() {
+-    ISSETUP=false
+-    if $GREP -q -w "${CORONA_NAME}" ${DHTADM_P}; then
+-	ISSETUP=true
+-    fi
++TranslateSubnet() {
+ 
+-    if ! $ISSETUP; then
+-            # any other case, this is considered an error
+-            exit 1;
+-    fi
+-    rm -f $UTDHCPFILE 2> /dev/null
+-    TranslateSunRayOptionsBlock
+-    if [ -s ${TMPDIR}/allSRnets.$$ ]; then
+-    	TranslateSubnetInterface
+-    fi
+-}
++	typeset TSUBNET
++	typeset INFILE=${1:-}
++	typeset Skip_Dummy_Subnet=true
++        BEGAN=false
++        VALUE=""
+ 
+-TranslateSunRayOptionsBlock() {
+-	typeset sunray_macro="${TMPDIR}/sunray_tmp.$$"
+-	typeset ether_macro="${TMPDIR}/ether_tmp.$$"
+-	GetDHCPMacro "$CORONA_NAME" > $sunray_macro
+-	if [[ ! -s $sunray_macro ]]; then
+-		rm -f $sunray_macro 2> /dev/null
++	if [ -z "$INFILE" ]; then
++		# list all the subnet files
++		ls $UTDHCPDIR | /usr/gnu/bin/sort -g | grep "SunRay-subnet" > $TMPLISTFILE
++		if [[ $? != 0 ]]; then
++			rm -f $TMPLISTFILE 2>/dev/null
++			return 1
++		fi
+ 	else
+-		print "begin options" >> $UTDHCPFILE
+-		TranslateSunRayOptions $sunray_macro
+-		print "end" >> $UTDHCPFILE
++		# use the specified file
++		print `basename $INFILE` > $TMPLISTFILE
++		# when passing specific file, do not skip even if it's a dummy
++		# subnet file
++		Skip_Dummy_Subnet=false
+ 	fi
+-	
+-	for ether in `cat ${TMPDIR}/allethers.$$`; do
+-		GetDHCPMacro "$ether" > $ether_macro
+-		if [[ ! -s $ether_macro ]]; then
+-			rm -f $ether_macro 2> /dev/null
+-		else
+-			ether=${ether#01}
+-			print "begin ether" >> $UTDHCPFILE
+-			print "macaddress=$ether" >> $UTDHCPFILE
+-			TranslateSunRayOptions $ether_macro
+-			print "end" >> $UTDHCPFILE
++
++	while read SUBFILE
++	do
++		if $Skip_Dummy_Subnet && isDummySubnet $UTDHCPDIR/$SUBFILE; then
++			# skip dummy subnet files
++			continue
+ 		fi
+-	done
+-	return 0
++        	while read TSUBNET
++        	do
++		case $TSUBNET in
++		(subnet*netmask*)
++			if $BEGAN; then
++				rm -f $UTDHCPFILE
++				rm -f $TMPLISTFILE 2>/dev/null
++				return 2
++			fi
++                        print "begin subnet" >> $UTDHCPFILE
++			TEMPSTRING=${TSUBNET#subnet }
++			VALUE=${TEMPSTRING% netmask*}
++			print "network=$VALUE" >> $UTDHCPFILE
++			VALUE=${TEMPSTRING#*netmask }
++			VALUE=${VALUE% \{}
++			print "netmask=$VALUE" >> $UTDHCPFILE
++			BEGAN=true
++			;;
++		(\})
++                    	if $BEGAN; then
++				print "end" >> $UTDHCPFILE
++				BEGAN=false
++			fi
++                        ;;
++		(*)
++                   	if $BEGAN; then
++				ProcessSubnet "$TSUBNET"
++				if [[ $? != 0 ]]; then
++                                        rm -f $UTDHCPFILE
++                                        rm -f $TMPLISTFILE 2>/dev/null
++                                        return 2
++				fi
++			fi
++                        ;;
++		esac
++        	done < $UTDHCPDIR/$SUBFILE
++	done < $TMPLISTFILE
++	rm -f $TMPLISTFILE 2>/dev/null
++        return 0
+ }
+ 
+-TranslateSunRayOptions() {
+-	macro_file=$1
++TranslateInterface() {
++	BEGAN=false
++	VALUE=""
+ 
+-	if AuthPort=`GetDHCPSymbol AuthPort $macro_file`; then
+-		print "authport=$AuthPort" >> $UTDHCPFILE
++	ls $UTDHCPDIR | /usr/gnu/bin/sort -g | grep "SunRay-interface" > $TMPLISTFILE
++	if [[ $? != 0 ]]; then
++		rm -f $TMPLISTFILE 2>/dev/null
++		return 1
+ 	fi
+-	if NewTVer=`GetDHCPSymbol NewTVer $macro_file`; then
+-                print "newtver=$NewTVer" >> $UTDHCPFILE
+-        fi
+-	if LogHost=`GetDHCPSymbol LogHost $macro_file`; then
+-                print "loghost=$LogHost" >> $UTDHCPFILE
+-        fi
+-	if LogKern=`GetDHCPSymbol LogKern $macro_file`; then
+-                print "logkernel=$LogKern" >> $UTDHCPFILE
+-        fi
+-	if LogNet=`GetDHCPSymbol LogNet $macro_file`; then
+-                print "lognet=$LogNet" >> $UTDHCPFILE
+-        fi
+-	if LogUSB=`GetDHCPSymbol LogUSB $macro_file`; then
+-                print "logusb=$LogUSB" >> $UTDHCPFILE
+-        fi
+-	if LogVid=`GetDHCPSymbol LogVid $macro_file`; then
+-                print "logvideo=$LogVid" >> $UTDHCPFILE
+-        fi
+-	if LogAppl=`GetDHCPSymbol LogAppl $macro_file`; then
+-                print "logapplication=$LogAppl" >> $UTDHCPFILE
+-        fi
+-	if NewTBW=`GetDHCPSymbol NewTBW $macro_file`; then
+-                print "newtbandwidth=$NewTBW" >> $UTDHCPFILE
+-        fi
+-	if BarrierLevel=`GetDHCPSymbol BarrierLevel $macro_file`; then
+-                print "barrierlevel=$BarrierLevel" >> $UTDHCPFILE
+-        fi
+-	if NewTFlags=`GetDHCPSymbol NewTFlags $macro_file`; then
+-                print "newtflags=$NewTFlags" >> $UTDHCPFILE
+-        fi
+-	if NewTDispIndx=`GetDHCPSymbol NewTDispIndx $macro_file`; then
+-                print "newtdispindex=$NewTDispIndx" >> $UTDHCPFILE
+-        fi
+-}
+ 
+-TranslateSubnetInterface() {
+-
+-    typeset Netmask
+-    typeset Broadcast
+-    typeset Router
+-    typeset FWSrvr
+-    typeset AuthSrvr
+-    typeset AltAuthSrvr
+-    typeset netmacro
+-    typeset Intf
+-    typeset IntfAddr
+-    typeset IPassign
+-    typeset FirstIP
+-    typeset LastIP
+-    typeset NewTVer
+-    typeset MTU
+-    typeset today
+-    typeset network_macro="${TMPDIR}/network_tmp.$$"
+-    typeset refer_macro="${TMPDIR}/netrefer_tmp.$$"
+-    typeset sunray_macro="${TMPDIR}/sunray_tmp.$$"
+-    typeset TSUBNET
+-
+-    rm -f $sunray_macro 2> /dev/null
+-    GetDHCPMacro "$CORONA_NAME" > $sunray_macro
+-    if [[ ! -s $sunray_macro ]]; then
+-        rm -f $sunray_macro 2> /dev/null
+-    fi
+-
+-    for TSUBNET in `cat ${TMPDIR}/allSRnets.$$`; do
+-        # setup the network macro file
+-        rm -f $network_macro 2> /dev/null
+-        GetDHCPMacro "$TSUBNET" > $network_macro
+-        if [[ ! -s $network_macro ]]; then
+-            print -u2 "No Subnet macro defined for \"${TSUBNET}\""
+-            rm -f ${TMPDIR}/net*_tmp.$$ 2> /dev/null
+-            continue
+-        fi
+-
+-        # check to see if it's a local interface
+-        if Intf=`GetDHCPSymbol Intf $network_macro`; then
+-	    ANYINTFSFOUND=true
+-            if [[ ! -s ${HOSTNAME_R}.${Intf} ]]; then
+-                IntfAddr=""
+-            else
+-                typeset H=`cat ${HOSTNAME_R}.${Intf}`
+-                IntfAddr=`getent hosts $H | awk '{ print $1 }'`
+-                if [[ -z "$IntfAddr" ]]; then
+-                    IntfAddr=""
+-                fi
+-            fi
+-        fi
+-
+-        # get the include macro
+-        if ! netmacro=`GetDHCPSymbol Include $network_macro`; then
+-
+-            if [ -z "${Intf}" ]; then
+-                print -u2 "missing Include macro in Subnet macro for \"${TSUBNET}\""
+-                rm -f ${TMPDIR}/net*_tmp.$$ 2> /dev/null
+-                continue
+-            fi
+-	    # for backward compatibility
+-            netmacro="${CORONA_NAME}-${Intf}"
+-        fi
+-
+-        # setup the referenced macro file
+-        rm -f $refer_macro 2> /dev/null
+-        GetDHCPMacro "$netmacro" > $refer_macro
+-        if [[ ! -s $refer_macro ]]; then
+-            print -u2 "No \"${netmacro} macro defined for \"${TSUBNET}\""
+-            rm -f ${TMPDIR}/net*_tmp.$$ 2> /dev/null
+-            continue
+-        fi
+-
+-        # establish the search order
+-        typeset PNTADM_PX="${TMPDIR}/pntadm_px.$$"
+-	typeset PNTADM_TMP="${TMPDIR}/pntadm_tmp.$$"
+-	pntadm -Px ${TSUBNET} > $PNTADM_TMP 2>/dev/null
+-	if [[ -s $PNTADM_TMP ]]; then
+-        	rm -f $PNTADM_PX 2>/dev/null
+-                nawk '
+-                    NR > 2 {
+-                        if ($6 == macro) {
+-                            print $3, $5;
+-                        }
+-                    }' macro=${netmacro} - < $PNTADM_TMP | \
+-                    sort -u -t . -k1,1n -k2,2n -k3,3n -k4,4n > $PNTADM_PX
+-	fi
+-	rm -f $PNTADM_TMP
+-        if [[ -s $PNTADM_PX ]]; then
+-            # network table defined, the macro referenced in the network
+-            # table has precedence.
+-            typeset order="$refer_macro $sunray_macro $network_macro"
+-        else
+-            # not defined in the network table, the network macro has
+-            # precedence.
+-            typeset order="$network_macro $refer_macro $sunray_macro"
+-        fi
+-
+-        # retrieve broacast value
+-        if ! Broadcast=`getDHCPSymbolFromList Broadcst $order`; then
+-            Broadcast=""
+-        fi
+-
+-        # retrieve netmask value
+-        if ! Netmask=`getDHCPSymbolFromList Subnet $order`; then
+-            Netmask=""
+-        fi
+-
+-        # retrieve router value
+-        if ! Router=`getDHCPSymbolFromList Router $order`; then
+-            Router=""
+-        fi
+-
+-        # retrieve firmware server value
+-        if ! FWSrvr=`getDHCPSymbolFromList FWSrvr $order`; then
+-            FWSrvr=""
+-        fi
+-
+-        # retrieve MTU value
+-	if ! MTU=`getDHCPSymbolFromList MTU $order`; then
+-	    MTU=""
+-	fi
+-
+-        # retrieve NewTver value
+-	if ! NewTVer=`getDHCPSymbolFromList NewTVer $order`; then
+-            NewTVer=""
+-        fi
+-
+-        # retrieve auth server value
+-        if ! AuthSrvr=`getDHCPSymbolFromList AuthSrvr $order`; then
+-            AuthSrvr=""
+-        fi
+-
+-        # retrieve altauth server list
+-        AltAuthSrvr=`getDHCPSymbolFromList AltAuth $order`
+-
+-        if [[ -s $PNTADM_PX ]]; then
+-            today=`/opt/SUNWut/lib/uttime`
+-            IPassign=`nawk -v today=$today 'BEGIN { count = 0; total = 0 }
+-                    {
+-                    if ($2 < 0 || today < $2) {
+-                        count++
+-                    }
+-                    total++
+-                }
+-                END {
+-                        print count, total
+-                }' $PNTADM_PX`
+-            FirstIP=`head -1 $PNTADM_PX | awk '{ print $1 }'`
+-	    LastIP=`tail -1 $PNTADM_PX | awk '{ print $1 }'`
+-        else
+-            IPassign=""
+-        fi
+-        rm -f $PNTADM_PX
+-            typeset HostName=""
+-            typeset ReqParams=""
+-            typeset ErrStr="- missing the following required parameter(s):"
+-            typeset ErrType=""
+-            typeset ErrFound=false
+-
+-	    # check for required parameters that are common for both private and lan
+-            [[ -z "${TSUBNET}" ]] && ReqParams=${ReqParams}" network" && ErrFound=true
+-            [[ -z "${Netmask}" ]] && ReqParams=${ReqParams}" netmask" && ErrFound=true
+-
+-            if [[ -n "$Intf" ]]; then
+-                # private interconnect, need to get the hostname and ip
+-                if [[ -n "${IntfAddr}" ]]; then
+-                    HostName=`getent hosts ${IntfAddr} | cut -f2-`
+-                fi
+-
+-                # check for the required parameters for private interconnect only
+-                [[ -z "${Intf}" ]] && ReqParams=${ReqParams}" interface" && ErrFound=true
+-                [[ -z "${HostName}" ]] && ReqParams=${ReqParams}" hostname" && ErrFound=true
+-                [[ -z "${IntfAddr}" ]] && ReqParams=${ReqParams}" ip" && ErrFound=true
+-
+-                # set the ineterface ErrType for error message
+-                ErrType="interface ${Intf}"
+-            else
+-                # set the subnet ErrType for error message
+-                ErrType="subnet ${TSUBNET}"
+-            fi
+-
+-            if ${ErrFound}; then
+-                print -u2 "Error: ${ErrType} ${ErrStr}\n\t${ReqParams}"
+-                exit 1
+-            fi
+-
+-            if [[ -n "$Intf" ]]; then
+-                # private interconnect
+-                print "begin interface" >> $UTDHCPFILE
+-                print "interface=${Intf}" >> $UTDHCPFILE
+-                print "hostname=${HostName}" >> $UTDHCPFILE
+-                print "ip=${IntfAddr}" >> $UTDHCPFILE
+-            else
+-                # subnetwork
+-                print "begin subnet" >> $UTDHCPFILE
+-            fi
+-            print "network=${TSUBNET}" >> $UTDHCPFILE
+-            print "netmask=${Netmask}" >> $UTDHCPFILE
+-
+-	if [[ -n $Broadcast ]]; then
+-		print "broadcast=${Broadcast}" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $Router ]]; then
+-		print "routers=$Router" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $FWSrvr ]]; then
+-		print "firmwaresrvr=$FWSrvr" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $MTU ]]; then
+-		print "mtu=$MTU" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $NewTVer ]]; then
+-		print "newtver=$NewTVer" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $AuthSrvr ]]; then
+-		print "authsrvr=$AuthSrvr" >> $UTDHCPFILE
+-        fi
+-	if [[ -n $AltAuthSrvr ]]; then
+-		print "altauthlist=$AltAuthSrvr" >> $UTDHCPFILE
+-	fi
+-	if [[ -n $IPassign ]]; then
+-		print "range=$FirstIP $LastIP" >> $UTDHCPFILE
+-		print "assigned=${IPassign% *}" >> $UTDHCPFILE
+-	fi
+-	TranslateSunRayOptions $network_macro
+-	print "end" >> $UTDHCPFILE
+-	rm -f ${TMPDIR}/net*_tmp.$$ 2> /dev/null
+-    done
+-}
+-
+-# CR 6217989 - dhtadm -B errors on Solaris x86
+-# workaround - issue the commands one at a time
+-# $1 - dhtadm or pntadm command
+-# $2 - batch dhtadm / pntadm commands
+-DoDhcpBatch() {
+-    typeset -i DHCPRC=0
+-    typeset BATCH=$2
+-
+-    if [ `uname -p` = "sparc" ] ; then
+-	$1 -B $BATCH
+-	DHCPRC=$?	# remember result
+-    else
+-	while read cmd
++	while read IFILE
+ 	do
+-	    echo ${cmd} | sh
+-	    if [[ $? -ne 0 ]] ; then
+-		DHCPRC=1	# remember an error occurred
+-	    fi
+-	done < ${BATCH}
+-    fi
+-
+-    return $DHCPRC
+-
++        while read INT
++	do
++		case $INT in
++		(subnet*netmask*)
++			if $BEGAN; then
++				rm -f $UTDHCPFILE
++				rm -f $TMPLISTFILE 2>/dev/null
++				return 2
++			fi
++                        print "begin interface" >> $UTDHCPFILE
++			TEMPSTRING=${INT#subnet }
++			VALUE=${TEMPSTRING% netmask*}
++			print "network=$VALUE" >> $UTDHCPFILE
++			VALUE=${TEMPSTRING#*netmask }
++			VALUE=${VALUE% \{}
++			print "netmask=$VALUE" >> $UTDHCPFILE
++			BEGAN=true
++			;;
++		(option*NewT.Intf*)
++			if $BEGAN; then
++				VALUE=${INT#option NewT.Intf }
++				VALUE=${VALUE%;}
++				# strip imbedded quotes if any
++				VALUE=${VALUE#\"}
++                                VALUE=${VALUE%\"}
++				print "interface=$VALUE" >> $UTDHCPFILE
++			fi
++                        ;;
++		(\#option*hostname*)
++			if $BEGAN; then
++				VALUE=${INT#\#option hostname }
++				VALUE=${VALUE%;}
++				print "hostname=$VALUE" >> $UTDHCPFILE
++			fi
++                        ;;
++		(option*dhcp-server-identifier*)
++			if $BEGAN; then
++                                VALUE=${INT#option dhcp-server-identifier }
++                                VALUE=${VALUE%;}
++                                print "ip=$VALUE" >> $UTDHCPFILE
++                        fi
++                        ;;
++		(\})
++                    	if $BEGAN; then
++				print "end" >> $UTDHCPFILE
++				BEGAN=false
++			fi
++                        ;;
++		(*)
++                   	if $BEGAN; then
++				ProcessSubnet "$INT"
++				if [[ $? != 0 ]]; then
++                                        rm -f $UTDHCPFILE
++                                        rm -f $TMPLISTFILE 2>/dev/null
++                                        return 2
++				fi
++			fi
++                        ;;
++		esac
++	done < $UTDHCPDIR/$IFILE
++	done < $TMPLISTFILE
++	rm -f $TMPLISTFILE 2>/dev/null
++	return 0
+ }

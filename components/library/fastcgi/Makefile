@@ -23,12 +23,11 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fastcgi
 COMPONENT_VERSION=      2.4.2
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      the FastCGI web server interface
 COMPONENT_PROJECT_URL=  https://fastcgi-archives.github.io/
 COMPONENT_SRC_NAME=		fcgi2

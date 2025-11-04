@@ -11,29 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jsonrpclib-pelix
+#   $WS_TOOLS/python-integrate-project -d python/jsonrpclib-pelix jsonrpclib_pelix
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jsonrpclib-pelix
-HUMAN_VERSION =			0.4.3.2
-COMPONENT_SUMMARY =		jsonrpclib-pelix - This project is an implementation of the JSON-RPC v2.0 specification (backwards-compatible) as a client library, for Python 2.7 and Python 3. This version is a fork of jsonrpclib by Josh Marshall, made to be also usable with Pelix/iPOPO remote services.
+COMPONENT_NAME =		jsonrpclib_pelix
+HUMAN_VERSION =			0.4.3.4
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		JSON-RPC v2.0 client and server for Python 2.7 and Python 3.6+ usable with Pelix/iPOPO remote services.
 COMPONENT_PROJECT_URL =		http://github.com/tcalmant/jsonrpclib/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f5/10/839b1d2cbd6157e4b09d4499c849b48127cd1d761e1d5bfeb1522c8be50d/jsonrpclib-pelix-0.4.3.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e9e0b33efa8fa20d817dd78dfd9e4cdb3967c8a5d3cb5a783be1ee81c4a89c7c
+	sha256:e82d6f4da907a7d111ef93fd2361c8c20b79d248be4fe99678e08626aa8fcbef
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/tcalmant/jsonrpclib/issues/61
+COMPONENT_PREP_ACTION += $(CHMOD) +x $(SOURCE_DIR)/tests/cgi-bin/cgi_server.py ;
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python

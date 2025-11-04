@@ -13,24 +13,27 @@
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2016 Aurelien Larcher
 # Copyright 2019 Michal Nowak
+# Copyright 2024 Klaus Ziegler
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         freetype
-COMPONENT_VERSION=      2.13.2
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.14.1
 COMPONENT_SUMMARY=  	FreeType 2 font engine
 COMPONENT_SRC=      	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:12991c4e55c506dd7f9b765933e62fd2be2e06d421505d7950a132e4f1bb484d
+COMPONENT_ARCHIVE_HASH= sha256:32427e8c471ac095853212a37aef816c60b42052d4d9e48230bab3bdf2936ccc
 COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/freetype/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://freetype.org/
 COMPONENT_FMRI=			system/library/freetype-2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      The FreeType Project License
 COMPONENT_LICENSE_FILE= LICENSE.TXT
+
+COMPONENT_FMRI.$(COMPONENT_NAME)-2-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -39,12 +42,12 @@ PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --enable-biarch-config
 CONFIGURE_OPTIONS += --enable-freetype-config
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-bzip2
 CONFIGURE_OPTIONS += --with-png
-CONFIGURE_OPTIONS += --with-harfbuzz
+CONFIGURE_OPTIONS.32 += --with-harfbuzz=no
+CONFIGURE_OPTIONS.64 += --with-harfbuzz=yes
 CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_PREP_ACTION = ( cd $(@D); \

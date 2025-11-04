@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= icon-naming-utils
 COMPONENT_VERSION= 0.8.90
-COMPONENT_REVISION =	2
+COMPONENT_REVISION =	3
 COMPONENT_SUMMARY= Icon naming utils
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -35,10 +35,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-
 # Build dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
+PERL_REQUIRED_PACKAGES += library/perl-5/xml-simple
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl

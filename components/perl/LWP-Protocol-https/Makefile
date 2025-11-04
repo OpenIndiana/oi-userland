@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module LWP::Protocol::https
+#   $WS_TOOLS/perl-integrate-module LWP-Protocol-https
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		LWP::Protocol::https
+COMPONENT_NAME =		LWP-Protocol-https
 HUMAN_VERSION =			6.14
-COMPONENT_SUMMARY =		LWP::Protocol::https - Provide https support for LWP::UserAgent
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Provide https support for LWP::UserAgent
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:59cdeabf26950d4f1bef70f096b0d77c5b1c5a7b5ad1b66d71b681ba279cbb2a
@@ -33,11 +34,17 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += '-e "/^    \#/d"'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
 PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
 PERL_REQUIRED_PACKAGES += library/perl-5/net-http
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

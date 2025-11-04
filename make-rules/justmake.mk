@@ -24,15 +24,8 @@
 # Rules and Macros for building opens source software that just uses their
 # own make and no autoconf-style tools.
 #
-# To use these rules, include ../make-rules/justmake.mk in your Makefile
-# and define "build", "install" targets appropriate to building your component.
-# Ex:
-#
-# 	build:		$(BUILD_32) \
-#	 		$(BUILD_64)
-# 
-#	install:	$(INSTALL_32) \
-#	 		$(INSTALL_64)
+# To use these rules, set BUILD_STYLE to justmake and include
+# $(WS_MAKE_RULES)/common.mk in your Makefile.
 #
 # Any additional pre/post configure, build, or install actions can be specified
 # in your Makefile by setting them in on of the following macros:
@@ -44,68 +37,19 @@
 #	COMPONENT_BUILD_TARGETS, COMPONENT_INSTALL_TARGETS
 #
 
+# Configure
+COMPONENT_CONFIGURE_ACTION = true
+
+# Build
+COMPONENT_BUILD_CMD = $(GMAKE)
+COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_GMAKE_ARGS)
+
+# Install
+COMPONENT_INSTALL_CMD = $(GMAKE)
 COMPONENT_INSTALL_ARGS += DESTDIR=$(PROTO_DIR)
-COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
-
-COMPONENT_COPY_ACTION ?= \
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
-
-COMPONENT_BUILD_ACTION ?= \
-	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
-	$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS)
-
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(COMPONENT_COPY_ACTION)
-	$(COMPONENT_PRE_BUILD_ACTION)
-	($(COMPONENT_BUILD_ACTION))
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
-
-COMPONENT_INSTALL_ACTION ?= \
-	cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-	$(GMAKE) $(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS)
-
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	($(COMPONENT_INSTALL_ACTION))
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
-
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Use common rules
+USE_COMMON_RULES = yes

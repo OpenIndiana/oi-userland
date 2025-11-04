@@ -4,11 +4,21 @@ py$(PYV): commands[0]> python -m pytest --durations 25
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1 item
+configfile: pyproject.toml
+collecting ... collected 2 items
 
 tests/test_devhelp.py::test_basic PASSED
+tests/test_devhelp.py::test_basic_deterministic_build PASSED
 
+=============================== warnings summary ===============================
+tests/test_devhelp.py::test_basic
+tests/test_devhelp.py::test_basic_deterministic_build
+  $(PYTHON_DIR)/vendor-packages/sphinx/builders/html/__init__.py:204: PendingDeprecationWarning: Argument "parser_name" will be removed in Docutils 2.0.
+    Specify parser name in the "parser" argument.
+    reader: Reader[DocTreeInput] = docutils.readers.doctree.Reader(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 25 durations =============================
-======== 1 passed ========
+======== 2 passed, 2 warnings ========
   py$(PYV): OK
   congratulations :)

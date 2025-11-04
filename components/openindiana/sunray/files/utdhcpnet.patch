@@ -1,0 +1,937 @@
+--- ./lib/dhcp/edhcp/utdhcpnet	Do. Okt. 16 11:49:36 2025
++++ ./lib/dhcp/isc/utdhcpnet	Do. Okt. 16 12:01:28 2025
+@@ -1,21 +1,42 @@
+ #!/bin/ksh -p
+ #
+-# ident "@(#)utdhcpnet.ksh	1.9 05/11/30 SMI"
++# ident "@(#)utdhcpnet.ksh	1.9 04/09/29 SMI"
+ #
+-# Copyright 2004-5 Sun Microsystems, Inc.  All rights reserved.
++# Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
+ # Use is subject to license terms.
+ #
+ 
+-CORONA_NAME="SunRay";
+-VARDIR=/var/opt/SUNWut
+-TMPDIR="$VARDIR"/tmp
+-GREP=/usr/xpg4/bin/grep
+-NETWORKS="/etc/inet/networks";
+-DHTADM_P="${TMPDIR}/dhtadm-P.$$"
+ 
++#
++# getIntfbySubnet() - gets the interface name for the specified subnet.
++# The interface is printed on the stdout.
++#
++# Parameters:
++#	$1 subnet number
++#
++getIntfbySubnet() {
++
++	typeset SUBNET=${1:-}
++	typeset T_SUB
++
++	while read T_INTF T_ADDR T_MASK
++	do
++		T_SUB=`IP_Mask2Net $T_ADDR $T_MASK`
++		if [ $? -ne 0 ]; then
++			# error found while translating the address
++			# we just skip it
++			continue
++		fi
++		if [ $SUBNET == $T_SUB ]; then
++			# it's local subnet, no dummy subnet needed
++			print $T_INTF
++			break
++		fi
++	done < ${DHCPALLINTF}
++}
++
+ ProcessAdd() {
+ 	BEGAN=false
+-
+ 	while read input
+ 	do
+ 		case $input in
+@@ -23,7 +44,7 @@
+ 			COMMAND=${input#begin }
+ 			if [[ $COMMAND != "subnet" && $COMMAND != "interface" ]]; then
+ 				print -u2 "Error: Invalid block type.  Please try again."
+-				exit 1
++				return 1
+ 			else
+ 				BEGAN=true
+ 			fi		
+@@ -34,40 +55,36 @@
+ 		(*)
+ 			if ! $BEGAN ; then
+ 				print -u2 "Error: Input must start with a \"begin\" statement"
+-				exit 1
++				return 1
+ 			else
+ 				ConvertKeyToLower "$input"
+                         	input="$_RETURN_VAL"
+ 				if [[ $COMMAND = "subnet" ]]; then
+ 					case $input in
+-                                        (network*)
+-                                                SUBNET=${input#network=}
+-						fgrep "${CORONA_NAME}-${SUBNET}:" $DHTADM_P >/dev/null 2>&1
+-						if [[ $? = "0" ]]; then
+-							print -u2 "DHCP subnet configuration for $SUBNET already exists."
+-                                                        exit 1
+-                                                fi
++					(network*)
++						SUBNET=${input#network=}
++						SUBNETFILE=$SUBNETFILEPATHPREFIX$SUBNET
++						if [[ -f $SUBNETFILE ]] &&
++						   ! isDummySubnet $SUBNETFILE; then
++                					print -u2 "DHCP subnet configuration for $SUBNET already exists. $SUBNETFILE"
++                					return 1
++        					fi
++						checkDummySubnet=$SUBNET
+ 					esac
+ 					SourceSubnet "$input"
+ 				elif [[ $COMMAND = "interface" ]]; then
+ 					case $input in
+-                                        (interface*)
+-                                                INT=${input#interface=}
+-						grep "${CORONA_NAME}-${INT}" $DHTADM_P >/dev/null 2>&1
+-						if [[ $? = "0" ]]; then
+-                                                 	print -u2 "DHCP interface configuration for $INT already exists."
+-                                                        exit 1
+-						fi
+-						;;
+-					(network*)
+-                                                SUBNET=${input#network=}
+-						fgrep "${SUBNET}" ${TMPDIR}/allSRnets.$$ >/dev/null
+-                                                if [[ $? = "0" ]]; then
+-                                                        print -u2 "DHCP subnet configuration for $SUBNET already exists."
+-                                                        exit 1
+-                                                fi
+-						;;
+-                                        esac
++					(interface*)
++						INT=${input#interface=}
++						# strip imbedded quotes if any
++                                                INT=${INT#\"}
++                                                INT=${INT%\"}
++						INTFILE=$INTFILEPATHPREFIX$INT	
++						if [[ -f $INTFILE ]]; then
++							print -u2 "DHCP interface configuration for $INT already exists."
++                                                        return 1
++					        fi
++					esac
+ 					SourceInterface "$input"
+ 				fi
+ 			fi
+@@ -74,84 +91,161 @@
+ 			;;
+ 		esac
+ 	done
+-	AddConfig
+-	exit 0
+-}
+-
+-AddConfig() {
+-	# set a default MTU only if we are responding to DHCPREQUEST
+-	if [[ -z $UT_DHCP_MTU && -n $UT_DHCP_RANGE ]]; then
+-		UT_DHCP_MTU="1500"
+-	fi
+ 	if [[ $COMMAND = "subnet" ]]; then
+ 		ValidateSubnetBlock
+ 		if [[ $? != 0 ]]; then
+ 			print -u2 "Error: Invalid subnet block"
+-			exit 1
++			return 1
+ 		else
+-			INTF_NETNAME=${CORONA_NAME}-${UT_DHCP_NETWORK}
+-			NET_MACRO=":Include=${INTF_NETNAME}:\
+-Subnet=${UT_DHCP_NETMASK}:FWSrvr=${UT_DHCP_FIRMWARESRVR}"
++			InsertSystemFiles subnet 
+ 		fi
+ 	elif [[ $COMMAND = "interface" ]]; then
+ 		ValidateInterfaceBlock
+ 		if [[ $? != 0 ]]; then
+ 			print -u2 "Error: Invalid interface block"
+-			exit 1
+-		else
+-			INTF_NETNAME=${CORONA_NAME}-${UT_DHCP_INTERFACE}
+-			NET_MACRO=":Include=${INTF_NETNAME}:\
+-Subnet=${UT_DHCP_NETMASK}:\
+-FWSrvr=${UT_DHCP_FIRMWARESRVR}:Intf=\"${UT_DHCP_INTERFACE}\"";
+-		fi
++			return 1
++                else
++			InsertSystemFiles interface
++                fi
+ 	fi
+-	if [ "${UT_DHCP_BROADCAST}" != "" ]; then
+-		NET_MACRO="${NET_MACRO}:Broadcst=${UT_DHCP_BROADCAST}"
++	return 0
++}
++
++#
++# InsertSystemFiles() - inserts the DHCP info into system files
++#	(e.g. /etc/dhcpd.conf and /etc/sysconfig/dhcpd.
++#
++# Parameters:
++#	$1 defines either subnet or interface operation
++#	$2 dummy flag.  Used to generate dummy subnet blocks
++#
++InsertSystemFiles() {
++
++	typeset mode=$1
++	typeset Dummy=${2:-}
++	typeset INTF=""
++	typeset SUBNET=""
++	typeset OUTPUTFILE=""
++	typeset INCFILE=""
++
++	case $mode in
++	(subnet)
++		SUBNET=$UT_DHCP_NETWORK
++		INTF=`getIntfbySubnet $SUBNET`
++		OUTPUTFILE=$SUBNETFILEPATHPREFIX$SUBNET
++		GenerateSubnetDHCPDConf $Dummy > $OUTPUTFILE
++		;;
++	(interface)
++		INTF=$UT_DHCP_INTERFACE
++		OUTPUTFILE=$INTFILEPATHPREFIX$INTF
++		GenerateInterfaceDHCPDConf > $OUTPUTFILE
++		;;
++	esac
++
++	INCFILE=$OUTPUTFILE
++	ls $DHCPDCONF | xargs grep "$INCFILE" >/dev/null
++	if [[ $? != 0 ]]; then
++		InsertGenericInclude "$INCFILE" "$INTF"
+ 	fi
+-	if [ "${UT_DHCP_MTU}" != "" ]; then
+-		NET_MACRO="${NET_MACRO}:MTU=${UT_DHCP_MTU}"
++}
++
++#
++# GenerateSubnetDHCPDConf() - generates the DHCP file for the subnetwork.
++# 
++# Parameters:
++#	$0 Dummy Subnet flag. When specified, only "not authoritative" option
++#	   will be set in the block instead of range and lease information.
++#	   Also, no need to generate the option block.
++#
++GenerateSubnetDHCPDConf() {
++	typeset Dummy=${1:-}
++	if [ -n "$Dummy" ]; then
++		print "$DUMMY_SUBNET_COMMENT"
+ 	fi
+-	if [ "${UT_DHCP_ROUTERS}" != "" ]; then
+-		NET_MACRO="${NET_MACRO}:Router=${UT_DHCP_ROUTERS}"
++	print "subnet $UT_DHCP_NETWORK netmask $UT_DHCP_NETMASK {"
++	if [[ -n $UT_DHCP_BROADCAST ]]; then
++		print "	option broadcast-address $UT_DHCP_BROADCAST;"
+ 	fi
+-	ConstructOptionsMacro
+-	NET_MACRO=${NET_MACRO}${CORONA_MACRO}
+-	# add server macro for each interface
+-	# (includes the sunray macro and contains auth server ipa and port,
+-	#  loghost, logkern/net/usb/vid/appl)
+-	AUTH_SRVR="AuthSrvr=${UT_DHCP_AUTHSRVR}";
+-	if [ "${UT_DHCP_ALTAUTHLIST}" != "" ]; then
+-		AUTH_SRVR="${AUTH_SRVR}:AltAuth=${UT_DHCP_ALTAUTHLIST}"
++	if [[ -n $UT_DHCP_SUBNETMASK ]]; then
++		print "	option subnet-mask $UT_DHCP_SUBNETMASK;"
+ 	fi
+-        SRV_MACRO=":Include=${CORONA_NAME}:${AUTH_SRVR}:";
+-	dhtadm -A -m ${INTF_NETNAME} -d "${SRV_MACRO}" 2> ${TMPDIR}/Err.$$;
+-	if [ ${?} -ne 0 ]; then
+-		print -u2 "Error:  cannot add interface macro \"${INTF_NETNAME}\" to dhcptab:\n	   `cat ${TMPDIR}/Err.$$`"
+-           	rm -f ${TMPDIR}/Err.$$;
+-		return 1;
++	if [[ -n $UT_DHCP_MTU ]]; then
++		print "	option interface-mtu $UT_DHCP_MTU;"
++	fi
++	if [[ -n $UT_DHCP_ROUTERS ]]; then
++		print "	option routers $UT_DHCP_ROUTERS;"
++	fi
++	if [ -z "$Dummy" ];then
++		print "	vendor-option-space NewT;"
++	fi
++	if [[ -n $UT_DHCP_AUTHSRVR ]]; then
++		print "	option NewT.AuthSrvr $UT_DHCP_AUTHSRVR;"
++	fi
++	if [[ -n $UT_DHCP_ALTAUTHLIST ]]; then
++		UT_DHCP_ALTAUTHLIST=`print -- $UT_DHCP_ALTAUTHLIST | 
++		/usr/gnu/bin/sed -e 's/ /,/g'`
++		print "	option NewT.AltAuth $UT_DHCP_ALTAUTHLIST;"
++	fi
++	if [[ -n $UT_DHCP_FIRMWARESRVR ]]; then
++		print "	option NewT.FWSrvr $UT_DHCP_FIRMWARESRVR;"
++	fi
++	if [ -n "$Dummy" ]; then
++		print "	not authoritative;"
+ 	else
+-        		rm -f ${TMPDIR}/Err.$$;
++		GenerateOptionsDHCPDBlock
++		if [[ -n $UT_DHCP_RANGE ]]; then
++			print "	range $UT_DHCP_RANGE;"
++			print "	not authoritative;"
++		else
++			print "	authoritative;"
++		fi
++		print "	max-lease-time 86400;"
++		print "	default-lease-time 86400;"
+ 	fi
+-        typeset MULTINET=N
+-	typeset TMPMULTIFILE=${TMPDIR}/pntadm-multi.$$
++	print "}"
++}
+ 
+-	rm -f ${TMPMULTIFILE} 2> /dev/null
+-	pntadm -P ${UT_DHCP_NETWORK} 2>/dev/null | sed -e '1,2d' > ${TMPMULTIFILE}
+-	# check for MULTINET by looking into the network table, not the networks file
+-	if $GREP -q -s -v "${INTF_NETNAME}" ${TMPMULTIFILE}; then
+-		MULTINET=Y
++GenerateInterfaceDHCPDConf() {
++cat <<!
++subnet $UT_DHCP_NETWORK netmask $UT_DHCP_NETMASK {
++	option dhcp-server-identifier $UT_DHCP_IP;
++	#option hostname $UT_DHCP_HOSTNAME;
++!
++        if [[ -n $UT_DHCP_BROADCAST ]]; then
++		print "	option broadcast-address $UT_DHCP_BROADCAST;"
+ 	fi
+-	if [ "${MULTINET}" = "N" ]; then
+-        	dhtadm -A -m ${UT_DHCP_NETWORK} -d "${NET_MACRO}" 2> ${TMPDIR}/Err.$$;
+-                if [ ${?} -ne 0 ]; then
+- 			print -u2 "Error:  cannot add network macro \"${UT_DHCP_NETWORK}\" to dhcptab:\n `cat ${TMPDIR}/Err.$$`"
+-                        rm -f ${TMPDIR}/Err.$$;
+-                        return 1;
+-                else
+-                        rm -f ${TMPDIR}/Err.$$;
+-                fi
++	if [[ -n $UT_DHCP_SUBNETMASK ]]; then
++		print "	option subnet-mask $UT_DHCP_SUBNETMASK;"
+ 	fi
+-	BuildNetworkTables $COMMAND
++        if [[ -n $UT_DHCP_MTU ]]; then
++		print "	option interface-mtu $UT_DHCP_MTU;"
++	fi
++        if [[ -n $UT_DHCP_ROUTERS ]]; then
++		print "	option routers $UT_DHCP_ROUTERS;"
++	fi
++	print "	vendor-option-space NewT;"
++	print "	option NewT.Intf \"$UT_DHCP_INTERFACE\";"
++	if [[ -n $UT_DHCP_AUTHSRVR ]]; then
++		print "	option NewT.AuthSrvr $UT_DHCP_AUTHSRVR;"
++	fi
++        if [[ -n $UT_DHCP_ALTAUTHLIST ]]; then
++		UT_DHCP_ALTAUTHLIST=`print -- $UT_DHCP_ALTAUTHLIST |
++		/usr/gnu/bin/sed -e 's/ /,/g'`
++		print "	option NewT.AltAuth $UT_DHCP_ALTAUTHLIST;"
++	fi
++        if [[ -n $UT_DHCP_FIRMWARESRVR ]]; then
++		print "	option NewT.FWSrvr $UT_DHCP_FIRMWARESRVR;"
++	fi
++        GenerateOptionsDHCPDBlock
++	if [[ -n $UT_DHCP_RANGE ]]; then
++		print "	range $UT_DHCP_RANGE;"
++		print "	not authoritative;"
++	else
++		print "	authoritative;"
++	fi
++	print "	max-lease-time 86400;"
++	print "	default-lease-time 86400;"
++	print "}"
+ }
+ 
+ ProcessDelete() {
+@@ -166,7 +260,7 @@
+                         COMMAND=${input#begin }
+                         if [[ $COMMAND != "subnet" && $COMMAND != "interface" ]]; then
+                                 print -u2 "Error: Invalid block type.  Please try again."
+-				exit 1
++				return 1
+ 			else
+ 				BEGAN=true
+                         fi
+@@ -175,26 +269,23 @@
+ 			if $BEGAN; then
+ 				if [[ $COMMAND = "subnet" ]]; then
+ 					print -u2 "Error: Invalid block."
+-					exit 1
++					return 1
+ 				elif [[ $COMMAND = "interface" ]]; then
+ 					INT=${input#interface=}
+-					grep "${CORONA_NAME}-${INT}" $DHTADM_P >/dev/null 2>&1
+-					if [[ $? != "0" ]]; then
+-						print -u2 "Configuration for DHCP interface $INT does not exist."
+-                                                exit 1
++					# strip imbedded quotes if any
++                                        INT=${INT#\"}
++                                        INT=${INT%\"}
++					INTFILE=$INTFILEPATHPREFIX$INT	
++					if [[ ! -f $INTFILE ]]; then
++                                        	print -u2 "Configuration for DHCP interface $INT does not exist."
++                                        	return 1
++					else
++						INTSET=true
+ 					fi
+-					INTF_NETNAME=${CORONA_NAME}-${INT}
+-					# not defined in the networks file, try checking in dhtadm
+-					INTF_NET=`$GREP -s ":Include=${INTF_NETNAME}:" $DHTADM_P | awk '{print $1}'`
+-					if [ -z "${INTF_NET}" ]; then
+-						print -u2 "Error: Cannot translate interface \"${INT}\" to a network number"
+-						return 1
+-					fi
+-					INTSET=true
+ 				fi
+ 			else
+ 				print -u2 "Error: Input must start with a \"begin\" statement"
+-				exit 1
++				return 1
+ 			fi
+ 			;;	
+ 		(network*)
+@@ -201,87 +292,47 @@
+ 			if $BEGAN; then
+ 				if [[ $COMMAND = "interface" ]]; then
+ 					print -u2 "Error: Invalid block."
+-                                        exit 1
++                                        return 1
+ 				elif [[ $COMMAND = "subnet" ]]; then
+ 					SUBNET=${input#network=}
+-					grep "${CORONA_NAME}-${SUBNET}" $DHTADM_P >/dev/null 2>&1
+-                                        if [[ $? != "0" ]]; then
+-						print -u2 "Configuration for DHCP subnet $SUBNET does not exist."
+-                                                exit 1
+-                                        fi
+-					INTF_NETNAME=${CORONA_NAME}-${SUBNET}
+-					INTF_NET=${SUBNET}
+-					NETSET=true
++					SUBNETFILE=$SUBNETFILEPATHPREFIX$SUBNET
++					if [[ ! -f $SUBNETFILE ]] ||
++					   isDummySubnet $SUBNETFILE; then
++                				print -u2 "Configuration for DHCP subnet $SUBNET does not exist."
++						return 1
++					else
++						NETSET=true
++					fi
++					checkDummySubnet=$SUBNET
+ 				fi
+ 			else
+ 				print -u2 "Error: Input must start with a \"begin\" statement"	
+-				exit 1
++				return 1
+ 			fi
+                         ;;
+ 		(end)
+-			if $NETSET || $INTSET; then
+-                     		break
++			if $NETSET; then
++				typeset Intf=`getIntfbySubnet $SUBNET`
++				DeleteGenericInclude "subnet-$SUBNET" $Intf
++				rm -f $SUBNETFILE 2>/dev/null
++			elif $INTSET; then
++				DeleteGenericInclude "interface-$INT" $Intf
++				rm -f $INTFILE 2>/dev/null
+ 			else
+-				print -u2 "Error: Must specify either an subnet or interface."
+-				exit 1
++				return 0
+ 			fi
+ 			;;
+ 		(*)
+ 			if $BEGAN; then
+ 				print -u2 "Error: Invalid argument."
+-				exit 1
++				return 1
+ 			else
+ 				print -u2 "Error: Must specify a valid block."
+-				exit 1
++				return 1
+ 			fi
+ 			;;
+ 		esac
+ 	done
+-	DeleteConfig
+-	if [[ $? != 0 ]]; then
+-		print -u2 "Error:  failed to remove dhcp network configuration."
+-	fi
+-}
+-
+-DeleteConfig() {
+-	typeset MULTINET=N
+-
+-	typeset TMPMULTIFILE=${TMPDIR}/pntadm-multi.$$
+-	typeset pntstat
+-
+-	rm -f ${TMPMULTIFILE} 2> /dev/null
+-	pntadm -P ${INTF_NET} | sed -e '1,2d' > ${TMPMULTIFILE}
+-	pntstat=${?}
+-	# check for MULTINET by looking into the network table, not the networks file
+-	if $GREP -q -s -v "${INTF_NETNAME}" ${TMPMULTIFILE}; then
+-		MULTINET=Y
+-	fi
+-	if [ $MULTINET = "N" ]; then
+-		dhtadm -D -m "${INTF_NET}";
+-		if [[ $pntstat -eq  0 ]]; then
+-			# remove the network table.
+-			 pntadm -R "${INTF_NET}"
+-		fi
+-	else
+-		typeset TMPBATCH=${TMPDIR}/pntadm-rm-batch.$$
+-		rm -f $TMPBATCH 2> /dev/null
+-		awk "/${INTF_NETNAME}/ { print \"pntadm -D \" \$3 \" ${INTF_NET}\" }" ${TMPMULTIFILE} \
+-		> $TMPBATCH
+-		if [[ -s $TMPBATCH ]]; then
+-			# CR 6217989 - dhtadm -B errors on Solaris x86
+-			DoDhcpBatch pntadm $TMPBATCH 2> ${TMPDIR}/Err.$$;
+-			if [[ ${?} != 0 ]]; then
+-                       		print -u2 "Error:  failed to remove the entries for subnetwork \"${INTF_NET}\":\n\
+-					`cat ${TMPDIR}/Err.$$`"
+-					# even when it failed, continue with the removal
+-                        fi
+-			 rm -f $TMPBATCH ${TMPDIR}/Err.$$ 2> /dev/null
+-		fi
+-	fi
+-	rm -f ${TMPMULTIFILE}
+-	if ! dhtadm -D -m ${INTF_NETNAME}; then
+-		return 1
+-	fi
+ 	return 0
+ }
+ 
+@@ -297,7 +348,7 @@
+                         COMMAND=${input#begin }
+                         if [[ $COMMAND != "subnet" && $COMMAND != "interface" ]]; then
+                                 print -u2 "Error: Invalid block type.  Please try again."
+-				exit 1
++				return 1
+ 			else
+ 				STARTED=true
+                         fi
+@@ -306,32 +357,30 @@
+ 			if $STARTED; then
+ 				if [[ $COMMAND = "subnet" ]]; then
+ 					print -u2 "Error: Invalid block."
+-                                        exit 1
++                                        return 1
+ 				fi						
+-				INTSET=true
+ 				INT=${input#interface=}
+-				grep "${CORONA_NAME}-${INT}" $DHTADM_P >/dev/null 2>&1
+-				if [[ $? != "0" ]]; then
+-					print -u2 "Configuration for DHCP interface $INT does not exist."
+-					exit 1
++				# strip imbedded quotes if any
++                                INT=${INT#\"}
++                                INT=${INT%\"}
++				INTFILE=$INTFILEPATHPREFIX$INT
++				if [[ ! -f $INTFILE ]]; then
++                                        print -u2 "Configuration for DHCP interface $INT does not exist."
++                                        return 1
++                                else
++					INTSET=true
++					TranslateDHCPDConf
++					InitDHCPBlockParser $UTDHCPFILE
++					while GetNextDHCPBlock interface
++					do
++						if [[ $UT_DHCP_INTERFACE = $INT ]]; then
++							break
++						fi
++					done
+ 				fi
+-				INTF_NETNAME=${CORONA_NAME}-${INT}
+-				INTF_NET=`$GREP -s ":Include=${INTF_NETNAME}:" $DHTADM_P | awk '{print $1}'`
+-				if [ -z "${INTF_NET}" ]; then
+-					print -u2 "Error: Cannot translate interface \"${INT}\" to a network number"
+-					return 1
+-				fi
+-				TranslateDhtadmP 
+-				InitDHCPBlockParser $UTDHCPFILE
+-				while GetNextDHCPBlock interface
+-				do
+-					if [[ $UT_DHCP_INTERFACE = $INT ]]; then
+-						break
+-					fi
+-				done
+ 			else
+ 				print -u2 "Error: Input must start with a \"begin\" statement"
+-                                exit 1
++                                return 1
+ 			fi
+ 			;;
+                 (network*)
+@@ -339,7 +388,7 @@
+ 				if [[ $COMMAND = "interface" ]]; then
+ 					if ! $INTSET; then
+                                 		print -u2 "Error: Missing Interface definition"
+-						exit 1
++						return 1
+                         		else
+                                 		ConvertKeyToLower "$input"
+                                 		input="$_RETURN_VAL"
+@@ -347,26 +396,26 @@
+                         		fi
+ 				elif [[ $COMMAND = "subnet" ]]; then
+                         		SUBNET=${input#network=}
+-					grep "${CORONA_NAME}-${SUBNET}" $DHTADM_P >/dev/null 2>&1
+-                                        if [[ $? != "0" ]]; then
+-                                                print -u2 "Configuration for DHCP subnet $SUBNET does not exist."
+-                                                exit 1
+-                                        fi
+-					INTF_NETNAME=${CORONA_NAME}-${SUBNET}
+-                                        INTF_NET=${SUBNET}
+-					NETSET=true
+-					TranslateDhtadmP 
+-					InitDHCPBlockParser $UTDHCPFILE
+-					while GetNextDHCPBlock subnet
+-					do
+-						if [[ $UT_DHCP_NETWORK = $SUBNET ]]; then
++                        		SUBNETFILE=$SUBNETFILEPATHPREFIX$SUBNET
++                        		if [[ ! -f $SUBNETFILE ]] ||
++					   isDummySubnet $SUBNETFILE; then
++                                		print -u2 "Configuration for DHCP subnet $SUBNET does not exist."
++						return 1
++					else
++						NETSET=true
++						TranslateDHCPDConf
++        					InitDHCPBlockParser $UTDHCPFILE
++						while GetNextDHCPBlock subnet
++						do
++							if [[ $UT_DHCP_NETWORK = $SUBNET ]]; then
+ 							break
+-						fi
+-					done
++							fi
++						done
++					fi
+ 				fi
+ 			else
+ 				print -u2 "Error: Input must start with a \"begin\" statement"
+-                                exit 1
++                                return 1
+                         fi
+                         ;;
+                 (end)
+@@ -383,18 +432,41 @@
+                         	SourceSubnet "$input" 
+ 			else
+ 				print -u2 "Error: Missing DHCP block definition"
+-                                exit 1
++                                return 1
+ 			fi
+                         ;;
+                 esac
+         done
+-	DeleteConfig
+-	AddConfig
+-        exit 0
++	DestroyDHCPBlockParser
++        rm -f $UTDHCPFILE 2>/dev/null
++	if $INTSET; then
++		ValidateInterfaceBlock
++		if [[ $? != 0 ]]; then
++                	print -u2 "Error: Invalid interface block"
++                	return 1
++		else
++			GenerateInterfaceDHCPDConf >> $INTFILE.$$
++			rm -f $INTFILE 2>/dev/null
++			mv $INTFILE.$$ $INTFILE
++		fi
++	elif $NETSET; then
++		ValidateSubnetBlock
++        	if [[ $? != 0 ]]; then
++                	print -u2 "Error: Invalid subnet block"
++                	return 1
++        	else
++			GenerateSubnetDHCPDConf >> $SUBNETFILE.$$
++			rm -f $SUBNETFILE 2>/dev/null
++			mv $SUBNETFILE.$$ $SUBNETFILE
++		fi
++	else
++		return 1
++        fi
++        return 0
+ }
+ 
+ ListSubnetBlocks() {
+-	TranslateDhtadmP 
++	TranslateDHCPDConf
+ 	if [[ $? != 0 ]]; then
+                 return 0
+         fi
+@@ -411,7 +483,7 @@
+ }
+ 
+ ListInterfaceBlocks() {
+-	TranslateDhtadmP 
++	TranslateDHCPDConf
+ 	if [[ $? != 0 ]]; then
+ 		return 0
+ 	fi
+@@ -427,56 +499,243 @@
+ 	rm -f $UTDHCPFILE 2>/dev/null
+ }
+ 
+-# main
++#
++# addDummySubnets() - adds the dummy local subnets so that DHCP can listen
++# on the local intefaces.
++#
++addDummySubnets() {
++	typeset T_INTF;
++	typeset T_ADDR;
++	typeset T_MASK;
++	typeset T_SUB;
++	typeset T_SUBFILE;
++	typeset T_INTFILE;
+ 
+-trap "rm -rf ${TMPDIR}/*.$$; exit" 0 1 2 3 14 15
++	while read T_INTF T_ADDR T_MASK
++	do
++		T_INTFILE=$INTFILEPATHPREFIX$T_INTF
++		if [ -f $T_INTFILE ]; then
++			continue
++		fi
++		T_SUB=`IP_Mask2Net $T_ADDR $T_MASK`
++		if [ $? -ne 0 ]; then
++			# error found while translating the address
++			# we just skip it
++			continue
++		fi
++		T_SUBFILE=$SUBNETFILEPATHPREFIX$T_SUB
++		if [ -f $T_SUBFILE ]; then
++			continue
++		fi
++		InitSubnetBlock
++		UT_DHCP_NETWORK=$T_SUB
++		UT_DHCP_NETMASK=$T_MASK
++		InsertSystemFiles subnet Dummy
++	done < ${DHCPALLINTF}
++}
+ 
+-ETC_OPT_UT="/etc/opt/SUNWut"
++#
++# delDummySubnets() - delete all dummy local subnets.
++#
++delDummySubnets() {
++
++	typeset T_INTF;
++	typeset T_SUBFILE;
++
++	typeset SUBNETFILES=`ls -1 ${SUBNETFILEPATHPREFIX}* 2>/dev/null`
++	if [ -z "$SUBNETFILES" ]; then
++		# no subnet definition
++		return
++	fi
++	for T_SUBFILE in $SUBNETFILES
++	do
++		if ! isDummySubnet $T_SUBFILE; then
++			continue
++		fi
++		if ! loadDHCPSubnetBlock $T_SUBFILE; then
++			continue
++		fi
++
++		T_INTF=`getIntfbySubnet $UT_DHCP_NETWORK`
++		if [ -z "$T_INTF" ]; then
++			# this means that this is in the local subnet but not
++			# attached to any specific interface.  This should not
++			# happen.  We just skip this file for now.
++			continue
++		fi
++		# remove the dummy subnet
++		DeleteGenericInclude "subnet-$UT_DHCP_NETWORK" $T_INTF
++		rm -f $T_SUBFILE
++	done
++}
++
++#
++# loadDHCPSubnetBlock() - loads the specified Subnet block file into the
++# global variables UT_DHCP_*.
++#
++# Parameters:
++#	$1 Subnet block file
++#
++# Returns:
++#	0 if successful
++#	1 otherwise
++#
++loadDHCPSubnetBlock() {
++	typeset DHCPFile=${1:-}
++	typeset status=0
++
++	if [ ! -f $DHCPFile ]; then
++		return 1
++	fi
++	InitSubnetBlock
++	TranslateSubnet $DHCPFile
++	InitDHCPBlockParser $UTDHCPFILE
++	if [[ $? != 0 ]]; then
++		return 1
++	fi
++	if ! GetNextDHCPBlock subnet; then
++		status=1
++	fi
++	DestroyDHCPBlockParser
++	rm -f $UTDHCPFILE 2>/dev/null
++	return $status
++}
++
++#
++# checkDummySubnet() - checks to make sure that dummy subnet files are created
++# or removed if configuring or un-configuring a remote subnet.  The subnet number
++# that was just added/deleted is stored in the checkDummySubnet variable.
++#
++# Parameters:
++#	$1 the operation on the subnet
++#
++# Returns:
++#	0 if successful
++#	1 otherwise
++#
++checkDummySubnet() {
++
++	typeset OPER=$1
++	typeset MOD_SUBNET=${checkDummySubnet:-}
++	typeset T_INTF;
++	typeset T_SUBFILE;
++
++	if [ -z "${MOD_SUBNET}" ]; then
++		# nothing to check
++		return 0
++	fi
++
++	case $OPER in
++	(add)
++
++		# check if it's a remote subnet
++		T_INTF=`getIntfbySubnet $MOD_SUBNET`
++		if [ -z "$T_INTF" ]; then
++			addDummySubnets
++		fi
++		;;
++	(delete)
++		# first, we need to check to see if any remote subnet is left
++		# after the deletion
++		typeset SUBNETFILES=`ls -1 ${SUBNETFILEPATHPREFIX}* 2>/dev/null`
++		typeset Remote_Subnet_Found=false
++
++		if [ -n "$SUBNETFILES" ]; then
++			for T_SUBFILE in $SUBNETFILES
++			do
++				if isDummySubnet $T_SUBFILE; then
++					continue
++				fi
++				if ! loadDHCPSubnetBlock $T_SUBFILE; then
++					continue
++				fi
++
++				T_INTF=`getIntfbySubnet $UT_DHCP_NETWORK`
++				if [ -z "$T_INTF" ]; then
++					# remote subnet found
++					Remote_Subnet_Found=true
++				fi
++			done
++			if $Remote_Subnet_Found; then
++				addDummySubnets
++			else
++				delDummySubnets
++			fi
++		fi
++		;;
++	esac
++
++}
++
++# main
++
++ETC_OPT_UT=/etc/opt/SUNWut
+ UT_DHCP_BASEDIR=`(cd ${ETC_OPT_UT}/dhcp ; /bin/pwd)`
+-. ${UT_DHCP_BASEDIR}/dhcp_config_solaris
++DHCPALLINTF=/var/opt/SUNWut/tmp/dhcp_all_interface.$$
++STATUS=0
++
+ . ${UT_DHCP_BASEDIR}/../../support_lib/dhcp_config
++. ${UT_DHCP_BASEDIR}/dhcp_config_solaris
+ 
+-GetCurrentCfg;
++TMPDELETEFILE=/var/opt/SUNWut/tmp/$$.delete
+ 
++# Contains the subnet that was just added/deleted.
++checkDummySubnet=""
++
+ if [[ $# = 0 ]]; then
+-	ANYINTFSFOUND=false
+ 	ListSubnetBlocks
+-	if $ANYINTFSFOUND; then
+-		ListInterfaceBlocks
+-	fi
++	ListInterfaceBlocks
+ 	exit 0
+ fi	
+ 
++# generate the list of available interfaces on the system.
++# it includes the inteface name, IP address, and netmasks
++ifconfig -a | grep -v "::" | awk '
++        /flags/    {
++                        split($1,intf,":");
++                                }
++        /inet/ { addr = $2; mask = $4;
++                 printf ("%s %s %s\n", intf[1], addr, mask);
++                                }
++        '  > ${DHCPALLINTF}
++
+ case $1 in
+ (add)
+-	ProcessAdd 
++	if ! ProcessAdd; then
++		STATUS=1
++	else
++		checkDummySubnet add
++		STATUS=$?
++	fi
+ 	;;
+ (change)
+ 	ProcessChange 
++	STATUS=$?
+ 	;;
+ (delete)
+-	ProcessDelete 
++	if ! ProcessDelete; then
++		STATUS=1
++	else
++		checkDummySubnet delete
++		STATUS=$?
++	fi
+ 	;;
+ (list)
+-	if [[ $# = 1 ]]; then
+-		ANYINTFSFOUND=false
++	if [[ -z $2 ]]; then
+ 		ListSubnetBlocks
+-		if $ANYINTFSFOUND; then
+-			ListInterfaceBlocks
+-		fi
+-		exit 0
+-	fi
+-	if [[ $2 = "subnet" ]]; then
++		ListInterfaceBlocks
++	elif [[ $2 = "subnet" ]]; then
+ 		ListSubnetBlocks
+-		exit 0
+ 	elif [[ $2 = "interface" ]]; then
+ 		ListInterfaceBlocks
+-		exit 0
+ 	else
+ 		print -u2 "Must specify either interface or subnet."
+-		exit 1
++		STATUS=1
+ 	fi
+ 	;;
+ (*)
+-	exit 1
++	STATUS=1
+ esac
++
++rm -f ${DHCPALLINTF}
++exit $STATUS

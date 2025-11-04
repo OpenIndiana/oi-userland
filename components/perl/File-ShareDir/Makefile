@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::ShareDir
+#   $WS_TOOLS/perl-integrate-module File-ShareDir
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::ShareDir
+COMPONENT_NAME =		File-ShareDir
 HUMAN_VERSION =			1.118
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		File::ShareDir - Locate per-dist and per-module shared files
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Locate per-dist and per-module shared files
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3bb2a20ba35df958dc0a4f2306fc05d903d8b8c4de3c8beefce17739d281c958
@@ -32,8 +32,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-inspector
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-sharedir-install
 PERL_REQUIRED_PACKAGES += library/perl-5/inc-latest
 PERL_REQUIRED_PACKAGES += library/perl-5/list-moreutils
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

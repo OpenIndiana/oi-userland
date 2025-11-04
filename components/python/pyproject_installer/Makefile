@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_installer
-HUMAN_VERSION =			0.5.2
-COMPONENT_SUMMARY =		pyproject_installer - Pyproject installer
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/9a/86/811ee7528e9ab6225f2bc26a58dcf91bf89bb7348b735aeec558cff356bf/pyproject_installer-0.5.2.tar.gz
+HUMAN_VERSION =			0.5.5
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Pyproject installer
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0ed379c5a6bd4294c5b4be626e82c8e84069a92ab9eed001c7e0c2a9a5e8323
+	sha256:5dc7daffc556156fcb7c8d2837e7edabad70c7437d8ea1e4c83022f09d4844b1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,10 +35,9 @@ PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:black
-PYTEST_ADDOPTS += -p no:cov
-PYTEST_ADDOPTS += -p no:mypy
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python

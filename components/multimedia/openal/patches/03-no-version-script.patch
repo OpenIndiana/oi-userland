@@ -1,0 +1,15 @@
+
+this fixes:
+ld: fatal: unrecognized option '--version-script...
+
+--- openal-soft-1.23.1/CMakeLists.txt.orig	2025-05-26 20:57:31.242379016 +0300
++++ openal-soft-1.23.1/CMakeLists.txt	2025-05-26 21:00:27.242859386 +0300
+@@ -1376,7 +1376,7 @@
+     endif()
+     target_link_libraries(${IMPL_TARGET} PRIVATE common ${LINKER_FLAGS} ${EXTRA_LIBS} ${MATH_LIB})
+ 
+-    if(NOT WIN32 AND NOT APPLE)
++    if(NOT WIN32 AND NOT APPLE AND NOT HAVE_SOLARIS)
+         # FIXME: This doesn't put a dependency on the version script. Changing
+         # the version script will not cause a relink as it should.
+         set_property(TARGET ${IMPL_TARGET} APPEND_STRING PROPERTY

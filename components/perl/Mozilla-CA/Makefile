@@ -11,22 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mozilla::CA
+#   $WS_TOOLS/perl-integrate-module Mozilla-CA
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mozilla::CA
-HUMAN_VERSION =			20240313
-COMPONENT_SUMMARY =		Mozilla::CA - Mozilla's CA cert bundle in PEM format
+COMPONENT_NAME =		Mozilla-CA
+HUMAN_VERSION =			20250602
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Mozilla's CA cert bundle in PEM format
 COMPONENT_CPAN_AUTHOR =		LWP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:624873939e309833894f881464a95dfe74ab77cab5d557308c010487161698e7
+	sha256:adeac0752440b2da094e8036bab6c857e22172457658868f5ac364f0c7b35481
 COMPONENT_LICENSE =		MPL-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

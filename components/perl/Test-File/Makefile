@@ -11,20 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::File
+#   $WS_TOOLS/perl-integrate-module Test-File
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::File
-HUMAN_VERSION =			1.993
+COMPONENT_NAME =		Test-File
+HUMAN_VERSION =			1.995
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::File - test file attributes
-COMPONENT_CPAN_AUTHOR =		BDFOY
+COMPONENT_SUMMARY =		test file attributes
+COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ef2ffe1aaec7b42d874ad411ec647547b9b9bc2f5fb93e49e3399488456afc7a
+	sha256:8f1cc36b871493dfdac29bda459763711b5fd828895c0f326b6c8654babd5f09
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,4 +35,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/version

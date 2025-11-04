@@ -18,16 +18,17 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXpresent
-COMPONENT_VERSION= 1.0.1
+COMPONENT_VERSION= 1.0.2
 COMPONENT_SUMMARY= libXpresent - Xlib-compatible API for the Present extension
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b964df9e5a066daa5e08d2dc82692c57ca27d00b8cc257e8e960c9f1cf26231b
+COMPONENT_ARCHIVE_HASH= sha256:4e5b21b4812206a4b223013606ae31170502c1043038777a1ef8f70c09d37602
 COMPONENT_FMRI=    x11/library/libxpresent
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-shared
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

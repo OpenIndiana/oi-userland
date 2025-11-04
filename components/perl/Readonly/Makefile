@@ -18,9 +18,10 @@ BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Readonly
+COMPONENT_NAME =		Readonly
 HUMAN_VERSION =			2.05
-COMPONENT_SUMMARY =		Readonly - Facility for creating read-only scalars, arrays, hashes
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Facility for creating read-only scalars, arrays, hashes
 COMPONENT_CPAN_AUTHOR =		SANKO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4b23542491af010d44a5c7c861244738acc74ababae6b8838d354dfb19462b5e
@@ -32,3 +33,4 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

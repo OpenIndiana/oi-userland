@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Role::Tiny
+#   $WS_TOOLS/perl-integrate-module Role-Tiny
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Role::Tiny
+COMPONENT_NAME =		Role-Tiny
 HUMAN_VERSION =			2.002004
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Role::Tiny - Roles: a nouvelle cuisine portion size slice of Moose
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Roles: a nouvelle cuisine portion size slice of Moose
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d7bdee9e138a4f83aa52d0a981625644bda87ff16642dfa845dcb44d9a242b45
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/class-method-modifiers
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

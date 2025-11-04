@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		websockets
-HUMAN_VERSION =			12.0
-COMPONENT_SUMMARY =		websockets - An implementation of the WebSocket Protocol (RFC 6455 & 7692)
+HUMAN_VERSION =			15.0.1
+COMPONENT_SUMMARY =		An implementation of the WebSocket Protocol (RFC 6455 & 7692)
 COMPONENT_PROJECT_URL =		https://github.com/python-websockets/websockets
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/python-websockets/websockets/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:49978ae3f2aedf1c40ce9031c547fb766deaf7e86c3ec9677f0f5991bdc160ec
+	sha256:8451495265af3e368f794c4dc15c99ce90c771d95560f542bff8c64b5455af3b
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,10 +35,10 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV += WEBSOCKETS_TESTS_TIMEOUT_FACTOR=10
 
 # Force verbose test output via tox posargs
-COMPONENT_TEST_TARGETS += -- -v
+TOX_POSARGS += -v
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/werkzeug

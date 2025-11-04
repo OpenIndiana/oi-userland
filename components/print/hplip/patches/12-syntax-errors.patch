@@ -1,0 +1,49 @@
+Fix various syntax errors.
+
+--- hplip-3.25.6/probe.py.orig
++++ hplip-3.25.6/probe.py
+@@ -42,11 +42,11 @@
+          ("Usage: %s [OPTIONS]" % __mod__, "", "summary", True),
+          utils.USAGE_OPTIONS,
+          ("Bus to probe:", "-b<bus> or --bus=<bus>", "option", False),
+-         ("", "<bus>: cups, usb\*, net, bt, fw, par (\*default) (Note: bt and fw not supported in this release.)", "option", False),
++         ("", "<bus>: cups, usb\\*, net, bt, fw, par (\\*default) (Note: bt and fw not supported in this release.)", "option", False),
+          ("Set Time to Live (TTL):", "-t<ttl> or --ttl=<ttl> (Default is 4).", "option", False),
+          ("Set timeout:", "-o<timeout in secs.> or --timeout=<timeout is secs.>", "option", False),
+          ("Filter by functionality:", "-e<filter list> or --filter=<filter list>", "option", False),
+-         ("", "<filter list>: comma separated list of one or more of: scan, pcard, fax, copy, or none\*. (\*none is the default)", "option", False),
++         ("", "<filter list>: comma separated list of one or more of: scan, pcard, fax, copy, or none\\*. (\\*none is the default)", "option", False),
+          ("Search:", "-s<search re> or --search=<search re>", "option", False),
+          ("", "<search re> must be a valid regular expression (not case sensitive)", "option", False),
+          ("Network discovery method:", "-m<method> or --method=<method>: <method> is 'slp'* or 'mdns'.", "option", False),
+--- hplip-3.25.6/check.py.orig
++++ hplip-3.25.6/check.py
+@@ -627,7 +627,7 @@
+                     status, output = utils.run("%s -d03f0:" % lsusb)
+ 
+                     if output:
+-                        lsusb_pat = re.compile("""^Bus\s([0-9a-fA-F]{3,3})\sDevice\s([0-9a-fA-F]{3,3}):\sID\s([0-9a-fA-F]{4,4}):([0-9a-fA-F]{4,4})(.*)""", re.IGNORECASE)
++                        lsusb_pat = re.compile(r"""^Bus\s([0-9a-fA-F]{3,3})\sDevice\s([0-9a-fA-F]{3,3}):\sID\s([0-9a-fA-F]{4,4}):([0-9a-fA-F]{4,4})(.*)""", re.IGNORECASE)
+                         log.debug(output)
+                         try:
+                             hpmudext = utils.import_ext('hpmudext')
+@@ -682,7 +682,7 @@
+ 
+                                         out =''
+                                         for g in getfacl_out_list:
+-                                            if 'getfacl' not in g and '' is not g and 'file' not in g:
++                                            if 'getfacl' not in g and '' != g and 'file' not in g:
+                                                 pat = re.compile('''.*:(.*)''')
+                                                 if pat.search(g):
+                                                     out = out +' '+ pat.search(g).group(1)
+--- hplip-3.25.6/check-plugin.py.orig
++++ hplip-3.25.6/check-plugin.py
+@@ -113,7 +113,7 @@
+     options=""
+     if USB_param is not None:
+         options += " -y3 %s"%(USB_param)
+-    if log_level is 'debug':
++    if log_level == 'debug':
+         options += " -g"
+ 
+     cmd= execmd + options

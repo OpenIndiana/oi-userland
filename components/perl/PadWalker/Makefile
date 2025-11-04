@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PadWalker
+COMPONENT_NAME =		PadWalker
 HUMAN_VERSION =			2.5
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		PadWalker - play with other peoples' lexical variables
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		play with other peoples' lexical variables
 COMPONENT_CPAN_AUTHOR =		ROBIN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:07b26abb841146af32072a8d68cb90176ffb176fd9268e6f2f7d106f817a0cd0
@@ -30,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module namespace::clean
+#   $WS_TOOLS/perl-integrate-module namespace-clean
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		namespace::clean
+COMPONENT_NAME =		namespace-clean
 HUMAN_VERSION =			0.27
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		namespace::clean - Keep imports and functions out of your namespace
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Keep imports and functions out of your namespace
 COMPONENT_CPAN_AUTHOR =		RIBASUSHI
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8a10a83c3e183dc78f9e7b7aa4d09b47c11fb4e7d3a33b9a12912fd22e31af9d
@@ -31,5 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-hooks-endofscope
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/package-stash
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

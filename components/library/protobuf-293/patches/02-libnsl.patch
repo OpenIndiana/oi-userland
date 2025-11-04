@@ -1,0 +1,12 @@
+Needed for setsockopt() and socketpair().
+
+--- protobuf-29.3/cmake/tests.cmake.orig
++++ protobuf-29.3/cmake/tests.cmake
+@@ -100,6 +100,7 @@
+ endif ()
+ 
+ add_executable(tests ${tests_files} ${common_test_files})
++target_link_libraries(tests socket nsl)
+ if (MSVC)
+   target_compile_options(tests PRIVATE
+     /wd4146 # unary minus operator applied to unsigned type, result still unsigned

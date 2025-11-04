@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::Build::XSUtil
+#   $WS_TOOLS/perl-integrate-module Module-Build-XSUtil
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::Build::XSUtil
+COMPONENT_NAME =		Module-Build-XSUtil
 HUMAN_VERSION =			0.19
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Module::Build::XSUtil - A Module::Build class for building XS modules
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		A Module::Build class for building XS modules
 COMPONENT_CPAN_AUTHOR =		HIDEAKIO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9063b3c346edeb422807ffe49ffb23038c4f900d4a77b845ce4b53d97bf29400
@@ -32,8 +32,12 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-checkcompiler
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cwd-guard
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-copy-recursive-reduced
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

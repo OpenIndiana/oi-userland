@@ -14,18 +14,19 @@
 # Copyright 2021,2024 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+# SunRay utaudio needs 32bit library
+BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpg123
-COMPONENT_VERSION= 1.32.6
+COMPONENT_VERSION= 1.33.3
 COMPONENT_SUMMARY= Fast console MPEG Audio Player and decoder library
 COMPONENT_PROJECT_URL= https://mpg123.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ccdd1d0abc31d73d8b435fc658c79049d0a905b30669b6a42a03ad169dc609e6
+COMPONENT_ARCHIVE_HASH= sha256:6a0c6472dd156e213c2068f40115ebbb73978c2d873e66bae2a250e2d2198d26
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI= audio/mpg123
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
@@ -45,9 +46,13 @@ CONFIGURE_OPTIONS += --enable-network
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-optimization=3
 ifeq ($(strip $(MACH)),i386)
-CONFIGURE_OPTIONS += --with-cpu=x86-64
+CONFIGURE_OPTIONS.64 += --with-cpu=x86-64
+CONFIGURE_OPTIONS.32 += --with-cpu=x86
 endif
-CONFIGURE_OPTIONS += --with-default-audio=pulse
+CONFIGURE_OPTIONS.32 += --with-audio=dummy
+CONFIGURE_OPTIONS.32 += --with-default-audio="dummy"
+CONFIGURE_OPTIONS.64 += --with-default-audio="pulse"
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/audio/openal

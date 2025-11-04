@@ -23,8 +23,6 @@
 # Copyright (c) 2010, 2017, Oracle and/or its affiliates. All rights reserved.
 #
 
-GIT =		/usr/bin/git
-
 COMPONENT_PREP_GIT?=yes
 ifeq ($(strip $(COMPONENT_PREP_GIT)), yes)
 

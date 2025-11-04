@@ -26,6 +26,15 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 depend type=require fmri=gnome/gnome-keyring
 depend type=require fmri=desktop/mate/marco
+# libGL and libEGL cannot be properly detected by pkgdepend
+# it does require the pkg.depend.bypass-generate=.* action on the two libexec binaries
+# mate-session-check-accelerated-gl-helper and mate-session-check-accelerated-gles-helper
+depend fmri=x11/library/mesa \
+	   fmri=driver/graphics/nvidia \
+	   fmri=driver/graphics/nvidia-340 \
+	   fmri=driver/graphics/nvidia-390 \
+	   fmri=driver/graphics/nvidia-470 \
+	   type=require-any
 
 depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/dbus-launch
 
@@ -35,8 +44,8 @@ file path=usr/bin/mate-session-properties
 file path=usr/bin/mate-session-save
 file path=usr/bin/mate-wm
 file path=usr/libexec/mate/mate-session-check-accelerated
-#file path=usr/libexec/mate/mate-session-check-accelerated-gl-helper
-#file path=usr/libexec/mate/mate-session-check-accelerated-gles-helper
+file path=usr/libexec/mate/mate-session-check-accelerated-gl-helper pkg.depend.bypass-generate=.*
+file path=usr/libexec/mate/mate-session-check-accelerated-gles-helper pkg.depend.bypass-generate=.*
 file path=usr/share/applications/mate-session-properties.desktop
 file path=usr/share/doc/mate-session-manager/dbus/mate-session.html
 file path=usr/share/glib-2.0/schemas/org.mate.session.gschema.xml

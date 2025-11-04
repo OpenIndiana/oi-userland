@@ -1,0 +1,35 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2025 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+link path=usr/bin/protoc-c target=protoc-gen-c
+file path=usr/bin/protoc-gen-c
+link path=usr/include/google/protobuf-c/protobuf-c.h \
+    target=../../protobuf-c/protobuf-c.h
+file path=usr/include/protobuf-c/protobuf-c.h
+file path=usr/include/protobuf-c/protobuf-c.proto
+link path=usr/lib/$(MACH64)/libprotobuf-c.so target=libprotobuf-c.so.1.0.0
+link path=usr/lib/$(MACH64)/libprotobuf-c.so.1 target=libprotobuf-c.so.1.0.0
+file path=usr/lib/$(MACH64)/libprotobuf-c.so.1.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libprotobuf-c.pc

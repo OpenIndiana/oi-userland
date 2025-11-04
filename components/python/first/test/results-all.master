@@ -1,0 +1,18 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest '--doctest-glob=*.rst' --doctest-modules --ignore=setup.py
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 6 items
+
+README.rst::README.rst PASSED
+first.py::first PASSED
+first.py::first.first PASSED
+test_first.py::TestFirst::test_default_value PASSED
+test_first.py::TestFirst::test_empty_iterables PASSED
+test_first.py::TestFirst::test_selection PASSED
+
+======== 6 passed ========
+  py$(PYV): OK
+  congratulations :)

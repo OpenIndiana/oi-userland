@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2024 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -26,10 +26,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 file path=usr/bin/xmlschema-json2xml-$(PYVER)
 file path=usr/bin/xmlschema-validate-$(PYVER)
 file path=usr/bin/xmlschema-xml2json-$(PYVER)
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/METADATA
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/WHEEL
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/licenses/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/aliases.py
@@ -37,8 +37,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/cli.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/abdera.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/badgerfish.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/columnar.py
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/default.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/gdata.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/jsonml.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/converters/parker.py
@@ -52,8 +52,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/extras/codegen.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/extras/templates/python/bindings.py.jinja
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/extras/templates/python/sample.py.jinja
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/extras/wsdl.py
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/limits.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/loaders.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/locale/en/LC_MESSAGES/xmlschema.mo
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/locale/en/LC_MESSAGES/xmlschema.po
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/locale/it/LC_MESSAGES/xmlschema.mo
@@ -66,10 +66,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/locations.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/names.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/namespaces.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/py.typed
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/arguments.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/fetchers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/filters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/sax.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/xml_loader.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/resources/xml_resource.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/DSIG/xmldsig-core-schema.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/DSIG/xmldsig11-schema.xsd
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/HFP/XMLSchema-hasFacetAndProperty_minimal.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/HFP/XMLSchema-hasFacetAndProperty.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/VC/XMLSchema-versioning.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/WSDL/soap-encoding.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/WSDL/soap-envelope.xsd
@@ -79,29 +85,40 @@ file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XENC/xenc-sch
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XENC/xenc-schema.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XHTML/xhtml1-strict.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XLINK/xlink.xsd
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XML/xml_minimal.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XML/xml.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSD_1.0/XMLSchema.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSD_1.0/datatypes.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSD_1.1/XMLSchema.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSD_1.1/datatypes.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSD_1.1/xsd11-extra.xsd
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSI/XMLSchema-instance_minimal.xsd
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/schemas/XSI/XMLSchema-instance.xsd
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_builders.py
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_case_class.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_factory.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_observers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/testing/_test_case_classes.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/translation.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/decoding.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/descriptors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/etree.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/logger.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/misc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/paths.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/protocols.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/qnames.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/streams.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/utils/urls.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/assertions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/attributes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/builders.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/builtins.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/complex_types.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/elements.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/facets.py
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/global_maps.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/groups.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/identities.py
@@ -110,14 +127,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/notations.
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/particles.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/schemas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/simple_types.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/validation.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/wildcards.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/xsd_globals.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/validators/xsdbase.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/assertion_parser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/identity_parser.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/mixin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/proxy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath3.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/selectors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/xmlschema/xpath/xpath3.py
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \

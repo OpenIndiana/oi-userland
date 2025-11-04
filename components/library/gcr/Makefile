@@ -26,13 +26,13 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gcr
 COMPONENT_MJR_VERSION=	3.41
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A GNOME library for displaying certificates and crypto UI
 COMPONENT_PROJECT_URL=	https://gitlab.gnome.org/GNOME/gcr/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -56,6 +56,9 @@ CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)"
 # Assumes GNU xgettext in PATH.
 CONFIGURE_ENV += PATH=$(PATH.gnu)
 CONFIGURE_ENV += GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
+
+# Prevent a build error on the build server
+COMPONENT_BUILD_ENV += HOME="/tmp"
 
 LDFLAGS += -lsocket
 LIBS	+= -lsocket

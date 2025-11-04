@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Class::Singleton
+#   $WS_TOOLS/perl-integrate-module Class-Singleton
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Class::Singleton
+COMPONENT_NAME =		Class-Singleton
 HUMAN_VERSION =			1.6
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Class::Singleton - Implementation of a \\\\\\\"Singleton\\\\\\\" class
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Implementation of a \\\\\\\"Singleton\\\\\\\" class 
 COMPONENT_CPAN_AUTHOR =		SHAY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:27ba13f0d9512929166bbd8c9ef95d90d630fc80f0c9a1b7458891055e9282a4
@@ -30,4 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

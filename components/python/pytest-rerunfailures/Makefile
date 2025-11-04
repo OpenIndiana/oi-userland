@@ -11,39 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-rerunfailures
+#   $WS_TOOLS/python-integrate-project -d python/pytest-rerunfailures pytest_rerunfailures
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-rerunfailures
-HUMAN_VERSION =			14.0
-COMPONENT_SUMMARY =		pytest-rerunfailures - pytest plugin to re-run tests to eliminate flaky failures
+COMPONENT_NAME =		pytest_rerunfailures
+HUMAN_VERSION =			16.1
+COMPONENT_SUMMARY =		pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a400bcbcd3c7a4ad151ab8afac123d90eca3abe27f98725dc4d9702887d2e92
+	sha256:c38b266db8a808953ebd71ac25c381cb1981a78ff9340a14bcb9f1b9bff1899e
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-# https://github.com/pytest-dev/pytest-rerunfailures/issues/218
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-# https://github.com/pytest-dev/pytest-rerunfailures/issues/217
-TEST_CONFLICTING_PACKAGES.python += library/python/flaky
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

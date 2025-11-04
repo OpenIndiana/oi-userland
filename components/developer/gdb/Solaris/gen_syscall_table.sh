@@ -6,7 +6,7 @@ GENOFFSETS=/opt/onbld/bin/genoffsets
 TMPDIR=${COMPONENT_DIR}/tmp
 CTFSTABS=/opt/onbld/bin/i386/ctfstabs
 CTFCONVERT=/opt/onbld/bin/i386/ctfconvert
-GENOFFSETS_CFLAGS="-gdwarf-2 -_gcc=-fno-eliminate-unused-debug-symbols -_gcc=-fno-eliminate-unused-debug-types"
+GENOFFSETS_CFLAGS="-gdwarf-2 -_gcc=-fno-eliminate-unused-debug-symbols -_gcc=-fno-eliminate-unused-debug-types -std=gnu99"
 EGREP=/usr/gnu/bin/egrep
 GCC=/usr/gcc/${GCC_VERSION}/bin/gcc
 CFLAGS32=-m32
@@ -48,9 +48,10 @@ EOM
         sed < $TMPDIR/offsets32.h 's/\t0x/_32&/'
         sed < $TMPDIR/offsets64.h 's/\t0x/_64&/'
         $EGREP $'define\tPR(FN|ARG)SZ' /usr/include/sys/old_procfs.h
-    } | tee illumos-offsets.h > ${SOURCE_DIR}/bfd/illumos-offsets.h
+    } > ${SOURCE_DIR}/bfd/illumos-offsets.h
 
 }
 
 [ ! -d ${TMPDIR} ] && mkdir ${TMPDIR}
 generate
+rm -rf ${TMPDIR}

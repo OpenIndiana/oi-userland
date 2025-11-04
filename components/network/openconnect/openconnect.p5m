@@ -29,16 +29,23 @@ depend type=require fmri=network/vpnc-scripts
 depend type=require fmri=driver/network/tun variant.opensolaris.zone=global
 depend type=require fmri=driver/network/tap variant.opensolaris.zone=global
 
+# do not included android sprecific file
+<transform path=usr/libexec/openconnect/hipreport-android.sh -> drop>
+# python file dependency checks in usr/libexec/openconnect is not supported by gmake REQUIRED_PACKAGES
+<transform file path=usr/libexec/openconnect/tncc-emulate.py -> add pkg.depend.bypass-generate .* >
+<transform file path=usr/libexec/openconnect/tncc-wrapper.py -> add pkg.depend.bypass-generate .* >
+
 file path=usr/include/openconnect.h
 link path=usr/lib/$(MACH64)/libopenconnect.so target=libopenconnect.so.5.9.0
 link path=usr/lib/$(MACH64)/libopenconnect.so.5 target=libopenconnect.so.5.9.0
 file path=usr/lib/$(MACH64)/libopenconnect.so.5.9.0
-file path=usr/lib/$(MACH64)/openconnect/csd-post.sh
-file path=usr/lib/$(MACH64)/openconnect/csd-wrapper.sh
-file path=usr/lib/$(MACH64)/openconnect/hipreport.sh
-file path=usr/lib/$(MACH64)/openconnect/tncc-emulate.py
-file path=usr/lib/$(MACH64)/openconnect/tncc-wrapper.py
 file path=usr/lib/$(MACH64)/pkgconfig/openconnect.pc
+file path=usr/libexec/openconnect/csd-post.sh
+file path=usr/libexec/openconnect/csd-wrapper.sh
+file path=usr/libexec/openconnect/hipreport-android.sh
+file path=usr/libexec/openconnect/hipreport.sh
+file path=usr/libexec/openconnect/tncc-emulate.py
+file path=usr/libexec/openconnect/tncc-wrapper.py
 file path=usr/sbin/openconnect
 file path=usr/share/bash-completion/completions/openconnect
 file path=usr/share/doc/openconnect/anyconnect.html

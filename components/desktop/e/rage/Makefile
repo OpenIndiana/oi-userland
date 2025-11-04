@@ -24,32 +24,24 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rage
 COMPONENT_VERSION=      0.2.1
-COMPONENT_FMRI=         media/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=Applications/Sound and Video
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Enlightenment - A video and audio player written with the EFL
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://enlightenment.org
+COMPONENT_PROJECT_URL=  https://enlightenment.org
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:3dba83ae3d0cdd6c43fc3f6e4ca87ecf58d0481d28cd431ba42c51b82c7b6b1a
-COMPONENT_ARCHIVE_URL= \
-    http://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:3dba83ae3d0cdd6c43fc3f6e4ca87ecf58d0481d28cd431ba42c51b82c7b6b1a
+COMPONENT_ARCHIVE_URL= 	https://download.enlightenment.org/rel/apps/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         media/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION= \
-    ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )
+COMPONENT_PREP_ACTION= ( cd $(@D); aclocal -I m4 --install && autoconf && automake -a; )
 
-CONFIGURE_BINDIR.64=$(USRBINDIR)
-
-build: $(BUILD_64)
-
-install: $(INSTALL_64)
-
-test: $(NO_TESTS)
+CONFIGURE_BINDIR.64= $(USRBINDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/e/efl

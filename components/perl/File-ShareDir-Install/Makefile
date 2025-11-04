@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::ShareDir::Install
+#   $WS_TOOLS/perl-integrate-module File-ShareDir-Install
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::ShareDir::Install
+COMPONENT_NAME =		File-ShareDir-Install
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		File::ShareDir::Install - Install shared files
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Install shared files
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8f9533b198f2d4a9a5288cbc7d224f7679ad05a7a8573745599789428bc5aea0
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

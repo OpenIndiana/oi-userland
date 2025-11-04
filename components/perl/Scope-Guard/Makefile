@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Scope::Guard
+#   $WS_TOOLS/perl-integrate-module Scope-Guard
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Scope::Guard
+COMPONENT_NAME =		Scope-Guard
 HUMAN_VERSION =			0.21
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Scope::Guard - lexically-scoped resource management
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		lexically-scoped resource management
 COMPONENT_CPAN_AUTHOR =		CHOCOLATE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8c9b1bea5c56448e2c3fadc65d05be9e4690a3823a80f39d2f10fdd8f777d278
@@ -30,4 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

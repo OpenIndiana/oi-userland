@@ -21,12 +21,11 @@
 # Copyright (c) 2015, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
 COMPONENT_VERSION=	0.1.4
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=      libmspub - library for reading Microsoft Publisher documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -53,6 +52,7 @@ REQUIRED_PACKAGES += system/library/boost
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/c++/librevenge
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

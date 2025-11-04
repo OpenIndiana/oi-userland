@@ -36,9 +36,12 @@ depend fmri=developer/build/onbld type=require
 depend fmri=developer/linker type=require
 
 # Compilers
-# gcc-13 is used to build oi-userland
-depend fmri=developer/gcc-13 type=require
-depend fmri=developer/clang-17 type=require
+# GCC
+depend type=require fmri=__TBD pkg.debug.depend.file=gcc \
+    pkg.debug.depend.path=usr/gcc/$(GCCVER)/bin
+# Clang
+depend type=require fmri=__TBD pkg.debug.depend.file=clang \
+    pkg.debug.depend.path=usr/clang/$(CLANGVER)/bin
 
 # Headers
 depend fmri=system/header type=require
@@ -107,7 +110,8 @@ depend fmri=developer/pkgtree type=require
 depend fmri=crypto/gnupg type=require
 
 # Java
-depend fmri=runtime/java/openjdk17 type=require
+depend type=require fmri=__TBD pkg.debug.depend.file=java \
+    pkg.debug.depend.path=usr/jdk/openjdk$(JAVAVER)/bin
 depend fmri=developer/java/junit type=require
 
 # Runtimes
@@ -121,9 +125,11 @@ depend fmri=runtime/python type=require
 depend fmri=developer/as type=require
 depend fmri=developer/astdev type=require
 # gcc-10 is primary compiler
-depend fmri=developer/gcc-10 type=require
-# gcc-7 is shadow compiler
-depend fmri=developer/gcc-7 type=require
+depend type=require fmri=__TBD pkg.debug.depend.file=gcc \
+    pkg.debug.depend.path=usr/gcc/10/bin
+# gcc-14 is shadow compiler
+depend type=require fmri=__TBD pkg.debug.depend.file=gcc \
+    pkg.debug.depend.path=usr/gcc/14/bin
 depend fmri=developer/illumos-closed type=require
 # java8 is used by default
 depend fmri=developer/java/openjdk8 type=require
@@ -131,7 +137,7 @@ depend fmri=developer/opensolaris/osnet type=require
 depend fmri=library/glib2 type=require
 depend fmri=library/idnkit/header-idnkit type=require
 depend fmri=library/libxml2 type=require
-depend fmri=library/nspr/header-nspr type=require
+depend fmri=library/nspr type=require
 depend fmri=library/perl-5/xml-parser type=require
 depend fmri=library/security/trousers type=require
 depend fmri=print/cups type=require

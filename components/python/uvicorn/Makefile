@@ -19,17 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uvicorn
-HUMAN_VERSION =			0.29.0
-COMPONENT_SUMMARY =		uvicorn - The lightning-fast ASGI server.
+HUMAN_VERSION =			0.31.1
+COMPONENT_SUMMARY =		The lightning-fast ASGI server.
 COMPONENT_PROJECT_URL =		https://www.uvicorn.org/
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/encode/uvicorn/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6a69214c0b6a087462412670b3ef21224fa48cae0e452b5883e8e8bdfdd11dd0
+	sha256:afb9029c4c9486703b00b13e8d81ff773399a834a6054d90b545bc41f9af4aec
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements.txt
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/click
@@ -37,3 +46,16 @@ PYTHON_REQUIRED_PACKAGES += library/python/h11
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/anyio
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/cryptography
+TEST_REQUIRED_PACKAGES.python += library/python/h11
+TEST_REQUIRED_PACKAGES.python += library/python/httpx
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/trustme
+TEST_REQUIRED_PACKAGES.python += library/python/twine
+TEST_REQUIRED_PACKAGES.python += library/python/types-pyyaml
+TEST_REQUIRED_PACKAGES.python += library/python/websockets

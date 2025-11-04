@@ -11,22 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.component
+#   $WS_TOOLS/python-integrate-project -d python/zope.component zope_component
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.component
-HUMAN_VERSION =			6.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		zope.component - Zope Component Architecture
+COMPONENT_NAME =		zope_component
+HUMAN_VERSION =			7.0
+COMPONENT_SUMMARY =		Zope Component Architecture
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/53/32/87db95f4a5f097aa837dcb951f5a4754e2e8d3ac70160a6c2df7bd215956/zope.component-6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a0a0472ad201b94b4fe6741ce9ac2c30b8bb22c516077bf03692dec4dfb6906
+	sha256:1256ca091ccd7e368ec4faaede45211c824038546d6961776223d99db79896a9
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,16 +41,18 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-event
-PYTHON_REQUIRED_PACKAGES += library/python/zope-hookable
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-event
+REQUIRED_PACKAGES.python += library/python/zope-hookable
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/persistent
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zodb
 TEST_REQUIRED_PACKAGES.python += library/python/zope-configuration

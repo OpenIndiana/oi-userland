@@ -1,0 +1,13 @@
+Illumos installs compiled zoneinfo files in /usr/share/lib/zoneinfo
+
+--- gnucash-5.11/libgnucash/engine/gnc-timezone.cpp.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/engine/gnc-timezone.cpp	Thu May  1 20:17:30 2025
+@@ -372,7 +372,7 @@
+ 	    else
+ 	    {
+ 		const char* tzdir_c = std::getenv("TZDIR");
+-		std::string tzdir = tzdir_c ? tzdir_c : "/usr/share/zoneinfo";
++		std::string tzdir = tzdir_c ? tzdir_c : "/usr/share/lib/zoneinfo";
+ //Note that we're not checking the filename.
+ 		ifs.open(std::move(tzdir + "/" + tzname),
+ 			 std::ios::in|std::ios::binary|std::ios::ate);

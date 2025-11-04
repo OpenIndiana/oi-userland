@@ -25,23 +25,13 @@ diff -Naur libreoffice-7.6.4.1/external/libcmis.old/libxml2.12.patch.1 libreoffi
 + #include <libxml/tree.h>
 + #include <libxml/xpathInternals.h>
 + #include <libxml/xmlwriter.h>
-diff -Naur libreoffice-7.6.4.1/external/libcmis.old/UnpackedTarball_libcmis.mk libreoffice-7.6.4.1/external/libcmis/UnpackedTarball_libcmis.mk
---- libreoffice-7.6.4.1/external/libcmis.old/UnpackedTarball_libcmis.mk	2023-11-30 08:04:41.000000000 -0500
-+++ libreoffice-7.6.4.1/external/libcmis/UnpackedTarball_libcmis.mk	2023-12-08 01:07:50.368597480 -0500
-@@ -7,6 +7,8 @@
- # file, You can obtain one at http://mozilla.org/MPL/2.0/.
- #
- 
-+libcmis_patches := libxml2.12.patch.1
-+
- $(eval $(call gb_UnpackedTarball_UnpackedTarball,libcmis))
- 
- $(eval $(call gb_UnpackedTarball_set_tarball,libcmis,$(LIBCMIS_TARBALL)))
-@@ -14,6 +16,7 @@
- $(eval $(call gb_UnpackedTarball_set_patchlevel,libcmis,1))
- 
- $(eval $(call gb_UnpackedTarball_add_patches,libcmis,\
-+        $(foreach patch,$(libcmis_patches),external/libcmis/$(patch)) \
+--- libreoffice-25.2.0.0.alpha1/external/libcmis/UnpackedTarball_libcmis.mk.~1~	2024-11-22 15:05:31.000000000 -0500
++++ libreoffice-25.2.0.0.alpha1/external/libcmis/UnpackedTarball_libcmis.mk	2024-11-26 22:22:04.239952679 -0500
+@@ -26,6 +26,7 @@
+ 	external/libcmis/0001-Take-into-account-m_CurlInitProtocolsFunction-in-cop.patch \
+ 	external/libcmis/initprotocols.patch.1 \
+ 	external/libcmis/0001-Fix-boost-1.86-breakage.patch \
++	external/libcmis/libxml2.12.patch.1 \
  ))
  
  # vim: set noet sw=4 ts=4:

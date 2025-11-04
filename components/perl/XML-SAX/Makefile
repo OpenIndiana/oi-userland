@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::SAX
+#   $WS_TOOLS/perl-integrate-module XML-SAX
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::SAX
+COMPONENT_NAME =		XML-SAX
 HUMAN_VERSION =			1.02
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		XML::SAX - Simple API for XML
+COMPONENT_REVISION =		5
+COMPONENT_SUMMARY =		Simple API for XML
 COMPONENT_CPAN_AUTHOR =		GRANTM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4506c387043aa6a77b455f00f57409f3720aa7e553495ab2535263b4ed1ea12a
@@ -33,6 +33,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += '-e "/^parsed/d"'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax-base
 PERL_REQUIRED_PACKAGES += runtime/perl

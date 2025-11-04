@@ -1,0 +1,13 @@
+https://rt.cpan.org/Public/Bug/Display.html?id=132995
+
+--- ExtUtils-Constant-0.25/t/Constant.t.orig
++++ ExtUtils-Constant-0.25/t/Constant.t
+@@ -435,7 +435,7 @@
+   print FH ");\n";
+   # Print the AUTOLOAD subroutine ExtUtils::Constant generated for us
+   print FH autoload ($package, $]);
+-  print FH "bootstrap $package \$VERSION;\n1;\n__END__\n";
++  print FH "$package->bootstrap(\$VERSION);\n1;\n__END__\n";
+   close FH or die "close $pm: $!\n";
+ 
+   ################ test.pl

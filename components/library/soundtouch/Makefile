@@ -17,13 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         soundtouch
-COMPONENT_VERSION=      2.3.3
-COMPONENT_SUMMARY=      Audio Processing Library
+COMPONENT_VERSION=      2.4.0
+COMPONENT_SUMMARY=      Audio processing library for changing the tempo, pitch and playback rates of audio streams or audio files
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=  https://www.surina.net/soundtouch
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:43b23dfac2f64a3aff55d64be096ffc7b73842c3f5665caff44975633a975a99
+COMPONENT_ARCHIVE_HASH= sha256:3dda3c9ab1e287f15028c010a66ab7145fa855dfa62763538f341e70b4d10abd
 COMPONENT_FMRI=         library/audio/soundtouch
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1

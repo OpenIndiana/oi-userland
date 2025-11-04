@@ -25,12 +25,11 @@
 #
 
 BUILD_BITS= 64_and_32
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libarchive
-COMPONENT_VERSION=	3.7.3
+COMPONENT_VERSION=	3.8.2
 COMPONENT_SUMMARY=	multi-format archive and compression library
 COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
  interface for reading and writing archives in various formats such as\
@@ -42,7 +41,7 @@ COMPONENT_DESCRIPTION=	The libarchive(3LIB) library provides a flexible\
 COMPONENT_SRC=			libarchive-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.libarchive.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f27a97bc22ceb996e72502df47dc19f99f9a0f09181ae909f09f3c9eb17b67e2
+COMPONENT_ARCHIVE_HASH=	sha256:5f2d3c2fde8dc44583a61165549dc50ba8a37c5947c90fc02c8e5ce7f1cfb80d
 COMPONENT_ARCHIVE_URL=	https://www.libarchive.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/libarchive
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -94,16 +93,18 @@ ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 # Tests may fail for other locales.
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
-# Build requirements
+# Manually added build dependencies
 REQUIRED_PACKAGES += print/filter/ghostscript
 REQUIRED_PACKAGES += text/groff
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxml2/32
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

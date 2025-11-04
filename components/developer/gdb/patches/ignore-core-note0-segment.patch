@@ -1,0 +1,33 @@
+do not evaluate the old core file note0 segment
+see:
+https://sourceware.org/bugzilla/show_bug.cgi?id=33258
+https://illumos.topicbox.com/groups/developer/Tffe426dfe1114e36/illumos-core-file-format
+
+diff --git a/bfd/elf.c b/bfd/elf.c
+index affddf9..9c00a72 100644
+--- a/bfd/elf.c
++++ b/bfd/elf.c
+@@ -11991,6 +11991,9 @@ elfcore_grok_solaris_note_impl (bfd *abfd, Elf_Internal_Note *note)
+ static bool
+ elfcore_grok_solaris_note (bfd *abfd, Elf_Internal_Note *note)
+ {
++  /* ignore the old note segment */
++  if (note->type == NT_PRPSINFO)
++    return true;
+   if (!elfcore_grok_solaris_note_impl (abfd, note))
+     return false;
+ 
+diff --git a/bfd/elf.c b/bfd/elf.c
+index b6edb86..38d1024 100644
+--- a/bfd/elf.c
++++ b/bfd/elf.c
+@@ -13290,6 +13290,9 @@ elf_parse_notes (bfd *abfd, char *buf, size_t size, file_ptr offset,
+ 		  {
+ 		    if (! grokers[i].func (abfd, & in))
+ 		      return false;
++		    /* ignore the old note segment */
++		    if ((grokers[i].func == elfcore_grok_solaris_note) && (in.type == NT_PRPSINFO))
++			p = buf + size;
+ 		    break;
+ 		  }
+ 	      }

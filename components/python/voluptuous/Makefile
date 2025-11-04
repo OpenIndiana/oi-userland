@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		voluptuous
-HUMAN_VERSION =			0.14.2
-COMPONENT_SUMMARY =		voluptuous - Python data validation library
+HUMAN_VERSION =			0.15.2
+COMPONENT_SUMMARY =		Python data validation library
 COMPONENT_PROJECT_URL =		https://github.com/alecthomas/voluptuous
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a1/ce/0733e4d6f870a0e5f4dbb00766b36b71ee0d25f8de33d27fb662f29154b1/voluptuous-0.14.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:533e36175967a310f1b73170d091232bf881403e4ebe52a9b4ade8404d151f5d
+	sha256:6ffcab32c4d3230b4d2af3a577c87e1908a714a11f6f95570456b1849b0279aa
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	COPYING
 

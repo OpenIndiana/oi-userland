@@ -26,28 +26,31 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.17
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.20
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fa49bacec37566fe52f88221d3871673a633aeee0cd923cc3a8e65bbef2b84e9
+COMPONENT_ARCHIVE_HASH=	sha256:a8f3faab1edda5188bb5ca3e4e9c0c5bc72cd0dadf4e1f4799d27fa75c6ae829
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
 COMPONENT_FMRI=		mail/mailutils
 COMPONENT_CLASSIFICATION=	Applications/Internet
-COMPONENT_LICENSE=	GPLv3,LGPLv3
+COMPONENT_LICENSE=	GPLv3, LGPLv3
 
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_MACROS += PYVER=$(PYTHON_VERSION)
 
+CFLAGS += $(XPG6MODE)
+# gcc 14 complains about this
+CFLAGS += -Wno-error=incompatible-pointer-types
+
 CONFIGURE_ENV += PYTHON_CONFIG=/usr/bin/python3.9-config
 
 # cpp flags.
 CONFIGURE_ENV += CPPFLAGS="-I/usr/include/openldap \
-		-I$(MYSQL_HOME)/include \
-		-I$(PG_HOME)/include"
+	-I$(MYSQL_HOME)/include \
+	-I$(PG_HOME)/include"
 
 # library link flags.
 CONFIGURE_ENV += LIBS="-lldap-2.6"
@@ -55,7 +58,6 @@ CONFIGURE_ENV += LIBS="-lldap-2.6"
 CONFIGURE_ENV += MYSQL_LIB="$(MYSQL_LIBDIR)"
 CONFIGURE_ENV += PG_LIB="$(PG_LIBDIR)"
 
-CONFIGURE_OPTIONS += --libexecdir=/usr/libexec
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --with-ldap
 CONFIGURE_OPTIONS += --with-mysql
@@ -109,6 +111,7 @@ REQUIRED_PACKAGES += editor/gnu-emacs
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/fribidi
@@ -118,7 +121,6 @@ REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libtool/libltdl
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

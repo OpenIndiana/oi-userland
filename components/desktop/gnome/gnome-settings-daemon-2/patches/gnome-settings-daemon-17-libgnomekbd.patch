@@ -1,0 +1,44 @@
+diff --git a/plugins/keyboard/gsd-keyboard-xkb.c b/plugins/keyboard/gsd-keyboard-xkb.c
+index 0026c93..0bbe822 100644
+--- a/plugins/keyboard/gsd-keyboard-xkb.c
++++ b/plugins/keyboard/gsd-keyboard-xkb.c
+@@ -44,6 +44,9 @@
+ 
+ #define GTK_RESPONSE_PRINT 2
+ 
++extern const gchar GKBD_DESKTOP_CONFIG_DIR[];
++extern const gchar GKBD_KEYBOARD_CONFIG_DIR[];
++
+ static GsdKeyboardManager *manager = NULL;
+ 
+ static XklEngine *xkl_engine;
+@@ -553,7 +556,7 @@ apply_xkb_settings (void)
+ 	}
+ 
+ 	gkbd_keyboard_config_init (&current_sys_kbd_config,
+-				   conf_client, xkl_engine);
++				   xkl_engine);
+ 
+ 	gkbd_keyboard_config_load_from_gconf (&current_kbd_config,
+ 					      &initial_sys_kbd_config);
+@@ -615,7 +618,7 @@ gsd_keyboard_xkb_analyze_sysconfig (void)
+ 
+ 	conf_client = gconf_client_get_default ();
+ 	gkbd_keyboard_config_init (&initial_sys_kbd_config,
+-				   conf_client, xkl_engine);
++				   xkl_engine);
+ 	gkbd_keyboard_config_load_from_x_initial (&initial_sys_kbd_config,
+ 						  NULL);
+ 	g_object_unref (conf_client);
+@@ -815,9 +818,9 @@ gsd_keyboard_xkb_init (GConfClient * client,
+ 		gdm_keyboard_layout = g_getenv ("GDM_KEYBOARD_LAYOUT");
+ 
+ 		gkbd_desktop_config_init (&current_config,
+-					  client, xkl_engine);
++					  xkl_engine);
+ 		gkbd_keyboard_config_init (&current_kbd_config,
+-					   client, xkl_engine);
++					   xkl_engine);
+ 		xkl_engine_backup_names_prop (xkl_engine);
+ 		gsd_keyboard_xkb_analyze_sysconfig ();
+ 		gnome_settings_profile_start

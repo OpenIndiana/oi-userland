@@ -11,15 +11,18 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 #
+
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		qhull
 COMPONENT_VERSION=	8.0.2
+HUMAN_VERSION=		2020.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.qhull.org/
 COMPONENT_SUMMARY=	General dimension convex hull programs
 COMPONENT_DESCRIPTION=	Qhull is a general dimension convex hull program that reads a set of points from stdin, and outputs the smallest convex set that contains the points to stdout.  It also generates Delaunay triangulations, Voronoi diagrams, furthest-site Voronoi diagrams, and halfspace intersections about a point.
-COMPONENT_SRC=		$(COMPONENT_NAME)-2020.2
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-2020-src-$(COMPONENT_VERSION).tgz
 COMPONENT_ARCHIVE_HASH=	sha256:b5c2d7eb833278881b952c8a52d20179eab87766b00b865000469a45c1838b7e
 COMPONENT_ARCHIVE_URL=	http://www.qhull.org/download/$(COMPONENT_ARCHIVE)

@@ -11,20 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module PAR::Dist
+#   $WS_TOOLS/perl-integrate-module PAR-Dist
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PAR::Dist
-HUMAN_VERSION =			0.52
+COMPONENT_NAME =		PAR-Dist
+HUMAN_VERSION =			0.53
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		PAR::Dist - Create and manipulate PAR distributions
+COMPONENT_SUMMARY =		Create and manipulate PAR distributions
 COMPONENT_CPAN_AUTHOR =		RSCHUPP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cbe963009ea79d2454a85fe1794f425b7ddc1e86b71749c884db29d601ea8f88
+	sha256:04cbc81e786968f9a4109ad6c2f9b81e879ac0c6b6080a9d217443b61dfd2498
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,4 +35,8 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/archive-zip
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/yaml-libyaml
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

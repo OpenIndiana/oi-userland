@@ -5,24 +5,20 @@ compiler bug.
 
 file upstream bug to determine correct fix
 
-diff --git a/Source/JavaScriptCore/dfg/DFGOperations.cpp b/Source/JavaScriptCore/dfg/DFGOperations.cpp
-index b211ed6..13b6945 100644
---- a/Source/JavaScriptCore/dfg/DFGOperations.cpp
-+++ b/Source/JavaScriptCore/dfg/DFGOperations.cpp
-@@ -2921,7 +2921,7 @@ JSC_DEFINE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject* globalObje
+--- webkitgtk-2.48.1/Source/JavaScriptCore/dfg/DFGOperations.cpp.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/dfg/DFGOperations.cpp
+@@ -3964,7 +3964,7 @@
  
- JSC_DEFINE_JIT_OPERATION(operationFModOnInts, double, (int32_t a, int32_t b))
+ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationFModOnInts, double, (int32_t a, int32_t b))
  {
 -    return fmod(a, b);
 +    return fmod(float(a), float(b));
  }
  
  #if USE(JSVALUE32_64)
-diff --git a/Source/WebCore/rendering/shapes/BoxShape.cpp b/Source/WebCore/rendering/shapes/BoxShape.cpp
-index c2e53dd..8f3068b 100644
---- a/Source/WebCore/rendering/shapes/BoxShape.cpp
-+++ b/Source/WebCore/rendering/shapes/BoxShape.cpp
-@@ -43,7 +43,7 @@ static inline LayoutUnit adjustRadiusForMarginBoxShape(LayoutUnit radius, Layout
+--- webkitgtk-2.48.1/Source/WebCore/rendering/shapes/BoxLayoutShape.cpp.orig
++++ webkitgtk-2.48.1/Source/WebCore/rendering/shapes/BoxLayoutShape.cpp
+@@ -44,7 +44,7 @@
  
      LayoutUnit ratio = radius / margin;
      if (ratio < 1)
@@ -31,11 +27,9 @@ index c2e53dd..8f3068b 100644
  
      return radius + margin;
  }
-diff --git a/Source/WebCore/rendering/shapes/RasterShape.cpp b/Source/WebCore/rendering/shapes/RasterShape.cpp
-index d52092b..10b22e3 100644
---- a/Source/WebCore/rendering/shapes/RasterShape.cpp
-+++ b/Source/WebCore/rendering/shapes/RasterShape.cpp
-@@ -142,7 +142,7 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
+--- webkitgtk-2.48.1/Source/WebCore/rendering/shapes/RasterLayoutShape.cpp.orig
++++ webkitgtk-2.48.1/Source/WebCore/rendering/shapes/RasterLayoutShape.cpp
+@@ -145,7 +145,7 @@
          return *m_intervals;
  
      int shapeMarginInt = clampToPositiveInteger(ceil(shapeMargin()));
@@ -44,8 +38,8 @@ index d52092b..10b22e3 100644
      if (!m_marginIntervals)
          m_marginIntervals = m_intervals->computeShapeMarginIntervals(std::min(shapeMarginInt, maxShapeMarginInt));
  
---- a/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp.orig
-+++ b/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp
+--- webkitgtk-2.48.1/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/dfg/DFGStaticExecutionCountEstimationPhase.cpp
 @@ -52,7 +52,7 @@
              if (!block)
                  continue;

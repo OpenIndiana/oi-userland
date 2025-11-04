@@ -31,7 +31,7 @@ COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
 # pyproject_installer does not bytecompile after the install.  Since we need
 # pyc files we need to force that.
 COMPONENT_POST_INSTALL_ACTION += \
-	$(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+	$(PYTHON) -m compileall $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ;
 else
 COMPONENT_BUILD_CMD =		$(PYTHON) -m build
 COMPONENT_BUILD_ARGS =
@@ -41,7 +41,7 @@ COMPONENT_BUILD_ARGS +=		--no-isolation
 COMPONENT_INSTALL_CMD =		$(PYTHON) -m installer
 COMPONENT_INSTALL_ARGS =
 COMPONENT_INSTALL_ARGS +=	--destdir $(PROTO_DIR)
-COMPONENT_INSTALL_ARGS +=	$(@D)/dist/*.whl
+COMPONENT_INSTALL_ARGS +=	$(@D)$(COMPONENT_SUBDIR:%=/%)/dist/*.whl
 
 USERLAND_REQUIRED_PACKAGES.python += library/python/build
 USERLAND_REQUIRED_PACKAGES.python += library/python/installer
@@ -51,9 +51,44 @@ endif
 # directory where we place modules shipped by the OS but not included in the
 # core Python distribution.
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -d $(PROTO_DIR)/$(PYTHON_DIR)/site-packages ] ; then \
-		$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB) ; \
-		$(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ; \
+	if [ -d $(PROTOPYTHONSITEDIR) ] ; then \
+		$(RM) -r $(PROTOPYTHONVENDORDIR) ; \
+		$(MV) $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ; \
+	fi ;
+
+# Generate raw list of hatch, pdm, pep735, pipenv, and poetry test dependencies
+# per Python version.
+#
+# Please note we set PATH below for tox to workaround
+# https://github.com/tox-dev/tox/issues/2538
+COMPONENT_POST_INSTALL_ACTION += \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
+	cfg=$(BUILD_DIR)/pyproject_deps-$(PYTHON_VERSION).json ; \
+	$(RM) $$cfg ; \
+	for p in $(TEST_REQUIREMENTS_HATCH) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add hatch_$$p hatch pyproject.toml $$p ; \
+	done ; \
+	for p in $(TEST_REQUIREMENTS_PDM) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pdm_$$p pdm $$p ; \
+	done ; \
+	for p in $(TEST_REQUIREMENTS_PEP735) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
+	done ; \
+	if [ "$(strip $(TEST_STYLE))" == "tox" ] && $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
+		for p in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
+				$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
+		done ; \
+	fi ; \
+	for p in $(TEST_REQUIREMENTS_PIPENV) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pipenv_$$p pipenv Pipfile $$p ; \
+	done ; \
+	for p in $(TEST_REQUIREMENTS_POETRY) ; do \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add poetry_$$p poetry $$p ; \
+	done ; \
+	if [ -f $$cfg ] ; then \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
+		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval \
+			| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ; \
 	fi ;
 
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
@@ -64,7 +99,7 @@ $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	# properly when we bootstrap the pyproject_installer bootstrapper.
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep517 pep517
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json add build_pep518 pep518
-	cd $(SOURCE_DIR) ; $(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
+	cd $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%) ; $(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json sync
 	$(PYTHON_ENV) $(PYTHON) -m pyproject_installer deps --depsconfig $(BUILD_DIR)/pyproject_deps.json eval --depformat '$$nname' \
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' \
 		> $@

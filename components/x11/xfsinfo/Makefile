@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xfsinfo
-COMPONENT_VERSION=  1.0.7
+COMPONENT_VERSION=  1.0.8
 COMPONENT_SUMMARY=  xfsinfo - X font server query utility
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:92f3ca451cba7717eed15f80de3c123aa56c82a1ee7d6e9116ba513021b98874
+COMPONENT_ARCHIVE_HASH= sha256:ae80592b6063da928e3d0c81023709b2fa29a04fcda49f6c363ac579d97f23a2
 COMPONENT_FMRI=     x11/xfs/xfsinfo
 
 include $(WS_MAKE_RULES)/common.mk

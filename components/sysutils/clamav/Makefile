@@ -10,12 +10,11 @@
 
 #
 # Copyright 2016, Jim Klimov. All rights reserved.
-# Copyright 2023, Friedrich Kink. All rights reserved.
+# Copyright 2023,2025 Friedrich Kink. All rights reserved.
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	clamav
@@ -23,7 +22,7 @@ COMPONENT_NAME=	clamav
 ### But our IPS version should better have same number of components.
 ### So the COMPONENT_VERSION may be 0.99 or 0.99.1 (as in original),
 ### but the IPS_COMPONENT_VERSION is forced to 3-part 0.99.0 or 0.99.1.
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.5.1
 ifeq ($(words $(subst ., ,$(COMPONENT_VERSION))),2)
  IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).0
 else
@@ -38,14 +37,14 @@ COMPONENT_DESCRIPTION=	ClamAV is an open source (GPLv2) anti-virus toolkit, desi
 			anti-virus engine available in a form of shared library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0a86a6496320d91576037b33101119af6fd8d5b91060cd316a3a9c229e9604aa
+COMPONENT_ARCHIVE_HASH=	sha256:64fe4a16a5622c1d71efe9ed7f2c2fbd37f8f237da9f11ff66b73038df71db91
 COMPONENT_PROJECT_URL=	https://www.clamav.net
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/downloads/production/$(COMPONENT_ARCHIVE)
-#COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE=	GPLv2,LGPL,Apache
 COMPONENT_LICENSE_FILE=	COPYING.$(COMPONENT_NAME)
+
 # We need to use non-default User-Agent for the fetch, otherwise we are denied
 # to download the source file.
 COMPONENT_FETCH_USER_AGENT=	fetch
@@ -53,14 +52,18 @@ COMPONENT_FETCH_USER_AGENT=	fetch
 include $(WS_MAKE_RULES)/common.mk
 
 # clamav now additionally also depends on rust :-(
-CARGO_HOME=		$(BUILD_DIR)/.cargo
+CARGO_HOME =		$(BUILD_DIR)/.cargo
 
-PATH=			$(PATH.gnu)
+PATH =			$(PATH.gnu)
 
 ENV +=			CARGO_HOME=$(CARGO_HOME)
 
-CONFIGURE_ENV=		$(ENV)
-COMPONENT_BUILD_ENV=	$(ENV)
+# Set CC to fix this build failure:
+# warning: openssl-sys@0.9.109: Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit status: 1): "gcc" "-E" "oi-userland/components/sysutils/clamav-1.5.1/build/amd64/x86_64-unknown-illumos/release/build/openssl-sys-4163889af58add68/out/1973174887749336979detect_compiler_family.c"
+# warning: openssl-sys@0.9.109: gcc: fatal error: cannot execute 'cc1': execvp: No such file or directory
+ENV +=			CC=/usr/bin/gcc
+
+COMPONENT_BUILD_ENV =	$(ENV)
 
 # Note: This is done just in case, because according to
 # https://github.com/vrtadmin/clamav-devel/issues/45 currently
@@ -68,7 +71,7 @@ COMPONENT_BUILD_ENV=	$(ENV)
 #   to constraints in the scanning engine.
 # Still, this can help with not dying on e.g. huge log files :-)
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(CPP_XPG5MODE)
+CFLAGS += $(XPG5MODE)
 
 CPPFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 
@@ -76,16 +79,15 @@ CPPFLAGS += $(CPP_LARGEFILES) -I$(OPENSSL_INCDIR)
 COMPONENT_PREP_ACTION= (cd $(@D) && for f in COPYING/*; do cat $$f >> COPYING.$(COMPONENT_NAME) ; done )
 
 CMAKE_ENV += LDFLAGS="-L$(OPENSSL_LIBDIR) -lsocket -lnsl"
-LDFLAGS+=-L$(OPENSSL_LIBDIR) -lsocket -lnsl
+LDFLAGS   += -L$(OPENSSL_LIBDIR) -lsocket -lnsl
 
 CMAKE_OPTIONS += -DPCRE2_INCLUDE_DIR=/usr/include/pcre
-# clang still does not work
-CMAKE_OPTIONS+= -DBYTECODE_RUNTIME=llvm
-CMAKE_OPTIONS += -DBYTECODE_RUNTIME=interpreter
+# clang still does not work (version too new, even clang-16)
+#CMAKE_OPTIONS += -DBYTECODE_RUNTIME=llvm
 #CMAKE_OPTIONS += -DLLVM_ROOT_DIR=$(CLANG_PREFIX)
+CMAKE_OPTIONS += -DBYTECODE_RUNTIME=interpreter
 CMAKE_OPTIONS += -DAPP_CONFIG_DIRECTORY=/etc/clamav
 CMAKE_OPTIONS += -DCMAKE_SKIP_RPATH=ON
-CMAKE_OPTIONS += -DENABLE_JSON_SHARED=OFF
 CMAKE_OPTIONS += -DENABLE_UNRAR=ON
 CMAKE_OPTIONS += -DENABLE_JSON_SHARED=ON
 CMAKE_OPTIONS += -DENABLE_SYSTEMD=OFF
@@ -107,6 +109,7 @@ REQUIRED_PACKAGES += developer/lang/rustc
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/json-c
@@ -114,7 +117,6 @@ REQUIRED_PACKAGES += library/libmilter
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

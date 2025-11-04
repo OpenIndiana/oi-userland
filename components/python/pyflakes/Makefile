@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project pyflakes
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyflakes
-HUMAN_VERSION =			3.2.0
-COMPONENT_SUMMARY =		pyflakes - passive checker of Python programs
+HUMAN_VERSION =			3.4.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		passive checker of Python programs
 COMPONENT_PROJECT_URL =		https://github.com/PyCQA/pyflakes
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/57/f9/669d8c9c86613c9d568757c7f5824bd3197d7b1c6c27553bc5618a27cce2/pyflakes-3.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c61603ff154621fb2a9172037d84dca3500def8c8b630657d1701f026f8af3f
+	sha256:b24f96fafb7d2ab0ec5075b7350b3d2d2218eab42003821c06344973d3ea2f58
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

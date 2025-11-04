@@ -12,9 +12,9 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2020 Andreas Wacknitz
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libexif-gtk

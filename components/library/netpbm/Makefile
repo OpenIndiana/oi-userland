@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netpbm
 COMPONENT_VERSION= 10.73.43
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Netpbm is a toolkit for manipulation of graphic images, including conversion of images between a variety of different formats.
 COMPONENT_PROJECT_URL= https://netpbm.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,12 +35,22 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# no SSE nor SSE2 for SPARC - CFLAGS switches descibed in config.mk.in does not work
+ifeq ($(MACH64), sparcv9)
+COMPONENT_PRE_BUILD_ACTION = ( \
+	$(CLONEY) $(SOURCE_DIR) $(@D); \
+	$(MKDIR) $(PROTO_DIR); \
+	$(GSED) -i -e 's/MACH64/$(MACH64)/' -e 's/WANT_SSE = Y/WANT_SSE = N/' files/config.mk; \
+	$(CP) files/config.mk $(@D)/config.mk; \
+	)
+else
 COMPONENT_PRE_BUILD_ACTION = ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
 	$(MKDIR) $(PROTO_DIR); \
 	$(GSED) -i -e 's/MACH64/$(MACH64)/' files/config.mk; \
 	$(CP) files/config.mk $(@D)/config.mk; \
 	)
+endif
 
 # build with the distribution preferred libjpeg implementation
 CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)

@@ -1,0 +1,257 @@
+--- ./lib/dhcp/edhcp/utdhcpservice	Fri Jul 11 16:54:29 2025
++++ ./lib/dhcp/isc/utdhcpservice	Mon Jul 21 14:33:10 2025
+@@ -34,10 +34,10 @@
+ UT_ETC="/etc/opt/SUNWut"
+ UT_BASEDIR=`(cd /etc/opt/SUNWut/basedir && /bin/pwd)`
+ UT_DHCP_BASEDIR=`(cd ${UT_ETC}/dhcp && /bin/pwd)`
+-DHCP_SVC_CONF="/etc/inet/dhcpsvc.conf"
++DHCP_SVC_CONF="/etc/inet/dhcpd4.conf"
+ SVCS="/bin/svcs"
+ SVCADM="/usr/sbin/svcadm"
+-DHCP_FMRI="svc:/network/dhcp-server:default"
++DHCP_FMRI="svc:/network/dhcp/server:ipv4"
+ 
+ PROGRAM_ID=$(basename $0)
+ 
+@@ -62,7 +62,7 @@
+ typeset DHCP_ENABLED=true
+ typeset DHCP_CONFIGURED=true
+ typeset DHCP_RUNNING=true
+-typeset DHCP_PACKAGE="SUNWdhcsb"
++typeset DHCP_PACKAGE="isc-dhcp"
+ typeset DHCP_STATE="online"
+ 
+ DHTADM_P="${TMPDIR}/dhtadm-P.$$"
+@@ -105,12 +105,6 @@
+ 
+ DHCP_DIR="/var/dhcp"
+ 
+-#
+-# Variables that will be used ONLY if USE_FILES=true
+-#
+-DHCPTAB="${DHCP_DIR}/dhcptab"
+-DHCP_CONFIG="/etc/default/dhcp"
+-
+ function DetermineRelease
+ {
+     if [ -d /usr/lib/inet/dhcp ]; then
+@@ -132,98 +126,8 @@
+ exit 1
+ }
+ 
+-#
+-# Setup the DHCP configuration file
+-#  usage:  SetupCfgFile
+-# write a new dhcp config file for Sun Ray use.
+-#
+-function SetupCfgFile {
+-
+-  #
+-  # If this is a post S8U5 then use the non-interactive
+-  # dhcpconfig command to setup dhcp configuration file
+-  # in the correct location
+-  #
+-  if ! $USE_FILES ; then
+-    if ! $DHCP_ENABLED; then
+-	# NOTE: this will start up the dhcp daemon automatically
+-	dhcpconfig -D -r SUNWbinfiles -p ${DHCP_DIR} >/dev/null
+-	return $?
+-    fi
+-    return 0
+-  fi
+-
+-  #
+-  # This is a pre-S8U5 system. So we use the file location
+-  #
+-  # check if the config file exists
+-  if [ -f ${DHCP_CONFIG} ]; then
+-    TMPDIR=`sed -n 's/^PATH=//p' ${DHCP_CONFIG}`
+-    if [ ${TMPDIR} != ${DHCP_DIR} ]; then
+-	print -u2 "Warning: DHCP_DIR changed to ${TMPDIR}"
+-	DHCP_DIR=${TMPDIR}
+-	DHCPTAB="${DHCP_DIR}/dhcptab"
+-    fi
+-    return 0
+-  fi
+-
+-  # create a new ${DHCP_CONFIG} file that forces files and path for Sun Ray
+-  print "# This file controls the defaults for datastore type and location" > ${DHCP_CONFIG}
+-  print "# for the DHCP service. Two directives are currently supported," >> ${DHCP_CONFIG}
+-  print "# 'RESOURCE' and 'PATH'. 'RESOURCE' can be either 'files' or 'nisplus'." >> ${DHCP_CONFIG}
+-  print "# 'PATH' can be a unix pathname for 'files' resources, or a legal" >> ${DHCP_CONFIG}
+-  print "# nisplus directory for 'nisplus' resources." >> ${DHCP_CONFIG}
+-  print "RESOURCE=files" >> ${DHCP_CONFIG}
+-  print "PATH=${DHCP_DIR}" >> ${DHCP_CONFIG}
+-
+-  return 0
+-}
+-
+-#
+-# make the dhcptab file
+-#  usage:  SetupDhcptab <interfaces>
+-# create the table and add all the macros
+-#
+-function SetupDhcptab {
+-
+-  if $USE_FILES ; then
+-    # check if the dhcp dir exists in the proper place
+-    if [ ! -d ${DHCP_DIR} ]; then
+-	#
+-        # In the case of a freshly installed pre S8U5 machine
+-	# DHCP_DIR will not be present.
+-	# dhcp dir doesnt exist, so make it
+-	#
+-        mkdir -m 655 -p ${DHCP_DIR}
+-	if [ ${?} -ne 0 ]; then
+-	print -u2 "Error:  unable to create dhcp dir \"${DHCP_DIR}\".  check and retry"
+-	return 1
+-	fi
+-    fi
+-  fi
+-
+-  #
+-  # create a new dhcptab if there isn't one
+-  # 
+-  if ! dhtadm -C >/dev/null 2>&1; then
+-	# failed to create; lets check if it's already configured
+-	if ! $DHCP_ENABLED; then
+-	    # there was a failure, so complain and bail
+-	    print -u2 "Error:  unable to create dhcptab.  check and retry"
+-	    return 1
+-	fi
+-  fi
+-
+-  return 0
+-}
+-
+ function StatusDHCP {
+-    if [ "`uname -r`" = 5.10 ]; then
+-	    typeset PACKAGE="SUNWdhcsb SUNWdhcsu SUNWdhcsr"
+-    else
+-	    typeset PACKAGE="SUNWdhcsb SUNWdhcs SUNWdhcm"
+-    fi
+-   
++    typeset PACKAGE="isc-dhcp"
+     if [ -x $SVCS ] && [ $DHCP_STATE != "unconfigured" ]; then
+ 	SVCS_INFO_F="${TMPDIR}/svcs.$$"
+ 	rm -rf $SVCS_INFO_F 2> /dev/null
+@@ -254,10 +158,31 @@
+     if $DHCP_ENABLED ; then
+ 	return 3
+     fi
+-    SetupCfgFile && SetupDhcptab
+-    if [ $? -ne 0 ] ; then
+-	return 1
++
++    if [[ -f ${DHCP_CONFIG} ]]; then
++      dhcpd -t > /dev/null 2>&1
++      if [[ $? -ne 0 ]]; then
++         # the configuration file has incorrect syntax
++         # there may be "SunRay-ether-" entries added with
++         # "utfwadm -A -e ether" before DHCP is enabled
++         # save non-Sun Ray related content
++         grep -v "${SUNRAYFILEPATHPREFIX}" ${DHCP_CONFIG} > ${DHCP_CONFIG}.non-sunray
++         # keep Sun Ray entries in the configuration file
++         grep "${SUNRAYFILEPATHPREFIX}" ${DHCP_CONFIG} > ${DHCP_CONFIG}.$$
++         rm ${DHCP_CONFIG}
++         mv ${DHCP_CONFIG}.$$ ${DHCP_CONFIG}
++      fi
++    else
++      touch ${DHCP_CONFIG}
+     fi
++    cat > ${DHCP_CONFIG}.$$ <<-EOF
++ddns-update-style ad-hoc; # SUNRAY ADD
++EOF
++    cat ${DHCP_CONFIG} >> ${DHCP_CONFIG}.$$
++    rm ${DHCP_CONFIG}
++    mv ${DHCP_CONFIG}.$$ ${DHCP_CONFIG}
++
++    $SVCADM enable $DHCP_FMRI
+     return 0
+ }
+ 
+@@ -269,11 +194,30 @@
+     if $DHCP_CONFIGURED || $DHCP_RUNNING ; then
+       return 1
+     fi
+-    typeset OTHER_CONF=$(dhtadm -P 2>/dev/null | sed 1,2d)
+-    if [[ -z $OTHER_CONF ]]; then
+-	dhtadm -R >/dev/null 2>&1
+-	svcadm disable $DHCP_FMRI
++    cat > ${DHCP_CONFIG}.$$ <<-EOF
++ddns-update-style ad-hoc; # SUNRAY ADD
++EOF
++    diff ${DHCP_CONFIG} ${DHCP_CONFIG}.$$ 2>/dev/null 1>&2
++    if [[ $? == 0 ]]; then
++        rm -f ${DHCP_CONFIG}
++        if [[ -f ${DHCP_CONFIG}.sunray ]]; then
++            mv ${DHCP_CONFIG}.non-sunray ${DHCP_CONFIG}
++        fi
++        chkconfig --del dhcpd >/dev/null 2>&1
++        rm -f ${DHCP_CONFIG}.$$
++        if [[ -f ${DHCP_DIR}/db/dhcpd.leases ]]; then
++           rm -f ${DHCP_DIR}/db/dhcpd.leases
++        else
++           rm -f ${DHCP_DIR}/dhcpd.leases
++        fi
++        return 0
+     fi
++
++    sed -e '/ddns-update-style ad-hoc; # SUNRAY ADD/d' ${DHCPDCONF} > ${DHCPDCONF}.$$
++    rm -f ${DHCPDCONF}
++    mv ${DHCPDCONF}.$$ ${DHCPDCONF}
++
++    $SVCADM disable $DHCP_FMRI
+     return 0
+ }
+ 
+@@ -291,7 +235,7 @@
+ }
+ 
+ function GetDHCPpid {
+-  dhcppid=`pgrep in.dhcpd`
++  dhcppid=`pgrep dhcpd`
+ }
+ 
+ #
+@@ -369,26 +313,24 @@
+   DHCP_RUNNING=false
+   DHCP_STATE="uninstalled"
+ else
+-  rm -f $DHTADM_P 2> /dev/null
+-  dhtadm -P 2>/dev/null > $DHTADM_P
+-  if [[ $? != "0" ]]; then
+-    DHCP_ENABLED=false
+-    DHCP_CONFIGURED=false
+-    DHCP_RUNNING=false
++  DHCP_INSTALLED=true
++  DHCP_ENABLED=`$SVCS -l $DHCP_FMRI | grep enabled | awk '{print $2 }'`
++  DHCP_STATE=`$SVCS -Ho state $DHCP_FMRI`
++  DHCP_CONFIGURED=false
++  if [ $DHCP_STATE="online" ]; then
+     if [ ! -f $DHCP_SVC_CONF ]; then
+-      DHCP_STATE="unconfigured"
++        DHCP_STATE="unconfigured"
++    else
++        if grep "/etc/opt/SUNWut/net/dhcp/SunRay-options" $DHCP_SVC_CONF > /dev/null 2>&1; then
++            DHCP_CONFIGURED=true
++        fi
+     fi
++    DHCP_ENABLED=true
++    DHCP_RUNNING=true
+   else
+-    grep "SunRay-" $DHTADM_P >/dev/null 2>&1
+-    if [[ $? != "0" ]]; then
+-      DHCP_CONFIGURED=false	# Interface / subnet not defined
++    if grep "/etc/opt/SUNWut/net/dhcp/SunRay-options" $DHCP_SVC_CONF > /dev/null 2>&1; then
++      DHCP_CONFIGURED=true	# Interface / subnet not defined
+     fi
+-
+-    GetDHCPpid
+-    if [[ -z $dhcppid ]]; then
+-      DHCP_RUNNING=false
+-    fi
+-
+   fi
+ fi
+ 

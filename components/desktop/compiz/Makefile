@@ -13,35 +13,39 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	OpenGL compositing window manager
-COMPONENT_PROJECT_URL=	https//www.northfield.ws/
+COMPONENT_PROJECT_URL=	https://gitlab.com/compiz/compiz-core
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= sha256:b72744cc1ecef8bfa55d5994c7409e5178e34250b0f9f48fe0218184529a147f
-COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_URL=	https://gitlab.com/-/project/6566715/uploads/198c6cfb64ddfc07eecaf5b1aa183c55/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/compiz
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Window Managers
-COMPONENT_LICENSE=	MIT, LGPLv2.1, GPLv2
-COMPONENT_LICENSE_FILE=	compiz.license
+COMPONENT_LICENSE=	HPND-sell-variant AND LGPL-2.1-only AND GPL-2.0-only
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.MIT -----------------------------------------------------------\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.MIT ; \
+		printf '\n\n--- COPYING.LGPL ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL ; \
+		printf -- '--- COPYING.GPL -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPL \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
+
+# GNU gettext is needed
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -i -f )
-
-CFLAGS += -I/usr/include/librsvg-2.0
-
-CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-mate
 CONFIGURE_OPTIONS += --enable-marco
 CONFIGURE_OPTIONS += --disable-static
@@ -49,9 +53,9 @@ CONFIGURE_OPTIONS += --with-default-plugins=animation,core,ccp,dbus,decoration,f
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

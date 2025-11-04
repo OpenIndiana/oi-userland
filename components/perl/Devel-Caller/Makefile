@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Devel::Caller
+#   $WS_TOOLS/perl-integrate-module Devel-Caller
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Devel::Caller
+COMPONENT_NAME =		Devel-Caller
 HUMAN_VERSION =			2.07
-COMPONENT_SUMMARY =		Devel::Caller - meatier versions of caller
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		meatier versions of caller
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b679a2b18034b0b720de82c3708724c364b10a6ca164cbc67cdc3af283f3503f
@@ -29,6 +30,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/padwalker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

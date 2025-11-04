@@ -14,18 +14,17 @@
 #   $WS_TOOLS/python-integrate-project zstd
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstd
-HUMAN_VERSION =			1.5.5.1
-COMPONENT_SUMMARY =		zstd - ZSTD Bindings for Python
+HUMAN_VERSION =			1.5.7.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		ZSTD Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/sergey-dryabzhinsky/python-zstd
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ba/b4/bf8c6a6b73c6b267a13df955f821f041fcc770b56820b135849f33e3b888/zstd-1.5.5.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1ef980abf0e1e072b028d2d76ef95b476632651c96225cf30b619c6eef625672
+	sha256:6d8684c69009be49e1b18ec251a5eb0d7e24f93624990a8a124a1da66a92fc8a
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,5 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

@@ -12,15 +12,16 @@
 # Copyright (c) 2024 Till Wegmueller
 #
 
+DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL2_image
-COMPONENT_VERSION=	2.8.2
+COMPONENT_VERSION=	2.8.8
 COMPONENT_SUMMARY=	Simple DirectMedia Layer - Sample Image Loading Library
 COMPONENT_PROJECT_URL=	https://libsdl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8f486bbfbcf8464dd58c9e5d93394ab0255ce68b51c5a966a918244820a76ddc
+COMPONENT_ARCHIVE_HASH= sha256:2213b56fdaff2220d0e38c8e420cbe1a83c87374190cba8c70af2156097ce30a
 COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_image/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	image/library/sdl2-image
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -31,8 +32,6 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
-
-CONFIGURE_OPTIONS += --disable-png-shared
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/sdl2

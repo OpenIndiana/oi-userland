@@ -15,23 +15,37 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mojolicious
-HUMAN_VERSION =			9.36
-COMPONENT_SUMMARY =		Mojolicious - Real-time web framework
+COMPONENT_NAME =		Mojolicious
+HUMAN_VERSION =			9.42
+COMPONENT_SUMMARY =		Real-time web framework
 COMPONENT_CPAN_AUTHOR =		SRI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:517ecf6fd86a0b7c6169d55102238bf9851618db762fb00d4cf0d94c6252015f
+	sha256:2328b51da0371e416a85372b9acd04433f5213e997cbfae4ec84d4c63ee36c8a
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Mojolicious --> Cpanel-JSON-XS --> Mojolicious
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/role-tiny
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpanel-json-xs
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += runtime/perl

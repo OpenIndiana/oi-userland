@@ -11,28 +11,33 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyQt-builder
+#   $WS_TOOLS/python-integrate-project -d python/PyQt-builder pyqt_builder
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyQt-builder
-HUMAN_VERSION =			1.16.0
-COMPONENT_SUMMARY =		PyQt-builder - The PyQt build system
+COMPONENT_NAME =		pyqt_builder
+HUMAN_VERSION =			1.19.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		The PyQt build system
+COMPONENT_PROJECT_URL =		https://github.com/Python-PyQt/PyQt-builder
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:47bbd2cfa5430020108f9f40301e166cbea98b6ef3e53953350bdd4c6b31ab18
+	sha256:79540e001c476bc050180db00fffcb1e9fa74544d95c148e48ad6117e49d6ea2
 COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
+
+# This project is missing tests
+# https://github.com/Python-PyQt/PyQt-builder/issues/35
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/sip
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/sip
+REQUIRED_PACKAGES.python += runtime/python

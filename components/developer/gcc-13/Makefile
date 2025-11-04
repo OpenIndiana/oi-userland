@@ -12,15 +12,15 @@
 #
 #
 
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_VERSION= 13.2.0
-COMPONENT_REVISION= 3
+COMPONENT_VERSION= 13.4.0
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-  sha256:80821c441131ed24ed44a1bc4cc7ad3a636636e8e82cf97987b210de3d2ae9e4
+  sha256:c1be0251330f238724c564e0ba90972eaf24d356784b7465786f8dd3291151d8
 
 MPFR_VERSION=4.2.1
 MPFR_ARCHIVE_HASH= \
@@ -36,46 +36,55 @@ GMP_ARCHIVE_HASH= \
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
-CC=/usr/gcc/12/bin/gcc
-CXX=/usr/gcc/12/bin/g++
-
 CPPFLAGS+=" -D_TS_ERRNO"
 LDFLAGS="-R$OPT/lib"
 
-GCC_MAJOR="$(GCC_COMPONENT_VERSION_MAJOR)"
-PKG_VARS += GCC_MAJOR
-
-# Workaround platform definition inconsistency
-ifeq ($(strip $(BUILD_BITS)),64)
-PARCH = $(MACH:i386=x86_64-pc)
+# SPARC support.
+ifeq ($(MACH), sparc)
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cd $(SOURCE_DIR) && autogen Makefile.def && \
+	$(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/gmp_asm_sparcv9_cpuflags.patch
+CONFIGURE_OPTIONS+= --with-mulhigh-size=2048
+CONFIGURE_OPTIONS+= --with-cpu=ultrasparc
 else
-PARCH = $(MACH:i386=i386-pc)
-endif
-GNU_TRIPLET = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
-PKG_MACROS += GNU_TRIPLET="$(GNU_TRIPLET)"
-
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	cd $(SOURCE_DIR) && autogen Makefile.def
+endif
+
+COMPONENT_POST_INSTALL_ACTION = \
+	( cd $(PROTOUSRDIR)/gcc/13/bin ; \
+	  $(STRIP) \
+		cpp gcov gcov-dump gcov-tool go gofmt lto-dump \
+		$(GNU_TRIPLET)-g++ \
+		$(GNU_TRIPLET)-gccgo \
+		$(GNU_TRIPLET)-gcc-ar \
+		$(GNU_TRIPLET)-gcc-nm \
+		$(GNU_TRIPLET)-gfortran \
+		$(GNU_TRIPLET)-gcc-ranlib \
+		$(GNU_TRIPLET)-gcc-$(COMPONENT_VERSION) ; \
+	  cd ../lib/gcc/$(GNU_TRIPLET)/$(COMPONENT_VERSION) ; \
+	  $(STRIP) \
+		cc1* collect2 f951 g++-mapper-server go1 lto-wrapper lto1 )
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS+= --with-ld=$(LD) --without-gnu-ld
-CONFIGURE_OPTIONS+= --with-as=/usr/bin/gas --with-gnu-as
-CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/${TRIPLETS[amd64]}/bin
-CONFIGURE_OPTIONS+= --with-build-config=no
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,objc
-# CONFIGURE_OPTIONS+= --with-arch-32=i586
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --with-system-zlib
-CONFIGURE_OPTIONS+= --enable-plugins
-CONFIGURE_OPTIONS+= --enable-__cxa_atexit
-CONFIGURE_OPTIONS+= --enable-initfini-array
-# CONFIGURE_OPTIONS+= --disable-libitm
-CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
-CONFIGURE_OPTIONS+= enable_frame_pointer=yes
+CONFIGURE_OPTIONS += --with-build-time-tools=/usr/gnu/$(GNU_TRIPLET)/bin
+CONFIGURE_OPTIONS += --with-build-config=no
+CONFIGURE_OPTIONS += --enable-languages=c,c++,fortran,go,objc
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --with-system-zlib
+CONFIGURE_OPTIONS += --enable-plugins
+CONFIGURE_OPTIONS += --enable-__cxa_atexit
+CONFIGURE_OPTIONS += --enable-initfini-array
+CONFIGURE_OPTIONS += --with-diagnostics-urls=auto-if-env
+CONFIGURE_OPTIONS += enable_frame_pointer=yes
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+COMPONEMT_TEST_TRANSFORMS= -n \
+    "-e '/Running/p' " \
+    "-e '/Summary/p' " \
+    "-e '/\# of/p' "
 
 PKG_HARDLINKS += usr/gcc/13/bin/g++
 PKG_HARDLINKS += usr/gcc/13/bin/gcc

@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		check
 COMPONENT_VERSION=	0.15.2
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		developer/check
 COMPONENT_SUMMARY=	Unit Testing Framework for C
 COMPONENT_PROJECT_URL=	https://libcheck.github.io/check
@@ -53,6 +54,9 @@ COMPONENT_TEST_TRANSFORMS += \
         '-e "/PASS:/p" ' \
         '-e "/FAIL:/p" ' \
         '-e "/ERROR:/p" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += text/patchutils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

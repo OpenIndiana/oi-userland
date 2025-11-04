@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::SharedFork
+#   $WS_TOOLS/perl-integrate-module Test-SharedFork
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::SharedFork
+COMPONENT_NAME =		Test-SharedFork
 HUMAN_VERSION =			0.35
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::SharedFork - fork test
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		fork test
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2932e865610e80758f764c586757ef8e11db1284d958e25e4b7a85098414c59f
@@ -31,5 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-harness
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

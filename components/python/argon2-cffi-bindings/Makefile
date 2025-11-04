@@ -11,35 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project argon2-cffi-bindings
+#   $WS_TOOLS/python-integrate-project -d python/argon2-cffi-bindings argon2_cffi_bindings
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		argon2-cffi-bindings
-HUMAN_VERSION =			21.2.0
-COMPONENT_SUMMARY =		argon2-cffi-bindings - Low-level CFFI bindings for Argon2
-COMPONENT_PROJECT_URL =		https://github.com/hynek/argon2-cffi-bindings
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/e9/184b8ccce6683b0aa2fbb7ba5683ea4b9c5763f1356347f1312c32e3c66e/argon2-cffi-bindings-21.2.0.tar.gz
+COMPONENT_NAME =		argon2_cffi_bindings
+HUMAN_VERSION =			25.1.0
+COMPONENT_SUMMARY =		Low-level CFFI bindings for Argon2
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bb89ceffa6c791807d1305ceb77dbfacc5aa499891d2c55661c6459651fc39e3
+	sha256:b957f3e6ea4d55d820e40ff76f450952807013d361a65d7f28acc0acbf29229d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Disable some plugins to get tests passed
-PYTEST_ADDOPTS += -p no:mypy
-
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

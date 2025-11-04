@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-shell-utilities
+#   $WS_TOOLS/python-integrate-project -d python/pytest-shell-utilities pytest_shell_utilities
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-shell-utilities
-HUMAN_VERSION =			1.9.0
-COMPONENT_SUMMARY =		pytest-shell-utilities - Pytest plugin to simplify running shell commands against the system
+COMPONENT_NAME =		pytest_shell_utilities
+HUMAN_VERSION =			1.9.7
+COMPONENT_SUMMARY =		Pytest plugin to simplify running shell commands against the system
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-shell-utilities
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e9ae85f8c64dd2b95e35ed1f110a90e25d498cb1af946be7cf1b7f069c089499
+	sha256:84a2283333925b43780509ccfd3d5be0d7db243b7414b89f1b63954bbcc9d3ec
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,7 +44,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/pytest-skip-markers
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-declarative-requirements
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-skip-markers
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests

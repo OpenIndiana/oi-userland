@@ -11,25 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::OpenSSL::Bignum
+#   $WS_TOOLS/perl-integrate-module Crypt-OpenSSL-Bignum
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Bignum
+COMPONENT_NAME =		Crypt-OpenSSL-Bignum
 HUMAN_VERSION =			0.09
-COMPONENT_SUMMARY =		Crypt::OpenSSL::Bignum - OpenSSL's multiprecision integer arithmetic
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		OpenSSL's multiprecision integer arithmetic
 COMPONENT_CPAN_AUTHOR =		KMX
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:234e72fb8396d45527e6fd45e43759c5c3f3a208cf8f29e6a22161a996fd42dc
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library

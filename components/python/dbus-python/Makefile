@@ -1,105 +1,90 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2019 Michal Nowak
-# Copyright 2022 Gary Mills
-# Copyright 2023 Klaus Ziegler
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project dbus-python
 #
 
-BUILD_BITS= 64
-BUILD_STYLE= setup.py
-TEST_STYLE= pytest
-USE_COMMON_TEST_MASTER= yes
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         dbus-python
-COMPONENT_VERSION=      1.3.2
-COMPONENT_REVISION=		1
-COMPONENT_PROJECT_URL=  https://www.freedesktop.org/wiki/Software/DBusBindings/
-COMPONENT_SUMMARY=      Python bindings for D-Bus
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ad67819308618b5069537be237f8e68ca1c7fcc95ee4a121fe6845b1418248f8
-COMPONENT_ARCHIVE_URL=  https://dbus.freedesktop.org/releases/dbus-python/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         library/python/python-dbus
-COMPONENT_CLASSIFICATTION= Development/Python
-COMPONENT_LICENSE=      MIT
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_NAME =		dbus-python
+HUMAN_VERSION =			1.3.2
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Python bindings for libdbus
+COMPONENT_PROJECT_URL =		http://www.freedesktop.org/wiki/Software/DBusBindings/#python
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:ad67819308618b5069537be237f8e68ca1c7fcc95ee4a121fe6845b1418248f8
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	COPYING
 
-PATH= $(PATH.gnu)
+# The test style detection does not work properly because pytest is unable to
+# automatically discover tests (see below) so we need to force the style here
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-PYTHON_ENV += DBUS_PYTHON_USE_AUTOTOOLS=true
+# To get correct prefix in the pkgconfig file
+COMPONENT_BUILD_ARGS += -Csetup-args="--prefix=$(USRDIR)"
+# Set build-dir for meson-python to keep built artifacts needed to run tests
+COMPONENT_BUILD_ARGS += -Cbuild-dir="$(@D)/.bld"
 
-# Rename SO files to cpython names
-COMPONENT_POST_INSTALL_ACTION += \
-	EXT_SUFFIX=$(shell $(PYTHON) -c "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))") ; \
-	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_dbus_bindings.so $(PROTO_DIR)$(PYTHON_LIB)/_dbus_bindings$$EXT_SUFFIX ; \
-	$(MV) $(PROTO_DIR)$(PYTHON_LIB)/_dbus_glib_bindings.so $(PROTO_DIR)$(PYTHON_LIB)/_dbus_glib_bindings$$EXT_SUFFIX ;
+# Move include file(s) to the desired location
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOUSRINCDIR)/python$(PYTHON_VERSION)/dbus_python/* $(PROTOUSRINCDIR) ;
 
-# Copy some uninstalled files to make way for symlinks
+# Move the pkgconfig file to the desired location.
+# See also https://github.com/mesonbuild/meson-python/issues/240
 COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(PROTOUSRINCDIR)/dbus-1.0/dbus; \
-	$(CP) $(SOURCE_DIR)/include/dbus/dbus-python.h \
-	$(PROTOUSRINCDIR)/dbus-1.0/dbus/dbus-python.h-$(PYTHON_VERSION) ;
+	$(MKDIR) $(PROTO_DIR)$(PKG_CONFIG_PATH.$(BITS)) ; \
+	$(MV) $(PROTO_DIR)/$(PYTHON_LIB)/.dbus_python.mesonpy.libs/pkgconfig/*.pc $(PROTO_DIR)$(PKG_CONFIG_PATH.$(BITS)) ;
 
+# Rename headers and pkgconfig files to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
-	$(MKDIR) $(PROTOUSRLIBDIR64)/pkgconfig; \
-	$(GSED) -e 's|^prefix=.*$$|prefix=$(USRDIR)|' \
-	$(SOURCE_DIR)/dbus-python.pc.in \
-	> $(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i 's|^Version:.*$$|Version: $(COMPONENT_VERSION)|' \
-	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i 's|^exec_prefix=.*$$|exec_prefix=$$\{prefix\}|' \
-	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i 's|^includedir=.*$$|includedir=$$\{prefix\}/include/dbus-1.0/dbus/|' \
-	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i 's|^datarootdir=.*$$|datarootdir=$$\{prefix\}/share/|' \
-	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -i 's|^datadir=.*$$|datadir=$$\{datarootdir\}|' \
-	$(PROTOUSRLIBDIR64)/pkgconfig/dbus-python.pc-$(PYTHON_VERSION) ;
+	for f in $$(find $(PROTOUSRINCDIR) $(PROTO_DIR)$(PKG_CONFIG_PATH.$(BITS)) -type f) ; do \
+		[ -f $$f ] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[ "$$f" == "$${f%%$$v}" ] || continue 2 ; \
+		done ; \
+		$(MV) $$f $$f-$(PYTHON_VERSION) ; \
+	done ;
 
-COMPONENT_TEST_ENV=	PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+# Automatic test discovery does not work due to hyphen in file names instead of underscore.
+# See https://docs.pytest.org/en/stable/explanation/goodpractices.html#test-discovery
+COMPONENT_TEST_TARGETS += test/test-*.py
 
-# Tests require packages: pytest benchmark pyparsing
-COMPONENT_TEST_DIR=	$(COMPONENT_SRC)/test
-COMPONENT_TEST_CMD=     /usr/bin/pytest-$(PYTHON_VERSION)
-COMPONENT_TEST_ARGS=	test-*.py
+# Make sure testing is able to find built files
+COMPONENT_TEST_ENV += PYTHONPATH=$(@D)/.bld/test:$(PROTO_DIR)/$(PYTHON_LIB)
 
-# Disable test files that have import failures or produce only errors.
-COMPONENT_PRE_TEST_ACTION = \
-( cd $(COMPONENT_TEST_DIR); \
-  for F in test-unusable-main-loop.py test-client.py test-p2p.py \
-	test-signals.py test-service.py; \
-  do \
-    test -f $$F && $(MV) $$F $$F-not; \
-    true; \
-  done )
+# All tests in following files fails.  This needs further investigation.
+PYTEST_ADDOPTS += --deselect test/test-client.py
+PYTEST_ADDOPTS += --deselect test/test-p2p.py
+PYTEST_ADDOPTS += --deselect test/test-signals.py
+PYTEST_ADDOPTS += --deselect test/test-unusable-main-loop.py
 
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/passed/ {gsub(\"in.* =*\",\"\"); print $0}'"
+# Replace Python version in header and pkgconfig file names
+GENERATE_EXTRA_CMD += | $(GSED) \
+	-e 's/\(\.h-\)3\.[0-9]\{1,\}$$/\1$$(PYVER)/' \
+	-e 's/\(\.pc*-\)3\.[0-9]\{1,\}$$/\1$$(PYVER)/' \
+	| uniq
 
-# Added test dependencies for all python versions
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pyparsing
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+# See 01-ninja.patch
+REQUIRED_PACKAGES += developer/build/ninja
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/meson
+PYTHON_REQUIRED_PACKAGES += library/python/meson-python
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

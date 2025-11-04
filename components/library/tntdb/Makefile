@@ -14,12 +14,11 @@
 # Copyright 2022 Friedrich Kink
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tntdb
 COMPONENT_VERSION=      1.4
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 COMPONENT_SUMMARY=      C++ library to access SQL databases, easy and robust
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -56,7 +55,6 @@ CONFIGURE_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_BUILD_ENV += $(COMPONENT_COMMON_ENV)
 COMPONENT_INSTALL_ENV += $(COMPONENT_COMMON_ENV)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-mysql=yes
 CONFIGURE_OPTIONS += --with-postgresql=yes
 CONFIGURE_OPTIONS += --with-replicate=yes

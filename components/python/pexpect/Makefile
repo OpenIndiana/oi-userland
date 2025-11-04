@@ -14,13 +14,15 @@
 #   $WS_TOOLS/python-integrate-project pexpect
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pexpect
 HUMAN_VERSION =			4.9
-COMPONENT_SUMMARY =		pexpect - Pexpect allows easy control of interactive console applications.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Pexpect allows easy control of interactive console applications.
 COMPONENT_PROJECT_URL =		https://pexpect.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pexpect/pexpect/archive/refs/tags/$(HUMAN_VERSION).tar.gz
@@ -38,10 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += requirements-testing.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/ptyprocess
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/coveralls
+REQUIRED_PACKAGES.python += library/python/ptyprocess
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/ptyprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

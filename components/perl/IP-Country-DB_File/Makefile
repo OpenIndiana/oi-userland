@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IP::Country::DB_File
+#   $WS_TOOLS/perl-integrate-module IP-Country-DB_File
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IP::Country::DB_File
+COMPONENT_NAME =		IP-Country-DB_File
 HUMAN_VERSION =			3.03
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		IP::Country::DB_File - IPv4 and IPv6 to country translation using DB_File
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		IPv4 and IPv6 to country translation using DB_File
 COMPONENT_CPAN_AUTHOR =		NWELLNHOF
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c794cd1cfda173e86cabe62778a96c7c241a295541443a4530c0a692ed1841ea
@@ -31,5 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/db_file
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/libnet
 PERL_REQUIRED_PACKAGES += library/perl-5/math-int64
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += runtime/perl

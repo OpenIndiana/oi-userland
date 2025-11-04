@@ -10,7 +10,7 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
-# Copyright 2013 Klaus Ziegler
+# Copyright 2025 Klaus Ziegler
 #
 
 BUILD_STYLE = pkg
@@ -18,7 +18,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		install-types
-COMPONENT_VERSION =	6
+COMPONENT_VERSION =	22
 
 include $(WS_MAKE_RULES)/common.mk
 

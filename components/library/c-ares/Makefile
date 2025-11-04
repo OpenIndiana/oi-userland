@@ -21,35 +21,37 @@
 
 #
 # Copyright (c) 2020, Oracle and/or its affiliates.
-# Copyright (c) 2021, Andreas Wacknitz.
+# Copyright (c) 2024, Andreas Wacknitz.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c-ares
-COMPONENT_VERSION=	1.28.1
+COMPONENT_VERSION=	1.34.5
 COMPONENT_SUMMARY=	c-ares - C library for asynchronous DNS requests
 COMPONENT_DESCRIPTION=	c-ares is a C library for asynchronous DNS requests including name resolves
 COMPONENT_PROJECT_URL=	https://c-ares.haxx.se/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:675a69fc54ddbf42e6830bc671eeb6cd89eeca43828eb413243fd2c0a760809d
-COMPONENT_ARCHIVE_URL=	https://c-ares.haxx.se/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7d935790e9af081c25c495fd13c2cfcda4792983418e96358ef6e7320ee06346
+COMPONENT_ARCHIVE_URL=	https://github.com/c-ares/c-ares/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/libcares
 COMPONENT_CLASSIFICATION=	System/Libraries
 COMPONENT_LICENSE=		MIT
 COMPONENT_LICENSE_FILE=	LICENSE.md
 
-# We don't have Googletest.
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)
 
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --disable-dependency-tracking
+
+# At the moment we have 10 failing tests (out of 1110 total tests)
+
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += developer/googletest
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

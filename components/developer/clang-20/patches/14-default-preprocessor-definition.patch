@@ -1,0 +1,26 @@
+$NetBSD: patch-lib_Basic_Targets_OSTargets.h,v 1.4 2019/10/19 13:54:29 adam Exp $
+
+Sync SunOS default defines with a working reality.
+
+--- llvm-20.1.7.src/tools/clang/lib/Basic/Targets/OSTargets.h.orig
++++ llvm-20.1.7.src/tools/clang/lib/Basic/Targets/OSTargets.h
+@@ -620,14 +620,15 @@
+     Builder.defineMacro("__svr4__");
+     Builder.defineMacro("__SVR4");
+     Builder.defineMacro("_XOPEN_SOURCE", "600");
++    // Compatibility with GCC to satisfy <sys/feature_tests.h> requirements.
+     if (Opts.CPlusPlus) {
+-      Builder.defineMacro("__C99FEATURES__");
++      Builder.defineMacro("__STDC_VERSION__", "201112L");
+       Builder.defineMacro("_FILE_OFFSET_BITS", "64");
++      Builder.defineMacro("_LARGEFILE_SOURCE");
++      Builder.defineMacro("_LARGEFILE64_SOURCE");
++      Builder.defineMacro("__EXTENSIONS__");
+     }
+     // GCC restricts the next two to C++.
+-    Builder.defineMacro("_LARGEFILE_SOURCE");
+-    Builder.defineMacro("_LARGEFILE64_SOURCE");
+-    Builder.defineMacro("__EXTENSIONS__");
+     if (Opts.POSIXThreads)
+       Builder.defineMacro("_REENTRANT");
+     if (this->HasFloat128)

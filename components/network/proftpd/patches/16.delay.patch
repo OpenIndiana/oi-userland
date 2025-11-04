@@ -1,0 +1,233 @@
+#
+# changeset delivers two fixes:
+#   - adds sleep(1) which provides enough time to make
+#     sure server is ready. not sure why we need it for
+#     those tests. Perhaps because they run as a root.
+#
+#   - test no. 13 (appe_ok_abs_symlink_existing_chrooted_bug4219)
+#     can not succeed on Solaris, because test.d/test.lnk
+#     points outside of chroot. Therefore symlink is not
+#     accessible at all inside chroot.
+#
+# Those changes were not submitted to upstream. I suspect
+# those are rather Solaris specific workarounds.
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/APPE.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/APPE.pm
+@@ -176,6 +176,7 @@ sub appe_ok_raw_active {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 1, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -258,6 +259,7 @@ sub appe_ok_raw_passive {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 1, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -345,6 +347,7 @@ sub appe_ok_file_new {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -456,6 +459,7 @@ sub appe_ok_file_existing {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -547,6 +551,7 @@ sub appe_ok_files_new_and_existing_bug3612 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -719,6 +724,7 @@ sub appe_fails_abs_symlink_new {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -833,6 +839,7 @@ sub appe_fails_abs_symlink_new_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -955,6 +962,7 @@ sub appe_fails_rel_symlink_new {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1078,6 +1086,7 @@ sub appe_fails_rel_symlink_new_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1198,6 +1207,7 @@ sub appe_ok_abs_symlink_existing {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1324,27 +1334,24 @@ sub appe_ok_abs_symlink_existing_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+       my $conn = $client->appe_raw('test.d/test.lnk');
+-      unless ($conn) {
+-        die("APPE failed: " . $client->response_code() . " " .
++      if ($conn) {
++        die("Should not succeed on Solaris: " . $client->response_code() . " " .
+           $client->response_msg());
++      } else {
++        my $resp_code = $client->response_code();
++        my $resp_msg = $client->response_msg();
++        my $expected = 550;
++        $self->assert($expected == $resp_code,
++          test_msg("Expected response code $expected, got $resp_code"));
++        $expected = "test.d/test.lnk: No such file or directory";
++        $self->assert($expected eq $resp_msg,
++          test_msg("Expected response message '$expected', got '$resp_msg'"));
+       }
+-
+-      my $buf = "Foo!\n";
+-      $conn->write($buf, length($buf), 25);
+-      eval { $conn->close() };
+-
+-      my $resp_code = $client->response_code();
+-      my $resp_msg = $client->response_msg();
+-      $self->assert_transfer_ok($resp_code, $resp_msg);
+-
+-      my $expected = -s $test_file;
+-      my $size = length($buf);
+-      $self->assert($expected == $size,
+-        test_msg("Expected $expected, got $size"));
+     };
+     if ($@) {
+       $ex = $@;
+@@ -1451,6 +1458,7 @@ sub appe_ok_rel_symlink_existing {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1581,6 +1589,7 @@ sub appe_ok_rel_symlink_existing_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1668,6 +1677,7 @@ sub appe_fails_not_reg {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1781,6 +1791,7 @@ sub appe_fails_abs_symlink_not_reg {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1889,6 +1900,7 @@ sub appe_fails_abs_symlink_not_reg_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -1927,6 +1939,7 @@ sub appe_fails_abs_symlink_not_reg_chrooted_bug4219 {
+   }
+ 
+   # Stop server
++  sleep(5);
+   server_stop($setup->{pid_file});
+   $self->assert_child_ok($pid);
+ 
+@@ -2006,6 +2019,7 @@ sub appe_fails_rel_symlink_not_reg {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -2124,6 +2138,7 @@ sub appe_fails_rel_symlink_not_reg_chrooted_bug4219 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -2203,6 +2218,7 @@ sub appe_fails_login_required {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       my ($resp_code, $resp_msg);
+ 
+@@ -2289,6 +2305,7 @@ sub appe_fails_no_path {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 
+@@ -2400,6 +2417,7 @@ sub appe_fails_eperm {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 1, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+       $client->port();
+@@ -2493,6 +2511,7 @@ sub appe_hiddenstores_bug4144 {
+   defined(my $pid = fork()) or die("Can't fork: $!");
+   if ($pid) {
+     eval {
++      sleep(1);
+       my $client = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 0, 1);
+       $client->login($setup->{user}, $setup->{passwd});
+ 

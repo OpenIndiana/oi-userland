@@ -1,0 +1,48 @@
+From dacb8834463f13bf8eca4986757565fe6fee8e44 Mon Sep 17 00:00:00 2001
+From: "Joshua M. Clulow" <josh@sysmgr.org>
+Date: Mon, 14 Feb 2022 12:28:13 -0800
+Subject: [PATCH] illumos: more debug logging in illumos_find_interface()
+
+---
+ libusb/os/illumos_usb.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/libusb/os/illumos_usb.c b/libusb/os/illumos_usb.c
+index ec4b2721..76583f33 100644
+--- a/libusb/os/illumos_usb.c
++++ b/libusb/os/illumos_usb.c
+@@ -822,6 +822,7 @@ illumos_find_interface(struct libusb_device_handle *hdev,
+ 
+ 	r = libusb_get_active_config_descriptor(hdev->dev, &config);
+ 	if (r < 0) {
++		usbi_dbg(HANDLE_CTX(hdev), "could not get active desc");
+ 		return (LIBUSB_ERROR_INVALID_PARAM);
+ 	}
+ 
+@@ -830,16 +831,25 @@ illumos_find_interface(struct libusb_device_handle *hdev,
+ 		    &config->interface[iface_idx];
+ 		int altsetting_idx;
+ 
++		usbi_dbg(HANDLE_CTX(hdev), "check iface %d", iface_idx);
+ 		for (altsetting_idx = 0; altsetting_idx < iface->num_altsetting;
+ 		    altsetting_idx++) {
+ 			const struct libusb_interface_descriptor *altsetting =
+ 			    &iface->altsetting[altsetting_idx];
+ 			int ep_idx;
+ 
++			usbi_dbg(HANDLE_CTX(hdev), "check iface %d alt %d",
++			    iface_idx, altsetting_idx);
+ 			for (ep_idx = 0; ep_idx < altsetting->bNumEndpoints;
+ 			    ep_idx++) {
+ 				const struct libusb_endpoint_descriptor *ep =
+-					&altsetting->endpoint[ep_idx];
++				    &altsetting->endpoint[ep_idx];
++
++				usbi_dbg(HANDLE_CTX(hdev), "check iface %d "
++				    "alt %d ep_idx %d; has epa %02x",
++				    iface_idx, altsetting_idx, ep_idx,
++				    (uint32_t)ep->bEndpointAddress);
++
+ 				if (ep->bEndpointAddress == endpoint) {
+ 					*interface = iface_idx;
+ 					libusb_free_config_descriptor(config);

@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= smartmontools
-COMPONENT_VERSION= 7.4
+COMPONENT_VERSION= 7.5
 COMPONENT_SUMMARY= smartmontools contains utilities that control and monitor storage devices
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://www.smartmontools.org/
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e9a61f641ff96ca95319edfb17948cd297d0cd3342736b2c49c99d4716fb993d
+COMPONENT_ARCHIVE_HASH= sha256:690b83ca331378da9ea0d9d61008c4b22dde391387b9bbad7f29387f2595f76e
 COMPONENT_ARCHIVE_URL= https://sourceforge.net/projects/smartmontools/files/smartmontools/${COMPONENT_VERSION}/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -39,17 +39,14 @@ COMPONENT_LICENSE= GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION =  ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION=  ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-savestates
 CONFIGURE_OPTIONS += --with-attributelog
 CONFIGURE_OPTIONS += --with-drivedbdir=yes
 CONFIGURE_OPTIONS += --with-smartdscriptdir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --with-nvme-devicescan=yes
-CONFIGURE_OPTIONS += --with-gnupg=/usr/bin/gpg2
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 

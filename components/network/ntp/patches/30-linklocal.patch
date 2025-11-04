@@ -1,0 +1,13 @@
+https://bugs.ntp.org/show_bug.cgi?id=3943
+
+--- ntpd/ntp_io.c	2024-08-12 21:52:15 +0000
++++ ntpd/ntp_io.c	2024-08-12 21:52:15 +0000
+@@ -3205,7 +3205,7 @@
+ 	}
+ 
+ 	do {
+-		if (INT_LL_OF_GLOB & src->flags) {
++		if (ismcast && INT_LL_OF_GLOB & src->flags) {
+ 			/* avoid duplicate multicasts on same IPv6 net */
+ 			goto loop;
+ 		}

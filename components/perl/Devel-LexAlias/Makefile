@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Devel::LexAlias
+#   $WS_TOOLS/perl-integrate-module Devel-LexAlias
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Devel::LexAlias
+COMPONENT_NAME =		Devel-LexAlias
 HUMAN_VERSION =			0.05
-COMPONENT_SUMMARY =		Devel::LexAlias - alias lexical variables
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		alias lexical variables
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5e0ad9d43e266033856e424e104a0009f8e63449e40cd5aba59ad94cb1bcee72
@@ -30,5 +31,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-caller
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

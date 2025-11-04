@@ -1,0 +1,13 @@
+--- jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/screencast_pipewire.c.orig
++++ jdk23u-jdk-23.0.1-ga/src/java.desktop/unix/native/libawt_xawt/awt/screencast_pipewire.c
+@@ -37,6 +37,10 @@
+ #include "gtk_interface.h"
+ #include "gtk3_interface.h"
+ 
++#ifndef MAX
++#define MAX(a,b) ((a) > (b) ? (a) : (b))
++#endif
++
+ int DEBUG_SCREENCAST_ENABLED = FALSE;
+ 
+ #define EXCEPTION_CHECK_DESCRIBE() if ((*env)->ExceptionCheck(env)) { \

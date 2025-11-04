@@ -25,6 +25,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-session-manager
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	0
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY=	The Session manager and session startup stuff
 COMPONENT_ARCHIVE_HASH= sha256:d32ce4595ba1da65290777203f2bc82bd973b214a3a04080a1ef5c68990a2d7b
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
@@ -34,6 +35,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Build requirements
 REQUIRED_PACKAGES += x11/library/xtrans
+REQUIRED_PACKAGES += developer/build/autoconf-archive
+
+## A note on nvidia dependencies. In order to things to properly depend on libGL or libEGL we have a line in the manifest.
+## Whoever rebuilds this will need to remove the REQUIRED_PACKAGES lines generated manually as we have no filtering mechanism
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -52,3 +57,4 @@ REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES += x11/library/mesa

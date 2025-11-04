@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dirty_equals
-HUMAN_VERSION =			0.7.1.post0
-COMPONENT_SUMMARY =		dirty_equals - Doing dirty (but extremely useful) things with equals.
+HUMAN_VERSION =			0.10.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Doing dirty (but extremely useful) things with equals.
 COMPONENT_PROJECT_URL =		https://github.com/samuelcolvin/dirty-equals
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78ff80578a46163831ecb3255cf30d03d1dc2fbca8e67f820105691a1bc556dc
+	sha256:623d7a07c5ba437f1a834c6246d1e3eb97238ca70331c61a499d9aabd757b899
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,19 +46,25 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += requirements/tests.in
-TEST_REQUIREMENTS_EXTRAS += pydantic
+TEST_REQUIREMENTS_PEP735 += dev
 
 # We do not have pytest-examples packaged yet.
 PYTEST_ADDOPTS += --ignore tests/test_docs.py
 
+# This is needed for few tests to pass
+# See also https://github.com/samuelcolvin/dirty-equals/issues/97
+COMPONENT_TEST_ENV += TZ=UTC
+
+# Normalize random uuids
+COMPONENT_TEST_TRANSFORMS += "-e 's/\[[0-9a-f]\{8\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{4\}-[0-9a-f]\{12\}-/[\$$(UUID)-/g'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/pytz
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pydantic
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
+TEST_REQUIRED_PACKAGES.python += library/python/types-pytz

@@ -28,13 +28,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.13
+COMPONENT_VERSION=	1.14
 COMPONENT_SUMMARY=	The GNU Zip (gzip) compression utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:7454eb6935db17c6655576c2e1b0fabefd38b4d0936e0f87f48cd062ce91a057
+COMPONENT_ARCHIVE_HASH= sha256:01a7b881bd220bfdf615f97b8718f80bdfd3f6add385b993dcf6efd14e8c0ac6
 COMPONENT_FMRI=		compress/gzip
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
@@ -74,13 +74,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
 # Note that the tests need to be run without extra privileges otherwise some tests may fail or skipped.
-#
-# If SHELLOPTS is exported (as it is by the userland makefiles),
-# then all shell options get exported to child invocations of bash,
-# which results in test failures due to nounset and xtrace being
-# set unexpectedly, and errors such as "$1: unbound variable" and
-# diffs failing due to script tracing in output files.
-unexport SHELLOPTS
 
 # Get the binaries to test from the component build area.
 COMPONENT_TEST_ENV += PATH=$(BUILD_DIR_$(BITS)):$(PATH.gnu)

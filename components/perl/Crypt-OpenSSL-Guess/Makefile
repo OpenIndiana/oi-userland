@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::OpenSSL::Guess
+#   $WS_TOOLS/perl-integrate-module Crypt-OpenSSL-Guess
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::OpenSSL::Guess
+COMPONENT_NAME =		Crypt-OpenSSL-Guess
 HUMAN_VERSION =			0.15
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Crypt::OpenSSL::Guess - Guess OpenSSL include path
+COMPONENT_REVISION =		6
+COMPONENT_SUMMARY =		Guess OpenSSL include path
 COMPONENT_CPAN_AUTHOR =		AKIYM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1c5033381819fdb4c9087dd291b90ec70e7810d31d57eade9b388eccfd70386d
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

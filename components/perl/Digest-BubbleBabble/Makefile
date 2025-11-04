@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Digest::BubbleBabble
+#   $WS_TOOLS/perl-integrate-module Digest-BubbleBabble
 #
 
 BUILD_STYLE = makemaker
@@ -19,10 +19,10 @@ USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Digest::BubbleBabble
+COMPONENT_NAME =		Digest-BubbleBabble
 HUMAN_VERSION =			0.02
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Digest::BubbleBabble - Create bubble-babble fingerprints
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Create bubble-babble fingerprints
 COMPONENT_CPAN_AUTHOR =		BTROTT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:80cfb2d2e43d6f79400658600567d2a270b145b4eef5aea58a66957788225c00
@@ -34,4 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_CONFIGURE_ENV += PERL5LIB=$(@D)
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/filter
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

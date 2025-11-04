@@ -19,20 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		calver
-HUMAN_VERSION =			2022.6.26
-COMPONENT_SUMMARY =		calver - Setuptools extension for CalVer package versions
+HUMAN_VERSION =			2025.10.20
+COMPONENT_SUMMARY =		Setuptools extension for CalVer package versions
 COMPONENT_PROJECT_URL =		https://github.com/di/calver
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b5/00/96cbed7c019c49ee04b8a08357a981983db7698ae6de402e57097cefc9ad/calver-2022.6.26.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e05493a3b17517ef1748fbe610da11f10485faa7c416b9d33fd4a52d74894f8b
+	sha256:c98b376c2424642224d456b2f70c51402343e008c63d204634665e1a2a2835f5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - trove-classifiers (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pretend
+TEST_REQUIRED_PACKAGES.python += library/python/pytest

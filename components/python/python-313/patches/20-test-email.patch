@@ -1,0 +1,12 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_email/test_utils.py a/Lib/test/test_email/test_utils.py
+--- a~/Lib/test/test_email/test_utils.py	1970-01-01 00:00:00
++++ a/Lib/test/test_email/test_utils.py	1970-01-01 00:00:00
+@@ -143,6 +143,8 @@ class LocaltimeTests(unittest.TestCase):
+         t2 = utils.localtime(t0.replace(tzinfo=None))
+         self.assertEqual(t1, t2)
+ 
++    @unittest.skipIf(sys.platform.startswith("sunos"),
++                     "The Kyiv database on SunOS puts 1984 in EET")
+     @test.support.run_with_tz('Europe/Kyiv')
+     def test_variable_tzname(self):
+         t0 = datetime.datetime(1984, 1, 1, tzinfo=datetime.timezone.utc)

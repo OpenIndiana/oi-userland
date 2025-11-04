@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::Parser
+#   $WS_TOOLS/perl-integrate-module XML-Parser
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::Parser
+COMPONENT_NAME =		XML-Parser
 HUMAN_VERSION =			2.47
-COMPONENT_SUMMARY =		XML::Parser - A perl module for parsing XML documents
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		A perl module for parsing XML documents
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ad4aae643ec784f489b956abe952432871a622d4e2b5c619e8855accbfc4d1d8
@@ -30,7 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

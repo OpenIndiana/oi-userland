@@ -1,0 +1,18 @@
+Running some sub-tests in process groups causes tests to hang - the reason is
+not yet known.
+Disable the use of process groups for now.
+
+This patch comes from OmniOS.
+
+--- Python-3.14.0/Lib/test/libregrtest/worker.py.orig
++++ Python-3.14.0/Lib/test/libregrtest/worker.py
+@@ -13,7 +13,8 @@
+     get_temp_dir, get_work_dir, exit_timeout)
+ 
+ 
+-USE_PROCESS_GROUP = (hasattr(os, "setsid") and hasattr(os, "killpg"))
++USE_PROCESS_GROUP = (hasattr(os, "setsid") and hasattr(os, "killpg")
++    and not sys.platform.startswith("sunos"))
+ NEED_TTY = {
+     'test_ioctl',
+ }

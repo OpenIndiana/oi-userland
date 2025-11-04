@@ -12,15 +12,15 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2016 Jim Klimov
+# Copyright 2024 Klaus Ziegler
 #
 
-BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libzmq
 COMPONENT_VERSION= 4.3.5
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Open source message queue optimised for performance
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -44,16 +44,10 @@ COMPONENT_PREP_ACTION = \
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-# Build docs just once (for one ARCH), parameter varies from version to version
-CONFIGURE_OPTIONS.32 +=	--with-docs
-CONFIGURE_OPTIONS.64 +=	--without-docs
-CONFIGURE_OPTIONS +=	--enable-static=no
-CONFIGURE_OPTIONS +=	--with-libsodium
-CONFIGURE_OPTIONS +=	--sysconfdir=/etc
-CONFIGURE_OPTIONS +=	--localstatedir=/var
-
-# Necessary for tests
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += --with-docs
+CONFIGURE_OPTIONS += --enable-static=no
+CONFIGURE_OPTIONS += --with-libsodium
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 
 # Build time dependencies (both needed for documentation)
 REQUIRED_PACKAGES +=text/asciidoc

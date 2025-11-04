@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1_modules
-HUMAN_VERSION =			0.4.0
-COMPONENT_SUMMARY =		pyasn1_modules - A collection of ASN.1-based protocols modules
+HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A collection of ASN.1-based protocols modules
 COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1-modules
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:831dbcea1b177b28c9baddf4c6d1013c24c3accd14a1873fffaa6a2e905f17b6
+	sha256:677091de870a80aae844b1ca6134f54652fa2c8c5a52aa396440ac3106e941e6
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,7 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyasn1
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pyasn1
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

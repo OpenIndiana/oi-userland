@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Eval::Closure
+#   $WS_TOOLS/perl-integrate-module Eval-Closure
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Eval::Closure
+COMPONENT_NAME =		Eval-Closure
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Eval::Closure - safely and cleanly create closures via string eval
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		safely and cleanly create closures via string eval
 COMPONENT_CPAN_AUTHOR =		DOY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ea0944f2f5ec98d895bef6d503e6e4a376fea6383a6bc64c7670d46ff2218cad
@@ -30,9 +30,15 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-output
+
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-lexalias
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/perl-tidy
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

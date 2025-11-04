@@ -1,0 +1,31 @@
+diff --git a/src/libs/zbxipcservice/ipcservice.c b/src/libs/zbxipcservice/ipcservice.c
+index b1e40ea..8166dce 100644
+--- a/src/libs/zbxipcservice/ipcservice.c
++++ b/src/libs/zbxipcservice/ipcservice.c
+@@ -1022,7 +1022,7 @@
+  ******************************************************************************/
+ static void	ipc_service_init_libevent(void)
+ {
+-	event_set_log_callback(ipc_service_event_log_cb);
++	/* event_set_log_callback(ipc_service_event_log_cb); */
+ }
+ 
+ /******************************************************************************
+diff --git a/m4/libevent.m4 b/m4/libevent.m4
+index d87aca4..67aeccd 100644
+--- a/m4/libevent.m4
++++ b/m4/libevent.m4
+@@ -38,8 +38,11 @@
+ 				if test -f /usr/local/include/event2/event.h; then withval=/usr/local; else withval=/usr; fi
+ 			fi
+ 
+-			LIBEVENT_CFLAGS="-I$withval/include"
+-			LIBEVENT_LDFLAGS="-L$withval/lib"
++			# dont assign default paths
++			if test "x$withval" != "x/usr"; then
++				LIBEVENT_CFLAGS="-I$withval/include"
++				LIBEVENT_LDFLAGS="-L$withval/lib"
++			fi
+ 			_libevent_dir_set="yes"
+ 		]
+ 	)

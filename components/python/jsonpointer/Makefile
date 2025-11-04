@@ -14,24 +14,25 @@
 #   $WS_TOOLS/python-integrate-project jsonpointer
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonpointer
-HUMAN_VERSION =			2.4
-COMPONENT_SUMMARY =		jsonpointer - Identify specific nodes in a JSON document (RFC 6901)
+HUMAN_VERSION =			3.0.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Identify specific nodes in a JSON document (RFC 6901)
 COMPONENT_PROJECT_URL =		https://github.com/stefankoegl/python-json-pointer
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8f/5e/67d3ab449818b629a0ffe554bb7eb5c030a71f7af5d80fbf670d7ebe62bc/jsonpointer-2.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:585cee82b70211fa9e6043b7bb89db6e1aa49524340dde8ad6b63206ea689d88
+	sha256:2b2d729f2091522d61c3b31f82e11870f60b68f43fbc705cb76bf4b832af59ef
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = setup.py
+TEST_STYLE = unittest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

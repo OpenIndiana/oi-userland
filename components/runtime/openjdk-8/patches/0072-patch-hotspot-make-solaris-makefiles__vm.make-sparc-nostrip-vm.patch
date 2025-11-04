@@ -1,0 +1,21 @@
+--- hotspot/make/solaris/makefiles/vm.make.orig	2025-05-15 12:30:15.397626896 +0200
++++ hotspot/make/solaris/makefiles/vm.make	2025-05-15 18:53:01.307625508 +0200
+@@ -310,12 +310,14 @@
+ ifeq ($(ENABLE_FULL_DEBUG_SYMBOLS),1)
+ 	$(QUIETLY) $(OBJCOPY) --only-keep-debug $@ $(LIBJVM_DEBUGINFO)
+ 	$(QUIETLY) $(OBJCOPY) --add-gnu-debuglink=$(LIBJVM_DEBUGINFO) $@
+-  ifeq ($(STRIP_POLICY),all_strip)
++  ifeq ($(BUILDARCH), amd64)
++    ifeq ($(STRIP_POLICY),all_strip)
+ 	$(QUIETLY) $(STRIP) $@
+-  else
+-    ifeq ($(STRIP_POLICY),min_strip)
++    else
++      ifeq ($(STRIP_POLICY),min_strip)
+ 	$(QUIETLY) $(STRIP) -x $@
+-    # implied else here is no stripping at all
++      # implied else here is no stripping at all
++      endif
+     endif
+   endif
+   ifeq ($(ZIP_DEBUGINFO_FILES),1)

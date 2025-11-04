@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Archive::Zip
+#   $WS_TOOLS/perl-integrate-module Archive-Zip
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Archive::Zip
+COMPONENT_NAME =		Archive-Zip
 HUMAN_VERSION =			1.68
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Archive::Zip - Provide an interface to ZIP archive files.
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Provide an interface to ZIP archive files.
 COMPONENT_CPAN_AUTHOR =		PHRED
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:984e185d785baf6129c6e75f8eb44411745ac00bf6122fb1c8e822a3861ec650
@@ -30,4 +30,11 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/compress-raw-zlib
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/time-local
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

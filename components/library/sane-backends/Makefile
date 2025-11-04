@@ -23,12 +23,11 @@
 # Copyright (c) 2023, Klaus Ziegler
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.1.1
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 9
 COMPONENT_SUMMARY=      SANE library and backends
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -42,9 +41,12 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# gcc-14 complains about these
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
+
 LDFLAGS += -lnsl -lsocket
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --disable-locking
 CONFIGURE_OPTIONS += --enable-pthread
 CONFIGURE_OPTIONS += --with-gphoto2
@@ -57,7 +59,6 @@ COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo

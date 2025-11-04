@@ -1,0 +1,21 @@
+Oracle Bug 14921397 - SUNBT1264008 Resource file ignored when XtSetLanguageProc
+    called
+
+When LANG=en_US, even when LC_NUMERIC=C, an application should look at its
+resources file in XAPPLRESDIR/%L, with %L=LANG=en_US.
+
+Here, when LC_NUMERIC=C, it looks in XAPPLRESDIR (it ignores %L). 
+
+Need to evaluate for submission upstream.
+
+--- a/src/Initialize.c	2022-11-07 19:16:54.921319439 -0800
++++ b/src/Initialize.c	2022-11-07 19:17:14.904036584 -0800
+@@ -487,7 +487,7 @@
+     if (!XSetLocaleModifiers(""))
+         XtWarning("X locale modifiers not supported, using default");
+ 
+-    return setlocale(LC_ALL, NULL);     /* re-query in case overwritten */
++    return setlocale(LC_CTYPE, NULL); /* re-query in case overwritten */
+ }
+ 
+ XtLanguageProc

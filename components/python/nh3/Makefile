@@ -15,14 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+CARGO_VENDOR = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nh3
-HUMAN_VERSION =			0.2.17
-COMPONENT_SUMMARY =		nh3 - Python bindings to the ammonia HTML sanitization library.
+HUMAN_VERSION =			0.3.1
+COMPONENT_SUMMARY =		Python binding to Ammonia HTML sanitizer Rust crate
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:40d0741a19c3d645e54efba71cb0d8c475b59135c1e3c580f879ad5514cbf028
+	sha256:6a854480058683d60bdc7f0456105092dae17bef1f300642856d74bd4201da93
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -30,11 +31,9 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://www.illumos.org/issues/15767
-LD_Z_IGNORE=
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/maturin
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += library/python/maturin
+REQUIRED_PACKAGES.python += runtime/python

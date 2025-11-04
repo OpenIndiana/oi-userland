@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		pmtools
+COMPONENT_NAME =		pmtools
 HUMAN_VERSION =			2.2.0
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		pmtools - Perl Module Tools
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl Module Tools
 COMPONENT_CPAN_AUTHOR =		MLFISHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2cc88d4408d5c3fcdd06de2ddb9e330b8fd55eb5450f89f8333f44b0b86bc7b8
@@ -31,4 +31,5 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

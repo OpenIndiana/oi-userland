@@ -1,0 +1,24 @@
+#
+# this fixes a failure in 'auth_file_symlink_segfault_bug4145'
+# (test case 24 in t/modules/mod_auth_file.t). The test fails
+# because symlink is not resolved properly as shown in log:
+#    2022-08-18 09:11:25,122 ST-ul-cbe proftpd[21479]: mod_auth_file/1.0: \
+#    unable to stat AuthUserFile \
+#    '/scratch/userland-gate/components/proftpd/build/amd64/tests/../../authfile.passwd': No such file or directory
+#
+# using a real path instead of abs path fixes the failure.
+# patch has been been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1526
+#
+
+--- a/modules/mod_auth_file.c
++++ b/modules/mod_auth_file.c
+@@ -181,7 +181,7 @@ static int af_check_file(pool *p, const char *name, const char *path,
+       /* The path contained in the symlink might itself be relative, thus
+        * we need to make sure that we get an absolute path (Bug#4145).
+        */
+-      path = dir_abs_path(p, buf, FALSE);
++      path = dir_realpath(p, buf);
+       if (path != NULL) {
+         orig_path = path;
+       }

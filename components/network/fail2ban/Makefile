@@ -10,26 +10,30 @@
 #
 
 #
-# Copyright 2024 Geoff Weiss
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d network/fail2ban fail2ban
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= fail2ban
-COMPONENT_VERSION= 1.0.2
-COMPONENT_SUMMARY= Ban hosts that cause multiple authentication errors
-COMPONENT_PROJECT_URL= https://www.fail2ban.org
-COMPONENT_FMRI= network/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION= System/Services
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_URL= https://github.com/fail2ban/fail2ban/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ae8b0b41f27a7be12d40488789d6c258029b23a01168e3c0d347ee80b325ac23
-COMPONENT_LICENSE= GPLv2
-
+COMPONENT_NAME =		fail2ban
+HUMAN_VERSION =			1.1.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Daemon to ban hosts that cause multiple authentication errors
+COMPONENT_PROJECT_URL =		https://www.fail2ban.org
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/fail2ban/fail2ban/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:474fcc25afdaf929c74329d1e4d24420caabeea1ef2e041a267ce19269570bae
+COMPONENT_LICENSE =		GPL-2.0-only AND MIT
 COMPONENT_LICENSE_FILE =	COPYING
+
+TEST_STYLE = pytest
+
+COMPONENT_CLASSIFICATION=	System/Services
+COMPONENT_FMRI =		network/fail2ban
 
 # This is a standalone application.  Since no other Python project depends on
 # it we just provide single unversioned package.
@@ -37,31 +41,20 @@ SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION +=  \
-	cd $(SOURCE_DIR) ; \
-	./fail2ban-2to3
-
-COMPONENT_BUILD_CMD = $(PYTHON) setup.py build
-COMPONENT_INSTALL_CMD = $(PYTHON) setup.py install
-COMPONENT_INSTALL_ARGS += --prefix=/usr
-COMPONENT_INSTALL_ARGS += --root=$(PROTO_DIR)
-COMPONENT_INSTALL_ARGS += --skip-build
-
-# Install SMF manifest files. Remove paths files for other OS's. 
+# Compile Python file(s) at non-default location
+COMPONENT_POST_INSTALL_ACTION += $(PYTHON) -mcompileall $(PROTOETCDIR) ;
+# Install SMF manifest files.
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -D $(SOURCE_DIR)/files/solaris-svc-fail2ban $(PROTOLIBDIR)/svc/method/svc-fail2ban ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -D $(SOURCE_DIR)/files/solaris-fail2ban.xml $(PROTOLIBDIR)/svc/manifest/network/solaris-fail2ban.xml ;
+# Remove paths files for other OS's.
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-arch.conf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-debian.conf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-fedora.conf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-freebsd.conf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-opensuse.conf ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fail2ban/paths-osx.conf ;
 # Add openindiana paths file.
-COMPONENT_POST_INSTALL_ACTION += \
-	$(PYTHON) -mcompileall $(PROTO_DIR) ; \
-	$(MKDIR) $(PROTO_DIR)/lib/svc/method ; \
-	$(CP) $(SOURCE_DIR)/files/solaris-svc-fail2ban $(PROTO_DIR)/lib/svc/method/svc-fail2ban ; \
-	$(MKDIR) $(PROTO_DIR)/lib/svc/manifest/network ; \
-	$(CP) $(SOURCE_DIR)/files/solaris-fail2ban.xml $(PROTO_DIR)/lib/svc/manifest/network ; \
-	$(CP) $(COMPONENT_DIR)/files/paths-openindiana.conf $(PROTO_DIR)/etc/fail2ban ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-arch.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-debian.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-fedora.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-freebsd.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-opensuse.conf ; \
-	rm -f $(PROTO_DIR)/etc/fail2ban/paths-osx.conf ; 
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -D $(COMPONENT_DIR)/files/paths-openindiana.conf $(PROTO_DIR)/etc/fail2ban/paths-openindiana.conf ;
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

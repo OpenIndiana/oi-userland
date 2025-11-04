@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Needs
+#   $WS_TOOLS/perl-integrate-module Test-Needs
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Needs
+COMPONENT_NAME =		Test-Needs
 HUMAN_VERSION =			0.002010
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::Needs - Skip tests when modules not available
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Skip tests when modules not available
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:923ffdc78fcba96609753e4bae26b0ba0186893de4a63cd5236e012c7c90e208
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Variable::OnDestruct
+#   $WS_TOOLS/perl-integrate-module Variable-OnDestruct
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Variable::OnDestruct
+COMPONENT_NAME =		Variable-OnDestruct
 HUMAN_VERSION =			0.09
-COMPONENT_SUMMARY =		Variable::OnDestruct - Call a subroutine on destruction of a variable.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Call a subroutine on destruction of a variable.
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7add0e8d81c2ff0f4e6b30ec98cb06c1e0058e89ceafccffea3695ce4674d0dc
@@ -33,3 +34,4 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -11,26 +11,32 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module PPIx::Utils
+#   $WS_TOOLS/perl-integrate-module PPIx-Utils
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PPIx::Utils
-HUMAN_VERSION =			0.003
-COMPONENT_SUMMARY =		PPIx::Utils - Utility functions for PPI
+COMPONENT_NAME =		PPIx-Utils
+HUMAN_VERSION =			0.004
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Utility functions for PPI
 COMPONENT_CPAN_AUTHOR =		DBOOK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2a9bccfc8ead03be01b67248fe8e152522040f798286fa4ef4432b7f2efdba11
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:336918d56ac9482d248d2ca6e79ed7f2cc67403fbdecdd73a9c414a034adb3cf
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/b-keywords
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/ppi
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/ppi
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

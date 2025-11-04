@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTML::TableExtract
+#   $WS_TOOLS/perl-integrate-module HTML-TableExtract
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTML::TableExtract
+COMPONENT_NAME =		HTML-TableExtract
 HUMAN_VERSION =			2.15
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		HTML::TableExtract - Perl module for extracting the content contained in tables within an HTML document, either as text or encoded element trees.
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl module for extracting the content contained in tables within an HTML document, either as text or encoded element trees.
 COMPONENT_CPAN_AUTHOR =		MSISK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:86c59c9d58da3ca174da5e62f5a0fb02f4da02b1b1e01df9e5d14bb65e4c3ecf
@@ -31,6 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/html-element-extended
 PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
 PERL_REQUIRED_PACKAGES += runtime/perl

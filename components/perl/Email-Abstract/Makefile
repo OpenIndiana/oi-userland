@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::Abstract
+#   $WS_TOOLS/perl-integrate-module Email-Abstract
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Email::Abstract
+COMPONENT_NAME =		Email-Abstract
 HUMAN_VERSION =			3.010
-COMPONENT_SUMMARY =		Email::Abstract - unified interface to mail representations
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		unified interface to mail representations
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8c12f68b5974cafc99d74942abefc8597193035aafd2763128e6aaafca4b7ed6
@@ -31,6 +32,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/email-simple
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-pluggable
 PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

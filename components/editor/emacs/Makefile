@@ -28,11 +28,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      29.3
+COMPONENT_VERSION=      30.2
+COMPONENT_REVISION=     1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c34c05d3ace666ed9c7f7a0faf070fea3217ff1910d004499bd5453233d742a0
+COMPONENT_ARCHIVE_HASH= sha256:b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -55,11 +56,6 @@ $(VARIANTS:%=%/.configured):	BITS=64
 BUILD_64= $(VARIANTS:%=%/.built)
 INSTALL_64= $(VARIANTS:%=%/.installed)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
 CFLAGS += $(shell pkg-config --cflags lcms2)
 
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
@@ -70,6 +66,9 @@ LD_MAP_NOEXDATA.sparc=
 # LDFLAGS is defined for emacs to detect ncurses
 LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
+# We have patched configure.ac for newer webkitgtk2 support
+COMPONENT_PREP_ACTION = ( cd ${@D} && NOCONFIGURE=1 ./autogen.sh )
+
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
@@ -77,6 +76,10 @@ LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 # The configure script runs the pkg-config command. Since we're building
 # 64-bit executables, we need pkg-config to use the 64-bit metadata files
 CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+
+PKG_HARDLINKS += usr/bin/emacs-nox
+PKG_HARDLINKS += usr/bin/emacs-x
+PKG_HARDLINKS += usr/bin/emacs-gtk
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
@@ -94,7 +97,7 @@ CONFIGURE_OPTIONS +=	--with-sqlite3
 CONFIGURE_OPTIONS +=	--with-tiff
 CONFIGURE_OPTIONS +=	--with-toolkit-scroll-bars
 CONFIGURE_OPTIONS +=	--with-webp
-CONFIGURE_OPTIONS +=	--with-treesitter
+CONFIGURE_OPTIONS +=	--with-tree-sitter
 CONFIGURE_OPTIONS +=	--with-sound=oss
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
@@ -110,7 +113,7 @@ ASLR_MODE = $(ASLR_DISABLE)
 LD_OPTIONS+= $(ASLR_MODE)
 
 # variant specific configure options
-$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-all --without-x
+$(BUILD_DIR)/%-nox/.configured:  CONFIGURE_OPTIONS +=	--without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
 $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk3 --with-xwidgets
 
@@ -215,9 +218,21 @@ COMPONENT_POST_INSTALL_ACTION += $(GUNZIP) \
 # Solaris, it is delivered by system/prerequisite/gnu.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
+# Add enough emacs sources such that xref-find-definitions is able to show functions definitions of internal functions.
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/src ; \
+	$(CP) $(SOURCE_DIR)/src/*.[ch] $(PROTO_DIR)/usr/share/emacs/$(COMPONENT_VERSION)/src/ ;
+
+# Create site-start.el for actual version
+COMPONENT_POST_UNPACK_ACTION += \
+	$(GSED) -e 's/COMPONENT_VERSION/$(COMPONENT_VERSION)/' $(COMPONENT_DIR)/augment/source.el >$(COMPONENT_DIR)/site-start.el ;
+
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed
 
-# build dependencies.
+clean::
+	$(RM) $(COMPONENT_DIR)/site-start.el
+
+# Manually added build dependencies.
 REQUIRED_PACKAGES += mail/mailutils
 
 # Auto-generated dependencies
@@ -225,7 +240,6 @@ REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += file/gnu-findutils
 REQUIRED_PACKAGES += image/imagemagick
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
@@ -239,7 +253,6 @@ REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/gnutls-3
-REQUIRED_PACKAGES += library/jansson
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/libxml2
@@ -267,4 +280,3 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/toolkit/libxaw7
 REQUIRED_PACKAGES += x11/library/toolkit/libxt
-REQUIRED_PACKAGES += x11/library/xcb-util

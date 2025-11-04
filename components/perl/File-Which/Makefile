@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::Which
+#   $WS_TOOLS/perl-integrate-module File-Which
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::Which
+COMPONENT_NAME =		File-Which
 HUMAN_VERSION =			1.27
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		File::Which - Perl implementation of the which utility as an API
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl implementation of the which utility as an API
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3201f1a60e3f16484082e6045c896842261fc345de9fb2e620fd2a2c7af3a93a
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

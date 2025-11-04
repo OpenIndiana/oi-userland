@@ -11,24 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-mock
+#   $WS_TOOLS/python-integrate-project -d python/types-mock types_mock
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-mock
-HUMAN_VERSION =			5.1.0.20240311
-COMPONENT_SUMMARY =		types-mock - Typing stubs for mock
+COMPONENT_NAME =		types_mock
+HUMAN_VERSION =			5.2.0.20250924
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for mock
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7472797986d83016f96fde7f73577d129b0cd8a8d0b783487a7be330d57ba431
+	sha256:953197543b4183f00363e8e626f6c7abea1a3f7a4dd69d199addb70b01b6bb35
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

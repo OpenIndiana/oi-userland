@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::CIDR::Lite
+#   $WS_TOOLS/perl-integrate-module Net-CIDR-Lite
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::CIDR::Lite
+COMPONENT_NAME =		Net-CIDR-Lite
 HUMAN_VERSION =			0.22
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Net::CIDR::Lite - Perl extension for merging IPv4 or IPv6 CIDR addresses
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl extension for merging IPv4 or IPv6 CIDR addresses
 COMPONENT_CPAN_AUTHOR =		STIGTSP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4317d8cb341a617b9e0888da43c09cdffffcb0c9edf7b8c9928d742a563b8517
@@ -34,4 +34,5 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

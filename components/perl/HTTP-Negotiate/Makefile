@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTTP::Negotiate
+#   $WS_TOOLS/perl-integrate-module HTTP-Negotiate
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTTP::Negotiate
+COMPONENT_NAME =		HTTP-Negotiate
 HUMAN_VERSION =			6.01
-COMPONENT_REVISION =		4
-COMPONENT_SUMMARY =		HTTP::Negotiate - choose a variant to serve
+COMPONENT_REVISION =		6
+COMPONENT_SUMMARY =		choose a variant to serve
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1c729c1ea63100e878405cda7d66f9adfd3ed4f1d6cacaca0ee9152df728e016
@@ -30,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
 PERL_REQUIRED_PACKAGES += runtime/perl

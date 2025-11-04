@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project elastic-transport
+#   $WS_TOOLS/python-integrate-project -d python/elastic-transport elastic_transport
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		elastic-transport
-HUMAN_VERSION =			8.13.0
-COMPONENT_SUMMARY =		elastic-transport - Transport classes and utilities shared among Python Elastic client libraries
+COMPONENT_NAME =		elastic_transport
+HUMAN_VERSION =			8.17.1
+COMPONENT_SUMMARY =		Transport classes and utilities shared among Python Elastic client libraries
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elastic-transport-python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2410ec1ff51221e8b3a01c0afa9f0d0498e1386a269283801f5c12f98e42dc45
+	sha256:5edef32ac864dca8e2f0a613ef63491ee8d6b8cfb52881fa7313ba9290cac6d2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -48,7 +48,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/urllib3
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohttp
 TEST_REQUIRED_PACKAGES.python += library/python/httpx
-TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

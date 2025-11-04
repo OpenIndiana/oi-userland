@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         bvi
-COMPONENT_VERSION=      1.4.2
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.5.0
 COMPONENT_SUMMARY=      bvi - Binary Visual Editor  
 COMPONENT_PROJECT_URL=  https://bvi.sourceforge.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/bvi/files/bvi/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
-COMPONENT_ARCHIVE_HASH= sha256:4bba16c2b496963a9b939336c0abcc8d488664492080ae43a86da18cf4ce94f2
+COMPONENT_ARCHIVE_HASH= sha256:6540716a1a3b2b9711635108da14b26baea488881d4a682121c0bddbba6b74cb
 COMPONENT_FMRI=         editor/bvi
 COMPONENT_CLASSIFICATION=Development/Editors
 COMPONENT_LICENSE=      GPLv3
@@ -30,6 +29,9 @@ COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 

@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project elasticsearch
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elasticsearch
-HUMAN_VERSION =			8.13.0
-COMPONENT_SUMMARY =		elasticsearch - Python client for Elasticsearch
+HUMAN_VERSION =			9.0.2
+COMPONENT_SUMMARY =		Python client for Elasticsearch
 COMPONENT_PROJECT_URL =		https://github.com/elastic/elasticsearch-py
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/elastic/elasticsearch-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:82c0bca576eeaeb62dbaf63bab51119a40e2b77d3b1a8a410cf4959e4f6eb187
+	sha256:5a26e4d928d448f086d00b591a58bb30832da802022d2e00d40bc0fbd54575d3
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,30 +37,37 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += dev-requirements.txt
+TEST_REQUIREMENTS_EXTRAS += dev
 
 # We do not have orjson
 PYTEST_ADDOPTS += --ignore test_elasticsearch/test_serializer.py
+# We do not have nltk
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/async_examples/vectors.py
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/_async/test_vectors.py
+PYTEST_ADDOPTS += --ignore test_elasticsearch/test_dsl/test_integration/test_examples/_sync/test_vectors.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/elastic-transport
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
+PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/aiohttp
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/elastic-transport
 TEST_REQUIRED_PACKAGES.python += library/python/isort
 TEST_REQUIRED_PACKAGES.python += library/python/jinja2
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nox
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/requests
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-autodoc-typehints
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
+TEST_REQUIRED_PACKAGES.python += library/python/tqdm
 TEST_REQUIRED_PACKAGES.python += library/python/twine
+TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil

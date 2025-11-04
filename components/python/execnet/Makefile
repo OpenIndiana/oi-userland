@@ -14,25 +14,24 @@
 #   $WS_TOOLS/python-integrate-project execnet
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		execnet
-COMPONENT_VERSION =		1.9.0
-COMPONENT_SUMMARY =		execnet - execnet: rapid multi-Python deployment
+HUMAN_VERSION =			2.1.1
+COMPONENT_SUMMARY =		execnet: rapid multi-Python deployment
 COMPONENT_PROJECT_URL =		https://execnet.readthedocs.io/en/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/7a/3c/b5ac9fc61e1e559ced3e40bf5b518a4142536b34eb274aa50dff29cb89f5/execnet-1.9.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8f694f3ba9cc92cab508b152dcfe322153975c29bda272e2fd7f3f00f36e47c5
+	sha256:5189b52c6121c24feae288166ab41b32549c7e2348652736540b9e6e7d4e72e3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/setuptools-scm

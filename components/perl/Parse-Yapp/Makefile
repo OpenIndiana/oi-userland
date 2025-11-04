@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Parse::Yapp
+#   $WS_TOOLS/perl-integrate-module Parse-Yapp
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Parse::Yapp
+COMPONENT_NAME =		Parse-Yapp
 HUMAN_VERSION =			1.21
-COMPONENT_REVISION =		4
-COMPONENT_SUMMARY =		Parse::Yapp - Perl extension for generating and using LALR parsers.
+COMPONENT_REVISION =		6
+COMPONENT_SUMMARY =		A perl frontend to the Parse::Yapp module
 COMPONENT_CPAN_AUTHOR =		WBRASWELL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3810e998308fba2e0f4f26043035032b027ce51ce5c8a52a8b8e340ca65f13e5
@@ -30,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

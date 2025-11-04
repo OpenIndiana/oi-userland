@@ -19,20 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		frozendict
-HUMAN_VERSION =			2.4.1
-COMPONENT_SUMMARY =		frozendict - A simple immutable dictionary
+HUMAN_VERSION =			2.4.6
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A simple immutable dictionary
 COMPONENT_PROJECT_URL =		https://github.com/Marco-Sulla/python-frozendict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1b32eb2f30bb734b7a699ee7003c86f81964f1c3b6e0e0f18efcbbdeb5b220bf
+	sha256:df7cd16470fbd26fc4969a208efadc46319334eb97def1ddf48919b351192b8e
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
+# deliverables differs for Python < 3.11
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

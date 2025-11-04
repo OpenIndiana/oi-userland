@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mojo::Log::Clearable
+#   $WS_TOOLS/perl-integrate-module Mojo-Log-Clearable
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mojo::Log::Clearable
+COMPONENT_NAME =		Mojo-Log-Clearable
 HUMAN_VERSION =			1.001
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Mojo::Log::Clearable - Mojo::Log with clearable log handle
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Mojo::Log with clearable log handle
 COMPONENT_CPAN_AUTHOR =		DBOOK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:82e06a29d59e99ce260bfc69efb59deea795da246a638c2b439351b07b6c0a72
@@ -36,3 +36,7 @@ PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/mojolicious
 PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

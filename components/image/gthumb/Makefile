@@ -19,12 +19,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gthumb
-COMPONENT_VERSION=      3.12.6
+COMPONENT_VERSION=      3.12.7
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNOME image organizer (gthumb)
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Apps/gthumb
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:608770c6c8e73073a1d404b65bd1b761e1ac5dc25e70130ff072488fa92f5c33
+COMPONENT_ARCHIVE_HASH= sha256:ee12d24cf231010241f758d6c95b9d53a7381278fa76b6a518b3d09b371efaec
 COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.12/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         image/viewer/gthumb
 COMPONENT_CLASSIFICATION=Applications/Graphics and Imaging
@@ -38,12 +39,8 @@ PATH= $(PATH.gnu)
 # For LCMS2 detection
 CPPFLAGS += -I/usr/include/lcms2
 
-CPPFLAGS += $(JPEG_CPPFLAGS)
-CFLAGS += $(JPEG_CFLAGS)
-LDFLAGS += $(JPEG_LDFLAGS)
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR)
+# libheif is only available in encumbered
+CONFIGURE_OPTIONS += -Dlibheif=false
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -61,13 +58,12 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += desktop/cd-burning/brasero
 REQUIRED_PACKAGES += image/library/exiv2
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/clutter
 REQUIRED_PACKAGES += library/desktop/clutter/clutter-gtk

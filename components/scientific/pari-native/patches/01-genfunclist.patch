@@ -1,0 +1,11 @@
+--- pari-2.13.3/config/genfunclist	Wed Mar 25 12:58:26 2020
++++ p0/pari-2.13.3/config/genfunclist	Mon Nov 22 15:52:15 2021
+@@ -2,7 +2,7 @@
+ FL="$1"
+ DIR="$2"
+ TMPFL=$FL.tmp$$
+-(cd $DIR && find ../functions -name CVS -prune -o -name '.*' -prune -o -name '*~' -prune -o -type f -print | env LANG= LC_COLLATE= LC_ALL= sort | xargs cksum ) > $TMPFL
++(cd $DIR && find ../functions -name CVS -prune -o -name '.*' -prune -o -name '*~' -prune -o -type l -print | env LANG= LC_COLLATE= LC_ALL= sort | xargs cksum ) > $TMPFL
+ if cmp $FL $TMPFL >/dev/null 2>&1; then
+         rm -f $TMPFL
+ else

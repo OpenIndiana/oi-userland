@@ -13,29 +13,23 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         util-macros
-COMPONENT_VERSION=      1.19.3
-COMPONENT_FMRI=         developer/build/autoconf/xorg-macros
+COMPONENT_VERSION=      1.20.2
 COMPONENT_SUMMARY=      GNU autoconf macros for X.Org software packages
 COMPONENT_PROJECT_URL=  https://x.org
-COMPONENT_CLASSIFICATION=Development/X11
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:624bb6c3a4613d18114a7e3849a3d70f2d7af9dc6eabeaba98060d87e3aef35b
-COMPONENT_ARCHIVE_URL=  \
-	http://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:9ac269eba24f672d7d7b3574e4be5f333d13f04a7712303b1821b2a51ac82e8e
+COMPONENT_ARCHIVE_URL=  https://ftp.x.org/pub/individual/util/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         developer/build/autoconf/xorg-macros
+COMPONENT_CLASSIFICATION=Development/X11
 COMPONENT_LICENSE=      MIT License
 COMPONENT_LICENSE_FILE= xorg-macros.license
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION =        ( cd $(@D)  && autoreconf -f )
+COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fiv )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-
+# Auto-generated dependencies

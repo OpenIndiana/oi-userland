@@ -15,52 +15,49 @@
 # Copyright 2019 Michal Nowak
 #
 
-# IMPORTANT if the umask of the builder isn't set to 0022
-# the resulting: /usr/lib/sparcv9/gobject-introspection/giscanner/__pycache__
-# directory ends up with 700 - in the final installation and therefore
-# can't be used by end-users !!!
-
 BUILD_STYLE= meson
-SINGLE_PYTHON_VERSION= yes
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gobject-introspection
+# Odd minor versions are unstable.
+# https://gi.readthedocs.io/en/latest/changelog.html
 
-COMPONENT_VERSION_MAJOR= 1
-COMPONENT_VERSION_MINOR= 72
-COMPONENT_VERSION_MICRO= 0
-COMPONENT_VERSION_DL= $(COMPONENT_VERSION_MAJOR).$(COMPONENT_VERSION_MINOR)
-COMPONENT_VERSION= $(COMPONENT_VERSION_DL).$(COMPONENT_VERSION_MICRO)
-COMPONENT_SUMMARY= Introspection for GObject libraries
-COMPONENT_PROJECT_URL= https://live.gnome.org/GObjectIntrospection
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:02fe8e590861d88f83060dd39cda5ccaa60b2da1d21d0f95499301b186beaabc
-COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_DL)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI= library/desktop/gobject/gobject-introspection
-COMPONENT_CLASSIFICATION= Development/GNOME and GTK+
-COMPONENT_LICENSE= GPLv2, LGPLv2
+COMPONENT_NAME =		gobject-introspection
+HUMAN_VERSION =			1.86.0
+COMPONENT_SUMMARY =		Introspection for GObject libraries
+COMPONENT_ARCHIVE_HASH =	sha256:920d1a3fcedeadc32acff95c2e203b319039dd4b4a08dd1a2dfd283d19c0b9ae
+COMPONENT_FMRI =		library/desktop/gobject/gobject-introspection
+COMPONENT_CLASSIFICATION =	Development/GNOME and GTK+
+COMPONENT_LICENSE =		GPL-2.0-or-later AND LGPL-2.0-or-later AND MIT
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.GPL -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPL ; \
+		printf '\n--- COPYING.LGPL ----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPL \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-# We have transfrom rules that re-add cpython-$(PYV) to manifest files. Thus, remove it here:
-COMPONENT_POST_INSTALL_ACTION = (cd $(PROTOUSRLIBDIR)/$(MACH64)/$(COMPONENT_NAME)/giscanner; \
-	$(MV) _giscanner.cpython-39.so _giscanner.so)
+PYTHON_SCRIPTS += usr/bin/g-ir-annotation-tool
+PYTHON_SCRIPTS += usr/bin/g-ir-doc-tool
+PYTHON_SCRIPTS += usr/bin/g-ir-scanner
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/^Ok/p" ' \
-	'-e "/^Expected/p" ' \
-	'-e "/^Fail/p" ' \
-	'-e "/^Unexpected/p" ' \
-	'-e "/^Skipped/p" ' \
-	'-e "/^Timeout/p" '
+# Build dependencies
+# Both mako and markdown are needed for doctool (see meson.build)
+REQUIRED_PACKAGES.python += library/python/mako
+REQUIRED_PACKAGES.python += library/python/markdown
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/python/markdown
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python

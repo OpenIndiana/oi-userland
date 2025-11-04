@@ -28,9 +28,9 @@ FETCH=$(WS_TOOLS)/userland-fetch
 DEBUG=no
 
 ifeq ($(DEBUG),yes)
-NIGHTLY_OPTIONS=-nCDmpt
+NIGHTLY_OPTIONS=-nDmpL
 else
-NIGHTLY_OPTIONS=-nCmpt
+NIGHTLY_OPTIONS=-nmpL
 endif
 ONNV_BUILDNUM=$(BRANCHID)
 
@@ -82,13 +82,16 @@ $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.downloaded $(PATCHES)
 
 prep::	$(SOURCE_DIR)/.patched
 
-$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
+$(BUILD_DIR)/runtime-perl.p5m: $(WS_TOOLS)/runtime-perl.p5m
+	$(MKDIR) $(@D)
+	$(CP) $< $@
+
+$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched $(BUILD_DIR)/runtime-perl.p5m
 	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
 	  cat usr/src/tools/env/illumos.sh | \
 	  (sed \
 	    -e 's|^export NIGHTLY_OPTIONS=.*|export NIGHTLY_OPTIONS=\"$(NIGHTLY_OPTIONS)\"|' \
-	    -e 's|^export VERSION=.*|export VERSION=\"$$(git log -1 --format=illumos-%h)\"|' \
 	    -e 's|^export CODEMGR_WS=.*|export CODEMGR_WS=\"$$PWD\"|' \
 	    -e '/^export ENABLE_SMATCH=/d' \
 	    -e 's|^export MULTI_PROTO=.*|export MULTI_PROTO=\"$(MULTI_PROTO)\"|' \
@@ -97,11 +100,20 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
 	  echo export PERL_VERSION=\"$(PERL_VERSION)\"; \
 	  echo export PERL_VARIANT=\"-thread-multi\" ; \
 	  echo export PERL_PKGVERS=\"-$(subst .,,$(PERL_VERSION))\"; \
+	  echo export DEP_RUNTIME_PERL="$(BUILD_DIR)/runtime-perl.p5m"; \
 	  echo export BUILDPERL32=\"#\"; \
+	  echo export PYTHON3_VERSION=$(PYTHON_VERSION) ; \
+	  echo export PYTHON3_PKGVERS=-$(subst .,,$(PYTHON_VERSION)) ; \
+	  $(if $(filter-out $(PYTHON_VERSION),$(lastword $(PYTHON_VERSIONS))), \
+	    echo export BUILDPY3b= ; \
+	    echo export PYTHON3b_VERSION=$(lastword $(PYTHON_VERSIONS)) ; \
+	    echo export PYTHON3b_PKGVERS=-$(subst .,,$(lastword $(PYTHON_VERSIONS))) ; \
+	    echo export PYTHON3b_SUFFIX= ; \
+	  ) \
 	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM); \
 	  echo export BOOTBANNER1=\"$(DISTRIBUTION_NAME) $(DISTRIBUTION_VERSION) Version ^v ^w-bit\") > \
 	  illumos.sh && \
-	  time $(ENV) -i ./usr/src/tools/scripts/nightly illumos.sh
+	  time $(ENV) ./usr/src/tools/scripts/nightly -V $(shell cd $(SOURCE_DIR) && git log -1 --format=illumos-%h) illumos.sh
 	$(TOUCH) $@
 
 build install: $(BUILD_DIR)/$(MACH)/.built
@@ -162,8 +174,10 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/brand-hipster.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/boot/loader@.* -> emit file path=boot/forth/logo-openindiana.4th group=sys mode=0444 owner=root >" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
-	# Settings for tagged pointers
+ifeq ($(MACH), i386)
+	# Settings for tagged pointers - causes several UltraI and UltraII systems to panic.
 	echo "<transform set name=pkg.fmri value=pkg://[^/]*/system/kernel@.* -> emit file path=etc/system.d/reserve_bits_for_tagged_pointers group=sys mode=0644 owner=root preserve=true>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+endif
 
 	# Fix dependencies on renamed runtime/java and runtime/java/runtime64 packages
 	echo '<transform depend fmri=runtime/java$$ -> set fmri runtime/java/openjdk8>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
@@ -171,10 +185,6 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: packages.ignore.in $(BUILD_DIR)/$(MACH)
 
 	# Drop dependency on GCC compat links
 	echo '<transform depend fmri=pkg:/system/library/gcc-.*-compat-links -> drop>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
-
-	# Convert dependency on any version of Perl runtime to dependency on single unversioned runtime/perl
-	echo '<transform depend type=require-any fmri=pkg:/runtime/perl-5[0-9]+@ -> set fmri runtime/perl>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
-	echo '<transform depend type=require-any fmri=runtime/perl$$ -> set type require>' >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	# Drop dependency on ignored packages
 	$(GSED) -e 's|^\(.*\)$$|<transform depend fmri=pkg:/\1@.* -> drop>|' $< >> $@
@@ -261,6 +271,35 @@ print-package-names:
 	grep -v -x -F -f packages.ignore.in pkg5.complete.fmris > pkg5.fmris
 	cat pkg5.fmris
 
-# build-essential always brings superset of packages needed to build
-# illumos-gate
+#
+# The build-essential package almost always brings superset of packages needed
+# to build illumos-gate.  The only known exceptions are described below.
+#
 REQUIRED_PACKAGES += metapackages/build-essential
+
+#
+# When we are in the process of changing the default Perl version we need to
+# make sure the new Perl is installed during the illumos-gate build.  We need
+# to specify it explicitly here because the unversioned runtime/perl required
+# by build-essential still points to the old Perl runtime version.
+#
+# We need to build the new Perl support from illumos-gate first, and then
+# switch the unversioned runtime/perl to the new Perl version.  If we would do
+# that the other way we will end up with missing Perl modules that comes from
+# the illumos-gate and some parts of the system won't work as expected.
+#
+# We cannot switch both illumos-gate and the unversioned runtime/perl in one
+# step because the illumos-gate component is always built separately from the
+# rest of oi-userland.
+#
+REQUIRED_PACKAGES += runtime/perl-$(subst .,,$(PERL_VERSION))
+
+#
+# When we are in the process of changing the default Python version we need to
+# make sure that both the old and the new Python versions are installed during
+# the illumos-gate build.  We need to specify the new version explicitly here
+# because the unversioned runtime/python required by build-essential still
+# points to the old Python runtime version.
+#
+REQUIRED_PACKAGES += \
+	$(if $(filter-out $(PYTHON_VERSION),$(lastword $(PYTHON_VERSIONS))),runtime/python-$(subst .,,$(lastword $(PYTHON_VERSIONS))))

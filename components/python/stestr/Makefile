@@ -14,16 +14,18 @@
 #   $WS_TOOLS/python-integrate-project stestr
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stestr
-HUMAN_VERSION =			4.1.0
-COMPONENT_SUMMARY =		stestr - A parallel Python test runner built around subunit
-COMPONENT_PROJECT_URL =		http://stestr.readthedocs.io/en/latest/
+HUMAN_VERSION =			4.2.0
+COMPONENT_SUMMARY =		A parallel Python test runner built around subunit
+COMPONENT_PROJECT_URL =		https://stestr.readthedocs.io/en/stable/
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/mtreinish/stestr/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5f61c369eece63c292d13599e12aa158af7685990643f24dd6fa7fabfe34e98a
+	sha256:ed533155fe0ab4dd10840037b9f8fcad697e269c655545a24efa756b3ac2a622
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,9 +39,8 @@ TOX_POSARGS += --suppress-attachments
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cliff
-PYTHON_REQUIRED_PACKAGES += library/python/extras
 PYTHON_REQUIRED_PACKAGES += library/python/fixtures
-PYTHON_REQUIRED_PACKAGES += library/python/pbr
+PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/python-subunit
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
 PYTHON_REQUIRED_PACKAGES += library/python/testtools
@@ -47,16 +48,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
 PYTHON_REQUIRED_PACKAGES += library/python/voluptuous
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
-TEST_REQUIRED_PACKAGES.python += library/python/cliff
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/ddt
-TEST_REQUIRED_PACKAGES.python += library/python/extras
-TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/iso8601
-TEST_REQUIRED_PACKAGES.python += library/python/pbr
-TEST_REQUIRED_PACKAGES.python += library/python/python-subunit
-TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/testtools
-TEST_REQUIRED_PACKAGES.python += library/python/tomlkit
-TEST_REQUIRED_PACKAGES.python += library/python/voluptuous

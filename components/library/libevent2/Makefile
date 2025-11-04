@@ -12,6 +12,7 @@
 # Copyright 2021 Gary Mills
 # Copyright 2014 Alexander Pyhalov
 # Copyright 2023 Niklas Poslovski
+# Copyright 2025 Klaus Ziegler
 #
 
 BUILD_BITS=		32_and_64
@@ -19,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent2
 COMPONENT_VERSION=	2.1.12
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	https://libevent.org/
 COMPONENT_SUMMARY=	An event notification library for event-driven network servers
 COMPONENT_FMRI=         library/libevent2
@@ -41,12 +43,11 @@ COMPONENT_PREP_ACTION= \
 	( $(CP) $(COMPONENT_DIR)/files/event_rpcgen.py $(@D) )
 
 CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--includedir=/usr/include/libevent2
 
 # Setup event-config.h file to support 32 & 64 bit.
 #
 COMPONENT_POST_INSTALL_ACTION= \
-            ($(MV) $(PROTO_DIR)/usr/include/libevent2/event2/event-config.h $(PROTO_DIR)/usr/include/libevent2/event2/event-config-$(BITS).h )
+            ($(MV) $(PROTO_DIR)/usr/include/event2/event-config.h $(PROTO_DIR)/usr/include/event2/event-config-$(BITS).h )
 
 # Typical results from the test target
 #EVPORT
@@ -73,5 +74,6 @@ COMPONENT_POST_INSTALL_ACTION= \
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += system/library

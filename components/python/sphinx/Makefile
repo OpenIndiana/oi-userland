@@ -19,15 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx
-HUMAN_VERSION =			7.2.6
-COMPONENT_SUMMARY =		sphinx - Python documentation generator
+HUMAN_VERSION =			7.4.7
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Python documentation generator
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/73/8e/6e51da4b26665b4b92b1944ea18b2d9c825e753e19180cc5bdc818d0ed3b/sphinx-7.2.6.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a5160e1ea90688d5963ba09a2dcd8bdd526620edbb65c328728f1b2228d5ab5
+	sha256:242f92a7ea7e6c5b406fdc2615413890ba9f699114a9c09192d7dfead2ee9cfe
 COMPONENT_LICENSE =		BSD-2-Clause AND BSD-3-Clause AND MIT
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,6 +44,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/jinja2
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/requests
+PYTHON_REQUIRED_PACKAGES += library/python/roman-numerals
 PYTHON_REQUIRED_PACKAGES += library/python/snowballstemmer
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-applehelp
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-devhelp
@@ -52,8 +52,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-htmlhelp
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-jsmath
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-qthelp
 PYTHON_REQUIRED_PACKAGES += library/python/sphinxcontrib-serializinghtml
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cython
-TEST_REQUIRED_PACKAGES.python += library/python/filelock
+TEST_REQUIRED_PACKAGES.python += library/python/defusedxml
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

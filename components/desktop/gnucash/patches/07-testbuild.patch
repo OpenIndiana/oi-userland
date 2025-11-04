@@ -1,0 +1,27 @@
+As shipped, the "make check" rule is the only way to build and run
+tests; the extra build noise at the start of the output makes our
+COMPONENT_TEST_COMPARE machinery sad.
+
+Rather than always running the tests twice, add a build target that
+builds tests without running them.
+
+--- gnucash-5.11/CMakeLists.txt.~2~	Fri May  2 09:40:36 2025
++++ gnucash-5.11/CMakeLists.txt	Fri May  2 10:00:56 2025
+@@ -693,6 +693,7 @@
+ gnc_gtest_configure()
+ 
+ # There are targets that need to build before tests will run
++add_custom_target(testbuild)
+ add_custom_target(check
+   COMMAND ${CMAKE_CTEST_COMMAND}
+ )
+--- gnucash-5.11/common/cmake_modules/GncAddTest.cmake.~2~	Fri May  2 09:40:36 2025
++++ gnucash-5.11/common/cmake_modules/GncAddTest.cmake	Fri May  2 10:02:57 2025
+@@ -104,6 +104,7 @@
+   target_link_libraries(${_TARGET} PRIVATE ${TEST_LIBS})
+   target_include_directories(${_TARGET} PRIVATE ${TEST_INCLUDE_DIRS})
+   set_tests_properties(${_TARGET} PROPERTIES ENVIRONMENT "${ENVVARS}$<$<CONFIG:Asan>:;ASAN_OPTIONS=${ASAN_TEST_OPTIONS}>")
++  add_dependencies(testbuild ${_TARGET})
+   add_dependencies(check ${_TARGET})
+ endfunction()
+ 

@@ -1,0 +1,12 @@
+--- llvm-20.1.7.src/tools/clang/lib/Driver/ToolChains/CommonArgs.cpp.orig
++++ llvm-20.1.7.src/tools/clang/lib/Driver/ToolChains/CommonArgs.cpp
+@@ -1432,6 +1432,9 @@
+ void tools::linkSanitizerRuntimeDeps(const ToolChain &TC,
+                                      const llvm::opt::ArgList &Args,
+                                      ArgStringList &CmdArgs) {
++  if (TC.getTriple().isOSSolaris())
++    return;
++
+   // Force linking against the system libraries sanitizers depends on
+   // (see PR15823 why this is necessary).
+   addAsNeededOption(TC, Args, CmdArgs, false);

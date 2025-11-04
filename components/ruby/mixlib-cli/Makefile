@@ -10,15 +10,16 @@
 
 #
 # Copyright 2021 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS=32
 BUILD_STYLE=gem
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mixlib-cli
 COMPONENT_VERSION=	1.7.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A class-based command line option parsing object
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,5 +34,9 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
-REQUIRED_PACKAGES += runtime/ruby-23
+# manually added dependencies
+REQUIRED_PACKAGES += runtime/ruby-32
+
+# Auto-generated dependencies

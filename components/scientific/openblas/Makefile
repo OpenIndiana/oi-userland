@@ -21,16 +21,18 @@
 # Copyright (c) 2014-2017, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2022 Niklas Poslovski
 #
+
 BUILD_STYLE= justmake
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.3.27
+COMPONENT_VERSION=	0.3.30
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openblas.net
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:aa2d68b1564fe2b13bc292672608e9cdeeeb6dc34995512e65c3b10f4599e897
+COMPONENT_ARCHIVE_HASH= sha256:27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d
 COMPONENT_ARCHIVE_URL=	https://github.com/xianyi/OpenBLAS/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=     	library/math/openblas
 COMPONENT_CLASSIFICATION= Development/High Performance Computing

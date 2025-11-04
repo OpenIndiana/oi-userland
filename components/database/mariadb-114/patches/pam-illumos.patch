@@ -1,0 +1,15 @@
+see: https://www.illumos.org/issues/15657
+void **item is not const in illumos before r151051
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/plugin/auth_pam/auth_pam_base.c a/plugin/auth_pam/auth_pam_base.c
+--- a~/plugin/auth_pam/auth_pam_base.c	1970-01-01 00:00:00
++++ a/plugin/auth_pam/auth_pam_base.c	1970-01-01 00:00:00
+@@ -128,7 +128,7 @@ static int conv(int n, const struct pam_
+ 
+ #define DO(X) if ((status = (X)) != PAM_SUCCESS) goto end
+ 
+-#if defined(SOLARIS) || defined(__sun)
++#if (defined(SOLARIS) || defined(__sun)) && OOCEVER < 151051
+ typedef void** pam_get_item_3_arg;
+ #else
+ typedef const void** pam_get_item_3_arg;

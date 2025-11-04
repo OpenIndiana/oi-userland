@@ -11,23 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d developer/scons SCons
+#   $WS_TOOLS/python-integrate-project -d developer/scons scons
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		SCons
-HUMAN_VERSION =			4.7.0
-COMPONENT_SUMMARY =		SCons - Open Source next-generation build tool.
+COMPONENT_NAME =		scons
+HUMAN_VERSION =			4.10.0
+COMPONENT_SUMMARY =		Open Source next-generation build tool.
 COMPONENT_PROJECT_URL =		https://www.scons.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d8b617f6610a73e46509de70dcf82f76861b79762ff602d546f4e80918ec81f3
+	sha256:61e2fc42e0e2c750105d61f26cc1dfebcae9f4103d3dc0e9aeb373016b0d208c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 COMPONENT_FMRI =		developer/build/scons
 COMPONENT_CLASSIFICATION =	Development/Distribution Tools
@@ -38,14 +38,8 @@ SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/SCons/scons/issues/2285
-COMPONENT_POST_INSTALL_ACTION += \
-	$(INSTALL) -d $(PROTOUSRSHAREMAN1DIR) ; \
-	$(MV) $(PROTOUSRDIR)/*.1 $(PROTOUSRSHAREMAN1DIR) ;
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/bash
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

@@ -1,0 +1,20 @@
+--- ntpsec-1.2.4/ntpd/ntp_control.c	2025-04-18 21:54:14.000000000 +0200
++++ ntpsec-1.2.4/ntpd/ntp_control.c.new	2025-07-14 21:55:55.918006191 +0200
+@@ -235,7 +235,7 @@
+ #define Var_uli(xname, xflags, xlocation) { \
+   .name = xname, .flags = xflags, .type = v_uli, .p.uli = &xlocation }
+ #define Var_li(xname, xflags, xlocation) { \
+-  .name = xname, .flags = xflags, .type = v_li, .p.li = &xlocation }
++  .name = xname, .flags = xflags, .type = v_li, .p.li = (const int64_t *) &xlocation }
+ #define Var_uint(xname, xflags, xlocation) { \
+   .name = xname, .flags = xflags, .type = v_uint, .p.uinnt = &xlocation }
+ #define Var_int(xname, xflags, xlocation) { \
+@@ -285,7 +285,7 @@
+ #define Var_mrumem(xname, xflags, xlocation) { \
+   .name = xname, .flags = xflags, .type = v_mrumem, .p.u64 = &xlocation }
+ #define Var_kli(xname, xflags, xlocation) { \
+-  .name = xname, .flags = xflags, .type = v_kli, .p.timex_li = &xlocation }
++  .name = xname, .flags = xflags, .type = v_kli, .p.timex_li = (const long int *) &xlocation }
+ #define Var_special(xname, xflags, xspecial) { \
+   .name = xname, .flags = xflags, .type = v_special, .p.special = xspecial }
+ 

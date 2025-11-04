@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Regexp::Util
+#   $WS_TOOLS/perl-integrate-module Regexp-Util
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Regexp::Util
+COMPONENT_NAME =		Regexp-Util
 HUMAN_VERSION =			0.005
-COMPONENT_SUMMARY =		Regexp::Util - A selection of general-utility regexp subroutines
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		A selection of general-utility regexp subroutines
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a08871fca2054c464ec6cd663fbdb2fce99cc0346256acf0a4936681ed8a0e00
@@ -31,5 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

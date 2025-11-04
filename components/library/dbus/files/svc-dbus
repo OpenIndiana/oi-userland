@@ -25,8 +25,8 @@ FMRI=svc:/system/dbus:default
 
 . /lib/svc/share/smf_include.sh
 
-if [ ! -x /usr/libexec/dbus-daemon ]; then
-	echo "/usr/libexec/dbus-daemon not found or not executable"
+if [ ! -x /usr/bin/dbus-daemon ]; then
+	echo "/usr/bin/dbus-daemon not found or not executable"
 	exit $SMF_EXIT_ERR_FATAL
 fi
 
@@ -52,7 +52,7 @@ case "$1" in
 		rm -f /var/run/dbus/pid
 	fi
 
-	(ulimit -S -n 8192 ; /usr/libexec/dbus-daemon --system)
+	(ulimit -S -n 8192 ; /usr/bin/dbus-daemon --system)
 	err=$?
 	if [ $err -ne 0 ]; then
 		echo "dbus failed to start: error $err"

@@ -25,79 +25,66 @@
 # Copyright 2023 Niklas Poslovski
 #
 
-BUILD_STYLE = justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.10.14
+COMPONENT_VERSION=	1.10.15
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:c451b8abca000892ef82f9e23ab26b02369973f5ca76fdf2b8d8fa258debffef
-COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-bin.tar.bz2
+COMPONENT_ARCHIVE_HASH= sha256:87f48d18ba11c115688c37ef97583ec6ff89ea6033f89d818a67248da4710c4b
+COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org//ant/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_TOP)/make-rules/common.mk
+include $(WS_MAKE_RULES)/prep.mk
+include $(WS_MAKE_RULES)/ips.mk
 
-$(BUILD_$(MK_BITS)):	GMAKE=./build.sh
-$(INSTALL_$(MK_BITS)):	GMAKE=./build.sh
-$(TEST_$(MK_BITS)):	GMAKE=./build.sh
+# Needed for GNU ln
+PATH=$(PATH.gnu)
 
-ANT_ENV += JAVA_HOME=$(JAVA_HOME)
+build: 
 
-ANT_DIST_DIRS += -Ddist.dir=$(PROTO_DIR)
-ANT_DIST_DIRS += -Ddist.bin=$(PROTO_DIR)/usr/bin
-ANT_DIST_DIRS += -Ddist.etc=$(PROTO_DIR)/usr/share/lib/ant
-ANT_DIST_DIRS += -Ddist.docs=$(PROTO_DIR)/usr/share/doc/ant
-ANT_DIST_DIRS += -Ddist.manual=$(PROTO_DIR)/usr/share/doc/ant/manual
-ANT_DIST_DIRS += -Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
-ANT_DIST_DIRS += -Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
+install: prep
+	mkdir -p $(PROTO_DIR)/etc
+	mkdir -p $(PROTO_DIR)/usr/bin
+	mkdir -p $(PROTO_DIR)/usr/share/ant/bin
+	mkdir -p $(PROTO_DIR)/usr/share/ant/etc
+# 	mkdir -p $(PROTO_DIR)/usr/share/ant/lib
+	mkdir -p $(PROTO_DIR)/usr/share/doc/ant
+	mkdir -p $(PROTO_DIR)/usr/share/java/ant
+	cp $(COMPONENT_DIR)/files/ant.conf $(PROTO_DIR)/etc
+	cp -pr $(SOURCE_DIR)/bin $(PROTO_DIR)/usr/share/ant/
+	cp -pr $(SOURCE_DIR)/etc $(PROTO_DIR)/usr/share/ant/
+	cp -p $(SOURCE_DIR)/lib/*jar $(PROTO_DIR)/usr/share/java/ant/
+	cp -pr $(SOURCE_DIR)/manual $(PROTO_DIR)/usr/share/doc/ant/
+	cp -p $(SOURCE_DIR)/CONTRIBUTORS $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/contributors.xml  $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/fetch.xml $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/get-m2.xml $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/INSTALL $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/KEYS $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/LICENSE $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/NOTICE $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/patch.xml $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/README $(PROTO_DIR)/usr/share/doc/ant
+	cp -p $(SOURCE_DIR)/WHATSNEW $(PROTO_DIR)/usr/share/doc/ant
+	ln -frs $(PROTO_DIR)/usr/share/ant/bin/ant $(PROTO_DIR)/usr/bin/ant
+	ln -frs $(PROTO_DIR)/usr/share/java/ant $(PROTO_DIR)/usr/share/ant/lib
+	rm $(PROTO_DIR)/usr/share/ant/bin/*.bat
+	rm $(PROTO_DIR)/usr/share/ant/bin/*.cmd
+	gsed -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' $(PROTO_DIR)/usr/share/ant/bin/runant.py
 
-OPTIONAL_LIBS += /usr/share/lib/java/junit.jar
-OPTIONAL_LIBS += /usr/share/lib/java/bsf.jar
-OPTIONAL_LIBS += /usr/share/antlr-2.7.7/antlr.jar
+clean::
+	rm -rf $(BUILD_DIR)
 
-COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
-
-# pkgdepend doesn't like the first line of a Python script to be:
-# '#!/usr/bin/python' so turn it into '#!/usr/bin/python$(PYTHON_VERSION)'
-#
-COMPONENT_POST_INSTALL_ACTION += \
-    $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
-    $(PROTOUSRBINDIR)/runant.py;
-
-COMPONENT_BUILD_ARGS =
-COMPONENT_BUILD_TARGETS =	build
-COMPONENT_BUILD_ENV +=		$(ANT_ENV)
-
-COMPONENT_INSTALL_ARGS =	$(ANT_DIST_DIRS)
-COMPONENT_INSTALL_TARGETS =	dist
-COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
-
-COMPONENT_TEST_TARGETS =	test
-COMPONENT_TEST_ENV +=		$(ANT_ENV)
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-    '-e "s/[0-9]*\.*[0-9]* sec//" ' \
-    '-e "s/[0-9]*ms//" ' \
-    '-e "s/[0-9]* minutes//" ' \
-    '-e "s/[0-9]* seconds//" ' \
-    '-e "s/Time elapsed: [0-9]*,/Time elapsed: /" ' \
-	'-e "/BUILD/p" ' \
-	'-e "/Testsuite/p" ' \
-	'-e "/Testcase/p" ' \
-	'-e "/Tests run/p" '
-
-# Build dependencies
-REQUIRED_PACKAGES += developer/java/openjdk8
-REQUIRED_PACKAGES += developer/parser/antlr-2
-REQUIRED_PACKAGES += runtime/java/openjdk8
-REQUIRED_PACKAGES += library/java/commons-bsf
+# COMPONENT_POST_INSTALL_ACTION += \
+#      $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
+#      $(PROTO_DIR)/usr/share/ant/bin/runant.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

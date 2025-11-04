@@ -1,0 +1,12 @@
+https://github.com/fedora-python/tox-current-env/issues/79
+
+--- tox_current_env-0.0.16/tests/test_integration_tox4.py.orig
++++ tox_current_env-0.0.16/tests/test_integration_tox4.py
+@@ -508,6 +508,7 @@
+     tox_path = shutil.which("tox")
+     tox_link.symlink_to(tox_path)
+     env = {**os.environ, "PATH": str(bin)}
++    del env["TOX_WORK_DIR"]
+ 
+     result = tox("-e", NATIVE_TOXENV, print_deps_stdout_arg, env=env)
+     expected = textwrap.dedent(

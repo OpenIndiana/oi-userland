@@ -1,6 +1,6 @@
---- MEGAsync_ori/src/MEGASync/mega/src/posix/fs.cpp	Thu Mar 10 00:45:05 2022
-+++ MEGAsync_patched/src/MEGASync/mega/src/posix/fs.cpp	Sat Mar  5 15:48:56 2022
-@@ -39,6 +39,10 @@
+--- MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/src/posix/fs.cpp.orig
++++ MEGAsync-4.9.5.0_Linux/src/MEGASync/mega/src/posix/fs.cpp
+@@ -41,6 +41,10 @@
  #include <uuid/uuid.h>
  #endif
  
@@ -11,7 +11,7 @@
  #ifdef __linux__
  
  #ifndef __ANDROID__
-@@ -1252,6 +1280,7 @@
+@@ -1061,6 +1065,7 @@
      dirent* d;
      int removed;
      struct stat statbuf;
@@ -19,7 +19,7 @@
  #ifdef USE_IOS
      const string namestr = adjustBasePath(name);
  #else
-@@ -1303,7 +1308,8 @@
+@@ -1087,7 +1092,8 @@
  
              while ((d = readdir(dp)))
              {
@@ -29,7 +29,7 @@
                   || *d->d_name != '.'
                   || (d->d_name[1] && (d->d_name[1] != '.' || d->d_name[2])))
                  {
-@@ -1633,7 +1639,7 @@
+@@ -1433,7 +1439,7 @@
      }
  #endif
  
@@ -38,7 +38,7 @@
  
      if (!uname(&uts))
      {
-@@ -1880,10 +1880,10 @@
+@@ -1932,10 +1938,10 @@
  #ifdef ENABLE_SYNC
  fsfp_t PosixFileSystemAccess::fsFingerprint(const LocalPath& path) const
  {
@@ -49,9 +49,9 @@
 -    if (statfs(path.localpath.c_str(), &statfsbuf))
 +    if (statvfs(path.localpath.c_str(), &statfsbuf))
      {
-         return 0;
-     }
-@@ -1927,9 +1934,9 @@
+         int e = errno;
+         LOG_err << "statfs() failed, errno " << e << " while processing path " << path;
+@@ -2035,9 +2041,9 @@
  bool PosixFileSystemAccess::getlocalfstype(const LocalPath& path, FileSystemType& type) const
  {
  #if defined(__linux__) || defined(__ANDROID__)
@@ -61,10 +61,10 @@
 -    if (!statfs(path.localpath.c_str(), &statbuf))
 +    if (!statvfs(path.localpath.c_str(), &statbuf))
      {
-         switch (statbuf.f_type)
+         switch (static_cast<unsigned long>(statbuf.f_type))
          {
-@@ -1978,9 +1985,9 @@
-         {"ntfs",  FS_NTFS}
+@@ -2103,9 +2109,9 @@
+         {"ufsd_NTFS",   FS_NTFS}  // Paragon NTFS for Mac
      }; /* filesystemTypes */
  
 -    struct statfs statbuf;
@@ -75,7 +75,7 @@
      {
          auto it = filesystemTypes.find(statbuf.f_fstypename);
  
-@@ -2203,10 +2203,10 @@
+@@ -2263,10 +2269,10 @@
  // saturating that quota.
  m_off_t PosixFileSystemAccess::availableDiskSpace(const LocalPath& drivePath)
  {

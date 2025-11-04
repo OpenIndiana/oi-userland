@@ -22,12 +22,11 @@
 # Copyright (c) 2022-2023 Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_auth_mellon
 COMPONENT_VERSION=	0.18.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	SAML2.0 authentication module for Apache
 COMPONENT_PROJECT_URL=	https://github.com/latchset/mod_auth_mellon
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,9 +56,9 @@ CONFIGURE_OPTIONS += --enable-diagnostics
 REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/lasso
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl

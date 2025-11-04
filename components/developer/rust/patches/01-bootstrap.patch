@@ -1,0 +1,27 @@
+As of rust 1.89.0, bootstrap is attempting to copy the entire /usr/lib
+tree into stage0-sysroot, including directories and files which
+are not readable; these error off like so:
+
+thread 'main' panicked at src/bootstrap/src/lib.rs:1724:17:
+failed to copy `/usr/lib/boot/bootmgmt-helper-chain` to `/build/userland/components/rust/rustc-11.3/build/amd64/build/x86_64-pc-solaris/stage0-sysroot/lib/boot/bootmgmt-helper-chain`: Permission denied (os error 13)
+
+This patch excludes non-rust files from the sysroot copy.
+
+
+--- rustc-1.89.0-src/src/bootstrap/src/core/build_steps/compile.rs-	2025-08-08 17:01:05.313682817 +0000
++++ rustc-1.89.0-src/src/bootstrap/src/core/build_steps/compile.rs	2025-08-08 17:09:32.262184460 +0000
+@@ -807,7 +807,13 @@
+                 let _ = fs::remove_dir_all(sysroot.join("lib/rustlib/src/rust"));
+             }
+ 
+-            builder.cp_link_r(&builder.initial_sysroot.join("lib"), &sysroot.join("lib"));
++            let src_lib = builder.initial_sysroot.join("lib");
++            let dst_lib = sysroot.join("lib");
++            builder.cp_link_filtered(&src_lib, &dst_lib, &|path| {
++                let name = path.file_name().unwrap();
++                path.components().any(|c| c.as_os_str() == "rustlib")
++                    || name.to_str().map(|n| n.starts_with("librustc_")).unwrap_or(false)
++            });
+         } else {
+             if builder.download_rustc() {
+                 // Ensure there are no CI-rustc std artifacts.

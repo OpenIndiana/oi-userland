@@ -1,0 +1,39 @@
+https://github.com/numpy/numpy/pull/27406
+Changes in test_public_api.py are needed for Python < 3.12.
+
+--- numpy-2.0.2/numpy/distutils/mingw32ccompiler.py.orig
++++ numpy-2.0.2/numpy/distutils/mingw32ccompiler.py
+@@ -24,7 +24,13 @@
+ 
+ import distutils.cygwinccompiler
+ from distutils.unixccompiler import UnixCCompiler
+-from distutils.msvccompiler import get_build_version as get_build_msvc_version
++
++try:
++    from distutils.msvccompiler import get_build_version as get_build_msvc_version
++except ImportError:
++    def get_build_msvc_version():
++        return None
++
+ from distutils.errors import UnknownFileError
+ from numpy.distutils.misc_util import (msvc_runtime_library,
+                                        msvc_runtime_version,
+--- numpy-2.0.2/numpy/tests/test_public_api.py.orig
++++ numpy-2.0.2/numpy/tests/test_public_api.py
+@@ -261,7 +261,6 @@
+             "distutils.lib2def",
+             "distutils.line_endings",
+             "distutils.mingw32ccompiler",
+-            "distutils.msvccompiler",
+             "distutils.npy_pkg_config",
+             "distutils.numpy_distribution",
+             "distutils.pathccompiler",
+@@ -288,7 +287,7 @@
+ 
+ 
+ if sys.version_info < (3, 12):
+-    SKIP_LIST = ["numpy.distutils.msvc9compiler"]
++    SKIP_LIST = ["numpy.distutils.msvc9compiler", "numpy.distutils.msvccompiler"]
+ else:
+     SKIP_LIST = []
+ 

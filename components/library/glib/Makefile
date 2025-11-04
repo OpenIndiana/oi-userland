@@ -17,27 +17,28 @@
 
 BUILD_BITS= 64_and_32
 BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-COMPONENT_MJR_VERSION=	2.76
-COMPONENT_MNR_VERSION=	4
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
+HUMAN_VERSION=		2.82.5
 COMPONENT_SUMMARY=	GNOME core libraries
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:5a5a191c96836e166a7771f7ea6ca2b0069c603c7da3cba1cd38d1694a395dda
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	https://wiki.gnome.org/Projects/GLib/
+COMPONENT_ARCHIVE_HASH=	sha256:05c2031f9bdf6b5aba7a06ca84f0b4aced28b19bf1b50c6ab25cc675277cbc3f
 COMPONENT_FMRI=		library/glib2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
+COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
+
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
-# /usr/lib and /usr/lib/$(MACH64) needed to make dbus-daemon program available
-PATH = $(PATH.gnu):/usr/lib:/usr/lib/$(MACH64)
+# GNU msgfmt is needed
+PATH = $(PATH.gnu)
 
 # socketpair(3socket) requires -lsocket -lnsl
 LDFLAGS += -lsocket -lnsl
@@ -48,27 +49,26 @@ LDFLAGS += -lsocket -lnsl
 CFLAGS += -std=gnu11
 
 # We need standard conforming getpwnam_r()/getpwuid_r()
+CPPFLAGS += $(CPP_POSIX)
+# Workaround for https://www.illumos.org/issues/16836
 CPPFLAGS += $(CPP_XPG6MODE)
-
-# Some warnings are treated as errors by default but we do not want that
-CFLAGS += -Wno-error=format-nonliteral
-CFLAGS += -Wno-error=format-security
 
 # We do not have getxattr() so disable xattr
 CONFIGURE_OPTIONS += -Dxattr=false
-CONFIGURE_OPTIONS += -Dman=true
-CONFIGURE_OPTIONS += -Druntime_libdir=$(USRLIBDIR)
-CONFIGURE_OPTIONS += -Dcharsetalias_dir=$(USRLIBDIR)
+CONFIGURE_OPTIONS.64 += -Dman-pages=enabled
 CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
 CONFIGURE_OPTIONS += -Dselinux=disabled
-CONFIGURE_OPTIONS += -Dxattr=false
 CONFIGURE_OPTIONS += -Dlibmount=disabled
 CONFIGURE_OPTIONS += -Dbsymbolic_functions=false
-CONFIGURE_OPTIONS += -Dman=true
 CONFIGURE_OPTIONS += -Dfam=true
-
-COMPONENT_POST_CONFIGURE_ACTION= \
-  ( cd $(@D); $(GSED) -i "s/_FILE_OFFSET_BITS=64/_FILE_OFFSET_BITS=$(BITS)/g" ./build.ninja )
+CONFIGURE_OPTIONS += -Ddtrace=disabled
+CONFIGURE_OPTIONS += -Dsystemtap=disabled
+CONFIGURE_OPTIONS += -Dsysprof=disabled
+# see https://gitlab.gnome.org/GNOME/glib/-/issues/3421
+CONFIGURE_OPTIONS += -Dglib_debug=disabled
+# Our 32 bit libelf is missing the large file support
+# https://www.illumos.org/issues/1587
+CONFIGURE_OPTIONS.32 += -Dlibelf=disabled
 
 # We need to install libraries and set correct LD_LIBRARY_PATH before test
 $(TEST_TARGET): $(INSTALL_TARGET)
@@ -77,25 +77,29 @@ $(TEST_TARGET): $(INSTALL_TARGET)
 DFLAGS.64 = -64
 COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 
-# necessary otherwise make REQUIRED_PACKAGES will fail
-COMPONENT_POST_INSTALL_ACTION.32= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR32)/g*
-COMPONENT_POST_INSTALL_ACTION.64= $(GSED) -i -e "s:\#!/usr/bin/env .*$$:\#!/usr/bin/python$(PYTHON_VERSION):" $(PROTOUSRBINDIR)/g*
-
-# Otherwise tests fail
-unexport SHELLOPTS
-
-# We need to install libraries and set correct LD_LIBRARY_PATH before test
-$(TEST_TARGET): $(INSTALL_TARGET)
+# Without this the gi-compile-repository loads system libraries which makes the
+# typelib compilation to fail
+COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=gio:glib:gobject
 
 # dbus-daemon is in /usr/lib
 COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
 COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH):/usr/lib/$(MACH64)
 COMPONENT_TEST_ENV = $(COMPONENT_TEST_ENV.$(BITS))
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
+COMPONENT_TEST_ENV += TZ=UTC
 
-COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^(Fail|Ok|Expected Fail|Unexpected Pass|Skipped|Timeout)/'"
+# Dynamic library version number
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
 
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
+
+# Build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/docutils
 
 # dbus-daemon is needed for testing
 TEST_REQUIRED_PACKAGES += system/library/dbus
@@ -104,6 +108,8 @@ TEST_REQUIRED_PACKAGES += system/library/dbus
 TEST_REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/python-subunit
+PYTHON_REQUIRED_PACKAGES += library/python/testtools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
@@ -111,3 +117,4 @@ REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math

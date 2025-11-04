@@ -1,0 +1,38 @@
+illumos refuses to remove current working directory.
+See also https://www.illumos.org/issues/16562
+
+--- mercurial-6.9.1/tests/test-removeemptydirs.t.orig
++++ mercurial-6.9.1/tests/test-removeemptydirs.t
+@@ -132,8 +132,6 @@
+   > EOF
+   $ cd $TESTTMP/hghistedit/somedir
+   $ hg $DO_RM --config extensions.histedit= histedit -q --commands ../histedit_commands
+-  current directory was removed (no-windows !)
+-  (consider changing to repo root: $TESTTMP/hghistedit) (no-windows !)
+   $ ls -A $TESTTMP/hghistedit/
+   .hg
+   histedit_commands
+@@ -141,23 +139,12 @@
+   r1
+   r2
+   somedir
+-#if windows
+   $ "$PYTHON" "$TESTTMP/pwd.py"
+   $TESTTMP/hghistedit/somedir
+   $ ls -A $TESTTMP/hghistedit/somedir
+   foo
+   $ ls -A
+   foo
+-#else
+-  $ echo ${PWD} # no-pwd-check
+-  $TESTTMP/hghistedit/somedir
+-  $ "$PYTHON" "$TESTTMP/pwd.py"
+-  <directory is no longer accessible>
+-  $ ls -A $TESTTMP/hghistedit/somedir
+-  foo
+-  $ ls -A || true
+-  ls: .: $ENOENT$ (?)
+-#endif
+ 
+ Get out of the doomed directory
+ 

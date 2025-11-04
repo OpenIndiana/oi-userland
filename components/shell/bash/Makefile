@@ -22,8 +22,8 @@
 #
 # Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
-# Copyright (c) 2021, Andreas Wacknitz
 # Copyright (c) 2022, Niklas Poslovski
+# Copyright (c) 2024, Andreas Wacknitz
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -111,19 +111,15 @@ CONFIGURE_OPTIONS += --enable-static-link
 CONFIGURE_OPTIONS += --enable-usg-echo-default=yes
 CONFIGURE_OPTIONS += --enable-xpg-echo-default=yes
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --without-bash-malloc
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --with-installed-readline=no
 
-COMPONENT_TEST_DIR      = $(BUILD_DIR_64)
-COMPONENT_TEST_ENV      = - $(TEST_PATH)
+COMPONENT_TEST_DIR= $(BUILD_DIR_64)
+COMPONENT_TEST_ENV= $(TEST_PATH)
 # The bash test harness needs the GNU userland utilities
 TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
-
-# Results output is slightly different on Intel vs. SPARC.
-#COMPONENT_TEST_MASTER       = \
-    $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
 # Bash tests can't pass if they don't have tty available. This script makes
 # sure to provide a tty if we are missing one

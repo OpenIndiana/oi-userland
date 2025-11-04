@@ -1,0 +1,52 @@
+without this patch 'pkgdepend resolve' will fail with:
+
+/usr/bin/pkgdepend resolve -e /code/github/oi-userland/components/network/wsdd/build/resolve.deps -m /code/github/oi-userland/components/network/wsdd/build/manifest-i386-wsdd.depend /code/github/oi-userland/components/network/wsdd/build/runtime-perl.p5m /code/github/oi-userland/components/network/wsdd/build/runtime-ruby.p5m
+/code/github/oi-userland/components/network/wsdd/build/manifest-i386-wsdd.depend has unresolved dependency '
+    depend type=require fmri=__TBD \
+        pkg.debug.depend.reason=usr/lib/wsdd/wsdd.py \
+        pkg.debug.depend.type=python \
+        pkg.debug.depend.file=64/daemon.abi3.so \
+        pkg.debug.depend.file=64/daemon.cpython-39.so \
+        pkg.debug.depend.file=64/daemon.so \
+        pkg.debug.depend.file=daemon.abi3.so \
+        pkg.debug.depend.file=daemon.cpython-39.so \
+        pkg.debug.depend.file=daemon.py \
+        pkg.debug.depend.file=daemon.pyc \
+        pkg.debug.depend.file=daemon.pyo \
+        pkg.debug.depend.file=daemon.so \
+        pkg.debug.depend.file=daemon/__init__.py \
+        pkg.debug.depend.path=usr/lib/python3.9/lib-dynload/systemd \
+        pkg.debug.depend.path=usr/lib/python3.9/site-packages/systemd \
+        pkg.debug.depend.path=usr/lib/python3.9/systemd \
+        pkg.debug.depend.path=usr/lib/python3.9/vendor-packages/systemd \
+        pkg.debug.depend.path=usr/lib/python39.zip/systemd \
+        pkg.debug.depend.path=usr/lib/wsdd/systemd'.
+/code/github/oi-userland/components/network/wsdd/build/manifest-i386-wsdd.depend has unresolved dependency '
+    depend type=require fmri=__TBD pkg.debug.depend.file=systemd/__init__.py \
+        pkg.debug.depend.reason=usr/lib/wsdd/wsdd.py \
+        pkg.debug.depend.type=python \
+        pkg.debug.depend.path=usr/lib/python3.9 \
+        pkg.debug.depend.path=usr/lib/python3.9/lib-dynload \
+        pkg.debug.depend.path=usr/lib/python3.9/site-packages \
+        pkg.debug.depend.path=usr/lib/python3.9/vendor-packages \
+        pkg.debug.depend.path=usr/lib/python39.zip \
+        pkg.debug.depend.path=usr/lib/wsdd'.
+
+
+diff --git a/src/wsdd.py b/src/wsdd.py
+index b345443..b36736a 100755
+--- a/src/wsdd.py
++++ b/src/wsdd.py
+@@ -42,12 +42,6 @@ try:
+ except ModuleNotFoundError:
+     from xml.etree.ElementTree import fromstring as ETfromString
+ 
+-try:
+-    import systemd.daemon  # type: ignore
+-except ModuleNotFoundError:
+-    # Non-systemd host
+-    pass
+-
+ WSDD_VERSION: str = '0.9'
+ 
+ 

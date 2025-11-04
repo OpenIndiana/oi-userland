@@ -11,35 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.itertools
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.itertools jaraco_itertools
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.itertools
-HUMAN_VERSION =			6.4.1
-COMPONENT_SUMMARY =		jaraco.itertools - jaraco.itertools
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.itertools
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ab/c8/60ae0b93e588e561a47795831f0a4fad5f22f28565897c3c30fc66845a76/jaraco.itertools-6.4.1.tar.gz
+COMPONENT_NAME =		jaraco_itertools
+HUMAN_VERSION =			6.4.3
+COMPONENT_SUMMARY =		jaraco.itertools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:314fce562ebb45ea4822a98bbd7b22e5feac7d5118dbc1a4f1eb2cd046bffa47
+	sha256:06c8727afcad659e29ce78773870428500f4daf6f13b9c2f5154ddb21cbca90d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/inflect
 PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

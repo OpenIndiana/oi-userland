@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTML::Template
+#   $WS_TOOLS/perl-integrate-module HTML-Template
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTML::Template
+COMPONENT_NAME =		HTML-Template
 HUMAN_VERSION =			2.97
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		HTML::Template - Perl module to use HTML-like templating language
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl module to use HTML-like templating language
 COMPONENT_CPAN_AUTHOR =		SAMTREGAR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6547af61f3aa85793f8616190938d677d7995fb3b720c16258040bc935e2129f
@@ -32,5 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/cgi
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

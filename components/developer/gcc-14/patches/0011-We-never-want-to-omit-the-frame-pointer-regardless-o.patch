@@ -1,0 +1,49 @@
+From 750a57287311346ce81723ff41a9ce0df4cc0e6e Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Thu, 25 Oct 2018 18:19:36 +0000
+Subject: We never want to omit the frame pointer, regardless of
+ the optimisation level or options to gcc - we like stack traces too much and
+ it is of questionable benefit anyway, even on i386.
+
+---
+ gcc/config/i386/i386-options.cc | 9 +++++++++
+ gcc/opts.cc                     | 3 ++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
+--- gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/i386/i386-options.cc
+@@ -3264,6 +3264,15 @@
+       free (str);
+     }
+ 
++  /*
++   * We never want to omit the frame pointer, regardless of the optimisation
++   * level or options to gcc - we like stack traces too much and it is of
++   * questionable benefit anyway, even on i386.
++   */
++
++  flag_omit_frame_pointer = 0;
++  opts->x_flag_omit_frame_pointer = 0;
++
+   /* Save the initial options in case the user does function specific
+      options.  */
+   if (main_args_p)
+--- gcc-releases-gcc-14.3.0/gcc/opts.cc.orig
++++ gcc-releases-gcc-14.3.0/gcc/opts.cc
+@@ -581,7 +581,7 @@
+     { OPT_LEVELS_1_PLUS, OPT_fipa_reference, NULL, 1 },
+     { OPT_LEVELS_1_PLUS, OPT_fipa_reference_addressable, NULL, 1 },
+     { OPT_LEVELS_1_PLUS, OPT_fmerge_constants, NULL, 1 },
+-    { OPT_LEVELS_1_PLUS, OPT_fomit_frame_pointer, NULL, 1 },
++    { OPT_LEVELS_1_PLUS, OPT_fomit_frame_pointer, NULL, 0 },
+     { OPT_LEVELS_1_PLUS, OPT_freorder_blocks, NULL, 1 },
+     { OPT_LEVELS_1_PLUS, OPT_fshrink_wrap, NULL, 1 },
+     { OPT_LEVELS_1_PLUS, OPT_fsplit_wide_types, NULL, 1 },
+@@ -617,6 +617,7 @@
+     { OPT_LEVELS_1_PLUS_NOT_DEBUG, OPT_ftree_pta, NULL, 1 },
+     { OPT_LEVELS_1_PLUS_NOT_DEBUG, OPT_ftree_sra, NULL, 1 },
+ 
++
+     /* -O2 and -Os optimizations.  */
+     { OPT_LEVELS_2_PLUS, OPT_fcaller_saves, NULL, 1 },
+     { OPT_LEVELS_2_PLUS, OPT_fcode_hoisting, NULL, 1 },

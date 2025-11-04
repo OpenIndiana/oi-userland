@@ -1,0 +1,53 @@
+Our build framework sets PYTEST_PLUGINS to contain 'asyncio' and so the
+	pytest_plugins = 'pytest_asyncio'
+line tries to load the plugin 2nd time.  This emits additional warning and so
+all tests that check the expected number of warnings fails here.
+
+--- pytest_asyncio-1.0.0/tests/hypothesis/test_base.py.orig
++++ pytest_asyncio-1.0.0/tests/hypothesis/test_base.py
+@@ -55,8 +55,6 @@
+         from hypothesis import given
+         import hypothesis.strategies as st
+ 
+-        pytest_plugins = 'pytest_asyncio'
+-
+         @given(n=st.integers())
+         async def test_hypothesis(n: int):
+             assert isinstance(n, int)
+@@ -78,8 +76,6 @@
+         from hypothesis import given
+         import hypothesis.strategies as st
+ 
+-        pytest_plugins = 'pytest_asyncio'
+-
+         @given(n=st.integers())
+         def test_hypothesis(request, n: int):
+             markers = [marker.name for marker in request.node.own_markers]
+--- pytest_asyncio-1.0.0/tests/test_event_loop_fixture.py.orig
++++ pytest_asyncio-1.0.0/tests/test_event_loop_fixture.py
+@@ -65,8 +65,6 @@
+             import asyncio
+             import pytest
+ 
+-            pytest_plugins = 'pytest_asyncio'
+-
+             @pytest.mark.asyncio
+             async def test_something():
+                 async def generator_fn():
+@@ -92,7 +90,6 @@
+             import asyncio
+             import pytest
+             import pytest_asyncio
+-            pytest_plugins = 'pytest_asyncio'
+ 
+             @pytest_asyncio.fixture
+             async def _event_loop():
+@@ -124,8 +121,6 @@
+             import asyncio
+             import pytest
+ 
+-            pytest_plugins = 'pytest_asyncio'
+-
+             @pytest.mark.asyncio
+             async def test_something():
+                 # mock shutdown_asyncgen failure

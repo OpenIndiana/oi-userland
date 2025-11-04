@@ -72,52 +72,9 @@
  
  tcsd_SOURCES=svrside.c tcsd_conf.c tcsd_threads.c platform.c
  
---- trousers-0.3.11.2/src/tcsd/Makefile.in.orig
-+++ trousers-0.3.11.2/src/tcsd/Makefile.in
-@@ -64,7 +64,7 @@
- mkinstalldirs = $(install_sh) -d
- CONFIG_CLEAN_FILES =
- CONFIG_CLEAN_VPATH_FILES =
--am__installdirs = "$(DESTDIR)$(sbindir)"
-+am__installdirs = "$(DESTDIR)$(libdir)"
- PROGRAMS = $(sbin_PROGRAMS)
- am_tcsd_OBJECTS = tcsd-svrside.$(OBJEXT) tcsd-tcsd_conf.$(OBJEXT) \
- 	tcsd-tcsd_threads.$(OBJEXT) tcsd-platform.$(OBJEXT)
-@@ -212,7 +212,7 @@
- prefix = @prefix@
- program_transform_name = @program_transform_name@
- psdir = @psdir@
--sbindir = @sbindir@
-+sbindir = @libdir@
- sharedstatedir = @sharedstatedir@
- srcdir = @srcdir@
- sysconfdir = @sysconfdir@
-@@ -227,8 +227,9 @@
- tcsd_CFLAGS = -DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" \
- 	-DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include \
- 	-fPIE -DPIE $(am__append_1) $(am__append_2)
--tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a -lpthread @CRYPTOLIB@
--tcsd_LDFLAGS = -pie -Wl,-z,relro -Wl,-z,now
-+tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a \
-+	-lpthread -lbsm -lscf -lresolv @CRYPTOLIB@
-+tcsd_LDFLAGS = -Wl,-z,now
- tcsd_SOURCES = svrside.c tcsd_conf.c tcsd_threads.c platform.c
- all: all-am
- 
 --- trousers-0.3.11.2/src/include/tcsd.h.orig
 +++ trousers-0.3.11.2/src/include/tcsd.h
-@@ -48,15 +48,25 @@
- 							of this TCS System */
- };
- 
-+#ifdef SOLARIS
-+#define	TCSD_DEFAULT_CONFIG_FILE	"/etc/security/tcsd.conf"
-+#else
- #define TCSD_DEFAULT_CONFIG_FILE	ETC_PREFIX "/tcsd.conf"
-+#endif
- extern char *tcsd_config_file;
- 
- #define TSS_USER_NAME		"tss"
+@@ -55,8 +55,14 @@
  #define TSS_GROUP_NAME		"tss"
  
  #define TCSD_DEFAULT_MAX_THREADS	10

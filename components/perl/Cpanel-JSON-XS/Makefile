@@ -11,23 +11,41 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Cpanel::JSON::XS
+#   $WS_TOOLS/perl-integrate-module Cpanel-JSON-XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Cpanel::JSON::XS
-HUMAN_VERSION =			4.37
-COMPONENT_SUMMARY =		Cpanel::JSON::XS - cPanel fork of JSON::XS, fast and correct serializing
+COMPONENT_NAME =		Cpanel-JSON-XS
+HUMAN_VERSION =			4.40
+COMPONENT_SUMMARY =		cPanel fork of JSON::XS, fast and correct serializing
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c241615a0e17ff745aaa86bbf466a6e29cd240515e65f06a7a05017b619e6d4b
+	sha256:785473f07673b197e1c29964e9445ed969ee0b4b2adf51d7bebec6887cd3514c
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
+REQUIRED_PACKAGES.perl += library/perl-5/podlators
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/class-xsaccessor
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/common-sense
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/json
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-pp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-xs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/list-moreutils
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/mojolicious
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/text-csv_xs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/time-piece

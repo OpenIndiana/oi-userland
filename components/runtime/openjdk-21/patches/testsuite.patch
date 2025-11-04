@@ -1,0 +1,218 @@
+The fixes here are restoring Solaris and SPARC functionality to the test
+suite. It would be nice to be complete, but that isn't true yet.
+
+--- a/test/lib/jdk/test/lib/Platform.java	Wed Sep 15 21:15:33 2021
++++ b/test/lib/jdk/test/lib/Platform.java	Tue Apr  2 11:22:50 2024
+@@ -130,6 +130,10 @@
+         return isOs("mac");
+     }
+ 
++    public static boolean isSolaris() {
++        return isOs("sunos");
++    }
++
+     public static boolean isWindows() {
+         return isOs("win");
+     }
+@@ -225,6 +229,11 @@
+         return isArch("s390.*") || isArch("s/390.*") || isArch("zArch_64");
+     }
+ 
++    // Returns true for sparc and sparcv9.
++    public static boolean isSparc() {
++        return isArch("sparc.*");
++    }
++
+     public static boolean isX64() {
+         // On OSX it's 'x86_64' and on other (Linux and Windows) platforms it's 'amd64'
+         return isArch("(amd64)|(x86_64)");
+@@ -253,6 +262,8 @@
+         }
+         if (isAix()) {
+             return false; // SA not implemented.
++        } else if (isSolaris()) {
++            return false; // Testing disabled due to JDK-8193639.
+         } else if (isLinux()) {
+             if (isS390x() || isARM()) {
+                 return false; // SA not implemented.
+@@ -462,6 +473,7 @@
+                 isServer() &&
+                 (isLinux()   ||
+                  isOSX()     ||
++                 isSolaris() ||
+                  isWindows()) &&
+                 !isZero()    &&
+                 !isMinimal() &&
+@@ -472,7 +484,7 @@
+      * This should match the #if condition in ClassListParser::load_class_from_source().
+      */
+     public static boolean areCustomLoadersSupportedForCDS() {
+-        return (is64bit() && (isLinux() || isOSX() || isWindows()));
++        return (is64bit() && (isLinux() || isSolaris() || isOSX() || isWindows()));
+     }
+ 
+     /**
+--- a/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java	Tue Jan  9 21:18:15 2024
++++ b/test/lib-test/jdk/test/lib/TestMutuallyExclusivePlatformPredicates.java	Tue Apr  2 11:28:16 2024
+@@ -45,9 +45,9 @@
+  */
+ public class TestMutuallyExclusivePlatformPredicates {
+     private static enum MethodGroup {
+-        ARCH("isAArch64", "isARM", "isRISCV64", "isPPC", "isS390x", "isX64", "isX86"),
++        ARCH("isAArch64", "isARM", "isRISCV64", "isPPC", "isS390x", "isSparc", "isX64", "isX86"),
+         BITNESS("is32bit", "is64bit"),
+-        OS("isAix", "isLinux", "isOSX", "isWindows"),
++        OS("isAix", "isLinux", "isOSX", "isSolaris", "isWindows"),
+         VM_TYPE("isClient", "isServer", "isMinimal", "isZero", "isEmbedded"),
+         MODE("isInt", "isMixed", "isComp"),
+         IGNORED("isEmulatedClient", "isDebugBuild", "isFastDebugBuild", "isMusl",
+--- a/test/jdk/java/lang/ProcessBuilder/DestroyTest.java	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/java/lang/ProcessBuilder/DestroyTest.java	Tue Apr  2 12:25:30 2024
+@@ -113,6 +113,7 @@
+             File tempFile = File.createTempFile("ProcessTrap-", ".sh", userDir);
+             if (osName.startsWith("Linux")
+                     || osName.startsWith("Mac OS")
++                    || osName.equals("SunOS")
+                     || osName.equals("AIX")) {
+                 return new UnixTest(tempFile);
+             }
+--- a/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/java/lang/RuntimeTests/exec/ExitValue.java	Tue Apr  2 12:26:47 2024
+@@ -97,7 +97,7 @@
+ 
+         checkPosixShellExitValue("exit 7", 7);
+ 
+-        int sigoffset = 128;
++        int sigoffset = UnixCommands.isSunOS ? 0 : 128;
+         checkPosixShellExitValue(UnixCommands.kill() + " -9 $$", sigoffset+9);
+     }
+ 
+--- a/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/java/lang/RuntimeTests/exec/UnixCommands.java	Tue Apr  2 12:35:44 2024
+@@ -32,6 +32,7 @@
+ 
+     public static final boolean isUnix = ! System.getProperty("os.name").startsWith("Windows");
+     public static final boolean isLinux = System.getProperty("os.name").startsWith("Linux");
++    public static final boolean isSunOS = System.getProperty("os.name").equals("SunOS");
+ 
+     private static final String[] paths = {"/bin", "/usr/bin"};
+ 
+--- a/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java	Tue Jan  9 21:18:15 2024
++++ b/test/hotspot/jtreg/runtime/jni/terminatedThread/TestTerminatedThread.java	Tue Apr  2 13:28:55 2024
+@@ -25,14 +25,17 @@
+ /*
+  * @test
+  * @bug     8205878 8206954
+- * @requires os.family != "windows"
++ * @requires os.family != "windows" & os.family != "solaris"
+  * @comment Calling pthread_getcpuclockid() with invalid pid leads to undefined
+  * behavior in musl libc (see 8240187).
+  * @requires !vm.musl
+  * @library /testlibrary
+  * @summary Basic test of Thread and ThreadMXBean queries on a natively
+  *          attached thread that has failed to detach before terminating.
+- * @comment The native code only supports POSIX so no windows testing
++ * @comment The native code only supports POSIX so no windows testing; also
++ *          we have to skip solaris as a terminating thread that fails to
++ *          detach will hit an infinite loop due to TLS destructor issues - see
++ *          comments in JDK-8156708
+  * @run main/othervm/native TestTerminatedThread
+  */
+ 
+--- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
++++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
+@@ -109,7 +109,7 @@
+         // We check for that here, but allow it for Aix and Windows slowdebug builds
+         // because the compiler ends up not inlining AllocateHeap.
+         Boolean okToHaveAllocateHeap = Platform.isSlowDebugBuild() &&
+-                                       (Platform.isAix() || Platform.isWindows());
++                                       (Platform.isAix() || Platform.isSolaris() || Platform.isWindows());
+         if (!okToHaveAllocateHeap) {
+             output.shouldNotContain("AllocateHeap");
+         }
+--- a/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java	Tue Jan  9 21:18:15 2024
++++ b/test/hotspot/jtreg/runtime/ReservedStack/ReservedStackTest.java	Thu Apr  4 10:25:01 2024
+@@ -241,6 +241,7 @@
+             (Platform.isLinux() &&
+              (Platform.isPPC() || Platform.isS390x() || Platform.isX64() ||
+               Platform.isX86() || Platform.isAArch64() || Platform.isRISCV64())) ||
++            Platform.isSolaris() ||
+             Platform.isOSX();
+     }
+ 
+--- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
+@@ -52,7 +52,7 @@
+ # set platform-dependent variables
+ OS=`uname -s`
+ case "$OS" in
+-  Linux | Darwin )
++  SunOS | Linux | Darwin )
+     PATHSEP=":"
+     FILESEP="/"
+     NATIVE=true
+--- a/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Thu Apr  4 11:06:23 2024
+@@ -51,6 +51,10 @@
+ # set platform-dependent variables
+ OS=`uname -s`
+ case "$OS" in
++  SunOS )
++    PS=":"
++    FS="/"
++    ;;
+   Linux )
+     PS=":"
+     FS="/"
+--- a/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/sun/security/ssl/SSLSocketImpl/NotifyHandshakeTest.sh	Thu Apr  4 11:07:24 2024
+@@ -46,7 +46,7 @@
+ 
+ OS=`uname -s`
+ case "$OS" in
+-    Linux | Darwin | AIX )
++    SunOS | Linux | Darwin | AIX )
+         FILESEP="/"
+         PATHSEP=":"
+         ;;
+--- a/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Tue Jan  9 21:18:15 2024
++++ b/test/jdk/sun/security/pkcs11/Provider/MultipleLogins.sh	Thu Apr  4 11:29:40 2024
+@@ -58,6 +58,12 @@
+ 
+ OS=`uname -s`
+ case "$OS" in
++  SunOS )
++    FS="/"
++    PS=":"
++    CP="${FS}bin${FS}cp"
++    CHMOD="${FS}bin${FS}chmod"
++    ;;
+   Linux )
+     FS="/"
+     PS=":"
+--- a/test/jdk/jdk/internal/util/OSTest.java	Mon Apr  8 07:22:11 2024
++++ b/test/jdk/jdk/internal/util/OSTest.java	Wed Jun  5 20:11:03 2024
+@@ -30,6 +30,7 @@
+ import static jdk.internal.util.OperatingSystem.AIX;
+ import static jdk.internal.util.OperatingSystem.LINUX;
+ import static jdk.internal.util.OperatingSystem.MACOS;
++import static jdk.internal.util.OperatingSystem.SOLARIS;
+ import static jdk.internal.util.OperatingSystem.WINDOWS;
+ 
+ import jdk.internal.util.StaticProperty;
+@@ -60,6 +61,7 @@
+             case "win" -> WINDOWS;
+             case "lin" -> LINUX;
+             case "mac" -> MACOS;
++            case "sun" -> SOLARIS;
+             case "aix" -> AIX;
+             default    -> fail("Unknown os.name: " + osName);
+         };
+@@ -75,6 +77,7 @@
+                 Arguments.of(LINUX, OperatingSystem.isLinux()),
+                 Arguments.of(WINDOWS, OperatingSystem.isWindows()),
+                 Arguments.of(MACOS, OperatingSystem.isMacOS()),
++                Arguments.of(SOLARIS, OperatingSystem.isSolaris()),
+                 Arguments.of(AIX, OperatingSystem.isAix())
+         );
+     }

@@ -6,7 +6,7 @@ configfile: setup.cfg
 timeout: 17.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 494 items
+collecting ... collected 503 items
 
 code)
 https://github.com/httplib2/httplib2/issues/170)
@@ -190,12 +190,21 @@ tests/test_proxy.py::test_from_env PASSED
 tests/test_proxy.py::test_from_env_https PASSED
 tests/test_proxy.py::test_from_env_none PASSED
 tests/test_proxy.py::test_from_env_other PASSED
-tests/test_proxy.py::test_from_url PASSED
-tests/test_proxy.py::test_from_url_ident PASSED
-tests/test_proxy.py::test_from_url_ipv6 PASSED
-tests/test_proxy.py::test_from_url_no_password PASSED
+tests/test_proxy.py::test_from_url[http://[::1]:8888-3-::1-8888-None-None] PASSED
+tests/test_proxy.py::test_from_url[http://leila@fro.xy:1032-3-fro.xy-1032-leila-None] PASSED
+tests/test_proxy.py::test_from_url[http://myproxy.example.com-3-myproxy.example.com-80-None-None] PASSED
+tests/test_proxy.py::test_from_url[http://zoidberg:fish@someproxy:99-3-someproxy-99-zoidberg-fish] PASSED
+tests/test_proxy.py::test_from_url[socks4://[::1]:8888-1-::1-8888-None-None] PASSED
+tests/test_proxy.py::test_from_url[socks4://leila@fro.xy:1032-1-fro.xy-1032-leila-None] PASSED
+tests/test_proxy.py::test_from_url[socks4://myproxy.example.com-1-myproxy.example.com-80-None-None] PASSED
+tests/test_proxy.py::test_from_url[socks4://zoidberg:fish@someproxy:99-1-someproxy-99-zoidberg-fish] PASSED
+tests/test_proxy.py::test_from_url[socks5://[::1]:8888-2-::1-8888-None-None] PASSED
+tests/test_proxy.py::test_from_url[socks5://leila@fro.xy:1032-2-fro.xy-1032-leila-None] PASSED
+tests/test_proxy.py::test_from_url[socks5://myproxy.example.com-2-myproxy.example.com-80-None-None] PASSED
+tests/test_proxy.py::test_from_url[socks5://zoidberg:fish@someproxy:99-2-someproxy-99-zoidberg-fish] PASSED
 tests/test_proxy.py::test_functional_noproxy_star_http PASSED
 tests/test_proxy.py::test_functional_noproxy_star_https PASSED
+tests/test_proxy.py::test_functional_socks5 PASSED
 tests/test_proxy.py::test_headers PASSED
 tests/test_proxy.py::test_noproxy_star PASSED
 tests/test_proxy.py::test_noproxy_trailing_comma PASSED
@@ -509,6 +518,24 @@ tests/test_uri.py::test_safename[(b'\\xd0\\xbf\\xd1\\x80', ',9f18c0db74a9734e9d1
 tests/test_uri.py::test_safename[(b'column\\tvalues/unstr.zip', 'columnvaluesunstr.zip,b9740dcd0553e11b526450ceb8f76683')] PASSED
 works only with follow_redirects, should work regardless)
 
+=============================== warnings summary ===============================
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:831
+  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:831: PytestAssertRewriteWarning: Module already imported so cannot be rewritten: xdist
+    self.import_plugin(import_spec, consider_entry_points=True)
 
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=================================== XPASSES ====================================
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
+
+Name                   Stmts   Miss  Cover
+------------------------------------------
+httplib2/__init__.py     917    151    84%
+httplib2/auth.py          39      5    87%
+httplib2/certs.py         29      4    86%
+httplib2/error.py         25      0   100%
+httplib2/iri2uri.py       40     15    62%
+------------------------------------------
+TOTAL                   1050    175    83%
 =========================== short test summary info ============================
-======== 483 passed, 9 skipped, 1 xfailed, 1 xpassed ========
+======== 492 passed, 9 skipped, 1 xfailed, 1 xpassed, 1 warning ========

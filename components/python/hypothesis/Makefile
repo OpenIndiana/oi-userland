@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project hypothesis
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.100.1
-COMPONENT_SUMMARY =		hypothesis - A library for property-based testing
+HUMAN_VERSION =			6.140.3
+COMPONENT_SUMMARY =		A library for property-based testing
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b769da366429b6f6727da5ba7313d56b1b42b93b3fb4bc9203d1d0392da754e0
+	sha256:6b08a8e7422e7f2f6af472965eaaf5d4f4648d8e5241a53d9fac180bb9bea629
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,18 +36,22 @@ COMPONENT_SUBDIR =		hypothesis-python
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Random temporary directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
+# Fails with tox-current-env
+PYTEST_ADDOPTS += --deselect $(COMPONENT_SUBDIR)/tests/nocover/test_scrutineer.py::test_report_sort
+
 # Contains the date of the test run
 COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/sortedcontainers
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/sortedcontainers
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pexpect
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

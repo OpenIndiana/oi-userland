@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2023 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,7 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=etc/tcsd.conf
+file path=etc/security/auth_attr.d/trousers
+file path=etc/security/prof_attr.d/trousers
+file path=etc/security/tcsd.conf
+file path=lib/svc/manifest/application/security/tcsd.xml
+file path=lib/svc/method/tcsd.sh
 file path=usr/include/trousers/trousers.h
 file path=usr/include/trousers/tss.h
 file path=usr/include/tss/compat11b.h
@@ -138,3 +142,6 @@ file path=usr/share/man/man3/Tspi_TPM_StirRandom.3
 file path=usr/share/man/man3/Tspi_TPM_TakeOwnership.3
 file path=usr/share/man/man5/tcsd.conf.5
 file path=usr/share/man/man8/tcsd.8
+link path=var/tpm/system/system.data target=system.data.auth
+file path=var/tpm/system/system.data.auth
+file path=var/tpm/system/system.data.noauth

@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		annotated_types
-HUMAN_VERSION =			0.6.0
-COMPONENT_SUMMARY =		annotated_types - Reusable constraint types to use with typing.Annotated
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/67/fe/8c7b275824c6d2cd17c93ee85d0ee81c090285b6d52f4876ccc47cf9c3c4/annotated_types-0.6.0.tar.gz
+HUMAN_VERSION =			0.7.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Reusable constraint types to use with typing.Annotated
+COMPONENT_PROJECT_URL =		https://github.com/annotated-types/annotated-types
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:563339e807e53ffd9c267e99fc6d9ea23eb8443c08f112651963e24e22f84a5d
+	sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,5 +36,5 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12,\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python

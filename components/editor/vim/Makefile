@@ -31,18 +31,20 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.1.155
-HUMAN_VERSION=		9.1.0155
+COMPONENT_VERSION=	9.1.1891
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1a4b4800f6e56eba627e05fd208b710b015d578563eb112d04682b2dccf3dcef
+COMPONENT_ARCHIVE_HASH=	sha256:aa90474ad0c7056a12e94a0b00a2a5e4e7f6c618139dc3e6be35931e9ea37415
 
 include $(WS_MAKE_RULES)/common.mk
 
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
+
 COMPONENT_POST_UNPACK_ACTION += ( \
-	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
+	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure ; \
 	find $(@D) -name \*.sh -exec chmod +x '{}' ';' ; \
 	rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
 
@@ -59,7 +61,7 @@ INSTALL_64 = $(VARIANTS:%=%/.installed)
 TEST_64 = $(NOX_VARIANT)/.tested
 
 # vim uses self-defined INFINITY/NAN, which don't work well on illumos
-CFLAGS += -std=c99 $(XPG6MODE)
+CFLAGS += -std=c99 $(XPG8MODE)
 
 CONFIGURE_ENV += PATH=$(PATH.gnu)
 # Make sure we use a 64-bit, multithreaded perl

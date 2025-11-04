@@ -13,12 +13,14 @@
 # Portions Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2016 Jim Klimov
 # Copyright 2022 Nona Hansel
+# Copyright 2025 Klaus Ziegler
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 # TODO: Shold there be some locale-related transforms for manpages?
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.description value="$(COMPONENT_DESCRIPTION)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
@@ -32,12 +34,11 @@ set name=org.opensolaris.arc-caseid value=PSARC/2007/129
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file files/exec_attr.nmap path=etc/security/exec_attr.d/diagnostic:nmap
+
 file path=usr/bin/ncat
 file path=usr/bin/nmap
 file path=usr/bin/nping
-
-file files/exec_attr.nmap path=etc/security/exec_attr.d/diagnostic:nmap
-
 file path=usr/share/man/de/man1/nmap.1
 file path=usr/share/man/es/man1/nmap.1
 file path=usr/share/man/fr/man1/nmap.1
@@ -60,7 +61,6 @@ file path=usr/share/ncat/ca-bundle.crt
 
 file path=usr/share/nmap/nmap-mac-prefixes
 file path=usr/share/nmap/nmap-os-db
-file path=usr/share/nmap/nmap-payloads
 file path=usr/share/nmap/nmap-protocols
 file path=usr/share/nmap/nmap-rpc
 file path=usr/share/nmap/nmap-service-probes
@@ -129,6 +129,7 @@ file path=usr/share/nmap/nselib/data/rtsp-urls.txt
 file path=usr/share/nmap/nselib/data/snmpcommunities.lst
 file path=usr/share/nmap/nselib/data/ssl-fingerprints
 file path=usr/share/nmap/nselib/data/targets-ipv6-wordlist
+file path=usr/share/nmap/nselib/data/tftp-fingerprints.lua
 file path=usr/share/nmap/nselib/data/tftplist.txt
 file path=usr/share/nmap/nselib/data/usernames.lst
 file path=usr/share/nmap/nselib/data/vhosts-default.lst
@@ -139,6 +140,7 @@ file path=usr/share/nmap/nselib/datafiles.lua
 file path=usr/share/nmap/nselib/datetime.lua
 file path=usr/share/nmap/nselib/dhcp.lua
 file path=usr/share/nmap/nselib/dhcp6.lua
+file path=usr/share/nmap/nselib/dicom.lua
 file path=usr/share/nmap/nselib/dns.lua
 file path=usr/share/nmap/nselib/dnsbl.lua
 file path=usr/share/nmap/nselib/dnssd.lua
@@ -154,6 +156,7 @@ file path=usr/share/nmap/nselib/http.lua
 file path=usr/share/nmap/nselib/httpspider.lua
 file path=usr/share/nmap/nselib/iax2.lua
 file path=usr/share/nmap/nselib/idna.lua
+file path=usr/share/nmap/nselib/iec61850mms.lua
 file path=usr/share/nmap/nselib/ike.lua
 file path=usr/share/nmap/nselib/imap.lua
 file path=usr/share/nmap/nselib/informix.lua
@@ -197,8 +200,8 @@ file path=usr/share/nmap/nselib/omp2.lua
 file path=usr/share/nmap/nselib/oops.lua
 file path=usr/share/nmap/nselib/openssl.luadoc
 file path=usr/share/nmap/nselib/ospf.lua
+file path=usr/share/nmap/nselib/outlib.lua
 file path=usr/share/nmap/nselib/packet.lua
-file path=usr/share/nmap/nselib/pcre.luadoc
 file path=usr/share/nmap/nselib/pgsql.lua
 file path=usr/share/nmap/nselib/pop3.lua
 file path=usr/share/nmap/nselib/pppoe.lua
@@ -341,6 +344,8 @@ file path=usr/share/nmap/scripts/daytime.nse
 file path=usr/share/nmap/scripts/db2-das-info.nse
 file path=usr/share/nmap/scripts/deluge-rpc-brute.nse
 file path=usr/share/nmap/scripts/dhcp-discover.nse
+file path=usr/share/nmap/scripts/dicom-brute.nse
+file path=usr/share/nmap/scripts/dicom-ping.nse
 file path=usr/share/nmap/scripts/dict-info.nse
 file path=usr/share/nmap/scripts/distcc-cve2004-2687.nse
 file path=usr/share/nmap/scripts/dns-blacklist.nse
@@ -399,6 +404,7 @@ file path=usr/share/nmap/scripts/hadoop-jobtracker-info.nse
 file path=usr/share/nmap/scripts/hadoop-namenode-info.nse
 file path=usr/share/nmap/scripts/hadoop-secondary-namenode-info.nse
 file path=usr/share/nmap/scripts/hadoop-tasktracker-info.nse
+file path=usr/share/nmap/scripts/hartip-info.nse
 file path=usr/share/nmap/scripts/hbase-master-info.nse
 file path=usr/share/nmap/scripts/hbase-region-info.nse
 file path=usr/share/nmap/scripts/hddtemp-info.nse
@@ -545,6 +551,7 @@ file path=usr/share/nmap/scripts/iax2-brute.nse
 file path=usr/share/nmap/scripts/iax2-version.nse
 file path=usr/share/nmap/scripts/icap-info.nse
 file path=usr/share/nmap/scripts/iec-identify.nse
+file path=usr/share/nmap/scripts/iec61850-mms.nse
 file path=usr/share/nmap/scripts/ike-version.nse
 file path=usr/share/nmap/scripts/imap-brute.nse
 file path=usr/share/nmap/scripts/imap-capabilities.nse
@@ -621,6 +628,7 @@ file path=usr/share/nmap/scripts/ms-sql-tables.nse
 file path=usr/share/nmap/scripts/ms-sql-xp-cmdshell.nse
 file path=usr/share/nmap/scripts/msrpc-enum.nse
 file path=usr/share/nmap/scripts/mtrace.nse
+file path=usr/share/nmap/scripts/multicast-profinet-discovery.nse
 file path=usr/share/nmap/scripts/murmur-version.nse
 file path=usr/share/nmap/scripts/mysql-audit.nse
 file path=usr/share/nmap/scripts/mysql-brute.nse
@@ -636,6 +644,7 @@ file path=usr/share/nmap/scripts/mysql-vuln-cve2012-2122.nse
 file path=usr/share/nmap/scripts/nat-pmp-info.nse
 file path=usr/share/nmap/scripts/nat-pmp-mapport.nse
 file path=usr/share/nmap/scripts/nbd-info.nse
+file path=usr/share/nmap/scripts/nbns-interfaces.nse
 file path=usr/share/nmap/scripts/nbstat.nse
 file path=usr/share/nmap/scripts/ncp-enum-users.nse
 file path=usr/share/nmap/scripts/ncp-serverinfo.nse
@@ -661,6 +670,7 @@ file path=usr/share/nmap/scripts/ntp-monlist.nse
 file path=usr/share/nmap/scripts/omp2-brute.nse
 file path=usr/share/nmap/scripts/omp2-enum-targets.nse
 file path=usr/share/nmap/scripts/omron-info.nse
+file path=usr/share/nmap/scripts/openflow-info.nse
 file path=usr/share/nmap/scripts/openlookup-info.nse
 file path=usr/share/nmap/scripts/openvas-otp-brute.nse
 file path=usr/share/nmap/scripts/openwebnet-discovery.nse
@@ -679,7 +689,9 @@ file path=usr/share/nmap/scripts/pjl-ready-message.nse
 file path=usr/share/nmap/scripts/pop3-brute.nse
 file path=usr/share/nmap/scripts/pop3-capabilities.nse
 file path=usr/share/nmap/scripts/pop3-ntlm-info.nse
+file path=usr/share/nmap/scripts/port-states.nse
 file path=usr/share/nmap/scripts/pptp-version.nse
+file path=usr/share/nmap/scripts/profinet-cm-lookup.nse
 file path=usr/share/nmap/scripts/puppet-naivesigning.nse
 file path=usr/share/nmap/scripts/qconn-exec.nse
 file path=usr/share/nmap/scripts/qscan.nse
@@ -819,6 +831,7 @@ file path=usr/share/nmap/scripts/telnet-brute.nse
 file path=usr/share/nmap/scripts/telnet-encryption.nse
 file path=usr/share/nmap/scripts/telnet-ntlm-info.nse
 file path=usr/share/nmap/scripts/tftp-enum.nse
+file path=usr/share/nmap/scripts/tftp-version.nse
 file path=usr/share/nmap/scripts/tls-alpn.nse
 file path=usr/share/nmap/scripts/tls-nextprotoneg.nse
 file path=usr/share/nmap/scripts/tls-ticketbleed.nse
@@ -831,6 +844,7 @@ file path=usr/share/nmap/scripts/ubiquiti-discovery.nse
 file path=usr/share/nmap/scripts/unittest.nse
 file path=usr/share/nmap/scripts/unusual-port.nse
 file path=usr/share/nmap/scripts/upnp-info.nse
+file path=usr/share/nmap/scripts/uptime-agent-info.nse
 file path=usr/share/nmap/scripts/url-snarf.nse
 file path=usr/share/nmap/scripts/ventrilo-info.nse
 file path=usr/share/nmap/scripts/versant-info.nse

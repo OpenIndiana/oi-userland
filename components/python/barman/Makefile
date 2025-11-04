@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project barman
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		barman
-HUMAN_VERSION =			3.10.0
-COMPONENT_SUMMARY =		barman - Backup and Recovery Manager for PostgreSQL
+HUMAN_VERSION =			3.16.1
+COMPONENT_SUMMARY =		Backup and Recovery Manager for PostgreSQL
 COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:171c61f24d0ffa0c96427043d91c218afff893a34bfd4ca1cd0c10b768943c8e
+	sha256:54574d27b7149298f949feed5475d14c0d61649431b484b62da9b729a6fec923
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -76,13 +76,23 @@ PYTEST_ADDOPTS += --ignore tests/test_cloud_snapshot_interface.py
 PYTEST_ADDOPTS += --ignore tests/test_infofile.py
 PYTEST_ADDOPTS += --ignore tests/test_output.py
 
+# We have no cramjam packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_compressor.py
+
+# https://github.com/EnterpriseDB/barman/issues/869
+PYTEST_ADDOPTS += --deselect tests/test_annotations.py::TestAnnotationManagerFile::test_delete_one_of_many_annotations
+PYTEST_ADDOPTS += --deselect tests/test_backup.py::TestWalCleanup::test_delete_wal_cleanup_if_oldest_two_nokeep_and_standalone
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/argcomplete
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/psycopg2
-PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/psycopg2
+REQUIRED_PACKAGES.python += library/python/python-dateutil
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/lz4
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/py
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/zstandard

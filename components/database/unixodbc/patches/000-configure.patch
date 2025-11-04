@@ -4,17 +4,17 @@ https://github.com/lurcher/unixODBC/commit/7d72255824cb96599e71d19fbbc94405db658
 
 Historically we were suggesting -lsocket -lnsl -lgen -z ignore for our users.
 
---- unixODBC-2.3.11/DriverManager/odbc.pc.in
-+++ unixODBC-2.3.11/DriverManager/odbc.pc.in
-@@ -17,4 +17,4 @@ URL: http://unixodbc.org
+--- unixODBC-2.3.13/DriverManager/odbc.pc.in.orig
++++ unixODBC-2.3.13/DriverManager/odbc.pc.in
+@@ -17,4 +17,4 @@
  Version: @PACKAGE_VERSION@
  Cflags: -I${includedir}
  Libs: -L${libdir} -lodbc
--Libs.private: @LIBLTDL@ @LIBS@
-+Libs.private: @LIBLTDL@ @LIBS@ -lsocket -lnsl -lgen -z ignore
---- unixODBC-2.3.11/configure.ac
-+++ unixODBC-2.3.11/configure.ac
-@@ -394,9 +394,9 @@ AC_DEFINE([HAVE_LIBPTH], [1], [Use the -
+-Libs.private: @LIBLTDL@ @LIBICONV@ @LIBS@
++Libs.private: @LIBLTDL@ @LIBICONV@ @LIBS@ -lsocket -lnsl -lgen -z ignore
+--- unixODBC-2.3.13/configure.ac.orig
++++ unixODBC-2.3.13/configure.ac
+@@ -438,9 +438,9 @@
    else
      gotthread="no";
  
@@ -26,9 +26,9 @@ Historically we were suggesting -lsocket -lnsl -lgen -z ignore for our users.
  			raw_threads="no";
  			AC_MSG_RESULT( yes - disable check for libthread );
      	;;
---- unixODBC-2.3.11/odbcinst/odbcinst.pc.in
-+++ unixODBC-2.3.11/odbcinst/odbcinst.pc.in
-@@ -9,4 +9,4 @@ URL: http://unixodbc.org
+--- unixODBC-2.3.13/odbcinst/odbcinst.pc.in.orig
++++ unixODBC-2.3.13/odbcinst/odbcinst.pc.in
+@@ -9,4 +9,4 @@
  Version: @PACKAGE_VERSION@
  Cflags: -I${includedir}
  Libs: -L${libdir} -lodbcinst

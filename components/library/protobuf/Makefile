@@ -26,38 +26,41 @@
 
 BUILD_STYLE= cmake
 USE_PARALLEL_BUILD=yes
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=      24.4
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=	30.2
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:616bb3536ac1fff3fb1a141450fa28b875e985712170ea7f1bfe5e5fc41e2cd8
+COMPONENT_ARCHIVE_HASH=	sha256:07a43d88fe5a38e434c7f94129cad56a4c43a51f99336074d0799c2f7d4e44c5
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE=		BSD-3-Clause
 COMPONENT_LICENSE_FILE= LICENSE
 
-# Tests require Googletest which we don't have yet.
-TEST_TARGET= $(NO_TESTS)
+COMPONENT_FMRI.library=		$(COMPONENT_FMRI)-$(subst .,,$(HUMAN_VERSION))
+COMPONENT_SUMMARY.library=	$(COMPONENT_SUMMARY) (runtime libraries)
+
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS += -Dprotobuf_BUILD_TESTS=OFF
-CMAKE_OPTIONS += -Dprotobuf_BUILD_SHARED_LIBS=ON
+# We need shared libraries, not static
+CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+# Make pkglint happy by avoiding $ORIGIN in rpath
+CMAKE_OPTIONS += -DCMAKE_SKIP_INSTALL_RPATH=TRUE
+# Use external (our packaged) googletest
+CMAKE_OPTIONS += -Dprotobuf_USE_EXTERNAL_GTEST=ON
 CMAKE_OPTIONS += -Dprotobuf_ABSL_PROVIDER=package
-
-#COMPONENT_POST_INSTALL_ACTION = \
-#    /usr/bin/elfedit -e 'dyn:delete RUNPATH' $(PROTO_DIR)/usr/bin/protoc; \
-#    /usr/bin/elfedit -e 'dyn:delete RPATH' $(PROTO_DIR)/usr/bin/protoc;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

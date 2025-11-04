@@ -11,27 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::Parser::PerlSAX
+#   $WS_TOOLS/perl-integrate-module libxml-perl
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::Parser::PerlSAX
-COMPONENT_PERL_DISTRIBUTION =	libxml-perl
+COMPONENT_NAME =		libxml-perl
 HUMAN_VERSION =			0.08
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		libxml-perl - Collection of Perl modules for working with XML
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Collection of Perl modules for working with XML
 COMPONENT_CPAN_AUTHOR =		KMACLEOD
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4571059b7b5d48b7ce52b01389e95d798bf5cf2020523c153ff27b498153c9cb
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
-COMPONENT_PROJECT_URL =		https://metacpan.org/dist/libxml-perl
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-parser
 PERL_REQUIRED_PACKAGES += runtime/perl

@@ -1,12 +1,12 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
+py$(PYV): commands[0]> pytest -v --tb=short --basetemp=$(@D)/.tox/tmp/py$(PYV)
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 484 items
+collecting ... collected 490 items
 
 tests/test_appctx.py::test_basic_url_generation PASSED
 tests/test_appctx.py::test_url_generation_requires_server_name PASSED
@@ -51,6 +51,7 @@ tests/test_basic.py::test_session_using_application_root PASSED
 tests/test_basic.py::test_session_using_session_settings PASSED
 tests/test_basic.py::test_session_using_samesite_attribute PASSED
 tests/test_basic.py::test_missing_session PASSED
+tests/test_basic.py::test_session_secret_key_fallbacks PASSED
 tests/test_basic.py::test_session_expiration PASSED
 tests/test_basic.py::test_session_stored_last PASSED
 tests/test_basic.py::test_session_special_types PASSED
@@ -101,6 +102,9 @@ tests/test_basic.py::test_static_folder_with_pathlib_path PASSED
 tests/test_basic.py::test_static_folder_with_ending_slash PASSED
 tests/test_basic.py::test_static_route_with_host_matching PASSED
 tests/test_basic.py::test_request_locals PASSED
+tests/test_basic.py::test_server_name_matching[False-False-default-default-default] PASSED
+tests/test_basic.py::test_server_name_matching[True-False-default-abc-<invalid>] PASSED
+tests/test_basic.py::test_server_name_matching[False-True-default-abc-default] PASSED
 tests/test_basic.py::test_server_name_subdomain PASSED
 tests/test_basic.py::test_exception_propagation[TESTING] PASSED
 tests/test_basic.py::test_exception_propagation[PROPAGATE_EXCEPTIONS] PASSED
@@ -130,7 +134,6 @@ tests/test_basic.py::test_werkzeug_passthrough_errors[False-False-True-True] PAS
 tests/test_basic.py::test_werkzeug_passthrough_errors[False-False-True-False] PASSED
 tests/test_basic.py::test_werkzeug_passthrough_errors[False-False-False-True] PASSED
 tests/test_basic.py::test_werkzeug_passthrough_errors[False-False-False-False] PASSED
-tests/test_basic.py::test_max_content_length PASSED
 tests/test_basic.py::test_url_processors PASSED
 tests/test_basic.py::test_inject_blueprint_url_defaults PASSED
 tests/test_basic.py::test_nonascii_pathinfo PASSED
@@ -316,29 +319,29 @@ tests/test_helpers.py::TestStreaming::test_streaming_with_context PASSED
 tests/test_helpers.py::TestStreaming::test_streaming_with_context_as_decorator PASSED
 tests/test_helpers.py::TestStreaming::test_streaming_with_context_and_custom_close PASSED
 tests/test_helpers.py::TestStreaming::test_stream_keeps_session PASSED
+tests/test_helpers.py::TestStreaming::test_async_view PASSED
 tests/test_helpers.py::TestHelpers::test_get_debug_flag[-False] PASSED
 tests/test_helpers.py::TestHelpers::test_get_debug_flag[0-False] PASSED
 tests/test_helpers.py::TestHelpers::test_get_debug_flag[False-False] PASSED
 tests/test_helpers.py::TestHelpers::test_get_debug_flag[No-False] PASSED
 tests/test_helpers.py::TestHelpers::test_get_debug_flag[True-True] PASSED
 tests/test_helpers.py::TestHelpers::test_make_response PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource[r] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource[rb] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource[rt] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource_exceptions[w] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource_exceptions[x] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource_exceptions[a] PASSED
-tests/test_helpers.py::TestHelpers::test_open_resource_exceptions[r+] PASSED
+tests/test_helpers.py::test_open_resource[r] PASSED
+tests/test_helpers.py::test_open_resource[rb] PASSED
+tests/test_helpers.py::test_open_resource[rt] PASSED
+tests/test_helpers.py::test_open_resource_exceptions[w] PASSED
+tests/test_helpers.py::test_open_resource_exceptions[x] PASSED
+tests/test_helpers.py::test_open_resource_exceptions[a] PASSED
+tests/test_helpers.py::test_open_resource_exceptions[r+] PASSED
+tests/test_helpers.py::test_open_resource_with_encoding[utf-8] PASSED
+tests/test_helpers.py::test_open_resource_with_encoding[utf-16-le] PASSED
 tests/test_instance_config.py::test_explicit_instance_paths PASSED
 tests/test_instance_config.py::test_uninstalled_module_paths PASSED
 tests/test_instance_config.py::test_uninstalled_package_paths PASSED
 tests/test_instance_config.py::test_uninstalled_namespace_paths PASSED
-tests/test_instance_config.py::test_installed_module_paths[True] PASSED
-tests/test_instance_config.py::test_installed_module_paths[False] PASSED
-tests/test_instance_config.py::test_installed_package_paths[True] PASSED
-tests/test_instance_config.py::test_installed_package_paths[False] PASSED
-tests/test_instance_config.py::test_prefix_package_paths[True] PASSED
-tests/test_instance_config.py::test_prefix_package_paths[False] PASSED
+tests/test_instance_config.py::test_installed_module_paths PASSED
+tests/test_instance_config.py::test_installed_package_paths PASSED
+tests/test_instance_config.py::test_prefix_package_paths PASSED
 tests/test_json.py::test_bad_request_debug_message[True] PASSED
 tests/test_json.py::test_bad_request_debug_message[False] PASSED
 tests/test_json.py::test_json_bad_requests PASSED
@@ -405,6 +408,9 @@ tests/test_reqctx.py::test_session_dynamic_cookie_name PASSED
 tests/test_reqctx.py::test_bad_environ_raises_bad_request PASSED
 tests/test_reqctx.py::test_environ_for_valid_idna_completes PASSED
 tests/test_reqctx.py::test_normal_environ_completes PASSED
+tests/test_request.py::test_max_content_length PASSED
+tests/test_request.py::test_limit_config PASSED
+tests/test_request.py::test_trusted_hosts_config PASSED
 tests/test_session_interface.py::test_open_session_with_endpoint PASSED
 tests/test_signals.py::test_template_rendered PASSED
 tests/test_signals.py::test_before_render_template PASSED
@@ -455,7 +461,7 @@ tests/test_testing.py::test_specify_url_scheme PASSED
 tests/test_testing.py::test_path_is_url PASSED
 tests/test_testing.py::test_environbuilder_json_dumps PASSED
 tests/test_testing.py::test_blueprint_with_subdomain PASSED
-tests/test_testing.py::test_redirect_keep_session PASSED
+tests/test_testing.py::test_redirect_session PASSED
 tests/test_testing.py::test_session_transactions PASSED
 tests/test_testing.py::test_session_transactions_no_null_sessions PASSED
 tests/test_testing.py::test_session_transactions_keep_context PASSED
@@ -494,6 +500,6 @@ tests/test_views.py::test_multiple_inheritance PASSED
 tests/test_views.py::test_remove_method_from_parent PASSED
 tests/test_views.py::test_init_once PASSED
 
-======== 483 passed, 1 skipped ========
+======== 489 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)

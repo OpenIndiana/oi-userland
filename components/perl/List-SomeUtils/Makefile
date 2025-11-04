@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module List::SomeUtils
+#   $WS_TOOLS/perl-integrate-module List-SomeUtils
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		List::SomeUtils
+COMPONENT_NAME =		List-SomeUtils
 HUMAN_VERSION =			0.59
-COMPONENT_SUMMARY =		List::SomeUtils - Provide the stuff missing in List::Util
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Provide the stuff missing in List::Util
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fab30372e4c67bf5a46062da38d1d0c8756279feada866eb439fa29571a2dc7b
@@ -30,7 +31,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/list-someutils-xs
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/text-parsewords
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

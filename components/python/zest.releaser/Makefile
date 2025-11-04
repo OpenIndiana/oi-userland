@@ -11,30 +11,32 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zest.releaser
+#   $WS_TOOLS/python-integrate-project -d python/zest.releaser zest_releaser
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zest.releaser
-HUMAN_VERSION =			9.1.3
-COMPONENT_SUMMARY =		zest.releaser - Software releasing made easy and repeatable
+COMPONENT_NAME =		zest_releaser
+HUMAN_VERSION =			9.6.2
+COMPONENT_SUMMARY =		Software releasing made easy and repeatable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7ef1fb259a7f6b3e103d799f4d7092614c9daa1be491d28c08063353c1ad6001
+	sha256:b13aa5f474a3f5a83ea0f1d168277ddefd0d8c8374f844490a7ce5436f072492
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE.GPL
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/build
 PYTHON_REQUIRED_PACKAGES += library/python/cmarkgfm
 PYTHON_REQUIRED_PACKAGES += library/python/colorama
+PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/readme-renderer
 PYTHON_REQUIRED_PACKAGES += library/python/requests
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
@@ -45,6 +47,5 @@ PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/check-manifest
 TEST_REQUIRED_PACKAGES.python += library/python/pep440
 TEST_REQUIRED_PACKAGES.python += library/python/pyroma
-TEST_REQUIRED_PACKAGES.python += library/python/wheel
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner

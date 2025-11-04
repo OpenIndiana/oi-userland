@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Fatal
+#   $WS_TOOLS/perl-integrate-module Test-Fatal
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Fatal
+COMPONENT_NAME =		Test-Fatal
 HUMAN_VERSION =			0.017
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::Fatal - incredibly simple helpers for testing code with exceptions
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		incredibly simple helpers for testing code with exceptions
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:37dfffdafb84b762efe96b02fb2aa41f37026c73e6b83590db76229697f3c4a6
@@ -31,5 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

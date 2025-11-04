@@ -1,0 +1,30 @@
+https://github.com/eserte/perl-tk/pull/101
+
+--- Tk-804.036/Event/Event.xs.orig
++++ Tk-804.036/Event/Event.xs
+@@ -1532,7 +1532,7 @@
+ BOOT:
+  {
+ #ifdef pWARN_NONE
+-  SV *old_warn = PL_curcop->cop_warnings;
++  void *old_warn = PL_curcop->cop_warnings;
+   PL_curcop->cop_warnings = pWARN_NONE;
+ #endif
+   newXS("Tk::Event::INIT", XS_Tk__Event_INIT, file);
+--- Tk-804.036/tkGlue.c.orig
++++ Tk-804.036/tkGlue.c
+@@ -5543,13 +5543,8 @@
+  char *XEventMethods = "abcdfhkmopstvwxyABDEKNRSTWXY#";
+  char buf[128];
+  CV *cv;
+-#if PERL_REVISION > 5 || (PERL_REVISION == 5 && PERL_VERSION >= 9)
+-#define COP_WARNINGS_TYPE STRLEN*
+-#else
+-#define COP_WARNINGS_TYPE SV*
+-#endif
+ #ifdef pWARN_NONE
+- COP_WARNINGS_TYPE old_warn = PL_curcop->cop_warnings;
++ void *old_warn = PL_curcop->cop_warnings;
+  PL_curcop->cop_warnings = pWARN_NONE;
+ #endif
+ 

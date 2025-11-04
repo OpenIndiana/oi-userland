@@ -1,0 +1,16 @@
+When starting maxima don't use the user's init file
+
+--- maxima-5.47.0/src/maxima.in.orig	2021-05-16 01:20:53.000000000 +0200
++++ maxima-5.47.0/src/maxima.in	2024-11-13 19:02:16.938731647 +0100
+@@ -243,9 +243,9 @@
+ # one has to extend the amount of memory sbcl will be able to claim by using the
+ # switch --dynamic-space-size in order to do so.
+   if [ -x "$MAXIMA_IMAGESDIR/binary-$MAXIMA_LISP/maxima" ]; then
+-    exec "$MAXIMA_IMAGESDIR/binary-$MAXIMA_LISP/maxima" --noinform $MAXIMA_LISP_OPTIONS --end-runtime-options --eval '(cl-user::run)' --end-toplevel-options "$@"
++    exec "$MAXIMA_IMAGESDIR/binary-$MAXIMA_LISP/maxima" --noinform $MAXIMA_LISP_OPTIONS --end-runtime-options --no-userinit --eval '(cl-user::run)' --end-toplevel-options "$@"
+   else
+-    exec "@SBCL_NAME@" --core "$maxima_image_base.core" --noinform $MAXIMA_LISP_OPTIONS --end-runtime-options --eval '(cl-user::run)' --end-toplevel-options "$@"
++    exec "@SBCL_NAME@" --core "$maxima_image_base.core" --noinform $MAXIMA_LISP_OPTIONS --end-runtime-options --no-userinit --eval '(cl-user::run)' --end-toplevel-options "$@"
+   fi
+ 
+ else

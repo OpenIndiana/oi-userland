@@ -11,62 +11,93 @@
 
 #
 # Copyright 2015 Alexander Pyhalov
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS= 64
+BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fontconfig
-COMPONENT_VERSION=	2.15.0
+COMPONENT_VERSION=	2.17.1
 COMPONENT_SUMMARY=	Fontconfig - Font configuration and customization library
+COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:63a0658d0e06e0fa886106452b58ef04f21f58202ea02a94c39de0d3335d7c0e
-COMPONENT_PROJECT_URL=	https://www.freedesktop.org/wiki/Software/fontconfig/
-COMPONENT_ARCHIVE_URL= 	https://www.freedesktop.org/software/fontconfig/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541
+COMPONENT_ARCHIVE_URL= 	https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		system/library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
 
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_FMRI.fontconfig-32= $(COMPONENT_FMRI)/32
+
+# Make gcc 14 accept the old code.
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+
+# tests require GNU cp (support for -a) & date (support for -d)
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION=  ( cd $(@D); autoreconf )
+CONFIGURE_BINDIR.32 =  $(CONFIGURE_PREFIX)/bin/$(MACH32)
 
-# Gperf files should be regenerated
-# https://bugs.freedesktop.org/show_bug.cgi?id=101280
-COMPONENT_PRE_CONFIGURE_ACTION= ( $(RM) $(SOURCE_DIR)/src/fcobjshash.h )
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --with-baseconfigdir=$(ETCDIR)/fonts
-CONFIGURE_OPTIONS += --with-default-fonts='/usr/share/fonts'
+CONFIGURE_OPTIONS += --with-templatedir='$(ETCDIR)/fonts/conf.avail'
+CONFIGURE_OPTIONS += --with-xmldir='$(ETCDIR)/fonts'
+CONFIGURE_OPTIONS += --with-default-fonts='$(USRSHAREDIR)/fonts'
 CONFIGURE_OPTIONS += --with-add-fonts='/etc/X11/fontpath.d,/usr/share/ghostscript/fonts,/usr/X11/lib/X11/fonts'
 CONFIGURE_OPTIONS += --with-cache-dir=/var/cache/fontconfig
+# Don't run fc-cache during the build
+CONFIGURE_OPTIONS += --disable-cache-build
+CONFIGURE_OPTIONS += --enable-iconv
 
-$(BUILD_DIR)/.fonts_installed:	$(INSTALL_64)
-	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.d 
-	$(RM) -r $(PROTO_DIR)/etc/fonts/conf.avail
-	$(MKDIR) $(PROTO_DIR)/etc/fonts/conf.d
-	$(MV) $(PROTO_DIR)/usr/share/fontconfig/conf.avail $(PROTO_DIR)/etc/fonts/conf.avail
-	for i in $$(ls $(PROTO_DIR)/etc/fonts/conf.avail); do \
-		ln -s ../conf.avail/$$i $(PROTO_DIR)/etc/fonts/conf.d/$$i; \
-	done
-	$(TOUCH) $@
+# Makefile.am files of this component are not compatible with illumos make.
+# Use GNU make to avoid the configuration error when makefile fragments are processed.
+CONFIGURE_OPTIONS += MAKE=$(GMAKE)
 
-install:	$(INSTALL_64) $(BUILD_DIR)/.fonts_installed
+# Add a note about the SMF service to the end of the man page
+COMPONENT_POST_INSTALL_ACTION += \
+    cat files/sunman-notes-fc-cache >> $(PROTOUSRSHAREMAN1DIR)/fc-cache.1 ;
 
-# This is necessary to pass tests
-unexport SHELLOPTS
+# Because both the 32-bit & 64-bit builds install the config files, whichever
+# runs second creates a backup of the first that we don't need in our packages.
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOETCDIR)/fonts/fonts.conf.bak ;
+
+# Make links in conf.d be relative links to ../conf.avail instead of absolute
+COMPONENT_POST_INSTALL_ACTION += \
+    (cd $(PROTOETCDIR)/fonts/conf.d/ ; \
+    for f in *.conf ; do \
+    $(RM) $${f} ; \
+    $(SYMLINK) ../conf.avail/$${f} $${f} ; \
+    done) ;
+
+# Make links in conf.d be relative links to ../conf.avail instead of absolute
+COMPONENT_POST_INSTALL_ACTION += \
+    (cd $(PROTOETCDIR)/fonts/conf.d/ ; \
+    for f in *.conf ; do \
+    $(RM) $${f} ; \
+    $(SYMLINK) ../conf.avail/$${f} $${f} ; \
+    done) ;
+
+# prevent run-test.sh from downloading files from the internet
+COMPONENT_TEST_ENV += NO_PROXY='*'
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/gperf
+REQUIRED_PACKAGES += library/json-c/32
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/expat
+REQUIRED_PACKAGES += library/expat/32
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32

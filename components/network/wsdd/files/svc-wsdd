@@ -1,0 +1,26 @@
+. /lib/svc/share/smf_include.sh
+
+result=${SMF_EXIT_OK}
+INTF=$(svcprop -p config/interface ${SMF_FMRI})
+DOMAIN=$(svcprop -p config/domain ${SMF_FMRI})
+EXTRA_OPT=$(svcprop -p config/debug ${SMF_FMRI})
+
+if [[ x$INTF != 'x'  && $(dladm show-link $INTF) ]]; then
+        INTF="-i $INTF"
+fi
+
+if [[ x$DOMAIN = "x" ]]; then echo "domain have not be empty"; fi
+
+case "$1" in
+'start')
+        # Start the service
+        /usr/lib/wsdd/wsdd.py $INTF -d $DOMAIN $EXTRA_OPT &
+        rc=$?
+        [ $rc -eq 0 ] && exit $SMF_EXIT_OK
+        exit $SMF_EXIT_ERR_FATAL
+        ;;
+*)
+        echo "Usage: $0 { start | stop }"
+        ;;
+esac
+exit $SMF_EXIT_ERR_FATAL

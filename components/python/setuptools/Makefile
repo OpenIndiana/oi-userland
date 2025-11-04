@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			69.2.0
-COMPONENT_SUMMARY =		setuptools - Easily download, build, install, upgrade, and uninstall Python packages
-COMPONENT_PROJECT_URL =		https://github.com/pypa/setuptools
+HUMAN_VERSION =			80.9.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0ff4183f8f42cd8fa3acea16c45205521a4ef28f73c6391d8a25e92893134f2e
+	sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,28 +44,45 @@ PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Testing expects there is no Cython installed
-TEST_CONFLICTING_PACKAGES.python += library/python/cython
+# nose causes the test_pyproject_sets_attribute test to fail
+TEST_CONFLICTING_PACKAGES.python += library/python/nose
+# many tests are failing with recent setuptools-scm
+TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-scm
+
+# fails with tox-current-env
+PYTEST_ADDOPTS += --deselect setuptools/tests/config/test_setupcfg.py::TestOptions::test_cmdclass
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_extern.py::test_distribution_picklable
+
+# https://github.com/pypa/setuptools/issues/5094
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_egg_info.py::TestEggInfo::test_setup_cfg_license_file_license_files
+
+# https://github.com/pypa/setuptools/issues/5097
+PYTEST_ADDOPTS += --deselect setuptools/tests/test_bdist_wheel.py::test_universal_deprecated
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/ini2toml
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-develop
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-envs
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-functools
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-path
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-text
+TEST_REQUIRED_PACKAGES.python += library/python/more-itertools
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pip
+TEST_REQUIRED_PACKAGES.python += library/python/platformdirs
+TEST_REQUIRED_PACKAGES.python += library/python/pyproject-hooks
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/tomli

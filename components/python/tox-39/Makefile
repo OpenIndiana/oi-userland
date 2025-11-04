@@ -1,0 +1,75 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/tox-39 tox
+#
+
+BUILD_STYLE = pyproject
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		tox
+HUMAN_VERSION =			4.30.3
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
+COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:f3dd0735f1cd4e8fbea5a3661b77f517456b5f0031a6256432533900e34b90bf
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE
+
+# tox >= 4.31.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# This test fails with tox-current-env
+PYTEST_ADDOPTS += --deselect tests/tox_env/python/test_python_api.py::test_build_wheel_in_non_base_pkg_env
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/cachetools
+REQUIRED_PACKAGES.python += library/python/chardet
+REQUIRED_PACKAGES.python += library/python/colorama
+REQUIRED_PACKAGES.python += library/python/filelock
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/platformdirs
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/pyproject-api
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += library/python/virtualenv
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
+TEST_REQUIRED_PACKAGES.python += library/python/distlib
+TEST_REQUIRED_PACKAGES.python += library/python/flaky
+TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
+TEST_REQUIRED_PACKAGES.python += library/python/hatchling
+TEST_REQUIRED_PACKAGES.python += library/python/pdm-backend
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/re-assert
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/time-machine
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

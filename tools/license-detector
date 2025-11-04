@@ -88,7 +88,7 @@ for l in "$WS_TOOLS"/licenses/$LICENSE ; do
 
 	cat <<#EOF > "$TMPFILE"
 		dos2unix -ascii \\
-			| tr -d '\\014' \\
+			| tr -d '\\014' 2>/dev/null \\
 			| LC_ALL=C sed -E -e 's/^[[:space:]]+\$//g' \\
 			| awk '/^#/{next}/^\$/{\$0="\n"}1' ORS=' ' \\
 			| LC_ALL=C sed -E -e 's/[[:space:]]+/ /g' -e 's/^ //' -e 's/ \$//' -e '/^\$/d' \\
@@ -99,6 +99,8 @@ for l in "$WS_TOOLS"/licenses/$LICENSE ; do
 				| sed -e '/^\*\*\$/d' -e 's/^\*\*\([^*]\)/\1/' -e 's/\([^*]\)\*\*\$/\1/' -e 's/\([^*]\)\*\*\([^*]\)/\1\2/g' \\
 		EOF
 	fi
+	# Punctuation - Quotes
+	printf '\t| sed -e %cs/“/"/g%c -e %cs/”/"/g%c \\\n' "'" "'" "'" "'" >> "$TMPFILE"
 	# Apply filter if any
 	[[ -x "$l.filter" ]] && printf '\t| LC_ALL=C %s \\\n' "$l.filter" >> "$TMPFILE"
 	cat <<#EOF >> "$TMPFILE"

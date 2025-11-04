@@ -1,0 +1,12 @@
+This patch is needed in order to prevent automake to create an absolute path for srcdir in our build environment.
+
+--- maxima-5.47.0/tests/Makefile.am.orig	2021-05-16 01:20:53.000000000 +0200
++++ maxima-5.47.0/tests/Makefile.am	2024-11-12 22:47:40.766805394 +0100
+@@ -97,6 +97,6 @@
+ endif
+ 
+ genericdir = $(insttestsdir)
+-genericdirDATA = $(wildcard $(addprefix $(srcdir)/, README.how-to mcond_display_elseif.out *.mac *.lisp *.wxm wester_problems/*))
++genericdirDATA = $(wildcard README.how-to mcond_display_elseif.out *.mac *.lisp *.wxm wester_problems/*)
+ 
+ EXTRA_DIST = $(genericdirDATA) test.sh.in

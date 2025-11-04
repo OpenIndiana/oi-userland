@@ -11,25 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-paramiko
+#   $WS_TOOLS/python-integrate-project -d python/types-paramiko types_paramiko
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-paramiko
-HUMAN_VERSION =			3.4.0.20240311
-COMPONENT_SUMMARY =		types-paramiko - Typing stubs for paramiko
+COMPONENT_NAME =		types_paramiko
+HUMAN_VERSION =			4.0.0.20250822
+COMPONENT_SUMMARY =		Typing stubs for paramiko
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:03c056b7bc4db3841e12d4ddc82ca2cb02d8dc121e389e6d12543d92976eac9c
+	sha256:1b56b0cbd3eec3d2fd123c9eb2704e612b777e15a17705a804279ea6525e0c53
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cryptography
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python

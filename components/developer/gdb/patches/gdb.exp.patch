@@ -1,0 +1,13 @@
+diff --git a/gdb/testsuite/lib/gdb.exp b/gdb/testsuite/lib/gdb.exp
+index 7ee2043..2ff0743 100644
+--- a/gdb/testsuite/lib/gdb.exp
++++ b/gdb/testsuite/lib/gdb.exp
+@@ -5932,7 +5932,7 @@ proc gdb_compile {source dest type options} {
+ 		      || [istarget *-*-cygwin*]) } {
+ 		    lappend new_options "ldflags=-Wl,--enable-auto-import"
+ 		}
+-		if { [test_compiler_info "gcc-*"] || [test_compiler_info "clang-*"] } {
++		if { ![istarget *-*-solaris2*] && [test_compiler_info "gcc-*"] || [test_compiler_info "clang-*"] } {
+ 		    # Undo debian's change in the default.
+ 		    # Put it at the front to not override any user-provided
+ 		    # value, and to make sure it appears in front of all the

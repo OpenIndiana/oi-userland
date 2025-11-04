@@ -24,15 +24,16 @@
 # Copyright (c) 2020-2021, Nona Hansel
 #
 
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	3.11
+COMPONENT_VERSION=	3.12
 COMPONENT_SUMMARY= 	GNU grep utilities
 COMPONENT_PROJECT_URL=	https://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab
+COMPONENT_ARCHIVE_HASH= sha256:2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-grep
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -40,30 +41,13 @@ COMPONENT_LICENSE=	GPLv3, FDLv1.3
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
-				aclocal -I m4 && \
-				autoheader && \
-				automake --add-missing --copy --force )
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	aclocal -I m4 && \
+	autoheader && \
+	automake --add-missing --copy --force )
 
-PATH=$(PATH.gnu)
-
-# Needed for "gmake test" to work.
-# SHELLOPTS is exported via make-rules/shared-macros.mk,
-# causing the braceexpand option to be set.
-# This option causes "$1: unbound variable" errors during the check-TESTS,
-# and the gnulib-tests don't even run at all.
-# Note that the below unexports SHELLOPTS, even for targets
-# other than "test." 
-unexport SHELLOPTS
-
-# Test transforms retain only relevant results output.
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/TOTAL/p" ' \
-	'-e "/SKIP/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/FAIL/p" ' \
-	'-e "/ERROR/p" '
+PATH= $(PATH.gnu)
 
 # Testsuite requirements
 TEST_REQUIRED_PACKAGES += developer/versioning/cvs

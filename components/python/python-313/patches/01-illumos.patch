@@ -1,0 +1,77 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Misc/platform_triplet.c a/Misc/platform_triplet.c
+--- a~/Misc/platform_triplet.c	1970-01-01 00:00:00
++++ a/Misc/platform_triplet.c	1970-01-01 00:00:00
+@@ -285,6 +285,14 @@ PLATFORM_TRIPLET=wasm64-wasi
+ #  else
+ #    error unknown wasm64 platform
+ #  endif
++#elif defined(__illumos__)
++#  if defined(__x86_64__)
++PLATFORM_TRIPLET=x86_64-pc-solaris2
++#  elif defined(__aarch64__)
++PLATFORM_TRIPLET=aarch64-unknown-solaris2
++#  else
++#    error unknown illumos platform
++#  endif
+ #else
+ # error unknown platform triplet
+ #endif
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -317,6 +317,7 @@ then
+        # ac_sys_system and ac_sys_release are used for setting
+        # a lot of different things including 'define_xopen_source'
+        # in the case statement below.
++	ac_sys_release=
+ 	case "$host" in
+ 	*-*-linux-android*)
+ 		ac_sys_system=Linux-android
+@@ -339,12 +340,15 @@ then
+ 	*-*-wasi*)
+ 	    ac_sys_system=WASI
+ 	    ;;
++	*-*-solaris*)
++	    ac_sys_system=SunOS
++	    ac_sys_release=5.11
++	    ;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"
+ 		AC_MSG_ERROR([cross build not supported for $host])
+ 	esac
+-	ac_sys_release=
+     else
+ 	ac_sys_system=`uname -s`
+ 	if test "$ac_sys_system" = "AIX" \
+@@ -452,6 +456,15 @@ AC_ARG_ENABLE([universalsdk],
+ 		UNIVERSALSDK=
+ 		enable_universalsdk=
+ 		;;
++	*-*-solaris*)
++		case "$host_cpu" in
++		aarch64*)
++			_host_cpu=arm
++			;;
++		*)
++			_host_cpu=$host_cpu
++		esac
++		;;
+ 	*)
+ 		UNIVERSALSDK=$enableval
+ 		if test ! -d "${UNIVERSALSDK}"
+@@ -777,6 +790,14 @@ if test "$cross_compiling" = yes; then
+ 	wasm32-*-* | wasm64-*-*)
+ 		_host_ident=$host_cpu
+ 		;;
++	*-*-solaris*)
++		case "$host_cpu" in
++			aarch64)
++				_host_ident=aarch64-unknown-solaris2 ;;
++			*)
++				AC_MSG_ERROR([unknown illumos platform]) ;;
++		esac
++		;;
+ 	*)
+ 		# for now, limit cross builds to known configurations
+ 		MACHDEP="unknown"

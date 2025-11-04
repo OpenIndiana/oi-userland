@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Ref::Util::XS
+#   $WS_TOOLS/perl-integrate-module Ref-Util-XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Ref::Util::XS
+COMPONENT_NAME =		Ref-Util-XS
 HUMAN_VERSION =			0.117
-COMPONENT_SUMMARY =		Ref::Util::XS - XS implementation for Ref::Util
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		XS implementation for Ref::Util
 COMPONENT_CPAN_AUTHOR =		XSAWYERX
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fb64c5a823787f6600257918febd9fbc6f0305936fc3287b81a30c099b65633c
@@ -29,6 +30,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/readonly
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

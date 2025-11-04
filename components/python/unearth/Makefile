@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		unearth
-HUMAN_VERSION =			0.15.1
-COMPONENT_SUMMARY =		unearth - A utility to fetch and download python packages
+HUMAN_VERSION =			0.17.5
+COMPONENT_SUMMARY =		A utility to fetch and download python packages
 COMPONENT_PROJECT_URL =		https://github.com/frostming/unearth
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:863deb3339c0d65a5be0d0ad2c67d46d5f574a798e74ef0552bf11d298a30abb
+	sha256:a19e1c02e64b40518d088079c7416fc41b45a648b81a4128aac02597234ee6ba
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,13 +31,17 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-httpserver
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+# This project uses pdm to manage test dependencies.
+TEST_REQUIREMENTS_PDM += test
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/httpx
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/pdm-backend
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/flask
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-httpserver
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/requests-wsgi-adapter
+TEST_REQUIRED_PACKAGES.python += library/python/trustme

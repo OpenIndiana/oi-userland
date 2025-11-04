@@ -18,34 +18,50 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=      6.1.1
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	7.1.2
 COMPONENT_SUMMARY=      A very fast video and audio converter
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8684f4b00f94b85461884c3719382f1261f0d9eb3d59640a1f4ac0873616f968
-COMPONENT_ARCHIVE_URL= https://www.ffmpeg.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  https://www.ffmpeg.org/
+COMPONENT_ARCHIVE_HASH=	sha256:089bc60fb59d6aecc5d994ff530fd0dcb3ee39aa55867849a2bbc4e555f9c304
+COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
+
+COMPONENT_FMRI.library =	library/ffmpeg-7
+COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
+
+COMPONENT_FMRI.developer =	developer/ffmpeg-7
+COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += -I/usr/X11/include
-CFLAGS += $(CPP_LARGEFILES)
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-CPPFLAGS += $($(COMPILER)_C99_ENABLE)
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/LICENSE.md ; \
+		printf '\n--- COPYING.LGPLv2.1 ------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv2.1 ; \
+		printf '\n--- COPYING.LGPLv3 --------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv3 ; \
+		printf '\n--- COPYING.GPLv2 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv2 ; \
+		printf '\n--- COPYING.GPLv3 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv3 \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --cc=$(CC)
-CONFIGURE_OPTIONS += --enable-runtime-cpudetect 
+CONFIGURE_OPTIONS += --enable-runtime-cpudetect
 CONFIGURE_OPTIONS += --enable-mmx --enable-sse --enable-ssse3
-# force additional new CPU instruction enablement
 CONFIGURE_OPTIONS += --enable-avx
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
@@ -59,15 +75,13 @@ CONFIGURE_OPTIONS += --enable-libx264
 CONFIGURE_OPTIONS += --enable-libx265
 CONFIGURE_OPTIONS += --enable-libdav1d
 CONFIGURE_OPTIONS += --enable-libwebp
-# Don't enable it, resulting binary is not 
+# Don't enable it, resulting binary is not
 # redistributable
 #CONFIGURE_OPTIONS += --enable-libfaac
 CONFIGURE_OPTIONS += --enable-libtheora
 CONFIGURE_OPTIONS += --enable-libmp3lame
 CONFIGURE_OPTIONS += --enable-libvorbis
 CONFIGURE_OPTIONS += --enable-libvpx
-# x11grab has been replaced by the x11xcb options
-#CONFIGURE_OPTIONS += --enable-x11grab
 CONFIGURE_OPTIONS += --enable-libxcb
 CONFIGURE_OPTIONS += --enable-libspeex
 CONFIGURE_OPTIONS += --enable-pthreads
@@ -76,14 +90,9 @@ CONFIGURE_OPTIONS += --enable-pthreads
 CONFIGURE_OPTIONS += --enable-libass
 CONFIGURE_OPTIONS += --enable-openssl
 CONFIGURE_OPTIONS += --enable-openal
-# don't enable avresample any more, it's long-deprecated.  Use swresample
-# instead
-#CONFIGURE_OPTIONS += --enable-avresample
 CONFIGURE_OPTIONS += --enable-swresample
 # Incompatible with GPLv2
 #CONFIGURE_OPTIONS += --enable-libopencore-amrwb
-# libschroedinger support was removed in 3.4.x
-#CONFIGURE_OPTIONS += --enable-libschroedinger
 CONFIGURE_OPTIONS += --enable-libopenjpeg
 CONFIGURE_OPTIONS += --enable-librtmp
 CONFIGURE_OPTIONS += --enable-vdpau
@@ -106,6 +115,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 test:	install $(TEST_64)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += audio/lame
 REQUIRED_PACKAGES += codec/dav1d
 REQUIRED_PACKAGES += codec/libtheora
@@ -119,16 +129,17 @@ REQUIRED_PACKAGES += library/graphics/libvdpau
 REQUIRED_PACKAGES += library/libvorbis
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/video/libass
 REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += library/video/x265
+REQUIRED_PACKAGES += library/video/x265-41
 REQUIRED_PACKAGES += library/video/xvid
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += video/rtmpdump
+REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext

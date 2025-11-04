@@ -15,23 +15,25 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
-COMPONENT_VERSION=      2.0
+COMPONENT_VERSION=      2.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Plugins for Geany editor
 COMPONENT_DESCRIPTION=	Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cd7d27f00aef4afe2040d7e5246a863234c340c8520ef698be9a15005ed8f57e
+COMPONENT_ARCHIVE_HASH= sha256:77ec3da07be809357ba9c986e9b72d2eca343008ccc0793673c9dcac2ad8dae1
 COMPONENT_PROJECT_URL=  https://plugins.geany.org
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         editor/geany/plugins
 COMPONENT_CLASSIFICATION= System/Text Tools
 COMPONENT_LICENSE=      GPLv2
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && rm ltmain.sh; autoreconf -fi )
+COMPONENT_PREP_ACTION += ( cd $(@D) && $(RM) ltmain.sh; $(ENV) PATH="$(PATH)" autoreconf -fi )
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -40,9 +42,10 @@ PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG6MODE)
 CFLAGS += -D_FILE_OFFSET_BITS=64
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_ENV += CHECK_CFLAGS="-I/usr/include/check"
-CONFIGURE_ENV += PYTHON=$(PYTHON.3.9.64)
 
 # requires libutil
 CONFIGURE_OPTIONS += --disable-debugger
@@ -67,7 +70,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/webkitgtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libgit2
-REQUIRED_PACKAGES += library/libsoup
+REQUIRED_PACKAGES += library/libsoup3
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/spell-checking/enchant

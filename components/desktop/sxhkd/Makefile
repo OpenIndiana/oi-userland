@@ -12,23 +12,26 @@
 # Copyright 2022 Benjamin S. Osenbach
 #
 
-BUILD_BITS=64 # for binaries or 32_and_64 for libraries
-BUILD_STYLE=justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=sxhkd
-COMPONENT_VERSION=0.6.2
+COMPONENT_NAME= sxhkd
+COMPONENT_VERSION= 0.6.3
 COMPONENT_SUMMARY= Simple X hotkey daemon
-COMPONENT_PROJECT_URL=https://github.com/baskerville/sxhkd
-COMPONENT_FMRI=application/sxhkd
-COMPONENT_CLASSIFICATION=Applications/System Utilities
+COMPONENT_PROJECT_URL= https://github.com/baskerville/sxhkd
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=https://github.com/baskerville/sxhkd/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=sha256:1edc8b1a8b3631c10ba9cb9df1181830dacbbdf77adb558e31d5dd2029637386
-COMPONENT_LICENSE=BSD
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+COMPONENT_ARCHIVE_URL= https://github.com/baskerville/sxhkd/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:9d7a64d73f7114a24ff93a35a2662afd9807e0df9ffbfabd24230b4872503fcb
+COMPONENT_FMRI= application/sxhkd
+COMPONENT_CLASSIFICATION= Applications/System Utilities
+COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE_FILE= LICENSE
+
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -Wno-error=implicit-function-declaration
 
 COMPONENT_BUILD_ENV += PREFIX=/usr
 

@@ -1,0 +1,116 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2025, Carsten Grzemba. All rights reserved.
+#
+
+# abreviation SRSS is used for SunRay Server Software
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# graphical desktop
+depend fmri=mate_install type=require
+
+# DHCP service
+depend fmri=service/network/dhcp/isc-dhcp type=require
+# empty package only for satisfy installation requirements
+# SRSS on Solaris uses the old Sun DHCP server but on OI we use ISC-DHCP
+depend fmri=service/network/dhcp type=require
+
+# SUNWutkio-libs package dependency, empty packages only
+# for satisfy installation requirements
+depend fmri=consolidation/X/X-incorporation type=require
+depend fmri=compatibility/packages/SUNWxwplt type=require
+
+# for Sun JRE, needed for service auth.utauthd.utauthd,
+# additional native libraries of SRSS is used
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libCrun.so.1
+
+# SRSS configure requirements rpm2cpio,
+# see https://docs.openindiana.org/handbook/sunray/#configure-isc-dhcp
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/rpm2cpio
+
+# in OI legacy/retired 64bit packages GDM and Gnome greeter,
+# only gdm-session-worker has to run in 32-bit, it needs SRSS libraries only available in 32-bit
+#
+# pkg.debug.depend.file does not working yet, there is no appropriate package in the OI repo
+# hence the kind of definition with named packages
+#
+depend fmri=system/display-manager/gdm-2 type=require
+depend fmri=gnome/gnome-session-2 type=require
+depend fmri=library/desktop/gnome-desktop-2 type=require
+depend fmri=gnome/gnome-settings-daemon-2 type=require
+depend fmri=library/gnome/libgnomekbd type=require
+
+# 32-bit packages needed by loginGUI and satisfy installation requirements for SUNWuto
+depend fmri=cde/cde-runtime@0.5.11 type=require
+depend fmri=library/tooltalk@0.5.11 type=require
+depend fmri=library/motif@0.5.11 type=require
+
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libICE.so.6
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libSM.so.6
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/X11/lib/X11/xkb/xkbtable.map
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/X11/lib/libxkbfile.so.5
+
+# 32-bit libraries needed by gdm-session-worker
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libglib-2.0.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/mps/libnspr4.so
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/mps/libnss3.so
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libdbus-glib-1.so.2
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libdbus-1.so.3
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libpcre2-8.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libffi.so.6
+
+# 32-bit libraries needed by utaudio, the SunRay audio driver
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libpulse.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libmpg123.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libFLAC.so.14
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libsndfile.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libSDL2-2.0.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libvorbis.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libopus.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libogg.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libmp3lame.so
+
+# 32-bit libraries needed by uttsc-bin, the SunRay RDP-client
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libX11.so.4
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXau.so.6
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libxcb.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXdmcp.so.6
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXext.so.0
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXfixes.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXft.so.2
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXcursor.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXrender.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXv.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXinerama.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXrandr.so.2
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXpm.so.4
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libz.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libpng16.so.16
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libfontconfig.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libfreetype.so.6
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libbrotlidec.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libbz2.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libexpat.so.1
+
+# These are libraries and tools which are used by utresexec, an exec wrapper
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libXss.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libsasl.so.1
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xkbcomp
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/bin/xsetroot
+
+# These are libraries used by pcscd
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/lib/libusb.so.1
+

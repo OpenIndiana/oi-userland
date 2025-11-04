@@ -14,23 +14,28 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= redis
-COMPONENT_VERSION= 6.2.14
+COMPONENT_VERSION= 6.2.18
 COMPONENT_SUMMARY= Redis in-memory data structure store
 COMPONENT_PROJECT_URL= https://redis.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  https://download.redis.io/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:34e74856cbd66fdb3a684fb349d93961d8c7aa668b06f81fd93ff267d09bc277
+COMPONENT_ARCHIVE_HASH= sha256:470c75bac73d7390be4dd66479c6f29e86371c5d380ce0c7efb4ba2bbda3612d
 COMPONENT_FMRI= database/redis
 COMPONENT_CLASSIFICATION= System/Databases
 COMPONENT_LICENSE= BSD
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/common.mk
+
+#CFLAGS += $(XPG6MODE)
+
+COMPONENT_ENV += PATH="$(PATH.illumos)"
 COMPONENT_ENV += CC="$(CC)"
 COMPONENT_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_ENV += LDFLAGS="$(LDFLAGS)"
@@ -40,21 +45,28 @@ COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV += PREFIX=/usr
 
 COMPONENT_TEST_ENV = $(COMPONENT_ENV)
-# Tests are not reliable - replica tests often fail with
-# rdb child didn't terminate
-# Remove measured times (eg. 11 seconds:
-# Remove trailing random numbers on server.
+# Tests are not reliable - replica tests often fail with rdb child didn't terminate
 
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/server\.[0-9]*.[0-9]*/server\./" ' \
-	'-e "s/[0-9]* seconds//" ' \
-	'-n' \
-	'-e "/ok/p" ' \
-	'-e "/err/p" ' \
-	'-e "/exception/p" ' \
-	'-e "/done/p" '
+# By default ignore all lines
+JUSTMAKE_TEST_TRANSFORMS += "-n"
+JUSTMAKE_TEST_TRANSFORMS += "-e '/ok\]/p'"
+JUSTMAKE_TEST_TRANSFORMS += "-e '/err\]/p'"
+JUSTMAKE_TEST_TRANSFORMS += "-e '/done\]/p'"
+JUSTMAKE_TEST_TRANSFORMS += "-e '/WARNING/p'"
 
-include $(WS_MAKE_RULES)/common.mk
+# Sort test results
+#JUSTMAKE_TEST_TRANSFORMS += "| ( \
+        $(GSED) -u -e '/^\$$/Q' | $(SORT) | $(COMPONENT_TEST_TRANSFORMER) -e '\$$G' ; \
+        $(CAT) \
+    ) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
+
+USE_DEFAULT_TEST_TRANSFORMS?=no
+ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
+COMPONENT_TEST_TRANSFORMS+= $(JUSTMAKE_TEST_TRANSFORMS)
+endif
+
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += runtime/tcl-8
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs

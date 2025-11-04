@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module FCGI::Client
+#   $WS_TOOLS/perl-integrate-module FCGI-Client
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		FCGI::Client
+COMPONENT_NAME =		FCGI-Client
 HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		FCGI::Client - client library for fastcgi protocol
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		client library for fastcgi protocol
 COMPONENT_CPAN_AUTHOR =		TOKUHIROM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d537cb09ce5aab3f447a6bb4415e46cc06efe01611cd56289b5582bdb46221e8
@@ -33,5 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/moo
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl

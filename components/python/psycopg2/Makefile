@@ -14,27 +14,28 @@
 #   $WS_TOOLS/python-integrate-project psycopg2
 #
 
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
+# Force setup.py build style because with the default PEP 517 build style we
+# are unable to generate the list of required packages.
+# See also https://github.com/psycopg/psycopg2/issues/1788
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psycopg2
-HUMAN_VERSION =			2.9.9
-COMPONENT_SUMMARY =		psycopg2 - psycopg2 - Python-PostgreSQL Database Adapter
+HUMAN_VERSION =			2.9.11
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		psycopg2 - Python-PostgreSQL Database Adapter
 COMPONENT_PROJECT_URL =		https://psycopg.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c9/5e/dc6acaf46d78979d6b03458b7a1618a68e152a6776fce95daac5e0f0301b/psycopg2-2.9.9.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d1454bde93fb1e224166811694d600e746430c006fbb031ea06ecc2ea41bf156
+	sha256:964d31caf728e217c697ff77ea69c2ba0865fa41ec20bb00f0977e62fdcc52e3
 COMPONENT_LICENSE =		LGPL-3.0-only
 
 # see doc/src/install.rst
 TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Do not depend on host default pg_config
-PATH := $(PG_BINDIR):$(PATH)
 
 # force needed rpath
 LD_OPTIONS += -R$(PG_LIBDIR)
@@ -71,6 +72,6 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 TEST_REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += runtime/python

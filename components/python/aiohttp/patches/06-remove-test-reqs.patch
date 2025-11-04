@@ -1,24 +1,40 @@
 We do not have these projects packaged yet.
 
---- aiohttp-3.9.3/requirements/test.in.orig
-+++ aiohttp-3.9.3/requirements/test.in
-@@ -4,12 +4,8 @@
+--- aiohttp-3.13.0/requirements/test-common.in.orig
++++ aiohttp-3.13.0/requirements/test-common.in
+@@ -1,18 +1,10 @@
+-blockbuster
  coverage
  freezegun
+-isal; python_version < "3.14" # no wheel for 3.14
  mypy; implementation_name == "cpython"
--proxy.py >= 2.4.4rc4
+ pkgconfig
+-proxy.py >= 2.4.4rc5
  pytest
  pytest-cov
  pytest-mock
+ pytest-xdist
+-pytest_codspeed
 -python-on-whales
  re-assert
 -setuptools-git
  trustme; platform_machine != "i686"  # no 32-bit wheels
 -wait-for-it
---- aiohttp-3.9.3/requirements/base.in.orig
-+++ aiohttp-3.9.3/requirements/base.in
-@@ -2,4 +2,3 @@
+-zlib_ng
+--- aiohttp-3.13.0/requirements/base.in.orig
++++ aiohttp-3.13.0/requirements/base.in
+@@ -1,5 +1,4 @@
  -r requirements/runtime-deps.in
  
  gunicorn
 -uvloop; platform_system != "Windows" and implementation_name == "cpython"  # MagicStack/uvloop#14
+ winloop; platform_system == "Windows" and implementation_name == "cpython"
+--- aiohttp-3.13.0/requirements/runtime-deps.in.orig
++++ aiohttp-3.13.0/requirements/runtime-deps.in
+@@ -1,6 +1,5 @@
+ # Extracted from `setup.cfg` via `make sync-direct-runtime-deps`
+ 
+-aiodns >= 3.3.0
+ aiohappyeyeballs >= 2.5.0
+ aiosignal >= 1.4.0
+ async-timeout >= 4.0, < 6.0 ; python_version < "3.11"

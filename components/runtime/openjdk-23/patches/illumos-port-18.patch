@@ -1,0 +1,33 @@
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/mutex.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/mutex.hpp
+@@ -29,7 +29,7 @@
+ #include "runtime/atomic.hpp"
+ #include "runtime/semaphore.hpp"
+ 
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "mutex_posix.hpp"
+ #else
+ # include OS_HEADER(mutex)
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/park.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/park.hpp
+@@ -28,7 +28,7 @@
+ #include "utilities/debug.hpp"
+ #include "utilities/globalDefinitions.hpp"
+ 
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "park_posix.hpp"
+ #else
+ # include OS_HEADER(park)
+--- jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/threadCrashProtection.hpp.orig
++++ jdk23u-jdk-23.0.1-ga/src/hotspot/share/runtime/threadCrashProtection.hpp
+@@ -27,7 +27,7 @@
+ #define SHARE_RUNTIME_THREADCRASHPROTECTION_HPP
+ 
+ #include "memory/allocation.hpp"
+-#if defined(LINUX) || defined(AIX) || defined(BSD)
++#if defined(LINUX) || defined(AIX) || defined(BSD) || defined(SOLARIS)
+ # include "threadCrashProtection_posix.hpp"
+ #else
+ # include OS_HEADER(threadCrashProtection)

@@ -19,10 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			42.0.5
-COMPONENT_SUMMARY =		cryptography - cryptography is a package which provides cryptographic recipes and primitives to Python developers.
+HUMAN_VERSION =			45.0.7
+COMPONENT_SUMMARY =		cryptography is a package which provides cryptographic recipes and primitives to Python developers.
+COMPONENT_PROJECT_URL =		https://github.com/pyca/cryptography
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6fe07eec95dfd477eb9530aef5bead34fec819b3aaf6c5bd6d20565da607bfe1
+	sha256:4b1654dfc64ea479c242508eb8c724044f1e964a47d1d1cacc5132292d851971
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = pytest
@@ -35,22 +36,20 @@ LD_Z_IGNORE=
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
-# https://github.com/pyca/cryptography/issues/10242
-TEST_REQUIRED_PACKAGES.python += library/python/cryptography-vectors
 
 # https://github.com/pyca/cryptography/issues/9111
 TEST_CONFLICTING_PACKAGES.python += library/python/coverage-enable-subprocess
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/cffi
+PYTHON_REQUIRED_PACKAGES += library/python/maturin
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 TEST_REQUIRED_PACKAGES.python += library/python/certifi
+TEST_REQUIRED_PACKAGES.python += library/python/cryptography-vectors
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark

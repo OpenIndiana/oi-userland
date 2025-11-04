@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Import::Into
+#   $WS_TOOLS/perl-integrate-module Import-Into
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Import::Into
+COMPONENT_NAME =		Import-Into
 HUMAN_VERSION =			1.002005
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Import::Into - Import packages into other packages
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Import packages into other packages
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:bd9e77a3fb662b40b43b18d3280cd352edf9fad8d94283e518181cc1ce9f0567
@@ -30,5 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

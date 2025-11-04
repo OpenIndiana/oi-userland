@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project gi-docgen
+#   $WS_TOOLS/python-integrate-project -d python/gi-docgen gi_docgen
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		gi-docgen
-HUMAN_VERSION =			2023.3
-COMPONENT_SUMMARY =		gi-docgen - Documentation tool for GObject-based libraries
+COMPONENT_NAME =		gi_docgen
+HUMAN_VERSION =			2025.4
+COMPONENT_SUMMARY =		Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ec/4e/7ae06ba557a1ef86abcf33c299bf955a4cf69f0b8f6268c6e97029b6329f/gi-docgen-2023.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:977616bcc0e2735bb596c71e8eb34533526680740c666e87f9dfc323acd488f0
+	sha256:7fe066da082a4edcf924063767404f9d04a998f6c0f0c475b180fd9823a72dc5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
 
@@ -42,5 +40,4 @@ PYTHON_REQUIRED_PACKAGES += library/python/pygments
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/typogrify
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

@@ -19,15 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinxcontrib_htmlhelp
-HUMAN_VERSION =			2.0.5
-COMPONENT_SUMMARY =		sphinxcontrib_htmlhelp - sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files
+HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		sphinxcontrib-htmlhelp is a sphinx extension which renders HTML help files
 COMPONENT_PROJECT_URL =		https://www.sphinx-doc.org/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8a/03/2f9d699fbfdf03ecb3b6d0e2a268a8998d009f2a9f699c2dcc936899257d/sphinxcontrib_htmlhelp-2.0.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0dc87637d5de53dd5eec3a6a01753b1ccf99494bd756aafecd74b4fa9e729015
+	sha256:c9e2916ace8aad64cc13a0d233ee22317f2b9025b9cf3295249fa985cc7082e9
 COMPONENT_LICENSE =		BSD-2-Clause
-COMPONENT_LICENSE_FILE =	LICENSE
+COMPONENT_LICENSE_FILE =	LICENCE.rst
 
 #
 # Following dependency loops were detected (where 'A --> B' means 'A needs B to
@@ -43,7 +42,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx

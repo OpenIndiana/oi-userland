@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module String::Format
+#   $WS_TOOLS/perl-integrate-module String-Format
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		String::Format
+COMPONENT_NAME =		String-Format
 HUMAN_VERSION =			1.18
-COMPONENT_SUMMARY =		String::Format - sprintf-like string formatting capabilities with arbitrary format definitions
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		sprintf-like string formatting capabilities with arbitrary format definitions
 COMPONENT_CPAN_AUTHOR =		SREZIC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9e417a8f8d9ea623beea2d13a47c0d5a696fc8602c0509b826cd45f97b76e778
@@ -30,4 +31,6 @@ COMPONENT_LICENSE_FILE =	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

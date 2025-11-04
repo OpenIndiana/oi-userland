@@ -1,0 +1,42 @@
+Attempting to detect whether we have a gethostbyname_r() with 6 arguments
+is fatal with gcc14. We jump straight to the 5 argument check which is
+correct when building with XPG6.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -5778,26 +5778,8 @@ AH_TEMPLATE([HAVE_GETHOSTBYNAME_R],
+ 
+ AC_CHECK_FUNC([gethostbyname_r],
+   [AC_DEFINE([HAVE_GETHOSTBYNAME_R])
+-  AC_MSG_CHECKING([gethostbyname_r with 6 args])
+   OLD_CFLAGS=$CFLAGS
+   CFLAGS="$CFLAGS $MY_CPPFLAGS $MY_THREAD_CPPFLAGS $MY_CFLAGS"
+-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+-#   include <netdb.h>
+-  ]], [[
+-    char *name;
+-    struct hostent *he, *res;
+-    char buffer[2048];
+-    int buflen = 2048;
+-    int h_errnop;
+-
+-    (void) gethostbyname_r(name, he, buffer, buflen, &res, &h_errnop)
+-  ]])],[
+-    AC_DEFINE([HAVE_GETHOSTBYNAME_R])
+-    AC_DEFINE([HAVE_GETHOSTBYNAME_R_6_ARG], [1],
+-    [Define this if you have the 6-arg version of gethostbyname_r().])
+-    AC_MSG_RESULT([yes])
+-  ],[
+-    AC_MSG_RESULT([no])
+     AC_MSG_CHECKING([gethostbyname_r with 5 args])
+     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+ #       include <netdb.h>
+@@ -5836,7 +5818,6 @@ AC_CHECK_FUNC([gethostbyname_r],
+            AC_MSG_RESULT([no])
+         ])
+     ])
+-  ])
+   CFLAGS=$OLD_CFLAGS
+ ], [
+   AC_CHECK_FUNCS([gethostbyname])

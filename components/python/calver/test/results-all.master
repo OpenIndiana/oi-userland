@@ -1,17 +1,21 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 3 items
+configfile: pyproject.toml
+collecting ... collected 8 items
 
-::project PASSED
+tests/test_integration.py::test_version_missing[None] PASSED
+tests/test_integration.py::test_version_missing[False] PASSED
+tests/test_integration.py::test_version_missing[] PASSED
+tests/test_integration.py::test_version_true PASSED
+tests/test_integration.py::test_version_str PASSED
+tests/test_integration.py::test_version_callable PASSED
+tests/test_integration.py::test_reads_pkginfo PASSED
+tests/test_integration.py::test_reproducible_build PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17
-  $(PYTHON_DIR)/vendor-packages/pytest_freezegun.py:17: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if LooseVersion(pytest.__version__) < LooseVersion('3.6.0'):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1 passed, 2 warnings ========
+======== 8 passed ========
+  py$(PYV): OK
+  congratulations :)

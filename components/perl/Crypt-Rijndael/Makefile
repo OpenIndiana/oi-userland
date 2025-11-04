@@ -11,23 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::Rijndael
+#   $WS_TOOLS/perl-integrate-module Crypt-Rijndael
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::Rijndael
+COMPONENT_NAME =		Crypt-Rijndael
 HUMAN_VERSION =			1.16
-COMPONENT_SUMMARY =		Crypt::Rijndael - Crypt::CBC compliant Rijndael encryption module
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Crypt::CBC compliant Rijndael encryption module
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6540085e3804b82a6f0752c1122cf78cadd221990136dd6fd4c097d056c84d40
 COMPONENT_LICENSE =		LGPL-3.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

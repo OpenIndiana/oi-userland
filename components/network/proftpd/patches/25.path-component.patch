@@ -1,0 +1,29 @@
+#
+# this glitch has been found by 'include_directory_wildcard_issue1472' test
+# case.  it fails with error as follows:
+#    
+#   not ok ERROR include_directory_wildcard_issue1472
+#   t/lib/ProFTPD/Tests/Config/Include.pm:865 - include_directory_wildcard_issue1472(ProFTPD::Tests::Config::Include)
+#   RETR test.txt succeeded unexpectedly at t/lib/ProFTPD/Tests/Config/Include.pm line 828.
+#    
+#  the error which causes the failure is comes from configuration parser:
+#    
+#    2022-08-16 10:14:16,580 ST-ul-cbe proftpd[26930]: warning:
+#    unable to include '/tmp/proftpd-test-26903-test5-YaFmyrhTnM/*/test.conf': No such file or directory
+#
+# I think we should let parse_wildcard_config_path() to process entire absolute
+# path,. Patch has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1513
+#
+--- a/src/parser.c
++++ b/src/parser.c
+@@ -1001,8 +1001,7 @@ static int parse_wildcard_config_path(pool *p, const char *path,
+    */
+ 
+   parent_path = pstrdup(tmp_pool, "/");
+-  component = path + 1;
+-
++  component = path;
+   while (TRUE) {
+     int last_component = FALSE;
+     char *ptr;

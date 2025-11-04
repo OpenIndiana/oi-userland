@@ -1,0 +1,125 @@
+--- ./sbin/utadm.orig	Do. Okt. 16 15:17:19 2025
++++ ./sbin/utadm	Do. Okt. 16 15:18:59 2025
+@@ -116,7 +116,7 @@
+ UTDHCPSERVICE_DISABLED=3
+ 
+ SVCADM="/usr/sbin/svcadm"
+-DHCP_FMRI="svc:/network/dhcp-server:default"
++DHCP_FMRI="svc:/network/dhcp-server:ipv4"
+ 
+ UTLIB="/opt/SUNWut/lib"
+ UTSBIN="/opt/SUNWut/sbin"
+@@ -207,6 +207,7 @@
+ 		IFCONFIG_KEY_NETMASK="netmask"
+ 		if [ -x /usr/sbin/ipadm ]; then
+ 		  IPADM_CONF=true
++		  DHCPCONFIG="/etc/inet/dhcpd4.conf"
+ 		fi
+ 
+ 		;;	# end case SunOS
+@@ -1086,6 +1087,7 @@
+ # makes sure the Sun Ray options are defined in DHCP
+ #
+ function SetupDHCPOptions {
++  print "### SetupDHCPOptions"
+   typeset TMPOPTIONS=${TMPDIR}/utdhcpoptions-out.$$
+   rm -f ${TMPOPTIONS} 2> /dev/null
+ 
+@@ -1642,7 +1644,7 @@
+     mv ${NETWORKS}.$$ ${NETWORKS}
+ 
+     if ! IntfConfigured ${INTF}; then
+-	print -u2 "Error: missing \"${HOSTNAME_R}.${INTF}\" file."
++	print -u2 "Error: ${INTF} not configured"
+ 	return 1
+     fi
+     print "### Removing ${CORONA_TITLE} interface configuration for \"${INTF}\"";
+@@ -1783,14 +1785,6 @@
+ 	DHCPONLY="N"
+ 	for test in ${INTF_ALL}; do
+ 	    if [ "${INTF}" = "${test}" -a -f "${HOSTNAME_C}${INTF}" ]; then
+-		#
+-		# Need to catch the case where hostname.<intf> exists but the hostname
+-		# defined in the file may not be configured locally in the hosts file.
+-		#
+-		if [ ! -f ${HOSTNAME_C}${INTF} ]; then
+-		    print -u2 "Error: missing \"${HOSTNAME_R}${INTF}\" file."
+-		    return 1
+-		fi
+ 		if [[ $OS == "SunOS" ]]; then
+ 			NAME=`getIfname ${INTF}`
+ 			if [ -z "${NAME}" ]; then
+@@ -2567,8 +2561,8 @@
+ 	    fi
+ 	    # Clear any pre-existing state on interface, then create
+ 	    # new persistent configuration
+-	    ipadm delete-ip ${INTF} 2>/dev/null
+-	    ipadm create-ip ${INTF}
++	    ipadm delete-if ${INTF} 2>/dev/null
++	    ipadm create-if ${INTF}
+ 	    ipadm create-addr -T static -a local=${IPADDR}/${MASKBITS} ${INTF}/v4static
+ 	  else
+ 	    # ifconfig the new interface
+@@ -2710,7 +2704,7 @@
+ 	if [[ $BLOCKTYPE = "interface" ]] ; then
+ 	  if Intf=${UT_DHCP_INTERFACE} ; then
+ 	    if [[ ! -s ${HOSTNAME_R}.${Intf} ]]; then
+-		IntfAddr=""*MISSING*""
++		IntfAddr=`ipadm show-addr -p -o ADDR ${Intf}/ | awk '{split($1,a,"/"); print a[1]}'`
+ 	    else
+ 	    	typeset H=`getIfname ${Intf}`
+ 	    	IntfAddr=`getent hosts $H | awk '{ print $1 }'`
+@@ -3151,14 +3145,6 @@
+ 
+ 	INTF=${UT_DHCP_INTERFACE}
+ 
+-	#
+-	# Need to catch the case where hostname.<intf> exists but the hostname
+-	# defined in the file may not be configured locally in the hosts file.
+-	#
+-	if [ ! -f ${HOSTNAME_R}.${INTF} ]; then
+-	    print -u2 "Error: missing \"${HOSTNAME_R}.${INTF}\" file."
+-	    return 1
+-	fi
+ 	H=`getIfname ${INTF}`
+ 	if [ -z "${H}" ]; then
+ 	    print -u2 "Error: interface ${INTF} is partially configured.  Hostname not" \
+@@ -3452,19 +3438,7 @@
+ 	awk '{print $1 ; exit}' "${HOSTNAME_R}.$1"
+ 	return
+     else
+-	# With ipadm, there's no way to create a persistent
+-	# configuration without it immediately being reflected in the
+-	# runtime configuration, nor does ipadm provide any convenient
+-	# way to find the IPv4 addrobj for the interface, so just
+-	# check runtime configuration via ifconfig.
+-	IPADDR=$(ifconfig $1 | awk '
+-		/[ 	]inet /{
+-			for (i = 1; i < NF; ++i) {
+-				if ($i == "inet") {
+-					print $(i+1)
+-				}
+-			}
+-		}')
++	IPADDR=`ipadm show-addr -p -o ADDR $1/ | awk '{split($1,a,"/"); print a[1] }'`
+ 	if [ -z "$IPADDR" ]; then
+ 	    print -u2 "Error in parsing of ifconfig addresses"
+ 	    exit 2
+@@ -3513,7 +3487,7 @@
+   exit 1
+ fi
+ GetCurrentCfg;
+-if $UT_DHCP_RUNNING; then
++if [[ $UT_DHCP_RUNNING = "online" ]]; then
+     DHCP_RUNNING=true
+ fi
+ 
+@@ -3748,7 +3722,7 @@
+     else
+     	print "${CORONA_TITLE} interconnect framework is not configured" | tee -a $LOGFILE
+     fi
+-    RestartDHCP 2>/dev/null # Ignore errors, since initial (empty) DHCP config on Linux is broken
++    RestartDHCP N 2>/dev/null # Ignore errors, since initial (empty) DHCP config on Linux is broken
+     exit ${?}
+ 
+ elif [[ "${REMOVE}" = "Y" ]]; then

@@ -1,9 +1,20 @@
-This is derived from the pkgsrc-joyent set for openjdk11
-https://github.com/joyent/pkgsrc-joyent/tree/master/openjdk11
-
-All patches -p0
+This originally derived from the pkgsrc-joyent set for openjdk11
+https://github.com/TritonDataCenter/pkgsrc-joyent/tree/master/openjdk11
 
 This set of patches for jdk11u
+
+11.0.26
+
+Trivial patch noise.
+
+11.0.25
+
+Remove the png patch, it doesn't apply and appears to be unnecessary
+now png has been updated.
+
+Cleanup - pick the right assembler for gcc builds so they'll work
+without accidentally picking up or needing the sun as, see the new
+toolchain-assembler.patch
 
 11.0.20
 
@@ -43,7 +54,7 @@ Anything named tribblix* is my additional patches:
 tribblix-attachListener_solaris.patch
   fixes incorrect arguments
 
-tribblix-flags-cflags.patch 
+tribblix-flags-cflags.patch
   remove SSP
 
 tribblix-Launcher-jdk.patch
@@ -72,7 +83,7 @@ tribblix-sparc1.patch
 tribblix-sparc2.patch
   fixes to enable a sparc build with gcc; it's possible that using the
   atomic_linux_sparc.hpp from linux_sparc rather than
-  atomic_solaris_sparc.hpp from solaris_sparc may also be required 
+  atomic_solaris_sparc.hpp from solaris_sparc may also be required
 
 Build:
 

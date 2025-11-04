@@ -23,27 +23,32 @@
 # Copyright (c) 2023, Franklin Ronald <franklin@wiselabs.com.br>
 #
 
-BUILD_STYLE=cmake
+BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		multitail
-COMPONENT_VERSION=	7.1.2
+COMPONENT_VERSION=	7.1.5
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Tail multiple files on console with ncurses
 COMPONENT_PROJECT_URL=	https://www.vanheusden.com/multitail/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/folkertvanheusden/multitail/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c8552e10093f0690b8baef84945753c878e234d7b3d0e3ff27e509ed5515998c
+COMPONENT_ARCHIVE_HASH=	sha256:b0c92bf5f504b39591bf3e2e30a1902925c11556e14b89a07cfa7533f9bd171b
 COMPONENT_FMRI=				file/multitail
 COMPONENT_CLASSIFICATION= 	Applications/System Utilities
 COMPONENT_LICENSE=			Apache 2.0
 COMPONENT_LICENSE_FILE=		LICENSE
 
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CMAKE_OPTIONS+= -DUTF8_SUPPORT=Yes -DCURSES_INCLUDE_PATH=/usr/include
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
+
+CMAKE_OPTIONS += -DUTF8_SUPPORT=Yes -DCURSES_INCLUDE_PATH=/usr/include
+
+COMPONENT_PREP_ACTION= ( $(GSED) -i -e "s/MACH64/$(MACH64)/g" $(COMPONENT_SRC)/CMakeLists.txt )
 
 COMPONENT_POST_INSTALL_ACTION  = \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "/usr/gnu/lib/$(MACH64)"' "$(PROTO_DIR)/usr/bin/multitail"; \
@@ -53,13 +58,6 @@ COMPONENT_POST_INSTALL_ACTION  = \
 	rm -Rf "$(PROTO_DIR)/etc"; \
 	mkdir -p "$(PROTO_DIR)/etc"; \
 	mv "$(PROTO_DIR)/usr/etc/multitail.conf.new" "$(PROTO_DIR)/etc/multitail.conf.sample";
-
-# The native Makefile invites patching to set the following, but doing it here
-# instead will keep it working if the build system changes.
-COMPONENT_BUILD_ARGS += CC="$(CC)"
-COMPONENT_BUILD_ARGS += CFLAGS="$(CC_BITS) $(CFLAGS)"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(LDFLAGS)"
-COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

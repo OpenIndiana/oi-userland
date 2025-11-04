@@ -11,14 +11,13 @@
 #
 # Copyright (c) 2021 Jake Goerzen
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		plib
 COMPONENT_VERSION=	1.8.5
-COMPONENT_REVISION= 2
-COMPONENT_PROJECT_URL=	https://plib.sourceforge.net
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	PLIB - A Suite of Portable Game Libraries.
+COMPONENT_PROJECT_URL=	https://plib.sourceforge.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:485b22bf6fdc0da067e34ead5e26f002b76326f6371e2ae006415dea6a380a32

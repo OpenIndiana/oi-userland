@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Devel::CheckCompiler
+#   $WS_TOOLS/perl-integrate-module Devel-CheckCompiler
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Devel::CheckCompiler
+COMPONENT_NAME =		Devel-CheckCompiler
 HUMAN_VERSION =			0.07
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Devel::CheckCompiler - Check the compiler's availability
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Check the compiler's availability
 COMPONENT_CPAN_AUTHOR =		SYOHEX
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:768b7697b4b8d4d372c7507b65e9dd26aa4223f7100183bbb4d3af46d43869b5
@@ -31,5 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

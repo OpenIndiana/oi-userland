@@ -20,21 +20,25 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-db
 COMPONENT_VERSION=	20080903
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	Foomatic database of PostScript Printer Definition files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:a404d1243a313259490a6a29238498c438b6e8638dafeb980ab98de347957414
-COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
-COMPONENT_BUGDB=	utility/foomatic
+COMPONENT_ARCHIVE_HASH=	sha256:a404d1243a313259490a6a29238498c438b6e8638dafeb980ab98de347957414
+COMPONENT_ARCHIVE_URL=	https://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	https://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+COMPONENT_FMRI=		print/cups/filter/foomatic-db
+COMPONENT_CLASSIFICATION=	System/Printing
+COMPONENT_LICENSE=	GPLv2, MIT
 
-include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
-include ../../../make-rules/ips.mk
+TEST_TARGET= $(NO_TESTS)
+include ../../$(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 
@@ -43,11 +47,5 @@ COMPONENT_POST_INSTALL_ACTION = \
  gzip -c $(SOURCE_DIR)/db/source/PPD/Oce/Others/IM8530_1.PPD \
   > $(PROTO_DIR)/usr/share/foomatic/db/source/PPD/Oce/Others/IM8530_1.ppd.gz
 
-# common targets
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(NO_TESTS)
 
 # Auto-generated dependencies

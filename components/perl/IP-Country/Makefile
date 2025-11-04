@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IP::Country
+#   $WS_TOOLS/perl-integrate-module IP-Country
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IP::Country
+COMPONENT_NAME =		IP-Country
 HUMAN_VERSION =			2.28
-COMPONENT_SUMMARY =		IP::Country - fast lookup of country codes from IP addresses
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		fast lookup of country codes from IP addresses
 COMPONENT_CPAN_AUTHOR =		NWETTERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:88db833a5ab22ed06cb53d6f205725e3b5371b254596053738885e91fa105f75
@@ -32,5 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e '/random find/d'"
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/geography-countries
 PERL_REQUIRED_PACKAGES += runtime/perl

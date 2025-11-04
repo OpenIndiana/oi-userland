@@ -11,6 +11,7 @@
 . /lib/svc/share/smf_include.sh
 
 SSHDIR=/etc/hpnssh
+DEFAULTPORT=22
 
 create_ipf_rules()
 {
@@ -20,14 +21,15 @@ create_ipf_rules()
 	policy=`get_policy ${FMRI}`
 
 	#
-	# Get port from the sshd_config file
+	# Get port(s) from configuration files
 	#
-	tports=`grep "^Port" "$SSHDIR/sshd_config" 2>/dev/null | \
-	    awk '{print $2}'`
+	tports=$(grep -h "^Port" "$SSHDIR/sshd_config" \
+	    "$SSHDIR/sshd_config.d/"* 2>/dev/null | awk '{print $2}')
 
 	echo "# $FMRI" >$ipf_file
 	echo "# $FMRI" >$ipf6_file
-	for port in $tports; do
+	# If port is not specified explicitly use default
+	for port in ${tports:-$DEFAULTPORT}; do
 		generate_rules $FMRI $policy "tcp" $port $ipf_file
 		generate_rules $FMRI $policy "tcp" $port $ipf6_file _6
 	done

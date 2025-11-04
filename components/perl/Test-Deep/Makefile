@@ -11,24 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Deep
+#   $WS_TOOLS/perl-integrate-module Test-Deep
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Deep
-HUMAN_VERSION =			1.204
+COMPONENT_NAME =		Test-Deep
+HUMAN_VERSION =			1.205
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::Deep - Extremely flexible deep comparison
+COMPONENT_SUMMARY =		Extremely flexible deep comparison
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b6591f6ccdd853c7efc9ff3c5756370403211cffe46047f082b1cd1611a84e5f
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:42781e9943a7a215e662c4973b9feafdc019fd16469bdb849a8537ee58956273
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

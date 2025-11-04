@@ -11,14 +11,14 @@
 
 #
 # Copyright 2020 Oxide Computer Company
+# Copyright 2025 Klaus Ziegler
 #
-
-BUILD_BITS=		64
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		minicom
 COMPONENT_VERSION=	2.7.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Serial communication program
 COMPONENT_PROJECT_URL=	https://salsa.debian.org/minicom-team/minicom
 COMPONENT_FMRI=		terminal/$(COMPONENT_NAME)
@@ -33,6 +33,11 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
+# for -D_XPG6.
+CPPFLAGS +=    $(CPP_XPG6MODE)
+CPPFLAGS +=    -DUSE_SOCKET
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
+
 TEST_TARGET=		$(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
@@ -44,6 +49,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PREP_ACTION += (cd $(@D) && autoreconf -fi)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

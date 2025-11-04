@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Encode::Detect
+#   $WS_TOOLS/perl-integrate-module Encode-Detect
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Encode::Detect
+COMPONENT_NAME =		Encode-Detect
 HUMAN_VERSION =			1.01
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Encode::Detect - An Encode::Encoding subclass that detects the encoding of data
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		An Encode::Encoding subclass that detects the encoding of data
 COMPONENT_CPAN_AUTHOR =		JGMYERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:834d893aa7db6ce3f158afbd0e432d6ed15a276e0940db0a74be13fd9c4bbbf1

@@ -1,0 +1,17 @@
+From OmniOS
+
+When running the tests as part of the build, we want to run them in a
+consistent order and not automatically re-launch them in verbose mode
+when a failure occurs.
+
+--- Python-3.12.1/Tools/scripts/run_tests.py.orig
++++ Python-3.12.1/Tools/scripts/run_tests.py
+@@ -56,8 +56,6 @@
+     args.extend(test.support.args_from_interpreter_flags())
+ 
+     args.extend(['-m', 'test',    # Run the test suite
+-                 '-r',            # Randomize test order
+-                 '-w',            # Re-run failed tests in verbose mode
+                  ])
+     if sys.platform == 'win32':
+         args.append('-n')         # Silence alerts under Windows

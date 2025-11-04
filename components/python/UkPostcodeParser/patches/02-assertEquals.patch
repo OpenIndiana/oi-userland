@@ -1,0 +1,40 @@
+https://github.com/hamstah/ukpostcodeparser/issues/11
+
+--- UkPostcodeParser-1.1.2/ukpostcodeparser/test/parser.py.orig
++++ UkPostcodeParser-1.1.2/ukpostcodeparser/test/parser.py
+@@ -18,7 +18,7 @@
+ 
+         with self.assertRaises(ValueError) as cm:
+             parse_uk_postcode('N16', True, True)
+-        self.assertEquals(cm.exception.__class__, IncodeNotFoundError)
++        self.assertEqual(cm.exception.__class__, IncodeNotFoundError)
+ 
+     def test_max_length_exceeded_error_is_value_error(self):
+         """
+@@ -28,7 +28,7 @@
+ 
+         with self.assertRaises(ValueError) as cm:
+             parse_uk_postcode('N16 8QSSS', True, True)
+-        self.assertEquals(cm.exception.__class__, MaxLengthExceededError)
++        self.assertEqual(cm.exception.__class__, MaxLengthExceededError)
+ 
+     def test_invalid_postcode_error_is_value_error(self):
+         """
+@@ -38,7 +38,7 @@
+ 
+         with self.assertRaises(ValueError) as cm:
+             parse_uk_postcode('xx0 2yr', True, True)
+-        self.assertEquals(cm.exception.__class__, InvalidPostcodeError)
++        self.assertEqual(cm.exception.__class__, InvalidPostcodeError)
+ 
+ 
+ class PostcodeTestCase(unittest.TestCase):
+@@ -68,7 +68,7 @@
+             m = 'Expected {!r} but got {!r} for postcode={!r}, strict={!r} and ' \
+                 'incode_mandatory={!r}'
+ 
+-            self.assertEquals(
++            self.assertEqual(
+                 expected,
+                 result,
+                 m.format(

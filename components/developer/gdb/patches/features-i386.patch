@@ -1,7 +1,7 @@
-diff -wpruN '--exclude=*.orig' a~/gdb/features/Makefile a/gdb/features/Makefile
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/Makefile a/gdb/features/Makefile
 --- a~/gdb/features/Makefile	1970-01-01 00:00:00
 +++ a/gdb/features/Makefile	1970-01-01 00:00:00
-@@ -99,6 +99,11 @@ OUTPUTS = $(patsubst %,$(outdir)/%.dat,$
+@@ -98,6 +98,11 @@ OUTPUTS = $(patsubst %,$(outdir)/%.dat,$
  # --enable-targets=all GDB.  You can override this by passing XMLTOC
  # to make on the command line.
  XMLTOC = \
@@ -13,16 +13,16 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/Makefile a/gdb/features/Makefile
  	microblaze-with-stack-protect.xml \
  	microblaze.xml \
  	mips-dsp-linux.xml \
-@@ -227,6 +232,8 @@ FEATURE_XMLFILES = aarch64-core.xml \
- 	i386/64bit-pkeys.xml \
+@@ -231,6 +236,8 @@ FEATURE_XMLFILES = aarch64-core.xml \
  	i386/64bit-sse.xml \
+ 	i386/pkeys.xml \
  	i386/x32-core.xml \
 +	i386/32bit-illumos.xml \
 +	i386/64bit-illumos.xml \
  	loongarch/base32.xml \
  	loongarch/base64.xml \
- 	riscv/rv32e-xregs.xml \
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/32bit-illumos.xml a/gdb/features/i386/32bit-illumos.xml
+ 	loongarch/fpu.xml \
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/32bit-illumos.xml a/gdb/features/i386/32bit-illumos.xml
 --- a~/gdb/features/i386/32bit-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/32bit-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,11 @@
@@ -37,7 +37,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/32bit-illumos.xml a/gdb/feat
 +<feature name="org.gnu.gdb.i386.illumos">
 +  <reg name="orig_eax" bitsize="32" type="int" regnum="41"/>
 +</feature>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/64bit-illumos.xml a/gdb/features/i386/64bit-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/64bit-illumos.xml a/gdb/features/i386/64bit-illumos.xml
 --- a~/gdb/features/i386/64bit-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/64bit-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,11 @@
@@ -52,7 +52,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/64bit-illumos.xml a/gdb/feat
 +<feature name="org.gnu.gdb.i386.illumos">
 +  <reg name="orig_rax" bitsize="64" type="int" regnum="57"/>
 +</feature>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-avx-illumos.xml a/gdb/features/i386/amd64-avx-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/amd64-avx-illumos.xml a/gdb/features/i386/amd64-avx-illumos.xml
 --- a~/gdb/features/i386/amd64-avx-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/amd64-avx-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,18 @@
@@ -74,7 +74,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-avx-illumos.xml a/gdb/
 +  <xi:include href="64bit-illumos.xml"/>
 +  <xi:include href="64bit-avx.xml"/>
 +</target>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-illumos.xml a/gdb/features/i386/amd64-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/amd64-illumos.xml a/gdb/features/i386/amd64-illumos.xml
 --- a~/gdb/features/i386/amd64-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/amd64-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,17 @@
@@ -95,7 +95,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/amd64-illumos.xml a/gdb/feat
 +  <xi:include href="64bit-sse.xml"/>
 +  <xi:include href="64bit-illumos.xml"/>
 +</target>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-avx-illumos.xml a/gdb/features/i386/i386-avx-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/i386-avx-illumos.xml a/gdb/features/i386/i386-avx-illumos.xml
 --- a~/gdb/features/i386/i386-avx-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/i386-avx-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,18 @@
@@ -117,7 +117,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-avx-illumos.xml a/gdb/f
 +  <xi:include href="32bit-illumos.xml"/>
 +  <xi:include href="32bit-avx.xml"/>
 +</target>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-illumos.xml a/gdb/features/i386/i386-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/i386-illumos.xml a/gdb/features/i386/i386-illumos.xml
 --- a~/gdb/features/i386/i386-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/i386-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,17 @@
@@ -138,7 +138,7 @@ diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-illumos.xml a/gdb/featu
 +  <xi:include href="32bit-illumos.xml"/>
 +  <xi:include href="32bit-sse.xml"/>
 +</target>
-diff -wpruN '--exclude=*.orig' a~/gdb/features/i386/i386-mmx-illumos.xml a/gdb/features/i386/i386-mmx-illumos.xml
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gdb/features/i386/i386-mmx-illumos.xml a/gdb/features/i386/i386-mmx-illumos.xml
 --- a~/gdb/features/i386/i386-mmx-illumos.xml	1970-01-01 00:00:00
 +++ a/gdb/features/i386/i386-mmx-illumos.xml	1970-01-01 00:00:00
 @@ -0,0 +1,16 @@

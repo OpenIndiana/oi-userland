@@ -11,28 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project python-dotenv
+#   $WS_TOOLS/python-integrate-project -d python/python-dotenv python_dotenv
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		python-dotenv
-HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		python-dotenv - Read key-value pairs from a .env file and set them as environment variables
+COMPONENT_NAME =		python_dotenv
+HUMAN_VERSION =			1.1.1
+COMPONENT_SUMMARY =		Read key-value pairs from a .env file and set them as environment variables
 COMPONENT_PROJECT_URL =		https://github.com/theskumar/python-dotenv
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/bc/57/e84d88dfe0aec03b7a2d4327012c1627ab5f03652216c63d49846d7a6c58/python-dotenv-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca
+	sha256:a8a6399716257f45be6a007360200409fce5cda2661e3dec71d23dc15f6189ab
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/click

@@ -11,26 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-pytz
+#   $WS_TOOLS/python-integrate-project -d python/types-pytz types_pytz
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-pytz
-HUMAN_VERSION =			2024.1.0.20240203
-COMPONENT_SUMMARY =		types-pytz - Typing stubs for pytz
+COMPONENT_NAME =		types_pytz
+HUMAN_VERSION =			2025.2.0.20250809
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for pytz
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d1/80/0a2ef56b9977898789b7a0ab8d8ec32e19159e8c5d5aef203fccf4bbc4ed/types-pytz-2024.1.0.20240203.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c93751ee20dfc6e054a0148f8f5227b9a00b79c90a4d3c9f464711a73179c89e
+	sha256:222e32e6a29bb28871f8834e8785e3801f2dc4441c715cd2082b271eecbe21e5
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

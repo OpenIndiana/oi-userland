@@ -1,5 +1,7 @@
 py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m zope.testrunner --test-path=src -a 1000 -vv
+$(PYTHON_DIR)/vendor-packages/zope/testrunner/__init__.py:20: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources  # noqa: F401 unused import, see GitHub issue #194
 Running tests at level 1000
 Running zope.testrunner.layer.UnitTests tests:
   Set up zope.testrunner.layer.UnitTests.
@@ -18,6 +20,7 @@ Running zope.testrunner.layer.UnitTests tests:
  hexify (ZODB.scripts.fstest)
  test_fstest_verbose (ZODB.scripts.tests.test_fstest)
  test_backup_ignored_args (ZODB.scripts.tests.test_repozo.Test_parseargs)
+ test_backup_no_ignored_args_warning (ZODB.scripts.tests.test_repozo.Test_parseargs)
  test_backup_required_args (ZODB.scripts.tests.test_repozo.Test_parseargs)
  test_bad_argument (ZODB.scripts.tests.test_repozo.Test_parseargs)
  test_bad_option (ZODB.scripts.tests.test_repozo.Test_parseargs)
@@ -865,7 +868,7 @@ New thread(s): [<Daemon(T2, started daemon 306)>]
  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/ZODB/tests/../persistentclass.rst
  class_with_circular_ref_to_self (ZODB.tests.testpersistentclass)
  test_new_ghost_w_persistent_class (ZODB.tests.testpersistentclass)
-  Ran 1092 tests with 0 failures, 0 errors and 18 skipped.
+  Ran 1093 tests with 0 failures, 0 errors and 18 skipped.
 Running .repozo tests:
   Tear down zope.testrunner.layer.UnitTests.
   Set up .repozo.
@@ -937,6 +940,7 @@ Running .testFileStorage tests:
  testReadMethods (ZODB.tests.testFileStorage.FileStorageTests)
  testRedundantPack (ZODB.tests.testFileStorage.FileStorageTests)
  testRestoreBumpsOid (ZODB.tests.testFileStorage.FileStorageTests)
+ testRestoreCopy (ZODB.tests.testFileStorage.FileStorageTests)
  testSerialIsNoneForInitialRevision (ZODB.tests.testFileStorage.FileStorageTests)
  testSimpleHistory (ZODB.tests.testFileStorage.FileStorageTests)
  testSimpleIteration (ZODB.tests.testFileStorage.FileStorageTests)
@@ -1039,6 +1043,7 @@ Running .testFileStorage tests:
  testReadMethods (ZODB.tests.testFileStorage.FileStorageHexTests)
  testRedundantPack (ZODB.tests.testFileStorage.FileStorageHexTests)
  testRestoreBumpsOid (ZODB.tests.testFileStorage.FileStorageHexTests)
+ testRestoreCopy (ZODB.tests.testFileStorage.FileStorageHexTests)
  testSerialIsNoneForInitialRevision (ZODB.tests.testFileStorage.FileStorageHexTests)
  testSimpleHistory (ZODB.tests.testFileStorage.FileStorageHexTests)
  testSimpleIteration (ZODB.tests.testFileStorage.FileStorageHexTests)
@@ -1158,6 +1163,7 @@ Running .testFileStorage tests:
  testReadMethods (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
  testRedundantPack (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
  testRestoreBumpsOid (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
+ testRestoreCopy (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
  testSerialIsNoneForInitialRevision (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
  testSimpleHistory (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
  testSimpleIteration (ZODB.tests.testFileStorage.FileStorageTestsWithBlobsEnabled)
@@ -1260,6 +1266,7 @@ Running .testFileStorage tests:
  testReadMethods (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
  testRedundantPack (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
  testRestoreBumpsOid (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
+ testRestoreCopy (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
  testSerialIsNoneForInitialRevision (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
  testSimpleHistory (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
  testSimpleIteration (ZODB.tests.testFileStorage.FileStorageHexTestsWithBlobsEnabled)
@@ -1308,7 +1315,7 @@ Running .testFileStorage tests:
  readonly_open_nonexistent_file (ZODB.tests.testFileStorage)
  testTimeTravelOnOpen (ZODB.tests.testFileStorage)
  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/ZODB/tests/IExternalGC.test
-  Ran 432 tests with 0 failures, 0 errors and 8 skipped.
+  Ran 436 tests with 0 failures, 0 errors and 8 skipped.
 Running ZODB.tests.util.BlobAdaptedFileStorageBlobTests tests:
   Tear down .testFileStorage.
   Set up ZODB.tests.util.BlobAdaptedFileStorageBlobTests.
@@ -1412,6 +1419,6 @@ Running ZODB.tests.util.MVCCMappingBlobTests tests:
   Ran 15 tests with 0 failures, 0 errors and 0 skipped.
 Tearing down left over layers:
   Tear down ZODB.tests.util.MVCCMappingBlobTests.
-Total: 1606 tests, 0 failures, 0 errors and 26 skipped.
+Total: 1611 tests, 0 failures, 0 errors and 26 skipped.
   py$(PYV): OK
   congratulations :)

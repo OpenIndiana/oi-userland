@@ -14,16 +14,18 @@
 #   $WS_TOOLS/python-integrate-project parso
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parso
-HUMAN_VERSION =			0.8.4
-COMPONENT_SUMMARY =		parso - A Python Parser
+HUMAN_VERSION =			0.8.5
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A Python Parser
 COMPONENT_PROJECT_URL =		https://github.com/davidhalter/parso
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb3a7b58240fb99099a345571deecc0f9540ea5f4dd2fe14c2a99d6b281ab92d
+	sha256:034d7354a9a018bdce352f48b2a8a450f05e9d6ee85db84764e9b6bd96dafe5a
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,5 +33,9 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

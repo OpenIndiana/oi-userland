@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			8.1.1
-COMPONENT_SUMMARY =		pytest - pytest: simple powerful testing with Python
+HUMAN_VERSION =			8.4.2
+COMPONENT_SUMMARY =		pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ac978141a75948948817d360297b7aae0fcb9d6ff6bc9ec6d514b85d5a65c044
+	sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -41,38 +41,24 @@ include $(WS_MAKE_RULES)/common.mk
 # https://github.com/fedora-python/tox-current-env/issues/68
 COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
 
-# https://github.com/pytest-dev/pluggy/issues/457
-# https://github.com/bitprophet/pytest-relaxed/issues/28
-# https://github.com/christiansandberg/pytest-reporter/issues/8
-# https://github.com/jaraco/pytest-enabler/issues/10
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-metadata
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-relaxed
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-reporter
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-
 # This is needed to get consistent test results.
 # See also https://github.com/pytest-dev/pytest/issues/11761
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/iniconfig
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pluggy
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
+REQUIRED_PACKAGES.python += library/python/iniconfig
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/mock
-TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/requests
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/xmlschema

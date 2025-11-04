@@ -23,11 +23,11 @@
 # Copyright 2022 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.8.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU Aspell spell checking library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -45,7 +45,6 @@ CXXFLAGS += -I/usr/include/ncurses
 
 LDFLAGS.64=	$(LDFLAGS) -L$(GNULIB64) -R$(GNULIB64)
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static 
 CONFIGURE_OPTIONS += --with-pic 

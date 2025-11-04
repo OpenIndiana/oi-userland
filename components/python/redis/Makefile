@@ -14,20 +14,24 @@
 #   $WS_TOOLS/python-integrate-project redis
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		redis
-HUMAN_VERSION =			5.0.3
-COMPONENT_SUMMARY =		redis - Python client for Redis database and key-value store
+HUMAN_VERSION =			6.2.0
+COMPONENT_SUMMARY =		Python client for Redis database and key-value store
 COMPONENT_PROJECT_URL =		https://github.com/redis/redis-py
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/redis/redis-py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4973bae7444c0fbed64a06b87446f79361cb7e4ec1538c022d696ed7a5015580
+	sha256:ce5c31c67e00fb1822b3eaa97ddb17d54bf9b1e86c171b5aa9015f4b8bab4169
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+COMPONENT_SRC =			redis-py-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -58,18 +62,23 @@ PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_json.py
 PYTEST_ADDOPTS += --ignore tests/test_timeseries.py
 PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_timeseries.py
 
+# https://github.com/redis/redis-py/issues/3508
+PYTEST_ADDOPTS += --ignore tests/test_asyncio/test_cluster.py
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/black
+TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/click
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/invoke
 TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/urllib3
-TEST_REQUIRED_PACKAGES.python += library/python/wheel

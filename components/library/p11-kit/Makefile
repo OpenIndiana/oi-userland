@@ -25,19 +25,19 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
+BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		p11-kit
-COMPONENT_VERSION=	0.25.3
+COMPONENT_VERSION=	0.25.10
 COMPONENT_FMRI=		library/desktop/p11-kit
 COMPONENT_SUMMARY=	p11-kit provides a way to load and enumerate PKCS\#11 modules
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_PROJECT_URL=	https://p11-glue.github.io/p11-glue/p11-kit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:d8ddce1bb7e898986f9d250ccae7c09ce14d82f1009046d202a0eb1b428b2adc
+COMPONENT_ARCHIVE_HASH= sha256:a62a137a966fb3a9bbfa670b4422161e369ddea216be51425e3be0ab2096e408
 COMPONENT_ARCHIVE_URL=	https://github.com/p11-glue/p11-kit/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=	BSD-3-Clause
 COMPONENT_LICENSE_FILE= COPYING
@@ -46,24 +46,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+CFLAGS += $(XPG7MODE)
 CFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 LDFLAGS += -lsocket -lnsl
 
-# Needed due to patch to automake-related files.
-COMPONENT_PREP_ACTION += (cd $(@D); PATH="$(PATH)" autoreconf -fiv);
-
-CONFIGURE_OPTIONS    += --enable-doc
-CONFIGURE_OPTIONS    += --disable-doc-html
-CONFIGURE_OPTIONS    += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS    += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS.32 += --with-module-path=/usr/lib/security
-CONFIGURE_OPTIONS.64 += --with-module-path=/usr/lib/security/$(MACH64)
-CONFIGURE_OPTIONS    += --with-trust-paths=/etc/certs/ca-certificates.crt
-
-# To prevent "libtool_install_magic: unbound variable"
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += -Dmodule_path=/usr/lib/security/$(MACH64)
+CONFIGURE_OPTIONS += -Dtrust_paths=/etc/certs/ca-certificates.crtA
+CONFIGURE_OPTIONS += -Dman=true
 
 COMPONENT_BUILD_ENV += PATH=$(PATH)
 COMPONENT_TEST_ENV += PATH=$(PATH)
@@ -73,10 +62,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/is up to date/d" ' \
 	'-e "/ok/p" ' 
 
-# bash-completion is needed to get the following two files installed into proto area:
-# - usr/share/bash-completion/completions/p11-kit
-# - usr/share/bash-completion/completions/trust
+# Manually added build dependencies
 REQUIRED_PACKAGES += utility/bash-completion
+REQUIRED_PACKAGES += utility/zsh-completions
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/libffi

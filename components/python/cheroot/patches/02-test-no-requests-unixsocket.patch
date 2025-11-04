@@ -1,0 +1,38 @@
+We have no requests-unixsocket packaged yet.
+
+--- cheroot-11.0.0/requirements/tests.in.orig
++++ cheroot-11.0.0/requirements/tests.in
+@@ -37,7 +37,6 @@
+ pytest >= 7
+ 
+ # HTTP over UNIX socket
+-requests-unixsocket
+ requests_toolbelt
+ 
+ # TLS
+--- cheroot-11.0.0/cheroot/test/test_server.py.orig
++++ cheroot-11.0.0/cheroot/test/test_server.py
+@@ -14,7 +14,6 @@
+ import pytest
+ 
+ import requests
+-import requests_unixsocket
+ from pypytools.gc.custom import DefaultGc
+ 
+ from .._compat import IS_LINUX, IS_MACOS, IS_WINDOWS, SYS_PLATFORM, bton, ntob
+@@ -265,6 +264,7 @@
+ @unix_only_sock_test
+ @non_macos_sock_test
+ @pytest.mark.flaky(reruns=3, reruns_delay=2)
++@pytest.mark.skip(reason="missing requests-unixsocket")
+ def test_peercreds_unix_sock(http_request_timeout, peercreds_enabled_server):
+     """Check that ``PEERCRED`` lookup works when enabled."""
+     httpserver = peercreds_enabled_server
+@@ -302,6 +302,7 @@
+ )
+ @unix_only_sock_test
+ @non_macos_sock_test
++@pytest.mark.skip(reason="missing requests-unixsocket")
+ def test_peercreds_unix_sock_with_lookup(
+     http_request_timeout,
+     peercreds_enabled_server,

@@ -350,7 +350,7 @@ allocLogicalEntry(int xLogicalIdx, entLogicalEntry_t * xnewLogicalEntry)
 
     /* Fix for 4921309 */
     if (xLogicalIdx < 0 || xLogicalIdx > MAX_ENTITY_INDEX)
-        return NULL;
+        return 0;
     /* End of Fix for 4921309 */
 
     /* Fix for 4911817: Check for size and boundary limits */

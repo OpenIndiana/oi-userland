@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IO::HTML
+#   $WS_TOOLS/perl-integrate-module IO-HTML
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IO::HTML
+COMPONENT_NAME =		IO-HTML
 HUMAN_VERSION =			1.004
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		IO::HTML - Open an HTML file with automatic charset detection
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Open an HTML file with automatic charset detection
 COMPONENT_CPAN_AUTHOR =		CJM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c87b2df59463bbf2c39596773dfb5c03bde0f7e1051af339f963f58c1cbd8bf5
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -14,30 +14,36 @@
 #
 
 BUILD_STYLE=justmake
-BUILD_BITS=64
-# Requires patching
-USE_OPENSSL11=no
+DROP_STATIC_LIBRARIES = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         rtmpdump
-COMPONENT_VERSION=      2.4
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      2.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      RTMPdump -- a toolkit for RTMP streams
-COMPONENT_SRC=          $(COMPONENT_NAME)
-COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:0be975011d116bbdf1befad2a984ac83d09b1061c86550326a7ec496d2f188fc
-COMPONENT_ARCHIVE_URL=  \
-	http://rtmpdump.mplayerhq.hu/download/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://rtmpdump.mplayerhq.hu/
 COMPONENT_LICENSE=      GPLv2,LGPLv2
 COMPONENT_LICENSE_FILE= rtmpdump.license
 COMPONENT_CLASSIFICATION=Applications/Sound and Video
 COMPONENT_FMRI=         video/rtmpdump
 
+# This project does not do release tarballs.  It even does not use git tags so
+# we need to pin to the desired commit explicitly.
+GIT_REPO=https://git.ffmpeg.org/rtmpdump
+GIT_BRANCH = master
+GIT_COMMIT_ID=6f6bb1353fc84f4cc37138baa99f586750028a01
+GIT_HASH = sha256:627ea7b61a14ae5820d3ab164c2e7ce3331a1dd362d8b5b8017bd217b1952743
+
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_MAKE_RULES)/encumbered.mk
+include $(WS_MAKE_RULES)/common.mk
+
 COMPONENT_ENV += CC="$(CC)"
 COMPONENT_ENV += XCFLAGS="$(CFLAGS) -I$(OPENSSL_INCDIR)"
-COMPONENT_ENV += XLDFLAGS="$(LDFLAGS) -L$(OPENSSL_LIBDIR.$(BITS)) -R$(OPENSSL_LIBDIR.$(BITS))"
+COMPONENT_ENV += XLDFLAGS="$(LDFLAGS) -L$(OPENSSL_LIBDIR) -R$(OPENSSL_LIBDIR)"
 COMPONENT_ENV += XLIBS="-lnsl -lsocket"
 
 COMPONENT_BUILD_ENV += $(COMPONENT_ENV)
@@ -46,10 +52,9 @@ COMPONENT_INSTALL_ENV.64 = ARCH=/$(MACH64)
 COMPONENT_INSTALL_ENV += $(COMPONENT_ENV)
 COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 
-include $(WS_MAKE_RULES)/encumbered.mk
-include $(WS_MAKE_RULES)/common.mk
+COMPONENT_BUILD_TARGETS = all
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

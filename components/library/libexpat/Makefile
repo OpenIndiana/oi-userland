@@ -30,29 +30,38 @@ USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libexpat
-COMPONENT_VERSION=	2.6.2
-COMPONENT_VERSION_U=$(shell echo $(COMPONENT_VERSION) | tr . _)
+COMPONENT_NAME=		expat
+COMPONENT_VERSION=	2.7.3
+COMPONENT_VERSION_U=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	libexpat - XML parser library
 COMPONENT_DESCRIPTION=	A fast, non-validating, stream-oriented XML parsing library	
 COMPONENT_PROJECT_URL=	https://libexpat.github.io
-COMPONENT_SRC_NAME=	expat
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH=	sha256:d276ffa9602e0c5f289f33fab7b3a9c86da446092642a09cd3c0c8e51f50d862
+COMPONENT_ARCHIVE_HASH=	sha256:4cb8ec847a42d97fe4e9ee4fb516aca79cd41667e13a3982124e11c204bf2b9d
 COMPONENT_ARCHIVE_URL=	https://github.com/libexpat/libexpat/releases/download/R_$(COMPONENT_VERSION_U)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/expat
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=	expat license
+COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	COPYING
+
+COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(CPP_LARGEFILES)
 
-# Deliver only 64-bit binary
-CONFIGURE_OPTIONS.64 += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --disable-static
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) ;
+
+# Workaround for the following expat bug:
+# https://github.com/libexpat/libexpat/issues/501
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(GSED) -i -e '/^get_filename_component.*CMAKE/{n; p;}' $(PROTOUSRLIBDIR64)/cmake/$(COMPONENT_SRC)/expat.cmake ; \
+	$(GSED) -i -e 's/$(MACH64)/lib\/&/' $(PROTOUSRLIBDIR64)/cmake/$(COMPONENT_SRC)/expat-noconfig.cmake ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

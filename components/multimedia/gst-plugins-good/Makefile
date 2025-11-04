@@ -10,84 +10,81 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
-# Copyright 2019 Tim Mooney.
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
+# Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-plugins-good
-COMPONENT_VERSION= 0.10.31
-COMPONENT_REVISION= 6
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:77a8436a7c0a15f876bad29616835046890df2bcaf72da02151bd91e3d292b64
-COMPONENT_ARCHIVE_URL=	https://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = https://gstreamer.freedesktop.org/
-COMPONENT_FMRI = library/audio/gstreamer/plugin/good
-COMPONENT_CLASSIFICATION = System/Multimedia Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING
+COMPONENT_NAME=		gst-plugins-good
+COMPONENT_VERSION=	1.26.7
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:82af18a1f3e4a060db61d2630fbb975269b80b55bb2fdcfddfab5c6440d30781
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/gstreamer/plugin/good
+COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(SOURCE_DIR) && aclocal -I ./m4 -I./common/m4 && \
-	autoheader && \
-	automake -a -f -c --gnu && \
-	autoconf )
+# almost everything is "auto" with meson
+CONFIGURE_OPTIONS += -Dorc=enabled
+CONFIGURE_OPTIONS += -Dlame=enabled
+CONFIGURE_OPTIONS += -Doss=enabled
+CONFIGURE_OPTIONS += -Doss4=enabled
+CONFIGURE_OPTIONS += -Dqt5=disabled
+CONFIGURE_OPTIONS += -Dqt6=disabled
+CONFIGURE_OPTIONS += -Dtwolame=enabled
+CONFIGURE_OPTIONS += -Dsoup=enabled
+CONFIGURE_OPTIONS += -Dtests=enabled
+# disable amrnb and amrwbdec because they are in opencore-amr which is in encumbered
+CONFIGURE_OPTIONS += -Damrnb=disabled
+CONFIGURE_OPTIONS += -Damrwbdec=disabled
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-gcc_OPT = -O2
-
-PATH = $(PATH.gnu)
-
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-CFLAGS   += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --enable-external
-CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
-
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+# build dependency not detected by REQUIRED_PACKAGES
+REQUIRED_PACKAGES += system/header/header-audio
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += audio/lame
+REQUIRED_PACKAGES += audio/mpg123
+REQUIRED_PACKAGES += audio/twolame
 REQUIRED_PACKAGES += audio/wavpack
 REQUIRED_PACKAGES += codec/flac
+REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += codec/speex
 REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/pulseaudio
+REQUIRED_PACKAGES += library/audio/taglib
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/libsoup
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += library/orc
+REQUIRED_PACKAGES += library/video/libvpx
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxdamage
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxfixes
-REQUIRED_PACKAGES += x11/library/libxv
+REQUIRED_PACKAGES += x11/library/libxtst

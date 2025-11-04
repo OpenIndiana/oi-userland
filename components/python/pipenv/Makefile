@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipenv
-HUMAN_VERSION =			2023.12.1
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		pipenv - Python Development Workflow for Humans.
+HUMAN_VERSION =			2025.0.4
+COMPONENT_SUMMARY =		Python Development Workflow for Humans.
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pipenv
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/pypa/pipenv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4aea73e23944e464ad2b849328e780ad121c5336e1c24a7ac15aa493c41c2341
+	sha256:d7a481a3a97c954be21e3b4be48a0105fe24c8f02d90875ee026c80af122f9a0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,9 +39,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ; \
 	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/examples ;
 
+# https://github.com/pypa/pipenv/issues/6294#issuecomment-2537370184
+PYTEST_ADDOPTS += -m "not cli and not needs_internet" tests/unit/
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/certifi
+PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python

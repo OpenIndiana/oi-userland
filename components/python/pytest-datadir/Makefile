@@ -11,26 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-datadir
+#   $WS_TOOLS/python-integrate-project -d python/pytest-datadir pytest_datadir
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-datadir
-HUMAN_VERSION =			1.5.0
-COMPONENT_SUMMARY =		pytest-datadir - pytest plugin for test data directories and files
+COMPONENT_NAME =		pytest_datadir
+HUMAN_VERSION =			1.8.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		pytest plugin for test data directories and files
 COMPONENT_PROJECT_URL =		http://github.com/gabrielcnr/pytest-datadir
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/aa/97/a93900d82635aa3f419c3cd2059b4de7d7fe44e415eaf00c298854582dcc/pytest-datadir-1.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1617ed92f9afda0c877e4eac91904b5f779d24ba8f5e438752e3ae39d8d2ee3f
+	sha256:7a15faed76cebe87cc91941dd1920a9a38eba56a09c11e9ddf1434d28a0f78eb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python

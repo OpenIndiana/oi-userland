@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::Twofish
+#   $WS_TOOLS/perl-integrate-module Crypt-Twofish
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::Twofish
+COMPONENT_NAME =		Crypt-Twofish
 HUMAN_VERSION =			2.18
-COMPONENT_SUMMARY =		Crypt::Twofish - The Twofish Encryption Algorithm
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		The Twofish Encryption Algorithm
 COMPONENT_CPAN_AUTHOR =		AMS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5881555d6187972a2382aa0d4db2d74c970b06774c621b6ca523739236d2d501
@@ -35,5 +36,6 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^Benchmarks/,\$$d'"
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-cbc
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

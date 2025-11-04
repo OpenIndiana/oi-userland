@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
 #
 
 
@@ -18,7 +18,7 @@
 # See http://squeak.org and http://squeakvm.org
 #
 # squeak uses cmake and a custom configure script (not GNU autoconf)
-# in order to build this package, "cmake" must be installed
+# in order to build this package, "cmake" and "pkg-config" must be installed
 #
 # squeak was built both in 32-bit and 64-bit mode
 # but since 2023 version 4.20.6 now only in 64 bit per OpenIndiana request
@@ -50,7 +50,6 @@
 # so we deliver a patch and rename files
 # in order to put the 64-bit objects in their usual usr/lib/amd64 location
 
-BUILD_BITS=64
 USE_COMMON_TEST_MASTER=no
 
 # there is support for OpenSSL 1.1 and 3.x in the squeak SSL module
@@ -58,10 +57,11 @@ USE_COMMON_TEST_MASTER=no
 # this can be set before including shared-macros.mk
 USE_OPENSSL10=yes
 
-# the goal is to use libjpeg8-turbo but that links, but does not display
-# working jpeg images; needs to be fixed upstream by the Squeak team
-# currently use libjpeg6-ijg which is better than using the copy of
-# those libjpeg files in the squeak source tree
+# the goal is to use libjpeg8-turbo (or any other libjpeg implementation)
+# special care for included header files as the struct sizes vary
+# we 'fix' the Squeak source code that has an old libjpeg included in source
+# this should be fixed upstream in the Squeak sources
+# the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
 JPEG_IMPLEM=libjpeg8-turbo
 
 include ../../../../make-rules/shared-macros.mk
@@ -70,15 +70,31 @@ include ../../../../make-rules/shared-macros.mk
 # it cannot be changed here randomly, it must match the VMMaker version
 
 COMPONENT_NAME=		squeak
-COMPONENT_VERSION=	4.20.7
+COMPONENT_VERSION=	4.21.3
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
 COMPONENT_FMRI=		runtime/smalltalk/squeak
 COMPONENT_CLASSIFICATION=	Development/Smalltalk
-SVN_REPO=		http://squeakvm.org/svn/squeak/trunk/
-SVN_REV=                3829
-SVN_HASH=  sha256:a50c19767806f5b318259a27e004c4b9c7441381132aa9d1af1abd106cc1f703
+# the svn repository has many files that we do not need
+# and checking out everything often causes timeouts
+# so only check out the following three subdirectories
+SQREPO=                 http://squeakvm.org/svn/squeak/trunk
+SVN_REPO_0=             $(SQREPO)/src
+SVN_REPO_1=             $(SQREPO)/platforms/Cross
+SVN_REPO_2=             $(SQREPO)/platforms/unix
+COMPONENT_NAME_0=	$(COMPONENT_NAME)-src
+COMPONENT_NAME_1=	$(COMPONENT_NAME)-platforms-Cross
+COMPONENT_NAME_2=	$(COMPONENT_NAME)-platforms-unix
+# also update squeak.ips when changing SQREV
+SQREV=                  3837
+SVN_REV_0=              $(SQREV)
+SVN_REV_1=              $(SQREV)
+SVN_REV_2=              $(SQREV)
+# userland-fetch from archives
+SVN_HASH_0=  sha256:9f088eb620ca1262f4372ef5569365be99f3f29ca74e02ba0dc285aabac2aa56
+SVN_HASH_1=  sha256:1b23c6b1fc4b8f06bbaa1072d12a7136504730b15eeab5292d38fa8802075fcd
+SVN_HASH_2=  sha256:19308395ba1555e50629bdf86fe9bbb2fa5eadd4830e50afc83acbf6d3b100e5
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
@@ -86,16 +102,20 @@ SVN_HASH=  sha256:a50c19767806f5b318259a27e004c4b9c7441381132aa9d1af1abd106cc1f7
 COMPONENT_LICENSE=      Squeak4
 COMPONENT_LICENSE_FILE= squeak4.license
 
+# Squeak has an extensive test framework called SUnit
+# it requires a X11 connection (graphical user interface)
+# if connection to $DISPLAY fails from "gmake test" the tests will fail
 # the tests are ran only on 32bit image for Squeak classical VM
 # because inisqueak downloads a 32 bit image (provided by squeak.org)
 # for OpenSmalltalk (see cog-spur and stack-spur) 32bit + 64bit
 # since version 2023 4.20.6 we use a 64bit executable to run the 32image
+# because OpenIndiana stopped shipping 32bit libraries for 32bit executables
 COMPONENT_TEST_CMD=	$(COMPONENT_TEST_RESULTS_DIR)/testrunner.sh $(BITS) $(COMPONENT_DIR) $(BUILD_DIR_64)
 
 include $(WS_MAKE_RULES)/common.mk
 
 PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
-PKG_OPTIONS += -DSVN_REV="$(SVN_REV)"
+PKG_OPTIONS += -DSVN_REV="$(SQREV)"
 
 PATH=$(PATH.gnu)
 
@@ -111,6 +131,13 @@ PATH=$(PATH.gnu)
 # lfcompile - large file compilation environment for 32-bit applications
 
 gcc_OPT=	-O
+
+# for gcc 14.2 add -Wno-error options
+gcc_OPT+=		-Wno-error=implicit-function-declaration
+gcc_OPT+=		-Wno-error=incompatible-pointer-types
+gcc_OPT+=		-Wno-error=return-mismatch
+gcc_OPT+=		-Wno-error=int-to-pointer-cast
+gcc_OPT+=		-Wno-error=int-conversion
 
 # add -D_FILE_OFFSET_BITS=64 to CPPFLAGS but unlike OpenSmalltalk,
 # must also add this to CFLAGS because Squeak configure is not using CPPFLAGS
@@ -128,13 +155,15 @@ LDFLAGS  +=     $(JPEG_LDFLAGS)
 CFLAGS   +=     $(CPPFLAGS)
 
 # cleanup the plugin directory
-SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
+SOURCE_JPEG = $(SOURCE_DIR_1)/plugins/JPEGReadWriter2Plugin
 
 # squeak configure looks for .svn or svnversion file, but
 # prep-svn.mk did a svn export and created an unversioned copy of the sources
+# CMakeLists.txt defines cross as unix/../Cross so set a softlink
 COMPONENT_PRE_CONFIGURE_ACTION = \
-( echo $(SVN_REV) > $(SOURCE_DIR)/platforms/unix/svnversion; \
-  find $(SOURCE_JPEG) \
+( echo $(SQREV) > $(SOURCE_DIR_2)/svnversion; \
+  if [ ! -L Cross ]; then ln -s $(SOURCE_DIR_1) Cross;fi ; \
+  find $(SOURCE_JPEG) -type f \
      \! -name JPEGReadWriter2Plugin.h \
      \! -name sqJPEGReadWriter2Plugin.c \
      \! -name Error.c \
@@ -143,9 +172,33 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
      \! -name jmemdatadst.c \
   -exec rm {} \;)
 
-CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/cmake/configure
-CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR)/src
+# clean up symbolic link set in pre configure action
+# also when we started to use 3 subversion packages, the .prep and .patched files started to appear in the component dir
+CLEAN_PATHS+= Cross
+CLEAN_PATHS+= .prep
+CLEAN_PATHS+= .patched
+CLEAN_PATHS+= .patched-02-openssl-cmake.patch
+CLEAN_PATHS+= .patched-03-cameraconfig.patch
+CLEAN_PATHS+= .patched-04-sqCamera.patch
+CLEAN_PATHS+= .patched-05-jmemdatasrc.patch
+CLEAN_PATHS+= .patched-06-jmemdatadst.patch
+CLEAN_PATHS+= .patched-07-sqJPEGReadWriter2Plugin.patch
+CLEAN_PATHS+= .patched-08-JPEGReadWriter2Plugin.patch
+
+# do not build vm-sound-Sun as we only package vm-sound-pulse (bug #17109)
+# do not build Mpeg3Plugin and RePlugin as it uses old copies of those libraries
+# do not build GStreamerPlugin, it uses the GStreamer 0.10 and not GStreamer 1.0 (bug #17111)
+ 
+CONFIGURE_SCRIPT= $(SOURCE_DIR_2)/cmake/configure
+CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR_0)
 CONFIGURE_OPTIONS +=    --link-shared-lib
+CONFIGURE_OPTIONS +=    --without-vm-sound-Sun
+CONFIGURE_OPTIONS +=    --without-RePlugin
+CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
+CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
+CONFIGURE_OPTIONS +=    --without-ScratchPlugin
+# cmake 4.x requires this -D because the CMakeLists.txt indicates cmake 2.x MINVERSION
+CONFIGURE_OPTIONS +=    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
 # in the 64bit case the vm is called squeakvm64 (not squeakvm)
 # the plugin directory under usr/lib/squeak has a _64bit suffix
@@ -171,7 +224,7 @@ rebuild-manifests::
 	cp manifests/squeak-display-X11.p5m squeak-display-X11.p5m
 	cp manifests/squeak-nodisplay.p5m squeak-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
-	tools/subversion.sh $(SVN_REV) <sample-manifest.p5m >sample.p5m
+	tools/subversion.sh $(SQREV) <sample-manifest.p5m >sample.p5m
 	tools/classify.pl <sample.p5m
 	tools/amd64-p5m.sh
 	rm -f sample-manifest.p5m sample.p5m
@@ -179,18 +232,22 @@ rebuild-manifests::
 # disable pkglint until we find solution for 64bit object in 32-bit path error
 PKGLINT= /bin/true
 
+# OpenGL support for mesa and nvidia
+# to force using the nvidia libGL.so.1 use
+# svccfg -s svc:/application/opengl/ogl-select
+# setprop options/vendor = astring: nvidia
+# ogl-select has a dependency on x11/library/mesa
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/library/libjpeg8-turbo
-REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libffi
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2

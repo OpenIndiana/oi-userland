@@ -14,26 +14,28 @@
 #   $WS_TOOLS/python-integrate-project typogrify
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typogrify
-HUMAN_VERSION =			2.0.7
-COMPONENT_SUMMARY =		typogrify - Filters to enhance web typography, including support for Django & Jinja templates
-COMPONENT_PROJECT_URL =		https://github.com/mintchaos/typogrify
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8a/bf/64959d6187d42472acb846bcf462347c9124952c05bd57e5769d5f28f9a6/typogrify-2.0.7.tar.gz
+HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Filters to enhance web typography, including support for Django & Jinja templates
+COMPONENT_PROJECT_URL =		https://github.com/justinmayer/typogrify
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8be4668cda434163ce229d87ca273a11922cb1614cb359970b7dc96eed13cb38
+	sha256:f0aa004e98032a6e6be4c9da65e7eb7150e36ca3bf508adbcda82b4d003e61ee
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = none
 
+# This project is missing tests.
+# https://github.com/justinmayer/typogrify/issues/4
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/smartypants
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/smartypants
+REQUIRED_PACKAGES.python += runtime/python

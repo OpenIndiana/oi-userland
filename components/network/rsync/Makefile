@@ -28,12 +28,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.3.0
+COMPONENT_VERSION=	3.4.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7399e9a6708c32d678a72a63219e96f23be0be2336e50fd1348498d07041df90
+COMPONENT_ARCHIVE_HASH=	sha256:2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -46,6 +47,8 @@ CONFIGURE_OPTIONS  +=	--with-included-popt
 CONFIGURE_OPTIONS  +=	--enable-xattr-support
 # disable xxHash until we provide a package for it (https://github.com/Cyan4973/xxHash)
 CONFIGURE_OPTIONS  +=	--disable-xxhash
+CONFIGURE_OPTIONS  +=	CPPFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS  +=	LDFLAGS=-L$(OPENSSL_LIBDIR)
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
 COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
@@ -54,8 +57,8 @@ COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
 TEST_REQUIRED_PACKAGES += developer/fakeroot
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += system/library

@@ -1,0 +1,158 @@
+From 4b5f5193848808c0d6c730ce37737538e404c218 Mon Sep 17 00:00:00 2001
+From: "Joshua M. Clulow" <josh@sysmgr.org>
+Date: Mon, 27 Dec 2021 16:08:40 -0800
+Subject: [PATCH] illumos: correctly return error conditions
+
+---
+ libusb/os/illumos_usb.c | 98 ++++++++++++++++++++++++++++++++---------
+ libusb/os/illumos_usb.h |  1 +
+ 2 files changed, 79 insertions(+), 20 deletions(-)
+
+diff --git a/libusb/os/illumos_usb.c b/libusb/os/illumos_usb.c
+index db8dcf75..ec4b2721 100644
+--- a/libusb/os/illumos_usb.c
++++ b/libusb/os/illumos_usb.c
+@@ -1186,7 +1186,6 @@ illumos_async_callback(union sigval arg)
+ 	struct libusb_transfer *xfer = tpriv->transfer;
+ 	struct usbi_transfer *ixfer = LIBUSB_TRANSFER_TO_USBI_TRANSFER(xfer);
+ 	struct aiocb *aiocb = &tpriv->aiocb;
+-	int ret;
+ 	illumos_dev_handle_priv_t *hpriv;
+ 	uint8_t ep;
+ 	libusb_device_handle *dev_handle;
+@@ -1196,23 +1195,20 @@ illumos_async_callback(union sigval arg)
+ 		return;
+ 	}
+ 
+-	hpriv = usbi_get_device_handle_priv(dev_handle);
+-	ep = illumos_usb_ep_index(xfer->endpoint);
++	if (aio_error(aiocb) != ECANCELED) {
++		hpriv = usbi_get_device_handle_priv(dev_handle);
++		ep = illumos_usb_ep_index(xfer->endpoint);
+ 
+-	ret = aio_error(aiocb);
+-	if (ret != 0) {
+-		xfer->status = illumos_usb_get_status(TRANSFER_CTX(xfer),
++		/*
++		 * Fetch the status for the last command on this endpoint from
++		 * ugen(7D) so that we can translate and report it later.
++		 */
++		tpriv->ugen_status = illumos_usb_get_status(TRANSFER_CTX(xfer),
+ 		    hpriv->eps[ep].statfd);
+ 	} else {
+-		xfer->actual_length = ixfer->transferred = aio_return(aiocb);
++		tpriv->ugen_status = USB_LC_STAT_NOERROR;
+ 	}
+ 
+-	usb_dump_data(xfer->buffer, xfer->actual_length);
+-
+-	usbi_dbg(TRANSFER_CTX(xfer), "ret=%d, len=%d, actual_len=%d",
+-	    ret, xfer->length, xfer->actual_length);
+-
+-	/* async notification */
+ 	usbi_signal_transfer_completion(ixfer);
+ }
+ 
+@@ -1478,10 +1474,6 @@ illumos_cancel_transfer(struct usbi_transfer *itransfer)
+ 	if (ret != AIO_CANCELED) {
+ 		ret = _errno_to_libusb(errno);
+ 	} else {
+-		/*
+-		 * we don't need to call usbi_handle_transfer_cancellation(),
+-		 * because we'll handle everything in illumos_async_callback.
+-		 */
+ 		ret = LIBUSB_SUCCESS;
+ 	}
+ 
+@@ -1489,10 +1481,76 @@ illumos_cancel_transfer(struct usbi_transfer *itransfer)
+ }
+ 
+ int
+-illumos_handle_transfer_completion(struct usbi_transfer *itransfer)
++illumos_handle_transfer_completion(struct usbi_transfer *ixfer)
+ {
+-	return (usbi_handle_transfer_completion(itransfer,
+-	    LIBUSB_TRANSFER_COMPLETED));
++	illumos_xfer_priv_t *tpriv = usbi_get_transfer_priv(ixfer);
++	struct libusb_transfer *xfer = USBI_TRANSFER_TO_LIBUSB_TRANSFER(ixfer);
++	struct aiocb *aiocb = &tpriv->aiocb;
++	int ret;
++	enum libusb_transfer_status status;
++
++	if ((ret = aio_error(aiocb)) == 0) {
++		/*
++		 * The command completed.  Update the transferred length:
++		 */
++		xfer->actual_length = ixfer->transferred = aio_return(aiocb);
++
++		usbi_dbg(TRANSFER_CTX(xfer), "ret=%d, len=%d, actual_len=%d",
++		    ret, xfer->length, xfer->actual_length);
++		usb_dump_data(xfer->buffer, xfer->actual_length);
++
++		status = LIBUSB_TRANSFER_COMPLETED;
++
++	} else if (ret == ECANCELED) {
++		/*
++		 * We used aio_cancel() to cancel this; report cancellation to
++		 * libusb so that timeouts can be handled correctly.
++		 */
++		usbi_dbg(TRANSFER_CTX(xfer),
++		    "aio cancelled, len=%d, actual_len=%d",
++		    xfer->length, xfer->actual_length);
++
++		status = LIBUSB_TRANSFER_CANCELLED;
++
++	} else {
++		/*
++		 * Convert the ugen(7D)-level status to a libusb-level status:
++		 */
++		switch (tpriv->ugen_status) {
++		case USB_LC_STAT_TIMEOUT:
++			status = LIBUSB_TRANSFER_TIMED_OUT;
++			break;
++		case USB_LC_STAT_STALL:
++			status = LIBUSB_TRANSFER_STALL;
++			break;
++		case USB_LC_STAT_DISCONNECTED:
++			status = LIBUSB_TRANSFER_NO_DEVICE;
++			break;
++		case USB_LC_STAT_INTERRUPTED:
++			status = LIBUSB_TRANSFER_CANCELLED;
++			break;
++		case USB_LC_STAT_BUFFER_OVERRUN:
++			/*
++			 * XXX Is this right? (*_DATA_OVERRUN?)
++			 */
++			status = LIBUSB_TRANSFER_OVERFLOW;
++			break;
++		default:
++			/*
++			 * Not every ugen(7D) status maps to a specific
++			 * libusb-level failure case.  Nonetheless, we must
++			 * report all failures as failures:
++			 */
++			status = LIBUSB_TRANSFER_ERROR;
++			break;
++		}
++	}
++
++	if (status == LIBUSB_TRANSFER_CANCELLED) {
++		return (usbi_handle_transfer_cancellation(ixfer));
++	} else {
++		return (usbi_handle_transfer_completion(ixfer, status));
++	}
+ }
+ 
+ int
+diff --git a/libusb/os/illumos_usb.h b/libusb/os/illumos_usb.h
+index f24c3707..4f3082c8 100644
+--- a/libusb/os/illumos_usb.h
++++ b/libusb/os/illumos_usb.h
+@@ -50,6 +50,7 @@ typedef struct illumos_device_handle_priv {
+ typedef	struct illumos_transfer_priv {
+ 	struct aiocb		aiocb;
+ 	struct libusb_transfer	*transfer;
++	int			ugen_status;
+ } illumos_xfer_priv_t;
+ 
+ struct node_args {

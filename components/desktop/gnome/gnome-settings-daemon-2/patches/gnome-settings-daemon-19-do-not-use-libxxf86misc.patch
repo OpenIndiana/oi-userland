@@ -1,0 +1,19 @@
+Because the library x11/library/libxxf86misc is now obsoleted in OpenIndiana, wont uses it any more
+
+diff --git a/configure.ac b/configure.ac
+index 7696c85..683ca8a 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -213,12 +213,6 @@ dnl ---------------------------------------------------------------------------
+ dnl - Keyboard plugin stuff
+ dnl ---------------------------------------------------------------------------
+ 
+-AC_CHECK_X_LIB(Xxf86misc, XF86MiscQueryExtension, [
+-  AC_CHECK_X_HEADERS([X11/extensions/xf86misc.h],
+-      [XF86MISC_LIBS="-lXxf86misc"], :,
+-      [#include <X11/Xlib.h>])], : ,
+-      -lXxf86misc $x_libs)
+-AC_SUBST(XF86MISC_LIBS)
+ AC_CHECK_X_HEADERS([X11/extensions/XKB.h])
+ 
+ PKG_CHECK_MODULES(LIBGNOMEKBDUI, [libgnomekbdui >= 2.31.2 libgnomekbd >= 2.29.5 libxklavier >= 5.0])

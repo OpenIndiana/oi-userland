@@ -25,12 +25,12 @@
 # Copyright (c) 2022  Tim Mooney.  All rights reserved.
 #
 
-BUILD_BITS=             32_and_64
-USE_COMMON_TEST_MASTER= no
+BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         zlib
 COMPONENT_VERSION=      1.3.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Zip compression library
 COMPONENT_PROJECT_URL=  https://zlib.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -44,7 +44,6 @@ COMPONENT_LICENSE=      zlib license
 COMPONENT_LICENSE_FILE=	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
 
 # Zlib won't build without cloning. We need also to get rid of default
 # Makefile and get our own version of zconf.h to avoid interactions
@@ -77,6 +76,9 @@ CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 # mapfile for result linking. While the one used with configure is just
 # to allow Zlib detect capability of creating shared libraries.
 COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-z -Wl,text -Wl,-h -Wl,libz.so.1 $(LD_OPTIONS_SO) -Wl,-M -Wl,../../mapfile -L."
+
+COMPONENT_TEST_TRANSFORMS += ' -n '
+COMPONENT_TEST_TRANSFORMS += ' -e "/OK/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

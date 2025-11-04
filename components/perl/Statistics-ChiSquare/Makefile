@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Statistics::ChiSquare
+#   $WS_TOOLS/perl-integrate-module Statistics-ChiSquare
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Statistics::ChiSquare
+COMPONENT_NAME =		Statistics-ChiSquare
 HUMAN_VERSION =			1.0000
-COMPONENT_SUMMARY =		Statistics::ChiSquare - How well-distributed is your data?
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		How well-distributed is your data?
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:255a5a38336d048ddb9077222691e000984e907aae09a4ea695a9cfd49a1ddd0
@@ -28,5 +29,11 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

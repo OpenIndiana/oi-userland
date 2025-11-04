@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::LibXML
+#   $WS_TOOLS/perl-integrate-module XML-LibXML
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::LibXML
+COMPONENT_NAME =		XML-LibXML
 HUMAN_VERSION =			2.0210
-COMPONENT_SUMMARY =		XML::LibXML - Interface to Gnome libxml2 xml parsing and DOM library
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Interface to Gnome libxml2 xml parsing and DOM library
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a29bf3f00ab9c9ee04218154e0afc8f799bf23674eb99c1a9ed4de1f4059a48d
@@ -31,9 +32,15 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-build
 PERL_REQUIRED_PACKAGES += library/perl-5/alien-libxml2
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-namespacesupport
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax
 PERL_REQUIRED_PACKAGES += library/perl-5/xml-sax-base
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

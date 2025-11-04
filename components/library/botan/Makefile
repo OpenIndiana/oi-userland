@@ -13,15 +13,16 @@
 # Copyright 2021, 2024 Andreas Wacknitz
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
-COMPONENT_VERSION= 3.3.0
+COMPONENT_VERSION= 3.9.0
 COMPONENT_SUMMARY= Crypto and TLS for Modern C++
 COMPONENT_PROJECT_URL= https://botan.randombit.net/
 COMPONENT_SRC= Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:368f11f426f1205aedb9e9e32368a16535dc11bd60351066e6f6664ec36b85b9
+COMPONENT_ARCHIVE_HASH= sha256:8c3f284b58ddd42e8e43e9fa86a7129d87ea7c3f776a80d3da63ec20722b0883
 COMPONENT_ARCHIVE_URL= https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/security/botan
 COMPONENT_CLASSIFICATION= System/Security
@@ -53,7 +54,6 @@ CONFIGURE_OPTIONS += --cpu=x86_64
 else
 CONFIGURE_OPTIONS += --cpu=sparc64
 endif
-
 CONFIGURE_OPTIONS += --disable-static-library
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --os solaris
@@ -62,13 +62,14 @@ CONFIGURE_OPTIONS += --with-lzma
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-sqlite3
 CONFIGURE_OPTIONS += --with-python-versions=$(PYTHON_VERSION)
+# Make documentation consistent
+CONFIGURE_OPTIONS += --without-sphinx
 
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "s/in [0-9]*.[0-9]* msec //" ' \
-	' -e "s/in [0-9]*.[0-9]* sec //" ' \
-	' -n ' \
-	' -e "/ok/p" ' \
-	' -e "/:/p" '
+COMPONENT_TEST_TRANSFORMS += ' -e "s/in [0-9]*.[0-9]* msec //" '
+COMPONENT_TEST_TRANSFORMS += ' -e "s/in [0-9]*.[0-9]* sec //" '
+COMPONENT_TEST_TRANSFORMS += ' -n '
+COMPONENT_TEST_TRANSFORMS += ' -e "/ok/p" '
+COMPONENT_TEST_TRANSFORMS += ' -e "/:/p" '
 
 # Manually added dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python

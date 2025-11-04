@@ -1,0 +1,21 @@
+diff --git a/modules/om/generic/omGeneric.c b/modules/om/generic/omGeneric.c
+index c44acb8..61d3069 100644
+--- a/modules/om/generic/omGeneric.c
++++ b/modules/om/generic/omGeneric.c
+@@ -772,6 +772,7 @@ parse_omit_name(
+ 	return True;
+ 
+     /* This may not be needed anymore as XListFonts() takes care of this */
++#ifndef SUNSOFT
+     if (num_fields < 12) {
+ 	if ((last - buf) > (XLFD_MAX_LEN - 2))
+ 	    return -1;
+@@ -783,7 +784,7 @@ parse_omit_name(
+ 	if ((font_data->xlfd_name = get_font_name(oc, buf)) != NULL)
+ 	    return True;
+     }
+-
++#endif /* SUNSOFT */
+ 
+     return False;
+ }

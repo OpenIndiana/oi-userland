@@ -13,10 +13,8 @@
 # Copyright 2022 Daniel Bell
 #
 
-OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
-BITS= 64
 ENV = /usr/bin/env
 
 # BUILD_BETA is the beta version; define with build number for beta release
@@ -34,8 +32,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      24.2.2
-COMPONENT_RC_VERSION=	2
+COMPONENT_VERSION=      25.8.3
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -48,20 +46,20 @@ COMPONENT_FULL_VERSION=$(COMPONENT_FULL_VERSION)-buildfix$(BUILD_FIX)
 endif
 # repology wants to use HUMAN_VERSION
 HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
-COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 ifdef BUILD_GITHUB
-COMPONENT_SHA=		832fb1ab9abf94f4074e0cc20d846c1536931cf3
+COMPONENT_SHA=		c8a02e44e7e1ad8d431f8b92e834ed195bdcc94b
 COMPONENT_SRC=          core-$(COMPONENT_SHA)
 COMPONENT_ARCHIVE=      $(COMPONENT_SHA).zip
 COMPONENT_ARCHIVE_URL=  https://github.com/LibreOffice/core/archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:0d5b9f45177e6f39bd5779858c1234822d6e705d52502e1ffb39b0f03df562ad
+COMPONENT_ARCHIVE_HASH= sha256:5b4e2c6c2abe9480a49c33543b57e0226c6cf9c966088b8e713d1b23490a2f3e
 else
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
+COMPONENT_ARCHIVE_HASH= sha256:f56e0633b937f97563c262c2c95e13f1ebd6e32460102ff0b56c10ce61d1f213
+# COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 endif
 COMPONENT_FMRI=         desktop/office/libreoffice
 COMPONENT_CLASSIFICATION= Applications/Office
@@ -96,16 +94,16 @@ COMPONENT_ARCHIVE_7 = mariadb-connector-c-3.1.8-src.tar.gz
 COMPONENT_ARCHIVE_HASH_7 = sha256:431434d3926f4bcce2e5c97240609983f60d7ff50df5a72083934759bb863f7b
 COMPONENT_ARCHIVE_URL_7 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_7)
 
-COMPONENT_ARCHIVE_8 = a39f6c07ddb20d7dd2ff1f95fa21e2cd-raptor2-2.0.15.tar.gz
-COMPONENT_ARCHIVE_HASH_8 = sha256:ada7f0ba54787b33485d090d3d2680533520cd4426d2f7fb4782dd4a6a1480ed
+COMPONENT_ARCHIVE_8 = raptor2-2.0.16.tar.gz
+COMPONENT_ARCHIVE_HASH_8 = sha256:089db78d7ac982354bdbf39d973baf09581e6904ac4c92a98c5caadb3de44680
 COMPONENT_ARCHIVE_URL_8 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_8)
 
 COMPONENT_ARCHIVE_9 = mythes-1.2.5.tar.xz
 COMPONENT_ARCHIVE_HASH_9 = sha256:19279f70707bbe5ffa619f2dc319f888cec0c4a8d339dc0a21330517bd6f521d
 COMPONENT_ARCHIVE_URL_9 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_9)
 
-COMPONENT_ARCHIVE_10 = glm-0.9.9.8.zip 
-COMPONENT_ARCHIVE_HASH_10 = sha256:6bba5f032bed47c73ad9397f2313b9acbfb56253d0d0576b5873d3dcb25e99ad
+COMPONENT_ARCHIVE_10 = glm-1.0.2.zip
+COMPONENT_ARCHIVE_HASH_10 = sha256:be64032585415ca7dbea0d614915bb8eec012adf7b4d4fea7ff6b5bd3e0b906a
 COMPONENT_ARCHIVE_URL_10 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_10)
 
 COMPONENT_ARCHIVE_11 = CoinMP-1.8.4.tgz
@@ -120,48 +118,50 @@ COMPONENT_ARCHIVE_13 = language-subtag-registry-2023-05-11.tar.bz2
 COMPONENT_ARCHIVE_HASH_13 = sha256:9042b64cd473bf36073513b474046f13778107b57c2ac47fb2633104120d69da
 COMPONENT_ARCHIVE_URL_13 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_13)
 
-COMPONENT_ARCHIVE_14 = libexttextcat-3.4.6.tar.xz
-COMPONENT_ARCHIVE_HASH_14 = sha256:6d77eace20e9ea106c1330e268ede70c9a4a89744ddc25715682754eca3368df
+COMPONENT_ARCHIVE_14 = libexttextcat-3.4.7.tar.xz
+COMPONENT_ARCHIVE_HASH_14 = sha256:df0a59d413a5b202573d8d4f5159e33a8538da4f8e8e60979facc64d6290cebd
 COMPONENT_ARCHIVE_URL_14 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_14)
 
 COMPONENT_ARCHIVE_15 = libnumbertext-1.0.11.tar.xz
 COMPONENT_ARCHIVE_HASH_15 = sha256:5dcb4db3b2340f81f601ce86d8d76b69e34d70f84f804192c901e4b7f84d5fb0
 COMPONENT_ARCHIVE_URL_15 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_15)
 
-COMPONENT_ARCHIVE_16 = liborcus-0.19.2.tar.xz
-COMPONENT_ARCHIVE_HASH_16 = sha256:69ed26a00d4aaa7688e62a6e003cbc81928521a45e96605e53365aa499719e39
+COMPONENT_ARCHIVE_16 = liborcus-0.20.1.tar.xz
+COMPONENT_ARCHIVE_HASH_16 = sha256:ec27f30e8445a2a3f307f7e829fc446fd48193150b7f8f23bb5bfb25ec6e4e27
 COMPONENT_ARCHIVE_URL_16 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_16)
 
 COMPONENT_ARCHIVE_17 = QR-Code-generator-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH_17 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
 COMPONENT_ARCHIVE_URL_17 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_17)
 
-COMPONENT_ARCHIVE_18 = xmlsec1-1.3.2.tar.gz
-COMPONENT_ARCHIVE_HASH_18 = sha256:4003c56b3d356d21b1db7775318540fad6bfedaf5f117e8f7c010811219be3cf
+COMPONENT_ARCHIVE_18 = xmlsec1-1.3.8.tar.gz
+COMPONENT_ARCHIVE_HASH_18 = sha256:d0180916ae71be28415a6fa919a0684433ec9ec3ba1cc0866910b02e5e13f5bd
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 #libreoffice-translations
 ifdef BUILD_GITHUB
-COMPONENT_ARCHIVE_19_GIT_HASH = d3abafd51ff477a324a0c0342fb1e02c78c93f6c
+COMPONENT_ARCHIVE_19_GIT_HASH = 113c6c3c2498ffc2f99f20c088367bca1fecc50b
 COMPONENT_ARCHIVE_19 = $(COMPONENT_ARCHIVE_19_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_HASH_19 = sha256:3d9d0b97b740ea7fdcd161a0d57d064379ab0c3e477458e418e20046a2aa82a0
+COMPONENT_ARCHIVE_HASH_19 = sha256:d6b5d495a6934423c9b65e539694749148fc265f7b5305f0bd193b27150056df
 COMPONENT_ARCHIVE_URL_19 = https://github.com/LibreOffice/translations/archive/$(COMPONENT_ARCHIVE_19)
 else
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
-COMPONENT_SIG_URL_19= $(COMPONENT_ARCHIVE_URL_19).asc
+COMPONENT_ARCHIVE_HASH_19 = sha256:13f8bd29eb573631a23d3f8cfd473951ee846c57f1b47f4e3916ccc0594c27dd
+# COMPONENT_SIG_URL_19= $(COMPONENT_ARCHIVE_URL_19).asc
 endif
 
 # libreoffice-dictionaries
 ifdef BUILD_GITHUB
-COMPONENT_ARCHIVE_20_GIT_HASH = a62f9b3e6b2de1366d826a5bacf19ae63e527ead
+COMPONENT_ARCHIVE_20_GIT_HASH = 7272a82714ca91947b4573c09bce4938861a9877
 COMPONENT_ARCHIVE_20 = $(COMPONENT_ARCHIVE_20_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_HASH_20 = sha256:c6c73cff772047023329f1889e484e65c569f0d6393c22f21b590a75688a558f
+COMPONENT_ARCHIVE_HASH_20 = sha256:0483554ded0e953f1f6c74198e61489ec202f3d3715140a5f7a630fbb50af9e3
 COMPONENT_ARCHIVE_URL_20 = https://github.com/LibreOffice/dictionaries/archive/$(COMPONENT_ARCHIVE_20)
 else
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
-COMPONENT_SIG_URL_20= $(COMPONENT_ARCHIVE_URL_20).asc
+COMPONENT_ARCHIVE_HASH_20 = sha256:33d5752cc3906eecd10157678e2e52491d2d2d2adbb83acddb8ebfd479f7d107
+# COMPONENT_SIG_URL_20= $(COMPONENT_ARCHIVE_URL_20).asc
 endif
 
 #COMPONENT_ARCHIVE_21 = boost_1_69_0.tar.bz2
@@ -172,8 +172,8 @@ COMPONENT_ARCHIVE_22 = neon-0.31.2.tar.gz
 COMPONENT_ARCHIVE_HASH_22 = sha256:cf1ee3ac27a215814a9c80803fcee4f0ede8466ebead40267a9bd115e16a8678
 COMPONENT_ARCHIVE_URL_22 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_22)
 
-COMPONENT_ARCHIVE_23 = zxing-cpp-2.1.0.tar.gz
-COMPONENT_ARCHIVE_HASH_23 = sha256:6d54e403592ec7a143791c6526c1baafddf4c0897bb49b1af72b70a0f0c4a3fe
+COMPONENT_ARCHIVE_23 = zxing-cpp-2.3.0.tar.gz
+COMPONENT_ARCHIVE_HASH_23 = sha256:64e4139103fdbc57752698ee15b5f0b0f7af9a0331ecbdc492047e0772c417ba
 COMPONENT_ARCHIVE_URL_23 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_23)
 
 COMPONENT_ARCHIVE_24 = box2d-2.4.1.tar.gz
@@ -185,52 +185,52 @@ COMPONENT_ARCHIVE_25 = dtoa-20180411.tgz
 COMPONENT_ARCHIVE_HASH_25 = sha256:0082d0684f7db6f62361b76c4b7faba19e0c7ce5cb8e36c4b65fea8281e711b4
 COMPONENT_ARCHIVE_URL_25 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_25)
 
-COMPONENT_ARCHIVE_26 = skia-m116-2ddcf183eb260f63698aa74d1bb380f247ad7ccd.tar.xz
-COMPONENT_ARCHIVE_HASH_26 = sha256:2223ebce534458a37826e8fe4f24635b0712cde7ed1bd3208f089f6fdd796e01
+COMPONENT_ARCHIVE_26 = skia-m136-28685d899b0a35894743e2cedad4c9f525e90e1e.tar.xz
+COMPONENT_ARCHIVE_HASH_26 = sha256:2384f5f44a0b714d8dc78923fdf17453ab5a1808ca638154e3e27b361531db25
 COMPONENT_ARCHIVE_URL_26 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_26)
 
-COMPONENT_ARCHIVE_27 = libcmis-0.6.1.tar.xz
-COMPONENT_ARCHIVE_HASH_27 = sha256:d54d19d86153dbc88e2d468f7136269a2cfe71b73227e12fded01d29ac268074
+COMPONENT_ARCHIVE_27 = libcmis-0.6.2.tar.xz
+COMPONENT_ARCHIVE_HASH_27 = sha256:1b5c2d7258ff93eb5f9958ff0e4dfd7332dc75a071bb717dde2217a26602a644
 COMPONENT_ARCHIVE_URL_27 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_27)
 
-COMPONENT_ARCHIVE_28 = gpgme-1.20.0.tar.bz2
-COMPONENT_ARCHIVE_HASH_28 = sha256:25a5785a5da356689001440926b94e967d02e13c49eb7743e35ef0cf22e42750
+COMPONENT_ARCHIVE_28 = gpgme-1.24.3.tar.bz2
+COMPONENT_ARCHIVE_HASH_28 = sha256:bfc17f5bd1b178c8649fdd918956d277080f33df006a2dc40acdecdce68c50dd
 COMPONENT_ARCHIVE_URL_28 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_28)
 
-COMPONENT_ARCHIVE_29 = libassuan-2.5.6.tar.bz2
-COMPONENT_ARCHIVE_HASH_29 = sha256:e9fd27218d5394904e4e39788f9b1742711c3e6b41689a31aa3380bd5aa4f426
+COMPONENT_ARCHIVE_29 = libassuan-3.0.2.tar.bz2
+COMPONENT_ARCHIVE_HASH_29 = sha256:d2931cdad266e633510f9970e1a2f346055e351bb19f9b78912475b8074c36f6
 COMPONENT_ARCHIVE_URL_29 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_29)
 
-COMPONENT_ARCHIVE_30 = libgpg-error-1.47.tar.bz2
-COMPONENT_ARCHIVE_HASH_30 = sha256:9e3c670966b96ecc746c28c2c419541e3bcb787d1a73930f5e5f5e1bcbbb9bdb
+COMPONENT_ARCHIVE_30 = libgpg-error-1.56.tar.bz2
+COMPONENT_ARCHIVE_HASH_30 = sha256:82c3d2deb4ad96ad3925d6f9f124fe7205716055ab50e291116ef27975d169c0
 COMPONENT_ARCHIVE_URL_30 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_30)
 
-COMPONENT_ARCHIVE_31 = frozen-1.1.1.tar.gz
-COMPONENT_ARCHIVE_HASH_31 = sha256:f7c7075750e8fceeac081e9ef01944f221b36d9725beac8681cbd2838d26be45
+COMPONENT_ARCHIVE_31 = frozen-1.2.0.tar.gz
+COMPONENT_ARCHIVE_HASH_31 = sha256:ed8339c017d7c5fe019ac2c642477f435278f0dc643c1d69d3f3b1e95915e823
 COMPONENT_ARCHIVE_URL_31 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_31)
 
 COMPONENT_ARCHIVE_32 = dragonbox-1.1.3.tar.gz
 COMPONENT_ARCHIVE_HASH_32 = sha256:09d63b05e9c594ec423778ab59b7a5aa1d76fdd71d25c7048b0258c4ec9c3384
 COMPONENT_ARCHIVE_URL_32 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_32)
 
-COMPONENT_ARCHIVE_33 = mdds-2.1.1.tar.xz
-COMPONENT_ARCHIVE_HASH_33 = sha256:1483d90cefb8aa4563c4d0a85cb7b243aa95217d235d422e9ca6722fd5b97e56
+COMPONENT_ARCHIVE_33 = mdds-3.1.0.tar.xz
+COMPONENT_ARCHIVE_HASH_33 = sha256:ca295f4c86968a7eb1f5d503ff7ae180e6605210cfb26d01658be42048c0924c
 COMPONENT_ARCHIVE_URL_33 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_33)
 
-COMPONENT_ARCHIVE_34 = zxcvbn-c-2.5.tar.gz
-COMPONENT_ARCHIVE_HASH_34 = sha256:77d6c6ecb35952a8d8ce7f736b7a2bf466275c48210e309b73782d6b7e84dffd
+COMPONENT_ARCHIVE_34 = zxcvbn-c-2.6.tar.gz
+COMPONENT_ARCHIVE_HASH_34 = sha256:11e39f6776f9c82c68b2acb94336e32697d4ab6cdb4ac16f9583ccbdd735113a
 COMPONENT_ARCHIVE_URL_34 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_34)
 
-COMPONENT_ARCHIVE_35 = beeca87be45ec87d241ddd0e1bad80c1-bsh-2.0b6-src.zip
-COMPONENT_ARCHIVE_HASH_35 = sha256:9e93c73e23aff644b17dfff656444474c14150e7f3b38b19635e622235e01c96
+COMPONENT_ARCHIVE_35 = bsh-2.1.1-src.zip
+COMPONENT_ARCHIVE_HASH_35 = sha256:2248387ceaa319840434a3547a8b2fec12f95a8418ee039ce5ff5726053a139c
 COMPONENT_ARCHIVE_URL_35 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_35)
 
 COMPONENT_ARCHIVE_36 = 17410483b5b5f267aa18b7e00b65e6e0-hsqldb_1_8_0.zip
 COMPONENT_ARCHIVE_HASH_36 = sha256:d30b13f4ba2e3b6a2d4f020c0dee0a9fb9fc6fbcc2d561f36b78da4bf3802370
 COMPONENT_ARCHIVE_URL_36 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_36)
 
-COMPONENT_ARCHIVE_37 = Java-WebSocket-1.5.4.tar.gz
-COMPONENT_ARCHIVE_HASH_37 = sha256:a6828b35d1f938fee2335945f3d3c563cbbfa58ce7eb0bf72778d0fa7a550720
+COMPONENT_ARCHIVE_37 = Java-WebSocket-1.6.0.tar.gz
+COMPONENT_ARCHIVE_HASH_37 = sha256:f3ce29efde338707241d47ab4784b19a1e3658bfa0564b5bc5f80c27e5118728
 COMPONENT_ARCHIVE_URL_37 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_37)
 
 COMPONENT_ARCHIVE_38 = ba2930200c9f019c2d93a8c88c651a0f-flow-engine-0.9.4.zip
@@ -277,8 +277,8 @@ COMPONENT_ARCHIVE_48 = 39bb3fcea1514f1369fcfc87542390fd-sacjava-1.3.zip
 COMPONENT_ARCHIVE_HASH_48 = sha256:085f2112c51fa8c1783fac12fbd452650596415121348393bb51f0f7e85a9045
 COMPONENT_ARCHIVE_URL_48 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_48)
 
-COMPONENT_ARCHIVE_49 = 798b2ffdc8bcfe7bca2cf92b62caf685-rhino1_5R5.zip
-COMPONENT_ARCHIVE_HASH_49 = sha256:1fb458d6aab06932693cc8a9b6e4e70944ee1ff052fa63606e3131df34e21753
+COMPONENT_ARCHIVE_49 = rhino-1.7.15.zip
+COMPONENT_ARCHIVE_HASH_49 = sha256:42fce6baf1bf789b62bf938b8e8ec18a1ac92c989dd6e7221e9531454cbd97fa
 COMPONENT_ARCHIVE_URL_49 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_49)
 
 COMPONENT_ARCHIVE_50 = 35c94d2df8893241173de1d16b6034c0-swingExSrc.zip
@@ -295,14 +295,15 @@ COMPONENT_ARCHIVE_URL_52 = https://dev-www.libreoffice.org/extern/$(COMPONENT_AR
 
 # libreoffice-help
 ifdef BUILD_GITHUB
-COMPONENT_ARCHIVE_53_GIT_HASH = 02a11cfe8fb608fdf77b4ce5a57a5dd23784f8ec
+COMPONENT_ARCHIVE_53_GIT_HASH = 540ea4b3f6f10a77fc06665de7c550c1eb9df00e
 COMPONENT_ARCHIVE_53 = $(COMPONENT_ARCHIVE_53_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_HASH_53 = sha256:e56db9f5ac41ddff0519d5c7c933a1f968140893745de50a93d9d483b294796b
+COMPONENT_ARCHIVE_HASH_53 = sha256:82cc4c627ff637947f251089f01d6b7700cdc368566248594f8a6732c417e13d
 COMPONENT_ARCHIVE_URL_53 = https://github.com/LibreOffice/help/archive/$(COMPONENT_ARCHIVE_53)
 else
 COMPONENT_ARCHIVE_53 = libreoffice-help-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_53 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_53)
-COMPONENT_SIG_URL_53= $(COMPONENT_ARCHIVE_URL_53).asc
+COMPONENT_ARCHIVE_HASH_53 = sha256:4ba4de3aa3a20fe47eba948eba3a73de63a416d3c1dec3c88b06c13006f5381d
+# COMPONENT_SIG_URL_53= $(COMPONENT_ARCHIVE_URL_53).asc
 endif
 
 COMPONENT_ARCHIVE_54 = 8249374c274932a21846fa7629c2aa9b-officeotron-0.7.4-master.jar
@@ -313,8 +314,12 @@ COMPONENT_ARCHIVE_55 = phc-winner-argon2-20190702.tar.gz
 COMPONENT_ARCHIVE_HASH_55 = sha256:4d1dac6ef66528b7a2bc910ff45c1015a1b83cb928515ca18a78dc76e688627b
 COMPONENT_ARCHIVE_URL_55 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_55)
 
+COMPONENT_ARCHIVE_56 = zstd-1.5.7.tar.gz
+COMPONENT_ARCHIVE_HASH_56 = sha256:eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
+COMPONENT_ARCHIVE_URL_56 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_55)
+
 # ignore archive 21 (boost)
-NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell 22 54)
+NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell seq 22 56)
 
 # github source archive files are a different compression than what is found on
 # the documentfoundation site
@@ -324,7 +329,7 @@ endif
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(GCC_BINDIR):$(PATH.gnu)
+PATH= $(PATH.gnu)
 
 #Ensure asm is built in 64-bit.
 AFLAGS= -m64
@@ -342,7 +347,6 @@ COMPONENT_TEST_ENV= LD_LIBRARY_PATH='$(GCC_LIBDIR):$(BUILD_DIR_64)/instdir/progr
 
 CONFIGURE_ENV = $(COMPONENT_BUILD_ENV)
 CONFIGURE_ENV += PYTHON=$(PYTHON)
-CONFIGURE_ENV += GPG=/usr/bin/gpg2
 CONFIGURE_ENV += GPGCONF=/usr/bin/gpgconf
 
 CONFIGURE_ENV += MARIADBCONFIG=$(MYSQL_CONFIG)
@@ -379,9 +383,9 @@ else
 COMPONENT_PREP_ACTION += )
 endif
 
-LDFLAGS += $(JPEG_LDFLAGS) -lX11-xcb -lX11 
+LDFLAGS += -lX11-xcb -lX11 
 
-CFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS) -lssp_nonshared
+CFLAGS += -lssp_nonshared
 #CONFIGURE_OPTIONS += --enable-debug
 #CONFIGURE_OPTIONS += --enable-optimized=no
 CXXFLAGS = $(CFLAGS)
@@ -399,8 +403,7 @@ CONFIGURE_OPTIONS += --with-myspell-dicts
 CONFIGURE_OPTIONS += --with-help=common
 CONFIGURE_OPTIONS += --enable-gstreamer-1-0
 CONFIGURE_OPTIONS += --enable-gtk3
-# gtk4 works, but not added to openindiana yet
-# CONFIGURE_OPTIONS += --enable-gtk4
+CONFIGURE_OPTIONS += --enable-gtk4
 CONFIGURE_OPTIONS += --enable-qt5
 CONFIGURE_OPTIONS += --enable-qt6
 CONFIGURE_OPTIONS += --disable-odk
@@ -470,7 +473,7 @@ CONFIGURE_OPTIONS += --with-system-openldap
 CONFIGURE_OPTIONS += --enable-python=system
 CONFIGURE_OPTIONS += --disable-cve-tests
 CONFIGURE_OPTIONS += --with-java
-CONFIGURE_OPTIONS += --with-jdk-home="/usr/jdk/openjdk17/"
+CONFIGURE_OPTIONS += --with-jdk-home="/usr/jdk/openjdk21/"
 CONFIGURE_OPTIONS += --without-system-beanshell
 CONFIGURE_OPTIONS += --without-system-hsqldb
 CONFIGURE_OPTIONS += --without-system-jfreereport
@@ -490,12 +493,12 @@ LIBREOFFICE_SHARE_DIR = /usr/lib/amd64/libreoffice/share
 
 NSS_LIB_DIR=/usr/lib/mps/amd64
 
-JAVA17_LIB_DIR=/usr/jdk/openjdk17/lib
+JAVA21_LIB_DIR=/usr/jdk/openjdk21/lib
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in $(PROTO_DIR)$(LIBREOFFICE_PROGRAM_DIR)/*.so*; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR):$(QT6_LIBDIR):$(JAVA17_LIB_DIR)"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR):$(QT6_LIBDIR):$(JAVA17_LIB_DIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR):$(QT6_LIBDIR):$(JAVA21_LIB_DIR)"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(LIBREOFFICE_PROGRAM_DIR):$(NSS_LIB_DIR):$(JPEG_LIBDIR):$(MARIADB_LIBDIR):$(QT5_LIBDIR):$(QT6_LIBDIR):$(JAVA21_LIB_DIR)"' $$file ; \
     done ; 
 
 # Replace "#!/usr/bin/env ..." shebang line with properly versioned one
@@ -507,7 +510,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
     LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 --dump -nolist $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/LICENSE.html > $(COMPONENT_NAME).license ;
 
-
 # the license file is dynamically built, thus we need to remove it:
 clean::
 	$(RM) $(COMPONENT_LICENSE_FILE)
@@ -515,6 +517,19 @@ clean::
 # Filter out test result lines with truncated $(BUILD_DIR) paths
 COMPONENT_TEST_TRANSFORMS +=    "-e 's|$(COMPONENT_DIR)|\$$(COMPONENT_DIR)|g'"
 COMPONENT_TEST_TRANSFORMS +=    '-e "s/ [0-9]*ms//g"'
+
+# Filter out filenames that begin with /tmp/ and end with .tmp. These names
+# change every time test is run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/\/tmp\/.*\.tmp//g"'
+
+# Filter out some lines from core dumps. Memory addresses change everyy
+# times tests are run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\\\#[0-9].*$$//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\/bin\/sh:.*$$//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/^rdx.*$$//g"'
+
+# Filter out PIDs.  These change every run
+COMPONENT_TEST_TRANSFORMS +=    '-e "s/\"pid\":[0-9]*//g"'
 
 # debug specific test
 testtrace:
@@ -535,18 +550,19 @@ REQUIRED_PACKAGES += library/c++/mdds
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/c++/graphite2
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/libabw
@@ -567,10 +583,11 @@ REQUIRED_PACKAGES += library/c++/libwpd
 REQUIRED_PACKAGES += library/c++/libwpg
 REQUIRED_PACKAGES += library/c++/libwps
 REQUIRED_PACKAGES += library/c++/libzmf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
+REQUIRED_PACKAGES += library/desktop/graphene
 REQUIRED_PACKAGES += library/desktop/gtk3
+REQUIRED_PACKAGES += library/desktop/gtk4
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
@@ -585,9 +602,8 @@ REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/qt5
 REQUIRED_PACKAGES += library/qt6
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/java/openjdk17
+REQUIRED_PACKAGES += runtime/java/openjdk21
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/boost
@@ -607,3 +623,4 @@ REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxinerama
 REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
+REQUIRED_PACKAGES.python += runtime/python

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Convert::ASN1
+#   $WS_TOOLS/perl-integrate-module Convert-ASN1
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Convert::ASN1
+COMPONENT_NAME =		Convert-ASN1
 HUMAN_VERSION =			0.34
-COMPONENT_SUMMARY =		Convert::ASN1 - Convert between perl data structures and ASN.1 encoded packets
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Convert between perl data structures and ASN.1 encoded packets
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a628d7c9d390568fb76359975fa03f626ce57f10dc17980e8e3587d7713e4ee7
@@ -30,4 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

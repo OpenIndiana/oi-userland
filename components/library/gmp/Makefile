@@ -22,15 +22,17 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2016, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2020, Andreas Wacknitz
+# Copyright (c) 2025, Klaus Ziegler
 #
 
+USE_PARALLEL_BUILD= yes
 BUILD_BITS= 32_and_64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmp
 COMPONENT_VERSION=      6.3.0
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=  https://gmplib.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,7 +53,7 @@ CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += -std=c99 
-CFLAGS += -fexceptions
+CFLAGS += -fexceptions -pedantic
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
@@ -89,11 +91,16 @@ CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock
-CONFIGURE_OPTIONS += --disable-alloca
 CONFIGURE_OPTIONS += --enable-cxx
 CONFIGURE_OPTIONS += --enable-fft
 CONFIGURE_OPTIONS += --disable-fat
 CONFIGURE_OPTIONS += --with-pic
+
+ifeq ($(MACH), sparc)
+CONFIGURE_OPTIONS += --build=ultrasparc2-sun-solaris2.11
+CONFIGURE_OPTIONS += --host=ultrasparc2-sun-solaris2.11
+CONFIGURE_OPTIONS += --target=ultrasparc2-sun-solaris2.11
+endif
 
 PROTOUSRSHAREINFODIR = $(PROTOUSRSHAREDIR)/info
 PROTOUSRSHAREHTMLDIR = $(PROTOUSRSHAREDIR)/doc/gmp/html
@@ -102,7 +109,7 @@ PROTOUSRINCLUDEDIR = $(PROTOUSRDIR)/include
 PROTOPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
 
-GMP_SOVERSION=4.5.2
+GMP_SOVERSION=4.7.0
 
 GCCLIBDIR  =$(GCC_ROOT)/lib
 GCCLIBDIR64=$(GCC_ROOT)/lib/$(MACH64)

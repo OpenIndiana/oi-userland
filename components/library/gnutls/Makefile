@@ -26,20 +26,20 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_MJR_VERSION=	3.8
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).5
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_PROJECT_URL=  https://gnutls.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:66269a2cfe0e1c2dabec87bdbbd8ab656f396edd9a40dd006978e003cfa52bfc
 COMPONENT_ARCHIVE_URL=  https://www.gnupg.org/ftp/gcrypt/gnutls/v$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -48,6 +48,10 @@ COMPONENT_LICENSE=	GPLv3, LGPLv2.1, FDLv1.3
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I$(USRINCDIR)/idn2
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
+
+PATH= $(PATH.gnu)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-default-trust-store-file=/etc/certs/ca-certificates.crt
@@ -55,6 +59,11 @@ CONFIGURE_OPTIONS += --with-default-trust-store-dir=/etc/certs/CA
 
 # usr/share/info/dir is provided by text/texinfo
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += security/softhsm
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -65,5 +74,6 @@ REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libtasn1
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/nettle
+REQUIRED_PACKAGES += service/network/unbound
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

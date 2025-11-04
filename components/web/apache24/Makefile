@@ -25,16 +25,15 @@
 # Copyright (c) 2023, Niklas Poslovski
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.4.59
+COMPONENT_VERSION=	2.4.65
 COMPONENT_PROJECT_URL=	https://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e4ec4ce12c6c8f5a794dc2263d126cb1d6ef667f034c4678ec945d61286e8b0f
+COMPONENT_ARCHIVE_HASH= sha256:4f92861a50325c6d1046ebad5d814bff0d4169ada8cc265655f32b7f1ba4be1b
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS= no
@@ -50,9 +49,6 @@ COMPONENT_PREP_ACTION +=($(CP) mod_auth_gss/mod_auth_gss.html $(@D)/docs/manual/
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 
 CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
-
-# pipefail wouldn't allow APR-util version check
-CONFIGURE_ENV += SHELLOPTS=
 
 CONFIGURE_PREFIX =	/usr/apache2/2.4
 
@@ -91,6 +87,7 @@ install: $(INSTALL_64)
 	$(TOUCH) $(BUILD_DIR)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/apr
 REQUIRED_PACKAGES += library/apr-util
@@ -102,7 +99,6 @@ REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += runtime/perl

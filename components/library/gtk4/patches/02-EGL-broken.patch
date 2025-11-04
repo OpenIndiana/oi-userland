@@ -1,0 +1,23 @@
+--- gtk-4.16.13/gdk/x11/gdkdisplay-x11.c.orig
++++ gtk-4.16.13/gdk/x11/gdkdisplay-x11.c
+@@ -2987,6 +2987,12 @@
+    * EGL, we want to avoid using it in favor of GLX.
+    */
+ 
++   /*  EGL does not work on openindiana. Only test for GLX. */
++#ifdef __sun
++   if (gdk_x11_display_init_glx (self, out_visual, out_depth, error))
++     return TRUE;
++   return FALSE;
++#else
+   if (!gdk_display_init_egl (display, EGL_PLATFORM_X11_KHR, dpy, FALSE, error))
+     {
+       g_clear_error (error);
+@@ -3019,6 +3025,7 @@
+   XFree (visinfo);
+ 
+   return TRUE;
++#endif
+ }
+ 
+ static GdkGLContext *

@@ -10,15 +10,17 @@
 
 #
 # Copyright 2022, Daniel Chan
+# Copyright 2025, Klaus Ziegler
 #
 
-BUILD_BITS=		64
 BUILD_STYLE=	justmake
-
+JAVA_VERSION= 8
+JAVA_HOME= /usr/jdk/openjdk8
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jxrlib
 COMPONENT_VERSION=	0.2.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Decode and encode JPEG-XR data from Java
 COMPONENT_PROJECT_URL=	https://github.com/glencoesoftware/jxrlib
 COMPONENT_FMRI=		library/jxrlib
@@ -41,7 +43,7 @@ COMPONENT_PRE_BUILD_ACTION += mkdir -p $(@D)/garbagecollector; \
 COMPONENT_BUILD_GMAKE_ARGS+=SHARED=1
 COMPONENT_BUILD_GMAKE_ARGS+=PREFIX=/usr
 COMPONENT_BUILD_GMAKE_ARGS+=swig all
-COMPONENT_BUILD_GMAKE_ARGS+=CC="$(CC) $(CFLAGS)"
+COMPONENT_BUILD_GMAKE_ARGS+=CC="$(CC) $(CFLAGS) -Wno-implicit-function-declaration -Wno-incompatible-pointer-types"
 COMPONENT_BUILD_GMAKE_ARGS+=CXX="$(CXX) $(CXXFLAGS)"
 COMPONENT_PRE_INSTALL_ACTION=LD_LIBRARY_PATH="$(@D)/build" mvn -s "$(@D)/garbagecollector/settings.xml" -f $(@D)/java package
 COMPONENT_INSTALL_ARGS+=SHARED=1

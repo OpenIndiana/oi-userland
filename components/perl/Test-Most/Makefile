@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Most
+#   $WS_TOOLS/perl-integrate-module Test-Most
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Most
+COMPONENT_NAME =		Test-Most
 HUMAN_VERSION =			0.38
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Test::Most - Most commonly needed test functions and features.
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Most commonly needed test functions and features.
 COMPONENT_CPAN_AUTHOR =		OVID
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:089eb894f7bace4c37c6334e0e290eb20338ee10223af0c82cbe7281c78382df
@@ -31,8 +31,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
 PERL_REQUIRED_PACKAGES += library/perl-5/test-differences
 PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
+PERL_REQUIRED_PACKAGES += library/perl-5/test-harness
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/test-warn
 PERL_REQUIRED_PACKAGES += runtime/perl

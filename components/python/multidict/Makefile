@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.0.5
-COMPONENT_SUMMARY =		multidict - multidict implementation
+HUMAN_VERSION =			6.7.0
+COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f9/79/722ca999a3a09a63b35aac12ec27dfa8e5bb3a38b0f857f7a1a209a88836/multidict-6.0.5.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f7e301075edaf50500f0b341543c41194d8df3ae5caf4702f2095f3ca73dd8da
+	sha256:c6e99d9a65ca282e578dfea819cfa9c0a62b2499d8677392e09feaf305e9e6f5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -54,8 +52,21 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/multidict $(@D)/multidict-RENAMED ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/multidict-RENAMED $(@D)/multidict ;
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/pytest.txt
+
+# We have no pytest-codspeed packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_multidict_benchmarks.py
+PYTEST_ADDOPTS += --ignore tests/test_views_benchmarks.py
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cffi
+TEST_REQUIRED_PACKAGES.python += library/python/objgraph
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

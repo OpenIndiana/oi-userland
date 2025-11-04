@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Term::Size::Any
+#   $WS_TOOLS/perl-integrate-module Term-Size-Any
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Term::Size::Any
+COMPONENT_NAME =		Term-Size-Any
 HUMAN_VERSION =			0.002
-COMPONENT_SUMMARY =		Term::Size::Any - Retrieve terminal size
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Retrieve terminal size
 COMPONENT_CPAN_AUTHOR =		FERREIRA
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:64fa5fdb1ae3a823134aaa95aec75354bc17bdd9ca12ba0a7ae34a7e51b3ded2
@@ -30,5 +31,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-hide
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/module-load-conditional
 PERL_REQUIRED_PACKAGES += library/perl-5/term-size-perl
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

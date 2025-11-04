@@ -10,14 +10,14 @@
 
 #
 # Copyright 2016 Adam Stevko 
-# Copyright 2023 Klaus Ziegler
+# Copyright 2024 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -39,7 +39,7 @@ else
 COMPONENT_ARCHIVE_URL_1= \
     https://dlc.openindiana.aurora-opencloud.org/SPARC/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1.sparc= \
-    sha256:6b5030de3facfb4dd2e9bb5f82efbddba6cd9ff238fea1aba4c5401b4db59bab
+    sha256:b1ac54348fcc8556c38ccdfb1a4953a04cd41243af5f8145900b76297fc72aad
 COMPONENT_ARCHIVE_URL_2= \
     https://dlc.openindiana.aurora-opencloud.org/SPARC/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2.sparc= \

@@ -14,23 +14,23 @@
 #   $WS_TOOLS/python-integrate-project CJKwrap
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CJKwrap
 HUMAN_VERSION =			2.2
-COMPONENT_SUMMARY =		CJKwrap - CJKwrap is a library for wrapping and filling CJK text. Fix Python issue24665
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		CJKwrap is a library for wrapping and filling CJK text. Fix Python issue24665
 COMPONENT_PROJECT_URL =		https://fgallaire.github.io/cjkwrap
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/43/e7/6289123edb86eef09d43ece0648c2eb71d860f020ae17b2c7a52ffa8bbe9/CJKwrap-2.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a2c7d2e527a0e89865ac2e6e73f198b829b871c826f34eeb4efb09669e1ec0ac
 COMPONENT_LICENSE =		LGPL-3.0-only
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

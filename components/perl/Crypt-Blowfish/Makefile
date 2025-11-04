@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::Blowfish
+#   $WS_TOOLS/perl-integrate-module Crypt-Blowfish
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::Blowfish
+COMPONENT_NAME =		Crypt-Blowfish
 HUMAN_VERSION =			2.14
-COMPONENT_SUMMARY =		Crypt::Blowfish - Perl Blowfish encryption module
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Perl Blowfish encryption module
 COMPONENT_CPAN_AUTHOR =		DPARIS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:46b3431ffb6bf5b9cb359f79565d48407e652ad2b04fdf5ca62a69e7197a67b1
@@ -31,6 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 # remove lines with timing info from test results
 COMPONENT_TEST_TRANSFORMS += '-e "/wallclock/d"'
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-cbc
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

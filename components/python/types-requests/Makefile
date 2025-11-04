@@ -11,25 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-requests
+#   $WS_TOOLS/python-integrate-project -d python/types-requests types_requests
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-requests
-HUMAN_VERSION =			2.31.0.20240406
-COMPONENT_SUMMARY =		types-requests - Typing stubs for requests
+COMPONENT_NAME =		types_requests
+HUMAN_VERSION =			2.32.4.20250913
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for requests
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4428df33c5503945c74b3f42e82b181e86ec7b724620419a2966e2de604ce1a1
+	sha256:abd6d4f9ce3a9383f269775a9835a4c24e5cd6b9f647d64f88aa4613c33def5d
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/urllib3
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/urllib3
+REQUIRED_PACKAGES.python += runtime/python

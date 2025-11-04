@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Importer
+COMPONENT_NAME =		Importer
 HUMAN_VERSION =			0.026
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Importer - Alternative but compatible interface to modules that export symbols.
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Alternative but compatible interface to modules that export symbols.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e08fa84e13cb998b7a897fc8ec9c3459fcc1716aff25cc343e36ef875891b0ef
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

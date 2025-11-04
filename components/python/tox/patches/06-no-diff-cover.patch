@@ -1,32 +1,27 @@
 We cannot compare against origin/main branch because we build from sdist, not git.
 
---- tox-4.14.2/tox.ini.orig
-+++ tox-4.14.2/tox.ini
-@@ -34,7 +34,6 @@
-       --cov-report xml:{toxworkdir}{/}coverage.{envname}.xml \
-       -n={env:PYTEST_XDIST_AUTO_NUM_WORKERS:auto} \
-       tests --durations 5 --run-integration}
--    diff-cover --compare-branch {env:DIFF_AGAINST:origin/main} {toxworkdir}{/}coverage.{envname}.xml
+--- tox-4.32.0/tox.toml.orig
++++ tox-4.32.0/tox.toml
+@@ -41,12 +41,6 @@
+       "--run-integration",
+     ] },
+   ],
+-  [
+-    "diff-cover",
+-    "--compare-branch",
+-    { replace = "env", name = "DIFF_AGAINST", default = "origin/main" },
+-    "{work_dir}{/}coverage.{env_name}.xml",
+-  ],
+ ]
  
- [testenv:fix]
- description = format the code base to adhere to our styles, and complain about what we cannot do automatically
---- tox-4.14.2/pyproject.toml.orig
-+++ tox-4.14.2/pyproject.toml
-@@ -74,7 +74,6 @@
-   "build[virtualenv]>=1.0.3",
+ [env.fix]
+--- tox-4.32.0/pyproject.toml.orig
++++ tox-4.32.0/pyproject.toml
+@@ -79,7 +79,6 @@
    "covdefaults>=2.3",
+   "coverage>=7.10.7",
    "detect-test-pollution>=1.2",
--  "diff-cover>=8.0.2",
-   "distlib>=0.3.8",
-   "flaky>=3.7",
-   "hatch-vcs>=0.4",
---- tox-4.14.2/PKG-INFO.orig
-+++ tox-4.14.2/PKG-INFO
-@@ -54,7 +54,6 @@
- Requires-Dist: build[virtualenv]>=1.0.3; extra == 'testing'
- Requires-Dist: covdefaults>=2.3; extra == 'testing'
- Requires-Dist: detect-test-pollution>=1.2; extra == 'testing'
--Requires-Dist: diff-cover>=8.0.2; extra == 'testing'
- Requires-Dist: distlib>=0.3.8; extra == 'testing'
- Requires-Dist: flaky>=3.7; extra == 'testing'
- Requires-Dist: hatch-vcs>=0.4; extra == 'testing'
+-  "diff-cover>=9.7.1",
+   "distlib>=0.4",
+   "flaky>=3.8.1",
+   "hatch-vcs>=0.5",

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IO::Tty
+#   $WS_TOOLS/perl-integrate-module IO-Tty
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IO::Tty
+COMPONENT_NAME =		IO-Tty
 HUMAN_VERSION =			1.20
-COMPONENT_SUMMARY =		IO::Tty - Low-level allocate a pseudo-Tty, import constants.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Pseudo ttys and constants
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b15309fc85623893289cb9b2b88dfa9ed1e69156b75f29938553a45be6d730af
@@ -29,5 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

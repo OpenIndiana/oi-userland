@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Text::Unidecode
+#   $WS_TOOLS/perl-integrate-module Text-Unidecode
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Text::Unidecode
+COMPONENT_NAME =		Text-Unidecode
 HUMAN_VERSION =			1.30
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Text::Unidecode - plain ASCII transliterations of Unicode text
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Provide plain ASCII transliterations of Unicode text
 COMPONENT_CPAN_AUTHOR =		SBURKE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6c24f14ddc1d20e26161c207b73ca184eed2ef57f08b5fb2ee196e6e2e88b1c6
@@ -30,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

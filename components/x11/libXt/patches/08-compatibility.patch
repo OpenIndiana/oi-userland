@@ -1,0 +1,94 @@
+Maintain Solaris ABI compatibility across X11R5 -> X11R6 upgrade.
+
+Need to evaluate for submission upstream.
+
+Code in Event.c checked in without a BugID:
+
+D 1.5   96/01/19 17:37:50 stuartm       6 5     00016/00000/01844
+added compatability functions _XtRegisterWindow and _XtUnregisterWindow
+They simply call the newer drawable routines.
+
+Code in NextEvent.c checked in under:
+
+Bug 14917447 - SUNBT1254790 _XtwaitForSomething renamed in X11R6 with no backcompat
+
+The symbol _XtwaitForSomething in X11R5 was changed to _XtWaitForSomething in
+X11R6.
+
+This violates backwards compatibility and disables all extensions which use
+the symbol.
+
+Incorporates fix for
+Oracle Bug 14974628 - SUNBT4185875 _XtwaitForSomething implemented incorrectly
+    on X11R6. It does not work.
+
+which added the missing "return" keywords.
+
+--- a/src/Event.c	2022-11-07 19:12:33.474188705 -0800
++++ b/src/Event.c	2022-11-07 19:13:39.893732706 -0800
+@@ -590,6 +590,14 @@
+     UNLOCK_APP(app);
+ }
+ 
++/* need this for backward compatability */
++void _XtRegisterWindow(
++    Window window,
++    Widget widget)
++{
++    XtRegisterDrawable(XtDisplay(widget), (Drawable)window, widget);
++}
++
+ void
+ XtUnregisterDrawable(Display *display, Drawable drawable)
+ {
+@@ -641,6 +649,14 @@
+     UNLOCK_APP(app);
+ }
+ 
++/* need this for backward compatability */
++void _XtUnregisterWindow(
++    register Window window,
++    register Widget widget)
++{
++    XtUnregisterDrawable(XtDisplay(widget), (Drawable)window);
++}
++
+ static void
+ ExpandWWTable(register WWTable tab)
+ {
+--- a/src/NextEvent.c	2022-11-07 19:13:50.529610200 -0800
++++ b/src/NextEvent.c	2022-11-07 19:14:35.844822484 -0800
+@@ -782,6 +782,33 @@
+ #define SeCallProc(ptr) \
+     (*ptr->se_proc) (ptr->se_closure, (XtSignalId*)&ptr);
+ 
++#ifdef sun /*SUNSOFT */
++int _XtwaitForSomething(
++    _XtBoolean ignoreTimers,
++    _XtBoolean ignoreInputs,
++    _XtBoolean ignoreEvents,
++    _XtBoolean block,
++    unsigned long *howlong,
++    XtAppContext app)
++{
++#ifdef XTHREADS
++/* fix for bug 4185875 leob */
++return _XtWaitForSomething(app,
++            ignoreEvents, ignoreTimers, ignoreInputs, TRUE,
++            block,
++            TRUE,
++            howlong);
++#else
++/* fix for bug 4185875 leob */
++return _XtWaitForSomething(app,
++            ignoreEvents, ignoreTimers, ignoreInputs, TRUE,
++            block,
++            howlong);
++#endif
++
++}
++#endif /* SUNSOFT */
++
+ /*
+  * Public Routines
+  */

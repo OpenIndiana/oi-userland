@@ -11,10 +11,10 @@
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2025 Klaus Ziegler
 #
 
 BUILD_STYLE= configure
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
@@ -22,11 +22,11 @@ PATH= $(PATH.gnu)
 
 COMPONENT_NAME=         corosync
 COMPONENT_VERSION=      2.4.5
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      The Corosync cluster engine.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:1637b9fcc90ecb719f0c24bdb5bf98bbe7b7f8dbaf19fbe1e5ca5640512565e1
+COMPONENT_ARCHIVE_HASH= sha256:72355e531f2ebce4942f179993d01261657e904541f9b83ca2fc370b2a23e714
 COMPONENT_PROJECT_URL=  https://github.com/corosync/corosync
 COMPONENT_ARCHIVE_URL=  https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
@@ -42,19 +42,16 @@ COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CFLAGS += $(XPG6MODE) -D_POSIX_PTHREAD_SEMANTICS
+CFLAGS += $(XPG6MODE) -D_POSIX_PTHREAD_SEMANTICS -Wno-implicit-function-declaration
 LDFLAGS += -R/usr/lib/mps/$(MACH64)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --sharedstatedir=$(VARDIR)/hacluster
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-monitoring
 CONFIGURE_OPTIONS += --enable-snmp
 CONFIGURE_OPTIONS += --enable-xmlconf
 CONFIGURE_OPTIONS += --enable-testagents
 CONFIGURE_OPTIONS += --enable-augeas
 CONFIGURE_OPTIONS += --enable-qdevices
-CONFIGURE_OPTIONS += --disable-rpath
 CONFIGURE_OPTIONS += --with-logdir=$(VARDIR)/log/hacluster
 
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):/usr/lib/$(MACH64)"

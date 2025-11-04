@@ -11,34 +11,54 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module DateTime::TimeZone
+#   $WS_TOOLS/perl-integrate-module DateTime-TimeZone
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DateTime::TimeZone
-HUMAN_VERSION =			2.62
-COMPONENT_SUMMARY =		DateTime::TimeZone - Time zone object base class and factory
+COMPONENT_NAME =		DateTime-TimeZone
+HUMAN_VERSION =			2.65
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Time zone object base class and factory
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6214f9c9c8dfa2000bae912ef2b8ebc5b163a83a0b5b2a82705162dad63466fa
+	sha256:019e99ca8e8c655d70d6813b6df3f351c2bee5983e0f4732f18c5788e1d38e62
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# DateTime-TimeZone --> DateTime ==> DateTime-TimeZone
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/datetime
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-singleton
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
 PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
 PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/specio
 PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requires
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

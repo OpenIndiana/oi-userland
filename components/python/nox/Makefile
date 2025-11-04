@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nox
-HUMAN_VERSION =			2024.3.2
-COMPONENT_SUMMARY =		nox - Flexible test automation.
+HUMAN_VERSION =			2025.5.1
+COMPONENT_SUMMARY =		Flexible test automation.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f521ae08a15adbf5e11f16cb34e8d0e6ea521e0b92868f684e91677deb974553
+	sha256:2a571dfa7a58acc726521ac3cd8184455ebcdcbf26401c7b737b5bc6701427b2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,21 +32,26 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += requirements-test.txt
+TEST_REQUIREMENTS_PEP735 += test
+
+# https://github.com/wntrblm/nox/issues/926
+PYTEST_ADDOPTS += --deselect tests/test_main.py::test_main_requires
+PYTEST_ADDOPTS += --deselect tests/test_main.py::test_noxfile_script_mode
 
 # Drop lines with timestamp
 COMPONENT_TEST_TRANSFORMS += "-e '/nox >/d'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/argcomplete
+PYTHON_REQUIRED_PACKAGES += library/python/attrs
 PYTHON_REQUIRED_PACKAGES += library/python/colorlog
+PYTHON_REQUIRED_PACKAGES += library/python/dependency-groups
 PYTHON_REQUIRED_PACKAGES += library/python/hatchling
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
+PYTHON_REQUIRED_PACKAGES += library/python/tomli
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/flask
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/tomli

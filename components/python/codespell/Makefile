@@ -19,24 +19,23 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		codespell
-HUMAN_VERSION =			2.2.6
-COMPONENT_SUMMARY =		codespell - Codespell
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e1/97/df3e00b4d795c96233e35d269c211131c5572503d2270afb6fed7d859cc2/codespell-2.2.6.tar.gz
+HUMAN_VERSION =			2.4.1
+COMPONENT_SUMMARY =		Fix common misspellings in text files
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a8c65d8eb3faa03deabab6b3bbe798bea72e1799c7e9e955d57eca4096abcff9
+	sha256:299fcdcb09d23e81e35a671bbe746d5ad7e8385972e65dbb833a2eaac33c01e5
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
-
-# Not sure how to detect this test dependency automatically (see pyproject.toml)
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/chardet
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
+TEST_REQUIRED_PACKAGES.python += library/python/twine

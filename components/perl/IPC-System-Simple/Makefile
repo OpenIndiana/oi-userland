@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IPC::System::Simple
+#   $WS_TOOLS/perl-integrate-module IPC-System-Simple
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IPC::System::Simple
+COMPONENT_NAME =		IPC-System-Simple
 HUMAN_VERSION =			1.30
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		IPC::System::Simple - Run commands simply, with detailed diagnostics
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Run commands simply, with detailed diagnostics
 COMPONENT_CPAN_AUTHOR =		JKEENAN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:22e6f5222b505ee513058fdca35ab7a1eab80539b98e5ca4a923a70a8ae9ba9e
@@ -35,4 +35,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/bsd-resource
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

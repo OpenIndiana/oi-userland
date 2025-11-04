@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			dejagnu
 COMPONENT_VERSION=		1.6.3
+COMPONENT_REVISION=		1
 COMPONENT_FMRI=			developer/test/dejagnu
 COMPONENT_SUMMARY=		DejaGnu - a framework for testing other programs
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -49,8 +50,6 @@ COMPONENT_TEST_TRANSFORMS += \
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-# Manually added dependencies
-REQUIRED_PACKAGES += shell/expect
-
 # Auto-generated dependencies
-
+REQUIRED_PACKAGES += shell/expect
+REQUIRED_PACKAGES += shell/ksh93

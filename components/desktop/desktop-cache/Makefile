@@ -11,7 +11,6 @@
 
 #
 # Copyright 2019 Alexander Pyhalov
-# Copyright 2023 Klaus Ziegler
 # Copyright 2023 Gary Mills
 #
 
@@ -19,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= desktop-cache
 COMPONENT_VERSION= 0.2.2
-COMPONENT_REVISION= 13
+COMPONENT_REVISION= 22
 COMPONENT_SUMMARY= desktop-cache is a set of SMF services used to update the various GNOME desktop caches.
 COMPONENT_SRC= desktop-cache-smf-services-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:9cf7328ffddbf86945bef630d8b8fdd61ffcfcac3972b9d0af8668642735de0d
+  sha256:1be28add6bc1877fd1a9e2a57884a98729abe081033b98ef8bf8fd9c7d7062fb
 COMPONENT_ARCHIVE_URL= \
   http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			service/gnome/desktop-cache
@@ -41,6 +40,5 @@ CONFIGURE_OPTIONS += --sysconfdir=/lib
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += shell/ksh93

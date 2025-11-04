@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module CGI::Fast
+#   $WS_TOOLS/perl-integrate-module CGI-Fast
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		CGI::Fast
+COMPONENT_NAME =		CGI-Fast
 HUMAN_VERSION =			2.17
-COMPONENT_SUMMARY =		CGI::Fast - CGI Interface for Fast CGI
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		CGI Interface for Fast CGI
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8afa3a8fff8eb1b29d646ed188a2cc889b19d5a0fb3aa5ddad508ccb0c79bdf2
@@ -30,5 +31,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/cgi
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/fcgi
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

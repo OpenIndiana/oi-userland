@@ -19,21 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		expandvars
-HUMAN_VERSION =			0.12.0
-COMPONENT_SUMMARY =		expandvars - Expand system variables Unix style
+HUMAN_VERSION =			1.1.2
+COMPONENT_SUMMARY =		Expand system variables Unix style
 COMPONENT_PROJECT_URL =		https://github.com/sayanarijit/expandvars
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/2b/a5/46d1f58edcae1d632fafdfee313e378240e002ae45d26502bac938bd8751/expandvars-0.12.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7d1adfa55728cf4b5d812ece3d087703faea953e0c0a1a78415de9df5024d844
+	sha256:6c5822b7b756a99a356b915dd1267f52ab8a4efaa135963bd7f4bd5d368f71d7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

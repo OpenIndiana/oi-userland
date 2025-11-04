@@ -29,6 +29,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# 32 bit files used to live in this package
+depend type=require fmri=$(COMPONENT_FMRI)/32
+
 #
 # libtspi needs to convert between codesets 646 and UTF-16LE, which are covered
 # by package system/library/iconv/utf-8. This is for function Trspi_Native_To_UNICODE()
@@ -38,19 +41,22 @@ depend type=require fmri=pkg:/system/library/iconv/utf-8
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+<transform file path=etc/security/tcsd\.conf$ -> default mode 0644>
+<transform file path=etc/security/tcsd\.conf$ -> default preserve true>
+<transform file path=etc/security/tcsd\.conf$ -> default original_name SUNWtss-root:etc/security/tcsd.conf>
 <transform file path=usr/lib/.*tcsd$ -> default mode 0555>
+<transform file path=var/tpm/system/system\.data\. -> default mode 0400>
+<transform file path=var/tpm/system/system\.data\. -> default owner root>
+<transform file path=var/tpm/system/system\.data\. -> default group sys>
 
-file dist/system.data.auth path=var/tpm/system/system.data.auth mode=0400 owner=root group=sys
-file dist/system.data.noauth path=var/tpm/system/system.data.noauth mode=0400 owner=root group=sys
-link path=var/tpm/system/system.data target=system.data.auth
 dir path=var/tpm/pkcs11 group=sys mode=1777 owner=root
 dir path=var/tpm/system group=sys mode=0700 owner=root
 dir path=var/tpm/userps group=sys mode=1777 owner=root
-file files/auth_attr path=etc/security/auth_attr.d/trousers
-file files/prof_attr path=etc/security/prof_attr.d/trousers
-file files/tcsd.xml path=lib/svc/manifest/application/security/tcsd.xml
-file files/tcsd.sh path=lib/svc/method/tcsd.sh mode=0555
-file etc/tcsd.conf path=etc/security/tcsd.conf mode=0644 preserve=true original_name=SUNWtss-root:etc/security/tcsd.conf
+file path=etc/security/auth_attr.d/trousers
+file path=etc/security/prof_attr.d/trousers
+file path=etc/security/tcsd.conf
+file path=lib/svc/manifest/application/security/tcsd.xml
+file path=lib/svc/method/tcsd.sh
 file path=usr/include/trousers/trousers.h
 file path=usr/include/trousers/tss.h
 file path=usr/include/tss/compat11b.h
@@ -80,10 +86,6 @@ link path=usr/lib/$(MACH64)/libtspi.so target=libtspi.so.1.2.0
 link path=usr/lib/$(MACH64)/libtspi.so.1 target=libtspi.so.1.2.0
 file path=usr/lib/$(MACH64)/libtspi.so.1.2.0
 file path=usr/lib/$(MACH64)/tcsd
-link path=usr/lib/libtspi.so target=libtspi.so.1.2.0
-link path=usr/lib/libtspi.so.1 target=libtspi.so.1.2.0
-file path=usr/lib/libtspi.so.1.2.0
-file path=usr/lib/tcsd
 file path=usr/share/man/man3/Tspi_ChangeAuth.3
 file path=usr/share/man/man3/Tspi_ChangeAuthAsym.3
 file path=usr/share/man/man3/Tspi_Context_Close.3
@@ -165,3 +167,6 @@ file path=usr/share/man/man3/Tspi_TPM_StirRandom.3
 file path=usr/share/man/man3/Tspi_TPM_TakeOwnership.3
 file path=usr/share/man/man5/tcsd.conf.5
 file path=usr/share/man/man8/tcsd.8
+link path=var/tpm/system/system.data target=system.data.auth
+file path=var/tpm/system/system.data.auth
+file path=var/tpm/system/system.data.noauth

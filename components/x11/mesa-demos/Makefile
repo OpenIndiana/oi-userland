@@ -14,38 +14,23 @@
 # Copyright 2016 Ken Mays
 #
 
-PREFERRED_BITS=64
-
+BUILD_BITS=64
+BUILD_STYLE=meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mesa-demos
-COMPONENT_VERSION= 8.3.0
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 8.5.0
 COMPONENT_SUMMARY= The Mesa 3-D Graphics demo applications
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c173154bbd0d5fb53d732471984def42fb1b14ac85fcb834138fb9518b3e0bef
-COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.freedesktop.org/pub/mesa/demos/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:2472818cea452a34229d03084e7c81f94267d14a39c5287379de0fb1dc02caab
+COMPONENT_ARCHIVE_URL= https://archive.mesa3d.org/demos/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mesa3d.org/
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D) && autoreconf -f -i)
-
-CONFIGURE_ENV += GLEW_CFLAGS="-I-have-no-GLEW-"
-CONFIGURE_ENV += GLEW_LIBS="-I-have-no-GLEW-"
-
-CONFIGURE_OPTIONS += --without-glut
-CONFIGURE_OPTIONS += --disable-osmesa
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxext

@@ -23,11 +23,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycurl
-HUMAN_VERSION =			7.45.3
-COMPONENT_SUMMARY =		pycurl - PycURL -- A Python Interface To The cURL library
+HUMAN_VERSION =			7.45.7
+COMPONENT_SUMMARY =		PycURL -- A Python Interface To The cURL library
 COMPONENT_PROJECT_URL =		http://pycurl.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c2471af9079ad798e1645ec0b0d3d4223db687379d17dd36a70637449f81d6b
+	sha256:9d43013002eab2fd6d0dcc671cd1e9149e2fc1c56d5e796fad94d076d6cb69ef
 COMPONENT_LICENSE =		LGPL-2.1-only
 
 TEST_STYLE = pytest
@@ -49,12 +49,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 # Compile extra libraries for tests
 COMPONENT_PRE_TEST_ACTION += PATH=$(PATH.gnu) make -C $(@D)/tests/fake-curl/libcurl ;
 
+# https://github.com/pycurl/pycurl/issues/876
+PYTEST_ADDOPTS += --deselect tests/pause_test.py::PauseTest::test_pause_via_call
+PYTEST_ADDOPTS += --deselect tests/pause_test.py::PauseTest::test_pause_via_return
+
 # Replace Python version in pycurl documentation directory name
 GENERATE_EXTRA_CMD += | \
 	$(GSED) -e 's/\(usr\/share\/doc\/pycurl-\)3\.[0-9]*/\1$$(PYVER)/' | uniq
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES.python += runtime/python

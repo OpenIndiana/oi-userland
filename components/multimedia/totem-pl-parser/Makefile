@@ -10,51 +10,33 @@
 #
 
 #
-# Copyright 2017 Alexander Pyhalov
-# Copyright 2019 Tim Mooney
+# Copyright 2025 Marcel Telka
 #
+
+BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= totem-pl-parser
-COMPONENT_VERSION= 3.10.7
-COMPONENT_REVISION= 3
-COMPONENT_SUMMARY= a library to parse playlist
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:9c8285bc3131faa309d5cba5a919d5166abc2b8cc5a0c850fe861be8b14e089c
-COMPONENT_ARCHIVE_URL= \
-  https://download.gnome.org/sources/$(COMPONENT_NAME)/3.10/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI = library/media-player/totem-pl-parser
-COMPONENT_CLASSIFICATION = Desktop (GNOME)/Libraries
-COMPONENT_LICENSE = LGPLv2
-COMPONENT_LICENSE_FILE = COPYING.LIB
+COMPONENT_NAME=			totem-pl-parser
+HUMAN_VERSION=			3.26.6
+COMPONENT_SUMMARY=		Simple GObject-based library to parse a host of playlist formats
+COMPONENT_ARCHIVE_HASH=		sha256:c0df0f68d5cf9d7da43c81c7f13f11158358368f98c22d47722f3bd04bd3ac1c
+COMPONENT_FMRI=			library/media-player/totem-pl-parser
+COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
+COMPONENT_LICENSE=		LGPL-2.0-only
+COMPONENT_LICENSE_FILE=		COPYING.LIB
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/gnome.mk
+include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
-
-COMPONENT_PREP_ACTION =        ( cp $(COMPONENT_DIR)/files/ax_code_coverage.m4 $(@D) && \
-					 cd $(@D) && autoreconf -f -I .)
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --localstatedir=/var/lib
-CONFIGURE_OPTIONS+= --disable-static
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
-build: $(BUILD_32_and_64)
-
-install: $(INSTALL_32_and_64)
+# Testing fails with uchardet because it detects IBM865 codepage but our iconv
+# does not support that.
+# See also https://www.freedesktop.org/wiki/Software/uchardet
+CONFIGURE_OPTIONS += -Denable-uchardet=no
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gmime
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += system/library

@@ -14,17 +14,18 @@
 # Copyright 2023 Till Wegmüller
 #
 
+BUILD_BITS = 32
+BUILD_STYLE = justmake
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ddu
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	1.3.1
 COMPONENT_LICENSE=	CDDL
-COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_FMRI= diagnostic/ddu
 COMPONENT_CLASSIFICATION= System/Hardware
 COMPONENT_LICENSE= CDDL,BSD3
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
 COMPONENT_PROJECT_URL=	$(GIT_REPO)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
@@ -37,15 +38,15 @@ GIT_BRANCH=oi/hipster
 GIT_CHANGESET=HEAD
 
 COMPONENT_PREP_GIT=no
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
 
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
-# publish: target should appear before inclusion of ips.mk
+# publish: target should appear before inclusion of common.mk
 publish: update-publish
 
-include $(WS_TOP)/make-rules/ips.mk
+TEST_TARGET = $(NO_TESTS)
+
+include $(WS_TOP)/make-rules/common.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -67,19 +68,15 @@ $(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
 COMPONENT_COPY_ACTION = \
         $(CP) -a $(SOURCE_DIR)/*  $(SOURCE_DIR)/.[^.]* $(@D)
 
-ENV=/usr/bin/env -i
-
 COMPONENT_BUILD_ARGS += CC=$(CC) CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV += PATH="$(PATH)"
 COMPONENT_INSTALL_ENV += PATH="$(PATH)"
 
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
-
 download:: $(SOURCE_DIR)/.downloaded
 
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
+CLOBBER_PATHS += $(SOURCE_DIR)
+
+PKG_HARDLINKS += usr/ddu/bin/$(MACH)/hd_detect
 
 REQUIRED_PACKAGES += developer/versioning/git
 REQUIRED_PACKAGES += system/header
@@ -87,10 +84,9 @@ REQUIRED_PACKAGES += system/library/storage/libmpapi
 REQUIRED_PACKAGES += text/locale
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 PYTHON_REQUIRED_PACKAGES += library/python/simplejson
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += gnome/help-viewer/yelp
 REQUIRED_PACKAGES += service/hal
 REQUIRED_PACKAGES += shell/ksh93

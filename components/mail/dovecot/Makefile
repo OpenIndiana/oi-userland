@@ -11,13 +11,14 @@
 #
 # Copyright 2022 Friedrich Kink
 # Copyright 2023 Niklas Poslovski
+# Copyright 2025 Klaus Ziegler
 #
 
-USE_OPENSSL11= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.3.21
+COMPONENT_VERSION=      2.3.21.1
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -27,15 +28,17 @@ COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for 
 COMPONENT_PROJECT_URL=  https://dovecot.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-#COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE).sig
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:05b11093a71c237c2ef309ad587510721cc93bbee6828251549fc1586c36502d
+COMPONENT_ARCHIVE_HASH= sha256:2d90a178c4297611088bf7daae5492a3bc3d5ab6328c3a032eb425d2c249097e
 COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# make gcc-14 happy.
+CFLAGS += -Wno-incompatible-pointer-types
 
 CONFIGURE_ENV += PANDOC=false
 CONFIGURE_ENV += CPPFLAGS=-I/usr/include/openldap
@@ -57,9 +60,8 @@ CONFIGURE_OPTIONS += --with-mysql
 CONFIGURE_OPTIONS += --with-pgsql
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-systemd
-CONFIGURE_OPTIONS += SSL_CFLAGS=-I$(OPENSSL_INCDIR)
-CONFIGURE_OPTIONS += SSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
-CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
+# to compile against new icu77 library -licuuc is needed.
+CONFIGURE_OPTIONS += LDFLAGS="-lldap_r -licuuc"
 
 # RPATH needed to make 'make REQUIRED_PACKAGES' happy
 COMPONENT_POST_CONFIGURE_ACTION= \
@@ -77,17 +79,18 @@ REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
 REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/icu
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-53
 REQUIRED_PACKAGES += shell/ksh93

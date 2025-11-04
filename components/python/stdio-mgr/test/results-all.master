@@ -1,47 +1,17 @@
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:193: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+collecting ... collected 5 items / 1 deselected / 4 selected
 
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
+tests/test_stdiomgr_base.py::test_CaptureStdout PASSED
+tests/test_stdiomgr_base.py::test_CaptureStderr PASSED
+tests/test_stdiomgr_base.py::test_DefaultStdin PASSED
+tests/test_stdiomgr_base.py::test_ManagedStdin PASSED
 
-!!
-  ir_d = dist.fetch_build_eggs(dist.install_requires)
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:194: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
-
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
-
-!!
-  tr_d = dist.fetch_build_eggs(dist.tests_require or [])
-$(PYTHON_DIR)/vendor-packages/setuptools/command/test.py:195: _DeprecatedInstaller: setuptools.installer and fetch_build_eggs are deprecated.
-!!
-
-        ********************************************************************************
-        Requirements should be satisfied by a PEP 517 installer.
-        If you are using pip, you can try `pip install --use-pep517`.
-        ********************************************************************************
-
-!!
-  er_d = dist.fetch_build_eggs(
-running egg_info
-writing src/stdio_mgr.egg-info/PKG-INFO
-writing dependency_links to src/stdio_mgr.egg-info/dependency_links.txt
-writing requirements to src/stdio_mgr.egg-info/requires.txt
-writing top-level names to src/stdio_mgr.egg-info/top_level.txt
-reading manifest file 'src/stdio_mgr.egg-info/SOURCES.txt'
-reading manifest template 'MANIFEST.in'
-adding license file 'LICENSE.txt'
-writing manifest file 'src/stdio_mgr.egg-info/SOURCES.txt'
-running build_ext
-
-----------------------------------------------------------------------
-Ran 0 tests
-
-OK
+======== 4 passed, 1 deselected ========
+  py$(PYV): OK
+  congratulations :)

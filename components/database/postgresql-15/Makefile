@@ -17,17 +17,15 @@
 # Copyright 2023 Andreas Wacknitz
 #
 
-BUILD_BITS= 32_and_64
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postgresql
 COMPONENT_MJR_VERSION=	15
-COMPONENT_MNR_VERSION=	6
+COMPONENT_MNR_VERSION=	14
 COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:8455146ed9c69c93a57de954aead0302cafad035c2b242175d6aa1e17ebcb2fb
+COMPONENT_ARCHIVE_HASH=	sha256:06dd75d305cd3870ee62b3932e661c624543eaf9ae2ba37cdec0a4f8edd051d2
 COMPONENT_ARCHIVE_URL=	https://ftp.postgresql.org/pub/source/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.postgresql.org
 COMPONENT_FMRI=			database/postgres-$(COMPONENT_MJR_VERSION)
@@ -56,13 +54,13 @@ CONFIGURE_OPTIONS += --docdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/doc
 CONFIGURE_OPTIONS += --htmldir=/usr/postgres/$(COMPONENT_MJR_VERSION)/doc
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --with-system-tzdata=/usr/share/lib/zoneinfo
-CONFIGURE_OPTIONS.64 += --with-tcl
-CONFIGURE_OPTIONS.64 += --with-python
-CONFIGURE_OPTIONS.64 += --with-pam
+CONFIGURE_OPTIONS += --with-tcl
+CONFIGURE_OPTIONS += --with-python
+CONFIGURE_OPTIONS += --with-pam
 CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libedit-preferred
 CONFIGURE_OPTIONS += --with-libxml
-CONFIGURE_OPTIONS.64 += --with-libxslt
+CONFIGURE_OPTIONS += --with-libxslt
 CONFIGURE_OPTIONS += --with-lz4
 CONFIGURE_OPTIONS += --with-gssapi
 CONFIGURE_OPTIONS += --enable-thread-safety
@@ -70,24 +68,14 @@ CONFIGURE_OPTIONS += --enable-dtrace
 CONFIGURE_OPTIONS += --enable-integer-datetimes
 CONFIGURE_OPTIONS += --with-includes=/usr/include
 CONFIGURE_OPTIONS += --with-tclconfig=/usr/lib
-CONFIGURE_OPTIONS.64 += --with-perl
+CONFIGURE_OPTIONS += --with-perl
 CONFIGURE_OPTIONS += --with-uuid=e2fs
-
-CONFIGURE_OPTIONS.32 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
-CONFIGURE_OPTIONS.32 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin/$(MACH32)
-CONFIGURE_OPTIONS.32 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib
-CONFIGURE_OPTIONS.32 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib
-
-CONFIGURE_OPTIONS.64 += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
-CONFIGURE_OPTIONS.64 += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
-CONFIGURE_OPTIONS.64 += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib/$(MACH64)
-CONFIGURE_OPTIONS.64 += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
-
+CONFIGURE_OPTIONS += --bindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
+CONFIGURE_OPTIONS += --libexecdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
+CONFIGURE_OPTIONS += --sbindir=/usr/postgres/$(COMPONENT_MJR_VERSION)/bin
+CONFIGURE_OPTIONS += --libdir=/usr/postgres/$(COMPONENT_MJR_VERSION)/lib/$(MACH64)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_PREFIX)/lib/$(MACH64)
 CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_PREFIX)/include
-
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 CONFIGURE_ENV += PERL=$(PERL)
@@ -99,14 +87,9 @@ COMPONENT_INSTALL_ENV += PATH=$(PATH)
 COMPONENT_BUILD_TARGETS = world
 COMPONENT_INSTALL_TARGETS = install-world
 
-COMPONENT_POST_INSTALL_ACTION.64= cd $(BUILD_DIR_$(BITS))/src/test/regress; env $(COMPONENT_INSTALL_ENV) gmake $(COMPONENT_INSTALL_ARGS) install-lib install-tests;
+COMPONENT_POST_INSTALL_ACTION= cd $(BUILD_DIR_$(BITS))/src/test/regress; env $(COMPONENT_INSTALL_ENV) gmake $(COMPONENT_INSTALL_ARGS) install-lib install-tests;
 
-COMPONENT_POST_INSTALL_ACTION+= $(COMPONENT_POST_INSTALL_ACTION.$(BITS))
-COMPONENT_POST_INSTALL_ACTION+= cd $(PROTO_DIR) &&  \
-             $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/pg_config-$(BITS).h  && \
-             $(MV) usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config.h usr/postgres/$(COMPONENT_MJR_VERSION)/include/server/pg_config-$(BITS).h
-
-ENV=/usr/bin/env -i
+ENV= /usr/bin/env -i
 
 COMPONENT_TEST_ENV += PATH=$(PATH)
 
@@ -120,13 +103,13 @@ COMPONENT_TEST_TRANSFORMS= \
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
 PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/postgres-common
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/lz4
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8
 REQUIRED_PACKAGES += shell/ksh93

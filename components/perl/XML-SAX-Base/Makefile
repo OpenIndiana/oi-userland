@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::SAX::Base
+#   $WS_TOOLS/perl-integrate-module XML-SAX-Base
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::SAX::Base
+COMPONENT_NAME =		XML-SAX-Base
 HUMAN_VERSION =			1.09
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		XML::SAX::Base - Base class SAX Drivers and Filters
+COMPONENT_REVISION =		5
+COMPONENT_SUMMARY =		Base class for SAX Drivers and Filters
 COMPONENT_CPAN_AUTHOR =		GRANTM
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:66cb355ba4ef47c10ca738bd35999723644386ac853abbeb5132841f5e8a2ad0
@@ -30,4 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

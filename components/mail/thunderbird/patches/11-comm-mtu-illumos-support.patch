@@ -1,0 +1,84 @@
+--- thunderbird-142.0/comm/third_party/rust/mtu/src/lib.rs.~1~	2025-07-15 20:27:07.000000000 -0400
++++ thunderbird-142.0/comm/third_party/rust/mtu/src/lib.rs	2025-07-16 07:49:26.940912378 -0400
+@@ -160,7 +160,7 @@
+             [NameMtu(Some("lo0"), 32_768), NameMtu(Some("lo0"), 32_768)]
+         } else if cfg!(target_os = "netbsd") {
+             [NameMtu(Some("lo0"), 33_624), NameMtu(Some("lo0"), 33_624)]
+-        } else if cfg!(target_os = "solaris") {
++        } else if cfg!(any(target_os = "solaris", target_os = "illumos")) {
+             // Note: Different loopback MTUs for IPv4 and IPv6?!
+             [NameMtu(Some("lo0"), 8_232), NameMtu(Some("lo0"), 8_252)]
+         } else {
+--- thunderbird-142.0/comm/third_party/rust/mtu/.cargo-checksum.json.~1~	2025-07-15 20:27:07.000000000 -0400
++++ thunderbird-142.0/comm/third_party/rust/mtu/.cargo-checksum.json	2025-07-16 07:57:24.266080860 -0400
+@@ -1 +1 @@
+-{"files":{"CODE_OF_CONDUCT.md":"f7b4cba1deaa0a77bd611c04c84ef5b6859e44c8370f7513fe688fb9531b913b","Cargo.lock":"87fd40e386e610a683ac57e8f20cdff83ba1617a8d963f30f23c4dc0f0e94675","Cargo.toml":"5599f073bcf2bd5a3d18b39e5f501ff66543625cfc8f70c5738045158fcbf4a5","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"4ad721b5b6a3d39ca3e2202f403d897c4a1d42896486dd58963a81f8e64ef61d","README.md":"24df0e24154b7f0096570ad221aea02bd53a0f1124a2adafff5730af5443a65c","SECURITY.md":"75455814b6cf997e22a927eb979b4356d788583aa1eb96e90853aaab0f82ad1b","build.rs":"a4bcd0562c80914a8e909e8b10507605bfd6f0f268fad9ef4d79f4c48bdaed6c","src/bsd.rs":"d8c078fc5a407df32862f404ead6acdf647e0f79a341f7575562886bfc037ceb","src/lib.rs":"5045fdb6e15886f611a41216c47a284e53532de0c69e1b2d330358ed04acab50","src/linux.rs":"aecc6acbea2419dd6cc31e916148e438d8cec20cf001758042299ff2ccc81d39","src/routesocket.rs":"be837947e2c3f9301a174499217fe8920ff492918bf85ca5eb281eb7ad2240e1","src/windows.rs":"d7e18d55b3be5462d2041fc22fb22cf1fc163ec30b107a3274f2bd22ad618411"},"package":"3e3124fb16267c5a77ce8cd015bcb5bb3f8aab28ec32d89d65f6a31c5c1306a0"}
+\ No newline at end of file
++{"files":{"CODE_OF_CONDUCT.md":"f7b4cba1deaa0a77bd611c04c84ef5b6859e44c8370f7513fe688fb9531b913b","Cargo.lock":"87fd40e386e610a683ac57e8f20cdff83ba1617a8d963f30f23c4dc0f0e94675","Cargo.toml":"5599f073bcf2bd5a3d18b39e5f501ff66543625cfc8f70c5738045158fcbf4a5","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"4ad721b5b6a3d39ca3e2202f403d897c4a1d42896486dd58963a81f8e64ef61d","README.md":"24df0e24154b7f0096570ad221aea02bd53a0f1124a2adafff5730af5443a65c","SECURITY.md":"75455814b6cf997e22a927eb979b4356d788583aa1eb96e90853aaab0f82ad1b","build.rs":"17a0dd0e998c014cd4d81d5e62ae5bdcf93fd99ca74c7fbd9fd8faee232e1027","src/bsd.rs":"63398d62465ed2d4894ae7ca84742df0820b7a53fe7820828349ec4746b9bece","src/lib.rs":"08fe37bebaab381072c75766bb4cf9f5afd5fe5b7ed15d947ff0511324663b9a","src/linux.rs":"aecc6acbea2419dd6cc31e916148e438d8cec20cf001758042299ff2ccc81d39","src/routesocket.rs":"be837947e2c3f9301a174499217fe8920ff492918bf85ca5eb281eb7ad2240e1","src/windows.rs":"d7e18d55b3be5462d2041fc22fb22cf1fc163ec30b107a3274f2bd22ad618411"},"package":"3e3124fb16267c5a77ce8cd015bcb5bb3f8aab28ec32d89d65f6a31c5c1306a0"}
+--- thunderbird-142.0/comm/third_party/rust/mtu/build.rs.old	2025-02-18 22:40:12.792257531 -0500
++++ thunderbird-142.0/comm/third_party/rust/mtu/build.rs	2025-02-18 22:40:42.285341578 -0500
+@@ -103,7 +103,8 @@
+                 target_os = "freebsd",
+                 target_os = "openbsd",
+                 target_os = "netbsd",
+-                target_os = "solaris"
++                target_os = "solaris",
++                target_os = "illumos"
+             )
+         }
+     }
+--- thunderbird-142.0/comm/third_party/rust/mtu/src/bsd.rs.~1~	2025-07-15 20:27:07.000000000 -0400
++++ thunderbird-142.0/comm/third_party/rust/mtu/src/bsd.rs	2025-07-16 07:53:49.484371304 -0400
+@@ -34,7 +34,7 @@
+     include!(env!("BINDINGS"));
+ }
+ 
+-#[cfg(any(target_os = "netbsd", target_os = "solaris"))]
++#[cfg(any(target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
+ use crate::bsd::bindings::RTA_IFP;
+ use crate::{
+     aligned_by,
+@@ -56,13 +56,13 @@
+ #[cfg(any(target_os = "macos", target_os = "freebsd", target_os = "openbsd"))]
+ asserted_const_with_type!(RTM_ADDRS, i32, RTA_DST, u32);
+ 
+-#[cfg(any(target_os = "netbsd", target_os = "solaris"))]
++#[cfg(any(target_os = "netbsd", target_os = "solaris", target_os = "illumos"))]
+ asserted_const_with_type!(RTM_ADDRS, i32, RTA_DST | RTA_IFP, u32);
+ 
+-#[cfg(not(target_os = "solaris"))]
++#[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+ type AddressFamily = u8;
+ 
+-#[cfg(target_os = "solaris")]
++#[cfg(any(target_os = "solaris", target_os = "illumos"))]
+ type AddressFamily = u16;
+ 
+ asserted_const_with_type!(AF_INET, AddressFamily, libc::AF_INET, i32);
+@@ -203,7 +203,7 @@
+         match ip {
+             IpAddr::V4(ip) => SockaddrStorage {
+                 sin: sockaddr_in {
+-                    #[cfg(not(target_os = "solaris"))]
++                    #[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+                     #[expect(
+                         clippy::cast_possible_truncation,
+                         reason = "`sockaddr_in` len is <= u8::MAX per `const_assert!` above."
+@@ -219,7 +219,7 @@
+             },
+             IpAddr::V6(ip) => SockaddrStorage {
+                 sin6: sockaddr_in6 {
+-                    #[cfg(not(target_os = "solaris"))]
++                    #[cfg(not(any(target_os = "solaris", target_os = "illumos")))]
+                     #[expect(
+                         clippy::cast_possible_truncation,
+                         reason = "`sockaddr_in6` len is <= u8::MAX per `const_assert!` above."
+@@ -232,7 +232,7 @@
+                     sin6_port: 0,
+                     sin6_flowinfo: 0,
+                     sin6_scope_id: 0,
+-                    #[cfg(target_os = "solaris")]
++                    #[cfg(any(target_os = "solaris", target_os = "illumos"))]
+                     __sin6_src_id: 0,
+                 },
+             },

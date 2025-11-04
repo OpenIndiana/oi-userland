@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test2::Plugin::NoWarnings
+#   $WS_TOOLS/perl-integrate-module Test2-Plugin-NoWarnings
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test2::Plugin::NoWarnings
+COMPONENT_NAME =		Test2-Plugin-NoWarnings
 HUMAN_VERSION =			0.10
-COMPONENT_SUMMARY =		Test2::Plugin::NoWarnings - Fail if tests warn
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Fail if tests warn
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c97cb1122cc6e3e4a079059da71e12f65760bfb0671d19d25a7ec7c5f1f240fb
@@ -30,7 +31,12 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/ipc-run3
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-pluggable
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

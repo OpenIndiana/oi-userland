@@ -1,0 +1,13 @@
+https://github.com/abseil/abseil-cpp/issues/1824#issuecomment-2640277565
+
+--- abseil-cpp-20240116.3/absl/strings/internal/cord_rep_btree_test.cc.orig
++++ abseil-cpp-20240116.3/absl/strings/internal/cord_rep_btree_test.cc
+@@ -740,7 +740,7 @@
+     std::uniform_int_distribution<int> dist_height(0, 3);
+     std::uniform_int_distribution<int> dist_leaf(0, max_cap - 1);
+     const int height = dist_height(rnd);
+-    return (height ? pow(max_cap, height) : 0) + dist_leaf(rnd);
++    return (height ? pow(static_cast<long double>(max_cap), height) : 0) + dist_leaf(rnd);
+   };
+ 
+   for (int i = 0; i < 10000; ++i) {

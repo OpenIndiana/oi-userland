@@ -10,70 +10,95 @@
 #
 
 #
-# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_BITS= 32_and_64
-USE_DEFAULT_TEST_TRANSFORMS= yes
-USE_COMMON_TEST_MASTER= no
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= gst-plugins-base
-COMPONENT_VERSION= 0.10.36
-COMPONENT_REVISION= 5
-COMPONENT_SUMMARY= GNOME streaming media framework plugins
-COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_PROJECT_URL= https://gstreamer.freedesktop.org/
-COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:2cd3b0fa8e9b595db8f514ef7c2bdbcd639a0d63d154c00f8c9b609321f49976
-COMPONENT_FMRI= library/audio/gstreamer/plugin/base
-COMPONENT_CLASSIFICATION= System/Multimedia Libraries
-COMPONENT_LICENSE_FILE= gstreamer-plugin-base.license
-COMPONENT_LICENSE= GPLv2, LGPLv2
+COMPONENT_NAME=		gst-plugins-base
+COMPONENT_VERSION=	1.26.7
+COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:969e3cbf05dfab92cf37e94840fbe398517d7ba3275331d1c216a2e30a7208d0
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=         library/audio/gstreamer/plugin/base
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=	LGPL-2.1-only
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-gcc_OPT= -O2
+# without this the elements_multifdsink test fails
+CFLAGS += $(XPG6MODE)
 
-PATH= $(PATH.gnu)
+CONFIGURE_OPTIONS += -Dalsa=disabled
+CONFIGURE_OPTIONS += -Dorc=enabled
+CONFIGURE_OPTIONS += -Dpango=enabled
+CONFIGURE_OPTIONS += -Dgl_api=opengl
+CONFIGURE_OPTIONS += -Dgl_platform=glx,egl
+CONFIGURE_OPTIONS += -Dgl_winsys=x11,egl
+CONFIGURE_OPTIONS += -Dgl-graphene=disabled
+CONFIGURE_OPTIONS += -Dintrospection=enabled
+# wglext is needed for Windows only
+CONFIGURE_OPTIONS += -Dgl-headers:wglext=disabled
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
-CONFIGURE_OPTIONS += --enable-external
-CONFIGURE_OPTIONS += --enable-experimental
-CONFIGURE_OPTIONS.32 += --enable-introspection=no
-CONFIGURE_OPTIONS += --disable-alsa
-CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
+# Dynamic library version number
+SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-# CFLAGS are not passed to compiler when g-ir-scanner is used
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
-COMPONENT_INSTALL_ENV += CC="$(CC)"
+# This is a workaround for the following meson bug:
+# https://github.com/mesonbuild/meson/issues/6541#issuecomment-2122142024
+COMPONENT_POST_INSTALL_ACTION += \
+	$(ELFEDIT) -e 'dyn:runpath /usr/lib/xorg/amd64:$(GCC_LIBDIR)' \
+	$(PROTOUSRLIBDIR.$(BITS))/libgstallocators-1.0.so.$(SOVER) ;
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Build dependencies
-REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += x11/library/mesa
+
+# gst-devtools is optional testing dependency.  However, if it is available it
+# must be at the same major version as the main gstreamer package to run tests
+# successfully.
+GST_DEVTOOLS_VERSION = \
+	$(shell $(ENV) $(GMAKE) -f $(WS_COMPONENTS)/encumbered/gst-devtools/Makefile print-value-COMPONENT_VERSION)
+ifeq ($(basename $(GST_DEVTOOLS_VERSION)),$(basename $(COMPONENT_VERSION)))
+TEST_REQUIRED_PACKAGES += library/audio/gstreamer/devtools
+else
+TEST_CONFLICTING_PACKAGES += library/audio/gstreamer/devtools
+endif
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += codec/libtheora
+REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/libvisual
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/gnome/gnome-vfs
 REQUIRED_PACKAGES += library/libogg
 REQUIRED_PACKAGES += library/libvorbis
-REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/opus
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/orc
+REQUIRED_PACKAGES += x11/library/libdrm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxi
 REQUIRED_PACKAGES += x11/library/libxv

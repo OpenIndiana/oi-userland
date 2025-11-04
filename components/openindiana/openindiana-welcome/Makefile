@@ -36,8 +36,7 @@ GIT_CHANGESET=	HEAD
 PATH=$(PATH.gnu)
 
 COMPONENT_PREP_GIT=no
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/common.mk
 
 CONFIGURE_ENV += PYTHON=$(PYTHON)
 
@@ -45,8 +44,6 @@ CONFIGURE_ENV += PYTHON=$(PYTHON)
 # source from git repository on each "gmake publish".
 # publish: target should appear before inclusion of ips.mk
 publish: update-publish
-
-include $(WS_TOP)/make-rules/ips.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -63,16 +60,6 @@ update-publish:
 
 COMPONENT_BUILD_TARGETS = all
 
-$(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
-	cd $(@D) &&\
-		touch config.rpath src/config.h.in&&\
-		PATH="$(PATH)" libtoolize --force &&\
-		aclocal -Im4  &&\
-		intltoolize --copy --force --automake &&\
-		automake --add-missing -f -i &&\
-		autoconf -f
-	touch $(SOURCE_DIR)/.prep
-
 build: $(BUILD_64)
 
 install: $(INSTALL_64)
@@ -80,5 +67,5 @@ install: $(INSTALL_64)
 download:: $(SOURCE_DIR)/.downloaded
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 PYTHON_REQUIRED_PACKAGES += runtime/python

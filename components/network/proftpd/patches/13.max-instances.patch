@@ -1,0 +1,20 @@
+# we need to add a delay at least 5 second (we add 6 secs to
+# get margin). I believe it may take up to 5 second for server
+# to detect command connection got closed while data were
+# in fly. In this period number of running instances is not dropped,
+# therefore new client can not connect (when MaxInstances is set to 1).
+#
+# change has been submitted toupstream:
+#	https://github.com/proftpd/proftpd/pull/1507
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RETR.pm
+@@ -2603,6 +2603,7 @@ sub retr_bug3496 {
+ 
+       # Close the _control_ connection immediately
+       $client->{ftp}->close();
++      sleep(6);
+ 
+       my $client2 = ProFTPD::TestSuite::FTP->new('127.0.0.1', $port, 1, 1);
+       $client2->login($setup->{user}, $setup->{passwd});

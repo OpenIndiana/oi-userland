@@ -16,9 +16,8 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dbus-test-runner
-COMPONENT_VERSION=      19.0.4.0
 HUMAN_VERSION=          19.04.0
-COMPONENT_REVISION=		2
+COMPONENT_VERSION=	$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*\([0-9]\)/.\1/g')
 COMPONENT_SUMMARY=      A small little utility to run a couple of executables under a new DBus session for testing
 COMPONENT_PROJECT_URL=  https://launchpad.net/dbus-test-runner
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -27,15 +26,15 @@ COMPONENT_ARCHIVE_HASH= sha256:645a32fbd909baf2c01438f0cbda29dc9cd01a7aba5504c45
 COMPONENT_ARCHIVE_URL=  https://launchpad.net/$(COMPONENT_NAME)/19.04/$(HUMAN_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/dbus-test-runner
 COMPONENT_CLASSIFICATION=       Development/Distribution Tools
-COMPONENT_LICENSE=      GPLv3
-
-PATH= $(PATH.gnu)
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --enable-static=no
+# GNU xgettext is needed
+PATH= $(PATH.gnu)
 
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += --enable-static=no
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2

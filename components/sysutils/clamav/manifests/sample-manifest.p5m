@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2024 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,6 +23,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=etc/clamav/certs/clamav.crt
 file path=etc/clamav/clamav-milter.conf.sample
 file path=etc/clamav/clamd.conf.sample
 file path=etc/clamav/freshclam.conf.sample
@@ -40,23 +41,23 @@ file path=usr/include/clamav-version.h
 file path=usr/include/clamav.h
 file path=usr/include/libfreshclam.h
 link path=usr/lib/$(MACH64)/libclamav.so target=libclamav.so.12
-link path=usr/lib/$(MACH64)/libclamav.so.12 target=libclamav.so.12.0.2
-file path=usr/lib/$(MACH64)/libclamav.so.12.0.2
+link path=usr/lib/$(MACH64)/libclamav.so.12 target=libclamav.so.12.1.0
+file path=usr/lib/$(MACH64)/libclamav.so.12.1.0
 file path=usr/lib/$(MACH64)/libclamav_rust.a
 link path=usr/lib/$(MACH64)/libclammspack.so target=libclammspack.so.0
 link path=usr/lib/$(MACH64)/libclammspack.so.0 target=libclammspack.so.0.8.0
 file path=usr/lib/$(MACH64)/libclammspack.so.0.8.0
 link path=usr/lib/$(MACH64)/libclamunrar.so target=libclamunrar.so.12
-link path=usr/lib/$(MACH64)/libclamunrar.so.12 target=libclamunrar.so.12.0.2
-file path=usr/lib/$(MACH64)/libclamunrar.so.12.0.2
+link path=usr/lib/$(MACH64)/libclamunrar.so.12 target=libclamunrar.so.12.1.0
+file path=usr/lib/$(MACH64)/libclamunrar.so.12.1.0
 link path=usr/lib/$(MACH64)/libclamunrar_iface.so \
     target=libclamunrar_iface.so.12
 link path=usr/lib/$(MACH64)/libclamunrar_iface.so.12 \
-    target=libclamunrar_iface.so.12.0.2
-file path=usr/lib/$(MACH64)/libclamunrar_iface.so.12.0.2
-link path=usr/lib/$(MACH64)/libfreshclam.so target=libfreshclam.so.3
-link path=usr/lib/$(MACH64)/libfreshclam.so.3 target=libfreshclam.so.3.0.1
-file path=usr/lib/$(MACH64)/libfreshclam.so.3.0.1
+    target=libclamunrar_iface.so.12.1.0
+file path=usr/lib/$(MACH64)/libclamunrar_iface.so.12.1.0
+link path=usr/lib/$(MACH64)/libfreshclam.so target=libfreshclam.so.4
+link path=usr/lib/$(MACH64)/libfreshclam.so.4 target=libfreshclam.so.4.0.0
+file path=usr/lib/$(MACH64)/libfreshclam.so.4.0.0
 file path=usr/lib/$(MACH64)/pkgconfig/libclamav.pc
 file path=usr/sbin/clamav-milter
 file path=usr/sbin/clamd
@@ -124,14 +125,13 @@ file path=usr/share/doc/ClamAV/html/highlight.css
 file path=usr/share/doc/ClamAV/html/highlight.js
 file path=usr/share/doc/ClamAV/html/images/change-fork-name.png
 file path=usr/share/doc/ClamAV/html/images/cisco.png
+file path=usr/share/doc/ClamAV/html/images/clamav-git-workflow.png
 file path=usr/share/doc/ClamAV/html/images/clone-your-fork.png
 file path=usr/share/doc/ClamAV/html/images/create-a-fork.png
 file path=usr/share/doc/ClamAV/html/images/demon.png
 file path=usr/share/doc/ClamAV/html/images/flamegraph.svg
 file path=usr/share/doc/ClamAV/html/images/fork-is-behind.png
 file path=usr/share/doc/ClamAV/html/images/logo.png
-file path=usr/share/doc/ClamAV/html/images/new-git-workflow.png
-file path=usr/share/doc/ClamAV/html/images/old-git-workflow.png
 file path=usr/share/doc/ClamAV/html/index.html
 file path=usr/share/doc/ClamAV/html/manual/Development.html
 file path=usr/share/doc/ClamAV/html/manual/Development/Contribute.html
@@ -150,7 +150,6 @@ file path=usr/share/doc/ClamAV/html/manual/Installing.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Add-clamav-user.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Community-projects.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Docker.html
-file path=usr/share/doc/ClamAV/html/manual/Installing/Installing-from-source-Unix-old.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Installing-from-source-Unix.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Installing-from-source-Windows.html
 file path=usr/share/doc/ClamAV/html/manual/Installing/Packages.html
@@ -177,15 +176,17 @@ file path=usr/share/doc/ClamAV/html/manual/Usage/ReportABug.html
 file path=usr/share/doc/ClamAV/html/manual/Usage/Scanning.html
 file path=usr/share/doc/ClamAV/html/manual/Usage/Services.html
 file path=usr/share/doc/ClamAV/html/manual/Usage/SignatureManagement.html
+file path=usr/share/doc/ClamAV/html/manual/cisco-talos.gpg
 file path=usr/share/doc/ClamAV/html/mark.min.js
 file path=usr/share/doc/ClamAV/html/mode-rust.js
 file path=usr/share/doc/ClamAV/html/print.html
 file path=usr/share/doc/ClamAV/html/searcher.js
 file path=usr/share/doc/ClamAV/html/searchindex.js
-file path=usr/share/doc/ClamAV/html/searchindex.json
 file path=usr/share/doc/ClamAV/html/sitemap.xml
 file path=usr/share/doc/ClamAV/html/theme-dawn.js
 file path=usr/share/doc/ClamAV/html/theme-tomorrow_night.js
+file path=usr/share/doc/ClamAV/html/toc.html
+file path=usr/share/doc/ClamAV/html/toc.js
 file path=usr/share/doc/ClamAV/html/tomorrow-night.css
 file path=usr/share/man/man1/clambc.1
 file path=usr/share/man/man1/clamconf.1

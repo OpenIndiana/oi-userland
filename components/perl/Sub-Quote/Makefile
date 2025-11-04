@@ -11,25 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Quote
+#   $WS_TOOLS/perl-integrate-module Sub-Quote
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Quote
-HUMAN_VERSION =			2.006008
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Sub::Quote - Efficient generation of subroutines via string eval
+COMPONENT_NAME =		Sub-Quote
+HUMAN_VERSION =			2.006009
+COMPONENT_SUMMARY =		Efficient generation of subroutines via string eval
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94bebd500af55762e83ea2f2bc594d87af828072370c7110c60c238a800d15b2
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:967282d54d2d51b198c67935594f93e4dea3e54d1e5bced158c94e29be868a4b
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

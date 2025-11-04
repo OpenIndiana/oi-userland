@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module DBD::Pg
+#   $WS_TOOLS/perl-integrate-module DBD-Pg
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DBD::Pg
+COMPONENT_NAME =		DBD-Pg
 HUMAN_VERSION =			3.18.0
-COMPONENT_SUMMARY =		DBD::Pg - PostgreSQL database driver for the DBI module
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		DBI PostgreSQL interface
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:92bbe8a363040f8ce6a3f1963f128132e245861a9b4dc5a84178b42d625a7807
@@ -45,7 +46,12 @@ REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += library/perl-5/module-signature
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
+PERL_REQUIRED_PACKAGES += library/perl-5/version
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library

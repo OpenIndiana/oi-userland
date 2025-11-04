@@ -15,38 +15,35 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64_and_32
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libnotify
-COMPONENT_VERSION=      0.7.12
+COMPONENT_VERSION=	0.8.7
 COMPONENT_SUMMARY=      Library for desktop notifications
-COMPONENT_PROJECT_URL=  https://github.com/GNOME/libnotify
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/0.7/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:744b2b37508135f8261b755a9debe6e09add421adc75bde930f6e198b70ab46e
+COMPONENT_ARCHIVE_HASH=	sha256:4be15202ec4184fce1ac15997ece5530d2be32fe9573875aeb10e3b573858748
 COMPONENT_FMRI=         library/libnotify
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=      LGPLv2.1
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
-PATH = $(PATH.gnu)
-
-# g-ir-scanner
-CC_PIC_MODE = $(CC_PIC_DISABLE)
-LD_Z_PIE_MODE = $(LD_Z_PIE_DISABLE)
-
-# Required for other components.
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS.64 += -Dintrospection=enabled
+# we miss docbook-xsl-ns
 CONFIGURE_OPTIONS += -Dman=false
-CONFIGURE_OPTIONS += -Ddefault_library=shared
 
-COMPONENT_BUILD_ENV += PATH="$(PATH)"
-COMPONENT_INSTALL_ENV += PATH="$(PATH)"
+# Testing needs an X server
+# The tests work best without a running non-system dbus.
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :1 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:1
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Manually added build dependencies
+REQUIRED_PACKAGES.python += library/python/gi-docgen
+# python-dbusmock is needed to build tests
+REQUIRED_PACKAGES.python += library/python/python-dbusmock
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

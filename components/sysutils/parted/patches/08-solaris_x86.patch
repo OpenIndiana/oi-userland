@@ -1,0 +1,891 @@
+Support for Solaris x86 VTOC.
+
+--- /dev/null
++++ parted-1.8.8/libparted/fs/solaris_x86/solaris_x86.c
+@@ -0,0 +1,171 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++/*
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++/*
++ * libparted - a library for manipulating disk partitions
++ *
++ * This module recognizes the Solaris x86 VTOC so that the
++ * partition can be identified as "solaris".
++ *
++ * Mark Logan <mark.logan@sun.com>
++ */
++
++#include <config.h>
++
++#include <parted/parted.h>
++#include <parted/endian.h>
++#include <parted/debug.h>
++
++#if ENABLE_NLS
++#include <libintl.h>
++#define	_(String)	dgettext(PACKAGE, String)
++#else
++#define	_(String)	(String)
++#endif /* ENABLE_NLS */
++
++#include <unistd.h>
++#include <string.h>
++
++#define	BLOCK_SIZES	((int[2]) {512, 0})
++
++#define	VTOC_SANE	0x600DDEEE
++#define	LEN_DKL_VVOL	8
++#define	V_NUMPAR	16		/* # of logical partitions */
++#define	LEN_DKL_ASCII	128		/* length of dkl_asciilabel */
++
++#define	LEN_DKL_PAD	\
++	(512 - \
++	((5 * sizeof (uint32_t)) + \
++	LEN_DKL_VVOL + \
++	(2 * sizeof (uint16_t)) + \
++	(10 * sizeof (uint32_t)) + \
++	(V_NUMPAR * sizeof (struct partition)) + \
++	(V_NUMPAR * sizeof (uint32_t)) + \
++	LEN_DKL_ASCII + \
++	(2 * (sizeof (uint16_t)))))
++
++#define	DKL_MAGIC	0xDABE		/* magic number */
++
++struct partition {
++	unsigned short p_tag;		/* ID tag of partition */
++	unsigned short p_flag;		/* permission flags */
++	uint32_t p_start;		/* start sector no of partition */
++	uint32_t p_size;		/* # of blocks in partition */
++};
++
++struct vtoc {
++	unsigned long	v_bootinfo[3];	/* info for mboot (unsupported) */
++	unsigned long	v_sanity;	/* to verify vtoc sanity */
++	unsigned long	v_version;	/* layout version */
++	char 		v_volume[LEN_DKL_VVOL]; /* volume name */
++	unsigned short	v_sectorsz;	/* sector size in bytes */
++	unsigned short	v_nparts;	/* number of partitions */
++	unsigned long	v_reserved[10]; /* free space */
++	struct partition v_part[V_NUMPAR]; /* partition headers */
++	int32_t	timestamp[V_NUMPAR];	/* partition timestamp (unsupported) */
++	char		 v_asciilabel[LEN_DKL_ASCII];	/* for compatibility */
++	char		dkl_pad[LEN_DKL_PAD];	/* unused part of 512 bytes */
++	uint16_t	dkl_magic;	/* identifies this label format */
++	uint16_t	dkl_cksum;	/* xor checksum of sector */
++};
++
++static PedGeometry*
++solaris_x86_probe(PedGeometry* geom)
++{
++	int8_t buf[512 * 3];
++	struct vtoc *pvtoc;
++	uint16_t *dkl_magic;
++
++	if (geom->length < 5)
++		return (0);
++	if (!ped_geometry_read(geom, buf, 1, 1))
++		return (0);
++
++	pvtoc = (struct vtoc *)buf;
++
++	if (pvtoc->v_sanity == VTOC_SANE && pvtoc->dkl_magic == DKL_MAGIC) {
++		PedSector block_size = pvtoc->v_sectorsz / 512;
++		/*
++		 * Use the size of the backup slice:
++		 */
++		PedSector block_count = pvtoc->v_part[2].p_size;
++		return ped_geometry_new(geom->dev, geom->start,
++		    block_size * block_count);
++	}
++
++	return (NULL);
++}
++
++#ifndef DISCOVER_ONLY
++static int
++solaris_x86_clobber(PedGeometry* geom)
++{
++	char	buf[512*3];
++
++	if (!ped_geometry_read(geom, buf, 1, 1))
++		return (0);
++
++	memset(buf, 0, sizeof (struct vtoc));
++
++	return (ped_geometry_write(geom, buf, 1, 1));
++}
++#endif /* !DISCOVER_ONLY */
++
++static PedFileSystemOps solaris_x86_ops = {
++	.probe = solaris_x86_probe,
++#ifndef DISCOVER_ONLY
++	.clobber = solaris_x86_clobber,
++#else
++	.clobber = NULL,
++#endif
++	.open = NULL,
++	.create = NULL,
++	.close = NULL,
++	.check = NULL,
++	.copy =	 NULL,
++	.resize = NULL,
++	.get_create_constraint = NULL,
++	.get_resize_constraint = NULL,
++	.get_copy_constraint = NULL
++};
++
++static PedFileSystemType solaris_x86_type = {
++	.next =	NULL,
++	.ops =	&solaris_x86_ops,
++	.name =	"solaris",
++	.block_sizes = BLOCK_SIZES
++};
++
++void
++ped_file_system_solaris_x86_init()
++{
++	ped_file_system_type_register(&solaris_x86_type);
++}
++
++void
++ped_file_system_solaris_x86_done()
++{
++	ped_file_system_type_unregister(&solaris_x86_type);
++}
+--- /dev/null
++++ parted-1.8.8/libparted/fs/solaris_x86/Makefile.am
+@@ -0,0 +1,8 @@
++partedincludedir      =	-I$(top_srcdir)/include
++
++noinst_LTLIBRARIES    =	libsolaris_x86.la
++libsolaris_x86_la_SOURCES     = solaris_x86.c
++
++INCLUDES = $(partedincludedir) $(INTLINCS)
++
++MAINTAINERCLEANFILES = Makefile.in
+--- /dev/null
++++ parted-1.8.8/libparted/fs/solaris_x86/Makefile.in
+@@ -0,0 +1,636 @@
++# Makefile.in generated by automake 1.10 from Makefile.am.
++# @configure_input@
++
++# Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
++# 2003, 2004, 2005, 2006  Free Software Foundation, Inc.
++# This Makefile.in is free software; the Free Software Foundation
++# gives unlimited permission to copy and/or distribute it,
++# with or without modifications, as long as this notice is preserved.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
++# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
++# PARTICULAR PURPOSE.
++
++@SET_MAKE@
++
++VPATH = @srcdir@
++pkgdatadir = $(datadir)/@PACKAGE@
++pkglibdir = $(libdir)/@PACKAGE@
++pkgincludedir = $(includedir)/@PACKAGE@
++am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
++install_sh_DATA = $(install_sh) -c -m 644
++install_sh_PROGRAM = $(install_sh) -c
++install_sh_SCRIPT = $(install_sh) -c
++INSTALL_HEADER = $(INSTALL_DATA)
++transform = $(program_transform_name)
++NORMAL_INSTALL = :
++PRE_INSTALL = :
++POST_INSTALL = :
++NORMAL_UNINSTALL = :
++PRE_UNINSTALL = :
++POST_UNINSTALL = :
++build_triplet = @build@
++host_triplet = @host@
++subdir = libparted/fs/fat
++DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
++ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
++am__aclocal_m4_deps = $(top_srcdir)/m4/alloca.m4 \
++	$(top_srcdir)/m4/assert.m4 $(top_srcdir)/m4/atexit.m4 \
++	$(top_srcdir)/m4/calloc.m4 $(top_srcdir)/m4/close-stream.m4 \
++	$(top_srcdir)/m4/closeout.m4 $(top_srcdir)/m4/codeset.m4 \
++	$(top_srcdir)/m4/config-h.m4 $(top_srcdir)/m4/dirname.m4 \
++	$(top_srcdir)/m4/dos.m4 $(top_srcdir)/m4/double-slash-root.m4 \
++	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/exitfail.m4 \
++	$(top_srcdir)/m4/extensions.m4 $(top_srcdir)/m4/fpending.m4 \
++	$(top_srcdir)/m4/free.m4 $(top_srcdir)/m4/getopt.m4 \
++	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/glibc21.m4 \
++	$(top_srcdir)/m4/gnulib-common.m4 \
++	$(top_srcdir)/m4/gnulib-comp.m4 $(top_srcdir)/m4/iconv.m4 \
++	$(top_srcdir)/m4/include_next.m4 $(top_srcdir)/m4/inline.m4 \
++	$(top_srcdir)/m4/intlmacosx.m4 \
++	$(top_srcdir)/m4/inttypes-pri.m4 $(top_srcdir)/m4/inttypes.m4 \
++	$(top_srcdir)/m4/lib-ignore.m4 $(top_srcdir)/m4/lib-ld.m4 \
++	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
++	$(top_srcdir)/m4/localcharset.m4 \
++	$(top_srcdir)/m4/long-options.m4 $(top_srcdir)/m4/longlong.m4 \
++	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbstate_t.m4 \
++	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcmp.m4 \
++	$(top_srcdir)/m4/memcpy.m4 $(top_srcdir)/m4/memmove.m4 \
++	$(top_srcdir)/m4/memset.m4 $(top_srcdir)/m4/nls.m4 \
++	$(top_srcdir)/m4/o-direct.m4 $(top_srcdir)/m4/po.m4 \
++	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/quotearg.m4 \
++	$(top_srcdir)/m4/regex.m4 $(top_srcdir)/m4/rename.m4 \
++	$(top_srcdir)/m4/rpmatch.m4 $(top_srcdir)/m4/safe-read.m4 \
++	$(top_srcdir)/m4/safe-write.m4 $(top_srcdir)/m4/ssize_t.m4 \
++	$(top_srcdir)/m4/stdarg.m4 $(top_srcdir)/m4/stdbool.m4 \
++	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdlib_h.m4 \
++	$(top_srcdir)/m4/strcspn.m4 $(top_srcdir)/m4/string_h.m4 \
++	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
++	$(top_srcdir)/m4/strtod.m4 $(top_srcdir)/m4/strtol.m4 \
++	$(top_srcdir)/m4/unistd_h.m4 $(top_srcdir)/m4/utimbuf.m4 \
++	$(top_srcdir)/m4/utime.m4 $(top_srcdir)/m4/utimes-null.m4 \
++	$(top_srcdir)/m4/wchar.m4 $(top_srcdir)/m4/wctype.m4 \
++	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
++	$(top_srcdir)/m4/xstrndup.m4 $(top_srcdir)/configure.ac
++am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
++	$(ACLOCAL_M4)
++mkinstalldirs = $(install_sh) -d
++CONFIG_HEADER = $(top_builddir)/lib/config.h
++CONFIG_CLEAN_FILES =
++LTLIBRARIES = $(noinst_LTLIBRARIES)
++libsolaris_x86_la_LIBADD =
++am_libsolaris_x86_la_OBJECTS = solaris_x86.lo
++libsolaris_x86_la_OBJECTS = $(am_libsolaris_x86_la_OBJECTS)
++DEFAULT_INCLUDES = -I. -I$(top_builddir)/lib@am__isrc@
++depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
++am__depfiles_maybe = depfiles
++COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
++	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
++	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
++	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++CCLD = $(CC)
++LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
++	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
++	$(LDFLAGS) -o $@
++SOURCES = $(libsolaris_x86_la_SOURCES)
++DIST_SOURCES = $(libsolaris_x86_la_SOURCES)
++ETAGS = etags
++CTAGS = ctags
++DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
++ACLOCAL = @ACLOCAL@
++ALLOCA = @ALLOCA@
++ALLOCA_H = @ALLOCA_H@
++AMTAR = @AMTAR@
++AR = @AR@
++AUTOCONF = @AUTOCONF@
++AUTOHEADER = @AUTOHEADER@
++AUTOMAKE = @AUTOMAKE@
++AWK = @AWK@
++BITSIZEOF_PTRDIFF_T = @BITSIZEOF_PTRDIFF_T@
++BITSIZEOF_SIG_ATOMIC_T = @BITSIZEOF_SIG_ATOMIC_T@
++BITSIZEOF_SIZE_T = @BITSIZEOF_SIZE_T@
++BITSIZEOF_WCHAR_T = @BITSIZEOF_WCHAR_T@
++BITSIZEOF_WINT_T = @BITSIZEOF_WINT_T@
++BUILDINFO = @BUILDINFO@
++CC = @CC@
++CCDEPMODE = @CCDEPMODE@
++CFLAGS = @CFLAGS@
++CHECK_CFLAGS = @CHECK_CFLAGS@
++CHECK_LIBS = @CHECK_LIBS@
++CPP = @CPP@
++CPPFLAGS = @CPPFLAGS@
++CXX = @CXX@
++CXXCPP = @CXXCPP@
++CXXDEPMODE = @CXXDEPMODE@
++CXXFLAGS = @CXXFLAGS@
++CYGPATH_W = @CYGPATH_W@
++DEFS = @DEFS@
++DEPDIR = @DEPDIR@
++DL_LIBS = @DL_LIBS@
++DM_LIBS = @DM_LIBS@
++ECHO = @ECHO@
++ECHO_C = @ECHO_C@
++ECHO_N = @ECHO_N@
++ECHO_T = @ECHO_T@
++EGREP = @EGREP@
++EXEEXT = @EXEEXT@
++F77 = @F77@
++FFLAGS = @FFLAGS@
++GETOPT_H = @GETOPT_H@
++GLIBC21 = @GLIBC21@
++GMSGFMT = @GMSGFMT@
++GMSGFMT_015 = @GMSGFMT_015@
++GNULIB_CHOWN = @GNULIB_CHOWN@
++GNULIB_DUP2 = @GNULIB_DUP2@
++GNULIB_FCHDIR = @GNULIB_FCHDIR@
++GNULIB_FTRUNCATE = @GNULIB_FTRUNCATE@
++GNULIB_GETCWD = @GNULIB_GETCWD@
++GNULIB_GETLOGIN_R = @GNULIB_GETLOGIN_R@
++GNULIB_GETSUBOPT = @GNULIB_GETSUBOPT@
++GNULIB_IMAXABS = @GNULIB_IMAXABS@
++GNULIB_IMAXDIV = @GNULIB_IMAXDIV@
++GNULIB_LCHOWN = @GNULIB_LCHOWN@
++GNULIB_LSEEK = @GNULIB_LSEEK@
++GNULIB_MBSCASECMP = @GNULIB_MBSCASECMP@
++GNULIB_MBSCASESTR = @GNULIB_MBSCASESTR@
++GNULIB_MBSCHR = @GNULIB_MBSCHR@
++GNULIB_MBSCSPN = @GNULIB_MBSCSPN@
++GNULIB_MBSLEN = @GNULIB_MBSLEN@
++GNULIB_MBSNCASECMP = @GNULIB_MBSNCASECMP@
++GNULIB_MBSNLEN = @GNULIB_MBSNLEN@
++GNULIB_MBSPBRK = @GNULIB_MBSPBRK@
++GNULIB_MBSPCASECMP = @GNULIB_MBSPCASECMP@
++GNULIB_MBSRCHR = @GNULIB_MBSRCHR@
++GNULIB_MBSSEP = @GNULIB_MBSSEP@
++GNULIB_MBSSPN = @GNULIB_MBSSPN@
++GNULIB_MBSSTR = @GNULIB_MBSSTR@
++GNULIB_MBSTOK_R = @GNULIB_MBSTOK_R@
++GNULIB_MEMMEM = @GNULIB_MEMMEM@
++GNULIB_MEMPCPY = @GNULIB_MEMPCPY@
++GNULIB_MEMRCHR = @GNULIB_MEMRCHR@
++GNULIB_MKDTEMP = @GNULIB_MKDTEMP@
++GNULIB_MKSTEMP = @GNULIB_MKSTEMP@
++GNULIB_READLINK = @GNULIB_READLINK@
++GNULIB_SLEEP = @GNULIB_SLEEP@
++GNULIB_STPCPY = @GNULIB_STPCPY@
++GNULIB_STPNCPY = @GNULIB_STPNCPY@
++GNULIB_STRCASESTR = @GNULIB_STRCASESTR@
++GNULIB_STRCHRNUL = @GNULIB_STRCHRNUL@
++GNULIB_STRDUP = @GNULIB_STRDUP@
++GNULIB_STRNDUP = @GNULIB_STRNDUP@
++GNULIB_STRNLEN = @GNULIB_STRNLEN@
++GNULIB_STRPBRK = @GNULIB_STRPBRK@
++GNULIB_STRSEP = @GNULIB_STRSEP@
++GNULIB_STRTOIMAX = @GNULIB_STRTOIMAX@
++GNULIB_STRTOK_R = @GNULIB_STRTOK_R@
++GNULIB_STRTOUMAX = @GNULIB_STRTOUMAX@
++GNULIB_WCWIDTH = @GNULIB_WCWIDTH@
++GREP = @GREP@
++HAVE_DECL_GETLOGIN_R = @HAVE_DECL_GETLOGIN_R@
++HAVE_DECL_IMAXABS = @HAVE_DECL_IMAXABS@
++HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
++HAVE_DECL_MEMMEM = @HAVE_DECL_MEMMEM@
++HAVE_DECL_MEMRCHR = @HAVE_DECL_MEMRCHR@
++HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
++HAVE_DECL_STRNCASECMP = @HAVE_DECL_STRNCASECMP@
++HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
++HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
++HAVE_DECL_STRTOIMAX = @HAVE_DECL_STRTOIMAX@
++HAVE_DECL_STRTOK_R = @HAVE_DECL_STRTOK_R@
++HAVE_DECL_STRTOUMAX = @HAVE_DECL_STRTOUMAX@
++HAVE_DECL_WCWIDTH = @HAVE_DECL_WCWIDTH@
++HAVE_DUP2 = @HAVE_DUP2@
++HAVE_FTRUNCATE = @HAVE_FTRUNCATE@
++HAVE_GETSUBOPT = @HAVE_GETSUBOPT@
++HAVE_INTTYPES_H = @HAVE_INTTYPES_H@
++HAVE_ISWCNTRL = @HAVE_ISWCNTRL@
++HAVE_LONG_LONG_INT = @HAVE_LONG_LONG_INT@
++HAVE_MEMPCPY = @HAVE_MEMPCPY@
++HAVE_MKDTEMP = @HAVE_MKDTEMP@
++HAVE_READLINK = @HAVE_READLINK@
++HAVE_SIGNED_SIG_ATOMIC_T = @HAVE_SIGNED_SIG_ATOMIC_T@
++HAVE_SIGNED_WCHAR_T = @HAVE_SIGNED_WCHAR_T@
++HAVE_SIGNED_WINT_T = @HAVE_SIGNED_WINT_T@
++HAVE_SLEEP = @HAVE_SLEEP@
++HAVE_STDINT_H = @HAVE_STDINT_H@
++HAVE_STPCPY = @HAVE_STPCPY@
++HAVE_STPNCPY = @HAVE_STPNCPY@
++HAVE_STRCASECMP = @HAVE_STRCASECMP@
++HAVE_STRCASESTR = @HAVE_STRCASESTR@
++HAVE_STRCHRNUL = @HAVE_STRCHRNUL@
++HAVE_STRNDUP = @HAVE_STRNDUP@
++HAVE_STRPBRK = @HAVE_STRPBRK@
++HAVE_STRSEP = @HAVE_STRSEP@
++HAVE_SYS_BITYPES_H = @HAVE_SYS_BITYPES_H@
++HAVE_SYS_INTTYPES_H = @HAVE_SYS_INTTYPES_H@
++HAVE_SYS_TYPES_H = @HAVE_SYS_TYPES_H@
++HAVE_UNISTD_H = @HAVE_UNISTD_H@
++HAVE_UNSIGNED_LONG_LONG_INT = @HAVE_UNSIGNED_LONG_LONG_INT@
++HAVE_WCHAR_H = @HAVE_WCHAR_H@
++HAVE_WCTYPE_H = @HAVE_WCTYPE_H@
++HAVE_WINT_T = @HAVE_WINT_T@
++HAVE__BOOL = @HAVE__BOOL@
++INCLUDE_NEXT = @INCLUDE_NEXT@
++INSTALL = @INSTALL@
++INSTALL_DATA = @INSTALL_DATA@
++INSTALL_PROGRAM = @INSTALL_PROGRAM@
++INSTALL_SCRIPT = @INSTALL_SCRIPT@
++INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
++INTLINCS = @INTLINCS@
++INTLLIBS = @INTLLIBS@
++INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
++INTTYPES_H = @INTTYPES_H@
++LDFLAGS = @LDFLAGS@
++LIBICONV = @LIBICONV@
++LIBINTL = @LIBINTL@
++LIBOBJS = @LIBOBJS@
++LIBS = @LIBS@
++LIBTOOL = @LIBTOOL@
++LN_S = @LN_S@
++LTALLOCA = @LTALLOCA@
++LTLIBICONV = @LTLIBICONV@
++LTLIBINTL = @LTLIBINTL@
++LTLIBOBJS = @LTLIBOBJS@
++LT_AGE = @LT_AGE@
++LT_CURRENT = @LT_CURRENT@
++LT_RELEASE = @LT_RELEASE@
++LT_REVISION = @LT_REVISION@
++MAKEINFO = @MAKEINFO@
++MKDIR_P = @MKDIR_P@
++MSGFMT = @MSGFMT@
++MSGFMT_015 = @MSGFMT_015@
++MSGMERGE = @MSGMERGE@
++NEXT_INTTYPES_H = @NEXT_INTTYPES_H@
++NEXT_STDINT_H = @NEXT_STDINT_H@
++NEXT_STDLIB_H = @NEXT_STDLIB_H@
++NEXT_STRING_H = @NEXT_STRING_H@
++NEXT_UNISTD_H = @NEXT_UNISTD_H@
++NEXT_WCHAR_H = @NEXT_WCHAR_H@
++NEXT_WCTYPE_H = @NEXT_WCTYPE_H@
++OBJEXT = @OBJEXT@
++OS = @OS@
++OS_LIBS = @OS_LIBS@
++PACKAGE = @PACKAGE@
++PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
++PACKAGE_NAME = @PACKAGE_NAME@
++PACKAGE_STRING = @PACKAGE_STRING@
++PACKAGE_TARNAME = @PACKAGE_TARNAME@
++PACKAGE_VERSION = @PACKAGE_VERSION@
++PARTEDLDFLAGS = @PARTEDLDFLAGS@
++PARTED_LIBS = @PARTED_LIBS@
++PARTED_USABLE_TEST_DIR = @PARTED_USABLE_TEST_DIR@
++PATH_SEPARATOR = @PATH_SEPARATOR@
++PKG_CONFIG = @PKG_CONFIG@
++POSUB = @POSUB@
++POW_LIB = @POW_LIB@
++PRIPTR_PREFIX = @PRIPTR_PREFIX@
++PRI_MACROS_BROKEN = @PRI_MACROS_BROKEN@
++PTRDIFF_T_SUFFIX = @PTRDIFF_T_SUFFIX@
++RANLIB = @RANLIB@
++REISER_LIBS = @REISER_LIBS@
++REPLACE_CHOWN = @REPLACE_CHOWN@
++REPLACE_FCHDIR = @REPLACE_FCHDIR@
++REPLACE_GETCWD = @REPLACE_GETCWD@
++REPLACE_LCHOWN = @REPLACE_LCHOWN@
++REPLACE_LSEEK = @REPLACE_LSEEK@
++REPLACE_MKSTEMP = @REPLACE_MKSTEMP@
++REPLACE_WCWIDTH = @REPLACE_WCWIDTH@
++SED = @SED@
++SELINUX_LIBS = @SELINUX_LIBS@
++SET_MAKE = @SET_MAKE@
++SHELL = @SHELL@
++SIG_ATOMIC_T_SUFFIX = @SIG_ATOMIC_T_SUFFIX@
++SIZE_T_SUFFIX = @SIZE_T_SUFFIX@
++STDBOOL_H = @STDBOOL_H@
++STDINT_H = @STDINT_H@
++STRIP = @STRIP@
++USE_NLS = @USE_NLS@
++UUID_LIBS = @UUID_LIBS@
++VERSION = @VERSION@
++WCHAR_H = @WCHAR_H@
++WCHAR_T_SUFFIX = @WCHAR_T_SUFFIX@
++WCTYPE_H = @WCTYPE_H@
++WINT_T_SUFFIX = @WINT_T_SUFFIX@
++XGETTEXT = @XGETTEXT@
++XGETTEXT_015 = @XGETTEXT_015@
++abs_builddir = @abs_builddir@
++abs_srcdir = @abs_srcdir@
++abs_top_builddir = @abs_top_builddir@
++abs_top_srcdir = @abs_top_srcdir@
++ac_ct_CC = @ac_ct_CC@
++ac_ct_CXX = @ac_ct_CXX@
++ac_ct_F77 = @ac_ct_F77@
++am__include = @am__include@
++am__leading_dot = @am__leading_dot@
++am__quote = @am__quote@
++am__tar = @am__tar@
++am__untar = @am__untar@
++bindir = @bindir@
++build = @build@
++build_alias = @build_alias@
++build_cpu = @build_cpu@
++build_os = @build_os@
++build_vendor = @build_vendor@
++builddir = @builddir@
++datadir = @datadir@
++datarootdir = @datarootdir@
++docdir = @docdir@
++dvidir = @dvidir@
++exec_prefix = @exec_prefix@
++gl_LIBOBJS = @gl_LIBOBJS@
++gl_LTLIBOBJS = @gl_LTLIBOBJS@
++host = @host@
++host_alias = @host_alias@
++host_cpu = @host_cpu@
++host_os = @host_os@
++host_vendor = @host_vendor@
++htmldir = @htmldir@
++includedir = @includedir@
++infodir = @infodir@
++install_sh = @install_sh@
++libdir = @libdir@
++libexecdir = @libexecdir@
++localedir = @localedir@
++localstatedir = @localstatedir@
++mandir = @mandir@
++mkdir_p = @mkdir_p@
++oldincludedir = @oldincludedir@
++pdfdir = @pdfdir@
++prefix = @prefix@
++program_transform_name = @program_transform_name@
++psdir = @psdir@
++sbindir = @sbindir@
++sharedstatedir = @sharedstatedir@
++srcdir = @srcdir@
++sysconfdir = @sysconfdir@
++target_alias = @target_alias@
++top_builddir = @top_builddir@
++top_srcdir = @top_srcdir@
++partedincludedir = -I$(top_srcdir)/include
++noinst_LTLIBRARIES = libsolaris_x86.la
++libsolaris_x86_la_SOURCES = solaris_x86.c
++
++INCLUDES = $(partedincludedir) $(INTLINCS)
++MAINTAINERCLEANFILES = Makefile.in
++all: all-am
++
++.SUFFIXES:
++.SUFFIXES: .c .lo .o .obj
++$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
++	@for dep in $?; do \
++	  case '$(am__configure_deps)' in \
++	    *$$dep*) \
++	      cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh \
++		&& exit 0; \
++	      exit 1;; \
++	  esac; \
++	done; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  libparted/fs/fat/Makefile'; \
++	cd $(top_srcdir) && \
++	  $(AUTOMAKE) --gnu  libparted/fs/fat/Makefile
++.PRECIOUS: Makefile
++Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
++	@case '$?' in \
++	  *config.status*) \
++	    cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh;; \
++	  *) \
++	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)'; \
++	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe);; \
++	esac;
++
++$(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++
++$(top_srcdir)/configure:  $(am__configure_deps)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
++	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
++
++clean-noinstLTLIBRARIES:
++	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
++	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
++	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
++	  test "$$dir" != "$$p" || dir=.; \
++	  echo "rm -f \"$${dir}/so_locations\""; \
++	  rm -f "$${dir}/so_locations"; \
++	done
++libsolaris_x86.la: $(libsolaris_x86_la_OBJECTS) $(libsolaris_x86_la_DEPENDENCIES) 
++	$(LINK)  $(libsolaris_x86_la_OBJECTS) $(libsolaris_x86_la_LIBADD) $(LIBS)
++
++mostlyclean-compile:
++	-rm -f *.$(OBJEXT)
++
++distclean-compile:
++	-rm -f *.tab.c
++
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solaris_x86.Plo@am__quote@
++
++.c.o:
++@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
++@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(COMPILE) -c $<
++
++.c.obj:
++@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
++@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
++
++.c.lo:
++@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
++@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
++
++mostlyclean-libtool:
++	-rm -f *.lo
++
++clean-libtool:
++	-rm -rf .libs _libs
++
++ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
++	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	mkid -fID $$unique
++tags: TAGS
++
++TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
++		$(TAGS_FILES) $(LISP)
++	tags=; \
++	here=`pwd`; \
++	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	if test -z "$(ETAGS_ARGS)$$tags$$unique"; then :; else \
++	  test -n "$$unique" || unique=$$empty_fix; \
++	  $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
++	    $$tags $$unique; \
++	fi
++ctags: CTAGS
++CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
++		$(TAGS_FILES) $(LISP)
++	tags=; \
++	here=`pwd`; \
++	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
++	unique=`for i in $$list; do \
++	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
++	  done | \
++	  $(AWK) '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	test -z "$(CTAGS_ARGS)$$tags$$unique" \
++	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
++	     $$tags $$unique
++
++GTAGS:
++	here=`$(am__cd) $(top_builddir) && pwd` \
++	  && cd $(top_srcdir) \
++	  && gtags -i $(GTAGS_ARGS) $$here
++
++distclean-tags:
++	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
++
++distdir: $(DISTFILES)
++	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
++	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
++	list='$(DISTFILES)'; \
++	  dist_files=`for file in $$list; do echo $$file; done | \
++	  sed -e "s|^$$srcdirstrip/||;t" \
++	      -e "s|^$$topsrcdirstrip/|$(top_builddir)/|;t"`; \
++	case $$dist_files in \
++	  */*) $(MKDIR_P) `echo "$$dist_files" | \
++			   sed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
++			   sort -u` ;; \
++	esac; \
++	for file in $$dist_files; do \
++	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
++	  if test -d $$d/$$file; then \
++	    dir=`echo "/$$file" | sed -e 's,/[^/]*$$,,'`; \
++	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
++	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
++	    fi; \
++	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
++	  else \
++	    test -f $(distdir)/$$file \
++	    || cp -p $$d/$$file $(distdir)/$$file \
++	    || exit 1; \
++	  fi; \
++	done
++check-am: all-am
++check: check-am
++all-am: Makefile $(LTLIBRARIES)
++installdirs:
++install: install-am
++install-exec: install-exec-am
++install-data: install-data-am
++uninstall: uninstall-am
++
++install-am: all-am
++	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
++
++installcheck: installcheck-am
++install-strip:
++	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
++	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
++	  `test -z '$(STRIP)' || \
++	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
++mostlyclean-generic:
++
++clean-generic:
++
++distclean-generic:
++	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
++
++maintainer-clean-generic:
++	@echo "This command is intended for maintainers to use"
++	@echo "it deletes files that may require special tools to rebuild."
++	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
++clean: clean-am
++
++clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
++	mostlyclean-am
++
++distclean: distclean-am
++	-rm -rf ./$(DEPDIR)
++	-rm -f Makefile
++distclean-am: clean-am distclean-compile distclean-generic \
++	distclean-tags
++
++dvi: dvi-am
++
++dvi-am:
++
++html: html-am
++
++info: info-am
++
++info-am:
++
++install-data-am:
++
++install-dvi: install-dvi-am
++
++install-exec-am:
++
++install-html: install-html-am
++
++install-info: install-info-am
++
++install-man:
++
++install-pdf: install-pdf-am
++
++install-ps: install-ps-am
++
++installcheck-am:
++
++maintainer-clean: maintainer-clean-am
++	-rm -rf ./$(DEPDIR)
++	-rm -f Makefile
++maintainer-clean-am: distclean-am maintainer-clean-generic
++
++mostlyclean: mostlyclean-am
++
++mostlyclean-am: mostlyclean-compile mostlyclean-generic \
++	mostlyclean-libtool
++
++pdf: pdf-am
++
++pdf-am:
++
++ps: ps-am
++
++ps-am:
++
++uninstall-am:
++
++.MAKE: install-am install-strip
++
++.PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
++	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
++	distclean-compile distclean-generic distclean-libtool \
++	distclean-tags distdir dvi dvi-am html html-am info info-am \
++	install install-am install-data install-data-am install-dvi \
++	install-dvi-am install-exec install-exec-am install-html \
++	install-html-am install-info install-info-am install-man \
++	install-pdf install-pdf-am install-ps install-ps-am \
++	install-strip installcheck installcheck-am installdirs \
++	maintainer-clean maintainer-clean-generic mostlyclean \
++	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
++	pdf pdf-am ps ps-am tags uninstall uninstall-am
++
++# Tell versions [3.59,3.63) of GNU make to not export all variables.
++# Otherwise a system limit (for SysV at least) may be exceeded.
++.NOEXPORT:
+--- parted-1.8.8/libparted/fs/Makefile.in.orig
++++ parted-1.8.8/libparted/fs/Makefile.in
+@@ -90,7 +90,7 @@
+ 	amiga/libamigafs.la ext2/libext2.la ufs/libufs.la \
+ 	fat/libfat.la ntfs/libntfs.la hfs/libhfs.la \
+ 	linux_swap/liblinuxswap.la xfs/libxfs.la jfs/libjfs.la \
+-	reiserfs/libreiserfs.la
++	reiserfs/libreiserfs.la solaris_x86/libsolaris_x86.la
+ am_libfs_la_OBJECTS =
+ libfs_la_OBJECTS = $(am_libfs_la_OBJECTS)
+ libfs_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+@@ -390,7 +390,7 @@
+ target_alias = @target_alias@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-SUBDIRS = amiga ext2 ufs fat ntfs hfs linux_swap xfs jfs reiserfs # bfs
++SUBDIRS = amiga ext2 ufs fat ntfs hfs linux_swap xfs jfs reiserfs solaris_x86 # bfs
+ partedincludedir = -I$(top_srcdir)/include
+ noinst_LTLIBRARIES = libfs.la
+ libfs_la_LDFLAGS = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+@@ -409,6 +409,7 @@
+ 		    linux_swap/liblinuxswap.la	\
+ 		    xfs/libxfs.la		\
+ 		    jfs/libjfs.la		\
++		    solaris_x86/libsolaris_x86.la	\
+ 		    reiserfs/libreiserfs.la
+ 
+ #		    bfs/libbfs.la
+--- parted-1.8.8/configure.orig
++++ parted-1.8.8/configure
+@@ -38289,7 +38289,7 @@
+ BUILDINFO="$USER@$HOST, $DATE"
+ 
+ 
+-ac_config_files="$ac_config_files Makefile lib/Makefile include/Makefile include/parted/Makefile libparted/Makefile libparted/labels/Makefile libparted/fs/Makefile libparted/fs/amiga/Makefile libparted/fs/ext2/Makefile libparted/fs/fat/Makefile libparted/fs/hfs/Makefile libparted/fs/jfs/Makefile libparted/fs/linux_swap/Makefile libparted/fs/ntfs/Makefile libparted/fs/reiserfs/Makefile libparted/fs/ufs/Makefile libparted/fs/xfs/Makefile libparted/tests/Makefile libparted.pc parted/Makefile partprobe/Makefile doc/Makefile doc/C/Makefile doc/pt_BR/Makefile debug/Makefile debug/clearfat/Makefile debug/test/Makefile tests/Makefile po/Makefile.in"
++ac_config_files="$ac_config_files Makefile lib/Makefile include/Makefile include/parted/Makefile libparted/Makefile libparted/labels/Makefile libparted/fs/Makefile libparted/fs/amiga/Makefile libparted/fs/ext2/Makefile libparted/fs/fat/Makefile libparted/fs/hfs/Makefile libparted/fs/jfs/Makefile libparted/fs/linux_swap/Makefile libparted/fs/ntfs/Makefile libparted/fs/reiserfs/Makefile libparted/fs/solaris_x86/Makefile libparted/fs/ufs/Makefile libparted/fs/xfs/Makefile libparted/tests/Makefile libparted.pc parted/Makefile partprobe/Makefile doc/Makefile doc/C/Makefile doc/pt_BR/Makefile debug/Makefile debug/clearfat/Makefile debug/test/Makefile tests/Makefile po/Makefile.in"
+ 
+ cat >confcache <<\_ACEOF
+ # This file is a shell script that caches the results of configure
+@@ -38945,6 +38945,7 @@
+     "libparted/fs/linux_swap/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/linux_swap/Makefile" ;;
+     "libparted/fs/ntfs/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/ntfs/Makefile" ;;
+     "libparted/fs/reiserfs/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/reiserfs/Makefile" ;;
++    "libparted/fs/solaris_x86/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/solaris_x86/Makefile" ;;
+     "libparted/fs/ufs/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/ufs/Makefile" ;;
+     "libparted/fs/xfs/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/fs/xfs/Makefile" ;;
+     "libparted/tests/Makefile") CONFIG_FILES="$CONFIG_FILES libparted/tests/Makefile" ;;
+--- parted-1.8.8/libparted/libparted.c.orig
++++ parted-1.8.8/libparted/libparted.c
+@@ -128,6 +128,7 @@
+ extern void ped_file_system_hfs_init (void);
+ extern void ped_file_system_fat_init (void);
+ extern void ped_file_system_ext2_init (void);
++extern void ped_file_system_solaris_x86_init (void);
+ 
+ static void
+ init_file_system_types ()
+@@ -142,6 +143,7 @@
+ 	ped_file_system_hfs_init ();
+ 	ped_file_system_fat_init ();
+ 	ped_file_system_ext2_init ();
++	ped_file_system_solaris_x86_init ();
+ }
+ #endif /* ENABLE_FS */
+ 

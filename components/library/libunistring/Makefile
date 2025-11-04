@@ -16,16 +16,17 @@
 
 BUILD_BITS= 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libunistring
-COMPONENT_VERSION=	1.1
+COMPONENT_VERSION=	1.4.1
 COMPONENT_SUMMARY=	libunistring - library for manipulating Unicode strings
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/libunistring/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/libunistring/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:827c1eb9cb6e7c738b171745dac0888aa58c5924df2e59239318383de0729b98
+COMPONENT_ARCHIVE_HASH=	sha256:67d88430892527861903788868c77802a217b0959990f7449f2976126a307763
 COMPONENT_FMRI=		library/libunistring
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv3, LGPLv3
@@ -34,8 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS += --disable-static
 
-# Prevent test failures
-unexport SHELLOPTS
+COMPONENT_POST_INSTALL_ACTION += ( $(RM) $(PROTOUSRSHAREDIR)/info/dir );
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

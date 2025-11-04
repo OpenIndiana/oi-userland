@@ -24,7 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-power-manager
 COMPONENT_MJR_VERSION=  1.26
 COMPONENT_MNR_VERSION=  1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      MATE Power Manager utilities for desktop users
 COMPONENT_ARCHIVE_HASH= sha256:20cd9d22ed04babf98bb50e71a0ec5d78a8a476287723278f87da76cabfb1042
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -32,6 +32,38 @@ COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Manually add apps icons files not getting installed by the Makefiles
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/16x16/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/16x16/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/16x16/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/22x22/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/22x22/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/22x22/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/24x24/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/24x24/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/24x24/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/32x32/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/32x32/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/32x32/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/48x48/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/48x48/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/48x48/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/64x64/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/64x64/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/64x64/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/96x96/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/96x96/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/96x96/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/128x128/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/128x128/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/128x128/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/256x256/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/256x256/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/256x256/apps ; \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/icons/hicolor/scalable/apps ; \
+	$(CP) $(SOURCE_DIR)/data/icons/scalable/apps/* $(PROTO_DIR)/usr/share/icons/hicolor/scalable/apps ;
+
+# Manually add icons files not getting installed by the Makefiles
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) -p $(PROTO_DIR)/usr/share/mate-power-manager/icons/hicolor ; \
+	$(CP) -pr $(SOURCE_DIR)/data/icons/* $(PROTO_DIR)/usr/share/mate-power-manager/icons/hicolor ;
+
+
+# Build dependencies
+REQUIRED_PACKAGES += developer/build/autoconf-archive
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel

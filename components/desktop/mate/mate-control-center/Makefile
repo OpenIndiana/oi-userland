@@ -24,7 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-control-center
 COMPONENT_MJR_VERSION=	1.26
 COMPONENT_MNR_VERSION=	0
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY=	MATE desktop wide preference configuration tools
 COMPONENT_ARCHIVE_HASH= sha256:286714ea778f6540fe74ef00aaf504c47141518d26ab224994f4a1af36b0134a
 COMPONENT_FMRI=			desktop/mate/control-center
@@ -43,8 +43,8 @@ REQUIRED_PACKAGES += system/library/libdbus-glib
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/marco
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

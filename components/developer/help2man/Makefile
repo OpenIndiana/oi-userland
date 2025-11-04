@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		help2man
 COMPONENT_VERSION=	1.49.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	help2man is a tool for automatically generating simple manual pages from program output
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -25,14 +26,12 @@ COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/help2man/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/help2man/
 COMPONENT_FMRI=		developer/build/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/GNU
-COMPONENT_LICENSE=	GPLv3
+COMPONENT_LICENSE=	GPL-3.0-only
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET = $(NO_TESTS)
 
 include $(WS_TOP)/make-rules/common.mk
 
-CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_ENV		+=	PERL="$(PERL)"
-
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += runtime/perl

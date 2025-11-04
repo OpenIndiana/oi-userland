@@ -11,37 +11,38 @@
 #
 # Copyright 2012 EveryCity Ltd. All rights reserved.
 #
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+
+BUILD_STYLE = meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         orc
-COMPONENT_VERSION=      0.4.26
-COMPONENT_REVISION=     1
-IPS_COMPONENT_VERSION=    0.5.11
-HUMAN_VERSION=            $(COMPONENT_VERSION)
-COMPONENT_FMRI=         system/library/orc
-COMPONENT_PROJECT_URL=  http://code.entropywave.com/projects/orc/
-COMPONENT_SUMMARY=      The Oil Runtime Compiler for SIMD array operations
+COMPONENT_VERSION=	0.4.41
+COMPONENT_FMRI=		library/orc
+COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org/projects/orc.html
+COMPONENT_SUMMARY=	The Optimized Inner Loop Runtime Compiler for SIMD array operations
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7d52fa80ef84988359c3434e1eea302d077a08987abdde6905678ebcad4fa649
+	sha256:cb1bfd4f655289cd39bc04642d597be9de5427623f0861c1fc19c08d98467fa2
 COMPONENT_ARCHIVE_URL=  \
 	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_LICENSE=      BSD
+COMPONENT_LICENSE=	BSD-2-Clause AND BSD-3-Clause
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Heals libgstvideoscale core dump
-gcc_OPT = -O2
+# Dynamic library version number
+SOVER = 0.$(word 3,$(subst ., ,$(COMPONENT_VERSION))).0
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-CONFIGURE_OPTIONS  +=	--with-pic
-CONFIGURE_OPTIONS  +=	--enable-shared
-CONFIGURE_OPTIONS  +=	--disable-static
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-ENV = /usr/bin/env -i
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

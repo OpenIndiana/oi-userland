@@ -12,35 +12,36 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2020, 2025 Andreas Wacknitz
 #
-BUILD_BITS= 64_and_32
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libass
-COMPONENT_VERSION=	0.17.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.17.4
 COMPONENT_SUMMARY=	Portable renderer for the ASS/SSA (Substation Alpha) subtitle format
 COMPONENT_PROJECT_URL=	https://github.com/libass/libass
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d653be97198a0543c69111122173c41a99e0b91426f9e17f06a858982c2fb03d
+COMPONENT_ARCHIVE_HASH= sha256:a886b3b80867f437bc55cff3280a652bfa0d37b43d2aff39ddf3c4f288b8c5a8
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/video/libass
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=	ISC
+COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 ifeq ($(strip $(MACH)),i386)
 CONFIGURE_OPTIONS.64 += --host=amd64-pc-solaris2.11
-CONFIGURE_OPTIONS.32 += --host=i686-pc-solaris2.11
 else
 CONFIGURE_OPTIONS.64 += --host=sparcv9-sun-solaris2.11
-CONFIGURE_OPTIONS.32 += --host=sparc-sun-solaris2.11
 endif
 
 # build requirement

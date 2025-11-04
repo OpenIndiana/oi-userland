@@ -30,7 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pcre
 COMPONENT_VERSION=      8.45
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_SUMMARY=      Perl-Compatible Regular Expressions
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -46,6 +46,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # pick up -std=c99 in CFLAGS
 CFLAGS += -std=c99
+CFLAGS += -Wno-error=implicit-function-declaration
 
 # turn on largefile support
 CFLAGS += $(CPP_LARGEFILES)
@@ -66,7 +67,6 @@ CONFIGURE_ENV.64 += "CXXLINKLIB=$(CXX) $(CCFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV.64 += "MACH64=$(MACH64)"
 
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/pcre
-CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-cpp
 CONFIGURE_OPTIONS += --enable-jit

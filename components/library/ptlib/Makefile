@@ -15,12 +15,11 @@
 # Copyright 2023 Friedrich Kink.  All rights reserved.
 #
 
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ptlib
 COMPONENT_VERSION= 2.16.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 4
 COMPONENT_SUMMARY= PTLib Class Library
 COMPONENT_PROJECT_URL = https://sourceforge.net/projects/opalvoip/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -41,13 +40,15 @@ COMPONENT_PREP_ACTION= ( cd $(@D) && aclocal && autoconf )
 CFLAGS += -I$(OPENSSL_INCDIR)
 LDFLAGS += -L$(OPENSSL_LIBDIR)
 
+# Silence gcc-14 (configure needs this in order to detect openldap)
+CFLAGS += -Wno-error=implicit-function-declaration
+
 COMPONENT_BUILD_ARGS += VERBOSE=1
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =  ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
 COMPONENT_POST_CONFIGURE_ACTION = ( echo "install: ; @\$$(MAKE) --file=$(SOURCE_DIR)/Makefile \$$(MAKECMDGOALS)" >> $(@D)/Makefile )
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-plugins
 CONFIGURE_OPTIONS += --enable-resolver
 CONFIGURE_OPTIONS += --enable-cpp11
@@ -65,9 +66,10 @@ CONFIGURE_OPTIONS += --enable-v4l
 CONFIGURE_OPTIONS += --enable-lua
 CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 CONFIGURE_OPTIONS += OPENLDAP_LIBS="-llber-2.6 -lldap-2.6"
+CONFIGURE_OPTIONS += OPENLDAP_CFLAGS="-I/usr/include/openldap"
 # to ensure gstreamer-1.0
 CONFIGURE_OPTIONS += GSTREAMER_LIBS="-lgstreamer-1.0 -lgobject-2.0 -lglib-2.0"
-CONFIGURE_OPTIONS += GSTREAMER_CFLAGS="-pthread -DFFI_NO_RAW_API -I/usr/include/gstreamer-1.0 -I/usr/lib/amd64/libffi-3.2.1/include -I/usr/include/glib-2.0 -I/usr/lib/amd64/glib-2.0/include -I/usr/include/pcre"
+CONFIGURE_OPTIONS += GSTREAMER_CFLAGS="-pthread -DFFI_NO_RAW_API -I/usr/include/gstreamer-1.0 -I/usr/lib/$(MACH64)/libffi-3.2.1/include -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include -I/usr/include/pcre"
 
 ENV += -i
 
@@ -75,14 +77,14 @@ ENV += -i
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += library/audio/gstreamer1
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/sdl
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library

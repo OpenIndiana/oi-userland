@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module List::MoreUtils
+#   $WS_TOOLS/perl-integrate-module List-MoreUtils
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		List::MoreUtils
+COMPONENT_NAME =		List-MoreUtils
 HUMAN_VERSION =			0.430
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		List::MoreUtils - Provide the stuff missing in List::Util
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Provide the stuff missing in List::Util
 COMPONENT_CPAN_AUTHOR =		REHSACK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:63b1f7842cd42d9b538d1e34e0330de5ff1559e4c2737342506418276f646527
@@ -32,6 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/exporter-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/list-moreutils-xs
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

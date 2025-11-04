@@ -11,24 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-psutil
+#   $WS_TOOLS/python-integrate-project -d python/types-psutil types_psutil
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-psutil
-HUMAN_VERSION =			5.9.5.20240316
-COMPONENT_SUMMARY =		types-psutil - Typing stubs for psutil
+COMPONENT_NAME =		types_psutil
+HUMAN_VERSION =			7.0.0.20251001
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for psutil
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5636f5714bb930c64bb34c4d47a59dc92f9d610b778b5364a31daa5584944848
+	sha256:60d696200ddae28677e7d88cdebd6e960294e85adefbaafe0f6e5d0e7b4c1963
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

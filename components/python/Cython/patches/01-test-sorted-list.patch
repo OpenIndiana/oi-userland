@@ -1,0 +1,22 @@
+Make sure the order of tests does not change between test runs.
+
+--- cython-3.1.4/runtests.py.orig
++++ cython-3.1.4/runtests.py
+@@ -1853,6 +1853,8 @@
+         skipped_dirs = ['Cython' + os.path.sep + 'Debugger' + os.path.sep]
+ 
+     for dirpath, dirnames, filenames in os.walk(path):
++        dirnames.sort()
++        filenames.sort()
+         if dirpath != path and "__init__.py" not in filenames:
+             skipped_dirs.append(dirpath + os.path.sep)
+             continue
+@@ -1896,6 +1898,8 @@
+     from importlib import import_module
+ 
+     for dirpath, dirnames, filenames in os.walk(path):
++        dirnames.sort()
++        filenames.sort()
+         for dir in list(dirnames):
+             if not package_matches(dir):
+                 dirnames.remove(dir)

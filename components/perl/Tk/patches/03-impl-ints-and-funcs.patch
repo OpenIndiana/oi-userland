@@ -1,0 +1,71 @@
+https://github.com/eserte/perl-tk/pull/91
+
+--- Tk-804.036/config/signedchar.c.orig
++++ Tk-804.036/config/signedchar.c
+@@ -1,4 +1,4 @@
+-main()
++int main(void)
+ {
+  signed char x = 'a';
+  return (x - 'a');
+--- Tk-804.036/config/unsigned.c.orig
++++ Tk-804.036/config/unsigned.c
+@@ -1,15 +1,16 @@
++#include <stdio.h>
+ int main()
+ {
+  char x[] = "\377";
+  if (x[0] > 0)
+   {
+    printf("char is unsigned type\n");
+-   exit(0);
++   return 0;
+   }
+  else
+   {
+    printf("char is signed type\n");
+-   exit(1);
++   return 1;
+   }
+ }
+ 
+--- Tk-804.036/pTk/config/Hstrdup.c.orig
++++ Tk-804.036/pTk/config/Hstrdup.c
+@@ -6,7 +6,7 @@
+ {char *e;
+  char *p = strdup(STRING);
+  if (!p || strcmp(p,STRING))
+-  exit(1);
++  return 1;
+  return 0;
+ }
+ 
+--- Tk-804.036/pTk/config/Hstrtoul.c.orig
++++ Tk-804.036/pTk/config/Hstrtoul.c
+@@ -1,4 +1,5 @@
+ #include <stdlib.h>
++#include <string.h>
+ 
+ int main()
+ {char *e;
+--- Tk-804.036/pTk/mTk/generic/tkEvent.c.orig
++++ Tk-804.036/pTk/mTk/generic/tkEvent.c
+@@ -1153,6 +1153,7 @@
+ Time
+ TkCurrentTime(dispPtr, fallbackCurrent)
+     TkDisplay *dispPtr;		/* Display for which the time is desired. */
++    int fallbackCurrent;
+ {
+     register XEvent *eventPtr;
+     ThreadSpecificData *tsdPtr = (ThreadSpecificData *)
+--- Tk-804.036/pTk/mTk/generic/tkImage.c.orig
++++ Tk-804.036/pTk/mTk/generic/tkImage.c
+@@ -1083,6 +1083,8 @@
+ int y;
+ int width;
+ int height;
++int imgWidth;
++int imgHeight;
+ {
+     Tk_Tile tile = (Tk_Tile) clientData;
+     Tk_TileChange *handler;

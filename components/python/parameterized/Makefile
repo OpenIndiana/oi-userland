@@ -14,24 +14,25 @@
 #   $WS_TOOLS/python-integrate-project parameterized
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		parameterized
-HUMAN_VERSION =			0.8.1
-COMPONENT_SUMMARY =		parameterized - Parameterized testing with any Python test framework
+HUMAN_VERSION =			0.9.0
+COMPONENT_SUMMARY =		Parameterized testing with any Python test framework
 COMPONENT_PROJECT_URL =		https://github.com/wolever/parameterized
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c6/23/2288f308d238b4f261c039cafcd650435d624de97c6ffc903f06ea8af50f/parameterized-0.8.1.tar.gz
+	https://github.com/wolever/parameterized/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:41bbff37d6186430f77f900d777e5bb6a24928a1c46fb1de692f8b52b8833b5c
+	sha256:8a0e5a7c0455f05acbddfc9dc6b8d270281796b09046aefb28b57cab6f7615f9
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/nose

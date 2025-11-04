@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Paste
+#   $WS_TOOLS/python-integrate-project -d python/Paste paste
 #
 
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Paste
-HUMAN_VERSION =			3.9.0
-COMPONENT_SUMMARY =		Paste - Tools for using a Web Server Gateway Interface stack
+COMPONENT_NAME =		paste
+HUMAN_VERSION =			3.10.1
+COMPONENT_SUMMARY =		paste - Tools for using a Web Server Gateway Interface stack
 COMPONENT_PROJECT_URL =		https://pythonpaste.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:556e3c24208fcfae269684fc3b888f46783c80208516bcecc410c00c7f678fef
+	sha256:1c3d12065a5e8a7a18c0c7be1653a97cf38cc3e9a5a0c8334a9dd992d3a05e4a
 COMPONENT_LICENSE =		MIT
-COMPONENT_LICENSE_FILE =	docs/license.txt
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -33,3 +33,4 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

@@ -16,17 +16,17 @@
 # Copyright 2022 Daniel Chan
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			qt
 COMPONENT_VERSION_MJR=	5.15
-COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).4
-COMPONENT_REVISION=		8
+COMPONENT_VERSION=		$(COMPONENT_VERSION_MJR).17
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=	https://www.qt.io/
 COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-everywhere-opensource-src-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:615ff68d7af8eef3167de1fd15eac1b150e1fd69d1e2f4239e54447e7797253b
+COMPONENT_ARCHIVE_HASH=	sha256:5c34b2e8054d23cbd6c98715af8766a61c7f346ac687aa2d80edd73f8073d2d2
 COMPONENT_ARCHIVE_URL=	https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/qt5
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
@@ -43,12 +43,7 @@ QT_PREFIX= $(QT5_BASEDIR)
 QT_ARCHSUBDIR.64= $(MACH64)
 QT_PLATFORM.64= solaris-g++-64
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
-OPENSSL_VERSION= 1.1
+OPENSSL_VERSION= 3
 CONFIGURE_ENV += OPENSSL_LIBS='-L$(OPENSSL_LIBDIR) -lssl -lcrypto'
 CONFIGURE_ENV += OPENSSL_INCLUDE_PATH=$(OPENSSL_INCDIR)
 
@@ -58,7 +53,7 @@ CONFIGURE_OPTIONS += -opensource
 CONFIGURE_OPTIONS += -confirm-license
 CONFIGURE_OPTIONS += -nomake examples
 CONFIGURE_OPTIONS += -nomake tests
-CONFIGURE_OPTIONS += -c++std c++11
+CONFIGURE_OPTIONS += -c++std c++17
 CONFIGURE_OPTIONS += -disable-reduce-exports
 CONFIGURE_OPTIONS += -xcb
 CONFIGURE_OPTIONS += -xcb-xlib
@@ -73,7 +68,17 @@ CONFIGURE_OPTIONS += -plugin-sql-mysql
 CONFIGURE_OPTIONS += -plugin-sql-psql
 CONFIGURE_OPTIONS += -plugin-sql-sqlite
 CONFIGURE_OPTIONS += -system-sqlite
+#CONFIGURE_OPTIONS += -tiff
+#CONFIGURE_OPTIONS += -syslog
+#CONFIGURE_OPTIONS += -pcre
+#CONFIGURE_OPTIONS += -libpng
+#CONFIGURE_OPTIONS += -libjpeg
+#CONFIGURE_OPTIONS += -harfbuzz
+#CONFIGURE_OPTIONS += -freetype
+#CONFIGURE_OPTIONS += -zlib
 CONFIGURE_OPTIONS += -openssl-linked
+#CONFIGURE_OPTIONS += -dbus-runtime
+#CONFIGURE_OPTIONS += -sanitize address
 CONFIGURE_OPTIONS += OPENSSL_INCDIR=$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += OPENSSL_LIBDIR=$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
@@ -113,15 +118,19 @@ REQUIRED_PACKAGES += x11/library/libpthread-stubs
 REQUIRED_PACKAGES += $(CLANG_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += codec/jasper
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/c++/harfbuzz
@@ -132,15 +141,12 @@ REQUIRED_PACKAGES += library/double-conversion
 REQUIRED_PACKAGES += library/freetds
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
-REQUIRED_PACKAGES += library/icu
 REQUIRED_PACKAGES += library/libwebp
 REQUIRED_PACKAGES += library/md4c
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/print/cups-libs
 REQUIRED_PACKAGES += library/sdl2
-REQUIRED_PACKAGES += library/security/openssl-11
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

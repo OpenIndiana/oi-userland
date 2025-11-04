@@ -1,0 +1,14 @@
+Our supplied PYTHONPATH must stay first in the list so the installed mercurial
+does not interfere with us.
+
+--- mercurial-6.9.1/tests/run-tests.py.orig
++++ mercurial-6.9.1/tests/run-tests.py
+@@ -3462,7 +3462,7 @@
+         # are in /opt/subversion.)
+         oldpypath = osenvironb.get(IMPL_PATH)
+         if oldpypath:
+-            pypath.append(oldpypath)
++            pypath.insert(0, oldpypath)
+         osenvironb[IMPL_PATH] = sepb.join(pypath)
+ 
+         os.environ["HGTEST_BASE_HGMODULEPOLICY"] = os.environ.get(

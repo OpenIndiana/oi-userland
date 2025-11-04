@@ -23,18 +23,16 @@
 # Copyright (c) 2021, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
-
 COMPONENT_NAME=		pinentry
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.3.2
 COMPONENT_SUMMARY=	A small utility for entering passwords.
 COMPONENT_DESCRIPTION=	A small collection of dialog programs that allow GnuPG to read passphrases and PIN numbers in a secure manner.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/pinentry/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:9b3cd5226e7597f2fded399a3bc659923351536559e9db0826981bca316494de
+COMPONENT_ARCHIVE_HASH=	sha256:8e986ed88561b4da6e9efe0c54fa4ca8923035c99264df0b0464497c5fb94e9e
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		security/pinentry
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
@@ -61,8 +59,6 @@ CONFIGURE_ENV += LIBS="$(LIBS)"
 # Following line is required if FLTK pinentry is to be shipped
 # CONFIGURE_ENV +=	FLTK_CONFIG="$(USRBINDIR.$(BITS))/fltk-config"
 
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-libsecret
 CONFIGURE_OPTIONS += --enable-pinentry-curses
 CONFIGURE_OPTIONS += --enable-ncurses
@@ -74,14 +70,14 @@ CONFIGURE_OPTIONS += --disable-pinentry-gnome3
 CONFIGURE_OPTIONS += --disable-pinentry-qt
 
 install: $(INSTALL_64)
-	$(MKDIR) $(PROTOUSRLIBDIR)
+	$(MKDIR) $(PROTOUSRLIBEXECDIR)
 	if test -f $(PROTOUSRBINDIR)/pinentry-curses ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBDIR)/ ; fi
+	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBEXECDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-gtk-2 ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBDIR)/ ; fi
+	$(MV) $(PROTOUSRBINDIR)/pinentry-gtk-2 $(PROTOUSRLIBEXECDIR)/ ; fi
 	if test -f $(PROTOUSRBINDIR)/pinentry-emacs ; then \
-	$(MV) $(PROTOUSRBINDIR)/pinentry-emacs $(PROTOUSRLIBDIR)/ ; fi
-	cd $(PROTOUSRLIBDIR) && ln -sf pinentry-gtk-2 pinentry
+	$(MV) $(PROTOUSRBINDIR)/pinentry-emacs $(PROTOUSRLIBEXECDIR)/ ; fi
+	cd $(PROTOUSRLIBEXECDIR) && ln -sf pinentry-gtk-2 pinentry
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gtk2

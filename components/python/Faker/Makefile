@@ -11,35 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Faker
+#   $WS_TOOLS/python-integrate-project -d python/Faker faker
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Faker
-HUMAN_VERSION =			24.7.1
-COMPONENT_SUMMARY =		Faker - Faker is a Python package that generates fake data for you.
+COMPONENT_NAME =		faker
+HUMAN_VERSION =			37.8.0
+COMPONENT_SUMMARY =		Faker is a Python package that generates fake data for you.
 COMPONENT_PROJECT_URL =		https://github.com/joke2k/faker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:39d34c63f0d62ed574161e23fe32008917b923d18098ce94c2650fe16463b7d5
+	sha256:090bb5abbec2b30949a95ce1ba6b20d1d0ed222883d63483a0d4be4a970d6fb8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pytest/issues/12186
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-black
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-mypy
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-system-statistics
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tzdata
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/pillow

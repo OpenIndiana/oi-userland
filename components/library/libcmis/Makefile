@@ -21,12 +21,12 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcmis
 COMPONENT_VERSION=	0.6.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      libcmis - C++ client library for the CMIS interface
 COMPONENT_PROJECT_URL=	https://github.com/tdf/libcmis
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,8 +46,6 @@ CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-static-boost
 CONFIGURE_OPTIONS += --with-man=no
-
-unexport SHELLOPTS
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/cppunit

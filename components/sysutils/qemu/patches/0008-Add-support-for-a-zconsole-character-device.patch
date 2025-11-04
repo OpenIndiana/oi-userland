@@ -1,0 +1,167 @@
+From e6a513f0f2408570114ea13e956db75cbb6078c6 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Mon, 22 May 2023 20:31:38 +0000
+Subject: Add support for a zconsole character device
+
+---
+ chardev/char-zconsole.c | 74 +++++++++++++++++++++++++++++++++++++++++
+ chardev/meson.build     |  6 ++++
+ include/chardev/char.h  |  1 +
+ include/qemu/osdep.h    |  4 +++
+ qapi/char.json          |  4 +++
+ 5 files changed, 89 insertions(+)
+ create mode 100644 chardev/char-zconsole.c
+
+diff --git a/chardev/char-zconsole.c b/chardev/char-zconsole.c
+new file mode 100644
+index 0000000000..9648fbf1d5
+--- /dev/null
++++ b/chardev/char-zconsole.c
+@@ -0,0 +1,74 @@
++#include "qemu/osdep.h"
++#include "qemu/module.h"
++#include "qemu/option.h"
++#include "qemu/sockets.h"
++#include "io/channel-file.h"
++#include "qapi/error.h"
++
++#include <sys/ioctl.h>
++#include <termios.h>
++#include "chardev/char-fd.h"
++
++#ifdef HAVE_CHARDEV_ZCONSOLE
++
++// XXX once illumos has cfmakeraw() that can be used instead.
++static void
++cfmakeraw (struct termios *termios_p)
++{
++	termios_p->c_iflag &=
++	    ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL | IXON);
++	termios_p->c_oflag &= ~OPOST;
++	termios_p->c_lflag &= ~(ECHO | ECHONL | ICANON | ISIG | IEXTEN);
++	termios_p->c_cflag &= ~(CSIZE | PARENB);
++	termios_p->c_cflag |= CS8;
++
++	termios_p->c_cc[VMIN] = 0;
++	termios_p->c_cc[VTIME] = 0;
++}
++
++static void
++char_zconsole_open(Chardev *chr, ChardevBackend *backend, bool *be_opened,
++    Error **errp)
++{
++	struct termios tty;
++	int fd;
++
++	fd = qmp_chardev_open_file_source((char *)"/dev/zconsole",
++	    O_RDWR | O_NONBLOCK, errp);
++	if (fd < 0)
++		return;
++
++	tcgetattr(fd, &tty);
++	cfmakeraw(&tty);
++	tcsetattr(fd, TCSAFLUSH, &tty);
++
++	if (!g_unix_set_fd_nonblocking(fd, true, NULL)) {
++		error_setg_errno(errp, errno, "Failed to set FD nonblocking");
++		return;
++	}
++
++	qemu_chr_open_fd(chr, fd, fd);
++}
++
++static void
++char_zconsole_init(ObjectClass *oc, const void *data)
++{
++	ChardevClass *cc = CHARDEV_CLASS(oc);
++
++	cc->open = char_zconsole_open;
++}
++
++static const TypeInfo char_serial_type_info = {
++	.name = TYPE_CHARDEV_ZCONSOLE,
++	.parent = TYPE_CHARDEV_FD,
++	.class_init = char_zconsole_init,
++};
++
++static void register_types(void)
++{
++	type_register_static(&char_serial_type_info);
++}
++
++type_init(register_types);
++
++#endif
+diff --git a/chardev/meson.build b/chardev/meson.build
+index 56ee39ac0b..5a346576b0 100644
+--- a/chardev/meson.build
++++ b/chardev/meson.build
+@@ -27,6 +27,12 @@ else
+     ), util)
+ endif
+ 
++if host_os == 'sunos'
++  chardev_ss.add(files(
++    'char-zconsole.c',
++  ))
++endif
++
+ chardev_ss = chardev_ss.apply({})
+ 
+ system_ss.add(files(
+diff --git a/include/chardev/char.h b/include/chardev/char.h
+index 429852f8d9..eb55c9e862 100644
+--- a/include/chardev/char.h
++++ b/include/chardev/char.h
+@@ -242,6 +242,7 @@ OBJECT_DECLARE_TYPE(Chardev, ChardevClass, CHARDEV)
+ #define TYPE_CHARDEV_PARALLEL "chardev-parallel"
+ #define TYPE_CHARDEV_FILE "chardev-file"
+ #define TYPE_CHARDEV_SERIAL "chardev-serial"
++#define TYPE_CHARDEV_ZCONSOLE "chardev-zconsole"
+ #define TYPE_CHARDEV_SOCKET "chardev-socket"
+ #define TYPE_CHARDEV_UDP "chardev-udp"
+ 
+diff --git a/include/qemu/osdep.h b/include/qemu/osdep.h
+index 96fe51bc39..4c01c862e3 100644
+--- a/include/qemu/osdep.h
++++ b/include/qemu/osdep.h
+@@ -530,6 +530,10 @@ int qemu_shm_alloc(size_t size, Error **errp);
+ #endif
+ #endif
+ 
++#ifdef __illumos__
++#define	HAVE_CHARDEV_ZCONSOLE 1
++#endif
++
+ #if defined(__HAIKU__)
+ #define SIGIO SIGPOLL
+ #endif
+diff --git a/qapi/char.json b/qapi/char.json
+index f0a53f742c..514a9ffc4c 100644
+--- a/qapi/char.json
++++ b/qapi/char.json
+@@ -478,6 +478,8 @@
+ #
+ # @parallel: parallel host device
+ #
++# @zconsole: illumos zone console character device
++#
+ # @pipe: pipes (since 1.5)
+ #
+ # @socket: stream socket
+@@ -528,6 +530,7 @@
+   'data': [ 'file',
+             { 'name': 'serial', 'if': 'HAVE_CHARDEV_SERIAL' },
+             { 'name': 'parallel', 'if': 'HAVE_CHARDEV_PARALLEL' },
++            'zconsole',
+             'pipe',
+             'socket',
+             'udp',
+@@ -721,6 +724,7 @@
+                         'if': 'HAVE_CHARDEV_SERIAL' },
+             'parallel': { 'type': 'ChardevHostdevWrapper',
+                           'if': 'HAVE_CHARDEV_PARALLEL' },
++            'zconsole': 'ChardevHostdevWrapper',
+             'pipe': 'ChardevHostdevWrapper',
+             'socket': 'ChardevSocketWrapper',
+             'udp': 'ChardevUdpWrapper',

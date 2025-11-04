@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ORBit2
 COMPONENT_VERSION=      2.14.19
-COMPONENT_REVISION=     5
+COMPONENT_REVISION=     6
 COMPONENT_PROJECT_URL=  https://projects.gnome.org/ORBit2/
 COMPONENT_SUMMARY=      High-performance CORBA Object Request Broker
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -51,6 +51,7 @@ REQUIRED_PACKAGES+= developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += library/libidl
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

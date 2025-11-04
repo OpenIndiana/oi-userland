@@ -21,20 +21,20 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2023,2024 Friedrich Kink. All rights reserved.
+# Copyright 2023,2025 Friedrich Kink. All rights reserved.
+# Copyright 2025 Klaus Ziegler. All rights reserved.
 #
 
-BUILD_BITS = 64
 BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.19.5
+COMPONENT_VERSION=	4.23.2
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:0e2405b4cec29d0459621f4340a1a74af771ec7cffedff43250cad7f1f87605e
+COMPONENT_ARCHIVE_HASH=	sha256:2de330647e1486683597e261285d04a9b7514ab5c7da27711736e22c7f2b9c2e
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
@@ -49,10 +49,11 @@ include $(WS_MAKE_RULES)/common.mk
 WAF = PYTHONHASHSEED=1 $(PYTHON) $(SOURCE_DIR)/buildtools/bin/waf
 
 # Compiler settings
-CFLAGS	+=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
+CFLAGS	+=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
+CFLAGS	+=	-Wno-implicit-function-declaration -Wno-incompatible-pointer-types
 
-LDFLAGS +=	-R/usr/lib/libsmbclient/$(MACH64)
-LDFLAGS +=	-R/usr/lib/libsmbclient/private/$(MACH64)
+LDFLAGS +=	-R/usr/lib/libsmbclient
+LDFLAGS +=	-R/usr/lib/libsmbclient/private
 
 LDFLAGS +=      -lrt -lsec -lcrypt -lmd5 -lsocket -lnsl -lsendfile
 LDFLAGS +=      -lldap-2.6 -lsendfile -lavahi-common -lavahi-core
@@ -76,12 +77,12 @@ CONFIGURE_PREFIX =      /usr/lib/libsmbclient
 # --enable-fhs should not be on
 CONFIGURE_OPTIONS +=	--prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--exec-prefix=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin/$(MACH64)
-CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/sbin/$(MACH64)
-CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_PREFIX)/$(MACH64)
-CONFIGURE_OPTIONS +=	--with-privatelibdir=$(CONFIGURE_PREFIX)/private/$(MACH64)
+CONFIGURE_OPTIONS +=	--bindir=$(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/sbin
+CONFIGURE_OPTIONS +=	--libdir=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS +=	--with-privatelibdir=$(CONFIGURE_PREFIX)/private
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/samba
-CONFIGURE_OPTIONS +=	--with-pammodulesdir=$(CONFIGURE_PREFIX)/security/$(MACH64)
+CONFIGURE_OPTIONS +=	--with-pammodulesdir=$(CONFIGURE_PREFIX)/security
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS +=	--mandir=$(USRSHAREMANDIR)
 CONFIGURE_OPTIONS +=	--htmldir=/usr/share/samba/swat/help
@@ -90,7 +91,7 @@ CONFIGURE_OPTIONS +=	--with-privatedir=$(ETCDIR)/samba/private
 CONFIGURE_OPTIONS +=	--localstatedir=$(VARDIR)/samba
 CONFIGURE_OPTIONS +=	--with-logfilebase=$(VARDIR)/samba/log
 CONFIGURE_OPTIONS +=	--sharedstatedir=$(VARDIR)/samba/com
-CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec/$(MACH64)
+CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
 CONFIGURE_OPTIONS +=	--with-static-modules=
@@ -111,11 +112,10 @@ CONFIGURE_ENV +=        CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=        CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_ENV +=        PATH=$(GNUBIN.$(BITS)):$(USRBINDIR.$(BITS)):$(PATH.gnu)
 
-# manually added packages
-PERL_REQUIRED_PACKAGES +=library/perl-5/json
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += database/lmdb
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson

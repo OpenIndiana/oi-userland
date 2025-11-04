@@ -24,7 +24,7 @@
 # Copyright 2018, Aurelien Larcher
 # Copyright 2018, Michal Nowak
 # Copyright 2021, Carsten Grzemba
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2025 Friedrich Kink
 #
 
 # This build is a mixture of configure and python style
@@ -35,13 +35,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.76.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	1.90.0
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9e5cff033a7f0d2266818982ad90e4d3e4ef8f8ee1715776c6e25073a136c021
+COMPONENT_ARCHIVE_HASH=	sha256:799a9f9cba4ed5351e071048bcf6b5560755d9009648def33a407dd4961f9b7e
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -54,8 +53,6 @@ RUST_ARCH= x86_64-unknown-illumos
 TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
-
-CLANG_VERSION= 17
 
 # Need some help to pick the correct ar binary
 GNUAR= $(GNUBIN)/ar
@@ -87,7 +84,6 @@ CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(RUSTC_LIBDIR)
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/rust-$(COMPONENT_VERSION)
 CONFIGURE_OPTIONS += --datadir=$(USRSHAREDIR)
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-local-rust
 CONFIGURE_OPTIONS += --local-rust-root=/usr
 CONFIGURE_OPTIONS += --enable-extended       # Build and install cargo too.
@@ -129,7 +125,6 @@ COMPONENT_BUILD_ENV += VERBOSE=1
 COMPONENT_BUILD_ENV += RUST_BACKTRACE=1
 
 COMPONENT_PRE_INSTALL_ACTION = mkdir -p $(PROTO_DIR)
-COMPONENT_POST_INSTALL_ACTION +=  $(TOUCH) $(BUILD_DIR)/META.depend-runtime.res
 
 # Cleanup standard environment
 COMPONENT_INSTALL_ENV= 
@@ -142,11 +137,11 @@ COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 REQUIRED_PACKAGES += developer/lang/rustc # previous before build version
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += library/libgit2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

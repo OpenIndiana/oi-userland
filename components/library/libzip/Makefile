@@ -12,29 +12,28 @@
 # Copyright (c) 2021 Klaus Ziegler
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libzip
-COMPONENT_VERSION=	1.10.1
+COMPONENT_VERSION=	1.11.4
 COMPONENT_SUMMARY=	A C library for reading, creating, and modifying zip archives
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://libzip.org/
-COMPONENT_ARCHIVE_HASH=	sha256:dc3c8d5b4c8bbd09626864f6bcf93de701540f761d76b85d7c7d710f4bd90318
+COMPONENT_ARCHIVE_HASH=	sha256:8a247f57d1e3e6f6d11413b12a6f28a9d388de110adc0ec608d893180ed7097b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_FMRI=		library/libzip
 COMPONENT_LICENSE=	BSD 3-clause
 COMPONENT_LICENSE_FILE=	LICENSE
 
-# We are lackaing nihtest (INSTALL.md mentions the test prerequisites):
+# We are lacking nihtest (INSTALL.md mentions the test prerequisites):
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(MKDIR) $(PROTOUSRLIBDIR)/cmake/libzip ; \
@@ -43,9 +42,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(MV) /tmp/libzip.$$ $(PROTOUSRLIBDIR)/cmake/libzip/libzip-targets-noconfig.cmake
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

@@ -11,28 +11,34 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Output
+#   $WS_TOOLS/perl-integrate-module Test-Output
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Output
-HUMAN_VERSION =			1.034
-COMPONENT_SUMMARY =		Test::Output - Utilities to test STDOUT and STDERR messages.
-COMPONENT_CPAN_AUTHOR =		BDFOY
+COMPONENT_NAME =		Test-Output
+HUMAN_VERSION =			1.036
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Utilities to test STDOUT and STDERR messages.
+COMPONENT_CPAN_AUTHOR =		BRIANDFOY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd42e2801c0d2b482d18c9fb4b06c757054818bcbb2824e5dfbf33ad7a3d69a0
+	sha256:a3a95cb8c4d387fe079add4490757e69927ef0488bbb18b4d55e7fc6d25f1a63
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Optional test dependencies missing from metadata
+# https://github.com/briandfoy/test-output/issues/18
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/capture-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/version

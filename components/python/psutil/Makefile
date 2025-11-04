@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psutil
-HUMAN_VERSION =			5.9.8
-COMPONENT_SUMMARY =		psutil - Cross-platform lib for process and system monitoring in Python.
+HUMAN_VERSION =			7.0.0
+COMPONENT_SUMMARY =		Cross-platform lib for process and system monitoring in Python.  NOTE: the syntax of this script MUST be kept compatible with Python 2.7.
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/psutil
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/90/c7/6dc0a455d111f68ee43f27793971cf03fe29b6ef972042549db29eec39a2/psutil-5.9.8.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6be126e3225486dff286a8fb9a06246a5253f4c7c53b475ea5f5ac934e64194c
+	sha256:7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,11 +31,37 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
+
 # We need to run tests in proto area to get access to compiled modules
 COMPONENT_TEST_DIR = $(PROTO_DIR)/$(PYTHON_LIB)
+# ... and so we need to point back to build dir for scripts subdirectory
+COMPONENT_TEST_ENV += PSUTIL_SCRIPTS_DIR=$(@D)/scripts
+
+# fails on zfs
+PYTEST_ADDOPTS += --deselect psutil/tests/test_posix.py::TestSystemAPIs::test_disk_usage
+# https://github.com/giampaolo/psutil/issues/2357
+PYTEST_ADDOPTS += --deselect psutil/tests/test_process.py::TestProcess::test_long_cmdline
+PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_cmdline
+# process priority and nice does not match
+PYTEST_ADDOPTS += --deselect psutil/tests/test_process.py::TestProcess::test_nice
+# https://github.com/giampaolo/psutil/issues/2358
+PYTEST_ADDOPTS += --deselect psutil/tests/test_process_all.py::TestFetchAllProcesses::test_all
+# these tests are unable to find setup.py because we run tests from non-default directory
+PYTEST_ADDOPTS += --deselect psutil/tests/test_scripts.py::TestSetupScript::test_invocation
+PYTEST_ADDOPTS += --deselect psutil/tests/test_scripts.py::TestSetupScript::test_python2
+# we have no pyperf packaged yet
+PYTEST_ADDOPTS += --deselect psutil/tests/test_scripts.py::TestInternalScripts::test_import_all
+# The test_memory_maps fails on Python 3.9 due to the not so robust realpath implementation
+PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIs::test_memory_maps
+PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_memory_maps
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

@@ -3,14 +3,113 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for note on a project zero variant.
 
-JDK 21 now we're in rampdown.
+21.0.8
 
-Issues known that indicate serious bugs, likely due to not integrating
-loom correctly as they date back to that change. Specifically, I
-suspect we need to provide a working DefaultPoller implementation
-rather than the current stub.
-* jshell doesn't work
-* illuminate doesn't work
+Poller implDeregister() signature change.
+
+Need extra pipewire patch.
+
+Cleanup: remove unused check_addr0_done.
+
+Cleanup: remove the Studio type linkage block from the gcc header.
+
+Cleanup: remove the unshuffle_list.txt hunk.
+
+Cleanup: Correct DTRACE_INSTRUMENTED_OBJS.
+
+Fix: Correct type argument to sema_init.
+
+Cleanup: Duplicate check for SC_CLK_TCK.
+
+21.0.7
+
+Minor patch noise.
+
+Needed to fix up jline due to updates, to match changes in other
+platforms.
+
+Fix incorrect LDFLAGS in TestFilesCompilation.gmk, see
+illumos-port-28.patch
+
+os::print_tos_pc() has been centralized, so remove our copy.
+
+Cleanup: Move the mapfiles (symbol files) to the right place.
+
+Cleanup: Remove the use of lp rather than lpr; all supported systems
+can or even should be using CUPS rather than legacy lp.
+
+Cleanup: Remove /usr/bin/sh override in PrintServiceLookupProvider.java.
+
+Cleanup: Define -D_REENTRANT for non-gcc (ie clang) builds
+
+Cleanup: Remove unused global UseOSErrorReporting.
+
+Cleanup: Remove long unused sysThreadAvailableStackWithSlack()
+
+21.0.6
+
+Minor patch noise.
+
+Cleanup: remove audio solaris 7 compatibility code
+
+Cleanup: use pset_getloadavg() directly
+
+Cleanup: Remove SolarisX86JavaThreadPDAccess, it's for 32-bit.
+
+Cleanup: allow fastdebug builds, see fastdebug.patch
+
+Cleanup: remove unused JSIG_VERSION_1_4_1 define
+
+Cleanup: remove unused SOLARIS_MUTATOR_LIBTHREAD hunk
+
+21.0.5
+
+Drop the png patch. It no longer applies and appears unnecessary with
+the png update.
+
+Need to provide an implementation of pd_pretouch_memory()
+
+Cleanup: src/hotspot/os/solaris and src/hotspot/os_cpu/solaris_x86
+split out into separate restore patches.
+
+Cleanup: format warning in print_memory_info()
+
+Cleanup: use jdk21 to build jdk21, as it's LTS.
+
+21.0.4
+
+Removed last remnants of extended_FILE_stdio, it's unused as 32-bit
+only, and the code to enable it had already been removed.
+
+Remove local copies of os::dont_yield() os::naked_yield()
+
+Centralization of breakpoint()
+
+21.0.3 respin 2
+
+Provide a working DefaultPoller implementation rather than the current
+stub in order to get loom fully working. (Courtesy of Jasper Siepkes.)
+
+21.0.3 respin 1
+
+Fixed the patch for src/java.base/unix/classes/java/lang/ProcessImpl.java
+which fixes the startup hang in jshell and illuminate (and hopefully
+the minecraft reports)
+
+Cleanup: missed the dropping of TIERED in 17+8, it's now
+COMPILER1_AND_COMPILER2
+
+21.0.3
+
+The smartcardio patch failed to apply. It's been reworked, but I can't
+see any evidence of this change in mainline so it's not a
+backport. Fixed up, mostly it's indented one stop deeper.
+
+New undefined symbol os::pd_dll_unload; copy the implementation from
+os_linux.cpp (backported from jdk23).
+
+os::prepare_native_symbols() has been added, provide a no-op implementation
+(backported from jdk22)
 
 21.0.2
 
@@ -233,13 +332,13 @@ a constant so we can easily handle that.
 Build:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk20 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk21 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-dtrace \
 --disable-warnings-as-errors \
 --with-source-date=current \
---with-jobs=3 \
+--with-jobs=4 \
 DATE=/usr/gnu/bin/date \
 STRIP=/usr/gnu/bin/strip
 

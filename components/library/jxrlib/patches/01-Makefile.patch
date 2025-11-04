@@ -20,7 +20,15 @@
  
  ifdef DEBUG
  CFLAGS:=$(CFLAGS) -g -O0 -DDEBUG
-@@ -305,20 +305,20 @@
+@@ -254,6 +254,7 @@
+ swig:
+ 	mkdir -p $(DIR_SRC)/$(DIR_JAVA)/$(JAVA_PKG)
+ 	$(SWIG) -java -c++ -package ome.jxrlib -outdir $(DIR_SRC)/$(DIR_JAVA)/$(JAVA_PKG) -o $(DIR_SRC)/$(DIR_JAVA)/JXR_wrap.cxx java/JXR.i
++	/usr/gnu/bin/patch  -p0 < ../../files/swig.patch
+ 
+ $(DIR_BUILD)/libjxrjava.$(LIBSUFFIX): $(LIBRARIES) $(CXX_LIBRARIES)
+ 	@echo "Building JNI"
+@@ -305,20 +306,20 @@
  	rm -rf $(DIR_BUILD)/*App $(DIR_BUILD)/**/*.o $(DIR_BUILD)/**/*.class $(DIR_BUILD)/libj*.a $(DIR_BUILD)/libj*.$(LIBSUFFIX) $(DIR_BUILD)/libjxr.pc $(DIR_BUILD)/$(CXXDECAPP) $(DIR_BUILD)/$(JAR)
  
  $(DIR_BUILD)/libjxr.pc: $(DIR_SRC)/libjxr.pc.in

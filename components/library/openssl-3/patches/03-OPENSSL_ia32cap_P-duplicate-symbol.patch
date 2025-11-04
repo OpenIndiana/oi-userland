@@ -1,0 +1,18 @@
+https://github.com/openssl/openssl/issues/23528
+
+--- openssl-3.5.3/crypto/perlasm/x86gas.pl.orig
++++ openssl-3.5.3/crypto/perlasm/x86gas.pl
+@@ -167,11 +167,13 @@
+ 	}
+     }
+     if (grep {/\b${nmdecor}OPENSSL_ia32cap_P\b/i} @out) {
++	if (grep {/\.hidden.*\b${nmdecor}OPENSSL_ia32cap_P\b/i} @out) {
+     # OPENSSL_ia32cap_P size should match with internal/cryptlib.h OPENSSL_IA32CAP_P_MAX_INDEXES
+ 	my $tmp=".comm\t${nmdecor}OPENSSL_ia32cap_P,40";
+ 	if ($::macosx)	{ push (@out,"$tmp,2\n"); }
+ 	elsif ($::elf)	{ push (@out,"$tmp,4\n"); }
+ 	else		{ push (@out,"$tmp\n"); }
++	} else { push (@out,".extern\t${nmdecor}OPENSSL_ia32cap_P\n"); }
+     }
+     push(@out,$initseg) if ($initseg);
+     if ($::elf) {

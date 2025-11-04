@@ -17,29 +17,30 @@
 # See https://github.com/yo8192/fcron and http://fcron.free.fr/
 #
 
-BUILD_BITS=64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fcron
-COMPONENT_VERSION=        3.3.1
+COMPONENT_VERSION=        3.3.3
 COMPONENT_SUMMARY=        Frequency Cron
 COMPONENT_PROJECT_URL=    http://fcron.free.fr
 COMPONENT_SRC=		  fcron-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	  $(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	  sha256:f359daa08a63ddfb7fe2f964bb3f5c52244c25aa36f9225a3cc54d36f4681106
+COMPONENT_ARCHIVE_HASH=	  sha256:e5b48c9b78cb38cfb24a038dcb13a08b5121889375378f42f3c94bc250d21497
 COMPONENT_ARCHIVE_URL=	  http://fcron.free.fr/archives/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=           sysutils/fcron
 COMPONENT_CLASSIFICATION= System/Administration and Configuration
 COMPONENT_LICENSE=        GPLv2
+COMPONENT_LICENSE_FILE=   doc/en/txt/gpl.txt
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += $(XPG6MODE)
+
 # a modified copy of the sysVinit-launcher script
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
+CONFIGURE_OPTIONS += --with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS += --with-spooldir=/var/spool/fcron
 CONFIGURE_OPTIONS += --with-piddir=/var/run
 CONFIGURE_OPTIONS += --with-fifodir=/var/run
@@ -57,12 +58,13 @@ CONFIGURE_OPTIONS += --with-pam=no
 
 # default install is install-staged + strip + perms (perms set permissions)
 
-COMPONENT_INSTALL_TARGETS=install-staged
+COMPONENT_INSTALL_TARGETS= install-staged
 
+# Manually added build dependencies
 REQUIRED_PACKAGES += editor/vim
 REQUIRED_PACKAGES += service/network/smtp/sendmail
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/readline
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::Address
+#   $WS_TOOLS/perl-integrate-module Email-Address
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Email::Address
+COMPONENT_NAME =		Email-Address
 HUMAN_VERSION =			1.913
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Email::Address - RFC 2822 Address Parsing and Creation
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		RFC 2822 Address Parsing and Creation
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6afb541f6df6b535ccf7642d361ae18d7a95a3f93ace1bc5373f64c2410ca5af
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

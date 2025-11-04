@@ -1,6 +1,162 @@
---- fontconfig-2.15.0/conf.d/65-nonlatin.conf.orig	2023-03-22 12:36:46.000000000 +0100
-+++ fontconfig-2.15.0/conf.d/65-nonlatin.conf	2023-12-23 19:23:31.705731975 +0100
-@@ -5,6 +5,7 @@
+Combined set of patches from the X gate
+
+Includes changes for:
+15205616 fonts.conf is not correct
+15207994 The Chinese font is ugly and not match with English
+15221279 HG-PGothicB-Sun removed from monospace alias
+15227706 fonts.conf has to be updated to use new korean truetype fonts
+15236574 EUDC should be added in fonts.conf
+15299859 fonts.conf need to be updated with Kacst fonts
+15459388 fonts.conf needs to be updated for Japanese IPAfont
+15460941 fonts.conf needs to be updated for Chinese Unifonts arphic(uming, ukai) fonts
+15463357 fonts.conf needs to be updated for being ordered by the quality of Japanese fonts
+15480345 Proportional ipafont should be used for Serif and Sans-serif alias
+15580990 installing lang-support-all hijacks existing default fonts for some locales
+15602683 wqy-zenhei.ttf is used for Japanese locale in snv_127
+15702176 Sun-Gothic and Sun-Michou fonts should be added in fonts.conf
+20987558 h2gtrm.ttf: "Gothic" should be added in fonts.conf
+
+--- fontconfig-2.17.1/conf.d/40-nonlatin.conf
++++ fontconfig-2.17.1/conf.d/40-nonlatin.conf
+@@ -43,6 +43,46 @@ <family>Jadid</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>HG-PMinchoL-Sun</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>Sun-Michou</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>HG-MinchoL-Sun</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>IPAPMincho</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>IPAMincho</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>FZSongTi</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>FZMingTi</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>KacstQurn</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>SunDotum</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
++		<family>AR PL ShanHeiSun Uni</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
+ 		<family>Kochi Mincho</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+@@ -130,6 +170,42 @@ <family>Terafik</family>
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>HG-PGothicB-Sun</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>HG-GothicB-Sun</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>Sun-Gothic</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>IPAPGothic</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>IPAGothic</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>FZSongTi</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>FZMingTi</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>KacstQurn</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
++		<family>SunDotum</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
+ 		<family>Kochi Gothic</family>
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+@@ -181,6 +257,10 @@ <!--
+   Monospace faces
+  -->
+ 	<alias>
++		<family>SunDotumChe</family>
++		<default><family>monospace</family></default>
++	</alias>
++	<alias>
+ 		<family>NSimSun</family>
+ 		<default><family>monospace</family></default>
+ 	</alias>
+--- fontconfig-2.17.1/conf.d/45-latin.conf
++++ fontconfig-2.17.1/conf.d/45-latin.conf
+@@ -43,6 +43,10 @@ <family>Liberation Serif</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>Lucida Bright</family>
++		<default><family>serif</family></default>
++	</alias>
++	<alias>
+ 		<family>Luxi Serif</family>
+ 		<default><family>serif</family></default>
+ 	</alias>
+@@ -154,6 +158,10 @@ <family>Nimbus Sans</family>
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+ 	<alias>
++		<family>Lucida Sans</family>
++		<default><family>sans-serif</family></default>
++	</alias>
++	<alias>
+ 		<family>Luxi Sans</family>
+ 		<default><family>sans-serif</family></default>
+ 	</alias>
+@@ -225,6 +233,10 @@ <family>Liberation Mono</family>
+ 		<default><family>monospace</family></default>
+ 	</alias>
+ 	<alias>
++		<family>Lucida Sans Typewriter</family>
++		<default><family>monospace</family></default>
++	</alias>
++	<alias>
+ 		<family>Luxi Mono</family>
+ 		<default><family>monospace</family></default>
+ 	</alias>
+--- fontconfig-2.17.1/conf.d/65-nonlatin.conf
++++ fontconfig-2.17.1/conf.d/65-nonlatin.conf
+@@ -5,6 +5,7 @@ <description>Set preferable fonts for no
  	<alias>
  		<family>serif</family>
  		<prefer>
@@ -8,7 +164,7 @@
  			<family>Artsounk</family> <!-- armenian -->
  			<family>BPG UTF8 M</family> <!-- georgian -->
  			<family>Kinnari</family> <!-- thai -->
-@@ -27,10 +28,6 @@
+@@ -27,10 +28,6 @@ <family>Hapax Berbère</family> <!-- tif
  			<family>MS Mincho</family> <!-- han (ja) -->
  			<family>SimSun</family> <!-- han (zh-cn,zh-tw) -->
  			<family>PMingLiu</family> <!-- han (zh-tw) -->
@@ -19,34 +175,34 @@
  			<family>ZYSong18030</family> <!-- han (zh-cn,zh-tw) -->
  			<family>HanyiSong</family> <!-- han (zh-cn,zh-tw) -->
  			<family>Hiragino Mincho ProN</family> <!-- han (ja) - macOS -->
-@@ -38,10 +35,19 @@
+@@ -38,10 +35,21 @@ <family>Songti SC</family> <!-- han (zh-
  			<family>Songti TC</family> <!-- han (zh-tw) - macOS -->
  			<family>SimSong</family> <!-- han (zh-cn) - macOS -->
  			<family>MgOpen Canonica</family>
 -			<family>Sazanami Mincho</family>
-+            <family>HG-PMinchoL-Sun</family>
-+            <family>HG-MinchoL-Sun</family>
++			<family>HG-PMinchoL-Sun</family>
++			<family>HG-MinchoL-Sun</family>
++			<family>Sun-Minchou</family>
  			<family>IPAMonaMincho</family>
++			<family>IPAPMincho</family>
  			<family>IPAMincho</family>
 -			<family>Kochi Mincho</family>
-+            <family>Sazanami Mincho</family>
-+            <family>Sazanami Gothic</family>
-+            <family>FZSongTi</family>
-+            <family>FZMingTi</family>
-+            <family>KacstQurn</family>
-+            <family>WenQuanYi Zen Hei</family> <!-- han (zh-cn,zh-tw) -->
-+            <family>WenQuanYi Bitmap Song</family> <!-- han (zh-cn,zh-tw) -->
-+            <family>AR PL ShanHeiSun Uni</family> <!-- han (ja,zh-cn,zh-tw) -->
-+            <family>AR PL New Sung</family> <!-- han (zh-cn,zh-tw) -->
++			<family>Sazanami Mincho</family>
++			<family>Sazanami Gothic</family>
++			<family>FZSongTi</family>
++			<family>FZMingTi</family>
++			<family>KacstQurn</family>
++			<family>WenQuanYi Zen Hei</family> <!-- han (zh-cn,zh-tw) -->
++			<family>WenQuanYi Bitmap Song</family> <!-- han (zh-cn,zh-tw) -->
++			<family>AR PL ShanHeiSun Uni</family> <!-- han (ja,zh-cn,zh-tw) -->
++			<family>AR PL New Sung</family> <!-- han (zh-cn,zh-tw) -->
  			<family>AR PL SungtiL GB</family>
  			<family>AR PL Mingti2L Big5</family>
-  			<family>AR PL Zenkai Uni</family>
-@@ -69,12 +75,15 @@
-  			<family>Lohit Kannada</family>
-  			<family>Lohit Telugu</family>
-  			<family>Lohit Oriya</family>
-- 			<family>LKLUG</family>
-+            <family>LKLUG</family>
+ 			<family>AR PL Zenkai Uni</family>
+@@ -70,11 +78,14 @@ <family>Lohit Kannada</family>
+ 			<family>Lohit Telugu</family>
+ 			<family>Lohit Odia</family>
+ 			<family>LKLUG</family>
 +			<family>SunDotum</family>
 +			<family>Gothic</family>
  		</prefer>
@@ -58,7 +214,7 @@
  			<family>Nachlieli</family> <!-- hebrew -->
  			<family>Lucida Sans Unicode</family>
  			<family>Yudit Unicode</family>
-@@ -104,10 +113,6 @@
+@@ -104,10 +115,6 @@ <family>MS Gothic</family> <!-- han (ja)
  			<family>UmePlus P Gothic</family> <!-- han (ja) -->
  			<family>Microsoft YaHei</family> <!-- han (zh-cn,zh-tw) -->
  			<family>Microsoft JhengHei</family> <!-- han (zh-tw) -->
@@ -69,37 +225,36 @@
  			<family>Hiragino Sans</family> <!-- han (ja) - macOS -->
  			<family>PingFang SC</family> <!-- han (zh-cn) - macOS -->
  			<family>PingFang TC</family> <!-- han (zh-tw) - macOS -->
-@@ -115,14 +120,22 @@
- 			<family>Hiragino Sans CNS</family> <!-- han (zh-cn) - macOS -->
+@@ -116,13 +123,23 @@ <family>Hiragino Sans CNS</family> <!--
  			<family>Hiragino Sans GB</family> <!-- han (zh-tw) - macOS -->
  			<family>MgOpen Modata</family>
--			<family>VL Gothic</family>
--			<family>IPAMonaGothic</family>
-+            <family>VL Gothic</family>
-+            <family>HG-PGothicB-Sun</family>
-+            <family>HG-GothicB-Sun</family>
-+            <family>IPAMonaGothic</family>
-+            <family>IPAPGothic</family>
+ 			<family>VL Gothic</family>
++			<family>HG-PGothicB-Sun</family>
++			<family>HG-GothicB-Sun</family>
++			<family>Sun-Gothic</family>
+ 			<family>IPAMonaGothic</family>
++			<family>IPAPGothic</family>
  			<family>IPAGothic</family>
  			<family>Sazanami Gothic</family>
 -			<family>Kochi Gothic</family>
 +			<family>FZSongTi</family>
-+            <family>FZMingTi</family>
-+            <family>KacstQurn</family>
++			<family>FZMingTi</family>
++			<family>KacstQurn</family>
  			<family>AR PL KaitiM GB</family>
  			<family>AR PL KaitiM Big5</family>
-- 			<family>AR PL ShanHeiSun Uni</family>
-+ 	        <family>WenQuanYi Zen Hei</family> <!-- han (zh-cn,zh-tw) -->
-+            <family>WenQuanYi Bitmap Song</family> <!-- han (zh-cn,zh-tw) -->
-+            <family>AR PL ShanHeiSun Uni</family> <!--han (ja,zh-cn,zh-tw) -->
-+            <family>AR PL New Sung</family> <!-- han (zh-cn,zh-tw) -->
-  			<family>AR PL SungtiL GB</family>
-  			<family>AR PL Mingti2L Big5</family>
+-			<family>AR PL ShanHeiSun Uni</family>
++			<family>WenQuanYi Zen Hei</family> <!-- han (zh-cn,zh-tw) -->
++                       <family>WenQuanYi Bitmap Song</family> <!-- han (zh-cn,zh-tw) -->
++                       <family>AR PL ShanHeiSun Uni</family> <!--han (ja,zh-cn,zh-tw) -->
++                       <family>AR PL New Sung</family> <!-- han (zh-cn,zh-tw) -->
++
+ 			<family>AR PL SungtiL GB</family>
+ 			<family>AR PL Mingti2L Big5</family>
  			<family>ＭＳ ゴシック</family>
-@@ -151,17 +164,24 @@
-  			<family>Lohit Telugu</family>
-  			<family>Lohit Oriya</family>
-  			<family>LKLUG</family>
+@@ -151,17 +168,25 @@ <family>Lohit Kannada</family>
+ 			<family>Lohit Telugu</family>
+ 			<family>Lohit Odia</family>
+ 			<family>LKLUG</family>
 +			<family>SunDotum</family>
 +			<family>Gothic</family>
  		</prefer>
@@ -112,17 +267,18 @@
  			<family>VL Gothic</family>
 +			<family>HG-GothicB-Sun</family>
 +			<family>HG-MinchoL-Sun</family>
++			<family>Sun-Gothic</family>
  			<family>IPAMonaGothic</family>
  			<family>IPAGothic</family>
  			<family>Sazanami Gothic</family>
 -			<family>Kochi Gothic</family>
 +			<family>FZSongTi</family>
-+                        <family>FZMingTi</family>
-+                        <family>KacstQurn</family>
++			<family>FZMingTi</family>
++			<family>KacstQurn</family>
  			<family>AR PL KaitiM GB</family>
  			<family>MS Gothic</family> <!-- han (ja) -->
  			<family>UmePlus Gothic</family> <!-- han (ja) -->
-@@ -175,7 +195,6 @@
+@@ -175,7 +200,6 @@ <family>AR PL Mingti2L Big5</family>
  			<family>ZYSong18030</family> <!-- han (zh-cn,zh-tw) -->
  			<family>NanumGothicCoding</family> <!-- hangul (ko) -->
  			<family>NanumGothic</family> <!-- hangul (ko) -->
@@ -130,14 +286,14 @@
  			<family>Baekmuk Dotum</family> <!-- hangul (ko) -->
  			<family>Baekmuk Gulim</family> <!-- hangul (ko) -->
  			<family>TlwgTypo</family> <!-- thai -->
-@@ -202,6 +221,10 @@
+@@ -202,6 +226,10 @@ <family>Lohit Kannada</family>
  			<family>Lohit Telugu</family>
- 			<family>Lohit Oriya</family>
+ 			<family>Lohit Odia</family>
  			<family>LKLUG</family>
 +			<family>SunDotumChe</family>
-+                        <family>UnBatang</family>
-+                        <family>UnDotum</family>
-+                        <family>Gothic</family>
++			<family>UnBatang</family>
++			<family>UnDotum</family>
++			<family>Gothic</family>
  		</prefer>
  	</alias>
  <!--

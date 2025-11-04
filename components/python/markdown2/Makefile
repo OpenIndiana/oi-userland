@@ -14,24 +14,29 @@
 #   $WS_TOOLS/python-integrate-project markdown2
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown2
-HUMAN_VERSION =			2.4.13
-COMPONENT_SUMMARY =		markdown2 - A fast and complete Python implementation of Markdown
+HUMAN_VERSION =			2.5.4
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A fast and complete Python implementation of Markdown
 COMPONENT_PROJECT_URL =		https://github.com/trentm/python-markdown2
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/trentm/python-markdown2/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:18ceb56590da77f2c22382e55be48c15b3c8f0c71d6398def387275e6c347a9f
+	sha256:304526a6cc7377ab13b566eb70c5b6929604256603ff5e398694f82057da57e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-TEST_STYLE = pytest
+COMPONENT_SRC =			python-markdown2-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# these lines could appear anywhere in the test output
+COMPONENT_TEST_TRANSFORMS += "-e '/^WARNING:test:skipping/d'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

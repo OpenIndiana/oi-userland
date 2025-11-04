@@ -11,34 +11,46 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTTP::Message
+#   $WS_TOOLS/perl-integrate-module HTTP-Message
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTTP::Message
-HUMAN_VERSION =			6.45
-COMPONENT_SUMMARY =		HTTP::Message - HTTP style message (base class)
+COMPONENT_NAME =		HTTP-Message
+HUMAN_VERSION =			7.01
+COMPONENT_SUMMARY =		HTTP style message (base class)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01cb8406612a3f738842d1e97313ae4d874870d1b8d6d66331f16000943d4cbe
+	sha256:82b79ce680251045c244ee059626fecbf98270bed1467f0175ff5ea91071437e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/clone
-PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
-PERL_REQUIRED_PACKAGES += library/perl-5/http-date
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-brotli
-PERL_REQUIRED_PACKAGES += library/perl-5/io-html
-PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/clone
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-bzip2
+REQUIRED_PACKAGES.perl += library/perl-5/compress-raw-zlib
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/encode-locale
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/http-date
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress-brotli
+REQUIRED_PACKAGES.perl += library/perl-5/io-html
+REQUIRED_PACKAGES.perl += library/perl-5/lwp-mediatypes
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-compress-brotli
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/time-local
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/uri

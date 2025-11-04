@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Class::XSAccessor
+#   $WS_TOOLS/perl-integrate-module Class-XSAccessor
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Class::XSAccessor
+COMPONENT_NAME =		Class-XSAccessor
 HUMAN_VERSION =			1.19
-COMPONENT_SUMMARY =		Class::XSAccessor - Generate fast XS accessors without runtime compilation
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Generate fast XS accessors without runtime compilation
 COMPONENT_CPAN_AUTHOR =		SMUELLER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:99c56b395f1239af19901f2feeb125d9ecb4e351a0d80daa9529211a4700a6f2
@@ -29,5 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::RIPEMD160
+#   $WS_TOOLS/perl-integrate-module Crypt-RIPEMD160
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::RIPEMD160
+COMPONENT_NAME =		Crypt-RIPEMD160
 HUMAN_VERSION =			0.08
-COMPONENT_SUMMARY =		Crypt::RIPEMD160 - Perl extension for the RIPEMD-160 Hash function
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Perl extension for the RIPEMD-160 Hash function
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:34d1c87607f6c9defab3741b76d31bccfbb6d4d201af80e0f6083c378130b232
@@ -35,5 +36,7 @@ COMPONENT_POST_BUILD_ACTION += \
 	echo "1;" > $(@D)/blib/lib/auto/Crypt/RIPEMD160/MAC/autosplit.ix ;
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

@@ -14,15 +14,16 @@
 
 BUILD_STYLE= cmake
 USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		CalcMySky
-COMPONENT_VERSION=	0.3.2
+COMPONENT_VERSION=	0.3.5
 COMPONENT_SUMMARY=	CalcMySky simulates scattering of light by the atmosphere to render daytime and twilight skies (without stars)
 COMPONENT_PROJECT_URL=	https://github.com/10110111/CalcMySky
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:680afed66bc9a2fb94b502da649d0d32fad9d91e3ccbab49a86f7d303e72efc6
+COMPONENT_ARCHIVE_HASH=	sha256:d49eab6bc70a2c82bf294dd8ace9ef2fc6df0afbb72ba493bb6d3f1f8cd8829d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/calcmysky
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -54,13 +55,6 @@ CMAKE_OPTIONS += -DQt5_DIR=$(QT5_LIBDIR)/cmake/Qt5
 #CMAKE_OPTIONS += -DQt5Script_DIR=$(QT5_LIBDIR)/cmake/Qt5Script
 #CMAKE_OPTIONS += -DQt5SerialPort_DIR=$(QT5_LIBDIR)/cmake/Qt5SerialPort
 #CMAKE_OPTIONS += -DQt5Widgets_DIR=$(QT5_LIBDIR)/cmake/Qt5Widgets
-
-COMPONENT_TEST_TRANSFORMS= \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/Passed/p" ' \
-	' -e "/passed/p" ' \
-	' -e "/Failed/p" '
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

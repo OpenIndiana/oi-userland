@@ -11,25 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module DBD::SQLite
+#   $WS_TOOLS/perl-integrate-module DBD-SQLite
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		DBD::SQLite
-HUMAN_VERSION =			1.74
-COMPONENT_SUMMARY =		DBD::SQLite - Self-contained RDBMS in a DBI Driver
+COMPONENT_NAME =		DBD-SQLite
+HUMAN_VERSION =			1.76
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Self Contained SQLite RDBMS in a DBI Driver
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8994997d84b9feb4547795f78746c661fb72e3cb6a25dbdd789b731f5688a4dd
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+	sha256:0a33a7a935be63371071dbe600cfaefa67cd971b67580a917bbf6ebaf723c584
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/dbi
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

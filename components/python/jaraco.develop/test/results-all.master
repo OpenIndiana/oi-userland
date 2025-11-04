@@ -5,10 +5,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 42 items
+collecting ... collected 45 items
 
-.::project PASSED
-.::project PASSED
 conftest.py::mypy PASSED
 conftest.py::mypy-status PASSED
 docs/conf.py::mypy PASSED
@@ -22,37 +20,128 @@ jaraco/develop/compat/py38.py::mypy PASSED
 jaraco/develop/compiler.py::mypy PASSED
 jaraco/develop/cpython-sync.py::mypy PASSED
 jaraco/develop/create-github-release.py::mypy PASSED
-jaraco/develop/filters.py::develop.filters PASSED
 jaraco/develop/filters.py::mypy PASSED
+jaraco/develop/filters.py::jaraco.develop.filters PASSED
 jaraco/develop/finalize.py::mypy PASSED
-jaraco/develop/git.py::develop.git.Project PASSED
-jaraco/develop/git.py::develop.git.URLScheme PASSED
-jaraco/develop/git.py::develop.git.make_args PASSED
-jaraco/develop/git.py::develop.git.resolve PASSED
 jaraco/develop/git.py::mypy PASSED
-jaraco/develop/github.py::develop.github.Repo.find_needed_secrets PASSED
+jaraco/develop/git.py::jaraco.develop.git.Project PASSED
+jaraco/develop/git.py::jaraco.develop.git.URLScheme PASSED
+jaraco/develop/git.py::jaraco.develop.git.exists PASSED
+jaraco/develop/git.py::jaraco.develop.git.make_args PASSED
+jaraco/develop/git.py::jaraco.develop.git.resolve PASSED
+jaraco/develop/git.py::jaraco.develop.git.target_for_root PASSED
 jaraco/develop/github.py::mypy PASSED
-jaraco/develop/indent.py::develop.indent.to_spaces PASSED
+jaraco/develop/github.py::jaraco.develop.github.Repo.find_needed_secrets PASSED
 jaraco/develop/indent.py::mypy PASSED
+jaraco/develop/indent.py::jaraco.develop.indent.to_spaces PASSED
 jaraco/develop/init-azure.py::mypy PASSED
 jaraco/develop/macos-build-python.py::mypy PASSED
-jaraco/develop/merge.py::develop.merge.Conflict PASSED
-jaraco/develop/merge.py::develop.merge._enable_rtd PASSED
-jaraco/develop/merge.py::develop.merge._retain_rtd PASSED
 jaraco/develop/merge.py::mypy PASSED
+jaraco/develop/merge.py::jaraco.develop.merge.Conflict PASSED
+jaraco/develop/merge.py::jaraco.develop.merge._enable_rtd PASSED
+jaraco/develop/merge.py::jaraco.develop.merge._retain_rtd PASSED
+jaraco/develop/migrate-config.py::mypy PASSED
 jaraco/develop/print-meta.py::mypy PASSED
 jaraco/develop/projects-run.py::mypy PASSED
 jaraco/develop/pypi.py::mypy PASSED
 jaraco/develop/repo.py::mypy PASSED
 jaraco/develop/rst-header-replace.py::mypy PASSED
 jaraco/develop/rtd.py::mypy PASSED
-jaraco/develop/towncrier.py::develop.towncrier.get_version PASSED
 jaraco/develop/towncrier.py::mypy PASSED
+jaraco/develop/towncrier.py::jaraco.develop.towncrier.get_version PASSED
 jaraco/develop/update-projects.py::mypy PASSED
-
+.::project PASSED
+.::project PASSED
 ===================================== mypy =====================================
 
-Success: no issues found in 28 source files
-======== 42 passed ========
+Success: no issues found in 29 source files
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+
+Name                                      Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------
+conftest.py                                  19      0   100%
+docs/conf.py                                 14      0   100%
+jaraco/develop/__init__.py                    0      0   100%
+jaraco/develop/add-github-secret.py           7      1    86%   18
+jaraco/develop/add-github-secrets.py         17      4    76%   43-46
+jaraco/develop/add-project.py                22     11    50%   20, 30-41
+jaraco/develop/checkout-all.py               11      2    82%   15-16
+jaraco/develop/compat/__init__.py             0      0   100%
+jaraco/develop/compat/py38.py                 8      1    88%   16
+jaraco/develop/compiler.py                   35     23    34%   16-20, 25-31, 36, 46-59
+jaraco/develop/cpython-sync.py               37     18    51%   22-24, 33, 37, 41, 45, 50-66
+jaraco/develop/create-github-release.py       8      2    75%   16-17
+jaraco/develop/filters.py                    24      0   100%
+jaraco/develop/finalize.py                   11      5    55%   11-16
+jaraco/develop/git.py                       137     33    76%   172-187, 206-211, 225-227, 252-256, 261-264
+jaraco/develop/github.py                     73     18    75%   53-56, 59-63, 66-73, 76-79
+jaraco/develop/indent.py                     54     37    31%   12-19, 23-27, 31-32, 40-42, 46-58, 66-90
+jaraco/develop/init-azure.py                 28     17    39%   11-23, 27-42, 46-49, 53-66, 71-75
+jaraco/develop/macos-build-python.py         24     15    38%   16-19, 23-27, 36-46
+jaraco/develop/merge.py                      69     28    59%   65, 94-97, 109-110, 115-123, 128-130, 162-164, 168-171, 176-180
+jaraco/develop/migrate-config.py             33     23    30%   15-17, 25-49, 53, 58-70
+jaraco/develop/print-meta.py                  7      2    71%   10-11
+jaraco/develop/projects-run.py               14      6    57%   33-38
+jaraco/develop/pypi.py                        7      3    57%   8-10
+jaraco/develop/repo.py                       20      5    75%   22-28, 32-33
+jaraco/develop/rst-header-replace.py         15      9    40%   8-12, 17-26
+jaraco/develop/rtd.py                        13      6    54%   11-14, 18-19
+jaraco/develop/towncrier.py                  28      8    71%   26-27, 50-56, 68-76, 80
+jaraco/develop/update-projects.py            40     27    32%   28-33, 37-53, 69-74
+-----------------------------------------------------------------------
+TOTAL                                       775    304    61%
+======== 45 passed ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5/test_static_directory_without_1
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_1'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw5
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw5'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6/test_static_directory_without_0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_static_directory_without_0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw6
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw6'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:91: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
   py$(PYV): OK
   congratulations :)

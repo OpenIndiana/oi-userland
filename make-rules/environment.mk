@@ -44,14 +44,21 @@ component-environment-check::
 	@/usr/sbin/psrinfo -vp
 	@/usr/sbin/ipadm show-addr
 	$(call separator-line,Required Packages)
-	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%)
+	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) \
+		$(if $(filter no,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)) \
+		$(filter-out $(if $(filter yes,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)),$(REQUIRED_PACKAGES:%=/%))
 	$(call separator-line)
 
 component-environment-prep::
-	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) >/dev/null || \
+	@/usr/bin/pkg list -vH $(USERLAND_REQUIRED_PACKAGES:%=/%) \
+	    $(if $(filter no,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)) \
+	    $(filter-out $(if $(filter yes,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)),$(REQUIRED_PACKAGES:%=/%)) \
+	    >/dev/null || \
 		{ echo "Adding required packages to build environment..."; \
 		while true ; do \
-		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_REQUIRED_PACKAGES:%=/%) $(REQUIRED_PACKAGES:%=/%) ; \
+		  $(PFEXEC) /usr/bin/pkg install --accept -v $(USERLAND_REQUIRED_PACKAGES:%=/%) \
+			$(if $(filter no,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)) \
+			$(filter-out $(if $(filter yes,$(BOOTSTRAP)),$(BOOTSTRAP_SKIP_REQUIRED_PACKAGES:%=/%)),$(REQUIRED_PACKAGES:%=/%)) ; \
 		  RETVAL=$$? ; \
 		  [ $$RETVAL -eq 0 ] && break; \
 		  [ $$RETVAL -eq 4 ] && break; \
@@ -95,7 +102,7 @@ component-test-environment-prep::
 	done
 
 ZONENAME_PREFIX = bz
-ZONENAME_ID = $(shell echo "$(WS_TOP)" | sha1sum | cut -c0-7)-$(COMPONENT_NAME)
+ZONENAME_ID = $(shell echo "$(WS_TOP)" | $(SHA1SUM) | $(CUT) -c0-7)-$(COMPONENT_NAME)
 ZONENAME = $(ZONENAME_PREFIX)-$(ZONENAME_ID)
 
 component-zone-template:
@@ -128,14 +135,14 @@ component-zone-build:
 	@while $$(true); do \
   		echo "Waiting for zoneproxyd to be ready.."; \
   		PROXY_PID=$$(/usr/bin/svcs -p svc:/application/pkg/zones-proxyd:default | \
-  			nawk '$$0 ~ /zoneproxyd/ {print $$2}') && \
+			$(NAWK) '$$0 ~ /zoneproxyd/ {print $$2}') && \
   			$(PFEXEC) /usr/bin/pfiles $${PROXY_PID} | \
   			$(GNU_GREP) $(ZONENAME) >/dev/null 2>&1 && break; \
   		sleep 10; \
   	done
 	$(PFEXEC) /usr/sbin/svcadm -z $(ZONENAME) \
 		enable svc:/application/pkg/zones-proxy-client:default
-	ZONEROOT="$$(/usr/sbin/zoneadm -z $(ZONENAME) list -p | cut -d: -f4)/root" && \
+	ZONEROOT="$$(/usr/sbin/zoneadm -z $(ZONENAME) list -p | $(CUT) -d: -f4)/root" && \
 		$(PFEXEC) /usr/bin/pkg -R $${ZONEROOT} set-property use-system-repo True && \
 	while $$(true); do \
 		echo "Waiting for sysrepo to be ready..." && \

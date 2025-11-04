@@ -12,19 +12,19 @@
 # Copyright 2019 Michal Nowak
 #
 
-OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD= yes
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gsoap
 COMPONENT_MAJOR_VERSION= 2.8
-COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).133
+COMPONENT_VERSION=      $(COMPONENT_MAJOR_VERSION).139
 COMPONENT_SUMMARY=      Toolkit for SOAP/REST-based C/C++ server and client web service applications
 COMPONENT_PROJECT_URL=  https://www.genivia.com/products.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_MAJOR_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)_$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/gsoap2/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:93e124302c5775e115e661af2bf4e1f07fa05aef14f58ce65b5c27c833afe279
+COMPONENT_ARCHIVE_HASH= sha256:74d1d7854c8ff500729a3003fd07536e417f3e900aee2eeb2d9300d70e4c047b
 COMPONENT_FMRI=         library/gsoap
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      GPLv2+ with exceptions
@@ -81,12 +81,14 @@ CONFIGURE_OPTIONS += --with-openssl-incdir=$(OPENSSL_INCDIR)
 # We opt for the former.
 COMPONENT_BUILD_ARGS=
 
+COMPONENT_TEST_TRANSFORMS += ' -e "/successful/p" '
+
 # dos2unix
 REQUIRED_PACKAGES += system/extended-system-utilities
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

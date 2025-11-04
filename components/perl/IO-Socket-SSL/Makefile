@@ -11,26 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module IO::Socket::SSL
+#   $WS_TOOLS/perl-integrate-module IO-Socket-SSL
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		IO::Socket::SSL
-HUMAN_VERSION =			2.085
-COMPONENT_SUMMARY =		IO::Socket::SSL - Nearly transparent SSL encapsulation for IO::Socket::INET.
+COMPONENT_NAME =		IO-Socket-SSL
+HUMAN_VERSION =			2.095
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Nearly transparent SSL encapsulation for IO::Socket::INET.
 COMPONENT_CPAN_AUTHOR =		SULLR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:95b2f7c0628a7e246a159665fbf0620d0d7835e3a940f22d3fdd47c3aa799c2e
+	sha256:7e764392b1b8bd44e654183c082b75be47800e98d7cd325f0e1b76c7d9a6b768
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Optional test dependencies missing from metadata
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-inet6
-
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl

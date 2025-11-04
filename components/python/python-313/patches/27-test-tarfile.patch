@@ -1,0 +1,20 @@
+
+The resolution of file timestamps is different in ZFS to tmpfs, so the
+comparison fails with an error like:
+
+ AssertionError: 1686679063.0 not greater than or equal to 1686679063.8400018
+
+Convert both timestamps to integer before comparing.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_tarfile.py a/Lib/test/test_tarfile.py
+--- a~/Lib/test/test_tarfile.py	1970-01-01 00:00:00
++++ a/Lib/test/test_tarfile.py	1970-01-01 00:00:00
+@@ -3299,7 +3299,7 @@ class NoneInfoExtractTests(ReadTest):
+                         if not path.is_symlink():
+                             raise
+                     else:
+-                        self.assertGreaterEqual(path.stat().st_mtime, now)
++                        self.assertGreaterEqual(int(path.stat().st_mtime), int(now))
+ 
+     def test_extractall_none_mode(self):
+         # modes of directories and regular files should match the mode

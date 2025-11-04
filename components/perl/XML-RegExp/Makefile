@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::RegExp
+#   $WS_TOOLS/perl-integrate-module XML-RegExp
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::RegExp
+COMPONENT_NAME =		XML-RegExp
 HUMAN_VERSION =			0.04
-COMPONENT_SUMMARY =		XML::RegExp - Regular expressions for XML tokens
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Regular expressions for XML tokens
 COMPONENT_CPAN_AUTHOR =		TJMATHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:df1990096036085c8e2d45904fe180f82bfed40f1a7e05243f334ea10090fc54
@@ -29,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

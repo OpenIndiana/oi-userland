@@ -114,7 +114,7 @@ PYTHON_BOOTSTRAP_CHECKPOINT_2 +=	packaging
 PYTHON_BOOTSTRAP_CHECKPOINT_2 +=		flit_core
 
 # Particular python runtime is always required (at least to run setup.py)
-PYTHON_REQUIRED_PACKAGES += runtime/python
+USERLAND_REQUIRED_PACKAGES.python += runtime/python
 
 define python-rule
 $(BUILD_DIR)/%-$(1)/.built:		PYTHON_VERSION=$(1)
@@ -159,9 +159,8 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
-# Set CARGO_HOME to make sure projects built using rust (for example via
-# setuptools-rust) do not pollute user's home directory with cargo bits.
-COMPONENT_BUILD_ENV += CARGO_HOME=$(@D)/.cargo
+# Force our preferred target linker for cargo.
+COMPONENT_BUILD_ENV += CARGO_TARGET_$(shell echo $(RUST_TRIPLET) | $(TR) '[a-z]-' '[A-Z]_')_LINKER=$(CARGO_TARGET_LINKER)
 
 # Make sure the default Python version is installed last and so is the
 # canonical version.  This is needed for components that keep PYTHON_VERSIONS
@@ -174,19 +173,11 @@ $(foreach pyver,$(filter-out $(PYTHON_VERSION),$(PYTHON_VERSIONS)),$(eval $(call
 
 # We need to copy the source dir to avoid its modification by install target
 # where egg-info is re-generated
-CLONEY_ARGS = CLONEY_MODE="copy"
+CLONEY_MODE = copy
+
+COMPONENT_CONFIGURE_ACTION = true
 
 COMPONENT_BUILD_CMD = $(PYTHON) setup.py --no-user-cfg build $(COMPONENT_BUILD_SETUP_PY_ARGS)
-
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
-	$(RM) -r $(@D) ; $(MKDIR) $(@D)
-	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
-	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(COMPONENT_BUILD_CMD) $(COMPONENT_BUILD_ARGS))
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
 
 
 COMPONENT_INSTALL_CMD = $(PYTHON) setup.py --no-user-cfg install
@@ -197,13 +188,8 @@ COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
 COMPONENT_INSTALL_ARGS +=	--skip-build
 COMPONENT_INSTALL_ARGS +=	--force
 
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-		$(COMPONENT_INSTALL_CMD) $(COMPONENT_INSTALL_ARGS))
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
+# this is needed to override the default set in shared-macros.mk
+COMPONENT_INSTALL_TARGETS =
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Rename binaries in /usr/bin to contain version number
@@ -237,9 +223,14 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|$(PYTHON_DIR)|\$$(PYTHON_DIR)|g'"
 # Testing depends on install target because we want to test installed modules
 COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 # Point Python to the proto area so it is able to find installed modules there
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTOPYTHONVENDORDIR)
 # Make sure testing is able to find own installed executables (if any)
 COMPONENT_TEST_ENV +=	PATH=$(PROTOUSRBINDIR):$(PATH)
+
+# Suppress the unnecessary warning that pollutes the test results and is
+# causing many tests to fail.
+# See also https://github.com/coherent-oss/coherent.licensed/issues/6
+COMPONENT_TEST_ENV += COHERENT_LICENSED_UNUSED_ACTION=ignore
 
 # determine the type of tests we want to run.
 ifeq ($(strip $(wildcard $(COMPONENT_TEST_RESULTS_DIR)/results-*.master)),)
@@ -311,6 +302,7 @@ TOX_TESTENV = -e py$(subst .,,$(PYTHON_VERSION))
 
 # Make sure following tools are called indirectly to properly support tox-current-env
 TOX_CALL_INDIRECTLY += py.test
+TOX_CALL_INDIRECTLY.py.test += pytest
 TOX_CALL_INDIRECTLY += pytest
 TOX_CALL_INDIRECTLY += coverage
 TOX_CALL_INDIRECTLY += zope-testrunner
@@ -361,35 +353,44 @@ COMPONENT_TEST_TRANSFORMS += \
 	) | $(COMPONENT_TEST_TRANSFORMER)"
 
 # tox package together with the tox-current-env plugin is needed
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/tox-current-env
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox-current-env
 
 # Generate raw lists of test dependencies per Python version
-# Please note we set PATH below four times for $(COMPONENT_TEST_CMD) (aka tox)
-# to workaround https://github.com/tox-dev/tox/issues/2538
+# Please note we set PATH below five times for tox to workaround
+# https://github.com/tox-dev/tox/issues/2538
 COMPONENT_POST_INSTALL_ACTION += \
-	if [ -x "$(COMPONENT_TEST_CMD)" ] ; then \
+	if $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) || exit 1 ; \
 		echo "Testing extras:" ; \
-		PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
-		( PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV) || exit 1 ; \
+		echo "Testing dependency groups:" ; \
+		PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
+		( PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
-				PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+				PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
-		for e in $$(PATH=$(PATH) $(COMPONENT_TEST_CMD) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
-			PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		for e in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
+			PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
-		done ) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
+		done \
+		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
 	fi ;
+# Both tox and tox-current-env are needed to generate the list of test
+# dependencies.  During the bootstrap they might be not available so depend on
+# them conditionally.  Additionally, the python-requires script requires
+# packaging, but this dependency is already handled separately (see below).
+USERLAND_REQUIRED_PACKAGES.python += $(if $(filter yes,$(PYTHON_TEST_BOOTSTRAP)),,library/python/tox)
+USERLAND_REQUIRED_PACKAGES.python += $(if $(filter yes,$(PYTHON_TEST_BOOTSTRAP)),,library/python/tox-current-env)
 else ifeq ($(strip $(TEST_STYLE)),pytest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m pytest
 COMPONENT_TEST_ARGS =		$(PYTEST_ADDOPTS)
 COMPONENT_TEST_TARGETS =
 
-USERLAND_TEST_REQUIRED_PACKAGES += library/python/pytest
+USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/pytest
 else ifeq ($(strip $(TEST_STYLE)),unittest)
 COMPONENT_TEST_CMD =		$(PYTHON) -m unittest
 COMPONENT_TEST_ARGS =
@@ -410,69 +411,87 @@ PYTEST_ADDOPTS += --verbose
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
-# Avoid loading of unexpected pytest plugins.
-define disable-pytest-plugin
-PYTEST_ADDOPTS += $$(if $$(filter library/python/$(2)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),,-p 'no:$(1)')
+# Create list of required pytest plugins.
+define pytest-plugin
+PYTEST_PLUGINS += $$(if $$(filter library/python/$(1)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),$(2))
 endef
-$(eval $(call disable-pytest-plugin,anyio,anyio))
-$(eval $(call disable-pytest-plugin,asyncio,pytest-asyncio))		# adds line to test report header
-$(eval $(call disable-pytest-plugin,benchmark,pytest-benchmark))	# adds line to test report header; adds benchmark report
-$(eval $(call disable-pytest-plugin,black,pytest-black))		# runs extra test(s)
-$(eval $(call disable-pytest-plugin,check,pytest-check))
-$(eval $(call disable-pytest-plugin,checkdocs,pytest-checkdocs))	# runs extra test(s)
-$(eval $(call disable-pytest-plugin,console-scripts,pytest-console-scripts))
-$(eval $(call disable-pytest-plugin,cov,pytest-cov))
-$(eval $(call disable-pytest-plugin,custom_exit_code,pytest-custom-exit-code))
-$(eval $(call disable-pytest-plugin,enabler,pytest-enabler))
-$(eval $(call disable-pytest-plugin,env,pytest-env))
-$(eval $(call disable-pytest-plugin,faker,faker))
-$(eval $(call disable-pytest-plugin,flake8,pytest-flake8))
-$(eval $(call disable-pytest-plugin,flaky,flaky))
-$(eval $(call disable-pytest-plugin,freezer,pytest-freezer))
-$(eval $(call disable-pytest-plugin,helpers_namespace,pytest-helpers-namespace))
-$(eval $(call disable-pytest-plugin,hypothesispytest,hypothesis))	# adds line to test report header
-$(eval $(call disable-pytest-plugin,jaraco.test.http,jaraco-test))
-$(eval $(call disable-pytest-plugin,kgb,kgb))
-$(eval $(call disable-pytest-plugin,metadata,pytest-metadata))		# adds line to test report header
-$(eval $(call disable-pytest-plugin,mypy,pytest-mypy))			# runs extra test(s)
-$(eval $(call disable-pytest-plugin,perf,pytest-perf))			# https://github.com/jaraco/pytest-perf/issues/9
-$(eval $(call disable-pytest-plugin,pytest home,pytest-home))
-$(eval $(call disable-pytest-plugin,pytest-datadir,pytest-datadir))
-$(eval $(call disable-pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))	# could cause tests to fail
-$(eval $(call disable-pytest-plugin,pytest-teamcity,teamcity-messages))
-$(eval $(call disable-pytest-plugin,pytest_expect,pytest-expect))
-$(eval $(call disable-pytest-plugin,pytest_fakefs,pyfakefs))
-$(eval $(call disable-pytest-plugin,pytest_forked,pytest-forked))
-$(eval $(call disable-pytest-plugin,pytest_httpserver,pytest-httpserver))
-$(eval $(call disable-pytest-plugin,pytest_ignore_flaky,pytest-ignore-flaky))
-$(eval $(call disable-pytest-plugin,pytest_lazyfixture,pytest-lazy-fixtures))
-$(eval $(call disable-pytest-plugin,pytest_mock,pytest-mock))
-$(eval $(call disable-pytest-plugin,randomly,pytest-randomly))		# reorders tests
-$(eval $(call disable-pytest-plugin,regressions,pytest-regressions))
-$(eval $(call disable-pytest-plugin,relaxed,pytest-relaxed))		# runs extra test(s); produces different test report
-$(eval $(call disable-pytest-plugin,reporter,pytest-reporter))		# https://github.com/christiansandberg/pytest-reporter/issues/8
-$(eval $(call disable-pytest-plugin,rerunfailures,pytest-rerunfailures))
-$(eval $(call disable-pytest-plugin,salt-factories,pytest-salt-factories))			# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-event-listener,pytest-salt-factories))	# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-factories,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-loader-mock,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-log-server,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-markers,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-sysinfo,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,salt-factories-sysstats,pytest-salt-factories))		# requires salt
-$(eval $(call disable-pytest-plugin,shell-utilities,pytest-shell-utilities))
-$(eval $(call disable-pytest-plugin,skip-markers,pytest-skip-markers))
-$(eval $(call disable-pytest-plugin,socket,pytest-socket))
-$(eval $(call disable-pytest-plugin,subprocess,pytest-subprocess))
-$(eval $(call disable-pytest-plugin,subtests,pytest-subtests))
-$(eval $(call disable-pytest-plugin,system-statistics,pytest-system-statistics))
-$(eval $(call disable-pytest-plugin,time_machine,time-machine))
-$(eval $(call disable-pytest-plugin,timeout,pytest-timeout))
-$(eval $(call disable-pytest-plugin,travis-fold,pytest-travis-fold))
-$(eval $(call disable-pytest-plugin,typeguard,typeguard))
-$(eval $(call disable-pytest-plugin,xdist,pytest-xdist))
-$(eval $(call disable-pytest-plugin,xdist.looponfail,pytest-xdist))
-$(eval $(call disable-pytest-plugin,xprocess,pytest-xprocess))		# adds a reminder line to test output
+$(eval $(call pytest-plugin,anyio,anyio))
+$(eval $(call pytest-plugin,betamax,pytest-betamax))
+$(eval $(call pytest-plugin,faker,faker))
+$(eval $(call pytest-plugin,flaky,flaky))
+$(eval $(call pytest-plugin,hypothesis,hypothesispytest))
+$(eval $(call pytest-plugin,inline-snapshot,inline_snapshot))
+$(eval $(call pytest-plugin,jaraco-test,jaraco.test.http))
+$(eval $(call pytest-plugin,jaraco-vcs,jaraco.vcs.fixtures))
+$(eval $(call pytest-plugin,kgb,kgb))
+$(eval $(call pytest-plugin,pyfakefs,fakefs))
+$(eval $(call pytest-plugin,pytest-asyncio,asyncio))
+$(eval $(call pytest-plugin,pytest-benchmark,benchmark))
+$(eval $(call pytest-plugin,pytest-black,black))
+$(eval $(call pytest-plugin,pytest-check,check))
+$(eval $(call pytest-plugin,pytest-checkdocs,checkdocs))
+$(eval $(call pytest-plugin,pytest-console-scripts,console-scripts))
+$(eval $(call pytest-plugin,pytest-cov,pytest_cov))
+$(eval $(call pytest-plugin,pytest-custom-exit-code,custom_exit_code))
+$(eval $(call pytest-plugin,pytest-datadir,pytest-datadir))
+$(eval $(call pytest-plugin,pytest-dependency,dependency))
+$(eval $(call pytest-plugin,pytest-enabler,enabler))
+$(eval $(call pytest-plugin,pytest-env,env))
+$(eval $(call pytest-plugin,pytest-flake8,flake8))
+$(eval $(call pytest-plugin,pytest-forked,pytest_forked))
+$(eval $(call pytest-plugin,pytest-freezer,freezer))
+$(eval $(call pytest-plugin,pytest-helpers-namespace,helpers_namespace))
+$(eval $(call pytest-plugin,pytest-home,home))
+$(eval $(call pytest-plugin,pytest-httpserver,pytest_httpserver))
+$(eval $(call pytest-plugin,pytest-ignore-flaky,pytest_ignore_flaky))
+$(eval $(call pytest-plugin,pytest-lazy-fixtures,pytest_lazyfixture))
+$(eval $(call pytest-plugin,pytest-metadata,metadata))
+$(eval $(call pytest-plugin,pytest-mock,pytest_mock))
+$(eval $(call pytest-plugin,pytest-mypy,mypy))
+$(eval $(call pytest-plugin,pytest-mypy-plugins,pytest-mypy-plugins))
+$(eval $(call pytest-plugin,pytest-order,pytest_order))
+$(eval $(call pytest-plugin,pytest-perf,perf))
+$(eval $(call pytest-plugin,pytest-randomly,randomly))
+$(eval $(call pytest-plugin,pytest-regressions,regressions))
+$(eval $(call pytest-plugin,pytest-relaxed,relaxed))
+$(eval $(call pytest-plugin,pytest-reporter,reporter))
+$(eval $(call pytest-plugin,pytest-rerunfailures,rerunfailures))
+$(eval $(call pytest-plugin,pytest-run-parallel,run-parallel))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-event-listener))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-factories))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-loader-mock))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-log-server))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-markers))
+$(eval $(call pytest-plugin,pytest-salt-factories,salt-factories-sysinfo))
+$(eval $(call pytest-plugin,pytest-shell-utilities,shell-utilities))
+$(eval $(call pytest-plugin,pytest-skip-markers,skip-markers))
+$(eval $(call pytest-plugin,pytest-socket,socket))
+$(eval $(call pytest-plugin,pytest-subprocess,pytest-subprocess))
+$(eval $(call pytest-plugin,pytest-subtests,subtests))
+$(eval $(call pytest-plugin,pytest-system-statistics,system-statistics))
+$(eval $(call pytest-plugin,pytest-timeout,timeout))
+$(eval $(call pytest-plugin,pytest-xdist,xdist))
+$(eval $(call pytest-plugin,pytest-xdist,xdist.looponfail))
+$(eval $(call pytest-plugin,pytest-xprocess,xprocess))
+$(eval $(call pytest-plugin,teamcity-messages,pytest-teamcity))
+$(eval $(call pytest-plugin,time-machine,time_machine))
+$(eval $(call pytest-plugin,typeguard,typeguard))
+#
+# Transitional (indirect) runtime dependencies of pytest plugins.
+#
+# Note: The list is not exhaustive and contians only entries that proved to be
+# needed or useful.
+#
+# pytest-datadir is required by pytest-regressions and pytest-regressions is required by coincidence
+$(eval $(call pytest-plugin,coincidence,regressions))
+$(eval $(call pytest-plugin,coincidence,pytest-datadir))
+
+# By default disable all pytest plugins ...
+COMPONENT_TEST_ENV += PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+# ... and load those in the PYTEST_PLUGINS list only.
+# $(sort) is used to avoid duplicates and to strip spaces.
+COMPONENT_TEST_ENV += PYTEST_PLUGINS="$(subst $(space),$(comma),$(sort $(PYTEST_PLUGINS)))"
 
 # By default we are not interested in full list of test failures so exit on
 # first failure to save time.  This could be easily overridden from environment
@@ -554,6 +573,10 @@ COMPONENT_TEST_TRANSFORMS += \
 			$(CAT) \
 		) | $(COMPONENT_TEST_TRANSFORMER) -e ''")
 
+# Remove timestamp produced by coincidence
+USE_COINCIDENCE = $(filter library/python/coincidence-$(subst .,,$(PYTHON_VERSION)), $(REQUIRED_PACKAGES) $(TEST_REQUIRED_PACKAGES))
+COMPONENT_TEST_TRANSFORMS += $(if $(strip $(USE_COINCIDENCE)),"-e '/^Test session started at/d'")
+
 # Normalize setup.py test results.  The setup.py testing could be used either
 # directly or via tox so add these transforms for all test styles
 # unconditionally.
@@ -561,39 +584,6 @@ COMPONENT_TEST_TRANSFORMS += "-e '/SetuptoolsDeprecationWarning:/,+1d'"		# depen
 COMPONENT_TEST_TRANSFORMS += "-e 's/^\(Ran [0-9]\{1,\} tests\{0,1\}\) in .*$$/\1/'"	# delete timing from test results
 
 COMPONENT_TEST_DIR = $(@D)$(COMPONENT_SUBDIR:%=/%)
-
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
 
 ifeq ($(strip $(SINGLE_PYTHON_VERSION)),no)
 # Temporarily create symlinks for renamed binaries
@@ -639,7 +629,7 @@ REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend-runtime.res
 
 # Generate raw lists of runtime dependencies per Python version
 COMPONENT_POST_INSTALL_ACTION += \
-	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+	PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) >> $(@D)/.depend-runtime ;
 
 # Convert raw per version lists of runtime dependencies to single resolved
@@ -656,10 +646,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 		$(CAT) $$f | $(DOS2UNIX) -ascii ; \
 	done ; \
 	for e in $(TEST_REQUIREMENTS_EXTRAS) ; do \
-		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 	done ) | $(WS_TOOLS)/python-resolve-deps \
-		PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
 
@@ -686,7 +676,5 @@ endif
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)
 
-# Make it easy to construct a URL for a pypi source download.
-pypi_url_multi = pypi:///$(COMPONENT_NAME_$(1))==$(COMPONENT_VERSION_$(1))
-pypi_url_single = pypi:///$(COMPONENT_NAME)==$(COMPONENT_VERSION)
-pypi_url = $(if $(COMPONENT_NAME_$(1)),$(pypi_url_multi),$(pypi_url_single))
+# Use common rules
+USE_COMMON_RULES = yes

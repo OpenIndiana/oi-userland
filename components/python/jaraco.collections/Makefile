@@ -11,34 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.collections
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.collections jaraco_collections
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.collections
-HUMAN_VERSION =			5.0.0
-COMPONENT_SUMMARY =		jaraco.collections - Collection objects similar to those in stdlib by jaraco
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.collections
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e6/85/9c4ab9772bcc2c9b4beffd56aca70f646e4a1f3a576579fa401d742b46a8/jaraco.collections-5.0.0.tar.gz
+COMPONENT_NAME =		jaraco_collections
+HUMAN_VERSION =			5.2.1
+COMPONENT_SUMMARY =		Collection objects similar to those in stdlib by jaraco
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1680e8d09f295f625c7ba926880175a26fdbe7092b4c76d198e30476b21cfe68
+	sha256:dab81970bad6f0ab53b20745f1b01da37926e4c0fcd425046aa45e0d8efa18ed
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-text
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler

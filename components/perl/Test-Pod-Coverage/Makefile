@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Pod::Coverage
+#   $WS_TOOLS/perl-integrate-module Test-Pod-Coverage
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Pod::Coverage
+COMPONENT_NAME =		Test-Pod-Coverage
 HUMAN_VERSION =			1.10
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::Pod::Coverage - Check for pod coverage in your distribution.
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Check for pod coverage in your distribution
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:48c9cca9f7d99eee741176445b431adf09c029e1aa57c4703c9f46f7601d40d4
@@ -30,5 +30,8 @@ COMPONENT_LICENSE =		Artistic-2.0
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/pod-coverage
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

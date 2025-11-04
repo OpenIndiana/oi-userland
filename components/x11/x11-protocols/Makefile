@@ -17,14 +17,15 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xorgproto
-COMPONENT_VERSION= 2023.2
+COMPONENT_VERSION= 2024.1
+COMPONENT_REVISION= 1
 COMPONENT_FMRI= x11/header/x11-protocols
 COMPONENT_SUMMARY= X Window System protocol definitions
 COMPONENT_CLASSIFICATION= Development/X11
 OMPONENT_PROJECT_URL= $(XORG_PROJECT_URL)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b61fbc7db82b14ce2dc705ab590efc32b9ad800037113d1973811781d5118c2c
+COMPONENT_ARCHIVE_HASH= sha256:372225fd40815b8423547f5d890c5debc72e88b91088fbfb13158c20495ccb59
 COMPONENT_ARCHIVE_URL= $(XORG_PROTO_BASE_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= MIT
 
@@ -36,7 +37,6 @@ COMPONENT_PREP_ACTION +=( cd $(@D); autoreconf -fiv );
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --without-xmlto
-CONFIGURE_OPTIONS+= --with-asciidoc
 CONFIGURE_OPTIONS+= --without-fop
 CONFIGURE_OPTIONS+= --localstatedir=/var
 CONFIGURE_OPTIONS+= --enable-legacy
@@ -44,7 +44,6 @@ CONFIGURE_OPTIONS+= --enable-legacy
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
 # Build dependencies
-REQUIRED_PACKAGES += text/asciidoc
 REQUIRED_PACKAGES += developer/build/autoconf/xorg-macros
 
 # Auto-generated dependencies

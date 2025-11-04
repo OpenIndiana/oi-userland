@@ -14,15 +14,15 @@
 # Copyright 2022 Niklas Poslovski
 #
 
-BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= enchant
-COMPONENT_VERSION= 2.6.9
+COMPONENT_VERSION= 2.8.12
 COMPONENT_SUMMARY= GNOME spell checker component
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d9a5a10dc9b38a43b3a0fa22c76ed6ebb7e09eb535aff62954afcdbd40efff6b
+COMPONENT_ARCHIVE_HASH=	sha256:20e5fab2ca0f95ba9d1ef5052fe5b028e3e1d66d4cdea6b9adfcbd3e524c2a09
 COMPONENT_ARCHIVE_URL=	https://github.com/AbiWord/enchant/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://abiword.github.io/enchant/
 COMPONENT_FMRI=			library/spell-checking/enchant
@@ -30,19 +30,18 @@ COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=		LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LIB
 
-# C tests pass but we do not have unittest-cpp
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D)  && autoreconf -vif )
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --with-hunspell-dir=$(USRSHAREDIR)/spell/hunspell
 CONFIGURE_OPTIONS += --disable-aspell
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --enable-relocatable
 CONFIGURE_OPTIONS += OBJC=$(CC)
+
+# Manually added dependencies
+TEST_REQUIRED_PACKAGES += developer/unittest-cpp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

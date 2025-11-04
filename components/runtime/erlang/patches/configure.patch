@@ -1,7 +1,6 @@
-diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure otp_src_26.2.2/lib/crypto/configure
---- otp_src_26.2.2_O/lib/crypto/configure	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/crypto/configure	2024-02-18 05:14:02.000000000 +0100
-@@ -5594,21 +5594,8 @@
+--- otp_src_28.0.1/lib/crypto/configure.orig
++++ otp_src_28.0.1/lib/crypto/configure
+@@ -6926,21 +6926,8 @@
  
  
  
@@ -25,16 +24,16 @@ diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure otp_src_26.2.2/lib/crypto/conf
  
  
  # Check whether --with-ssl was given.
-@@ -5736,7 +5723,7 @@
+@@ -7076,7 +7063,7 @@
  # Setup subdirectories to search in...
  search_subdirs="lib"
  if test "$ac_cv_sizeof_void_p" = "8"; then
 -   search_subdirs="$search_subdirs lib64 lib/64"
-+   search_subdirs="lib/amd64"
++   search_subdirs="lib/MACH64"
  else
     search_subdirs="$search_subdirs lib32 lib/32"
  fi
-@@ -7251,7 +7238,7 @@
+@@ -8618,7 +8605,7 @@
                        # If none of the above links, we skip runtime
                        # library path...
                        #
@@ -43,10 +42,9 @@ diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure otp_src_26.2.2/lib/crypto/conf
  
                            ded_ld_rpath="$ded_ld_rflg$SSL_RUNTIME_LIBDIR"
                            rpath="$SSL_RUNTIME_LIBDIR"
-diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure.ac otp_src_26.2.2/lib/crypto/configure.ac
---- otp_src_26.2.2_O/lib/crypto/configure.ac	2024-02-07 15:00:00.000000000 +0100
-+++ otp_src_26.2.2/lib/crypto/configure.ac	2024-02-18 05:12:06.000000000 +0100
-@@ -54,6 +54,7 @@
+--- otp_src_28.0.1/lib/crypto/configure.ac.orig
++++ otp_src_28.0.1/lib/crypto/configure.ac
+@@ -59,6 +59,7 @@
  LM_WINDOWS_ENVIRONMENT
  
  ERL_DED
@@ -54,7 +52,7 @@ diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure.ac otp_src_26.2.2/lib/crypto/c
  
  AC_MSG_CHECKING([for multiarch directory])
  multiarch_dir=
-@@ -81,21 +82,7 @@
+@@ -86,21 +87,7 @@
  
  AC_CHECK_SIZEOF(void *)
  
@@ -77,16 +75,16 @@ diff -Nuraw otp_src_26.2.2_O/lib/crypto/configure.ac otp_src_26.2.2/lib/crypto/c
  			
  AC_ARG_WITH(ssl,
  AS_HELP_STRING([--with-ssl=PATH], [base location of OpenSSL include and lib directories])
-@@ -395,7 +382,7 @@
+@@ -400,7 +387,7 @@
  # Setup subdirectories to search in...
  search_subdirs="lib"
  if test "$ac_cv_sizeof_void_p" = "8"; then
 -   search_subdirs="$search_subdirs lib64 lib/64"
-+   search_subdirs="lib/amd64"
++   search_subdirs="lib/MACH64"
  else
     search_subdirs="$search_subdirs lib32 lib/32"
  fi
-@@ -747,7 +734,7 @@
+@@ -752,7 +739,7 @@
                        # If none of the above links, we skip runtime
                        # library path...
                        #

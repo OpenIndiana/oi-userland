@@ -11,21 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project tox-current-env
+#   $WS_TOOLS/python-integrate-project -d python/tox-current-env tox_current_env
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		tox-current-env
-HUMAN_VERSION =			0.0.11
-COMPONENT_SUMMARY =		tox-current-env - Use current environment instead of virtualenv for tox testenvs
+COMPONENT_NAME =		tox_current_env
+HUMAN_VERSION =			0.0.16
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Use current environment instead of virtualenv for tox testenvs
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/tox-current-env
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/8b/a4/82c5c771ed7defdae4d1ad814cc4f86377d2bf893aea015d9fb6994e6eaf/tox-current-env-0.0.11.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b05d7a169e323ca73c8bacd90cfcfe38e2672b705f944f94d1d6c0f56f31c51
+	sha256:2e453c3e82e837d35846004a678db4504e24e5c0419d6e42aa07ca8294fad1bd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,16 +42,18 @@ COMPONENT_TEST_TRANSFORMS += \
 	"| ( \
 		$(GSED) -u -e '/^=\{1,\} test session starts /q' ; \
 		$(GSED) -u -e '/^$$/q' ; \
-		$(GSED) -u -e '/^$$/Q' | LC_ALL=C $(GSORT) | $(NAWK) '{print}END{if(NR>0)printf(\"\\\\n\")}' ; \
+		$(GSED) -u -e '/^$$/Q' | $(SORT) | $(GSED) -e '\$$a\'\$$'\\\n\\\n' ; \
 		$(CAT) \
 	) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tox
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tox
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

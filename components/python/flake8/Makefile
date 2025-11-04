@@ -14,18 +14,18 @@
 #   $WS_TOOLS/python-integrate-project flake8
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flake8
-HUMAN_VERSION =			7.0.0
-COMPONENT_SUMMARY =		flake8 - the modular source code checker: pep8 pyflakes and co
+HUMAN_VERSION =			7.3.0
+COMPONENT_SUMMARY =		the modular source code checker: pep8 pyflakes and co
 COMPONENT_PROJECT_URL =		https://github.com/pycqa/flake8
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/flake8/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b649d29d4bc2562e2d814ffdc63b90828e3f43b50bc146021901b4446bae7fb
+	sha256:71a7d2ec4166f83c6fc66e6465a45c49b4565ee29b69f27b335366ce101d8c2b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,10 +35,11 @@ include $(WS_MAKE_RULES)/common.mk
 # some tests will fail.
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-2020
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-bugbear
-TEST_CONFLICTING_PACKAGES.python += library/python/flake8-docstrings
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-noqa
 TEST_CONFLICTING_PACKAGES.python += library/python/flake8-typing-imports
-TEST_CONFLICTING_PACKAGES.python += library/python/teamcity-messages
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/mccabe

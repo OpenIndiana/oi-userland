@@ -13,31 +13,38 @@
 #
 
 BUILD_STYLE= cmake
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         re2
-COMPONENT_VERSION=      2024.4.1
-HUMAN_VERSION=          2024-04-01
+COMPONENT_VERSION=      2025.8.12
+HUMAN_VERSION=          2025-08-12
 COMPONENT_SUMMARY=      Fast, safe, thread-friendly regular expression engine
 COMPONENT_PROJECT_URL=  https://github.com/google/re2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3f6690c3393a613c3a0b566309cf04dc381d61470079b653afc47c67fb898198
+COMPONENT_ARCHIVE_HASH= sha256:2f3bec634c3e51ea1faf0d441e0a8718b73ef758d7020175ed7e352df3f6ae12
 COMPONENT_ARCHIVE_URL=	https://github.com/google/$(COMPONENT_NAME)/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/re2
 COMPONENT_CLASSIFICATION= Development/C++
 COMPONENT_LICENSE=      BSD
 COMPONENT_LICENSE_FILE= LICENSE
 
-# Tests require Googletest which we don't have yet.
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
+
+COMPONENT_TEST_CMD= ./runtests
+
+# Manually added build dependencies
+TEST_REQUIRED_PACKAGES += developer/googletest
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += library/c++/abseil-cpp
+REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyftpdlib
-HUMAN_VERSION =			1.5.9
-COMPONENT_SUMMARY =		pyftpdlib - Very fast asynchronous FTP server library
+HUMAN_VERSION =			2.1.0
+COMPONENT_SUMMARY =		Very fast asynchronous FTP server library
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/pyftpdlib/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/47/9f/5dc055ab2db58db561f72b1b2f18b1dafc025f2ac5dd842c40259c17195e/pyftpdlib-1.5.9.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:323d4c42f1406aedb4df18faf680f64f32c080ff66f6c26090ba592f5bfc4a0f
+	sha256:5e92e7ba37c3e458ec458e5c201e2deb992cb6011c963e6a8512a634d8d80116
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,8 +31,16 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/psutil
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/psutil
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pyopenssl
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

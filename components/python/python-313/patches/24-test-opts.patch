@@ -1,0 +1,20 @@
+
+When running the tests as part of the build, we want to run them in a
+consistent order and not automatically re-launch them in verbose mode
+when a failure occurs.
+
+	-r	Randomize test order
+	-w	Re-run failed tests in verbose mode
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_regrtest.py a/Lib/test/test_regrtest.py
+--- a~/Lib/test/test_regrtest.py	1970-01-01 00:00:00
++++ a/Lib/test/test_regrtest.py	1970-01-01 00:00:00
+@@ -818,7 +818,7 @@ class ProgramsTestCase(BaseTestCase):
+         self.tests = [self.create_test() for index in range(self.NTEST)]
+ 
+         self.python_args = ['-Wd', '-E', '-bb']
+-        self.regrtest_args = ['-uall', '-rwW',
++        self.regrtest_args = ['-uall', '-W',
+                               '--testdir=%s' % self.tmptestdir]
+         self.regrtest_args.extend(('--timeout', '3600', '-j4'))
+         if sys.platform == 'win32':

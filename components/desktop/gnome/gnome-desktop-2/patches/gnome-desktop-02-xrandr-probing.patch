@@ -1,0 +1,64 @@
+--- gnome-desktop-2.26.1/libgnome-desktop/gnome-rr.c.ori	2009-04-15 05:28:28.927718257 +0100
++++ gnome-desktop-2.26.1/libgnome-desktop/gnome-rr.c	2009-04-15 05:34:06.962714756 +0100
+@@ -432,9 +432,34 @@
+ static ScreenInfo *
+ screen_info_new (GnomeRRScreen *screen, gboolean needs_reprobe, GError **error)
+ {
+-    ScreenInfo *info = g_new0 (ScreenInfo, 1);
+-    
++    GTimeVal   cur_time_val;
++    gint64     cur, prev;
++ 
+     g_assert (screen != NULL);
++
++    if ( screen->info != NULL ) {
++        g_get_current_time(&cur_time_val);
++        cur = (gint64) cur_time_val.tv_sec * G_USEC_PER_SEC + cur_time_val.tv_usec;
++        prev =(gint64) screen->last_update_time.tv_sec * G_USEC_PER_SEC + screen->last_update_time.tv_usec;
++
++        /* Only referesh the info after 2 seconds have elapsed since last
++         * update, otherwise it will cause a lot of extra probing on the X
++         * server.
++         */
++        if (((cur - prev) < 0) || ((cur - prev) > 2000000)) {
++            screen->last_update_time = cur_time_val;
++        }
++        else {
++            /* Don't return any update, which should result in caller using
++             * existing data
++             */
++            g_warning("Call to screen_info_new is too frequent, skipping...");
++            return( NULL );
++        }
++    }
++
++    ScreenInfo *info = g_new0 (ScreenInfo, 1);
++
+     
+     info->outputs = NULL;
+     info->crtcs = NULL;
+diff -ruN gnome-desktop-2.29.92.orig/libgnome-desktop/gnome-rr-private.h gnome-desktop-2.29.92/libgnome-desktop/gnome-rr-private.h
+--- gnome-desktop-2.29.92.orig/libgnome-desktop/gnome-rr-private.h	2010-03-11 22:12:45.452630032 +0000
++++ gnome-desktop-2.29.92/libgnome-desktop/gnome-rr-private.h	2010-03-11 22:13:28.367005972 +0000
+@@ -42,7 +42,7 @@
+     
+     GnomeRRScreenChanged	callback;
+     gpointer			data;
+-
++    GTimeVal                    last_update_time;
+     Atom                        connector_type_atom;
+ };
+ 
+diff -ruN gnome-desktop-2.29.92.orig/libgnome-desktop/gnome-rr.c gnome-desktop-2.29.92/libgnome-desktop/gnome-rr.c
+--- gnome-desktop-2.29.92.orig/libgnome-desktop/gnome-rr.c	2010-03-11 22:15:24.569673576 +0000
++++ gnome-desktop-2.29.92/libgnome-desktop/gnome-rr.c	2010-03-11 22:18:41.223085776 +0000
+@@ -713,6 +713,9 @@
+ 	}
+ 
+ 	screen->info = screen_info_new (screen, TRUE, error);
++
++        /* Initialize the last udpate time */
++        g_get_current_time (&(screen->last_update_time));
+ 	
+ 	if (!screen->info) {
+ 	    g_free (screen);

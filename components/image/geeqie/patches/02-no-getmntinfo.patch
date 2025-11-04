@@ -1,0 +1,18 @@
+--- geeqie-2.6/src/collect-io.cc.orig	2025-05-05 16:22:17.000000000 +0200
++++ geeqie-2.6/src/collect-io.cc	2025-05-06 22:35:34.408178027 +0200
+@@ -156,6 +156,7 @@
+ 			return true;
+ 		}
+ #else
++#ifndef __sun__
+ 	struct statfs* mounts;
+ 	int num_mounts = getmntinfo(&mounts, MNT_NOWAIT);
+ 
+@@ -171,6 +172,7 @@
+ 		if (is_file_in_dir(mounts[i].f_mntonname))
+ 			return true;
+ 		}
++#endif  // ifndef __sun
+ #endif
+ 	return false;
+ }

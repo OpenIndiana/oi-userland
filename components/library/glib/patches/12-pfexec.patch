@@ -6,14 +6,14 @@ is setuid. If it is setuid, dbus launcher is not executed.
 But this check also fires when we use pfexec. So we revert to uid/euid comparison
 here to allow applications using glib to work with dbus.
 
---- glib-2.58.2/glib/gutils.c	2018-12-28 20:30:35.103726021 +0000
-+++ glib-2.58.2/glib/gutils.c	2018-12-28 20:32:56.090135890 +0000
-@@ -2518,7 +2518,7 @@ g_check_setuid (void)
+--- glib-2.82.0/glib/gutils.c.orig
++++ glib-2.82.0/glib/gutils.c
+@@ -3281,7 +3281,7 @@
    if (errsv)
      g_error ("getauxval () failed: %s", g_strerror (errsv));
    return value;
--#elif defined(HAVE_ISSETUGID) && !defined(__BIONIC__)
-+#elif defined(HAVE_ISSETUGID) && !defined(__BIONIC__) && !defined(__sun)
+-#elif defined(HAVE_ISSETUGID) && !defined(__ANDROID__)
++#elif defined(HAVE_ISSETUGID) && !defined(__ANDROID__) && !defined(__sun)
    /* BSD: http://www.freebsd.org/cgi/man.cgi?query=issetugid&sektion=2 */
  
    /* Android had it in older versions but the new 64 bit ABI does not

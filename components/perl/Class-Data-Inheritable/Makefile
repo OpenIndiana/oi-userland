@@ -11,20 +11,20 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Class::Data::Inheritable
+#   $WS_TOOLS/perl-integrate-module Class-Data-Inheritable
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Class::Data::Inheritable
-HUMAN_VERSION =			0.09
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Class::Data::Inheritable - Inheritable, overridable class data
+COMPONENT_NAME =		Class-Data-Inheritable
+HUMAN_VERSION =			0.10
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Inheritable, overridable class data
 COMPONENT_CPAN_AUTHOR =		RSHERER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:44088d6e90712e187b8a5b050ca5b1c70efe2baa32ae123e9bd8f59f29f06e4d
+	sha256:aa1ae68a611357b7bfd9a2f64907cc196ddd6d047cae64ef9d0ad099d98ae54a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -34,4 +34,5 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

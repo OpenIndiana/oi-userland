@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		augeas
 COMPONENT_VERSION=	1.14.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Augeas is a utility for editing configuration files
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -36,20 +36,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --localstatedir=/var
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
-
-# Needed for "gmake test" to work.
-# SHELLOPTS is exported via make-rules/shared-macros.mk,
-# causing the braceexpand option to be set.
-# This option causes "$1: unbound variable" errors during the check-TESTS,
-# and the gnulib-tests don't even run at all.
-# Note that the below unexports SHELLOPTS, even for targets
-# other than "test."
-unexport SHELLOPTS
 
 COMPONENT_TEST_ARGS		= -k
 COMPONENT_TEST_TRANSFORMER	= $(NAWK)
@@ -57,6 +45,6 @@ COMPONENT_TEST_TRANSFORMS	= "'/TOTAL|FAIL/'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library

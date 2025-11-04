@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mtxclient
 COMPONENT_VERSION=      0.9.2
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      Client API library for the Matrix protocol
 COMPONENT_PROJECT_URL=  https://github.com/Nheko-Reborn/mtxclient
 COMPONENT_FMRI=         network/chat/mtxclient
@@ -33,6 +33,8 @@ COMPONENT_LICENSE_FILE= LICENSE
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+CXXFLAGS += -fpermissive
+
 CMAKE_OPTIONS += -DBUILD_LIB_TESTS=OFF
 CMAKE_OPTIONS += -DBUILD_LIB_EXAMPLES=OFF
 
@@ -42,9 +44,9 @@ REQUIRED_PACKAGES += library/c++/nlohmann-json
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/c++/spdlog
 REQUIRED_PACKAGES += library/olm
 REQUIRED_PACKAGES += library/re2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/coeurl

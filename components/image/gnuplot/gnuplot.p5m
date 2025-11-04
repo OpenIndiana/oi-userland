@@ -10,8 +10,7 @@
 #
 
 #
-# Copyright 2017 Aurelien Larcher
-# Copyright 2021, 2023 Andreas Wacknitz
+# Copyright (c) 2021, 2024, Oracle and/or its affiliates.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -24,13 +23,18 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# Install demos directly from the source directory
-<transform file path=usr/demo/gnuplot/(.+[.-].+)$ -> set action.hash demo/%<\1> >
-# Make sure all files in libexec are executable
-<transform file path=usr/libexec/.* -> default mode 0555>
 
 # force a dependency on the liberation font which we are using:
 depend type=require fmri=system/font/truetype/liberation
+
+# Do not deliver build system files and object files...
+<transform file path=usr/demo/gnuplot.*Makefile -> drop>
+<transform file path=usr/demo/gnuplot/plugin/\.deps -> drop>
+<transform file path=usr/demo/gnuplot/plugin/demo_plugin_so-demo_plugin.o -> drop>
+<transform file path=usr/demo/gnuplot/all.dem.~1~ -> drop>
+
+# Ignore 64-bit object in 32-bit path error for demo plugin.
+<transform file path=usr/demo/gnuplot/plugin/demo_plugin.so -> set pkg.linted.userland.action001.2 true>
 
 link path=usr/share/X11/app-defaults/Gnuplot target=../../gnuplot/6.0/app-defaults/Gnuplot
 
@@ -45,12 +49,14 @@ file path=usr/demo/gnuplot/Dawson.dem
 file path=usr/demo/gnuplot/Fresnel.dem
 file path=usr/demo/gnuplot/GM1_bonds.r3d
 file path=usr/demo/gnuplot/GM1_sugar.pdb
+file path=usr/demo/gnuplot/Makefile
 file path=usr/demo/gnuplot/Makefile.am
 file path=usr/demo/gnuplot/Makefile.am.in
 file path=usr/demo/gnuplot/Makefile.in
 file path=usr/demo/gnuplot/WorldEnergy.dat
 file path=usr/demo/gnuplot/airfoil.dem
 file path=usr/demo/gnuplot/all.dem
+file path=usr/demo/gnuplot/all.dem.~1~
 file path=usr/demo/gnuplot/animate.dem
 file path=usr/demo/gnuplot/animate2.dem
 file path=usr/demo/gnuplot/animation.dem
@@ -71,6 +77,10 @@ file path=usr/demo/gnuplot/barchart_art.dem
 file path=usr/demo/gnuplot/battery.dat
 file path=usr/demo/gnuplot/big_peak.dat
 file path=usr/demo/gnuplot/binary.dem
+file path=usr/demo/gnuplot/binary1
+file path=usr/demo/gnuplot/binary2
+file path=usr/demo/gnuplot/binary3
+file path=usr/demo/gnuplot/binary_polygon.dem
 file path=usr/demo/gnuplot/bins.dem
 file path=usr/demo/gnuplot/bivariat.dem
 file path=usr/demo/gnuplot/bldg.png
@@ -114,6 +124,7 @@ file path=usr/demo/gnuplot/demo.edf
 file path=usr/demo/gnuplot/density.fnc
 file path=usr/demo/gnuplot/dgrid3d.dem
 file path=usr/demo/gnuplot/discrete.dem
+file path=usr/demo/gnuplot/dodecahedron.bin
 file path=usr/demo/gnuplot/dodecahedron.dat
 file path=usr/demo/gnuplot/electron.dem
 file path=usr/demo/gnuplot/ellipse.dem
@@ -138,6 +149,7 @@ file path=usr/demo/gnuplot/fit.dem
 file path=usr/demo/gnuplot/fit3.dat
 file path=usr/demo/gnuplot/fitmulti.dem
 file path=usr/demo/gnuplot/fontfile.dem
+file path=usr/demo/gnuplot/fs_empty.dem
 file path=usr/demo/gnuplot/function_block.dem
 file path=usr/demo/gnuplot/gantt.dem
 file path=usr/demo/gnuplot/gen-random.inc
@@ -161,6 +173,7 @@ file path=usr/demo/gnuplot/histogram_colors.dem
 file path=usr/demo/gnuplot/histograms.dem
 file path=usr/demo/gnuplot/histograms2.dem
 file path=usr/demo/gnuplot/histopt.dat
+file path=usr/demo/gnuplot/hsteps.dem
 file path=usr/demo/gnuplot/html/Makefile
 file path=usr/demo/gnuplot/html/Makefile.canvas
 file path=usr/demo/gnuplot/html/Makefile.svg
@@ -187,6 +200,7 @@ file path=usr/demo/gnuplot/hypertext_surface.dem
 file path=usr/demo/gnuplot/ibeta.dem
 file path=usr/demo/gnuplot/icon64x64.png
 file path=usr/demo/gnuplot/icosahedron.dat
+file path=usr/demo/gnuplot/if_filter.dem
 file path=usr/demo/gnuplot/igamma.dem
 file path=usr/demo/gnuplot/image.dem
 file path=usr/demo/gnuplot/image2.dem
@@ -215,6 +229,8 @@ file path=usr/demo/gnuplot/lines_arrows.dem
 file path=usr/demo/gnuplot/linked_autoscale.dem
 file path=usr/demo/gnuplot/linkedaxes.dem
 file path=usr/demo/gnuplot/lnGamma.dem
+file path=usr/demo/gnuplot/log_tics.dem
+file path=usr/demo/gnuplot/logic_timing.dem
 file path=usr/demo/gnuplot/logscale_clipping.dem
 file path=usr/demo/gnuplot/macros.dem
 file path=usr/demo/gnuplot/map_projection.dem
@@ -254,11 +270,14 @@ file path=usr/demo/gnuplot/parallel.dem
 file path=usr/demo/gnuplot/param.dem
 file path=usr/demo/gnuplot/piecewise.dem
 file path=usr/demo/gnuplot/pixmap.dem
-file path=usr/demo/gnuplot/pixmap.dem.~1~
+file path=usr/demo/gnuplot/plugin/.deps/demo_plugin_so-demo_plugin.Po
+file path=usr/demo/gnuplot/plugin/Makefile
 file path=usr/demo/gnuplot/plugin/Makefile.am
 file path=usr/demo/gnuplot/plugin/Makefile.in
 file path=usr/demo/gnuplot/plugin/README
 file path=usr/demo/gnuplot/plugin/demo_plugin.c
+file path=usr/demo/gnuplot/plugin/demo_plugin.so
+file path=usr/demo/gnuplot/plugin/demo_plugin_so-demo_plugin.o
 file path=usr/demo/gnuplot/plugin/gnuplot_plugin.h
 file path=usr/demo/gnuplot/plugin/plugin.dem
 file path=usr/demo/gnuplot/pm3d.dem
@@ -282,6 +301,7 @@ file path=usr/demo/gnuplot/pt_variable.dem
 file path=usr/demo/gnuplot/rainbow.dem
 file path=usr/demo/gnuplot/random-points
 file path=usr/demo/gnuplot/random.dem
+file path=usr/demo/gnuplot/rank_sequence.dem
 file path=usr/demo/gnuplot/rectangle.dem
 file path=usr/demo/gnuplot/reflect.fnc
 file path=usr/demo/gnuplot/rgb_variable.dat
@@ -289,7 +309,9 @@ file path=usr/demo/gnuplot/rgb_variable.dem
 file path=usr/demo/gnuplot/rgba_lines.dem
 file path=usr/demo/gnuplot/rotate_labels.dem
 file path=usr/demo/gnuplot/rugplot.dem
+file path=usr/demo/gnuplot/rundemo
 file path=usr/demo/gnuplot/running_avg.dem
+file path=usr/demo/gnuplot/runtcldemo
 file path=usr/demo/gnuplot/sampling.dem
 file path=usr/demo/gnuplot/sampling2.dem
 file path=usr/demo/gnuplot/scatter.dem
@@ -353,8 +375,11 @@ file path=usr/demo/gnuplot/volatile.dem
 file path=usr/demo/gnuplot/voxel.dem
 file path=usr/demo/gnuplot/vplot.dem
 file path=usr/demo/gnuplot/walls.dem
+file path=usr/demo/gnuplot/watch_contours.dem
 file path=usr/demo/gnuplot/watchmouse.dem
 file path=usr/demo/gnuplot/watchpoints.dem
+file path=usr/demo/gnuplot/watchpoints2.dem
+file path=usr/demo/gnuplot/waterfallplot.dem
 file path=usr/demo/gnuplot/week_date.dem
 file path=usr/demo/gnuplot/whale.dat
 file path=usr/demo/gnuplot/windrose.dem
@@ -406,5 +431,6 @@ file path=usr/share/gnuplot/6.0/js/textzoom.png
 file path=usr/share/gnuplot/6.0/lua/gnuplot-tikz.lua
 file path=usr/share/gnuplot/6.0/qt/qtgnuplot_fr.qm
 file path=usr/share/gnuplot/6.0/qt/qtgnuplot_ja.qm
+file path=usr/share/info/gnuplot.info
 file path=usr/share/man/ja/man1/gnuplot.1
 file path=usr/share/man/man1/gnuplot.1

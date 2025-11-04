@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Text::Soundex
+#   $WS_TOOLS/perl-integrate-module Text-Soundex
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Text::Soundex
+COMPONENT_NAME =		Text-Soundex
 HUMAN_VERSION =			3.05
-COMPONENT_SUMMARY =		Text::Soundex - Implementation of the soundex algorithm.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Implementation of the soundex algorithm.
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f6dd55b4280b25dea978221839864382560074e1d6933395faee2510c2db60ed
@@ -30,5 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

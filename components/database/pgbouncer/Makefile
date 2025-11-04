@@ -17,11 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= pgbouncer
-COMPONENT_VERSION= 	1.22.1
+COMPONENT_VERSION= 	1.24.1
 COMPONENT_SUMMARY= 	pgBouncer connection pooler
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2b018aa6ce7f592c9892bb9e0fd90262484eb73937fd2af929770a45373ba215
+COMPONENT_ARCHIVE_HASH=	sha256:da72a3aba13072876d055a3e58dd4aba4a5de4ed6148e73033185245598fd3e0
 COMPONENT_ARCHIVE_URL=	https://pgbouncer.github.io/downloads/files/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.pgbouncer.org/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
@@ -32,7 +32,7 @@ COMPONENT_LICENSE_FILE=	COPYRIGHT
 # Don't depend on host default pg_config
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
-TEST_TARGET=$(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CLONEY_ARGS= CLONEY_MODE="hardlink"
@@ -44,8 +44,8 @@ CONFIGURE_ENV +=	"XMLTO=xmlto --skip-validation"
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libcares
 REQUIRED_PACKAGES += library/libevent2
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

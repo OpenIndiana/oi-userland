@@ -19,22 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tempora
-HUMAN_VERSION =			5.5.1
-COMPONENT_SUMMARY =		tempora - Objects and routines pertaining to date and time (tempora)
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/tempora
+HUMAN_VERSION =			5.8.1
+COMPONENT_SUMMARY =		Objects and routines pertaining to date and time (tempora)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a2bb51e2121976d931347b3e433917c364b83fdd5f64ef27336c865bf1fb0f75
+	sha256:abb5d9ec790cc5e4f9431778029ba3e3d9ba9bd50cb306dad824824b2b362dcd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
-PYTHON_REQUIRED_PACKAGES += library/python/pytz
+PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
@@ -42,4 +41,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-freezer
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
-TEST_REQUIRED_PACKAGES.python += library/python/types-pytz
+TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil

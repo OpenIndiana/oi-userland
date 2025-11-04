@@ -11,36 +11,36 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.location
+#   $WS_TOOLS/python-integrate-project -d python/zope.location zope_location
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.location
-HUMAN_VERSION =			5.0
-COMPONENT_SUMMARY =		zope.location - Zope Location
+COMPONENT_NAME =		zope_location
+HUMAN_VERSION =			6.0
+COMPONENT_SUMMARY =		Zope Location
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.location/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/eb/f9/1fb7a001feb5fec6f180ef3610169f1cbef76e8c015c52409c2d18b7fac4/zope.location-5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:016fea934b97dad2b08a64ea7f2fbc3de55dbb074c461f66d871c70bf3aaaea5
+	sha256:baa3e0e8eab734ff908ffd9860185c8de458025d49eae62f11ba3b16579ee6ce
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += library/python/zope-proxy
-PYTHON_REQUIRED_PACKAGES += library/python/zope-schema
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += library/python/zope-proxy
+REQUIRED_PACKAGES.python += library/python/zope-schema
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component
 TEST_REQUIRED_PACKAGES.python += library/python/zope-configuration

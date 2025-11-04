@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module MIME::Charset
+#   $WS_TOOLS/perl-integrate-module MIME-Charset
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		MIME::Charset
+COMPONENT_NAME =		MIME-Charset
 HUMAN_VERSION =			1.013.1
-COMPONENT_SUMMARY =		MIME::Charset - Charset Information for MIME
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Charset Information for MIME
 COMPONENT_CPAN_AUTHOR =		NEZUMI
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1bb7a6e0c0d251f23d6e60bf84c9adefc5b74eec58475bfee4d39107e60870f0
@@ -29,5 +30,12 @@ COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/cpan
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

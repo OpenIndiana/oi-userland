@@ -11,27 +11,38 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::Build::Tiny
+#   $WS_TOOLS/perl-integrate-module Module-Build-Tiny
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::Build::Tiny
-HUMAN_VERSION =			0.047
-COMPONENT_SUMMARY =		Module::Build::Tiny - A tiny replacement for Module::Build
+COMPONENT_NAME =		Module-Build-Tiny
+HUMAN_VERSION =			0.052
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A tiny replacement for Module::Build
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:71260e9421b93c33dd1b3e7d0cf15f759c0ca7c753fa840279ec3be70f8f8c9d
+	sha256:bd10452c9f24d4b4fe594126e3ad231bab6cebf16acda40a4e8dc784907eb87f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta
+PERL_REQUIRED_PACKAGES += library/perl-5/cpan-requirements-dynamic
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-config
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-helpers
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-install
 PERL_REQUIRED_PACKAGES += library/perl-5/extutils-installpaths
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
+PERL_REQUIRED_PACKAGES += library/perl-5/json-pp
+PERL_REQUIRED_PACKAGES += library/perl-5/podlators
+PERL_REQUIRED_PACKAGES += library/perl-5/test-harness
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

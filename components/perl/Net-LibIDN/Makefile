@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::LibIDN
+#   $WS_TOOLS/perl-integrate-module Net-LibIDN
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::LibIDN
+COMPONENT_NAME =		Net-LibIDN
 HUMAN_VERSION =			0.12
-COMPONENT_SUMMARY =		Net::LibIDN - Perl bindings for GNU Libidn
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Perl bindings for GNU Libidn
 COMPONENT_CPAN_AUTHOR =		THOR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2f8acc9442b3866ec7dc63cd449fc693ae3e930d5d3e5e9430fbb6f393bdbb17
@@ -31,6 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += --with-libidn-inc=/usr/include/idn
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/libidn
 REQUIRED_PACKAGES += system/library

@@ -19,21 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pygments
-HUMAN_VERSION =			2.17.2
-COMPONENT_SUMMARY =		pygments - Pygments is a syntax highlighting package written in Python.
+HUMAN_VERSION =			2.19.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Pygments is a syntax highlighting package written in Python.
 COMPONENT_PROJECT_URL =		https://pygments.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/55/59/8bccf4157baf25e4aa5a0bb7fa3ba8600907de105ebc22b0c78cfbf6f565/pygments-2.17.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367
+	sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - pytest (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly

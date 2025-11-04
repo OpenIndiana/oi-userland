@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Package::Stash::XS
+#   $WS_TOOLS/perl-integrate-module Package-Stash-XS
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Package::Stash::XS
+COMPONENT_NAME =		Package-Stash-XS
 HUMAN_VERSION =			0.30
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Package::Stash::XS - Faster and more correct implementation of the Package::Stash API
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Faster and more correct implementation of the Package::Stash API
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:26bad65c1959c57379b3e139dc776fbec5f702906617ef27cdc293ddf1239231
@@ -31,8 +31,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/variable-magic

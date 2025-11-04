@@ -14,16 +14,17 @@
 #   $WS_TOOLS/python-integrate-project pycparser
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycparser
-HUMAN_VERSION =			2.22
-COMPONENT_SUMMARY =		pycparser - C parser in Python
+HUMAN_VERSION =			2.23
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		C parser in Python
 COMPONENT_PROJECT_URL =		https://github.com/eliben/pycparser
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6
+	sha256:78816d4f24add8f10a06d6f05b4d424ad9e96cfebf68a4ddc99c65c0720d00c2
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,4 +38,5 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_LIB)/pycparser/c_ast.py
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

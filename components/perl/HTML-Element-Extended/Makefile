@@ -11,18 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTML::ElementTable
+#   $WS_TOOLS/perl-integrate-module HTML-Element-Extended
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTML::ElementTable
-COMPONENT_PERL_DISTRIBUTION =	HTML-Element-Extended
+COMPONENT_NAME =		HTML-Element-Extended
 HUMAN_VERSION =			1.18
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		HTML::ElementTable - Perl extension for manipulating a table composed of HTML::Element style components.
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Perl extension for HTML::Element(3).
 COMPONENT_CPAN_AUTHOR =		MSISK
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f3ef1af108f27fef15ebec66479f251ce08aa49bd00b0462c9c80c86b4b6b32b
@@ -31,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/html-tree
 PERL_REQUIRED_PACKAGES += runtime/perl

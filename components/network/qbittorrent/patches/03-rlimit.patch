@@ -1,7 +1,6 @@
-diff -Nru qbittorrent-4.5.0.orig/src/app/application.cpp qbittorrent-4.5.0/src/app/application.cpp
---- qbittorrent-4.5.0.orig/src/app/application.cpp	2023-01-14 20:42:09.101483950 +0000
-+++ qbittorrent-4.5.0/src/app/application.cpp	2023-01-14 20:51:56.094149358 +0000
-@@ -1036,11 +1036,11 @@
+--- qbittorrent-5.0.5/src/app/application.cpp.~1~	2025-04-13 10:55:32.000000000 +0300
++++ qbittorrent-5.0.5/src/app/application.cpp	2025-04-18 10:05:57.321063439 +0300
+@@ -1222,7 +1222,7 @@
      // has no effect on linux but it might be meaningful for other OS
      rlimit limit {};
  
@@ -9,7 +8,20 @@ diff -Nru qbittorrent-4.5.0.orig/src/app/application.cpp qbittorrent-4.5.0/src/a
 +    if (::getrlimit(RLIMIT_VMEM, &limit) != 0)
          return;
  
-     limit.rlim_cur = memoryWorkingSetLimit() * MiB;
+     const size_t newSize = memoryWorkingSetLimit() * MiB;
+@@ -1231,7 +1231,7 @@
+         // try to raise the hard limit
+         rlimit newLimit = limit;
+         newLimit.rlim_max = newSize;
+-        if (::setrlimit(RLIMIT_RSS, &newLimit) != 0)
++        if (::setrlimit(RLIMIT_VMEM, &newLimit) != 0)
+         {
+             const auto message = QString::fromLocal8Bit(strerror(errno));
+             LogMsg(tr("Failed to set physical memory (RAM) usage hard limit. Requested size: %1. System hard limit: %2. Error code: %3. Error message: \"%4\"")
+@@ -1241,7 +1241,7 @@
+     }
+ 
+     limit.rlim_cur = newSize;
 -    if (::setrlimit(RLIMIT_RSS, &limit) != 0)
 +    if (::setrlimit(RLIMIT_VMEM, &limit) != 0)
      {

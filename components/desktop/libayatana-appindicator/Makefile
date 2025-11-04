@@ -18,13 +18,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libayatana-appindicator
-COMPONENT_VERSION=      0.5.93
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      0.5.94
 COMPONENT_SUMMARY=      Ayatana Application Indicators shared library
 COMPONENT_PROJECT_URL=  https://github.com/AyatanaIndicators/libayatana-appindicator
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cbefed7a918a227bf71286246e237fcd3a9c8499b3eaac4897811a869409edf0
+COMPONENT_ARCHIVE_HASH= sha256:884a6bc77994c0b58c961613ca4c4b974dc91aa0f804e70e92f38a542d0d0f90
 COMPONENT_ARCHIVE_URL=  https://github.com/AyatanaIndicators/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         desktop/library/libayatana-appindicator
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries

@@ -19,31 +19,50 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		astroid
-HUMAN_VERSION =			3.1.0
-COMPONENT_SUMMARY =		astroid - An abstract syntax tree for Python with inference support.
+HUMAN_VERSION =			3.3.10
+COMPONENT_SUMMARY =		An abstract syntax tree for Python with inference support.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ac248253bfa4bd924a0de213707e7ebeeb3138abeb48d798784ead1e56d419d4
+	sha256:c332157953060c6deb9caa57303ae0d20b0fbdb2e59b4a4f2a6ba49d0a7961ce
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pylint-dev/astroid/issues/2392
+PYTEST_ADDOPTS += --deselect tests/brain/test_dataclasses.py::test_pydantic_field
+# fails with tox-current-env
+PYTEST_ADDOPTS += --deselect tests/test_manager.py::AstroidManagerTest::test_identify_old_namespace_package_protocol
+PYTEST_ADDOPTS += --deselect tests/test_modutils.py::GetModulePartTest::test_known_values_get_builtin_module_part
+# https://github.com/pylint-dev/astroid/issues/2442
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_einsumfunc.py::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_fromnumeric.py::BrainNumpyCoreFromNumericTest::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_multiarray.py::BrainNumpyCoreMultiarrayTest::test_numpy_function_calls_inferred_as_ndarray
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_numerictypes.py::NumpyBrainCoreNumericTypesTest::test_datetime_astype_return
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_numerictypes.py::NumpyBrainCoreNumericTypesTest::test_generic_types_are_subscriptables
+PYTEST_ADDOPTS += --deselect tests/brain/numpy/test_core_umath.py::NumpyBrainCoreUmathTest::test_numpy_core_umath_functions_return_type
+PYTEST_ADDOPTS += --deselect tests/test_regrtest.py::NonRegressionTests::test_numpy_distutils
+
+# Random temporary dir name
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}/|\1XXXXXXXX/|g'"
+# Random temporary file name
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/tmp\).\{8\}\.py|\1XXXXXXXX.py|g'"
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/nose
-TEST_REQUIRED_PACKAGES.python += library/python/pre-commit
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
 TEST_REQUIRED_PACKAGES.python += library/python/pylint
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/python-dateutil
 TEST_REQUIRED_PACKAGES.python += library/python/regex
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/six
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/urllib3

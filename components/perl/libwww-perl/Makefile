@@ -11,40 +11,62 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module LWP
+#   $WS_TOOLS/perl-integrate-module libwww-perl
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		LWP
-COMPONENT_PERL_DISTRIBUTION =	libwww-perl
-HUMAN_VERSION =			6.77
-COMPONENT_SUMMARY =		LWP - The World-Wide Web library for Perl
+COMPONENT_NAME =		libwww-perl
+HUMAN_VERSION =			6.81
+COMPONENT_SUMMARY =		The World-Wide Web library for Perl
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:94a907d6b3ea8d966ef43deffd4fa31f5500142b4c00489bfd403860a5f060e4
+	sha256:ab30552f194e8b5ae3ac0885132fd1d4ea04c4c7fe6555765b98f01af70c1736
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# libwww-perl --> LWP-Protocol-https ==> libwww-perl
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode-locale
-PERL_REQUIRED_PACKAGES += library/perl-5/file-listing
-PERL_REQUIRED_PACKAGES += library/perl-5/html-parser
-PERL_REQUIRED_PACKAGES += library/perl-5/http-cookies
-PERL_REQUIRED_PACKAGES += library/perl-5/http-date
-PERL_REQUIRED_PACKAGES += library/perl-5/http-message
-PERL_REQUIRED_PACKAGES += library/perl-5/http-negotiate
-PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
-PERL_REQUIRED_PACKAGES += library/perl-5/net-http
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += library/perl-5/www-robotrules
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/encode-locale
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-listing
+REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
+REQUIRED_PACKAGES.perl += library/perl-5/html-parser
+REQUIRED_PACKAGES.perl += library/perl-5/http-cookies
+REQUIRED_PACKAGES.perl += library/perl-5/http-date
+REQUIRED_PACKAGES.perl += library/perl-5/http-message
+REQUIRED_PACKAGES.perl += library/perl-5/http-negotiate
+REQUIRED_PACKAGES.perl += library/perl-5/libnet
+REQUIRED_PACKAGES.perl += library/perl-5/lwp-mediatypes
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/module-load
+REQUIRED_PACKAGES.perl += library/perl-5/net-http
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += library/perl-5/www-robotrules
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/data-dump
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-cookiejar
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/http-daemon
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/lwp-protocol-https
@@ -52,3 +74,4 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-leaktrace
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

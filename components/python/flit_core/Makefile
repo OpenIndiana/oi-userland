@@ -15,16 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
-HUMAN_VERSION =			3.9.0
-COMPONENT_SUMMARY =		flit_core - Distribution-building parts of Flit. See flit package for more information
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/e6/c1ac50fe3eebb38a155155711e6e864e254ce4b6e17fe2429b4c4d5b9e80/flit_core-3.9.0.tar.gz
+HUMAN_VERSION =			3.12.0
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72ad266176c4a3fcfab5f2930d76896059851240570ce9a98733b658cb786eba
+	sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,16 +33,22 @@ TEST_STYLE = pytest
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - build
+# - coherent.licensed
 # - flit_scm (test bootstrap)
 # - installer
 # - packaging
 # - pathspec (test bootstrap)
 # - pyproject_hooks
+# - tomli
 # - typing_extensions
-# - wheel
+# - wheel (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/testpath
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python

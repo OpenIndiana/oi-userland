@@ -15,12 +15,12 @@
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gtksourceview
 COMPONENT_MAJOR_MINOR=	4.8
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_MINOR).4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Multiline text editing library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
@@ -78,7 +78,7 @@ REQUIRED_PACKAGES += developer/vala
 REQUIRED_PACKAGES += developer/ui-designer/glade
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

@@ -1,0 +1,11 @@
+--- ffmpeg-6.1.2/tests/fate/filter-video.mak.orig
++++ ffmpeg-6.1.2/tests/fate/filter-video.mak
+@@ -535,7 +535,7 @@
+ tests/pixfmts.mak: TAG = GEN
+ tests/pixfmts.mak: ffmpeg$(PROGSSUF)$(EXESUF) | tests
+ 	$(M)printf "PIXFMTS = " > $@
+-	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -nostdin -pix_fmts list 2> /dev/null | awk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
++	$(Q)$(TARGET_EXEC) $(TARGET_PATH)/$< -nostdin -pix_fmts list 2> /dev/null | gawk 'NR > 8 && /^IO/ { printf $$2 " " }' >> $@
+ 	$(Q)printf "\n" >> $@
+ 
+ RUNNING_PIXFMTS_TESTS := $(filter check fate fate-list fate-filter fate-vfilter fate-filter-pixdesc%,$(MAKECMDGOALS))

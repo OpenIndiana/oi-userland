@@ -19,36 +19,37 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.6.3
-COMPONENT_SUMMARY =		pymongo - Python driver for MongoDB <http://www.mongodb.org>
-COMPONENT_PROJECT_URL =		http://github.com/mongodb/mongo-python-driver
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/mongodb/mongo-python-driver/archive/refs/tags/$(HUMAN_VERSION).tar.gz
+HUMAN_VERSION =			4.15.3
+COMPONENT_REVISION =		15
+COMPONENT_SUMMARY =		PyMongo - the Official MongoDB Python driver
+COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c3b1be222869a35fee67714b754ebe8c5e83553b34ec60a6e8870ba0ea4f4496
+	sha256:7a981271347623b5319932796690c2d301668ac3a1965974ac9f5c3b8a22cea5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Github tarball use different source directory than sdist
-COMPONENT_SRC =		mongo-python-driver-$(HUMAN_VERSION)
+TEST_STYLE = pytest
+
+# The 10.10.10.10 version was briefly available at PyPI and so we packaged it.
+# It later disappeared because it was created mistakenly but since IPS cannot
+# downgrade we need to keep it.
+COMPONENT_VERSION =		10.10.10.10
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Normalize pointer
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(traceback object at \)0x[a-f0-9]\{12\}>/\1\$$(POINTER)>/g'"
-# The order of items in the list is random
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(Must be one of (\)[^)]\{1,\})/\1LIST)/g'"
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/test.txt
 
-# For testing the svc:/application/database/mongodb-44:default service must be
-# online.
-
-# Manually added test dependencies
-TEST_REQUIRED_PACKAGES += service/database/mongodb-44
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/dnspython
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/dnspython
+REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

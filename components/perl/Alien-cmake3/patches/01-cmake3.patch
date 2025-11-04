@@ -1,0 +1,24 @@
+cmake is 4.x so we need to use cmake3 instead
+
+--- Alien-cmake3-0.10/alienfile.orig
++++ Alien-cmake3-0.10/alienfile
+@@ -19,7 +19,7 @@
+ 
+ probe sub {
+   my($build) = @_;
+-  my $old_cmake = $build->install_prop->{my_old_cmake} = which 'cmake';
++  my $old_cmake = $build->install_prop->{my_old_cmake} = which 'cmake3';
+   
+   if($old_cmake)
+   {
+--- Alien-cmake3-0.10/t/alien_cmake3.t.orig
++++ Alien-cmake3-0.10/t/alien_cmake3.t
+@@ -4,7 +4,7 @@
+ 
+ alien_ok 'Alien::cmake3';
+ 
+-run_ok(['cmake', '--version'])
++run_ok(['cmake3', '--version'])
+   ->exit_is(0)
+   ->out_like(qr/cmake version 3\.([0-9\.])+/)
+   ->note;

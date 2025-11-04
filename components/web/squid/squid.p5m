@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 Friedrich Kink. All rights reserved.
+# Copyright 2022,2025 Friedrich Kink. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -37,24 +37,20 @@ file files/exec_attr path=etc/security/exec_attr.d/squid
 file path=usr/squid/libexec/pinger mode=4555
 
 # special attributes
-file path=etc/squid/cachemgr.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/cachemgr.conf preserve=renamenew
 file path=etc/squid/mime.conf group=webservd mode=0644 \
     original_name=SUNWsquid:etc/squid/mime.conf preserve=renamenew
 file path=etc/squid/squid.conf group=webservd mode=0644 \
     original_name=SUNWsquid:etc/squid/squid.conf preserve=renamenew
+file path=etc/squid/errorpage.css group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/errorpage.css preserve=renamenew
 dir path=var/squid/cache group=webservd owner=webservd mode=0755
 dir path=var/squid/logs group=webservd owner=webservd mode=0755
 dir path=var/squid/run group=webservd owner=webservd mode=0755
 
-file path=etc/squid/cachemgr.conf.default
-file path=etc/squid/errorpage.css preserve=true
 file path=etc/squid/errorpage.css.default
 file path=etc/squid/mime.conf.default
 file path=etc/squid/squid.conf.default
 file path=etc/squid/squid.conf.documented
-file path=usr/squid/bin/purge
-file path=usr/squid/bin/squidclient
 file path=usr/squid/libexec/basic_db_auth
 file path=usr/squid/libexec/basic_fake_auth
 file path=usr/squid/libexec/basic_getpwnam_auth
@@ -64,10 +60,8 @@ file path=usr/squid/libexec/basic_nis_auth
 file path=usr/squid/libexec/basic_pam_auth
 file path=usr/squid/libexec/basic_pop3_auth
 file path=usr/squid/libexec/basic_radius_auth
-file path=usr/squid/libexec/basic_sasl_auth
 file path=usr/squid/libexec/basic_smb_auth
 file path=usr/squid/libexec/basic_smb_auth.sh
-file path=usr/squid/libexec/cachemgr.cgi
 file path=usr/squid/libexec/digest_edirectory_auth
 file path=usr/squid/libexec/digest_file_auth
 file path=usr/squid/libexec/digest_ldap_auth
@@ -81,8 +75,6 @@ file path=usr/squid/libexec/ext_wbinfo_group_acl
 file path=usr/squid/libexec/helper-mux
 file path=usr/squid/libexec/log_db_daemon
 file path=usr/squid/libexec/log_file_daemon
-file path=usr/squid/libexec/negotiate_kerberos_auth
-file path=usr/squid/libexec/negotiate_kerberos_auth_test
 file path=usr/squid/libexec/negotiate_wrapper_auth
 file path=usr/squid/libexec/ntlm_fake_auth
 file path=usr/squid/libexec/security_fake_certverify
@@ -92,23 +84,27 @@ file path=usr/squid/libexec/unlinkd
 file path=usr/squid/libexec/url_fake_rewrite
 file path=usr/squid/libexec/url_fake_rewrite.sh
 file path=usr/squid/libexec/url_lfs_rewrite
-file path=usr/squid/man/man1/purge.1
-file path=usr/squid/man/man1/squidclient.1
+file path=usr/squid/man/man8/basic_db_auth.8
 file path=usr/squid/man/man8/basic_getpwnam_auth.8
 file path=usr/squid/man/man8/basic_ldap_auth.8
 file path=usr/squid/man/man8/basic_ncsa_auth.8
 file path=usr/squid/man/man8/basic_pam_auth.8
+file path=usr/squid/man/man8/basic_pop3_auth.8
 file path=usr/squid/man/man8/basic_radius_auth.8
-file path=usr/squid/man/man8/basic_sasl_auth.8
-file path=usr/squid/man/man8/cachemgr.cgi.8
 file path=usr/squid/man/man8/digest_file_auth.8
+file path=usr/squid/man/man8/ext_delayer_acl.8
 file path=usr/squid/man/man8/ext_file_userip_acl.8
 file path=usr/squid/man/man8/ext_ldap_group_acl.8
 file path=usr/squid/man/man8/ext_session_acl.8
 file path=usr/squid/man/man8/ext_unix_group_acl.8
-file path=usr/squid/man/man8/negotiate_kerberos_auth.8
+file path=usr/squid/man/man8/ext_wbinfo_group_acl.8
+file path=usr/squid/man/man8/helper-mux.8
+file path=usr/squid/man/man8/log_db_daemon.8
+file path=usr/squid/man/man8/security_fake_certverify.8
 file path=usr/squid/man/man8/security_file_certgen.8
 file path=usr/squid/man/man8/squid.8
+file path=usr/squid/man/man8/storeid_file_rewrite.8
+file path=usr/squid/man/man8/url_lfs_rewrite.8
 file path=usr/squid/sbin/squid
 file path=usr/squid/share/errors/COPYRIGHT
 file path=usr/squid/share/errors/TRANSLATORS

@@ -16,14 +16,14 @@
 # Copyright 2019 Geoffrey Weiss
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Carsten Grzemba
-# Copyright 2023-2024 Niklas Poslovski
+# Copyright 2023-2025 Niklas Poslovski
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	123.0.1
+COMPONENT_MAJOR_VERSION =	144.0
 COMPONENT_MINOR_VERSION =	1
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
@@ -32,12 +32,12 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d6d05b17df53fe5d526b9abef7d408556596fdaa7ea09af2af05245cb5fe59b9
+COMPONENT_ARCHIVE_HASH= sha256:7dbf8ebee436fd3efc5895b5151af0e23063ef1d3a47ff3da6d55dfcc1b047c6
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.75.0
+RUST_VERSION= 1.89.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -51,6 +51,9 @@ PATH= $(CARGO_HOME)/bin:$(PATH.gnu)
 
 MOZCONFIG= $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
+
+# Clang 20 does not work with Mozilla patches
+# CLANG_VERSION= 19
 
 ifdef DEBUG
 # disable code optimization
@@ -74,8 +77,6 @@ COMPILER.clang= clang
 COMPILER = $(COMPILER.$(CC_TYPE))
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
-# xpcom uses DEF XP_SOLARIS
-CXXFLAGS += -DXP_SOLARIS
 # type problem compiling ffvpx with clang 
 CFLAGS += -D__int8_t_defined
 
@@ -83,7 +84,6 @@ FIREFOX_LIBDIR =	$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
-	echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
@@ -95,6 +95,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-pulseaudio" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --target=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
@@ -112,7 +113,7 @@ LD_MAP_NOEXBSS.sparc=
 LD_Z_IGNORE=
 
 # missing symbols from gtk3 during Firefox start
-LD_B_DIRECT=
+# LD_B_DIRECT=
 
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
@@ -122,12 +123,13 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	export RUSTUP_HOME=$(RUSTUP_HOME); \
 	export CARGO_HOME=$(CARGO_HOME); \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+	export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
 	curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
 	source $(CARGO_HOME)/env; \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -135,6 +137,9 @@ ENV +=	CXXFLAGS="$(CXXFLAGS)"
 ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
 ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 ENV += CARGO_HOME=$(CARGO_HOME)
+
+# This is needed to run bins/libs in .rustup
+ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
@@ -147,10 +152,12 @@ COMPONENT_POST_BUILD_ACTION = \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 
 COMPONENT_POST_INSTALL_ACTION  = \
-    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
+    for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/ -name "*.so"`; do \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/librewolf"' $$file ; \
     done ; \
+    mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution ; \
+    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/librewolf/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
@@ -174,7 +181,6 @@ REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += developer/lang/rustc
-REQUIRED_PACKAGES += gnome/config/gconf
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/http-parser
 REQUIRED_PACKAGES += web/browser/lynx
@@ -182,8 +188,8 @@ REQUIRED_PACKAGES += web/browser/lynx
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

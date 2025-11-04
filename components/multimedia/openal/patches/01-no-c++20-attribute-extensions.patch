@@ -1,0 +1,24 @@
+
+fixes following warning:
+cc1plus: note: unrecognized command-line option '-Wno-c++20-attribute-extensions' ...
+
+--- openal-soft-1.23.1/CMakeLists.txt.orig	2023-04-11 22:46:23.000000000 +0300
++++ openal-soft-1.23.1/CMakeLists.txt	2025-05-26 20:55:18.045962172 +0300
+@@ -268,14 +268,9 @@
+         -Wpedantic
+         $<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast -Wnon-virtual-dtor -Woverloaded-virtual>)
+ 
+-    check_cxx_compiler_flag(-Wno-c++20-attribute-extensions HAVE_WNO_CXX20_ATTR_EXT)
+-    if(HAVE_WNO_CXX20_ATTR_EXT)
+-        set(C_FLAGS ${C_FLAGS} $<$<COMPILE_LANGUAGE:CXX>:-Wno-c++20-attribute-extensions>)
+-    else()
+-        check_cxx_compiler_flag(-Wno-c++20-extensions HAVE_WNO_CXX20_EXT)
+-        if(HAVE_WNO_CXX20_EXT)
+-            set(C_FLAGS ${C_FLAGS} $<$<COMPILE_LANGUAGE:CXX>:-Wno-c++20-extensions>)
+-        endif()
++    check_cxx_compiler_flag(-Wno-c++20-extensions HAVE_WNO_CXX20_EXT)
++    if(HAVE_WNO_CXX20_EXT)
++        set(C_FLAGS ${C_FLAGS} $<$<COMPILE_LANGUAGE:CXX>:-Wno-c++20-extensions>)
+     endif()
+ 
+     if(ALSOFT_WERROR)

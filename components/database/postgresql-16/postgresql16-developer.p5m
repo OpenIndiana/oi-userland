@@ -23,18 +23,11 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/postgres/16/bin/$(MACH32)/pg_config mode=0555
 file path=usr/postgres/16/bin/pg_config mode=0555
-file path=usr/postgres/16/bin/$(MACH32)/ecpg mode=0555
 file path=usr/postgres/16/bin/ecpg mode=0555
-
-file files/pg_config.h path=usr/postgres/16/include/pg_config.h
-hardlink path=usr/postgres/16/include/server/pg_config.h target=../pg_config.h
 
 link path=usr/bin/pg_config target=../postgres/16/bin/pg_config mediator=postgres mediator-implementation=postgresql mediator-version=16
 link path=usr/bin/ecpg target=../postgres/16/bin/ecpg mediator=postgres mediator-implementation=postgresql mediator-version=16
-link path=usr/bin/$(MACH32)/pg_config target=../../postgres/16/bin/$(MACH32)/pg_config mediator=postgres mediator-implementation=postgresql mediator-version=16
-link path=usr/bin/$(MACH32)/ecpg target=../../postgres/16/bin/$(MACH32)/ecpg mediator=postgres mediator-implementation=postgresql mediator-version=16
 
 link path=usr/share/man/man1/ecpg.1 target=../../../postgres/16/man/man1/ecpg.1 mediator=postgres mediator-implementation=postgresql mediator-version=16
 link path=usr/share/man/man1/pg_config.1 target=../../../postgres/16/man/man1/pg_config.1 mediator=postgres mediator-implementation=postgresql mediator-version=16
@@ -57,8 +50,7 @@ file path=usr/postgres/16/include/internal/pqexpbuffer.h
 file path=usr/postgres/16/include/libpq-events.h
 file path=usr/postgres/16/include/libpq-fe.h
 file path=usr/postgres/16/include/libpq/libpq-fs.h
-file path=usr/postgres/16/include/pg_config-32.h
-file path=usr/postgres/16/include/pg_config-64.h
+file path=usr/postgres/16/include/pg_config.h
 file path=usr/postgres/16/include/pg_config_ext.h
 file path=usr/postgres/16/include/pg_config_manual.h
 file path=usr/postgres/16/include/pg_config_os.h
@@ -467,8 +459,10 @@ file path=usr/postgres/16/include/server/foreign/fdwapi.h
 file path=usr/postgres/16/include/server/foreign/foreign.h
 file path=usr/postgres/16/include/server/funcapi.h
 file path=usr/postgres/16/include/server/getopt_long.h
+file path=usr/postgres/16/include/server/jit/SectionMemoryManager.h
 file path=usr/postgres/16/include/server/jit/jit.h
 file path=usr/postgres/16/include/server/jit/llvmjit.h
+file path=usr/postgres/16/include/server/jit/llvmjit_backport.h
 file path=usr/postgres/16/include/server/jit/llvmjit_emit.h
 file path=usr/postgres/16/include/server/lib/binaryheap.h
 file path=usr/postgres/16/include/server/lib/bipartite_match.h
@@ -581,8 +575,7 @@ file path=usr/postgres/16/include/server/partitioning/partbounds.h
 file path=usr/postgres/16/include/server/partitioning/partdefs.h
 file path=usr/postgres/16/include/server/partitioning/partdesc.h
 file path=usr/postgres/16/include/server/partitioning/partprune.h
-file path=usr/postgres/16/include/server/pg_config-32.h
-file path=usr/postgres/16/include/server/pg_config-64.h
+file path=usr/postgres/16/include/server/pg_config.h
 file path=usr/postgres/16/include/server/pg_config_ext.h
 file path=usr/postgres/16/include/server/pg_config_manual.h
 file path=usr/postgres/16/include/server/pg_config_os.h
@@ -950,18 +943,6 @@ file path=usr/postgres/16/lib/$(MACH64)/libpgcommon_shlib.a
 file path=usr/postgres/16/lib/$(MACH64)/libpgfeutils.a
 file path=usr/postgres/16/lib/$(MACH64)/libpgport.a
 file path=usr/postgres/16/lib/$(MACH64)/libpgport_shlib.a
-file path=usr/postgres/16/lib/pgxs/config/install-sh mode=0555
-file path=usr/postgres/16/lib/pgxs/config/missing
-file path=usr/postgres/16/lib/pgxs/src/Makefile.global
-file path=usr/postgres/16/lib/pgxs/src/Makefile.port
-file path=usr/postgres/16/lib/pgxs/src/Makefile.shlib
-file path=usr/postgres/16/lib/pgxs/src/makefiles/pgxs.mk
-file path=usr/postgres/16/lib/pgxs/src/nls-global.mk
-file path=usr/postgres/16/lib/libpgcommon.a
-file path=usr/postgres/16/lib/libpgcommon_shlib.a
-file path=usr/postgres/16/lib/libpgport_shlib.a
-file path=usr/postgres/16/lib/libpgfeutils.a
-file path=usr/postgres/16/lib/libpgport.a
 file path=usr/postgres/16/man/man1/ecpg.1
 file path=usr/postgres/16/man/man1/pg_config.1
 file path=usr/share/locale/cs/LC_MESSAGES/ecpg-16.mo

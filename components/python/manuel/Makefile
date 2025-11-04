@@ -19,21 +19,22 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		manuel
-HUMAN_VERSION =			1.12.4
-COMPONENT_SUMMARY =		manuel - Manuel lets you build tested documentation.
+HUMAN_VERSION =			1.13.0
+COMPONENT_SUMMARY =		Manuel lets you build tested documentation.
 COMPONENT_PROJECT_URL =		http://pypi.python.org/pypi/manuel
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b6/7e/4b35dc0d8b0f9d6140cd57743cde7c7f7e02aef807c86e1a813c9f69572c/manuel-1.12.4.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0395aadf6991f924ac795cfad59da5dc0618732a8cc58ad0f474965ab728f7f4
+	sha256:5d63120de8fa6d927780b69ae28aa3e9d1669b10af3d32785f3fba11a5be885a
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
-TEST_STYLE = setup.py
+# https://github.com/benji-york/manuel/issues/34#issuecomment-2016443027
+TEST_STYLE = unittest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/benji-york/manuel/issues/34#issuecomment-2016443027
+COMPONENT_TEST_TARGETS += manuel.tests.test_suite
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/six
 PYTHON_REQUIRED_PACKAGES += runtime/python

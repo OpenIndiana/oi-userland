@@ -11,24 +11,37 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Path::Tiny
+#   $WS_TOOLS/perl-integrate-module Path-Tiny
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Path::Tiny
-HUMAN_VERSION =			0.144
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Path::Tiny - File path utility
+COMPONENT_NAME =		Path-Tiny
+HUMAN_VERSION =			0.150
+COMPONENT_SUMMARY =		File path utility
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6ea094ece845c952a02c2789332579354de8d410a707f9b7045bd241206487d
+	sha256:ff20713d1a14d257af9c78209001f40dc177e4b9d1496115cbd8726d577946c7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/unicode-utf8
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-failwarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-mockrandom
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

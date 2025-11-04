@@ -21,16 +21,17 @@
 # Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-BUILD_BITS= 64
+
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libksba
-COMPONENT_VERSION=      1.6.6
+COMPONENT_VERSION=      1.6.7
 COMPONENT_SUMMARY=      GnuPG X.509 certificate library
 COMPONENT_PROJECT_URL=  https://www.gnupg.org/related_software/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5dec033d211559338838c0c4957c73dfdc3ee86f73977d6279640c9cd08ce6a4
+COMPONENT_ARCHIVE_HASH= sha256:cf72510b8ebb4eb6693eef765749d83677a03c79291a311040a5bfd79baab763
 COMPONENT_ARCHIVE_URL=  https://gnupg.org/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/security/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -41,7 +42,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -49,10 +50,8 @@ CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-pic
 
 COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^Making/d"' \
-	'-e "/Nothing to be done/d"' \
-	'-e "/Leaving directory/d"' \
-	'-e "/Entering directory/d"'
+	'-e "/All/p"' \
+	'-e "/====/p"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/security/libgpg-error

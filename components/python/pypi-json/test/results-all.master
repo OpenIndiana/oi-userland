@@ -1,0 +1,44 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python --version
+Python 3.9.19
+py$(PYV): commands[1]> python -m pytest --cov=pypi_json -r aR tests/
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 23 items
+
+tests/test_api.py::test_changes_to_api_july_2022 PASSED
+tests/test_api.py::test_class_misc PASSED
+tests/test_api.py::test_custom_endpoint PASSED
+tests/test_api.py::test_download_file[%] PASSED
+tests/test_api.py::test_download_file[^] PASSED
+tests/test_api.py::test_get_latest_version PASSED
+tests/test_api.py::test_get_metadata PASSED
+tests/test_api.py::test_get_metadata_not_found PASSED
+tests/test_api.py::test_get_pypi_releases[0.1.0] PASSED
+tests/test_api.py::test_get_pypi_releases[None] PASSED
+tests/test_api.py::test_get_releases_with_digests[0.1.0] PASSED
+tests/test_api.py::test_get_releases_with_digests[None] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[apeye] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[coverage] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[domdf_python_tools] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[mathematical] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[numpy] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[pyyaml] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[scipy] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping[shippinglabel] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping_no_files[microsoft] PASSED
+tests/test_api.py::test_get_wheel_tag_mapping_no_version[microsoft] PASSED
+tests/test_api.py::test_metadata_nonexistant PASSED
+
+Required test coverage of 98.0% reached. Total coverage: 98.21%
+
+============================= slowest 25 durations =============================
+======== 23 passed ========
+  py$(PYV): OK
+  congratulations :)

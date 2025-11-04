@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='site/wsdd' type='service' version='0'>
+    <create_default_instance enabled='false'/>
+    <single_instance/>
+    <dependency name='smb_server' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/network/smb/server:default'/>
+    </dependency>
+    <dependency name='network' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/milestone/network:default'/>
+    </dependency>
+    <dependency name='filesystem' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <method_context/>
+    <exec_method name='start' type='method' exec='/lib/svc/method/svc-wsdd %m' timeout_seconds='60'/>
+    <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'/>
+    <property_group name='config' type='application'>
+      <propval name='domain' type='astring' value='example.lan'/>
+      <propval name='interface' type='astring' value='igb0'/>
+      <propval name='debug' type='astring' value='-v'/>
+    </property_group>
+    <property_group name='application' type='application'/>
+    <property_group name='startd' type='framework'>
+      <propval name='ignore_error' type='astring' value='core,signal'/>
+    </property_group>
+    <stability value='Evolving'/>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>Web Service Discovery daemon</loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>

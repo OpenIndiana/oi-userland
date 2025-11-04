@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Exporter
+#   $WS_TOOLS/perl-integrate-module Sub-Exporter
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Exporter
+COMPONENT_NAME =		Sub-Exporter
 HUMAN_VERSION =			0.991
-COMPONENT_SUMMARY =		Sub::Exporter - a sophisticated exporter for custom-built routines
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		a sophisticated exporter for custom-built routines
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2a95695d35c5d0d5373a7e145c96b9b016113b74e94116835ac05450cae4d445
@@ -31,6 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/data-optlist
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/params-util
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-install
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

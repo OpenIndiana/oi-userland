@@ -1,0 +1,32 @@
+Text relocation remains                         referenced
+    against symbol                  offset      in file
+_ZN15nsImapNamespaceC1E8._anon_1PKccb 0xfd              ../../../comm/mailnews/imap/src/nsImapHostSessionList.o
+_ZN19nsImapNamespaceList25GetDefaultNamespaceOfTypeE8._anon_1 0x38              ../../../comm/mailnews/imap/src/nsImapHostSessionList.o
+_ZN19nsImapNamespaceList25GetDefaultNamespaceOfTypeE8._anon_1 0x4f              ../../../comm/mailnews/imap/src/nsImapHostSessionList.o
+_ZN19nsImapNamespaceList18GetNamespaceNumberEi8._anon_1 0x194           ../../../comm/mailnews/imap/src/nsImapHostSessionList.o
+_ZN19nsImapNamespaceList21GetNumberOfNamespacesE8._anon_1 0x117         ../../../comm/mailnews/imap/src/nsImapHostSessionList.o
+_ZN15nsImapNamespaceC1E10._anon_140PKccb 0xe8           ../../../comm/mailnews/imap/src/nsImapServerResponseParser.o
+_ZN19nsImapNamespaceList42GenerateFullFolderNameWithDefaultNamespaceEPKcS1_S1_10._anon_164PP15nsImapNamespace 0x11ba            ../../../comm/mailnews/imap/src/nsImapService.o
+ld: fatal: relocations remain against allocatable but non-writable sections
+collect2: error: ld returned 1 exit status
+
+Revert EIMAPNamespaceType enum header
+
+--- thunderbird-128.0/comm/mailnews/imap/src/nsImapCore.h.old	2024-07-08 07:52:12.399273308 -0400
++++ thunderbird-128.0/comm/mailnews/imap/src/nsImapCore.h	2024-07-08 07:53:17.270769253 -0400
+@@ -80,13 +80,13 @@
+ };
+ 
+ // I think this should really go in an imap.h equivalent file
+-using EIMAPNamespaceType = enum EIMapNamespaceType {
++typedef enum {
+     kPersonalNamespace = 0,
+     kOtherUsersNamespace,
+     kPublicNamespace,
+     kDefaultNamespace,
+     kUnknownNamespace
+-};
++} EIMAPNamespaceType;
+ 
+ 
+ /**

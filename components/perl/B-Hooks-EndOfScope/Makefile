@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module B::Hooks::EndOfScope
+#   $WS_TOOLS/perl-integrate-module B-Hooks-EndOfScope
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		B::Hooks::EndOfScope
+COMPONENT_NAME =		B-Hooks-EndOfScope
 HUMAN_VERSION =			0.28
-COMPONENT_SUMMARY =		B::Hooks::EndOfScope - Execute code after a scope finished compilation
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Execute code after a scope finished compilation
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:edac77a17fc36620c8324cc194ce1fad2f02e9fcbe72d08ad0b2c47f0c7fd8ef
@@ -30,9 +31,15 @@ COMPONENT_LICENSE_FILE =	LICENCE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/module-implementation
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter-progressive
+PERL_REQUIRED_PACKAGES += library/perl-5/text-parsewords
 PERL_REQUIRED_PACKAGES += library/perl-5/variable-magic
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/variable-magic

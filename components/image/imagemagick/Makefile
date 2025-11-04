@@ -24,21 +24,21 @@
 # Copyright (c) 2023, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		7.1.1
-COMPONENT_SUBVERSION=		30
+COMPONENT_VERSION=		7.1.2
+COMPONENT_SUBVERSION=		0
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		ImageMagick - Image Manipulation Utilities and Libraries
 COMPONENT_PROJECT_URL=	https://imagemagick.org
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1f719ceb809e9b9b5f485af121be3df328c0acec6f714f5875a9bfb1512de074
+COMPONENT_ARCHIVE_HASH=	sha256:03fe29e376b5938255b3fdb8d1f50515caa48055c0c2743faaeea52fc673a38b
 COMPONENT_ARCHIVE_URL=	https://github.com/ImageMagick/ImageMagick/archive/$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=			image/imagemagick
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
@@ -65,27 +65,19 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
 CONFIGURE_OPTIONS += --with-modules
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
+# libheic is in encumbered
+CONFIGURE_OPTIONS += --without-heic
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 #CONFIGURE_OPTIONS+= --with-fontconfig=no
-# Configure option 'with-gs-font-dir' is required because some build systems might 
-# not have ghostscript fonts installed.
-CONFIGURE_OPTIONS += --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS += --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
 CONFIGURE_OPTIONS += --with-perl=$(PERL)
 CONFIGURE_OPTIONS += --with-perl-options="INSTALLDIRS=vendor"
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
-# As of version 7.1.0-34, a "Linux-compatible sendfile()" is detected;
-# override thiis.
+# As of version 7.1.0-34, a "Linux-compatible sendfile()" is detected; override this.
 CONFIGURE_OPTIONS += ac_cv_have_linux_sendfile=no
 
 # Tests hang waiting for input unless stdin is redirected.
@@ -94,7 +86,7 @@ COMPONENT_TEST_TARGETS = check < /dev/null
 # PKGVERS is needed for manifest processing
 PKG_MACROS += PERLVER=$(PERL_VERSION)
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += print/filter/ghostscript/fonts/gnu-gs-fonts-std
 
 # Auto-generated dependencies
@@ -105,7 +97,6 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += image/djvulibre
 REQUIRED_PACKAGES += image/graphviz
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/libtiff

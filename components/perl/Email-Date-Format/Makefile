@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::Date::Format
+#   $WS_TOOLS/perl-integrate-module Email-Date-Format
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Email::Date::Format
+COMPONENT_NAME =		Email-Date-Format
 HUMAN_VERSION =			1.008
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Email::Date::Format - produce RFC 2822 date strings
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		produce RFC 2822 date strings
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:432b7c83ff88749af128003f5257c573aec1a463418db90ed22843cbbc258b4f
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/time-local
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

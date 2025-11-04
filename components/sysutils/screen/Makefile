@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		screen
 COMPONENT_VERSION=	4.9.1
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	GNU Screen terminal multiplexer
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/screen/
 COMPONENT_FMRI=		terminal/screen
@@ -37,22 +37,22 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:26cef3e3c42571c0d484ad6faf110c5c15091fbf872b06fa7aa4766c7405ac69
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig	
+COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_LICENSE= 	GPLv3+
 COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-CFLAGS += $(CPP_XPG6MODE)
+CFLAGS += $(CPP_XPG6MODE) -std=gnu90 -Wno-deprecated-non-prototype
 LDFLAGS += -lutempter
 
 COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS += --enable-colors256
 CONFIGURE_OPTIONS += --with-sys-screenrc=/etc/screenrc
-CONFIGURE_OPTIONS += --disable-socket-dir
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS += --with-pty-mode=0620
 
 PROTOTERMINFODIR= $(PROTOUSRSHAREDIR)/lib/terminfo
 

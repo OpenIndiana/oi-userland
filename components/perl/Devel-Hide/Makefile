@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Devel::Hide
+#   $WS_TOOLS/perl-integrate-module Devel-Hide
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Devel::Hide
+COMPONENT_NAME =		Devel-Hide
 HUMAN_VERSION =			0.0015
-COMPONENT_SUMMARY =		Devel::Hide - Forces the unavailability of specified Perl modules (for testing)
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Forces the unavailability of specified Perl modules (for testing)
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fc8dbeb7f7d75a78ed496b1e0e05cfc99c68acab3a2e92cff155ca5f0fa5df58
@@ -28,5 +29,12 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

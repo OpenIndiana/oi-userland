@@ -1,0 +1,24 @@
+https://github.com/cherrypy/cheroot/pull/776
+
+--- cheroot-11.0.0/cheroot/test/test_ssl.py.orig
++++ cheroot-11.0.0/cheroot/test/test_ssl.py
+@@ -24,6 +24,7 @@
+     IS_LINUX,
+     IS_MACOS,
+     IS_PYPY,
++    IS_SOLARIS,
+     IS_WINDOWS,
+     bton,
+     ntob,
+@@ -732,6 +733,11 @@
+             54,
+             'Connection reset by peer',
+         )
++    if IS_SOLARIS:
++        expected_error_code, expected_error_text = (
++            None,
++            'Remote end closed connection without response',
++        )
+     if IS_WINDOWS:
+         expected_error_code, expected_error_text = (
+             10054,

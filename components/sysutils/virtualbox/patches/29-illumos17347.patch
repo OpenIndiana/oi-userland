@@ -1,0 +1,15 @@
+--- VirtualBox-7.1.10/src/VBox/Runtime/r3/posix/RTTimeZoneGetCurrent-posix.cpp.orig
++++ VirtualBox-7.1.10/src/VBox/Runtime/r3/posix/RTTimeZoneGetCurrent-posix.cpp
+@@ -51,8 +51,11 @@
+ #include <iprt/symlink.h>
+ #include <iprt/stream.h>
+ 
+-#if defined(RT_OS_DARWIN) || defined(RT_OS_SOLARIS)
++#if defined(RT_OS_DARWIN)
+ # include <tzfile.h>
++#elif defined(RT_OS_SOLARIS)
++# define TZDIR                   "/usr/share/lib/zoneinfo"
++# define TZ_MAGIC                "TZif"
+ #else
+ # define TZDIR                   "/usr/share/zoneinfo"
+ # define TZ_MAGIC                "TZif"

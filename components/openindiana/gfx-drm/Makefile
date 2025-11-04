@@ -20,7 +20,7 @@ COMPONENT_NAME=		gfx-drm
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=https://github.com/illumos/gfx-drm.git
+GIT_REPO=https://github.com/openindiana/gfx-drm.git
 GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 
@@ -52,7 +52,7 @@ update:
 
 download:: $(SOURCE_DIR)/.downloaded
 
-$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.patched
+$(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	$(MKDIR) $(@D)
 	cd $(SOURCE_DIR) && \
 		cat myenv.sh | \

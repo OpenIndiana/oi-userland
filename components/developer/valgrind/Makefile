@@ -24,17 +24,18 @@
 # Copyright (c) 2019 Michal Nowak
 # Copyright (c) 2021 David Stes
 # Copyright (c) 2022,2023 Friedrich Kink
+# Copyright (c) 2025 Paul Floyd
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.22.0
+COMPONENT_VERSION=	3.26.0
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:c811db5add2c5f729944caf47c4e7a65dcaabb9461e472b578765dd7bf6d2d4c
+COMPONENT_ARCHIVE_HASH=	sha256:8d54c717029106f1644aadaf802ab9692e53d93dd015cbd19e74190eba616bd7
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
@@ -44,23 +45,21 @@ COMPONENT_LICENSE_FILE=	COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Use GNU utilities
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Flags are inferred from CC and tests rely on sigaction
 CFLAGS= -D__EXTENSIONS__
 CXXFLAGS= -D__EXTENSIONS__
 LDFLAGS=
 
-CONFIGURE_DEFAULT_DIRS=no
+CONFIGURE_DEFAULT_DIRS= no
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --sbindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS += --enable-inner
 CONFIGURE_OPTIONS += --enable-tls
 CONFIGURE_OPTIONS += --with-mpicc=$(USRLIBDIR)/openmpi/gcc/bin/mpicc
 
@@ -69,12 +68,11 @@ COMPONENT_PREP_ACTION += ( cd $(@D) && ./autogen.sh )
 # config.h is generated in the build directory while it is assumed to live in the source dir
 COMPONENT_POST_CONFIGURE_ACTION += ( cp $(@D)/config.h $(SOURCE_DIR) )
 
-COMPONENT_POST_BUILD_ACTION += \
-	( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
+COMPONENT_POST_BUILD_ACTION += ( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
 
 #
-# currently 3.22.0
-# == 835 tests, 62 stderr failures, 14 stdout failures, 0 stderrB failures, 0 stdoutB failures, 6 post failures ==
+# currently 3.25.0
+# == 894 tests, 6 stderr failures, 0 stdout failures, 16 stderrB failures, 3 stdoutB failures, 1 post failure ==
 #
 COMPONENT_TEST_TARGETS = regtest
 # check just overal test results
@@ -82,8 +80,7 @@ COMPONENT_TEST_TRANSFORMS += '-n -e "/^== /p"'
 
 # Build dependencies
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += developer/gcc-13
 REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

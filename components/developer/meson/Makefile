@@ -1,63 +1,94 @@
+#
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
-# only use this file in accordance with the terms of the CDDL.
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
-# source. A copy of the CDDL is also available via the Internet at
+# source.  A copy of the CDDL is also available via the Internet at
 # http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2017 Aurelien Larcher
-# Copyright 2020 Michal Nowak
-# Copyright 2022 Andreas Wacknitz
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d developer/meson meson
 #
 
-BUILD_STYLE= setup.py
-SINGLE_PYTHON_VERSION= yes
-TEST_STYLE = run_tests.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         meson
-COMPONENT_VERSION=      1.4.0
-COMPONENT_SUMMARY=      The Meson Build system
-COMPONENT_PROJECT_URL=  https://mesonbuild.com/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=  https://github.com/mesonbuild/meson/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:61382f295378bddcd9bebb3a9a9065b1cbc671fa41b80964ab02726f9a5f3a88
-COMPONENT_FMRI=         developer/build/meson
-COMPONENT_CLASSIFICATION=Development/Distribution Tools
-COMPONENT_LICENSE=      APLv2
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_NAME =		meson
+HUMAN_VERSION =			1.7.2
+COMPONENT_SUMMARY =		A high performance build system
+COMPONENT_PROJECT_URL =		https://mesonbuild.com
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/mesonbuild/meson/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:4d40d63aa748a9c139cc41ab9bffe43edd113c5639d78bde81544ca955aea890
+COMPONENT_LICENSE =		Apache-2.0
+COMPONENT_LICENSE_FILE =	COPYING
+
+# Manifest options for developer/build/meson package
+COMPONENT_FMRI.meson-meta =		developer/build/meson
+COMPONENT_CLASSIFICATION.meson-meta =	Development/Distribution Tools
+
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
+# We have no polkit
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/polkit-1 ;
 
-PKG_MACROS += PYVER=$(PYTHON_VERSION)
+# Rename section 1 man page(s) to contain version number
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(PROTOUSRSHAREMAN1DIR)/*.1 ; do \
+		[[ -f $$f ]] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[[ "$$f" == "$${f%%$$v.1}" ]] || continue 2 ; \
+		done ; \
+		$(MV) $$f $${f%%.1}-$(PYTHON_VERSION).1 ; \
+	done ;
 
-# Assumes GNU msgfmt is first in PATH
-PYTHON_ENV += PATH="$(GCC_ROOT)/bin:$(PATH.gnu)"
+# Custom test style
+# See also: https://mesonbuild.com/MesonCI.html
+COMPONENT_TEST_CMD = $(PYTHON) run_tests.py
+COMPONENT_TEST_ARGS =
+COMPONENT_TEST_ARGS += -v		# verbose
+COMPONENT_TEST_ARGS += --failfast
+COMPONENT_TEST_TARGETS =
+COMPONENT_TEST_ENV += PYTEST_ADDOPTS="$(PYTEST_ADDOPTS)"
+# Testing expects GNU msgfmt and GNU make
+COMPONENT_TEST_ENV += PATH="$(PATH.gnu)"
+# Testing needs to find Qt5/Qt6 libraries
+COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(QT5_LIBDIR):$(QT6_LIBDIR)
 
-COMPONENT_INSTALL_ARGS= --root $(PROTO_DIR) --force --prefix=/usr --install-lib=$(PYTHON_LIB)
+# Exhausts memory
+PYTEST_ADDOPTS += --deselect unittests/linuxliketests.py::LinuxlikeTests::test_generate_gir_with_address_sanitizer
+# Uses valgrind and fails (needs further investigation)
+PYTEST_ADDOPTS += --deselect unittests/allplatformstests.py::AllPlatformTests::test_testsetups
+# Python 2 test that fails in our environment
+PYTEST_ADDOPTS += --deselect unittests/machinefiletests.py::NativeFileTests::test_python_module
 
-PROTO_PY_MESONBUILD_DIR= $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/mesonbuild
+# Remove timing
+COMPONENT_TEST_TRANSFORMS += "-e '/^Total .*time:/d'"
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+# Varies between test runs
+COMPONENT_TEST_TRANSFORMS += "-e 's/Generating targets:.*//g'"
 
-COMPONENT_POST_INSTALL_ACTION= \
-	( $(GSED) -i -e 's/env python3/python$(PYTHON_VERSION)/' $(PROTO_PY_MESONBUILD_DIR)/rewriter.py ; )
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 
-COMPONENT_TEST_CMD= ./run_tests.py
-COMPONENT_TEST_ARGS= 
-COMPONENT_TEST_TRANSFORMS += \
-	'-n ' \
-	'-e "/ok/p" ' \
-	'-e "/PASS/p" ' \
-	'-e "/SKIPPED/p" ' \
-	'-e "/-----/p" ' \
-	'-e "/=====/p" ' \
+# Manually added test dependencies to make sure we test as much as possible and
+# to get consistent test results
+TEST_REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+TEST_REQUIRED_PACKAGES += library/c++/hdf5
+TEST_REQUIRED_PACKAGES += library/qt5
+TEST_REQUIRED_PACKAGES += library/qt6
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += developer/build/ninja

@@ -17,13 +17,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libplist
-COMPONENT_VERSION= 2.4.0
+COMPONENT_VERSION= 2.7.0
 COMPONENT_SUMMARY= A library to handle Apple Property List format in binary or XML
 COMPONENT_PROJECT_URL = https://github.com/libimobiledevice/libplist
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:154815a2daca115f83a00a645073755196fd3adfbf0244d159c0eaced2a45bcd
-COMPONENT_ARCHIVE_URL=	https://cgit.libimobiledevice.org/libplist.git/snapshot/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:7ac42301e896b1ebe3c654634780c82baa7cb70df8554e683ff89f7c2643eb8b
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/libplist
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE= GPLv2,LGPLv2.1
@@ -33,7 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 # Without .tarball-version the build fails because of undefined PKG_VERSION.
-COMPONENT_PREP_ACTION= ( cd  $(@D) && echo -n "$(COMPONENT_VERSION)" > .tarball-version  && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
+#COMPONENT_PREP_ACTION= ( cd  $(@D) && echo -n "$(COMPONENT_VERSION)" > .tarball-version  && NOCONFIGURE=true PATH="$(PATH.gnu)" sh autogen.sh )
 
 # We use python vendor-packages instead of site-packages
 COMPONENT_POST_INSTALL_ACTION += \

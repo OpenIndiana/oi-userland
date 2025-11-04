@@ -15,15 +15,15 @@
 #
 
 BUILD_BITS= 64_and_32
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libwebp
-COMPONENT_VERSION= 1.3.2
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 1.6.0
 COMPONENT_SUMMARY= WebP image format library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2a499607df669e40258e53d0ade8035ba4ec0175244869d1025d460562aa09b4
+COMPONENT_ARCHIVE_HASH= sha256:e4ab7009bf0629fd11982d4c2aa83964cf244cffba7347ecd39019a9e38c4564
 COMPONENT_ARCHIVE_URL= https://storage.googleapis.com/downloads.webmproject.org/releases/webp/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL= https://developers.google.com/speed/webp/
 COMPONENT_FMRI= library/libwebp
@@ -36,13 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
-
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS += --enable-libwebpmux
 CONFIGURE_OPTIONS += --enable-libwebpdemux
 CONFIGURE_OPTIONS += --enable-libwebpdecoder

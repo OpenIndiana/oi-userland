@@ -1,0 +1,21 @@
+modunload fails because
+$ modinfo | grep vboxflt
+delivers two lines:
+
+root@notebookcg2:~# modinfo | grep vboxflt
+262 fffffffff529a000   7bd8 309   1  vboxflt (VirtualBox NetDrv 7.1.8r168469)
+262 fffffffff529a000   7bd8   -   1  vboxflt (VirtualBox NetMod 7.1.8r168469)
+
+this leads to a non working modunload option list. The mod_id's are the same, so take the last.
+
+--- VirtualBox-7.1.10/src/VBox/Installer/solaris/vboxconfig.sh.orig
++++ VirtualBox-7.1.10/src/VBox/Installer/solaris/vboxconfig.sh
+@@ -576,7 +576,7 @@
+     moddesc=$2
+     retry=$3
+     fatal=$4
+-    modid=`$BIN_MODINFO | grep "$modname " | cut -f 1 -d ' ' `
++    modid=`$BIN_MODINFO | grep "$modname " | cut -f 1 -d ' ' | tail -1`
+     if test -n "$modid"; then
+         $BIN_MODUNLOAD -i $modid
+         if test "$?" -eq 0; then

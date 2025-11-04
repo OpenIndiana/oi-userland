@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::DNS::Resolver::Mock
+#   $WS_TOOLS/perl-integrate-module Net-DNS-Resolver-Mock
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::DNS::Resolver::Mock
+COMPONENT_NAME =		Net-DNS-Resolver-Mock
 HUMAN_VERSION =			1.20230216
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Net::DNS::Resolver::Mock - Mock a DNS Resolver object for testing
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Mock a DNS Resolver object for testing
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ed4930577fd1a29d6435b5875533d3b28f5c1258a35833fe6ca2cb6a2685a49b
@@ -31,6 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
 PERL_REQUIRED_PACKAGES += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

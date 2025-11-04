@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::chdir
+#   $WS_TOOLS/perl-integrate-module File-chdir
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::chdir
+COMPONENT_NAME =		File-chdir
 HUMAN_VERSION =			0.1011
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		File::chdir - a more sensible way to change directories
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		a more sensible way to change directories
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:31ebf912df48d5d681def74b9880d78b1f3aca4351a0ed1fe3570b8e03af6c79
@@ -31,4 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

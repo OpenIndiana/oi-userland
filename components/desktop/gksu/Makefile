@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gksu
 COMPONENT_VERSION=      2.0.2
-COMPONENT_REVISION=     6
+COMPONENT_REVISION=     7
 COMPONENT_FMRI=         desktop/gksu
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_PROJECT_URL=  http://www.nongnu.org/gksu/
@@ -35,6 +35,9 @@ TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
 
 COMPONENT_PREP_ACTION =        ( cd $(@D)  && \
 					$(TOUCH) NEWS  README&&\
@@ -60,7 +63,7 @@ gcc_OPT=
 REQUIRED_PACKAGES += library/gnome/gnome-keyring
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/libgksu
 REQUIRED_PACKAGES += library/glib2

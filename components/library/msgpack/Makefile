@@ -16,15 +16,14 @@ BUILD_STYLE=cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         msgpack
-COMPONENT_VERSION=      6.0.0
-#COMPONENT_REVISION=     1
+COMPONENT_VERSION=      6.1.0
 COMPONENT_PROJECT_URL=  https://msgpack.org
 COMPONENT_SUMMARY=      An efficient object serialization library
 COMPONENT_FMRI=         library/msgpack
 COMPONENT_SRC=          $(COMPONENT_NAME)-c-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:3654f5e2c652dc52e0a993e270bb57d5702b262703f03771c152bba51602aeba
+    sha256:674119f1a85b5f2ecc4c7d5c2859edf50c0b05e0c10aa0df85eefa2c8c14b796
 COMPONENT_ARCHIVE_URL=	https://github.com/msgpack/msgpack-c/releases/download/c-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=       System/Libraries
 COMPONENT_LICENSE=      Boost

@@ -1,0 +1,25 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/src/main/tls.c a/src/main/tls.c
+--- a~/src/main/tls.c	1970-01-01 00:00:00
++++ a/src/main/tls.c	1970-01-01 00:00:00
+@@ -1824,7 +1824,7 @@ static int load_dh_params(SSL_CTX *ctx,
+ 	 *
+ 	 * Change suggested by @t8m
+ 	 */
+-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++#if (OPENSSL_VERSION_NUMBER >= 0x10101000L) && (OPENSSL_VERSION_NUMBER < 0x30000000L)
+ 	if (FIPS_mode() > 0) {
+ 		WARN(LOG_PREFIX ": Ignoring user-selected DH parameters in FIPS mode. Using defaults.");
+ 		file = NULL;
+change "fips=no" to "-fips"
+based on discussions with the OpenSSL developers in https://github.com/FreeRADIUS/freeradius-server/issues/5631
+--- freeradius-server-release_3_2_7/src/main/tls.c	2025-08-12 20:27:29.128710567 +0200
++++ freeradius-server-release_3_2_7/src/main/tls.c.new	2025-08-12 20:29:19.580273810 +0200
+@@ -3644,7 +3644,7 @@
+ 	CONF_modules_load_file(NULL, NULL, 0);
+ 
+ #if OPENSSL_VERSION_NUMBER >= 0x30000000L
+-	EVP_set_default_properties(NULL, "fips=no");
++	EVP_set_default_properties(NULL, "-fips");
+ #endif
+ 
+ 	/*

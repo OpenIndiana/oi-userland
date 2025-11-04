@@ -11,23 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Config::Tiny
+#   $WS_TOOLS/perl-integrate-module Config-Tiny
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Config::Tiny
+COMPONENT_NAME =		Config-Tiny
 HUMAN_VERSION =			2.30
-COMPONENT_SUMMARY =		Config::Tiny - Read/Write .ini style files with as little code as possible
-COMPONENT_ARCHIVE_URL=		https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.30.tgz
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Read/Write .ini style files with as little code as possible
+COMPONENT_ARCHIVE_URL =		\
+	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.30.tgz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b2f7345619b3b8e636dd39ea010731c9dc2bfb8f022bcbd86ae6ad17866e110d
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

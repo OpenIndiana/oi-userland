@@ -1,0 +1,20 @@
+We provide our own PYTHONEXECDIR value and so we need to prevent its overwrite.
+
+--- hplip-3.25.6/configure.in.orig
++++ hplip-3.25.6/configure.in
+@@ -657,15 +657,6 @@
+          AC_MSG_ERROR([Failed to determine the Python include directory. Please check your Python installation.], 6)
+       fi
+    fi
+-   PYTHONEXECDIR=`$PYTHON -c "from distutils.sysconfig import get_python_lib; print (get_python_lib(1));" 2>/dev/null || echo "not found"`
+-   if test "$PYTHONEXECDIR" = "not found"; then
+-      AC_MSG_WARN([Failed to determine the Python executable directory. Retry using sysconfig module.])
+-      PYTHONEXECDIR=`$PYTHON -c "import sysconfig; print(sysconfig.get_path('platlib'))" 2>/dev/null || echo "not found"`
+-      if test "$PYTHONEXECDIR" = "not found"; then
+-         AC_MSG_ERROR([Failed to determine the Python executable directory. Please check your Python installation.], 6)
+-      fi
+-   fi
+-   AC_MSG_RESULT("using python executable directory $PYTHONEXECDIR ....  python${PYTHON_VERSION}/Python.h")
+    AC_MSG_RESULT("using python include directory $PYTHONINCLUDEDIR ....  python${PYTHON_VERSION}/Python.h")
+    AC_ARG_VAR(PYTHONINCLUDEDIR, [path to Python.h C header file])
+    AC_ARG_VAR(PYTHONEXECDIR, [path to Python executable directory])

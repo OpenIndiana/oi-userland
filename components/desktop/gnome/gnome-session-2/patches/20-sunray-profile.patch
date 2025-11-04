@@ -1,0 +1,61 @@
+diff -urN -x'*nfs*' gnome-session-2.27.92/gnome-session/gsm-autostart-app.c ../SUNWgnome-session-2.27.92.hacked/gnome-session-2.27.92/gnome-session/gsm-autostart-app.c
+--- gnome-session-2.27.92/gnome-session/gsm-autostart-app.c	2009-07-01 13:45:30.000000000 +0100
++++ ../SUNWgnome-session-2.27.92.hacked/gnome-session-2.27.92/gnome-session/gsm-autostart-app.c	2009-09-21 14:41:00.117490099 +0100
+@@ -28,6 +28,7 @@
+ 
+ #include <glib.h>
+ #include <gio/gio.h>
++#include <gdk/gdkx.h>
+ 
+ #include <gconf/gconf-client.h>
+ 
+@@ -99,6 +100,38 @@
+ }
+ 
+ static gboolean
++is_sunray_client (void)
++{
++        Atom          sunray_client_id;
++
++        sunray_client_id = XInternAtom (GDK_DISPLAY (),
++                                        "_SUN_SUNRAY_SESSION", True);
++ 
++        if (sunray_client_id == None) {
++                return FALSE;
++        }
++	else return TRUE;
++}
++
++
++static gboolean
++is_disabled_for_sunray_client (GsmApp *app)
++{
++	GsmAutostartAppPrivate *priv;
++
++	priv = GSM_AUTOSTART_APP (app)->priv;
++
++	if (egg_desktop_file_has_key (priv->desktop_file,
++				      "X-SUNRAY-Disable", NULL) &&
++	    egg_desktop_file_get_boolean (priv->desktop_file,
++                                          "X-SUNRAY-Disable", NULL) &&
++	    is_sunray_client ())
++		return TRUE;
++	else
++		return FALSE;
++}
++
++static gboolean
+ is_disabled (GsmApp *app)
+ {
+         GsmAutostartAppPrivate *priv;
+@@ -130,6 +163,10 @@
+                 return TRUE;
+         }
+ 
++	/* Add additional check for Sun Ray DTU */
++	if (is_disabled_for_sunray_client (app))
++		return TRUE;
++
+         /* Do not check AutostartCondition - this method is only to determine
+          if the app is unconditionally disabled */
+ 

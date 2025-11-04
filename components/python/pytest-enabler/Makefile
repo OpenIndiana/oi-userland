@@ -11,32 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-enabler
+#   $WS_TOOLS/python-integrate-project -d python/pytest-enabler pytest_enabler
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-enabler
-HUMAN_VERSION =			3.1.1
-COMPONENT_SUMMARY =		pytest-enabler - Enable installed pytest plugins
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/pytest-enabler
+COMPONENT_NAME =		pytest_enabler
+HUMAN_VERSION =			3.4.0
+COMPONENT_SUMMARY =		Enable installed pytest plugins
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ea1157e716801f9ba3f1c3db4474ec2114a0b8e77b909c1eb0f7a630a325483
+	sha256:45ece0ff22183503804d15307364290bc41fa027c843eb7046ee4f3439c8ba3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/coherent-licensed
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-resources
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-functools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/toml
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs

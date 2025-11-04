@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Uplevel
+#   $WS_TOOLS/perl-integrate-module Sub-Uplevel
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Uplevel
+COMPONENT_NAME =		Sub-Uplevel
 HUMAN_VERSION =			0.2800
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Sub::Uplevel - apparently run a function in a higher stack frame
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		apparently run a function in a higher stack frame
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b4f3f63b80f680a421332d8851ddbe5a8e72fcaa74d5d1d98f3c8cc4a3ece293
@@ -31,4 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

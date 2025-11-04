@@ -14,27 +14,30 @@
 #   $WS_TOOLS/python-integrate-project smartypants
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		smartypants
-HUMAN_VERSION =			2.0.1
+HUMAN_VERSION =			2.0.2
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		smartypants - Python with the SmartyPants
-COMPONENT_PROJECT_URL =		https://github.com/leohemsted/smartypants.py
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/leohemsted/smartypants.py/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
+COMPONENT_SUMMARY =		Python with the SmartyPants
+COMPONENT_PROJECT_URL =		https://github.com/justinmayer/smartypants.py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b98191911ff3b4144ef8ad53e776a2d0ad24bd508a905c6ce523597c40022773
+	sha256:39d64ce1d7cc6964b698297bdf391bc12c3251b7f608e6e55d857cd7c5f800c6
 COMPONENT_LICENSE =		BSD-2-Clause AND BSD-3-Clause
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
-COMPONENT_SRC =			smartypants.py-$(HUMAN_VERSION)
-
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+# See https://github.com/justinmayer/smartypants.py/blob/main/.github/workflows/ci.yml
+TEST_REQUIRED_PACKAGES.python += library/python/docutils
+TEST_REQUIRED_PACKAGES.python += library/python/pygments
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

@@ -16,12 +16,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ngtcp2
-COMPONENT_VERSION=	1.0.1
+COMPONENT_VERSION=	1.17.0
 COMPONENT_SUMMARY=	ngtcp2 project is an effort to implement RFC9000 QUIC protocol
 COMPONENT_PROJECT_URL=	https://ngtcp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:21c898fa5543d3f2dc203fd0a300a8a7cb70fec21ad7f7a3ec6e119ba4850451
+COMPONENT_ARCHIVE_HASH= sha256:9c9a4e2e150e90bf77d4ffcbefe82f738ee375287e68aaa715fa83c04a12209c
 COMPONENT_ARCHIVE_URL=	https://github.com/ngtcp2/ngtcp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/ngtcp2
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -30,13 +30,15 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# for some reason SPARC needs libsocket, to compile the examples directory.
-ifeq ($(strip $(MACH)),sparc)
+CFLAGS += $(XPG8MODE)
+
+# Needed to find right openssl
+CPPFLAGS += -I$(OPENSSL_INCDIR)
+LDFLAGS  += -L$(OPENSSL_LIBDIR)
+
 CONFIGURE_ENV += LIBS="-lsocket"
-endif
 
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-gnutls
 
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/cunit
@@ -45,5 +47,5 @@ REQUIRED_PACKAGES += library/libev
 REQUIRED_PACKAGES += library/nghttp3
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/gnutls-3
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += system/library

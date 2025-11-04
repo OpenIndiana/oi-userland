@@ -19,12 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yt_dlp
-HUMAN_VERSION =			2024.3.10
-COMPONENT_SUMMARY =		yt_dlp - A youtube-dl fork with additional features and patches
+HUMAN_VERSION =			2025.9.26
+COMPONENT_SUMMARY =		A feature-rich command-line audio/video downloader
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6e74cb14a69dbeb872c8ef4e0b8bbed2ee846ec633513cf3124a74c1faedc07b
+	sha256:c148ae8233ac4ce6c5fbf6f70fcc390f13a00f59da3776d373cf88c5370bda86
 COMPONENT_LICENSE =		Unlicense
 COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
 
 COMPONENT_FMRI =		multimedia/yt-dlp
 COMPONENT_CLASSIFICATION =	Applications/Sound and Video
@@ -35,14 +37,27 @@ SINGLE_PYTHON_VERSION = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Add optional runtime dependencies.  Technically, we do not need all of them
+# because only subset is strongly recommended but it is easier to add all of
+# them than to maintain the list of the strongly recommended.
+#
+# See also https://github.com/yt-dlp/yt-dlp/pull/11255
+#
+COMPONENT_POST_INSTALL_ACTION += \
+	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_DIR)/site-packages:$(PROTO_DIR)/$(PYTHON_LIB) \
+		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) default >> $(@D)/.depend-runtime ;
+
+# avoid downloads during testing
+PYTEST_ADDOPTS += -m 'not download'
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/brotli
-PYTHON_REQUIRED_PACKAGES += library/python/certifi
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/mutagen
-PYTHON_REQUIRED_PACKAGES += library/python/pycryptodomex
-PYTHON_REQUIRED_PACKAGES += library/python/requests
-PYTHON_REQUIRED_PACKAGES += library/python/urllib3
-PYTHON_REQUIRED_PACKAGES += library/python/websockets
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/brotli
+REQUIRED_PACKAGES.python += library/python/certifi
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/mutagen
+REQUIRED_PACKAGES.python += library/python/pycryptodomex
+REQUIRED_PACKAGES.python += library/python/requests
+REQUIRED_PACKAGES.python += library/python/urllib3
+REQUIRED_PACKAGES.python += library/python/websockets
+REQUIRED_PACKAGES.python += runtime/python

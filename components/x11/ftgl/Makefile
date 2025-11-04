@@ -12,14 +12,14 @@
 #
 # Copyright 2018 Harry Liebel <hliebel@gmail.com>
 # Copyright 2021 Andreas Wacknitz
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ftgl
 COMPONENT_VERSION=	2.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	OpenGL FreeType fonts rendering library
 COMPONENT_DESCRIPTION=	FTGL is a free cross-platform Open Source C++ library that uses Freetype2 to simplify rendering fonts in OpenGL applications. FTGL supports bitmaps, pixmaps, texture maps, outlines, polygon mesh, and extruded polygon rendering modes.
 COMPONENT_PROJECT_URL=	https://github.com/frankheckenbach/ftgl
@@ -40,7 +40,7 @@ COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 CONFIGURE_ENV += LIBS="-lm"
 
 CONFIGURE_OPTIONS += --with-x
-CONFIGURE_OPTIONS += --enable-static=
+CONFIGURE_OPTIONS += --enable-static=no
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += x11/library/freeglut

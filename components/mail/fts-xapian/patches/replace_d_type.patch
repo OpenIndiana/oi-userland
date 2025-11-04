@@ -1,0 +1,19 @@
+--- fts-xapian-1.9.1/src/fts-backend-xapian.cpp.~1~	2025-02-17 14:26:38.000000000 +0200
++++ fts-xapian-1.9.1/src/fts-backend-xapian.cpp	2025-04-17 12:48:45.721303756 +0300
+@@ -481,6 +481,7 @@
+ 	struct dirent * dp;
+ 	std::string s;
+ 	uint32_t uid;
++	struct stat	t_statbuf;
+ 	int ret=0;
+ 	std::vector<uint32_t> uids; uids.clear();
+ 	char *zErrMsg = 0;
+@@ -489,7 +490,7 @@
+ 	while ((dp = readdir(dirp)) != NULL)
+ 	{
+ 		s = dp->d_name;
+-		if((dp->d_type == DT_REG) && s.starts_with("db_") && s.ends_with(suffixExp) )
++		if(S_ISREG(t_statbuf.st_mode) && s.starts_with("db_") && s.ends_with(suffixExp) )
+ 		{
+ 			uids.clear();
+ 			i_info("FTS Xapian: Optimize (1) : Checking expunges from %s",dp->d_name);

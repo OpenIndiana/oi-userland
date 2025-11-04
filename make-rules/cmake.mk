@@ -29,23 +29,12 @@
 # This file implements the same rules as configure.mk and thus uses GNU Make
 # to build the components with support of multiple version (32/64 bit).
 #
-# To use these rules, include ../make-rules/cmake.mk in your Makefile
-# and define "build", "install", and "test" targets appropriate to building
-# your component.
-# Ex:
-#
-# 	build:		$(SOURCE_DIR)/build/$(MACH32)/.built \
-#	 		$(SOURCE_DIR)/build/$(MACH64)/.built
-#
-#	install:	$(SOURCE_DIR)/build/$(MACH32)/.installed \
-#	 		$(SOURCE_DIR)/build/$(MACH64)/.installed
-#
-#	test:		$(SOURCE_DIR)/build/$(MACH32)/.tested \
-#	 		$(SOURCE_DIR)/build/$(MACH64)/.tested
+# To use these rules, set BUILD_STYLE to cmake and include
+# $(WS_MAKE_RULES)/common.mk in your Makefile.
 #
 # Any additional pre/post configure, build, or install actions can be specified
 # in your make file by setting them in on of the following macros:
-#	COMPONENT_PRE_CMAKE_ACTION, COMPONENT_POST_CMAKE_ACTION
+#	COMPONENT_PRE_CONFIGURE_ACTION, COMPONENT_POST_CONFIGURE_ACTION
 #	COMPONENT_PRE_BUILD_ACTION, COMPONENT_POST_BUILD_ACTION
 #	COMPONENT_PRE_INSTALL_ACTION, COMPONENT_POST_INSTALL_ACTION
 #	COMPONENT_PRE_TEST_ACTION, COMPONENT_POST_TEST_ACTION
@@ -161,92 +150,58 @@ CMAKE_OPTIONS.64 += -DLIB_SUFFIX="/$(MACH64)"
 endif
 CMAKE_OPTIONS += $(CMAKE_OPTIONS.$(BITS))
 
-COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
+COMPONENT_INSTALL_ENV +=	DESTDIR=$(PROTO_DIR)
 
 $(BUILD_DIR_32)/.configured:	BITS=32
 $(BUILD_DIR_64)/.configured:	BITS=64
 
 CMAKE_ENV += $(CMAKE_ENV.$(BITS))
 
-COMPONENT_TEST_CMD=ctest
+COMPONENT_TEST_CMD = /usr/bin/ctest
 COMPONENT_TEST_TARGETS=
 
 # configure the unpacked source for building 32 and 64 bit version
-CMAKE =	cmake
+CMAKE = /usr/bin/cmake
 
 # provide test transforms for ctest
-CMAKE_TEST_TRANSFORMS = \
-	' -e "s/[0-9]*\.[0-9]* sec//" ' \
-	' -n ' \
-	' -e "/Not Run/p" ' \
-	' -e "/Start/p" ' \
-	' -e "/Skipped/p" ' \
-	' -e "/Failed/p" ' \
-	' -e "/Passed/p" ' \
-	' -e "/failed/p" '
+# drop timing
+CMAKE_TEST_TRANSFORMS += "-e 's/ *[0-9]\{1,\}\.[0-9]\{1,\} sec\$$//'"
+CMAKE_TEST_TRANSFORMS += "-e '/^Total Test time/d'"
+# drop Start lines
+CMAKE_TEST_TRANSFORMS += "-e '/^ *Start/d'"
+# drop test numbers
+CMAKE_TEST_TRANSFORMS += "-e 's/^ *[0-9]\{1,\}\/[0-9]\{1,\} Test *\#[0-9]\{1,\}:/Test/'"
 
 USE_DEFAULT_TEST_TRANSFORMS?=no
 ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)
 COMPONENT_TEST_TRANSFORMS += $(CMAKE_TEST_TRANSFORMS)
 endif
 
-$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
-	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
-	$(COMPONENT_PRE_CMAKE_ACTION)
-	(cd $(@D) ; $(ENV) $(CMAKE_ENV) \
-		$(CMAKE) $(CMAKE_OPTIONS) $(SOURCE_DIR))
-	$(COMPONENT_POST_CMAKE_ACTION)
-	$(TOUCH) $@
+# Configure
+CLONEY_MODE = none
+COMPONENT_PRE_CONFIGURE_ACTION += $(COMPONENT_PRE_CMAKE_ACTION)
+CONFIGURE_ENV += $(CMAKE_ENV)
+COMPONENT_CONFIGURE_ACTION ?= \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(CONFIGURE_ENV) \
+		$(CMAKE) $(CMAKE_OPTIONS) $(SOURCE_DIR)
+COMPONENT_POST_CONFIGURE_ACTION += $(COMPONENT_POST_CMAKE_ACTION)
 
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
-	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		$(GMAKE) $(COMPONENT_BUILD_GMAKE_ARGS) $(COMPONENT_BUILD_ARGS) \
-		$(COMPONENT_BUILD_TARGETS))
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
+# Build
+COMPONENT_BUILD_CMD = $(CMAKE) --build .
+COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_CMAKE_ARGS)
 
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) \
-			$(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
-
-# test the built source
-$(BUILD_DIR)/%/.tested-and-compared:	$(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	-(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		&> $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_COMPARE)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
-
-$(BUILD_DIR)/%/.tested:	SHELLOPTS=pipefail
-$(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
-	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
-	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(COMPONENT_TEST_DIR) ; \
-		$(COMPONENT_TEST_ENV_CMD) $(COMPONENT_TEST_ENV) \
-		$(COMPONENT_TEST_CMD) \
-		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS)) \
-		|& $(TEE) $(COMPONENT_TEST_OUTPUT)
-	$(COMPONENT_POST_TEST_ACTION)
-	$(COMPONENT_TEST_CREATE_TRANSFORMS)
-	$(COMPONENT_TEST_PERFORM_TRANSFORM)
-	$(COMPONENT_TEST_CLEANUP)
-	$(TOUCH) $@
+# Install
+COMPONENT_INSTALL_ACTION = \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(if $(strip $(CMAKE_COMPONENTS)), \
+		$(CMAKE_COMPONENTS:%=$(ENV) $(COMPONENT_INSTALL_ENV) \
+			$(CMAKE) --install . --component % $(COMPONENT_INSTALL_ARGS) ;) \
+		, \
+		$(ENV) $(COMPONENT_INSTALL_ENV) \
+			$(CMAKE) --install . $(COMPONENT_INSTALL_ARGS) \
+	)
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+
+# Use common rules
+USE_COMMON_RULES = yes

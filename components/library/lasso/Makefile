@@ -23,13 +23,12 @@
 # Copyright (c) 2019, Oracle and/or its affiliates. All rights reserved.
 #
 
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lasso
 COMPONENT_VERSION= 2.8.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= Lasso - library implementing the SAML 2.0 and ID-FF 1.2 protocols
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -45,24 +44,26 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
+
 CONFIGURE_OPTIONS += --disable-perl
 CONFIGURE_OPTIONS += --disable-java
 CONFIGURE_OPTIONS += --disable-python
-CONFIGURE_OPTIONS += --with-pkg-config=$(PKG_CONFIG_PATH.$(BITS))
 CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
-
-unexport SHELLOPTS
 
 # Manually added dependencies
 # inkscape is needed for png file creation:
 REQUIRED_PACKAGES += image/editor/inkscape
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/xmlsec
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

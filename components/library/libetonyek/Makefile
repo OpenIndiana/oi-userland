@@ -21,18 +21,16 @@
 # Copyright (c) 2020, Aurelien Larcher. All rights reserved.
 #
 
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetonyek
-COMPONENT_VERSION=	0.1.10
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.1.13
 COMPONENT_SUMMARY=      libetonyek - library for reading Apple iWork documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libetonyek
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:b430435a6e8487888b761dc848b7981626eb814884963ffe25eb26a139301e9a
+COMPONENT_ARCHIVE_HASH=	sha256:032b71cb597edd92a0b270b916188281bc35be55296b263f6817b29adbcb1709
 COMPONENT_ARCHIVE_URL=	https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/libetonyek
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -44,15 +42,15 @@ CXXFLAGS += -std=c++17 -pthread
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS += --enable-shared
-CONFIGURE_OPTIONS += --disable-static
+#CONFIGURE_OPTIONS += --enable-shared
+#CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-mdds=2.1
-
-unexport SHELLOPTS
+CONFIGURE_OPTIONS += --without-docs
 
 # Build dependencies
 REQUIRED_PACKAGES += library/c++/mdds
 REQUIRED_PACKAGES += library/math/glm
+REQUIRED_PACKAGES += system/library/boost
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

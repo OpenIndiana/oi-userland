@@ -2,9 +2,11 @@ $NetBSD: patch-hotspot_make_solaris_makefiles_gcc.make,v 1.2 2015/07/18 07:07:42
 
 GCC support.
 
---- hotspot/make/solaris/makefiles/gcc.make.orig	2015-06-10 10:31:44.000000000 +0000
+add some SPARC flags.
+
+--- hotspot/make/solaris/makefiles/gcc.make.orig
 +++ hotspot/make/solaris/makefiles/gcc.make
-@@ -70,11 +70,23 @@ VM_PICFLAG/LIBJVM = $(PICFLAG)
+@@ -70,16 +70,28 @@
  VM_PICFLAG/AOUT   =
  VM_PICFLAG        = $(VM_PICFLAG/$(LINK_INTO))
  
@@ -28,7 +30,14 @@ GCC support.
  
  ARCHFLAG = $(ARCHFLAG/$(BUILDARCH))
  
-@@ -94,10 +107,9 @@ ISA_DIR/sparcv9=/64
+-ARCHFLAG/sparc   = -m32 -mcpu=v9
+-ARCHFLAG/sparcv9 = -m64 -mcpu=v9
++ARCHFLAG/sparc   = -m32
++ARCHFLAG/sparcv9 = -m64
+ ARCHFLAG/i486    = -m32 -march=i586
+ ARCHFLAG/amd64   = -m64 -march=k8
+ 
+@@ -94,11 +106,14 @@
  CFLAGS     += $(ARCHFLAG)
  AOUT_FLAGS += $(ARCHFLAG)
  LFLAGS     += $(ARCHFLAG)
@@ -38,9 +47,14 @@ GCC support.
 -ASFLAGS += -march=k8  -march=amd64
 +ASFLAGS += -march=k8  -64
  LFLAGS += -march=k8 
++else
++CFLAGS += -O3 -mptr64 -mcpu=ultrasparc -mvis -mfsmuld
++CXXFLAGS += $(CFLAGS)
++ASFLAGS += -xarch=sparcvis -64
  endif
  
-@@ -107,6 +119,11 @@ ifdef CC_INTERP
+ 
+@@ -107,6 +122,11 @@
    CFLAGS += -DCC_INTERP
  endif
  
@@ -52,7 +66,7 @@ GCC support.
  # Keep temporary files (.ii, .s)
  ifdef NEED_ASM
    CFLAGS += -save-temps
-@@ -117,9 +134,18 @@ endif
+@@ -117,9 +137,18 @@
  
  # Compiler warnings are treated as errors 
  WARNINGS_ARE_ERRORS = -Werror 
@@ -74,7 +88,7 @@ GCC support.
  # Special cases 
  CFLAGS_WARN/BYFILE = $(CFLAGS_WARN/$@)$(CFLAGS_WARN/DEFAULT$(CFLAGS_WARN/$@))  
  
-@@ -177,7 +203,7 @@ MAPFLAG = -Xlinker -M -Xlinker FILENAME
+@@ -177,7 +206,7 @@
  endif 
  
  # Use $(SONAMEFLAG:SONAME=soname) to specify the intrinsic name of a shared obj
@@ -83,7 +97,7 @@ GCC support.
  
  # Build shared library
  SHARED_FLAG = -shared
-@@ -185,15 +211,32 @@ SHARED_FLAG = -shared
+@@ -185,15 +214,32 @@
  #------------------------------------------------------------------------
  # Debug flags
  

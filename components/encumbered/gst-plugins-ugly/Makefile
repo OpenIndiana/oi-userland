@@ -10,64 +10,46 @@
 #
 
 #
-# Copyright 2015 Alexander Pyhalov
+# Copyright 2016-2018 Aurelien Larcher.  All rights reserved.
+# Copyright 2019 Michal Nowak
+# Copyright 2021 Tim Mooney.  All rights reserved.
+# Copyright 2022-2023 Niklas Poslovski
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=64
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS = yes
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gst-plugins-ugly
-COMPONENT_VERSION=      0.10.19
-COMPONENT_REVISION=     3
+COMPONENT_NAME=		gst-plugins-ugly
+COMPONENT_VERSION=	1.26.7
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:4934f65ff892637e7efaf1cfe635779189dde429d0706f40c86a3aac476ea873
-COMPONENT_ARCHIVE_URL=  \
-	http://gstreamer.freedesktop.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://gstreamer.freedesktop.org/
-COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_ARCHIVE_HASH=	sha256:11f2e4f34bb2e841dc60edc95581572bc47be0c11e577d12bed98bb1f80a661b
+COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/ugly
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_CLASSIFICATION=System/Multimedia Libraries
+COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && aclocal -I ./m4 -I./common/m4 &&\
-                                      autoheader &&\
-                                      automake -a -f -c --gnu &&\
-                                      autoconf )
-
-gcc_OPT = -O2
-
-PATH = $(PATH.gnu)
-
-CFLAGS += -I/usr/X11/include
-
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR64)
-CONFIGURE_OPTIONS += --enable-external
-CONFIGURE_OPTIONS += --with-default-audiosrc=autoaudiosrc
-CONFIGURE_OPTIONS += --with-default-audiosink=autoaudiosink
-CONFIGURE_OPTIONS += --with-default-videosink=autovideosink
-
-COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+# no introspection or examples here
+CONFIGURE_OPTIONS += -Dorc=enabled
+CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
+CONFIGURE_OPTIONS += -Dgpl=enabled
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += audio/lame
-REQUIRED_PACKAGES += audio/twolame
-REQUIRED_PACKAGES += codec/opencore-amr
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
-REQUIRED_PACKAGES += library/audio/libmad
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmpeg2
 REQUIRED_PACKAGES += library/video/x264
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/orc

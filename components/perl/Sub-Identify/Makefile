@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Identify
+#   $WS_TOOLS/perl-integrate-module Sub-Identify
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Identify
+COMPONENT_NAME =		Sub-Identify
 HUMAN_VERSION =			0.14
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Sub::Identify - Retrieve names of code references
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Retrieve names of code references
 COMPONENT_CPAN_AUTHOR =		RGARCIA
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:068d272086514dd1e842b6a40b1bedbafee63900e5b08890ef6700039defad6f
@@ -33,5 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		environment-modules
 COMPONENT_VERSION=	3.2.10
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_FMRI=		package/$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://modules.sourceforge.net/
 SOURCE_NAME=		modules
@@ -33,10 +33,10 @@ COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_LICENSE=	GPLv2
 
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/configure.mk
-include $(WS_MAKE_RULES)/ips.mk  
+include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += -Wno-implicit-function-declaration -Wno-int-conversion
+CFLAGS += -Wno-int-conversion
 
 CONFIGURE_PREFIX=	$(USRLIBDIR)
 
@@ -51,9 +51,7 @@ CONFIGURE_OPTIONS+=	--with-module-path=$(MODULE_PATH)
 CONFIGURE_OPTIONS+=	--with-version-path=$(MODULE_VERSIONS_PATH)
 
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 	$(MKDIR) $(PROTO_DIR)$(BASH_COMPLETIONS_PATH);
 	$(CP) $(PROTO_DIR)$(CONFIGURE_PREFIX)/Modules/$(COMPONENT_VERSION)/init/bash_completion \
 		$(PROTO_DIR)$(BASH_COMPLETIONS_PATH)/modules;
@@ -64,7 +62,7 @@ test:	$(NO_TESTS)
 
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += runtime/tcl-8
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11

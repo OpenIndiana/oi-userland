@@ -19,19 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema
-HUMAN_VERSION =			4.21.1
-COMPONENT_SUMMARY =		jsonschema - An implementation of JSON Schema validation for Python
+HUMAN_VERSION =			4.25.1
+COMPONENT_SUMMARY =		An implementation of JSON Schema validation for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4d/c5/3f6165d3df419ea7b0990b3abed4ff348946a826caf0e7c990b65ff7b9be/jsonschema-4.21.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:85727c00279f5fa6bedbe6238d2aa6403bedd8b4864ab11207d07df3cc1b2ee5
+	sha256:e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_PEP735 += test
+
+# We have no jsonpath-ng packaged (yet)
+PYTEST_ADDOPTS += --ignore jsonschema/tests/test_exceptions.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs

@@ -16,17 +16,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         crmsh
-COMPONENT_VERSION=      4.1.0
-COMPONENT_REVISION=     2
-COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
-COMPONENT_CLASSIFICATION=System/Shells
+COMPONENT_VERSION=      4.6.0
+COMPONENT_REVISION=		1
+COMPONENT_SUMMARY=      crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
 COMPONENT_PROJECT_URL=  https://github.com/ClusterLabs/crmsh
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cccd51eb05a121e2b8d66e425057be0b022fa59d187978568411ff4164bf2d03
+COMPONENT_ARCHIVE_HASH= sha256:006ef95137b3cf0882758b2cb6f2df633622f7736fbd33638b7d476390010a4a
 COMPONENT_ARCHIVE_URL=  https://github.com/ClusterLabs/$(COMPONENT_NAME)/archive/$(COMPONENT_VERSION).tar.gz
+COMPONENT_FMRI=         application/cluster/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=System/Shells
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_SUMMARY=      crmsh is a command-line interface for High-Availability cluster management and part of the Clusterlabs project.
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,10 +42,9 @@ COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_SCRIPT= $(@D)/configure
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS += --sharedstatedir=/var/hacluster
-CONFIGURE_OPTIONS += --localstatedir=/var
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS += --sharedstatedir=$(VARDIR)/hacluster
+CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/lxml

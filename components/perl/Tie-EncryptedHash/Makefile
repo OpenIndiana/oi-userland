@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Tie::EncryptedHash
+#   $WS_TOOLS/perl-integrate-module Tie-EncryptedHash
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Tie::EncryptedHash
+COMPONENT_NAME =		Tie-EncryptedHash
 HUMAN_VERSION =			1.24
-COMPONENT_SUMMARY =		Tie::EncryptedHash - Hashes (and objects based on hashes) with encrypting fields.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Hashes (and objects based on hashes) with encrypting fields.
 COMPONENT_CPAN_AUTHOR =		VIPUL
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:aa9a083a231e4046170a5894644e3c59679c7dbd0aa2d1217dc85150df2c1e21
@@ -37,4 +38,5 @@ COMPONENT_TEST_TRANSFORMS += "-e '\|lib/Tie/EncryptedHash\.pm line 125\.|d'"
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-blowfish
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-cbc
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-des
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

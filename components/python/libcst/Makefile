@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.3.1
-COMPONENT_SUMMARY =		libcst - A concrete syntax tree with AST-like properties for Python 3.0 through 3.12 programs.
+HUMAN_VERSION =			1.8.5
+COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.13 programs.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:03b1df1ae02456f1d465fcd5ead1d0d454bb483caefd8c8e6bde515ffdb53d1b
+	sha256:e72e1816eed63f530668e93a4c22ff1cf8b91ddce0ec53e597d3f6c53e103ec7
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -61,15 +61,19 @@ PYTEST_ADDOPTS += --ignore libcst-RENAMED/tests/test_fuzz.py
 # https://github.com/Instagram/LibCST/issues/818
 PYTEST_ADDOPTS += --ignore libcst-RENAMED/codegen/tests/test_codegen_clean.py
 
+# https://github.com/Instagram/LibCST/issues/1220
+PYTEST_ADDOPTS += --deselect libcst-RENAMED/codemod/tests/test_codemod_cli.py::TestCodemodCLI::test_codemod_formatter_error_input
+
 # Remove extra -RENAMED from test report
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(libcst\)-RENAMED/\1/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/pyyaml
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-rust
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python

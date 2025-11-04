@@ -19,13 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		backports.tarfile
-HUMAN_VERSION =			1.0.0
-COMPONENT_SUMMARY =		backports.tarfile - Backport of CPython tarfile module
+HUMAN_VERSION =			1.2.0
+COMPONENT_SUMMARY =		Backport of CPython tarfile module
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/backports.tarfile
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2688f159c21afd56a07b75f01306f9f52c79aebcc5f4a117fb8fbb4445352c75
+	sha256:d75e02c268746e1b8144c278978b6e98e85de6ad16f8e4b0844a154557eca991
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =		backports_tarfile-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -34,6 +36,7 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

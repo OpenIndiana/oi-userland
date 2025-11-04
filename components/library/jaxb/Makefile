@@ -12,12 +12,14 @@
 # Copyright 2017 Alexander Pyhalov
 #
 
+JAVA_VERSION= 8
+JAVA_HOME= /usr/jdk/openjdk8
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		jaxb-ri
 COMPONENT_VERSION=	2.2.11
-COMPONENT_REVISIOM=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      jaxb - Java Architecture for XML Binding
 COMPONENT_PROJECT_URL=	https://jaxb.java.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sphinx_issues
-HUMAN_VERSION =			4.0.0
-COMPONENT_SUMMARY =		sphinx_issues - A Sphinx extension for linking to your project's issue tracker
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/dd/8b/d0c10bb1a98273c08cbe6fe773bada84597d250960c91dbe7d1a97f6df7d/sphinx_issues-4.0.0.tar.gz
+HUMAN_VERSION =			5.0.1
+COMPONENT_SUMMARY =		A Sphinx extension for linking to your project's issue tracker
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b8fcc229ffaeaef53fef0dca88dc89bc14b4aa81f221d9682a64ecced02e25d
+	sha256:6da131d4545af00be4b48ec7c4086ea82c1371a05116bbe5779f57cff34bf16a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/flit-core

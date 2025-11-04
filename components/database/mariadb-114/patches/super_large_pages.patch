@@ -1,0 +1,31 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/mysys/my_largepage.c a/mysys/my_largepage.c
+--- a~/mysys/my_largepage.c	1970-01-01 00:00:00
++++ a/mysys/my_largepage.c	1970-01-01 00:00:00
+@@ -28,6 +28,7 @@
+ #endif
+ 
+ #ifdef HAVE_SOLARIS_LARGE_PAGES
++my_bool opt_super_large_pages= 0;
+ #if defined(__sun__) && defined(__GNUC__) && defined(__cplusplus) \
+     && defined(_XOPEN_SOURCE)
+ /* memcntl exist within sys/mman.h, but under-defines what is need to use it */
+@@ -203,7 +204,6 @@ int my_init_large_pages(void)
+   my_get_large_page_sizes(my_large_page_sizes);
+ 
+ #ifdef HAVE_SOLARIS_LARGE_PAGES
+-  extern my_bool opt_super_large_pages;
+   /*
+     tell the kernel that we want to use 4/256MB page for heap storage
+     and also for the stack. We use 4 MByte as default and if the
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sql/mysqld.cc a/sql/mysqld.cc
+--- a~/sql/mysqld.cc	1970-01-01 00:00:00
++++ a/sql/mysqld.cc	1970-01-01 00:00:00
+@@ -425,7 +425,7 @@ char* opt_secure_file_priv;
+ my_bool lower_case_file_system= 0;
+ my_bool opt_large_pages= 0;
+ #ifdef HAVE_SOLARIS_LARGE_PAGES
+-my_bool opt_super_large_pages= 0;
++extern my_bool opt_super_large_pages;
+ #endif
+ my_bool opt_myisam_use_mmap= 0;
+ uint   opt_large_page_size= 0;

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::Slurper
+#   $WS_TOOLS/perl-integrate-module File-Slurper
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::Slurper
+COMPONENT_NAME =		File-Slurper
 HUMAN_VERSION =			0.014
-COMPONENT_SUMMARY =		File::Slurper - A simple, sane and efficient module to slurp a file
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		A simple, sane and efficient module to slurp a file
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d5a36487339888c3cd758e648160ee1d70eb4153cacbaff57846dbcefb344b0c
@@ -30,6 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/encode
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/perlio-utf8_strict
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings

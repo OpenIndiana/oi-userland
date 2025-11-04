@@ -55,7 +55,15 @@ ifeq ($(strip $(SINGLE_PYTHON_VERSION)),yes)
 PYTHON_VERSIONS = $(PYTHON_VERSION)
 endif
 
+# Include prep.mk.  If we need the generic cargo vendor support then include
+# cargo-vendor.mk instead.  The cargo-vendor.mk includes prep.mk internally and
+# wraps the vendor patching around it.
+CARGO_VENDOR ?= no
+ifeq ($(strip $(CARGO_VENDOR)),no)
 include $(WS_MAKE_RULES)/prep.mk
+else
+include $(WS_MAKE_RULES)/cargo-vendor.mk
+endif
 
 # Override this to limit builds and publication to a single architecture.
 BUILD_ARCH ?= $(MACH)
@@ -76,6 +84,12 @@ endif
 ifneq ($(strip $(BUILD_STYLE)),archive)
 ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
+
+# Include common rules used by build styles that opted to use them
+USE_COMMON_RULES ?= no
+ifneq ($(strip $(USE_COMMON_RULES)),no)
+include $(WS_MAKE_RULES)/common-rules.mk
+endif
 endif
 endif
 
@@ -225,14 +239,12 @@ COMPONENT_PRE_TEST_ACTION += $(COMPONENT_PRE_TEST_ACTION.$(MACH))
 COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(BITS))
 COMPONENT_POST_TEST_ACTION += $(COMPONENT_POST_TEST_ACTION.$(MACH))
 
-# If component asked for non-default gcc version we need to make sure it is
-# installed
-ifneq ($(strip $(GCC_VERSION)),$(GCC_DEFAULT))
-USERLAND_REQUIRED_PACKAGES += developer/gcc-$(GCC_VERSION)
-endif
-
-# If component asked for non-default clang version we need to make sure it is
-# installed
-ifneq ($(strip $(CLANG_VERSION)),$(CLANG_DEFAULT))
-USERLAND_REQUIRED_PACKAGES += developer/clang-$(CLANG_VERSION)
+# In an ideal world all components should support parallel build but it is
+# often not the case.  So by default we do not run parallel build and allow
+# components to opt-in for parallel build by setting USE_PARALLEL_BUILD = yes.
+PARALLEL_JOBS ?= $(shell /usr/sbin/psrinfo -t -c)
+ifeq ($(strip $(USE_PARALLEL_BUILD)),yes)
+COMPONENT_BUILD_CMAKE_ARGS += -j$(PARALLEL_JOBS)
+COMPONENT_BUILD_GMAKE_ARGS += -j$(PARALLEL_JOBS)
+COMPONENT_BUILD_SETUP_PY_ARGS += -j$(PARALLEL_JOBS)
 endif

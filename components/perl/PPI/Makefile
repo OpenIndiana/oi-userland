@@ -18,23 +18,36 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PPI
-HUMAN_VERSION =			1.278
-COMPONENT_SUMMARY =		PPI - Parse, Analyze and Manipulate Perl (without perl)
+COMPONENT_NAME =		PPI
+HUMAN_VERSION =			1.284
+COMPONENT_SUMMARY =		Parse, Analyze and Manipulate Perl (without perl)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c867b2e9b10056978db9ddaadab599af9a5c9a66805ed03ef4b201f1105d427
+	sha256:8d91e66d910d3096ad4a1fabd884a770c6aede2f034d4d5e5600617ec833bbd3
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/clone
-PERL_REQUIRED_PACKAGES += library/perl-5/params-util
-PERL_REQUIRED_PACKAGES += library/perl-5/task-weaken
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/clone
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-path
+REQUIRED_PACKAGES.perl += library/perl-5/params-util
+REQUIRED_PACKAGES.perl += library/perl-5/safe-isa
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/task-weaken
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += library/perl-5/yaml-pp
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/class-inspector
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/parent
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-object
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-subcalls

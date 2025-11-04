@@ -25,32 +25,35 @@
 # Copyright (c) 2022, Friedrich Kink
 #
 
+
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
-COMPONENT_VERSION=      2.6.7
+COMPONENT_VERSION=      2.6.10
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_PROJECT_URL=  https://www.openldap.org/
-COMPONENT_ARCHIVE_HASH= sha256:cd775f625c944ed78a3da18a03b03b08eea73c8aabc97b41bb336e9a10954930
+COMPONENT_ARCHIVE_HASH= sha256:c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516
 COMPONENT_ARCHIVE_URL=  https://openldap.org/software/download/OpenLDAP/openldap-release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/openldap
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      The OpenLDAP Public License
 COMPONENT_LICENSE_FILE= LICENSE
 
-TEST_TARGET = $(TEST_64)
+TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
+# check below for a newer release is still needed for a gcc14 build.
+CFLAGS += -Wno-implicit-function-declaration
 
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --libexecdir=$(USRLIBDIR$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)/openldap
 CONFIGURE_OPTIONS += --includedir=$(USRINCDIR)/openldap
 CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)
@@ -86,7 +89,7 @@ CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-tls=openssl
 CONFIGURE_OPTIONS += --with-mp=gmp
 CONFIGURE_OPTIONS += --with-odbc=unixodbc
-CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
 
 # Force known perl version
@@ -110,10 +113,11 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += security/argon2
 REQUIRED_PACKAGES += shell/ksh93

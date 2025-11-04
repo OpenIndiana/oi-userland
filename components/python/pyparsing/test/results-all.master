@@ -4,11 +4,13 @@ py$(PYV): commands[0]> python -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1679 items
+configfile: pyproject.toml
+collecting ... collected 1946 items
 
 tests/test_diagram.py::TestRailroadDiagrams::test_complete_combine_element PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_create_diagram PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_create_diagram_embed PASSED
+tests/test_diagram.py::TestRailroadDiagrams::test_create_diagram_for_oneormore_with_stopon PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_each_grammar PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_example_rr_diags PASSED
 tests/test_diagram.py::TestRailroadDiagrams::test_kwargs_pass_thru_create_diagram PASSED
@@ -21,9 +23,12 @@ tests/test_examples.py::TestExamples::test_delta_time PASSED
 tests/test_examples.py::TestExamples::test_email_parser PASSED
 tests/test_examples.py::TestExamples::test_eval_arith PASSED
 tests/test_examples.py::TestExamples::test_excelExpr PASSED
+tests/test_examples.py::TestExamples::test_lox_parser PASSED
 tests/test_examples.py::TestExamples::test_lucene_grammar PASSED
+tests/test_examples.py::TestExamples::test_mongodb_query_parser PASSED
 tests/test_examples.py::TestExamples::test_numerics PASSED
 tests/test_examples.py::TestExamples::test_oc PASSED
+tests/test_examples.py::TestExamples::test_parse_python_value PASSED
 tests/test_examples.py::TestExamples::test_range_check PASSED
 tests/test_examples.py::TestExamples::test_roman_numerals PASSED
 tests/test_examples.py::TestExamples::test_rosettacode PASSED
@@ -31,21 +36,50 @@ tests/test_examples.py::TestExamples::test_select_parser PASSED
 tests/test_examples.py::TestExamples::test_sexp_parser PASSED
 tests/test_examples.py::TestExamples::test_stackish PASSED
 tests/test_examples.py::TestExamples::test_tap PASSED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[hspace without value] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[hspace with invalid value] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[function without space] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[accent without space] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[frac without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[frac with empty parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[binom without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[binom with empty parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[genfrac without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[genfrac with empty parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[sqrt without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[sqrt with invalid value] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[overline without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[overline with empty parameter] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[left with invalid delimiter] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[right with invalid delimiter] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[unclosed parentheses with sizing] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[unclosed parentheses without sizing] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[dfrac without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[dfrac with empty parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[overset without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[underset without parameters] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[unknown symbol] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[double superscript] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[double subscript] SKIPPED
+tests/test_matplotlib_cases.py::test_mathtext_exceptions[super on sub without braces] SKIPPED
+tests/test_matplotlib_cases.py::test_get_unicode_index_exception SKIPPED
+tests/test_pep8_converter.py::test_conversion_composed PASSED
+tests/test_pep8_converter.py::test_conversion_examples PASSED
 tests/test_simple_unit.py::PyparsingExpressionTestCase::runTest PASSED
-tests/test_simple_unit.py::TestCaselessLiteral::runTest PASSED
-tests/test_simple_unit.py::TestCombine::runTest PASSED
-tests/test_simple_unit.py::TestCommonHelperExpressions::runTest PASSED
-tests/test_simple_unit.py::TestGroups::runTest PASSED
 tests/test_simple_unit.py::TestLiteral::runTest PASSED
-tests/test_simple_unit.py::TestParseAction::runTest PASSED
-tests/test_simple_unit.py::TestParseCondition::runTest PASSED
-tests/test_simple_unit.py::TestRegex::runTest PASSED
-tests/test_simple_unit.py::TestRepetition::runTest PASSED
-tests/test_simple_unit.py::TestResultsModifyingParseAction::runTest PASSED
-tests/test_simple_unit.py::TestResultsName::runTest PASSED
-tests/test_simple_unit.py::TestTransformStringUsingParseActions::runTest PASSED
-tests/test_simple_unit.py::TestWhitespaceMethods::runTest PASSED
+tests/test_simple_unit.py::TestCaselessLiteral::runTest PASSED
 tests/test_simple_unit.py::TestWord::runTest PASSED
+tests/test_simple_unit.py::TestCombine::runTest PASSED
+tests/test_simple_unit.py::TestRepetition::runTest PASSED
+tests/test_simple_unit.py::TestResultsName::runTest PASSED
+tests/test_simple_unit.py::TestGroups::runTest PASSED
+tests/test_simple_unit.py::TestParseAction::runTest PASSED
+tests/test_simple_unit.py::TestResultsModifyingParseAction::runTest PASSED
+tests/test_simple_unit.py::TestRegex::runTest PASSED
+tests/test_simple_unit.py::TestParseCondition::runTest PASSED
+tests/test_simple_unit.py::TestTransformStringUsingParseActions::runTest PASSED
+tests/test_simple_unit.py::TestCommonHelperExpressions::runTest PASSED
+tests/test_simple_unit.py::TestWhitespaceMethods::runTest PASSED
 tests/test_unit.py::Test01_PyparsingTestInit::runTest PASSED
 tests/test_unit.py::Test01a_PyparsingEnvironmentTests::runTest PASSED
 tests/test_unit.py::Test01b_PyparsingUnitTestUtilitiesTests::runTest PASSED
@@ -54,6 +88,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testAddCondition PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testAtLineStart PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testAutonameElements PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testCStyleCommentParser PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCaselessOneOf PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testChainedTernaryOperator PASSED
@@ -66,7 +101,6 @@ tests/test_unit.py::Test02_WithoutPackrat::testCloseMatchCaseless PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCol PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCombineSetName PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test02_WithoutPackrat::testCommentParser PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCommonExpressions PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCommonUrl PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCommonUrlExprs PASSED
@@ -79,6 +113,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testCountedArrayTest2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testCuneiformTransformString PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCustomQuotes PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testCustomQuotes2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testDefaultKeywordChars PASSED
@@ -89,6 +124,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testDelimitedListParseActions1 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testEachWithParseFatalException PASSED
@@ -101,6 +137,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testEnableDebugOnNamedExpressions PAS
 tests/test_unit.py::Test02_WithoutPackrat::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testEnableWarnDiags PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testExplainException PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testExprSplitter PASSED
@@ -115,6 +152,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testGoToColumn PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testHTMLEntities PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testHTMLStripper PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testHtmlCommentParser PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testIgnoreString PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testIndentedBlock PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testIndentedBlockClass PASSED
@@ -155,9 +193,14 @@ tests/test_unit.py::Test02_WithoutPackrat::testMiscellaneousExceptionBits PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testMulWithEllipsis PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testNestedAsDict PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressions PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressions2 PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressions3 PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testNestedExpressions4 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testNumericExpressions PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testOneOf PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testOneOfKeywords PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testOneOfWithEmptyList PASSED
@@ -173,7 +216,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testOptionalWithResultsNameAndNoMatch
 tests/test_unit.py::Test02_WithoutPackrat::testOriginalTextFor PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test02_WithoutPackrat::testParseActionException PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseActionNesting PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseActionWithDelimitedList PASSED
@@ -181,6 +224,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testParseAll PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseConfigFile PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseEBNF PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseExpressionResults PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseExpressionsWithRegex PASSED
@@ -221,6 +265,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testParseResultsReturningDunderAttrib
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsReversed PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsValues PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testParseResultsWithNamedTuple PASSED
@@ -243,14 +288,20 @@ tests/test_unit.py::Test02_WithoutPackrat::testPop PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testPopKwargsErr PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testPrecededBy PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testQuotedStringLoc PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testQuotedStrings PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testReStringRange PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRecursiveCombine PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRegexAsType PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRegexInvalidType PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRegexSub PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testRepeater PASSED
@@ -268,6 +319,7 @@ tests/test_unit.py::Test02_WithoutPackrat::testSetBreak PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSetDebugRecursively PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSetName PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSingleArgException PASSED
@@ -279,8 +331,10 @@ tests/test_unit.py::Test02_WithoutPackrat::testStreamlineOfSubexpressions PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testStringStart PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testSumParseResults PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testTagElements PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTokenMap PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTransformString PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTransformStringWithLeadingNotAny PASSED
@@ -290,7 +344,9 @@ tests/test_unit.py::Test02_WithoutPackrat::testTrimArityExceptionMasking PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUnicodeExpression PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUnicodeTests PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testUnicodeTests2 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testUpdateDefaultWhitespace2 PASSED
@@ -305,6 +361,9 @@ tests/test_unit.py::Test02_WithoutPackrat::testWarnUsingLshiftForward PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordExact PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordExclude PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordExclude2 PASSED
@@ -317,15 +376,19 @@ tests/test_unit.py::Test02_WithoutPackrat::testWordMin PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordMinOfZero PASSED
+tests/test_unit.py::Test02_WithoutPackrat::testWordParseImpl PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test02_WithoutPackrat::testZeroOrMoreStop PASSED
 tests/test_unit.py::Test02_WithoutPackrat::test_exception_messages PASSED
+tests/test_unit.py::Test02_WithoutPackrat::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test02_WithoutPackrat::test_pep8_synonyms PASSED
 tests/test_unit.py::Test03_EnablePackratParsing::runTest PASSED
 tests/test_unit.py::Test04_WithPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test04_WithPackrat::testAddCondition PASSED
 tests/test_unit.py::Test04_WithPackrat::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test04_WithPackrat::testAtLineStart PASSED
 tests/test_unit.py::Test04_WithPackrat::testAutonameElements PASSED
+tests/test_unit.py::Test04_WithPackrat::testCStyleCommentParser PASSED
 tests/test_unit.py::Test04_WithPackrat::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test04_WithPackrat::testCaselessOneOf PASSED
 tests/test_unit.py::Test04_WithPackrat::testChainedTernaryOperator PASSED
@@ -338,7 +401,6 @@ tests/test_unit.py::Test04_WithPackrat::testCloseMatchCaseless PASSED
 tests/test_unit.py::Test04_WithPackrat::testCol PASSED
 tests/test_unit.py::Test04_WithPackrat::testCombineSetName PASSED
 tests/test_unit.py::Test04_WithPackrat::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test04_WithPackrat::testCommentParser PASSED
 tests/test_unit.py::Test04_WithPackrat::testCommonExpressions PASSED
 tests/test_unit.py::Test04_WithPackrat::testCommonUrl PASSED
 tests/test_unit.py::Test04_WithPackrat::testCommonUrlExprs PASSED
@@ -351,6 +413,7 @@ tests/test_unit.py::Test04_WithPackrat::testCountedArrayTest2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test04_WithPackrat::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test04_WithPackrat::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test04_WithPackrat::testCuneiformTransformString PASSED
 tests/test_unit.py::Test04_WithPackrat::testCustomQuotes PASSED
 tests/test_unit.py::Test04_WithPackrat::testCustomQuotes2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testDefaultKeywordChars PASSED
@@ -361,6 +424,7 @@ tests/test_unit.py::Test04_WithPackrat::testDelimitedListParseActions1 PASSED
 tests/test_unit.py::Test04_WithPackrat::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test04_WithPackrat::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test04_WithPackrat::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test04_WithPackrat::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test04_WithPackrat::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test04_WithPackrat::testEachWithParseFatalException PASSED
@@ -373,6 +437,7 @@ tests/test_unit.py::Test04_WithPackrat::testEnableDebugOnNamedExpressions PASSED
 tests/test_unit.py::Test04_WithPackrat::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test04_WithPackrat::testEnableWarnDiags PASSED
 tests/test_unit.py::Test04_WithPackrat::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test04_WithPackrat::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test04_WithPackrat::testExplainException PASSED
 tests/test_unit.py::Test04_WithPackrat::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test04_WithPackrat::testExprSplitter PASSED
@@ -387,6 +452,7 @@ tests/test_unit.py::Test04_WithPackrat::testGoToColumn PASSED
 tests/test_unit.py::Test04_WithPackrat::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test04_WithPackrat::testHTMLEntities PASSED
 tests/test_unit.py::Test04_WithPackrat::testHTMLStripper PASSED
+tests/test_unit.py::Test04_WithPackrat::testHtmlCommentParser PASSED
 tests/test_unit.py::Test04_WithPackrat::testIgnoreString PASSED
 tests/test_unit.py::Test04_WithPackrat::testIndentedBlock PASSED
 tests/test_unit.py::Test04_WithPackrat::testIndentedBlockClass PASSED
@@ -427,9 +493,14 @@ tests/test_unit.py::Test04_WithPackrat::testMiscellaneousExceptionBits PASSED
 tests/test_unit.py::Test04_WithPackrat::testMulWithEllipsis PASSED
 tests/test_unit.py::Test04_WithPackrat::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test04_WithPackrat::testNestedAsDict PASSED
+tests/test_unit.py::Test04_WithPackrat::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test04_WithPackrat::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test04_WithPackrat::testNestedExpressions PASSED
 tests/test_unit.py::Test04_WithPackrat::testNestedExpressions2 PASSED
+tests/test_unit.py::Test04_WithPackrat::testNestedExpressions3 PASSED
+tests/test_unit.py::Test04_WithPackrat::testNestedExpressions4 PASSED
 tests/test_unit.py::Test04_WithPackrat::testNumericExpressions PASSED
+tests/test_unit.py::Test04_WithPackrat::testOneOf PASSED
 tests/test_unit.py::Test04_WithPackrat::testOneOfKeywords PASSED
 tests/test_unit.py::Test04_WithPackrat::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test04_WithPackrat::testOneOfWithEmptyList PASSED
@@ -445,7 +516,7 @@ tests/test_unit.py::Test04_WithPackrat::testOptionalWithResultsNameAndNoMatch PA
 tests/test_unit.py::Test04_WithPackrat::testOriginalTextFor PASSED
 tests/test_unit.py::Test04_WithPackrat::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test04_WithPackrat::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test04_WithPackrat::testParseActionException PASSED
+tests/test_unit.py::Test04_WithPackrat::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseActionNesting PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseActionWithDelimitedList PASSED
@@ -453,6 +524,7 @@ tests/test_unit.py::Test04_WithPackrat::testParseAll PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseConfigFile PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseEBNF PASSED
+tests/test_unit.py::Test04_WithPackrat::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseExpressionResults PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseExpressionsWithRegex PASSED
@@ -493,6 +565,7 @@ tests/test_unit.py::Test04_WithPackrat::testParseResultsReturningDunderAttribute
 tests/test_unit.py::Test04_WithPackrat::testParseResultsReversed PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseResultsValues PASSED
+tests/test_unit.py::Test04_WithPackrat::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test04_WithPackrat::testParseResultsWithNamedTuple PASSED
@@ -515,14 +588,20 @@ tests/test_unit.py::Test04_WithPackrat::testPop PASSED
 tests/test_unit.py::Test04_WithPackrat::testPopKwargsErr PASSED
 tests/test_unit.py::Test04_WithPackrat::testPrecededBy PASSED
 tests/test_unit.py::Test04_WithPackrat::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test04_WithPackrat::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test04_WithPackrat::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test04_WithPackrat::testQuotedStringLoc PASSED
 tests/test_unit.py::Test04_WithPackrat::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test04_WithPackrat::testQuotedStrings PASSED
+tests/test_unit.py::Test04_WithPackrat::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test04_WithPackrat::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test04_WithPackrat::testReStringRange PASSED
 tests/test_unit.py::Test04_WithPackrat::testRecursiveCombine PASSED
 tests/test_unit.py::Test04_WithPackrat::testRegexAsType PASSED
+tests/test_unit.py::Test04_WithPackrat::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test04_WithPackrat::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test04_WithPackrat::testRegexInvalidType PASSED
+tests/test_unit.py::Test04_WithPackrat::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test04_WithPackrat::testRegexSub PASSED
 tests/test_unit.py::Test04_WithPackrat::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test04_WithPackrat::testRepeater PASSED
@@ -540,6 +619,7 @@ tests/test_unit.py::Test04_WithPackrat::testSetBreak PASSED
 tests/test_unit.py::Test04_WithPackrat::testSetDebugRecursively PASSED
 tests/test_unit.py::Test04_WithPackrat::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test04_WithPackrat::testSetName PASSED
+tests/test_unit.py::Test04_WithPackrat::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test04_WithPackrat::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test04_WithPackrat::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test04_WithPackrat::testSingleArgException PASSED
@@ -551,8 +631,10 @@ tests/test_unit.py::Test04_WithPackrat::testStreamlineOfSubexpressions PASSED
 tests/test_unit.py::Test04_WithPackrat::testStringStart PASSED
 tests/test_unit.py::Test04_WithPackrat::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test04_WithPackrat::testSumParseResults PASSED
+tests/test_unit.py::Test04_WithPackrat::testTagElements PASSED
 tests/test_unit.py::Test04_WithPackrat::testTokenMap PASSED
 tests/test_unit.py::Test04_WithPackrat::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test04_WithPackrat::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test04_WithPackrat::testTransformString PASSED
 tests/test_unit.py::Test04_WithPackrat::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test04_WithPackrat::testTransformStringWithLeadingNotAny PASSED
@@ -562,7 +644,9 @@ tests/test_unit.py::Test04_WithPackrat::testTrimArityExceptionMasking PASSED
 tests/test_unit.py::Test04_WithPackrat::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test04_WithPackrat::testUnicodeExpression PASSED
+tests/test_unit.py::Test04_WithPackrat::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test04_WithPackrat::testUnicodeTests PASSED
+tests/test_unit.py::Test04_WithPackrat::testUnicodeTests2 PASSED
 tests/test_unit.py::Test04_WithPackrat::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test04_WithPackrat::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test04_WithPackrat::testUpdateDefaultWhitespace2 PASSED
@@ -577,6 +661,9 @@ tests/test_unit.py::Test04_WithPackrat::testWarnUsingLshiftForward PASSED
 tests/test_unit.py::Test04_WithPackrat::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test04_WithPackrat::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test04_WithPackrat::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test04_WithPackrat::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordExact PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordExclude PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordExclude2 PASSED
@@ -589,15 +676,19 @@ tests/test_unit.py::Test04_WithPackrat::testWordMin PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordMinOfZero PASSED
+tests/test_unit.py::Test04_WithPackrat::testWordParseImpl PASSED
 tests/test_unit.py::Test04_WithPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test04_WithPackrat::testZeroOrMoreStop PASSED
 tests/test_unit.py::Test04_WithPackrat::test_exception_messages PASSED
+tests/test_unit.py::Test04_WithPackrat::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test04_WithPackrat::test_pep8_synonyms PASSED
 tests/test_unit.py::Test05_EnableBoundedPackratParsing::runTest PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testAddCondition PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testAtLineStart PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testAutonameElements PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testCStyleCommentParser PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCaselessOneOf PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testChainedTernaryOperator PASSED
@@ -610,7 +701,6 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testCloseMatchCaseless PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCol PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCombineSetName PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test06_WithBoundedPackrat::testCommentParser PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCommonExpressions PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCommonUrl PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCommonUrlExprs PASSED
@@ -623,6 +713,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testCountedArrayTest2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testCuneiformTransformString PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCustomQuotes PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testCustomQuotes2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testDefaultKeywordChars PASSED
@@ -633,6 +724,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testDelimitedListParseActions1 PA
 tests/test_unit.py::Test06_WithBoundedPackrat::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testEachWithParseFatalException PASSED
@@ -645,6 +737,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testEnableDebugOnNamedExpressions
 tests/test_unit.py::Test06_WithBoundedPackrat::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testEnableWarnDiags PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testExplainException PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testExprSplitter PASSED
@@ -659,6 +752,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testGoToColumn PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testHTMLEntities PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testHTMLStripper PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testHtmlCommentParser PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testIgnoreString PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testIndentedBlock PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testIndentedBlockClass PASSED
@@ -699,9 +793,14 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testMiscellaneousExceptionBits PA
 tests/test_unit.py::Test06_WithBoundedPackrat::testMulWithEllipsis PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testNestedAsDict PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressions PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressions2 PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressions3 PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testNestedExpressions4 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testNumericExpressions PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testOneOf PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testOneOfKeywords PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testOneOfWithEmptyList PASSED
@@ -717,7 +816,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testOptionalWithResultsNameAndNoM
 tests/test_unit.py::Test06_WithBoundedPackrat::testOriginalTextFor PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test06_WithBoundedPackrat::testParseActionException PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseActionNesting PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseActionWithDelimitedList PASSED
@@ -725,6 +824,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testParseAll PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseConfigFile PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseEBNF PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseExpressionResults PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseExpressionsWithRegex PASSED
@@ -765,6 +865,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsReturningDunderAt
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsReversed PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsValues PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testParseResultsWithNamedTuple PASSED
@@ -787,14 +888,20 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testPop PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testPopKwargsErr PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testPrecededBy PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testQuotedStringLoc PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testQuotedStrings PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testReStringRange PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRecursiveCombine PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRegexAsType PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRegexInvalidType PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRegexSub PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testRepeater PASSED
@@ -812,6 +919,7 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testSetBreak PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSetDebugRecursively PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSetName PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSingleArgException PASSED
@@ -823,8 +931,10 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testStreamlineOfSubexpressions PA
 tests/test_unit.py::Test06_WithBoundedPackrat::testStringStart PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testSumParseResults PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testTagElements PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testTokenMap PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testTransformString PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testTransformStringWithLeadingNotAny PASSED
@@ -834,7 +944,9 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testTrimArityExceptionMasking PAS
 tests/test_unit.py::Test06_WithBoundedPackrat::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUnicodeExpression PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUnicodeTests PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testUnicodeTests2 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testUpdateDefaultWhitespace2 PASSED
@@ -849,6 +961,9 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testWarnUsingLshiftForward PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordExact PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordExclude PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordExclude2 PASSED
@@ -861,15 +976,20 @@ tests/test_unit.py::Test06_WithBoundedPackrat::testWordMin PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordMinOfZero PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::testWordParseImpl PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::testZeroOrMoreStop PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::test_exceeding_fifo_cache_size PASSED
 tests/test_unit.py::Test06_WithBoundedPackrat::test_exception_messages PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test06_WithBoundedPackrat::test_pep8_synonyms PASSED
 tests/test_unit.py::Test07_EnableUnboundedPackratParsing::runTest PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testAddCondition PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testAtLineStart PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testAutonameElements PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testCStyleCommentParser PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCaselessOneOf PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testChainedTernaryOperator PASSED
@@ -882,7 +1002,6 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testCloseMatchCaseless PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCol PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCombineSetName PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test08_WithUnboundedPackrat::testCommentParser PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCommonExpressions PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCommonUrl PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCommonUrlExprs PASSED
@@ -895,6 +1014,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testCountedArrayTest2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testCuneiformTransformString PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCustomQuotes PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testCustomQuotes2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testDefaultKeywordChars PASSED
@@ -905,6 +1025,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testDelimitedListParseActions1 
 tests/test_unit.py::Test08_WithUnboundedPackrat::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testEachWithParseFatalException PASSED
@@ -917,6 +1038,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testEnableDebugOnNamedExpressio
 tests/test_unit.py::Test08_WithUnboundedPackrat::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testEnableWarnDiags PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testExplainException PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testExprSplitter PASSED
@@ -931,6 +1053,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testGoToColumn PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testHTMLEntities PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testHTMLStripper PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testHtmlCommentParser PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testIgnoreString PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testIndentedBlock PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testIndentedBlockClass PASSED
@@ -971,9 +1094,14 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testMiscellaneousExceptionBits 
 tests/test_unit.py::Test08_WithUnboundedPackrat::testMulWithEllipsis PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedAsDict PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressions PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressions2 PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressions3 PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testNestedExpressions4 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testNumericExpressions PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testOneOf PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testOneOfKeywords PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testOneOfWithEmptyList PASSED
@@ -989,7 +1117,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testOptionalWithResultsNameAndN
 tests/test_unit.py::Test08_WithUnboundedPackrat::testOriginalTextFor PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test08_WithUnboundedPackrat::testParseActionException PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseActionNesting PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseActionWithDelimitedList PASSED
@@ -997,6 +1125,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testParseAll PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseConfigFile PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseEBNF PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseExpressionResults PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseExpressionsWithRegex PASSED
@@ -1037,6 +1166,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsReturningDunder
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsReversed PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsValues PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testParseResultsWithNamedTuple PASSED
@@ -1059,14 +1189,20 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testPop PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testPopKwargsErr PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testPrecededBy PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testQuotedStringLoc PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testQuotedStrings PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testReStringRange PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRecursiveCombine PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexAsType PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexInvalidType PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRegexSub PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testRepeater PASSED
@@ -1084,6 +1220,7 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testSetBreak PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSetDebugRecursively PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSetName PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSingleArgException PASSED
@@ -1095,8 +1232,10 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testStreamlineOfSubexpressions 
 tests/test_unit.py::Test08_WithUnboundedPackrat::testStringStart PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testSumParseResults PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testTagElements PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTokenMap PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTransformString PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTransformStringWithLeadingNotAny PASSED
@@ -1106,7 +1245,9 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testTrimArityExceptionMasking P
 tests/test_unit.py::Test08_WithUnboundedPackrat::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUnicodeExpression PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUnicodeTests PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testUnicodeTests2 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testUpdateDefaultWhitespace2 PASSED
@@ -1121,6 +1262,9 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testWarnUsingLshiftForward PASS
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordExact PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordExclude PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordExclude2 PASSED
@@ -1133,14 +1277,18 @@ tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMin PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordMinOfZero PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::testWordParseImpl PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testWordWithIdentChars PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::testZeroOrMoreStop PASSED
 tests/test_unit.py::Test08_WithUnboundedPackrat::test_exception_messages PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test08_WithUnboundedPackrat::test_pep8_synonyms PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAddCondition PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAtLineStart PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testAutonameElements PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testCStyleCommentParser PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCaselessOneOf PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testChainedTernaryOperator PASSED
@@ -1153,7 +1301,6 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testCloseMatchCaseless PASS
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCol PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCombineSetName PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test09_WithLeftRecursionParsing::testCommentParser PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCommonExpressions PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCommonUrl PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCommonUrlExprs PASSED
@@ -1166,6 +1313,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testCountedArrayTest2 PASSE
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testCuneiformTransformString PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCustomQuotes PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testCustomQuotes2 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testDefaultKeywordChars PASSED
@@ -1176,6 +1324,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testDelimitedListParseActio
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testEachWithParseFatalException PASSED
@@ -1188,6 +1337,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testEnableDebugOnNamedExpre
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testEnableWarnDiags PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testExplainException PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testExprSplitter PASSED
@@ -1202,6 +1352,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testGoToColumn PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testHTMLEntities PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testHTMLStripper PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testHtmlCommentParser PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testIgnoreString PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testIndentedBlock PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testIndentedBlockClass PASSED
@@ -1242,9 +1393,14 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testMiscellaneousExceptionB
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testMulWithEllipsis PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedAsDict PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressions PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressions2 PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressions3 PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testNestedExpressions4 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testNumericExpressions PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testOneOf PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testOneOfKeywords PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testOneOfWithEmptyList PASSED
@@ -1260,7 +1416,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testOptionalWithResultsName
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testOriginalTextFor PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseActionException PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseActionNesting PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseActionWithDelimitedList PASSED
@@ -1268,6 +1424,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseAll PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseConfigFile PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseEBNF PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseExpressionResults PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseExpressionsWithRegex PASSED
@@ -1308,6 +1465,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsReturningDu
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsReversed PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsValues PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testParseResultsWithNamedTuple PASSED
@@ -1330,14 +1488,20 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testPop PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testPopKwargsErr PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testPrecededBy PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testQuotedStringLoc PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testQuotedStrings PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testReStringRange PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRecursiveCombine PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexAsType PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexInvalidType PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRegexSub PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testRepeater PASSED
@@ -1355,6 +1519,7 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetBreak PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetDebugRecursively PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetName PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSingleArgException PASSED
@@ -1366,8 +1531,10 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testStreamlineOfSubexpressi
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testStringStart PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testSumParseResults PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testTagElements PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTokenMap PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTransformString PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTransformStringWithLeadingNotAny PASSED
@@ -1377,7 +1544,9 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testTrimArityExceptionMaski
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUnicodeExpression PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUnicodeTests PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testUnicodeTests2 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testUpdateDefaultWhitespace2 PASSED
@@ -1392,6 +1561,9 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testWarnUsingLshiftForward 
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordExact PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordExclude PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordExclude2 PASSED
@@ -1404,14 +1576,18 @@ tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMin PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordMinOfZero PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordParseImpl PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testWordWithIdentChars PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::testZeroOrMoreStop PASSED
 tests/test_unit.py::Test09_WithLeftRecursionParsing::test_exception_messages PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test09_WithLeftRecursionParsing::test_pep8_synonyms PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test000_assert_packrat_status PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAddCondition PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAssertParseAndCheckDict PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAtLineStart PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testAutonameElements PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCStyleCommentParser PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCaselessKeywordVsKeywordCaseless PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCaselessOneOf PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testChainedTernaryOperator PASSED
@@ -1424,7 +1600,6 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCloseMatchCa
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCol PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCombineSetName PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCombineWithResultsNames PASSED
-tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCommentParser PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCommonExpressions PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCommonUrl PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCommonUrlExprs PASSED
@@ -1437,6 +1612,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCountedArray
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCountedArrayTest3 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCountedArrayTest4 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCreateLiteralWithEmptyString PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCuneiformTransformString PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCustomQuotes PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testCustomQuotes2 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDefaultKeywordChars PASSED
@@ -1447,6 +1623,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDelimitedLis
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDelimitedListParseActions2 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDelimitedListParseActions3 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDontWarnUngroupedNamedTokensIfWarningSuppressed PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testDoubleSlashCommentParser PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEachWithMultipleMatch PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEachWithOptionalWithResultsName PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEachWithParseFatalException PASSED
@@ -1459,6 +1636,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEnableDebugO
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEnableDebugWithCachedExpressionsMarkedWithAsterisk PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testEnableWarnDiags PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExceptionExplainVariations PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExceptionMessageCustomization PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExplainException PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExplainExceptionWithMemoizationCheck PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testExprSplitter PASSED
@@ -1473,6 +1651,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testGoToColumn P
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testGreedyQuotedStrings PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testHTMLEntities PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testHTMLStripper PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testHtmlCommentParser PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testIgnoreString PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testIndentedBlock PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testIndentedBlockClass PASSED
@@ -1513,9 +1692,14 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testMiscellaneou
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testMulWithEllipsis PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testMulWithNegativeNumber PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedAsDict PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressionDoesNotOverwriteParseActions PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressionRandom PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressions PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressions2 PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressions3 PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNestedExpressions4 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testNumericExpressions PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOneOf PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOneOfKeywords PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOneOfWithDuplicateSymbols PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOneOfWithEmptyList PASSED
@@ -1531,7 +1715,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOptionalWith
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testOriginalTextFor PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPackratParsingCacheCopy PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPackratParsingCacheCopyTest2 PASSED
-tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseActionException PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseActionIndexErrorException PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseActionNesting PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseActionRunsInNotAny PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseActionWithDelimitedList PASSED
@@ -1539,6 +1723,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseAll PAS
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseCommaSeparatedValues PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseConfigFile PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseEBNF PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseEBNFmissingDefinitions PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseExpressionResults PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseExpressionResultsAccumulate PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseExpressionsWithRegex PASSED
@@ -1579,6 +1764,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResults
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsReversed PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsStringListUsingCombine PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsValues PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsWithAsListWithAndWithoutFlattening PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsWithNameMatchFirst PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsWithNameOr PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testParseResultsWithNamedTuple PASSED
@@ -1601,14 +1787,20 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPop PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPopKwargsErr PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPrecededBy PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testPythonQuotedStrings PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testQuotedStringEscapedExtendedChars PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testQuotedStringEscapedQuotes PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testQuotedStringLoc PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testQuotedStringUnquotesAndConvertWhitespaceEscapes PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testQuotedStrings PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testReCatastrophicBacktrackingInCommentParsers PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testReCatastrophicBacktrackingInQuotedStringParsers PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testReStringRange PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRecursiveCombine PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexAsType PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexDeferredCompile PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexDeferredCompileCommonHtmlEntity PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexInvalidType PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexLoopPastEndOfString PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRegexSub PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRepeatedTokensWhenPackratting PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testRepeater PASSED
@@ -1626,6 +1818,7 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetBreak PAS
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetDebugRecursively PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetDebugRecursivelyWithForward PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetName PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetNameToStrAndNone PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetParseActionUncallableErr PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSetResultsNameWithOneOrMoreAndZeroOrMore PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSingleArgException PASSED
@@ -1637,8 +1830,10 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testStreamlineOf
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testStringStart PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testStringStartAndLineStartInsideAnd PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testSumParseResults PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTagElements PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTokenMap PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTraceParseActionDecorator PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTraceParseActionDecorator_with_exception PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTransformString PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTransformStringWithExpectedLeadingWhitespace PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTransformStringWithLeadingNotAny PASSED
@@ -1648,7 +1843,9 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTrimArityExc
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testTrimArityExceptionMaskingTest2 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUndesirableButCommonPractices PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUnicodeExpression PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUnicodeSetNameEquivalence PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUnicodeTests PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUnicodeTests2 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUpcaseDowncaseUnicode PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUpdateDefaultWhitespace PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testUpdateDefaultWhitespace2 PASSED
@@ -1663,6 +1860,9 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWarnUsingLsh
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWithAttributeParseAction PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordBoundaryExpressions PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordBoundaryExpressions2 PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordCopyWhenWordCharsIncludeSpace PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordCopyWhenWordCharsIncludeSpace2 PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordCopyWhenWordCharsIncludeSpace3 PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordExact PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordExclude PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordExclude2 PASSED
@@ -1675,9 +1875,12 @@ tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMin PASS
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMinMaxArgs PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMinMaxExactArgs PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordMinOfZero PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordParseImpl PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testWordWithIdentChars PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::testZeroOrMoreStop PASSED
 tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test_exception_messages PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test_exception_messages_with_exception_subclass PASSED
+tests/test_unit.py::Test10_WithLeftRecursionParsingBoundedMemo::test_pep8_synonyms PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_add_sub PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_binary_associative PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_binary_recursive PASSED
@@ -1685,7 +1888,72 @@ tests/test_unit.py::Test11_LR1_Recursion::test_math PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_non_peg PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_repeat_as_recurse PASSED
 tests/test_unit.py::Test11_LR1_Recursion::test_terminate_empty PASSED
+tests/test_util.py::test_flatten[Empty list-input_list0-expected_output0] PASSED
+tests/test_util.py::test_flatten[Flat list-input_list1-expected_output1] PASSED
+tests/test_util.py::test_flatten[Nested list-input_list2-expected_output2] PASSED
+tests/test_util.py::test_flatten[Mixed list with single values and lists-input_list3-expected_output3] PASSED
+tests/test_util.py::test_flatten[Deeper nested lists-input_list4-expected_output4] PASSED
+tests/test_util.py::test_flatten[Deeper nesting with sublists-input_list5-expected_output5] PASSED
+tests/test_util.py::test_flatten[Mixed empty and non-empty nested lists-input_list6-expected_output6] PASSED
+tests/test_util.py::test_flatten[Deeply nested empty lists-input_list7-expected_output7] PASSED
+tests/test_util.py::test_flatten[Mixed empty lists and non-empty elements-input_list8-expected_output8] PASSED
+tests/test_util.py::test_flatten[ParseResults instead of lists-input_list9-expected_output9] PASSED
+tests/test_util.py::test_flatten[ParseResults with mixed types-input_list10-expected_output10] PASSED
+tests/test_util.py::test_flatten[Nested ParseResults-input_list11-expected_output11] PASSED
+tests/test_util.py::test_flatten[Empty ParseResults-input_list12-expected_output12] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Empty string--True-] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Single character-a-True-a] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Two consecutive characters-ab-True-ab] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Two non-consecutive characters-az-True-az] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Three consecutive characters-abcg-True-a-cg] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Full consecutive alphabet-abcdefghijklmnopqrstuvwxyz-True-a-z] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Consecutive characters with special regex chars-^-]-True-\\-\\]\\^] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Consecutive characters without escaping-^-]-False--]^] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Mixed consecutive and non-consecutive-abcxyz-True-a-cx-z] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Reversed order input-cba-True-a-c] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Characters with duplicates-aaxxxddddbbcc-True-a-dx] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Non-alphabetic consecutive characters-012345-True-0-5] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Non-alphabetic mixed characters-@05-True-05@] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Non-alphabetic, non-consecutive characters-02-True-02] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Verify range ending with '-' creates valid regex-*+,--True-*-\\-] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Verify range ending with ']' creates valid regex-WXYZ[\\]-True-W-\\]] PASSED
+tests/test_util.py::test_collapse_string_to_ranges[Verify range starting with '^' creates valid regex-^_`a-True-\\^-a] PASSED
+tests/test_util.py::test_col[First column, no newline-0-abcdef-1] PASSED
+tests/test_util.py::test_col[Second column, no newline-1-abcdef-2] PASSED
+tests/test_util.py::test_col[First column after newline-4-abc\ndef-1] PASSED
+tests/test_util.py::test_col[Second column after newline-5-abc\ndef-2] PASSED
+tests/test_util.py::test_col[Column after multiple newlines-9-abc\ndef\nghi-2] PASSED
+tests/test_util.py::test_col[Location at start of string-0-abcdef-1] PASSED
+tests/test_util.py::test_col[Location at end of string-5-abcdef-6] PASSED
+tests/test_util.py::test_col[Column after newline at end-3-abc\n-4] PASSED
+tests/test_util.py::test_col[Tab character in the string-4-a\tbcd\tef-5] PASSED
+tests/test_util.py::test_col[Multiple lines with tab-8-a\tb\nc\td-5] PASSED
+tests/test_util.py::test_line[Single line, no newlines-0-abcdef-abcdef] PASSED
+tests/test_util.py::test_line[First line in multi-line string-2-abc\ndef-abc] PASSED
+tests/test_util.py::test_line[Second line in multi-line string-5-abc\ndef-def] PASSED
+tests/test_util.py::test_line[Location at start of second line-4-abc\ndef-def] PASSED
+tests/test_util.py::test_line[Empty string-0--] PASSED
+tests/test_util.py::test_line[Location at newline character-3-abc\ndef-abc] PASSED
+tests/test_util.py::test_line[Last line without trailing newline-7-abc\ndef\nghi-def] PASSED
+tests/test_util.py::test_line[Single line with newline at end-2-abc\n-abc] PASSED
+tests/test_util.py::test_line[Multi-line with multiple newlines-6-line1\nline2\nline3-line2] PASSED
+tests/test_util.py::test_line[Multi-line with trailing newline-11-line1\nline2\nline3\n-line2] PASSED
+tests/test_util.py::test_lineno[Single line, no newlines-0-abcdef-1] PASSED
+tests/test_util.py::test_lineno[First line in multi-line string-2-abc\ndef-1] PASSED
+tests/test_util.py::test_lineno[Second line in multi-line string-5-abc\ndef-2] PASSED
+tests/test_util.py::test_lineno[Location at start of second line-4-abc\ndef-2] PASSED
+tests/test_util.py::test_lineno[Multiple newlines, third line-10-abc\ndef\nghi-3] PASSED
+tests/test_util.py::test_lineno[Empty string-0--1] PASSED
+tests/test_util.py::test_lineno[Location at newline character-3-abc\ndef-1] PASSED
+tests/test_util.py::test_lineno[Last line without trailing newline-7-abc\ndef\nghi-2] PASSED
+tests/test_util.py::test_lineno[Single line with newline at end-4-abc\n-2] PASSED
+tests/test_util.py::test_lineno[Multi-line with trailing newline-12-line1\nline2\nline3\n-3] PASSED
+tests/test_util.py::test_lineno[Location in middle of a tabbed string-7-a\tb\nc\td-2] PASSED
+tests/test_util.py::test_html_entities PASSED
+tests/test_util.py::test_make_compressed_re PASSED
+tests/test_util.py::test_make_compressed_re_bad_input PASSED
+tests/test_util.py::test_make_compressed_re_random PASSED
 
-======== 1679 passed ========
+======== 1919 passed, 27 skipped ========
   py$(PYV): OK
   congratulations :)

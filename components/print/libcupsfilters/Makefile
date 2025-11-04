@@ -17,8 +17,8 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	libcupsfilters
-COMPONENT_VERSION= 2.0.0
-COMPONENT_REVISION= 2
+COMPONENT_VERSION= 2.1.1
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY= libcupsfilters contains all the code of the filters of the former cups-filters package as library functions
 COMPONENT_DESCRIPTION= The filter functions are principally intended to be used for the data format conversion tasks needed in \
 					   Printer Applications. They are already in use (together with libppd and pappl-retrofit) by the CUPS-driver \
@@ -28,7 +28,7 @@ COMPONENT_DESCRIPTION= The filter functions are principally intended to be used 
 					   make/model/device ID matching, ...
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:542f2bfbc58136a4743c11dc8c86cee03c9aca705612654e36ac34aa0d9aa601
+COMPONENT_ARCHIVE_HASH=	sha256:6c303e36cfde05a6c88fb940c62b6a18e7cdbfb91f077733ebc98f104925ce36
 COMPONENT_PROJECT_URL= https://openprinting.github.io/
 COMPONENT_ARCHIVE_URL= https://github.com/OpenPrinting/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	print/$(COMPONENT_NAME)
@@ -40,6 +40,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
 COMPONENT_PREP_ACTION += ( cd $(@D); PATH=$(PATH) $(CONFIG_SHELL) autogen.sh )
 
 CPPFLAGS = -D_POSIX_PTHREAD_SEMANTICS
@@ -47,11 +49,6 @@ CPPFLAGS += -I/usr/include/cups
 CPPFLAGS += -I/usr/include/lcms2
 
 CFLAGS += $(XPG6MODE)
-
-# Build with the distribution preferred libjpeg implementation
-CFLAGS   += $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS += $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS  += $(JPEG_LDFLAGS)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
@@ -76,7 +73,6 @@ REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += image/library/libexif
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/lcms2

@@ -11,24 +11,27 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project types-docutils
+#   $WS_TOOLS/python-integrate-project -d python/types-docutils types_docutils
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		types-docutils
-HUMAN_VERSION =			0.20.0.20240406
-COMPONENT_SUMMARY =		types-docutils - Typing stubs for docutils
+COMPONENT_NAME =		types_docutils
+HUMAN_VERSION =			0.22.2.20251006
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Typing stubs for docutils
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e8ec4a5a125d06d8632bbaac8a11fbea18a1edfa94df9c5129dc45980915b84b
+	sha256:c36c0459106eda39e908e9147bcff9dbd88535975cde399433c428a517b9e3b2
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

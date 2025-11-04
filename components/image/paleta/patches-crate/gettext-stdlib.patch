@@ -1,0 +1,33 @@
+diff -Naur build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3.old/build.rs build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3/build.rs
+--- build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3.old/build.rs	1973-11-29 16:33:09.000000000 -0500
++++ build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3/build.rs	2025-04-06 13:52:07.180259981 -0400
+@@ -193,6 +193,15 @@
+     }
+     run(&mut cmd, "tar");
+ 
++    let mut cmd = Command::new("gpatch");
++    cmd.current_dir(&build_dir.join("gettext"))
++        .arg("--backup")
++        .arg("--version-control=numbered")
++        .arg("-p0")
++        .arg("gettext-tools/src/locating-rule.c")
++        .arg(&src.join("gettext.patch"));
++    run(&mut cmd, "gpatch");
++
+     let mut cmd = Command::new("sh");
+     cmd.env("CC", compiler.path())
+         .env("CFLAGS", cflags)
+diff -Naur build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3.old/gettext.patch build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3/gettext.patch
+--- build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3.old/gettext.patch	1969-12-31 19:00:00.000000000 -0500
++++ build/amd64/cargo-home/registry/src/index.crates.io-1949cf8c6b5b557f/gettext-sys-0.21.3/gettext.patch	2025-04-06 13:46:32.680996206 -0400
+@@ -0,0 +1,10 @@
++--- gettext-tools/src/locating-rule.c.old       2025-04-06 13:34:17.471324003 -0400
+++++ gettext-tools/src/locating-rule.c   2025-04-06 13:34:40.078736623 -0400
++@@ -47,6 +47,7 @@
++ #include <libxml/parser.h>
++ #include <libxml/uri.h>
++ #include "xalloc.h"
+++#include <stdlib.h>
++ 
++ #define _(str) gettext (str)
++ 

@@ -15,11 +15,11 @@
 #
 
 BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         clutter-gtk
 COMPONENT_VERSION=      1.8.4
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      GTK+ integration library for clutter
 COMPONENT_FMRI=         library/desktop/clutter/clutter-gtk
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,6 +52,10 @@ CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
 # Tell g-ir-scanner about compiler
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ENV += CC="$(CC)"
+
+ifeq ($(strip $(MACH)),sparc)
+REQUIRED_PACKAGES += system/library/math
+endif
 
 # Build dependencies
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

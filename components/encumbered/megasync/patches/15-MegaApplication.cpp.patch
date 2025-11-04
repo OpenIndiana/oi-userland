@@ -1,6 +1,6 @@
---- MEGAsync_ori/src/MEGASync/MegaApplication.cpp	Wed Jan 26 20:25:17 2022
-+++ MEGAsync_patched/src/MEGASync/MegaApplication.cpp	Sun Mar  6 01:01:28 2022
-@@ -22,7 +22,7 @@
+--- MEGAsync-4.9.5.0_Linux/src/MEGASync/MegaApplication.cpp.orig
++++ MEGAsync-4.9.5.0_Linux/src/MEGASync/MegaApplication.cpp
+@@ -37,7 +37,7 @@
  
  #include <assert.h>
  
@@ -9,16 +9,16 @@
      #include <signal.h>
      #include <condition_variable>
      #include <QSvgRenderer>
-@@ -54,7 +54,7 @@
+@@ -73,7 +73,7 @@
  
  void MegaApplication::loadDataPath()
  {
 -#ifdef Q_OS_LINUX
 +#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
      dataPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-                + QString::fromUtf8("/data/Mega Limited/MEGAsync");
- #else
-@@ -89,7 +89,7 @@
+                + QString::fromUtf8("/data/") // appending "data" is non-standard behavior according to XDG Base Directory specification
+                + organizationName() + QString::fromLatin1("/")
+@@ -135,7 +135,7 @@
          args += QString::fromUtf8(argv[i]);
      }
  
@@ -27,16 +27,16 @@
  
      if (args.contains(QLatin1String("--version")))
      {
-@@ -418,7 +418,7 @@
+@@ -417,7 +417,7 @@
+     paused = false;
      indexing = false;
-     setQuitOnLastWindowClosed(false);
  
 -#ifdef Q_OS_LINUX
 +#if defined(Q_OS_LINUX) || defined(Q_OS_SOLARIS)
      isLinux = true;
  #else
      isLinux = false;
-@@ -737,7 +737,7 @@
+@@ -744,7 +744,7 @@
      createTrayIcon();
  }
  
@@ -45,7 +45,7 @@
  void MegaApplication::setTrayIconFromTheme(QString icon)
  {
      QString name = QString(icon).replace(QString::fromUtf8("://images/"), QString::fromUtf8("mega")).replace(QString::fromUtf8(".svg"),QString::fromUtf8(""));
-@@ -965,7 +965,7 @@
+@@ -1007,7 +1007,7 @@
  
  void MegaApplication::start()
  {
@@ -54,7 +54,7 @@
      QSvgRenderer qsr; //to have svg library linked
  #endif
  
-@@ -2250,7 +2250,7 @@
+@@ -2143,7 +2143,7 @@
  
      if (trayIcon)
      {
@@ -63,7 +63,7 @@
          if (counter==4 && getenv("XDG_CURRENT_DESKTOP") && !strcmp(getenv("XDG_CURRENT_DESKTOP"),"XFCE"))
          {
              trayIcon->hide();
-@@ -5793,7 +5793,7 @@
+@@ -5744,7 +5744,7 @@
          whyAmIBlocked();
      }
  

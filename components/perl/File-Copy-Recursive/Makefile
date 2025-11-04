@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::Copy::Recursive
+#   $WS_TOOLS/perl-integrate-module File-Copy-Recursive
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::Copy::Recursive
+COMPONENT_NAME =		File-Copy-Recursive
 HUMAN_VERSION =			0.45
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		File::Copy::Recursive - Perl extension for recursively copying files and directories
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl extension for recursively copying files and directories
 COMPONENT_CPAN_AUTHOR =		DMUEY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d3971cf78a8345e38042b208bb7b39cb695080386af629f4a04ffd6549df1157
@@ -30,9 +30,12 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/path-tiny
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-file
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings

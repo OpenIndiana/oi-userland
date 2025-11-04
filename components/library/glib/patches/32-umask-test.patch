@@ -1,11 +1,9 @@
 umask returns mode_t which is unsigned int
 this maks confusion in 32bit and 64bit build, so we extend to long for both
 
-diff --git a/gio/tests/file.c b/gio/tests/file.c
-index 9a15f97..888da69 100644
---- a/gio/tests/file.c
-+++ b/gio/tests/file.c
-@@ -2373,7 +2373,7 @@ test_copy_preserve_mode (void)
+--- glib-2.82.0/gio/tests/file.c.orig
++++ glib-2.82.0/gio/tests/file.c
+@@ -2469,7 +2469,7 @@
    /* Reset the umask after querying it above. There’s no way to query it without
     * changing it. */
    umask (current_umask);

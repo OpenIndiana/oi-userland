@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstandard
-HUMAN_VERSION =			0.22.0
-COMPONENT_SUMMARY =		zstandard - Zstandard bindings for Python
+HUMAN_VERSION =			0.25.0
+COMPONENT_SUMMARY =		Zstandard bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/indygreg/python-zstandard
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5d/91/2162ab4239b3bd6743e8e407bc2442fca0d326e2d77b3f4a88d90ad5a1fa/zstandard-0.22.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8226a33c542bcb54cd6bd0a366067b610b41713b64c9abec1bc4533d69f51e70
+	sha256:7713e1179d162cf5c7906da876ec2ccb9c3a9dcbdffef0cc7f70c3667a205f0b
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -55,8 +53,8 @@ COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/zstandard $(@D)/zstandard-RENAMED ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zstandard-RENAMED $(@D)/zstandard ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

@@ -10,18 +10,18 @@
 
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
+# Copyright 2025 Carsten Grzemba
 #
-
-BUILD_STYLE = pkg
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		X-incorporation
-COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	9
+COMPONENT_VERSION=	$(PKG_OS_VERSION)
+COMPONENT_REVISION=	11
 COMPONENT_SUMMARY=	X consolidation incorporation
+COMPONENT_DESCRIPTION=	empty package to satisfy install requirements of SunRay Server Software
 COMPONENT_FMRI=		consolidation/X/X-incorporation
 
-include $(WS_MAKE_RULES)/common.mk
+include ../../../make-rules/ips.mk
 
-# Auto-generated dependencies
+#PKGLINT=/bin/true

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Memory::Cycle
+#   $WS_TOOLS/perl-integrate-module Test-Memory-Cycle
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Memory::Cycle
+COMPONENT_NAME =		Test-Memory-Cycle
 HUMAN_VERSION =			1.06
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::Memory::Cycle - Check for memory leaks and circular memory references
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Verifies code hasn't left circular references
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9d53ddfdc964cd8454cb0da4c695b6a3ae47b45839291c34cb9d8d1cfaab3202
@@ -36,5 +36,8 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-cycle
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
 PERL_REQUIRED_PACKAGES += library/perl-5/padwalker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

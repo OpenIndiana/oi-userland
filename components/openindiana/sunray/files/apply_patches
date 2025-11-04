@@ -1,0 +1,18 @@
+#!/bin/ksh
+
+SCRIPTDIR=/opt/SUNWut/utils
+
+cd /opt/SUNWut
+mkdir lib/dhcp/isc
+if [ $? -ne 0 ]; then
+        echo "directory /opt/SUNWut/lib/dhcp/isc already exists: stop!"
+        exit 1
+fi
+
+cp lib/dhcp/edhcp/* lib/dhcp/isc/
+for p in $(ls ${SCRIPTDIR}/*.patch); {
+	gpatch -p1 -i $p;
+}
+
+cp ${SCRIPTDIR}/revivesrsession /etc/opt/SUNWut/gdm/SunRayPostSession/helpers/
+cp ${SCRIPTDIR}/revivesrsession.py /opt/SUNWut/lib/gdm/

@@ -1,0 +1,46 @@
+--- trealla-2.82.28/Makefile.orig
++++ trealla-2.82.28/Makefile
+@@ -1,13 +1,16 @@
+ GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+ COMPILER_IS_GCC := $(shell $(CC) --version | grep -E -o 'g?cc')
+ 
+-CFLAGS = -Isrc -I/usr/local/include -DVERSION='$(GIT_VERSION)' \
++CFLAGS = -Isrc \
++	-Wno-error=int-conversion \
++	-Wno-error=implicit-function-declaration \
++	$(XPG8MODE) \
+ 	-O3 $(OPT) -D_GNU_SOURCE \
+ 	-Wall -Wextra \
+ 	-Wno-unused-but-set-variable \
+ 	-Wno-unused-parameter \
+ 	-Wno-unused-variable
+-LDFLAGS = -L/usr/local/lib -lm
++LDFLAGS = -lm -lsocket -lnsl
+ 
+ ifdef HOMEBREW_PREFIX
+ LDFLAGS += -L$(HOMEBREW_PREFIX)/opt/libffi/lib -L$(HOMEBREW_PREFIX)/opt/openssl@3/lib -L$(HOMEBREW_PREFIX)/opt/readline/lib
+@@ -51,12 +54,12 @@
+ endif
+ 
+ ifndef NOFFI
+-CFLAGS += -DUSE_FFI=1 -I/usr/local/opt/libffi/include
+-LDFLAGS += -lffi -ldl
++CFLAGS += -DUSE_FFI=1 -I/usr/lib/amd64/libffi-3.2.1/include
++LDFLAGS += -lffi -ldl -L/usr/openssl/3/lib/amd64
+ endif
+ 
+ ifndef NOSSL
+-CFLAGS += -DUSE_OPENSSL=1
++CFLAGS += -DUSE_OPENSSL=1 -I/usr/openssl/3/include
+ LDFLAGS += -lssl -lcrypto
+ endif
+ 
+@@ -189,7 +192,7 @@
+ 	$(MAKE) 'OPT=$(OPT) -DNDEBUG'
+ 
+ install:
+-	ln -s ./tpl ~/bin/tpl
++	echo "nothing to do"
+ 
+ tpl.wasm:
+ 	$(MAKE) WASI=1 'OPT=$(OPT) -DNDEBUG'

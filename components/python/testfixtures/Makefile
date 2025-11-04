@@ -19,11 +19,11 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testfixtures
-HUMAN_VERSION =			8.1.0
-COMPONENT_SUMMARY =		testfixtures - A collection of helpers and mock objects for unit tests and doc tests.
+HUMAN_VERSION =			8.3.0
+COMPONENT_SUMMARY =		A collection of helpers and mock objects for unit tests and doc tests.
 COMPONENT_PROJECT_URL =		https://github.com/Simplistix/testfixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:80848990304859c3a2b68dfe4bcaf77b6e6425a3925047bc25a52755277bfa6d
+	sha256:d4c0b84af2f267610f908009b50d6f983a4e58ade22c67bab6787b5a402d59c0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -38,5 +38,14 @@ COMPONENT_POST_UNPACK_ACTION += $(RM) -r $(COMPONENT_SRC)/testfixtures/tests/tes
 # The pytest discovery finds tests in build/lib, but that does not work.
 PYTEST_ADDOPTS += testfixtures
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
+
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/sybil
+TEST_REQUIRED_PACKAGES.python += library/python/twisted

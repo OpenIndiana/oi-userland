@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Devel::Cycle
+#   $WS_TOOLS/perl-integrate-module Devel-Cycle
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Devel::Cycle
+COMPONENT_NAME =		Devel-Cycle
 HUMAN_VERSION =			1.12
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Devel::Cycle - Find memory cycles in objects
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Find memory cycles in objects
 COMPONENT_CPAN_AUTHOR =		LDS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fd3365c4d898b2b2bddbb78a46d507a18cca8490a290199547dab7f1e7390bc2
@@ -30,4 +30,7 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

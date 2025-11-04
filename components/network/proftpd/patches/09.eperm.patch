@@ -1,0 +1,451 @@
+#
+# different EPERM error string on Solaris
+#    
+# s/Operation not permitted/Insufficient privileges
+#
+# patch has been submitted to upstream:
+#	https://github.com/proftpd/proftpd/pull/1504
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Commands/NOOP.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/NOOP.pm
+@@ -161,7 +161,11 @@ sub noop_limit_deny_issue684 {
+       $self->assert($expected == $resp_code,
+         "Expected response code $expected, got $resp_code");
+ 
+-      $expected = 'Operation not permitted';
++      if ($^O eq 'solaris') {
++        $expected = 'Insufficient privileges';
++      } else {
++        $expected = 'Operation not permitted';
++      }
+       $self->assert($expected eq $resp_msg,
+         "Expected response message '$expected', got '$resp_msg'");
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RANG.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RANG.pm
+@@ -2245,7 +2245,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "RANG: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "RANG: Insufficient privileges";
++      } else {
++        $expected = "RANG: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Commands/RNFR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Commands/RNFR.pm
+@@ -1531,7 +1531,11 @@ sub rnfr_limit_bug3698 {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "sub.d/foo: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "sub.d/foo: Insufficient privileges";
++      } else {
++        $expected = "sub.d/foo: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Config/AllowFilter.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/AllowFilter.pm
+@@ -341,7 +341,11 @@ sub allowfilter_dele_denied {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+@@ -1153,7 +1157,11 @@ sub allowfilter_rnfr_denied {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$dirname: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$dirname: Insufficient privileges";
++      } else {
++        $expected = "$dirname: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -1427,7 +1435,11 @@ sub allowfilter_rnto_denied {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "Rename $dirname: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$dirname: Insufficient privileges";
++      } else {
++        $expected = "Rename $dirname: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -1705,7 +1717,11 @@ sub allowfilter_stor_denied {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Config/DenyFilter.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/DenyFilter.pm
+@@ -301,7 +301,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -445,7 +449,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Config/Directory/Limits.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/Directory/Limits.pm
+@@ -387,7 +387,11 @@ EOD
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -554,7 +558,11 @@ sub limits_with_glob_denied_delete_bug3146 {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -722,7 +730,11 @@ sub limits_without_glob_denied_delete_bug3146 {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -1533,7 +1545,11 @@ sub limits_rename_dir_failed_rnfr_denied {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "upload: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "upload: Insufficient privileges";
++      } else {
++        $expected = "upload: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -2234,7 +2250,11 @@ sub limits_with_multi_globs_denied_delete {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -2390,7 +2410,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+@@ -2546,7 +2570,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/FTPAccess/RETR.pm
+@@ -165,7 +165,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -182,7 +186,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$test_file: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$test_file: Insufficient privileges";
++      } else {
++        $expected = "$test_file: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -383,7 +391,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -400,7 +412,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "$anon_test_file: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$anon_test_file: Insufficient privileges";
++      } else {
++        $expected = "$anon_test_file: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -598,7 +614,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -618,7 +638,11 @@ EOF
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Config/Include.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/Include.pm
+@@ -162,7 +162,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+@@ -322,7 +326,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+@@ -506,7 +514,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+@@ -835,7 +847,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = "$filename: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "$filename: Insufficient privileges";
++      } else {
++        $expected = "$filename: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Config/Limit/Filters.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/Limit/Filters.pm
+@@ -270,7 +270,11 @@ sub filter_dele_deny_bug2067 {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+@@ -409,7 +413,11 @@ EOC
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = 'test.txt: Operation not permitted';
++      if ($^O eq 'solaris') {
++        $expected = 'test.txt: Insufficient privileges';
++      } else {
++        $expected = 'test.txt: Operation not permitted';
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Config/MaxRetrieveFileSize.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/MaxRetrieveFileSize.pm
+@@ -275,7 +275,11 @@ sub maxretrievefilesize_exceeded {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "Transfer aborted. Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "Transfer aborted. Insufficient privileges";
++      } else {
++        $expected = "Transfer aborted. Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+     };
+--- a/tests/t/lib/ProFTPD/Tests/Config/Order.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/Order.pm
+@@ -418,7 +418,11 @@ sub order_denyallow_ok {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+@@ -549,7 +553,11 @@ sub order_deny_allow_ok {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected $expected, got $resp_code"));
+ 
+-      $expected = "test.txt: Operation not permitted";
++      if ($^O eq 'solaris') {
++        $expected = "test.txt: Insufficient privileges";
++      } else {
++        $expected = "test.txt: Operation not permitted";
++      }
+       $self->assert($expected eq $resp_msg,
+         test_msg("Expected '$expected', got '$resp_msg'"));
+ 
+--- a/tests/t/lib/ProFTPD/Tests/Logging/ExtendedLog.pm
++++ b/tests/t/lib/ProFTPD/Tests/Logging/ExtendedLog.pm
+@@ -10039,7 +10039,13 @@ EOC
+           my $xfer_failure = $2;
+ 
+           if ($cmd eq 'RETR') {
+-            if ($xfer_failure eq 'Operation not permitted') {
++            my $expected;
++            if ($^O eq 'solaris') {
++              $expected = 'Insufficient privileges';
++            } else {
++              $expected = 'Operation not permitted';
++            }
++            if ($xfer_failure eq $expected) {
+               $expected_xfer_reason = 1;
+               last;
+             }

@@ -1,4 +1,4 @@
-#if defined(_LP64) || defined (__amd64)
+#if defined(_LP64) || defined(__amd64) || defined(__sparcv9)
 #include <ogg/config_types-64.h>
 #else
 #include <ogg/config_types-32.h>

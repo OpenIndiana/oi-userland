@@ -17,11 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
-COMPONENT_VERSION= 7.8.1
+COMPONENT_VERSION= 7.10.1
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0f4c0762de45a415c9fd7357ce508666fa88b9a4a463f5fb76c235bc80dd6a84
+COMPONENT_ARCHIVE_HASH= sha256:cfbbb1d93a0a3d81319ec71d9a3db80447bb033c4f6cee088554a88862fd77d7
 COMPONENT_ARCHIVE_URL= https://github.com/jtv/libpqxx/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://pqxx.org/development/libpqxx/
 COMPONENT_FMRI= database/postgres/library/c++/libpqxx
@@ -35,8 +35,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Don't depend on host default pg_config
 PATH= $(PG_BINDIR.$(BITS)):$(PATH.illumos)
-
-CXXFLAGS += -std=c++17
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )

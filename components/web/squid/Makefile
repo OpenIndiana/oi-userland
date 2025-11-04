@@ -22,25 +22,24 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2023,2024 Friedrich Kink
+# Copyright (c) 2023,2025 Friedrich Kink
 #
 
-BUILD_BITS=             64
-OPENSSL_VERSION=	3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      6.7
+COMPONENT_VERSION=      7.2
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v6/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e14daa4eae41925d1ae3f08e64439a6aaa3011bdced686628b8de697d5ab8428
-COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20231227.tar.gz
+COMPONENT_ARCHIVE_URL=  https://github.com/squid-cache/$(COMPONENT_NAME)/releases/download/SQUID_7_2/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:5e077be1d83a9e696ce8d0d9e723b1273152207a091404be68a4b9a9e18c7003
+COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20240307.tar.gz
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_HASH_1= sha256:43f98e15759f193e56fedeff9fab5d31a6b326df1ebe9bf77cb9a26ae6674a74
+COMPONENT_ARCHIVE_HASH_1= sha256:5cd2ac5c5aa718090487909d623fa20b076f0bb628a4eff96842c8fa1dd5427f
 COMPONENT_FMRI=         web/proxy/squid
 COMPONENT_CLASSIFICATION=Web Services/Application and Web Servers
 COMPONENT_LICENSE=      GPLv2
@@ -49,7 +48,10 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 PATH   = $(PATH.gnu)
-CFLAGS += $(CPP_LARGEFILES)
+# -march option needed to guarantee working code on older CPU architectures
+ifeq ($(MACH), i386)
+CFLAGS += $(CPP_LARGEFILES) -march=nehalem
+endif
 
 #incorporate official translations
 COMPONENT_PREP_ACTION=	( cd $(COMPONENT_SRC)/errors; $(GTAR) xf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1))
@@ -60,7 +62,7 @@ CONFIGURE_PREFIX =	/usr/squid
 CONFIGURE_BINDIR = $(CONFIGURE_PREFIX)/bin
 CONFIGURE_SBINDIR = $(CONFIGURE_PREFIX)/sbin
 
-CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6"
+CONFIGURE_OPTIONS += LDFLAGS="-lldap-2.6 -lsocket"
 CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/openldap"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
@@ -126,7 +128,7 @@ CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-cap
 CONFIGURE_OPTIONS += --without-heimdal-krb5
 CONFIGURE_OPTIONS += --without-mit-krb5
-CONFIGURE_OPTIONS += --without-gnugss
+CONFIGURE_OPTIONS += --without-gss
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += --without-gnutls
 # These are needed for Cisco integration
@@ -150,18 +152,13 @@ REQUIRED_PACKAGES += developer/cppunit
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/libtool/libltdl
-REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nettle
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/tdb
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
-REQUIRED_PACKAGES += system/library/security/gss
-REQUIRED_PACKAGES += system/library/security/libsasl

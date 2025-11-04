@@ -23,18 +23,17 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rtorrent
 COMPONENT_VERSION=	0.9.8
-COMPONENT_REVISION= 3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	rtorrent - a BitTorrent client for ncurses
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rakshasa.github.io/rtorrent/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:9edf0304bf142215d3bc85a0771446b6a72d0ad8218efbe184b41e4c9c7542af
-COMPONENT_ARCHIVE_URL=	http://rtorrent.net/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://github.com/rakshasa/rtorrent-archive/raw/master/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/rtorrent
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2

@@ -11,23 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Crypt::DES_EDE3
+#   $WS_TOOLS/perl-integrate-module Crypt-DES_EDE3
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Crypt::DES_EDE3
-HUMAN_VERSION =			0.01
-COMPONENT_SUMMARY =		Crypt::DES_EDE3 - Triple-DES EDE encryption/decryption
-COMPONENT_CPAN_AUTHOR =		BTROTT
+COMPONENT_NAME =		Crypt-DES_EDE3
+HUMAN_VERSION =			0.03
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Triple-DES EDE encryption/decryption
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9cb2e04b625e9cc0833cd499f76fd12556583ececa782a9758a55e3f969748d6
+	sha256:28592db7b9e34745aa91f3e19e5dbbb83aaf472a29e707b9791d0d02b3e227f5
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/crypt-des
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

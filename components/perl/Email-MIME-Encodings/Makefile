@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::MIME::Encodings
+#   $WS_TOOLS/perl-integrate-module Email-MIME-Encodings
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Email::MIME::Encodings
+COMPONENT_NAME =		Email-MIME-Encodings
 HUMAN_VERSION =			1.317
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Email::MIME::Encodings - A unified interface to MIME encoding and decoding
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		A unified interface to MIME encoding and decoding
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4a9a41671a9d1504c4da241be419a9503fa3486262526edb81eca9e2ebea0baf
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

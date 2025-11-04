@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mixin::Linewise
+#   $WS_TOOLS/perl-integrate-module Mixin-Linewise
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mixin::Linewise
+COMPONENT_NAME =		Mixin-Linewise
 HUMAN_VERSION =			0.111
-COMPONENT_SUMMARY =		Mixin::Linewise - write your linewise code for handles; this does the rest
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		write your linewise code for handles; this does the rest
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d28e88516ce9b5295c31631dcccdc0fc8f2ab7d8a5cc876bb1b20131087b01db
@@ -30,6 +31,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/perlio-utf8_strict
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-exporter
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

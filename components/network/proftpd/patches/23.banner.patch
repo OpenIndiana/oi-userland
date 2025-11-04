@@ -1,0 +1,29 @@
+#
+# we do not print proftpd version (on Solaris)
+# I'm not sure if it is Solaris specific or the
+# change is generic enough worth to be submitted
+# to upstream. I need to check proftpd on other OSes.
+#
+# change has not been submitted to upstream yet.
+#
+
+--- a/tests/t/lib/ProFTPD/Tests/Config/DeferWelcome.pm
++++ b/tests/t/lib/ProFTPD/Tests/Config/DeferWelcome.pm
+@@ -233,7 +233,7 @@ sub deferwelcome_off_serverident_on {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = 'ProFTPD \S+ Server \(ProFTPD\) \[\S+\]';
++      $expected = 'ProFTPD Server \(ProFTPD\) \[\S+\]';
+       $self->assert(qr/$expected/, $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };
+@@ -411,7 +411,7 @@ sub deferwelcome_on_serverident_on {
+       $self->assert($expected == $resp_code,
+         test_msg("Expected response code $expected, got $resp_code"));
+ 
+-      $expected = 'ProFTPD \S+ Server ready\.';
++      $expected = 'ProFTPD Server ready\.';
+       $self->assert(qr/$expected/, $resp_msg,
+         test_msg("Expected response message '$expected', got '$resp_msg'"));
+     };

@@ -11,24 +11,25 @@
 #
 # Copyright 2011-2013, EveryCity Ltd. All rights reserved.
 #
-BUILD_STYLE=configure
-BUILD_BITS=64
+
+BUILD_STYLE= configure
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gaa
 COMPONENT_VERSION=      1.6.6
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha256:2ef95b9922856ef5a4d8f9c589da5650b51b345b4f884b3d0bc207c6fab6a2f2
-COMPONENT_PROJECT_URL=  http://sourceforge.net/projects/gaa
-COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE) 	
+COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/gaa
+COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE) 	
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
-CONFIGURE_OPTIONS+=	--with-pic
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --with-pic
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

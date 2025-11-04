@@ -137,6 +137,10 @@ endif
 endef
 $(foreach isa,$(MACH_LIST),$(eval $(call mach-list-generate-macros,$(isa))))
 
+PKG_MACROS +=		GCCVER=$(GCC_VERSION)
+PKG_MACROS +=		CLANGVER=$(CLANG_VERSION)
+PKG_MACROS +=		JAVAVER=$(JAVA_VERSION)
+
 define python-generate-macros
 PKG_MACROS +=           PYTHON_$(1)_ONLY=\#
 PKG_MACROS +=           PYTHON_$(1)_EXCL=
@@ -168,16 +172,16 @@ CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 	$(CP) $< $@
 
 define ips-print-depend-require-rule
-$(shell cat $(1) $(WS_TOP)/transforms/print-depend-require |\
+$(shell $(CAT) $(1) $(WS_TOP)/transforms/print-depend-require |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-depend-require-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
-	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(shell $(CAT) $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 define ips-print-depend-require-type-rule
@@ -185,16 +189,16 @@ $(foreach m,$($(1)_MANIFESTS),$(call ips-print-depend-require-versioned-rule,$(1
 endef
 
 define ips-print-names-rule
-$(shell cat $(1) $(WS_TOP)/transforms/print-pkgs |\
+$(shell $(CAT) $(1) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$(1:.p5m=)) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-versioned-rule
 $(foreach v,$($(1)V_VALUES),\
-	$(shell cat $(2) $(WS_TOP)/transforms/print-pkgs |\
+	$(shell $(CAT) $(2) $(WS_TOP)/transforms/print-pkgs |\
 	$(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=$(v) /dev/fd/0 |\
-	sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
+	$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u))
 endef
 
 #
@@ -202,10 +206,10 @@ endef
 # name of the generic package which pulls in the concrete packages.
 #
 define ips-print-names-generic-rule
-$(shell cat $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
+$(shell $(CAT) $(2) $(WS_TOP)/transforms/mkgeneric $(BUILD_DIR)/mkgeneric-python \
     $(WS_TOP)/transforms/print-pkgs |\
     $(PKGMOGRIFY) $(PKG_OPTIONS) -D $($(1)V_FMRI_VERSION)=\#\#\# /dev/fd/0 |\
-    sed -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
+    $(GSED) -e '/^$$/d' -e '/^#.*$$/d' | $(SORT) -u)
 endef
 
 define ips-print-names-type-rule
@@ -237,10 +241,10 @@ endif
 # - for all python versions we are currently obsoleting (from PYTHON_VERSIONS_OBSOLETING)
 # - the $(PYV) string itself
 PYTHON_PYV_VALUES = $(subst .,,$(PYTHON_VERSIONS) $(PYTHON_VERSIONS_OBSOLETING)) $$(PYV)
-# Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for runtime/python
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*runtime/python\)-$(v)$$|PYTHON_\1|g')
-# Convert REQUIRED_PACKAGES to PYTHON_REQUIRED_PACKAGES for library/python/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(.*library/python/.*\)-$(v)$$|PYTHON_\1|g')
+# Convert REQUIRED_PACKAGES to REQUIRED_PACKAGES.python for runtime/python
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(REQUIRED_PACKAGES\)\(.*runtime/python\)-$(v)$$|\1.python\2|g')
+# Convert REQUIRED_PACKAGES to REQUIRED_PACKAGES.python for library/python/*
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PYTHON_PYV_VALUES)),-e 's|^\(REQUIRED_PACKAGES\)\(.*library/python/.*\)-$(v)$$|\1.python\2|g')
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
@@ -260,10 +264,10 @@ endif
 # - for all perl versions we are currently obsoleting (from PERL_VERSIONS_OBSOLETING)
 # - the $(PLV) string itself
 PERL_PLV_VALUES = $(subst .,,$(PERL_VERSIONS) $(PERL_VERSIONS_OBSOLETING)) $$(PLV)
-# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for runtime/perl
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*runtime/perl\)-$(v)$$|PERL_\1|g')
-# Convert REQUIRED_PACKAGES to PERL_REQUIRED_PACKAGES for library/perl-5/*
-REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(.*library/perl-5/.*\)-$(v)$$|PERL_\1|g')
+# Convert REQUIRED_PACKAGES to REQUIRED_PACKAGES.perl for runtime/perl
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(REQUIRED_PACKAGES\)\(.*runtime/perl\)-$(v)$$|\1.perl\2|g')
+# Convert REQUIRED_PACKAGES to REQUIRED_PACKAGES.perl for library/perl-5/*
+REQUIRED_PACKAGES_TRANSFORM += $(foreach v,$(subst $,\$,$(PERL_PLV_VALUES)),-e 's|^\(REQUIRED_PACKAGES\)\(.*library/perl-5/.*\)-$(v)$$|\1.perl\2|g')
 
 # Look for manifests which need to be duplicated for each version of ruby.
 # NOPERL_MANIFESTS represents the manifests that are not Python or
@@ -326,7 +330,8 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' \
 			-e '/\.la$$/d' \
-			-e 's/$(subst .,\.,$(GCC_GNU_TRIPLET))/$$(GCC_GNU_TRIPLET)/g' | \
+			-e 's/$(subst .,\.,$(GNU_TRIPLET))/$$(GNU_TRIPLET)/g' \
+			$(GENERATE_EXTRA_SED) | \
 		$(PKGFMT) -u | \
 		uniq | \
 		$(PKGFMT) | \
@@ -335,7 +340,7 @@ $(GENERATED).p5m:	install $(GENERATE_EXTRA_DEPS)
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
-	cat $(METADATA_TEMPLATE) $< >$@
+	$(CAT) $(METADATA_TEMPLATE) $< >$@
 
 # The text of a transform that will emit a dependency conditional on the
 # presence of a particular version of a runtime, which will then draw in the
@@ -385,7 +390,7 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
 	$(PKGMOGRIFY) -D PYV=### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 # Define and execute a macro that generates a rule to create a manifest for a
 # perl module specific to a particular version of the perl runtime.
@@ -415,7 +420,7 @@ $(BUILD_DIR)/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(BUILD_DIR)/mkgeneric-perl
 	$(PKGMOGRIFY) -D PLV=### $(BUILD_DIR)/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 # Rule to generate historical manifests from the $(HISTORY) file.
 define history-manifest-rule
@@ -436,7 +441,7 @@ $(MANIFEST_BASE)-%-$(subst .,,$(1)).mogrified: \
 
 $(MANIFEST_BASE)-%-$(subst .,,$(1)).p5m: %-RUBYVER.p5m
 	if [ -f $$*-$(subst .,,$(1))GENFRAG.p5m ]; then \
-	        cat $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
+	        $(CAT) $$*-$(subst .,,$(1))GENFRAG.p5m >> $$@; \
 	fi
 	$(PKGMOGRIFY) -D RUBY_VERSION=$(1) -D RUBY_LIB_VERSION=$(2) \
 	    -D RUBYV=$(subst .,,$(1)) $$< > $$@
@@ -460,7 +465,7 @@ $(BUILD_DIR)/mkgeneric-ruby: $(WS_TOP)/make-rules/shared-macros.mk $(MAKEFILE_PR
 $(MANIFEST_BASE)-%.p5m: %-RUBYVER.p5m $(BUILD_DIR)/mkgeneric-ruby
 	$(PKGMOGRIFY) -D RUBYV=### $(BUILD_DIR)/mkgeneric-ruby \
 	        $(WS_TOP)/transforms/mkgeneric $< > $@
-	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+	if [ -f $*-GENFRAG.p5m ]; then $(CAT) $*-GENFRAG.p5m >> $@; fi
 
 per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="$(strip $($(var).$(1)))")) \
 	$(if $(COMPONENT_CLASSIFICATION.$(1)),-D COMPONENT_CLASSIFICATION="org.opensolaris.category.2008:$(strip $(COMPONENT_CLASSIFICATION.$(1)))")
@@ -469,13 +474,13 @@ per-manifest-options = $(foreach var,$(PKG_VARS),$(if $($(var).$(1)),-D $(var)="
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(call per-manifest-options,$*) $< \
 		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR) $(MAKEFILE_PREREQ)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
@@ -489,9 +494,12 @@ $(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
 	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
 
 # generate dependencies
-PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
+PKGDEPEND_RUNPATH += '$$PKGDEPEND_RUNPATH'
+PKGDEPEND_GENERATE_OPTIONS += -m
+PKGDEPEND_GENERATE_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
+PKGDEPEND_GENERATE_OPTIONS += $(PKGDEPEND_RUNPATH:%=-k %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
-	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
+	$(PKGDEPEND_GENERATE_ENV) $(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # pkgdepend resolve builds a map of all installed packages by default.  This
 # makes dependency resolution particularly slow.  We can dramatically improve
@@ -579,7 +587,7 @@ PKGSEND_PUBLISH_OPTIONS += -T \*.py
 $(MANIFEST_BASE)-%.pre-published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(FINAL_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 	@echo "NEW PACKAGE CONTENTS ARE LOCALLY VALIDATED AND READY TO GO"
 
 $(MANIFEST_BASE)-%.histogrified: $(MANIFEST_BASE)-%.p5m
@@ -612,16 +620,16 @@ print-package-names:	canonical-manifests $(MKGENERIC_SCRIPTS)
 	    | tr ' ' '\n' | $(SORT) -u
 
 print-package-paths:	canonical-manifests
-	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	@$(CAT) $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | \
+		$(GSED) -e '/^$$/d' -e '/^#.*$$/d' | \
 		$(SORT) -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
-	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	    $(CAT) $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 	    $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
-	    sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
+	    $(GSED) -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | \
 	    $(SORT) -u | \
 	    (cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
 	 else ; \
@@ -641,21 +649,15 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	$(error Missing canonical manifest(s))
 endif
 
-# Component variables are expanded directly to PKG_OPTIONS instead of via
-# PKG_MACROS since the values may contain whitespace.
-mkdefine = -D $(1)="$$(strip $(2))"
-
 # Expand PKG_VARS into defines via PKG_OPTIONS.
-$(foreach var, $(PKG_VARS), \
-    $(eval PKG_OPTIONS += $(call mkdefine,$(var),$$($(var)))) \
-)
+PKG_OPTIONS += $(foreach var,$(PKG_VARS),-D $(var)="$($(var))")
 
 # This converts required paths to containing package names for be able to
 # properly setup the build environment for a component.
 required-pkgs.mk:	Makefile
 	@echo "generating $@ from Makefile REQUIRED_* data"
 	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
-		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
+		| $(GSED) -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
 
 pre-prep:	required-pkgs.mk
 
@@ -665,3 +667,21 @@ CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-perl
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-python
 CLEAN_PATHS +=	$(BUILD_DIR)/mkgeneric-ruby
 CLEAN_PATHS +=	$(GENERATED_ARCH_MANIFESTS)
+
+# If a component needs a runtime flac library then it also needs the flac
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ codec\/flac-/{p;s/-[^-]*$$//}'
+
+# If a component needs a runtime abseil-cpp library then it also needs the
+# abseil-cpp development files for building.  Add such dependency automatically
+# here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/abseil-cpp-/{p;s/-[^-]*$$//}'
+
+# If a component needs a runtime protobuf library then it also needs the
+# protobuf development files for building.  Add such dependency automatically
+# here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ library\/c++\/protobuf-/{p;s/-[^-]*$$//}'
+
+# If a component needs the runtime ICU library then it also needs the ICU
+# development files for building.  Add such dependency automatically here.
+REQUIRED_PACKAGES_TRANSFORM += -e '/ \$$(ICU_LIBRARY_PKG)$$/{p;s/\$$(ICU_LIBRARY_PKG)$$/developer\/icu/}'

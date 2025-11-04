@@ -1,0 +1,14 @@
+The importlib test checks that there is no package called 'pkg', which is not
+true on OpenIndiana.
+
+--- Python-3.14.0/Lib/test/test_importlib/metadata/test_api.py.orig
++++ Python-3.14.0/Lib/test/test_importlib/metadata/test_api.py
+@@ -59,7 +59,7 @@
+                 assert distribution(name).metadata['Name'] == 'pkg.dot'
+ 
+     def test_prefix_not_matched(self):
+-        prefixes = 'p', 'pkg', 'pkg.'
++        prefixes = 'p', 'pkg.'
+         for prefix in prefixes:
+             with self.subTest(prefix):
+                 with self.assertRaises(PackageNotFoundError):

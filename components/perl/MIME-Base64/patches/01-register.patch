@@ -1,0 +1,31 @@
+https://github.com/Perl/perl5/commit/492d6b6e6b407a820fc1a7d7ff2803440c2030bc
+
+--- MIME-Base64-3.16/Base64.xs.orig
++++ MIME-Base64-3.16/Base64.xs
+@@ -67,7 +67,7 @@
+           ((SvFLAGS(sv) & (SVf_POK|SVf_UTF8)) == (SVf_POK) \
+            ? ((lp = SvCUR(sv)), SvPVX(sv)) : my_sv_2pvbyte(aTHX_ sv, &lp))
+        static char *
+-       my_sv_2pvbyte(pTHX_ register SV *sv, STRLEN *lp)
++       my_sv_2pvbyte(pTHX_ SV *sv, STRLEN *lp)
+        {   
+            sv_utf8_downgrade(sv,0);
+            return SvPV(sv,*lp);
+@@ -180,7 +180,7 @@
+ 
+ 	PREINIT:
+ 	STRLEN len;
+-	register unsigned char *str = (unsigned char*)SvPV(sv, len);
++	unsigned char *str = (unsigned char*)SvPV(sv, len);
+ 	unsigned char const* end = str + len;
+ 	char *r;
+ 	unsigned char c[4];
+@@ -276,7 +276,7 @@
+ 
+ 	PREINIT:
+ 	STRLEN len;
+-	register unsigned char *str = (unsigned char*)SvPV(sv, len);
++	unsigned char *str = (unsigned char*)SvPV(sv, len);
+ 	unsigned char const* end = str + len;
+ 	int i = 0;
+ 

@@ -24,6 +24,7 @@ include $(WS_MAKE_RULES)/mate.mk
 COMPONENT_NAME=		mate-media
 COMPONENT_MJR_VERSION=	1.28
 COMPONENT_MNR_VERSION=	1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Multimedia applications for the MATE desktop
 COMPONENT_ARCHIVE_HASH= sha256:bcdc102e22f63f55e63166d5c708e91c113570e6a30a874345a88609e83a9912
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -33,7 +34,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/mate/mate-panel
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

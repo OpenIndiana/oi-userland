@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::RequiresInternet
+#   $WS_TOOLS/perl-integrate-module Test-RequiresInternet
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::RequiresInternet
+COMPONENT_NAME =		Test-RequiresInternet
 HUMAN_VERSION =			0.05
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::RequiresInternet - Easily test network connectivity
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Easily test network connectivity
 COMPONENT_CPAN_AUTHOR =		MALLEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:bba7b32a1cc0d58ce2ec20b200a7347c69631641e8cae8ff4567ad24ef1e833e
@@ -31,4 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module FFI::CheckLib
+#   $WS_TOOLS/perl-integrate-module FFI-CheckLib
 #
 
 BUILD_STYLE = makemaker
@@ -21,10 +21,10 @@ CLONEY_ARGS = CLONEY_MODE="hardlink"
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		FFI::CheckLib
+COMPONENT_NAME =		FFI-CheckLib
 HUMAN_VERSION =			0.31
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		FFI::CheckLib - Check that a library is available for FFI
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Check that a library is available for FFI
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:04d885fc377d44896e5ea1c4ec310f979bb04f2f18658a7e7a4d509f7e80bb80
@@ -34,6 +34,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/file-which
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

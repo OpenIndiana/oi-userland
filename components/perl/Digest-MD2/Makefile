@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Digest::MD2
+#   $WS_TOOLS/perl-integrate-module Digest-MD2
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Digest::MD2
+COMPONENT_NAME =		Digest-MD2
 HUMAN_VERSION =			2.04
-COMPONENT_SUMMARY =		Digest::MD2 - Perl interface to the MD2 Algorithm
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Perl interface to the MD2 Algorithm
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d0aabf4834c20ac411bea427c4a308b59a5fcaa327679ef5294c1d68ab71eed3
@@ -29,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

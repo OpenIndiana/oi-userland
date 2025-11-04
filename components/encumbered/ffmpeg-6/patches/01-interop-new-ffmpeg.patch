@@ -1,0 +1,24 @@
+For interoperability with latest ffmpeg.
+
+--- ffmpeg-6.1.2/configure.orig
++++ ffmpeg-6.1.2/configure
+@@ -4008,7 +4008,7 @@
+ SLIBNAME_WITH_MAJOR='$(SLIBNAME).$(LIBMAJOR)'
+ LIB_INSTALL_EXTRA_CMD='$$(RANLIB) "$(LIBDIR)/$(LIBNAME)"'
+ SLIB_INSTALL_NAME='$(SLIBNAME_WITH_VERSION)'
+-SLIB_INSTALL_LINKS='$(SLIBNAME_WITH_MAJOR) $(SLIBNAME)'
++SLIB_INSTALL_LINKS='$(SLIBNAME_WITH_MAJOR) $(SLIBPREF)$(FULLNAME)6$(SLIBSUF)'
+ VERSION_SCRIPT_POSTPROCESS_CMD="cat"
+ 
+ asflags_filter=echo
+--- ffmpeg-6.1.2/ffbuild/pkgconfig_generate.sh.orig
++++ ffmpeg-6.1.2/ffbuild/pkgconfig_generate.sh
+@@ -38,7 +38,7 @@
+ Requires: $($shared || echo $requires)
+ Requires.private: $($shared && echo $requires)
+ Conflicts:
+-Libs: -L\${libdir} $rpath -l${fullname#lib} $($shared || echo $libs)
++Libs: -L\${libdir} $rpath -l${fullname#lib}6 $($shared || echo $libs)
+ Libs.private: $($shared && echo $libs)
+ Cflags: -I\${includedir}
+ EOF

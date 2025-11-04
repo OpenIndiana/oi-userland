@@ -1,21 +1,22 @@
---- curl-7.60.0/configure.ac.1	2018-05-17 19:52:38.637214847 +0000
-+++ curl-7.60.0/configure.ac	2018-05-17 19:56:10.531967993 +0000
-@@ -1401,6 +1401,9 @@
-            *-hp-hpux*)
-               gss_libname="gss"
-               ;;
-+           *sunos*)
-+              gss_libname="gss"
-+              ;;
-            *)
-               gss_libname="gssapi"
-               ;;
-@@ -1422,7 +1425,7 @@
+--- curl-8.13.0/configure.ac.orig	2025-04-02 07:47:41.000000000 +0200
++++ curl-8.13.0/configure.ac	2025-04-05 15:50:00.109802467 +0200
+@@ -2020,6 +2020,9 @@
+           *-hp-hpux*)
+             gss_libname="gss"
+             ;;
++          *-solaris2*)
++            gss_libname="gss"
++            ;;
+           *)
+             gss_libname="gssapi"
+             ;;
+@@ -2041,6 +2044,9 @@
+       *-hp-hpux*)
          LIBS="-lgss $LIBS"
          ;;
-      *)
--        LIBS="-lgssapi $LIBS"
++      *-solaris2*)
 +        LIBS="-lgss $LIBS"
++        ;;
+       *)
+         LIBS="-lgssapi $LIBS"
          ;;
-      esac
-   fi

@@ -18,10 +18,10 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Moo
+COMPONENT_NAME =		Moo
 HUMAN_VERSION =			2.005005
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Moo - Minimalist Object Orientation (with Moose compatibility)
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Minimalist Object Orientation (with Moose compatibility)
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fb5a2952649faed07373f220b78004a9c6aba387739133740c1770e9b1f4b108
@@ -33,6 +33,11 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/class-method-modifiers
 PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

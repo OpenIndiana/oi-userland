@@ -28,13 +28,15 @@ ESR =
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # CANDIDATE_BETA is the beta version found in the candidates directory.
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
+# USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
 # CANDIDATE_BETA=9
 # CANDIDATE_NIGHTLY=1
+# USE_HG_REPO=1
 
 COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	124.0.2
+COMPONENT_VERSION =	144.0.2
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -46,31 +48,36 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 # CANDIDATE_BETA
 endif
 
-ifndef CANDIDATE_BUILD
-MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
-else
-  ifndef CANDIDATE_BETA
-MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
-  else
-MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)
-  endif
-endif
-
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     9dc5b89f7de66165e234e8d244c2796b2dfe9235
-COMPONENT_SRC=          gecko-dev-$(COMPONENT_GIT_HASH)
+COMPONENT_GIT_HASH=     16f979184458f531fce47706d2fa7f2902e75ad3
+COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
-COMPONENT_ARCHIVE_URL=  https://github.com/mozilla/gecko-dev/archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
+  ifdef USE_HG_REPO
+  COMPONENT_HG_HASH=	ff0882e981495f07c521e0b00e1e83b050dfcdc2
+  COMPONENT_SRC=	mozilla-central-$(COMPONENT_HG_HASH)
+  COMPONENT_ARCHIVE=	$(COMPONENT_HG_HASH).zip
+  COMPONENT_ARCHIVE_URL= https://hg.mozilla.org/mozilla-central/archive/$(COMPONENT_ARCHIVE)
+  endif
 else
+ ifndef CANDIDATE_BUILD
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)$(ESR)
+  else
+    ifndef CANDIDATE_BETA
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)$(ESR)-candidates/build$(CANDIDATE_BUILD)
+    else
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)
+    endif
+  endif
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:a6526d3540e19c8875cb7364e4490436c189478d375c4cb5216b0414e4b2d91c
+COMPONENT_ARCHIVE_HASH= sha256:eac4722ed259008d73006c4894c18d2871702c661d14e27505812351df62806b
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=		web/browser/firefox
 
-RUST_VERSION = 1.76.0
+RUST_VERSION = 1.89.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -79,7 +86,7 @@ export ALLOW_UNVERIFIED_DOWNLOADS
 LANG_LIST= ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA en-GB \
  en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb \
  hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN \
- pl pt-BR pt-PT rm ro ru sat sc sco si sk sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+ pl pt-BR pt-PT rm ro ru sat sc sco si sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 
 ifdef CANDIDATE_NIGHTLY
 FIREFOX_UPDATE_CHANNEL=nightly
@@ -120,6 +127,9 @@ PATH = $(CARGO_HOME)/bin:$(PATH.gnu)
 MOZCONFIG = $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
+# Clang 20 does not work with Mozilla patches
+# CLANG_VERSION= 19
+
 ifdef DEBUG
 # disable code optimization
 CFLAGS =
@@ -142,8 +152,6 @@ COMPILER.clang= clang
 COMPILER = $(COMPILER.$(CC_TYPE))
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
-# xpcom uses DEF XP_SOLARIS
-CXXFLAGS += -DXP_SOLARIS
 # type problem compiling ffvpx with clang 
 CFLAGS += -D__int8_t_defined
 
@@ -153,7 +161,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
         rm -f  $(MOZCONFIG); \
 	echo "ac_add_options MOZILLA_OFFICIAL=1" >> $(MOZCONFIG) ; \
 	echo "ac_add_options PKG_CONFIG=/usr/bin/amd64/pkg-config" >> $(MOZCONFIG) ; \
-	echo "ac_add_options CC_TYPE=$(CC_TYPE)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CC=$(CC)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options CXX=$(CXX)" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --prefix=/usr" >> $(MOZCONFIG) ; \
@@ -173,6 +180,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-replace-malloc" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-system-pixman" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --enable-update-channel=$(FIREFOX_UPDATE_CHANNEL)" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
@@ -190,7 +198,7 @@ LD_MAP_NOEXBSS.sparc=
 LD_Z_IGNORE=
 
 # missing symbols from gtk3 during Firefox start
-LD_B_DIRECT=
+# LD_B_DIRECT=
 
 # hope to get args data in stacks of core dumps
 LD_OPTIONS += -msave-args
@@ -200,12 +208,13 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	export RUSTUP_HOME=$(RUSTUP_HOME); \
 	export CARGO_HOME=$(CARGO_HOME); \
 	export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+	export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
 	curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
 	source $(CARGO_HOME)/env; \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.26.0 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -213,6 +222,9 @@ ENV +=	CXXFLAGS="$(CXXFLAGS)"
 ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
 ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 ENV += CARGO_HOME=$(CARGO_HOME)
+
+# This is needed to run bins/libs in .rustup
+ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
@@ -238,9 +250,11 @@ COMPONENT_POST_BUILD_ACTION = \
 
 COMPONENT_POST_INSTALL_ACTION  = \
     for file in `find $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/ -name "*.so"`; do \
-        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
-        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox:/usr/lib/mps/amd64"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH   "$(GCC_LIBDIR):$(FIREFOX_LIBDIR)/firefox"' $$file ; \
     done ; \
+    mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
+    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
 
@@ -258,22 +272,22 @@ clean::
 	$(RM) $(COMPONENT_LICENSE_FILE)
 
 # Build dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
-REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += library/audio/pulseaudio
-REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += developer/lang/rustc
-REQUIRED_PACKAGES += gnome/config/gconf
+PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/build/autoconf-213
+REQUIRED_PACKAGES += developer/lang/rustc
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += runtime/nodejs-24
+REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/c++/harfbuzz
-REQUIRED_PACKAGES += library/desktop/atk
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

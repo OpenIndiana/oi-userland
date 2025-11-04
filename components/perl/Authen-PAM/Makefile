@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Authen::PAM
+#   $WS_TOOLS/perl-integrate-module Authen-PAM
 #
 
 BUILD_STYLE = makemaker
@@ -19,10 +19,10 @@ USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Authen::PAM
+COMPONENT_NAME =		Authen-PAM
 HUMAN_VERSION =			0.16
-COMPONENT_REVISION =		7
-COMPONENT_SUMMARY =		Authen::PAM - Perl interface to PAM library
+COMPONENT_REVISION =		9
+COMPONENT_SUMMARY =		Frequently-Asked Questions about Authen::PAM.
 COMPONENT_CPAN_AUTHOR =		NIKIP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0e949bd9a2a9df0f829971030fe9169cbaf6cec78b92faf22f547ff6c6155c9b
@@ -37,5 +37,6 @@ COMPONENT_PREP_ACTION = ( cd $(@D) && autoconf )
 COMPONENT_TEST_TRANSFORMS += "-e '/^----/d'"
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

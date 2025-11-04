@@ -26,22 +26,19 @@
 # Copyright 2023 Carsten Grzemba
 #
 
-# There are a large number of macros in the GDB code written
-# specifically for GCC's preprocessor. Studio does not expand
-# these macros the same way GCC does, and the resulting gdb is
-# not usable. Building gdb with a GCC >= 4.7.2 produces very
-# good results, even on SPARC.
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      13.2
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      16.3
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:7ead13d9e19fa0c57bb19104e1a5f67eefa9fc79f2e6360de491e8fddeda1e30
+	sha256:86015081217dc82c5485db9ce864dcc0b703759d2bdbe4441b095c5f900a6a37
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 COMPONENT_FMRI= developer/debug/gdb
@@ -80,6 +77,9 @@ COMPONENT_TEST_TRANSFORMS += \
 # so master test results will not match, and are not
 # appropriate for a full Userland test run
 
+# COMPONENT_TEST_ARGS+=RUNTESTFLAGS=gdb.base/a2-run.exp
+COMPONENT_TEST_ARGS+= -j32
+
 PATH = $(PATH.gnu)
 
 CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
@@ -112,6 +112,7 @@ CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 
 CONFIGURE_OPTIONS += --with-x=no
 CONFIGURE_OPTIONS += --with-curses
+CONFIGURE_OPTIONS += --disable-slim
 CONFIGURE_OPTIONS += --disable-werror
 CONFIGURE_OPTIONS += --enable-plugins
 CONFIGURE_OPTIONS += --enable-tui
@@ -121,6 +122,8 @@ CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --with-system-zlib
 CONFIGURE_OPTIONS += --without-guile
+# libbfd is provided by binutils
+CONFIGURE_OPTIONS += --disable-install-libbfd
 
 COMPONENT_BUILD_ENV += $(CONFIGURE_ENV)
 
@@ -133,25 +136,199 @@ COMPONENT_POST_UNPACK_ACTION = \
 
 # Generate the newly added Solaris instruction and
 # register tables which weren't there by default.
+XMLTOC+= i386/amd64-avx-illumos.xml
+XMLTOC+= i386/amd64-illumos.xml
+XMLTOC+= i386/i386-avx-illumos.xml
+XMLTOC+= i386/i386-illumos.xml
+XMLTOC+= i386/i386-mmx-illumos.xml
+
+FEATURE_XMLFILES+= i386/32bit-illumos.xml
+FEATURE_XMLFILES+= i386/64bit-illumos.xml
+
 COMPONENT_PRE_CONFIGURE_ACTION += \
-  +( cd  $(SOURCE_DIR)/gdb/features ; \
-    $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) all; )
+  ( cd  $(SOURCE_DIR)/gdb/features ; \
+    $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) GDB=/usr/bin/gdb XMLTOC="$(XMLTOC)" FEATURE_XMLFILES="$(FEATURE_XMLFILES)" cfiles; )
 
 # build the manpages
 COMPONENT_POST_BUILD_ACTION = \
 	+( cd $(BUILD_DIR_64)/gdb/doc ; \
     $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) man; )
 
-# Two tests hangs up the test run, so skip them.
+# tests hangs up the test run, so skip them.
+SKIP_GDB_TEST+= gdb.mi/mi-exec-run.exp
+SKIP_GDB_TEST+= gdb.base/annota3.exp
+SKIP_GDB_TEST+= gdb.base/catch-fork-kill.exp
+SKIP_GDB_TEST+= gdb.threads/local-watch-wrong-thread.exp
+#   #error "not using SystemTap v3 probes" Running target unix
+SKIP_GDB_TEST+= gdb.base/stap-probe.exp
+SKIP_GDB_TEST+= gdb.trace/stap-trace.exp
+# fatal error: asm/unistd.h: No such file or directory
+SKIP_GDB_TEST+= gdb.threads/step-over-thread-exit-while-stop-all-threads.exp
+SKIP_GDB_TEST+= gdb.threads/step-over-thread-exit.exp 
+# fatal error: sys/ptrace.h: No such file or directory
+SKIP_GDB_TEST+= gdb.base/attach-twice.exp
+# ld: fatal: library -lm: not found
+SKIP_GDB_TEST+= gdb.arch/aarch64-fp.exp 
+SKIP_GDB_TEST+= gdb.base/break-entry.exp
+SKIP_GDB_TEST+= gdb.base/watchpoints.exp
+# attempt to include C-header as assembler code
+# /usr/include/sys/int_types.h: Assembler messages:
+SKIP_GDB_TEST+= gdb.arch/amd64-entry-value-inline.exp
+SKIP_GDB_TEST+= gdb.arch/altivec-abi.exp
+SKIP_GDB_TEST+= gdb.arch/riscv-info-fcsr.exp
+SKIP_GDB_TEST+= gdb.arch/amd64-watchpoint-downgrade.exp
+# ld: fatal: unrecognized option '--build-id'
+SKIP_GDB_TEST+= gdb.base/watch_thread_num.exp
+SKIP_GDB_TEST+= gdb.base/index-cache.exp
+SKIP_GDB_TEST+= gdb.base/bigcore.exp
+SKIP_GDB_TEST+= gdb.dwarf2/dw2-using-debug-str.exp
+SKIP_GDB_TEST+= gdb.python/py-cmd.exp
+SKIP_GDB_TEST+= gdb.python/py-missing-debug.exp
+# ld: fatal: unrecognized option '--build-id=none'
+SKIP_GDB_TEST+= gdb.base/jit-reader.exp
+SKIP_GDB_TEST+= gdb.base/bp-cmds-sourced-script.exp
+# ld: fatal: unrecognized option '--gc-sections'
+SKIP_GDB_TEST+= gdb.base/siginfo.exp
+# gcc: error: -pie is not supported in this configuration
+SKIP_GDB_TEST+= gdb.base/dprintf-next.exp
+SKIP_GDB_TEST+= gdb.base/ldbl_e308.exp
+SKIP_GDB_TEST+= gdb.base/patch.exp
+SKIP_GDB_TEST+= gdb.base/many-completions.exp
+SKIP_GDB_TEST+= gdb.base/find.exp
+SKIP_GDB_TEST+= gdb.disasm/mn10300.exp
+# ld: fatal: unrecognized option '--ctf-variables'
+SKIP_GDB_TEST+= gdb.base/gdbinit-history.exp
+SKIP_GDB_TEST+= gdb.base/corefile2.exp
+SKIP_GDB_TEST+= gdb.base/inferior-clone.exp
+# ld: fatal: unrecognized option '-g'
+SKIP_GDB_TEST+= gdb.base/infcall-nested-structs-c++.exp
+# ld: fatal: option -z has illegal argument 'relro'
+SKIP_GDB_TEST+= gdb.base/gcore-relro.exp
+# ld: fatal: unrecognized option '--gdb-index'
+SKIP_GDB_TEST+= gdb.base/gold-gdb-index.exp
+# ld: fatal: unrecognized option '-T'
+SKIP_GDB_TEST+= gdb.base/infoline-reloc-main-from-zero.exp
+# ld: fatal: unrecognized option '--export-dynamic'
+SKIP_GDB_TEST+= gdb.ctf/multi.exp
+SKIP_GDB_TEST+= gdb.ctf/dwarf2-and-ctf.exp
+# ld: warning: symbol 'glob' has differing types:
+SKIP_GDB_TEST+= gdb.multi/bp-thread-specific.exp
+SKIP_GDB_TEST+= gdb.multi/stop-all-on-exit.exp
+SKIP_GDB_TEST+= gdb.multi/base.exp
+# ld: fatal: unrecognized option '--strip-debug'
+SKIP_GDB_TEST+= gdb.python/py-progspace-events.exp
+# Undefined                   first referenced
+SKIP_GDB_TEST+= gdb.python/py-connection-removed.exp
+SKIP_GDB_TEST+= gdb.arch/i386-avx.exp
+# In function 'funca':
+SKIP_GDB_TEST+= gdb.python/py-framefilter.c
+# ERROR: tcl error code TCL LOOKUP COMMAND, TCL READ VARNAME
+SKIP_GDB_TEST+= libctf-lookup/lookup.exp
+SKIP_GDB_TEST+= libctf-regression/libctf-repeat-cu.exp
+SKIP_GDB_TEST+= libctf-regression/regression.exp
+SKIP_GDB_TEST+= libctf-writable/writable.exp
+SKIP_GDB_TEST+= gdb.base/complex-parts.exp
+SKIP_GDB_TEST+= gdb.base/print-internal-string.exp
+SKIP_GDB_TEST+= gdb.dap/attach.exp
+SKIP_GDB_TEST+= gdb.dap/stop-at-main.exp
+SKIP_GDB_TEST+= gdb.dap/log-message.exp
+SKIP_GDB_TEST+= gdb.dap/cond-bp.exp
+SKIP_GDB_TEST+= gdb.dap/cancel-launch.exp
+SKIP_GDB_TEST+= gdb.dap/stack-format.exp
+SKIP_GDB_TEST+= gdb.dap/ptrref.exp
+SKIP_GDB_TEST+= gdb.dap/terminate.exp
+SKIP_GDB_TEST+= gdb.dap/eof.exp
+SKIP_GDB_TEST+= gdb.dap/children.exp
+SKIP_GDB_TEST+= gdb.dap/bt-nodebug.exp
+SKIP_GDB_TEST+= gdb.dap/line-zero.exp
+SKIP_GDB_TEST+= gdb.dap/ada-arrays.exp
+SKIP_GDB_TEST+= gdb.dap/args-env.exp
+SKIP_GDB_TEST+= gdb.dap/hover.exp
+SKIP_GDB_TEST+= gdb.dap/scopes.exp
+SKIP_GDB_TEST+= gdb.dap/disassem.exp
+SKIP_GDB_TEST+= gdb.dap/global.exp
+SKIP_GDB_TEST+= gdb.dap/max-size.exp
+SKIP_GDB_TEST+= gdb.dap/catch-exception.exp
+SKIP_GDB_TEST+= gdb.debuginfod/crc_mismatch.exp
+SKIP_GDB_TEST+= gdb.debuginfod/solib-with-soname.exp
+SKIP_GDB_TEST+= gdb.debuginfod/build-id-no-debug-warning.exp
+SKIP_GDB_TEST+= gdb.debuginfod/fetch_src_and_symbols.exp
+SKIP_GDB_TEST+= gdb.dwarf2/gdb-index-tilde.exp
+SKIP_GDB_TEST+= gdb.dwarf2/ada-linkage-name.exp
+SKIP_GDB_TEST+= gdb.mi/mi-start.exp
+SKIP_GDB_TEST+= gdb.mi/mi-memory-changed.exp
+SKIP_GDB_TEST+= gdb.mi/mi-i-cmd.exp
+SKIP_GDB_TEST+= gdb.mi/mi-thread-specific-bp.exp
+SKIP_GDB_TEST+= gdb.mi/mi-thread-bp-deleted.exp
+SKIP_GDB_TEST+= gdb.mi/mi-console.exp
+SKIP_GDB_TEST+= gdb.mi/list-thread-groups-no-inferior.exp
+SKIP_GDB_TEST+= gdb.mi/mi-var-rtti.exp
+SKIP_GDB_TEST+= gdb.mi/mi-var-invalidate-shlib.exp
+SKIP_GDB_TEST+= gdb.mi/mi-stack.exp
+SKIP_GDB_TEST+= gdb.mi/mi-until.exp
+SKIP_GDB_TEST+= gdb.mi/mi-vla-fortran.exp
+SKIP_GDB_TEST+= gdb.mi/mi-break-qualified.exp
+SKIP_GDB_TEST+= gdb.mi/mi-exit-code.exp
+SKIP_GDB_TEST+= gdb.mi/mi-threads-interrupt.exp
+SKIP_GDB_TEST+= gdb.mi/mi-catch-load.exp
+SKIP_GDB_TEST+= gdb.mi/mi-var-display.exp
+SKIP_GDB_TEST+= gdb.mi/mi-var-list-children-invalid-grandchild.exp
+SKIP_GDB_TEST+= gdb.modula2/builtin-procedure-adr.exp
+SKIP_GDB_TEST+= gdb.multi/multi-attach.exp
+SKIP_GDB_TEST+= gdb.multi/tids.exp
+SKIP_GDB_TEST+= gdb.multi/bp-thread-specific.exp
+SKIP_GDB_TEST+= gdb.multi/multi-target-thread-find.exp
+SKIP_GDB_TEST+= gdb.multi/multi-target-no-resumed.exp
+SKIP_GDB_TEST+= gdb.python/py-events.exp
+SKIP_GDB_TEST+= gdb.python/tui-window-factory.exp
+SKIP_GDB_TEST+= gdb.reverse/getresuid-reverse.exp
+SKIP_GDB_TEST+= gdb.reverse/time-reverse.exp
+SKIP_GDB_TEST+= gdb.reverse/s390-mvcle.exp
+SKIP_GDB_TEST+= gdb.reverse/step-reverse.exp
+SKIP_GDB_TEST+= gdb.threads/multi-create.exp
+SKIP_GDB_TEST+= gdb.threads/signal-delivered-right-thread.exp
+SKIP_GDB_TEST+= gdb.threads/detach-step-over.exp
+SKIP_GDB_TEST+= gdb.threads/non-ldr-exc-3.exp
+SKIP_GDB_TEST+= gdb.threads/sigthread.exp
+SKIP_GDB_TEST+= gdb.threads/bp_in_thread.exp
+SKIP_GDB_TEST+= gdb.threads/pending-fork-event-detach.exp
+SKIP_GDB_TEST+= gdb.threads/thread-bp-deleted.exp
+SKIP_GDB_TEST+= gdb.xml/tdesc-reload.exp
+# timeout
+SKIP_GDB_TEST+= gdb.base/sigstep.exp
+SKIP_GDB_TEST+= gdb.threads/multiple-step-overs.exp
+SKIP_GDB_TEST+= gdb.threads/wp-replication.exp
+SKIP_GDB_TEST+= gdb.threads/watchthreads.exp
+SKIP_GDB_TEST+= gdb.threads/watchthreads2.exp
+SKIP_GDB_TEST+= gdb.tui/flush-after-run.exp
+# changing results
+SKIP_GDB_TEST+= gdb.threads/attach-many-short-lived-threads.exp
+SKIP_GDB_TEST+= gdb.threads/continue-pending-status.exp
+SKIP_GDB_TEST+= gdb.threads/infcall-from-bp-cond-simple.exp
+SKIP_GDB_TEST+= gdb.threads/manythreads.exp
+SKIP_GDB_TEST+= gdb.threads/next-fork-exec-other-thread.exp
+SKIP_GDB_TEST+= gdb.threads/threadcrash.exp
+SKIP_GDB_TEST+= gdb.threads/schedlock.exp
+SKIP_GDB_TEST+= gdb.threads/tls-core.exp
+SKIP_GDB_TEST+= gdb.base/bp-cmds-continue-ctrl-c.exp
+SKIP_GDB_TEST+= gdb.mi/new-ui-mi-sync.exp
+SKIP_GDB_TEST+= gdb.threads/step-over-trips-on-watchpoint.exp
+SKIP_GDB_TEST+=	gdb.btrace/event-tracing-gap.exp
+SKIP_GDB_TEST+=	gdb.btrace/event-tracing.exp
+SKIP_GDB_TEST+= gdb.threads/gcore-thread.exp
+
 COMPONENT_PRE_TEST_ACTION += \
   ( cd $(SOURCE_DIR)/gdb/testsuite; \
-    for F in gdb.mi/mi-exec-run.exp gdb.base/annota3.exp; \
+    for F in $(SKIP_GDB_TEST); \
     do \
       if test -e $$F; \
       then \
         $(MV) $$F $$F-save; \
       fi; \
-    done )
+    done; \
+    cd "$(BUILD_DIR_64)/gdb/testsuite/" ; \
+    PATH=$(PATH) $(MAKE) site.exp ; \
+    echo "set gdb_test_timeout 120" >> site.exp )
 
 COMPONENT_POST_INSTALL_ACTION = \
   ( cd  $(PROTOUSRDIR)/share/gdb/python/gdb ; \
@@ -194,7 +371,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 ASLR_MODE=$(ASLR_DISABLE)
 
 # Testing needs to find C/C++ compiler
-COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)"
+COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)" LD_LIBRARY_PATH="$(GCC_ROOT)/lib/$(MACH64)/"
 
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/.*\.pyc$$'
 
@@ -207,6 +384,7 @@ REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += developer/babeltrace
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/gmp
+REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/zlib

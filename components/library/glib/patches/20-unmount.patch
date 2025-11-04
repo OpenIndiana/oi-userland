@@ -3,9 +3,9 @@ http://cvsweb.openbsd.org/cgi-bin/cvsweb/~checkout~/ports/devel/glib2/patches/pa
 
 to make unmount work for non-root users since our transition to Gnome 3
 
---- a/gio/gunixmount.c	2020-10-22 12:50:57.295707505 -0700
-+++ b/gio/gunixmount.c	2020-10-22 14:51:46.852693272 -0700
-@@ -330,12 +330,9 @@
+--- glib-2.82.0/gio/gunixmount.c.orig
++++ glib-2.82.0/gio/gunixmount.c
+@@ -334,12 +334,9 @@
                        gpointer             user_data)
  {
    GUnixMount *unix_mount = G_UNIX_MOUNT (mount);
@@ -18,5 +18,5 @@ to make unmount work for non-root users since our transition to Gnome 3
 -    argv[1] = unix_mount->device_path;
 +  argv[2] = unix_mount->device_path;
  
-   eject_unmount_do (mount, cancellable, callback, user_data, argv);
+   eject_unmount_do (mount, cancellable, callback, user_data, argv, "[gio] unmount mount");
  }

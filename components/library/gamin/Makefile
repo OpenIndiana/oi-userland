@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gamin
 COMPONENT_VERSION= 0.1.10
-COMPONENT_REVISION= 5
+COMPONENT_REVISION= 6
 COMPONENT_SUMMARY= Library providing the FAM File Alteration Monitor API
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -34,6 +34,11 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH=$(PATH.gnu)
+
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
+CFLAGS += -Wno-return-mismatch
+CFLAGS += -Wno-int-conversion
 
 COMPONENT_PREP_ACTION= ( cd $(@D)  && \
 	libtoolize --copy --force &&\
@@ -55,4 +60,5 @@ PYTHON_REQUIRED_PACKAGES  += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
+REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += system/library

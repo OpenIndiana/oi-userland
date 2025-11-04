@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dulwich
-HUMAN_VERSION =			0.21.7
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		dulwich - Python Git Library
+HUMAN_VERSION =			0.22.8
+COMPONENT_SUMMARY =		Python Git Library
 COMPONENT_PROJECT_URL =		https://www.dulwich.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a9e9c66833cea580c3ac12927e4b9711985d76afca98da971405d414de60e968
+	sha256:701547310415de300269331abe29cb5717aa1ea377af826bf513d0adfb1c209b
 COMPONENT_LICENSE =		Apache-2.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -33,13 +32,8 @@ TEST_STYLE = unittest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Remove misplaced docs files
-# https://github.com/jelmer/dulwich/issues/1248
-COMPONENT_POST_INSTALL_ACTION += \
-	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ;
-
 # see tox.ini
-COMPONENT_TEST_TARGETS = dulwich.tests.test_suite
+COMPONENT_TEST_TARGETS = tests.test_suite
 
 # Normalize pointers
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
@@ -52,7 +46,6 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\(laddr=('\''127.0.0.1'\'', \)[0-9]\{1,\})/\
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools-rust
 PYTHON_REQUIRED_PACKAGES += library/python/urllib3
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += system/library

@@ -11,19 +11,23 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project Cython
+#   $WS_TOOLS/python-integrate-project -d python/Cython cython
 #
 
+BUILD_STYLE = pyproject
+# Force setup.py build style because with the default PEP 517 build style we
+# are unable to generate the list of required packages.
+# See also https://github.com/cython/cython/issues/6305
 BUILD_STYLE = setup.py
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		Cython
-HUMAN_VERSION =			3.0.10
-COMPONENT_SUMMARY =		Cython - The Cython compiler for writing C extensions in the Python language.
+COMPONENT_NAME =		cython
+HUMAN_VERSION =			3.1.4
+COMPONENT_SUMMARY =		The Cython compiler for writing C extensions in the Python language.
 COMPONENT_PROJECT_URL =		https://cython.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dcc96739331fb854dcf503f94607576cfe8488066c61ca50dfd55836f132de99
+	sha256:9aefefe831331e2d66ab31799814eae4d0f8a2d246cbaaaa14d1be29ef777683
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,6 +38,10 @@ COMPONENT_TEST_ENV += CYTHON_CACHE_DIR=$(@D)/.cython-cache-dir
 # Testing installs packages using pip so direct it to private directory
 COMPONENT_TEST_ENV += PYTHONUSERBASE=$(@D)/.python-user-base
 
+# Cleanup remnants from previous test run (if any)
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/.cython-cache-dir ;
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/.python-user-base ;
+
 # Normalize tmp dir name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/cycache-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/recythonize-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
@@ -43,12 +51,20 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\(Broken object at \)0x[a-f0-9]\{1,\}>/\1\$$
 COMPONENT_TEST_TRANSFORMS += "-e '/^libgcov profiling error:/d'"
 # Remove profiling info
 COMPONENT_TEST_TRANSFORMS += "-e '/^Most expensive pipeline stages:/d'"
+# Normalize random temporary file name
+COMPONENT_TEST_TRANSFORMS += "-e 's|^\(/tmp/tmp\).\{8\}:|\1XXXXXXXX:|'"
+# Normalize random file name
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(_cython_inline_\).\{40\}\.pyx/\1XXXXXXXX.pyx/'"
 
-# https://github.com/OpenIndiana/oi-userland/pull/16549#issuecomment-2037519250
-TEST_CONFLICTING_PACKAGES.python += library/python/numpy
+# tox.ini does not specify test requirements
+TEST_REQUIREMENTS += test-requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/numpy
+TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools

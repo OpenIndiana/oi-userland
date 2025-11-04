@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flask
-HUMAN_VERSION =			3.0.3
-COMPONENT_SUMMARY =		flask - A simple framework for building complex web applications.
+HUMAN_VERSION =			3.1.2
+COMPONENT_SUMMARY =		A simple framework for building complex web applications.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ceb27b0af3823ea2737928a4d99d125a06175b8512c445cbd9a9ce200ef76842
+	sha256:bf656c15c80190ed628ad08cdfd3aaa35beb087855e2f494910aa3774cc4fd87
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,11 +35,10 @@ PYTHON_REQUIRED_PACKAGES += library/python/flit-core
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/itsdangerous
 PYTHON_REQUIRED_PACKAGES += library/python/jinja2
+PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
 PYTHON_REQUIRED_PACKAGES += library/python/werkzeug
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/asgiref
-TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
-TEST_REQUIRED_PACKAGES.python += library/python/packaging
-TEST_REQUIRED_PACKAGES.python += library/python/pluggy
+TEST_REQUIRED_PACKAGES.python += library/python/greenlet
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/python-dotenv

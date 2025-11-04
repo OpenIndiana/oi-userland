@@ -24,18 +24,17 @@
 # Copyright 2020, 2022 Andreas Wacknitz
 #
 
-BUILD_BITS=	64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autoconf-archive
-COMPONENT_VERSION=      2023.2.20
-HUMAN_VERSION=  		2023.02.20
+COMPONENT_VERSION=  	2024.10.16
+#HUMAN_VERSION=  		2024.10.16
 COMPONENT_SUMMARY=      GNU Autoconf Archive
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf-archive/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/autoconf-archive/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:71d4048479ae28f1f5794619c3d72df9c01df49b1c628ef85fde37596dc31a33
+COMPONENT_ARCHIVE_HASH= sha256:7bcd5d001916f3a50ed7436f4f700e3d2b1bade3ed803219c592d62502a57363
 COMPONENT_FMRI=         developer/build/autoconf-archive
 COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=      GPLv3  

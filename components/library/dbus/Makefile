@@ -23,59 +23,76 @@
 # Copyright (c) 2016, 2023, Oracle and/or its affiliates.
 #
 
+BUILD_STYLE= meson
 BUILD_BITS= 64_and_32
-USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_COMMON_TEST_MASTER = no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= dbus
-COMPONENT_VERSION= 1.14.10
+COMPONENT_VERSION= 1.16.2
 COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Simple IPC library based on messages
 COMPONENT_PROJECT_URL= https://dbus.freedesktop.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ba1f21d2bd9d339da2d4aa8780c09df32fea87998b73da24f49ab9df1e36a50f
+COMPONENT_ARCHIVE_HASH= sha256:0ba2a1a4b16afe7bceb2c07e9ce99a8c2c3508e5dec290dbb643384bd6beb7e2
 COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI= system/library/dbus
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_LICENSE= dbus, GPLv2
 
+COMPONENT_FMRI.dbus-x11 =	$(COMPONENT_FMRI)/dbus-x11
+COMPONENT_SUMMARY.dbus-x11 =	$(COMPONENT_SUMMARY) - X11
+
+COMPONENT_FMRI.libdbus =	system/library/libdbus
+COMPONENT_SUMMARY.libdbus =	$(COMPONENT_SUMMARY)
+
+COMPONENT_FMRI.libdbus-32 =	$(COMPONENT_FMRI.libdbus)/32
+COMPONENT_SUMMARY.libdbus-32 =	$(COMPONENT_SUMMARY.libdbus) (32-bit)
+
 # https://release-monitoring.org/api/project/$(COMPONENT_ANITYA_ID) will answer a JSON object with project information
 COMPONENT_ANITYA_ID= 5356
 
 include $(WS_MAKE_RULES)/common.mk
 
-# Needed for "gmake test" to work successfully.
-unexport SHELLOPTS
+CFLAGS += $(XPG6MODE)
+CPPFLAGS += -D_REENTRANT
 
-# Will break parallel 32/64-bit builds; needs update when that happens.
-CONFIGURE_BINDIR.32 = $(CONFIGURE_PREFIX)/bin
+CONFIGURE_OPTIONS += -Druntime_dir=$(VARDIR)/run
+CONFIGURE_OPTIONS += -Ddbus_user=root
+CONFIGURE_OPTIONS += -Depoll=disabled
+CONFIGURE_OPTIONS += -Dinotify=disabled
+CONFIGURE_OPTIONS += -Dc_link_args=-lsocket
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --with-dbus-daemondir=$(USRLIBEXECDIR)
-CONFIGURE_OPTIONS += --with-dbus-user=root
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --enable-xml-docs		# needs text/xmlto
-CONFIGURE_OPTIONS += --enable-doxygen-docs	# needs developer/documentation-tool/doxygen 
-CONFIGURE_OPTIONS += --enable-evports
-CONFIGURE_OPTIONS += --enable-year2038
+# We do not need to build these for 32-bit.  They are either overwritten by the
+# 64-bit build, or unused.
+CONFIGURE_OPTIONS.32 += -Ddoxygen_docs=disabled
+CONFIGURE_OPTIONS.32 += -Dtools=false
+CONFIGURE_OPTIONS.32 += -Dtraditional_activation=false
+CONFIGURE_OPTIONS.32 += -Dxml_docs=disabled
+
 # enable-tests activates more tests but is said to be unsafe for deployments. Thus, we don't use it here.
 #CONFIGURE_OPTIONS += --enable-tests
 
-# Makefile.am files of this component are not compatible with Solaris make.
-# Use GNU make to avoid the configuration error when makefile fragments are processed.
-CONFIGURE_OPTIONS += MAKE=$(GMAKE)
+# Drop 32-bit binaries and files that will be overwritten by 64-bit build
+# anyway.
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRINCDIR) ;
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREDIR) ;
 
-# GNU Build System files have to be regenerated for automake 1.16.
-# It can be removed when the upstream starts to use a newer automake version.
-COMPONENT_PREP_ACTION= ( cd $(@D) && PATH="$(PATH)" autoreconf -fiv )
+# Install additional files
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOETCDIR)/X11/xinit/xinitrc.d $(COMPONENT_DIR)/files/0070.dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -D $(COMPONENT_DIR)/files/auth_attr $(PROTOETCSECDIR)/auth_attr.d/system:library:dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -D $(COMPONENT_DIR)/files/prof_attr $(PROTOETCSECDIR)/prof_attr.d/system:library:dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOLIBDIR)/svc/manifest/system $(COMPONENT_DIR)/files/dbus.xml ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOLIBDIR)/svc/method $(COMPONENT_DIR)/files/svc-dbus ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(INSTALL) -Dt $(PROTOUSRSHAREMANDIR)/man3lib $(COMPONENT_DIR)/files/libdbus-1.3lib ;
 
 # Manually added build dependencies
-REQUIRED_PACKAGES += developer/build/autoconf-archive
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 REQUIRED_PACKAGES += text/xmlto

@@ -27,13 +27,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hpn-ssh
-COMPONENT_VERSION=	18.3.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	18.4.2
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	High performance SSH/SCP
 COMPONENT_SRC=		$(COMPONENT_NAME)-hpn-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.psc.edu/hpn-ssh-home/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7165ecef8ae008aff8e317a5f0d2f546e56d5173ae82a51fa75525dcba67d48f
+COMPONENT_ARCHIVE_HASH=	sha256:ff5653d26cd3846f5d366e6826589c66dca7607b3ce7ab6af83258510da521f8
 COMPONENT_ARCHIVE_URL=	https://github.com/rapier1/hpn-ssh/archive/refs/tags/hpn-$(HUMAN_VERSION).tar.gz
 COMPONENT_FMRI=		network/hpn-ssh
 COMPONENT_LICENSE=	BSD, BSD-like
@@ -84,7 +84,6 @@ CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --disable-lastlog
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 # Install hpnssh-copy-id and its man page
@@ -95,12 +94,18 @@ COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/hpnssh-
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm0444 $(COMPONENT_DIR)/files/hpnssh.xml $(PROTO_DIR)/lib/svc/manifest/network/hpnssh.xml ;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm0555 $(COMPONENT_DIR)/files/hpnsshd $(PROTO_DIR)/lib/svc/method/hpnsshd ;
 
+# Install configuration snippets
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTO_DIR)/etc/hpnssh/ssh_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/ssh_config.d/* $(PROTO_DIR)/etc/hpnssh/ssh_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -d $(PROTO_DIR)/etc/hpnssh/sshd_config.d ;
+COMPONENT_POST_INSTALL_ACTION += $(INSTALL) $(COMPONENT_DIR)/files/sshd_config.d/* $(PROTO_DIR)/etc/hpnssh/sshd_config.d ;
+
 COMPONENT_TEST_TARGETS = tests
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash

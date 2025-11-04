@@ -19,34 +19,34 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		attrs
-HUMAN_VERSION =			23.2.0
+HUMAN_VERSION =			25.4.0
 COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		attrs - Classes Without Boilerplate
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz
+COMPONENT_SUMMARY =		Classes Without Boilerplate
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30
+	sha256:16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# attrs --> hypothesis ==> attrs
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
-# Filter out test loop dependency.  The loop is caused by complex project's
-# test dependency hierarchy involving extras (see pyproject.toml).
-REQUIRED_PACKAGES_TRANSFORM += \
-	| $(GSED) -e '/^TEST_REQUIRED_PACKAGES\.python += library\/python\/attrs$$/d' \
-	| $(COMPONENT_TEST_TRANSFORMER) -e ''
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cloudpickle
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy-plugins
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/zope-interface

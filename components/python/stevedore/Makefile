@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project stevedore
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stevedore
-HUMAN_VERSION =			5.2.0
-COMPONENT_SUMMARY =		stevedore - Manage dynamic plugins for Python applications
+HUMAN_VERSION =			5.5.0
+COMPONENT_SUMMARY =		Manage dynamic plugins for Python applications
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/stevedore/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:46b93ca40e1114cea93d738a6c1e365396981bb6bb78c27045b7587c9473544d
+	sha256:d31496a4f4df9825e1a1e4f1f74d19abb0154aff311c3b376fcc89dae8fccd73
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -44,6 +44,5 @@ include $(WS_MAKE_RULES)/common.mk
 PYTHON_REQUIRED_PACKAGES += library/python/pbr
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/pbr
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/stestr

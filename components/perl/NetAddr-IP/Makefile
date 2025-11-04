@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module NetAddr::IP
+#   $WS_TOOLS/perl-integrate-module NetAddr-IP
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		NetAddr::IP
+COMPONENT_NAME =		NetAddr-IP
 HUMAN_VERSION =			4.079
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		NetAddr::IP - Manages IPv4 and IPv6 addresses and subnets
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Manages IPv4 and IPv6 addresses and subnets
 COMPONENT_CPAN_AUTHOR =		MIKER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ec5a82dfb7028bcd28bb3d569f95d87dd4166cc19867f2184ed3a59f6d6ca0e7
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-or-later
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -33,5 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket6
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

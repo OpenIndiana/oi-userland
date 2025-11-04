@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Cwd::Guard
+#   $WS_TOOLS/perl-integrate-module Cwd-Guard
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Cwd::Guard
+COMPONENT_NAME =		Cwd-Guard
 HUMAN_VERSION =			0.05
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Cwd::Guard - Temporary changing working directory (chdir)
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Temporary changing working directory (chdir)
 COMPONENT_CPAN_AUTHOR =		KAZEBURO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7afc7ca2b9502e440241938ad97a3e7ebd550180ebd6142e1db394186b268e77
@@ -32,5 +32,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/parent
 PERL_REQUIRED_PACKAGES += library/perl-5/test-requires
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

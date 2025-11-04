@@ -11,21 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.testing
+#   $WS_TOOLS/python-integrate-project -d python/zope.testing zope_testing
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.testing
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		zope.testing - Zope testing helpers
+COMPONENT_NAME =		zope_testing
+HUMAN_VERSION =			6.0
+COMPONENT_SUMMARY =		Zope testing helpers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/1c/45/a22985a9a5bb886ae0665f04c1ffe985d9558c3e9881fde808fc9dc0a6f9/zope.testing-5.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e87cd0d8d666573cdaf133816ab7b9beec801a64a86595c19cb5fe992ef3d649
+	sha256:7b34133a8f4a7135f3732fa5ba31d9968e9b9029881157d2a24493356d7fd54a
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -36,12 +34,14 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(@D)/src
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-exceptions
 TEST_REQUIRED_PACKAGES.python += library/python/zope-interface

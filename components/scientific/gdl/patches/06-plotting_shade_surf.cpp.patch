@@ -1,19 +1,20 @@
-diff -Nru gdl-1.0.3.orig/src/plotting_shade_surf.cpp gdl-1.0.3/src/plotting_shade_surf.cpp
---- gdl-1.0.3.orig/src/plotting_shade_surf.cpp	2023-09-05 14:05:24.000000000 +0200
-+++ gdl-1.0.3/src/plotting_shade_surf.cpp	2023-10-03 16:42:43.694289148 +0200
-@@ -402,11 +402,11 @@
+Prevent a name clash
+
+--- gdl-v1.0.6/src/plotting_shade_surf.cpp.org	2024-05-23 16:36:39.000000000 +0200
++++ gdl-v1.0.6/src/plotting_shade_surf.cpp	2024-05-30 09:56:41.415618734 +0200
+@@ -430,11 +430,11 @@
  
          //position of light Source. Plplot does not use only the direction of the beam but the position of the illuminating
          //source. And its illumination looks strange. We try to make the ill. source a bit far in the good direction.
 -        PLFLT sun[3];
 -        sun[0]=lightSourcePos[0]*1E10;
 -        sun[1]=lightSourcePos[1]*1E10;
--        sun[2]=lightSourcePos[2]*1E10;
+-        sun[2]=lightSourcePos[2]*1E10;if (below) sun[2]*=-1;
 -        actStream->lightsource(sun[0],sun[1],sun[2]);
 +        PLFLT sunn[3];
 +        sunn[0]=lightSourcePos[0]*1E10;
 +        sunn[1]=lightSourcePos[1]*1E10;
-+        sunn[2]=lightSourcePos[2]*1E10;
++        sunn[2]=lightSourcePos[2]*1E10;if (below) sunn[2]*=-1;
 +        actStream->lightsource(sunn[0],sunn[1],sunn[2]);
          actStream->surf3d(xg1,yg1,map,cgrid1.nx,cgrid1.ny,meshOpt,NULL,0);
  

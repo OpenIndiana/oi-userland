@@ -11,25 +11,28 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module PPIx::Regexp
+#   $WS_TOOLS/perl-integrate-module PPIx-Regexp
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PPIx::Regexp
-HUMAN_VERSION =			0.088
-COMPONENT_SUMMARY =		PPIx::Regexp - Represent a regular expression of some sort
+COMPONENT_NAME =		PPIx-Regexp
+HUMAN_VERSION =			0.091
+COMPONENT_SUMMARY =		Parse regular expressions
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:885433f9b102fad4fd36b21c7320bb036036111caf998131bf416f7cd5ee9764
+	sha256:e72ec79eff640297b087227d6a7708fca871c6de09997149585a98fe65ed942f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
-PERL_REQUIRED_PACKAGES += library/perl-5/ppi
-PERL_REQUIRED_PACKAGES += library/perl-5/task-weaken
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/module-build
+REQUIRED_PACKAGES.perl += library/perl-5/ppi
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/task-weaken
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl

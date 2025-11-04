@@ -12,12 +12,11 @@
 # Copyright 2021 erwinlem
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nzbget
 COMPONENT_VERSION=	22.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Binary newsreader supporting NZB files
 COMPONENT_PROJECT_URL=	https://nzbget.com
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -28,6 +27,7 @@ COMPONENT_FMRI=		network/nzbget
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPL-2.0 License
 COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_BUILD_ARGS=	-j50
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -37,9 +37,9 @@ CONFIGURE_ENV += MAKE=$(GMAKE)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

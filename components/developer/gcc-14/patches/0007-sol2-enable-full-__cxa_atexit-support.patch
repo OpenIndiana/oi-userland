@@ -1,0 +1,49 @@
+From 37050a5dc2b0d5856a31ea14fc085e866562a150 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 22:11:03 +0000
+Subject: sol2: enable full __cxa_atexit support
+
+---
+ gcc/config/sol2.h  | 4 ++--
+ libgcc/config.host | 3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+--- gcc-releases-gcc-14.3.0/gcc/config/sol2.h.orig
++++ gcc-releases-gcc-14.3.0/gcc/config/sol2.h
+@@ -209,7 +209,7 @@
+ 				   shared|" PIE_SPEC ":crtbeginS.o%s; \
+ 				   :crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ #if ENABLE_VTABLE_VERIFY
+@@ -289,7 +289,7 @@
+ 			       shared|" PIE_SPEC ":crtendS.o%s; \
+ 			       :crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+--- gcc-releases-gcc-14.3.0/libgcc/config.host.orig
++++ gcc-releases-gcc-14.3.0/libgcc/config.host
+@@ -342,7 +342,7 @@
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+@@ -362,6 +362,7 @@
+       i?86-*-solaris2* | x86_64-*-solaris2*)
+         # Solaris 10+/x86 provides crt1.o, crti.o, crtn.o, and gcrt1.o as
+         # part of the base system.
++        extra_parts="$extra_parts crtbeginS.o crtendS.o"
+         ;;
+       sparc*-*-solaris2*)
+         # Solaris 10+/SPARC lacks crt1.o and gcrt1.o.

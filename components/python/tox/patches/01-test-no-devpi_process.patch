@@ -1,17 +1,17 @@
 We do not have devpi_process available (yet)
 
---- tox-4.14.2/pyproject.toml.orig
-+++ tox-4.14.2/pyproject.toml
-@@ -74,7 +74,6 @@
-   "build[virtualenv]>=1.0.3",
+--- tox-4.32.0/pyproject.toml.orig
++++ tox-4.32.0/pyproject.toml
+@@ -79,7 +79,6 @@
    "covdefaults>=2.3",
+   "coverage>=7.10.7",
    "detect-test-pollution>=1.2",
--  "devpi-process>=1",
-   "diff-cover>=8.0.2",
-   "distlib>=0.3.8",
-   "flaky>=3.7",
---- tox-4.14.2/src/tox/pytest.py.orig
-+++ tox-4.14.2/src/tox/pytest.py
+-  "devpi-process>=1.0.2",
+   "diff-cover>=9.7.1",
+   "distlib>=0.4",
+   "flaky>=3.8.1",
+--- tox-4.32.0/src/tox/pytest.py.orig
++++ tox-4.32.0/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -20,7 +20,7 @@ We do not have devpi_process available (yet)
  from virtualenv.info import fs_supports_symlink
  
  import tox.run
-@@ -473,15 +472,6 @@
+@@ -480,15 +479,6 @@
  
  
  @pytest.fixture(scope="session")
@@ -33,48 +33,63 @@ We do not have devpi_process available (yet)
 -
 -
 -@pytest.fixture(scope="session")
- def _invalid_index_fake_port() -> int:  # noqa: PT005
+ def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.14.2/tests/test_provision.py.orig
-+++ tox-4.14.2/tests/test_provision.py
-@@ -16,8 +16,6 @@
- from packaging.requirements import Requirement
+--- tox-4.32.0/tests/test_provision.py.orig
++++ tox-4.32.0/tests/test_provision.py
+@@ -19,7 +19,6 @@
+     from collections.abc import Callable, Iterator, Sequence
  
- if TYPE_CHECKING:
+     from build import DistributionType
 -    from devpi_process import Index, IndexServer
--
+ 
      from tox.pytest import MonkeyPatch, TempPathFactory, ToxProjectCreator
  
- from importlib.metadata import Distribution
-@@ -92,23 +90,6 @@
+@@ -104,39 +103,6 @@
          return result
  
  
 -@pytest.fixture(scope="session")
--def pypi_index_self(pypi_server: IndexServer, tox_wheels: list[Path], demo_pkg_inline_wheel: Path) -> Index:
--    with elapsed("start devpi and create index"):  # takes around 1s
+-def local_pypi_indexes(
+-    pypi_server: IndexServer, tox_wheels: list[Path], demo_pkg_inline_wheel: Path
+-) -> tuple[Index, Index]:
+-    with elapsed("start devpi and create indexes"):  # takes around 1s
+-        pypi_server.create_index("mirror", "type=mirror", "mirror_url=https://pypi.org/simple/")
+-        mirrored_index = pypi_server.create_index("magic", f"bases={pypi_server.user}/mirror")
 -        self_index = pypi_server.create_index("self", "volatile=False")
 -    with elapsed("upload tox and its wheels to devpi"):  # takes around 3.2s on build
+-        mirrored_index.upload(*tox_wheels, demo_pkg_inline_wheel)
 -        self_index.upload(*tox_wheels, demo_pkg_inline_wheel)
--    return self_index
+-    return mirrored_index, self_index
 -
 -
--@pytest.fixture()
--def _pypi_index_self(pypi_index_self: Index, monkeypatch: MonkeyPatch) -> None:
--    pypi_index_self.use()
--    monkeypatch.setenv("PIP_INDEX_URL", pypi_index_self.url)
+-def _use_pypi_index(pypi_index: Index, monkeypatch: MonkeyPatch) -> None:
+-    pypi_index.use()
+-    monkeypatch.setenv("PIP_INDEX_URL", pypi_index.url)
 -    monkeypatch.setenv("PIP_RETRIES", str(2))
 -    monkeypatch.setenv("PIP_TIMEOUT", str(5))
+-
+-
+-@pytest.fixture
+-def _pypi_index_mirrored(local_pypi_indexes: tuple[Index, Index], monkeypatch: MonkeyPatch) -> None:
+-    pypi_index_mirrored, _ = local_pypi_indexes
+-    _use_pypi_index(pypi_index_mirrored, monkeypatch)
+-
+-
+-@pytest.fixture
+-def _pypi_index_self(local_pypi_indexes: tuple[Index, Index], monkeypatch: MonkeyPatch) -> None:
+-    _, pypi_index_self = local_pypi_indexes
+-    _use_pypi_index(pypi_index_self, monkeypatch)
 -
 -
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -122,96 +103,6 @@
+@@ -150,96 +116,6 @@
  
  
- @pytest.mark.integration()
+ @pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -def test_provision_requires_ok(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
 -    proj = tox_project({"tox.ini": "[tox]\nrequires=demo-pkg-inline\n[testenv]\npackage=skip"})
@@ -107,7 +122,7 @@ We do not have devpi_process available (yet)
 -    assert f"ROOT: remove tox env folder {provision_env}" in result_recreate.out, result_recreate.out
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -def test_provision_platform_check(tox_project: ToxProjectCreator) -> None:
 -    ini = "[tox]\nrequires=demo-pkg-inline\n[testenv]\npackage=skip\n[testenv:.tox]\nplatform=wrong_platform"
@@ -141,7 +156,7 @@ We do not have devpi_process available (yet)
 -    assert requires == {"minversion": None, "requires": ["p", "tox"]}
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("plugin_testenv", ["testenv", "testenv:a"])
 -def test_provision_plugin_runner(tox_project: ToxProjectCreator, tmp_path: Path, plugin_testenv: str) -> None:
@@ -164,15 +179,15 @@ We do not have devpi_process available (yet)
 -    assert prov_msg in result_label.out
 -
 -
--@pytest.mark.integration()
+-@pytest.mark.integration
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -220,17 +111,6 @@
+@@ -248,17 +124,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
--@pytest.mark.integration()
+-@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
 -@pytest.mark.parametrize("relative_path", [True, False], ids=["relative", "absolute"])
 -def test_provision_conf_file(tox_project: ToxProjectCreator, tmp_path: Path, relative_path: bool) -> None:
@@ -186,13 +201,37 @@ We do not have devpi_process available (yet)
  @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
  def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
      ini = r"""
---- tox-4.14.2/PKG-INFO.orig
-+++ tox-4.14.2/PKG-INFO
-@@ -54,7 +54,6 @@
- Requires-Dist: build[virtualenv]>=1.0.3; extra == 'testing'
- Requires-Dist: covdefaults>=2.3; extra == 'testing'
- Requires-Dist: detect-test-pollution>=1.2; extra == 'testing'
--Requires-Dist: devpi-process>=1; extra == 'testing'
- Requires-Dist: diff-cover>=8.0.2; extra == 'testing'
- Requires-Dist: distlib>=0.3.8; extra == 'testing'
- Requires-Dist: flaky>=3.7; extra == 'testing'
+@@ -273,33 +138,3 @@
+     outcome = project.run(subcommand)
+     for argument in ["result_json", "hash_seed", "discover", "list_dependencies"]:
+         assert hasattr(outcome.state.conf.options, argument)
+-
+-
+-@pytest.mark.integration
+-@pytest.mark.usefixtures("_pypi_index_mirrored")
+-def test_provision_install_pkg_pep517(
+-    tmp_path_factory: TempPathFactory,
+-    tox_project: ToxProjectCreator,
+-    pkg_builder: Callable[[Path, Path, Sequence[DistributionType], bool], Path],
+-) -> None:
+-    example = tmp_path_factory.mktemp("example")
+-    skeleton = """
+-    [build-system]
+-    requires = ["setuptools"]
+-    build-backend = "setuptools.build_meta"
+-    [project]
+-    name = "skeleton"
+-    version = "0.1.1337"
+-    """
+-    (example / "pyproject.toml").write_text(skeleton)
+-    sdist = pkg_builder(example / "dist", example, ["sdist"], False)
+-
+-    tox_ini = r"""
+-    [tox]
+-    requires = demo-pkg-inline
+-    [testenv]
+-    commands = python -c "print(42)"
+-    """
+-    project = tox_project({"tox.ini": tox_ini}, base=example)
+-    result = project.run("r", "-e", "py", "--installpkg", str(sdist), "--notest")
+-    result.assert_success()

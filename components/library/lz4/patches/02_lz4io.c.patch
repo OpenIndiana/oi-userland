@@ -1,0 +1,35 @@
+The original code calls fseek and if it fails then it assumes that fp is a pipe
+and calls skipStream, which uses fread instead. On Solaris fseek fails but
+it also changes the file position, so the fread does not read anything and the
+function fails.  The modified implementation uses fstat to find out if fp is
+a pipe.
+
+This is Solaris specific patch but can be offered also upstream. 
+
+--- lz4-1.10.0/programs/lz4io.c.orig
++++ lz4-1.10.0/programs/lz4io.c
+@@ -2320,14 +2320,21 @@
+ {
+     const unsigned stepMax = 1U << 30;
+     int errorNb = 0;
++    struct stat statBuf;
+ 
+     if (where != SEEK_CUR) return -1;  /* Only allows SEEK_CUR */
+     while (offset > 0) {
+         unsigned s = offset;
+         if (s > stepMax) s = stepMax;
+-        errorNb = UTIL_fseek(fp, (long)s, SEEK_CUR);
+-        if (errorNb==0) { offset -= s; continue; }
+-        errorNb = skipStream(fp, offset);
++        errorNb = fstat(fileno(fp), &statBuf);
++        if (errorNb == 0) {
++            if (S_ISFIFO(statBuf.st_mode))
++                errorNb = skipStream(fp, offset);
++            else {
++                errorNb = UTIL_fseek(fp, (long)s, SEEK_CUR);
++                if (errorNb==0) { offset -= s; continue; }
++            }
++        }			
+         offset = 0;
+     }
+     return errorNb;

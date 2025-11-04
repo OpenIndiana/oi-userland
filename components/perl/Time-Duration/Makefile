@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Time::Duration
+#   $WS_TOOLS/perl-integrate-module Time-Duration
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Time::Duration
+COMPONENT_NAME =		Time-Duration
 HUMAN_VERSION =			1.21
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Time::Duration - rounded or exact English expression of durations
+COMPONENT_REVISION =		5
+COMPONENT_SUMMARY =		rounded or exact English expression of durations
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fe340eba8765f9263694674e5dff14833443e19865e5ff427bbd79b7b5f8a9b8
@@ -31,4 +31,5 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

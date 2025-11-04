@@ -14,24 +14,23 @@
 #   $WS_TOOLS/python-integrate-project snowballstemmer
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		snowballstemmer
-COMPONENT_VERSION =		2.2.0
-COMPONENT_SUMMARY =		snowballstemmer - This package provides 29 stemmers for 28 languages generated from Snowball algorithms.
+HUMAN_VERSION =			3.0.1
+COMPONENT_SUMMARY =		This package provides 32 stemmers for 30 languages generated from Snowball algorithms.
 COMPONENT_PROJECT_URL =		https://github.com/snowballstem/snowball
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/44/7b/af302bebf22c749c56c9c3e8ae13190b5b5db37a33d9068652e8f73b7089/snowballstemmer-2.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1
+	sha256:6d5eeeec8e9f84d4d56b847692bacf79bc2c8e90c7f80ca4444ff8b6f2e52895
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	COPYING
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python

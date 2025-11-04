@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Email::Simple
+#   $WS_TOOLS/perl-integrate-module Email-Simple
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Email::Simple
+COMPONENT_NAME =		Email-Simple
 HUMAN_VERSION =			2.218
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Email::Simple - simple parsing of RFC2822 message format and headers
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		simple parsing of RFC2822 message format and headers
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2dce1d68fde99d53db9ca43e211b69b169ba2efaecf87a55cb33a9336047c96d
@@ -32,4 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/email-date-format
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

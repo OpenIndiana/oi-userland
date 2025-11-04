@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project cliff
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cliff
-HUMAN_VERSION =			4.6.0
-COMPONENT_SUMMARY =		cliff - Command Line Interface Formulation Framework
+HUMAN_VERSION =			4.9.1
+COMPONENT_SUMMARY =		Command Line Interface Formulation Framework
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/cliff/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2f38ce8bd1ea4958d66f15b066ac47e65d61f600b9319b921e12e9e9cbcd99d0
+	sha256:5b392198293c0b9225d459be8ba710cf8248f1ee33006bdeb3d92fb0012592b4
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,13 +47,16 @@ TOX_POSARGS += --suppress-attachments
 PYTHON_REQUIRED_PACKAGES += library/python/autopage
 PYTHON_REQUIRED_PACKAGES += library/python/cmd2
 PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
+PYTHON_REQUIRED_PACKAGES += library/python/pbr
 PYTHON_REQUIRED_PACKAGES += library/python/prettytable
 PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/stevedore
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/autopage
 TEST_REQUIRED_PACKAGES.python += library/python/cmd2
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/prettytable
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml

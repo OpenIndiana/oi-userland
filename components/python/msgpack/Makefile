@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		msgpack
-HUMAN_VERSION =			1.0.8
-COMPONENT_SUMMARY =		msgpack - MessagePack serializer
+HUMAN_VERSION =			1.1.2
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		MessagePack serializer
 COMPONENT_PROJECT_URL =		https://msgpack.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:95c02b0e27e706e48d0e5426d1710ca78e0f0628d6e89d5b5a5b91a5f12274f3
+	sha256:3b60763c1373dd60f398488069bcdc703cd08a711477b5d480eecc9f9626f47e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -32,8 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

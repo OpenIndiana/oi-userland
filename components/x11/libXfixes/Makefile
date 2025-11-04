@@ -18,11 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXfixes
-COMPONENT_VERSION= 6.0.1
-COMPONENT_REVISION=1
+COMPONENT_VERSION= 6.0.2
 COMPONENT_SUMMARY= libXfixes - XFIXES extension client library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b695f93cd2499421ab02d22744458e650ccc88c1d4c8130d60200213abc02d58
+COMPONENT_ARCHIVE_HASH= sha256:39f115d72d9c5f8111e4684164d3d68cc1fd21f9b27ff2401b08fddfc0f409ba
 COMPONENT_FMRI =   x11/library/libxfixes
 COMPONENT_LICENSE_FILE = COPYING
 
@@ -30,7 +29,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" autoreconf -f -i )
 
-CONFIGURE_OPTIONS +=  --localstatedir=/var
 CONFIGURE_OPTIONS +=  --enable-shared=yes
 CONFIGURE_OPTIONS +=  --enable-static=no
 CONFIGURE_OPTIONS +=  --with-pic

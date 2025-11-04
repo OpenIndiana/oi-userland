@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Data::Dump
+#   $WS_TOOLS/perl-integrate-module Data-Dump
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Data::Dump
+COMPONENT_NAME =		Data-Dump
 HUMAN_VERSION =			1.25
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Data::Dump - Pretty printing of data structures
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Pretty printing of data structures
 COMPONENT_CPAN_AUTHOR =		GARU
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:a4aa6e0ddbf39d5ad49bddfe0f89d9da864e3bc00f627125d1bc580472f53fbd
@@ -30,4 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
 PERL_REQUIRED_PACKAGES += runtime/perl

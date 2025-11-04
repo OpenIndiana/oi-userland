@@ -28,18 +28,19 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre2
-COMPONENT_VERSION=	10.43
+COMPONENT_VERSION=	10.47
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	Version 2 of Perl-Compatible Regular Expressions
 COMPONENT_PROJECT_URL=  https://pcre.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb
+COMPONENT_ARCHIVE_HASH= sha256:47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7
 COMPONENT_ARCHIVE_URL=  https://github.com/PhilipHazel/pcre2/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_FMRI=		library/pcre2
 COMPONENT_CLASSIFICATION=	Development/C
 COMPONENT_LICENSE=	BSD
-COMPONENT_LICENSE_FILE=	LICENCE
+COMPONENT_LICENSE_FILE=	LICENCE.md
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,18 +49,12 @@ TEST_TARGET= install $(TEST_32_and_64)
 # pick up -std=c99 in CFLAGS
 CFLAGS += -std=c99
 
+CXXFLAGS +=	$(CC_PIC)
+
 # turn on largefile support
 CFLAGS += $(CPP_LARGEFILES)
 
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath
-# here, otherwise -norunpath doesn't get set when creating the shared
-# libraries (CC -G).
-CXX += $(studio_NORUNPATH)
-
-CXXFLAGS +=	$(CC_PIC)
-
-# turn on support for large files
-CXXFLAGS +=	$(CPP_LARGEFILES)
+CFLAGS += $(XPG6MODE)
 
 CONFIGURE_ENV += "CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += "CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
@@ -72,21 +67,24 @@ CONFIGURE_ENV.64 +=	"CXXLINKLIB=$(CXX) $(CCFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV.64 +=	"MACH64=$(MACH64)"
 
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/pcre
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-rebuild-chartables
 CONFIGURE_OPTIONS += --enable-newline-is-any
 CONFIGURE_OPTIONS += --enable-pcre2grep-libz
 CONFIGURE_OPTIONS += --enable-pcre2grep-libbz2
+# Enable Unicode support (was --enable-unicode-properties in pcre(1) configure).
+CONFIGURE_OPTIONS += --enable-unicode
+# Enable UTF8 support    (was --enable-utf8 in pcre(1) configure).
+CONFIGURE_OPTIONS += --enable-pcre2-8
 CONFIGURE_OPTIONS += --enable-pcre2-16
 CONFIGURE_OPTIONS += --enable-pcre2-32
+CONFIGURE_OPTIONS += --enable-valgrind
 CONFIGURE_OPTIONS += --with-link-size=4
 CONFIGURE_OPTIONS += --with-match-limit=10000000
 CONFIGURE_OPTIONS += --with-pic
-# Enable UTF8 support    (was --enable-utf8 in pcre(1) configure).
-CONFIGURE_OPTIONS += --enable-pcre2-8
-# Enable Unicode support (was --enable-unicode-properties in pcre(1) configure).
-CONFIGURE_OPTIONS += --enable-unicode
+ifeq ($(MACH), i386)
+CONFIGURE_OPTIONS += --enable-jit
+endif
 
 COMPONENT_BUILD_ENV += "LDFLAGS=$(LDFLAGS)"
 COMPONENT_BUILD_ENV += "INSTALL=$(INSTALL)"
@@ -106,6 +104,9 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/Leaving directory/d"' \
 	'-e "/Entering directory/d"' \
 	'-e "s|Testsuite summary for PCRE .*|Testsuite summary for PCRE|" '
+
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/debug/valgrind
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/bzip2

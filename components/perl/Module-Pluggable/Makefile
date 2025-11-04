@@ -11,23 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Module::Pluggable
+#   $WS_TOOLS/perl-integrate-module Module-Pluggable
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Module::Pluggable
-HUMAN_VERSION =			5.2
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Module::Pluggable - automatically give your module the ability to have plugins
+COMPONENT_NAME =		Module-Pluggable
+HUMAN_VERSION =			6.3
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		automatically give your module the ability to have plugins
 COMPONENT_CPAN_AUTHOR =		SIMONW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b3f2ad45e4fd10b3fb90d912d78d8b795ab295480db56dc64e86b9fa75c5a6df
+	sha256:58512bb9c654746d0937770b98b559b30872d85ac24073485e5830890dd1b2a0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

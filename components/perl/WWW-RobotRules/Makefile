@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module WWW::RobotRules
+#   $WS_TOOLS/perl-integrate-module WWW-RobotRules
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		WWW::RobotRules
+COMPONENT_NAME =		WWW-RobotRules
 HUMAN_VERSION =			6.02
-COMPONENT_REVISION =		4
-COMPONENT_SUMMARY =		WWW::RobotRules - database of robots.txt-derived permissions
+COMPONENT_REVISION =		6
+COMPONENT_SUMMARY =		database of robots.txt-derived permissions
 COMPONENT_CPAN_AUTHOR =		GAAS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:46b502e7a288d559429891eeb5d979461dd3ecc6a5c491ead85d165b6e03a51e
@@ -30,5 +30,6 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl

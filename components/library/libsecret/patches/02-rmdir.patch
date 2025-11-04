@@ -1,0 +1,13 @@
+On illumos it is not possible to remove current working directory of current
+process.  See also https://www.illumos.org/issues/16562
+
+--- libsecret-0.21.6/tool/test-secret-tool.sh.orig
++++ libsecret-0.21.6/tool/test-secret-tool.sh
+@@ -6,6 +6,7 @@
+ test -d "$testdir" || mkdir "$testdir"
+ 
+ cleanup () {
++	cd ..
+ 	rm -rf "$testdir"
+ }
+ trap cleanup 0

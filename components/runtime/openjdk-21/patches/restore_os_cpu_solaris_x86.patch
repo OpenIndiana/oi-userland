@@ -1,0 +1,1862 @@
+diff -urN /tmp/a/assembler_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/assembler_solaris_x86.cpp
+--- /tmp/a/assembler_solaris_x86.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/assembler_solaris_x86.cpp	2024-10-15 14:59:36.868225263 +0100
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 1999, 2015, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "precompiled.hpp"
++#include "asm/macroAssembler.inline.hpp"
++#include "runtime/os.hpp"
++
++void MacroAssembler::int3() {
++  push(rax);
++  push(rdx);
++  push(rcx);
++  call(RuntimeAddress(CAST_FROM_FN_PTR(address, os::breakpoint)));
++  pop(rcx);
++  pop(rdx);
++  pop(rax);
++}
+diff -urN /tmp/a/atomic_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/atomic_solaris_x86.hpp
+--- /tmp/a/atomic_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/atomic_solaris_x86.hpp	2024-10-15 14:59:36.868356722 +0100
+@@ -0,0 +1,182 @@
++/*
++ * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
++
++inline int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest) {
++  int32_t rv = add_value;
++  __asm__ volatile ("lock xaddl %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest) {
++  int64_t rv = add_value;
++  __asm__ volatile ("lock xaddq %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest) {
++  __asm__ __volatile__ ("xchgl (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest) {
++  __asm__ __volatile__ ("xchgq (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int8_t _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest, int8_t compare_value) {
++  __asm__ volatile ("lock cmpxchgb %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest, int32_t compare_value) {
++  __asm__ volatile ("lock cmpxchgl %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest, int64_t compare_value) {
++  __asm__ volatile ("lock cmpxchgq %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++
++template<size_t byte_size>
++struct Atomic::PlatformAdd {
++  template<typename D, typename I>
++  D add_then_fetch(D volatile* dest, I add_value, atomic_memory_order order) const;
++
++  template<typename D, typename I>
++  D fetch_then_add(D volatile* dest, I add_value, atomic_memory_order order) const {
++    return add_then_fetch(dest, add_value, order) - add_value;
++  }
++};
++
++// Not using add_using_helper; see comment for cmpxchg.
++template<>
++template<typename D, typename I>
++inline D Atomic::PlatformAdd<4>::add_then_fetch(D volatile* dest, I add_value,
++                                               atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(I));
++  STATIC_ASSERT(4 == sizeof(D));
++  return PrimitiveConversions::cast<D>(
++    _Atomic_add(PrimitiveConversions::cast<int32_t>(add_value),
++                reinterpret_cast<int32_t volatile*>(dest)));
++}
++
++// Not using add_using_helper; see comment for cmpxchg.
++template<>
++template<typename D, typename I>
++inline D Atomic::PlatformAdd<8>::add_then_fetch(D volatile* dest, I add_value,
++                                               atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(I));
++  STATIC_ASSERT(8 == sizeof(D));
++  return PrimitiveConversions::cast<D>(
++    _Atomic_add_long(PrimitiveConversions::cast<int64_t>(add_value),
++                     reinterpret_cast<int64_t volatile*>(dest)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformXchg<4>::operator()(T volatile* dest,
++                                             T exchange_value,
++                                             atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_xchg(PrimitiveConversions::cast<int32_t>(exchange_value),
++                 reinterpret_cast<int32_t volatile*>(dest)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformXchg<8>::operator()(T volatile* dest,
++                                             T exchange_value,
++                                             atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_xchg_long(PrimitiveConversions::cast<int64_t>(exchange_value),
++                      reinterpret_cast<int64_t volatile*>(dest)));
++}
++
++// Not using cmpxchg_using_helper here, because some configurations of
++// Solaris compiler don't deal well with passing a "defined in .il"
++// function as an argument.  We *should* switch to using gcc-style
++// inline assembly, but attempting to do so with Studio 12.4 ran into
++// segfaults.
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<1>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(1 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg_byte(PrimitiveConversions::cast<int8_t>(exchange_value),
++                         reinterpret_cast<int8_t volatile*>(dest),
++                         PrimitiveConversions::cast<int8_t>(compare_value)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<4>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(4 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg(PrimitiveConversions::cast<int32_t>(exchange_value),
++                    reinterpret_cast<int32_t volatile*>(dest),
++                    PrimitiveConversions::cast<int32_t>(compare_value)));
++}
++
++template<>
++template<typename T>
++inline T Atomic::PlatformCmpxchg<8>::operator()(T volatile* dest,
++                                                T compare_value,
++                                                T exchange_value,
++                                                atomic_memory_order order) const {
++  STATIC_ASSERT(8 == sizeof(T));
++  return PrimitiveConversions::cast<T>(
++    _Atomic_cmpxchg_long(PrimitiveConversions::cast<int64_t>(exchange_value),
++                         reinterpret_cast<int64_t volatile*>(dest),
++                         PrimitiveConversions::cast<int64_t>(compare_value)));
++}
++
++#endif // OS_CPU_SOLARIS_X86_ATOMIC_SOLARIS_X86_HPP
+diff -urN /tmp/a/bytes_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/bytes_solaris_x86.hpp
+--- /tmp/a/bytes_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/bytes_solaris_x86.hpp	2024-10-15 14:59:36.868451442 +0100
+@@ -0,0 +1,60 @@
++/*
++ * Copyright (c) 1998, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_BYTES_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_BYTES_SOLARIS_X86_HPP
++
++extern "C" {
++  inline u2 _raw_swap_u2(u2 x) {
++    unsigned short int __dest;
++    __asm__ ("rorw $8, %w0": "=r" (__dest): "0" (x): "cc");
++    return __dest;
++  }
++  inline u4 _raw_swap_u4(u4 x) {
++    unsigned int __dest;
++    __asm__ ("bswap %0" : "=r" (__dest) : "0" (x));
++    return __dest;
++  }
++  inline u8 _raw_swap_u8(u8 x) {
++    unsigned long  __dest;
++    __asm__ ("bswap %q0" : "=r" (__dest) : "0" (x));
++    return __dest;
++  }
++}
++
++// Efficient swapping of data bytes from Java byte
++// ordering to native byte ordering and vice versa.
++inline u2   Bytes::swap_u2(u2 x) {
++  return _raw_swap_u2(x);
++}
++
++inline u4   Bytes::swap_u4(u4 x) {
++  return _raw_swap_u4(x);
++}
++
++inline u8   Bytes::swap_u8(u8 x) {
++  return _raw_swap_u8(x);
++}
++
++#endif // OS_CPU_SOLARIS_X86_BYTES_SOLARIS_X86_HPP
+diff -urN /tmp/a/copy_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/copy_solaris_x86.hpp
+--- /tmp/a/copy_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/copy_solaris_x86.hpp	2024-10-15 14:59:36.868532464 +0100
+@@ -0,0 +1,30 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_COPY_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_COPY_SOLARIS_X86_HPP
++
++// now in central copy_x86.hpp
++
++#endif // OS_CPU_SOLARIS_X86_COPY_SOLARIS_X86_HPP
+diff -urN /tmp/a/globals_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/globals_solaris_x86.hpp
+--- /tmp/a/globals_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/globals_solaris_x86.hpp	2024-10-15 14:59:36.868622681 +0100
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_GLOBALS_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_GLOBALS_SOLARIS_X86_HPP
++
++// Sets the default values for platform dependent flags used by the runtime system.
++// (see globals.hpp)
++
++define_pd_global(bool, DontYieldALot,            true); // Determined in the design center
++define_pd_global(intx, CompilerThreadStackSize,  1024);
++define_pd_global(intx, ThreadStackSize,          1024); // 0 => use system default
++define_pd_global(intx, VMThreadStackSize,        1024);
++define_pd_global(size_t, JVMInvokeMethodSlack,   8*K);
++
++// Used on 64 bit platforms for UseCompressedOops base address
++define_pd_global(size_t, HeapBaseMinAddress,     2*G);
++
++#endif // OS_CPU_SOLARIS_X86_GLOBALS_SOLARIS_X86_HPP
+diff -urN /tmp/a/javaThread_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.cpp
+--- /tmp/a/javaThread_solaris_x86.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.cpp	2024-10-15 14:59:36.869548940 +0100
+@@ -0,0 +1,97 @@
++/*
++ * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "precompiled.hpp"
++#include "runtime/frame.inline.hpp"
++#include "runtime/javaThread.hpp"
++
++frame JavaThread::pd_last_frame() {
++  assert(has_last_Java_frame(), "must have last_Java_sp() when suspended");
++  vmassert(_anchor.last_Java_pc() != NULL, "not walkable");
++  return frame(_anchor.last_Java_sp(), _anchor.last_Java_fp(), _anchor.last_Java_pc());
++}
++
++// For Forte Analyzer AsyncGetCallTrace profiling support - thread is
++// currently interrupted by SIGPROF
++bool JavaThread::pd_get_top_frame_for_signal_handler(frame* fr_addr,
++  void* ucontext, bool isInJava) {
++  assert(Thread::current() == this, "caller must be current thread");
++  return pd_get_top_frame(fr_addr, ucontext, isInJava);
++}
++
++bool JavaThread::pd_get_top_frame_for_profiling(frame* fr_addr,
++  void* ucontext, bool isInJava) {
++  return pd_get_top_frame(fr_addr, ucontext, isInJava);
++}
++
++bool JavaThread::pd_get_top_frame(frame* fr_addr,
++  void* ucontext, bool isInJava) {
++  assert(this->is_Java_thread(), "must be JavaThread");
++  JavaThread* jt = (JavaThread *)this;
++
++  // There is small window where last_Java_frame is not walkable or safe
++  if (jt->has_last_Java_frame() && jt->frame_anchor()->walkable()) {
++    *fr_addr = jt->pd_last_frame();
++    return true;
++  }
++
++  ucontext_t* uc = (ucontext_t*) ucontext;
++
++  // We always want to use the initial frame we create from the ucontext as
++  // it certainly signals where we currently are. However that frame may not
++  // be safe for calling sender. In that case if we have a last_Java_frame
++  // then the forte walker will switch to that frame as the virtual sender
++  // for the frame we create here which is not sender safe.
++
++  intptr_t* ret_fp;
++  intptr_t* ret_sp;
++  address addr = os::fetch_frame_from_context(uc, &ret_sp, &ret_fp);
++
++  // Something would really have to be screwed up to get a NULL pc
++
++  if (addr == NULL) {
++    // ucontext wasn't useful
++    return false;
++  }
++
++  // If sp and fp are nonsense just leave them out
++
++  if (!jt->is_in_full_stack((address)ret_sp)) {
++    ret_sp = NULL;
++    ret_fp = NULL;
++  } else {
++    // sp is reasonable is fp reasonable?
++    if (!jt->is_in_stack_range_incl((address)ret_fp, (address)ret_sp)) {
++      ret_fp = NULL;
++    }
++  }
++
++  frame ret_frame(ret_sp, ret_fp, addr);
++
++  *fr_addr = ret_frame;
++  return true;
++
++}
++
++void JavaThread::cache_global_variables() { }
+diff -urN /tmp/a/javaThread_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.hpp
+--- /tmp/a/javaThread_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/javaThread_solaris_x86.hpp	2024-10-15 14:59:36.869648787 +0100
+@@ -0,0 +1,52 @@
++/*
++ * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_JAVATHREAD_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_JAVATHREAD_SOLARIS_X86_HPP
++
++ private:
++  void pd_initialize()                           { _anchor.clear(); }
++
++  frame pd_last_frame();
++
++ public:
++
++  void set_base_of_stack_pointer(intptr_t* base_sp)  {}
++
++  static ByteSize last_Java_fp_offset()          {
++    return byte_offset_of(JavaThread, _anchor) + JavaFrameAnchor::last_Java_fp_offset();
++  }
++
++  intptr_t* base_of_stack_pointer()                  { return NULL; }
++  void record_base_of_stack_pointer()            {}
++
++  bool pd_get_top_frame_for_signal_handler(frame* fr_addr, void* ucontext,
++    bool isInJava);
++  bool pd_get_top_frame_for_profiling(frame* fr_addr, void* ucontext,
++    bool isInJava);
++private:
++  bool pd_get_top_frame(frame* fr_addr, void* ucontext,
++    bool isInJava);
++
++#endif // OS_CPU_SOLARIS_X86_JAVATHREAD_SOLARIS_X86_HPP
+diff -urN /tmp/a/orderAccess_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/orderAccess_solaris_x86.hpp
+--- /tmp/a/orderAccess_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/orderAccess_solaris_x86.hpp	2024-10-15 14:59:36.868709514 +0100
+@@ -0,0 +1,58 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_ORDERACCESS_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_ORDERACCESS_SOLARIS_X86_HPP
++
++// Included in orderAccess.hpp header file.
++
++// Compiler version last used for testing: solaris studio 12u3
++// Please update this information when this file changes
++
++// Implementation of class OrderAccess.
++
++// A compiler barrier, forcing the C++ compiler to invalidate all memory assumptions
++inline void compiler_barrier() {
++  __asm__ volatile ("" : : : "memory");
++}
++
++inline void OrderAccess::loadload()   { compiler_barrier(); }
++inline void OrderAccess::storestore() { compiler_barrier(); }
++inline void OrderAccess::loadstore()  { compiler_barrier(); }
++inline void OrderAccess::storeload()  { fence();            }
++
++inline void OrderAccess::acquire()    { compiler_barrier(); }
++inline void OrderAccess::release()    { compiler_barrier(); }
++
++inline void OrderAccess::fence() {
++  __asm__ volatile ("lock; addl $0,0(%%rsp)" : : : "cc", "memory");
++  compiler_barrier();
++}
++
++inline void OrderAccess::cross_modify_fence_impl() {
++  int idx = 0;
++  __asm__ volatile ("cpuid " : "+a" (idx) : : "ebx", "ecx", "edx", "memory");
++}
++
++#endif // OS_CPU_SOLARIS_X86_ORDERACCESS_SOLARIS_X86_HPP
+diff -urN /tmp/a/os_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp
+--- /tmp/a/os_solaris_x86.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.cpp	2024-10-15 14:59:36.911042968 +0100
+@@ -0,0 +1,592 @@
++/*
++ * Copyright (c) 1999, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++// no precompiled headers
++#include "jvm.h"
++#include "asm/macroAssembler.hpp"
++#include "classfile/classLoader.hpp"
++#include "classfile/systemDictionary.hpp"
++#include "classfile/vmSymbols.hpp"
++#include "code/codeCache.hpp"
++#include "code/icBuffer.hpp"
++#include "code/vtableStubs.hpp"
++#include "interpreter/interpreter.hpp"
++#include "logging/log.hpp"
++#include "memory/allocation.inline.hpp"
++#include "os_solaris.hpp"
++#include "os_posix.hpp"
++#include "prims/jniFastGetField.hpp"
++#include "prims/jvm_misc.hpp"
++#include "runtime/arguments.hpp"
++#include "runtime/frame.inline.hpp"
++#include "runtime/interfaceSupport.inline.hpp"
++#include "runtime/java.hpp"
++#include "runtime/javaCalls.hpp"
++#include "runtime/mutexLocker.hpp"
++#include "runtime/osThread.hpp"
++#include "runtime/safepointMechanism.hpp"
++#include "runtime/sharedRuntime.hpp"
++#include "runtime/stubRoutines.hpp"
++#include "runtime/thread.inline.hpp"
++#include "runtime/timer.hpp"
++#include "signals_posix.hpp"
++#include "utilities/align.hpp"
++#include "utilities/events.hpp"
++#include "utilities/vmError.hpp"
++
++// put OS-includes here
++# include <sys/types.h>
++# include <sys/mman.h>
++# include <pthread.h>
++# include <signal.h>
++# include <setjmp.h>
++# include <errno.h>
++# include <dlfcn.h>
++# include <stdio.h>
++# include <unistd.h>
++# include <sys/resource.h>
++# include <thread.h>
++# include <sys/stat.h>
++# include <sys/time.h>
++# include <sys/filio.h>
++# include <sys/utsname.h>
++# include <sys/systeminfo.h>
++# include <sys/socket.h>
++# include <sys/trap.h>
++# include <sys/lwp.h>
++# include <poll.h>
++# include <sys/lwp.h>
++# include <procfs.h>
++
++
++#define MAX_PATH (2 * K)
++
++// Minimum usable stack sizes required to get to user code. Space for
++// HotSpot guard pages is added later.
++#ifdef _LP64
++// The adlc generated method 'State::MachNodeGenerator(int)' used by the C2 compiler
++// threads requires a large stack with the Solaris Studio C++ compiler version 5.13
++// and product VM builds (debug builds require significantly less stack space).
++size_t os::_compiler_thread_min_stack_allowed = 325 * K;
++size_t os::_java_thread_min_stack_allowed = 48 * K;
++size_t os::_vm_internal_thread_min_stack_allowed = 224 * K;
++#else
++size_t os::_compiler_thread_min_stack_allowed = 32 * K;
++size_t os::_java_thread_min_stack_allowed = 32 * K;
++size_t os::_vm_internal_thread_min_stack_allowed = 64 * K;
++#endif // _LP64
++
++#ifdef AMD64
++#define REG_SP REG_RSP
++#define REG_PC REG_RIP
++#define REG_FP REG_RBP
++#else
++#define REG_SP UESP
++#define REG_PC EIP
++#define REG_FP EBP
++// 4900493 counter to prevent runaway LDTR refresh attempt
++
++static volatile int ldtr_refresh = 0;
++// the libthread instruction that faults because of the stale LDTR
++
++static const unsigned char movlfs[] = { 0x8e, 0xe0    // movl %eax,%fs
++                       };
++#endif // AMD64
++
++char* os::non_memory_address_word() {
++  // Must never look like an address returned by reserve_memory,
++  // even in its subfields (as defined by the CPU immediate fields,
++  // if the CPU splits constants across multiple instructions).
++  return (char*) -1;
++}
++
++//
++// Validate a ucontext retrieved from walking a uc_link of a ucontext.
++// There are issues with libthread giving out uc_links for different threads
++// on the same uc_link chain and bad or circular links.
++//
++bool os::Solaris::valid_ucontext(Thread* thread, const ucontext_t* valid, const ucontext_t* suspect) {
++  if (valid >= suspect ||
++      valid->uc_stack.ss_flags != suspect->uc_stack.ss_flags ||
++      valid->uc_stack.ss_sp    != suspect->uc_stack.ss_sp    ||
++      valid->uc_stack.ss_size  != suspect->uc_stack.ss_size) {
++    DEBUG_ONLY(tty->print_cr("valid_ucontext: failed test 1");)
++    return false;
++  }
++
++  if (thread->is_Java_thread()) {
++    if (!thread->is_in_full_stack_checked((address)suspect)) {
++      DEBUG_ONLY(tty->print_cr("valid_ucontext: uc_link not in thread stack");)
++      return false;
++    }
++    if (!thread->is_in_full_stack_checked((address) suspect->uc_mcontext.gregs[REG_SP])) {
++      DEBUG_ONLY(tty->print_cr("valid_ucontext: stackpointer not in thread stack");)
++      return false;
++    }
++  }
++  return true;
++}
++
++// We will only follow one level of uc_link since there are libthread
++// issues with ucontext linking and it is better to be safe and just
++// let caller retry later.
++const ucontext_t* os::Solaris::get_valid_uc_in_signal_handler(Thread *thread,
++  const ucontext_t *uc) {
++
++  const ucontext_t *retuc = NULL;
++
++  if (uc != NULL) {
++    if (uc->uc_link == NULL) {
++      // cannot validate without uc_link so accept current ucontext
++      retuc = uc;
++    } else if (os::Solaris::valid_ucontext(thread, uc, uc->uc_link)) {
++      // first ucontext is valid so try the next one
++      uc = uc->uc_link;
++      if (uc->uc_link == NULL) {
++        // cannot validate without uc_link so accept current ucontext
++        retuc = uc;
++      } else if (os::Solaris::valid_ucontext(thread, uc, uc->uc_link)) {
++        // the ucontext one level down is also valid so return it
++        retuc = uc;
++      }
++    }
++  }
++  return retuc;
++}
++
++void os::Posix::ucontext_set_pc(ucontext_t* uc, address pc) {
++  uc->uc_mcontext.gregs [REG_PC]  = (greg_t) pc;
++}
++
++// Assumes ucontext is valid
++intptr_t* os::Solaris::ucontext_get_sp(const ucontext_t *uc) {
++  return (intptr_t*)uc->uc_mcontext.gregs[REG_SP];
++}
++
++// Assumes ucontext is valid
++intptr_t* os::Solaris::ucontext_get_fp(const ucontext_t *uc) {
++  return (intptr_t*)uc->uc_mcontext.gregs[REG_FP];
++}
++
++address os::Posix::ucontext_get_pc(const ucontext_t *uc) {
++  return (address) uc->uc_mcontext.gregs[REG_PC];
++}
++
++address os::fetch_frame_from_context(const void* ucVoid,
++                    intptr_t** ret_sp, intptr_t** ret_fp) {
++
++  address  epc;
++  const ucontext_t *uc = (const ucontext_t*)ucVoid;
++
++  if (uc != NULL) {
++    epc = os::Posix::ucontext_get_pc(uc);
++    if (ret_sp) *ret_sp = os::Solaris::ucontext_get_sp(uc);
++    if (ret_fp) *ret_fp = os::Solaris::ucontext_get_fp(uc);
++  } else {
++    epc = NULL;
++    if (ret_sp) *ret_sp = (intptr_t *)NULL;
++    if (ret_fp) *ret_fp = (intptr_t *)NULL;
++  }
++
++  return epc;
++}
++
++frame os::fetch_frame_from_context(const void* ucVoid) {
++  intptr_t* sp;
++  intptr_t* fp;
++  address epc = fetch_frame_from_context(ucVoid, &sp, &fp);
++  return frame(sp, fp, epc);
++}
++
++frame os::fetch_compiled_frame_from_context(const void* ucVoid) {
++  const ucontext_t* uc = (const ucontext_t*)ucVoid;
++  frame fr = os::fetch_frame_from_context(uc);
++  // in compiled code, the stack banging is performed just after the return pc
++  // has been pushed on the stack
++  return frame(fr.sp() + 1, fr.fp(), (address)*(fr.sp()));
++}
++
++frame os::get_sender_for_C_frame(frame* fr) {
++  return frame(fr->sender_sp(), fr->link(), fr->sender_pc());
++}
++
++extern "C" intptr_t *_get_current_sp() {
++  register intptr_t *rsp __asm__ ("rsp");
++  return rsp;
++}
++
++address os::current_stack_pointer() {
++  return (address)_get_current_sp();
++}
++
++extern "C" intptr_t *_get_current_fp() {
++  register intptr_t **rbp __asm__ ("rbp");
++  return (intptr_t*) *rbp;
++}
++
++frame os::current_frame() {
++  intptr_t* fp = _get_current_fp();  // it's inlined so want current fp
++  // fp is for os::current_frame. We want the fp for our caller.
++  frame myframe((intptr_t*)os::current_stack_pointer(),
++                (intptr_t*)fp,
++                CAST_FROM_FN_PTR(address, os::current_frame));
++  frame caller_frame = os::get_sender_for_C_frame(&myframe);
++
++  if (os::is_first_C_frame(&caller_frame)) {
++    // stack is not walkable
++    frame ret; // This will be a null useless frame
++    return ret;
++  } else {
++    // return frame for our caller's caller
++    return os::get_sender_for_C_frame(&caller_frame);
++  }
++}
++
++
++juint os::cpu_microcode_revision() {
++  juint result = 0;
++  // to implement this, look at the source for ucodeadm -v
++  return result;
++}
++
++bool PosixSignals::pd_hotspot_signal_handler(int sig, siginfo_t* info,
++                                             ucontext_t* uc, JavaThread* thread) {
++
++  if (info == NULL || info->si_code <= 0 || info->si_code == SI_NOINFO) {
++    // can't decode this kind of signal
++    info = NULL;
++  } else {
++    assert(sig == info->si_signo, "bad siginfo");
++  }
++
++  // decide if this trap can be handled by a stub
++  address stub = NULL;
++
++  address pc          = NULL;
++
++  //%note os_trap_1
++  if (info != NULL && uc != NULL && thread != NULL) {
++    // factor me: getPCfromContext
++    pc = (address) uc->uc_mcontext.gregs[REG_PC];
++
++    // Handle ALL stack overflow variations here
++    if (sig == SIGSEGV && info->si_code == SEGV_ACCERR) {
++      address addr = (address) info->si_addr;
++      if (thread->is_in_full_stack(addr)) {
++        // stack overflow
++        if (os::Posix::handle_stack_overflow(thread, addr, pc, uc, &stub)) {
++          return true; // continue
++        }
++      }
++    }
++
++    if ((sig == SIGSEGV) && VM_Version::is_cpuinfo_segv_addr(pc)) {
++      // Verify that OS save/restore AVX registers.
++      stub = VM_Version::cpuinfo_cont_addr();
++    }
++
++    if (thread->thread_state() == _thread_in_vm ||
++         thread->thread_state() == _thread_in_native) {
++      if (sig == SIGBUS && info->si_code == BUS_OBJERR && thread->doing_unsafe_access()) {
++        address next_pc = Assembler::locate_next_instruction(pc);
++        if (UnsafeCopyMemory::contains_pc(pc)) {
++          next_pc = UnsafeCopyMemory::page_error_continue_pc(pc);
++        }
++        stub = SharedRuntime::handle_unsafe_access(thread, next_pc);
++      }
++    }
++
++    if (thread->thread_state() == _thread_in_Java) {
++      // Support Safepoint Polling
++      if ( sig == SIGSEGV && SafepointMechanism::is_poll_address((address)info->si_addr)) {
++        stub = SharedRuntime::get_poll_stub(pc);
++      }
++      else if (sig == SIGBUS && info->si_code == BUS_OBJERR) {
++        // BugId 4454115: A read from a MappedByteBuffer can fault
++        // here if the underlying file has been truncated.
++        // Do not crash the VM in such a case.
++        CodeBlob* cb = CodeCache::find_blob(pc);
++        if (cb != NULL) {
++          CompiledMethod* nm = cb->as_compiled_method_or_null();
++          bool is_unsafe_arraycopy = thread->doing_unsafe_access() && UnsafeCopyMemory::contains_pc(pc);
++          if ((nm != NULL && nm->has_unsafe_access()) || is_unsafe_arraycopy) {
++            address next_pc = Assembler::locate_next_instruction(pc);
++            if (is_unsafe_arraycopy) {
++              next_pc = UnsafeCopyMemory::page_error_continue_pc(pc);
++            }
++            stub = SharedRuntime::handle_unsafe_access(thread, next_pc);
++          }
++        }
++      }
++      else
++      if (sig == SIGFPE && info->si_code == FPE_INTDIV) {
++        // integer divide by zero
++        stub = SharedRuntime::continuation_for_implicit_exception(thread, pc, SharedRuntime::IMPLICIT_DIVIDE_BY_ZERO);
++      }
++#ifndef AMD64
++      else if (sig == SIGFPE && info->si_code == FPE_FLTDIV) {
++        // floating-point divide by zero
++        stub = SharedRuntime::continuation_for_implicit_exception(thread, pc, SharedRuntime::IMPLICIT_DIVIDE_BY_ZERO);
++      }
++      else if (sig == SIGFPE && info->si_code == FPE_FLTINV) {
++        // The encoding of D2I in i486.ad can cause an exception prior
++        // to the fist instruction if there was an invalid operation
++        // pending. We want to dismiss that exception. From the win_32
++        // side it also seems that if it really was the fist causing
++        // the exception that we do the d2i by hand with different
++        // rounding. Seems kind of weird. QQQ TODO
++        // Note that we take the exception at the NEXT floating point instruction.
++        if (pc[0] == 0xDB) {
++            assert(pc[0] == 0xDB, "not a FIST opcode");
++            assert(pc[1] == 0x14, "not a FIST opcode");
++            assert(pc[2] == 0x24, "not a FIST opcode");
++            return true;
++        } else {
++            assert(pc[-3] == 0xDB, "not an flt invalid opcode");
++            assert(pc[-2] == 0x14, "not an flt invalid opcode");
++            assert(pc[-1] == 0x24, "not an flt invalid opcode");
++        }
++      }
++      else if (sig == SIGFPE ) {
++        tty->print_cr("caught SIGFPE, info 0x%x.", info->si_code);
++      }
++#endif // !AMD64
++
++        // QQQ It doesn't seem that we need to do this on x86 because we should be able
++        // to return properly from the handler without this extra stuff on the back side.
++
++      else if (sig == SIGSEGV && info->si_code > 0 &&
++               MacroAssembler::uses_implicit_null_check(info->si_addr)) {
++        // Determination of interpreter/vtable stub/compiled code null exception
++        stub = SharedRuntime::continuation_for_implicit_exception(thread, pc, SharedRuntime::IMPLICIT_NULL);
++      }
++    }
++
++    // jni_fast_Get<Primitive>Field can trap at certain pc's if a GC kicks in
++    // and the heap gets shrunk before the field access.
++    if ((sig == SIGSEGV) || (sig == SIGBUS)) {
++      address addr = JNI_FastGetField::find_slowcase_pc(pc);
++      if (addr != (address)-1) {
++        stub = addr;
++      }
++    }
++  }
++
++  // Execution protection violation
++  //
++  // Preventative code for future versions of Solaris which may
++  // enable execution protection when running the 32-bit VM on AMD64.
++  //
++  // This should be kept as the last step in the triage.  We don't
++  // have a dedicated trap number for a no-execute fault, so be
++  // conservative and allow other handlers the first shot.
++  //
++  // Note: We don't test that info->si_code == SEGV_ACCERR here.
++  // this si_code is so generic that it is almost meaningless; and
++  // the si_code for this condition may change in the future.
++  // Furthermore, a false-positive should be harmless.
++  if (UnguardOnExecutionViolation > 0 &&
++      (sig == SIGSEGV || sig == SIGBUS) &&
++      uc->uc_mcontext.gregs[TRAPNO] == T_PGFLT) {  // page fault
++    int page_size = os::vm_page_size();
++    address addr = (address) info->si_addr;
++    address pc = (address) uc->uc_mcontext.gregs[REG_PC];
++    // Make sure the pc and the faulting address are sane.
++    //
++    // If an instruction spans a page boundary, and the page containing
++    // the beginning of the instruction is executable but the following
++    // page is not, the pc and the faulting address might be slightly
++    // different - we still want to unguard the 2nd page in this case.
++    //
++    // 15 bytes seems to be a (very) safe value for max instruction size.
++    bool pc_is_near_addr =
++      (pointer_delta((void*) addr, (void*) pc, sizeof(char)) < 15);
++    bool instr_spans_page_boundary =
++      (align_down((intptr_t) pc ^ (intptr_t) addr,
++                       (intptr_t) page_size) > 0);
++
++    if (pc == addr || (pc_is_near_addr && instr_spans_page_boundary)) {
++      static volatile address last_addr =
++        (address) os::non_memory_address_word();
++
++      // In conservative mode, don't unguard unless the address is in the VM
++      if (addr != last_addr &&
++          (UnguardOnExecutionViolation > 1 || os::address_is_in_vm(addr))) {
++
++        // Make memory rwx and retry
++        address page_start = align_down(addr, page_size);
++        bool res = os::protect_memory((char*) page_start, page_size,
++                                      os::MEM_PROT_RWX);
++
++        log_debug(os)("Execution protection violation "
++                      "at " INTPTR_FORMAT
++                      ", unguarding " INTPTR_FORMAT ": %s, errno=%d", p2i(addr),
++                      p2i(page_start), (res ? "success" : "failed"), errno);
++        stub = pc;
++
++        // Set last_addr so if we fault again at the same address, we don't end
++        // up in an endless loop.
++        //
++        // There are two potential complications here.  Two threads trapping at
++        // the same address at the same time could cause one of the threads to
++        // think it already unguarded, and abort the VM.  Likely very rare.
++        //
++        // The other race involves two threads alternately trapping at
++        // different addresses and failing to unguard the page, resulting in
++        // an endless loop.  This condition is probably even more unlikely than
++        // the first.
++        //
++        // Although both cases could be avoided by using locks or thread local
++        // last_addr, these solutions are unnecessary complication: this
++        // handler is a best-effort safety net, not a complete solution.  It is
++        // disabled by default and should only be used as a workaround in case
++        // we missed any no-execute-unsafe VM code.
++
++        last_addr = addr;
++      }
++    }
++  }
++
++  if (stub != NULL) {
++    // save all thread context in case we need to restore it
++
++    if (thread != NULL) thread->set_saved_exception_pc(pc);
++    // 12/02/99: On Sparc it appears that the full context is also saved
++    // but as yet, no one looks at or restores that saved context
++    os::Posix::ucontext_set_pc(uc, stub);
++    return true;
++  }
++
++  return false;
++}
++
++void os::print_context(outputStream *st, const void *context) {
++  if (context == NULL) return;
++
++  const ucontext_t *uc = (const ucontext_t*)context;
++  st->print_cr("Registers:");
++#ifdef AMD64
++  st->print(  "RAX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RAX]);
++  st->print(", RBX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RBX]);
++  st->print(", RCX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RCX]);
++  st->print(", RDX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RDX]);
++  st->cr();
++  st->print(  "RSP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RSP]);
++  st->print(", RBP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RBP]);
++  st->print(", RSI=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RSI]);
++  st->print(", RDI=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RDI]);
++  st->cr();
++  st->print(  "R8 =" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R8]);
++  st->print(", R9 =" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R9]);
++  st->print(", R10=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R10]);
++  st->print(", R11=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R11]);
++  st->cr();
++  st->print(  "R12=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R12]);
++  st->print(", R13=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R13]);
++  st->print(", R14=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R14]);
++  st->print(", R15=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_R15]);
++  st->cr();
++  st->print(  "RIP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RIP]);
++  st->print(", RFLAGS=" INTPTR_FORMAT, uc->uc_mcontext.gregs[REG_RFL]);
++#else
++  st->print(  "EAX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EAX]);
++  st->print(", EBX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EBX]);
++  st->print(", ECX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[ECX]);
++  st->print(", EDX=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EDX]);
++  st->cr();
++  st->print(  "ESP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[UESP]);
++  st->print(", EBP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EBP]);
++  st->print(", ESI=" INTPTR_FORMAT, uc->uc_mcontext.gregs[ESI]);
++  st->print(", EDI=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EDI]);
++  st->cr();
++  st->print(  "EIP=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EIP]);
++  st->print(", EFLAGS=" INTPTR_FORMAT, uc->uc_mcontext.gregs[EFL]);
++#endif // AMD64
++  st->cr();
++  st->cr();
++}
++
++void os::print_register_info(outputStream *st, const void *context, int& continuation) {
++  const int register_count = AMD64_ONLY(16) NOT_AMD64(8);
++  int n = continuation;
++  assert(n >= 0 && n <= register_count, "Invalid continuation value");
++  if (context == nullptr || n == register_count) {
++    return;
++  }
++
++  const ucontext_t *uc = (const ucontext_t*)context;
++  while (n < register_count) {
++    // Update continuation with next index before printing location
++    continuation = n + 1;
++# define CASE_PRINT_REG(n, str, id) case n: st->print(str); print_location(st, uc->uc_mcontext.gregs[REG_##id]);
++    switch (n) {
++#ifdef AMD64
++    CASE_PRINT_REG( 0, "RAX=", RAX); break;
++    CASE_PRINT_REG( 1, "RBX=", RBX); break;
++    CASE_PRINT_REG( 2, "RCX=", RCX); break;
++    CASE_PRINT_REG( 3, "RDX=", RDX); break;
++    CASE_PRINT_REG( 4, "RSP=", RSP); break;
++    CASE_PRINT_REG( 5, "RBP=", RBP); break;
++    CASE_PRINT_REG( 6, "RSI=", RSI); break;
++    CASE_PRINT_REG( 7, "RDI=", RDI); break;
++    CASE_PRINT_REG( 8, "R8 =", R8); break;
++    CASE_PRINT_REG( 9, "R9 =", R9); break;
++    CASE_PRINT_REG(10, "R10=", R10); break;
++    CASE_PRINT_REG(11, "R11=", R11); break;
++    CASE_PRINT_REG(12, "R12=", R12); break;
++    CASE_PRINT_REG(13, "R13=", R13); break;
++    CASE_PRINT_REG(14, "R14=", R14); break;
++    CASE_PRINT_REG(15, "R15=", R15); break;
++#else
++    CASE_PRINT_REG(0, "EAX=", EAX); break;
++    CASE_PRINT_REG(1, "EBX=", EBX); break;
++    CASE_PRINT_REG(2, "ECX=", ECX); break;
++    CASE_PRINT_REG(3, "EDX=", EDX); break;
++    CASE_PRINT_REG(4, "ESP=", ESP); break;
++    CASE_PRINT_REG(5, "EBP=", EBP); break;
++    CASE_PRINT_REG(6, "ESI=", ESI); break;
++    CASE_PRINT_REG(7, "EDI=", EDI); break;
++#endif // AMD64
++    }
++# undef CASE_PRINT_REG
++    ++n;
++  }
++}
++
++
++void os::Solaris::init_thread_fpu_state(void) {
++  // Nothing to do
++}
++void os::setup_fpu() {}
++
++#ifndef PRODUCT
++void os::verify_stack_alignment() {
++  assert(((intptr_t)os::current_stack_pointer() & (StackAlignmentInBytes-1)) == 0, "incorrect stack alignment");
++}
++#endif
++
++int os::extra_bang_size_in_bytes() {
++  // JDK-8050147 requires the full cache line bang for x86.
++  return VM_Version::L1_line_size();
++}
+diff -urN /tmp/a/os_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.hpp
+--- /tmp/a/os_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.hpp	2024-10-15 14:59:36.898145900 +0100
+@@ -0,0 +1,57 @@
++/*
++ * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_HPP
++
++  //
++  // NOTE: we are back in class os here, not Solaris
++  //
++#ifdef AMD64
++  static void setup_fpu() {}
++#else
++  static int32_t  (*atomic_xchg_func)        (int32_t,  volatile int32_t*);
++  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*, int64_t);
++  static int32_t  (*atomic_add_func)         (int32_t,  volatile int32_t*);
++
++  static int32_t  atomic_xchg_bootstrap        (int32_t,  volatile int32_t*);
++  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*, int32_t);
++  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*, int64_t);
++  static int32_t  atomic_add_bootstrap         (int32_t,  volatile int32_t*);
++
++  static void setup_fpu();
++#endif // AMD64
++
++  static juint cpu_microcode_revision();
++
++  static jlong rdtsc();
++
++  static bool is_allocatable(size_t bytes);
++
++  // Used to register dynamic code cache area with the OS
++  // Note: Currently only used in 64 bit Windows implementations
++  static bool register_code_area(char *low, char *high) { return true; }
++
++#endif // OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_HPP
+diff -urN /tmp/a/os_solaris_x86.inline.hpp b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.inline.hpp
+--- /tmp/a/os_solaris_x86.inline.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/os_solaris_x86.inline.hpp	2024-10-15 14:59:36.869168535 +0100
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_INLINE_HPP
++#define OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_INLINE_HPP
++
++#include "runtime/os.hpp"
++
++// See http://www.technovelty.org/code/c/reading-rdtsc.htl for details
++inline jlong os::rdtsc() {
++  uint64_t res;
++  uint32_t ts1, ts2;
++  __asm__ __volatile__ ("rdtsc" : "=a" (ts1), "=d" (ts2));
++  res = ((uint64_t)ts1 | (uint64_t)ts2 << 32);
++  return (jlong)res;
++}
++
++#endif // OS_CPU_SOLARIS_X86_OS_SOLARIS_X86_INLINE_HPP
+diff -urN /tmp/a/prefetch_solaris_x86.inline.hpp b/src/hotspot/os_cpu/solaris_x86/prefetch_solaris_x86.inline.hpp
+--- /tmp/a/prefetch_solaris_x86.inline.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/prefetch_solaris_x86.inline.hpp	2024-10-15 14:59:36.869266764 +0100
+@@ -0,0 +1,42 @@
++/*
++ * Copyright (c) 2003, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_PREFETCH_SOLARIS_X86_INLINE_HPP
++#define OS_CPU_SOLARIS_X86_PREFETCH_SOLARIS_X86_INLINE_HPP
++
++#include "runtime/prefetch.hpp"
++
++inline void Prefetch::read (const void *loc, intx interval) {
++#ifdef AMD64
++  __asm__ ("prefetcht0 (%0,%1,1)" : : "r" (loc), "r" (interval));
++#endif // AMD64
++}
++
++inline void Prefetch::write(void *loc, intx interval) {
++#ifdef AMD64
++  __asm__ ("prefetcht0 (%0,%1,1)" : : "r" (loc), "r" (interval));
++#endif // AMD64
++}
++
++#endif // OS_CPU_SOLARIS_X86_PREFETCH_SOLARIS_X86_INLINE_HPP
+diff -urN /tmp/a/safefetch_solaris_x86_64.S b/src/hotspot/os_cpu/solaris_x86/safefetch_solaris_x86_64.S
+--- /tmp/a/safefetch_solaris_x86_64.S	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/safefetch_solaris_x86_64.S	2024-10-15 14:59:36.915486184 +0100
+@@ -0,0 +1,58 @@
++#
++# Copyright (c) 2022 SAP SE. All rights reserved.
++# Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++#
++# This code is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 2 only, as
++# published by the Free Software Foundation.
++#
++# This code is distributed in the hope that it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++# version 2 for more details (a copy is included in the LICENSE file that
++# accompanied this code).
++#
++# You should have received a copy of the GNU General Public License version
++# 2 along with this work; if not, write to the Free Software Foundation,
++# Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++#
++# Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++# or visit www.oracle.com if you need additional information or have any
++# questions.
++#
++    .globl SafeFetch32_impl
++    .globl SafeFetchN_impl
++    .globl _SafeFetch32_fault
++    .globl _SafeFetchN_fault
++    .globl _SafeFetch32_continuation
++    .globl _SafeFetchN_continuation
++
++	.text
++
++
++    # Support for int SafeFetch32(int* address, int defaultval);
++    #
++    #  %rdi : address
++    #  %esi : defaultval
++    .type    SafeFetch32_impl,@function
++SafeFetch32_impl:
++_SafeFetch32_fault:
++    movl (%rdi), %eax       # load target value, may fault
++    ret
++_SafeFetch32_continuation:
++    movl %esi, %eax         # return default
++    ret
++
++    # Support for intptr_t SafeFetchN(intptr_t* address, intptr_t defaultval);
++    #
++    #  %rdi : address
++    #  %rsi : defaultval
++    .type    SafeFetchN_impl,@function
++SafeFetchN_impl:
++_SafeFetchN_fault:
++    movq (%rdi), %rax       # load target value, may fault
++    ret
++_SafeFetchN_continuation:
++    movq %rsi, %rax         # return default
++    ret
+diff -urN /tmp/a/solaris_x86_64.S b/src/hotspot/os_cpu/solaris_x86/solaris_x86_64.S
+--- /tmp/a/solaris_x86_64.S	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/solaris_x86_64.S	2024-10-15 14:59:36.869441513 +0100
+@@ -0,0 +1,386 @@
++#
++# Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
++# DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++#
++# This code is free software; you can redistribute it and/or modify it
++# under the terms of the GNU General Public License version 2 only, as
++# published by the Free Software Foundation.
++#
++# This code is distributed in the hope that it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++# version 2 for more details (a copy is included in the LICENSE file that
++# accompanied this code).
++#
++# You should have received a copy of the GNU General Public License version
++# 2 along with this work; if not, write to the Free Software Foundation,
++# Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++#
++# Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++# or visit www.oracle.com if you need additional information or have any
++# questions.
++#
++
++        .globl fs_load
++        .globl fs_thread
++
++        ## NOTE WELL!  The _Copy functions are called directly
++        ## from server-compiler-generated code via CallLeafNoFP,
++        ## which means that they *must* either not use floating
++        ## point or use it in the same manner as does the server
++        ## compiler.
++
++        .globl _Copy_arrayof_conjoint_bytes
++        .globl _Copy_conjoint_jshorts_atomic
++        .globl _Copy_arrayof_conjoint_jshorts
++        .globl _Copy_conjoint_jints_atomic
++        .globl _Copy_arrayof_conjoint_jints
++        .globl _Copy_conjoint_jlongs_atomic
++        .globl _Copy_arrayof_conjoint_jlongs
++
++        .section .text,"ax"
++
++        # Fast thread accessors, used by threadLS_solaris_amd64.cpp
++        .align   16
++fs_load:
++        movq %fs:(%rdi),%rax
++        ret
++
++        .align   16
++fs_thread:
++        movq %fs:0x0,%rax
++        ret
++
++        .globl  SpinPause
++        .align  16
++SpinPause:
++        rep
++        nop
++        movq    $1, %rax
++        ret
++
++
++        # Support for void Copy::arrayof_conjoint_bytes(void* from,
++        #                                               void* to,
++        #                                               size_t count)
++        # rdi - from
++        # rsi - to
++        # rdx - count, treated as ssize_t
++        #
++        .align   16
++_Copy_arrayof_conjoint_bytes:
++        movq     %rdx,%r8             # byte count
++        shrq     $3,%rdx              # qword count
++        cmpq     %rdi,%rsi
++        leaq     -1(%rdi,%r8,1),%rax  # from + bcount*1 - 1
++        jbe      acb_CopyRight
++        cmpq     %rax,%rsi
++        jbe      acb_CopyLeft 
++acb_CopyRight:
++        leaq     -8(%rdi,%rdx,8),%rax # from + qcount*8 - 8
++        leaq     -8(%rsi,%rdx,8),%rcx # to + qcount*8 - 8
++        negq     %rdx
++        jmp      7f
++        .align   16
++1:      movq     8(%rax,%rdx,8),%rsi
++        movq     %rsi,8(%rcx,%rdx,8)
++        addq     $1,%rdx
++        jnz      1b
++2:      testq    $4,%r8               # check for trailing dword
++        jz       3f
++        movl     8(%rax),%esi         # copy trailing dword
++        movl     %esi,8(%rcx)
++        addq     $4,%rax
++        addq     $4,%rcx              # original %rsi is trashed, so we
++                                      #  can't use it as a base register
++3:      testq    $2,%r8               # check for trailing word
++        jz       4f
++        movw     8(%rax),%si          # copy trailing word
++        movw     %si,8(%rcx)
++        addq     $2,%rcx
++4:      testq    $1,%r8               # check for trailing byte
++        jz       5f
++        movb     -1(%rdi,%r8,1),%al   # copy trailing byte
++        movb     %al,8(%rcx)
++5:      ret
++        .align   16
++6:      movq     -24(%rax,%rdx,8),%rsi
++        movq     %rsi,-24(%rcx,%rdx,8)
++        movq     -16(%rax,%rdx,8),%rsi
++        movq     %rsi,-16(%rcx,%rdx,8)
++        movq     -8(%rax,%rdx,8),%rsi
++        movq     %rsi,-8(%rcx,%rdx,8)
++        movq     (%rax,%rdx,8),%rsi
++        movq     %rsi,(%rcx,%rdx,8)
++7:      addq     $4,%rdx
++        jle      6b
++        subq     $4,%rdx
++        jl       1b
++        jmp      2b
++acb_CopyLeft:
++        testq    $1,%r8               # check for trailing byte
++        jz       1f
++        movb     -1(%rdi,%r8,1),%cl   # copy trailing byte
++        movb     %cl,-1(%rsi,%r8,1)
++        subq     $1,%r8               # adjust for possible trailing word
++1:      testq    $2,%r8               # check for trailing word
++        jz       2f
++        movw     -2(%rdi,%r8,1),%cx   # copy trailing word
++        movw     %cx,-2(%rsi,%r8,1)
++2:      testq    $4,%r8               # check for trailing dword
++        jz       5f
++        movl     (%rdi,%rdx,8),%ecx   # copy trailing dword
++        movl     %ecx,(%rsi,%rdx,8)
++        jmp      5f
++        .align   16
++3:      movq     -8(%rdi,%rdx,8),%rcx
++        movq     %rcx,-8(%rsi,%rdx,8)
++        subq     $1,%rdx
++        jnz      3b
++        ret
++        .align   16
++4:      movq     24(%rdi,%rdx,8),%rcx
++        movq     %rcx,24(%rsi,%rdx,8)
++        movq     16(%rdi,%rdx,8),%rcx
++        movq     %rcx,16(%rsi,%rdx,8)
++        movq     8(%rdi,%rdx,8),%rcx
++        movq     %rcx,8(%rsi,%rdx,8)
++        movq     (%rdi,%rdx,8),%rcx
++        movq     %rcx,(%rsi,%rdx,8)
++5:      subq     $4,%rdx
++        jge      4b
++        addq     $4,%rdx
++        jg       3b
++        ret
++
++        # Support for void Copy::arrayof_conjoint_jshorts(void* from,
++        #                                                 void* to,
++        #                                                 size_t count)
++        # Equivalent to
++        #   conjoint_jshorts_atomic
++        #
++        # If 'from' and/or 'to' are aligned on 4- or 2-byte boundaries, we
++        # let the hardware handle it.  The tow or four words within dwords
++        # or qwords that span cache line boundaries will still be loaded
++        # and stored atomically.
++        #
++        # rdi - from
++        # rsi - to
++        # rdx - count, treated as ssize_t
++        #
++        .align   16
++_Copy_arrayof_conjoint_jshorts:
++_Copy_conjoint_jshorts_atomic:
++        movq     %rdx,%r8             # word count
++        shrq     $2,%rdx              # qword count
++        cmpq     %rdi,%rsi
++        leaq     -2(%rdi,%r8,2),%rax  # from + wcount*2 - 2
++        jbe      acs_CopyRight
++        cmpq     %rax,%rsi
++        jbe      acs_CopyLeft 
++acs_CopyRight:
++        leaq     -8(%rdi,%rdx,8),%rax # from + qcount*8 - 8
++        leaq     -8(%rsi,%rdx,8),%rcx # to + qcount*8 - 8
++        negq     %rdx
++        jmp      6f
++1:      movq     8(%rax,%rdx,8),%rsi
++        movq     %rsi,8(%rcx,%rdx,8)
++        addq     $1,%rdx
++        jnz      1b
++2:      testq    $2,%r8               # check for trailing dword
++        jz       3f
++        movl     8(%rax),%esi         # copy trailing dword
++        movl     %esi,8(%rcx)
++        addq     $4,%rcx              # original %rsi is trashed, so we
++                                      #  can't use it as a base register
++3:      testq    $1,%r8               # check for trailing word
++        jz       4f
++        movw     -2(%rdi,%r8,2),%si   # copy trailing word
++        movw     %si,8(%rcx)
++4:      ret
++        .align   16
++5:      movq     -24(%rax,%rdx,8),%rsi
++        movq     %rsi,-24(%rcx,%rdx,8)
++        movq     -16(%rax,%rdx,8),%rsi
++        movq     %rsi,-16(%rcx,%rdx,8)
++        movq     -8(%rax,%rdx,8),%rsi
++        movq     %rsi,-8(%rcx,%rdx,8)
++        movq     (%rax,%rdx,8),%rsi
++        movq     %rsi,(%rcx,%rdx,8)
++6:      addq     $4,%rdx
++        jle      5b
++        subq     $4,%rdx
++        jl       1b
++        jmp      2b
++acs_CopyLeft:
++        testq    $1,%r8               # check for trailing word
++        jz       1f
++        movw     -2(%rdi,%r8,2),%cx   # copy trailing word
++        movw     %cx,-2(%rsi,%r8,2)
++1:      testq    $2,%r8               # check for trailing dword
++        jz       4f
++        movl     (%rdi,%rdx,8),%ecx   # copy trailing dword
++        movl     %ecx,(%rsi,%rdx,8)
++        jmp      4f
++2:      movq     -8(%rdi,%rdx,8),%rcx
++        movq     %rcx,-8(%rsi,%rdx,8)
++        subq     $1,%rdx
++        jnz      2b
++        ret
++        .align   16
++3:      movq     24(%rdi,%rdx,8),%rcx
++        movq     %rcx,24(%rsi,%rdx,8)
++        movq     16(%rdi,%rdx,8),%rcx
++        movq     %rcx,16(%rsi,%rdx,8)
++        movq     8(%rdi,%rdx,8),%rcx
++        movq     %rcx,8(%rsi,%rdx,8)
++        movq     (%rdi,%rdx,8),%rcx
++        movq     %rcx,(%rsi,%rdx,8)
++4:      subq     $4,%rdx
++        jge      3b
++        addq     $4,%rdx
++        jg       2b
++        ret
++
++        # Support for void Copy::arrayof_conjoint_jints(jint* from,
++        #                                               jint* to,
++        #                                               size_t count)
++        # Equivalent to
++        #   conjoint_jints_atomic
++        #
++        # If 'from' and/or 'to' are aligned on 4-byte boundaries, we let
++        # the hardware handle it.  The two dwords within qwords that span
++        # cache line boundaries will still be loaded and stored atomically.
++        #
++        # rdi - from
++        # rsi - to
++        # rdx - count, treated as ssize_t
++        #
++        .align   16
++_Copy_arrayof_conjoint_jints:
++_Copy_conjoint_jints_atomic:
++        movq     %rdx,%r8             # dword count
++        shrq     %rdx                 # qword count
++        cmpq     %rdi,%rsi
++        leaq     -4(%rdi,%r8,4),%rax  # from + dcount*4 - 4
++        jbe      aci_CopyRight
++        cmpq     %rax,%rsi
++        jbe      aci_CopyLeft 
++aci_CopyRight:
++        leaq     -8(%rdi,%rdx,8),%rax # from + qcount*8 - 8
++        leaq     -8(%rsi,%rdx,8),%rcx # to + qcount*8 - 8
++        negq     %rdx
++        jmp      5f
++        .align   16
++1:      movq     8(%rax,%rdx,8),%rsi
++        movq     %rsi,8(%rcx,%rdx,8)
++        addq     $1,%rdx
++        jnz       1b
++2:      testq    $1,%r8               # check for trailing dword
++        jz       3f
++        movl     8(%rax),%esi         # copy trailing dword
++        movl     %esi,8(%rcx)
++3:      ret
++        .align   16
++4:      movq     -24(%rax,%rdx,8),%rsi
++        movq     %rsi,-24(%rcx,%rdx,8)
++        movq     -16(%rax,%rdx,8),%rsi
++        movq     %rsi,-16(%rcx,%rdx,8)
++        movq     -8(%rax,%rdx,8),%rsi
++        movq     %rsi,-8(%rcx,%rdx,8)
++        movq     (%rax,%rdx,8),%rsi
++        movq     %rsi,(%rcx,%rdx,8)
++5:      addq     $4,%rdx
++        jle      4b
++        subq     $4,%rdx
++        jl       1b
++        jmp      2b
++aci_CopyLeft:
++        testq    $1,%r8               # check for trailing dword
++        jz       3f
++        movl     -4(%rdi,%r8,4),%ecx  # copy trailing dword
++        movl     %ecx,-4(%rsi,%r8,4)
++        jmp      3f
++1:      movq     -8(%rdi,%rdx,8),%rcx
++        movq     %rcx,-8(%rsi,%rdx,8)
++        subq     $1,%rdx
++        jnz      1b
++        ret
++        .align   16
++2:      movq     24(%rdi,%rdx,8),%rcx
++        movq     %rcx,24(%rsi,%rdx,8)
++        movq     16(%rdi,%rdx,8),%rcx
++        movq     %rcx,16(%rsi,%rdx,8)
++        movq     8(%rdi,%rdx,8),%rcx
++        movq     %rcx,8(%rsi,%rdx,8)
++        movq     (%rdi,%rdx,8),%rcx
++        movq     %rcx,(%rsi,%rdx,8)
++3:      subq     $4,%rdx
++        jge      2b
++        addq     $4,%rdx
++        jg       1b
++        ret
++
++        # Support for void Copy::arrayof_conjoint_jlongs(jlong* from,
++        #                                                jlong* to,
++        #                                                size_t count)
++        # Equivalent to
++        #   conjoint_jlongs_atomic
++        #   arrayof_conjoint_oops
++        #   conjoint_oops_atomic
++        #
++        # rdi - from
++        # rsi - to
++        # rdx - count, treated as ssize_t
++        #
++        .align   16
++_Copy_arrayof_conjoint_jlongs:
++_Copy_conjoint_jlongs_atomic:
++        cmpq     %rdi,%rsi
++        leaq     -8(%rdi,%rdx,8),%rax # from + count*8 - 8
++        jbe      acl_CopyRight
++        cmpq     %rax,%rsi
++        jbe      acl_CopyLeft 
++acl_CopyRight:
++        leaq     -8(%rsi,%rdx,8),%rcx # to + count*8 - 8
++        negq     %rdx
++        jmp      3f
++1:      movq     8(%rax,%rdx,8),%rsi
++        movq     %rsi,8(%rcx,%rdx,8)
++        addq     $1,%rdx
++        jnz      1b
++        ret
++        .align   16
++2:      movq     -24(%rax,%rdx,8),%rsi
++        movq     %rsi,-24(%rcx,%rdx,8)
++        movq     -16(%rax,%rdx,8),%rsi
++        movq     %rsi,-16(%rcx,%rdx,8)
++        movq     -8(%rax,%rdx,8),%rsi
++        movq     %rsi,-8(%rcx,%rdx,8)
++        movq     (%rax,%rdx,8),%rsi
++        movq     %rsi,(%rcx,%rdx,8)
++3:      addq     $4,%rdx
++        jle      2b
++        subq     $4,%rdx
++        jl       1b
++        ret
++4:      movq     -8(%rdi,%rdx,8),%rcx
++        movq     %rcx,-8(%rsi,%rdx,8)
++        subq     $1,%rdx
++        jnz      4b
++        ret
++        .align   16
++5:      movq     24(%rdi,%rdx,8),%rcx
++        movq     %rcx,24(%rsi,%rdx,8)
++        movq     16(%rdi,%rdx,8),%rcx
++        movq     %rcx,16(%rsi,%rdx,8)
++        movq     8(%rdi,%rdx,8),%rcx
++        movq     %rcx,8(%rsi,%rdx,8)
++        movq     (%rdi,%rdx,8),%rcx
++        movq     %rcx,(%rsi,%rdx,8)
++acl_CopyLeft:
++        subq     $4,%rdx
++        jge      5b
++        addq     $4,%rdx
++        jg       4b
++        ret
+diff -urN /tmp/a/vmStructs_solaris_x86.hpp b/src/hotspot/os_cpu/solaris_x86/vmStructs_solaris_x86.hpp
+--- /tmp/a/vmStructs_solaris_x86.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/vmStructs_solaris_x86.hpp	2024-10-15 14:59:36.869736563 +0100
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2000, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_CPU_SOLARIS_X86_VMSTRUCTS_SOLARIS_X86_HPP
++#define OS_CPU_SOLARIS_X86_VMSTRUCTS_SOLARIS_X86_HPP
++
++// These are the OS and CPU-specific fields, types and integer
++// constants required by the Serviceability Agent. This file is
++// referenced by vmStructs.cpp.
++
++#define VM_STRUCTS_OS_CPU(nonstatic_field, static_field, unchecked_nonstatic_field, volatile_nonstatic_field, nonproduct_nonstatic_field, c2_nonstatic_field, unchecked_c1_static_field, unchecked_c2_static_field)
++
++#define VM_TYPES_OS_CPU(declare_type, declare_toplevel_type, declare_oop_type, declare_integer_type, declare_unsigned_integer_type, declare_c1_toplevel_type, declare_c2_type, declare_c2_toplevel_type)
++
++#define VM_INT_CONSTANTS_OS_CPU(declare_constant, declare_preprocessor_constant, declare_c1_constant, declare_c2_constant, declare_c2_preprocessor_constant)
++
++#define VM_LONG_CONSTANTS_OS_CPU(declare_constant, declare_preprocessor_constant, declare_c1_constant, declare_c2_constant, declare_c2_preprocessor_constant)
++
++#endif // OS_CPU_SOLARIS_X86_VMSTRUCTS_SOLARIS_X86_HPP
+diff -urN /tmp/a/vm_version_solaris_x86.cpp b/src/hotspot/os_cpu/solaris_x86/vm_version_solaris_x86.cpp
+--- /tmp/a/vm_version_solaris_x86.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os_cpu/solaris_x86/vm_version_solaris_x86.cpp	2024-10-15 14:59:36.869816605 +0100
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (c) 2006, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "precompiled.hpp"
++#include "runtime/os.hpp"
++#include "runtime/vm_version.hpp"
++

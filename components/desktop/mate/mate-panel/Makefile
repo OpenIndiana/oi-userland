@@ -21,12 +21,15 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=         mate-panel
 COMPONENT_MJR_VERSION=  1.28
-COMPONENT_MNR_VERSION=  1
+COMPONENT_MNR_VERSION=  4
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      The Panel of Mate
-COMPONENT_ARCHIVE_HASH= sha256:5133c64f5969ae8eeebe6e8bba450dea792cb0be06d9ae1c36e8569d2f8524ba
+COMPONENT_ARCHIVE_HASH= sha256:02f09eb0314c2ac197b6f089950a571cdba39bfd03d6c3a0b8fd77252a968874
 COMPONENT_CLASSIFICATION= System/Libraries
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -Wno-error=int-conversion
 
 # Build requires
 REQUIRED_PACKAGES += text/itstool
@@ -36,7 +39,7 @@ REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += system/library/libdbus-glib
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

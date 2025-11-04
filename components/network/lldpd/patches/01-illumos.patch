@@ -1,0 +1,98 @@
+--- lldpd-1.0.19/src/compat/compat.h.orig
++++ lldpd-1.0.19/src/compat/compat.h
+@@ -90,4 +90,8 @@
+ void *realloc(void *ptr, size_t size);
+ #endif
+ 
++/* illumos does not provide these macros */
++#define	ETHER_ADDR_LEN	6
++#define	ETHER_MAX_LEN	1518
++
+ #endif
+--- lldpd-1.0.19/src/daemon/lldpd.h.orig
++++ lldpd-1.0.19/src/daemon/lldpd.h
+@@ -36,6 +36,8 @@
+ #include <sys/socket.h>
+ #include <netinet/in.h>
+ #include <net/if_arp.h>
++/* To get struct ifnet needed in netinet/if_ether.h */
++#include <net/if.h>
+ #include <netinet/if_ether.h>
+ #include <sys/un.h>
+ 
+--- lldpd-1.0.19/tests/check-compat.h.orig
++++ lldpd-1.0.19/tests/check-compat.h
+@@ -13,4 +13,8 @@
+     } while (0)
+ #endif
+ 
++/* illumos does not provide these macros */
++#define	ETHER_ADDR_LEN	6
++#define	ETHER_TYPE_LEN	2
++
+ #endif
+--- lldpd-1.0.19/src/daemon/client.c.orig
++++ lldpd-1.0.19/src/daemon/client.c
+@@ -20,6 +20,8 @@
+ 
+ #include <sys/param.h>
+ #include <sys/utsname.h>
++/* for MIN macro */
++#include <sys/sysmacros.h>
+ 
+ static ssize_t
+ client_handle_none(struct lldpd *cfg, enum hmsg_type *type, void *input, int input_len,
+--- lldpd-1.0.19/src/daemon/lldpd.c.orig
++++ lldpd-1.0.19/src/daemon/lldpd.c
+@@ -40,6 +40,8 @@
+ #include <netinet/if_ether.h>
+ #include <pwd.h>
+ #include <grp.h>
++/* for MIN macro */
++#include <sys/sysmacros.h>
+ 
+ #if HAVE_VFORK_H
+ #  include <vfork.h>
+--- lldpd-1.0.19/src/daemon/protocols/sonmp.c.orig
++++ lldpd-1.0.19/src/daemon/protocols/sonmp.c
+@@ -25,6 +25,8 @@
+ #  include <errno.h>
+ #  include <arpa/inet.h>
+ #  include <sys/param.h>
++/* for MIN macro */
++#include <sys/sysmacros.h>
+ 
+ static struct sonmp_chassis sonmp_chassis_types[] = {
+ 	{ 1, "unknown (via SONMP)" },
+--- lldpd-1.0.19/src/daemon/protocols/edp.c.orig
++++ lldpd-1.0.19/src/daemon/protocols/edp.c
+@@ -26,6 +26,8 @@
+ #  include <arpa/inet.h>
+ #  include <fnmatch.h>
+ #  include <sys/param.h>
++/* for MIN macro */
++#include <sys/sysmacros.h>
+ 
+ static int seq = 0;
+ 
+--- lldpd-1.0.19/src/daemon/priv-bsd.c.orig
++++ lldpd-1.0.19/src/daemon/priv-bsd.c
+@@ -23,7 +23,6 @@
+ #include <net/bpf.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#include <sys/sysctl.h>
+ #include <sys/ioctl.h>
+ #include <fcntl.h>
+ #include <errno.h>
+--- lldpd-1.0.19/src/client/display.c.orig
++++ lldpd-1.0.19/src/client/display.c
+@@ -27,6 +27,8 @@
+ #include <sys/un.h>
+ #include <arpa/inet.h>
+ #include <string.h>
++/* for MIN macro */
++#include <sys/sysmacros.h>
+ 
+ #include "../log.h"
+ #include "client.h"

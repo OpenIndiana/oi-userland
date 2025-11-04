@@ -14,17 +14,16 @@
 # Copyright 2021, 2022 Nona Hansel
 #
 
-BUILD_BITS=		64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.5.9
+COMPONENT_VERSION=	2.6.0
 COMPONENT_SUMMARY=	Text-mode interface for git
 COMPONENT_DESCRIPTION=	Tig is an ncurses-based text-mode interface for git. It functions mainly as a Git repository browser, but can also assist in staging changes for commit at chunk level and act as a pager for output from various Git commands.
 COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0cb4d9e3de00dc92aaa7996e1517845bd9b9a0d4368f3206f618d813e8db8b39
+COMPONENT_ARCHIVE_HASH= sha256:99d4a0fdd3d93547ebacfe511195cb92e4f75b91644c06293c067f401addeb3e
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/tig
 COMPONENT_CLASSIFICATION= Development/Source Code Management
@@ -40,9 +39,6 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-# Place the config file in /etc
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-
 CFLAGS += -I/usr/include/ncurses
 
 COMPONENT_INSTALL_TARGETS = install install-doc
@@ -55,6 +51,6 @@ COMPONENT_TEST_TARGETS = test
 REQUIRED_PACKAGES += text/asciidoc
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += system/library

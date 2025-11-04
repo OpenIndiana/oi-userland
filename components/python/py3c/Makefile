@@ -14,17 +14,20 @@
 #   $WS_TOOLS/python-integrate-project py3c
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		py3c
 HUMAN_VERSION =			1.4
-COMPONENT_SUMMARY =		py3c - Python compatibility headers
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Python compatibility headers
 COMPONENT_PROJECT_URL =		http://py3c.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:abc745079ef906148817f4472c3fb4bc41d62a9ea51a746b53e09819494ac006
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.MIT
 
 # https://github.com/encukou/py3c/issues/56
 COMPONENT_ARCHIVE_URL =		\
@@ -44,12 +47,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 # Normalize special PYV case
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(cpython-\)$(shell echo $(PYTHON_VERSION) | tr -d .)/\1\$$(PYV)/'"
 
-# Make sure include files are included in right packages
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's|^.*usr/include/python\(3.[0-9]*\)[^0-9]|$$(PYTHON_\1_ONLY)&|'
 # Replace Python version in pkgconfig file names
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/\(py3c\.pc-\)3\.[0-9]*$$/\1$$(PYVER)/' | uniq
+GENERATE_EXTRA_SED += -e 's/\(py3c\.pc-\)3\.[0-9]*$$/\1$$(PYVER)/'
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

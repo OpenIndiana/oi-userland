@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::LeakTrace
+#   $WS_TOOLS/perl-integrate-module Test-LeakTrace
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::LeakTrace
+COMPONENT_NAME =		Test-LeakTrace
 HUMAN_VERSION =			0.17
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::LeakTrace - Traces memory leaks
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Traces memory leaks
 COMPONENT_CPAN_AUTHOR =		LEEJO
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:777d64d2938f5ea586300eef97ef03eacb43d4c1853c9c3b1091eb3311467970
@@ -33,5 +33,7 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += '-e "/^leaked /d"'
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

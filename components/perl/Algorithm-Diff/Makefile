@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Algorithm::Diff
+#   $WS_TOOLS/perl-integrate-module Algorithm-Diff
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Algorithm::Diff
+COMPONENT_NAME =		Algorithm-Diff
 HUMAN_VERSION =			1.201
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Algorithm::Diff - Compute \`intelligent' differences between two files / lists
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Compute \`intelligent' differences between two files / lists
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0022da5982645d9ef0207f3eb9ef63e70e9713ed2340ed7b3850779b0d842a7d
@@ -30,4 +30,5 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

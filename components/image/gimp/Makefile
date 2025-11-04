@@ -13,18 +13,20 @@
 # Copyright (c) 2019 Tim Mooney
 #
 
+BUILD_STYLE = meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	2.10.36
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	3.0.6
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:3d3bc3c69a4bdb3aea9ba2d5385ed98ea03953f3857aafd1d6976011ed7cdbb2
-COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/gimp/v2.10/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:246c225383c72ef9f0dc7703b7d707084bbf177bd2900e94ce466a62862e296b
+COMPONENT_ARCHIVE_URL=	https://download.gimp.org/gimp/v3.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/gimp
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
 COMPONENT_LICENSE=	GPLv3
@@ -34,60 +36,38 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-# Gimp depends on Python 2.7 still:
-PYTHON_VERSION= 2.7
-PYTHON=/usr/bin/$(MACH64)/python2.7
+LDFLAGS += -lsocket -lnsl
 
-CFLAGS += -I/usr/include/glib-2.0 -I/usr/lib/$(MACH64)/glib-2.0/include
-CFLAGS += -I/usr/include/libmng
-
-COMPONENT_PREP_ACTION =	( cd $(@D)  && \
-				PATH="$(PATH)" libtoolize --force &&\
-				intltoolize --force --copy --automake &&\
-				aclocal -I. &&\
-				automake -a -c -f &&\
-				autoconf)
-
-CONFIGURE_OPTIONS += --datarootdir=$(USRSHAREDIR)
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --enable-mp
-CONFIGURE_OPTIONS += --enable-default-binary
-CONFIGURE_OPTIONS += --enable-mmx=no
-CONFIGURE_OPTIONS += --with-lcms=2
 
-CONFIGURE_ENV+= PYTHON=$(PYTHON)
+CONFIGURE_ENV += PYTHON=$(PYTHON)
 
-COMPONENT_POST_CONFIGURE_ACTION = \
-		( cd $(@D) && \
-		  $(GSED) -e 's@^ECHO=.*@ECHO="echo"@g' libtool > print.patch && \
-		  $(MV) print.patch libtool && \
-		  $(CHMOD) 755 libtool && \
-		  $(RM) print.patch )
+# Tell g-ir-scanner not to cache results in homedir of user running the build
+COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
 # Replace "#!/usr/bin/env ..." shebang lines with properly versioned ones.
-COMPONENT_POST_INSTALL_ACTION = \
-        /usr/bin/find $(PROTO_DIR) -name *.py \
-                -exec $(GSED) -i -e '1s|env python.*|$(MACH64)/python$(PYTHON_VERSION)|' "{}" \; ;
+COMPONENT_POST_INSTALL_ACTION+= \
+	/usr/bin/find $(PROTO_DIR) -name *.py \
+		-exec $(GSED) -i -e '1s|env python.*|python$(PYTHON_VERSION)|' "{}" \; ;
 
-# Tests need a display and some fail.
+COMPONENT_POST_INSTALL_ACTION+= \
+	/usr/bin/find $(PROTO_DIR) -name *.scm \
+		-exec $(GSED) -i -e '1s|env gimp-script-fu-interpreter|gimp-script-fu-interpreter|' "{}" \; ;
 
 # Build dependencies
-REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
+REQUIRED_PACKAGES += developer/vala
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject
-PYTHON_REQUIRED_PACKAGES += library/python/pygtk2
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
+REQUIRED_PACKAGES += desktop/appstream
 REQUIRED_PACKAGES += image/graphviz
 REQUIRED_PACKAGES += image/library/babl
 REQUIRED_PACKAGES += image/library/gegl
 REQUIRED_PACKAGES += image/library/gexiv2
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
@@ -96,12 +76,14 @@ REQUIRED_PACKAGES += library/aalib
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/json-glib
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/libmng
 REQUIRED_PACKAGES += library/lcms2
+REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/libmypaint
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libwebp
@@ -109,6 +91,7 @@ REQUIRED_PACKAGES += library/mypaint-brushes
 REQUIRED_PACKAGES += library/openexr
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += print/filter/ghostscript
+REQUIRED_PACKAGES += system/font/truetype/noto-emoji
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
 REQUIRED_PACKAGES += system/library/freetype-2

@@ -2,11 +2,9 @@ Changes for the build to work on Solaris
 
 Potentially suitable to send upstream
 
-diff --git a/Source/WTF/wtf/CurrentTime.cpp b/Source/WTF/wtf/CurrentTime.cpp
-index d7fb93f..aa9c14d 100644
---- a/Source/WTF/wtf/CurrentTime.cpp
-+++ b/Source/WTF/wtf/CurrentTime.cpp
-@@ -273,7 +273,7 @@ MonotonicTime MonotonicTime::now()
+--- webkitgtk-2.48.1/Source/WTF/wtf/CurrentTime.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/CurrentTime.cpp
+@@ -305,7 +305,7 @@
      return fromMachAbsoluteTime(mach_absolute_time());
  #elif OS(FUCHSIA)
      return fromRawSeconds(zx_clock_get_monotonic() / static_cast<double>(ZX_SEC(1)));
@@ -15,67 +13,60 @@ index d7fb93f..aa9c14d 100644
      struct timespec ts { };
      clock_gettime(CLOCK_MONOTONIC, &ts);
      return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
-diff --git a/Source/WTF/wtf/NumberOfCores.cpp b/Source/WTF/wtf/NumberOfCores.cpp
-index 7636865..59fd2f7 100644
---- a/Source/WTF/wtf/NumberOfCores.cpp
-+++ b/Source/WTF/wtf/NumberOfCores.cpp
-@@ -30,7 +30,7 @@
+--- webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp
+@@ -31,7 +31,7 @@
  
  #if OS(DARWIN)
  #include <sys/sysctl.h>
--#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
-+#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
  #include <unistd.h>
  #elif OS(WINDOWS)
  #include <windows.h>
-@@ -65,7 +65,7 @@ int numberOfProcessorCores()
+@@ -68,7 +68,7 @@
      int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
  
      s_numberOfCores = sysctlResult < 0 ? defaultIfUnavailable : result;
--#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
-+#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD)
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
      long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
  
      s_numberOfCores = sysconfResult < 0 ? defaultIfUnavailable : static_cast<int>(sysconfResult);
-diff --git a/Source/WTF/wtf/PageBlock.h b/Source/WTF/wtf/PageBlock.h
-index c655a50..be6f1a4 100644
---- a/Source/WTF/wtf/PageBlock.h
-+++ b/Source/WTF/wtf/PageBlock.h
-@@ -49,7 +49,7 @@ namespace WTF {
+--- webkitgtk-2.48.1/Source/WTF/wtf/PageBlock.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/PageBlock.h
+@@ -53,7 +53,7 @@
  // Use 64 KiB for any unknown CPUs to be conservative.
- #if OS(DARWIN) || PLATFORM(PLAYSTATION)
+ #if OS(DARWIN) || PLATFORM(PLAYSTATION) || CPU(MIPS) || CPU(MIPS64) || CPU(LOONGARCH64) || (OS(LINUX) && CPU(ARM64) && !USE(64KB_PAGE_BLOCK))
  constexpr size_t CeilingOnPageSize = 16 * KB;
 -#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
 +#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SPARC) || CPU(UNKNOWN)
  constexpr size_t CeilingOnPageSize = 64 * KB;
- #elif OS(WINDOWS) || CPU(MIPS) || CPU(MIPS64) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64)
+ #elif OS(WINDOWS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
  constexpr size_t CeilingOnPageSize = 4 * KB;
- 
-diff --git a/Source/WTF/wtf/PlatformHave.h b/Source/WTF/wtf/PlatformHave.h
-index 41afbb4..9e5d453 100644
---- a/Source/WTF/wtf/PlatformHave.h
-+++ b/Source/WTF/wtf/PlatformHave.h
-@@ -229,16 +229,16 @@
+--- webkitgtk-2.48.1/Source/WTF/wtf/PlatformHave.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/PlatformHave.h
+@@ -237,16 +237,16 @@
  #define HAVE_HOSTED_CORE_ANIMATION 1
  #endif
  
--#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
-+#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX)) && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS) || CPU(RISCV64)))
+-#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
++#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
  #define HAVE_MACHINE_CONTEXT 1
  #endif
  
--#if OS(DARWIN) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
-+#if OS(DARWIN) || OS(SOLARIS) || (OS(LINUX) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+-#if OS(DARWIN) || OS(HAIKU) || ((OS(LINUX) || OS(HURD)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
++#if OS(DARWIN) || OS(HAIKU) || OS(SOLARIS) || ((OS(LINUX) || OS(HURD)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
  #define HAVE_BACKTRACE 1
  #define HAVE_BACKTRACE_SYMBOLS 1
  #endif
  
--#if OS(DARWIN) || OS(LINUX)
-+#if OS(DARWIN) || OS(LINUX) || OS(SOLARIS)
+-#if OS(DARWIN) || OS(HAIKU) || OS(LINUX) || OS(HURD)
++#if OS(DARWIN) || OS(HAIKU) || OS(SOLARIS) || OS(LINUX) || OS(HURD)
  #define HAVE_DLADDR 1
  #endif
  
-@@ -376,7 +376,7 @@
+@@ -402,7 +402,7 @@
  #define HAVE_URL_FORMATTING 1
  #endif
  
@@ -84,12 +75,10 @@ index 41afbb4..9e5d453 100644
  #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
  #endif
  
-diff --git a/Source/WTF/wtf/PlatformOS.h b/Source/WTF/wtf/PlatformOS.h
-index be27911..a5216ba 100644
---- a/Source/WTF/wtf/PlatformOS.h
-+++ b/Source/WTF/wtf/PlatformOS.h
-@@ -114,6 +114,11 @@
- #define WTF_OS_OPENBSD 1
+--- webkitgtk-2.48.1/Source/WTF/wtf/PlatformOS.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/PlatformOS.h
+@@ -121,6 +121,11 @@
+ #define WTF_OS_QNX 1
  #endif
  
 +/* OS(SOLARIS) - Solaris */
@@ -100,7 +89,7 @@ index be27911..a5216ba 100644
  /* OS(WINDOWS) - Any version of Windows */
  #if defined(WIN32) || defined(_WIN32)
  #define WTF_OS_WINDOWS 1
-@@ -129,6 +134,7 @@
+@@ -136,6 +141,7 @@
      || OS(LINUX)            \
      || OS(NETBSD)           \
      || OS(OPENBSD)          \
@@ -108,10 +97,8 @@ index be27911..a5216ba 100644
      || defined(unix)        \
      || defined(__unix)      \
      || defined(__unix__)
-diff --git a/Source/WTF/wtf/StackBounds.cpp b/Source/WTF/wtf/StackBounds.cpp
-index e6f7095..8fb3955 100644
---- a/Source/WTF/wtf/StackBounds.cpp
-+++ b/Source/WTF/wtf/StackBounds.cpp
+--- webkitgtk-2.48.1/Source/WTF/wtf/StackBounds.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/StackBounds.cpp
 @@ -29,6 +29,10 @@
  
  #include <windows.h>
@@ -120,10 +107,10 @@ index e6f7095..8fb3955 100644
 +
 +#include <thread.h>
 +
- #elif OS(UNIX)
+ #elif OS(UNIX) || OS(HAIKU)
  
  #include <pthread.h>
-@@ -65,6 +69,17 @@ StackBounds StackBounds::currentThreadStackBoundsInternal()
+@@ -81,6 +85,17 @@
      return newThreadStackBounds(pthread_self());
  }
  
@@ -138,14 +125,12 @@ index e6f7095..8fb3955 100644
 +    return StackBounds { origin, bound };
 +}
 +
- #elif OS(UNIX)
+ #elif OS(UNIX) || OS(HAIKU)
  
  #if OS(OPENBSD)
-diff --git a/Source/WebCore/inspector/InspectorFrontendHost.cpp b/Source/WebCore/inspector/InspectorFrontendHost.cpp
-index 6577423..b882b9e 100644
---- a/Source/WebCore/inspector/InspectorFrontendHost.cpp
-+++ b/Source/WebCore/inspector/InspectorFrontendHost.cpp
-@@ -386,6 +386,8 @@ String InspectorFrontendHost::platform() const
+--- webkitgtk-2.48.1/Source/WebCore/inspector/InspectorFrontendHost.cpp.orig
++++ webkitgtk-2.48.1/Source/WebCore/inspector/InspectorFrontendHost.cpp
+@@ -414,6 +414,8 @@
      return "freebsd"_s;
  #elif OS(OPENBSD)
      return "openbsd"_s;
@@ -154,58 +139,67 @@ index 6577423..b882b9e 100644
  #else
      return "unknown"_s;
  #endif
---- webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h.~1~	2023-09-19 04:27:45.475782200 -0400
-+++ webkitgtk-2.42.5/Source/JavaScriptCore/runtime/MachineContext.h	2024-02-18 01:24:47.690986457 -0500
+--- webkitgtk-2.48.1/Source/JavaScriptCore/runtime/MachineContext.h.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/runtime/MachineContext.h
 @@ -33,6 +33,7 @@
  #include <wtf/PlatformRegisters.h>
  #include <wtf/PointerPreparations.h>
  #include <wtf/StdLibExtras.h>
 +#include <sys/regset.h>
  
- namespace JSC {
- namespace MachineContext {
-@@ -193,7 +194,7 @@
+ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+ 
+@@ -182,7 +183,7 @@
  #error Unknown Architecture
  #endif
  
--#elif OS(FUCHSIA) || OS(LINUX)
-+#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
  
- #if CPU(X86)
-     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESP]);
-@@ -338,7 +339,7 @@
+ #if CPU(X86_64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RSP]);
+@@ -305,7 +306,7 @@
  #error Unknown Architecture
  #endif
  
--#elif OS(FUCHSIA) || OS(LINUX)
-+#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
  
  // The following sequence depends on glibc's sys/ucontext.h.
- #if CPU(X86)
-@@ -496,7 +497,7 @@
+ #if CPU(X86_64)
+@@ -467,7 +468,7 @@
  #error Unknown Architecture
  #endif
  
--#elif OS(FUCHSIA) || OS(LINUX)
-+#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
  
  // The following sequence depends on glibc's sys/ucontext.h.
- #if CPU(X86)
-@@ -652,7 +653,7 @@
+ #if CPU(X86_64)
+@@ -655,7 +656,7 @@
  #error Unknown Architecture
  #endif
  
--#elif OS(FUCHSIA) || OS(LINUX)
-+#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
  
  // The following sequence depends on glibc's sys/ucontext.h.
- #if CPU(X86)
-@@ -787,7 +788,7 @@
+ #if CPU(X86_64)
+@@ -712,7 +713,7 @@
  #error Unknown Architecture
  #endif
  
--#elif OS(FUCHSIA) || OS(LINUX)
-+#elif OS(FUCHSIA) || OS(LINUX) || OS(SOLARIS)
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
  
  // The following sequence depends on glibc's sys/ucontext.h.
- #if CPU(X86)
+ #if CPU(X86_64)
+@@ -834,7 +835,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)

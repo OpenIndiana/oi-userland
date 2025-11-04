@@ -1,0 +1,77 @@
+We do not have whey-conda and whey-pth packaged yet.
+
+--- whey-0.1.1/tests/requirements.txt.orig
++++ whey-0.1.1/tests/requirements.txt
+@@ -9,5 +9,3 @@
+ pytest-randomly>=3.7.0
+ pytest-timeout>=1.4.2
+ re-assert>=1.1.0
+-whey-conda>=0.1.0
+-whey-pth>=0.0.4
+--- whey-0.1.1/tests/test_utils.py.orig
++++ whey-0.1.1/tests/test_utils.py
+@@ -7,8 +7,6 @@
+ from coincidence.regressions import AdvancedDataRegressionFixture, AdvancedFileRegressionFixture
+ from domdf_python_tools.paths import PathPlus
+ from pyproject_examples import MINIMAL_CONFIG
+-from whey_conda import CondaBuilder
+-from whey_pth import PthWheelBuilder
+ 
+ # this package
+ from whey.builder import AbstractBuilder, SDistBuilder, WheelBuilder
+@@ -26,9 +24,7 @@
+ 				pytest.param(MINIMAL_CONFIG, id="default"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nsdist = "whey_sdist"', id="sdist"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nwheel = "whey_wheel"', id="wheel"),
+-				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nwheel = "whey_pth_wheel"', id="whey_pth"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nbinary = "whey_wheel"', id="binary_wheel"),
+-				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nbinary = "whey_conda"', id="binary_conda"),
+ 				pytest.param(
+ 						f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nsdist = "whey_sdist"\nwheel = "whey_wheel"',
+ 						id="sdist_and_wheel",
+@@ -49,8 +45,6 @@
+ 		"custom_builders",
+ 		[
+ 				pytest.param({}, id="none"),
+-				pytest.param({"whey_conda": CondaBuilder}, id="whey_conda"),
+-				pytest.param({"whey_pth": PthWheelBuilder}, id="whey_pth"),
+ 				]
+ 		)
+ def test_print_builder_names(
+@@ -78,11 +72,6 @@
+ 
+ 	assert parse_custom_builders(["whey_sdist"]) == {"whey_sdist": SDistBuilder}
+ 	assert parse_custom_builders(["whey_wheel"]) == {"whey_wheel": WheelBuilder}
+-	assert parse_custom_builders(["whey_conda"]) == {"whey_conda": CondaBuilder}
+-	assert parse_custom_builders(["whey_pth_wheel"]) == {"whey_pth_wheel": PthWheelBuilder}
+-
+-	expected = {"whey_conda": CondaBuilder, "whey_pth_wheel": PthWheelBuilder}
+-	assert parse_custom_builders(["whey_conda", "whey_pth_wheel"]) == expected
+ 
+ 	with pytest.raises(
+ 			click.BadArgumentUsage,
+--- whey-0.1.1/tests/test_cli.py.orig
++++ whey-0.1.1/tests/test_cli.py
+@@ -565,9 +565,7 @@
+ 				pytest.param(MINIMAL_CONFIG, id="default"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nsdist = "whey_sdist"', id="sdist"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nwheel = "whey_wheel"', id="wheel"),
+-				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nwheel = "whey_pth_wheel"', id="whey_pth"),
+ 				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nbinary = "whey_wheel"', id="binary_wheel"),
+-				pytest.param(f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nbinary = "whey_conda"', id="binary_conda"),
+ 				pytest.param(
+ 						f'{MINIMAL_CONFIG}\n[tool.whey.builders]\nsdist = "whey_sdist"\nwheel = "whey_wheel"',
+ 						id="sdist_and_wheel",
+@@ -582,12 +580,6 @@
+ 				pytest.param(["--wheel"], id="wheel"),
+ 				pytest.param(["--binary"], id="binary"),
+ 				pytest.param(["--binary", "--sdist"], id="binary_and_sdist"),
+-				pytest.param(["--builder", "whey_conda"], id="whey_conda"),
+-				pytest.param(["--builder", "whey_conda", "--sdist"], id="whey_conda_and_sdist"),
+-				pytest.param(
+-						["--builder", "whey_pth_wheel", "--builder", "whey_conda"],
+-						id="whey_conda_and_whey_pth",
+-						),
+ 				]
+ 		)
+ def test_show_builders(

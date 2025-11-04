@@ -11,16 +11,10 @@
 # Copyright (c) 2017, Aurelien Larcher. All rights reserved.
 #
 
-# All X11 components should now prefer 64-bits unless specified
-
-PREFERRED_BITS=64
-
 #
 # General macros
 #
 PKG_X11_VERSION=7.7
-
-X11_COMPONENTS_DIR = $(WS_COMPONENTS)/x11
 
 #
 # Provide macros for commonly used urls
@@ -28,7 +22,6 @@ X11_COMPONENTS_DIR = $(WS_COMPONENTS)/x11
 
 XORG_PROJECT_URL = https://www.x.org/
 XORG_BASE_URL    = https://www.x.org/releases/individual
-SOLARIS_XORG_URL = https://github.com/oracle/solaris-userland
 
 XORG_APP_BASE_URL     = $(XORG_BASE_URL)/app
 XORG_DATA_BASE_URL    = $(XORG_BASE_URL)/data
@@ -60,7 +53,6 @@ endif
 # Set defaults for X11 applications
 #
 ifeq ($(strip $(X11_CATEGORY)),APP)
-BUILD_BITS = 64
 PATH=$(PATH.gnu)
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE        = MIT License
@@ -70,7 +62,6 @@ endif
 # Set defaults for X11 utilities
 #
 ifeq ($(strip $(X11_CATEGORY)),UTIL)
-BUILD_BITS = 64
 PATH=$(PATH.gnu)
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE        = MIT License
@@ -80,7 +71,6 @@ endif
 # Set defaults for X11 documentation
 #
 ifeq ($(strip $(X11_CATEGORY)),DOC)
-BUILD_BITS = 64
 PATH=$(PATH.gnu)
 COMPONENT_CLASSIFICATION = System/X11
 COMPONENT_LICENSE        = MIT License
@@ -100,7 +90,6 @@ endif
 # Set defaults for X11 drivers
 #
 ifeq ($(strip $(X11_CATEGORY)),DRIVER)
-BUILD_BITS = 64
 PATH=$(PATH.gnu)
 ifneq (,$(findstring video,$(COMPONENT_NAME)))
 COMPONENT_CLASSIFICATION = Drivers/Display
@@ -110,7 +99,7 @@ endif
 COMPONENT_LICENSE        = MIT License
 COMPONENT_LICENSE_FILE   = COPYING
 COMPONENT_PREP_ACTION = ( cd $(@D) && \
-                          libtoolize --automake --copy --force && \
+                          PATH="$(PATH)" libtoolize --automake --copy --force && \
                           aclocal && \
                           autoheader && \
                           automake -a -f -c && \

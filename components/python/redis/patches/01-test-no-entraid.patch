@@ -1,0 +1,85 @@
+We have no redis-entraid packaged.
+
+--- redis-py-6.2.0/dev_requirements.txt.orig
++++ redis-py-6.2.0/dev_requirements.txt
+@@ -13,4 +13,3 @@
+ uvloop
+ vulture>=2.3.0
+ numpy>=1.24.0
+-redis-entraid==1.0.0
+--- redis-py-6.2.0/tests/test_asyncio/test_credentials.py.orig
++++ redis-py-6.2.0/tests/test_asyncio/test_credentials.py
+@@ -18,7 +18,6 @@
+ from redis.exceptions import ConnectionError
+ from redis.utils import str_if_bytes
+ from tests.conftest import get_endpoint, skip_if_redis_enterprise
+-from tests.entraid_utils import AuthType
+ from tests.test_asyncio.conftest import get_credential_provider
+ 
+ try:
+@@ -617,12 +616,8 @@
+                 "cred_provider_class": EntraIdCredentialsProvider,
+                 "cred_provider_kwargs": {"block_for_initial": True},
+             },
+-            {
+-                "cred_provider_class": EntraIdCredentialsProvider,
+-                "idp_kwargs": {"auth_type": AuthType.DEFAULT_AZURE_CREDENTIAL},
+-            },
+         ],
+-        ids=["blocked", "non-blocked", "DefaultAzureCredential"],
++        ids=["blocked", "non-blocked"],
+         indirect=True,
+     )
+     @pytest.mark.asyncio
+@@ -697,12 +692,8 @@
+                 "cred_provider_class": EntraIdCredentialsProvider,
+                 "cred_provider_kwargs": {"block_for_initial": True},
+             },
+-            {
+-                "cred_provider_class": EntraIdCredentialsProvider,
+-                "idp_kwargs": {"auth_type": AuthType.DEFAULT_AZURE_CREDENTIAL},
+-            },
+         ],
+-        ids=["blocked", "non-blocked", "DefaultAzureCredential"],
++        ids=["blocked", "non-blocked"],
+         indirect=True,
+     )
+     @pytest.mark.asyncio
+--- redis-py-6.2.0/tests/test_credentials.py.orig
++++ redis-py-6.2.0/tests/test_credentials.py
+@@ -22,7 +22,6 @@
+     get_endpoint,
+     skip_if_redis_enterprise,
+ )
+-from tests.entraid_utils import AuthType
+ 
+ try:
+     from redis_entraid.cred_provider import EntraIdCredentialsProvider
+@@ -586,12 +585,8 @@
+                 "cred_provider_class": EntraIdCredentialsProvider,
+                 "single_connection_client": True,
+             },
+-            {
+-                "cred_provider_class": EntraIdCredentialsProvider,
+-                "idp_kwargs": {"auth_type": AuthType.DEFAULT_AZURE_CREDENTIAL},
+-            },
+         ],
+-        ids=["pool", "single", "DefaultAzureCredential"],
++        ids=["pool", "single"],
+         indirect=True,
+     )
+     @pytest.mark.onlynoncluster
+@@ -661,12 +656,8 @@
+                 "cred_provider_class": EntraIdCredentialsProvider,
+                 "single_connection_client": True,
+             },
+-            {
+-                "cred_provider_class": EntraIdCredentialsProvider,
+-                "idp_kwargs": {"auth_type": AuthType.DEFAULT_AZURE_CREDENTIAL},
+-            },
+         ],
+-        ids=["pool", "single", "DefaultAzureCredential"],
++        ids=["pool", "single"],
+         indirect=True,
+     )
+     @pytest.mark.onlycluster

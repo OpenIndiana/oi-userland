@@ -23,18 +23,17 @@
 # Copyright (c) 2023, Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		chrony
-COMPONENT_VERSION=	4.5
+COMPONENT_VERSION=	4.6.1
 COMPONENT_SUMMARY=	network time services
 COMPONENT_DESCRIPTION=	A versatile implementation of the Network Time Protocol (NTP)
 COMPONENT_PROJECT_URL=	https://chrony-project.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:19fe1d9f4664d445a69a96c71e8fdb60bcd8df24c73d1386e02287f7366ad422
+COMPONENT_ARCHIVE_HASH= sha256:571ff73fbf0ae3097f0604eca2e00b1d8bb2e91affe1a3494785ff21d6199c5c
 COMPONENT_SIG_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_SRC)-tar-gz-asc.txt
 COMPONENT_FMRI=	service/network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Services
@@ -54,8 +53,6 @@ CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS += --disable-shared
 CONFIGURE_OPTIONS += --enable-ntp-signd
 CONFIGURE_OPTIONS += --with-user=chrony
-
-unexport SHELLOPTS
 
 COMPONENT_TEST_TRANSFORMS += \
 	' -n ' \

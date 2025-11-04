@@ -1,0 +1,13 @@
+uudecode is 32-bit and so we cannot preload the 64-bit libfakeroot there.
+
+--- fakeroot-1.31/test/tartest.orig
++++ fakeroot-1.31/test/tartest
+@@ -75,7 +75,7 @@
+ 
+ 
+ rm -f tartest.tar.gz
+-uudecode ${SRCDIR}/tartest.tar.gz.uue
++LD_PRELOAD= uudecode ${SRCDIR}/tartest.tar.gz.uue
+ 
+ tar -cf - tar | gzip -9 > faketar.tar.gz
+ 

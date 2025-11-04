@@ -1,0 +1,28 @@
+--- build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nix-0.29.0/src/sys/resource.rs.~1~	2006-07-23 21:21:28.000000000 -0400
++++ build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nix-0.29.0/src/sys/resource.rs	2025-04-23 23:13:37.797654327 -0400
+@@ -19,6 +19,7 @@
+         bsd,
+         target_os = "android",
+         target_os = "aix",
++        target_os = "illumos",
+         all(target_os = "linux", not(target_env = "gnu"))
+     ))]{
+         use libc::rlimit;
+@@ -49,6 +50,7 @@
+             bsd,
+             target_os = "android",
+             target_os = "aix",
++            target_os = "illumos",
+             all(target_os = "linux", not(any(target_env = "gnu", target_env = "uclibc")))
+         ), repr(i32))]
+     #[non_exhaustive]
+--- build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nix-0.29.0/src/sys/mod.rs.old	2025-04-23 23:24:02.308271091 -0400
++++ build/amd64/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nix-0.29.0/src/sys/mod.rs	2025-04-23 23:24:23.689171148 -0400
+@@ -88,7 +88,6 @@
+ #[cfg(not(any(
+     target_os = "redox",
+     target_os = "fuchsia",
+-    solarish,
+     target_os = "haiku"
+ )))]
+ feature! {

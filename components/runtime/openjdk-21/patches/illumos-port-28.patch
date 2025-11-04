@@ -1,0 +1,13 @@
+--- jdk21u-jdk-21.0.7-ga/make/common/TestFilesCompilation.gmk~	Wed Apr  9 20:45:47 2025
++++ jdk21u-jdk-21.0.7-ga/make/common/TestFilesCompilation.gmk	Wed Apr 16 13:46:56 2025
+@@ -61,7 +61,9 @@
+ 
+   ifeq ($(TOOLCHAIN_TYPE), gcc)
+     TEST_CFLAGS += -fvisibility=hidden
+-    TEST_LDFLAGS += -Wl,--exclude-libs,ALL
++    ifneq ($(OPENJDK_TARGET_OS), solaris)
++      TEST_LDFLAGS += -Wl,--exclude-libs,ALL
++    endif
+   else ifeq ($(TOOLCHAIN_TYPE), clang)
+     TEST_CFLAGS += -fvisibility=hidden
+   endif

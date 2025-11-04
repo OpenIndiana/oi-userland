@@ -1,0 +1,249 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python -m pytest --durations 10 --junitxml $(@D)/.tox/py$(PYV)/tmp/junit.xml --no-cov-on-fail --cov filelock --cov $(@D)/tests --cov-config $(@D)/pyproject.toml --cov-context test --cov-report term-missing:skip-covered --cov-report html:$(@D)/.tox/py$(PYV)/tmp/htmlcov --cov-report xml:$(@D)/.tox/py$(PYV)/tmp/coverage.xml tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pyproject.toml
+asyncio: mode=strict, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
+collecting ... collected 170 items
+
+tests/test_async_filelock.py::test_simple[a-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[a-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new/b-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_simple[new2/new3/c-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[a-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new/b-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-str-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-str-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-PurePath-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-PurePath-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-Path-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_acquire[new2/new3/c-Path-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_blocking[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_blocking[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[True-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[True-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[False-AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_non_executor[False-AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_coroutine_function PASSED
+tests/test_async_filelock.py::test_wait_message_logged[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_wait_message_logged[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire_branch[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire_branch[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_thread_local_run_in_executor PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_acquire[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_release[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_attempting_to_release[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_early_exit_when_unlocked[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_early_exit_when_unlocked[AsyncSoftFileLock] PASSED
+tests/test_async_filelock.py::test_release_nonzero_counter_exit[AsyncUnixFileLock] PASSED
+tests/test_async_filelock.py::test_release_nonzero_counter_exit[AsyncSoftFileLock] PASSED
+tests/test_error.py::test_timeout_str PASSED
+tests/test_error.py::test_timeout_repr PASSED
+tests/test_error.py::test_timeout_lock_file PASSED
+tests/test_error.py::test_timeout_pickle PASSED
+tests/test_filelock.py::test_simple[a-str-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[a-str-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[a-PurePath-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[a-PurePath-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[a-Path-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[a-Path-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-str-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-str-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-PurePath-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-PurePath-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-Path-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new/b-Path-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-str-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-str-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-PurePath-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-PurePath-SoftFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-Path-UnixFileLock] PASSED
+tests/test_filelock.py::test_simple[new2/new3/c-Path-SoftFileLock] PASSED
+tests/test_filelock.py::test_ro_folder[UnixFileLock] PASSED
+tests/test_filelock.py::test_ro_folder[SoftFileLock] PASSED
+tests/test_filelock.py::test_ro_file[UnixFileLock] PASSED
+tests/test_filelock.py::test_ro_file[SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[blank_filename-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[null_byte-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[current_directory-UnixFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[current_directory-SoftFileLock] PASSED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_<-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_>-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_:-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_"-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_|-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_?-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_*-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[invalid_\x07-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_/-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_/-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-UnixFileLock] SKIPPED
+tests/test_filelock.py::test_bad_lock_file[permission_\\-SoftFileLock] SKIPPED
+tests/test_filelock.py::test_nested_context_manager[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_context_manager[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_acquire[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_acquire[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_forced_release[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_forced_release[SoftFileLock] PASSED
+tests/test_filelock.py::test_nested_contruct[UnixFileLock] PASSED
+tests/test_filelock.py::test_nested_contruct[SoftFileLock] PASSED
+tests/test_filelock.py::test_threaded_shared_lock_obj[UnixFileLock] PASSED
+tests/test_filelock.py::test_threaded_shared_lock_obj[SoftFileLock] PASSED
+tests/test_filelock.py::test_threaded_lock_different_lock_obj[UnixFileLock] PASSED
+tests/test_filelock.py::test_threaded_lock_different_lock_obj[SoftFileLock] PASSED
+tests/test_filelock.py::test_timeout[UnixFileLock] PASSED
+tests/test_filelock.py::test_timeout[SoftFileLock] PASSED
+tests/test_filelock.py::test_non_blocking[UnixFileLock] PASSED
+tests/test_filelock.py::test_non_blocking[SoftFileLock] PASSED
+tests/test_filelock.py::test_default_timeout[UnixFileLock] PASSED
+tests/test_filelock.py::test_default_timeout[SoftFileLock] PASSED
+tests/test_filelock.py::test_context_release_on_exc[UnixFileLock] PASSED
+tests/test_filelock.py::test_context_release_on_exc[SoftFileLock] PASSED
+tests/test_filelock.py::test_acquire_release_on_exc[UnixFileLock] PASSED
+tests/test_filelock.py::test_acquire_release_on_exc[SoftFileLock] PASSED
+tests/test_filelock.py::test_del[UnixFileLock] PASSED
+tests/test_filelock.py::test_del[SoftFileLock] PASSED
+tests/test_filelock.py::test_cleanup_soft_lock PASSED
+tests/test_filelock.py::test_poll_intervall_deprecated[UnixFileLock] PASSED
+tests/test_filelock.py::test_poll_intervall_deprecated[SoftFileLock] PASSED
+tests/test_filelock.py::test_context_decorator[UnixFileLock] PASSED
+tests/test_filelock.py::test_context_decorator[SoftFileLock] PASSED
+tests/test_filelock.py::test_lock_mode PASSED
+tests/test_filelock.py::test_lock_mode_soft PASSED
+tests/test_filelock.py::test_umask PASSED
+tests/test_filelock.py::test_umask_soft PASSED
+tests/test_filelock.py::test_wrong_platform PASSED
+tests/test_filelock.py::test_flock_not_implemented_unix PASSED
+tests/test_filelock.py::test_soft_errors PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_passing_lock_to_threads[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_global_lock[SoftFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[UnixFileLock] PASSED
+tests/test_filelock.py::test_thrashing_with_thread_pool_lock_recreated_in_each_thread[SoftFileLock] PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[UnixFileLock] PASSED
+tests/test_filelock.py::test_lock_can_be_non_thread_local[SoftFileLock] PASSED
+tests/test_filelock.py::test_subclass_compatibility PASSED
+tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_and_non_singleton_locks_are_distinct[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_the_same[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_the_same[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_distinct_per_lock_file[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_must_be_initialized_with_the_same_args[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_must_be_initialized_with_the_same_args[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_are_deleted_when_no_external_references_exist[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[UnixFileLock] PASSED
+tests/test_filelock.py::test_singleton_instance_tracking_is_unique_per_subclass[SoftFileLock] PASSED
+tests/test_filelock.py::test_singleton_locks_when_inheriting_init_is_called_once PASSED
+tests/test_filelock.py::test_file_lock_positional_argument PASSED
+tests/test_filelock.py::test_mtime_zero_exit_branch[SoftFileLock-TimeoutError] PASSED
+tests/test_filelock.py::test_mtime_zero_exit_branch[UnixFileLock-PermissionError] PASSED
+tests/test_virtualenv.py::test_virtualenv PASSED
+
+- generated xml file: $(@D)/.tox/py$(PYV)/tmp/junit.xml -
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
+
+Name                                                                                                                                  Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/__init__.py      22      4      2      1    79%   41-44
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/filelock/_unix.py         38      2      4      0    95%   31-32
+tests/test_filelock.py                                                                                                                  514      1     22      1    99%   546
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                  1110      7     82      2    99%
+
+10 files skipped due to complete coverage.
+Coverage HTML written to dir $(@D)/.tox/py$(PYV)/tmp/htmlcov
+Coverage XML written to file $(@D)/.tox/py$(PYV)/tmp/coverage.xml
+Required test coverage of 76.0% reached. Total coverage: 99.24%
+============================= slowest 10 durations =============================
+======== 150 passed, 20 skipped ========
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+  py$(PYV): OK
+  congratulations :)

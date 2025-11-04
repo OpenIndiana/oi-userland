@@ -27,13 +27,16 @@
 
 source /lib/svc/share/smf_include.sh
 
+# set architecture.
+ARCH64=`/usr/bin/isainfo | awk '{print $1}'`
+
 typeset -r LDAPUSR=openldap
 typeset -r LDAPGRP=openldap
 typeset -r VARRUNDIR=/var/openldap/run
 typeset -r VARDATADIR=/var/openldap/openldap-data
 typeset -r PIDFILE=${VARRUNDIR}/slapd.pid
 typeset -r CONF_FILE=/etc/openldap/slapd.conf
-typeset -r SLAPD="/usr/lib/amd64/slapd -u ${LDAPUSR} -g ${LDAPGRP} -f ${CONF_FILE}"
+typeset -r SLAPD="/usr/lib/${ARCH64}/slapd -u ${LDAPUSR} -g ${LDAPGRP} -f ${CONF_FILE}"
 
 [[ ! -f ${CONF_FILE} ]] && exit $SMF_EXIT_ERR_CONFIG
 

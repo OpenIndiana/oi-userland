@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Variable::Magic
+#   $WS_TOOLS/perl-integrate-module Variable-Magic
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Variable::Magic
+COMPONENT_NAME =		Variable-Magic
 HUMAN_VERSION =			0.64
-COMPONENT_SUMMARY =		Variable::Magic - Associate user-defined magic to variables from Perl.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Associate user-defined magic to variables from Perl.
 COMPONENT_CPAN_AUTHOR =		VPIT
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:9f7853249c9ea3b4df92fb6b790c03a60680fc029f44c8bf9894dccf019516bd
@@ -29,5 +30,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

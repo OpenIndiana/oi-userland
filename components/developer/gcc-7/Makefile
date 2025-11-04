@@ -15,11 +15,12 @@
 #
 
 BUILD_BITS=32
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 7.5.0
 ILLUMOS_GCC_REVISION= 0
-COMPONENT_REVISION= 9
+COMPONENT_REVISION= 10
 COMPONENT_SRC_NAME= gcc-$(COMPONENT_VERSION)-oi-$(ILLUMOS_GCC_REVISION)
 COMPONENT_SRC= gcc-$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC_NAME).tar.gz
@@ -41,6 +42,11 @@ GMP_VERSION=6.1.2
 GMP_ARCHIVE_HASH= \
   sha256:5275bb04f4863a13516b2f39392ac5e272f5e1bb8057b18aec1c9b79d73d8fb2
 
+# gcc 10 or later is by default 64 bit.  This is unexpected here and causes the
+# build failure.  Since gcc 7 is being phasing out it is easier to force
+# building it using gcc 7 than to make it working properly using gcc 10 or
+# later.
+GCC_VERSION = 7
 
 include $(WS_MAKE_RULES)/gcc-component.mk
 
@@ -51,6 +57,19 @@ CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
 
-# Auto-generated dependencies
-REQUIRED_PACKAGES += library/gc
+PKG_HARDLINKS += usr/gcc/7/bin/g++
+PKG_HARDLINKS += usr/gcc/7/bin/gcc
+PKG_HARDLINKS += usr/gcc/7/bin/gcc-ar
+PKG_HARDLINKS += usr/gcc/7/bin/gcc-nm
+PKG_HARDLINKS += usr/gcc/7/bin/gcc-ranlib
+PKG_HARDLINKS += usr/gcc/7/bin/gfortran
 
+# Auto-generated dependencies
+REQUIRED_PACKAGES += developer/gnu-binutils
+REQUIRED_PACKAGES += developer/linker
+REQUIRED_PACKAGES += library/gc
+REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES += system/header
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/c-runtime
+REQUIRED_PACKAGES += system/library/math

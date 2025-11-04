@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         clutter
 COMPONENT_VERSION=      1.26.4
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      clutter - a library for creating fast, visually rich and animated graphical user interfaces
 COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/Clutter
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -47,7 +48,7 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/cogl
 REQUIRED_PACKAGES += library/desktop/gtk3

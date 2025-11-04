@@ -18,13 +18,13 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		PkgConfig
-HUMAN_VERSION =			0.25026
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		PkgConfig - Pure-Perl Core-Only replacement for pkg-config
+COMPONENT_NAME =		PkgConfig
+HUMAN_VERSION =			0.26026
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Pure-Perl Core-Only replacement for pkg-config
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4dba5ed3c2d6a681b95c5ebf14b6a6995ce6991ae4719bad7f1aaf38e987c2a0
+	sha256:5352ed156a4b5de8c523771ee399f6f8ce5e8bfcf8674f1e1dbd4a8c83643b85
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -37,4 +37,6 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^Testing PkgConfig .*, Perl .*/d"'
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/capture-tiny
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

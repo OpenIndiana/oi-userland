@@ -11,21 +11,18 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project setuptools-scm
+#   $WS_TOOLS/python-integrate-project -d python/setuptools-scm setuptools_scm
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		setuptools-scm
-HUMAN_VERSION =			8.0.4
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		setuptools-scm - the blessed package to manage your versions by scm tags
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/eb/b1/0248705f10f6de5eefe7ff93e399f7192257b23df4d431d2f5680bb2778f/setuptools-scm-8.0.4.tar.gz
+COMPONENT_NAME =		setuptools_scm
+HUMAN_VERSION =			9.2.2
+COMPONENT_SUMMARY =		the blessed package to manage your versions by scm tags
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b5f43ff6800669595193fd09891564ee9d1d7dcb196cab4b2506d53a2e1c95c7
+	sha256:1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - flit_scm (test bootstrap)
 # - hatch_vcs (test bootstrap)
 # - importlib_metadata
+# - iniconfig (test bootstrap)
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
 # - zipp
@@ -41,17 +39,26 @@ PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/PyO3/setuptools-rust/issues/358
-TEST_CONFLICTING_PACKAGES.python += library/python/setuptools-rust
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
+# https://github.com/pypa/setuptools-scm/issues/1204
+PYTEST_ADDOPTS += --deselect testing/test_functions.py::test_dump_version_mypy
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
+TEST_REQUIRED_PACKAGES.python += library/python/flake8
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/rich
-TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
+TEST_REQUIRED_PACKAGES.python += library/python/wheel

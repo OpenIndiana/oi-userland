@@ -1,0 +1,52 @@
+Gnucash attempts to set up en_US-like defaults in the C locale, but
+assumes the "grouping" and "mon_grouping" values will be set to the
+empty string in that locale.  Illumos insteads sets the grouping
+values to "\177\0" (which is a different way to express "no grouping".
+
+The report regression tests explicitly set the "C" locale and assume
+you'll get 3-digit grouping with commas in the C locale; with this
+patch, all of the regression tests now pass.
+
+--- gnucash-5.11/libgnucash/core-utils/gnc-locale-utils.c.~1~	Mon Nov 11 18:02:45 2024
++++ gnucash-5.11/libgnucash/core-utils/gnc-locale-utils.c	Thu May  1 18:25:20 2025
+@@ -65,7 +65,25 @@
+     }
+ }
+ 
++/*
++ * Force grouping if there is a separator but no grouping is set.
++ * Not ideal but seems to be necessary to get regression tests to
++ * pass on illumos (espcially since libstdc++ kills us in a non-C locale)
++ */
+ static void
++gnc_lconv_set_grouping (char **p_value, char *default_value, char *sep)
++{
++    char *value = *p_value;
++
++    if ((value == NULL) || (value[0] == 0)) {
++	*p_value = default_value;
++	return;
++    }
++    if ((value[0] == CHAR_MAX) && sep != NULL && sep[0] != 0)
++	*p_value = default_value;
++}
++
++static void
+ gnc_lconv_set_char (char *p_value, char default_value)
+ {
+     if ((p_value != NULL) && (*p_value == CHAR_MAX))
+@@ -85,12 +103,12 @@
+ 
+     gnc_lconv_set_utf8(&lc.decimal_point, ".");
+     gnc_lconv_set_utf8(&lc.thousands_sep, ",");
+-    gnc_lconv_set_utf8(&lc.grouping, "\003");
++    gnc_lconv_set_grouping(&lc.grouping, "\003", lc.thousands_sep);
+     gnc_lconv_set_utf8(&lc.int_curr_symbol, "USD ");
+     gnc_lconv_set_utf8(&lc.currency_symbol, "$");
+     gnc_lconv_set_utf8(&lc.mon_decimal_point, ".");
+     gnc_lconv_set_utf8(&lc.mon_thousands_sep, ",");
+-    gnc_lconv_set_utf8(&lc.mon_grouping, "\003");
++    gnc_lconv_set_grouping(&lc.mon_grouping, "\003", lc.mon_thousands_sep);
+     gnc_lconv_set_utf8(&lc.negative_sign, "-");
+     gnc_lconv_set_utf8(&lc.positive_sign, "");
+ 

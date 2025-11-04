@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Class::Inspector
+#   $WS_TOOLS/perl-integrate-module Class-Inspector
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Class::Inspector
+COMPONENT_NAME =		Class-Inspector
 HUMAN_VERSION =			1.36
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Class::Inspector - Get information about a class and its structure
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Get information about a class and its structure
 COMPONENT_CPAN_AUTHOR =		PLICEASE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:cc295d23a472687c24489d58226ead23b9fdc2588e522f0b5f0747741700694e
@@ -30,5 +30,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

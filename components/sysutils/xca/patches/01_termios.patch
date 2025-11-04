@@ -1,0 +1,16 @@
+--- xca-2.6.0/lib/arguments.cpp	2024-06-23 20:51:22.973597905 +0200
++++ xca-2.6.0/lib/arguments.cpp.new	2024-06-23 20:51:14.420511262 +0200
+@@ -11,6 +11,13 @@
+ #include "arguments.h"
+ 
+ #include <stdio.h>
++
++#ifdef __SOLARIS__
++#include <sys/termios.h>
++#include <unistd.h>
++#include <stropts.h>
++#endif
++
+ #include <QCommandLineParser>
+ #include <QRegularExpression>
+ 

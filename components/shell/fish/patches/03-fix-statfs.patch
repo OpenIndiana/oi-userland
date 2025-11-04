@@ -1,0 +1,19 @@
+--- fish-4.0.6/src/path.rs.~1~	2025-09-12 05:47:41.000000000 -0400
++++ fish-4.0.6/src/path.rs	2025-09-12 16:08:23.976139451 -0400
+@@ -737,14 +737,14 @@
+         }
+         // ST_LOCAL is a flag to statvfs, which is itself standardized.
+         // In practice the only system to define it is NetBSD.
+-        #[cfg(target_os = "netbsd")]
++        #[cfg(any(target_os = "netbsd", target_os = "illumos"))]
+         let remoteness = remoteness_via_statfs(
+             libc::statvfs,
+             |stat: &libc::statvfs| stat.f_flag,
+             crate::libc::ST_LOCAL(),
+             &narrow,
+         );
+-        #[cfg(not(target_os = "netbsd"))]
++        #[cfg(not(any(target_os = "netbsd", target_os = "illumos")))]
+         let remoteness = remoteness_via_statfs(
+             libc::statfs,
+             |stat: &libc::statfs| stat.f_flags,

@@ -1,0 +1,32 @@
+# erlang interface changed, so erl_interface head and lib are no longer required
+--- opendkim-2.10.3/opendkim/opendkim-db.c	2024-05-24 19:50:30.375945194 +0200
++++ opendkim-2.10.3/opendkim/opendkim-db.c.new	2024-05-24 19:50:20.050730616 +0200
+@@ -96,7 +96,7 @@
+ #endif /* USE_MDB */
+ #ifdef USE_ERLANG
+ # include <sys/time.h>
+-# include <erl_interface.h>
++//# include <erl_interface.h>
+ # include <ei.h>
+ #endif /* USE_ERLANG */
+ 
+--- opendkim-2.10.3/configure.ac	2024-05-24 19:18:13.441188792 +0200
++++ opendkim-2.10.3/configure.ac.new	2024-05-24 19:53:35.889471118 +0200
+@@ -2512,7 +2512,7 @@
+ 	AC_MSG_RESULT($erlbase)
+ 	LIBERL_INCDIRS="-I$erlbase/include"
+ 	LIBERL_LIBDIRS="-L$erlbase/lib"
+-	LIBERL_LIBS="-pthread -lerl_interface -lei"
++	LIBERL_LIBS="-pthread -lei"
+ 	AC_DEFINE([USE_ERLANG], 1, [support for erlang access])
+ 	erl_found="yes"
+ fi
+@@ -2525,7 +2525,7 @@
+ 		AC_MSG_RESULT($erlpath)
+ 		LIBERL_INCDIRS="-I$erlpath/include"
+ 		LIBERL_LIBDIRS="-L$erlpath/lib"
+-		LIBERL_LIBS="-pthread -lerl_interface -lei"
++		LIBERL_LIBS="-pthread -lei"
+ 		erl_found="yes"
+ 	else
+ 		AC_MSG_ERROR(not found at $erlpath)

@@ -26,40 +26,36 @@
 # Copyright 2024 Goetz Fischer, R-A-C. All rights reserved.
 #
 
-BUILD_BITS= 64
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_FMRI= runtime/erlang
 COMPONENT_NAME= erlang
-COMPONENT_VERSION= 26.2.3
+COMPONENT_VERSION= 28.1.1
 COMPONENT_REVISION= 1
+COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
+COMPONENT_SUMMARY= Erlang programming language and OTP libraries
 COMPONENT_PROJECT_URL= https://erlang.org/
 COMPONENT_SRC_NAME= otp_src
 COMPONENT_SRC= $(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= ${COMPONENT_SRC}.tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:2c4e61b24fb1c131d9f30cfe2415320899180debdb71fb59195c72bd9a4ab625
+COMPONENT_ARCHIVE_HASH= sha256:03e1b26e846b2cc1b49271656da6d5ecf4d5f4c2e34224d869a23c61a3d5660a
 COMPONENT_ARCHIVE_URL= https://github.com/erlang/otp/releases/download/OTP-${COMPONENT_VERSION}/${COMPONENT_ARCHIVE}
-COMPONENT_POST_UNPACK_ACTION= ( $(RM) -r $(COMPONENT_SRC)/lib/wx )
-COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
+COMPONENT_FMRI= runtime/erlang
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE.txt
-COMPONENT_SUMMARY= Erlang/OTP
-COMPONENT_DESCRIPTION= Erlang programming language and OTP libraries
 
 # manpages
 COMPONENT_NAME_1= otp_doc_man
 COMPONENT_SRC_1= $(COMPONENT_NAME_1)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1= \
-    sha256:2341f5e062755542e651fce0ee50664822802b30b71a0b70d8cbdfaa5c81748b
+COMPONENT_ARCHIVE_HASH_1= sha256:90a7e5d84285d1b3487a869edeacba16dd0d3a6cdd33c0f910949a256c7c6c81
 COMPONENT_ARCHIVE_URL_1= https://github.com/erlang/otp/releases/download/OTP-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_1)
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
 
 include $(WS_MAKE_RULES)/common.mk
 
-SYSTEM_TEST_TARGET= configure $(SYSTEM_TEST_64)
+COMPONENT_POST_UNPACK_ACTION= ( $(RM) -r $(COMPONENT_SRC)/lib/wx )
 
 # Fix 64-bit linking.
 LDFLAGS += $(CC_BITS)
@@ -71,45 +67,33 @@ CXXFLAGS += -finline-functions -funroll-loops -fno-exceptions -fno-rtti
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --with-ssl=$(OPENSSL_PREFIX)
-CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/amd64
+CONFIGURE_OPTIONS += --with-ssl-lib-subdir=/$(MACH64)
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 CONFIGURE_OPTIONS += --disable-silent-rules
 CONFIGURE_OPTIONS += --without-javac
-
-# The HiPE portion is a bit sensitive, and only seems to work 64-bit on
-# amd64 (thus the variant.arch tagging in erlang.p5m). erts/config.log
-# can be very interesting if issues occur.
-CONFIGURE_OPTIONS.i386  = --enable-hipe
-CONFIGURE_OPTIONS.sparc = --disable-hipe
-# Disable kernel poll on sparc to avoid hangs in erl_child_setup (bug 31443512).
-CONFIGURE_OPTIONS.sparc += --disable-kernel-poll
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # Erlang doesn't appear to like ASLR: it uses mmap() with MAP_FIXED, and
 # makes assumptions about memory layout that aren't true on Solaris x86,
 # leading to segmentation faults in erlc.
 ASLR_MODE =	$(ASLR_DISABLE)
 
-# Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
-# to copy files and our tar doesn't handle long links by default.  Between
-# the use of 'tar' and 'ld', a path adjustment wasn't an option due to the
-# need for /usr/bin/ld and /usr/gnu/bin/tar.  This is still the case with
-# erlang version 17.5.
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CP) -rp $(SOURCE_DIR)/. $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR)/. $(@D) ; \
+	$(GSED) -i -e 's/MACH64/$(MACH64)/' $(@D)/lib/crypto/configure )
+
 CONFIGURE_SCRIPT = $(@D)/configure
 
 # fix build on jenkins
 COMPONENT_BUILD_ENV += HOME=/tmp
 COMPONENT_INSTALL_ENV += HOME=/tmp
-COMPONENT_TEST_ENV += HOME=/tmp
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
+COMPONENT_TEST_ENV += HOME=/tmp
 COMPONENT_TEST_ENV += ERL_TOP=$(BUILD_DIR_64)
-COMPONENT_TEST_TARGETS = tests
-COMPONENT_SYSTEM_TEST_ENV += ERL_TOP=$(BUILD_DIR_64)
-COMPONENT_SYSTEM_TEST_TARGETS =	tests
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "/^gmake.*release_tests_spec/d" '
+# Run Erlang release tests; it takes many hours...
+COMPONENT_TEST_DIR = $(COMPONENT_DIR)
+COMPONENT_TEST_CMD = $(SHELL)
+COMPONENT_TEST_TARGETS = run_erlang_tests.sh $(BUILD_DIR_64)
+COMPONENT_TEST_TRANSFORMS += '-e "/^gmake.*release_tests_spec/d" '
+COMPONENT_TEST_TRANSFORMS += '-e "/^run_erlang_tests.sh/d" '
 
 # remove INSTALL_PREFIX from path
 COMPONENT_POST_INSTALL_ACTION += \
@@ -127,9 +111,9 @@ test:     $(TEST_64)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

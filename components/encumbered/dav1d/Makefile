@@ -11,19 +11,19 @@
 #
 # Copyright 2021 (c) Tim Mooney. All rights reserved.
 #
-BUILD_BITS= 64
+
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dav1d
-COMPONENT_VERSION=      1.4.1
+COMPONENT_VERSION=      1.5.2
 COMPONENT_SUMMARY=      A fast, cross-platform AV1 decoder
 COMPONENT_PROJECT_URL=  https://code.videolan.org/videolan/dav1d
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:04da7689748a3501d00b6796b6de0596177019709ecc6095c667b7964895dd8c
+COMPONENT_ARCHIVE_HASH= sha256:2fc0810b4cdf72784b3c107827ff10b1d83ec709a1ec1fbdbc6a932daf65ead6
 COMPONENT_FMRI=         codec/dav1d
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      BSD 2-Clause Simplified License

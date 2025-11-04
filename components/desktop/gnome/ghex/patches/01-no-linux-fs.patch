@@ -1,0 +1,52 @@
+--- ghex-46.2/meson.build.orig
++++ ghex-46.2/meson.build
+@@ -141,7 +141,6 @@
+     'unistd.h',
+     'fcntl.h',
+     'sys/ioctl.h',
+-    'linux/fs.h',
+     ]
+   foreach h : check_headers_direct
+     cc.has_header(h, required: true)
+--- ghex-46.2/src/hex-buffer-direct.h.orig
++++ ghex-46.2/src/hex-buffer-direct.h
+@@ -33,7 +33,13 @@
+ #include <fcntl.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
++#ifdef __linux__
+ #include <linux/fs.h>
++#endif
++#ifdef __sun__
++#include <sys/dkio.h>
++#include <sys/vtoc.h>
++#endif
+ 
+ G_BEGIN_DECLS
+ 
+--- ghex-46.2/src/hex-buffer-direct.c.orig
++++ ghex-46.2/src/hex-buffer-direct.c
+@@ -412,11 +412,23 @@
+ 	{
+ 		gint64 block_file_size;
+ 
++#ifdef __linux__
+ 		if (ioctl (tmp_fd, BLKGETSIZE64, &block_file_size) != 0)
+ 		{
+ 			set_error (self, _("Error attempting to read block device"));
+ 			return FALSE;
+ 		}
++#endif
++#ifdef __sun__
++		struct dk_minfo dkmp;
++
++		if (ioctl (tmp_fd, DKIOCGMEDIAINFO, &dkmp) != 0)
++		{
++			set_error (self, _("Error attempting to read block device"));
++			return FALSE;
++		}
++		block_file_size = dkmp.dki_capacity * dkmp.dki_lbsize;
++#endif
+ 		bytes = block_file_size;
+ 	}
+ 

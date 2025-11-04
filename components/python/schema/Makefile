@@ -19,22 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		schema
-HUMAN_VERSION =			0.7.5
-COMPONENT_SUMMARY =		schema - Simple data validation library
+HUMAN_VERSION =			0.7.8
+COMPONENT_SUMMARY =		Simple data validation library
 COMPONENT_PROJECT_URL =		https://github.com/keleshev/schema
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4e/e8/01e1b46d9e04cdaee91c9c736d9117304df53361a191144c8eccda7f0ee9/schema-0.7.5.tar.gz
+	https://github.com/keleshev/schema/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f06717112c61895cabc4707752b88716e8420a8819d71404501e114f91043197
+	sha256:fa2286808bbc9c7015ad0e0253822a3a2e77792f868ab8aefc4afbbc07bc2732
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE-MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/contextlib2
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

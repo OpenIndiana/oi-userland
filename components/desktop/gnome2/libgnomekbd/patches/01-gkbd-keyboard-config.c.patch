@@ -1,0 +1,40 @@
+diff --git a/libgnomekbd/gkbd-keyboard-config.c b/libgnomekbd/gkbd-keyboard-config.c
+index 96c88a6..0d372de 100644
+--- a/libgnomekbd/gkbd-keyboard-config.c
++++ b/libgnomekbd/gkbd-keyboard-config.c
+@@ -51,35 +51,6 @@ const gchar *GKBD_KEYBOARD_CONFIG_ACTIVE[] = {
+ 
+ const gchar *XMODMAP_KNOWN_FILES[] = { ".xmodmap", ".Xmodmap" };
+ 
+-/**
+- * static common functions
+- */
+-
+-static gboolean
+-g_strv_equal (gchar ** l1, gchar ** l2)
+-{
+-	if (l1 == l2)
+-		return TRUE;
+-	if (l1 == NULL)
+-		return g_strv_length (l2) == 0;
+-	if (l2 == NULL)
+-		return g_strv_length (l1) == 0;
+-
+-	while ((*l1 != NULL) && (*l2 != NULL)) {
+-		if (*l1 != *l2) {
+-			if (*l1 && *l2) {
+-				if (g_ascii_strcasecmp (*l1, *l2))
+-					return FALSE;
+-			} else
+-				return FALSE;
+-		}
+-
+-		l1++;
+-		l2++;
+-	}
+-	return (*l1 == NULL) && (*l2 == NULL);
+-}
+-
+ gboolean
+ gkbd_keyboard_config_get_lv_descriptions (XklConfigRegistry *
+ 					  config_registry,

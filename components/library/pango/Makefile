@@ -12,60 +12,48 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2021 Andreas Wacknitz
+# Copyright 2025 Andreas Wacknitz
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= meson
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-COMPONENT_MJR_VERSION=	1.52
-COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).2
+HUMAN_VERSION=		1.57.0
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:73919f3e0290349ce3959aa81d921b15de444f1a84e4447b8902a8d6ad42b35f
-COMPONENT_ARCHIVE_URL=  https://gitlab.gnome.org/GNOME/pango/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
-COMPONENT_LICENSE=      LGPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE= COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=int-conversion
+
+# statvfs64_t is used
+CFLAGS += $(XPG8MODE)
+
+# Testing needs GNU tools
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += -Dinstall-tests=true
+# needed to produce GIR and Typelib files
+CONFIGURE_OPTIONS += -Dintrospection=enabled
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+# Dynamic library version number
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER_RE = $(subst .,\.,$(SOVER))
 
-COMPONENT_POST_INSTALL_ACTION.64 = ( $(RM) -fr $(PROTO_DIR)/etc/$(MACH64)/pango && $(MKDIR) $(PROTO_DIR)/etc/$(MACH64)/pango &&\
-	$(ENV) LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) \
-	$(PROTO_DIR)/usr/bin/$(MACH64)/pango-querymodules \
-	  $(PROTO_DIR)/usr/lib/$(MACH64)/pango/*/modules/*.so | sed -e "s:$(PROTO_DIR)::" \
-	  > $(PROTO_DIR)/etc/$(MACH64)/pango/pango.modules )
+# Replace library version number by SOVER
+GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
 
-COMPONENT_POST_INSTALL_ACTION=$(COMPONENT_POST_INSTALL_ACTION.$(BITS))
-
-# cp boundaries.utf8 to tests directory in the build area
-COMPONENT_PRE_TEST_ACTION += \
-	cp $(SOURCE_DIR)/tests/boundaries.utf8 $(BUILD_DIR_$(BITS))/tests/
-
-COMPONENT_TEST_TARGETS += ; cd tests; ./cxx-test; ./markup-parse; \
-	./test-break; ./test-converage; ./test-font ; ./test-ot-tags; \
-	./testboundaries; ./testcolor; ./testiter; ./testscript; \
-	./test-ellipsize; ./test-harfbuzz; ./test-itemize; ./test-layout; \
-	./test-pangocairo-threads; ./test-shape; ./testmisc; ./testattributes;
-
-COMPONENT_TEST_TRANSFORMS += \
-	'-e "s/      [0-9].[0-9][0-9]s//" ' \
-	'-e "s/      [0-9][0-9].[0-9][0-9]s//" ' \
-	'-e "s/[0-9]*\:[0-9]*\:[0-9]*\.[0-9]*//" ' \
-	'-e "s/test-layout\:[0-9]*/test-layout/" '
+# SOVER is needed for manifest processing
+PKG_MACROS += SOVER=$(SOVER)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/c++/harfbuzz

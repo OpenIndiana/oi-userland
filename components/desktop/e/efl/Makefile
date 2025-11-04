@@ -25,13 +25,12 @@
 # Copyright 2022 Gary Mills
 #
 
-BUILD_BITS= 64
 OPENSSL_VERSION= 1.0
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		efl
 COMPONENT_VERSION=	1.18.5
-COMPONENT_REVISION=	9
+COMPONENT_REVISION=	12
 COMPONENT_SUMMARY=	Enlightenment Foundation Libraries
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.enlightenment.org
@@ -43,6 +42,10 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	BSD 2-clause, GPLv2, LGPLv2.1, Small
 
 include $(WS_MAKE_RULES)/common.mk
+
+# gcc 14 complains about these
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_BINDIR.64= $(USRBINDIR)
 CONFIGURE_SBINDIR.64= $(USRSBINDIR)
@@ -74,17 +77,16 @@ COMPONENT_POST_INSTALL_ACTION=sed -i -e '1 s|^.*$$|\#!/usr/bin/python$(PYTHON_VE
 REQUIRED_PACKAGES += x11/library/mesa
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libraw
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/libtiff
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/bullet
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/cairo
@@ -93,7 +95,6 @@ REQUIRED_PACKAGES += library/giflib
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libpoppler
 REQUIRED_PACKAGES += library/libspectre
-REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += shell/ksh93
@@ -115,3 +116,4 @@ REQUIRED_PACKAGES += x11/library/libxrandr
 REQUIRED_PACKAGES += x11/library/libxrender
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/libxtst
+REQUIRED_PACKAGES.python += runtime/python

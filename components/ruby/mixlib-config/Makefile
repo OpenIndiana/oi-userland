@@ -12,13 +12,13 @@
 # Copyright 2021 Alexander Pyhalov
 #
 
-BUILD_BITS=32
 BUILD_STYLE=gem
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mixlib-config
 COMPONENT_VERSION=	2.2.18
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	A class-based configuration object
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -33,5 +33,9 @@ COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET=		$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+include $(WS_MAKE_RULES)/ruby.mk
 
-REQUIRED_PACKAGES += runtime/ruby-23
+# manually added dependencies.
+REQUIRED_PACKAGES += runtime/ruby-32
+
+# Auto-generated dependencies

@@ -47,23 +47,21 @@ PATCH_PATTERN ?=	*.patch*
 
 PATCH_DIR ?=		patches
 
-PATCHES =	$(wildcard $(PATCH_DIR)/$(PATCH_PATTERN))
+ALL_PATCHES =	$(wildcard $(PATCH_DIR)/$(PATCH_PATTERN))
 
-PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(PATCHES))))
+PCH_SUFFIXES = $(patsubst .patch_%,%, $(filter-out .patch,$(suffix $(ALL_PATCHES))))
 
 define patch-rule
 
 ifeq ($(1),_0)
 PATCH_PATTERN$(1) ?=	%.patch
-PATCHES$(1) = $(filter %.patch,$(PATCHES))
+PATCHES$(1) = $(filter %.patch,$(ALL_PATCHES))
 else
 PATCH_PATTERN$(1) ?=	%.patch$(1)
-PATCHES$(1) = $(filter %.patch$(1),$(PATCHES))
+PATCHES$(1) = $(filter %.patch$(1),$(ALL_PATCHES))
 endif
 
-ifneq ($(strip $(ADDITIONAL_PATCHES$(1))),)
 PATCHES$(1) += $(ADDITIONAL_PATCHES$(1))
-endif
 
 ifneq ($$(PATCHES$(1)),)
 PATCH_STAMPS$(1) += $$(PATCHES$(1):$(PATCH_DIR)/%=$$(SOURCE_DIR$(1))/.patched-%)
@@ -77,10 +75,6 @@ $$(PATCH_STAMPS$(1)):	unpack
 # re-evaluate the need for patching.  If we ever move the stamps to the build
 # directory, we may not need the dependency any more.
 $$(SOURCE_DIR$(1))/.patched-%:	$(PATCH_DIR)/% $(MAKEFILE_PREREQ)
-	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
-	$(TOUCH) $$(@)
-
-$$(SOURCE_DIR$(1))/.patched-%:	$(MAKEFILE_PREREQ)
 	$(GPATCH) -d $$(@D) $$(GPATCH_FLAGS) < $$<
 	$(TOUCH) $$(@)
 
@@ -113,26 +107,28 @@ refresh-patches: $(QUILT) patch
 	done
 	# Make sure the series file does not exist
 	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
-	# Apply and refresh patches, then unapply them
+	# Apply and refresh patches, then unapply them to prepare the tree for
+	# the next quilt run loop
 	cd $(SOURCE_DIR) ; for p in $(PATCHES) ; do \
-		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null "../$$p" \
+		QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p $(PATCH_LEVEL) "../$$p" \
 		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q \
-		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 1 --no-timestamps --no-index \
+		&& QUILT_PATCHES=../$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p $(if $(filter 0,$(PATCH_LEVEL)),0,1) --no-timestamps --no-index \
 		&& continue ; \
 		exit 1 ; \
 	done ; \
-	[ ! -e $(COMPONENT_DIR)/$(PATCH_DIR)/series ] || QUILT_PATCHES=../$(PATCH_DIR) quilt pop --quiltrc /dev/null -a -q
-	# cleanup
+	[ ! -e $(COMPONENT_DIR)/$(PATCH_DIR)/series ] || (($(PATCH_LEVEL) == 0)) || QUILT_PATCHES=../$(PATCH_DIR) quilt pop --quiltrc /dev/null -a -q
+	# Remove unneeded quilt files
 	$(RM) -r $(SOURCE_DIR)/.pc
 	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
 	# Apply and refresh patches again to get the desired patch format
-	for p in $(PATCHES) ; do \
+	# (needed only with non-zero PATCH_LEVEL)
+	(($(PATCH_LEVEL) == 0)) || for p in $(PATCHES) ; do \
 		QUILT_PATCHES=$(PATCH_DIR) $(QUILT) import --quiltrc /dev/null -p 0 "$$p" \
 		&& QUILT_PATCHES=$(PATCH_DIR) $(QUILT) push --quiltrc /dev/null -q \
 		&& QUILT_PATCHES=$(PATCH_DIR) $(QUILT) refresh --quiltrc /dev/null -p 0 --no-timestamps --no-index \
 		&& continue ; \
 		exit 1 ; \
 	done
-	# final cleanup
-	$(RM) -r $(COMPONENT_DIR)/.pc
-	$(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series
+	# Remove unneeded quilt files
+	(($(PATCH_LEVEL) == 0)) || $(RM) -r $(COMPONENT_DIR)/.pc
+	(($(PATCH_LEVEL) == 0)) || $(RM) $(COMPONENT_DIR)/$(PATCH_DIR)/series

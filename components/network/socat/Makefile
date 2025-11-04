@@ -13,45 +13,48 @@
 # Copyright (c) 2018, Michal Nowak
 #
 
-PREFERRED_BITS=		64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		socat
-COMPONENT_VERSION=	1.7.3.2
+COMPONENT_VERSION=	1.8.0.3
+COMPONENT_SUMMARY=	socat is a larger and more flexible variant of netcat
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:360c9d08b47b446cd88ee2f3465a19177c4d2099fc92d20e1c10b5cd51a27ebf
+COMPONENT_ARCHIVE_HASH= sha256:01eb017361d95bb3a6941e840b59e4463a3fabf92df4154ed02b16a2ed6a0095
 COMPONENT_PROJECT_URL=	http://www.dest-unreach.org/socat/
 COMPONENT_ARCHIVE_URL=	http://www.dest-unreach.org/socat/download/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=			network/$(COMPONENT_NAME)
+COMPONENT_CLASSIFICATION=	Applications/Internet
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	COPYING
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/configure.mk
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/common.mk
+
+CFLAGS += $(XPG6MODE)
+LDFLAGS += -L$(OPENSSL_LIBDIR)
+
+CONFIGURE_OPTIONS += --enable-openssl_base=$(OPENSSL_PREFIX)
 
 # For the test target
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 COMPONENT_TEST_TARGETS=	test
 
 # Disable colors in test output
 COMPONENT_TEST_ENV += TERM=
 
+# Note that some tests fail because of missing privileges ("not root")
 COMPONENT_TEST_TRANSFORMS= \
 	'-ne "s/\.\.\. .* OK/\.\.\. OK/"' \
 	'-ne "s/\.\.\. .* NO RESULT/\.\.\. NO RESULT/"' \
 	'-ne "s/\.\.\. .* timed out/\.\.\. timed out/"' \
 	'-ne "/^test/p"' \
 	'-ne "/^summary/p"' \
+	'-ne "/^CANT/p"' \
 	'-ne "/^FAILED/p"'
 
-build:		$(BUILD_64)
-
-install:	$(INSTALL_64)
-
-test:		$(TEST_64)
-
-REQUIRED_PACKAGES += library/readline
-REQUIRED_PACKAGES += library/security/openssl
+# Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += system/library

@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argh
-HUMAN_VERSION =			0.31.2
-COMPONENT_SUMMARY =		argh - Plain Python functions as CLI commands without boilerplate
+HUMAN_VERSION =			0.31.3
+COMPONENT_SUMMARY =		Plain Python functions as CLI commands without boilerplate
 COMPONENT_PROJECT_URL =		https://github.com/neithere/argh
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/4e/ae/3c1896d2e8c7f74270686f339aa4a07dd8d4ffddde96488fcb1a726eb072/argh-0.31.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:db1c34885804f7d4646c385dc2fb19b45298561322f4c15eae1b133993f9e323
+	sha256:f30023d8be14ca5ee6b1b3eeab829151d7bbda464ae07dc4dd5347919c5892f9
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	COPYING.LESSER
 

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Pod::Coverage
+#   $WS_TOOLS/perl-integrate-module Pod-Coverage
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Pod::Coverage
+COMPONENT_NAME =		Pod-Coverage
 HUMAN_VERSION =			0.23
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Pod::Coverage - Checks if the documentation of a module is comprehensive
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Checks if the documentation of a module is comprehensive
 COMPONENT_CPAN_AUTHOR =		RCLAMP
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:30b7a0b0c942f44a7552c0d34e9b1f2e0ba0b67955c61e3b1589ec369074b107
@@ -34,5 +34,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += library/perl-5/devel-symdump
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/pod-parser
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl

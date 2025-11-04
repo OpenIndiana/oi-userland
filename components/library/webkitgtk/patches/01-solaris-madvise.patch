@@ -3,11 +3,9 @@ The cast is safe as void and unsigned char have same alignment.
 
 file upstream bug
 
-diff --git a/Source/bmalloc/bmalloc/VMAllocate.h b/Source/bmalloc/bmalloc/VMAllocate.h
-index 580251e..a3e3be3 100644
---- a/Source/bmalloc/bmalloc/VMAllocate.h
-+++ b/Source/bmalloc/bmalloc/VMAllocate.h
-@@ -204,7 +204,7 @@ inline void vmDeallocatePhysicalPages(void* p, size_t vmSize)
+--- webkitgtk-2.48.1/Source/bmalloc/bmalloc/VMAllocate.h.orig
++++ webkitgtk-2.48.1/Source/bmalloc/bmalloc/VMAllocate.h
+@@ -213,7 +213,7 @@
  #elif BOS(FREEBSD)
      SYSCALL(madvise(p, vmSize, MADV_FREE));
  #else
@@ -16,9 +14,9 @@ index 580251e..a3e3be3 100644
  #if BOS(LINUX)
      SYSCALL(madvise(p, vmSize, MADV_DONTDUMP));
  #endif
-@@ -217,7 +217,7 @@ inline void vmAllocatePhysicalPages(void* p, size_t vmSize)
- #if BOS(DARWIN)
-     SYSCALL(madvise(p, vmSize, MADV_FREE_REUSE));
+@@ -230,7 +230,7 @@
+     // to commit physical memory to back a range of allocated virtual memory.
+     // Instead the kernel will commit pages as they are touched.
  #else
 -    SYSCALL(madvise(p, vmSize, MADV_NORMAL));
 +    SYSCALL(madvise(reinterpret_cast<char*>(p), vmSize, MADV_NORMAL));

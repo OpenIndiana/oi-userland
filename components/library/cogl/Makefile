@@ -28,8 +28,9 @@ COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
 
+# make gcc-14 happy.
+CFLAGS += -Wno-implicit-function-declaration
 
-#TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
@@ -38,11 +39,9 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-cogl-gst=yes
 CONFIGURE_OPTIONS += --enable-sdl2=yes
 
-unexport SHELLOPTS
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/audio/gstreamer1
-REQUIRED_PACKAGES += library/audio/gstreamer1/plugin/base
+REQUIRED_PACKAGES += library/audio/gstreamer
+REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/pango

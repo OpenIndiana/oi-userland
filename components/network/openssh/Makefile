@@ -24,26 +24,25 @@
 # Copyright 2019 Michal Nowak
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-COMPONENT_VERSION=	9.7.0.1
-HUMAN_VERSION=		9.7p1
+COMPONENT_VERSION=	10.0.0.2
+HUMAN_VERSION=		10.0p2
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+# OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
+COMPONENT_SRC=		$(COMPONENT_NAME)-10.0p1
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd
+COMPONENT_ARCHIVE_HASH=	sha256:021a2e709a0edf4250b1256bd5a9e500411a90dddabea830ed59cef90eb9d85c
 COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
 COMPONENT_LICENSE_FILE=	LICENCE
 
-TEST_TARGET= $(SKIP_TEST)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
@@ -67,29 +66,28 @@ CFLAGS += -I$(OPENSSL_INCDIR)
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
 # contain any files. If we use lazyloading, sshd will fail to find any
 # libraries that it needs.
-LDFLAGS += -B direct -z nolazyload
+#LDFLAGS += -B direct -z nolazyload
 
-CONFIGURE_OPTIONS += --with-ssl-dir=$(OPENSSL_LIBDIR)
-CONFIGURE_OPTIONS += --with-ssl-engine
+# Link OpenSSH with libumem
+LDFLAGS += -lumem
+
+CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-audit=solaris
-CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
+CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-pam
+CONFIGURE_OPTIONS += --with-privsep-user=daemon
 CONFIGURE_OPTIONS += --with-sandbox=solaris
 CONFIGURE_OPTIONS += --with-solaris-contracts
 CONFIGURE_OPTIONS += --with-solaris-privs
-CONFIGURE_OPTIONS += --with-privsep-user=daemon
 CONFIGURE_OPTIONS += --with-solaris-projects
+CONFIGURE_OPTIONS += --with-ssl-dir=$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += --with-ssl-engine
 CONFIGURE_OPTIONS += --with-tcp-wrappers
-CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --with-xauth=/usr/bin/xauth
 CONFIGURE_OPTIONS += --enable-strip=no
 CONFIGURE_OPTIONS += --without-rpath
-CONFIGURE_OPTIONS += --disable-lastlog
-CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
-CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
-CONFIGURE_OPTIONS += --bindir=/usr/bin
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/ssh
 
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm755 $(SOURCE_DIR)/contrib/ssh-copy-id $(PROTOUSRBINDIR)/ssh-copy-id;
 COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-copy-id.1 $(PROTOUSRSHAREMAN1DIR)/ssh-copy-id.1;
@@ -97,9 +95,9 @@ COMPONENT_POST_INSTALL_ACTION += $(INSTALL) -Dm644 $(SOURCE_DIR)/contrib/ssh-cop
 COMPONENT_TEST_TARGETS = tests
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += network/ssh-askpass
 REQUIRED_PACKAGES += service/security/kerberos-5

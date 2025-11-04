@@ -1,0 +1,22 @@
+https://bz.mercurial-scm.org/show_bug.cgi?id=6954
+
+--- mercurial-6.9.1/tests/run-tests.py.orig
++++ mercurial-6.9.1/tests/run-tests.py
+@@ -2402,7 +2402,7 @@
+             # bypass the TextTestResult method as do deal with the output ourself
+             super(base_class, self).addSuccess(test)
+             if self.showAll:
+-                self._write_status(test, "ok")
++                self.stream.writeln('ok')
+             elif self.dots:
+                 self._write_dot('.')
+         self.successes.append(test)
+@@ -2410,7 +2410,7 @@
+     def addError(self, test, err):
+         super(base_class, self).addError(test, err)
+         if self.showAll:
+-            self._write_status(test, "ERROR")
++            self.stream.writeln('ERROR')
+         elif self.dots:
+             self._write_dot('E')
+         if self._options.first:

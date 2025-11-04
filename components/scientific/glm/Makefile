@@ -11,28 +11,38 @@
 
 #
 # Copyright 2020 Aurelien Larcher
+# Copyright 2025 Klaus Ziegler
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= glm
-COMPONENT_VERSION= 0.9.9.8
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 1.0.2
 COMPONENT_FMRI= library/math/glm
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_SUMMARY= glm - OpenGL Mathematics, A C++ mathematics library for graphics programming
 COMPONENT_PROJECT_URL= https://glm.g-truc.net
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7d508ab72cb5d43227a3711420f06ff99b0a0cb63ee2f93631b162bfe1fe9592
+COMPONENT_ARCHIVE_HASH= sha256:19edf2e860297efab1c74950e6076bf4dad9de483826bc95e2e0f2c758a43f65
 COMPONENT_ARCHIVE_URL= https://github.com/g-truc/glm/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_LICENSE= MIT
 COMPONENT_LICENSE_FILE= copying.txt
 
 include $(WS_MAKE_RULES)/common.mk
+
+CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
+CMAKE_OPTIONS += -DGLM_BUILD_TESTS=On
+
+# remove backup'd file from patch phase to prevent its appearance in the sample-manifest
+# install pkgconfig file.
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(RM) $(PROTOUSRINCDIR)/glm/detail/*.hpp.* ; \
+	$(MKDIR) $(PROTOUSRLIBDIR64)/pkgconfig ; \
+	$(GSED) -e 's/@GLM_VERSION@/$(COMPONENT_VERSION)/g' \
+	$(COMPONENT_DIR)/files/glm.pc > $(PROTOUSRLIBDIR64)/pkgconfig/glm.pc )
 
 # Note that test-core_func_integer fails with gcc-13 but is ok with gcc-7 and gcc-10.
 COMPONENT_TEST_TRANSFORMS += ' -e "/aborted/p" '

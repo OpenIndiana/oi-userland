@@ -163,13 +163,14 @@ fi
 
 # Get project homepage if not already provided
 if [[ -z "$HOMEPAGE" ]] ; then
-	HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.home_page')
-	if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-		HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.project_urls.Homepage')
-		if (($? != 0)) || [[ -z "$HOMEPAGE" || "$HOMEPAGE" == "null" ]] ; then
-			printf "WARNING: Failed to get homepage for project %s from pypi\n" "$PROJECT" >&2
-			HOMEPAGE=$(get_PKGINFO_entry "Home-page")
-		fi
+	for field in '.info.home_page' '.info.project_urls.Homepage' '.info.project_urls.homepage' ; do
+		HOMEPAGE=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r "$field")
+		(($? == 0)) && [[ -n "$HOMEPAGE" && "$HOMEPAGE" != "null" ]] && break
+		HOMEPAGE=
+	done
+	if [[ -z "$HOMEPAGE" ]] ; then
+		printf "WARNING: Failed to get homepage for project %s from PyPI\n" "$PROJECT" >&2
+		HOMEPAGE=$(get_PKGINFO_entry "Home-page")
 	fi
 fi
 
@@ -226,6 +227,7 @@ cat <<EOF
 #
 
 BUILD_STYLE = pyproject
+CARGO_VENDOR = yes
 USE_COMMON_TEST_MASTER = no
 EOF
 [[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
@@ -236,7 +238,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME =		$DISTRIBUTION
 HUMAN_VERSION =			$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
-COMPONENT_SUMMARY =		$PROJECT - TODO
+COMPONENT_SUMMARY =		TODO
 EOF
 [[ -n "$HOMEPAGE" ]] && printf "COMPONENT_PROJECT_URL =\t\t%s\n" "$HOMEPAGE"
 [[ -n "$DOWNLOAD_URL" ]] && printf 'DOWNLOAD_URL =\t\t\\\n\t%s\n' "$DOWNLOAD_URL"
@@ -279,7 +281,7 @@ COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
 git add Makefile
 
 # Calculate sham256 sum for source package
-$GMAKE fetch > /dev/null 2>&1
+$GMAKE DLC_ARCHIVE_MIRROR= fetch > /dev/null 2>&1
 USERLAND_ARCHIVES=$($GMAKE print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$($GMAKE print-value-COMPONENT_ARCHIVE)
 [[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
@@ -298,19 +300,20 @@ else
 	git checkout patches 2>/dev/null
 fi
 
+# Remove CARGO_VENDOR if not needed
+SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+if [[ ! -f "$SOURCE_DIR/Cargo.toml" ]] ; then
+	sed -i -e '/^CARGO_VENDOR = yes$/d' Makefile
+	git add Makefile
+fi
+
 # Cleanup after patch refresh
 $GMAKE clobber > /dev/null 2>&1
 
 # Prepare sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 [[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
-
-if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/pyproject.toml" ]] ; then
-	[[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/setup.py" ]] && printf "FATAL: Neither pyproject.toml nor setup.py found!\n" >&2 && exit 1
-	sed -i -e 's/^\(BUILD_STYLE = \).*$/\1setup.py/' Makefile
-fi
 
 # Get summary if not already provided
 if [[ -z "$SUMMARY" ]] ; then
@@ -327,6 +330,7 @@ SUMMARY="${SUMMARY//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
 SUMMARY="${SUMMARY//\//\/}"
 SUMMARY="${SUMMARY//\$/\\\\\$\$}"
 SUMMARY="${SUMMARY//\&/\\&}"
+SUMMARY="${SUMMARY//#/\\\\#}"
 sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$SUMMARY"'/g' Makefile
 
 
@@ -378,28 +382,33 @@ fi
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 
+PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
+
+
 # detect TEST_STYLE
 TEST_STYLE=
 cd "$SOURCE_DIR$COMPONENT_SUBDIR"
 while true ; do
-	TOX_OUT=$(tox -l)
+	TOX_OUT=$(tox-${PYTHON_VERSIONS%% *} -l --no-provision 2>&1)
 	TOX_RET=$?
 	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
+	((TOX_RET == 254)) && printf '%s' "$TOX_OUT" | grep -q 'provisioning explicitly disabled' \
+		&& printf 'ERROR: tox test style needs provisioning\n' >&2
 
-	# Disable some pytest plugins that almost always collects tests to run
-	# even there are no pytest tests available otherwise.
-	#
-	# The system-statistics plugin is disabled because it often causes the
-	# pytest to fail.
-	# See also https://github.com/saltstack/pytest-system-statistics/issues/4
-	pytest -p no:black -p no:checkdocs -p no:cov -p no:mypy -p no:relaxed -p no:system-statistics --setup-plan
+	# Disable autoload of all pytest plugins because some of them almost
+	# always collects tests to run even there are no pytest tests available
+	# otherwise.  Some other plugins could do the opposite: prevent tests
+	# collection even there are pytest tests available.
+	PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest-${PYTHON_VERSIONS%% *} --setup-plan > /dev/null 2>&1
 	(($? != 5)) && TEST_STYLE="pytest" && break
 
-	[[ -f setup.py ]] && python setup.py test --help && TEST_STYLE="setup.py" && break
+	python${PYTHON_VERSIONS%% *} -m unittest discover 2>&1 | grep '^Ran' | grep -q -v '^Ran 0 ' && TEST_STYLE='unittest' && break
+
+	[[ -f setup.py ]] && python${PYTHON_VERSIONS%% *} setup.py test --help > /dev/null 2>&1 && TEST_STYLE='setup.py' && break
 
 	TEST_STYLE="none"
 	break
-done > /dev/null 2>&1
+done
 cd "$DIR"
 
 if [[ "$TEST_STYLE" == "$($GMAKE print-value-TEST_STYLE)" ]] ; then
@@ -504,7 +513,6 @@ $GMAKE publish > /dev/null 2>&1 || printf "ERROR: 'gmake publish' failed!\n" >&2
 git add pkg5 2>/dev/null
 
 
-PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
 PYTHON_TEST_BOOTSTRAP=$($GMAKE print-value-PYTHON_TEST_BOOTSTRAP)
 
 
@@ -569,6 +577,12 @@ if [[ "$common_results" == "yes" ]] ; then
 	sed -i -e '/^USE_COMMON_TEST_MASTER/d' Makefile
 	git add Makefile
 fi
+
+
+# Create .gitignore
+COMPONENT_SRC=$($GMAKE print-value-COMPONENT_SRC)
+printf '/%s/\n' "$COMPONENT_SRC" > .gitignore
+git add .gitignore
 
 
 # Construct the commit message

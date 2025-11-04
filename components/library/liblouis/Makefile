@@ -19,30 +19,30 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= liblouis
-COMPONENT_VERSION= 3.29.0
+COMPONENT_VERSION= 3.35.0
 COMPONENT_SUMMARY= The Liblouis software suite provides an open-source braille translator, back-translator and formatter for a large number of languages and braille codes
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:859086fa5db3b0a6624058e215442d001ac62c4b4fbb5f776378be8b33277493
+COMPONENT_ARCHIVE_HASH=	sha256:1bb4308d94d31e9650b05cb196240499df83bf1f5a97faa3a1fd28b8aa3b515f
 COMPONENT_ARCHIVE_URL=	https://github.com/liblouis/liblouis/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL = https://liblouis.io/
 COMPONENT_CLASSIFICATION = System/Libraries
 COMPONENT_FMRI = library/liblouis
 COMPONENT_LICENSE = LGPLv3,GPLv3
-COMPONENT_LICENSE_FILE = liblouis.license
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_BUILD_ARGS =
+COMPONENT_BUILD_ARGS=
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -f -i ) 
+COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -f -i ) 
 
 # Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION += ( cp -a $(SOURCE_DIR)/* $(@D)) ;
+COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) );
+COMPONENT_POST_INSTALL_ACTION += ( $(RM) $(PROTOUSRSHAREDIR)/info/dir );
 
-CONFIGURE_SCRIPT = $(@D)/configure
+CONFIGURE_SCRIPT= $(@D)/configure
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
@@ -50,24 +50,22 @@ CONFIGURE_OPTIONS += --enable-ucs4
 
 # While the main library is built with configure, the python module is
 # built & installed with separate invocations of setup.py
-PYTHON_ENV +=   CC="$(CC)"
-PYTHON_ENV +=   CFLAGS="$(CFLAGS)"
-PYTHON_ENV +=   PYTHONPATH='$(@D)/python' 
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+PYTHON_ENV += PYTHONPATH='$(@D)/python' 
 
-COMPONENT_POST_BUILD_ACTION += \
-    (cd $(@D)/python ; \
-        $(ENV) $(COMPONENT_BUILD_ENV) $(PYTHON_ENV) \
-        LD_LIBRARY_PATH_$(BITS)=$(@D)/liblouis/.libs/ \
-            $(PYTHON) ./setup.py build );
-COMPONENT_POST_INSTALL_ACTION += \
-    (cd $(@D)/python ; \
-        $(ENV) $(COMPONENT_INSTALL_ENV) $(PYTHON_ENV) \
-        LD_LIBRARY_PATH_$(BITS)=$(PROTO_DIR)$(USRLIB.$(BITS)) \
-            $(PYTHON) ./setup.py install --root $(PROTO_DIR) \
-        --install-lib $(PYTHON_LIB) );
+COMPONENT_POST_BUILD_ACTION += ( \
+	cd $(@D)/python ; \
+	$(ENV) $(COMPONENT_BUILD_ENV) $(PYTHON_ENV) \
+		LD_LIBRARY_PATH_$(BITS)=$(@D)/liblouis/.libs/ \
+        $(PYTHON) ./setup.py build );
 
-# Needed for "gmake test" to work successfully.
-unexport SHELLOPTS
+COMPONENT_POST_INSTALL_ACTION += ( \
+	cd $(@D)/python ; \
+	$(ENV) $(COMPONENT_INSTALL_ENV) $(PYTHON_ENV) \
+		LD_LIBRARY_PATH_$(BITS)=$(PROTO_DIR)$(USRLIB.$(BITS)) \
+		$(PYTHON) ./setup.py install --root $(PROTO_DIR) \
+        	--install-lib $(PYTHON_LIB) );
 
 # additional transforms for brltty
 COMPONENT_TEST_TRANSFORMS += \

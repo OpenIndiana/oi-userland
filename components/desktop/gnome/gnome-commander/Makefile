@@ -13,43 +13,40 @@
 #
 
 BUILD_STYLE= meson
-USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
-COMPONENT_MJR_VERSION=	1.16
-COMPONENT_MNR_VERSION=	1
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
-COMPONENT_REVISION=	2
+HUMAN_VERSION=		1.18.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:3f1d00c4a650fe7902167648286b32c9ca4ef86e31a5d8ccca0139f12d10d0b3
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:fb54300fbc2f14a45dd7202317cb8136e8a2253b43df2351df65aa58bdd6fbca
 COMPONENT_FMRI=		desktop/file-manager/gnome-commander
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
-COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --libexecdir=$(USRLIBEXECDIR)
-
-CONFIGURE_ENV += PERL=$(PERL)
-CONFIGURE_ENV += PYTHON=$(PYTHON)
+# Testing needs an X server
+TEST_REQUIRED_PACKAGES += x11/server/xvfb
+COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
+COMPONENT_TEST_ENV += DISPLAY=:0
+COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += image/library/exiv2
 REQUIRED_PACKAGES += library/audio/taglib
+REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
-REQUIRED_PACKAGES += library/desktop/gtk2
+REQUIRED_PACKAGES += library/desktop/gtk3
 REQUIRED_PACKAGES += library/desktop/libgsf
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2

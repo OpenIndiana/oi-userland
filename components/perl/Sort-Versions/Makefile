@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sort::Versions
+#   $WS_TOOLS/perl-integrate-module Sort-Versions
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sort::Versions
+COMPONENT_NAME =		Sort-Versions
 HUMAN_VERSION =			1.62
-COMPONENT_SUMMARY =		Sort::Versions - a perl 5 module for sorting of revision-like numbers
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		a perl 5 module for sorting of revision-like numbers
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:bf5f3307406ebe2581237f025982e8c84f6f6625dd774e457c03f8994efd2eaa
@@ -30,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

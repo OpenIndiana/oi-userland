@@ -16,31 +16,22 @@ USE_DEFAULT_TEST_TRANSFORMS=yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libgdiplus
-COMPONENT_VERSION=      6.1
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      6.2
 COMPONENT_SUMMARY=      Open Source Implementation of the GDI+ API
 COMPONENT_PROJECT_URL=  https://www.mono-project.com/docs/gui/libgdiplus/
 COMPONENT_FMRI=         library/desktop/libgdiplus
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-    sha256:97d5a83d6d6d8f96c27fb7626f4ae11d3b38bc88a1726b4466aeb91451f3255b
-COMPONENT_ARCHIVE_URL=	https://download.mono-project.com/sources/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:683adb7d99d03f6ee7985173a206a2243f76632682334ced4cae2fcd20c83bc9
+COMPONENT_ARCHIVE_URL=	https://dl.winehq.org/mono/sources/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      MIT
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
-unexport SHELLOPTS
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
-
-COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)

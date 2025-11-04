@@ -13,46 +13,42 @@
 # Copyright (c) 2018 Michal Nowak
 #
 
-BUILD_BITS=	64
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		compiz-plugins-main
 COMPONENT_VERSION=	0.8.18
-COMPONENT_REVISION= 1
-COMPONENT_PROJECT_URL=	http://www.northfield.ws/
+COMPONENT_REVISION= 3
 COMPONENT_SUMMARY=	main effects plugins for compiz
+COMPONENT_PROJECT_URL=	http://www.northfield.ws/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=	\
-	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
+COMPONENT_ARCHIVE_HASH=	sha256:c7a427b8733e75f8f1319aca5c81f2726e2d1c4f37f368b4bf20b053bd52e5b3
 COMPONENT_ARCHIVE_URL=	http://www.northfield.ws/projects/compiz/releases/$(COMPONENT_VERSION)/$(COMPONENT_SRC).tar.xz
 
-TEST_TARGET = $(NO_TESTS)
+TEST_TARGET= $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
+CFLAGS += -Wno-error=incompatible-pointer-types
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && \
-  aclocal -I. && \
-  autoheader && \
-  libtoolize --automake --copy --force && \
-  automake -a -f -c &&\
-  autoconf &&\
-  find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
+PATH= $(PATH.gnu)
 
-# build with the distribution preferred libjpeg implementation
-CFLAGS            +=    $(JPEG_CPPFLAGS) $(JPEG_CFLAGS)
-CXXFLAGS          +=    $(JPEG_CPPFLAGS) $(JPEG_CXXFLAGS)
-LDFLAGS           +=    $(JPEG_LDFLAGS)
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D) && \
+	aclocal -I. && \
+	autoheader && \
+	libtoolize --automake --copy --force && \
+	automake -a -f -c && \
+	autoconf && \
+	find $(@D) -name '*_options.c' -o -name '*_options.h' -exec rm -f {} \; )
 
-CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
+CONFIGURE_ENV += INTLTOOL_PERL=$(PERL)
 
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --disable-static
 
-# Build dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += desktop/compiz
 REQUIRED_PACKAGES += desktop/compiz/bcop
 

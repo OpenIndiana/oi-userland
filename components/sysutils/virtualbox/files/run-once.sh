@@ -112,6 +112,17 @@ fi
 # Run the pkginstall.sh --ips
 echo "--PKGINSTALL virtualbox/run-once"
 /opt/VirtualBox/pkginstall.sh --ips
+if [ $? -ne 0 ]; then
+        errorprint "pkginstall.sh failed"
+	abort_error
+fi
+TZDIR=/usr/share/lib/zoneinfo/
+if [ ! -L /etc/localtime ]; then
+	TZ=$(grep TZ= /etc/default/init | cut -d= -f2)
+	if [ x$TZ != x ]; then
+		ln -s $TZDIR$TZ /etc/localtime
+	fi
+fi
 svccfg -s $SMF_FMRI setprop config/assembled = true
 svccfg -s $SMF_FMRI refresh
 echo "--DONE virtualbox/run-once"

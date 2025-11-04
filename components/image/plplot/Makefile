@@ -12,13 +12,12 @@
 # Copyright (c) 2017 Dariusz Sendkowski
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         plplot
 COMPONENT_VERSION=      5.15.0
-COMPONENT_REVISION=		4
+COMPONENT_REVISION=		5
 COMPONENT_SUMMARY=		A cross-platform software package for creating scientific plots.
 COMPONENT_PROJECT_URL=	https://plplot.sourceforge.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)

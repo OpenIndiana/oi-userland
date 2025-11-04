@@ -1,0 +1,182 @@
+py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+py$(PYV): commands[0]> python --version
+Python 3.9.19
+py$(PYV): commands[1]> python -m pytest --cov=sdjson -r aR tests/
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: tox.ini
+timeout: 300.0s
+timeout method: signal
+timeout func_only: False
+collecting ... collected 155 items
+
+tests/stdlib_tests/test_decode.py::test_decimal PASSED
+tests/stdlib_tests/test_decode.py::test_decoder_optimizations PASSED
+tests/stdlib_tests/test_decode.py::test_empty_objects PASSED
+tests/stdlib_tests/test_decode.py::test_extra_data PASSED
+tests/stdlib_tests/test_decode.py::test_float PASSED
+tests/stdlib_tests/test_decode.py::test_invalid_escape PASSED
+tests/stdlib_tests/test_decode.py::test_invalid_input_type PASSED
+tests/stdlib_tests/test_decode.py::test_keys_reuse PASSED
+tests/stdlib_tests/test_decode.py::test_negative_index PASSED
+tests/stdlib_tests/test_decode.py::test_object_pairs_hook PASSED
+tests/stdlib_tests/test_decode.py::test_string_with_utf8_bom PASSED
+tests/stdlib_tests/test_default.py::test_default PASSED
+tests/stdlib_tests/test_dump.py::test_dump PASSED
+tests/stdlib_tests/test_dump.py::test_dump_skipkeys PASSED
+tests/stdlib_tests/test_dump.py::test_dumps PASSED
+tests/stdlib_tests/test_dump.py::test_encode_evil_dict PASSED
+tests/stdlib_tests/test_dump.py::test_encode_mutated PASSED
+tests/stdlib_tests/test_dump.py::test_encode_truefalse[data0-{"false": true, "true": false}] PASSED
+tests/stdlib_tests/test_dump.py::test_encode_truefalse[data1-{"false": 1, "2": 3.0, "4.0": 5, "6": true}] PASSED
+tests/stdlib_tests/test_encode_basestring_ascii.py::test_ordered_dict PASSED
+tests/stdlib_tests/test_encode_basestring_ascii.py::test_sorted_dict PASSED
+tests/stdlib_tests/test_enum.py::test_dict_keys PASSED
+tests/stdlib_tests/test_enum.py::test_dict_values PASSED
+tests/stdlib_tests/test_enum.py::test_floats PASSED
+tests/stdlib_tests/test_enum.py::test_ints PASSED
+tests/stdlib_tests/test_enum.py::test_list PASSED
+tests/stdlib_tests/test_enum.py::test_weird_floats PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data["spam",42-Extra data-6] PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data[42,"spam"-Extra data-2] PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data[[],[]-Extra data-2] PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data[[]]-Extra data-2] PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data[{},{}-Extra data-2] PASSED
+tests/stdlib_tests/test_fail.py::test_extra_data[{}}-Extra data-2] PASSED
+tests/stdlib_tests/test_fail.py::test_failures PASSED
+tests/stdlib_tests/test_fail.py::test_linecol[ !-1-2-1] PASSED
+tests/stdlib_tests/test_fail.py::test_linecol[!-1-1-0] PASSED
+tests/stdlib_tests/test_fail.py::test_linecol[\n  \n\n     !-4-6-10] PASSED
+tests/stdlib_tests/test_fail.py::test_linecol[\n!-2-1-1] PASSED
+tests/stdlib_tests/test_fail.py::test_non_string_keys_dict PASSED
+tests/stdlib_tests/test_fail.py::test_not_serializable PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input["-Unterminated string starting at-0] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input["spam-Unterminated string starting at-0] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[-Expecting value-0] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[["-Unterminated string starting at-1] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[["spam",-Expecting value-8] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[["spam"-Expecting ',' delimiter-7] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[["spam-Unterminated string starting at-1] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[[-Expecting value-1] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[[42,-Expecting value-4] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[[42-Expecting ',' delimiter-3] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"-Unterminated string starting at-1] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"spam"-Expecting ':' delimiter-7] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"spam":-Expecting value-8] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"spam":42,-Expecting property name enclosed in double quotes-11] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"spam":42-Expecting ',' delimiter-10] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{"spam-Unterminated string starting at-1] PASSED
+tests/stdlib_tests/test_fail.py::test_truncated_input[{-Expecting property name enclosed in double quotes-1] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[["]-Unterminated string starting at-1] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[["spam",]-Expecting value-8] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[["spam":-Expecting ',' delimiter-7] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[,-Expecting value-1] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[42 "spam"-Expecting ',' delimiter-4] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[42,]-Expecting value-4] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[42:-Expecting ',' delimiter-3] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[{"spam":42]-Expecting ',' delimiter-11] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[{"spam":]-Expecting value-9] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[{"spam"]-Expecting ':' delimiter-8] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[[{]-Expecting property name enclosed in double quotes-2] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam",-Expecting ':' delimiter-7] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam":42 "ham"-Expecting ',' delimiter-11] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam":42,}-Expecting property name enclosed in double quotes-11] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam":[42}-Expecting ',' delimiter-11] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam":[}-Expecting value-9] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam":}-Expecting value-8] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{"spam"}-Expecting ':' delimiter-7] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{,-Expecting property name enclosed in double quotes-1] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{42-Expecting property name enclosed in double quotes-1] PASSED
+tests/stdlib_tests/test_fail.py::test_unexpected_data[{:-Expecting property name enclosed in double quotes-1] PASSED
+tests/stdlib_tests/test_float.py::test_allow_nan PASSED
+tests/stdlib_tests/test_float.py::test_floats PASSED
+tests/stdlib_tests/test_float.py::test_ints PASSED
+tests/stdlib_tests/test_float.py::test_out_of_range PASSED
+tests/stdlib_tests/test_indent.py::test_indent PASSED
+tests/stdlib_tests/test_indent.py::test_indent0 PASSED
+tests/stdlib_tests/test_passes.py::test_parse_pass_1 PASSED
+tests/stdlib_tests/test_passes.py::test_parse_pass_2 PASSED
+tests/stdlib_tests/test_passes.py::test_parse_pass_3 PASSED
+tests/stdlib_tests/test_recursion.py::test_defaultrecursion PASSED
+tests/stdlib_tests/test_recursion.py::test_dictrecursion PASSED
+tests/stdlib_tests/test_recursion.py::test_endless_recursion PASSED
+tests/stdlib_tests/test_recursion.py::test_highly_nested_objects_decoding PASSED
+tests/stdlib_tests/test_recursion.py::test_highly_nested_objects_encoding PASSED
+tests/stdlib_tests/test_recursion.py::test_listrecursion PASSED
+tests/stdlib_tests/test_separators.py::test_illegal_separators PASSED
+tests/stdlib_tests/test_separators.py::test_separators PASSED
+tests/stdlib_tests/test_unicode.py::test_big_unicode_decode PASSED
+tests/stdlib_tests/test_unicode.py::test_big_unicode_encode PASSED
+tests/stdlib_tests/test_unicode.py::test_bytes_decode PASSED
+tests/stdlib_tests/test_unicode.py::test_bytes_encode PASSED
+tests/stdlib_tests/test_unicode.py::test_encoding3 PASSED
+tests/stdlib_tests/test_unicode.py::test_encoding4 PASSED
+tests/stdlib_tests/test_unicode.py::test_encoding5 PASSED
+tests/stdlib_tests/test_unicode.py::test_encoding6 PASSED
+tests/stdlib_tests/test_unicode.py::test_object_pairs_hook_with_unicode PASSED
+tests/stdlib_tests/test_unicode.py::test_unicode_decode PASSED
+tests/stdlib_tests/test_unicode.py::test_unicode_preservation PASSED
+tests/test_custom_class.py::test_custom_class PASSED
+tests/test_custom_encoders.py::test_date_str PASSED
+tests/test_custom_encoders.py::test_date_tuple PASSED
+tests/test_custom_encoders.py::test_datetime_float PASSED
+tests/test_custom_encoders.py::test_datetime_str PASSED
+tests/test_custom_encoders.py::test_datetime_tuple PASSED
+tests/test_custom_encoders.py::test_decimal_float PASSED
+tests/test_custom_encoders.py::test_decimal_str PASSED
+tests/test_custom_encoders.py::test_fraction_float PASSED
+tests/test_custom_encoders.py::test_fraction_str PASSED
+tests/test_custom_encoders.py::test_named_tuple XFAIL (Not implement...)
+tests/test_custom_encoders.py::test_time_float PASSED
+tests/test_custom_encoders.py::test_time_str PASSED
+tests/test_custom_encoders.py::test_time_tuple PASSED
+tests/test_custom_encoders.py::test_timedelta_float PASSED
+tests/test_load.py::test_bools PASSED
+tests/test_load.py::test_dict_failure[dictionary0] XFAIL
+tests/test_load.py::test_dict_failure[dictionary1] XFAIL
+tests/test_load.py::test_float[-1.005] PASSED
+tests/test_load.py::test_float[-1.0] PASSED
+tests/test_load.py::test_float[-1234.005] PASSED
+tests/test_load.py::test_float[-1234.0] PASSED
+tests/test_load.py::test_float[-12340000000.005] PASSED
+tests/test_load.py::test_float[-12340000000.0] PASSED
+tests/test_load.py::test_float[1.005] PASSED
+tests/test_load.py::test_float[1.0] PASSED
+tests/test_load.py::test_float[1234.005] PASSED
+tests/test_load.py::test_float[1234.0] PASSED
+tests/test_load.py::test_float[12340000000.005] PASSED
+tests/test_load.py::test_float[12340000000.0] PASSED
+tests/test_load.py::test_int[-12340000000] PASSED
+tests/test_load.py::test_int[-1234] PASSED
+tests/test_load.py::test_int[-1] PASSED
+tests/test_load.py::test_int[12340000000] PASSED
+tests/test_load.py::test_int[1234] PASSED
+tests/test_load.py::test_int[1] PASSED
+tests/test_load.py::test_none PASSED
+tests/test_load.py::test_tuple_failure XFAIL
+tests/test_load.py::test_write_then_read[dict] PASSED
+tests/test_load.py::test_write_then_read[egg and bacon-egg and bacon] PASSED
+tests/test_load.py::test_write_then_read[egg and spam-egg and spam] PASSED
+tests/test_load.py::test_write_then_read[egg bacon and spam-egg bacon and spam] PASSED
+tests/test_load.py::test_write_then_read[egg sausage and bacon-egg sausage and bacon] PASSED
+tests/test_load.py::test_write_then_read[list] PASSED
+tests/test_load.py::test_write_then_read[tuple] PASSED
+tests/test_multiple_files.py::test_multiple_files PASSED
+tests/test_overloading.py::test_overloading PASSED
+tests/test_protocols.py::test_protocols PASSED
+tests/test_unregister.py::test_unregister PASSED
+
+================================== XFAILURES ===================================
+$(@D)/tests/test_custom_encoders.py:232: assert '["Alice", 12, "Sue"]' == '{"name": "Al...cher": "Sue"}'
+$(@D)/tests/test_load.py:101: AssertionError: assert {'2': 3.0, '4...e, 'false': 1} == {False: 1, 2:...0: 5, 6: True}
+$(@D)/tests/test_load.py:101: AssertionError: assert {'false': True, 'true': False} == {False: True, True: False}
+$(@D)/tests/test_load.py:110: AssertionError: assert [True, False, 1, 2.5, 'spam'] == (True, False, 1, 2.5, 'spam')
+
+Required test coverage of 99.0% reached. Total coverage: 99.21%
+============================= slowest 25 durations =============================
+=========================== short test summary info ============================
+======== 151 passed, 4 xfailed ========
+  py$(PYV): OK
+  congratulations :)

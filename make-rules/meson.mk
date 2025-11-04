@@ -49,6 +49,9 @@ endif
 
 MESON_BUILDPIE ?=	false
 
+# By default do not download any subprojects
+MESON_WRAPMODE ?=	nodownload
+
 # If the component prefers 64-bit binaries, then ensure builds deliver 64-bit
 # binaries to the standard directories and 32-bit binaries to the non-standard
 # location.  This allows simplification of package manifests and makes it
@@ -117,6 +120,7 @@ CONFIGURE_OPTIONS += --buildtype=$(MESON_BUILDTYPE)
 CONFIGURE_OPTIONS += --optimization=$(MESON_OPTIMIZATION)
 CONFIGURE_OPTIONS += -Ddefault_library=shared
 CONFIGURE_OPTIONS += -Db_pie=$(MESON_BUILDPIE)
+CONFIGURE_OPTIONS += --wrap-mode=$(MESON_WRAPMODE)
 
 # Install paths
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
@@ -146,32 +150,37 @@ CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
 # during ./configure).
 COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-MESON = 	/usr/bin/meson
+MESON = /usr/bin/meson
+USERLAND_REQUIRED_PACKAGES += developer/build/meson
 
-# configure the unpacked source for building 32 and 64 bit version
-# meson insists on separate source & build directories, so no cloney here.
-$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
-	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
-	$(COMPONENT_PRE_CONFIGURE_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(CONFIGURE_ENV) $(MESON) setup $(@D) \
-		$(CONFIGURE_OPTIONS))
-	$(COMPONENT_POST_CONFIGURE_ACTION)
-	$(TOUCH) $@
+# Configure
+CLONEY_MODE = none
+COMPONENT_CONFIGURE_ACTION = \
+	cd $(SOURCE_DIR) ; $(ENV) $(CONFIGURE_ENV) \
+		$(MESON) setup $(@D) $(CONFIGURE_OPTIONS)
 
 # If BUILD_STYLE is set, provide a default configure target.
 ifeq   ($(strip $(BUILD_STYLE)),meson)
 configure:	$(CONFIGURE_$(MK_BITS))
 endif
 
-USERLAND_REQUIRED_PACKAGES += developer/build/meson
-
-MESON_TEST_TRANSFORMS = \
-	'-n ' \
-	'-e "/Ok:/p" ' \
-	'-e "/Fail:/p" ' \
-	'-e "/Pass:/p" ' \
-	'-e "/Skipped:/p" ' \
-	'-e "/Timeout:/p" '
+# Remove the empty line after the 'Summary of Failures:'
+MESON_TEST_TRANSFORMS += "-e '/^Summary of Failures:/{n; N; D; }' | $(COMPONENT_TEST_TRANSFORMER)"
+# Remove the list of failed tests so we do not see failed tests twice
+MESON_TEST_TRANSFORMS += "-e '/^Summary of Failures:/,/^\$$/d'"
+# By default ignore all lines
+MESON_TEST_TRANSFORMS += "-n"
+# Print individual test results with removed test number and timing
+MESON_TEST_TRANSFORMS += "-e '/^ *[0-9]\{1,\}\/[0-9]\{1,\} /{s///; s/ \{1,\}[0-9]*[0-9]\.[0-9][0-9]s//; p; }'"
+# Print the test summary too
+MESON_TEST_TRANSFORMS += "-e '/^Ok:/,/^\$$/p'"
+# Add back the empty line before the test summary
+MESON_TEST_TRANSFORMS += "| $(COMPONENT_TEST_TRANSFORMER) -e '/^Ok:/{H; x; }'"
+# Sort test results
+MESON_TEST_TRANSFORMS += "| ( \
+		$(GSED) -u -e '/^\$$/Q' | $(SORT) | $(COMPONENT_TEST_TRANSFORMER) -e '\$$G' ; \
+		$(CAT) \
+	) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
 USE_DEFAULT_TEST_TRANSFORMS?=no
 ifeq ($(strip $(USE_DEFAULT_TEST_TRANSFORMS)),yes)

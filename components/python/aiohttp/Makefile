@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohttp
-HUMAN_VERSION =			3.9.3
-COMPONENT_SUMMARY =		aiohttp - Async http client/server framework (asyncio)
+HUMAN_VERSION =			3.13.0
+COMPONENT_SUMMARY =		Async http client/server framework (asyncio)
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiohttp
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/18/93/1f005bbe044471a0444a82cdd7356f5120b9cf94fe2c50c0cdbf28f1258b/aiohttp-3.9.3.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:90842933e5d1ff760fae6caca4b2b3edba53ba8f4b71e95dacf2818a2aca06f7
+	sha256:378dbc57dd8cf341ce243f13fa1fa5394d68e2e02c15cd5f28eae35a70ec7f67
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -63,18 +61,35 @@ COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/aiohttp-RENAMED $(@D)/aiohttp ;
 PYTEST_ADDOPTS += --ignore tests/test_proxy_functional.py
 # We have no python-on-whales packaged yet.
 PYTEST_ADDOPTS += --ignore tests/autobahn/test_autobahn.py
+# We have no pytest_codspeed packaged yet so we cannot run benchmark tests.
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_request.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_client_ws.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_cookiejar.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_websocket.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_http_writer.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_fileresponse.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_middleware.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_response.py
+PYTEST_ADDOPTS += --ignore tests/test_benchmarks_web_urldispatcher.py
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/aiosignal
-PYTHON_REQUIRED_PACKAGES += library/python/async-timeout
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/frozenlist
-PYTHON_REQUIRED_PACKAGES += library/python/multidict
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += library/python/yarl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/aiohappyeyeballs
+REQUIRED_PACKAGES.python += library/python/aiosignal
+REQUIRED_PACKAGES.python += library/python/async-timeout
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/frozenlist
+REQUIRED_PACKAGES.python += library/python/multidict
+REQUIRED_PACKAGES.python += library/python/pkgconfig
+REQUIRED_PACKAGES.python += library/python/propcache
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/yarl
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/aiohappyeyeballs
 TEST_REQUIRED_PACKAGES.python += library/python/aiosignal
 TEST_REQUIRED_PACKAGES.python += library/python/async-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
@@ -85,10 +100,13 @@ TEST_REQUIRED_PACKAGES.python += library/python/frozenlist
 TEST_REQUIRED_PACKAGES.python += library/python/gunicorn
 TEST_REQUIRED_PACKAGES.python += library/python/multidict
 TEST_REQUIRED_PACKAGES.python += library/python/mypy
+TEST_REQUIRED_PACKAGES.python += library/python/pkgconfig
+TEST_REQUIRED_PACKAGES.python += library/python/propcache
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/trustme
-TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/yarl
+TEST_REQUIRED_PACKAGES.python += library/python/zstandard

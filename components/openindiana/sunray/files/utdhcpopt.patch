@@ -1,0 +1,546 @@
+--- ./lib/dhcp/edhcp/utdhcpopt	Thu Jul 10 16:08:47 2025
++++ ./lib/dhcp/isc/utdhcpopt	Mon Jul 21 14:07:42 2025
+@@ -6,20 +6,8 @@
+ # Use is subject to license terms.
+ #
+ 
+-# names of files and directories that will be touched by this script
+-#
+-TMPDIR="/var/opt/SUNWut/tmp"
+-CORONA_NAME="SunRay";
+-CORONA_TITLE="Sun Ray";
++TMPDELETEFILE=/var/opt/SUNWut/tmp/$$.delete
+ 
+-LEASE_DAYS=1;
+-LOG_KERN=6;
+-LOG_NET=6;
+-LOG_USB=6;
+-LOG_VID=6;
+-LOG_APPL=6;
+-AUTH_PORT=7009;
+-
+ ProcessAdd() {
+ 	BEGAN=false
+ 
+@@ -30,18 +18,17 @@
+ 			COMMAND=${input#begin }
+ 			if [[ $COMMAND = "options" ]]; then
+ 				BEGAN=true
+-				grep "$CORONA_NAME " $DHTADM_P >/dev/null 2>&1
+-				if [[ $? = "0" ]]; then
+-					print -u2 "DHCP options configuration already exists."
+-					exit 1
+-				fi
++				if [[ -f $OPTIONSFILE ]]; then
++                			print -u2 "DHCP options configuration already exists."
++                			exit 1
++        			fi
+ 			elif [[ $COMMAND = "ether" ]]; then
+ 				BEGAN=true
+ 			else
+-				print -u2 "Error: Invalid block type.  Please try again."
++                            	print -u2 "Error: Invalid block type.  Please try again."
+ 				exit 1
+-			fi		
+-			;;
++			fi
++                        ;;
+ 		(end)
+ 			break
+ 			;;
+@@ -52,14 +39,14 @@
+ 				ETHER=${input#macaddress=}
+ 				normalizeEther
+ 				UT_DHCP_MACADDRESS=$ETHER
+-				grep "$UT_DHCP_MACADDRESS" $DHTADM_P >/dev/null 2>&1
+-                                if [[ $? = "0" ]]; then
++				ETHERFILE=${ETHERFILEPATHPREFIX}${UT_DHCP_MACADDRESS}
++                                if [[ -f $ETHERFILE ]]; then
+                                         print -u2 "DHCP ether configuration already exists."
+                                         exit 1
+-                                fi	
++                                fi
+ 			else
+ 				print -u2 "Error: Input must start with a \"begin\" statement"
+-				exit 1	
++				exit 1
+ 			fi
+ 			;;
+ 		(*)
+@@ -80,117 +67,74 @@
+ 			print -u2 "Error: Invalid options block"
+ 			exit 1
+ 		else
+-			AddVendorOptions
+-			AddSunrayOptions
+-			if [[ $? = "0" ]]; then
+-				print "Configuration added."
+-				exit 0
+-			else
+-				print -us "Error: Could not add configuration."
+-				exit 1 
+-			fi
++			GenerateOptionsDHCPDConf >> $OPTIONSFILE
++			OPTINSERT=$OPTIONSFILE
++			ls $DHCPDCONF | xargs grep $OPTINSERT >/dev/null
++                	if [[ $? != 0 ]]; then
++                        	InsertOptionsInclude $OPTINSERT
++                	fi
+ 		fi
+-	elif [[ $COMMAND = "ether" ]]; then	
++	elif [[ $COMMAND = "ether" ]]; then
+ 		ValidateEtherBlock
+ 		if [[ $? != 0 ]]; then
+-                        print -u2 "Error: Invalid ether block"
+-                        exit 1
++       			print -u2 "Error: Invalid ether block"
++			exit 1
+ 		else
+-			AddEther
++			GenerateEtherDHCPDConf >> $ETHERFILE
++			ETHERINSERT=$ETHERFILE
++			ls $DHCPDCONF | xargs grep $ETHERINSERT >/dev/null
++			if [[ $? != 0 ]]; then
++				InsertGenericInclude $ETHERINSERT
++			fi	
+ 		fi
+-	fi
++        fi
++	print "Configuration added."
++	exit 0
+ }
+ 
+-AddEther() {
+-	ConstructOptionsMacro
+-	dhtadm -A -m "01$UT_DHCP_MACADDRESS" -d "$CORONA_MACRO" 2> ${TMPDIR}/Err.$$;
+-	if [ ${?} -ne 0 ]
+-	then
+-		print -u2 "Error: cannot create macro \"01$UT_DHCP_MACADDRESS\":"
+-		print -u2 $(cat ${TMPDIR}/Err.$$)
+-		rm -f ${TMPDIR}/Err.$$;
+-		exit 1;
+-	fi
+-	rm -f ${TMPDIR}/Err.$$;
++GenerateEtherDHCPDConf() {
++	AddEtherColon
++	print "subclass \"SunRayEther\" 1:$ETHERCOLON {"
++	print "	vendor-option-space NewT;"
++	GenerateOptionsDHCPDBlock	
++	print "}"
+ }
+ 
+-RemoveEther() {
+-	dhtadm -D -m "01$UT_DHCP_MACADDRESS" 2> ${TMPDIR}/Err.$$;
+-	if [ ${?} -ne 0 ]
+-	then
+-		print -u2 "Error: cannot remove \"01$UT_DHCP_MACADDRESS\" macro:"
+-		print -u2 $(cat ${TMPDIR}/Err.$$)
+-		rm -f ${TMPDIR}/Err.$$;
+-		exit 1;
+-	fi
+-	rm -f ${TMPDIR}/Err.$$;
+-}
++GenerateOptionsDHCPDConf() {
++cat <<!
++option space NewT;
++option NewT.AuthSrvr code 21 = ip-address;
++option NewT.AuthPort code 22 = unsigned integer 16;
++option NewT.NewTVer  code 23 = string;
++option NewT.LogHost  code 24 = ip-address;
++option NewT.LogKern  code 25 = unsigned integer 8;
++option NewT.LogNet   code 26 = unsigned integer 8;
++option NewT.LogUSB   code 27 = unsigned integer 8;
++option NewT.LogVid   code 28 = unsigned integer 8;
++option NewT.LogAppl  code 29 = unsigned integer 8;
++option NewT.NewTBW   code 30 = unsigned integer 32;
++option NewT.FWSrvr   code 31 = ip-address;
++option NewT.NewTDispIndx   code 32 = unsigned integer 32;
++option NewT.Intf     code 33 = string;
++option NewT.NewTFlags      code 34 = unsigned integer 32;
++option NewT.AltAuth  code 35 = array of ip-address;
++option NewT.BarrierLevel   code 36 = unsigned integer 32;
+ 
+-RemoveSunrayOptions() {
+-	dhtadm -D -m "${CORONA_NAME}" 2> /dev/null
++class "SunRayEther" {
++	match option dhcp-client-identifier;
+ }
+-
+-AddSunrayOptions() {
+-    ConstructOptionsMacro
+-    let LEASE=${LEASE_DAYS}\*86400;
+-    CORONA_MACRO=":LeaseTim=${LEASE}:LeaseNeg${CORONA_MACRO}"
+-    dhtadm -D -m "${CORONA_NAME}" 2> /dev/null
+-    dhtadm -A -m "${CORONA_NAME}" -d "${CORONA_MACRO}" 2> ${TMPDIR}/Err.$$;
+-
+-    if [ ${?} -ne 0 ]; then
+-  	print -u2 "Error:  cannot add server macro \"${CORONA_NAME}\" to dhcptab:\n    `cat ${TMPDIR}/Err.$$`"
+-	 rm -f ${TMPDIR}/Err.$$
+-	 return 1;
+-    else
+-  	rm -f ${TMPDIR}/Err.$$
+-    fi
+-    return 0
++        
++class "SunRay" {
++	match option vendor-class-identifier;
+ }
+ 
+-RemoveVendorOptions() {
+-	# remove them first
+-	typeset TMPBATCH=${TMPDIR}/setupdhcp-batch.$$
+-	rm -f ${TMPBATCH} 2> /dev/null
+-	touch ${TMPBATCH}
+-	for i in `cat $DHTADM_P | awk '/SUNW.NewT.SUNW/ { print $1 }'`; do
+-		print "dhtadm -D -s $i" >> ${TMPBATCH}
+-	done
+-	if [[ -s $TMPBATCH ]]; then
+-		# CR 6217989 - dhtadm -B errors on Solaris x86
+-		DoDhcpBatch dhtadm $TMPBATCH 2> /dev/null	# ignore errors
+-	fi
+- 	rm -f ${TMPBATCH}
++subclass "SunRay" "SUNW.NewT.SUNW" {
++	vendor-option-space NewT;
++!
++	GenerateOptionsDHCPDBlock
++	print "}"
+ }
+ 
+-AddVendorOptions() {
+-	RemoveVendorOptions
+-	typeset TMPBATCH=${TMPDIR}/setupdhcp-batch.$$  
+-  	print "dhtadm -A -s AuthSrvr -d 'Vendor=SUNW.NewT.SUNW,21,IP,1,1'" > ${TMPBATCH}
+-  	print "dhtadm -A -s AltAuth -d 'Vendor=SUNW.NewT.SUNW,35,IP,1,0'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s AuthPort -d 'Vendor=SUNW.NewT.SUNW,22,NUMBER,2,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s NewTVer -d 'Vendor=SUNW.NewT.SUNW,23,ASCII,1,0'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s NewTBW -d 'Vendor=SUNW.NewT.SUNW,30,NUMBER,4,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogHost -d 'Vendor=SUNW.NewT.SUNW,24,IP,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogKern -d 'Vendor=SUNW.NewT.SUNW,25,NUMBER,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogNet -d 'Vendor=SUNW.NewT.SUNW,26,NUMBER,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogUSB -d 'Vendor=SUNW.NewT.SUNW,27,NUMBER,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogVid -d 'Vendor=SUNW.NewT.SUNW,28,NUMBER,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s LogAppl -d 'Vendor=SUNW.NewT.SUNW,29,NUMBER,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s FWSrvr -d 'Vendor=SUNW.NewT.SUNW,31,IP,1,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s Intf -d 'Vendor=SUNW.NewT.SUNW,33,ASCII,1,0'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s NewTFlags -d 'Vendor=SUNW.NewT.SUNW,34,NUMBER,4,1'" >> ${TMPBATCH}
+-  	print "dhtadm -A -s BarrierLevel -d 'Vendor=SUNW.NewT.SUNW,36,NUMBER,4,1'" >> ${TMPBATCH}
+-	# CR 6217989 - dhtadm -B errors on Solaris x86
+-	DoDhcpBatch dhtadm $TMPBATCH 2> ${TMPDIR}/Err.$$;
+-  	if [ ${?} -ne 0 ]; then
+-		print -u2 "Error:  cannot add SunRay symbols to dhcptab:\n	  `cat ${TMPDIR}/Err.$$`"
+-		rm -f ${TMPBATCH} ${TMPDIR}/Err.$$;
+-		return 1;
+-  	fi
+-	rm -f ${TMPBATCH} ${TMPDIR}/Err.$$;
+-
+-}
+-
+ ProcessDelete() {
+ 	BEGAN=false
+ 
+@@ -199,27 +143,44 @@
+        		case $input in
+ 		(begin*)
+ 			COMMAND=${input#begin }
+-			if [[ $COMMAND = "options" ]]; then
+-				grep "$CORONA_NAME " $DHTADM_P >/dev/null 2>&1
+-				if [[ $? != 0 ]]; then
+-					print -u2 "Configuration for DHCP options does not exist."
+-					exit 1
+-				fi
+-				BEGAN=true
+-			elif [[ $COMMAND = "ether" ]]; then
+-				BEGAN=true
+-			else
+-				print -u2 "Error: Must be either an 'options' or 'ether' block"
+-				exit 1
+-			fi
++                        if [[ $COMMAND = "options" ]]; then
++                                BEGAN=true
++                                if [[ ! -f $OPTIONSFILE ]]; then
++                                        print -u2 "Configuration for DHCP options does not exist."
++                                        exit 1
++                                fi
++                        elif [[ $COMMAND = "ether" ]]; then
++                                BEGAN=true
++                        else
++                                print -u2 "Error: Invalid block type.  Please try again."
++                                exit 1
++                        fi
+                         ;;
++		(macaddress*)
++                        if $BEGAN; then
++                                ConvertKeyToLower "$input"
++                                input="$_RETURN_VAL"
++                                ETHER=${input#macaddress=}
++                                normalizeEther
++                                UT_DHCP_MACADDRESS=$ETHER
++                                ETHERFILE=${ETHERFILEPATHPREFIX}${UT_DHCP_MACADDRESS}
++                                if [[ ! -f $ETHERFILE ]]; then
++                                        print -u2 "DHCP ether configuration $UT_DHCP_MACADDRESS does not exist."
++                                        exit 1
++                                fi
++                        else
++                                print -u2 "Error: Input must start with a \"begin\" statement"
++                                exit 1
++                        fi
++                        ;;
+ 		(end)
+                         if $BEGAN; then
+ 				if [[ $COMMAND = "options" ]]; then
+-					RemoveSunrayOptions
+-					RemoveVendorOptions
++					DeleteGenericInclude "SunRay-options"
++					rm -f $OPTIONSFILE
+ 				elif [[ $COMMAND = "ether" ]]; then
+-					RemoveEther
++					DeleteGenericInclude "SunRay-ether-$ETHER"
++					rm -f $ETHERFILE
+ 				fi
+                         else
+                                 return 0
+@@ -226,23 +187,6 @@
+                         fi
+ 			break
+ 				;;
+-		(macaddress*)
+-			if $BEGAN; then
+-				ConvertKeyToLower "$input"
+-				input="$_RETURN_VAL"
+-				ETHER=${input#macaddress=}
+-				normalizeEther
+-				UT_DHCP_MACADDRESS=$ETHER
+-				grep "$UT_DHCP_MACADDRESS" $DHTADM_P >/dev/null 2>&1
+-				if [[ $? != "0" ]]; then
+-                                        print -u2 "DHCP ether configuration $UT_DHCP_MACADDRESS does not exist."
+-                                        exit 1
+-				fi
+-			else
+-				print -u2 "Error: Input must start with a \"begin\" statement"
+-				exit 1
+-                        fi
+-                        ;;
+ 		(*)
+                         if $BEGAN; then
+                                 print -u2 "Error: Invalid argument."
+@@ -260,59 +204,52 @@
+ ProcessChange() {
+ 	BEGAN=false
+ 
+-	grep "$CORONA_NAME " $DHTADM_P >/dev/null 2>&1
+-	if [[ $? != 0 ]]; then
+-		print -u2 "Configuration for DHCP options does not exist."
+-		exit 1
+-	fi
+-	TranslateDhtadmP
++	TranslateDHCPDConf
+         InitDHCPBlockParser $UTDHCPFILE
+         while read input
+         do
+                 case $input in
+-                (begin*)
+-			COMMAND=${input#begin }
+-			if [[ $COMMAND = "options" ]]; then
+-				grep "$CORONA_NAME " $DHTADM_P >/dev/null 2>&1
+-				if [[ $? != 0 ]]; then
++		(begin*)
++                        COMMAND=${input#begin }
++                        if [[ $COMMAND = "options" ]]; then
++                                BEGAN=true
++                                if [[ ! -f $OPTIONSFILE ]]; then
+                                         print -u2 "Configuration for DHCP options does not exist."
+                                         exit 1
+-				fi
++                                fi
+ 				GetNextDHCPBlock options
++                        elif [[ $COMMAND = "ether" ]]; then
+                                 BEGAN=true
+-			elif [[ $COMMAND = "ether" ]]; then
+-				BEGAN=true
+-			else
+-                            	print -u2 "Error: Must be either an 'options' or 'ether' block"
+-				exit 1
+-			fi
++                        else
++                                print -u2 "Error: Invalid block type.  Please try again."
++                                exit 1
++                        fi
+                         ;;
+-                (end)
+-                        break
+-                        ;;
+-		(macaddress*)
+-			if $BEGAN; then
+-				ConvertKeyToLower "$input"
+-				input="$_RETURN_VAL"
+-				ETHER=${input#macaddress=}
+-				normalizeEther
+-				UT_DHCP_MACADDRESS=$ETHER
+-				grep "$UT_DHCP_MACADDRESS" $DHTADM_P >/dev/null 2>&1
+-				if [[ $? != "0" ]]; then
++                (macaddress*)
++                        if $BEGAN; then
++                                ConvertKeyToLower "$input"
++                                input="$_RETURN_VAL" 
++                                ETHER=${input#macaddress=}
++                                normalizeEther
++                                ETHERFILE=${ETHERFILEPATHPREFIX}${ETHER}
++                                if [[ ! -f $ETHERFILE ]]; then
+                                         print -u2 "DHCP ether configuration $UT_DHCP_MACADDRESS does not exist."
+                                         exit 1
+-				fi
++                                fi
+ 				while GetNextDHCPBlock ether
+                                 do
+                                         if [[ $UT_DHCP_MACADDRESS = $ETHER ]]; then
+-						break
+-					fi
+-				done
+-			else
+-                            	print -u2 "Error: Input must start with a \"begin\" statement"
+-				exit 1
+-			fi
++                                                break
++                                        fi
++                                done
++                        else
++                                print -u2 "Error: Input must start with a \"begin\" statement"
++                                exit 1
++                        fi
+                         ;;
++                (end)
++                        break
++                        ;;
+                 (*)
+                         if ! $BEGAN ; then
+                                 print -u2 "Error: Input must start with a \"begin\" statement"
+@@ -333,49 +270,44 @@
+                 	print -u2 "Error: Invalid options block"
+                 	exit 1
+         	else
+-			AddVendorOptions
+-			AddSunrayOptions
+-			if [[ $? = "0" ]]; then
+-				print "Configuration changed."
+-				exit 0
+-			else
+-                    		print -us "Error: Could not change configuration."
+-				exit 1
+-			fi
+-		fi
++			GenerateOptionsDHCPDConf >> $OPTIONSFILE.$$
++			rm -f $OPTIONSFILE 2>/dev/null
++			mv $OPTIONSFILE.$$ $OPTIONSFILE
++        	fi
+ 	elif [[ $COMMAND = "ether" ]]; then
+ 		ValidateEtherBlock
+ 		if [[ $? != 0 ]]; then
+ 			print -u2 "Error: Invalid ether block"
+-			exit 1	
++                        exit 1 
+ 		else
+-			RemoveEther
+-			AddEther
+-			print "Configuration changed."
++			GenerateEtherDHCPDConf >> $ETHERFILE.$$
++			rm -f $ETHERFILE 2>/dev/null
++			mv $ETHERFILE.$$ $ETHERFILE
+ 		fi
+-        fi
++	fi
++        print "Configuration changed."
+         exit 0
+ }
+ 
+ ListEtherBlocks() {
+-	TranslateDhtadmP
+-	if [[ $? != 0 ]]; then
+-		return 0
+-	fi
+-	InitDHCPBlockParser $UTDHCPFILE
+-	if [[ $? != 0 ]]; then
+-		return 0
+-	fi
++	TranslateDHCPDConf
++        if [[ $? != 0 ]]; then
++                return 0
++        fi
++        InitDHCPBlockParser $UTDHCPFILE
++        if [[ $? != 0 ]]; then
++                return 0
++        fi
+         while GetNextDHCPBlock ether
+-	do
+-          	CreateDHCPBlock ether
+-	done
+-	DestroyDHCPBlockParser
+-	rm -f $UTDHCPFILE 2>/dev/null
++        do
++                CreateDHCPBlock ether
++        done
++        DestroyDHCPBlockParser
++        rm -f $UTDHCPFILE 2>/dev/null
+ }
+ 
+ ListOptionsBlocks() {
+-	TranslateDhtadmP
++	TranslateDHCPDConf
+ 	if [[ $? != 0 ]]; then
+ 		return 0
+ 	fi
+@@ -393,15 +325,11 @@
+ 
+ # main
+ 
+-trap "rm -rf ${TMPDIR}/*.$$; exit" 0 1 2 3 14 15
+-
+-ETC_OPT_UT="/etc/opt/SUNWut"
++ETC_OPT_UT=/etc/opt/SUNWut
+ UT_DHCP_BASEDIR=`(cd ${ETC_OPT_UT}/dhcp ; /bin/pwd)`
+ . ${UT_DHCP_BASEDIR}/../../support_lib/dhcp_config
+ . ${UT_DHCP_BASEDIR}/dhcp_config_solaris
+ 
+-GetCurrentCfg
+-
+ if [[ $# = 0 ]]; then
+ 	ListOptionsBlocks
+ 	ListEtherBlocks
+@@ -419,22 +347,22 @@
+ 	ProcessDelete 
+ 	;;
+ (list)
+-        if [[ $# = 1 ]]; then
+-                ListOptionsBlocks
+-                ListEtherBlocks
+-                exit 0  
+-        fi
+-        if [[ $2 = "options" ]]; then
+-                ListOptionsBlocks
+-                exit 0
+-        elif [[ $2 = "ether" ]]; then
+-                ListEtherBlocks
+-                exit 0
+-        else    
+-                print -u2 'Must specify either options or ether.'
+-                exit 1
+-        fi
+-        ;;
++	if [[ -z $2 ]]; then
++		ListOptionsBlocks
++		ListEtherBlocks
++		exit 0
++	fi
++	if [[ $2 = "options" ]]; then
++		ListOptionsBlocks
++		exit 0
++	elif [[ $2 = "ether" ]]; then
++		ListEtherBlocks
++		exit 0
++	else
++		print -u2 'Must specify either options or ether.'
++		exit 1
++	fi
++	;;
+ (*)
+ 	exit 1
+ esac

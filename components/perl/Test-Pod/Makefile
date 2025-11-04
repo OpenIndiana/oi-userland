@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Test::Pod
+#   $WS_TOOLS/perl-integrate-module Test-Pod
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Test::Pod
+COMPONENT_NAME =		Test-Pod
 HUMAN_VERSION =			1.52
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Test::Pod - check for POD errors in files
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		check for POD errors in files
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:60a8dbcc60168bf1daa5cc2350236df9343e9878f4ab9830970a5dde6fe8e5fc
@@ -30,4 +30,9 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/pod-simple
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/pod-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

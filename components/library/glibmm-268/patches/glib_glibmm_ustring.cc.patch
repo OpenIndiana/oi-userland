@@ -1,0 +1,53 @@
+OI (and Solaris) iconv doesn't support WCHAR_T <-> UTF-8 conversions 
+( https://www.illumos.org/issues/5089 ). But internal encoding used 
+in WCHAR_T is UCS-4LE, so we use it.
+
+--- glibmm-2.82.0/glib/glibmm/ustring.cc.orig
++++ glibmm-2.82.0/glib/glibmm/ustring.cc
+@@ -1373,7 +1373,7 @@
+ #else
+   gsize n_bytes = 0;
+   const auto buf = make_unique_ptr_gfree(g_convert(reinterpret_cast<const char*>(str.data()),
+-    str.size() * sizeof(std::wstring::value_type), "UTF-8", "WCHAR_T", nullptr, &n_bytes, &error));
++    str.size() * sizeof(std::wstring::value_type), "UTF-8", "UCS-4LE", nullptr, &n_bytes, &error));
+ #endif /* !(__STDC_ISO_10646__ || G_OS_WIN32) */
+ 
+ #else /* !GLIBMM_HAVE_WIDE_STREAM */
+@@ -1462,7 +1462,7 @@
+ #else
+   gsize n_bytes = 0;
+   const auto buf = make_unique_ptr_gfree(g_convert(reinterpret_cast<const char*>(wstr.data()),
+-    wstr.size() * sizeof(std::wstring::value_type), "UTF-8", "WCHAR_T", nullptr, &n_bytes, &error));
++    wstr.size() * sizeof(std::wstring::value_type), "UTF-8", "UCS-4LE", nullptr, &n_bytes, &error));
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
+ 
+   if (error)
+@@ -1490,7 +1490,7 @@
+     g_utf8_to_utf16(utf8_string.raw().data(), utf8_string.raw().size(), nullptr, nullptr, &error));
+ #else
+   const auto buf = make_unique_ptr_gfree(g_convert(utf8_string.raw().data(),
+-    utf8_string.raw().size(), "WCHAR_T", "UTF-8", nullptr, nullptr, &error));
++    utf8_string.raw().size(), "UCS-4LE", "UTF-8", nullptr, nullptr, &error));
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
+ 
+   if (error)
+--- glibmm-2.82.0/untracked/glib/glibmm/convert.cc.orig
++++ glibmm-2.82.0/untracked/glib/glibmm/convert.cc
+@@ -319,7 +319,7 @@
+ #else
+   gsize bytes_written = 0;
+   const auto buf = make_unique_ptr_gfree(g_convert(utf8_string.c_str(),
+-    utf8_string.bytes(), "WCHAR_T", "UTF-8", nullptr, &bytes_written, &error));
++    utf8_string.bytes(), "UCS-4LE", "UTF-8", nullptr, &bytes_written, &error));
+     items_written = bytes_written / GLIBMM_SIZEOF_WCHAR_T;
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)
+ 
+@@ -351,7 +351,7 @@
+   gsize n_bytes = 0;
+   const auto buf = make_unique_ptr_gfree(g_convert(
+     reinterpret_cast<const char*>(wide_string.c_str()),
+-    wide_string.size() * GLIBMM_SIZEOF_WCHAR_T, "UTF-8", "WCHAR_T",
++    wide_string.size() * GLIBMM_SIZEOF_WCHAR_T, "UTF-8", "UCS-4LE",
+     nullptr, &n_bytes, &error));
+   bytes_written = n_bytes;
+ #endif // !(__STDC_ISO_10646__ || G_OS_WIN32)

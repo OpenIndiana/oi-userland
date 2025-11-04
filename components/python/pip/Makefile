@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pip
-HUMAN_VERSION =			24.0
-COMPONENT_SUMMARY =		pip - The PyPA recommended tool for installing Python packages.
+HUMAN_VERSION =			25.2
+COMPONENT_SUMMARY =		The PyPA recommended tool for installing Python packages.
 COMPONENT_PROJECT_URL =		https://pip.pypa.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pypa/pip/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ad0dfe75fb28092a8cbe18523391695ceb0c0d65a5c9a969349fcb13b12b84c7
+	sha256:d09e469f9c6d829eb5094f8369912519c025868a772077e826afd161abd67aee
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -33,18 +33,15 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# usr/bin/pip3.x needs to be handled separately because we have no generic
-# rules covering it
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/\(usr\/bin\/pip\)3\.[0-9]\{1,\}$$/\1$$(PYVER)/' | uniq
-
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += tests/requirements.txt
+TEST_REQUIREMENTS_PEP735 += test
+
+# We have no proxy.py packaged yet
+PYTEST_ADDOPTS += --ignore tests/functional/test_proxy.py
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun

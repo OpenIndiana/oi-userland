@@ -19,10 +19,9 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testpath
-COMPONENT_VERSION =		0.6.0
-COMPONENT_SUMMARY =		testpath - Test utilities for code working with files and commands
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/08/ad/a3e7d580902f57e31d2181563fc4088894692bb6ef79b816344f27719cdc/testpath-0.6.0.tar.gz
+HUMAN_VERSION =			0.6.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Test utilities for code working with files and commands
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:2f1b97e6442c02681ebe01bd84f531028a7caea1af3825000f52345c30285e0f
 COMPONENT_LICENSE =		BSD-3-Clause
@@ -33,8 +32,9 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # cli-32.exe and cli-64.exe are needed for Windows only, so drop them
-GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/cli-(32|64)\.exe$$'
+GENERATE_EXTRA_SED += -e '/\/cli-32\.exe$$/d'
+GENERATE_EXTRA_SED += -e '/\/cli-64\.exe$$/d'
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python

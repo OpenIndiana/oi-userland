@@ -1,0 +1,15 @@
+Make sure Apache modules are found.
+
+--- libsoup-3.6.1/get_apache_modules_dirs.py.orig
++++ libsoup-3.6.1/get_apache_modules_dirs.py
+@@ -101,8 +101,8 @@
+     apache_mod_unixd_module_file = ''
+     apache_http2_module_dir = ''
+ 
+-    for lib_dir in ['lib', 'lib64']:
+-        for httpd_dir in ['apache', 'apache2', 'http', 'http2', 'httpd']:
++    for lib_dir in ['lib', 'lib64', 'libexec']:
++        for httpd_dir in ['apache', 'apache2', 'http', 'http2', 'httpd', '']:
+             for mpm_suffix in ['', '-' + mpm]:
+                 for modules_dir in ['', 'modules']:
+                     modules_path = os.path.join(apache_prefix, lib_dir, httpd_dir + mpm_suffix, modules_dir)

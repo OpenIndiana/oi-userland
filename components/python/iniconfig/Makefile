@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iniconfig
-HUMAN_VERSION =			2.0.0
-COMPONENT_SUMMARY =		iniconfig - brain-dead simple config-ini parsing
+HUMAN_VERSION =			2.3.0
+COMPONENT_SUMMARY =		brain-dead simple config-ini parsing
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/iniconfig
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/d7/4b/cbd8e699e64a6f16ca3a8220661b5f83792b3017d0f79807cb8708d33913/iniconfig-2.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3
+	sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,9 +34,15 @@ TEST_STYLE = pytest
 # - pytest (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
+# Python 3.9 is not supported by iniconfig >= 2.2.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python

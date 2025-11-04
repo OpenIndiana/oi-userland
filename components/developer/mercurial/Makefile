@@ -1,93 +1,86 @@
 #
-# CDDL HEADER START
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
 #
-# The contents of this file are subject to the terms of the
-# Common Development and Distribution License (the "License").
-# You may not use this file except in compliance with the License.
-#
-# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
-# or http://www.opensolaris.org/os/licensing.
-# See the License for the specific language governing permissions
-# and limitations under the License.
-#
-# When distributing Covered Code, include this CDDL HEADER in each
-# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
-# If applicable, add the following below this CDDL HEADER, with the
-# fields enclosed by brackets "[]" replaced with your own identifying
-# information: Portions Copyright [yyyy] [name of copyright owner]
-#
-# CDDL HEADER END
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
-# Copyright 2017, 2021 Gary Mills
-# Copyright (c) 2011, 2016, Oracle and/or its affiliates. All rights reserved.
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d developer/mercurial mercurial
 #
 
-BUILD_STYLE= setup.py
+BUILD_STYLE = pyproject
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	5.9.3
-COMPONENT_REVISION=		2
-COMPONENT_SUMMARY=		The Mercurial Source Control Management System
-COMPONENT_PROJECT_URL=		https://mercurial-scm.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:3b43f68977ad0fa75aa7f1e5c8f0a83ba935621ab2396129abb498e56d1be08e
-COMPONENT_ARCHIVE_URL=	https://www.mercurial-scm.org/release/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=			developer/versioning/mercurial
-COMPONENT_CLASSIFICATION=	Development/Source Code Management
-COMPONENT_LICENSE=		GPL-2.0-or-later
-COMPONENT_LICENSE_FILE=		COPYING
+COMPONENT_NAME =		mercurial
+HUMAN_VERSION =			6.9.1
+COMPONENT_SUMMARY =		Fast scalable distributed SCM (revision control, version control) system
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:e577577ee9a97a9f84d3c34d53ccb8b9354263d6ab96447525094f3e0a567270
+COMPONENT_LICENSE =		GPL-2.0-only
+COMPONENT_LICENSE_FILE =	COPYING
 
+COMPONENT_FMRI =		developer/versioning/mercurial
+COMPONENT_CLASSIFICATION =	Development/Source Code Management
+
+# This is a standalone application.  Since no other Python project depends on
+# it we just provide single unversioned package.
 SINGLE_PYTHON_VERSION = yes
 
 TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
+# Build and install documentation
+COMPONENT_POST_BUILD_ACTION += cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) $(GMAKE) doc ;
+COMPONENT_POST_INSTALL_ACTION += cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) DESTDIR=$(PROTO_DIR) PREFIX=$(USRDIR) install-doc ;
+
+# This test fails with PYTHONPATH set
+TEST_BLACKLIST += test-hghave.t
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6402
+TEST_BLACKLIST += test-stdio.py
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6915
+TEST_BLACKLIST += test-patchbomb.t
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6899
+TEST_BLACKLIST += test-revlog-mmapindex.t
+# https://bz.mercurial-scm.org/show_bug.cgi?id=6957
+TEST_BLACKLIST += test-highlight.t
 
 # Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
-# worked, and using /bin/bash doesn't always work, either.  Also skip the
-# tests which try to check all the code in the userland gate.  And finally,
-# test the bits from the proto area, rather than rebuilding.  Given the way the
-# test suite works, the hg executable must be named "hg".
-TEST_BLACKLIST = \
-	test-check-code.t \
-	test-check-config.t \
-	test-devel-warnings.t \
-	test-hghave.t \
-	test-run-tests.t \
-	test-merge1.t \
-	test-removeemptydirs.t \
-	test-stdio.py \
-	test-update-names.t
-
-# https://www.mercurial-scm.org/pipermail/mercurial-devel/2017-March/093876.html
-TEST_BLACKLIST += \
-	test-ssh-bundle1.t \
-	test-bundle2-exchange.t
-
+# worked, and using /bin/bash doesn't always work, either.
+# Test the bits from the proto area, rather than rebuilding.
 COMPONENT_PRE_TEST_ACTION += \
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
 	printf "%s\n" $(TEST_BLACKLIST) > blacklist);
 
-COMPONENT_TEST_DIR =	$(COMPONENT_SRC)/tests
-COMPONENT_TEST_ENV =	PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB)
+# see tests/README
+COMPONENT_TEST_DIR =	$(@D)/tests
 COMPONENT_TEST_ENV +=	TERM=dumb
 COMPONENT_TEST_ENV +=	HGTEST_JOBS=$(or $(HGTEST_JOBS),1)
-COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_ENV +=	PATH=$(PATH.gnu)
 COMPONENT_TEST_CMD =	$(PYTHON)
 COMPONENT_TEST_ARGS =	./run-tests.py \
+			--verbose \
 			--shell $(BUILD_DIR)/sh \
 			--with-hg $(PROTOUSRBINDIR)/hg \
 			--blacklist $(BUILD_DIR)/blacklist
 COMPONENT_TEST_TARGETS =
 
+# Random temporary directory
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/hgtests\.[^ ]\{8\}|\$$(HGTMP)|g'"
+# Sequential number of test working directory
+COMPONENT_TEST_TRANSFORMS += "-e 's|\(/child\)[0-9]\{1,\}/|\1X/|g'"
+# Daemon process PID
+COMPONENT_TEST_TRANSFORMS += "-e 's/\([Dd]aemon process \)[0-9]\{1,\}/\1\$$(PID)/'"
+
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/setuptools
+PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library

@@ -19,13 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httplib2
-HUMAN_VERSION =			0.22.0
-COMPONENT_SUMMARY =		httplib2 - A comprehensive HTTP client library.
+HUMAN_VERSION =			0.30.2
+COMPONENT_SUMMARY =		A comprehensive HTTP client library.
 COMPONENT_PROJECT_URL =		https://github.com/httplib2/httplib2
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3d/ad/2371116b22d616c194aa25ec410c9c6c37f23599dcd590502b74db197584/httplib2-0.22.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d7a10bc5ef5ab08322488bde8c726eeee5c8618723fdb399597ec58f3d82df81
+	sha256:050bde6a332824b05a3deef5238f2b0372f71af46f8ca2190c2cb1f66aa376cd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,17 +36,16 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += requirements-test.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyparsing
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pyparsing
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
-TEST_REQUIRED_PACKAGES.python += library/python/future
+TEST_REQUIRED_PACKAGES.python += library/python/pysocks
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-forked
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
-TEST_REQUIRED_PACKAGES.python += library/python/six

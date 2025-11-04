@@ -1,0 +1,67 @@
+--- rofi-2.0.0/source/modes/drun.c.orig	2025-09-01 20:22:18.000000000 +0200
++++ rofi-2.0.0/source/modes/drun.c	2025-11-02 12:51:36.616845887 +0100
+@@ -866,44 +866,30 @@
+     if (file->d_name[0] == '.') {
+       continue;
+     }
+-    switch (file->d_type) {
+-    case DT_LNK:
+-    case DT_REG:
+-    case DT_DIR:
+-    case DT_UNKNOWN:
+-      filename = g_build_filename(dirname, file->d_name, NULL);
+-      break;
+-    default:
+-      continue;
++    /* ATM I don't know how to replace DT_UNKNOWN */
++    if ((stat(file->d_name, &st) == 0) && (S_ISLNK(st.st_mode) || S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
++        filename = g_build_filename(dirname, file->d_name, NULL);
++        break;
++    } else {
++        continue;
+     }
+ 
+-    // On a link, or if FS does not support providing this information
+-    // Fallback to stat method.
+-    if (file->d_type == DT_LNK || file->d_type == DT_UNKNOWN) {
+-      file->d_type = DT_UNKNOWN;
+-      if (stat(filename, &st) == 0) {
++    if (stat(filename, &st) == 0) {
++        if (S_ISREG(st.st_mode)) {
++            // Skip files not ending on .desktop.
++            if (g_str_has_suffix(file->d_name, ".desktop")) {
++                read_desktop_file(pd, root, filename, file->d_name, DRUN_GROUP_NAME);
++            }
++            break;
++        }
+         if (S_ISDIR(st.st_mode)) {
+-          file->d_type = DT_DIR;
+-        } else if (S_ISREG(st.st_mode)) {
+-          file->d_type = DT_REG;
++            if (recursive) {
++                walk_dir(pd, root, filename, recursive);
++            }
++            break;
+         }
+-      }
+-    }
+-
+-    switch (file->d_type) {
+-    case DT_REG:
+-      // Skip files not ending on .desktop.
+-      if (g_str_has_suffix(file->d_name, ".desktop")) {
+-        read_desktop_file(pd, root, filename, file->d_name, DRUN_GROUP_NAME);
+-      }
+-      break;
+-    case DT_DIR:
+-      if (recursive) {
+-        walk_dir(pd, root, filename, recursive);
+-      }
+-      break;
+-    default:
+-      break;
++    
++        break;
+     }
+     g_free(filename);
+   }

@@ -13,38 +13,26 @@
 # Copyright 2021 Andreas Wacknitz
 #
 
-BUILD_BITS= 64_and_32
 BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libwnck
-COMPONENT_MJR_VERSION=	43
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
-COMPONENT_REVISION = 	1
+HUMAN_VERSION=		43.3
 COMPONENT_SUMMARY=	Window Navigator Construction Kit Library
-COMPONENT_PROJECT_URL=	https://www.gnome.org
-COMPONENT_SRC=		libwnck-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:905bcdb85847d6b8f8861e56b30cd6dc61eae67ecef4cd994a9f925a26a2c1fe
-COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/libwnck/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:6af8ac41a8f067ade1d3caaed254a83423b5f61ad3f7a460fcacbac2e192bdf7
 COMPONENT_FMRI=         library/desktop/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
-COMPONENT_LICENSE=	LGPLv2
+COMPONENT_LICENSE=	LGPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET= $(NO_TESTS)
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
+# GNU msgfmt is needed
 PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
-CONFIGURE_OPTIONS += --sysconfdir=/etc
-
-COMPONENT_BUILD_ENV += CC="$(CC)"
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3

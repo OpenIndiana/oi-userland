@@ -11,21 +11,21 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Date::Calc
+#   $WS_TOOLS/perl-integrate-module Date-Calc
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Date::Calc
+COMPONENT_NAME =		Date-Calc
 HUMAN_VERSION =			6.4
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Date::Calc - Gregorian calendar date calculations
+COMPONENT_REVISION =		7
+COMPONENT_SUMMARY =		Gregorian calendar date calculations
 COMPONENT_CPAN_AUTHOR =		STBEY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7ce137b2e797b7c0901f3adf1a05a19343356cd1f04676aa1c56a9f624f859ad
-COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only OR LGPL-2.0-only
+COMPONENT_LICENSE =		Artistic-1.0-Perl
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,6 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 # To bootstrap both components we need to build Date-Calc first and remove any
 # unresolved runtime dependency on Date-Calc-XS.
 #
+BOOTSTRAP_SKIP_REQUIRED_PACKAGES.perl += library/perl-5/date-calc-xs
 MANGLE_DEPEND_RUNTIME += | \
 	$(GNU_GREP) -v '^depend type=require fmri=__TBD pkg\.debug\.depend\.file=Date/Calc/XS\.pm'
 
@@ -45,4 +46,5 @@ MANGLE_DEPEND_RUNTIME += | \
 PERL_REQUIRED_PACKAGES += library/perl-5/bit-vector
 PERL_REQUIRED_PACKAGES += library/perl-5/carp-clan
 PERL_REQUIRED_PACKAGES += library/perl-5/date-calc-xs
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

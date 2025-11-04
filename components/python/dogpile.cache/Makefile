@@ -11,31 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project dogpile.cache
+#   $WS_TOOLS/python-integrate-project -d python/dogpile.cache dogpile_cache
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		dogpile.cache
-HUMAN_VERSION =			1.3.2
-COMPONENT_SUMMARY =		dogpile.cache - A caching front-end based on the Dogpile lock.
+COMPONENT_NAME =		dogpile_cache
+HUMAN_VERSION =			1.4.1
+COMPONENT_SUMMARY =		A caching front-end based on the Dogpile lock.
 COMPONENT_PROJECT_URL =		https://github.com/sqlalchemy/dogpile.cache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4f71dc0333ad351c9c6f704f5ba2a37bf51c6eed0437d1adf56e075959afe63b
+	sha256:e25c60e677a5e28ff86124765fbf18c53257bcd7830749cd5ba350ace2a12989
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/decorator
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/stevedore
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/decorator
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/stevedore
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/decorator
 TEST_REQUIRED_PACKAGES.python += library/python/mako
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

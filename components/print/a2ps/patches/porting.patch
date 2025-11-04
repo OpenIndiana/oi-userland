@@ -1,0 +1,76 @@
+void *calloc(size_t nelem, size_t elsize);
+
+Why the test for calloc limit is passing pointer difference limit as an
+argument? The limit is defined as SIZE_MAX in C99 standard.
+
+#include <stdlib.h>
+#include <limits.h>
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+
+void main(){
+        void * a = calloc(SIZE_MAX, 1);
+        printf("a: %p, errno: %d, strerror: %s\n", a, errno, strerror(errno));
+}
+
+$ uname -a
+SunOS ST-ul-cbe 5.11 11.4.75.178.0 i86pc i386 i86pc virtualbox
+$ ./a.out
+a: 0, errno: 12, strerror: Cannot allocate memory
+$ uname -a
+SunOS S11-3-SRU 5.11 11.3 i86pc i386 i86pc
+$ ./a.out
+a: 0, errno: 12, strerror: Not enough space
+$ ggrep -r ENOMEM /usr/include/sys/errno.h
+#define ENOMEM  12      /* Not enough core                      */
+
+--- a/m4/malloc.m4
++++ b/m4/malloc.m4
+@@ -130,12 +130,9 @@
+       case "$host_os" in
+         mingw*)
+           gl_cv_func_malloc_posix=no ;;
+-        irix* | solaris*)
++        irix*)
+           dnl On IRIX 6.5, the three functions return NULL with errno unset
+           dnl when the argument is larger than PTRDIFF_MAX.
+-          dnl On Solaris 11.3, the three functions return NULL with errno set
+-          dnl to EAGAIN, not ENOMEM, when the argument is larger than
+-          dnl PTRDIFF_MAX.
+           dnl Here is a test program:
+ m4_divert_push([KILL])
+ #include <errno.h>
+
+Solaris grep doesn't know -F.
+--- a/tests/deleg-2.tst
++++ b/tests/deleg-2.tst
+@@ -18,7 +18,7 @@
+ . $SRCDIR/defs || exit 1
+ 
+ # a2ps should fail, saying it does not know the sheet test_delegation.ssh
+-$CHK $OPT $TST_FILE -P void 2>&1 | grep -F 'cannot find style sheet' > /dev/null 2>&1
++$CHK $OPT $TST_FILE -P void 2>&1 | ggrep -F 'cannot find style sheet' > /dev/null 2>&1
+ 
+ # Return status of grep
+ exit $?
+
+Solaris rm cannot remove current working directory.
+--- a/tests/styles.tst
++++ b/tests/styles.tst
+@@ -110,6 +110,7 @@
+   cat $builddir/sum-ps-diff
+   failure=1
+ else
++  cd -
+   rm -rf $builddir/sum-ps-diff $DIFF
+ fi
+ 
+@@ -121,6 +122,7 @@
+   cat $builddir/sum-gps-diff
+   failure=1
+ else
++  cd -
+   rm -rf $builddir/sum-gps-diff $GDIFF
+ fi
+ 

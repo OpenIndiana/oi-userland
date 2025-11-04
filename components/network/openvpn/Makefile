@@ -16,18 +16,17 @@
 # Copyright 2024 Stephan Althaus
 #
 
-OPENSSL_VERSION= 3.1
 USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openvpn
-COMPONENT_VERSION=	2.6.10
+COMPONENT_VERSION=	2.6.15
 COMPONENT_SUMMARY=	OpenVPN is a full-featured open source SSL VPN solution
 COMPONENT_PROJECT_URL=	https://openvpn.net
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:1993bbb7b9edb430626eaa24573f881fd3df642f427fcb824b1aed1fca1bcc9b
+COMPONENT_ARCHIVE_HASH=	sha256:e35513ee15995e3c71adfd8891b9f33522896c70b3baa2ed9a23c7a42c4d7bde
 COMPONENT_ARCHIVE_URL=	https://build.openvpn.net/downloads/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/openvpn
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -53,11 +52,13 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/cannot find/p"'
 
 # Build dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/docutils
 REQUIRED_PACKAGES += driver/network/header-tun
+TEST_REQUIRED_PACKAGES += library/cmocka
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/lzo
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += system/library

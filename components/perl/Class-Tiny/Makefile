@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Class::Tiny
+#   $WS_TOOLS/perl-integrate-module Class-Tiny
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Class::Tiny
+COMPONENT_NAME =		Class-Tiny
 HUMAN_VERSION =			1.008
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Class::Tiny - Minimalist class construction
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Minimalist class construction
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ee058a63912fa1fcb9a72498f56ca421a2056dc7f9f4b67837446d6421815615
@@ -31,4 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-failwarnings
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

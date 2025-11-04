@@ -11,16 +11,16 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Net::Domain::TLD
+#   $WS_TOOLS/perl-integrate-module Net-Domain-TLD
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Net::Domain::TLD
+COMPONENT_NAME =		Net-Domain-TLD
 HUMAN_VERSION =			1.75
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		4
 COMPONENT_SUMMARY =		Net::Domain::TLD - Work with TLD names
 COMPONENT_CPAN_AUTHOR =		ALEXP
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,4 +31,5 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl

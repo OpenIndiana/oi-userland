@@ -1,0 +1,112 @@
+This patch is not for upstream, it's rather specific to Solaris X11 platform.
+Fixes KeyboardEvent.code in JavaScript applications that care about physical
+location of the key when processing keyboard events.
+
+The translation function was generated on Solaris Trunk using this recipe:
+
+cd /usr/share/X11/xkb/keycodes
+
+# $1 - filename
+# $2 - section
+parse() {
+        gsed -ne "/\"$2\"/,/}/ {p}" $1 | cut -f1 -d\; |
+                awk 'NF == 3 && $2 == "=" && $1 ~ /^</ {print $1, $3}' |                        tr -d '<>' | sort
+}
+
+cat << EOF
+static int
+translate_xfree86_to_evdev_keycode(int xfcode)
+{
+        int evcode;                                                              
+        switch (xfcode) {
+$(while read key xfcode evcode; do
+        if ((evcode != xfcode)); then
+                echo "\tcase $xfcode /* $key */: evcode = $evcode; break;"
+        fi
+done < <(gjoin <(parse xfree86 basic) <(parse evdev evdev)))
+        default: evcode = xfcode; break;
+        }
+        return (evcode);
+}
+EOF
+
+diff -rup firefox-140.3.0.orig/widget/gtk/nsGtkKeyUtils.cpp firefox-140.3.0/widget/gtk/nsGtkKeyUtils.cpp
+--- firefox-140.3.0.orig/widget/gtk/nsGtkKeyUtils.cpp	2025-10-01 13:06:02.512013497 +0200
++++ firefox-140.3.0/widget/gtk/nsGtkKeyUtils.cpp	2025-10-02 12:06:08.362293443 +0200
+@@ -1443,10 +1443,76 @@ KeyNameIndex KeymapWrapper::ComputeDOMKe
+   return KEY_NAME_INDEX_Unidentified;
+ }
+ 
++#ifdef __sun
++/*
++ * Translate GDK's hardware_keycode between Solaris and Linux.
++ * The translation is requried to get right KeyboardEvent.code.
++ * The browser's keycode definitions for X11 platform in
++ * NativeKeyToDOMCodeName.h are specific to evdev,
++ * which is input interface originally made for
++ * Linux kernel. On Solaris, the hardware_keycode
++ * contains 'standard' XFree86 keycodes.
++ * See /usr/share/X11/xkb/keycodes/{evdev,xfree86}.
++ */
++static int
++translate_xfree86_to_evdev_keycode(int xfcode)
++{
++        int evcode;                                                             
++        switch (xfcode) {
++        case 211 /* AB11 */: evcode = 97; break;
++        case 133 /* AE13 */: evcode = 132; break;
++        case 125 /* ALT */: evcode = 204; break;
++        case 107 /* DELE */: evcode = 119; break;
++        case 104 /* DOWN */: evcode = 116; break;
++        case 103 /* END */: evcode = 115; break;
++        case 118 /* FK13 */: evcode = 191; break;
++        case 119 /* FK14 */: evcode = 192; break;
++        case 120 /* FK15 */: evcode = 193; break;
++        case 121 /* FK16 */: evcode = 194; break;
++        case 122 /* FK17 */: evcode = 195; break;
++        case 210 /* HJCV */: evcode = 131; break;
++        case 208 /* HKTG */: evcode = 101; break;
++        case 209 /* HNGL */: evcode = 130; break;
++        case 97 /* HOME */: evcode = 110; break;
++        case 128 /* HYPR */: evcode = 207; break;
++        case 106 /* INS */: evcode = 118; break;
++        case 112 /* KPDV */: evcode = 106; break;
++        case 108 /* KPEN */: evcode = 104; break;
++        case 126 /* KPEQ */: evcode = 125; break;
++        case 100 /* LEFT */: evcode = 113; break;
++        case 124 /* LVL3 */: evcode = 92; break;
++        case 8 /* LVL5 */: evcode = 203; break;
++        case 115 /* LWIN */: evcode = 133; break;
++        case 156 /* META */: evcode = 205; break;
++        case 110 /* PAUS */: evcode = 127; break;
++        case 105 /* PGDN */: evcode = 117; break;
++        case 99 /* PGUP */: evcode = 112; break;
++        case 111 /* PRSC */: evcode = 107; break;
++        case 113 /* RALT */: evcode = 108; break;
++        case 109 /* RCTL */: evcode = 105; break;
++        case 102 /* RGHT */: evcode = 114; break;
++        case 116 /* RWIN */: evcode = 134; break;
++        case 127 /* SUPR */: evcode = 206; break;
++        case 98 /* UP */: evcode = 111; break;
++        default: evcode = xfcode; break;
++        }
++        return (evcode);
++}
++#endif
++
+ /* static */
+ CodeNameIndex KeymapWrapper::ComputeDOMCodeNameIndex(
+     const GdkEventKey* aGdkKeyEvent) {
++#ifdef __sun
++  /*
++   * aGdkKeyEvent->hardware_keycode contains:
++   *   evdev keycode   (on Linux X11)
++   *   xfree86 keycode (on Solaris X11)
++   */
++  switch (translate_xfree86_to_evdev_keycode(aGdkKeyEvent->hardware_keycode)) {
++#else
+   switch (aGdkKeyEvent->hardware_keycode) {
++#endif
+ #define NS_NATIVE_KEY_TO_DOM_CODE_NAME_INDEX(aNativeKey, aCodeNameIndex) \
+   case aNativeKey:                                                       \
+     return aCodeNameIndex;

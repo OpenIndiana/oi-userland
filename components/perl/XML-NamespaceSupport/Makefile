@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module XML::NamespaceSupport
+#   $WS_TOOLS/perl-integrate-module XML-NamespaceSupport
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		XML::NamespaceSupport
+COMPONENT_NAME =		XML-NamespaceSupport
 HUMAN_VERSION =			1.12
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		XML::NamespaceSupport - A simple generic namespace processor
+COMPONENT_REVISION =		5
+COMPONENT_SUMMARY =		A simple generic namespace processor
 COMPONENT_CPAN_AUTHOR =		PERIGRIN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:47e995859f8dd0413aa3f22d350c4a62da652e854267aa0586ae544ae2bae5ef
@@ -31,4 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

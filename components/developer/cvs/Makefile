@@ -21,13 +21,16 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
+# disable CONFIGURE_DEFAULT_DIRS, because cvs does not support --localdir
+CONFIGURE_DEFAULT_DIRS=no
+
 BUILD_STYLE=configure
 BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cvs
 COMPONENT_VERSION=      1.12.13
-COMPONENT_REVISION=     3
+COMPONENT_REVISION=     4
 COMPONENT_FMRI=         developer/versioning/cvs
 COMPONENT_SUMMARY=      The CVS version control system
 COMPONENT_CLASSIFICATION=Development/Source Code Management
@@ -45,6 +48,7 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
 CONFIGURE_OPTIONS  +=	--with-external-zlib
+CONFIGURE_OPTIONS  +=	--mandir=/usr/share/man
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

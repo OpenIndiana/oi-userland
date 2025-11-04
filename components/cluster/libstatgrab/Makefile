@@ -13,13 +13,13 @@
 # Copyright 2021 Andreas Wacknitz. All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=   libstatgrab
 COMPONENT_VERSION=  0.92.1
+COMPONENT_REVISON=	1
 COMPONENT_VERSION2=	$(subst .,_,$(COMPONENT_VERSION))
-COMPONENT_SUMMARY= libstatgrab is a library that provides cross platform access to statistics about the system on which it's run.
+COMPONENT_SUMMARY= libstatgrab is a cross platform library for accessing system statistics
 COMPONENT_PROJECT_URL=  https://libstatgrab.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -31,7 +31,10 @@ COMPONENT_LICENSE= GPLv2
 
 include $(WS_MAKE_RULES)/common.mk
 
+CFLAGS += $(XPG6MODE)
+
 CONFIGURE_ENV.64 += lt_cv_sys_lib_dlsearch_path_spec="/lib/$(MACH64) /usr/lib/$(MACH64)"
+CONFIGURE_OPTIONS += --enable-static=no
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses

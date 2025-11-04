@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		waitress
-HUMAN_VERSION =			3.0.0
-COMPONENT_SUMMARY =		waitress - Waitress WSGI server
+HUMAN_VERSION =			3.0.2
+COMPONENT_SUMMARY =		Waitress WSGI server
 COMPONENT_PROJECT_URL =		https://github.com/Pylons/waitress
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:005da479b04134cdd9dd602d1ee7c49d79de0537610d653674cc6cbde222b8a1
+	sha256:682aaaf2af0c44ada4abfb70ded36393f0e307f4ab9456a215ce0020baefc31f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,7 +31,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

@@ -1,0 +1,19 @@
+--- libfyaml-0.9/src/util/fy-utils.c.orig	2023-03-31 16:42:43.000000000 +0200
++++ libfyaml-0.9/src/util/fy-utils.c	2025-10-22 17:05:06.113856204 +0200
+@@ -414,7 +414,16 @@
+ 
+ 	newt = t;
+ 
++/* https://www.perkin.org.uk/posts/solaris-portability-cfmakeraw.html */
++#ifdef __illumos__
++	newt.c_iflag &= ~(IMAXBEL|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
++	newt.c_oflag &= ~OPOST;
++	newt.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
++	newt.c_cflag &= ~(CSIZE|PARENB);
++	newt.c_cflag |= CS8;
++#else
+ 	cfmakeraw(&newt);
++#endif
+     
+ 	ret = tcsetattr(fd, TCSANOW, &newt);
+ 	if (ret != 0)

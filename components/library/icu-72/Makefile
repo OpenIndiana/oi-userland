@@ -21,7 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
 COMPONENT_VERSION =		72.1
-COMPONENT_REVISION =		4
+COMPONENT_REVISION =		5
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(subst .,_,$(HUMAN_VERSION))-src.tgz
@@ -40,6 +40,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Testing expects GNU diff in PATH
 PATH = $(PATH.gnu)
+
+# https://unicode-org.atlassian.net/browse/ICU-22629
+CXXFLAGS += -fexcess-precision=fast
 
 COMPONENT_BUILD_TARGETS = all
 
@@ -62,8 +65,6 @@ CXXFLAGS += -D__EXTENSIONS__ -DDECCHECK -D_XOPEN_SOURCE=600 -std=c++11
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(echo 'CPPFLAGS += -DICU_DATA_DIR=\"$(CONFIGURE_PREFIX)/share/icu/$(COMPONENT_VERSION)\"' >> $(@D)/icudefs.mk ) 
 
-# Tests fails when compiled using gcc 13
-# https://unicode-org.atlassian.net/browse/ICU-22629
 COMPONENT_TEST_TRANSFORMS += \
     '-n ' \
     '-e "/^All tests OK:  testdata intltest iotest cintltst/p" ' \

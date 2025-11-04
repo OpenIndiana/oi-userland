@@ -23,17 +23,18 @@
 # Copyright (c) 2011, 2019, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2022 Friedrich Kink
-# Copyright 2023 Klaus Ziegler
 # Copyright 2023 Niklas Poslovski
+# Copyright 2023-2025 Klaus Ziegler
 #
 
 BUILD_BITS=64_and_32
 USE_COMMON_TEST_MASTER=no
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,15 @@ COMPONENT_CLASSIFICATION= System/Enterprise Management
 COMPONENT_LICENSE=	BSD, BSD-like
 COMPONENT_LICENSE_FILE=	COPYING
 
+COMPONENT_FMRI.$(COMPONENT_NAME)-addons =	$(COMPONENT_FMRI)/addons
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-addons =	Net-SNMP addon libraries
+
+COMPONENT_FMRI.$(COMPONENT_NAME)-demo =		$(COMPONENT_FMRI)/demo
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-demo =	Net-SNMP demo modules
+
+COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
+COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	Net-SNMP 32-bit support
+
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
@@ -52,6 +62,13 @@ PATH= $(PATH.gnu)
 DOXYGEN= /usr/bin/doxygen
 
 CONFIGURE_ENV.64 += PERL=$(PERL)
+
+# make gcc-14 happy.
+CFLAGS += -Wno-incompatible-pointer-types
+
+# Make sure generated files from build dir are used instead of files already
+# installed in /usr/include
+CFLAGS += -I$(BUILD_DIR_$(BITS))/include
 
 CONFIGURE_OPTIONS += --enable-static=no
 # should not be used anylonger
@@ -93,17 +110,24 @@ CONFIGURE_OPTIONS.32 += --disable-perl-cc-checks
 CONFIGURE_OPTIONS.32 += --with-perl-modules="no"
 CONFIGURE_OPTIONS.32 +=	--disable-embedded-perl
 
+# We do not need agent, applications and scripts for 32-bit
+CONFIGURE_OPTIONS.32 += --disable-agent
+CONFIGURE_OPTIONS.32 += --disable-applications
+CONFIGURE_OPTIONS.32 += --disable-scripts
+# Manuals and MIBs built during the 64-bit build are enough.
+# We do not need to build them twice.
+CONFIGURE_OPTIONS.32 += --disable-manuals
+CONFIGURE_OPTIONS.32 += --disable-mibs
+
 COMPONENT_PRE_CONFIGURE_ACTION= \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun;)
 
 ARCH= $(BITS:64=$(MACH64))
 
-CCSMAKE_ARGS= CC="$(CC)" CFLAGS="-I. -fpic $(gcc_OPT)" CFGPREFIX=$(USRDIR)
+CCSMAKE_ARGS= CC="$(CC)" CFLAGS="-I. -fpic $(gcc_OPT) -Wno-implicit-function-declaration" CFGPREFIX=$(USRDIR)
 CCSMAKE_ARGS +=	CFGLIB64=$(USRLIBDIR64) ARCH=$(ARCH) ROOT=$(PROTO_DIR)
 
 COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
-
-TEST_TARGET=            $(TEST_64)
 
 COMPONENT_TEST_DIR= $(@D)/testing/
 COMPONENT_TEST_CMD= $(KSH93)
@@ -111,27 +135,35 @@ COMPONENT_TEST_TARGETS= ./RUNTESTS
 COMPONENT_TEST_TRANSFORMS += \
 	'-e "s|\(simple-\).*|\1XXXXXX|g"' \
 	'-e "s|\(output (\)\(.*\)|\2|g"'
-#COMPONENT_TEST_MASTER=	$(COMPONENT_TEST_RESULTS_DIR)/results-$(BITS).master
 # Get correct binaries from the proto area.
 COMPONENT_TEST_ENV += PATH=$(PROTOUSRBINDIR):$(PATH)
 # Get correct libraries from the proto area.
 COMPONENT_TEST_ENV +=   LD_LIBRARY_PATH=$(PROTOUSRLIBDIR$(BITS))
 
-COMPONENT_POST_BUILD_ACTION = \
-	(cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
+COMPONENT_POST_BUILD_ACTION.64 += \
+	(cd $(@D)/sun ; $(CCSMAKE) -e $(CCSMAKE_ARGS)) ;
 
-COMPONENT_POST_INSTALL_ACTION.64= \
-	($(MKDIR) $(PROTOETCDIR)/$(COMPONENT_NAME)/snmp/mibs; \
-	 cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install; \
-	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
-	$(CP) -a $(@D)/docs/html $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
-	)
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	(cd $(@D)/sun ; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ;
 
-COMPONENT_POST_INSTALL_ACTION.32= \
-	($(MKDIR) $(PROTOETCDIR)/$(COMPONENT_NAME)/snmp/mibs; \
-	 cd $(@D)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install; \
-	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME); \
-	)
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME) ; \
+	$(CP) -a $(@D)/docs/html $(PROTOUSRSHAREDOCDIR)/$(COMPONENT_NAME) ;
+
+# Install demo files
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(MKDIR) $(PROTOUSRDIR)/demo ; \
+	$(CP) -a $(COMPONENT_DIR)/sun/sdk/demo $(PROTOUSRDIR)/demo/net-snmp ; \
+	$(CP) -a $(COMPONENT_DIR)/sun/agent/modules/entityMib/*.h $(PROTOUSRDIR)/demo/net-snmp/demo_module_11 ;
+
+# Install the configuration file and smf service
+COMPONENT_POST_INSTALL_ACTION.64 += \
+	$(INSTALL) -D $(COMPONENT_DIR)/sun/snmpd.conf $(PROTOETCDIR)/net-snmp/snmp/ ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/sun/net-snmp.xml $(PROTOLIBDIR)/svc/manifest/application/management/net-snmp.xml ; \
+	$(INSTALL) -D $(COMPONENT_DIR)/sun/svc-net-snmp $(PROTOLIBDIR)/svc/method/svc-net-snmp ;
+
+# Drop 32-bit binaries
+COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRBINDIR32) ;
 
 COMPONENT_PRE_INSTALL_ACTION.64 += ( \
 	cd $(@D) ; \
@@ -146,10 +178,12 @@ REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
 PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += service/picl
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
+REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,36 @@
+This patch limits the amount of memory that is being allocated when
+RLIMIT_NOFILE is set to RLIM_INFINITY (bug 34982685).
+
+This was reported upstream:
+https://github.com/python/cpython/issues/102494
+
+This patch causes several tests to fail. If this patch is removed, then
+all the tests pass.
+
+--- Python-3.13.0/Modules/selectmodule.c
++++ Python-3.13.0/Modules/selectmodule.c
+@@ -1127,7 +1127,7 @@ newDevPollObject(PyObject *module)
+     struct rlimit limit;
+ 
+     /*
+-    ** If we try to process more that getrlimit()
++    ** If we try to process more than getrlimit()
+     ** fds, the kernel will give an error, so
+     ** we set the limit here. It is a dynamic
+     ** value, because we can change rlimit() anytime.
+@@ -1138,6 +1138,15 @@ newDevPollObject(PyObject *module)
+         return NULL;
+     }
+ 
++    /*
++    ** If the limit is too high (or RLIM_INFINITY), we might allocate huge
++    ** amounts of memory (or even fail to allocate). Because of that, we limit
++    ** the number of allocated structs to 2^18 (which is ~4MB of memory).
++    */
++    if (limit.rlim_cur > (rlim_t)262144) {
++        limit.rlim_cur = (rlim_t)262144;
++    }
++
+     fd_devpoll = _Py_open("/dev/poll", O_RDWR);
+     if (fd_devpoll == -1)
+         return NULL;

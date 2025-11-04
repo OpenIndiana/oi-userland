@@ -13,43 +13,40 @@
 # Copyright 2016 Alexander Pyhalov
 #
 
-BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gvfs
-COMPONENT_VERSION=      1.26.0
-COMPONENT_REVISION=     7
-COMPONENT_SUMMARY=      GNOME virtual file system framework
-COMPONENT_PROJECT_URL=  https://www.gnome.org
+COMPONENT_VERSION=      1.26.3
+COMPONENT_SUMMARY=      GVfs is a userspace virtual filesystem implementation for GIO (GLib)
+COMPONENT_PROJECT_URL=  https://wiki.gnome.org/Projects/gvfs
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6d43e8b33a5c1588525875f9d3979b515f648da1d567d0ce3d337a18f5ff8c32
+COMPONENT_ARCHIVE_HASH= sha256:a70f75fa60d66f3f478c0c8aec43d0e43455a8cc75a4dfa8029e51c816401b4a
 COMPONENT_ARCHIVE_URL= 	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.26/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/gnome/gvfs
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=      LGPLv2
 COMPONENT_LICENSE_FILE= COPYING
 
+TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
-COMPONENT_PREP_ACTION= ( cd $(@D) && \
-	autoreconf -if)
+COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -if )
 
+CFLAGS += -Wno-deprecated-declarations -Wno-incompatible-pointer-types
 CPPFLAGS += -D_XPG4_2 -D__EXTENSIONS__
-LDFLAGS += -lxml2 -L/usr/lib/libsmbclient/$(MACH64) -R/usr/lib/libsmbclient/$(MACH64)
+LDFLAGS += -lxml2 -L/usr/lib/libsmbclient -R/usr/lib/libsmbclient
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --disable-fuse
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-avahi
-CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --enable-archive
 CONFIGURE_OPTIONS += --enable-bash-completion
 CONFIGURE_OPTIONS += --enable-documentation
 CONFIGURE_OPTIONS += --enable-goa
-CONFIGURE_OPTIONS += --disable-gphoto2
+# libbluray is in encumbered
 CONFIGURE_OPTIONS += --disable-bluray
 CONFIGURE_OPTIONS += --enable-gtk
 CONFIGURE_OPTIONS += --enable-http
@@ -57,14 +54,10 @@ CONFIGURE_OPTIONS += --enable-keyring
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-samba-includes=/usr/include/libsmbclient
+CONFIGURE_OPTIONS += --disable-libsystemd-login
 
-CONFIGURE_OPTIONS.32 += --without-samba
-CONFIGURE_OPTIONS.64 += --with-samba
-#CONFIGURE_OPTIONS.64 += --with-samba-libs=/usr/lib/libsmbclient/$(MACH64)
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
-
-CONFIGURE_ENV+= PERL=$(PERL)
-CONFIGURE_ENV+= GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
+CONFIGURE_ENV += PERL=$(PERL)
+CONFIGURE_ENV += GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/gtk-doc

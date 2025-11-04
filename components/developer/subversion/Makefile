@@ -30,7 +30,7 @@ PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
 COMPONENT_VERSION=	1.14.2
-COMPONENT_REVISION =	3
+COMPONENT_REVISION =	4
 COMPONENT_PROJECT_URL=	https://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
@@ -84,7 +84,7 @@ APACHE_LIBEXECDIR = `$(APXS) -q libexecdir`
 LDFLAGS += -R$(LIBSVNDIR) -R$(APR-CONFIG-RPATH) \
 	   -R$(APU-CONFIG-RPATH)
 
-CONFIGURE_ENV += RUBY="$(RUBY.1.9)"
+CONFIGURE_ENV += RUBY="$(RUBY.3.2)"
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)

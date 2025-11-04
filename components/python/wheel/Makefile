@@ -19,10 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.43.0
-COMPONENT_SUMMARY =		wheel - A built-package format for Python
+HUMAN_VERSION =			0.45.1
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		A built-package format for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85
+	sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,20 +32,24 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # - cachetools (test bootstrap)
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
-# - importlib_metadata
-# - pluggy (test bootstrap)
-# - pytest (test bootstrap)
-# - setuptools
-# - setuptools-scm
 # - tox-current-env (test bootstrap)
-# - trove-classifiers (test bootstrap)
-# - zipp
-PYTHON_BOOTSTRAP = yes
+PYTHON_TEST_BOOTSTRAP = yes
+
+# Version 0.46.1 was yanked but we had it packaged.
+COMPONENT_VERSION =		0.46.1
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/pypa/wheel/issues/658
+PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_default
+PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_deprecated
+PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_override
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools

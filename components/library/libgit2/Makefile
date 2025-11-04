@@ -16,17 +16,15 @@
 #
 
 BUILD_STYLE= cmake
-OPENSSL_VERSION= 3.1
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
-COMPONENT_VERSION=	1.8.0
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.9.1
 COMPONENT_SUMMARY=	Portable implementation of the Git core methods provided as a library
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9e1d6a880d59026b675456fbb1593c724c68d73c34c0d214d6eb848e9bbd8ae4
+COMPONENT_ARCHIVE_HASH=	sha256:14cab3014b2b7ad75970ff4548e83615f74d719afe00aa479b4a889c1e13fc00
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/libgit2
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
@@ -43,6 +41,6 @@ CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 COMPONENT_TEST_TRANSFORMS += '-e "s/[0-9. ]*sec//g"'
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/security/openssl-31
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Digest::SHA3
+#   $WS_TOOLS/perl-integrate-module Digest-SHA3
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Digest::SHA3
+COMPONENT_NAME =		Digest-SHA3
 HUMAN_VERSION =			1.05
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Digest::SHA3 - Perl extension for SHA-3
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Perl extension for SHA-3
 COMPONENT_CPAN_AUTHOR =		MSHELOR
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:adf1b9079b2b781755e5704877a1430a5f12997ea82205fd2966c9cc465a8522
@@ -34,5 +34,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library

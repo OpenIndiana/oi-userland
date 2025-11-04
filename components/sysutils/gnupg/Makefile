@@ -29,13 +29,14 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnupg
-COMPONENT_VERSION=      2.4.5
+COMPONENT_VERSION=      2.4.8
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      GNU Privacy Guard
 COMPONENT_DESCRIPTION=	A complete and free implementation of the OpenPGP Standard as defined by RFC4880
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://gnupg.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277
+COMPONENT_ARCHIVE_HASH= sha256:b58c80d79b04d3243ff49c1c3fc6b5f83138eb3784689563bcdd060595318616
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/ftp/gcrypt/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         crypto/gnupg
 COMPONENT_CLASSIFICATION=Applications/System Utilities
@@ -45,6 +46,13 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# Enable C99 mode
+CC += -std=gnu99
+
+# builtins have been known to be buggy
+CFLAGS += -fno-builtin
+CFLAGS += $(XPG6MODE)
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += -I/usr/include/openldap
 
@@ -54,21 +62,24 @@ CFLAGS += -I/usr/include/openldap
 LDFLAGS += -lc -z defs -lsocket -lnsl
 LD_OPTIONS += -z defs
 
+# This is needed because we disable some failing tests
+COMPONENT_PREP_ACTION= ( cd $(@D) && NOCONFIGURE=1 ./autogen.sh )
+
+# Make sure development_version is not set
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(GSED) -i -e 's:development_version=yes:development_version=no:' $(SOURCE_DIR)/configure );
+
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += LDAPLIBS="-lldap-2.6 -llber-2.6"
 
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --libexecdir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --datadir=$(CONFIGURE_PREFIX)/share
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --enable-largefile
 CONFIGURE_OPTIONS += --disable-selinux-support
 CONFIGURE_OPTIONS += --disable-libdns
-CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
+CONFIGURE_OPTIONS += --with-pinentry-pgm=$(CONFIGURE_PREFIX)/libexec/pinentry
 CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-ksba-prefix=$(CONFIGURE_PREFIX)
@@ -78,14 +89,20 @@ CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-readline=$(CONFIGURE_PREFIX)
 
-MAN8LIST= addgnupghome applygnupgdefaults
+# The 'doc' directory uses CC_FOR_BUILD which does not respect our compilation
+# flags. This is a workaround to make gnupg use PIC build.
+COMPONENT_BUILD_ARGS += CC_FOR_BUILD='$(CC) $(CONFIGURE_CPPFLAGS) $(CC_PIC_ENABLE)'
 
-install:	$(INSTALL_64)
+COMPONENT_POST_INSTALL_ACTION += \
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
-	    $(CP) -R 'en@boldquot' en )
+	    $(CP) -R 'en@boldquot' en ) ;
 
-# Alas we have some failing tests after changes in shared-macros.mk:
-# build, install and test in clean environment (c86a36b0fd6dda8c75b28642c319842ace789385)
+# We do not want the info index file
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+
+# Testing fails without HOME set
+COMPONENT_TEST_ENV += HOME=/tmp
+
 COMPONENT_TEST_TRANSFORMS += "-e '/Failed tests/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/tests run/p'"
 COMPONENT_TEST_TRANSFORMS += "-e '/test passed/p'"
@@ -96,20 +113,20 @@ COMPONENT_TEST_TRANSFORMS += "-e '/====/p'"
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libsecret
+REQUIRED_PACKAGES += security/pinentry
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/libusb-1
 REQUIRED_PACKAGES += library/npth
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/libassuan
 REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/security/libksba
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += security/pinentry
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libgcrypt

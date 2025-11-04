@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Params::ValidationCompiler
+#   $WS_TOOLS/perl-integrate-module Params-ValidationCompiler
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Params::ValidationCompiler
+COMPONENT_NAME =		Params-ValidationCompiler
 HUMAN_VERSION =			0.31
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Params::ValidationCompiler - Build an optimized subroutine parameter validator once, use it forever
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Build an optimized subroutine parameter validator once, use it forever
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7b6497173f1b6adb29f5d51d8cf9ec36d2f1219412b4b2410e9d77a901e84a6d
@@ -37,8 +37,12 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/type-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/class-xsaccessor
 PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
 PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-without-module
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-plugin-nowarnings
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test2-suite

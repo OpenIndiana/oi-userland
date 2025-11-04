@@ -23,21 +23,18 @@
 # Copyright (c) 2022, Niklas Poslovski
 #
 
-BUILD_BITS= 64
-OPENSSL_VERSION= 3.1
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.7.1
+COMPONENT_VERSION=      8.16.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:6fea2aac6a4610fbd0400afb0bcddbe7258a64c63f1f68e5855ebc0c659710cd
+COMPONENT_ARCHIVE_HASH= sha256:40c8cddbcb6cc6251c03dea423a472a6cea4037be654ba5cf5dec6eb2d22ff1d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=  	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      CURL
@@ -46,7 +43,6 @@ COMPONENT_LICENSE_FILE= COPYING
 include $(WS_MAKE_RULES)/common.mk
 
 # Community code uses different defs
-#$(BUILD_DIR_32)/.configured:   CPPFLAGS += -D__ILP32=32
 $(BUILD_DIR_64)/.configured:   CPPFLAGS += -D__LP64=64
 
 CPPFLAGS += $(CPP_LARGEFILES)
@@ -59,7 +55,6 @@ CPPFLAGS += $(shell pkg-config --cflags libidn2)
 CPPFLAGS += $(shell krb5-config --cflags)
 LIBS     += $(shell krb5-config --libs gssapi)
 
-#GSSAPI_LIBDIR_32= /usr/lib
 GSSAPI_LIBDIR_64= /usr/lib/$(MACH64)
 
 LDFLAGS += -m$(BITS)
@@ -118,6 +113,7 @@ COMPONENT_TEST_TRANSFORMS += \
 	'-e "/TESTDONE:/p" '
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libcares
@@ -127,7 +123,6 @@ REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
 REQUIRED_PACKAGES += library/nghttp2
 REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/openssl-31
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library

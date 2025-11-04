@@ -13,21 +13,17 @@
 # Copyright 2015 Alexander Pyhalov
 #
 
-BUILD_STYLE=configure
-BUILD_BITS=32_and_64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libtheora
-COMPONENT_VERSION=      1.1.1
-COMPONENT_REVISION=     3
+COMPONENT_VERSION=      1.2.0
 COMPONENT_SUMMARY=      Theora video compression codec
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= \
-	sha256:40952956c47811928d1e7922cda3bc1f427eb75680c3c37249c91e949054916b
-COMPONENT_ARCHIVE_URL=  \
-	http://downloads.xiph.org/releases/theora/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.theora.org
+COMPONENT_ARCHIVE_HASH= sha256:279327339903b544c28a92aeada7d0dcfd0397b59c2f368cc698ac56f515906e
+COMPONENT_ARCHIVE_URL=  https://downloads.xiph.org/releases/theora/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  https://www.theora.org
 COMPONENT_FMRI=         codec/libtheora
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
 COMPONENT_LICENSE=      Xiph.org BSD-style
@@ -35,16 +31,11 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-# Code in decode.c looks crappy and GCC warns about it.
-# This seeems to disable some loop optimizations and fixes crash in oc_init()
-gcc_OPT = -O2 
-
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --enable-shared
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --disable-examples
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-examples
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/documentation-tool/doxygen

@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		resolvelib
-HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		resolvelib - Resolve abstract dependencies into concrete ones
+HUMAN_VERSION =			1.2.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Resolve abstract dependencies into concrete ones
 COMPONENT_PROJECT_URL =		https://github.com/sarugaku/resolvelib
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ce/10/f699366ce577423cbc3df3280063099054c23df70856465080798c6ebad6/resolvelib-1.0.1.tar.gz
+	https://github.com/sarugaku/resolvelib/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04ce76cbd63fded2078ce224785da6ecd42b9564b1390793f64ddecbe997b309
+	sha256:4d4c4137d7b8f8f27f298ff1af2faa767d790f271928506358d25e4252ed749a
 COMPONENT_LICENSE =		ISC
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,7 +34,9 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

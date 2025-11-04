@@ -1,0 +1,14 @@
+--- hotspot/src/os_cpu/solaris_sparc/vm/os_solaris_sparc.cpp	Tue Jan 10 08:32:35 2023
++++ hotspot/src/os_cpu/solaris_sparc/vm/os_solaris_sparc.cpp	Wed Apr 12 08:58:43 2023
+@@ -253,9 +253,8 @@
+ // point into the calling threads stack, and be no lower than the current stack
+ // pointer.
+ address os::current_stack_pointer() {
+-  volatile int dummy;
+-  address sp = (address)&dummy + 8;     // %%%% need to confirm if this is right
+-  return sp;
++  register void *sp __asm__ ("sp");
++  return (address)sp;
+ }
+ 
+ frame os::current_frame() {

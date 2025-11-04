@@ -22,20 +22,19 @@
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2019 Rouven Weiler
-# Copyright 2023,2024 Friedrich Kink
+# Copyright 2023,2025 Friedrich Kink
 #
 
-BUILD_BITS =			64
 BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.20.0
+COMPONENT_VERSION =		4.23.2
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:02672542510ac6e5d0c91c0c14d90ab4e6ec397c709e952c6da3a6e0b4d5a42f
+COMPONENT_ARCHIVE_HASH = 	sha256:2de330647e1486683597e261285d04a9b7514ab5c7da27711736e22c7f2b9c2e
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
@@ -46,6 +45,7 @@ COMPONENT_LICENSE_FILE = 	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+#PYTHON_VERSION = 3.13
 PYV =		$(shell echo $(PYTHON_VERSION) | tr -d .)
 PKG_MACROS +=	PYV=$(PYV)
 PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
@@ -58,8 +58,10 @@ PKG_OPTIONS +=		-I$(COMPONENT_DIR)
 # Set the pkg... path to search files in ./Solaris/ dir (mainly the SMF manifests are there)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)
 
-CFLAGS +=	$($(COMPILER)_C99_ENABLE) -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto
-CPPFLAGS +=	$(CPP_LARGEFILES) $(CPP_XPG6MODE) 
+CFLAGS +=	-std=c17 -D_POSIX_PTHREAD_SEMANTICS -DHAVE_AUXV_T -DHCRYPTO_DEF_PROVIDER=hcrypto -DHAVE_FREEBSD_SUNACL_H -DACE_INHERITED_ACE
+# make gcc-14 happy.
+CFLAGS +=	-Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-incompatible-pointer-types -Wno-int-conversion
+CPPFLAGS +=	$(CPP_LARGEFILES) $(XPG6MODE) 
 CPPFLAGS +=	-I/usr/include/openldap -I/usr/include/jansson
 
 LDFLAGS +=	-R/usr/lib/samba
@@ -75,10 +77,9 @@ LDFLAGS +=     $(LD_SSP)
 LD_OPTIONS +=	-B direct
 
 # to avoid a clash with system gssapi.h (some declaration are not compatible)
-# and to work around cups-config (64bit vs 32bit)
 COMPONENT_POST_CONFIGURE_ACTION= ( \
 	$(RM) $(@D)/third_party/heimdal/lib/gssapi/gssapi.h; \
-	$(GSED) -i -e 's:/usr/lib/amd64:/usr/lib:' $(@D)/bin/c4che/default_cache.py; \
+	$(GSED) -i -e 's:/usr/lib/$(MACH64):/usr/lib:' $(@D)/bin/c4che/default_cache.py; \
 	 ); 
 #
 # set everything for target configure.
@@ -111,8 +112,8 @@ CONFIGURE_OPTIONS +=    --sharedstatedir=$(VARDIR)/samba/com
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS +=	--with-bind-dns-dir=$(CONFIGURE_PREFIX)/bind-dns
 
-CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl,vfs_zfsacl
-CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_cacheprime
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
+CONFIGURE_OPTIONS +=	--with-shared-modules=ALL,vfs_cacheprime,vfs_zfsacl,vfs_nfs4acl_xattr,vfs_acl_common
 CONFIGURE_OPTIONS +=	--with-acl-support
 CONFIGURE_OPTIONS +=	--with-ads
 CONFIGURE_OPTIONS +=	--with-winbind
@@ -138,15 +139,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # Build dependencies
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += library/perl-5/parse-yapp
-REQUIRED_PACKAGES += library/python/dnspython
-REQUIRED_PACKAGES += library/python/markdown
+PERL_REQUIRED_PACKAGES += library/perl-5/parse-yapp
+PYTHON_REQUIRED_PACKAGES += library/python/dnspython
+PYTHON_REQUIRED_PACKAGES += library/python/markdown
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/gnutls-3
 REQUIRED_PACKAGES += library/jansson
@@ -154,9 +156,9 @@ REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/print/cups-libs
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += library/security/gpgme
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/network/avahi
+REQUIRED_PACKAGES.python += runtime/python

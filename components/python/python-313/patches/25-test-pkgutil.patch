@@ -1,0 +1,43 @@
+Python does not expect the build system to already have a 'pkg' module, and
+it may well have if it's an IPS image.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_pkgutil.py a/Lib/test/test_pkgutil.py
+--- a~/Lib/test/test_pkgutil.py	1970-01-01 00:00:00
++++ a/Lib/test/test_pkgutil.py	1970-01-01 00:00:00
+@@ -582,22 +582,22 @@ class NestedNamespacePackageTest(unittes
+         pkgutil_boilerplate = (
+             'import pkgutil; '
+             '__path__ = pkgutil.extend_path(__path__, __name__)')
+-        self.create_module('a.pkg.__init__', pkgutil_boilerplate)
+-        self.create_module('b.pkg.__init__', pkgutil_boilerplate)
+-        self.create_module('a.pkg.subpkg.__init__', pkgutil_boilerplate)
+-        self.create_module('b.pkg.subpkg.__init__', pkgutil_boilerplate)
+-        self.create_module('a.pkg.subpkg.c', 'c = 1')
+-        self.create_module('b.pkg.subpkg.d', 'd = 2')
++        self.create_module('a._pkg.__init__', pkgutil_boilerplate)
++        self.create_module('b._pkg.__init__', pkgutil_boilerplate)
++        self.create_module('a._pkg.subpkg.__init__', pkgutil_boilerplate)
++        self.create_module('b._pkg.subpkg.__init__', pkgutil_boilerplate)
++        self.create_module('a._pkg.subpkg.c', 'c = 1')
++        self.create_module('b._pkg.subpkg.d', 'd = 2')
+         sys.path.insert(0, os.path.join(self.basedir, 'a'))
+         sys.path.insert(0, os.path.join(self.basedir, 'b'))
+-        import pkg
+-        self.addCleanup(unload, 'pkg')
+-        self.assertEqual(len(pkg.__path__), 2)
+-        import pkg.subpkg
+-        self.addCleanup(unload, 'pkg.subpkg')
+-        self.assertEqual(len(pkg.subpkg.__path__), 2)
+-        from pkg.subpkg.c import c
+-        from pkg.subpkg.d import d
++        import _pkg
++        self.addCleanup(unload, '_pkg')
++        self.assertEqual(len(_pkg.__path__), 2)
++        import _pkg.subpkg
++        self.addCleanup(unload, '_pkg.subpkg')
++        self.assertEqual(len(_pkg.subpkg.__path__), 2)
++        from _pkg.subpkg.c import c
++        from _pkg.subpkg.d import d
+         self.assertEqual(c, 1)
+         self.assertEqual(d, 2)
+

@@ -14,37 +14,32 @@
 #   $WS_TOOLS/python-integrate-project gunicorn
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gunicorn
-HUMAN_VERSION =			21.2.0
-COMPONENT_SUMMARY =		gunicorn - WSGI HTTP Server for UNIX
+HUMAN_VERSION =			23.0.0
+COMPONENT_SUMMARY =		WSGI HTTP Server for UNIX
 COMPONENT_PROJECT_URL =		https://gunicorn.org
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/06/89/acd9879fa6a5309b4bf16a5a8855f1e58f26d38e0c18ede9b3a70996b021/gunicorn-21.2.0.tar.gz
+	https://github.com/benoitc/gunicorn/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033
+	sha256:d92daec8a5fb3d48d61ae13841173e93f321b0fd3378d876b7efbb75a1e95247
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS += requirements_test.txt
+# We have no eventlet packaged yet.
+COMPONENT_POST_UNPACK_ACTION += $(RM) $(COMPONENT_SRC)/gunicorn/workers/geventlet.py ;
+COMPONENT_POST_UNPACK_ACTION += $(RM) $(COMPONENT_SRC)/tests/workers/test_geventlet.py ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/packaging
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/cryptography
-TEST_REQUIRED_PACKAGES.python += library/python/eventlet
 TEST_REQUIRED_PACKAGES.python += library/python/gevent
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

@@ -14,25 +14,24 @@
 #   $WS_TOOLS/python-integrate-project pycodestyle
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycodestyle
-HUMAN_VERSION =			2.11.1
-COMPONENT_SUMMARY =		pycodestyle - Python style guide checker
+HUMAN_VERSION =			2.14.0
+COMPONENT_SUMMARY =		Python style guide checker
 COMPONENT_PROJECT_URL =		https://pycodestyle.pycqa.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/PyCQA/pycodestyle/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a01fdd890c6472eebc32e8baf21e29173c35776e765c64cc83ccd09b99dc5399
+	sha256:ffcf4dc55f1e5fbdc6dd6acf5db0fd07ded534ae376eee23a742e1410b48d9ae
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults

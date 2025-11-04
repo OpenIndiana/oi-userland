@@ -18,22 +18,16 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         zenity
-COMPONENT_VERSION=      3.44.3
-COMPONENT_VERSION_MAJOR=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
-COMPONENT_PROJECT_URL=  http://www.gnome.org
+COMPONENT_VERSION=      3.44.5
 COMPONENT_SUMMARY=      GNOME graphical dialog box generator
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:86f8c8c51f2bbfc729d4e863a135122de400cbfb3fa43b64b4438790de778c7b
-COMPONENT_ARCHIVE_URL=  https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_VERSION_MAJOR)/$(COMPONENT_ARCHIVE)
+	sha256:29ac447f4246b1da783a3c28ddc80b0ef7c80eccd5836ad9140abf89841d0eab
 COMPONENT_FMRI=		gnome/zenity
 COMPONENT_CLASSIFICATION=Development/GNOME and GTK+
 COMPONENT_LICENSE=	LGPL-2.1-only
 COMPONENT_LICENSE_FILE=	COPYING
 
-TEST_TARGET=$(NO_TESTS)
-
+include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # GNU gettext is needed
@@ -41,9 +35,6 @@ PATH = $(PATH.gnu)
 
 CONFIGURE_OPTIONS += -Dlibnotify=true
 CONFIGURE_OPTIONS += -Dwebkitgtk=true
-
-# Build dependencies
-REQUIRED_PACKAGES += developer/gnome/gnome-doc-utils
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf

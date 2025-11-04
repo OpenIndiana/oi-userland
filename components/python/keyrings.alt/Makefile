@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		keyrings.alt
-HUMAN_VERSION =			5.0.1
-COMPONENT_SUMMARY =		keyrings.alt - Alternate keyring implementations
-COMPONENT_PROJECT_URL =		https://github.com/jaraco/keyrings.alt
+HUMAN_VERSION =			5.0.2
+COMPONENT_SUMMARY =		Alternate keyring implementations
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd372a1ec446a1bc5a90624a52c88e83b9330218e39047a6c9a48ae37d116745
+	sha256:8f097ebe9dc8b185106502b8cdb066c926d2180e13b4689fd4771a3eab7d69fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+COMPONENT_SRC =			keyrings_alt-$(HUMAN_VERSION)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -34,7 +35,6 @@ PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
 PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools
 PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/keyring
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome

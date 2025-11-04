@@ -35,6 +35,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 license graphviz.license.extra license="Other Notices"
 
+file path=lib/svc/manifest/application/graphviz/configure-plugins.xml
+file path=lib/svc/method/graphviz-configure-plugins
 file path=usr/bin/acyclic
 file path=usr/bin/bcomps
 file path=usr/bin/ccomps
@@ -45,6 +47,7 @@ file path=usr/bin/dijkstra
 file path=usr/bin/dot
 link path=usr/bin/dot2gxl target=gxl2gv
 file path=usr/bin/dot_builtins
+file path=usr/bin/dot_sandbox
 file path=usr/bin/edgepaint
 link path=usr/bin/fdp target=dot
 file path=usr/bin/gc
@@ -122,6 +125,11 @@ link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so \
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so.6 \
     target=libgvplugin_gs.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_gs.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_kitty.so \
+    target=libgvplugin_kitty.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_kitty.so.6 \
+    target=libgvplugin_kitty.so.6.0.0
+file path=usr/lib/$(MACH64)/graphviz/libgvplugin_kitty.so.6.0.0
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so \
     target=libgvplugin_neato_layout.so.6.0.0
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_neato_layout.so.6 \
@@ -142,6 +150,11 @@ link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so \
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so.6 \
     target=libgvplugin_rsvg.so.6.0.0
 file path=usr/lib/$(MACH64)/graphviz/libgvplugin_rsvg.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_vt.so \
+    target=libgvplugin_vt.so.6.0.0
+link path=usr/lib/$(MACH64)/graphviz/libgvplugin_vt.so.6 \
+    target=libgvplugin_vt.so.6.0.0
+file path=usr/lib/$(MACH64)/graphviz/libgvplugin_vt.so.6.0.0
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_webp.so \
     target=libgvplugin_webp.so.6.0.0
 link path=usr/lib/$(MACH64)/graphviz/libgvplugin_webp.so.6 \
@@ -327,7 +340,8 @@ file path=usr/share/man/man1/cluster.1
 file path=usr/share/man/man1/diffimg.1
 file path=usr/share/man/man1/dijkstra.1
 file path=usr/share/man/man1/dot.1
-link path=usr/share/man/man1/dot2gxl.1 target=gv2gxl.1
+link path=usr/share/man/man1/dot2gxl.1 target=gxl2gv.1
+file path=usr/share/man/man1/dot_sandbox.1
 file path=usr/share/man/man1/edgepaint.1
 link path=usr/share/man/man1/fdp.1 target=dot.1
 file path=usr/share/man/man1/gc.1
@@ -381,8 +395,8 @@ depend fmri=image/graphviz/graphviz-ruby@$(IPS_COMPONENT_VERSION) \
 depend fmri=image/graphviz/graphviz-tcl@$(IPS_COMPONENT_VERSION) \
     type=conditional predicate=runtime/tcl-8
 depend fmri=image/graphviz/graphviz-guile@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/guile-8
+    type=conditional predicate=library/guile
 depend fmri=image/graphviz/graphviz-go@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/go-8
+    type=conditional predicate=developer/golang
 depend fmri=image/graphviz/graphviz-php@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/php-8
+    type=conditional predicate=web/php-$(PHPVER)

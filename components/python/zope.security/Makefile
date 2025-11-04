@@ -11,41 +11,41 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project zope.security
+#   $WS_TOOLS/python-integrate-project -d python/zope.security zope_security
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		zope.security
-HUMAN_VERSION =			6.2
-COMPONENT_SUMMARY =		zope.security - Zope Security Framework
+COMPONENT_NAME =		zope_security
+HUMAN_VERSION =			8.1
+COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.security
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/19/63/ab9cf7529413330069c69d2338e077d418c75ab34554a7c62d333eb9d42d/zope.security-6.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6af7704e7d8138b7d6c745601cac2d16fef27361e5d99c61b746f650a8fba1f7
+	sha256:8dad1f138b92dc8a9ac51cc20e5af56753233968d59d8d0a7d4bebb5ff622be8
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-component
-PYTHON_REQUIRED_PACKAGES += library/python/zope-i18nmessageid
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += library/python/zope-location
-PYTHON_REQUIRED_PACKAGES += library/python/zope-proxy
-PYTHON_REQUIRED_PACKAGES += library/python/zope-schema
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-component
+REQUIRED_PACKAGES.python += library/python/zope-i18nmessageid
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += library/python/zope-location
+REQUIRED_PACKAGES.python += library/python/zope-proxy
+REQUIRED_PACKAGES.python += library/python/zope-schema
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/btrees
 TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component

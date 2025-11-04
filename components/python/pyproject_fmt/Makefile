@@ -19,24 +19,39 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			1.7.0
-COMPONENT_SUMMARY =		pyproject_fmt - Format your pyproject.toml file
+HUMAN_VERSION =			2.7.0
+COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/31/0a/4acc5aa04f5de56d165b03ec340f6956dd8ae1ebcf497c83cf1b3206786f/pyproject_fmt-1.7.0.tar.gz
+	https://github.com/tox-dev/toml-fmt/archive/refs/tags/pyproject-fmt/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:db404b2e5d186a6cdfe2b90d7cf1d548cc8e46f87acd278cb7748ef3f05368c2
+	sha256:3dbe43d000a3f267e5b4365bc0eb144a6690de86b046b6ff903655bd71f830f9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
+COMPONENT_SRC = toml-fmt-pyproject-fmt-$(HUMAN_VERSION)
+COMPONENT_SUBDIR = pyproject-fmt
+
 include $(WS_MAKE_RULES)/common.mk
 
+# https://www.illumos.org/issues/15767
+LD_Z_IGNORE=
+
+# During testing the /usr/bin is added to PATH (due to a bug) and so when we
+# try to run pyproject-fmt we always run the installed one, not the currently
+# built one in the proto area.
+#
+# See also https://github.com/fedora-python/tox-current-env/issues/68
+TEST_CONFLICTING_PACKAGES.python += library/python/pyproject-fmt
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/tomlkit
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/maturin
+REQUIRED_PACKAGES.python += library/python/toml-fmt-common
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

@@ -22,7 +22,7 @@ COMPONENT_NAME_SHORT=	gcm
 # The value below should match the .p5m and .license filenames, in particular:
 COMPONENT_NAME=  		$(COMPONENT_NAME_LONG)
 COMPONENT_VERSION=	1.2.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 # Currently the latest release is a bit behind the Git HEAD on features
 # Comment away when switching to future "vanilla" release
 COMPONENT_GIT_ORG=	kuthulux
@@ -71,7 +71,7 @@ COMPONENT_INSTALL_ACTION =	true
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/pycairo
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject-3
+PYTHON_REQUIRED_PACKAGES += library/python/pygobject
 PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/expect
 REQUIRED_PACKAGES += shell/ksh93

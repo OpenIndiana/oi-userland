@@ -26,7 +26,7 @@ CURL="/usr/bin/curl -s"
 function usage
 {
 	[[ -n "$1" ]] && printf "ERROR: %s\n\n" "$1" >&2
-	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] MODULE\n" "$THIS" >&2
+	printf "Usage: %s [-d DIR] [-f] [-l VERSION] [-o OBSOLETE].. [-u] DISTRIBUTION|MODULE\n" "$THIS" >&2
 	[[ -n "$1" ]] && exit 1
 	exit 0
 }
@@ -69,29 +69,52 @@ BASE_DIR="$WS_TOP/components"
 [[ -d "$BASE_DIR" ]] || usage "Directory $BASE_DIR not found"
 
 
-# Get data from metacpan
-METACPAN_MODULE=$($CURL "$APIURL/module/$MODULE")
-if (($? != 0)) || [[ -z "$METACPAN_MODULE" ]] ; then
-	printf "FATAL: Failed to get data from metacpan\n" >&2
+# Query MetaCPAN
+METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+	printf '{"term":{"distribution":"%s"}}],' "$MODULE" ; \
+	printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
+	printf '"size":1,"sort":[{"date":"desc"}],' ; \
+	printf '"fields":["distribution","version","author","download_url","abstract"]}') \
+		| $CURL "$APIURL/release/_search" -d @- \
+		| /usr/bin/jq -r '.hits.hits[].fields')
+if (($? != 0)) ; then
+	printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
 	exit 1
 fi
 
-# Detect distribution for module
-DISTRIBUTION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
+# If we didn't found the distribution directly try to find the module
+if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+	DISTRIBUTION=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+		printf '{"term":{"module.name":"%s"}}],' "$MODULE" ; \
+		printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
+		printf '"size":1,"fields":["distribution"]}') \
+			| $CURL "$APIURL/module/_search" -d @- \
+			| /usr/bin/jq -r '.hits.hits[].fields.distribution')
+	if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
+		printf 'FATAL: Failed to find distribution for %s at MetaCPAN\n' "$MODULE" >&2
+		exit 1
+	fi
+	METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"released"}},' ; \
+		printf '{"term":{"distribution":"%s"}}],' "$DISTRIBUTION" ; \
+		printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
+		printf '"size":1,"sort":[{"date":"desc"}],' ; \
+		printf '"fields":["distribution","version","author","download_url","abstract"]}') \
+			| $CURL "$APIURL/release/_search" -d @- \
+			| /usr/bin/jq -r '.hits.hits[].fields')
+	if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+		printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
+		exit 1
+	fi
+fi
+
+# Get distribution
+DISTRIBUTION=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.distribution')
 if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
-	printf "FATAL: Failed to get distribution for module %s from metacpan\n" "$MODULE" >&2
+	printf 'FATAL: Failed to confirm or detect distribution\n' >&2
 	exit 1
 fi
-if [[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] then
-	NEW_MODULE="${DISTRIBUTION//-/::}"
-	NEW_METACPAN_MODULE=$($CURL "$APIURL/module/$NEW_MODULE")
-	NEW_DISTRIBUTION=$(printf "%s" "$NEW_METACPAN_MODULE" | /usr/bin/jq -r '.distribution')
-	if [[ "$NEW_DISTRIBUTION" == "$DISTRIBUTION" ]] ; then
-		printf "WARNING: Module %s does not match distribution %s\n" "$MODULE" "$DISTRIBUTION" >&2
-		printf "WARNING: Continue with module %s instead of %s\n" "$NEW_MODULE" "$MODULE" >&2
-		MODULE="$NEW_MODULE"
-		METACPAN_MODULE="$NEW_METACPAN_MODULE"
-	fi
+if [[ "$DISTRIBUTION" != "$MODULE" ]] then
+	printf 'WARNING: Using distribution %s for module %s\n' "$DISTRIBUTION" "$MODULE" >&2
 fi
 
 
@@ -108,6 +131,7 @@ git checkout . > /dev/null 2>&1
 VERSION=
 DOWNLOAD_URL=
 LICENSE_FILE=
+SUMMARY=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -119,14 +143,19 @@ fi
 # Version specified as option takes precedence
 [[ -n "$OPT_VERSION" ]] && VERSION="$OPT_VERSION"
 
-# Find the latest version if not already provided
+# Find the latest version
+LATEST_VERSION=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.version')
+if (($? != 0)) || [[ -z "$LATEST_VERSION" || "$LATEST_VERSION" == "null" ]] ; then
+	printf 'FATAL: Failed to detect the latest version\n' >&2
+	exit 1
+fi
+
+# Use the latest version if version was not provided
 if [[ -z "$VERSION" ]] ; then
-	VERSION=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.version')
-	if (($? != 0)) || [[ -z "$VERSION" || "$VERSION" == "null" ]] ; then
-		printf "FATAL: Failed to get version for module %s from metacpan\n" "$MODULE" >&2
-		exit 1
-	fi
-	VERSION=${VERSION#v}
+	VERSION=$LATEST_VERSION
+elif [[ "$VERSION" != "$LATEST_VERSION" ]] ; then
+	# MetaCPAN data are no longer valid because we need different version
+	METACPAN_DATA=
 fi
 
 
@@ -142,14 +171,33 @@ if git ls-files --error-unmatch Makefile > /dev/null 2>&1 ; then
 	PREV_REV=$($GMAKE print-value-COMPONENT_REVISION 2>/dev/null)
 
 	# If we were asked to do version upgrade, but we do not have new
-	# version, then we are done.
+	# version, then we are done.  Check versions for bundled CPAN too.
 	PREV_HVER=$($GMAKE print-value-HUMAN_VERSION 2>/dev/null)
-	((UPGRADE_ONLY)) && [[ "$PREV_HVER" == "$VERSION" ]] && exit 0
+	if ((UPGRADE_ONLY)) ; then while true ; do
+		for v in $($GMAKE print-value-PERL_VERSIONS) ; do
+			PERL_DIR="perl/perl-${v//.}"
+			if [[ -f "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" ]] ; then
+				BVER=$(cd "$BASE_DIR/$PERL_DIR" ; $GMAKE print-value-HUMAN_VERSION.$DISTRIBUTION 2>/dev/null)
+				[[ "$BVER" != "$VERSION" ]] && break 2
+				continue
+			fi
+			[[ "$PREV_HVER" != "$VERSION" ]] && break 2
+		done
+		exit 0
+	done ; fi
 
 	# Pre-flight environment checks
 	if ((FORCE == 0)) ; then
-		! $GMAKE env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2 && exit 1
-		! $GMAKE test-env-check > /dev/null 2>&1 && printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2 && exit 1
+		if ! $GMAKE BOOTSTRAP=yes env-check > /dev/null 2>&1 ; then
+			printf "FATAL: Pre-flight 'gmake env-check' failed!\n" >&2
+			exit 1
+		fi
+		if [[ "$($GMAKE print-value-PERL_TEST_BOOTSTRAP)" != "yes" ]] ; then
+			if ! $GMAKE BOOTSTRAP=yes test-env-check > /dev/null 2>&1 ; then
+				printf "FATAL: Pre-flight 'gmake test-env-check' failed!\n" >&2
+				exit 1
+			fi
+		fi
 	fi
 
 	$GMAKE clobber > /dev/null 2>&1
@@ -158,18 +206,33 @@ fi
 
 # Get download_url if not already provided
 if [[ -z "$DOWNLOAD_URL" ]] ; then
-	# Get module author
-	# TODO: here we get author of the latest version, not the specified version
-	AUTHOR=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.author')
+	# Get new MetaCPAN data if needed
+	if [[ -z "$METACPAN_DATA" ]] ; then
+		METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[' ; \
+			printf '{"term":{"maturity":"released"}},' ; \
+			printf '{"term":{"distribution":"%s"}},' "$DISTRIBUTION" ; \
+			printf '{"term":{"version":"%s"}}]}},' "$VERSION" ; \
+			printf '"size":1,' ; \
+			printf '"fields":["author","download_url","abstract"]}') \
+				| $CURL "$APIURL/release/_search" -d @- \
+				| /usr/bin/jq -r '.hits.hits[].fields')
+		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
+			exit 1
+		fi
+	fi
+
+	# Get author
+	AUTHOR=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.author')
 	if (($? != 0)) || [[ -z "$AUTHOR" || "$AUTHOR" == "null" ]] ; then
-		printf "FATAL: Failed to get author for module %s from metacpan\n" "$MODULE" >&2
+		printf 'FATAL: Failed to get author from MetaCPAN\n' >&2
 		exit 1
 	fi
 
 	# Get download_url
-	DOWNLOAD_URL=$($CURL "$APIURL/download_url/$MODULE?version===$VERSION" | /usr/bin/jq -r '.download_url')
+	DOWNLOAD_URL=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.download_url')
 	if (($? != 0)) || [[ -z "$DOWNLOAD_URL" || "$DOWNLOAD_URL" == "null" ]] ; then
-		printf "WARNING: Failed to get download_url for module %s, version %s from metacpan\n" "$MODULE" "$VERSION" >&2
+		printf 'WARNING: Failed to get download_url for version %s from MetaCPAN\n' "$VERSION" >&2
 		DOWNLOAD_URL=
 	fi
 fi
@@ -199,7 +262,7 @@ done
 # Makefile template
 GENERATE_CMD="\$WS_TOOLS/$THIS"
 [[ "$DIRECTORY" != "perl/$DISTRIBUTION" ]] && GENERATE_CMD="$GENERATE_CMD -d $DIRECTORY"
-GENERATE_CMD="$GENERATE_CMD $MODULE"
+GENERATE_CMD="$GENERATE_CMD $DISTRIBUTION"
 (
 cat $WS_TOP/transforms/copyright-template | sed -e '/^$/,$d'
 cat <<EOF
@@ -217,13 +280,10 @@ cat <<EOF
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		$MODULE
-EOF
-[[ "$DISTRIBUTION" != "${MODULE//::/-}" ]] && printf "COMPONENT_PERL_DISTRIBUTION =\t%s\n" "$DISTRIBUTION"
-cat <<EOF
+COMPONENT_NAME =		$DISTRIBUTION
 HUMAN_VERSION =			$VERSION
 COMPONENT_REVISION =		$((PREV_REV + 1))
-COMPONENT_SUMMARY =		$MODULE - TODO
+COMPONENT_SUMMARY =		TODO
 COMPONENT_CPAN_AUTHOR =		$AUTHOR
 COMPONENT_ARCHIVE_HASH =	\\
 	sha256:TODO
@@ -250,7 +310,7 @@ COMPONENT_VERSION=$($GMAKE print-value-COMPONENT_VERSION)
 git add Makefile
 
 # Calculate sham256 sum for source package
-$GMAKE fetch > /dev/null 2>&1
+$GMAKE DLC_ARCHIVE_MIRROR= fetch > /dev/null 2>&1
 USERLAND_ARCHIVES=$($GMAKE print-value-USERLAND_ARCHIVES)
 COMPONENT_ARCHIVE=$($GMAKE print-value-COMPONENT_ARCHIVE)
 [[ ! -f "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE" ]] && printf "FATAL: 'gmake fetch' failed!\n" >&2 && exit 1
@@ -281,41 +341,61 @@ COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
 # Switch to modulebuild if possible
 [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/Build.PL" ]] && sed -i -e 's/makemaker/modulebuild/g' Makefile
 
-# Get abstract.  Either from metacpan, or directly from sources.
-ABSTRACT=$(printf "%s" "$METACPAN_MODULE" | /usr/bin/jq -r '.abstract')
-if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-	printf "WARNING: Failed to get abstract for module %s from metacpan\n" "$MODULE" >&2
-	ABSTRACT="TODO"
-fi
-if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
-		printf "WARNING: META.json missing\n" >&2
-	else
-		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
-		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-			printf "WARNING: Failed to get abstract from META.json\n" >&2
-			ABSTRACT="TODO"
+# Get summary if not already provided
+if [[ -z "$SUMMARY" ]] ; then
+	# Get new MetaCPAN data if needed
+	if [[ -z "$METACPAN_DATA" ]] ; then
+		METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[' ; \
+			printf '{"term":{"maturity":"released"}},' ; \
+			printf '{"term":{"distribution":"%s"}},' "$DISTRIBUTION" ; \
+			printf '{"term":{"version":"%s"}}]}},' "$VERSION" ; \
+			printf '"size":1,"fields":["abstract"]}') \
+				| $CURL "$APIURL/release/_search" -d @- \
+				| /usr/bin/jq -r '.hits.hits[].fields')
+		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
+			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
+			exit 1
 		fi
 	fi
-fi
-if [[ "$ABSTRACT" == "TODO" ]] ; then
-	if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
-		printf "WARNING: META.yml missing\n" >&2
-	else
-		ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
-		if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
-			printf "WARNING: Failed to get abstract from META.yml\n" >&2
-			ABSTRACT="TODO"
+
+	# Get abstract and use it as summary.  Either from MetaCPAN, or directly from sources.
+	ABSTRACT=$(printf '%s' "$METACPAN_DATA" | /usr/bin/jq -r '.abstract')
+	if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+		printf 'WARNING: Failed to get abstract from MetaCPAN\n' >&2
+		ABSTRACT="TODO"
+	fi
+	if [[ "$ABSTRACT" == "TODO" ]] ; then
+		if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" ]] ; then
+			printf "WARNING: META.json missing\n" >&2
+		else
+			ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" | /usr/bin/jq -r '.abstract')
+			if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+				printf "WARNING: Failed to get abstract from META.json\n" >&2
+				ABSTRACT="TODO"
+			fi
 		fi
 	fi
+	if [[ "$ABSTRACT" == "TODO" ]] ; then
+		if [[ ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" ]] ; then
+			printf "WARNING: META.yml missing\n" >&2
+		else
+			ABSTRACT=$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" | python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' | /usr/bin/jq -r '.abstract')
+			if (($? != 0)) || [[ -z "$ABSTRACT" || "$ABSTRACT" == "null" ]] ; then
+				printf "WARNING: Failed to get abstract from META.yml\n" >&2
+				ABSTRACT="TODO"
+			fi
+		fi
+	fi
+	SUMMARY="$ABSTRACT"
 fi
-# Abstract needs to be sanitized
-ABSTRACT="${ABSTRACT//\`/\\\\\`}"
-ABSTRACT="${ABSTRACT//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
-ABSTRACT="${ABSTRACT//\//\/}"
-ABSTRACT="${ABSTRACT//\$/\\\\\$\$}"
-ABSTRACT="${ABSTRACT//\&/\\&}"
-sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$ABSTRACT"'/g' Makefile
+# Summary needs to be sanitized
+SUMMARY="${SUMMARY//\`/\\\\\`}"
+SUMMARY="${SUMMARY//\"/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"}"
+SUMMARY="${SUMMARY//\//\/}"
+SUMMARY="${SUMMARY//\$/\\\\\$\$}"
+SUMMARY="${SUMMARY//\&/\\&}"
+SUMMARY="${SUMMARY//#/\\\\#}"
+sed -i -e 's/\(COMPONENT_SUMMARY.*\)TODO$/\1'"$SUMMARY"'/g' Makefile
 
 
 # Try to detect license type(s)
@@ -426,7 +506,7 @@ if [[ -z "$LICENSE" ]] ; then
 		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" && "$(/usr/bin/jq -r '.license[]' < "$SOURCE_DIR$COMPONENT_SUBDIR/META.json" 2>/dev/null)" == "perl_5" ]] && D=0
 		((D)) && [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" && "$(cat "$SOURCE_DIR$COMPONENT_SUBDIR/META.yml" \
 			| python -c 'import sys, yaml, json; y=yaml.safe_load(sys.stdin.read()); print(json.dumps(y))' \
-			| /usr/bin/jq -r '.license[]' 2>/dev/null)" == "perl_5" ]] && D=0
+			| /usr/bin/jq -r '.license' 2>/dev/null)" == "perl" ]] && D=0
 
 		((D)) && printf "ERROR: Heuristics failed to detect license type, using default Perl license\n" >&2
 
@@ -443,10 +523,15 @@ fi
 sed -i -e 's/license:TODO/'"$LICENSE"'/g' Makefile
 
 
-# Create manifests
-if ! $GMAKE sample-manifest > /dev/null 2>&1 ; then
-	printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
-else
+# In a case we need to bootstrap we will need to restart the whole process from
+# the sample-manifest step.  We are able to detect the bootstrap mode only
+# after the REQUIRED_PACKAGES generation is completed below.
+for BOOTSTRAP in '' 'BOOTSTRAP=yes' ; do
+	# Create manifests
+	if ! $GMAKE $BOOTSTRAP sample-manifest > /dev/null 2>&1 ; then
+		printf "ERROR: 'gmake sample-manifest' failed!\n" >&2
+		break
+	fi
 	MANIFEST="$DISTRIBUTION-PERLVER.p5m"
 	[[ "$($GMAKE print-value-SINGLE_PERL_VERSION)" == "yes" ]] && MANIFEST="$DISTRIBUTION.p5m"
 	cat manifests/sample-manifest.p5m \
@@ -461,12 +546,23 @@ else
 	fi
 
 	git add manifests/sample-manifest.p5m $MANIFEST
-fi
 
 
-# Generate REQUIRED_PACKAGES
-$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
-git add Makefile
+	# Generate REQUIRED_PACKAGES
+	$GMAKE REQUIRED_PACKAGES > /dev/null 2>&1 || printf "ERROR: 'gmake REQUIRED_PACKAGES' failed!\n" >&2
+	git add Makefile
+
+
+	# If we are already in the bootstrap mode, or everything is okay then
+	# we are done here
+	[[ -n "$BOOTSTRAP" ]] && break
+	$GMAKE env-check > /dev/null 2>&1 && break
+
+	# Otherwise we need to retry with the bootstrap mode enabled
+	printf 'WARNING: Bootstrap mode enabled!\n' >&2
+	# Cleanup before the retry
+	$GMAKE clobber > /dev/null 2>&1
+done
 
 
 # Check for Makefile completeness
@@ -504,7 +600,7 @@ if [[ -f history ]] ; then
 	mv history.new history
 	git add history
 
-	awk '$2 == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
+	awk '$NF == "noincorporate" {printf("WARNING: Unincorporated package: %s\n", $1)}' < history >&2
 fi
 
 
@@ -518,13 +614,21 @@ git add pkg5 2>/dev/null
 
 
 PERL_VERSIONS=$($GMAKE print-value-PERL_VERSIONS)
+PERL_TEST_BOOTSTRAP=$($GMAKE print-value-PERL_TEST_BOOTSTRAP)
 
 
 # Run tests to make sure they pass and to create result snapshots
 TESTED_VERSIONS=
 for v in $PERL_VERSIONS ; do
 	# Check the test environment
-	! $GMAKE PERL_VERSIONS=$v test-env-check > /dev/null 2>&1 && printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2 && continue
+	if ! $GMAKE PERL_VERSIONS=$v test-env-check > /dev/null 2>&1 ; then
+		if [[ "$PERL_TEST_BOOTSTRAP" == "yes" ]] ; then
+			printf "WARNING: Test environment for %s is not ready yet (bootstrap)\n" "$v" >&2
+		else
+			printf "ERROR: 'gmake test-env-check' failed for %s!\n" "$v" >&2
+		fi
+		continue
+	fi
 
 	# Run the test
 	! $GMAKE PERL_VERSIONS=$v test > /dev/null 2>&1 && printf "ERROR: Testing failed for %s!\n" "$v" >&2 && continue
@@ -576,10 +680,32 @@ if [[ "$common_results" == "yes" ]] ; then
 fi
 
 
+# Create .gitignore
+COMPONENT_SRC=$($GMAKE print-value-COMPONENT_SRC)
+printf '/%s/\n' "$COMPONENT_SRC" > .gitignore
+git add .gitignore
+
+
+# Cleanup bundled CPAN
+for v in $PERL_VERSIONS_OBSOLETING $PERL_VERSIONS ; do
+	PLV="${v//.}"
+	PERL_DIR="perl/perl-$PLV"
+	if [[ -f "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" ]] ; then
+		printf "WARNING: Removing %s\n" "$PERL_DIR/$DISTRIBUTION.p5m" >&2
+		git rm "$BASE_DIR/$PERL_DIR/$DISTRIBUTION.p5m" > /dev/null 2>&1
+	fi
+	if [[ -f "$BASE_DIR/$PERL_DIR/pkg5" ]] && grep -q '"'"$COMPONENT_FMRI-$PLV"'",' "$BASE_DIR/$PERL_DIR/pkg5" ; then
+		printf "WARNING: Updating %s\n" "$PERL_DIR/pkg5" >&2
+		sed -i -e '\|"'"$COMPONENT_FMRI-$PLV"'",|d' "$BASE_DIR/$PERL_DIR/pkg5"
+		git add "$BASE_DIR/$PERL_DIR/pkg5"
+	fi
+done
+
+
 # Construct the commit message
 MSG=
 if ((NEW)) ; then
-	MSG="Add $MODULE Perl module"
+	MSG="Add $DISTRIBUTION Perl distribution"
 else
 	[[ "$PREV_VER" != "$COMPONENT_VERSION" ]] && MSG="change version format"
 	[[ "$PREV_HVER" != "$VERSION" ]] && MSG="update to $VERSION"

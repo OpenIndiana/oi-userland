@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Ref::Util
+#   $WS_TOOLS/perl-integrate-module Ref-Util
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Ref::Util
+COMPONENT_NAME =		Ref-Util
 HUMAN_VERSION =			0.204
-COMPONENT_SUMMARY =		Ref::Util - Utility functions for checking references
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Utility functions for checking references
 COMPONENT_CPAN_AUTHOR =		ARC
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:415fa73dbacf44f3d5d79c14888cc994562720ab468e6f71f91cd1f769f105e1
@@ -29,7 +30,15 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Optional test dependencies missing from metadata
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/readonly
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/ref-util-xs
+PERL_REQUIRED_PACKAGES += library/perl-5/text-parsewords
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/ref-util-xs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

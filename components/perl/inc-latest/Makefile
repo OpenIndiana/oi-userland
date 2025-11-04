@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module inc::latest
+#   $WS_TOOLS/perl-integrate-module inc-latest
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		inc::latest
+COMPONENT_NAME =		inc-latest
 HUMAN_VERSION =			0.500
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		inc::latest - use modules bundled in inc/ if they are newer than installed ones
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		use modules bundled in inc/ if they are newer than installed ones
 COMPONENT_CPAN_AUTHOR =		DAGOLDEN
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:daa905f363c6a748deb7c408473870563fcac79b9e3e95b26e130a4a8dc3c611
@@ -31,4 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-install
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Sub::Info
+#   $WS_TOOLS/perl-integrate-module Sub-Info
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Sub::Info
+COMPONENT_NAME =		Sub-Info
 HUMAN_VERSION =			0.002
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		Sub::Info - Tool for inspecting subroutines.
+COMPONENT_REVISION =		4
+COMPONENT_SUMMARY =		Tool for inspecting subroutines.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:ea3056d696bdeff21a99d340d5570887d39a8cc47bff23adfc82df6758cdd0ea
@@ -31,5 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/importer
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

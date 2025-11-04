@@ -1,0 +1,28 @@
+https://github.com/python/cpython/pull/138201
+
+--- Python-3.14.0/Modules/posixmodule.c.orig
++++ Python-3.14.0/Modules/posixmodule.c
+@@ -8189,7 +8189,11 @@
+     int max;
+ 
+     max = sched_get_priority_max(policy);
++#ifdef __sun
++    if (max == -1 && errno == EINVAL)
++#else
+     if (max < 0)
++#endif
+         return posix_error();
+     return PyLong_FromLong(max);
+ }
+@@ -8208,7 +8212,11 @@
+ /*[clinic end generated code: output=7595c1138cc47a6d input=21bc8fa0d70983bf]*/
+ {
+     int min = sched_get_priority_min(policy);
++#ifdef __sun
++    if (min == -1 && errno == EINVAL)
++#else
+     if (min < 0)
++#endif
+         return posix_error();
+     return PyLong_FromLong(min);
+ }

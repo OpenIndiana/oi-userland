@@ -11,21 +11,20 @@
 #
 # Copyright (c) 2015 Alexander Pyhalov
 # Copyright (c) 2019 Michal Nowak
-# Copyright (c) 2021, 2023 Andreas Wacknitz
+# Copyright (c) 2021, 2024 Andreas Wacknitz
 #
 
 BUILD_STYLE= meson
-BUILD_BITS= 64
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixman
-COMPONENT_VERSION=	0.43.4
+COMPONENT_VERSION=	0.46.4
 COMPONENT_SUMMARY=	Pixman: The pixel-manipulation library for X and Cairo
 COMPONENT_PROJECT_URL=	https://www.pixman.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:a0624db90180c7ddb79fc7a9151093dc37c646d8c38d3f232f767cf64b85a226
+COMPONENT_ARCHIVE_HASH= sha256:d09c44ebc3bd5bee7021c79f922fe8fb2fb57f7320f55e97ff9914d2346a591c
 COMPONENT_ARCHIVE_URL=	https://cairographics.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/graphics/pixman
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -34,10 +33,9 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-PATH= $(PATH.gnu)
+CFLAGS += $(XPG6MODE)
 
-# The test suite needs this
-unexport SHELLOPTS
+PATH= $(PATH.gnu)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library

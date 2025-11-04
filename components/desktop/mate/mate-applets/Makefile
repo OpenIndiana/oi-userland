@@ -18,15 +18,14 @@
 #
 
 MATE_CATEGORY= APP
-BUILD_STYLE= configure
 include ../../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-applets
 COMPONENT_MJR_VERSION=	1.28
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY=	Applets components for the MATE Desktop Environment
-COMPONENT_ARCHIVE_HASH= sha256:1b6bef6bd5d326fb9dc828ff910e4b1b9294b4660c311dc1c90310fd9c356686
+COMPONENT_ARCHIVE_HASH= sha256:a5967141527dc5b172d322a6003c23aeec253160f650bb36430a06ddaefa7e2e
 COMPONENT_LICENSE=	GPLv2, LGPLv2, FDLv1.1
 COMPONENT_CLASSIFICATION= System/Libraries
 
@@ -41,11 +40,10 @@ CONFIGURE_ENV += LIBS="-lnsl -lsocket"
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/character-map/gucharmap
 REQUIRED_PACKAGES += desktop/mate/mate-panel
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/desktop/gtksourceview4
 REQUIRED_PACKAGES += library/desktop/libwnck
 REQUIRED_PACKAGES += library/desktop/mate/libmateweather
 REQUIRED_PACKAGES += library/desktop/mate/mate-desktop

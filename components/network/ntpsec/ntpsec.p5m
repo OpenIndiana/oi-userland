@@ -1,0 +1,251 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2025 Friedrich Kink
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=usr/lib/libntpc.so.1.1.0 -> default pkg.linted.userland.action001.2 true >
+
+group groupname=ntp gid=35
+user username=ntp gcos-field="ntp - used for unprivileged processes" group=ntp home-dir=/var/empty login-shell=/bin/false uid=35
+
+dir path=var/ntp group=sys
+dir path=var/ntp/ntpstats group=sys
+file Solaris/ntp.client path=etc/inet/ntp.client group=sys
+file Solaris/ntp.client path=etc/inet/ntp.conf group=sys preserve=true
+file Solaris/ntp.server path=etc/inet/ntp.server group=sys
+file Solaris/auth_attr path=etc/security/auth_attr.d/ntp
+file Solaris/prof_attr path=etc/security/prof_attr.d/ntp
+file Solaris/ntpsec.xml path=lib/svc/manifest/network/ntpsec.xml
+file Solaris/ntpsec.sh path=lib/svc/method/ntpsec
+file Solaris/RtNTPMngmnt.html \
+    path=usr/lib/help/auths/locale/C/RtNTPMngmnt.html
+file Solaris/SmfNTPStates.html \
+    path=usr/lib/help/auths/locale/C/SmfNTPStates.html
+file Solaris/SmfValueNTP.html \
+    path=usr/lib/help/auths/locale/C/SmfValueNTP.html
+
+file path=usr/bin/ntpdig
+file path=usr/bin/ntpfrob
+file path=usr/bin/ntpkeygen
+file path=usr/bin/ntpleapfetch
+file path=usr/bin/ntplogtemp
+file path=usr/bin/ntpmon
+file path=usr/bin/ntpq
+file path=usr/bin/ntpsnmpd
+file path=usr/bin/ntpsweep
+file path=usr/bin/ntptrace
+file path=usr/bin/ntpviz
+file path=usr/bin/ntpwait
+link path=usr/lib/libntpc.so target=libntpc.so.1.1.0
+link path=usr/lib/libntpc.so.1 target=libntpc.so.1.1.0
+file path=usr/lib/libntpc.so.1.1.0
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp-$(HUMAN_VERSION).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/agentx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/agentx_packet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/control.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/magic.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/ntpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/packet.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/poly.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/statfiles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/ntp/util.py
+file path=usr/sbin/ntpd
+file path=usr/share/doc/ntpsec/404.html
+file path=usr/share/doc/ntpsec/NTS-QuickStart.html
+file path=usr/share/doc/ntpsec/access.html
+file path=usr/share/doc/ntpsec/accopt.html
+file path=usr/share/doc/ntpsec/asciidoc.css
+file path=usr/share/doc/ntpsec/asciidoc.js
+file path=usr/share/doc/ntpsec/assoc.html
+file path=usr/share/doc/ntpsec/authentic.html
+file path=usr/share/doc/ntpsec/authopt.html
+file path=usr/share/doc/ntpsec/bugs.html
+file path=usr/share/doc/ntpsec/build.html
+file path=usr/share/doc/ntpsec/clock.html
+file path=usr/share/doc/ntpsec/clockopt.html
+file path=usr/share/doc/ntpsec/cluster.html
+file path=usr/share/doc/ntpsec/comdex.html
+file path=usr/share/doc/ntpsec/confopt.html
+file path=usr/share/doc/ntpsec/copyright.html
+file path=usr/share/doc/ntpsec/debug.html
+file path=usr/share/doc/ntpsec/decode.html
+file path=usr/share/doc/ntpsec/discipline.html
+file path=usr/share/doc/ntpsec/discover.html
+file path=usr/share/doc/ntpsec/driver_arbiter.html
+file path=usr/share/doc/ntpsec/driver_generic.html
+file path=usr/share/doc/ntpsec/driver_gpsd.html
+file path=usr/share/doc/ntpsec/driver_howto.html
+file path=usr/share/doc/ntpsec/driver_hpgps.html
+file path=usr/share/doc/ntpsec/driver_jjy.html
+file path=usr/share/doc/ntpsec/driver_local.html
+file path=usr/share/doc/ntpsec/driver_modem.html
+file path=usr/share/doc/ntpsec/driver_nmea.html
+file path=usr/share/doc/ntpsec/driver_oncore.html
+file path=usr/share/doc/ntpsec/driver_pps.html
+file path=usr/share/doc/ntpsec/driver_shm.html
+file path=usr/share/doc/ntpsec/driver_spectracom.html
+file path=usr/share/doc/ntpsec/driver_trimble.html
+file path=usr/share/doc/ntpsec/driver_truetime.html
+file path=usr/share/doc/ntpsec/driver_zyfer.html
+file path=usr/share/doc/ntpsec/extern.html
+file path=usr/share/doc/ntpsec/filter.html
+file path=usr/share/doc/ntpsec/generic_howto.html
+file path=usr/share/doc/ntpsec/history.html
+file path=usr/share/doc/ntpsec/huffpuff.html
+file path=usr/share/doc/ntpsec/icons/home.gif
+file path=usr/share/doc/ntpsec/icons/mail2.gif
+file path=usr/share/doc/ntpsec/icons/sitemap.png
+file path=usr/share/doc/ntpsec/index.html
+file path=usr/share/doc/ntpsec/kern.html
+file path=usr/share/doc/ntpsec/kernpps.html
+file path=usr/share/doc/ntpsec/leap.html
+file path=usr/share/doc/ntpsec/leapsmear.html
+file path=usr/share/doc/ntpsec/miscopt.html
+file path=usr/share/doc/ntpsec/mode6.html
+file path=usr/share/doc/ntpsec/monopt.html
+file path=usr/share/doc/ntpsec/msyslog.html
+file path=usr/share/doc/ntpsec/ntp_conf.html
+file path=usr/share/doc/ntpsec/ntp_config.html
+file path=usr/share/doc/ntpsec/ntp_keys.html
+file path=usr/share/doc/ntpsec/ntpd.html
+file path=usr/share/doc/ntpsec/ntpdig.html
+file path=usr/share/doc/ntpsec/ntpfrob.html
+file path=usr/share/doc/ntpsec/ntpkeygen.html
+file path=usr/share/doc/ntpsec/ntpleapfetch.html
+file path=usr/share/doc/ntpsec/ntploggps.html
+file path=usr/share/doc/ntpsec/ntplogtemp.html
+file path=usr/share/doc/ntpsec/ntpmon.html
+file path=usr/share/doc/ntpsec/ntpq.html
+file path=usr/share/doc/ntpsec/ntpsec.html
+file path=usr/share/doc/ntpsec/ntpsnmpd.html
+file path=usr/share/doc/ntpsec/ntpspeak.html
+file path=usr/share/doc/ntpsec/ntpsweep.html
+file path=usr/share/doc/ntpsec/ntptrace.html
+file path=usr/share/doc/ntpsec/ntpviz.html
+file path=usr/share/doc/ntpsec/ntpwait.html
+file path=usr/share/doc/ntpsec/oncore-shmem.html
+file path=usr/share/doc/ntpsec/orphan.html
+file path=usr/share/doc/ntpsec/outside-tools.html
+file path=usr/share/doc/ntpsec/parsedata.html
+file path=usr/share/doc/ntpsec/pic/SAppr.jpg
+file path=usr/share/doc/ntpsec/pic/alice11.gif
+file path=usr/share/doc/ntpsec/pic/alice13.gif
+file path=usr/share/doc/ntpsec/pic/alice15.gif
+file path=usr/share/doc/ntpsec/pic/alice23.gif
+file path=usr/share/doc/ntpsec/pic/alice32.gif
+file path=usr/share/doc/ntpsec/pic/alice35.gif
+file path=usr/share/doc/ntpsec/pic/alice38.gif
+file path=usr/share/doc/ntpsec/pic/alice44.gif
+file path=usr/share/doc/ntpsec/pic/alice47.gif
+file path=usr/share/doc/ntpsec/pic/alice51.gif
+file path=usr/share/doc/ntpsec/pic/alice61.gif
+file path=usr/share/doc/ntpsec/pic/barnstable.gif
+file path=usr/share/doc/ntpsec/pic/beaver.gif
+file path=usr/share/doc/ntpsec/pic/boom3.gif
+file path=usr/share/doc/ntpsec/pic/boom3a.gif
+file path=usr/share/doc/ntpsec/pic/boom4.gif
+file path=usr/share/doc/ntpsec/pic/bustardfly.gif
+file path=usr/share/doc/ntpsec/pic/c51.jpg
+file path=usr/share/doc/ntpsec/pic/clocktower128.png
+file path=usr/share/doc/ntpsec/pic/description.jpg
+file path=usr/share/doc/ntpsec/pic/discipline.gif
+file path=usr/share/doc/ntpsec/pic/dogsnake.gif
+file path=usr/share/doc/ntpsec/pic/driver_palisade.gif
+file path=usr/share/doc/ntpsec/pic/fg6021.gif
+file path=usr/share/doc/ntpsec/pic/fig_3_1.gif
+file path=usr/share/doc/ntpsec/pic/flatheads.gif
+file path=usr/share/doc/ntpsec/pic/flt1.gif
+file path=usr/share/doc/ntpsec/pic/flt2.gif
+file path=usr/share/doc/ntpsec/pic/flt3.gif
+file path=usr/share/doc/ntpsec/pic/flt4.gif
+file path=usr/share/doc/ntpsec/pic/flt5.gif
+file path=usr/share/doc/ntpsec/pic/flt6.gif
+file path=usr/share/doc/ntpsec/pic/flt7.gif
+file path=usr/share/doc/ntpsec/pic/flt8.gif
+file path=usr/share/doc/ntpsec/pic/flt9.gif
+file path=usr/share/doc/ntpsec/pic/gps167.jpg
+file path=usr/share/doc/ntpsec/pic/hornraba.gif
+file path=usr/share/doc/ntpsec/pic/howland.jpg
+file path=usr/share/doc/ntpsec/pic/igclock.gif
+file path=usr/share/doc/ntpsec/pic/kelly_pogo_earthday.jpg
+file path=usr/share/doc/ntpsec/pic/looking.jpg
+file path=usr/share/doc/ntpsec/pic/neoclock4x.gif
+file path=usr/share/doc/ntpsec/pic/oncore_evalbig.gif
+file path=usr/share/doc/ntpsec/pic/oncore_utplusbig.gif
+file path=usr/share/doc/ntpsec/pic/orchestra.gif
+file path=usr/share/doc/ntpsec/pic/oz2.gif
+file path=usr/share/doc/ntpsec/pic/panda.gif
+file path=usr/share/doc/ntpsec/pic/pd_om006.gif
+file path=usr/share/doc/ntpsec/pic/pd_om011.gif
+file path=usr/share/doc/ntpsec/pic/pogo-enemy2.png
+file path=usr/share/doc/ntpsec/pic/pogo.gif
+file path=usr/share/doc/ntpsec/pic/pogo1a.gif
+file path=usr/share/doc/ntpsec/pic/pogo3a.gif
+file path=usr/share/doc/ntpsec/pic/pogo4.gif
+file path=usr/share/doc/ntpsec/pic/pogo5.gif
+file path=usr/share/doc/ntpsec/pic/pogo6.gif
+file path=usr/share/doc/ntpsec/pic/pogo7.gif
+file path=usr/share/doc/ntpsec/pic/pogo8.gif
+file path=usr/share/doc/ntpsec/pic/pogocell.gif
+file path=usr/share/doc/ntpsec/pic/pzf511.jpg
+file path=usr/share/doc/ntpsec/pic/radio2.jpg
+file path=usr/share/doc/ntpsec/pic/sheepb.jpg
+file path=usr/share/doc/ntpsec/pic/stack1a.jpg
+file path=usr/share/doc/ntpsec/pic/stats.gif
+file path=usr/share/doc/ntpsec/pic/sx5.gif
+file path=usr/share/doc/ntpsec/pic/thunderbolt.jpg
+file path=usr/share/doc/ntpsec/pic/time1.gif
+file path=usr/share/doc/ntpsec/pic/tonea.gif
+file path=usr/share/doc/ntpsec/pic/tribeb.gif
+file path=usr/share/doc/ntpsec/pic/which-way-is.up.jpg
+file path=usr/share/doc/ntpsec/pic/wingdorothy.gif
+file path=usr/share/doc/ntpsec/poll.html
+file path=usr/share/doc/ntpsec/pps.html
+file path=usr/share/doc/ntpsec/prefer.html
+file path=usr/share/doc/ntpsec/quick.html
+file path=usr/share/doc/ntpsec/rate.html
+file path=usr/share/doc/ntpsec/rdebug.html
+file path=usr/share/doc/ntpsec/refclock.html
+file path=usr/share/doc/ntpsec/rollover.html
+file path=usr/share/doc/ntpsec/select.html
+file path=usr/share/doc/ntpsec/sitemap.html
+file path=usr/share/doc/ntpsec/standards.html
+file path=usr/share/doc/ntpsec/stats.html
+file path=usr/share/doc/ntpsec/tf582_4.html
+file path=usr/share/doc/ntpsec/warp.html
+file path=usr/share/man/man1/ntpdig.1
+file path=usr/share/man/man1/ntplogtemp.1
+file path=usr/share/man/man1/ntpmon.1
+file path=usr/share/man/man1/ntpq.1
+file path=usr/share/man/man1/ntpsweep.1
+file path=usr/share/man/man1/ntptrace.1
+file path=usr/share/man/man1/ntpviz.1
+file path=usr/share/man/man5/ntp.conf.5
+file path=usr/share/man/man5/ntp.keys.5
+file path=usr/share/man/man8/ntpd.8
+file path=usr/share/man/man8/ntpfrob.8
+file path=usr/share/man/man8/ntpkeygen.8
+file path=usr/share/man/man8/ntpleapfetch.8
+file path=usr/share/man/man8/ntpsnmpd.8
+file path=usr/share/man/man8/ntpwait.8

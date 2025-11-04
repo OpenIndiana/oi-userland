@@ -11,26 +11,29 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-salt-factories
+#   $WS_TOOLS/python-integrate-project -d python/pytest-salt-factories pytest_salt_factories
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-salt-factories
-HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		pytest-salt-factories - Pytest Salt Plugin
+COMPONENT_NAME =		pytest_salt_factories
+HUMAN_VERSION =			1.0.4
+COMPONENT_SUMMARY =		Pytest Salt Plugin
 COMPONENT_PROJECT_URL =		https://github.com/saltstack/pytest-salt-factories
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:daf267a4810d01c91f5e9ae09cd084c4732d9c8a0cad7e207264a2b78c3199c5
+	sha256:4532a74a8195353dc094fa620870dff76d1c4fc9ce38c4a4c6470297849dc178
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# https://github.com/saltstack/pytest-system-statistics/issues/4
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/tests.txt
 
 # Auto-generated dependencies
 PYTHON_REQUIRED_PACKAGES += library/python/attrs
@@ -49,3 +52,17 @@ PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
 PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
 PYTHON_REQUIRED_PACKAGES += library/python/wheel
 PYTHON_REQUIRED_PACKAGES += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/attrs
+TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
+TEST_REQUIRED_PACKAGES.python += library/python/msgpack
+TEST_REQUIRED_PACKAGES.python += library/python/psutil
+TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-helpers-namespace
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-shell-utilities
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-skip-markers
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-system-statistics
+TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
+TEST_REQUIRED_PACKAGES.python += library/python/pyzmq
+TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

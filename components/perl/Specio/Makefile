@@ -18,13 +18,12 @@ BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Specio
-HUMAN_VERSION =			0.48
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Specio - Type constraints and coercions for Perl
+COMPONENT_NAME =		Specio
+HUMAN_VERSION =			0.53
+COMPONENT_SUMMARY =		Type constraints and coercions for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c85793580f1274ef08173079131d101f77b22accea7afa8255202f0811682b2
+	sha256:0d0eecfb9e89bd0f5f710fac42e1200a882d513a862f98497eaef5927ac6c183
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,15 +33,26 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/devel-stacktrace
-PERL_REQUIRED_PACKAGES += library/perl-5/eval-closure
-PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/mro-compat
-PERL_REQUIRED_PACKAGES += library/perl-5/ref-util
-PERL_REQUIRED_PACKAGES += library/perl-5/role-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/sub-quote
-PERL_REQUIRED_PACKAGES += library/perl-5/test-fatal
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/xstring
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/clone
+REQUIRED_PACKAGES.perl += library/perl-5/clone-pp
+REQUIRED_PACKAGES.perl += library/perl-5/devel-stacktrace
+REQUIRED_PACKAGES.perl += library/perl-5/eval-closure
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/module-implementation
+REQUIRED_PACKAGES.perl += library/perl-5/module-runtime
+REQUIRED_PACKAGES.perl += library/perl-5/mro-compat
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/ref-util
+REQUIRED_PACKAGES.perl += library/perl-5/role-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/sub-quote
+REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += library/perl-5/xstring
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

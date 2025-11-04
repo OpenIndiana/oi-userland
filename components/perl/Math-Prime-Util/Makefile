@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Math::Prime::Util
+#   $WS_TOOLS/perl-integrate-module Math-Prime-Util
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Math::Prime::Util
+COMPONENT_NAME =		Math-Prime-Util
 HUMAN_VERSION =			0.73
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		Math::Prime::Util - Utilities related to prime numbers, including fast sieves and factoring
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Utilities related to prime numbers, including fast sieves and factoring
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:4afa6dd8cdb97499bd4eca6925861812c29d9f5a0f1ac27ad9d2d9c9b5602894
@@ -31,9 +31,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
 PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint-gmp
 PERL_REQUIRED_PACKAGES += library/perl-5/math-prime-util-gmp
 PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/bignum
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn

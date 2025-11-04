@@ -1,0 +1,12 @@
+# see https://bugreports.qt.io/browse/QTBUG-106964
+--- qt-everywhere-src-5.15.14/qtdeclarative/src/3rdparty/masm/wtf/Assertions.h	2024-05-08 07:14:41.000000000 +0200
++++ qt-everywhere-src-5.15.14/qtdeclarative/src/3rdparty/masm/wtf/Assertions.h.new	2024-06-26 18:55:00.197407181 +0200
+@@ -346,7 +346,7 @@
+ #ifndef COMPILE_ASSERT
+ #if COMPILER_SUPPORTS(C_STATIC_ASSERT)
+ /* Unlike static_assert below, this also works in plain C code. */
+-#define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
++#define COMPILE_ASSERT(exp, name) typedef int dummy##name [(exp) ? 1 : -1]
+ #elif COMPILER_SUPPORTS(CXX_STATIC_ASSERT)
+ #define COMPILE_ASSERT(exp, name) static_assert((exp), #name)
+ #else

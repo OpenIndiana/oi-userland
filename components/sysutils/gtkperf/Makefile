@@ -12,13 +12,14 @@
 #
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 # Copyright 2019 Nona Hansel
+# Copyright 2025 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	gtkperf
 COMPONENT_VERSION= 	0.40
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY= 	Gtk+ performance testing application
 COMPONENT_SRC= 		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
@@ -36,10 +37,11 @@ COMPONENT_PREP_ACTION += \
 		$(TOUCH) config.rpath &&\
 		autoreconf -fi)
 
-CONFIGURE_OPTIONS += --disable-nls
+# make gcc-14 happy
+CFLAGS += -Wno-implicit-function-declaration
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += library/desktop/atk
+REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/desktop/pango

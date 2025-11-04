@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyzmq
-HUMAN_VERSION =			25.1.2
-COMPONENT_SUMMARY =		pyzmq - Python bindings for 0MQ
+HUMAN_VERSION =			27.1.0
+COMPONENT_SUMMARY =		Python bindings for 0MQ
 COMPONENT_PROJECT_URL =		https://pyzmq.readthedocs.org
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3a/33/1a3683fc9a4bd64d8ccc0290da75c8f042184a1a49c146d28398414d3341/pyzmq-25.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:93f1aa311e8bb912e34f004cf186407a4e90eec4f0ecc0efd26056bf7eda0226
-COMPONENT_LICENSE =		BSD-3-Clause AND LGPL-3.0-only
+	sha256:ac0765e3d44455adb6ddbf4417dcce460fc40a05978c08efdf2948072f6db540
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE.md
 
 TEST_STYLE = pytest
 
@@ -63,14 +62,12 @@ COMPONENT_POST_TEST_ACTION +=	$(RM) -r $(@D)/zmq ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/zmq-RENAMED $(@D)/zmq ;
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cython
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/c++/zeromq
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cython
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/scikit-build-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/codecov
 TEST_REQUIRED_PACKAGES.python += library/python/coverage

@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTTP::Date
+#   $WS_TOOLS/perl-integrate-module HTTP-Date
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTTP::Date
+COMPONENT_NAME =		HTTP-Date
 HUMAN_VERSION =			6.06
-COMPONENT_SUMMARY =		HTTP::Date - HTTP::Date - date conversion routines
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		HTTP::Date - date conversion routines
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7b685191c6acc3e773d1fc02c95ee1f9fae94f77783175f5e78c181cc92d2b52
@@ -30,5 +31,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/time-local
 PERL_REQUIRED_PACKAGES += library/perl-5/timedate
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

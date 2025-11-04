@@ -11,33 +11,35 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project WebTest
+#   $WS_TOOLS/python-integrate-project -d python/WebTest webtest
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		WebTest
-HUMAN_VERSION =			3.0.0
-COMPONENT_SUMMARY =		WebTest - Helper to test WSGI applications
+COMPONENT_NAME =		webtest
+HUMAN_VERSION =			3.0.7
+COMPONENT_SUMMARY =		Helper to test WSGI applications
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/webtest/en/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/26/c8/8ffba1782700eb06e9b9169156698c6ba95c05b66cda3fc9e025b6b3b649/WebTest-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:54bd969725838d9861a9fa27f8d971f79d275d94ae255f5c501f53bb6d9929eb
+	sha256:7aeab50f970d46c068e7a36dd162cb242591edf72a1d04efd21374772b931741
 COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	license.rst
 
 include $(WS_MAKE_RULES)/common.mk
 
+# We do not have pyquery packaged yet
+PYTEST_ADDOPTS += --deselect tests/test_response.py::TestResponse::test_pyquery
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/beautifulsoup4
-PYTHON_REQUIRED_PACKAGES += library/python/waitress
-PYTHON_REQUIRED_PACKAGES += library/python/webob
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/beautifulsoup4
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/waitress
+REQUIRED_PACKAGES.python += library/python/webob
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pastedeploy
-TEST_REQUIRED_PACKAGES.python += library/python/pyquery
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/wsgiproxy2

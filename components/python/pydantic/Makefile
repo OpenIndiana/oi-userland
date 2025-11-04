@@ -14,18 +14,16 @@
 #   $WS_TOOLS/python-integrate-project pydantic
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pydantic
-HUMAN_VERSION =			1.10.14
-COMPONENT_SUMMARY =		pydantic - Data validation using Python type hints
+HUMAN_VERSION =			2.10.6
+COMPONENT_SUMMARY =		Data validation using Python type hints
 COMPONENT_PROJECT_URL =		https://github.com/pydantic/pydantic
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/df/ab/67eda485b025e9253cce0eaede9b6158a08f62af7013a883b2c8775917b2/pydantic-1.10.14.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:46f17b832fe27de7850896f3afee50ea682220dd218f7e9c88d436788419dca6
+	sha256:ca5daa827cce33de7a42be142548b0096bf05a7e7b365aebfa5f8eeec7128236
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,9 +33,32 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIREMENTS_PEP735 += dev
+# Additional extras are needed for tests too
+TEST_REQUIREMENTS_EXTRAS += email
+
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
+# We do not have pytest-examples packaged yet
+PYTEST_ADDOPTS += --ignore tests/test_docs.py
 
 # Auto-generated dependencies
+PYTHON_REQUIRED_PACKAGES += library/python/annotated-types
+PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
+PYTHON_REQUIRED_PACKAGES += library/python/hatchling
+PYTHON_REQUIRED_PACKAGES += library/python/pydantic-core
 PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
 PYTHON_REQUIRED_PACKAGES += runtime/python
-REQUIRED_PACKAGES += system/library
+TEST_REQUIRED_PACKAGES.python += library/python/coverage
+TEST_REQUIRED_PACKAGES.python += library/python/dirty-equals
+TEST_REQUIRED_PACKAGES.python += library/python/email-validator
+TEST_REQUIRED_PACKAGES.python += library/python/eval-type-backport
+TEST_REQUIRED_PACKAGES.python += library/python/faker
+TEST_REQUIRED_PACKAGES.python += library/python/jsonschema
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytz
+TEST_REQUIRED_PACKAGES.python += library/python/tomli

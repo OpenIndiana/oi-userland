@@ -22,6 +22,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=runtime/perl-$(PLV) type=require
 
+# We need to make sure the Perl support from illumos-gate is installed at the
+# expected version.
+depend fmri=runtime/perl-$(PLV)/module/sun-solaris type=require
+
 # This alternative Perl location is used primarily by illumos-gate.  These
 # symlinks are not mediated because illumos-gate builds support for single Perl
 # version only.
@@ -34,5 +38,5 @@ link path=usr/perl5/pod target=$(PERLVER)/lib/pod
 
 # Temporary fake dir and vendor mediated symlink used during transition between
 # Perl versions.
-$(VENDOR_MEDIATOR)dir path=usr/perl5/$(PERLVER)
-$(VENDOR_MEDIATOR)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor
+$(VERSION_SWITCH)dir path=usr/perl5/$(PERLVER)
+$(VERSION_SWITCH)link path=usr/perl5/transition-perl target=$(PERLVER) mediator=perl mediator-version=$(PERLVER) mediator-priority=vendor

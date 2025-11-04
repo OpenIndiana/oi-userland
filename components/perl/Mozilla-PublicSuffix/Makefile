@@ -11,28 +11,39 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module Mozilla::PublicSuffix
+#   $WS_TOOLS/perl-integrate-module Mozilla-PublicSuffix
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		Mozilla::PublicSuffix
-HUMAN_VERSION =			1.0.6
-COMPONENT_SUMMARY =		Mozilla::PublicSuffix - Get a domain name's public suffix via the Mozilla Public Suffix List
+COMPONENT_NAME =		Mozilla-PublicSuffix
+HUMAN_VERSION =			v1.0.7
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Get a domain name's public suffix via the Mozilla Public Suffix List
 COMPONENT_CPAN_AUTHOR =		TOMHUKINS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a3bc115d6a59fb7bf23b539fb7b95e4ee06850fab884e2d12dd98dc545f9ebd8
+	sha256:6815e292161ba8192b434398db295e229b3e61574e6a61994e90f359a2c71b21
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_SRC =			$(COMPONENT_NAME)-v$(HUMAN_VERSION)
-
-
 include $(WS_MAKE_RULES)/common.mk
 
+# sanity check to make sure we (still) update an existing file
+COMPONENT_POST_UNPACK_ACTION += \
+	[ -f $(SOURCE_DIR)/effective_tld_names.dat ] || exit 1 ;
+# Save the original data file
+COMPONENT_POST_UNPACK_ACTION += \
+	$(CP) $(SOURCE_DIR)/effective_tld_names.dat $(SOURCE_DIR)/effective_tld_names.dat.orig ;
+# use the up-to-date data file
+COMPONENT_POST_UNPACK_ACTION += \
+	[ -f $(COMPONENT_DIR)/files/public_suffix_list.dat ] && \
+	$(CP) $(COMPONENT_DIR)/files/public_suffix_list.dat $(SOURCE_DIR)/effective_tld_names.dat ;
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/http-tiny
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
+PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
 PERL_REQUIRED_PACKAGES += library/perl-5/uri
 PERL_REQUIRED_PACKAGES += runtime/perl

@@ -15,25 +15,25 @@
 #
 
 BUILD_STYLE = pyproject
-PYTHON3_SOABI = abi3
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.8.3
-COMPONENT_SUMMARY =		sip - A Python bindings generator for C/C++ libraries
-COMPONENT_PROJECT_URL =		https://www.riverbankcomputing.com/software/sip/
+HUMAN_VERSION =			6.14.0
+COMPONENT_SUMMARY =		A Python bindings generator for C/C++ libraries
+COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:888547b018bb24c36aded519e93d3e513d4c6aa0ba55b7cc1affbd45cf10762c
-COMPONENT_LICENSE =		BSD-like AND GPL-2.0-only AND GPL-3.0-only
+	sha256:20c086aba387707b34cf47fd96d1a978d01e2b95807e86f8aaa960081f163b28
+COMPONENT_LICENSE =		BSD-2-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python

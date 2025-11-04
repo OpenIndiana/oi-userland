@@ -11,16 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTML::Tagset
+#   $WS_TOOLS/perl-integrate-module HTML-Tagset
 #
 
 BUILD_STYLE = makemaker
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTML::Tagset
+COMPONENT_NAME =		HTML-Tagset
 HUMAN_VERSION =			3.24
-COMPONENT_SUMMARY =		HTML::Tagset - data tables useful in parsing HTML
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Data tables useful in parsing HTML
 COMPONENT_CPAN_AUTHOR =		PETDANCE
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:eb89e145a608ed1f8f141a57472ee5f69e67592a432dcd2e8b1dbb445f2b230b
@@ -32,4 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

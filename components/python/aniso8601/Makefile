@@ -14,18 +14,17 @@
 #   $WS_TOOLS/python-integrate-project aniso8601
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aniso8601
-HUMAN_VERSION =			9.0.1
-COMPONENT_SUMMARY =		aniso8601 - A library for parsing ISO 8601 strings.
-COMPONENT_PROJECT_URL =		https://bitbucket.org/nielsenb/aniso8601
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/cb/72/be3db445b03944bfbb2b02b82d00cb2a2bcf96275c4543f14bf60fa79e12/aniso8601-9.0.1.tar.gz
+HUMAN_VERSION =			10.0.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A library for parsing ISO 8601 strings.
+COMPONENT_PROJECT_URL =		https://codeberg.org/nielsenb-jf/aniso8601
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:72e3117667eedf66951bb2d93f4296a56b94b078a8a95905a052611fb3f1b973
+	sha256:25488f8663dd1528ae1f54f94ac1ea51ae25b4d531539b8bc707fed184d16845
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,4 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

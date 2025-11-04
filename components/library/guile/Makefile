@@ -33,7 +33,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
 COMPONENT_VERSION=	3.0.8
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	GNU guile utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/guile/
 COMPONENT_CLASSIFICATION= Development/Other Languages
@@ -48,6 +48,10 @@ COMPONENT_LICENSE_FILE=	COPYING
 CONFIGURE_FIX_LIBTOOL_RPATH = no
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=implicit-function-declaration
+CXXFLAGS += -Wno-error=incompatible-pointer-types
 
 CONFIGURE_ENV+= CPP="$(GCC_ROOT)/bin/gcc -E"
 CONFIGURE_ENV.64 += LT_SYS_LIBRARY_PATH="/lib/$(MACH64):$(USRLIBDIR.64)"
@@ -82,11 +86,12 @@ COMPONENT_POST_INSTALL_ACTION= (find $(PROTO_DIR) -name *.go -print0 | xargs -0 
 TEST_REQUIRED_PACKAGES += locale/en-extra
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += $(READLINE_PKG)/32
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libunistring
-REQUIRED_PACKAGES += library/readline
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -5,24 +5,33 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 12 items
+collecting ... collected 11 items
 
-.::project PASSED
-.::project PASSED
 docs/conf.py::mypy PASSED
-docs/conf.py::mypy-status PASSED
+.::project PASSED
 pytest_enabler/__init__.py::mypy PASSED
 pytest_enabler/__init__.py::pytest_enabler.none_as_empty PASSED
+.::project PASSED
 tests/test_enabler.py::mypy PASSED
-tests/test_enabler.py::test_coverage_explicit PASSED
 tests/test_enabler.py::test_pytest_addoption_default PASSED
-tests/test_enabler.py::test_pytest_addoption_disable PASSED
 tests/test_enabler.py::test_pytest_addoption_override PASSED
+tests/test_enabler.py::test_pytest_addoption_disable PASSED
 tests/test_enabler.py::test_remove_deps PASSED
-
+tests/test_enabler.py::test_coverage_explicit PASSED
 ===================================== mypy =====================================
 
 Success: no issues found in 3 source files
-======== 12 passed ========
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.21-final-0 _______________
+
+Name                                                                                                                                              Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_enabler/__init__.py      48     19    60%   18-19, 50, 56-57, 63-64, 72-84, 103-112
+docs/conf.py                                                                                                                                         15      0   100%
+pytest_enabler/__init__.py                                                                                                                           48      2    96%   18-19
+tests/test_enabler.py                                                                                                                                39      0   100%
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                                                                                                                               150     21    86%
+======== 11 passed ========
   py$(PYV): OK
   congratulations :)

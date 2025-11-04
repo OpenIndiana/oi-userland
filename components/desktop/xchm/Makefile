@@ -13,13 +13,11 @@
 # Copyright 2014 Alexander Pyhalov.  All rights reserved.
 #
 
-BUILD_STYLE= configure
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xchm
 COMPONENT_VERSION=      1.33
-COMPONENT_REVISION=		2
+COMPONENT_REVISION=		3
 COMPONENT_SUMMARY=      CHM viewer for UNIX
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz

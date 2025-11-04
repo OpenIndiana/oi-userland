@@ -3,9 +3,12 @@
 BITS=$1
 COMPONENT_DIR=$2
 BUILD_DIR=$3
-TEST_TARGET=$4
 
 LOGFILE=testrunner-log.$BITS
+
+echo "BITS set to $BITS" >> $LOGFILE
+echo "COMPONENT_DIR set to $COMPONENT_DIR" >> $LOGFILE
+echo "BUILD_DIR set to $BUILD_DIR" >> $LOGFILE
 
 # the tests could be ran after pkg install as:
 #       inisqueak -n;squeak squeak.image testrunner.st
@@ -35,10 +38,22 @@ echo "Setting SQUEAK_PLUGINS to $SQUEAK_PLUGINS" >> $LOGFILE
 export SQUEAK_PLUGINS
 
 # download squeak.image to current directory
+echo "Running $COMPONENT_DIR/inisqueak4 -n" >> $LOGFILE
 $COMPONENT_DIR/inisqueak4 -n >> $LOGFILE 2>&1
 
 # start squeak binary from the build dir
-$BUILD_DIR/squeakvm64 squeak.image $COMPONENT_DIR/test/testrunner.st >> $LOGFILE 2>&1
+cd $BUILD_DIR
+
+# check DISPLAY is set
+if [ -z "$DISPLAY" ]
+then
+  echo "Setting DISPLAY to :0" >> $LOGFILE
+  DISPLAY=":0"
+  export DISPLAY
+fi
+
+echo "Running $BUILD_DIR/squeakvm64 -display $DISPLAY squeak.image $COMPONENT_DIR/test/testrunner.st" >> $LOGFILE
+$BUILD_DIR/squeakvm64 -display $DISPLAY squeak.image $COMPONENT_DIR/test/testrunner.st >> $LOGFILE 2>&1
 
 # testrunner.st saves output in a file , dump that file as output
 cat results-32.vm

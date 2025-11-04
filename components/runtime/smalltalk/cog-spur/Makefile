@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023, 2024 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
 #
 
 
@@ -21,22 +21,31 @@
 # opensmalltalk-vm can be built both in 32 and 64bit
 # since december 2023 version 5.0.3339 we only deliver ELF64 bit executables
 # because the required 32bit libraries are no longer available
-BUILD_BITS=64
+
 USE_COMMON_TEST_MASTER= no
 
 # the SSL module is supporting 1.1 and 3.x but SUnit testframework is not
 USE_OPENSSL10=yes
 
+# currently the JPEGReadWriter2Plugin is disabled in plugins.int
+#
+# the goal is to use libjpeg8-turbo (or any other libjpeg implementation)
+# special care for included header files as the struct sizes vary
+# we 'fix' the Squeak source code that has an old libjpeg included in source
+# this should be fixed upstream in the Squeak sources
+# the default OpenIndiana JPEG_IMPLEM at time of writing is libjpeg8-turbo
+JPEG_IMPLEM=libjpeg8-turbo
+
 include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
-# we use 5.0.<n> for VMMaker.oscog-eem.<n>
+# we use 5.0.<n> for VMMaker.oscog-eem.<n> or VMMaker.oscog-mt.<n>
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
-COMPONENT_VERSION=	5.0.3356
-GIT_TAG=		sun-v5.0.63
-PLUGIN_REV=		5.0-202403301849-cog
+COMPONENT_VERSION=	5.0.3663
+GIT_TAG=		sun-v5.0.78
+PLUGIN_REV=		7.0rc2-202510111123-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -50,7 +59,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:417eeb23cf33fab0e670903f406308ac49f227f15cf9e377a655d3ce402fb281
+COMPONENT_ARCHIVE_HASH=	sha256:ad061f074ce1bb8cbc2f5e37acc6e4e5d8dcff08776317a75cab9d44e51d8536
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -70,12 +79,24 @@ PKG_OPTIONS += -DBRANCHID="$(BRANCHID)"
 
 PATH=$(PATH.gnu)
 
+# cleanup the plugin directory
+SOURCE_JPEG = $(SOURCE_DIR)/platforms/Cross/plugins/JPEGReadWriter2Plugin
+
+# remove old libjpeg6 b2 sources from tree
 # opensmalltalk configure script checks for plugins files in builddir
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(MKDIR) $(BUILD_DIR_32); \
 	cp plugins.ext plugins.int $(BUILD_DIR_32); \
 	$(MKDIR) $(BUILD_DIR_64); \
-	cp plugins.ext plugins.int $(BUILD_DIR_64) \
+	cp plugins.ext plugins.int $(BUILD_DIR_64); \
+        find $(SOURCE_JPEG) \
+     \! -name JPEGReadWriter2Plugin.h \
+     \! -name sqJPEGReadWriter2Plugin.c \
+     \! -name Error.c \
+     \! -name jinclude.h \
+     \! -name jmemdatasrc.c \
+     \! -name jmemdatadst.c \
+  -exec rm {} \; \
 	)
 
 # the Squeak configure script detects the lfcompile flags
@@ -83,24 +104,34 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 # we have to make sure largefile support is enabled in the 32bit case
 CPPFLAGS += $(CPP_LARGEFILES)
 
+# commit e6108a0cd problem introduced in VMMaker.oscog-eem.3533
+CPPFLAGS += -DOLD_1002_ATTRIBUTE=1
+
 # Spur memory management sometimes not compatible with traditional malloc
 LIBS = "-lmapmalloc"
 
 # the default CFLAGS.gcc will be -m64 -O3 but this does not work for us
 # opensmalltalk code is not compatible with the gcc optimizer -O2 or higher
+# for gcc 14.2 add -Wno-error options
 gcc_OPT=		-DAIO_DEBUG -DNDEBUG -DDEBUGVM=0 -DCOGMTVM=0
+gcc_OPT+=		-Wno-error=implicit-function-declaration
+gcc_OPT+=		-Wno-error=incompatible-pointer-types
+
+# epoll(5) seems to work with OpenSmalltalk, but valgrind complains #17199
+# also on Linux some OpenSmalltalk users prefer to disable epoll when fork used
+# http://lists.squeakfoundation.org/pipermail/vm-dev/2022-February/037652.html
 
 CONFIGURE_SCRIPT= $(SOURCE_DIR)/platforms/unix/config/configure
 CONFIGURE_OPTIONS +=	--without-npsqueak
 CONFIGURE_OPTIONS +=	--with-vmversion=5.0
 CONFIGURE_OPTIONS +=	--disable-dynamicopenssl
 CONFIGURE_OPTIONS +=	--without-libtls
+CONFIGURE_OPTIONS +=	--without-vm-sound-Sun
+CONFIGURE_OPTIONS +=	--without-vm-sound-OSS
 CONFIGURE_OPTIONS.32 +=	--with-src=src/spur32.cog
 CONFIGURE_OPTIONS.64 +=	--with-src=src/spur64.cog
+CONFIGURE_OPTIONS +=	--disable-epoll
 
-# epoll(5) seems to work, so use epoll instead of select(3c)
-CONFIGURE_ENV    +=     ax_cv_have_epoll=yes
-CONFIGURE_ENV    +=     ax_cv_have_epoll_pwait=yes
 CONFIGURE_ENV    +=     CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV    +=     LIBS="$(LIBS)"
 CONFIGURE_ENV.32 +=	TARGET_ARCH="-m32"
@@ -137,16 +168,16 @@ rebuild-manifests::
 
 REQUIRED_PACKAGES += x11/library/mesa
 REQUIRED_PACKAGES += system/library/dbus
-REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library/freetype-2
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/security/openssl
+REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

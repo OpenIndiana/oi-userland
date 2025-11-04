@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module File::Remove
+#   $WS_TOOLS/perl-integrate-module File-Remove
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		File::Remove
+COMPONENT_NAME =		File-Remove
 HUMAN_VERSION =			1.61
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		File::Remove - Remove files and directories
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Remove files and directories
 COMPONENT_CPAN_AUTHOR =		SHLOMIF
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:fd857f585908fc503461b9e48b3c8594e6535766bc14beb17c90ba58d5dc4975
@@ -31,5 +31,8 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
+PERL_REQUIRED_PACKAGES += library/perl-5/file-path
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -11,17 +11,17 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/perl-integrate-module HTTP::Daemon
+#   $WS_TOOLS/perl-integrate-module HTTP-Daemon
 #
 
 BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_PERL_MODULE =		HTTP::Daemon
+COMPONENT_NAME =		HTTP-Daemon
 HUMAN_VERSION =			6.16
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		HTTP::Daemon - A simple http server class
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		A simple http server class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b38d092725e6fa4e0c4dc2a47e157070491bafa0dbe16c78a358e806aa7e173d
@@ -30,11 +30,30 @@ COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# HTTP-Daemon --> libwww-perl --> HTTP-Daemon
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PERL_TEST_BOOTSTRAP = yes
+
 # Auto-generated dependencies
+PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
 PERL_REQUIRED_PACKAGES += library/perl-5/http-date
 PERL_REQUIRED_PACKAGES += library/perl-5/http-message
+PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
 PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
 PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
+PERL_REQUIRED_PACKAGES += library/perl-5/socket
 PERL_REQUIRED_PACKAGES += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

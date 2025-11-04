@@ -1,0 +1,14 @@
+groff 1.23.0 fails to build user.ps; skip build since we are not shipping it anyway
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/dbug/CMakeLists.txt a/dbug/CMakeLists.txt
+--- a~/dbug/CMakeLists.txt	1970-01-01 00:00:00
++++ a/dbug/CMakeLists.txt	1970-01-01 00:00:00
+@@ -30,7 +30,7 @@ IF(NOT CMAKE_CROSSCOMPILING OR DEFINED C
+   TARGET_LINK_LIBRARIES(factorial dbug)
+ ENDIF()
+ 
+-IF(NOT WIN32 AND NOT CMAKE_GENERATOR MATCHES Xcode AND NOT RPM AND NOT DEB)
++IF(NOT WIN32 AND NOT CMAKE_GENERATOR MATCHES Xcode AND NOT RPM AND NOT DEB AND NOT CMAKE_HOST_SOLARIS)
+   FIND_PROGRAM(GROFF groff)
+   FIND_PROGRAM(NROFF nroff)
+   MARK_AS_ADVANCED(GROFF)

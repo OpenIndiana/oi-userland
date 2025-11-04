@@ -13,23 +13,22 @@
 # Copyright 2016 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
-# Copyright 2023-2024 Niklas Poslovski
+# Copyright 2023-2025 Niklas Poslovski
 #
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	21
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	2
+OPENJDK_BUILD=	8
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
-COMPONENT_REVISION= 1
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=  jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
 COMPONENT_ARCHIVE=      jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:17eda717843ffbbacc7de4bdcd934f404a23a57ebb3cda3cec630a668651531f
+	sha256:e0758d17991a51967931854523ca6e287eb4240f0b3e3bc231b2ddb0e77cf71b
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
@@ -58,7 +57,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk20/
+CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk21/
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -133,13 +132,12 @@ REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/library/c++/sunpro
 
 # Manually added boot JDK
-REQUIRED_PACKAGES += runtime/java/openjdk20
+REQUIRED_PACKAGES += runtime/java/openjdk21
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += image/library/libjpeg-turbo
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/giflib

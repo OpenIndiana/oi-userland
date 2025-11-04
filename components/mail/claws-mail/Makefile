@@ -14,19 +14,18 @@
 # Copyright 2021 Gary Mills
 #
 
-BUILD_BITS= 64
 SINGLE_PYTHON_VERSION= yes
 USE_PARALLEL_BUILD= Yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.2.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	4.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:446c89f27c2205277f08e776b53d9d151be013211d91e7d9da006bc95c051c60
+COMPONENT_ARCHIVE_HASH= sha256:8fc4f0e0f274297063e5e7682089a32b65ac1b2d21cfa13c54b980520952def2
 COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -37,6 +36,11 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+LDFLAGS += -lsocket
+
+# gcc 14 complains about incompatible pointer types
+CFLAGS += -Wno-error=implicit-function-declaration
 
 COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -fi )
 
@@ -61,7 +65,7 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 REQUIRED_PACKAGES += file/gnu-coreutils
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -87,3 +91,4 @@ REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
 REQUIRED_PACKAGES += x11/library/libx11
+REQUIRED_PACKAGES.python += runtime/python

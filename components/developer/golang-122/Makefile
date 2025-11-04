@@ -23,7 +23,6 @@
 # Copyright 2023 Till Wegmueller
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 USE_COMMON_TEST_MASTER= no
 CLONEY_ARGS= CLONEY_MODE="copy"
@@ -32,19 +31,24 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			golang
 COMPONENT_MAJOR_VERSION=	1.22
-COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).2
+COMPONENT_VERSION=		$(COMPONENT_MAJOR_VERSION).12
 COMPONENT_SUMMARY=		The Go Programming Language
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=		https://golang.org/
 COMPONENT_ARCHIVE=		go$(COMPONENT_VERSION).src.tar.gz
 COMPONENT_ARCHIVE_URL=		https://storage.googleapis.com/golang/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:374ea82b289ec738e968267cac59c7d5ff180f9492250254784b2044e90df5a9
+COMPONENT_ARCHIVE_HASH=		sha256:012a7e1f37f362c0918c1dfa3334458ac2da1628c4b9cf4d9ca02db986e17d71
 COMPONENT_FMRI=			developer/golang
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		BSD-style, Patent Grant
 COMPONENT_LICENSE_FILE=		LICENSE
 
 PATCH_EACH_ARCHIVE= 1
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Note that bootstrapping can also happen with the direct predecessor
+BOOTSTRAP_VERSION= 1.22
 
 MEDIATEDUSRSHAREMAN1DIR=	$(PROTO_DIR)/usr/share/golang/$(COMPONENT_MAJOR_VERSION)/man/man1
 
@@ -64,16 +68,14 @@ COMPONENT_BUILD_ENV +=	GOOS="illumos"
 COMPONENT_BUILD_ENV +=	GOCACHE="$(SOURCE_DIR)/gocache"
 COMPONENT_BUILD_ENV +=  GOPATH="$(SOURCE_DIR)/gopath"
 COMPONENT_BUILD_ENV +=  GO_LDSO=/lib/64/ld.so.1
-COMPONENT_BUILD_ENV +=  GOROOT_BOOTSTRAP=/usr/lib/golang/1.21
+COMPONENT_BUILD_ENV +=  GOROOT_BOOTSTRAP=/usr/lib/golang/$(BOOTSTRAP_VERSION)
 
 # For convenience during installation of supplementary packages.
 COMPONENT_INSTALL_ENV += PATH="$(PROTO_DIR)$(GOROOT_FINAL)/bin:$(PATH)"
 COMPONENT_INSTALL_ENV += GOROOT="$(PROTO_DIR)$(GOROOT_FINAL)"
 COMPONENT_INSTALL_ENV += GOCACHE="$(SOURCE_DIR)/gocache"
-COMPONENT_INSTALL_ENV += GOROOT_BOOTSTRAP=/usr/lib/golang/1.21
+COMPONENT_INSTALL_ENV += GOROOT_BOOTSTRAP=/usr/lib/golang/$(BOOTSTRAP_VERSION)
 COMPONENT_INSTALL_ENV += GOPATH="$(SOURCE_DIR)/gopath"
-
-include $(WS_MAKE_RULES)/common.mk
 
 # We have to fiddle with the package archives to get them into the same source
 # directory so that we can use the standard build targets.  We're effectively
@@ -131,7 +133,8 @@ define COMPONENT_INSTALL_ACTION=
 	| xargs rm;
 endef
 
-REQUIRED_PACKAGES += developer/golang-121
+# Manually added build dependencies
+REQUIRED_PACKAGES += developer/golang-122
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
