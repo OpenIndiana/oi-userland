@@ -1,0 +1,48 @@
+mostly backport from upstream https://github.com/open62541/open62541.git
+
+diff --git a/qtopcua/src/3rdparty/open62541/open62541.c b/qtopcua/src/3rdparty/open62541/open62541.c
+index 8cafa7b..bb0aca7 100644
+--- a/qtopcua/src/3rdparty/open62541/open62541.c
++++ b/qtopcua/src/3rdparty/open62541/open62541.c
+@@ -123774,7 +123774,7 @@
+ UA_StatusCode
+ UA_EventLoopPOSIX_setReusable(UA_FD sockfd) {
+     int enableReuseVal = 1;
+-#ifndef UA_ARCHITECTURE_WIN32
++#ifdef SO_REUSEPORT
+     int res = UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
+                             (const char*)&enableReuseVal, sizeof(enableReuseVal));
+     res |= UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
+@@ -125235,7 +125235,7 @@ typedef enum {
+ } MultiCastType;
+ 
+ typedef union {
+-#ifdef UA_ARCHITECTURE_WIN32
++#if !defined(ip_mreqn)
+     struct ip_mreq ipv4;
+ #else
+     struct ip_mreqn ipv4;
+@@ -125391,10 +125391,12 @@ setMulticastInterface(const char *netif, struct addrinfo *info,
+         return UA_STATUSCODE_BADINTERNALERROR;
+ 
+     /* Write the interface index */
+-    if(info->ai_family == AF_INET)
++    if(info->ai_family == AF_INET) {
++#if defined(ip_mreqn)
+         req->ipv4.imr_ifindex = idx;
++#endif
+ #if UA_IPV6
+-    else /* if(info->ai_family == AF_INET6) */
++     } else /* if(info->ai_family == AF_INET6) */
+         req->ipv6.ipv6mr_interface = idx;
+ #endif
+     return UA_STATUSCODE_GOOD;
+@@ -125409,7 +125411,7 @@ setupMulticastRequest(UA_FD socket, MulticastRequest *req, const UA_KeyValueMap
+     if(info->ai_family == AF_INET) {
+         struct sockaddr_in *sin = (struct sockaddr_in *)info->ai_addr;
+         req->ipv4.imr_multiaddr = sin->sin_addr;
+-#ifdef UA_ARCHITECTURE_WIN32
++#if !defined(ip_mreqn)
+         req->ipv4.imr_interface.s_addr = htonl(INADDR_ANY); /* default ANY */
+ #else
+         req->ipv4.imr_address.s_addr = htonl(INADDR_ANY); /* default ANY */
