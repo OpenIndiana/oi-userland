@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jq
 COMPONENT_VERSION=      1.8.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      jq - lightweight and flexible command-line JSON processor
 COMPONENT_PROJECT_URL=	https://stedolan.github.io/jq/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
