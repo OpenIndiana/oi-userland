@@ -1,7 +1,7 @@
-Testing Botan 3.9.0 (release, dated 20250805, revision git:07e1cfe0a06b224bbb37ad534736924931184246)
+Testing Botan 3.10.0 (release, dated 20251106, revision git:e27d332089247f04e89854a2e60a3af2ec4e430f)
 Properties:
-  CPU flags: sse2 ssse3 avx2 rdtsc bmi2 rdrand aesni clmul
-  drbg_seed: 1859D826F7985EB3
+  CPU flags: sse2 ssse3 avx2 rdtsc adx bmi2 rdrand rdseed aesni clmul
+  drbg_seed: 1875CE9A05FC072C
 aead:
 AES-128/CCM(10,2) ran 86 tests all ok
 AES-128/CCM(12,2) ran 43 tests all ok
@@ -21,7 +21,7 @@ AES-128/CCM(8,2) ran 172 tests all ok
 AES-128/CCM(8,3) ran 43 tests all ok
 AES-128/EAX ran 4514 tests all ok
 AES-128/EAX(8) ran 84 tests all ok
-AES-128/GCM ran 952 tests all ok
+AES-128/GCM ran 826 tests all ok
 AES-128/GCM(12) ran 147 tests all ok
 AES-128/GCM(8) ran 49 tests all ok
 AES-128/OCB ran 1835 tests all ok
@@ -38,6 +38,7 @@ AES-256/GCM(14) ran 98 tests all ok
 AES-256/GCM(15) ran 98 tests all ok
 ARIA-128/GCM ran 49 tests all ok
 ARIA-256/GCM ran 49 tests all ok
+Ascon-AEAD128 ran 5368 tests all ok
 Blowfish/EAX ran 818 tests all ok
 ChaCha20Poly1305 ran 70455 tests all ok
 DES/EAX ran 818 tests all ok
@@ -79,6 +80,7 @@ TripleDES ran 1064 tests all ok
 Twofish ran 20957 tests all ok
 hash_algos:
 Adler32 ran 328 tests all ok
+Ascon-Hash256 ran 1147 tests all ok
 BLAKE2b(256) ran 3071 tests all ok
 BLAKE2b(384) ran 3071 tests all ok
 BLAKE2b(512) ran 3071 tests all ok
@@ -97,8 +99,8 @@ MD5 ran 916 tests all ok
 Parallel(MD5,SHA-1) ran 17 tests all ok
 Parallel(SHA-256,SHA-512) ran 19 tests all ok
 RIPEMD-160 ran 895 tests all ok
-SHA-1 ran 945 tests all ok
-SHA-224 ran 31 tests all ok
+SHA-1 ran 954 tests all ok
+SHA-224 ran 40 tests all ok
 SHA-256 ran 4687 tests all ok
 SHA-3(224) ran 1208 tests all ok
 SHA-3(256) ran 1199 tests all ok
@@ -254,7 +256,7 @@ CMAC(AES-192) ran 112 tests all ok
 CMAC(AES-256) ran 131 tests all ok
 CMAC(Blowfish) ran 19 tests all ok
 CMAC(Threefish-512) ran 19 tests all ok
-GMAC(AES-128) ran 124 tests all ok
+GMAC(AES-128) ran 172 tests all ok
 GMAC(AES-192) ran 70 tests all ok
 GMAC(AES-256) ran 70 tests all ok
 HMAC(MD5) ran 76 tests all ok
@@ -341,7 +343,7 @@ CTR-BE(Serpent) ran 3325 tests all ok
 CTR-BE(TripleDES) ran 4047 tests all ok
 ChaCha(12) ran 38 tests all ok
 ChaCha(20) ran 1634 tests all ok
-ChaCha(8) ran 415 tests all ok
+ChaCha(8) ran 379 tests all ok
 MARK-4 ran 95 tests all ok
 OFB(AES-128) ran 209 tests all ok
 OFB(AES-192) ran 19 tests all ok
@@ -462,7 +464,7 @@ conditional XOR, no alignment ran 2 tests all ok
 default constructed bitvector ran 5 tests all ok
 empty byte-array ran 3 tests all ok
 empty copy is allowed ran 3 tests all ok
-flipping bits ran 17 tests all ok
+flipping bits ran 26 tests all ok
 hamming weight ran 10 tests all ok
 hamming weight oddness ran 2 tests all ok
 load all bits from byte-array (aligned data) ran 65 tests all ok
@@ -477,7 +479,7 @@ range errors are caught ran 4 tests all ok
 reserved bitvector has capacity ran 6 tests all ok
 resize() ran 12 tests all ok
 set and unset ran 256 tests all ok
-setting bits ran 7 tests all ok
+setting bits ran 46 tests all ok
 subscript operator ran 6 tests all ok
 subscript operator does not validate offsets ran 2 tests all ok
 to_bytes() uses secure_allocator if necessary ran 2 tests all ok
@@ -486,7 +488,7 @@ to_bytes(std::span) can handle non-zero out-memory ran 1 tests all ok
 unaligned copy ran 349 tests all ok
 unaligned unsigned integer subvector ran 240 tests all ok
 unaligned unsigned integer subvector replacement ran 1400 tests all ok
-unsetting bits ran 23 tests all ok
+unsetting bits ran 35 tests all ok
 blowfish_salted:
 Blowfish salted key schedule ran 11 tests all ok
 bn_add:
@@ -496,9 +498,9 @@ BigInt Comparison EQ ran 6 tests all ok
 BigInt Comparison LT ran 12 tests all ok
 BigInt Comparison LTE ran 14 tests all ok
 bn_div:
-BigInt Divide ran 4344 tests all ok
+BigInt Divide ran 4359 tests all ok
 bn_div_pow2k:
-BigInt ct_divide_pow2k ran 67433 tests all ok
+BigInt divide pow2k ran 134862 tests all ok
 bn_gcd:
 BigInt GCD ran 364 tests all ok
 bn_invmod:
@@ -511,11 +513,11 @@ BigInt IsSquare ran 7 tests all ok
 bn_jacobi:
 BigInt Jacobi ran 698 tests all ok
 bn_lshift:
-BigInt Lshift ran 100 tests all ok
+BigInt Lshift ran 102 tests all ok
 bn_lucas:
 Lucas primality test ran 5000 tests all ok
 bn_mod:
-BigInt Mod ran 422 tests all ok
+BigInt Mod ran 428 tests all ok
 bn_mul:
 BigInt Multiply ran 416 tests all ok
 bn_powmod:
@@ -523,7 +525,7 @@ BigInt Powmod ran 47 tests all ok
 bn_rand:
 BigInt Random ran 4 tests all ok
 bn_rshift:
-BigInt Rshift ran 106 tests all ok
+BigInt Rshift ran 108 tests all ok
 bn_sqr:
 BigInt Square ran 42 tests all ok
 bn_sqrt_modulo_prime:
@@ -536,8 +538,8 @@ buffer_utilities:
 Add Zero-Padding to Alignment Buffer ran 11 tests all ok
 Aligned data blockwise (no block-defer) ran 15 tests all ok
 Aligned data blockwise (with block-defer) ran 13 tests all ok
-Aligned data is not buffered unneccesarily (no block-defer) ran 12 tests all ok
-Aligned data is not buffered unneccesarily (with block-defer) ran 12 tests all ok
+Aligned data is not buffered unnecessarily (no block-defer) ran 12 tests all ok
+Aligned data is not buffered unnecessarily (with block-defer) ran 12 tests all ok
 Aligned data passthrough (no block-defer) ran 12 tests all ok
 Aligned data passthrough (with block-defer) ran 12 tests all ok
 Clear Alignment Buffer ran 6 tests all ok
@@ -558,8 +560,8 @@ concatenate strong types ran 2 tests all ok
 dynamic length-check ran 2 tests all ok
 empty concat ran 4 tests all ok
 certstor:
-Certificate Store - Find by subject hash ran 6 tests all ok
 Certificate Store - Load every cert of every files ran 2 tests all ok
+Certificate Store - Test all finders ran 12 tests all ok
 Certificate Store SQLITE3 - All subjects ran 7 tests all ok
 Certificate Store SQLITE3 - CRL ran 9 tests all ok
 Certificate Store SQLITE3 - Find all certs ran 8 tests all ok
@@ -567,6 +569,7 @@ Certificate Store SQLITE3 - Insert, Find, Remove ran 34 tests all ok
 certstor_flatfile:
 Flatfile Certificate Store - Find Certificate by SHA1(pubkey) ran 4 tests all ok
 Flatfile Certificate Store - Find Certificate by UTF8 subject DN ran 3 tests all ok
+Flatfile Certificate Store - Find Certificate by issuer DN and serial number ran 4 tests all ok
 Flatfile Certificate Store - Find Certificate by subject DN ran 3 tests all ok
 Flatfile Certificate Store - Find Certificate by subject DN and key ID ran 3 tests all ok
 Flatfile Certificate Store - Find Certificates by subject DN and key ID ran 4 tests all ok
@@ -578,6 +581,7 @@ certstor_system:
 System Certificate Store - Find Certificate by SHA1(pubkey) ran 4 tests all ok
 System Certificate Store - Find Certificate by SHA1(pubkey) - regression test for GH #2779 ran 3 tests all ok
 System Certificate Store - Find Certificate by UTF8 subject DN ran 11 tests all ok
+System Certificate Store - Find Certificate by issuer DN and serial number ran 4 tests all ok
 System Certificate Store - Find Certificate by subject DN ran 3 tests all ok
 System Certificate Store - Find Certificate by subject DN and key ID ran 3 tests all ok
 System Certificate Store - Find Certificates by subject DN and key ID ran 4 tests all ok
@@ -632,7 +636,7 @@ Cryptobox ran 54 tests all ok
 crystals:
 Extended Euclidean Algorithm ran 11 tests all ok
 bounded XOF with small bound ran 4 tests all ok
-cloned polynomials always manage their storge ran 20 tests all ok
+cloned polynomials always manage their storage ran 20 tests all ok
 decode polynomial coefficients from XOF ran 768 tests all ok
 decode polynomial coefficients from buffer ran 771 tests all ok
 encode polynomial coefficients into buffer ran 3 tests all ok
@@ -729,7 +733,7 @@ dl_group:
 DL_Group encoding ran 8 tests all ok
 DL_Group errors ran 1 tests all ok
 dl_group_gen:
-DL_Group generate ran 20 tests all ok
+DL_Group generate ran 21 tests all ok
 dl_group_named:
 DL_Group named ran 115 tests all ok
 dlies:
@@ -1371,16 +1375,17 @@ PKCSv15 Decoding ran 47 tests all ok
 entropy:
 Entropy source getentropy ran 9 tests all ok
 Entropy source rdrand ran 9 tests all ok
-Entropy source rdseed ran 1 tests all ok
+Entropy source rdseed ran 9 tests all ok
 Entropy source system_rng ran 9 tests all ok
 extendable_output_functions:
 AES-256/CTR XOF failure modes ran 3 tests all ok
-CTR-BE(AES-256) ran 405 tests all ok
-SHAKE-128 ran 1722 tests all ok
-SHAKE-256 ran 1995 tests all ok
+Ascon-XOF128 ran 2332 tests all ok
+CTR-BE(AES-256) ran 432 tests all ok
+SHAKE-128 ran 1804 tests all ok
+SHAKE-256 ran 2090 tests all ok
 cSHAKE without a name ran 6 tests all ok
-cSHAKE-128 ran 81 tests all ok
-cSHAKE-256 ran 81 tests all ok
+cSHAKE-128 ran 85 tests all ok
+cSHAKE-256 ran 85 tests all ok
 ffi_aead:
 FFI AEAD ran 370 tests all ok
 ffi_base64:
@@ -1406,9 +1411,9 @@ FFI EAX ran 57 tests all ok
 ffi_ec_group:
 FFI EC Group ran 73 tests all ok
 ffi_ecdh:
-FFI ECDH ran 82 tests all ok
+FFI ECDH ran 111 tests all ok
 ffi_ecdsa:
-FFI ECDSA ran 80 tests all ok
+FFI ECDSA ran 84 tests all ok
 ffi_ecdsa_certificate:
 FFI ECDSA cert ran 41 tests all ok
 ffi_ed25519:
@@ -1451,7 +1456,7 @@ FFI ML-DSA ran 108 tests all ok
 ffi_ml_kem:
 FFI ML-KEM ran 96 tests all ok
 ffi_mp:
-FFI MP ran 115 tests all ok
+FFI MP ran 123 tests all ok
 ffi_oid:
 FFI OID ran 48 tests all ok
 ffi_pkcs_hashid:
@@ -1467,9 +1472,11 @@ FFI Scrypt ran 5 tests all ok
 ffi_slh_dsa:
 FFI SLH-DSA ran 216 tests all ok
 ffi_sm2_enc:
-FFI SM2 Enc ran 50 tests all ok
+FFI SM2 Enc ran 54 tests all ok
 ffi_sm2_sig:
-FFI SM2 Sig ran 62 tests all ok
+FFI SM2 Sig ran 66 tests all ok
+ffi_srp6:
+FFI SRP6 ran 18 tests all ok
 ffi_streamcipher:
 FFI stream ciphers ran 15 tests all ok
 ffi_totp:
@@ -1581,7 +1588,7 @@ hash truncation parameter validation ran 3 tests all ok
 hkdf_expand_label:
 HKDF-Expand-Label(SHA-256) ran 2 tests all ok
 HKDF-Expand-Label(SHA-384) ran 2 tests all ok
-hmac_drbg_multi_requst:
+hmac_drbg_multi_request:
 bulk and split output with input ran 3 tests all ok
 bulk and split output without input ran 3 tests all ok
 hmac_drbg_unit:
@@ -1844,7 +1851,7 @@ roughtime server_information ran 14 tests all ok
 rsa_blinding:
 RSA blinding ran 450 tests all ok
 rsa_compute_d:
-RSA compute exponent ran 3988 tests all ok
+RSA compute exponent ran 3990 tests all ok
 rsa_decrypt:
 RSA/OAEP(SHA-224,MGF1(SHA-256)) decryption ran 6 tests all ok
 RSA/OAEP(SHA-256,MGF1(SHA-1)) decryption ran 6 tests all ok
@@ -1857,7 +1864,7 @@ RSA decrypt_or_random PKCS1v15 ran 658 tests all ok
 rsa_encrypt:
 RSA/EME-PKCS1-v1_5 encryption ran 60 tests all ok
 RSA/OAEP(SHA-1) encryption ran 228 tests all ok
-RSA/Raw encryption ran 1533 tests all ok
+RSA/Raw encryption ran 1531 tests all ok
 rsa_kem:
 RSA/KDF1-18033(SHA-1) KEM ran 16 tests all ok
 RSA/KDF1-18033(SHA-256) KEM ran 16 tests all ok
@@ -2358,30 +2365,33 @@ Client aborts in tls_session_established with internal_error: DTLS v1.2 ran 14 t
 Client aborts in tls_session_established with internal_error: DTLS v1.2 ran 14 tests all ok
 Client aborts in tls_session_established with internal_error: TLS v1.2 ran 12 tests all ok
 Client aborts in tls_session_established with internal_error: TLS v1.2 ran 12 tests all ok
-DTLS v1.2 3DES ECDH ran 112 tests all ok
+Client uses a custom ECDH provider for brainpool256r1 in TLS 1.2 ran 32 tests all ok
+Client uses a custom ECDH provider for brainpool512r1 in TLS 1.2 ran 32 tests all ok
+Client uses a custom ECDH provider for secp256r1 in TLS 1.2 ran 32 tests all ok
+DTLS v1.2 3DES ECDH ran 111 tests all ok
 DTLS v1.2 3DES RSA ran 112 tests all ok
-DTLS v1.2 AES-128 DH ran 56 tests all ok
+DTLS v1.2 AES-128 DH ran 55 tests all ok
 DTLS v1.2 AES-128 ECDH ran 112 tests all ok
 DTLS v1.2 AES-128 RSA ran 112 tests all ok
 DTLS v1.2 AES-128/CCM PSK ran 56 tests all ok
 DTLS v1.2 AES-128/CCM-8 PSK ran 56 tests all ok
-DTLS v1.2 AES-128/GCM ECDH ran 54 tests all ok
-DTLS v1.2 AES-128/GCM ECDH RSA ran 54 tests all ok
-DTLS v1.2 AES-128/GCM ECDH no OCSP ran 54 tests all ok
+DTLS v1.2 AES-128/GCM ECDH ran 56 tests all ok
+DTLS v1.2 AES-128/GCM ECDH RSA ran 56 tests all ok
+DTLS v1.2 AES-128/GCM ECDH no OCSP ran 55 tests all ok
 DTLS v1.2 AES-128/GCM ECDHE_PSK ran 56 tests all ok
 DTLS v1.2 AES-128/GCM FFDHE-2048 ran 55 tests all ok
 DTLS v1.2 AES-128/GCM PSK ran 56 tests all ok
-DTLS v1.2 AES-128/GCM RSA ran 55 tests all ok
+DTLS v1.2 AES-128/GCM RSA ran 56 tests all ok
 DTLS v1.2 AES-128/GCM bp256r1 ran 56 tests all ok
 DTLS v1.2 AES-128/GCM point compression ran 56 tests all ok
 DTLS v1.2 AES-128/GCM x25519 ran 56 tests all ok
 DTLS v1.2 AES-256/GCM client certs ran 62 tests all ok
 DTLS v1.2 AES-256/GCM numsp256d1 ran 16 tests all ok
-DTLS v1.2 AES-256/GCM p521 ran 56 tests all ok
+DTLS v1.2 AES-256/GCM p521 ran 55 tests all ok
 DTLS v1.2 AES-256/OCB ECDH ran 56 tests all ok
 DTLS v1.2 ARIA/GCM ECDH ran 56 tests all ok
 DTLS v1.2 Camellia-128/GCM ECDH ran 56 tests all ok
-DTLS v1.2 ChaCha20Poly1305 ECDH ran 56 tests all ok
+DTLS v1.2 ChaCha20Poly1305 ECDH ran 55 tests all ok
 Server aborts in tls_session_established with access_denied: DTLS v1.2 ran 12 tests all ok
 Server aborts in tls_session_established with access_denied: DTLS v1.2 ran 12 tests all ok
 Server aborts in tls_session_established with access_denied: TLS v1.2 ran 10 tests all ok
@@ -2394,30 +2404,30 @@ Server aborts in tls_session_established with internal_error: DTLS v1.2 ran 12 t
 Server aborts in tls_session_established with internal_error: DTLS v1.2 ran 12 tests all ok
 Server aborts in tls_session_established with internal_error: TLS v1.2 ran 10 tests all ok
 Server aborts in tls_session_established with internal_error: TLS v1.2 ran 10 tests all ok
-TLS v1.2 3DES ECDH ran 104 tests all ok
-TLS v1.2 3DES RSA ran 104 tests all ok
+TLS v1.2 3DES ECDH ran 101 tests all ok
+TLS v1.2 3DES RSA ran 103 tests all ok
 TLS v1.2 AES-128 DH ran 51 tests all ok
-TLS v1.2 AES-128 ECDH ran 102 tests all ok
+TLS v1.2 AES-128 ECDH ran 101 tests all ok
 TLS v1.2 AES-128 RSA ran 103 tests all ok
 TLS v1.2 AES-128/CCM PSK ran 52 tests all ok
 TLS v1.2 AES-128/CCM-8 PSK ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH RSA ran 52 tests all ok
-TLS v1.2 AES-128/GCM ECDH no OCSP ran 52 tests all ok
+TLS v1.2 AES-128/GCM ECDH ran 50 tests all ok
+TLS v1.2 AES-128/GCM ECDH RSA ran 50 tests all ok
+TLS v1.2 AES-128/GCM ECDH no OCSP ran 50 tests all ok
 TLS v1.2 AES-128/GCM ECDHE_PSK ran 52 tests all ok
 TLS v1.2 AES-128/GCM FFDHE-2048 ran 51 tests all ok
-TLS v1.2 AES-128/GCM PSK ran 52 tests all ok
-TLS v1.2 AES-128/GCM RSA ran 52 tests all ok
+TLS v1.2 AES-128/GCM PSK ran 51 tests all ok
+TLS v1.2 AES-128/GCM RSA ran 51 tests all ok
 TLS v1.2 AES-128/GCM bp256r1 ran 52 tests all ok
 TLS v1.2 AES-128/GCM point compression ran 52 tests all ok
 TLS v1.2 AES-128/GCM x25519 ran 52 tests all ok
 TLS v1.2 AES-256/GCM client certs ran 57 tests all ok
 TLS v1.2 AES-256/GCM numsp256d1 ran 12 tests all ok
-TLS v1.2 AES-256/GCM p521 ran 51 tests all ok
+TLS v1.2 AES-256/GCM p521 ran 52 tests all ok
 TLS v1.2 AES-256/OCB ECDH ran 51 tests all ok
 TLS v1.2 ARIA/GCM ECDH ran 52 tests all ok
-TLS v1.2 Camellia-128/GCM ECDH ran 52 tests all ok
-TLS v1.2 ChaCha20Poly1305 ECDH ran 51 tests all ok
+TLS v1.2 Camellia-128/GCM ECDH ran 51 tests all ok
+TLS v1.2 ChaCha20Poly1305 ECDH ran 52 tests all ok
 TLS v1.2 Strict policy ran 52 tests all ok
 TLS v1.2 Suite B ran 52 tests all ok
 uri:
@@ -2523,19 +2533,19 @@ x509_unit:
 CRL DN name ran 2 tests all ok
 Certificate_Status_Code to_string ran 93 tests all ok
 DN with multiple elements in RDN ran 2 tests all ok
-PKCS10 extensions ran 84 tests all ok
+PKCS10 extensions ran 77 tests all ok
 RSA OAEP decoding ran 2 tests all ok
-X509 Custom DN ran 120 tests all ok
-X509 Extensions ran 204 tests all ok
+X509 Custom DN ran 110 tests all ok
+X509 Extensions ran 187 tests all ok
 X509 Extensions API ran 16 tests all ok
 X509 GOST-2012 certificates ran 1 tests all ok
 X509 Hashes ran 240 tests all ok
 X509 Padding Config ran 11 tests all ok
 X509 RSA-PSS certificate ran 1 tests all ok
-X509 Self Issued ran 12 tests all ok
+X509 Self Issued ran 11 tests all ok
 X509 TNAuthList decode ran 14 tests all ok
 X509 Time ran 75 tests all ok
-X509 Unit ran 360 tests all ok
+X509 Unit ran 330 tests all ok
 X509 Usage ran 122 tests all ok
 X509 Valid Constraints ClassicMcEliece ran 10 tests all ok
 X509 Valid Constraints DH ran 12 tests all ok
@@ -2618,4 +2628,4 @@ XMSS/SHAKE_20_256 verify invalid signature ran 28 tests all ok
 XMSS/SHAKE_20_512 verify invalid signature ran 28 tests all ok
 zfec:
 ZFEC encoding/decoding ran 3483 tests all ok
-Tests complete ran 3097720 tests all tests ok
+Tests complete ran 3174308 tests all tests ok
