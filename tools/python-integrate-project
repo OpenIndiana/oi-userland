@@ -227,7 +227,7 @@ cat <<EOF
 #
 
 BUILD_STYLE = pyproject
-CARGO_VENDOR = yes
+CARGO_VENDOR = no
 USE_COMMON_TEST_MASTER = no
 EOF
 [[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
@@ -300,12 +300,14 @@ else
 	git checkout patches 2>/dev/null
 fi
 
-# Remove CARGO_VENDOR if not needed
+# Handle CARGO_VENDOR
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
-if [[ ! -f "$SOURCE_DIR/Cargo.toml" ]] ; then
-	sed -i -e '/^CARGO_VENDOR = yes$/d' Makefile
-	git add Makefile
+if [[ -f "$SOURCE_DIR/Cargo.toml" ]] ; then
+	sed -i -e '/^\(CARGO_VENDOR = \)no$/\1yes/' Makefile
+else
+	sed -i -e '/^CARGO_VENDOR = no$/d' Makefile
 fi
+git add Makefile
 
 # Cleanup after patch refresh
 $GMAKE clobber > /dev/null 2>&1
