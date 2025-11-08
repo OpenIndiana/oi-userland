@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytokens
-HUMAN_VERSION =			0.2.0
-COMPONENT_SUMMARY =		A Fast, spec compliant Python 3.13+ tokenizer that runs on older Pythons.
+HUMAN_VERSION =			0.3.0
+COMPONENT_SUMMARY =		A Fast, spec compliant Python 3.14+ tokenizer that runs on older Pythons.
 COMPONENT_PROJECT_URL =		https://github.com/tusharsadhwani/pytokens
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/tusharsadhwani/pytokens/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:74f119c46e07e1dbf6b0a09e5516d54b1773cfbbeef9bd4ceb1b83e17f794fef
+	sha256:bca8cbc74040557d6ab095a41dd766ebcf5e6a46dc5ef48768a5b2db36b5f9ec
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
