@@ -27,13 +27,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.16.0
+COMPONENT_VERSION=      8.17.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://curl.haxx.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:40c8cddbcb6cc6251c03dea423a472a6cea4037be654ba5cf5dec6eb2d22ff1d
+COMPONENT_ARCHIVE_HASH= sha256:955f6e729ad6b3566260e8fef68620e76ba3c31acf0a18524416a185acf77992
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -117,7 +117,6 @@ REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libcares
-REQUIRED_PACKAGES += library/libgsasl
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/libpsl
 REQUIRED_PACKAGES += library/libssh2
