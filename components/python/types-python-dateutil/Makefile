@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_python_dateutil
-HUMAN_VERSION =			2.9.0.20251008
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.9.0.20251108
 COMPONENT_SUMMARY =		Typing stubs for python-dateutil
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c3826289c170c93ebd8360c3485311187df740166dbab9dd3b792e69f2bc1f9c
+	sha256:d8a6687e197f2fa71779ce36176c666841f811368710ab8d274b876424ebfcaa
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
