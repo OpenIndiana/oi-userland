@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
-HUMAN_VERSION =			0.22.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.22.3
 COMPONENT_SUMMARY =		Docutils -- Python Documentation Utilities
 COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9fdb771707c8784c8f2728b67cb2c691305933d68137ef95a75db5f4dfbc213d
+	sha256:21486ae730e4ca9f622677b1412b879af1791efcfba517e4c6f60be543fc8cdd
 COMPONENT_LICENSE =		CC-PDDC AND BSD-3-Clause AND BSD-2-Clause
 COMPONENT_LICENSE_FILE =	COPYING.rst
 
