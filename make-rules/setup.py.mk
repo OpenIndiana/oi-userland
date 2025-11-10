@@ -204,7 +204,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 endif
 
 # Remove any previous dependency files
-COMPONENT_POST_INSTALL_ACTION +=	$(RM) $(@D)/.depend-runtime $(@D)/.depend-test ;
+COMPONENT_POST_INSTALL_ACTION +=	$(RM) $(@D)/.depend-runtime ;
 
 # Define Python version specific filenames for tests.
 ifeq ($(strip $(USE_COMMON_TEST_MASTER)),no)
@@ -359,7 +359,8 @@ USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox-current-env
 # Generate raw lists of test dependencies per Python version
 # Please note we set PATH below five times for tox to workaround
 # https://github.com/tox-dev/tox/issues/2538
-COMPONENT_POST_INSTALL_ACTION += \
+DEPEND_TEST_FILES += $(INSTALL_$(MK_BITS):%.installed=%.depend-test-tox)
+$(BUILD_DIR)/%/.depend-test-tox: $(BUILD_DIR)/%/.installed
 	if $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 		echo "Testing dependencies:" ; \
@@ -377,8 +378,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 			PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 		done \
-		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' >> $(@D)/.depend-test ; \
-	fi ;
+		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $@ ; \
+	fi
+	$(TOUCH) $@
 # Both tox and tox-current-env are needed to generate the list of test
 # dependencies.  During the bootstrap they might be not available so depend on
 # them conditionally.  Additionally, the python-requires script requires
@@ -632,7 +634,8 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.de
 		| $(GSED) -e 's/.*/depend type=require fmri=pkg:\/library\/python\/&-$$(PYV)/' > $@
 
 # Generate raw lists of test dependencies per Python version
-COMPONENT_POST_INSTALL_ACTION += \
+DEPEND_TEST_FILES += $(INSTALL_$(MK_BITS):%.installed=%.depend-test)
+$(BUILD_DIR)/%/.depend-test: $(BUILD_DIR)/%/.installed
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	( for f in $(TEST_REQUIREMENTS) ; do \
 		$(CAT) $$f | $(DOS2UNIX) -ascii ; \
@@ -643,13 +646,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ) | $(WS_TOOLS)/python-resolve-deps \
 		PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
 		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
-	| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ;
+	| $(PYTHON) $(WS_TOOLS)/python-requires - > $@
 
 # Convert raw per version lists of test dependencies to single list of
 # TEST_REQUIRED_PACKAGES entries.  Some Python projects lists their own project
 # as a test dependency so filter this out here too.
-$(BUILD_DIR)/META.depend-test.required:	$(INSTALL_$(MK_BITS))
-	$(CAT) $(INSTALL_$(MK_BITS):%.installed=%.depend-test) | $(SORT) -u \
+$(BUILD_DIR)/META.depend-test.required:	$(DEPEND_TEST_FILES)
+	$(CAT) $^ | $(SORT) -u \
 		| $(GSED) -e 's/.*/TEST_REQUIRED_PACKAGES.python += library\/python\/&/' \
 		| ( $(GNU_GREP) -v ' $(COMPONENT_FMRI)$$' || true ) \
 		> $@

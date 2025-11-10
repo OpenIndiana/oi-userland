@@ -13,6 +13,9 @@
 # Copyright 2022 Marcel Telka
 #
 
+# DEPEND_TEST_FILES needs to be set before the setup.py.mk include
+DEPEND_TEST_FILES += $(INSTALL_$(MK_BITS):%.installed=%.depend-test-pyproject)
+
 include $(WS_MAKE_RULES)/setup.py.mk
 
 ifeq ($(strip $(PYTHON_BOOTSTRAP)),yes)
@@ -61,7 +64,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 #
 # Please note we set PATH below for tox to workaround
 # https://github.com/tox-dev/tox/issues/2538
-COMPONENT_POST_INSTALL_ACTION += \
+$(BUILD_DIR)/%/.depend-test-pyproject: $(BUILD_DIR)/%/.installed
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	cfg=$(BUILD_DIR)/pyproject_deps-$(PYTHON_VERSION).json ; \
 	$(RM) $$cfg ; \
@@ -76,7 +79,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ; \
 	if [ "$(strip $(TEST_STYLE))" == "tox" ] && $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
 		for p in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV)) ; do \
-				$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
+			$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg add pep735_$$p pep735 $$p ; \
 		done ; \
 	fi ; \
 	for p in $(TEST_REQUIREMENTS_PIPENV) ; do \
@@ -88,8 +91,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	if [ -f $$cfg ] ; then \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval \
-			| $(PYTHON) $(WS_TOOLS)/python-requires - >> $(@D)/.depend-test ; \
-	fi ;
+			| $(PYTHON) $(WS_TOOLS)/python-requires - > $@ ; \
+	fi
+	$(TOUCH) $@
 
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
