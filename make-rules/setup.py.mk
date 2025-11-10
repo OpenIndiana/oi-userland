@@ -322,18 +322,17 @@ COMPONENT_PRE_TEST_ACTION += \
 	)
 COMPONENT_PRE_TEST_ACTION += true ;
 
-# Normalize tox test results.
+# Normalize tox test results
 COMPONENT_TEST_TRANSFORMS += "-e 's/py$(subst .,,$(PYTHON_VERSION))/py\$$(PYV)/g'"	# normalize PYV
+COMPONENT_TEST_TRANSFORMS += "-e '0,/py\$$(PYV): commands/{/py\$$(PYV): remove tox env folder/d'}"	# optional line
 COMPONENT_TEST_TRANSFORMS += "-e '/^py\$$(PYV) installed:/d'"		# depends on set of installed packages
 COMPONENT_TEST_TRANSFORMS += "-e '/PYTHONHASHSEED/d'"			# this is random
+COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"		# timing
+COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"	# timing
 
 # Normalize zope.testrunner test results
 COMPONENT_TEST_TRANSFORMS += \
 	"-e 's/ in \([0-9]\{1,\} minutes \)\{0,1\}[0-9]\{1,\}\.[0-9]\{3\} seconds//'"	# timing
-
-# Remove timing for tox 4 test results
-COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  py\$$(PYV): OK\) (.* seconds)$$/\1/'"
-COMPONENT_TEST_TRANSFORMS += "-e 's/^\(  congratulations :)\) (.* seconds)$$/\1/'"
 
 # Remove useless lines from the "coverage combine" output
 COMPONENT_TEST_TRANSFORMS += "-e '/^Combined data file .*\.coverage/d'"
