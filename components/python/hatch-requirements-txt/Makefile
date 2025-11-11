@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatch-requirements-txt
 HUMAN_VERSION =			0.4.1
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Hatchling plugin to read project dependencies from requirements.txt
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/hatch-requirements-txt
 COMPONENT_ARCHIVE_URL =		\
@@ -48,18 +48,16 @@ PYTEST_ADDOPTS += --deselect tests/test_errors.py::test_not_dynamic_but_filename
 PYTEST_ADDOPTS += --deselect tests/test_errors.py::test_not_dynamic_but_files_defined
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/dist-meta
 TEST_REQUIRED_PACKAGES.python += library/python/domdf-python-tools
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pkginfo
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
