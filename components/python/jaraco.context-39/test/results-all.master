@@ -1,0 +1,46 @@
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 15 items
+
+conftest.py::mypy PASSED
+docs/conf.py::mypy PASSED
+jaraco/context/__init__.py::mypy PASSED
+jaraco/context/__init__.py::jaraco.context.ExceptionTrap PASSED
+jaraco/context/__init__.py::jaraco.context.ExceptionTrap.passes PASSED
+jaraco/context/__init__.py::jaraco.context.ExceptionTrap.raises PASSED
+jaraco/context/__init__.py::jaraco.context._compose PASSED
+jaraco/context/__init__.py::jaraco.context.on_interrupt PASSED
+jaraco/context/__init__.py::jaraco.context.pushd PASSED
+jaraco/context/__init__.py::jaraco.context.repo_context PASSED
+jaraco/context/__init__.py::jaraco.context.suppress PASSED
+jaraco/context/__init__.py::jaraco.context.tarball PASSED
+jaraco/context/__init__.py::jaraco.context.temp_dir PASSED
+.::project PASSED
+.::project PASSED
+
+=============================== warnings summary ===============================
+.::project
+.::project
+  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
+    parts = docutils.core.publish_parts(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===================================== mypy =====================================
+Success: no issues found in 3 source files
+================================ tests coverage ================================
+_______________ coverage: platform sunos5, python 3.9.25-final-0 _______________
+
+Name                         Stmts   Miss  Cover   Missing
+----------------------------------------------------------
+conftest.py                     27      0   100%
+docs/conf.py                    11      0   100%
+jaraco/context/__init__.py     115      6    95%   21, 135-142
+----------------------------------------------------------
+TOTAL                          153      6    96%
+======== 15 passed, 2 warnings ========
+  py$(PYV): OK
+  congratulations :)
