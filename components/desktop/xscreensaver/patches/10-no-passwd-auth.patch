@@ -1,8 +1,8 @@
---- a/driver/Makefile.in.~6~	2017-10-06 09:21:27.619470801 +0000
-+++ b/driver/Makefile.in	2017-10-06 09:22:34.765399528 +0000
-@@ -103,8 +103,8 @@
- GTK_LOCK_SRCS	= lock-Gtk.c atoms.c remote.c
- GTK_LOCK_OBJS	= lock-Gtk.o atoms.o remote.o
+--- xscreensaver-6.10/driver/Makefile.in.~1~	2025-04-28 22:45:42.708277731 +0300
++++ xscreensaver-6.10/driver/Makefile.in	2025-11-11 13:32:47.149456262 +0200
+@@ -128,8 +128,8 @@
+ GFX_LIBS	= $(LIBS_PRE) $(XFT_LIBS) $(XDPMS_LIBS) $(XINERAMA_LIBS) \
+ 		  @SAVER_LIBS@ -lXt -lX11 -lXext -lXi $(LIBS_POST) $(INTL_LIBS)
  
 -PWENT_SRCS	= passwd-pwent.c
 -PWENT_OBJS	= passwd-pwent.o
@@ -11,9 +11,22 @@
  
  KERBEROS_SRCS	= passwd-kerberos.c
  KERBEROS_OBJS	= passwd-kerberos.o
---- a/driver/auth.h
-+++ b/driver/auth.h
-@@ -75,9 +75,11 @@ extern void pam_try_unlock (saver_info *si, Bool verbose_p,
+@@ -436,9 +436,9 @@
+ 	  exit 0 ;							\
+ 	fi ;								\
+ 									\
+-	if [ ! -d $(install_prefix)$(PAM_ROOT) ]; then			\
+-	  echo $(INSTALL_DIRS) $(install_prefix)$(PAM_ROOT) ;		\
+-	       $(INSTALL_DIRS) $(install_prefix)$(PAM_ROOT) ;		\
++	if [ ! -d $(install_prefix)$(PAM_DIR) ]; then			\
++	  echo $(INSTALL_DIRS) $(install_prefix)$(PAM_DIR) ;		\
++	       $(INSTALL_DIRS) $(install_prefix)$(PAM_DIR) ;		\
+ 	fi ;								\
+ 									\
+ 	if [ -d $$dir ] ; then						\
+--- xscreensaver-6.10/driver/auth.h.~1~	2024-07-26 05:38:57.891408829 +0300
++++ xscreensaver-6.10/driver/auth.h	2025-11-11 13:32:47.149925337 +0200
+@@ -75,9 +75,11 @@
  extern Bool ext_passwd_valid_p (void *closure, const char *plaintext);
  #endif
  
@@ -25,9 +38,9 @@
  
  /* GUI conversation function to pass to xscreensaver_auth. */
  extern Bool xscreensaver_auth_conv (void *closure,
---- a/driver/passwd.c
-+++ b/driver/passwd.c
-@@ -105,8 +107,10 @@ struct auth_methods methods[] = {
+--- xscreensaver-6.10/driver/passwd.c.~1~	2021-10-05 01:18:28.000000000 +0300
++++ xscreensaver-6.10/driver/passwd.c	2025-11-11 13:32:47.150393670 +0200
+@@ -95,7 +95,9 @@
  # ifdef PASSWD_HELPER_PROGRAM
    { "EXT",   0, ext_priv_init, ext_passwd_valid_p, 0, },
  # endif
@@ -35,3 +48,5 @@
    { "pwnam", pwent_lock_init, pwent_priv_init, pwent_passwd_valid_p, 0, }
 +# endif
  };
+ 
+ 
