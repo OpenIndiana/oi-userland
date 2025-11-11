@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= avahi
 COMPONENT_VERSION= 0.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Avahi client and bridge to pkg://service/network/dns/mdns
 COMPONENT_PROJECT_URL=	https://avahi.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -59,8 +60,6 @@ CONFIGURE_OPTIONS += --enable-tests
 CONFIGURE_OPTIONS += --disable-compat-howl
 CONFIGURE_OPTIONS += --disable-compat-libdns_sd
 CONFIGURE_OPTIONS += --disable-autoipd
-CONFIGURE_OPTIONS += --disable-gdbm
-CONFIGURE_OPTIONS += --enable-dbm
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 # We don't want 32 bit gui
 CONFIGURE_OPTIONS.32 += --disable-gtk
@@ -90,12 +89,10 @@ CFLAGS += -Wno-implicit-function-declaration -Wno-int-conversion -Wno-incompatib
 REQUIRED_PACKAGES += text/xmltoman
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/dbus-python
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/glib2/32
@@ -106,3 +103,7 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/dbus
 REQUIRED_PACKAGES += system/library/libdbus
+REQUIRED_PACKAGES += system/library/libdbus/32
+REQUIRED_PACKAGES.python += library/python/dbus-python
+REQUIRED_PACKAGES.python += library/python/pygobject
+REQUIRED_PACKAGES.python += runtime/python
