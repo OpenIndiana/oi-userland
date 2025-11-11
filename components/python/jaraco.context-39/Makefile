@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.context
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.context-39 jaraco.context
 #
 
 BUILD_STYLE = pyproject
@@ -29,23 +29,13 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 COMPONENT_SRC =			jaraco_context-$(HUMAN_VERSION)
 
-# runtime dependencies differs for Python < 3.12
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# jaraco.context --> pytest-enabler ==> jaraco.context
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
+# runtime dependencies differs for Python >= 3.12
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/backports-tarfile
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
