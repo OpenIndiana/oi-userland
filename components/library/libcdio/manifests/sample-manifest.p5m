@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2022 <contributor>
+# Copyright 2025 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,13 +23,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-file path=usr/bin/$(MACH64)/cd-drive
-file path=usr/bin/$(MACH64)/cd-info
-file path=usr/bin/$(MACH64)/cd-read
-file path=usr/bin/$(MACH64)/cdda-player
-file path=usr/bin/$(MACH64)/iso-info
-file path=usr/bin/$(MACH64)/iso-read
-file path=usr/bin/$(MACH64)/mmc-tool
+file path=usr/bin/$(MACH32)/cd-drive
+file path=usr/bin/$(MACH32)/cd-info
+file path=usr/bin/$(MACH32)/cd-read
+file path=usr/bin/$(MACH32)/cdda-player
+file path=usr/bin/$(MACH32)/iso-info
+file path=usr/bin/$(MACH32)/iso-read
+file path=usr/bin/$(MACH32)/mmc-tool
 file path=usr/bin/cd-drive
 file path=usr/bin/cd-info
 file path=usr/bin/cd-read
@@ -37,6 +37,16 @@ file path=usr/bin/cdda-player
 file path=usr/bin/iso-info
 file path=usr/bin/iso-read
 file path=usr/bin/mmc-tool
+file path=usr/include/cdio++/cdio.hpp
+file path=usr/include/cdio++/cdtext.hpp
+file path=usr/include/cdio++/device.hpp
+file path=usr/include/cdio++/devices.hpp
+file path=usr/include/cdio++/disc.hpp
+file path=usr/include/cdio++/enum.hpp
+file path=usr/include/cdio++/iso9660.hpp
+file path=usr/include/cdio++/mmc.hpp
+file path=usr/include/cdio++/read.hpp
+file path=usr/include/cdio++/track.hpp
 file path=usr/include/cdio/audio.h
 file path=usr/include/cdio/bytesex.h
 file path=usr/include/cdio/bytesex_asm.h
@@ -71,28 +81,44 @@ file path=usr/include/cdio/utf8.h
 file path=usr/include/cdio/util.h
 file path=usr/include/cdio/version.h
 file path=usr/include/cdio/xa.h
+link path=usr/lib/$(MACH64)/libcdio++.so target=libcdio++.so.1.0.0
+link path=usr/lib/$(MACH64)/libcdio++.so.1 target=libcdio++.so.1.0.0
+file path=usr/lib/$(MACH64)/libcdio++.so.1.0.0
 link path=usr/lib/$(MACH64)/libcdio.so target=libcdio.so.19.0.0
 link path=usr/lib/$(MACH64)/libcdio.so.19 target=libcdio.so.19.0.0
 file path=usr/lib/$(MACH64)/libcdio.so.19.0.0
-link path=usr/lib/$(MACH64)/libiso9660.so target=libiso9660.so.11.0.0
-link path=usr/lib/$(MACH64)/libiso9660.so.11 target=libiso9660.so.11.0.0
-file path=usr/lib/$(MACH64)/libiso9660.so.11.0.0
+link path=usr/lib/$(MACH64)/libiso9660++.so target=libiso9660++.so.1.0.0
+link path=usr/lib/$(MACH64)/libiso9660++.so.1 target=libiso9660++.so.1.0.0
+file path=usr/lib/$(MACH64)/libiso9660++.so.1.0.0
+link path=usr/lib/$(MACH64)/libiso9660.so target=libiso9660.so.12.0.0
+link path=usr/lib/$(MACH64)/libiso9660.so.12 target=libiso9660.so.12.0.0
+file path=usr/lib/$(MACH64)/libiso9660.so.12.0.0
 link path=usr/lib/$(MACH64)/libudf.so target=libudf.so.0.0.0
 link path=usr/lib/$(MACH64)/libudf.so.0 target=libudf.so.0.0.0
 file path=usr/lib/$(MACH64)/libudf.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libcdio++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libcdio.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libiso9660++.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libiso9660.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libudf.pc
+link path=usr/lib/libcdio++.so target=libcdio++.so.1.0.0
+link path=usr/lib/libcdio++.so.1 target=libcdio++.so.1.0.0
+file path=usr/lib/libcdio++.so.1.0.0
 link path=usr/lib/libcdio.so target=libcdio.so.19.0.0
 link path=usr/lib/libcdio.so.19 target=libcdio.so.19.0.0
 file path=usr/lib/libcdio.so.19.0.0
-link path=usr/lib/libiso9660.so target=libiso9660.so.11.0.0
-link path=usr/lib/libiso9660.so.11 target=libiso9660.so.11.0.0
-file path=usr/lib/libiso9660.so.11.0.0
+link path=usr/lib/libiso9660++.so target=libiso9660++.so.1.0.0
+link path=usr/lib/libiso9660++.so.1 target=libiso9660++.so.1.0.0
+file path=usr/lib/libiso9660++.so.1.0.0
+link path=usr/lib/libiso9660.so target=libiso9660.so.12.0.0
+link path=usr/lib/libiso9660.so.12 target=libiso9660.so.12.0.0
+file path=usr/lib/libiso9660.so.12.0.0
 link path=usr/lib/libudf.so target=libudf.so.0.0.0
 link path=usr/lib/libudf.so.0 target=libudf.so.0.0.0
 file path=usr/lib/libudf.so.0.0.0
+file path=usr/lib/pkgconfig/libcdio++.pc
 file path=usr/lib/pkgconfig/libcdio.pc
+file path=usr/lib/pkgconfig/libiso9660++.pc
 file path=usr/lib/pkgconfig/libiso9660.pc
 file path=usr/lib/pkgconfig/libudf.pc
 file path=usr/share/info/dir
