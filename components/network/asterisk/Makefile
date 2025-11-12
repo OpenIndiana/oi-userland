@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
 COMPONENT_VERSION=	22.6.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -59,7 +60,7 @@ COMPONENT_POST_CONFIGURE_ACTION += ( \
 	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt.c; \
 	$(GSED) -i -e '/stdlib/a \#include <alloca.h>' third-party/libjwt/source/libjwt/jwt-openssl.c; \
 	$(GSED) -i -e 's:LDAP_INCLUDE=:LDAP_INCLUDE=-I/usr/include/openldap:' makeopts; \
-	$(GSED) -i -e 's:-L/usr/lib/amd64::g' makeopts; \
+	$(GSED) -i -e 's:-L/usr/lib/$(MACH64)::g' makeopts; \
 	$(GSED) -i -e 's/ -lldap-2.6//' makeopts; \
 	$(GSED) -i -e 's/LDAP_LIB= -lldap/LDAP_LIB= -lldap-2.6/' makeopts; \
 	$(GSED) -i -e "s:-L$(OPENSSL_PREFIX)/lib :-L$(OPENSSL_LIBDIR.$(BITS)) :" makeopts; \
