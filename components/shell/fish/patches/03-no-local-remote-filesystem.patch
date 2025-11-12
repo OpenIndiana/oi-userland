@@ -1,0 +1,16 @@
+--- fish-4.2.0/src/path.rs.~1~	2025-11-10 02:19:40.000000000 -0500
++++ fish-4.2.0/src/path.rs	2025-11-11 08:42:04.870713261 -0500
+@@ -711,7 +711,12 @@
+         }
+     }
+ 
+-    #[cfg(not(any(target_os = "linux", target_os = "netbsd", cygwin)))]
++    #[cfg(target_os = "illumos")]
++    {
++        return DirRemoteness::unknown;
++    }
++
++    #[cfg(not(any(target_os = "linux", target_os = "netbsd", cygwin, target_os = "illumos")))]
+     {
+         let mut buf = MaybeUninit::uninit();
+         if unsafe { libc::statfs(narrow.as_ptr(), buf.as_mut_ptr()) } < 0 {

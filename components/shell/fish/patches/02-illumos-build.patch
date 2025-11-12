@@ -1,0 +1,10 @@
+--- fish-4.2.0/build.rs.old	2025-11-10 23:28:30.027191745 -0500
++++ fish-4.2.0/build.rs	2025-11-10 23:29:12.978759154 -0500
+@@ -83,6 +83,7 @@
+         ("bsd", &detect_bsd),
+         ("using_cmake", &|_| option_env!("FISH_CMAKE_BINARY_DIR").is_some()),
+         ("cygwin", &detect_cygwin),
++        ("illumos", &|_| env::var("CARGO_CFG_TARGET_OS").unwrap() == "illumos"),
+         ("small_main_stack", &has_small_stack),
+         // See if libc supports the thread-safe localeconv_l(3) alternative to localeconv(3).
+         ("localeconv_l", &|target| {
