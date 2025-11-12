@@ -1,0 +1,24 @@
+# Fix 64-bit linking
+# LDARCHFLAG is passed from the top-level components/trousers/Makefile.
+# See the comments there.  Not suitable for upstream use.
+# This change was implemented in-house.
+#
+--- src/tspi/Makefile.am	2014-04-24 11:05:44.000000000 -0700
++++ src/tspi/Makefile.am	2016-04-18 13:55:57.962261900 -0700
+@@ -17,7 +17,7 @@
+ # 5. If any interfaces have been added since the last public release, then increment age.
+ # 6. If any interfaces have been removed since the last public release, then set age to 0.
+ 
+-libtspi_la_LDFLAGS=-version-info 3:0:2 -lpthread @CRYPTOLIB@
++libtspi_la_LDFLAGS=$(LDARCHFLAG) -version-info 3:0:2 @CRYPTOLIB@
+ 
+ libtspi_la_CFLAGS=-I$(top_srcdir)/src/include -DAPPID=\"TSPI\" -DVAR_PREFIX=\"@localstatedir@\" -DETC_PREFIX=\"@sysconfdir@\"
+ 
+@@ -218,7 +218,6 @@
+ libtspi_la_SOURCES+=gtk/main.c gtk/support.c gtk/interface.c gtk/callbacks.c
+ endif
+ if OPENSSL_UI
+-libtspi_la_LDFLAGS+=-lssl
+ libtspi_la_SOURCES+=ssl_ui.c
+ endif
+ 

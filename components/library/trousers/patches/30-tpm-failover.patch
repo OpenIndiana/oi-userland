@@ -1,0 +1,80 @@
+#
+# 30-tpm-failover.patch
+# This patch c implements the tcsd part of
+# Solaris- and SPARC-specific TPM failover.
+# It is not suitable for upstream use.
+# This change was implemented in-house.
+#
+--- src/tcs/tcs_key_ps.c.	2010-06-09 13:20:44.000000000 -0700
++++ src/tcs/tcs_key_ps.c	2014-07-23 16:48:40.316448661 -0700
+@@ -26,6 +26,16 @@
+ #include "tcsps.h"
+ #include "req_mgr.h"
+ 
++#if defined(SOLARIS) && defined(__sparcv9)
++#include <signal.h>
++#include <fcntl.h>
++#include <sys/paths.h>
++#define	FILE_PREFIX		"application-security-tcsd:"
++#define	PATH_TPMFOD_PID		_PATH_SYSVOL "/" FILE_PREFIX "tpmfod.pid"
++#define	PATH_ADMIN_PIN		_PATH_SYSVOL "/" FILE_PREFIX "admin.pin"
++#define	PATH_BACKUP_PIN		_PATH_SYSVOL "/" FILE_PREFIX "backup.pin"
++#endif	/* SOLARIS && __sparcv9 */
++
+ 
+ TSS_RESULT
+ ps_init_disk_cache(void)
+@@ -338,6 +348,42 @@
+         return ret;
+ }
+ 
++#if defined(SOLARIS) && defined(__sparcv9)
++/* Notify the tpmfod when the System keystore (persistent storage) changes */
++static void
++notify_system_ps_change(void)
++{
++	int	fd;
++	pid_t	pid = -1;
++	char	pid_string[256] = "";
++
++	/* No failover support if no tpmfod daemon. */
++	if (access(PATH_TPMFOD_PID, R_OK) < 0) {
++		return;
++	}
++
++	/* Read pid string from file and convert to integer */
++	if ((fd = open(PATH_TPMFOD_PID, O_RDONLY)) == -1) {
++		return;
++	}
++
++	if (read(fd, pid_string, strlen(pid_string)) < 0) {
++		(void) close(fd);
++		return;
++	}
++
++	(void) close(fd);
++
++	pid = atoll(pid_string);
++	if (pid <= 0) {
++		return;
++	}
++
++	/* Signal tpmfod */
++	(void) kill(pid, SIGUSR1);
++}
++#endif	/* SOLARIS && __sparcv9 */
++
+ TSS_RESULT
+ ps_write_key(TSS_UUID *uuid, TSS_UUID *parent_uuid, BYTE *vendor_data,
+ 	     UINT32 vendor_size, BYTE *blob, UINT32 blob_size)
+@@ -363,5 +409,10 @@
+ 			      vendor_size, blob, short_blob_size);
+ 
+         put_file(fd);
++
++#if defined(SOLARIS) && defined(__sparcv9)
++	notify_system_ps_change();
++#endif	/* SOLARIS && __sparcv9 */
++
+         return TSS_SUCCESS;
+ }

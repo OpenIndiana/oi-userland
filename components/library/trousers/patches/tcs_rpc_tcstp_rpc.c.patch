@@ -1,6 +1,10 @@
---- trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc.c.orig
-+++ trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc.c
-@@ -387,134 +387,134 @@
+# Add Solaris Auditing.
+# Patch not suitable for upstream use.
+# This change was implemented in-house.
+#
+--- src/tcs/rpc/tcstp/rpc.c
++++ src/tcs/rpc/tcstp/rpc.c
+@@ -387,134 +387,134 @@ /* Dispatch */
  typedef struct tdDispatchTable {
  	TSS_RESULT (*Func) (struct tcsd_thread_data *);
  	const char *name;
@@ -260,7 +264,7 @@
  int
  access_control(struct tcsd_thread_data *thread_data)
  {
-@@ -564,11 +564,190 @@
+@@ -567,11 +567,190 @@ }
  	return 1;
  }
  
@@ -451,7 +455,7 @@
  
  	/* First, check the ordinal bounds */
  	if (data->comm.hdr.u.ordinal >= TCSD_MAX_NUM_ORDS) {
-@@ -599,6 +778,9 @@
+@@ -602,6 +781,9 @@ return TSS_SUCCESS;
  	}
  
  	/* Now, dispatch */
@@ -461,7 +465,7 @@
  	if ((result = tcs_func_table[data->comm.hdr.u.ordinal].Func(data)) == TSS_SUCCESS) {
  		/* set the comm buffer */
  		offset = 0;
-@@ -610,6 +792,9 @@
+@@ -613,6 +795,9 @@ LoadBlob_UINT32(&offset, data->comm.hdr.
  		LoadBlob_UINT32(&offset, data->comm.hdr.parm_size, data->comm.buf);
  		LoadBlob_UINT32(&offset, data->comm.hdr.parm_offset, data->comm.buf);
  	}
