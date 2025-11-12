@@ -19,12 +19,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xscreensaver
-COMPONENT_VERSION=      6.9
-HUMAN_VERSION=      	6.09
+COMPONENT_VERSION=      6.10
 COMPONENT_PROJECT_URL=  https://www.jwz.org/xscreensaver/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f4667705adb8cc43fd2f3973a88a1b54b16f20190afe93b21e221f2f57320b05
+COMPONENT_ARCHIVE_HASH= sha256:ffe599f9cf77afa46efb8dbb7b561e8da0c3156dea64b635e0b7e2c20f4bb3ed
 COMPONENT_ARCHIVE_URL=  https://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         desktop/xscreensaver
 
@@ -59,6 +58,7 @@ CONFIGURE_OPTIONS += --with-randr-ext
 CONFIGURE_OPTIONS += --enable-root-passwd
 CONFIGURE_OPTIONS += --with-gl=/usr
 CONFIGURE_OPTIONS += --without-motif
+CONFIGURE_OPTIONS += --with-app-defaults=/usr/share/X11/app-defaults
 CONFIGURE_OPTIONS += --with-hackdir=/usr/lib/xscreensaver/hacks 
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/xscreensaver/bin
 CONFIGURE_OPTIONS += --with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
@@ -77,7 +77,7 @@ COMPONENT_POST_UNPACK_ACTION= \
 	( cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver ; \
 	cp $(COMPONENT_DIR)/files/*.xpm $(SOURCE_DIR)/utils/images/; )
 
-COMPONENT_PREP_ACTION = ( cd $(@D) && autoreconf -if )
+COMPONENT_PREP_ACTION = ( cd $(@D) && export ACLOCAL_PATH=/usr/share/gettext/m4; autoreconf -if )
 
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	chmod -R u+r $(SOURCE_DIR)/ ; \
