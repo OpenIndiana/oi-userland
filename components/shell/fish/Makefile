@@ -16,17 +16,17 @@
 #
 
 BUILD_STYLE= cmake
-USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	4.0.9
+COMPONENT_VERSION=	4.2.0
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3decb552c93a2abbba7e43211a33b6c2ec2aeaf285b738fe4b50f9013f8551f6
+COMPONENT_ARCHIVE_HASH=	sha256:6c43be5a9274963c06ba4cd55a109dfcc4d5d3a8054ed0e0a3666388581ec252
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -44,10 +44,7 @@ CMAKE_OPTIONS += -DWITH_GETTEXT=ON
 # Need to compile dynamic rust crates. See https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
 
-# Need to patch gettext-sys dependency crate contents.  The gettext C
-# source does not have #include <stdlib.h> in locating-rule.c .  So patch
-# build.rs which then patches gettext after extraction from archive.
-# Download all dependency crates and then apply patch.
+# add fixes to third party vendor crates
 CRATE_PATCH_FLAG = --backup --version-control=numbered -p0
 COMPONENT_PRE_BUILD_ACTION= \
         CARGO_HOME=$(@D)/.cargo cargo fetch --manifest-path $(SOURCE_DIR)/Cargo.toml ; \
@@ -57,7 +54,15 @@ COMPONENT_PRE_BUILD_ACTION= \
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 COMPONENT_TEST_CMD= gmake
-COMPONENT_TEST_TARGETS= test
+COMPONENT_TEST_TARGETS= fish_run_tests
+
+# strip timing
+COMPONENT_TEST_TRANSFORMS += "-e 's/ ms//g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/ [0-9]*$$//'"
+# only keep the test result lines
+COMPONENT_TEST_TRANSFORMS += -n
+COMPONENT_TEST_TRANSFORMS += '-e "/FAILED/p" '
+COMPONENT_TEST_TRANSFORMS += '-e "/PASSED/p" '
 
 # Manually added dependencies (for tests)
 PYTHON_REQUIRED_PACKAGES += library/python/pexpect

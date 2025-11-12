@@ -1,0 +1,12 @@
+--- fish-4.2.0/src/fork_exec/spawn.rs.old	2025-11-10 23:42:49.710475725 -0500
++++ fish-4.2.0/src/fork_exec/spawn.rs	2025-11-10 23:44:00.788440322 -0500
+@@ -116,6 +116,9 @@
+         };
+ 
+         // Set our flags.
++        #[cfg(target_os = "illumos")]
++        let mut flags: i16 = 0;
++        #[cfg(not(target_os = "illumos"))]
+         let mut flags: i32 = 0;
+         flags |= libc::POSIX_SPAWN_SETSIGDEF;
+         flags |= libc::POSIX_SPAWN_SETSIGMASK;
