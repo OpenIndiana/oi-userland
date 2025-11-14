@@ -11,29 +11,33 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ephemeral_port_reserve
+#   $WS_TOOLS/python-integrate-project -d python/ephemeral_port_reserve ephemeral-port-reserve
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		ephemeral_port_reserve
-COMPONENT_VERSION =		1.1.4
-COMPONENT_SUMMARY =		ephemeral_port_reserve - Bind to an ephemeral port, force it into the TIME_WAIT state, and unbind it.
+COMPONENT_NAME =		ephemeral-port-reserve
+HUMAN_VERSION =			1.1.4
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Bind to an ephemeral port, force it into the TIME_WAIT state, and unbind it.
 COMPONENT_PROJECT_URL =		https://github.com/Yelp/ephemeral-port-reserve/
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ef/93/3f0b75f75f94227f67ccfe86f989415e40ac054dd67b55dfac7abdc0a2d2/ephemeral_port_reserve-1.1.4.tar.gz
+	https://github.com/Yelp/ephemeral-port-reserve/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8f7da2c97090cb0801949dec1d6d40c97220505b742a70935ffbd43234c14b2
+	sha256:522a3b80e885c62b9561c4150cefda7a67cad954d22d474c6f9362348828e079
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
-
 include $(WS_MAKE_RULES)/common.mk
 
+# https://www.illumos.org/issues/17745
+PYTEST_ADDOPTS += --deselect tests/ephemeral_port_test.py::test_localhost
+PYTEST_ADDOPTS += --deselect tests/ephemeral_port_test.py::test_fqdn
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
