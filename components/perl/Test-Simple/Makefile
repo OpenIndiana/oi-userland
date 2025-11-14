@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Simple
-HUMAN_VERSION =			1.302214
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.302215
 COMPONENT_SUMMARY =		Basic utilities for writing tests.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6077ecc35f37b11b3b75df2d0ba1b9ca541f1dc24b2be8e15b6e91f78e2e03fc
+	sha256:69fcba16318d5658f39e2f117a89b5f4db62c827e70dbf0d9c3eea392e937c44
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,11 +33,11 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-maybexs
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/term-table
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/term-table
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-pluggable
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/term-size-any
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/termreadkey
