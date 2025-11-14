@@ -1,0 +1,107 @@
+--- giflib-5.2.2/Makefile.~1~	2024-02-19 03:01:50.000000000 +0200
++++ giflib-5.2.2/Makefile	2025-11-13 21:38:55.835395949 +0200
+@@ -6,18 +6,17 @@
+ # of code space in the shared library.
+ 
+ #
+-OFLAGS = -O0 -g
+-OFLAGS  = -O2
+-CFLAGS  = -std=gnu99 -fPIC -Wall -Wno-format-truncation $(OFLAGS)
++
++CFLAGS  =  -fPIC -Wall gcc_OPT
+ 
+ SHELL = /bin/sh
+ TAR = tar
+ INSTALL = install
+ 
+-PREFIX = /usr/local
++PREFIX = /usr
+ BINDIR = $(PREFIX)/bin
+ INCDIR = $(PREFIX)/include
+-LIBDIR = $(PREFIX)/lib
++LIBDIR = $(PREFIX)/lib/MACH64
+ MANDIR = $(PREFIX)/share/man
+ 
+ # No user-serviceable parts below this line
+@@ -43,7 +42,9 @@
+ INSTALLABLE = \
+ 	gif2rgb \
+ 	gifbuild \
++	gifecho \
+ 	giffix \
++	gifinto \
+ 	giftext \
+ 	giftool \
+ 	gifclrmp
+@@ -54,23 +55,25 @@
+ UTILS = $(INSTALLABLE) \
+ 	gifbg \
+ 	gifcolor \
+-	gifecho \
+ 	giffilter \
+ 	gifhisto \
+-	gifinto \
+ 	gifsponge \
+ 	gifwedge
+ 
+ LDLIBS=libgif.a -lm
+ 
+ MANUAL_PAGES = \
+-	doc/gif2rgb.xml \
+-	doc/gifbuild.xml \
+-	doc/gifclrmp.xml \
+-	doc/giffix.xml \
+-	doc/giflib.xml \
+-	doc/giftext.xml \
+-	doc/giftool.xml
++	doc/gif2rgb.1 \
++	doc/gifbuild.1 \
++	doc/gifclrmp.1 \
++	doc/gifecho.1 \
++	doc/giffix.1 \
++	doc/gifinto.1 \
++	doc/giftext.1 \
++	doc/giftool.1
++
++MAN3_PAGES = \
++	doc/giflib.3
+ 
+ SOEXTENSION	= so
+ LIBGIFSO	= libgif.$(SOEXTENSION)
+@@ -99,7 +102,7 @@
+ ifeq ($(UNAME), Darwin)
+ 	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBGIFSO)
+ else
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBGIFSOMAJOR) -o $(LIBGIFSO) $(OBJECTS)
++	$(CC) $(CFLAGS) -fPIC -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBGIFSOMAJOR) -o $(LIBGIFSO) $(OBJECTS)
+ endif
+ 
+ libgif.a: $(OBJECTS) $(HEADERS)
+@@ -109,7 +112,7 @@
+ ifeq ($(UNAME), Darwin)
+ 	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBUTILSO)
+ else
+-	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBUTILMAJOR) -o $(LIBUTILSO) $(UOBJECTS)
++	$(CC) $(CFLAGS) -fPIC -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBUTILMAJOR) -o $(LIBUTILSO) $(UOBJECTS)
+ endif
+ 
+ libutil.a: $(UOBJECTS) $(UHEADERS)
+@@ -149,7 +152,9 @@
+ 	ln -sf $(LIBGIFSOMAJOR) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSO)"
+ install-man:
+ 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1"
++	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man3"
+ 	$(INSTALL) -m 644 $(MANUAL_PAGES) "$(DESTDIR)$(MANDIR)/man1"
++	$(INSTALL) -m 644 doc/giflib.7 "$(DESTDIR)$(MANDIR)/man3"
+ uninstall: uninstall-man uninstall-include uninstall-lib uninstall-bin
+ uninstall-bin:
+ 	cd "$(DESTDIR)$(BINDIR)" && rm -f $(INSTALLABLE)
+@@ -160,7 +165,7 @@
+ 		rm -f libgif.a $(LIBGIFSO) $(LIBGIFSOMAJOR) $(LIBGIFSOVER)
+ uninstall-man:
+ 	cd "$(DESTDIR)$(MANDIR)/man1" && rm -f $(shell cd doc >/dev/null && echo *.1)
+-	cd "$(DESTDIR)$(MANDIR)/man7" && rm -f $(shell cd doc >/dev/null && echo *.7)
++	cd "$(DESTDIR)$(MANDIR)/man3" && rm -f $(shell cd doc >/dev/null && echo *.7)
+ 
+ # Make distribution tarball
+ #

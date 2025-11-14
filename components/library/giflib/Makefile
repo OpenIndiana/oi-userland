@@ -20,64 +20,42 @@
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
 # Copyright (c) 2016 Jim Klimov
+# Copyright (c) 2025 Klaus Ziegler
 #
 
-BUILD_BITS= 32_and_64
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         giflib
-COMPONENT_VERSION=      5.1.4
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      5.2.2
 COMPONENT_SUMMARY=      GIFLIB - A library and utilities for processing GIFs
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://giflib.sourceforge.net/
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb
 COMPONENT_ARCHIVE_URL=  https://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=         library/giflib
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=      MIT
 COMPONENT_LICENSE_FILE= COPYING
 
-# For backwards compatibility, deliver shared lib of previous version SO number
-COMPONENT_VERSION_1=	5.0.6
-COMPONENT_SRC_1=	$(COMPONENT_NAME)-$(COMPONENT_VERSION_1)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_HASH_1= sha256:8909839ccbdfca75cfbe6a4db907b55978e11fb268a8f3cde24bd923a0f669ea
-COMPONENT_ARCHIVE_URL_1= https://sourceforge.net/projects/giflib/files/$(COMPONENT_ARCHIVE_1)/download
-CLEAN_PATHS +=	$(COMPONENT_SRC_1)
-SOURCE_DIR_1 =	$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
-
-TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PATH.gnu)
+PATH= $(PATH.gnu)
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+COMPONENT_POST_CONFIGURE_ACTION += ( \
+	cd $(COMPONENT_SRC); \
+	$(GSED) -i -e 's/MACH64/$(MACH64)/' -e 's/gcc_OPT/$(gcc_OPT)/' Makefile );
 
-# Macros to configure, build, and install the old version for the time being.
-# Snatched from libreadline recipe
-BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
-BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
+COMPONENT_POST_INSTALL_ACTION += ( \
+	$(MV) $(PROTOUSRSHAREMAN3DIR)/giflib.7 $(PROTOUSRSHAREMAN3DIR)/giflib.3; \
+	$(GSED) -i -e 's@"7"@"3"@g' $(PROTOUSRSHAREMAN3DIR)/giflib.3 );
 
-$(BUILD_OLD_DIR_32)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_64)/.configured: CONFIGURE_SCRIPT = $(SOURCE_DIR_1)/configure
-$(BUILD_OLD_DIR_32)/.configured:        BITS=32
-$(BUILD_OLD_DIR_64)/.configured:        BITS=64
-
-BUILD_32 += $(BUILD_OLD_DIR_32)/.built
-BUILD_64 += $(BUILD_OLD_DIR_64)/.built
-
-INSTALL_32 += $(BUILD_OLD_DIR_32)/.installed
-INSTALL_64 += $(BUILD_OLD_DIR_64)/.installed
-
-# install the old version first
-$(BUILD_DIR_32)/.installed:     $(BUILD_OLD_DIR_32)/.installed
-$(BUILD_DIR_64)/.installed:     $(BUILD_OLD_DIR_64)/.installed
-
-# Build dependencies
-REQUIRED_PACKAGES += text/xmlto
+OMPONENT_TEST_TRANSFORMS= "-n"
+COMPONENT_TEST_TRANSFORMS += "-e '/Testing/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/Checking/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/basic sanity check/p'"
+COMPONENT_TEST_TRANSFORMS += "-e '/No output is good news/p'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
