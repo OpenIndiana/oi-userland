@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest testing
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -8,7 +7,7 @@ configfile: tox.ini
 timeout: 20.0s
 timeout method: signal
 timeout func_only: False
-collecting ... collected 1095 items
+collecting ... collected 1095 items / 1 deselected / 1094 selected
 
 testing/test_basics.py::TestSerializeAPI::test_serializer_api[123] PASSED
 testing/test_basics.py::TestSerializeAPI::test_serializer_api[42] PASSED
@@ -28,8 +27,8 @@ testing/test_basics.py::test_subprocess_interaction[sys.executable] PASSED
 testing/test_basics.py::test_subprocess_interaction[pypy3] SKIPPED (...)
 testing/test_basics.py::test_io_message[thread-sys.executable] PASSED
 testing/test_basics.py::test_io_message[thread-pypy3] SKIPPED (no py...)
-testing/test_basics.py::test_popen_io[thread-sys.executable] SKIPPED
-testing/test_basics.py::test_popen_io[thread-pypy3] SKIPPED (always ...)
+testing/test_basics.py::test_popen_io[thread-sys.executable] PASSED
+testing/test_basics.py::test_popen_io[thread-pypy3] SKIPPED (no pypy...)
 testing/test_basics.py::test_popen_io_readloop[thread] PASSED
 testing/test_basics.py::test_stdouterrin_setnull[thread] PASSED
 testing/test_basics.py::test_exectask[thread] PASSED
@@ -271,7 +270,7 @@ testing/test_threadpool.py::test_primary_thread_integration[thread] PASSED
 testing/test_threadpool.py::test_primary_thread_integration_shutdown[thread] PASSED
 testing/test_basics.py::test_io_message[main_thread_only-sys.executable] PASSED
 testing/test_basics.py::test_io_message[main_thread_only-pypy3] SKIPPED
-testing/test_basics.py::test_popen_io[main_thread_only-sys.executable] SKIPPED
+testing/test_basics.py::test_popen_io[main_thread_only-sys.executable] PASSED
 testing/test_basics.py::test_popen_io[main_thread_only-pypy3] SKIPPED
 testing/test_basics.py::test_popen_io_readloop[main_thread_only] PASSED
 testing/test_basics.py::test_stdouterrin_setnull[main_thread_only] PASSED
@@ -515,7 +514,7 @@ testing/test_threadpool.py::test_primary_thread_integration_shutdown[main_thread
 testing/test_basics.py::test_io_message[eventlet-sys.executable] SKIPPED
 testing/test_basics.py::test_io_message[eventlet-pypy3] SKIPPED (cou...)
 testing/test_basics.py::test_popen_io[eventlet-sys.executable] SKIPPED
-testing/test_basics.py::test_popen_io[eventlet-pypy3] SKIPPED (alway...)
+testing/test_basics.py::test_popen_io[eventlet-pypy3] SKIPPED (could...)
 testing/test_basics.py::test_popen_io_readloop[eventlet] SKIPPED (co...)
 testing/test_basics.py::test_stdouterrin_setnull[eventlet] SKIPPED (...)
 testing/test_basics.py::test_exectask[eventlet] SKIPPED (could not i...)
@@ -757,8 +756,7 @@ testing/test_threadpool.py::test_primary_thread_integration[eventlet] SKIPPED
 testing/test_threadpool.py::test_primary_thread_integration_shutdown[eventlet] SKIPPED
 testing/test_basics.py::test_io_message[gevent-sys.executable] PASSED
 testing/test_basics.py::test_io_message[gevent-pypy3] SKIPPED (no py...)
-testing/test_basics.py::test_popen_io[gevent-sys.executable] SKIPPED
-testing/test_basics.py::test_popen_io[gevent-pypy3] SKIPPED (always ...)
+testing/test_basics.py::test_popen_io[gevent-pypy3] SKIPPED (no pypy...)
 testing/test_basics.py::test_popen_io_readloop[gevent] PASSED
 testing/test_basics.py::test_stdouterrin_setnull[gevent] PASSED
 testing/test_basics.py::test_exectask[gevent] PASSED
@@ -1106,42 +1104,18 @@ testing/test_xspec.py::TestMakegateway::test_socket SKIPPED (no 'gsp...)
 testing/test_xspec.py::TestMakegateway::test_socket_second SKIPPED (...)
 testing/test_xspec.py::TestMakegateway::test_socket_installvia PASSED
 
-================================== XFAILURES ===================================
-$(@D)/testing/test_multi.py:255: AttributeError: 'ThreadExecModel' object has no attribute 'active_count'
-$(@D)/testing/test_threadpool.py:76: TypeError: __init__() got an unexpected keyword argument 'size'
-$(@D)/testing/test_multi.py:255: AttributeError: 'MainThreadOnlyExecModel' object has no attribute 'active_count'
-$(@D)/testing/test_threadpool.py:76: TypeError: __init__() got an unexpected keyword argument 'size'
-$(@D)/testing/test_multi.py:237: _pytest.outcomes.XFailed: execution model 'gevent' does not support task count
-$(@D)/testing/test_multi.py:261: _pytest.outcomes.XFailed: execution model 'gevent' does not support task count
-$(@D)/testing/test_termination.py:48: _pytest.outcomes.XFailed: test and execnet not compatible to greenlets yet
-$(@D)/testing/test_termination.py:118: _pytest.outcomes.XFailed: only os threading model supported
-$(@D)/testing/test_threadpool.py:76: TypeError: __init__() got an unexpected keyword argument 'size'
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/execnet/gateway_base.py:931: execnet.gateway_base.TimeoutError: no item after 0.5 seconds
 =================================== XPASSES ====================================
 ______ TestBasicGateway.test_gateway_status_busy[main_thread_only-proxy] _______
 ----------------------------- Captured stderr call -----------------------------
-Exception ignored in: <function Channel.__del__ at 0x7fffae8a4b80>
+Exception ignored in: <function Channel.__del__ at 0x7fffae3c64c0>
 Traceback (most recent call last):
   File "<string>", line 775, in __del__
 AttributeError: 'str' object has no attribute 'warn'
-Exception ignored in: <function Channel.__del__ at 0x7fffae8a4b80>
+Exception ignored in: <function Channel.__del__ at 0x7fffae3c64c0>
 Traceback (most recent call last):
   File "<string>", line 775, in __del__
 AttributeError: 'str' object has no attribute 'warn'
-____________________ TestTracing.test_popen_stderr_tracing _____________________
------------------------------ Captured stderr call -----------------------------
-[18206] gw0-worker [receiver-thread] received <Message GATEWAY_TERMINATE channel=0 lendata=0>
-[18206] gw0-worker [receiver-thread] finishing receiving thread
-[18206] gw0-worker [receiver-thread] terminating execution
-[18206] gw0-worker shutting down execution pool
-[18206] gw0-worker [receiver-thread] closing read
-[18206] gw0-worker [receiver-thread] closing write
-[18206] gw0-worker 1 channel.__del__
-[18206] gw0-worker [receiver-thread] terminating our receive pseudo pool
-[18206] gw0-worker [serve] joining receiver thread
-[18206] gw0-worker waiting for receiver thread to finish
-[18206] === atexit cleanup <Group []> ===
 =========================== short test summary info ============================
-======== 640 passed, 431 skipped, 10 xfailed, 14 xpassed ========
+======== 642 passed, 428 skipped, 1 deselected, 10 xfailed, 14 xpassed ========
   py$(PYV): OK
   congratulations :)
