@@ -33,25 +33,38 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
 # CANDIDATE_BUILD= 1
+# CANDIDATE_BETA= 4
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	144.0.1
+COMPONENT_VERSION =	145.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE = 	$(COMPONENT_SRC).source.tar.xz
-COMPONENT_ARCHIVE_HASH= \
-	 sha256:62dd606308ee0c3298e052c05a8fce321df3a1012628511c7aacdf7ef6b7e965
-ifndef CANDIDATE_BUILD
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+
+ifdef CANDIDATE_BETA
+COMPONENT_ARCHIVE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)b$(CANDIDATE_BETA).source.tar.xz
 else
-MOZILLA_FTP = 		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
+COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
+
+COMPONENT_ARCHIVE_HASH= \
+	 sha256:4c24f99c45ac909e79f71072549ffcc2866097a6f5fab1dfd41c51918978b9b1
+
+ifndef CANDIDATE_BUILD
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
+else
+   ifndef CANDIDATE_BETA
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)
+  else
+MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)-candidates/build$(CANDIDATE_BUILD)
+  endif
+endif
+
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
 
-RUST_VERSION = 1.89.0
+RUST_VERSION = 1.90.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -67,12 +80,17 @@ LANG_LIST = af ar ast be bg br ca cak cs cy \
        nb-NO nl nn-NO pa-IN pl pt-BR pt-PT rm ro ru sk sl \
        sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 
+  ifdef CANDIDATE_BETA
+LANG_FILES_LOCATION= \
+      https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+  else
     ifdef CANDIDATE_BUILD
-LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
+      LANG_FILES_LOCATION= \
+      https://ftp.mozilla.org/pub/thunderbird/candidates/$(COMPONENT_VERSION)-candidates/build$(CANDIDATE_BUILD)/linux-x86_64/xpi
     else
-LANG_FILES_LOCATION= \
-        https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
+      LANG_FILES_LOCATION= \
+      https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)/linux-x86_64/xpi
+    endif
 endif
 
 CLEAN_PATHS += $(COMPONENT_DIR)/xpi
@@ -131,6 +149,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 	echo "ac_add_options --enable-update-channel=release" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-distribution-id=org.openindiana" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-intl-api" >> $(MOZCONFIG) ; \
+	echo "ac_add_options --with-system-botan" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-libevent" >> $(MOZCONFIG) ; \
 	echo "ac_add_options --with-system-zlib" >> $(MOZCONFIG) ; \
         echo "ac_add_options --host=$(GNU_ARCH)" >> $(MOZCONFIG) ; \
@@ -240,6 +259,7 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/pixman
 REQUIRED_PACKAGES += library/libevent2
+REQUIRED_PACKAGES += library/security/botan
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/fontconfig
