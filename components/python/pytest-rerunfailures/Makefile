@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_rerunfailures
 HUMAN_VERSION =			16.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_HASH =	\
