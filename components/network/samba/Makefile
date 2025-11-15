@@ -30,6 +30,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
 COMPONENT_VERSION =		4.23.2
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
@@ -45,7 +46,6 @@ COMPONENT_LICENSE_FILE = 	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-#PYTHON_VERSION = 3.13
 PYV =		$(shell echo $(PYTHON_VERSION) | tr -d .)
 PKG_MACROS +=	PYV=$(PYV)
 PKG_MACROS +=	PYVER=$(PYTHON_VERSION)
