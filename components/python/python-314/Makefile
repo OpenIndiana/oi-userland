@@ -32,7 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Python
 COMPONENT_VERSION =		3.14.0
-COMPONENT_REVISION =		2
+COMPONENT_REVISION =		3
 PYTHON_VERSION =		$(basename $(COMPONENT_VERSION))
 PYV =				$(subst .,,$(PYTHON_VERSION))
 COMPONENT_SUMMARY =		The Python interpreter, libraries and utilities
@@ -122,6 +122,9 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^    /s/\([^ ]\) /\\1\\\\n    /g'"
 # Print the test results summary only
 COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += "-e '/^== Test/,/OK/p'"
+
+# Testing fails with tzdata installed
+TEST_CONFLICTING_PACKAGES.python += library/python/tzdata
 
 # Allow 'pkgdepend generate' to run the currently built Python
 PKGDEPEND_GENERATE_ENV += PATH="$(PROTOUSRBINDIR):$(PATH)"

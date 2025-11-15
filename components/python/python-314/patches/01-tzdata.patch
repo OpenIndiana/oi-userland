@@ -1,0 +1,14 @@
+https://github.com/python/cpython/pull/137872
+
+--- Python-3.14.0/Lib/zoneinfo/_tzpath.py.orig
++++ Python-3.14.0/Lib/zoneinfo/_tzpath.py
+@@ -124,7 +124,8 @@
+     # Start with loading from the tzdata package if it exists: this has a
+     # pre-assembled list of zones that only requires opening one file.
+     try:
+-        with resources.files("tzdata").joinpath("zones").open("r") as f:
++        zones_file = resources.files("tzdata").joinpath("zones")
++        with zones_file.open("r", encoding="utf-8") as f:
+             for zone in f:
+                 zone = zone.strip()
+                 if zone:
