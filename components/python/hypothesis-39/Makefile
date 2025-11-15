@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project hypothesis
+#   $WS_TOOLS/python-integrate-project -d python/hypothesis-39 hypothesis
 #
 
 BUILD_STYLE = pyproject
@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.148.0
+HUMAN_VERSION =			6.141.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The property-based testing library for Python
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c508d4ba443aa69c2552cda1d1f2123cf36ad1c0212886a06cab272053bb192e
+	sha256:d28ebaa73b6d3897693ace2f27d63753eac589ef6673ddf3e5f87a37e8a2b4bd
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -34,8 +35,8 @@ COMPONENT_SRC =			hypothesis-hypothesis-python-$(HUMAN_VERSION)
 # https://github.com/HypothesisWorks/hypothesis/issues/3637
 COMPONENT_SUBDIR =		hypothesis-python
 
-# Python 3.9 is not supported by hypothesis >= 6.142.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# hypothesis >= 6.142.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,10 +49,9 @@ COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
-# https://github.com/python/tzdata/issues/116
-TEST_CONFLICTING_PACKAGES.python += library/python/tzdata
-
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/sortedcontainers
 REQUIRED_PACKAGES.python += library/python/wheel
