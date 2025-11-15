@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmime3
 COMPONENT_VERSION=      3.2.15
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      A C/C++ MIME creation and parser library with support for S/MIME, PGP, and Unix mbox spools
 COMPONENT_PROJECT_URL=  https://github.com/jstedfast/gmime
 COMPONENT_SRC=          gmime-$(COMPONENT_VERSION)
