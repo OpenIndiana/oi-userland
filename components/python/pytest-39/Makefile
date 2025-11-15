@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest
+#   $WS_TOOLS/python-integrate-project -d python/pytest-39 pytest
 #
 
 BUILD_STYLE = pyproject
@@ -19,21 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest
-HUMAN_VERSION =			9.0.1
+HUMAN_VERSION =			8.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest: simple powerful testing with Python
 COMPONENT_PROJECT_URL =		https://docs.pytest.org/en/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3e9c069ea73583e255c3b21cf46b8d3c56f6e3a1a8f6da94ccb0fcf57b9d73c8
+	sha256:86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - Userland testing framework (see setup.py.mk)
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by pytest >= 9.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pytest >= 9.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,12 +45,14 @@ COMPONENT_TEST_ENV += _PYTEST_TOX_COVERAGE_RUN="python -m"
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
 REQUIRED_PACKAGES.python += library/python/iniconfig
 REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/pluggy
 REQUIRED_PACKAGES.python += library/python/pygments
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
