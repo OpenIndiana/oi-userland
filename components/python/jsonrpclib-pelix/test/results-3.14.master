@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 69 items
+collecting ... collected 69 items / 1 skipped
 
 tests/test_cgi.py::CGIHandlerTests::test_server PASSED
 tests/test_compatibility.py::TestCompatibility::test_batch PASSED
@@ -83,12 +83,8 @@ tests/test_cgi.py::CGIHandlerTests::test_server
 
 tests/test_cgi.py::CGIHandlerTests::test_server
 tests/test_cgi.py::CGIHandlerTests::test_server
-  $(PYTHON_DIR)/http/server.py:1231: DeprecationWarning: This process (pid=841325) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  $(PYTHON_DIR)/http/server.py:1231: DeprecationWarning: This process (pid=$(PID)) is multi-threaded, use of fork() may lead to deadlocks in the child.
     pid = os.fork()
 
-tests/test_headers.py: 71 warnings
-  $(@D)/tests/test_headers.py:88: DeprecationWarning: 'maxsplit' is passed as positional argument
-    raw_headers = map(lambda h: re.split(r":\s?", h, 1), raw_headers)
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 63 passed, 6 skipped, 75 warnings ========
+======== 63 passed, 7 skipped, 4 warnings ========
