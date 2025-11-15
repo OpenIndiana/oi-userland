@@ -19,19 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Term-Table
-HUMAN_VERSION =			0.025
+HUMAN_VERSION =			0.027
 COMPONENT_SUMMARY =		Format a header and rows into a table
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2e7d83a8be97cdb71d5eb8165b5e82dc9e3f4f624db972a3cdfd6eba7e2cb29e
+	sha256:79630dd1f3628f07192edb7d1de0cfbee8e995a008cb67dd07d1d45df9a5c1a6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/term-size-any
-PERL_REQUIRED_PACKAGES += library/perl-5/unicode-linebreak
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/term-size-any
+REQUIRED_PACKAGES.perl += library/perl-5/unicode-linebreak
+REQUIRED_PACKAGES.perl += runtime/perl
