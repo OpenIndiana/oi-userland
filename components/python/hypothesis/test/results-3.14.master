@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder .tox/py$(PYV)
 py$(PYV): commands[0]> python -bb -X dev -m pytest -n auto tests/nocover/
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/hypothesis-python/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 hypothesis profile 'default'
 rootdir: $(@D)
 configfile: pytest.ini
-X workers [1360 items]
+X workers [1391 items]
 
 scheduling tests via LoadScheduling
 
@@ -269,8 +268,15 @@ tests/nocover/test_emails.py::test_is_valid_email PASSED
 tests/nocover/test_eval_as_source.py::test_caches PASSED
 tests/nocover/test_eval_as_source.py::test_can_call_self_recursively PASSED
 tests/nocover/test_eval_as_source.py::test_can_eval_as_source PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_discard_frozen PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_multiple_InvalidArgument PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_multiple_hypothesisexception PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_multiple_stop PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_nested PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_stop_and_hypothesisexception PASSED
+tests/nocover/test_exceptiongroup.py::test_exceptiongroup_user_originated PASSED
 tests/nocover/test_explore_arbitrary_languages.py::test_explore_an_arbitrary_language PASSED
-tests/nocover/test_explore_arbitrary_languages.py::test_run_specific_example[seed0-language0] SKIPPED
+tests/nocover/test_explore_arbitrary_languages.py::test_run_specific_example[NOTSET] SKIPPED
 tests/nocover/test_fancy_repr.py::test_builds_repr PASSED
 tests/nocover/test_fancy_repr.py::test_filter_repr PASSED
 tests/nocover/test_fancy_repr.py::test_flatmap_repr PASSED
@@ -1030,8 +1036,8 @@ tests/nocover/test_regex.py::test_case_insensitive_not_literal_never_constructs_
 tests/nocover/test_regex.py::test_conservative_regex_are_correct_by_construction PASSED
 tests/nocover/test_regex.py::test_fuzz_stuff PASSED
 tests/nocover/test_regex.py::test_no_error_converting_negated_sets_to_strategy PASSED
-tests/nocover/test_regex.py::test_regex_atomic_group SKIPPED
-tests/nocover/test_regex.py::test_regex_possessive SKIPPED
+tests/nocover/test_regex.py::test_regex_atomic_group PASSED
+tests/nocover/test_regex.py::test_regex_possessive PASSED
 tests/nocover/test_regressions.py::test_explain_phase_label_assertion_4339 PASSED
 tests/nocover/test_regressions.py::test_note_deprecation_blames_right_code_issue_652 PASSED
 tests/nocover/test_regressions.py::test_overrun_during_datatree_simulation_3874 PASSED
@@ -1313,50 +1319,74 @@ tests/nocover/test_threading.py::test_run_stateful_test_concurrently PASSED
 tests/nocover/test_threading.py::test_single_thread_can_raise_deadline_exceeded PASSED
 tests/nocover/test_threading.py::test_stackframes_restores_original_recursion_limit PASSED
 tests/nocover/test_type_lookup.py::test_binary_type_resolution PASSED
-tests/nocover/test_type_lookup.py::test_callable_return_typegard_type[None0] SKIPPED
-tests/nocover/test_type_lookup.py::test_callable_return_typegard_type[None1] SKIPPED
+tests/nocover/test_type_lookup.py::test_callable_return_typegard_type[TypeGuard] PASSED
+tests/nocover/test_type_lookup.py::test_callable_return_typegard_type[TypeIs] PASSED
 tests/nocover/test_type_lookup.py::test_callable_with_concatenate PASSED
 tests/nocover/test_type_lookup.py::test_callable_with_paramspec PASSED
 tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Annotated] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Never] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ParamSpec] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Self] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeVarTuple] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type0] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type10] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type11] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type13] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type14] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type15] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type17] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type19] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type2] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type4] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type5] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type6] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type7] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type8] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[non_runtime_type9] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Any] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ClassVar0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ClassVar1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Concatenate0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Concatenate1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Final0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Final1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Never0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Never1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[NoReturn0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[NoReturn1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[NotRequired0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[NotRequired1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ParamSpec0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ParamSpec1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ReadOnly0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[ReadOnly1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Required0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Required1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Self0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Self1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeAlias0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeAlias1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeGuard0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeGuard1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeIs0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeIs1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeVarTuple0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[TypeVarTuple1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Unpack0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_registered[Unpack1] PASSED
 tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Annotated] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Never] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ParamSpec] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Self] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeVarTuple] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type0] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type10] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type11] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type13] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type14] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type15] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type17] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type19] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type2] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type4] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type5] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type6] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type7] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type8] PASSED
-tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[non_runtime_type9] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Any] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ClassVar0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ClassVar1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Concatenate0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Concatenate1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Final0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Final1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Never0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Never1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[NoReturn0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[NoReturn1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[NotRequired0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[NotRequired1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ParamSpec0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ParamSpec1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ReadOnly0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[ReadOnly1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Required0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Required1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Self0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Self1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeAlias0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeAlias1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeGuard0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeGuard1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeIs0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeIs1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeVarTuple0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[TypeVarTuple1] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Unpack0] PASSED
+tests/nocover/test_type_lookup.py::test_non_runtime_type_cannot_be_resolved[Unpack1] PASSED
 tests/nocover/test_type_lookup_forward_ref.py::test_mutually_recursive_types_with_typevar PASSED
 tests/nocover/test_type_lookup_forward_ref.py::test_mutually_recursive_types_with_typevar_alternate PASSED
 tests/nocover/test_type_lookup_future_annotations.py::test_complex_forward_ref_in_typed_dict PASSED
@@ -1372,6 +1402,6 @@ tests/nocover/test_uuids.py::test_can_generate_specified_version[5] PASSED
 tests/nocover/test_uuids.py::test_retains_uniqueness_in_simplify PASSED
 
 ============================= slowest 20 durations =============================
-======== 1354 passed, 7 skipped ========
+======== 1389 passed, 2 skipped ========
   py$(PYV): OK
   congratulations :)
