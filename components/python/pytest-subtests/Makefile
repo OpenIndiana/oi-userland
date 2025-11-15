@@ -19,20 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_subtests
-HUMAN_VERSION =			0.14.2
+HUMAN_VERSION =			0.15.0
 COMPONENT_SUMMARY =		unittest subTest() support and subtests fixture
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-subtests
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7154a8665fd528ee70a76d00216a44d139dc3c9c83521a0f779f7b0ad4f800de
+	sha256:cb495bde05551b784b8f0b8adfaa27edb4131469a27c339b80fd8d6ba33f887c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
