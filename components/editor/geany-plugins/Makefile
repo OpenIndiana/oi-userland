@@ -16,12 +16,11 @@
 #
 
 USE_PARALLEL_BUILD = yes
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         geany-plugins
 COMPONENT_VERSION=      2.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      Plugins for Geany editor
 COMPONENT_DESCRIPTION=	Geany-Plugins is a collection of different plugins for Geany, a lightweight IDE.
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
