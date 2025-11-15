@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project testtools
+#   $WS_TOOLS/python-integrate-project -d python/testtools-39 testtools
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testtools
-HUMAN_VERSION =			2.8.0
+HUMAN_VERSION =			2.7.2
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Extensions to the Python standard library unit testing framework
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/testtools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b4496f147a7b79440242496889a734179795df345b57d5aa406a09c90572dba1
+	sha256:5be5bbc1f0fa0f8b60aca6ceec07845d41d0c475cf445bfadb4d2c45ec397ea3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# testtools --> testscenarios ==> testtools
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by testtools >= 2.8.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# testtools >= 2.8.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -49,6 +39,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\(laddr=('\''127.0.0.1'\'', \)[0-9]\{1,\})/\
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/testresources
