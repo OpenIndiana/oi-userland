@@ -11,25 +11,33 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/cached-property cached_property
+#   $WS_TOOLS/python-integrate-project cached-property
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		cached_property
+COMPONENT_NAME =		cached-property
 HUMAN_VERSION =			2.0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A decorator for caching properties in classes.
 COMPONENT_PROJECT_URL =		https://github.com/pydanny/cached-property
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/pydanny/cached-property/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:484d617105e3ee0e4f1f58725e72a8ef9e93deee462222dbd51cd91230897641
+	sha256:2680524870b43cdcd729edf49b3042612b8a4d2fa089d9f2e9ce32d8d0d5d3ba
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = pytest
-
 include $(WS_MAKE_RULES)/common.mk
 
+# Random thread number
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Exception in thread \)Thread-[0-9]\{1,\}$$/\1\$$(THREAD)/'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/freezegun
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
