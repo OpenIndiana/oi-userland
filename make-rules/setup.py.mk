@@ -359,6 +359,7 @@ USERLAND_TEST_REQUIRED_PACKAGES.python += library/python/tox-current-env
 # Please note we set PATH below five times for tox to workaround
 # https://github.com/tox-dev/tox/issues/2538
 DEPEND_TEST_FILES += $(INSTALL_$(MK_BITS):%.installed=%.depend-test-tox)
+$(foreach v,$(PYTHON_VERSIONS),$(eval $(BUILD_DIR)/%-$(v)/.depend-test-tox: PYTHON_VERSION=$(v)))
 $(BUILD_DIR)/%/.depend-test-tox: $(BUILD_DIR)/%/.installed
 	if $(TOX) --version 2>/dev/null | $(GNU_GREP) -q tox-current-env ; then \
 		cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
@@ -631,6 +632,7 @@ $(BUILD_DIR)/META.depend-runtime.res:	$(INSTALL_$(MK_BITS)) $(BUILD_DIR)/META.de
 
 # Generate raw lists of test dependencies per Python version
 DEPEND_TEST_FILES += $(INSTALL_$(MK_BITS):%.installed=%.depend-test)
+$(foreach v,$(PYTHON_VERSIONS),$(eval $(BUILD_DIR)/%-$(v)/.depend-test: PYTHON_VERSION=$(v)))
 $(BUILD_DIR)/%/.depend-test: $(BUILD_DIR)/%/.installed
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	( for f in $(TEST_REQUIREMENTS) ; do \

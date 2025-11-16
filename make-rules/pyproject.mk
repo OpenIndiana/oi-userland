@@ -64,6 +64,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 #
 # Please note we set PATH below for tox to workaround
 # https://github.com/tox-dev/tox/issues/2538
+$(foreach v,$(PYTHON_VERSIONS),$(eval $(BUILD_DIR)/%-$(v)/.depend-test-pyproject: PYTHON_VERSION=$(v)))
 $(BUILD_DIR)/%/.depend-test-pyproject: $(BUILD_DIR)/%/.installed
 	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; \
 	cfg=$(BUILD_DIR)/pyproject_deps-$(PYTHON_VERSION).json ; \
