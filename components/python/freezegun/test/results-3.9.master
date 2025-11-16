@@ -1,5 +1,9 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --cov
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/_integration/deprecation.py:7: UserWarning: setup.cfg: at [metadata]
+version = attr: ... is forcing setuptools to override the version setuptools-scm did already set
+When using setuptools-scm it's invalid to use setuptools dynamic version as well, please remove it.
+Setuptools-scm is responsible for setting the version, forcing setuptools to override creates errors.
+  warnings.warn(
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -155,35 +159,6 @@ tests/test_uuid.py::test_uuid1_past PASSED
 tests/test_warnings.py::test_ignore_warnings_in_start PASSED
 tests/test_warnings.py::test_ignore_warnings_in_stop PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
-
-Name                            Stmts   Miss  Cover
----------------------------------------------------
-freezegun/__init__.py               8      0   100%
-freezegun/_async.py                12      1    92%
-freezegun/api.py                  640     70    89%
-freezegun/config.py                17      1    94%
-tests/__init__.py                   0      0   100%
-tests/another_module.py            28      0   100%
-tests/fake_module.py               22      2    91%
-tests/test_asyncio.py              44      0   100%
-tests/test_class_decorator.py      39      0   100%
-tests/test_class_import.py        130      0   100%
-tests/test_configure.py            29      0   100%
-tests/test_datetimes.py           549     25    95%
-tests/test_errors.py               30      0   100%
-tests/test_import_alias.py         17      0   100%
-tests/test_operations.py           93      1    99%
-tests/test_pickle.py               46      0   100%
-tests/test_sqlite3.py              11      0   100%
-tests/test_ticking.py              87     27    69%
-tests/test_utils.py                25      2    92%
-tests/test_uuid.py                 22      0   100%
-tests/test_warnings.py             43      0   100%
-tests/utils.py                     21      2    90%
----------------------------------------------------
-TOTAL                            1913    131    93%
 ======== 143 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
