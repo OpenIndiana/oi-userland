@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         WindowMaker
 COMPONENT_VERSION=      0.96.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Window Maker is an X11 window manager originally designed to provide integration support for the GNUstep Desktop Environment, although it can run stand alone. In every way possible, it reproduces the elegant look and feel of the NeXTSTEP user interface.
 COMPONENT_PROJECT_URL=  https://windowmaker.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
