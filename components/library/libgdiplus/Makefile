@@ -13,10 +13,12 @@
 #
 
 USE_DEFAULT_TEST_TRANSFORMS=yes
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libgdiplus
 COMPONENT_VERSION=      6.2
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Open Source Implementation of the GDI+ API
 COMPONENT_PROJECT_URL=  https://www.mono-project.com/docs/gui/libgdiplus/
 COMPONENT_FMRI=         library/desktop/libgdiplus
