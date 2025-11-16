@@ -21,12 +21,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	4.2.0
+COMPONENT_VERSION=	4.2.1
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:6c43be5a9274963c06ba4cd55a109dfcc4d5d3a8054ed0e0a3666388581ec252
+COMPONENT_ARCHIVE_HASH=	sha256:0f99222a3063377c91fbf78d9850edab7a0b91bdbed201cf79da48ea3a41f393
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -59,6 +59,9 @@ COMPONENT_TEST_TARGETS= fish_run_tests
 # strip timing
 COMPONENT_TEST_TRANSFORMS += "-e 's/ ms//g'"
 COMPONENT_TEST_TRANSFORMS += "-e 's/ [0-9]*$$//'"
+# remove terminal color codes
+COMPONENT_TEST_TRANSFORMS += "-e 's/\x1B\[32mPASSED\x1B\[0m/PASSED/g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/\x1B\[31mFAILED\x1B\[0m/FAILED/g'"
 # only keep the test result lines
 COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += '-e "/FAILED/p" '
