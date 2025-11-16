@@ -15,16 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		build
-HUMAN_VERSION =			1.3.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		A simple, correct Python build frontend
 COMPONENT_PROJECT_URL =		https://build.pypa.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:698edd0ea270bde950f53aed21f3a0135672206f3911e0176261a31e0e07b397
+	sha256:f1b91b925aa322be454f8330c6fb48b465da993d1e7e7e6fa35027ec49f3c936
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,6 +39,9 @@ PYTEST_ADDOPTS += --assert=plain
 # https://github.com/pypa/build/issues/920
 PYTEST_ADDOPTS += --deselect tests/test_projectbuilder.py::test_check_dependencies
 
+# This list could vary between Python versions
+COMPONENT_TEST_TRANSFORMS += "-e '/^installed packages of interest:/d'"
+
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
@@ -50,9 +53,7 @@ REQUIRED_PACKAGES.python += library/python/pyproject-hooks
 REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/filelock
-TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
