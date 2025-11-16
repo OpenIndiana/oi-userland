@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_mock
 HUMAN_VERSION =			3.15.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Thin-wrapper around the mock package for easier use with pytest
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-mock/
 COMPONENT_ARCHIVE_HASH =	\
@@ -40,6 +42,5 @@ REQUIRED_PACKAGES.python += library/python/pytest
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
