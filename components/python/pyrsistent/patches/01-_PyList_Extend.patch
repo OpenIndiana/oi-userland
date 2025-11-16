@@ -1,0 +1,18 @@
+https://github.com/tobgu/pyrsistent/pull/284
+
+--- pyrsistent-0.20.0/pvectorcmodule.c.orig
++++ pyrsistent-0.20.0/pvectorcmodule.c
+@@ -1313,12 +1313,10 @@
+ }
+ 
+ static PyObject *PVectorEvolver_extend(PVectorEvolver *self, PyObject *args) {
+-  PyObject *retVal = _PyList_Extend((PyListObject *)self->appendList, args);
+-  if (retVal == NULL) {
++  if (PyList_SetSlice(self->appendList, PY_SSIZE_T_MAX, PY_SSIZE_T_MAX, args) < 0) {
+     return NULL;
+   }
+ 
+-  Py_DECREF(retVal);
+   Py_INCREF(self);
+   return (PyObject*)self;
+ }
