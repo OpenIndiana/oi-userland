@@ -411,6 +411,10 @@ PYTEST_ADDOPTS += --verbose
 # Force pytest to not use colored output so the results normalization is unaffected
 PYTEST_ADDOPTS += --color=no
 
+# Clear cross-session cache so the current test run is not affected by the
+# previous one
+PYTEST_ADDOPTS += --cache-clear
+
 # Create list of required pytest plugins.
 define pytest-plugin
 PYTEST_PLUGINS += $$(if $$(filter library/python/$(1)-$$(subst .,,$$(PYTHON_VERSION)), $$(REQUIRED_PACKAGES) $$(TEST_REQUIRED_PACKAGES) $$(COMPONENT_FMRI)-$$(subst .,,$$(PYTHON_VERSION))),$(2))
