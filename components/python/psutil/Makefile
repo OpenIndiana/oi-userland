@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psutil
-HUMAN_VERSION =			7.0.0
-COMPONENT_SUMMARY =		Cross-platform lib for process and system monitoring in Python.  NOTE: the syntax of this script MUST be kept compatible with Python 2.7.
+HUMAN_VERSION =			7.1.3
+COMPONENT_SUMMARY =		Cross-platform lib for process and system monitoring.
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/psutil
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456
+	sha256:6c86281738d77335af7aec228328e944b30930899ea760ecf33a4dba66be5e74
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,13 +38,12 @@ TEST_REQUIREMENTS_EXTRAS += test
 # We need to run tests in proto area to get access to compiled modules
 COMPONENT_TEST_DIR = $(PROTO_DIR)/$(PYTHON_LIB)
 # ... and so we need to point back to build dir for scripts subdirectory
-COMPONENT_TEST_ENV += PSUTIL_SCRIPTS_DIR=$(@D)/scripts
+COMPONENT_TEST_ENV += PSUTIL_ROOT_DIR=$(@D)
+# https://github.com/giampaolo/psutil/issues/2686
+COMPONENT_TEST_ENV += PSUTIL_DEBUG=0
 
 # fails on zfs
 PYTEST_ADDOPTS += --deselect psutil/tests/test_posix.py::TestSystemAPIs::test_disk_usage
-# https://github.com/giampaolo/psutil/issues/2357
-PYTEST_ADDOPTS += --deselect psutil/tests/test_process.py::TestProcess::test_long_cmdline
-PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_proc_cmdline
 # process priority and nice does not match
 PYTEST_ADDOPTS += --deselect psutil/tests/test_process.py::TestProcess::test_nice
 # https://github.com/giampaolo/psutil/issues/2358
@@ -59,9 +58,10 @@ PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIs::test_memo
 PYTEST_ADDOPTS += --deselect psutil/tests/test_unicode.py::TestFSAPIsWithInvalidPath::test_memory_maps
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-subtests
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
