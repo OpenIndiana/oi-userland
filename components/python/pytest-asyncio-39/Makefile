@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/pytest-asyncio pytest_asyncio
+#   $WS_TOOLS/python-integrate-project -d python/pytest-asyncio-39 pytest_asyncio
 #
 
 BUILD_STYLE = pyproject
@@ -27,8 +27,8 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by pytest-asyncio >= 1.3.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pytest-asyncio >= 1.3.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,8 +36,10 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/backports-asyncio-runner
 REQUIRED_PACKAGES.python += library/python/pytest
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
