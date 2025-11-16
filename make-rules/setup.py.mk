@@ -371,12 +371,10 @@ $(BUILD_DIR)/%/.depend-test-tox: $(BUILD_DIR)/%/.installed
 		PATH=$(PATH) $(TOX) -qq --no-provision --print-dependency-groups-to=- $(TOX_TESTENV) || exit 1 ; \
 		( PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
-				PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
+				PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
 		for e in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
-			PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-				$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
+			PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 		done \
 		) | $(GSED) -e '/^tox\(-current-env\)\?$$/d' > $@ ; \
 	fi
@@ -639,11 +637,9 @@ $(BUILD_DIR)/%/.depend-test: $(BUILD_DIR)/%/.installed
 		$(CAT) $$f | $(DOS2UNIX) -ascii ; \
 	done ; \
 	for e in $(TEST_REQUIREMENTS_EXTRAS) ; do \
-		PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-			$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
+		PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 	done ) | $(WS_TOOLS)/python-resolve-deps \
-		PYTHONPATH=$(PROTOPYTHONSITEDIR):$(PROTOPYTHONVENDORDIR) \
-		$(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
+		PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
 	| $(PYTHON) $(WS_TOOLS)/python-requires - > $@
 
 # Convert raw per version lists of test dependencies to single list of
