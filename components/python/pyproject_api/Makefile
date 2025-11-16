@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_api
 HUMAN_VERSION =			1.10.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		API to interact with the python pyproject.toml based projects
 COMPONENT_PROJECT_URL =		https://pyproject-api.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
@@ -45,8 +46,6 @@ REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
