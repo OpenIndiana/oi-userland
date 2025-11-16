@@ -1,10 +1,11 @@
 --- fish-4.2.0/src/wutil/dir_iter.rs.~1~	2025-11-10 02:19:40.000000000 -0500
 +++ fish-4.2.0/src/wutil/dir_iter.rs	2025-11-10 23:26:28.445480042 -0500
-@@ -293,6 +293,7 @@
+@@ -293,6 +293,8 @@
                  self.entry.inode = dent.d_ino;
              }
          );
-+        #[cfg(not(target_os = "illumos"))] {
++        #[cfg(not(target_os = "illumos"))]
++        {
          let typ = dirent_type_to_entry_type(dent.d_type);
          // Do not store symlinks as we will need to resolve them.
          if typ != Some(DirEntryType::lnk) {
