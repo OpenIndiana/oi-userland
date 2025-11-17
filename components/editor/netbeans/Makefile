@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
 COMPONENT_VERSION= 28
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -43,10 +44,18 @@ COMPONENT_BUILD_ARGS=
 
 PYTHON_SHEBANG="\#\!\/usr\/bin\/python$(PYTHON_VERSION)"
 
+ifeq ($(MACH), i386)
+NARCH=x86_64
+endif
+
+ifeq ($(MACH), sparc)
+NARCH=sparcv9
+endif
+
 $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	mkdir -p $(PROTO_DIR)/usr/netbeans/;
 	[ -d $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION) ] || cp -R $(BUILD_DIR_64)/nbbuild/netbeans $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION);
-	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/{pty,pty_open,process_start,killall}; do \
+	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/{pty,pty_open,process_start,killall}; do \
 		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$FILE; \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' $$FILE; \
 	done;
