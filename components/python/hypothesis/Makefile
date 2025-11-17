@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.148.0
+HUMAN_VERSION =			6.148.1
 COMPONENT_SUMMARY =		The property-based testing library for Python
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c508d4ba443aa69c2552cda1d1f2123cf36ad1c0212886a06cab272053bb192e
+	sha256:685b808652951d48387fb24f5a7a6763fd0473770ed0301b7b4c53cf6394a60a
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -47,9 +47,6 @@ COMPONENT_TEST_TRANSFORMS += "-e '/to add failing examples to your code/d'"
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
-
-# https://github.com/python/tzdata/issues/116
-TEST_CONFLICTING_PACKAGES.python += library/python/tzdata
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
