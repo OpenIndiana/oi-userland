@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_freezer
 HUMAN_VERSION =			0.4.9
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pytest plugin providing a fixture interface for spulec/freezegun
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-freezer
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,7 +33,7 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/freezegun
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/freezegun
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += runtime/python
