@@ -1,17 +1,29 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.hypothesis/examples')
-rootdir: $(@D), configfile: pyproject.toml, testpaths: tests/
-asyncio: mode=strict
+rootdir: $(@D)
+configfile: pyproject.toml
+testpaths: tests/
 collecting ... collected 7 items
 
 tests/test_cli.py::test_cli_help[subprocess-args0-0] PASSED
 tests/test_cli.py::test_cli_help[subprocess-args1-2] PASSED
 tests/test_cli.py::test_cli_version[subprocess-0.0.0-0] PASSED
 tests/test_cli.py::test_cli_version[subprocess-not-a-version-1] PASSED
-tests/test_pep.py::test_not_ok PASSED
 tests/test_pep.py::test_ok PASSED
+tests/test_pep.py::test_not_ok PASSED
 tests/test_pep.py::test_ok_loose PASSED
 
-======== 7 passed ========
+=============================== warnings summary ===============================
+tests/test_cli.py::test_cli_help[subprocess-args0-0]
+tests/test_cli.py::test_cli_help[subprocess-args0-0]
+tests/test_cli.py::test_cli_version[subprocess-0.0.0-0]
+tests/test_cli.py::test_cli_version[subprocess-0.0.0-0]
+tests/test_cli.py::test_cli_version[subprocess-not-a-version-1]
+tests/test_cli.py::test_cli_version[subprocess-not-a-version-1]
+  $(@D)/tests/test_cli.py:15: DeprecationWarning: script_runner commands should be passed as a single sequence, not as multiple arguments.
+  Replace `script_runner.run(a, b, c)` calls with `script_runner.run([a, b, c])`
+    return script_runner.run(NAME, *map(str, args), **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 7 passed, 6 warnings ========
