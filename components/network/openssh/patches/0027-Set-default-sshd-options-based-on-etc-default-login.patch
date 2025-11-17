@@ -3,27 +3,29 @@ From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
 
---- openssh-10.0p1/pathnames.h.orig
-+++ openssh-10.0p1/pathnames.h
-@@ -42,6 +42,7 @@
- #define _PATH_HOST_XMSS_KEY_FILE	SSHDIR "/ssh_host_xmss_key"
+diff -wpruN --no-dereference '--exclude=*.orig' a~/pathnames.h a/pathnames.h
+--- openssh-10.2p1/pathnames.h.orig	1970-01-01 00:00:00
++++ openssh-10.2p1/pathnames.h	1970-01-01 00:00:00
+@@ -40,6 +40,7 @@
+ #define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
  #define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
  #define _PATH_DH_MODULI			SSHDIR "/moduli"
 +#define _PATH_DEFAULT_LOGIN		ETCDIR "/default/login"
  
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
---- openssh-10.0p1/servconf.c.orig
-+++ openssh-10.0p1/servconf.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- openssh-10.2p1/servconf.c.orig	1970-01-01 00:00:00
++++ openssh-10.2p1/servconf.c	1970-01-01 00:00:00
 @@ -36,6 +36,7 @@
  #include <unistd.h>
  #include <limits.h>
  #include <stdarg.h>
 +#include <deflt.h>
  #include <errno.h>
- #ifdef HAVE_UTIL_H
  #include <util.h>
-@@ -238,6 +239,64 @@
+ #ifdef USE_SYSTEM_GLOB
+@@ -236,6 +237,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -88,7 +90,7 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -325,6 +384,8 @@
+@@ -323,6 +382,8 @@ fill_default_server_options(ServerOption
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  #endif
  
@@ -97,9 +99,10 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  	/* Standard Options */
  	if (options->num_host_key_files == 0) {
  		/* fill default hostkeys for protocols */
---- openssh-10.0p1/sshd_config.5.orig
-+++ openssh-10.0p1/sshd_config.5
-@@ -1350,7 +1350,14 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd_config.5 a/sshd_config.5
+--- openssh-10.2p1/sshd_config.5.orig	1970-01-01 00:00:00
++++ openssh-10.2p1/sshd_config.5	1970-01-01 00:00:00
+@@ -1349,7 +1349,14 @@ Specifies the maximum number of authenti
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -115,7 +118,7 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1425,7 +1432,14 @@
+@@ -1424,7 +1431,14 @@ The default is
  When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is

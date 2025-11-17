@@ -9,9 +9,11 @@ Subject: [PATCH 02/34] PAM Support
 # will not contribute the changes to the upstream community.
 #
 
---- openssh-10.0p1/servconf.c.orig
-+++ openssh-10.0p1/servconf.c
-@@ -299,7 +299,12 @@
+*** orig/servconf.c	Mon Dec  5 17:23:03 2011
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- openssh-10.2p1/servconf.c.orig	1970-01-01 00:00:00
++++ openssh-10.2p1/servconf.c	1970-01-01 00:00:00
+@@ -297,7 +297,12 @@ fill_default_server_options(ServerOption
  
  	/* Portable-specific options */
  	if (options->use_pam == -1)
@@ -24,7 +26,7 @@ Subject: [PATCH 02/34] PAM Support
  	if (options->pam_service_name == NULL)
  		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
  
-@@ -1389,8 +1394,17 @@
+@@ -1383,8 +1388,17 @@ process_server_config_line_depth(ServerO
  	switch (opcode) {
  	/* Portable-specific options */
  	case sUsePAM:
