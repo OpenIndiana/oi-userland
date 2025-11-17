@@ -391,11 +391,17 @@ PYTHON_VERSIONS=$($GMAKE print-value-PYTHON_VERSIONS)
 TEST_STYLE=
 cd "$SOURCE_DIR$COMPONENT_SUBDIR"
 while true ; do
-	TOX_OUT=$(tox-${PYTHON_VERSIONS%% *} -l --no-provision 2>&1)
-	TOX_RET=$?
-	((TOX_RET == 0)) && ! printf "%s" "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && TEST_STYLE="tox" && break
-	((TOX_RET == 254)) && printf '%s' "$TOX_OUT" | grep -q 'provisioning explicitly disabled' \
-		&& printf 'ERROR: tox test style needs provisioning\n' >&2
+	TEST_STYLE='tox'
+	for v in $PYTHON_VERSIONS ; do
+		TOX_OUT=$(tox-$v -l --no-provision 2>&1)
+		TOX_RET=$?
+		((TOX_RET == 0)) && ! printf '%s' "$TOX_OUT" | grep -q 'assuming empty tox\.ini' && continue
+		TEST_STYLE=
+		((TOX_RET == 254)) && printf '%s' "$TOX_OUT" | grep -q 'provisioning explicitly disabled' \
+			&& printf 'ERROR: tox test style needs provisioning for %s\n' "$v" >&2 && continue
+		break
+	done
+	[[ "$TEST_STYLE" ]] && break
 
 	# Disable autoload of all pytest plugins because some of them almost
 	# always collects tests to run even there are no pytest tests available
