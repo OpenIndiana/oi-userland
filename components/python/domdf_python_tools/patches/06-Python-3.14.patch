@@ -1,0 +1,37 @@
+https://github.com/domdfcoding/domdf_python_tools/pull/137
+
+--- domdf_python_tools-3.10.0/domdf_python_tools/words.py.orig
++++ domdf_python_tools-3.10.0/domdf_python_tools/words.py
+@@ -171,14 +171,13 @@
+ 
+ 	alphabet_ = list(alphabet)
+ 
+-	try:
+-		return sorted(iterable, key=lambda attr: [alphabet_.index(letter) for letter in attr], reverse=reverse)
+-	except ValueError as e:
+-		m = re.match(r"'(.*)' is not in list", str(e))
+-		if m:
+-			raise ValueError(f"The character {m.group(1)!r} was not found in the alphabet.") from None
+-		else:  # pragma: no cover
+-			raise e
++	def _alphabet_index(letter: str) -> int:
++		try:
++			return alphabet_.index(letter)
++		except ValueError:
++			raise ValueError(f"The character {letter!r} was not found in the alphabet.") from None
++
++	return sorted(iterable, key=lambda attr: [_alphabet_index(letter) for letter in attr], reverse=reverse)
+ 
+ 
+ class Font(Dict[str, str]):
+--- domdf_python_tools-3.10.0/tests/test_utils.py.orig
++++ domdf_python_tools-3.10.0/tests/test_utils.py
+@@ -124,7 +124,7 @@
+ 	assert re.match(expects, stdout[0])
+ 
+ 
+-if sys.version_info >= (3, 13):
++if sys.version_info[:2] == (3, 13):
+ 	pure_posix_path_expected = "<class 'pathlib._local.PurePosixPath'>"
+ else:
+ 	pure_posix_path_expected = "<class 'pathlib.PurePosixPath'>"
