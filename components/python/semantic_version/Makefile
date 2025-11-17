@@ -14,13 +14,13 @@
 #   $WS_TOOLS/python-integrate-project semantic_version
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		semantic_version
 HUMAN_VERSION =			2.10.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		A library implementing the 'SemVer' scheme.
 COMPONENT_PROJECT_URL =		https://github.com/rbarrois/python-semanticversion
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,15 +28,25 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# semantic_version --> zest.releaser ==> twine ==> id ==> requests --> trustme ==> cryptography ==> maturin ==> setuptools-rust ==> semantic_version
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/check-manifest
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/nose
-TEST_REQUIRED_PACKAGES.python += library/python/pep440
-TEST_REQUIRED_PACKAGES.python += library/python/pyroma
 TEST_REQUIRED_PACKAGES.python += library/python/wheel
 TEST_REQUIRED_PACKAGES.python += library/python/zest-releaser
