@@ -25,13 +25,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			janet
-COMPONENT_VERSION=		1.40.0
+COMPONENT_VERSION=		1.40.1
 COMPONENT_SUMMARY=		Janet is a functional and imperative programming language
 COMPONENT_PROJECT_URL=	https://www.janet-lang.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/janet-lang/janet/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a93f1d3ba220e487e2fd95b786602eb786c4972e356cec2e19c5d75289edc52f
+COMPONENT_ARCHIVE_HASH=	sha256:e7fdcb7ccc83a3be6181f7d7d71f0ea027a000e0eefe9bba3b8373c05eb5764a
 COMPONENT_FMRI=			runtime/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		MIT
