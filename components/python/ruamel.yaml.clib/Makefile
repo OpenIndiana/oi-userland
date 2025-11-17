@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ruamel.yaml.clib
-HUMAN_VERSION =			0.2.14
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.2.15
 COMPONENT_SUMMARY =		C version of reader, parser and emitter for ruamel.yaml derived from libyaml
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/ea/97/60fda20e2fb54b83a61ae14648b0817c8f5d84a3821e40bfbdae1437026a/ruamel_yaml_clib-0.2.15.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:803f5044b13602d58ea378576dd75aa759f52116a0232608e8fdada4da33752e
+	sha256:46e4cc8c43ef6a94885f72512094e482114a8a706d3c555a34ed4b0d20200600
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
