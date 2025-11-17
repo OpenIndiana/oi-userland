@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		seedir
 HUMAN_VERSION =			0.5.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Package for creating, editing, and reading folder tree diagrams.
 COMPONENT_PROJECT_URL =		https://github.com/earnestt1234/seedir
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/natsort
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
