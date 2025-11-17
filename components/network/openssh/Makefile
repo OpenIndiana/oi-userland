@@ -29,15 +29,14 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-COMPONENT_VERSION=	10.0.0.2
-HUMAN_VERSION=		10.0p2
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	10.2.0.1
+HUMAN_VERSION=		10.2p1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 # OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
-COMPONENT_SRC=		$(COMPONENT_NAME)-10.0p1
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openssh.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:021a2e709a0edf4250b1256bd5a9e500411a90dddabea830ed59cef90eb9d85c
+COMPONENT_ARCHIVE_HASH=	sha256:ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2
 COMPONENT_ARCHIVE_URL=	https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/ssh
 COMPONENT_LICENSE=	BSD, BSD-like
