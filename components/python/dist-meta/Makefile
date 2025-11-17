@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dist-meta
 HUMAN_VERSION =			0.9.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Parse and create Python distribution metadata.
 COMPONENT_PROJECT_URL =		https://github.com/repo-helper/dist-meta
 COMPONENT_ARCHIVE_URL =		\
@@ -47,29 +48,24 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_ADDOPTS += --deselect tests/test_distributions.py::test_packages_distributions
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
-PYTHON_REQUIRED_PACKAGES += library/python/handy-archives
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/domdf-python-tools
+REQUIRED_PACKAGES.python += library/python/handy-archives
+REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/apeye
-TEST_REQUIRED_PACKAGES.python += library/python/atomicwrites
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
 TEST_REQUIRED_PACKAGES.python += library/python/colorama
 TEST_REQUIRED_PACKAGES.python += library/python/consolekit
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/first
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
-TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pypi-json
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytz
 TEST_REQUIRED_PACKAGES.python += library/python/shippinglabel
 TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
