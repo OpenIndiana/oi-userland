@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1307 items
+collecting ... collected 1336 items
 
 tests/test_arguments.py::test_nargs_star PASSED
 tests/test_arguments.py::test_nargs_tup PASSED
@@ -93,6 +92,12 @@ tests/test_arguments.py::test_subcommand_help PASSED
 tests/test_arguments.py::test_nested_subcommand_help PASSED
 tests/test_arguments.py::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved PASSED
 tests/test_arguments.py::test_duplicate_names_warning[args_one0-args_two0] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs0-pass_argv0] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs1-pass_argv1] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs2-pass_argv2] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs3-pass_argv3] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs4-pass_argv4] PASSED
+tests/test_arguments.py::test_argument_custom_class_can_override_type_cast_value_and_never_sees_unset[argument_kwargs5-pass_argv5] PASSED
 tests/test_basic.py::test_basic_functionality PASSED
 tests/test_basic.py::test_repr PASSED
 tests/test_basic.py::test_return_values PASSED
@@ -218,7 +223,23 @@ tests/test_commands.py::test_group_with_args[args2-0-obj=obj1\nmove\n] PASSED
 tests/test_commands.py::test_group_with_args[args3-2-Show this message and exit.] PASSED
 tests/test_commands.py::test_custom_parser PASSED
 tests/test_commands.py::test_object_propagation PASSED
-tests/test_commands.py::test_other_command_invoke_with_defaults PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params0-42] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params1-15] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params2-expected2] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params3-None] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params4-None] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params5-False] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params6-True] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params7-3.14] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params8-expected8] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params9-expected9] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params10-None] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params11-b] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params12-/tmp] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params13-False] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params14-True] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params15-0] PASSED
+tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params16-secret] PASSED
 tests/test_commands.py::test_invoked_subcommand PASSED
 tests/test_commands.py::test_aliased_command_canonical_name PASSED
 tests/test_commands.py::test_group_add_command_name PASSED
@@ -279,6 +300,7 @@ tests/test_context.py::test_global_context_object PASSED
 tests/test_context.py::test_context_meta PASSED
 tests/test_context.py::test_make_pass_meta_decorator PASSED
 tests/test_context.py::test_make_pass_meta_decorator_doc PASSED
+tests/test_context.py::test_hiding_of_unset_sentinel_in_callbacks PASSED
 tests/test_context.py::test_context_pushing PASSED
 tests/test_context.py::test_pass_obj PASSED
 tests/test_context.py::test_close_before_pop PASSED
@@ -310,6 +332,7 @@ tests/test_defaults.py::test_multiple_defaults PASSED
 tests/test_defaults.py::test_nargs_plus_multiple PASSED
 tests/test_defaults.py::test_multiple_flag_default PASSED
 tests/test_defaults.py::test_flag_default_map PASSED
+tests/test_defaults.py::test_shared_param_prefers_first_default PASSED
 tests/test_formatting.py::test_basic_functionality PASSED
 tests/test_formatting.py::test_wrapping_long_options_strings PASSED
 tests/test_formatting.py::test_wrapping_long_command_name PASSED
@@ -529,6 +552,11 @@ tests/test_options.py::test_case_insensitive_choice_returned_exactly PASSED
 tests/test_options.py::test_option_help_preserve_paragraphs PASSED
 tests/test_options.py::test_argument_custom_class PASSED
 tests/test_options.py::test_option_custom_class PASSED
+tests/test_options.py::test_option_custom_class_can_override_type_cast_value_and_never_sees_unset[--opt-option_kwargs0-pass_argv0] PASSED
+tests/test_options.py::test_option_custom_class_can_override_type_cast_value_and_never_sees_unset[--opt-option_kwargs1-pass_argv1] PASSED
+tests/test_options.py::test_option_custom_class_can_override_type_cast_value_and_never_sees_unset[--opt-option_kwargs2-pass_argv2] PASSED
+tests/test_options.py::test_option_custom_class_can_override_type_cast_value_and_never_sees_unset[--opt/--no-opt-option_kwargs3-pass_argv3] PASSED
+tests/test_options.py::test_option_custom_class_can_override_type_cast_value_and_never_sees_unset[--req-option_kwargs4-pass_argv4] PASSED
 tests/test_options.py::test_option_custom_class_reusable PASSED
 tests/test_options.py::test_help_option_custom_names_and_class[name_specs0-  -h, --help  Show this message and exit.\n-True] PASSED
 tests/test_options.py::test_help_option_custom_names_and_class[name_specs0-  -h, --help  Show this message and exit.\n-False] PASSED
@@ -1332,6 +1360,6 @@ tests/test_utils.py::test_make_default_short_help[no-wrap mark-truncate] PASSED
 tests/test_utils.py::test_make_default_short_help[no-wrap mark-length includes suffix] PASSED
 tests/test_utils.py::test_make_default_short_help[no-wrap mark-ignore dot in word] PASSED
 
-======== 1285 passed, 21 skipped, 1 xfailed ========
+======== 1314 passed, 21 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
