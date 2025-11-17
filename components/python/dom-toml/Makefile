@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dom_toml
 HUMAN_VERSION =			2.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Dom's tools for Tom's Obvious, Minimal Language.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/dom_toml
 COMPONENT_ARCHIVE_URL =		\
@@ -43,17 +44,13 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/domdf-python-tools
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/numpy
-TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
