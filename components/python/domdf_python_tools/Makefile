@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		domdf_python_tools
 HUMAN_VERSION =			3.10.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Helpful functions for Python
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/domdf_python_tools
 COMPONENT_ARCHIVE_URL =		\
@@ -51,24 +52,20 @@ PYTEST_ADDOPTS += --deselect tests/test_import_tools.py::test_discover_entry_poi
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x0\*[0-9a-f]\{12\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
-PYTHON_REQUIRED_PACKAGES += library/python/natsort
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
+REQUIRED_PACKAGES.python += library/python/natsort
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/click
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
 TEST_REQUIRED_PACKAGES.python += library/python/consolekit
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/faker
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/funcy
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
-TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-regressions
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-rerunfailures
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytz
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
