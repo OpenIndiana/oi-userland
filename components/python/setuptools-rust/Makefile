@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools_rust
 HUMAN_VERSION =			1.12.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Setuptools Rust extension plugin
 COMPONENT_PROJECT_URL =		https://github.com/PyO3/setuptools-rust
 COMPONENT_ARCHIVE_HASH =	\
@@ -39,7 +40,7 @@ COMPONENT_TEST_TARGETS += setuptools_rust
 COMPONENT_TEST_TARGETS += tests
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/semantic-version
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/semantic-version
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
