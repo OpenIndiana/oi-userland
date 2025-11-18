@@ -37,8 +37,7 @@ CONFIGURE_OPTIONS += --buildtype=release
 CONFIGURE_OPTIONS += --strip
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += developer/build/pkgconf
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += library/libarchive
-REQUIRED_PACKAGES += developer/build/pkgconf
