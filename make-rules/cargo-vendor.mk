@@ -34,7 +34,10 @@ USERLAND_REQUIRED_PACKAGES += developer/lang/rustc
 CARGO_VENDOR_DIR = $(SOURCE_DIR)-cargo-vendor
 
 # Directory with the Cargo.toml manifest
-CARGO_TOML_DIR = $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%)
+CARGO_TOML_DIR = $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%)$(CARGO_TOML_SUBDIR:%=/%)
+
+# Directory with the config.toml file we are about to create
+CARGO_CONFIG_DIR = $(SOURCE_DIR)$(COMPONENT_SUBDIR:%=/%)/.cargo
 
 # Cargo.toml is available only after we unpack sources
 $(CARGO_TOML_DIR)/Cargo.toml: unpack
@@ -48,11 +51,11 @@ $(SOURCE_DIR)/.cargo-fetched: $(CARGO_TOML_DIR)/Cargo.toml
 # Vendor all dependencies locally
 $(SOURCE_DIR)/.cargo-vendored: $(SOURCE_DIR)/.cargo-fetched $(CARGO_TOML_DIR)/Cargo.toml
 	$(RM) -r $(CARGO_VENDOR_DIR)
-	$(RM) -r $(CARGO_TOML_DIR)/.cargo ; $(MKDIR) $(CARGO_TOML_DIR)/.cargo
+	$(RM) -r $(CARGO_CONFIG_DIR) ; $(MKDIR) $(CARGO_CONFIG_DIR)
 	$(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 		$(CARGO) vendor --manifest-path $(CARGO_TOML_DIR)/Cargo.toml \
 			--versioned-dirs --offline $(CARGO_VENDOR_DIR) \
-		| $(TEE) $(CARGO_TOML_DIR)/.cargo/config.toml
+		| $(TEE) $(CARGO_CONFIG_DIR)/config.toml
 	$(TOUCH) $@
 
 # Vendor Cargo dependencies during the patch step
