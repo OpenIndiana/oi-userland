@@ -14,13 +14,15 @@
 #   $WS_TOOLS/python-integrate-project flaky
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flaky
 HUMAN_VERSION =			3.8.1
-COMPONENT_SUMMARY =		flaky - Plugin for pytest that automatically reruns flaky tests.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Plugin for pytest that automatically reruns flaky tests.
 COMPONENT_PROJECT_URL =		https://github.com/box/flaky
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/box/flaky/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
@@ -32,10 +34,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coveralls
-TEST_REQUIRED_PACKAGES.python += library/python/pycodestyle
-TEST_REQUIRED_PACKAGES.python += library/python/pylint
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
