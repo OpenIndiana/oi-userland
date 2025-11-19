@@ -17,11 +17,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	pg_repack
-COMPONENT_VERSION=	1.5.2
+COMPONENT_VERSION=	1.5.3
 COMPONENT_SUMMARY=	pg_repack - utility to reorganize PostgreSQL tables on-line
 COMPONENT_SRC=	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:96842aedbb8ded469e60ddb46ef3b652d26f5ce35800aee640fa113fbcac88b7
+COMPONENT_ARCHIVE_HASH= sha256:00657fbdcbe6c4d9309ea9b8ea723cec09f9db38b0b223e7199f34d68c24d7d3
 COMPONENT_ARCHIVE_URL=	https://api.pgxn.org/dist/pg_repack/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://reorg.github.io/pg_repack/
 COMPONENT_FMRI=	database/postgres-$(PG_VERSION)/pg_repack
