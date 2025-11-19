@@ -1,9 +1,7 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> $(PYTHON) -m pytest --cov-config=$(@D)/tox.ini --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=3 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
+py$(PYV): commands[0]> $(PYTHON) -m pytest --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=3 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
-benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: tox.ini
 collecting ... collected 40 items
@@ -51,10 +49,6 @@ tests/test_ucslevel.py::test_nonint_unicode PASSED
 tests/test_ucslevel.py::test_nonint_str PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
-
-Coverage HTML written to dir htmlcov
 ============================= slowest 3 durations ==============================
 ======== 39 passed, 1 skipped ========
   py$(PYV): OK
