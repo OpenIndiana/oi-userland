@@ -1,5 +1,8 @@
 https://unicode-org.atlassian.net/browse/ICU-23263
 
+OpenIndiana on SPARC follows the same GCC configuration as x86_64.
+
+
 --- icu/source/configure.orig
 +++ icu/source/configure
 @@ -7013,7 +7013,7 @@
@@ -11,3 +14,25 @@ https://unicode-org.atlassian.net/browse/ICU-23263
      if test "$GCC" = yes; then
          # When using gcc, look if we're also using GNU as.
          # When using GNU as, the simple -a gcc command line works for genccode.
+@@ -7028,8 +7028,19 @@
+         GENCCODE_ASSEMBLY="-a sun-x86"
+     fi ;;
+ sparc-*-solaris*)
+-    GENCCODE_ASSEMBLY="-a sun"
+-    ;;
++    if test "$GCC" = yes; then
++        # When using gcc, look if we're also using GNU as.
++        # When using GNU as, the simple -a gcc command line works for genccode.
++        asv=`"${CC}" -print-prog-name=as 2>/dev/null`
++        asv=`"${asv}" --version 2>/dev/null`
++        case "X${asv}" in
++        X*GNU*) GENCCODE_ASSEMBLY="-a gcc" ;;
++        X*) GENCCODE_ASSEMBLY="-a sun" ;;
++        esac
++        unset asv
++    else
++        GENCCODE_ASSEMBLY="-a sun"
++    fi ;;
+ ia64-*-hpux*)
+ # There has been some issues with building ICU data on HPUX ia64 aCC
+ # when using the assemble code setting below.  For now, build without
