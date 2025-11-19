@@ -1,0 +1,140 @@
+--- llvm-21.1.4.src/tools/clang/include/clang-c/Index.h.old	2025-10-29 15:03:27.241885300 -0400
++++ llvm-21.1.4.src/tools/clang/include/clang-c/Index.h	2025-10-29 15:05:00.557848708 -0400
+@@ -3035,7 +3035,8 @@
+   /* HLSL Types */
+   CXType_HLSLResource = 179,
+   CXType_HLSLAttributedResource = 180,
+-  CXType_HLSLInlineSpirv = 181
++  CXType_HLSLInlineSpirv = 181,
++  CXType_Using = 182
+ };
+ 
+ /**
+--- llvm-20.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp.orig
++++ llvm-20.1.7.src/tools/clang/lib/Sema/SemaCodeComplete.cpp
+@@ -4271,6 +4271,7 @@
+     return CXCursor_TranslationUnit;
+ 
+   case Decl::Using:
++  case Decl::UsingShadow:
+   case Decl::UnresolvedUsingValue:
+   case Decl::UnresolvedUsingTypename:
+     return CXCursor_UsingDeclaration;
+--- llvm-20.1.7.src/tools/clang/test/Index/print-type.cpp.orig
++++ llvm-20.1.7.src/tools/clang/test/Index/print-type.cpp
+@@ -92,6 +92,14 @@
+ }
+ 
+ inline namespace InlineNS {}
++
++namespace ToBeExported {
++  typedef int ToBeExportedType;
++}
++
++using ToBeExported::ToBeExportedType;
++void UseToBeExported(ToBeExportedType f);
++
+ // RUN: c-index-test -test-print-type %s -std=c++14 | FileCheck %s
+ // CHECK: Namespace=outer:1:11 (Definition) [type=] [typekind=Invalid] [isPOD=0]
+ // CHECK: ClassTemplate=Foo:4:8 (Definition) [type=] [typekind=Invalid] [isPOD=0]
+@@ -207,3 +215,5 @@
+ // CHECK: EnumDecl=(unnamed enum at {{.*}}:87:3 (Definition) [type=X::(unnamed enum at {{.*}}print-type.cpp:87:3)] [typekind=Enum] [isPOD=1] [isAnon=1]
+ // CHECK: Namespace=:90:11 (Definition) [type=] [typekind=Invalid] [isPOD=0] [isAnon=1]
+ // CHECK: Namespace=InlineNS:94:18 (Definition) [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0] [isInlineNamespace=1]
++// CHECK: UsingDeclaration=ToBeExportedType[97:15] [type=] [typekind=Invalid] [isPOD=0] [isAnonRecDecl=0]
++// CHECK: ParmDecl=f:101:39 (Definition) [type=ToBeExportedType] [typekind=Elaborated] [canonicaltype=int] [canonicaltypekind=Int] [isPOD=1] [isAnonRecDecl=0]
+--- llvm-20.1.7.src/tools/clang/tools/libclang/CXCursor.cpp.orig
++++ llvm-20.1.7.src/tools/clang/tools/libclang/CXCursor.cpp
+@@ -1336,6 +1336,10 @@
+     return MakeCursorTypeRef(Tag->getDecl(), Loc, TU);
+   if (const TemplateTypeParmType *TemplP = Ty->getAs<TemplateTypeParmType>())
+     return MakeCursorTypeRef(TemplP->getDecl(), Loc, TU);
++  if (const UsingType *Using = Ty->getAs<UsingType>())
++    if (const UsingShadowDecl *Shadow = Using->getFoundDecl())
++      if (const auto *TD = dyn_cast_or_null<TypeDecl>(Shadow->getTargetDecl()))
++        return MakeCursorTypeRef(TD, Loc, TU);
+ 
+   return cursor;
+ }
+--- llvm-20.1.7.src/tools/clang/tools/libclang/CXType.cpp.orig
++++ llvm-20.1.7.src/tools/clang/tools/libclang/CXType.cpp
+@@ -103,6 +103,7 @@
+     TKCASE(Record);
+     TKCASE(Enum);
+     TKCASE(Typedef);
++    TKCASE(Using);
+     TKCASE(ObjCInterface);
+     TKCASE(ObjCObject);
+     TKCASE(ObjCObjectPointer);
+@@ -224,24 +225,9 @@
+   return std::nullopt;
+ }
+ 
+-CXType clang_getCursorType(CXCursor C) {
+-  using namespace cxcursor;
+-
+-  CXTranslationUnit TU = cxcursor::getCursorTU(C);
+-  if (!TU)
+-    return MakeCXType(QualType(), TU);
+-
+-  ASTContext &Context = cxtu::getASTUnit(TU)->getASTContext();
+-  if (clang_isExpression(C.kind)) {
+-    QualType T = cxcursor::getCursorExpr(C)->getType();
+-    return MakeCXType(T, TU);
+-  }
+-
+-  if (clang_isDeclaration(C.kind)) {
+-    const Decl *D = cxcursor::getCursorDecl(C);
++static CXType getDeclType(const Decl* D, CXTranslationUnit TU, ASTContext &Context) {
+     if (!D)
+       return MakeCXType(QualType(), TU);
+-
+     if (const TypeDecl *TD = dyn_cast<TypeDecl>(D))
+       return MakeCXType(Context.getTypeDeclType(TD), TU);
+     if (const ObjCInterfaceDecl *ID = dyn_cast<ObjCInterfaceDecl>(D))
+@@ -254,9 +240,27 @@
+       return MakeCXType(PD->getType(), TU);
+     if (const FunctionTemplateDecl *FTD = dyn_cast<FunctionTemplateDecl>(D))
+       return MakeCXType(FTD->getTemplatedDecl()->getType(), TU);
++    if (const auto *UD = dyn_cast<UsingShadowDecl>(D))
++      return getDeclType(UD->getTargetDecl(), TU, Context);
+     return MakeCXType(QualType(), TU);
++}
++
++CXType clang_getCursorType(CXCursor C) {
++  using namespace cxcursor;
++
++  CXTranslationUnit TU = cxcursor::getCursorTU(C);
++  if (!TU)
++    return MakeCXType(QualType(), TU);
++
++  ASTContext &Context = cxtu::getASTUnit(TU)->getASTContext();
++  if (clang_isExpression(C.kind)) {
++    QualType T = cxcursor::getCursorExpr(C)->getType();
++    return MakeCXType(T, TU);
+   }
+ 
++  if (clang_isDeclaration(C.kind))
++    return getDeclType(cxcursor::getCursorDecl(C), TU, Context);
++
+   if (clang_isReference(C.kind)) {
+     switch (C.kind) {
+     case CXCursor_ObjCSuperClassRef: {
+@@ -520,6 +524,9 @@
+   case Type::Typedef:
+     D = cast<TypedefType>(TP)->getDecl();
+     break;
++  case Type::Using:
++    D = cast<UsingType>(TP)->getFoundDecl();
++    break;
+   case Type::ObjCObject:
+     D = cast<ObjCObjectType>(TP)->getInterface();
+     break;
+@@ -617,6 +624,7 @@
+     TKIND(Record);
+     TKIND(Enum);
+     TKIND(Typedef);
++    TKIND(Using);
+     TKIND(ObjCInterface);
+     TKIND(ObjCObject);
+     TKIND(ObjCObjectPointer);

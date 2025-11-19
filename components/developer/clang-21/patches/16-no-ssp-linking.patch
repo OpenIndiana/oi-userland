@@ -1,0 +1,16 @@
+--- llvm-20.1.7.src/tools/clang/lib/Driver/ToolChains/Solaris.cpp.orig
++++ llvm-20.1.7.src/tools/clang/lib/Driver/ToolChains/Solaris.cpp
+@@ -229,13 +229,6 @@
+       addFortranRuntimeLibs(getToolChain(), Args, CmdArgs);
+       CmdArgs.push_back("-lm");
+     }
+-    if (Args.hasArg(options::OPT_fstack_protector) ||
+-        Args.hasArg(options::OPT_fstack_protector_strong) ||
+-        Args.hasArg(options::OPT_fstack_protector_all)) {
+-      // Explicitly link ssp libraries, not folded into Solaris libc.
+-      CmdArgs.push_back("-lssp_nonshared");
+-      CmdArgs.push_back("-lssp");
+-    }
+     // LLVM support for atomics on 32-bit SPARC V8+ is incomplete, so
+     // forcibly link with libatomic as a workaround.
+     if (Arch == llvm::Triple::sparc) {

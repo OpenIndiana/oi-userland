@@ -1,0 +1,10 @@
+--- llvm-20.1.7.src/tools/clang/lib/Basic/Targets/OSTargets.h.orig
++++ llvm-20.1.7.src/tools/clang/lib/Basic/Targets/OSTargets.h
+@@ -615,6 +615,7 @@
+   void getOSDefines(const LangOptions &Opts, const llvm::Triple &Triple,
+                     MacroBuilder &Builder) const override {
+     DefineStd(Builder, "sun", Opts);
++    Builder.defineMacro("__illumos__");
+     DefineStd(Builder, "unix", Opts);
+     Builder.defineMacro("__svr4__");
+     Builder.defineMacro("__SVR4");
