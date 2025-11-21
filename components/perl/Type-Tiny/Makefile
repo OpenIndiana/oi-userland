@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Type-Tiny
-HUMAN_VERSION =			2.008004
+HUMAN_VERSION =			2.008005
 COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27f9cadd91d15217be2748d612fef78d22474d3f6554ccfca4171cbcde1ab34e
+	sha256:ec8ebbf710d1b76efee7fd3b3d9fc6f242f7632a4a5020e54a39d95cb18ea94e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
