@@ -79,17 +79,14 @@ TEST_TARGET ?= target-na
 SYSTEM_TEST_TARGET ?= target-na
 endif
 
-# If not an archive build (i.e. extract and copy) or pkg build (publish only),
-# include relevant makefile.
+# If not an archive build (i.e. extract and copy) include relevant makefile.
 ifneq ($(strip $(BUILD_STYLE)),archive)
-ifneq ($(strip $(BUILD_STYLE)),pkg)
 include $(WS_MAKE_RULES)/$(strip $(BUILD_STYLE)).mk
 
 # Include common rules used by build styles that opted to use them
 USE_COMMON_RULES ?= no
 ifneq ($(strip $(USE_COMMON_RULES)),no)
 include $(WS_MAKE_RULES)/common-rules.mk
-endif
 endif
 endif
 
@@ -157,27 +154,6 @@ ifeq ($(strip $(BUILD_STYLE)),archive)
 BUILD_TARGET ?=
 INSTALL_TARGET ?=
 TEST_TARGET ?=
-endif
-
-# For pkg-based build style, assume there are no build, install, or test steps;
-# just a package to be published.  However, 'gmake sample-manifest' requires
-# proto dir.  Since sample-manifest generation depends on install target we
-# will abuse it to get the required dir created.
-ifeq ($(strip $(BUILD_STYLE)),pkg)
-BUILD_TARGET=
-INSTALL_TARGET = $(BUILD_DIR)/.installed
-TEST_TARGET=
-SYSTEM_TEST_TARGET=
-build:
-test system-test:	$(NO_TESTS)
-
-$(BUILD_DIR)/.installed:
-	$(RM) -r $(BUILD_DIR)
-	$(MKDIR) $(PROTO_DIR)
-	$(TOUCH) $@
-
-clean::
-	$(RM) -r $(BUILD_DIR)
 endif
 
 # If TEST_TARGET is NO_TESTS, assume no system tests by default.
