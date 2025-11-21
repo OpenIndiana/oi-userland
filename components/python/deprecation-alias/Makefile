@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		deprecation-alias
 HUMAN_VERSION =			0.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A wrapper around 'deprecation' providing support for deprecated aliases.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/deprecation-alias
 COMPONENT_ARCHIVE_URL =		\
@@ -43,18 +44,14 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/deprecation
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-requirements-txt
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/deprecation
+REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/coincidence
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/domdf-python-tools
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/iniconfig
-TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
