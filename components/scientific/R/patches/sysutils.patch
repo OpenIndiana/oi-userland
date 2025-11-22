@@ -1,0 +1,18 @@
+Illumos iconv_open does not support empty encoding, unlike Solaris 11 and Linux.
+Ensure a fallback mechanism.
+
+Not suitable for upstream
+
+diff --git a/src/main/sysutils.c b/src/main/sysutils.c
+index 1d10dae..6b3c5d1 100644
+--- a/src/main/sysutils.c
++++ b/src/main/sysutils.c
+@@ -1461,7 +1461,7 @@ static void *iconv_open_internal(const char *tocode, const char *fromcode)
+ 
+ void * Riconv_open (const char* tocode, const char* fromcode)
+ {
+-#if defined Win32 || __APPLE__
++#if defined Win32 || __APPLE__ || __sun
+ // These two support "utf8"
+ # ifdef Win32
+     const char *cp = "ASCII";
