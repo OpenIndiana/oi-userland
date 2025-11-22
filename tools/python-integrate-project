@@ -249,6 +249,7 @@ COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 
 _TEST_STYLE = TODO
+CARGO_TOML_SUBDIR =
 EOF
 [[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
@@ -302,10 +303,17 @@ fi
 
 # Handle CARGO_VENDOR
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
-if [[ -f "$SOURCE_DIR/Cargo.toml" ]] ; then
-	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' Makefile
+CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR" ; find . -name Cargo.toml)
+if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
+	CARGO_TOML_SUBDIR=$(printf '%s\n' "$CARGO_TOML_SUBDIRS" \
+		| sed -e 's/^\.\(.*\)\/Cargo\.toml$/\1/' -e 's/^\///' \
+		| LC_ALL=C sort | head -n 1 \
+	)
+	(($(printf '%s\n' "$CARGO_TOML_SUBDIRS" | wc -l) > 1)) \
+		&& rintf 'WARNING: Multiple Cargo.toml files found.\n' >&2
+	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' -e 's|^CARGO_TOML_SUBDIR =$|&'"$CARGO_TOML_SUBDIR|" Makefile
 else
-	sed -i -e '/^CARGO_VENDOR = no$/d' Makefile
+	sed -i -e '/^CARGO_VENDOR = no$/d' -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
 fi
 git add Makefile
 
