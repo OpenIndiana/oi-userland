@@ -1,10 +1,9 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 95 items
+collecting ... collected 101 items
 
 tests/cfgv_test.py::test_ValidationError_simple_str PASSED
 tests/cfgv_test.py::test_ValidationError_nested PASSED
@@ -101,7 +100,13 @@ tests/cfgv_test.py::test_conditional_optional_remove_default[False] PASSED
 tests/cfgv_test.py::test_no_additional_keys PASSED
 tests/cfgv_test.py::test_warn_additional_keys_when_has_extra_keys PASSED
 tests/cfgv_test.py::test_warn_additional_keys_when_no_extra_keys PASSED
+tests/cfgv_test.py::test_key_value_map_schema_ok PASSED
+tests/cfgv_test.py::test_key_value_map_apply_defaults PASSED
+tests/cfgv_test.py::test_key_value_map_remove_defaults PASSED
+tests/cfgv_test.py::test_key_value_map_not_a_map PASSED
+tests/cfgv_test.py::test_key_value_map_wrong_key_type PASSED
+tests/cfgv_test.py::test_key_value_map_error_in_child_schema PASSED
 
-======== 95 passed ========
+======== 101 passed ========
   py$(PYV): OK
   congratulations :)
