@@ -19,7 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= lame
 COMPONENT_VERSION= 3.100
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 COMPONENT_SUMMARY= LAME is a high quality MPEG Audio Layer III (MP3) encoder licensed under the LGPL 
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -32,6 +32,8 @@ COMPONENT_CLASSIFICATION= System/Media
 COMPONENT_FMRI= audio/lame
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += -Wno-incompatible-pointer-types
 
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --with-fileio=sndfile
