@@ -18,13 +18,13 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ninja
-COMPONENT_VERSION=	1.13.1
+COMPONENT_VERSION=	1.13.2
 COMPONENT_SUMMARY=      Ninja - a small build system with a focus on speed
 COMPONENT_PROJECT_URL=  https://ninja-build.org/
 COMPONENT_SRC=    		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ninja-build/ninja/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:f0055ad0369bf2e372955ba55128d000cfcc21777057806015b45e4accbebf23
+COMPONENT_ARCHIVE_HASH=	sha256:974d6b2f4eeefa25625d34da3cb36bdcebe7fbce40f4c16ac0835fd1c0cbae17
 COMPONENT_FMRI=         developer/build/ninja
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
 COMPONENT_LICENSE=	Apache-2.0
@@ -44,7 +44,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/ ([0-9]\{1,\} ms.*)\$$//'"
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/lexer/re2c
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
