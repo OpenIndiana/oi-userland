@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 102 items
+collecting ... collected 103 items
 
 tests/test_apport_monkeypatching.py::test_apport_excepthook_monkeypatch_interaction SKIPPED
 tests/test_catch.py::test_bad_arg PASSED
@@ -57,6 +56,7 @@ tests/test_exceptions.py::ExceptionGroupFields::test_notes_is_list_of_strings_if
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__match PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__no_match PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_predicate__passthrough PASSED
+tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__match 
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__match PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__no_match PASSED
 tests/test_exceptions.py::ExceptionGroupSubgroupTests::test_basics_subgroup_by_type__passthrough PASSED
@@ -82,6 +82,7 @@ tests/test_exceptions.py::NestedExceptionGroupSubclassSplitTest::test_split_Exce
 tests/test_exceptions.py::test_repr PASSED
 tests/test_exceptions.py::test_bug_exceptiongroup_has_no_init PASSED
 tests/test_exceptions.py::test_exceptions_mutate_original_sequence PASSED
+tests/test_formatting.py::test_unpatched_tracebackexception_format SKIPPED
 tests/test_formatting.py::test_exceptionhook PASSED
 tests/test_formatting.py::test_exceptiongroup_as_cause PASSED
 tests/test_formatting.py::test_exceptiongroup_loop PASSED
@@ -112,6 +113,6 @@ tests/test_formatting.py::test_works_around_httperror_bug PASSED
 tests/test_suppress.py::test_suppress_exception PASSED
 
 =========================== short test summary info ============================
-======== 91 passed, 11 skipped ========
+======== 91 passed, 12 skipped, 3 subtests passed ========
   py$(PYV): OK
   congratulations :)
