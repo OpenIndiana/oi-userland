@@ -23,13 +23,24 @@ BUILD_STYLE = setup.py
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cython
-HUMAN_VERSION =			3.1.4
+HUMAN_VERSION =			3.1.7
 COMPONENT_SUMMARY =		The Cython compiler for writing C extensions in the Python language.
 COMPONENT_PROJECT_URL =		https://cython.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9aefefe831331e2d66ab31799814eae4d0f8a2d246cbaaaa14d1be29ef777683
+	sha256:6f78b9053861325a44468fa4b48f11950635cd6d4715e8cd2633c73dd6a75a3d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Cython --> numpy ==> Cython
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,16 +56,12 @@ COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/.python-user-base ;
 # Normalize tmp dir name
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/cycache-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(TEST_TMP/recythonize-test\).\{8\}\(/src\).\{8\}/|\1\2/|g'"
-# Normalize pointer
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(Broken object at \)0x[a-f0-9]\{1,\}>/\1\$$(POINTER)>/g'"
-# Remove line with private path
-COMPONENT_TEST_TRANSFORMS += "-e '/^libgcov profiling error:/d'"
+# Normalize pointers
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
 # Remove profiling info
 COMPONENT_TEST_TRANSFORMS += "-e '/^Most expensive pipeline stages:/d'"
-# Normalize random temporary file name
-COMPONENT_TEST_TRANSFORMS += "-e 's|^\(/tmp/tmp\).\{8\}:|\1XXXXXXXX:|'"
 # Normalize random file name
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(_cython_inline_\).\{40\}\.pyx/\1XXXXXXXX.pyx/'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(_cython_inline_\).\{64\}\.pyx/\1XXXXXXXX.pyx/'"
 
 # tox.ini does not specify test requirements
 TEST_REQUIREMENTS += test-requirements.txt
