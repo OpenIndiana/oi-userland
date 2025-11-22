@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_metadata
-HUMAN_VERSION =			0.9.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.10.0
 COMPONENT_SUMMARY =		PEP 621 metadata parsing
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pyproject-metadata
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8b2253dd1b7062b78cf949a115f02ba7fa4114aabe63fa10528e9e1a954a816
+	sha256:7f5bd0ef398b60169556cb17ea261d715caf7f8561238151f51b2305084ba8d4
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
