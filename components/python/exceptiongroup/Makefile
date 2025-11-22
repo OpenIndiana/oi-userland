@@ -20,18 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		exceptiongroup
-HUMAN_VERSION =			1.3.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			1.3.1
 COMPONENT_SUMMARY =		Backport of PEP 654 (exception groups)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b241f5885f560bc56a59ee63ca4c6a8bfa46ae4ad651af316d4e81817bb9fd88
+	sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219
 COMPONENT_LICENSE =		MIT AND PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - pytest (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
