@@ -35,16 +35,17 @@ GIT_CHANGESET=HEAD
 
 PATH=/usr/gnu/bin:/usr/bin
 
-COMPONENT_PREP_GIT=no
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/justmake.mk
+CLEAN_PATHS += $(BUILD_DIR)
+CLOBBER_PATHS += $(SOURCE_DIR)
 
+COMPONENT_PREP_GIT=no
 # The ugly hack with update-publish target is necessary to update
 # source from git repository on each "gmake publish".
 # publish: target should appear before inclusion of ips.mk
 publish: update-publish
 
-include $(WS_TOP)/make-rules/ips.mk
+include $(WS_MAKE_RULES)/justmake.mk
+include $(WS_MAKE_RULES)/common.mk
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -61,11 +62,7 @@ update-publish:
 
 COMPONENT_BUILD_TARGETS = all
 
-$(SOURCE_DIR)/.prep: $(SOURCE_DIR)/.downloaded Makefile
-
-build: $(BUILD_32)
-
-install: $(INSTALL_32)
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 download:: $(SOURCE_DIR)/.downloaded
 
