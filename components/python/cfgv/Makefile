@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cfgv
-HUMAN_VERSION =			3.4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.5.0
 COMPONENT_SUMMARY =		Validate configuration and produce human readable error messages.
 COMPONENT_PROJECT_URL =		https://github.com/asottile/cfgv
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/cfgv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a8a4e4ad5618b6e65af563b14f46ccb1e45f5725c3b733d0ba15bb2a3b5bf9fd
+	sha256:13d7bd4125dd3deed477cbfad9e8fb44a442f0bb627b5cd03afb6bc1899538db
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
