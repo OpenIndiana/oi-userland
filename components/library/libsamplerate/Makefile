@@ -26,7 +26,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsamplerate
 COMPONENT_VERSION=	0.2.2
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY=	Secret Rabbit Code (aka libsamplerate) - Sample Rate Converter for audio 
 COMPONENT_PROJECT_URL=	https://libsndfile.github.io/libsamplerate/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
