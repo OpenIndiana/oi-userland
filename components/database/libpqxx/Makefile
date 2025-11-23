@@ -17,11 +17,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libpqxx
-COMPONENT_VERSION= 7.10.1
+COMPONENT_VERSION= 7.10.3
 COMPONENT_SUMMARY= C++ binding library for PostgreSQL
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cfbbb1d93a0a3d81319ec71d9a3db80447bb033c4f6cee088554a88862fd77d7
+COMPONENT_ARCHIVE_HASH= sha256:c5ba455e4f28901297c18a76e533c466cbe8908d4b2ff6313235954bb37cef25
 COMPONENT_ARCHIVE_URL= https://github.com/jtv/libpqxx/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://pqxx.org/development/libpqxx/
 COMPONENT_FMRI= database/postgres/library/c++/libpqxx
