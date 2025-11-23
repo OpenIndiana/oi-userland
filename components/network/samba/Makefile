@@ -29,13 +29,12 @@ BUILD_STYLE =			waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		samba
-COMPONENT_VERSION =		4.23.2
-COMPONENT_REVISION =	1
+COMPONENT_VERSION =		4.23.3
 COMPONENT_SUMMARY =		samba - A Windows SMB/CIFS fileserver for UNIX
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =		https://www.samba.org/
 COMPONENT_ARCHIVE =             $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = 	sha256:2de330647e1486683597e261285d04a9b7514ab5c7da27711736e22c7f2b9c2e
+COMPONENT_ARCHIVE_HASH = 	sha256:06cdbb27a6956978b045455fe0696d998ffbac8d24ba24de87a4ef8200813320
 COMPONENT_ARCHIVE_URL =		https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL = 		https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI =		service/network/samba
