@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyyaml
 HUMAN_VERSION =			6.0.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		YAML parser and emitter for Python
 COMPONENT_PROJECT_URL =		https://pyyaml.org/
 COMPONENT_ARCHIVE_HASH =	\
