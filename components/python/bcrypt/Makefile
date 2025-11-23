@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+CARGO_VENDOR = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bcrypt
 HUMAN_VERSION =			5.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Modern password hashing for your software and your servers
 COMPONENT_PROJECT_URL =		https://github.com/pyca/bcrypt/
 COMPONENT_ARCHIVE_HASH =	\
@@ -28,11 +30,9 @@ COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+CARGO_TOML_SUBDIR =src/_bcrypt
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://www.illumos.org/issues/15767
-LD_Z_IGNORE=
 
 # This project does not support tox so we need to provide test requirements
 # manually.
