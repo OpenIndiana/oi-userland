@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml_html_clean
 HUMAN_VERSION =			0.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTML cleaner from lxml project
 COMPONENT_PROJECT_URL =		https://github.com/fedora-python/lxml_html_clean/
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,7 +32,7 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/lxml
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/lxml
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/lxml
