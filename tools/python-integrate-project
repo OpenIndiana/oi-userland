@@ -310,7 +310,7 @@ if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
 		| LC_ALL=C sort | head -n 1 \
 	)
 	(($(printf '%s\n' "$CARGO_TOML_SUBDIRS" | wc -l) > 1)) \
-		&& rintf 'WARNING: Multiple Cargo.toml files found.\n' >&2
+		&& printf 'WARNING: Multiple Cargo.toml files found.\n' >&2
 	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' -e 's|^CARGO_TOML_SUBDIR =$|&'"$CARGO_TOML_SUBDIR|" Makefile
 else
 	sed -i -e '/^CARGO_VENDOR = no$/d' -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
