@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyyaml_env_tag
 HUMAN_VERSION =			1.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A custom YAML tag for referencing environment variables in YAML files.
 COMPONENT_PROJECT_URL =		https://github.com/waylan/pyyaml-env-tag
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,6 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pyyaml
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
