@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		beautifulsoup4
 HUMAN_VERSION =			4.14.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Screen-scraping library
 COMPONENT_PROJECT_URL =		https://www.crummy.com/software/BeautifulSoup/bs4/
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +32,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
+
+# https://bugs.launchpad.net/beautifulsoup/+bug/2132345
+PYTEST_ADDOPTS += --deselect bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_rejected_input
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
