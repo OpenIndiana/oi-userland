@@ -303,18 +303,26 @@ fi
 
 # Handle CARGO_VENDOR
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
-CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR" ; find . -name Cargo.toml)
-if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
-	CARGO_TOML_SUBDIR=$(printf '%s\n' "$CARGO_TOML_SUBDIRS" \
-		| sed -e 's/^\.\(.*\)\/Cargo\.toml$/\1/' -e 's/^\///' \
-		| LC_ALL=C sort | head -n 1 \
-	)
-	(($(printf '%s\n' "$CARGO_TOML_SUBDIRS" | wc -l) > 1)) \
-		&& printf 'WARNING: Multiple Cargo.toml files found.\n' >&2
-	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' -e 's|^CARGO_TOML_SUBDIR =$|&'"$CARGO_TOML_SUBDIR|" Makefile
-else
-	sed -i -e '/^CARGO_VENDOR = no$/d' -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
+CARGO_TOML_SUBDIR=$($GMAKE print-value-CARGO_TOML_SUBDIR)
+if [[ -z "$CARGO_TOML_SUBDIR" ]] ; then
+	CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR" ; find . -name Cargo.toml)
+	if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
+		CARGO_TOML_SUBDIR=$(printf '%s\n' "$CARGO_TOML_SUBDIRS" \
+			| sed -e 's/^\.\(.*\)\/Cargo\.toml$/\1/' -e 's/^\///' \
+			| LC_ALL=C sort | head -n 1 \
+		)
+		(($(printf '%s\n' "$CARGO_TOML_SUBDIRS" | wc -l) > 1)) \
+			&& printf 'WARNING: Multiple Cargo.toml files found\n' >&2
+		[[ -n "$CARGO_TOML_SUBDIR" ]] && sed -i -e 's|^CARGO_TOML_SUBDIR =$|& '"$CARGO_TOML_SUBDIR|" Makefile
+	fi
 fi
+if [[ -f "$SOURCE_DIR/$CARGO_TOML_SUBDIR/Cargo.toml" ]] ; then
+	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' Makefile
+else
+	sed -i -e '/^CARGO_VENDOR = no$/d' Makefile
+	[[ -n "$CARGO_TOML_SUBDIR" ]] && printf 'ERROR: %s/Cargo.toml not found\n' "$CARGO_TOML_SUBDIR" >&2
+fi
+sed -i -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
 git add Makefile
 
 # Cleanup after patch refresh
