@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lxml
 HUMAN_VERSION =			6.0.2
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API.
 COMPONENT_PROJECT_URL =		https://lxml.de/
 COMPONENT_ARCHIVE_HASH =	\
@@ -68,6 +69,7 @@ COMPONENT_TEST_TRANSFORMS += \
 
 # This project does not support tox so we need to provide test requirements
 # manually.
+TEST_REQUIREMENTS_EXTRAS += cssselect
 TEST_REQUIREMENTS_EXTRAS += html-clean
 
 # Auto-generated dependencies
@@ -77,4 +79,5 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/cython
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cssselect
 TEST_REQUIRED_PACKAGES.python += library/python/lxml-html-clean
