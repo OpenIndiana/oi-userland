@@ -15,23 +15,23 @@
 #
 
 BUILD_STYLE = pyproject
+CARGO_VENDOR = yes
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.8.5
-COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.13 programs.
+HUMAN_VERSION =			1.8.6
+COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.14 programs.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e72e1816eed63f530668e93a4c22ff1cf8b91ddce0ec53e597d3f6c53e103ec7
+	sha256:f729c37c9317126da9475bdd06a7208eb52fcbd180a6341648b45a56b4ba708b
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+CARGO_TOML_SUBDIR = native
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://www.illumos.org/issues/15767
-LD_Z_IGNORE=
 
 #
 # Tests are run from build directory that contains cloned copy of sdist.  We
