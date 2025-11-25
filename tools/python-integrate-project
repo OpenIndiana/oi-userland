@@ -290,16 +290,11 @@ SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
-# Unpack sources and apply patches
+# Unpack sources and apply patches.  First time we need to skip cargo patches
+# (if any) because CARGO_VENDOR is not set yet and so the cargo patches cannot
+# be applied.
+rm -f patches/*.patch_cargo
 ! $GMAKE patch > /dev/null 2>&1 && printf "FATAL: 'gmake patch' failed!\n" >&2 && exit 1
-
-# Refresh patches
-if $GMAKE refresh-patches > /dev/null 2>&1 ; then
-	git add patches 2>/dev/null
-else
-	printf "ERROR: 'gmake refresh-patches' failed!\n" >&2
-	git checkout patches 2>/dev/null
-fi
 
 # Handle CARGO_VENDOR
 SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
@@ -324,6 +319,19 @@ else
 fi
 sed -i -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
 git add Makefile
+
+# Apply patches again in a case there are some cargo patches
+git checkout patches 2>/dev/null
+$GMAKE clobber > /dev/null 2>&1
+! $GMAKE patch > /dev/null 2>&1 && printf 'FATAL: '"'gmake patch'"' (cargo-vendor) failed!\n' >&2 && exit 1
+
+# Refresh patches
+if $GMAKE refresh-patches > /dev/null 2>&1 ; then
+	git add patches 2>/dev/null
+else
+	printf 'ERROR: '"'gmake refresh-patches'"' failed!\n' >&2
+	git checkout patches 2>/dev/null
+fi
 
 # Cleanup after patch refresh
 $GMAKE clobber > /dev/null 2>&1
