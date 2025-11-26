@@ -1,14 +1,12 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 254 items
+collecting ... collected 253 items
 
 docs/conf.py::mypy PASSED
-docs/conf.py::mypy-status PASSED
 importlib_resources/__init__.py::mypy PASSED
 importlib_resources/_adapters.py::mypy PASSED
 importlib_resources/_common.py::mypy PASSED
@@ -262,9 +260,15 @@ importlib_resources/tests/zip.py::mypy PASSED
 .::project PASSED
 .::project PASSED
 
-===================================== mypy =====================================
+=============================== warnings summary ===============================
+.::project
+.::project
+  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
+    parts = docutils.core.publish_parts(
 
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+===================================== mypy =====================================
 Success: no issues found in 31 source files
-======== 253 passed, 1 skipped ========
+======== 252 passed, 1 skipped, 2 warnings ========
   py$(PYV): OK
   congratulations :)
