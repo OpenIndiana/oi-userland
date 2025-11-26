@@ -18,13 +18,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tmux
-COMPONENT_VERSION=	3.5.1
-HUMAN_VERSION=		3.5a
+COMPONENT_VERSION=	3.6
 COMPONENT_SUMMARY=	tmux terminal multiplexer
 COMPONENT_PROJECT_URL=	https://$(COMPONENT_NAME).github.io
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951
+COMPONENT_ARCHIVE_HASH= sha256:136db80cfbfba617a103401f52874e7c64927986b65b1b700350b6058ad69607
 COMPONENT_ARCHIVE_URL=	https://github.com/tmux/tmux/releases/download/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		terminal/tmux
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -35,6 +34,8 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -I/usr/include/ncurses
+# Make gcc-14 happy
+CFLAGS += -Wno-error=implicit-function-declaration
 
 COMPONENT_PREP_ACTION= ( cd $(@D) ; autoreconf -fiv )
 
