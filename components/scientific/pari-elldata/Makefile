@@ -39,10 +39,11 @@ BUILD_BITS = NO_ARCH
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pari-elldata	
+COMPONENT_NAME=		pari-elldata
 COMPONENT_SRC=		data
-COMPONENT_VERSION=	0.20210301
-COMPONENT_SUMMARY=	PARI/GP Computer Algebra System elliptic curves (elldata) 
+COMPONENT_VERSION=	20210301
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=	PARI/GP version of J. E. Cremona Elliptic Curve Data, needed by ellsearch and ellidentify
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_FMRI=		library/math/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
