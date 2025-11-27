@@ -37,6 +37,15 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 <transform file path=.*lib/.*gif ->   default mode 0444>
 <transform file path=.*lib/.*tool ->  default mode 0444>
 
+# Please don't substitue these 6 header files with $(MACH), otherwise
+# they don't get distributed on other 64-bit architectures.
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/atomic.h
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/ethr_dw_atomic.h
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/ethr_membar.h
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/ethread.h
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/rwlock.h
+file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/i386/spinlock.h
+
 # Latest erlang seems to have dropped all man pages despite section 1.
 # So our rename operations are not applicable anymore.
 # Put man pages into separate folders in order to prevent collisions
@@ -115,12 +124,6 @@ file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/erl_fixed_size_int_types.
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/erl_int_sizes_config.h
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/erl_nif.h
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/erl_nif_api_funcs.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/atomic.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/ethr_dw_atomic.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/ethr_membar.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/ethread.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/rwlock.h
-file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/$(MACH)/spinlock.h
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/README
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/erl_errno.h
 file path=usr/lib/$(MACH64)/erlang/erts-16.1.2/include/internal/erl_misc_utils.h
