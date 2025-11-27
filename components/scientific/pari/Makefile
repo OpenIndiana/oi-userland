@@ -27,13 +27,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
-COMPONENT_VERSION=	2.17.2
-COMPONENT_REVISION=	1
-COMPONENT_SUMMARY=	The PARI Computer Algebra System
+COMPONENT_VERSION=	2.17.3
+COMPONENT_SUMMARY=	PARI/GP is a computer algebra system with the main aim of facilitating number theory computations
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7d30578f5cf97b137a281f4548d131aafc0cde86bcfd10cc1e1bd72a81e65061
+COMPONENT_ARCHIVE_HASH=	sha256:8d9c4fcd584c468d27e0f23c36836587284452094c4b1c404c20c4b810462dcb
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/math/pari
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -86,4 +85,3 @@ REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
-
