@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
 COMPONENT_VERSION=	0.3.30
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openblas.net
@@ -48,16 +49,30 @@ include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
 
+# set default target for amd64 or sparcv9
+ifeq ($(MACH64), amd64)
+TARGET=PRESCOTT
+COMMON_OPT="$(CFLAGS) -Wa,--divide"
+endif
+ifeq ($(MACH64), sparcv9)
+TARGET=SPARC
+COMMON_OPT="$(CFLAGS)"
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cd $(SOURCE_DIR) && $(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/dblat1.patch ; \
+	$(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/xdcblat1.patch
+endif
+
+
 # In a virtualized environment getarch cannot detect the architecture.
 # It falls back to INTEL_UKNOWN which causes failure of the build.
 # The option TARGET=GENERIC has to be passed to force detection.
 COMPONENT_BUILD_GMAKE_ARGS= PREFIX=$(USRDIR) \
                             DYNAMIC_ARCH=1 \
-                            TARGET=PRESCOTT \
+                            TARGET=$(TARGET) \
                             BINARY=$(BITS) \
                             CROSS_SUFFIX="" \
                             FC=$(FC) CC=$(CC) \
-                            COMMON_OPT="$(CFLAGS) -Wa,--divide" \
+                            COMMON_OPT=$(COMMON_OPT) \
                             NO_LAPACKE=1 \
                             USE_OPENMP=0 \
                             USE_THREAD=1 \
