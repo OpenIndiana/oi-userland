@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
 COMPONENT_VERSION=	0.3.30
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openblas.net
@@ -57,9 +57,6 @@ endif
 ifeq ($(MACH64), sparcv9)
 TARGET=SPARC
 COMMON_OPT="$(CFLAGS)"
-COMPONENT_PRE_CONFIGURE_ACTION += \
-	cd $(SOURCE_DIR) && $(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/dblat1.patch ; \
-	$(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/xdcblat1.patch
 endif
 
 
