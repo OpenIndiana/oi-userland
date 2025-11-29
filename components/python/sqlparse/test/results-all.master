@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 464 items
+collecting ... collected 480 items
 
 tests/test_cli.py::test_cli_main_empty PASSED
 tests/test_cli.py::test_parser_empty PASSED
@@ -22,6 +22,17 @@ tests/test_cli.py::test_encoding_output_file[encoding_gbk.sql-gbk] PASSED
 tests/test_cli.py::test_encoding_stdin[encoding_utf8.sql-utf-8] PASSED
 tests/test_cli.py::test_encoding_stdin[encoding_gbk.sql-gbk] PASSED
 tests/test_cli.py::test_encoding PASSED
+tests/test_cli.py::test_cli_multiple_files_with_inplace PASSED
+tests/test_cli.py::test_cli_multiple_files_without_inplace_fails PASSED
+tests/test_cli.py::test_cli_inplace_with_stdin_fails PASSED
+tests/test_cli.py::test_cli_outfile_with_multiple_files_fails PASSED
+tests/test_cli.py::test_cli_single_file_inplace PASSED
+tests/test_cli.py::test_cli_error_handling_continues PASSED
+tests/test_dos_prevention.py::TestDoSPrevention::test_large_tuple_list_performance PASSED
+tests/test_dos_prevention.py::TestDoSPrevention::test_deeply_nested_groups_limited PASSED
+tests/test_dos_prevention.py::TestDoSPrevention::test_very_large_token_list_limited PASSED
+tests/test_dos_prevention.py::TestDoSPrevention::test_normal_sql_still_works PASSED
+tests/test_dos_prevention.py::TestDoSPrevention::test_reasonable_tuple_list_works PASSED
 tests/test_format.py::TestFormat::test_keywordcase PASSED
 tests/test_format.py::TestFormat::test_keywordcase_invalid_option PASSED
 tests/test_format.py::TestFormat::test_identifiercase PASSED
@@ -267,6 +278,8 @@ tests/test_parse.py::test_get_real_name PASSED
 tests/test_parse.py::test_from_subquery PASSED
 tests/test_parse.py::test_parenthesis PASSED
 tests/test_parse.py::test_configurable_keywords PASSED
+tests/test_parse.py::test_regexp PASSED
+tests/test_parse.py::test_regexp_binary PASSED
 tests/test_parse.py::test_configurable_regex PASSED
 tests/test_parse.py::test_json_operators[->] PASSED
 tests/test_parse.py::test_json_operators[->>] PASSED
@@ -404,6 +417,9 @@ tests/test_split.py::test_split_go[USE foo;\nGO\nSELECT 1;\nGO-4] PASSED
 tests/test_split.py::test_split_go[SELECT * FROM foo;\nGO-2] PASSED
 tests/test_split.py::test_split_go[USE foo;\nGO 2\nSELECT 1;-3] PASSED
 tests/test_split.py::test_split_multiple_case_in_begin PASSED
+tests/test_split.py::test_split_if_exists_in_begin_end PASSED
+tests/test_split.py::test_split_begin_end_semicolons PASSED
+tests/test_split.py::test_split_begin_end_procedure PASSED
 tests/test_tokenize.py::test_tokenize_simple PASSED
 tests/test_tokenize.py::test_tokenize_backticks PASSED
 tests/test_tokenize.py::test_tokenize_linebreaks[foo\nbar\n] PASSED
@@ -470,4 +486,4 @@ tests/test_utils.py::test_remove_quotes['foo'-foo] PASSED
 tests/test_utils.py::test_remove_quotes["foo"-foo] PASSED
 tests/test_utils.py::test_remove_quotes[`foo`-foo] PASSED
 
-======== 461 passed, 2 xfailed, 1 xpassed ========
+======== 477 passed, 2 xfailed, 1 xpassed ========
