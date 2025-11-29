@@ -20,18 +20,43 @@ CARGO_VENDOR = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uv_build
-HUMAN_VERSION =			0.9.12
+HUMAN_VERSION =			0.9.13
 COMPONENT_SUMMARY =		The uv build backend
 COMPONENT_PROJECT_URL =		https://pypi.org/project/uv/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d11ef6c659e4bc1b89b3a556edac71c431521efbc574a6fd4e6588236137d0c5
+	sha256:53c81cb51a24d1f274645c53716954d8b5387a03cfa13a967818af89d760a2c0
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
-TEST_STYLE = none
-
 # https://github.com/astral-sh/uv/issues/16849
+TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/astral-sh/uv/issues/16849
+COMPONENT_TEST_CMD = $(CARGO) test
+COMPONENT_TEST_ARGS += --release
+COMPONENT_TEST_ARGS += --offline
+COMPONENT_TEST_ARGS += -p uv-build-backend
+COMPONENT_TEST_TARGETS =
+
+# skip failing tests
+# see https://github.com/astral-sh/uv/issues/16849
+COMPONENT_TEST_ARGS += --
+COMPONENT_TEST_ARGS += --skip tests::built_by_uv_building
+COMPONENT_TEST_ARGS += --skip wheel::test::test_prepare_metadata
+
+# drop header
+COMPONENT_TEST_TRANSFORMS += "-e '0,/Finished/d'"
+# remove timing
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(finished\) in [0-9]\{1,\}\.[0-9]\{2\}s\$$/\1/g'"
+# normalize variable hash in filename
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(Running .* (.*-\)[0-9a-f]\{16\})/\1XXXXXXXXXXXXXXXX)/'"
+# sort tests
+COMPONENT_TEST_TRANSFORMS += "| ( while true ; do \
+		$(GSED) -u -e '/^running [0-9]\{1,\} tests\$$/q1' && break ; \
+		$(GSED) -u -e '/^\$$/Q' | $(SORT) ; \
+		echo "" ; \
+	done ) | $(COMPONENT_TEST_TRANSFORMER) -e ''"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
