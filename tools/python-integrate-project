@@ -290,6 +290,11 @@ SHA256=$(digest -a sha256 "$USERLAND_ARCHIVES$COMPONENT_ARCHIVE")
 sed -i -e 's/sha256:TODO/sha256:'"$SHA256"'/g' Makefile
 git add Makefile
 
+# Get SOURCE_DIR and COMPONENT_SUBDIR
+SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
+COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
+[[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
+
 # Unpack sources and apply patches.  First time we need to skip cargo patches
 # (if any) because CARGO_VENDOR is not set yet and so the cargo patches cannot
 # be applied.
@@ -297,10 +302,9 @@ rm -f patches/*.patch_cargo
 ! $GMAKE patch > /dev/null 2>&1 && printf "FATAL: 'gmake patch' failed!\n" >&2 && exit 1
 
 # Handle CARGO_VENDOR
-SOURCE_DIR=$($GMAKE print-value-SOURCE_DIR)
 CARGO_TOML_SUBDIR=$($GMAKE print-value-CARGO_TOML_SUBDIR)
 if [[ -z "$CARGO_TOML_SUBDIR" ]] ; then
-	CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR" ; find . -name Cargo.toml)
+	CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR$COMPONENT_SUBDIR" ; find . -name Cargo.toml)
 	if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
 		CARGO_TOML_SUBDIR=$(printf '%s\n' "$CARGO_TOML_SUBDIRS" \
 			| sed -e 's/^\.\(.*\)\/Cargo\.toml$/\1/' -e 's/^\///' \
@@ -311,7 +315,7 @@ if [[ -z "$CARGO_TOML_SUBDIR" ]] ; then
 		[[ -n "$CARGO_TOML_SUBDIR" ]] && sed -i -e 's|^CARGO_TOML_SUBDIR =$|& '"$CARGO_TOML_SUBDIR|" Makefile
 	fi
 fi
-if [[ -f "$SOURCE_DIR/$CARGO_TOML_SUBDIR/Cargo.toml" ]] ; then
+if [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$CARGO_TOML_SUBDIR/Cargo.toml" ]] ; then
 	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' Makefile
 else
 	sed -i -e '/^CARGO_VENDOR = no$/d' Makefile
@@ -338,8 +342,6 @@ $GMAKE clobber > /dev/null 2>&1
 
 # Prepare sources
 ! $GMAKE prep > /dev/null 2>&1 && printf "FATAL: 'gmake prep' failed!\n" >&2 && exit 1
-COMPONENT_SUBDIR=$($GMAKE print-value-COMPONENT_SUBDIR)
-[[ -n "$COMPONENT_SUBDIR" ]] && COMPONENT_SUBDIR="/$COMPONENT_SUBDIR"
 
 # Get summary if not already provided
 if [[ -z "$SUMMARY" ]] ; then
