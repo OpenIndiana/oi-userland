@@ -1,0 +1,17 @@
+Do not depend on pytest_run_parallel.
+
+--- cffi-2.0.0/testing/conftest.py.orig
++++ cffi-2.0.0/testing/conftest.py
+@@ -3,11 +3,7 @@
+ 
+ from ctypes import util
+ 
+-try:
+-    import pytest_run_parallel  # noqa:F401
+-    PARALLEL_RUN_AVAILABLE = True
+-except Exception:
+-    PARALLEL_RUN_AVAILABLE = False
++PARALLEL_RUN_AVAILABLE = False
+ 
+ def pytest_configure(config):
+     # Don't warn for `pytest-run-parallel` markers if they're not available

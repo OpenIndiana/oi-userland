@@ -15,28 +15,32 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cffi
-HUMAN_VERSION =			1.17.1
+HUMAN_VERSION =			2.0.0
 COMPONENT_SUMMARY =		Foreign Function Interface for Python calling C code.
-COMPONENT_PROJECT_URL =		http://cffi.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824
-COMPONENT_LICENSE =		MIT
+	sha256:44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529
+COMPONENT_LICENSE =		MIT-0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This is needed for the test_errno_working_even_with_pypys_jit test.  Please
+# see note in the test (file testing/cffi0/test_verify.py) for details.
+CFLAGS += -pthread
+
 # Normalize pointers
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pycparser
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/pycparser
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
