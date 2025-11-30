@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		argon2_cffi_bindings
 HUMAN_VERSION =			25.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Low-level CFFI bindings for Argon2
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b957f3e6ea4d55d820e40ff76f450952807013d361a65d7f28acc0acbf29229d
@@ -29,9 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
