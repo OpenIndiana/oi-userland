@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cmarkgfm
-HUMAN_VERSION =			2024.11.20
+HUMAN_VERSION =			2025.10.22
 COMPONENT_SUMMARY =		Minimal bindings to GitHub's fork of cmark
 COMPONENT_PROJECT_URL =		https://github.com/theacodes/cmarkgfm
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5dd01cf61975a8a57213cdef5ed870e936032f13fe93d60ddf659ffb9cf73c6a
+	sha256:5bec61007b65b919488442c838c58a6c8bf4741f5103c593b2ef180d39818eda
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -31,8 +31,12 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Needed to get strncasecmp() declaration
+CFLAGS += $(XPG5MODE)
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/pycparser
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
