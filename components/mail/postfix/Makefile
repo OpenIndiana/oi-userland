@@ -21,13 +21,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
-COMPONENT_VERSION=	3.10.5
+COMPONENT_VERSION=	3.10.6
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://de.postfix.org/ftpmirror/official/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:6a926bf702173861b08e49bcb51fca3a2f269f9a337f72ef159bf46052087e35
+COMPONENT_ARCHIVE_HASH=	sha256:71b383f57d4cb363201be8a301bcbafe304aadbe7f38ebde41cd5b952248465b
 COMPONENT_FMRI=		service/network/smtp/postfix
 COMPONENT_CLASSIFICATION= System/Services
 COMPONENT_LICENSE=	IBM PUBLIC LICENSE, Eclipse Public License 2.0
