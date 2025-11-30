@@ -1,17 +1,15 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> coverage run --source=pytest_run_parallel,tests -m pytest -W error -v tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .tox/py$(PYV)/.pytest_cache
+cachedir: .pytest_cache
 hypothesis profile 'default'
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 69 items
+collecting ... collected 76 items
 Collected 0 items to run in parallel
 
 tests/test_cpu_detection.py::test_auto_detect_cpus_psutil_affinity PASSED
 tests/test_cpu_detection.py::test_auto_detect_cpus_psutil_cpu_count PASSED
-tests/test_cpu_detection.py::test_auto_detect_process_cpu_count SKIPPED
+tests/test_cpu_detection.py::test_auto_detect_process_cpu_count PASSED
 tests/test_cpu_detection.py::test_auto_detect_sched_getaffinity SKIPPED
 tests/test_cpu_detection.py::test_auto_detect_cpu_count PASSED
 tests/test_run_parallel.py::test_default_threads PASSED
@@ -22,6 +20,8 @@ tests/test_run_parallel.py::test_skip PASSED
 tests/test_run_parallel.py::test_fail PASSED
 tests/test_run_parallel.py::test_exception PASSED
 tests/test_run_parallel.py::test_num_parallel_threads_fixture PASSED
+tests/test_run_parallel.py::test_parallel_threads_limit_fixture PASSED
+tests/test_run_parallel.py::test_parallel_threads_limit_one_thread PASSED
 tests/test_run_parallel.py::test_iterations_marker_one_thread PASSED
 tests/test_run_parallel.py::test_iterations_config_one_thread PASSED
 tests/test_run_parallel.py::test_multiple_iterations_multiple_threads PASSED
@@ -35,6 +35,10 @@ tests/test_run_parallel.py::test_runs_hypothesis_in_parallel PASSED
 tests/test_run_parallel.py::test_fail_warning_gil_enabled_during_execution PASSED
 tests/test_run_parallel.py::test_fail_warning_gil_enabled_during_collection PASSED
 tests/test_run_parallel.py::test_warning_gil_enabled_ignore_option PASSED
+tests/test_run_parallel.py::test_runs_with_xdist PASSED
+tests/test_run_parallel.py::test_forever_with_xdist_errors PASSED
+tests/test_run_parallel.py::test_parallel_threads_deprecation PASSED
+tests/test_run_parallel.py::test_forever_without_selected_tests PASSED
 tests/test_thread_comparator.py::test_thread_comp_fixture PASSED
 tests/test_thread_index.py::test_thread_index_single_thread PASSED
 tests/test_thread_index.py::test_thread_index_num_parallel_threads PASSED
@@ -64,6 +68,7 @@ tests/test_thread_unsafe_detection.py::test_thread_unsafe_pytest_warns_instance_
 tests/test_thread_unsafe_detection.py::test_thread_unsafe_hypothesis_config_option PASSED
 tests/test_thread_unsafe_detection.py::test_thread_unsafe_detection_can_handle_none_module PASSED
 tests/test_thread_unsafe_detection.py::test_ast_parsing_error PASSED
+tests/test_thread_unsafe_detection.py::test_detect_gc_collect PASSED
 tests/test_tmp_path.py::test_tmp_path_is_empty[1-PASSED] PASSED
 tests/test_tmp_path.py::test_tmp_path_is_empty[auto-PARALLEL PASSED] PASSED
 tests/test_tmp_path.py::test_tmp_path_read_write[1-PASSED] PASSED
@@ -79,24 +84,4 @@ tests/test_tmp_path.py::test_tmpdir_delete[auto-PARALLEL PASSED] PASSED
 tests/test_tmp_path.py::test_tmp_path_tmpdir[1-PASSED] PASSED
 tests/test_tmp_path.py::test_tmp_path_tmpdir[auto-PARALLEL PASSED] PASSED
 
-======== 67 passed, 2 skipped ========
-py$(PYV): commands[1]> coverage report -m
-Name                                                                                                                                                                       Stmts   Miss  Cover   Missing
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/__init__.py                      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/cpu_detection.py                29      8    72%   4-5, 18-19, 23, 27-28, 32
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/plugin.py                      262     21    92%   50-53, 82, 109, 198, 203, 210, 214-219, 226, 228, 233, 266, 270, 329, 370
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/thread_comparator.py            52      6    88%   8-9, 59-62, 64
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/thread_unsafe_detection.py     207     15    93%   11-18, 23-24, 87-88, 144, 153, 275, 305-308
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/pytest_run_parallel/utils.py                        24      2    92%   20-21
-tests/conftest.py                                                                                                                                                              1      0   100%
-tests/test_cpu_detection.py                                                                                                                                                   61     19    69%   7-8, 78-95, 109-127
-tests/test_run_parallel.py                                                                                                                                                   119      2    98%   7-8
-tests/test_thread_comparator.py                                                                                                                                                4      0   100%
-tests/test_thread_index.py                                                                                                                                                    25      0   100%
-tests/test_thread_unsafe_detection.py                                                                                                                                        136      4    97%   11-12, 769, 781
-tests/test_tmp_path.py                                                                                                                                                        37      0   100%
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                                        957     77    92%
-  py$(PYV): OK
-  congratulations :)
+======== 75 passed, 1 skipped ========
