@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 2053 items
+collecting ... collected 2057 items
 
 src/c/test_c.py::test_load_library PASSED
 src/c/test_c.py::test_all_rtld_symbols PASSED
@@ -365,6 +365,7 @@ testing/cffi0/test_ctypes.py::TestCTypes::test_sizeof_struct_directly PASSED
 testing/cffi0/test_ctypes.py::TestCTypes::test_callback_large_struct PASSED
 testing/cffi0/test_ctypes.py::TestCTypes::test_ffi_array_as_init PASSED
 testing/cffi0/test_ctypes.py::TestCTypes::test_too_many_initializers PASSED
+testing/cffi0/test_ctypes.py::TestCTypes::test_array_slicing SKIPPED
 testing/cffi0/test_ctypes.py::TestCTypes::test_array_of_func_ptr SKIPPED
 testing/cffi0/test_ctypes.py::TestCTypes::test_structptr_argument SKIPPED
 testing/cffi0/test_ctypes.py::TestCTypes::test_array_argument_as_list SKIPPED
@@ -426,6 +427,7 @@ testing/cffi0/test_ffi_backend.py::TestFFI::test_new_unsupported_type PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_new_single_integer PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_new_array_no_arg PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_array_indexing PASSED
+testing/cffi0/test_ffi_backend.py::TestFFI::test_array_slicing PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_new_array_args PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_new_array_varsize PASSED
 testing/cffi0/test_ffi_backend.py::TestFFI::test_pointer_init PASSED
@@ -1049,7 +1051,7 @@ testing/cffi0/test_verify2.py::test_arithmetic_in_cdef PASSED
 testing/cffi0/test_verify2.py::test_passing_large_list PASSED
 testing/cffi0/test_version.py::test_version PASSED
 testing/cffi0/test_version.py::test_doc_version PASSED
-testing/cffi0/test_version.py::test_setup_version PASSED
+testing/cffi0/test_version.py::test_pyproject_version PASSED
 testing/cffi0/test_version.py::test_c_version PASSED
 testing/cffi0/test_version.py::test_embedding_h PASSED
 testing/cffi0/test_vgen.py::test_module_type PASSED
@@ -1678,6 +1680,8 @@ testing/cffi1/test_re_python.py::test_partial_enum PASSED
 testing/cffi1/test_re_python.py::test_anonymous_union_inside_struct PASSED
 testing/cffi1/test_re_python.py::test_selfref PASSED
 testing/cffi1/test_re_python.py::test_dlopen_handle PASSED
+testing/cffi1/test_re_python.py::test_rec_structs_1 PASSED
+testing/cffi1/test_re_python.py::test_rec_structs_2 PASSED
 testing/cffi1/test_realize_c_type.py::test_void PASSED
 testing/cffi1/test_realize_c_type.py::test_int_star PASSED
 testing/cffi1/test_realize_c_type.py::test_noop PASSED
@@ -2064,47 +2068,166 @@ src/cffi/_imp_emulation.py:4
   $(@D)/src/c/../cffi/_imp_emulation.py:4: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
     from imp import *
 
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/nose/plugins/manager.py:417
+  $(PYTHON_DIR)/vendor-packages/nose/plugins/manager.py:417: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+    import pkg_resources
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2558
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(parent)
+
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+  Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+    declare_namespace(pkg)
+
 src/c/test_c.py::test_callback_return_type
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
   
   Traceback (most recent call last):
-    File "$(@D)/src/c/test_c.py", line 1453, in test_callback_return_type
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
       assert f(max) == 42
   OverflowError: int too big to convert
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: int too big to convert
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 4294967296 does not fit 'unsigned int'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 65536 does not fit 'unsigned short'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 256 does not fit 'unsigned char'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: int too big to convert
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 2147483648 does not fit 'int'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 32768 does not fit 'short'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+src/c/test_c.py::test_callback_return_type
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_return_type.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/src/c/test_c.py", line 1456, in test_callback_return_type
+      assert f(max) == 42
+  OverflowError: integer 128 does not fit 'signed char'
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 src/c/test_c.py::test_callback_returning_wchar_t
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_returning_wchar_t.<locals>.cb at $(POINTER)>: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_callback_returning_wchar_t.<locals>.cb at $(POINTER)>: None
   
   Traceback (most recent call last):
-    File "$(@D)/src/c/test_c.py", line 1748, in cb
+    File "$(@D)/src/c/test_c.py", line 1751, in cb
       raise ValueError
   ValueError
   
+  
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
-src/c/test_c.py::test_cast_with_functionptr
-  $(@D)/src/c/test_c.py:2166: UserWarning: implicit cast from 'char *' to a different pointer type: will be forbidden in the future (check that the types are as you expect; use an explicit ffi.cast() if they are correct)
-    newp(BStructPtr, [cast(BCharP, 0)])
-
 testing/cffi0/test_ffi_backend.py::TestFFI::test_callback_crash
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function BackendTests.test_callback_crash.<locals>.cb at $(POINTER)>: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function BackendTests.test_callback_crash.<locals>.cb at $(POINTER)>: None
   
   Traceback (most recent call last):
-    File "$(@D)/testing/cffi0/backend_tests.py", line 848, in cb
+    File "$(@D)/testing/cffi0/backend_tests.py", line 858, in cb
       raise Exception
   Exception
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 testing/cffi0/test_ffi_backend.py::TestFFI::test_callback_decorator
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function BackendTests.test_callback_decorator.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function BackendTests.test_callback_decorator.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
   
   Traceback (most recent call last):
-    File "$(@D)/testing/cffi0/backend_tests.py", line 1390, in test_callback_decorator
+    File "$(@D)/testing/cffi0/backend_tests.py", line 1400, in test_callback_decorator
       assert cb((1 << (sz*8-1)) - 1, -10) == 42
   OverflowError: int too big to convert
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
@@ -2113,54 +2236,81 @@ testing/cffi0/test_parsing.py::test_missing_newline_bug
     warnings.warn(
 
 testing/cffi1/test_ffi_obj.py::test_ffi_callback
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_ffi_callback.<locals>.<lambda> at $(POINTER)>: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_ffi_callback.<locals>.<lambda> at $(POINTER)>: None
   
   Traceback (most recent call last):
-    File "$(@D)/testing/cffi1/test_ffi_obj.py", line 130, in <lambda>
+    File "$(@D)/testing/cffi1/test_ffi_obj.py", line 132, in <lambda>
       assert ffi.callback("int(int)", lambda x: x + "", error=-66)(10) == -66
   TypeError: unsupported operand type(s) for +: 'int' and 'str'
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+testing/cffi1/test_ffi_obj.py::test_ffi_callback
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_ffi_callback.<locals>.<lambda> at $(POINTER)>: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/testing/cffi1/test_ffi_obj.py", line 131, in <lambda>
+      assert ffi.callback("int(int)", lambda x: x + "", -66)(10) == -66
+  TypeError: unsupported operand type(s) for +: 'int' and 'str'
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 testing/cffi1/test_ffi_obj.py::test_ffi_callback_decorator
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_ffi_callback_decorator.<locals>.<lambda> at $(POINTER)>: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_ffi_callback_decorator.<locals>.<lambda> at $(POINTER)>: None
   
   Traceback (most recent call last):
-    File "$(@D)/testing/cffi1/test_ffi_obj.py", line 136, in <lambda>
+    File "$(@D)/testing/cffi1/test_ffi_obj.py", line 138, in <lambda>
       assert deco(lambda x: x + "")(10) == -66
   TypeError: unsupported operand type(s) for +: 'int' and 'str'
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 testing/cffi1/test_new_ffi_1.py::TestNewFFI1::test_callback_crash
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function TestNewFFI1.test_callback_crash.<locals>.cb at $(POINTER)>: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function TestNewFFI1.test_callback_crash.<locals>.cb at $(POINTER)>: None
   
   Traceback (most recent call last):
     File "$(@D)/testing/cffi1/test_new_ffi_1.py", line 863, in cb
       raise Exception
   Exception
   
+  
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 testing/cffi1/test_new_ffi_1.py::TestNewFFI1::test_callback_decorator
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function TestNewFFI1.test_callback_decorator.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function TestNewFFI1.test_callback_decorator.<locals>.cb at $(POINTER)>, trying to convert the result back to C: None
   
   Traceback (most recent call last):
     File "$(@D)/testing/cffi1/test_new_ffi_1.py", line 1341, in test_callback_decorator
       assert cb((1 << (sz*8-1)) - 1, -10) == 42
   OverflowError: int too big to convert
   
+  
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 testing/cffi1/test_recompiler.py::test_macro_var_callback
-  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:85: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_macro_var_callback.<locals>.get_my_value at $(POINTER)>, trying to convert the result back to C: None
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_macro_var_callback.<locals>.get_my_value at $(POINTER)>, trying to convert the result back to C: None
   
   Traceback (most recent call last):
-    File "$(PYTHON_DIR)/vendor-packages/_pytest/python_api.py", line 968, in raises
+    File "$(PYTHON_DIR)/vendor-packages/_pytest/raises.py", line 296, in raises
       func(*args[1:], **kwargs)
   TypeError: initializer for ctype 'int *' must be a cdata pointer, not str
+  
+  
+    warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
+
+testing/cffi1/test_recompiler.py::test_macro_var_callback
+  $(PYTHON_DIR)/vendor-packages/_pytest/unraisableexception.py:67: PytestUnraisableExceptionWarning: Exception ignored from cffi callback <function test_macro_var_callback.<locals>.get_my_value at $(POINTER)>: None
+  
+  Traceback (most recent call last):
+    File "$(@D)/testing/cffi1/test_recompiler.py", line 1272, in get_my_value
+      raise LookupError
+  LookupError
+  
   
     warnings.warn(pytest.PytestUnraisableExceptionWarning(msg))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1926 passed, 123 skipped, 4 xfailed, 12 warnings ========
+======== 1929 passed, 124 skipped, 4 xfailed, 29 warnings ========
