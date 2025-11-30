@@ -14,19 +14,16 @@
 #   $WS_TOOLS/python-integrate-project brotlicffi
 #
 
-BUILD_STYLE = setup.py
-PYTHON3_SOABI = abi3
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		brotlicffi
-HUMAN_VERSION =			1.1.0.0
-COMPONENT_SUMMARY =		brotlicffi - Python CFFI bindings to the Brotli library
+HUMAN_VERSION =			1.2.0.0
+COMPONENT_SUMMARY =		Python CFFI bindings to the Brotli library
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/brotlicffi
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/95/9d/70caa61192f570fcf0352766331b735afa931b4c6bc9a348a0925cc13288/brotlicffi-1.1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b77827a689905143f87915310b93b273ab17888fd43ef350d4832c4a71083c13
+	sha256:34345d8d1f9d534fcac2249e57a4c3c8801a33c9942ff9f8574f67a175e17adb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -36,6 +33,7 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
