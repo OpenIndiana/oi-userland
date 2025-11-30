@@ -1,0 +1,80 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/gio/tests/meson.build a/gio/tests/meson.build
+--- a~/gio/tests/meson.build	1970-01-01 00:00:00
++++ a/gio/tests/meson.build	1970-01-01 00:00:00
+@@ -106,7 +106,11 @@ gio_tests = {
+   'memory-output-stream' : {},
+   'memory-settings-backend' : {},
+   'mount-operation' : {},
+-  'network-address' : {'extra_sources': ['mock-resolver.c']},
++  'network-address' : {
++    'extra_sources': ['mock-resolver.c'],
++    'c_args' : network_args,
++    'dependencies' : network_libs,
++  },
+   'network-monitor' : {},
+   'network-monitor-race' : {},
+   'null-settings-backend' : {},
+@@ -126,6 +130,8 @@ gio_tests = {
+     # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/1392
+     # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/3148
+     'can_fail' : host_system in ['darwin', 'gnu'],
++    'c_args' : network_args,
++    'dependencies' : network_libs
+   },
+   'socket-listener' : {},
+   'socket-service' : {},
+@@ -144,7 +150,10 @@ gio_tests = {
+   'tls-interaction' : {'extra_sources' : ['gtesttlsbackend.c']},
+   'tls-database' : {'extra_sources' : ['gtesttlsbackend.c']},
+   'tls-bindings' : {'extra_sources' : ['gtesttlsbackend.c']},
+-  'unix-fd' : {},
++  'unix-fd' : {
++    'c_args' : network_args,
++    'dependencies' : network_libs
++  },
+   'gdbus-address-get-session' : {
+     'extra_programs': host_system != 'windows' ? ['dbus-launch'] : [],
+     # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/1392
+@@ -260,7 +269,10 @@ if host_machine.system() != 'windows'
+       # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/3148
+       'can_fail' : host_system == 'gnu',
+     },
+-    'gdbus-peer-object-manager' : {},
++    'gdbus-peer-object-manager' : {
++      'c_args' : network_args,
++      'dependencies' : network_libs
++    },
+     'gdbus-sasl' : {},
+     'live-g-file' : {},
+     'portal-support-flatpak-none' : {
+@@ -307,6 +319,8 @@ if host_machine.system() != 'windows'
+     'stream-rw_all' : {
+       # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/3148
+       'can_fail' : host_system == 'gnu',
++      'c_args' : network_args,
++      'dependencies' : network_libs
+     },
+     'unix-mounts' : {},
+     'unix-streams' : {},
+@@ -606,8 +620,8 @@ if host_machine.system() != 'windows'
+ 
+   # This test is currently unreliable
+   executable('gdbus-overflow', 'gdbus-overflow.c',
+-      c_args : test_c_args,
+-      dependencies : common_gio_tests_deps,
++      c_args : [test_c_args, network_args],
++      dependencies : [common_gio_tests_deps, network_libs],
+       install_dir : installed_tests_execdir,
+       install_tag : 'tests',
+       install : installed_tests_enabled)
+diff -wpruN --no-dereference '--exclude=*.orig' a~/glib/tests/meson.build a/glib/tests/meson.build
+--- a~/glib/tests/meson.build	1970-01-01 00:00:00
++++ a/glib/tests/meson.build	1970-01-01 00:00:00
+@@ -140,6 +140,7 @@ glib_tests = {
+   },
+   'spawn-singlethread' : {
+     'dependencies' : [winsock2],
++    'link_args' : '-lsocket',
+     'extra_programs' : ['test-spawn-echo'],
+     # FIXME: https://gitlab.gnome.org/GNOME/glib/-/issues/3148
+     'can_fail' : host_system == 'gnu',

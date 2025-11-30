@@ -1,0 +1,12 @@
+--- glib-2.85.4/gio/gmemorymonitorbase.c.old	2025-09-03 13:52:12.377161622 -0400
++++ glib-2.85.4/gio/gmemorymonitorbase.c	2025-09-03 13:53:17.725158450 -0400
+@@ -29,6 +29,9 @@
+ #include "gmemorymonitor.h"
+ #include "gmemorymonitorbase.h"
+ 
++/* error: 'struct sysinfo' has no member named 'totalram' */
++#undef HAVE_SYSINFO
++
+ #ifdef HAVE_SYSINFO
+ #include <sys/sysinfo.h>
+ #endif

@@ -1,16 +1,29 @@
-Remove Unix standard settings for Solaris 11.4, so we don't exclude all
-features added between XPG2 & XPG7, now that these are exposed by default.
-
-To send upstream, need to adjust to right version for each OS level
-
---- glib-2.82.0/meson.build.orig
-+++ glib-2.82.0/meson.build
-@@ -2477,8 +2477,6 @@
+--- glib-2.86.0/meson.build.~1~	2025-09-05 08:42:14.000000000 -0400
++++ glib-2.86.0/meson.build	2025-09-14 19:26:07.323353559 -0400
+@@ -2549,26 +2549,6 @@
+ # Some installed tests require a custom environment
+ env_program = find_program('env', required: installed_tests_enabled)
  
- # FIXME: How to detect Solaris? https://github.com/mesonbuild/meson/issues/1578
- if host_system == 'sunos'
--  glib_conf.set('_XOPEN_SOURCE_EXTENDED', 1)
--  glib_conf.set('_XOPEN_SOURCE', 2)
-   glib_conf.set('__EXTENSIONS__',1)
- endif
- 
+-# illumos & Solaris may need extra definitions to expose some SUS/POSIX
+-# interfaces in headers that conflict with previous Solaris headers.
+-# But if we define them to request an older version of the standards,
+-# we may hide things introduced in newer versions.  We only check the
+-# versions that are supported on systems new enough that meson runs on them.
+-if host_system == 'sunos'
+-  xopen_test_code = '''#include <unistd.h>
+-  #if _XOPEN_VERSION != _XOPEN_SOURCE
+-  #error "XOPEN_SOURCE of _XOPEN_SOURCE not supported"
+-  #endif'''
+-  foreach std : ['800', '700', '600']
+-    if cc.compiles(xopen_test_code, args: '-D_XOPEN_SOURCE=' + std, name: 'building with _XOPEN_SOURCE=' + std)
+-      xopen_version = std
+-      break
+-    endif
+-  endforeach
+-  glib_conf.set('_XOPEN_SOURCE', xopen_version)
+-  glib_conf.set('__EXTENSIONS__',1)
+-endif
+-
+ # Sadly Meson does not expose this value:
+ # https://github.com/mesonbuild/meson/pull/3460
+ if host_system == 'windows'

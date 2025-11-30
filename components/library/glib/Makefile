@@ -23,9 +23,9 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
-HUMAN_VERSION=		2.82.5
+HUMAN_VERSION=		2.86.2
 COMPONENT_SUMMARY=	GNOME core libraries
-COMPONENT_ARCHIVE_HASH=	sha256:05c2031f9bdf6b5aba7a06ca84f0b4aced28b19bf1b50c6ab25cc675277cbc3f
+COMPONENT_ARCHIVE_HASH=	sha256:8a724e970855357ea8101e27727202392a0ffd5410a98336aed54ec59113e611
 COMPONENT_FMRI=		library/glib2
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
@@ -81,6 +81,20 @@ COMPONENT_BUILD_ENV += DFLAGS=$(DFLAGS.$(BITS))
 # typelib compilation to fail
 COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=gio:glib:gobject
 
+# fix python scripts
+COMPONENT_POST_INSTALL_ACTION.32 += \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/gtester-report && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/gdbus-codegen && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/glib-genmarshal && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/glib-mkenums
+
+
+COMPONENT_POST_INSTALL_ACTION.64 += \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/gtester-report && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/gdbus-codegen && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/glib-genmarshal && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/glib-mkenums
+
 # dbus-daemon is in /usr/lib
 COMPONENT_TEST_ENV.32 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib PATH=$(PATH):/usr/lib
 COMPONENT_TEST_ENV.64 = LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib/$(MACH64) PATH=$(PATH):/usr/lib/$(MACH64)
@@ -108,9 +122,6 @@ TEST_REQUIRED_PACKAGES += system/library/dbus
 TEST_REQUIRED_PACKAGES += library/desktop/desktop-file-utils
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/python-subunit
-PYTHON_REQUIRED_PACKAGES += library/python/testtools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/file-monitor/gamin
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/pcre2
@@ -118,3 +129,6 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += library/python/python-subunit
+REQUIRED_PACKAGES.python += library/python/testtools
+REQUIRED_PACKAGES.python += runtime/python
