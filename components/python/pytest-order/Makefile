@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project -d python/pytest-order pytest_order
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_order
 HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		pytest plugin to run your tests in a specific order
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-order
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,10 +34,10 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_ADDOPTS += --deselect tests/test_xdist_handling.py::test_xdist_ordering
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-dependency
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
