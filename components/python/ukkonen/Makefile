@@ -14,14 +14,14 @@
 #   $WS_TOOLS/python-integrate-project ukkonen
 #
 
-BUILD_STYLE = setup.py
-PYTHON3_SOABI = abi3
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ukkonen
 HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		ukkonen - Implementation of bounded Levenshtein distance (Ukkonen)
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Implementation of bounded Levenshtein distance (Ukkonen)
 COMPONENT_PROJECT_URL =		https://www.github.com/asottile/ukkonen
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/ukkonen/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
@@ -33,11 +33,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cffi
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/cffi
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
