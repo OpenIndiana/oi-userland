@@ -1,0 +1,14 @@
+We cannot run argon2 in isolated mode because it is in proto area and so we
+need to point PYTHONPATH there.
+
+--- argon2_cffi-25.1.0/tox.ini.orig
++++ argon2_cffi-25.1.0/tox.ini
+@@ -23,7 +23,7 @@
+     NO_COLOR
+ commands =
+     pytest {posargs}
+-    python -Im argon2 -n 1 -t 1 -m 8 -p 1
++    python -m argon2 -n 1 -t 1 -m 8 -p 1
+     mypy: mypy tests/typing
+ 
+ 
