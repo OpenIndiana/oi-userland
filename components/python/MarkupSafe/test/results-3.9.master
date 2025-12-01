@@ -1,12 +1,12 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
+py$(PYV): commands[0]> python -m pytest -v --tb=short --basetemp=$(@D)/.tox/py$(PYV)/tmp
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
 collecting ... collected 80 items
+Collected 0 items to run in parallel
 
 tests/test_escape.py::test_escape[markupsafe._native--] PASSED
 tests/test_escape.py::test_escape[markupsafe._native-abcd&><'"efgh-abcd&amp;&gt;&lt;&#39;&#34;efgh] PASSED

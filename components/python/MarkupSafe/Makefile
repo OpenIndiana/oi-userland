@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markupsafe
 HUMAN_VERSION =			3.0.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Safely add untrusted strings to HTML/XML markup.
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698
@@ -33,3 +35,4 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-run-parallel
