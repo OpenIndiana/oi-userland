@@ -10,19 +10,19 @@
 
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
-# Copyright 2021, 2024, Andreas Wacknitz
+# Copyright 2021, 2025, Andreas Wacknitz
 #
 
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.5.10
+COMPONENT_VERSION=	2.5.11
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:bf5fb49f2a42f36b3e003d2e4d234386addf07d9dd8ca8634656927cc96ce125
+COMPONENT_ARCHIVE_HASH=	sha256:eaec6a0d4feb291946b3b61698cc0652b51fed4c72aea0a37ba28856d4a27404
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
