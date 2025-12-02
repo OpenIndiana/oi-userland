@@ -1,6 +1,10 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/_integration/deprecation.py:7: UserWarning: setup.cfg: at [metadata]
+version = attr: ... is forcing setuptools to override the version setuptools-scm did already set
+When using setuptools-scm it's invalid to use setuptools dynamic version as well, please remove it.
+Setuptools-scm is responsible for setting the version, forcing setuptools to override creates errors.
+  warnings.warn(
 py$(PYV): commands[0]> python -m pycodestyle --statistics pycodestyle.py
-py$(PYV): commands[1]> python -m coverage run -m pytest tests
+py$(PYV): commands[1]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -782,13 +786,5 @@ tests/test_shell.py::ShellTestCase::test_print_usage PASSED
 tests/test_util.py::UtilTestCase::test_normalize_paths PASSED
 
 ======== 758 passed, 15 skipped ========
-py$(PYV): commands[2]> python -m coverage report
-Name             Stmts   Miss Branch BrPart  Cover   Missing
-------------------------------------------------------------
-pycodestyle.py    1322     85    752     47    92%   83-84, 191->194, 302->exit, 314, 319, 408->414, 412->408, 620, 633, 662, 705, 734, 750->754, 975, 1505, 1751-1752, 1757, 1802->1804, 1847, 1910-1913, 2015, 2018, 2045-2046, 2137-2141, 2205, 2213, 2215, 2226, 2237, 2242-2243, 2247-2250, 2281->2284, 2296-2301, 2303, 2383, 2384->2381, 2387, 2394, 2401-2421, 2429, 2434, 2548-2550, 2557-2558, 2563, 2570-2571, 2582-2583, 2585, 2592, 2596, 2611->2613, 2613->2622, 2631, 2679-2680, 2688, 2691, 2695
-------------------------------------------------------------
-TOTAL             2000     85    794     47    94%
-
-14 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)
