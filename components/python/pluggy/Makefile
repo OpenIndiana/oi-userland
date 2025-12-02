@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pluggy
-HUMAN_VERSION =			1.6.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.7.0
 COMPONENT_SUMMARY =		plugin and hook calling mechanisms for python
+COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pluggy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3
+	sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +34,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - tox (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
+# Python 3.9 is not supported by pluggy >= 1.7.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Make sure pytest is called indirectly
@@ -43,6 +46,4 @@ COMPONENT_TEST_ENV += _PLUGGY_TOX_CMD="python -m pytest"
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-benchmark
