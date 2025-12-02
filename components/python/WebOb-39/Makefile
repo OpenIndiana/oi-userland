@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/WebOb webob
+#   $WS_TOOLS/python-integrate-project -d python/WebOb-39 webob
 #
 
 BUILD_STYLE = pyproject
@@ -28,16 +28,12 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	docs/license.txt
 
-# runtime dependencies differs for Python < 3.13
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# runtime dependencies differs for Python >= 3.13
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/Pylons/webob/issues/479
-PYTEST_ADDOPTS += --deselect tests/test_in_wsgiref.py::test_interrupted_request
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/legacy-cgi
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
