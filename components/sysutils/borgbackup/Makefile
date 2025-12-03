@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		borgbackup
-HUMAN_VERSION =			1.4.2
+HUMAN_VERSION =			1.4.3
 COMPONENT_SUMMARY =		Deduplicated, encrypted, authenticated and compressed backups
 COMPONENT_PROJECT_URL =		https://borgbackup.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8923f5e953205d81138d1d7276c8a1c864215e230994d620c397635568ed376f
+	sha256:79bbfa745d1901d685973584bd2d16a350686ddd176f6a2244490fb01996441f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +38,9 @@ include $(WS_MAKE_RULES)/common.mk
 
 # To fully utilize pytest-xdist
 COMPONENT_TEST_ENV += XDISTN=auto
+
+# https://github.com/borgbackup/borg/issues/8740
+PYTEST_ADDOPTS += --deselect archiver.py::DiffArchiverTestCase::test_multiple_link_exclusion
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
