@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema_specifications
 HUMAN_VERSION =			2025.9.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The JSON Schema meta-schemas and vocabularies, exposed as a Registry
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema-specifications
 COMPONENT_ARCHIVE_HASH =	\
