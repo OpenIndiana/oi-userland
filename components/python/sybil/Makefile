@@ -19,14 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
-HUMAN_VERSION =			9.2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			9.3.0
 COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/simplistix/sybil/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f872f3df3640eb001ce70432aa9d4a90cf068884b482702bdc10e966765a46e7
+	sha256:000bb402d06894f03ac7102d3952f3550b6b7adedb06ee79338c4c7fd1becc25
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
