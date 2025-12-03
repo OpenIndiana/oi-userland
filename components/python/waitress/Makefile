@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		waitress
 HUMAN_VERSION =			3.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Waitress WSGI server
 COMPONENT_PROJECT_URL =		https://github.com/Pylons/waitress
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,8 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
