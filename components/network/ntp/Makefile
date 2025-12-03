@@ -31,7 +31,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ntp
 HUMAN_VERSION=		4.2.8p18
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	Network Time Protocol Daemon v4
 COMPONENT_DESCRIPTION=	Network Time Protocol v4, NTP Daemon and Utilities
 COMPONENT_PROJECT_URL=	https://www.ntp.org/
@@ -51,8 +51,14 @@ ASLR_MODE= $(ASLR_ENABLE)
 
 include $(WS_MAKE_RULES)/common.mk
 
+# re-add SPARC support
+ifeq ($(MACH), sparc)
+COMPONENT_PREP_ACTION = (cd $(@D) && PATH="$(PATH)" ./bootstrap; \
+			 $(GPATCH) -p0 < $(COMPONENT_DIR)/sparc/90-align.patch)
+else
 # We modified configure.ac and m4 macros
 COMPONENT_PREP_ACTION = ( cd $(@D) && PATH="$(PATH)" ./bootstrap )
+endif
 
 CFLAGS += -D_XOPEN_SOURCE=800 -D__EXTENSIONS__
 

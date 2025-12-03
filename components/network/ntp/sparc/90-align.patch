@@ -1,0 +1,591 @@
+This patch fixes a data misalignment on SPARC. 
+
+The problem was reported at NTP community bug 3933,
+"4.2.8p18 Restrict structure misaligned on SPARC64"
+https://bugs.ntp.org/show_bug.cgi?id=3933
+This patch may be removed when upgrading to a version of NTP with this
+bug fixed.
+
+diff -Nru ChangeLog ChangeLog
+--- ChangeLog
++++ ChangeLog
+@@ -1,4 +1,17 @@
+ ---
++
++* [Bug 3933] Restrict structure misaligned on SPARC64. <hart@ntp.org>
++* Reorder restrict_u layout to improve alignment on all platforms.
++  <hart@ntp.org>
++* Correct match_restrict[46]_addr() logic expiring temporary restrictions.
++  <hart@ntp.org>
++* Rename is_ip_address() to sau_from_string() to better reflect use.
++  <hart@ntp.org>
++* Get rid of hack to quiet alignment warnings (safecast.h). <hart@ntp.org>
++* Fix bug in m4sh macro NTP_FACILITYNAMES that meant detection always failed.
++  <hart@ntp.org>
++
++---
+ (4.2.8p18) 2024/05/25 Released by Harlan Stenn <stenn@ntp.org>
+ 
+ * [Bug 3918] Tweak openssl header/library handling. <stenn@ntp.org>
+###diff -Nru include/Makefile.am include/Makefile.am
+###--- include/Makefile.am
+###+++ include/Makefile.am
+###@@ -71,7 +71,6 @@
+### 	recvbuff.h	\
+### 	refclock_atom.h	\
+### 	refidsmear.h	\
+###-	safecast.h	\
+### 	ssl_applink.c	\
+### 	timepps-SCO.h	\
+### 	timepps-Solaris.h	\
+diff -Nru include/ntp.h include/ntp.h
+--- include/ntp.h
++++ include/ntp.h
+@@ -857,18 +857,18 @@
+ 	restrict_u *	link;		/* link to next entry */
+ 	u_int32		count;		/* number of packets matched */
+ 	u_int32		expire;		/* valid until current_time */
+-	u_short		rflags;		/* restrict (accesslist) flags */
+ 	u_int32		mflags;		/* match flags */
++	u_short		rflags;		/* restrict (accesslist) flags */
+ 	short		ippeerlimit;	/* limit of associations matching */
+ 	union {				/* variant starting here */
+ 		res_addr4 v4;
+ 		res_addr6 v6;
+ 	} u;
+ };
+-#define	V4_SIZEOF_RESTRICT_U	(offsetof(restrict_u, u)	\
+-				 + sizeof(res_addr4))
+-#define	V6_SIZEOF_RESTRICT_U	(offsetof(restrict_u, u)	\
+-				 + sizeof(res_addr6))
++#define	V4_SIZEOF_RESTRICT_U	ALIGNED_SIZE(  offsetof(restrict_u, u)	\
++					     + sizeof(res_addr4))
++#define	V6_SIZEOF_RESTRICT_U	ALIGNED_SIZE(  offsetof(restrict_u, u)	\
++					     + sizeof(res_addr6))
+ 
+ /* restrictions for (4) a given address */
+ typedef struct r4addr_tag	r4addr;
+diff -Nru include/ntp_stdlib.h include/ntp_stdlib.h
+--- include/ntp_stdlib.h
++++ include/ntp_stdlib.h
+@@ -168,7 +168,7 @@
+ extern	int	hextoint	(const char *, u_long *);
+ extern	const char *	humanlogtime	(void);
+ extern	const char *	humantime	(time_t);
+-extern int	is_ip_address	(const char *, u_short, sockaddr_u *);
++extern int	sau_from_string	(const char *, u_short, sockaddr_u *);
+ extern	char *	mfptoa		(u_int32, u_int32, short);
+ extern	char *	mfptoms		(u_int32, u_int32, short);
+ extern	const char * modetoa	(size_t);
+diff -Nru include/ntp_types.h include/ntp_types.h
+--- include/ntp_types.h
++++ include/ntp_types.h
+@@ -234,25 +234,33 @@
+  * easy to do portably, as the maximum alignment required is not
+  * exposed.  Use the size of a union of the types known to represent the
+  * strictest alignment on some platform.
++ * ALIGNED_SIZE() assumes sizeof(max_alignment) is a power of two.
+  */
+ typedef union max_alignment_tag {
+-	double		d;
++	double	d;
++	long	l;
++	void *	vp;
++#ifdef HAVE_INT64
++	int64	i64;
++#endif
+ } max_alignment;
+ 
+-#define MAXALIGN		sizeof(max_alignment)
+-#define ALIGN_UNITS(sz)		(((sz) + MAXALIGN - 1) / MAXALIGN)
+-#define ALIGNED_SIZE(sz)	(MAXALIGN * ALIGN_UNITS(sz))
+-#define INC_ALIGNED_PTR(b, m)	((void *)aligned_ptr((void *)(b), m))
+-
+-static inline
+-max_alignment *
+-aligned_ptr(
+-	max_alignment *	base,
+-	size_t		minsize
+-	)
+-{
+-	return base + ALIGN_UNITS((minsize < 1) ? 1 : minsize);
+-}
++#define MAXALIGN		(sizeof(max_alignment))
++#define ALIGNMASK		(MAXALIGN - 1)
++#define ALIGNED_SIZE(sz)	(((sz) + ALIGNMASK) & ~ALIGNMASK)
++#define INCR_PTR(p, sz)		((void *)((char *)(p) + (sz)))
++
++/*
++ * There are cases where we would get "cast increases required alignment"
++ * when in fact it doesn't, and we know it doesn't.  An example is struct
++ * addrinfo.ai_addr, which is declared as a sockaddr * but often is the
++ * more-strictly-aligned sockaddr_in6 *.  Only when it is clear the
++ * alignment requirement is not really increasing, use QUIET_ALIGN_WARN().
++ * In addition to quieting the warning, it also unfortunately defeats 
++ * compiler type checking.
++ */
++
++#define QUIET_ALIGN_WARN(p)	((void *)(p))
+ 
+ /*
+  * On Unix struct sock_timeval is equivalent to struct timeval.
+diff -Nru include/safecast.h include/safecast.h
+--- include/safecast.h
++++ /dev/null	Thu Jan  1 00:00:00 1970 -00:00
+@@ -1,34 +0,0 @@
+-#ifndef SAFECAST_H
+-#define SAFECAST_H
+-
+-#include <limits.h>
+-static inline int size2int_chk(size_t v)
+-{
+-	if (v > INT_MAX)
+-		abort();
+-	return (int)(v);
+-}
+-
+-static inline int size2int_sat(size_t v)
+-{
+-	return (v > INT_MAX) ? INT_MAX : (int)v;
+-}
+-
+-/* Compilers can emit warning about increased alignment requirements
+- * when casting pointers. The impact is tricky: on machines where
+- * alignment is just a performance issue (x86,x64,...) this might just
+- * cause a performance penalty. On others, an address error can occur
+- * and the process dies...
+- *
+- * Still, there are many cases where the pointer arithmetic and the
+- * buffer alignment make sure this does not happen. OTOH, the compiler
+- * doesn't know this and still emits warnings.
+- *
+- * The following cast macros are going through void pointers to tell
+- * the compiler that there is no alignment requirement to watch.
+- */
+-#define UA_PTR(ptype,pval) ((ptype *)(void*)(pval))
+-#define UAC_PTR(ptype,pval) ((const ptype *)(const void*)(pval))
+-#define UAV_PTR(ptype,pval) ((volatile ptype *)(volatile void*)(pval))
+-
+-#endif
+diff -Nru libntp/authreadkeys.c libntp/authreadkeys.c
+--- libntp/authreadkeys.c
++++ libntp/authreadkeys.c
+@@ -326,7 +326,7 @@
+ 					snbits = UINT_MAX;
+ 				}
+ 
+-				if (is_ip_address(tp, AF_UNSPEC, &addr)) {
++				if (sau_from_string(tp, AF_UNSPEC, &addr)) {
+ 					/* Make sure that snbits is valid for addr */
+ 				    if ((snbits < UINT_MAX) &&
+ 					( (IS_IPV4(&addr) && snbits > 32) ||
+diff -Nru libntp/is_ip_address.c libntp/is_ip_address.c
+--- libntp/is_ip_address.c
++++ libntp/is_ip_address.c
+@@ -1,5 +1,5 @@
+ /*
+- * is_ip_address
++ * sau_from_string
+  *
+  */
+ 
+@@ -9,7 +9,6 @@
+ 
+ #include "ntp_assert.h"
+ #include "ntp_stdlib.h"
+-#include "safecast.h"
+ 
+ /* Don't include ISC's version of IPv6 variables and structures */
+ #define ISC_IPV6_H 1
+@@ -18,13 +17,11 @@
+ 
+ 
+ /*
+- * Code to tell if we have an IP address
+- * If we have then return the sockaddr structure
+- * and set the return value
+- * see the bind9/getaddresses.c for details
++ * sau_from_string() - sockaddr_u from IP address string
++ * Formerly named is_ip_address()
+  */
+ int
+-is_ip_address(
++sau_from_string(
+ 	const char *	host,
+ 	u_short		af,
+ 	sockaddr_u *	addr
+@@ -37,8 +34,8 @@
+ 	char tmpbuf[128];
+ 	char *pch;
+ 
+-	REQUIRE(host != NULL);
+-	REQUIRE(addr != NULL);
++	DEBUG_REQUIRE(host != NULL);
++	DEBUG_REQUIRE(addr != NULL);
+ 
+ 	ZERO_SOCK(addr);
+ 
+@@ -74,7 +71,7 @@
+ 			hints.ai_flags |= AI_NUMERICHOST;
+ 			if (getaddrinfo(tmpbuf, NULL, &hints, &result) == 0) {
+ 				AF(addr) = AF_INET6;
+-				resaddr6 = UA_PTR(struct sockaddr_in6, result->ai_addr);
++				resaddr6 = QUIET_ALIGN_WARN(result->ai_addr);
+ 				SET_ADDR6N(addr, resaddr6->sin6_addr);
+ 				SET_SCOPE(addr, resaddr6->sin6_scope_id);
+ 
+diff -Nru libntp/ntp_crypto_rnd.c libntp/ntp_crypto_rnd.c
+--- libntp/ntp_crypto_rnd.c
++++ libntp/ntp_crypto_rnd.c
+@@ -12,11 +12,12 @@
+ #ifdef HAVE_UNISTD_H
+ # include <unistd.h>
+ #endif
++#include <limits.h>
+ #include <stdio.h>
+ 
++#include <ntp_assert.h>
+ #include <ntp_stdlib.h>
+ #include <ntp_random.h>
+-#include "safecast.h"
+ 
+ #ifdef USE_OPENSSL_CRYPTO_RAND
+ #include <openssl/err.h>
+@@ -96,7 +97,8 @@
+ 		return -1;
+ 
+ #if defined(USE_OPENSSL_CRYPTO_RAND)
+-	if (1 != RAND_bytes(buf, size2int_chk(nbytes))) {
++	REQUIRE(nbytes <= INT_MAX);
++	if (1 != RAND_bytes(buf, (int)nbytes)) {
+ 		unsigned long err;
+ 		char *err_str;
+ 
+diff -Nru libntp/ntp_lineedit.c libntp/ntp_lineedit.c
+--- libntp/ntp_lineedit.c
++++ libntp/ntp_lineedit.c
+@@ -29,7 +29,6 @@
+ #include "ntp.h"
+ #include "ntp_stdlib.h"
+ #include "ntp_lineedit.h"
+-#include "safecast.h"
+ 
+ #define MAXEDITLINE	512
+ 
+diff -Nru ntpd/ntp_config.c ntpd/ntp_config.c
+--- ntpd/ntp_config.c
++++ ntpd/ntp_config.c
+@@ -3380,7 +3380,7 @@
+ 			pchSlash = strchr(if_name, '/');
+ 			if (pchSlash != NULL)
+ 				*pchSlash = '\0';
+-			if (is_ip_address(if_name, AF_UNSPEC, &addr)) {
++			if (sau_from_string(if_name, AF_UNSPEC, &addr)) {
+ 				match_type = MATCH_IFADDR;
+ 				if (pchSlash != NULL
+ 				    && 1 == sscanf(pchSlash + 1, "%d",
+@@ -4421,8 +4421,8 @@
+ 		 * Note that if we're told to add the peer here, we
+ 		 * do that regardless of ippeerlimit.
+ 		 */
+-		if (is_ip_address(*cmdline_servers, AF_UNSPEC,
+-				  &peeraddr)) {
++		if (sau_from_string(*cmdline_servers, AF_UNSPEC,
++				    &peeraddr)) {
+ 
+ 			SET_PORT(&peeraddr, NTP_PORT);
+ 			if (is_sane_resolved_address(&peeraddr,
+@@ -4497,8 +4497,9 @@
+ 		 * proceed in the mainline with it.  Otherwise, hand
+ 		 * the hostname off to the blocking child.
+ 		 */
+-		} else if (is_ip_address(curr_peer->addr->address,
+-				  curr_peer->addr->type, &peeraddr)) {
++		} else if (sau_from_string(curr_peer->addr->address,
++					   curr_peer->addr->type, 
++					   &peeraddr)) {
+ 
+ 			SET_PORT(&peeraddr, NTP_PORT);
+ 			if (is_sane_resolved_address(&peeraddr,
+@@ -5615,7 +5616,7 @@
+ 		AF_INET == AF(addr) ||
+ 		AF_INET6 == AF(addr));
+ 
+-	if (!is_ip_address(num, AF(addr), addr)) {
++	if (!sau_from_string(num, AF(addr), addr)) {
+ 		return 0;
+ 	}
+ # ifdef ISC_PLATFORM_HAVESALEN
+diff -Nru ntpd/ntp_io.c ntpd/ntp_io.c
+--- ntpd/ntp_io.c
++++ ntpd/ntp_io.c
+@@ -41,7 +41,6 @@
+ #include "timevalops.h"
+ #include "timespecops.h"
+ #include "ntpd-opts.h"
+-#include "safecast.h"
+ 
+ /* Don't include ISC's version of IPv6 variables and structures */
+ #define ISC_IPV6_H 1
+@@ -1116,7 +1115,7 @@
+ 	} else if (MATCH_IFADDR == match_type) {
+ 		REQUIRE(NULL != if_name);
+ 		/* set rule->addr */
+-		is_ip = is_ip_address(if_name, AF_UNSPEC, &rule->addr);
++		is_ip = sau_from_string(if_name, AF_UNSPEC, &rule->addr);
+ 		REQUIRE(is_ip);
+ 	} else
+ 		REQUIRE(NULL == if_name);
+diff -Nru ntpd/ntp_proto.c ntpd/ntp_proto.c
+--- ntpd/ntp_proto.c
++++ ntpd/ntp_proto.c
+@@ -3577,8 +3577,8 @@
+ 	indx_size = ALIGNED_SIZE(nlist * 2 * sizeof(*indx));
+ 	octets = endpoint_size + peers_size + indx_size;
+ 	endpoint = erealloc(endpoint, octets);
+-	peers = INC_ALIGNED_PTR(endpoint, endpoint_size);
+-	indx = INC_ALIGNED_PTR(peers, peers_size);
++	peers = INCR_PTR(endpoint, endpoint_size);
++	indx = INCR_PTR(peers, peers_size);
+ 
+ 	/*
+ 	 * Initially, we populate the island with all the rifraff peers
+diff -Nru ntpd/ntp_restrict.c ntpd/ntp_restrict.c
+--- ntpd/ntp_restrict.c
++++ ntpd/ntp_restrict.c
+@@ -40,8 +40,15 @@
+ 
+ /*
+  * We allocate INC_RESLIST{4|6} entries to the free list whenever empty.
+- * Auto-tune these to be just less than 1KB (leaving at least 32 bytes
+- * for allocator overhead).
++ * Auto-tune these to be just less than 1 KB (leaving at least 32 bytes
++ * for allocator overhead).  We'll use one entry for each "restrict"
++ * in ntp.conf, plus one for each local address.  This tuning gives us
++ * room for 31 IPv4 entries and 17 IPv6 entries per allocation on a
++ * 64-bit system, which is enough for the most common configurations
++ * to have all the restrictions in a a pair of 1 KB "hot zones" that will
++ * be accessed on every incoming packet of the respective address family
++ * and should stay in cache.  This is a performance optimization
++ * compared to allocating and freeing each entry as needed.
+  */
+ #define	INC_RESLIST4	((1024 - 32) / V4_SIZEOF_RESTRICT_U)
+ #define	INC_RESLIST6	((1024 - 32) / V6_SIZEOF_RESTRICT_U)
+@@ -234,9 +241,9 @@
+ 	if (res != NULL) {
+ 		return res;
+ 	}
+-	rl = eallocarray(count, cb);
++	rl = eallocarray(count, cb);	/* zeroes */
+ 	/* link all but the first onto free list */
+-	res = (void *)((char *)rl + (count - 1) * cb);
++	res = INCR_PTR(rl, (count - 1) * cb);
+ 	for (i = count - 1; i > 0; i--) {
+ 		LINK_SLIST(resfree4, res, link);
+ 		res = (void *)((char *)res - cb);
+@@ -260,9 +267,9 @@
+ 	if (res != NULL) {
+ 		return res;
+ 	}
+-	rl = eallocarray(count, cb);
++	rl = eallocarray(count, cb);	/* zeroes */
+ 	/* link all but the first onto free list */
+-	res = (void *)((char *)rl + (count - 1) * cb);
++	res = INCR_PTR(rl, (count - 1) * cb);
+ 	for (i = count - 1; i > 0; i--) {
+ 		LINK_SLIST(resfree6, res, link);
+ 		res = (void *)((char *)res - cb);
+@@ -336,8 +343,9 @@
+ 
+ 	for (res = restrictlist4; res != NULL; res = next) {
+ 		next = res->link;
+-		if (res->expire && res->expire <= current_time) {
++		if (res->expire > 0 && res->expire <= current_time) {
+ 			free_res(res, v6);	/* zeroes the contents */
++			continue;
+ 		}
+ 		if (   res->u.v4.addr == (addr & res->u.v4.mask)
+ 		    && (   !(RESM_NTPONLY & res->mflags)
+@@ -363,8 +371,9 @@
+ 
+ 	for (res = restrictlist6; res != NULL; res = next) {
+ 		next = res->link;
+-		if (res->expire && res->expire <= current_time) {
+-			free_res(res, v6);
++		if (res->expire > 0 && res->expire <= current_time) {
++			free_res(res, v6);	/* zeroes the contents */
++			continue;
+ 		}
+ 		MASK_IPV6_ADDR(&masked, addr, &res->u.v6.mask);
+ 		if (ADDR6_EQ(&masked, &res->u.v6.addr)
+diff -Nru ntpd/ntpd.c ntpd/ntpd.c
+--- ntpd/ntpd.c
++++ ntpd/ntpd.c
+@@ -972,7 +972,7 @@
+ 
+ 		while (ifacect-- > 0) {
+ 			add_nic_rule(
+-				is_ip_address(*ifaces, AF_UNSPEC, &addr)
++				sau_from_string(*ifaces, AF_UNSPEC, &addr)
+ 					? MATCH_IFADDR
+ 					: MATCH_IFNAME,
+ 				*ifaces, -1, ACTION_LISTEN);
+diff -Nru ntpdc/ntpdc.c ntpdc/ntpdc.c
+--- ntpdc/ntpdc.c
++++ ntpdc/ntpdc.c
+@@ -32,7 +32,6 @@
+ 
+ #include "ntp_libopts.h"
+ #include "ntpdc-opts.h"
+-#include "safecast.h"
+ 
+ #ifdef SYS_VXWORKS
+ 				/* vxWorks needs mode flag -casey*/
+@@ -965,8 +964,7 @@
+ 	get_systime(&ts);
+ 	L_ADD(&ts, &delay_time);
+ 	HTONL_FP(&ts, ptstamp);
+-	maclen = authencrypt(
+-		info_auth_keyid, (void *)&qpkt, size2int_chk(reqsize));
++	maclen = authencrypt(info_auth_keyid, (void *)&qpkt, reqsize);
+ 	if (!maclen) {  
+ 		fprintf(stderr, "Key not found\n");
+ 		return 1;
+diff -Nru ntpq/ntpq.c ntpq/ntpq.c
+--- ntpq/ntpq.c
++++ ntpq/ntpq.c
+@@ -49,7 +49,6 @@
+ #include <ssl_applink.c>
+ 
+ #include "ntp_libopts.h"
+-#include "safecast.h"
+ 
+ #ifdef SYS_VXWORKS		/* vxWorks needs mode flag -casey*/
+ # define open(name, flags)   open(name, flags, 0777)
+@@ -3474,8 +3473,8 @@
+ /*
+  * Global data used by the cooked output routines
+  */
+-int out_chars;		/* number of characters output */
+-int out_linecount;	/* number of characters output on this line */
++size_t out_chars;	/* number of characters output */
++size_t out_linecount;	/* number of characters output on this line */
+ 
+ 
+ /*
+@@ -3499,12 +3498,12 @@
+ 	const char *value
+ 	)
+ {
+-	int len;
++	size_t len;
+ 
+ 	/* strlen of "name=value" */
+-	len = size2int_sat(strlen(name) + 1 + strlen(value));
++	len = strlen(name) + 1 + strlen(value);
+ 
+-	if (out_chars != 0) {
++	if (out_chars > 0) {
+ 		out_chars += 2;
+ 		if ((out_linecount + len + 2) > MAXOUTLINE) {
+ 			fputs(",\n", fp);
+diff -Nru ports/winnt/vs2013/libntp/libntp.vcxproj ports/winnt/vs2013/libntp/libntp.vcxproj
+--- ports/winnt/vs2013/libntp/libntp.vcxproj
++++ ports/winnt/vs2013/libntp/libntp.vcxproj
+@@ -360,7 +360,6 @@
+     <ClInclude Include="..\..\..\..\include\ntp_types.h" />
+     <ClInclude Include="..\..\..\..\include\ntp_unixtime.h" />
+     <ClInclude Include="..\..\..\..\include\recvbuff.h" />
+-    <ClInclude Include="..\..\..\..\include\safecast.h" />
+     <ClInclude Include="..\..\..\..\include\timespecops.h" />
+     <ClInclude Include="..\..\..\..\include\timetoa.h" />
+     <ClInclude Include="..\..\..\..\include\timevalops.h" />
+diff -Nru ports/winnt/vs2013/libntp/libntp.vcxproj.filters ports/winnt/vs2013/libntp/libntp.vcxproj.filters
+--- ports/winnt/vs2013/libntp/libntp.vcxproj.filters
++++ ports/winnt/vs2013/libntp/libntp.vcxproj.filters
+@@ -577,9 +577,6 @@
+     <ClInclude Include="..\..\..\..\libntp\lib\isc\win32\include\isc\win32os.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+-    <ClInclude Include="..\..\..\..\include\safecast.h">
+-      <Filter>Header Files</Filter>
+-    </ClInclude>
+     <ClInclude Include="..\..\..\..\include\libntp.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+diff -Nru ports/winnt/vs2015/libntp/libntp.vcxproj ports/winnt/vs2015/libntp/libntp.vcxproj
+--- ports/winnt/vs2015/libntp/libntp.vcxproj
++++ ports/winnt/vs2015/libntp/libntp.vcxproj
+@@ -265,7 +265,6 @@
+     <ClInclude Include="..\..\..\..\include\ntp_types.h" />
+     <ClInclude Include="..\..\..\..\include\ntp_unixtime.h" />
+     <ClInclude Include="..\..\..\..\include\recvbuff.h" />
+-    <ClInclude Include="..\..\..\..\include\safecast.h" />
+     <ClInclude Include="..\..\..\..\include\timespecops.h" />
+     <ClInclude Include="..\..\..\..\include\timetoa.h" />
+     <ClInclude Include="..\..\..\..\include\timevalops.h" />
+diff -Nru ports/winnt/vs2015/libntp/libntp.vcxproj.filters ports/winnt/vs2015/libntp/libntp.vcxproj.filters
+--- ports/winnt/vs2015/libntp/libntp.vcxproj.filters
++++ ports/winnt/vs2015/libntp/libntp.vcxproj.filters
+@@ -517,9 +517,6 @@
+     <ClInclude Include="..\..\libntp\messages.h">
+       <Filter>Generated Files</Filter>
+     </ClInclude>
+-    <ClInclude Include="..\..\..\..\include\safecast.h">
+-      <Filter>Header Files</Filter>
+-    </ClInclude>
+     <ClInclude Include="..\..\..\..\include\libntp.h">
+       <Filter>Header Files</Filter>
+     </ClInclude>
+###diff -Nru sntp/m4/ntp_facilitynames.m4 sntp/m4/ntp_facilitynames.m4
+###--- sntp/m4/ntp_facilitynames.m4
+###+++ sntp/m4/ntp_facilitynames.m4
+###@@ -15,7 +15,7 @@
+### 	    [[
+### 		void *fnames = facilitynames;
+### 	    ]]
+###-	)]
+###+	)],
+### 	[ac_cv_HAVE_SYSLOG_FACILITYNAMES=yes],
+### 	[ac_cv_HAVE_SYSLOG_FACILITYNAMES=no]
+###     )]
+--- configure
++++ configure
+@@ -28892,10 +28892,11 @@
+   ;
+   return 0;
+ }
+-	ac_cv_HAVE_SYSLOG_FACILITYNAMES=yes
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"
+ then :
++  ac_cv_HAVE_SYSLOG_FACILITYNAMES=yes
++else $as_nop
+   ac_cv_HAVE_SYSLOG_FACILITYNAMES=no
+ 
+ fi
+--- sntp/configure
++++ sntp/configure
+@@ -28733,10 +28733,11 @@
+   ;
+   return 0;
+ }
+-	ac_cv_HAVE_SYSLOG_FACILITYNAMES=yes
+ _ACEOF
+ if ac_fn_c_try_compile "$LINENO"
+ then :
++  ac_cv_HAVE_SYSLOG_FACILITYNAMES=yes
++else $as_nop
+   ac_cv_HAVE_SYSLOG_FACILITYNAMES=no
+ 
+ fi
+--- include/Makefile.in
++++ include/Makefile.in
+@@ -557,7 +557,6 @@
+ 	recvbuff.h	\
+ 	refclock_atom.h	\
+ 	refidsmear.h	\
+-	safecast.h	\
+ 	ssl_applink.c	\
+ 	timepps-SCO.h	\
+ 	timepps-Solaris.h	\
