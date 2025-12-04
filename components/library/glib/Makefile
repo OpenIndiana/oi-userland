@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		glib
 HUMAN_VERSION=		2.86.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME core libraries
 COMPONENT_ARCHIVE_HASH=	sha256:8a724e970855357ea8101e27727202392a0ffd5410a98336aed54ec59113e611
 COMPONENT_FMRI=		library/glib2
@@ -83,10 +84,10 @@ COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=gio:glib:gobject
 
 # fix python scripts
 COMPONENT_POST_INSTALL_ACTION.32 += \
-        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/gtester-report && \
-        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/gdbus-codegen && \
-        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/glib-genmarshal && \
-        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/i86/glib-mkenums
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/$(MACH32)/gtester-report && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/$(MACH32)/gdbus-codegen && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/$(MACH32)/glib-genmarshal && \
+        $(GSED) -i "s|/usr/bin/env python3|$(PYTHON)|" $(PROTO_DIR)/usr/bin/$(MACH32)/glib-mkenums
 
 
 COMPONENT_POST_INSTALL_ACTION.64 += \
