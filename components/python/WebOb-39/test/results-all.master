@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 2390 items / 1 deselected / 2389 selected
+collecting ... collected 2390 items
 
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=] PASSED
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=1] PASSED
@@ -1682,6 +1682,7 @@ tests/test_headers.py::test__trans_key_not_a_header PASSED
 tests/test_headers.py::test__trans_key_key2header PASSED
 tests/test_headers.py::test__trans_key_httpheader PASSED
 tests/test_in_wsgiref.py::test_request_reading PASSED
+tests/test_in_wsgiref.py::test_interrupted_request PASSED
 tests/test_misc.py::test_html_escape[these chars: < > & "-these chars: &lt; &gt; &amp; &quot;] PASSED
 tests/test_misc.py::test_html_escape[ - ] PASSED
 tests/test_misc.py::test_html_escape[&egrave;-&amp;egrave;] PASSED
@@ -2397,19 +2398,6 @@ tests/test_util.py::Test_strings_differ::test_it_with_external_comparator PASSED
 tests/test_util.py::Test_strings_differ::test_it_with_internal_comparator PASSED
 
 =============================== warnings summary ===============================
-tests/test_client_functional.py::test_client
-tests/test_client_functional.py::test_no_content_length
-tests/test_client_functional.py::test_client_cookies
-tests/test_client_functional.py::test_client_slow
-tests/test_in_wsgiref.py::test_request_reading
-  $(@D)/tests/conftest.py:53: DeprecationWarning: setDaemon() is deprecated, set the daemon attribute instead
-    worker.setDaemon(True)
-
-tests/test_cookies.py: 6 warnings
-tests/test_response.py: 5 warnings
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/cookies.py:238: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    v = datetime.utcnow() + v
-
 tests/test_request.py::TestRequest_functional::test_request_put
   $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/acceptparse.py:1262: DeprecationWarning: The behavior of .__contains__ for the Accept classes is currently being maintained for backward compatibility, but it will change in the future to better conform to the RFC.
     warnings.warn(
@@ -2419,40 +2407,13 @@ tests/test_request.py::TestRequest_functional::test_request_put
     warnings.warn(
 
 tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
-  $(@D)/tests/test_response.py:867: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    then = datetime.datetime.utcnow() + datetime.timedelta(days=1)
-
-tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_timedelta_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_datetime_tz_and_max_age_is_None
   $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1037: DeprecationWarning: Argument "expires" will be removed in a future version of WebOb, please use "max_age".
     warn_deprecation('Argument "expires" will be removed in a future '
 
-tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
-tests/test_response.py::test_set_cookie_expires_is_datetime_tz_and_max_age_is_None
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1054: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    max_age = expires - datetime.utcnow()
-
-tests/test_response.py::test_cache_expires_set
-tests/test_response.py::test_cache_expires_set_zero
-tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1199: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    self.expires = datetime.utcnow()
-
-tests/test_response.py::test_cache_expires_set
-tests/test_response.py::test_cache_expires_set_zero
-tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1201: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    self.last_modified = datetime.utcnow()
-
-tests/test_response.py::test_cache_expires_set_timedelta
-tests/test_response.py::test_cache_expires_set_int
-tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1206: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    self.expires = datetime.utcnow() + timedelta(seconds=seconds)
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/pytest-py$(PYV).xml -
-======== 2378 passed, 10 skipped, 1 deselected, 1 xfailed, 33 warnings ========
+======== 2379 passed, 10 skipped, 1 xfailed, 5 warnings ========
   py$(PYV): OK
   congratulations :)
