@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v -n auto -rs --benchmark-skip --pyargs borg.testsuite
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pyproject.toml
-X workers [1649 items]
+X workers [1650 items]
 
 scheduling tests via LoadScheduling
 
@@ -481,7 +480,6 @@ archiver.py::ArchiverTestCaseBinary::test_usage <- ../prototype/i386$(PYTHON_DIR
 archiver.py::ArchiverTestCaseBinary::test_with_lock <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::ArchiverTestCaseBinary::test_with_lock_non_existent_command <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::DiffArchiverTestCase::test_basic_functionality <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
-archiver.py::DiffArchiverTestCase::test_multiple_link_exclusion <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py SKIPPED
 archiver.py::DiffArchiverTestCase::test_sort_option <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::DiffArchiverTestCase::test_sort_validation <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
 archiver.py::DiffArchiverTestCase::test_time_diffs <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/archiver.py PASSED
@@ -1161,6 +1159,8 @@ helpers.py::test_yes_input_defaults <- ../prototype/i386$(PYTHON_DIR)/vendor-pac
 helpers.py::test_yes_no_retry <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_yes_output <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
 helpers.py::test_yes_retry <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/helpers.py PASSED
+issue_8535.py::test_index_corruption_with_old_hints <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/issue_8535.py PASSED
+issue_8535.py::test_missing_segment_in_hints <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/issue_8535.py PASSED
 item.py::test_item_bigint_property <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/item.py PASSED
 item.py::test_item_dict_property <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/item.py PASSED
 item.py::test_item_empty <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/item.py PASSED
@@ -1661,6 +1661,6 @@ xattr.py::test_split_lstring[\x01a-splitted2] <- ../prototype/i386$(PYTHON_DIR)/
 xattr.py::test_split_lstring[\x01a\x02cd-splitted3] <- ../prototype/i386$(PYTHON_DIR)/vendor-packages/borg/testsuite/xattr.py PASSED
 
 =========================== short test summary info ============================
-======== 1287 passed, 362 skipped ========
+======== 1289 passed, 361 skipped ========
   py$(PYV): OK
   congratulations :)
