@@ -19,13 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_interface
-HUMAN_VERSION =			8.0.1
+HUMAN_VERSION =			8.1.1
 COMPONENT_SUMMARY =		Interfaces for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eba5610d042c3704a48222f7f7c6ab5b243ed26f917e2bc69379456b115e02d1
+	sha256:51b10e6e8e238d719636a401f44f1e366146912407b58453936b781a19be19ec
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# zope.interface --> zope.testing --> zope.interface
+# zope.interface --> zope.event --> zope.testrunner ==> zope.interface
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
