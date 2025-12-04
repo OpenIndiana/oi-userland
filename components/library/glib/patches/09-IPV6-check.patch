@@ -1,0 +1,11 @@
+--- glib-2.86.0/gio/ginetaddress.c.old	2025-09-14 21:01:27.619784403 -0400
++++ glib-2.86.0/gio/ginetaddress.c	2025-09-14 21:03:19.137493200 -0400
+@@ -464,7 +464,7 @@
+       GInetAddress *address = NULL;
+       
+       status = getaddrinfo (string, NULL, &hints, &res);
+-      if (status == 0)
++      if ((status == 0) && (res->ai_family == AF_INET6))
+         {
+           g_assert (res->ai_addrlen == sizeof (struct sockaddr_in6));
+           struct sockaddr_in6 *sockaddr6 = (struct sockaddr_in6 *)res->ai_addr;

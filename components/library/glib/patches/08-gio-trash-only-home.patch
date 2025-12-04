@@ -1,6 +1,6 @@
---- glib-2.82.0/gio/glocalfile.c.orig
-+++ glib-2.82.0/gio/glocalfile.c
-@@ -2000,6 +2000,7 @@
+--- glib-2.85.4/gio/glocalfile.c.~1~	2025-08-22 08:29:34.000000000 -0400
++++ glib-2.85.4/gio/glocalfile.c	2025-09-03 13:37:38.047224783 -0400
+@@ -2095,6 +2095,7 @@
    char *dirname, *globaldir;
    GVfsClass *class;
    GVfs *vfs;
@@ -8,170 +8,16 @@
    int errsv;
    size_t basename_len;
    GError *my_error = NULL;
-@@ -2057,146 +2058,25 @@
+@@ -2156,7 +2157,7 @@
        g_free (path);
      }
  
--  if (file_stat.st_dev == home_stat.st_dev)
-+  /* Always move to .Trash in the user's home directory  */
-+  is_homedir_trash = TRUE;
-+  errno = 0;
-+  trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
-+  if (g_mkdir_with_parents (trashdir, 0700) < 0)
+-  if (checked_st_dev == home_stat.st_dev)
++  if (1)
      {
--      is_homedir_trash = TRUE;
--      errno = 0;
--      trashdir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
--      if (g_mkdir_with_parents (trashdir, 0700) < 0)
--	{
--          char *display_name;
--          errsv = errno;
--
--          display_name = g_filename_display_name (trashdir);
--          g_set_error (error, G_IO_ERROR,
--                       g_io_error_from_errno (errsv),
--                       _("Unable to create trash directory %s: %s"),
--                       display_name, g_strerror (errsv));
--          g_free (display_name);
--          g_free (trashdir);
--          return FALSE;
--	}
--      topdir = g_strdup (g_get_user_data_dir ());
--    }
--  else
--    {
--      uid_t uid;
--      char uid_str[32];
--      gboolean success = FALSE;
--
--      uid = geteuid ();
--      g_snprintf (uid_str, sizeof (uid_str), "%lu", (unsigned long)uid);
--
--      topdir = _g_local_file_find_topdir_for (local->filename);
--      if (topdir == NULL)
--	{
--          g_set_io_error (error,
--                          _("Unable to find toplevel directory to trash %s"),
--                          file, ENOTSUP);
--	  return FALSE;
--	}
--
--      if (ignore_trash_path (topdir))
--        {
--          g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
--                       _("Trashing on system internal mounts is not supported"));
--          g_free (topdir);
--
--          return FALSE;
--        }
--
--      /* Try looking for global trash dir $topdir/.Trash/$uid */
--      globaldir = g_build_filename (topdir, ".Trash", NULL);
--      if (g_lstat (globaldir, &global_stat) == 0 &&
--	  S_ISDIR (global_stat.st_mode) &&
--	  (global_stat.st_mode & S_ISVTX) != 0)
--	{
--	  trashdir = g_build_filename (globaldir, uid_str, NULL);
--	  success = TRUE;
--
--	  if (g_lstat (trashdir, &trash_stat) == 0)
--	    {
--	      if (!S_ISDIR (trash_stat.st_mode) ||
--		  trash_stat.st_uid != uid)
--		{
--		  /* Not a directory or not owned by user, ignore */
--		  g_free (trashdir);
--		  trashdir = NULL;
--		  success = FALSE;
--		}
--	    }
--	  else if (g_mkdir (trashdir, 0700) == -1)
--	    {
--	      g_free (trashdir);
--	      trashdir = NULL;
--	      success = FALSE;
--	    }
--	}
--      g_free (globaldir);
--
--      if (trashdir == NULL)
--	{
--	  gboolean tried_create;
--	  
--	  /* No global trash dir, or it failed the tests, fall back to $topdir/.Trash-$uid */
--	  dirname = g_strdup_printf (".Trash-%s", uid_str);
--	  trashdir = g_build_filename (topdir, dirname, NULL);
--          success = TRUE;
--	  g_free (dirname);
--
--	  tried_create = FALSE;
--
--	retry:
--	  if (g_lstat (trashdir, &trash_stat) == 0)
--	    {
--	      if (!S_ISDIR (trash_stat.st_mode) ||
--		  trash_stat.st_uid != uid)
--		{
--		  /* Remove the failed directory */
--		  if (tried_create)
--		    g_remove (trashdir);
--		  
--		  /* Not a directory or not owned by user, ignore */
--		  success = FALSE;
--		}
--	    }
--	  else
--	    {
--	      if (!tried_create &&
--		  g_mkdir (trashdir, 0700) != -1)
--		{
--		  /* Ensure that the created dir has the right uid etc.
--		     This might fail on e.g. a FAT dir */
--		  tried_create = TRUE;
--		  goto retry;
--		}
--	      else
--		{
--		  success = FALSE;
--		}
--	    }
--	}
--
--      if (!success)
--	{
--          gchar *trashdir_display_name = NULL, *file_display_name = NULL;
--
--          trashdir_display_name = g_filename_display_name (trashdir);
--          file_display_name = g_filename_display_name (local->filename);
--          g_set_error (error, G_IO_ERROR,
--                       G_IO_ERROR_NOT_SUPPORTED,
--                       _("Unable to find or create trash directory %s to trash %s"),
--                       trashdir_display_name, file_display_name);
--
--          g_free (trashdir_display_name);
--          g_free (file_display_name);
--
--          g_free (topdir);
--          g_free (trashdir);
-+      char *display_name;
-+      errsv = errno;
- 
--	  return FALSE;
--	}
-+      display_name = g_filename_display_name (trashdir);
-+      g_set_error (error, G_IO_ERROR,
-+          g_io_error_from_errno (errsv),
-+          _("Unable to create trash directory %s: %s"),
-+          display_name, g_strerror (errsv));
-+      g_free (display_name);
-+      g_free (trashdir);
-+      return FALSE;
-     }
-+  topdir = g_strdup (g_get_user_data_dir ());
- 
-   /* Trashdir points to the trash dir with the "info" and "files" subdirectories */
- 
-@@ -2366,8 +2246,8 @@
+       is_homedir_trash = TRUE;
+       errno = 0;
+@@ -2478,8 +2479,8 @@
    trashfile = g_build_filename (filesdir, trashname, NULL);
  
    g_free (filesdir);
@@ -182,7 +28,7 @@
      {
        errsv = errno;
  
-@@ -2376,6 +2256,7 @@
+@@ -2488,6 +2489,7 @@
        g_free (trashname);
        g_free (infofile);
        g_free (trashfile);
@@ -190,7 +36,7 @@
  
        if (errsv == EXDEV)
  	/* The trash dir was actually on another fs anyway!?
-@@ -2398,6 +2279,7 @@
+@@ -2510,6 +2512,7 @@
      class->local_file_moved (vfs, local->filename, trashfile);
  
    g_free (trashfile);
