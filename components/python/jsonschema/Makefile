@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema
 HUMAN_VERSION =			4.25.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		An implementation of JSON Schema validation for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
 COMPONENT_ARCHIVE_HASH =	\
@@ -39,11 +40,11 @@ TEST_REQUIREMENTS_PEP735 += test
 PYTEST_ADDOPTS += --ignore jsonschema/tests/test_exceptions.py
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/jsonschema-specifications
-PYTHON_REQUIRED_PACKAGES += library/python/referencing
-PYTHON_REQUIRED_PACKAGES += library/python/rpds-py
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/jsonschema-specifications
+REQUIRED_PACKAGES.python += library/python/referencing
+REQUIRED_PACKAGES.python += library/python/rpds-py
+REQUIRED_PACKAGES.python += runtime/python
