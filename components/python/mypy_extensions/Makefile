@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mypy_extensions
 HUMAN_VERSION =			1.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Type system extensions for programs checked with the mypy type checker.
 COMPONENT_PROJECT_URL =		https://github.com/python/mypy_extensions
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,5 +32,5 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
