@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			4.5.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.5.1
 COMPONENT_SUMMARY =		A small Python package for determining appropriate platform-specific dirs, e.g. a \`user data dir\`.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/platformdirs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:70ddccdd7c99fc5942e9fc25636a8b34d04c24b335100223152c2803e4063312
+	sha256:61d5cdcc6065745cdd94f0f878977f8de9437be93de97c1c12f853c9c0cdcbda
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,7 +49,5 @@ REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/appdirs
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
