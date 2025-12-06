@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.i18nmessageid zope_i18nmessageid
+#   $WS_TOOLS/python-integrate-project -d python/zope.i18nmessageid-39 zope_i18nmessageid
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_i18nmessageid
-HUMAN_VERSION =			8.2
+HUMAN_VERSION =			8.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Message Identifiers for internationalization
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:85204fb2440f6bd0aac52f6a4629eb44f8fe569dcd9caa582a0a39df18a30817
+	sha256:f1be1e76f93b4d525e95c6c242ae843371ba3d4ec5cf46e5f0faf2bde8f956a1
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.i18nmessageid >= 8.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.i18nmessageid >= 8.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,7 +39,6 @@ TOX_POSARGS += -vv
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
-REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
