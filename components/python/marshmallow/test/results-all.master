@@ -1,11 +1,10 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1118 items / 1 deselected / 1117 selected
+collecting ... collected 1119 items
 
 tests/test_context.py::TestContext::test_context_load_dump PASSED
 tests/test_context.py::TestContext::test_context_method PASSED
@@ -933,6 +932,7 @@ tests/test_utils.py::test_is_collection PASSED
 tests/test_utils.py::test_from_timestamp[1676386740-expected0] PASSED
 tests/test_utils.py::test_from_timestamp[1676386740.58-expected1] PASSED
 tests/test_utils.py::test_from_timestamp_with_negative_value PASSED
+tests/test_utils.py::test_from_timestamp_with_overflow_value PASSED
 tests/test_utils.py::test_function_field_using_type_annotation PASSED
 tests/test_validate.py::test_url_absolute_valid[http://example.org] PASSED
 tests/test_validate.py::test_url_absolute_valid[https://example.org] PASSED
@@ -1038,6 +1038,7 @@ tests/test_validate.py::test_url_dont_require_tld_invalid[http:// /foo/bar] PASS
 tests/test_validate.py::test_url_dont_require_tld_invalid[] PASSED
 tests/test_validate.py::test_url_dont_require_tld_invalid[None] PASSED
 tests/test_validate.py::test_url_custom_scheme PASSED
+tests/test_validate.py::test_url_custom_scheme_case_insensitive PASSED
 tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/tmp1234] PASSED
 tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/tmp/tmp1234] PASSED
 tests/test_validate.py::test_url_accepts_valid_file_urls[file:///C:/Users/test/file.txt] PASSED
@@ -1125,6 +1126,6 @@ tests/test_validate.py::test_containsnoneof_custom_message PASSED
 tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 
-======== 1117 passed, 1 deselected ========
+======== 1119 passed ========
   py$(PYV): OK
   congratulations :)
