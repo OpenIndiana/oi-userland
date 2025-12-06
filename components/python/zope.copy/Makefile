@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_copy
 HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pluggable object copying mechanism
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.copy
 COMPONENT_ARCHIVE_HASH =	\
@@ -49,9 +50,7 @@ REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zodbpickle
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component
 TEST_REQUIRED_PACKAGES.python += library/python/zope-location
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
