@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_deferredimport
 HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		zope.deferredimport allows you to perform imports names that will only be resolved when used in the code.
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.deferredimport
 COMPONENT_ARCHIVE_HASH =	\
@@ -37,7 +39,5 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zope-proxy
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
