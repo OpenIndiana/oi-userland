@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus-anthy
 COMPONENT_VERSION=      1.5.17
+COMPONENT_REVISION=       1
 COMPONENT_CLASSIFICATION=System/Internationalization
 COMPONENT_SUMMARY=      iBus Japanese IME - anthy
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
