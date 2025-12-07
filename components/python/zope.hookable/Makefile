@@ -15,15 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_hookable
-HUMAN_VERSION =			8.0
+HUMAN_VERSION =			8.2
 COMPONENT_SUMMARY =		Zope hookable
-COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.hookable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fd2916aba426e594c20e08ffc76a72421c44072ade14cdbb42e238df0a2211df
+	sha256:42f13261768010c00031e840a561e2e5ee251f1509fa8b84178940e9a368cb33
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -38,7 +38,5 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
