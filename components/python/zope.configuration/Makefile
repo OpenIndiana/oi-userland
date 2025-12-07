@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_configuration
 HUMAN_VERSION =			7.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope Configuration Markup Language (ZCML)
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.configuration
 COMPONENT_ARCHIVE_HASH =	\
@@ -39,8 +41,6 @@ REQUIRED_PACKAGES.python += library/python/zope-i18nmessageid
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += library/python/zope-schema
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testing
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
