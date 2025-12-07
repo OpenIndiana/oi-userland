@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sip
+#   $WS_TOOLS/python-integrate-project -d python/sip-39 sip
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.15.0
+HUMAN_VERSION =			6.14.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A Python bindings generator for C/C++ libraries
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3920f26515456ee21114a1f8282144f8c156b1aabc3b44424155d5f81396025f
+	sha256:20c086aba387707b34cf47fd96d1a978d01e2b95807e86f8aaa960081f163b28
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = none
 
-# Python 3.9 is not supported by sip >= 6.15.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# sip >= 6.15.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,4 +39,5 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
