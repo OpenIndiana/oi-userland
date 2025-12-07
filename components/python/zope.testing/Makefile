@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testing
 HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope testing helpers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,20 +30,15 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
-# sphinx-build is unable to find zope.testing modules in proto area during testing.
-# The root cause is unknown (yet), but it looks like a bug.
-COMPONENT_TEST_ENV +=	PYTHONPATH=$(@D)/src
-
 # Force no colors and more verbose output via tox posargs
 TOX_POSARGS += -vv
+
+# https://github.com/zopefoundation/zope.testing/issues/56
+TOX_POSARGS += --test !doctestcase
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/zope-exceptions
-TEST_REQUIRED_PACKAGES.python += library/python/zope-interface
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
