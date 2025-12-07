@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_component
 HUMAN_VERSION =			7.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope Component Architecture
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
 COMPONENT_ARCHIVE_HASH =	\
@@ -51,10 +52,7 @@ REQUIRED_PACKAGES.python += library/python/zope-hookable
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/persistent
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/zodb
 TEST_REQUIRED_PACKAGES.python += library/python/zope-configuration
 TEST_REQUIRED_PACKAGES.python += library/python/zope-i18nmessageid
 TEST_REQUIRED_PACKAGES.python += library/python/zope-location
