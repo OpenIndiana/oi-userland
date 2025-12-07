@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elementpath
 HUMAN_VERSION =			5.0.4
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/elementpath
 COMPONENT_ARCHIVE_HASH =	\
