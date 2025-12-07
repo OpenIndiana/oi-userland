@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testrunner
 HUMAN_VERSION =			8.1
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
@@ -43,6 +44,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
 TOX_POSARGS += -vv
+
+# https://github.com/zopefoundation/zope.testrunner/issues/189
+TOX_POSARGS += --test !testrunner-edge-cases
+# https://github.com/zopefoundation/zope.testrunner/issues/203
+TOX_POSARGS += --test !testrunner-colors
 
 # Random pid
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(subprocess \)[0-9]\{1,\}\( is still running\)/\1\$$(PID)\2/'"
