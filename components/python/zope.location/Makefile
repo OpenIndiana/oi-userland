@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_location
 HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope Location
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.location/
 COMPONENT_ARCHIVE_HASH =	\
@@ -39,9 +41,7 @@ REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += library/python/zope-proxy
 REQUIRED_PACKAGES.python += library/python/zope-schema
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component
 TEST_REQUIRED_PACKAGES.python += library/python/zope-configuration
 TEST_REQUIRED_PACKAGES.python += library/python/zope-copy
