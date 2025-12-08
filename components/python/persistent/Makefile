@@ -15,15 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			6.3
+HUMAN_VERSION =			6.5
 COMPONENT_SUMMARY =		Translucent persistent objects
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/persistent/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01d94668b54d3d5fbab9eb41d81f41e3d8407a7233fd2a928a6417e4dc11d429
+	sha256:47092215965329865105c48c1524e9d2617aa3cf0835ac625c379404f6cbdbdf
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -42,8 +42,5 @@ REQUIRED_PACKAGES.python += library/python/zope-deferredimport
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
