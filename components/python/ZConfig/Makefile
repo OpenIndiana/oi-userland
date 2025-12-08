@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zconfig
-HUMAN_VERSION =			4.2
+HUMAN_VERSION =			4.3
 COMPONENT_SUMMARY =		Structured Configuration Library
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/ZConfig/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a0e4b5277c4cee8060ce335a578ac458f82c240ae96b16659200dbc4d98bfcce
+	sha256:472233e515fa29be6c873e78b8a2b450c2cd25d0133cb45960837f33f1ab4fe3
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,11 +36,12 @@ COMPONENT_POST_UNPACK_ACTION += \
 	$(RM) $(SOURCE_DIR)/src/ZConfig/tests/test_readme.py ;
 
 # Force no colors and more verbose output via tox posargs
-COMPONENT_TEST_TARGETS += -- -vv
+TOX_POSARGS += -vv
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/manuel
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
