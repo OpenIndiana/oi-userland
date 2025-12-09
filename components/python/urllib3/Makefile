@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		urllib3
-HUMAN_VERSION =			2.6.0
+HUMAN_VERSION =			2.6.1
 COMPONENT_SUMMARY =		HTTP library with thread-safe connection pooling, file post, and more.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cb9bcef5a4b345d5da5d145dc3e30834f58e8018828cbc724d30b4cb7d4d49f1
+	sha256:5379eb6e1aba4088bae84f8242960017ec8d8e3decf30480b3a1abdaa9671a3f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
