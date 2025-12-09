@@ -14,25 +14,33 @@
 #   $WS_TOOLS/python-integrate-project testscenarios
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testscenarios
-COMPONENT_VERSION =		0.5.0
-COMPONENT_SUMMARY =		testscenarios - Testscenarios, a pyunit extension for dependency injection
+HUMAN_VERSION =			0.5.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Testscenarios, a pyunit extension for dependency injection
 COMPONENT_PROJECT_URL =		https://launchpad.net/testscenarios
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f0/de/b0b5b98c0f38fd7086d082c47fcb455eedd39a044abe7c595f5f40cd6eed/testscenarios-0.5.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c257cb6b90ea7e6f8fef3158121d430543412c9a87df30b5dde6ec8b9b57a2b6
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
-TEST_STYLE = pytest
+# Force unittest test style because the automatically detected pytest does not
+# work properly.
+# See https://bugs.launchpad.net/testscenarios/+bug/1930149
+# and https://github.com/testing-cabal/testscenarios/issues/5
+TEST_STYLE = unittest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://bugs.launchpad.net/testscenarios/+bug/1930149/comments/3
+COMPONENT_TEST_ARGS += testscenarios.tests.test_suite
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pbr
-PYTHON_REQUIRED_PACKAGES += library/python/testtools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pbr
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/testtools
+REQUIRED_PACKAGES.python += runtime/python
