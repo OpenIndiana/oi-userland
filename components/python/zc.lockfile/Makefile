@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zc_lockfile
 HUMAN_VERSION =			4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Basic inter-process locks
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zc.lockfile
 COMPONENT_ARCHIVE_HASH =	\
