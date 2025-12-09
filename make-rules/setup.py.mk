@@ -311,6 +311,8 @@ TOX_CALL_INDIRECTLY += sphinx-build
 TOX_CALL_INDIRECTLY.sphinx-build = sphinx.cmd.build
 TOX_CALL_INDIRECTLY += nosetests
 TOX_CALL_INDIRECTLY.nosetests = nose
+TOX_CALL_INDIRECTLY += stestr
+TOX_CALL_INDIRECTLY.stestr = stestr.cli
 $(foreach indirectly, $(TOX_CALL_INDIRECTLY), $(eval TOX_CALL_INDIRECTLY.$(indirectly) ?= $(indirectly)))
 COMPONENT_PRE_TEST_ACTION += COMPONENT_TEST_DIR=$(COMPONENT_TEST_DIR) ;
 COMPONENT_PRE_TEST_ACTION += \
