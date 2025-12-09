@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		MIME-Types
-HUMAN_VERSION =			2.29
+HUMAN_VERSION =			2.30
 COMPONENT_SUMMARY =		Definition of MIME types
 COMPONENT_CPAN_AUTHOR =		MARKOV
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a6d4ec9b3aa0df2f935d4d74f7dc809fd523d508cd0e9966b5b257c02c03414
+	sha256:f31b1666bdf420b4b65c373ce0129ee349dd24bab4cd16c7f01b698fe450be6f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -34,7 +34,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/mojolicious
 # Auto-generated dependencies
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
-REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
