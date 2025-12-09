@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_copy
 HUMAN_VERSION =			6.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Pluggable object copying mechanism
 COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.copy
 COMPONENT_ARCHIVE_HASH =	\
