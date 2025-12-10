@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_psutil
-HUMAN_VERSION =			7.1.3.20251202
+HUMAN_VERSION =			7.1.3.20251210
 COMPONENT_SUMMARY =		Typing stubs for psutil
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5cfecaced7c486fb3995bb290eab45043d697a261718aca01b9b340d1ab7968a
+	sha256:0fef0f363574d76965385e5170a0c95f88ef2c67327e4337298b3a1d35e61be4
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
