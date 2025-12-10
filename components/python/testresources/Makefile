@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testresources
 HUMAN_VERSION =			2.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Testresources, a pyunit extension for managing expensive test resources
 COMPONENT_PROJECT_URL =		https://launchpad.net/testresources
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,9 +30,9 @@ COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pbr
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pbr
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/fixtures
 TEST_REQUIRED_PACKAGES.python += library/python/testtools
