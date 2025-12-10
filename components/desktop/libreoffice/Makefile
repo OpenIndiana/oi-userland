@@ -32,9 +32,8 @@ ENV = /usr/bin/env
 # BUILD_GITHUB=1
 
 COMPONENT_NAME=         libreoffice
-COMPONENT_VERSION=      25.8.3
-COMPONENT_REVISION=     1
-COMPONENT_RC_VERSION=	2
+COMPONENT_VERSION=      25.8.4
+COMPONENT_RC_VERSION=	1
 ifdef BUILD_ALPHA
 COMPONENT_FULL_VERSION=$(COMPONENT_VERSION).$(COMPONENT_RC_VERSION).alpha$(BUILD_ALPHA)
 else ifdef BUILD_BETA
@@ -59,7 +58,7 @@ else
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_FULL_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e9396d76a2471d5da3ccd3e5c6a7a9b83245f38c2c47c29a76219f6214914882
+COMPONENT_ARCHIVE_HASH= sha256:8e293c07fb3b9b21e9913c5863f31c1210b36c0b6da9830b0e42cd777ece1705
 # COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).asc
 endif
 COMPONENT_FMRI=         desktop/office/libreoffice
@@ -135,8 +134,8 @@ COMPONENT_ARCHIVE_17 = QR-Code-generator-1.4.0.tar.gz
 COMPONENT_ARCHIVE_HASH_17 = sha256:fcdf9fd69fde07ae4dca2351d84271a9de8093002f733b77c70f52f1630f6e4a
 COMPONENT_ARCHIVE_URL_17 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_17)
 
-COMPONENT_ARCHIVE_18 = xmlsec1-1.3.8.tar.gz
-COMPONENT_ARCHIVE_HASH_18 = sha256:d0180916ae71be28415a6fa919a0684433ec9ec3ba1cc0866910b02e5e13f5bd
+COMPONENT_ARCHIVE_18 = xmlsec1-1.3.9.tar.gz
+COMPONENT_ARCHIVE_HASH_18 = sha256:a631c8cd7a6b86e6adb9f5b935d45a9cf9768b3cb090d461e8eb9d043cf9b62f
 COMPONENT_ARCHIVE_URL_18 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_18)
 
 #libreoffice-translations
@@ -148,7 +147,7 @@ COMPONENT_ARCHIVE_URL_19 = https://github.com/LibreOffice/translations/archive/$
 else
 COMPONENT_ARCHIVE_19 = libreoffice-translations-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_19 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_19)
-COMPONENT_ARCHIVE_HASH_19 = sha256:1c70b0dcf9f0d8abad5742fbbbbbf313b43530821d76e6edeffd24ac9dc4ad9d
+COMPONENT_ARCHIVE_HASH_19 = sha256:cff92fd817407a3cfb145744fc6b1d89edb64c687405f575f12a4d31693c0bf2
 # COMPONENT_SIG_URL_19= $(COMPONENT_ARCHIVE_URL_19).asc
 endif
 
@@ -161,7 +160,7 @@ COMPONENT_ARCHIVE_URL_20 = https://github.com/LibreOffice/dictionaries/archive/$
 else
 COMPONENT_ARCHIVE_20 = libreoffice-dictionaries-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_20 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_20)
-COMPONENT_ARCHIVE_HASH_20 = sha256:de30fd10e444fbc0cdb019a560ee70c1af25c393589c6eb26ac1a1e7de4636d5
+COMPONENT_ARCHIVE_HASH_20 = sha256:8a0527a9ae779375273237f15621f9890171e5f5f02bea5e16edfa562bbf308e
 # COMPONENT_SIG_URL_20= $(COMPONENT_ARCHIVE_URL_20).asc
 endif
 
@@ -303,7 +302,7 @@ COMPONENT_ARCHIVE_URL_53 = https://github.com/LibreOffice/help/archive/$(COMPONE
 else
 COMPONENT_ARCHIVE_53 = libreoffice-help-$(COMPONENT_FULL_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL_53 = https://download.documentfoundation.org/libreoffice/src/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE_53)
-COMPONENT_ARCHIVE_HASH_53 = sha256:d6f3f4b3527453b0afaf3a566163a401b4e42e34ba06d35493be9637c4c8bd7d
+COMPONENT_ARCHIVE_HASH_53 = sha256:b47998a4fc8244025ec1e42c6bc374d0ec82fe289e542ecce81b296bd796621f
 # COMPONENT_SIG_URL_53= $(COMPONENT_ARCHIVE_URL_53).asc
 endif
 
@@ -317,7 +316,7 @@ COMPONENT_ARCHIVE_URL_55 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHI
 
 COMPONENT_ARCHIVE_56 = zstd-1.5.7.tar.gz
 COMPONENT_ARCHIVE_HASH_56 = sha256:eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
-COMPONENT_ARCHIVE_URL_56 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_55)
+COMPONENT_ARCHIVE_URL_56 = https://dev-www.libreoffice.org/src/$(COMPONENT_ARCHIVE_56)
 
 # ignore archive 21 (boost)
 NUM_EXTRA_ARCHIVES = $(shell seq 1 20) $(shell seq 22 56)
@@ -480,7 +479,7 @@ CONFIGURE_OPTIONS += --without-system-hsqldb
 CONFIGURE_OPTIONS += --without-system-jfreereport
 CONFIGURE_OPTIONS += --enable-ext-wiki-publisher
 CONFIGURE_OPTIONS += --enable-ext-nlpsolver
-CONFIGURE_OPTIONS += --with-export-validation
+CONFIGURE_OPTIONS += --without-export-validation
 CONFIGURE_OPTIONS += --enable-scripting-beanshell
 CONFIGURE_OPTIONS += --enable-scripting-javascript
 CONFIGURE_OPTIONS += SED=/usr/bin/gsed
@@ -517,20 +516,60 @@ clean::
 
 # Filter out test result lines with truncated $(BUILD_DIR) paths
 COMPONENT_TEST_TRANSFORMS +=    "-e 's|$(COMPONENT_DIR)|\$$(COMPONENT_DIR)|g'"
+
+# Filter out terminal color sequences
+COMPONENT_TEST_TRANSFORMS +=    "-e 's/\x1b\[[0-9;]*m//g'"
+
+# Filter out timings
 COMPONENT_TEST_TRANSFORMS +=    '-e "s/ [0-9]*ms//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^Ran.*tests.*/d"'
 
 # Filter out filenames that begin with /tmp/ and end with .tmp. These names
 # change every time test is run
 COMPONENT_TEST_TRANSFORMS +=    '-e "s/\/tmp\/.*\.tmp//g"'
 
-# Filter out some lines from core dumps. Memory addresses change everyy
+# Filter out core dumps
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^Backtraces/,/Error 1$$/d"'
+
+# Filter out limit execution messages
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^Error: a unit test failed, please do one of:/,/above mentioned params\.\.\.$$/d"'
+
+# Filter out some lines from core dumps. Memory addresses change every
 # times tests are run
-COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\\\#[0-9].*$$//g"'
-COMPONENT_TEST_TRANSFORMS +=    '-e "s/^\/bin\/sh:.*$$//g"'
-COMPONENT_TEST_TRANSFORMS +=    '-e "s/^rdx.*$$//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\\\#[0-9].*$$/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\/bin\/sh:.*$$/d"'
 
 # Filter out PIDs.  These change every run
-COMPONENT_TEST_TRANSFORMS +=    '-e "s/\"pid\":[0-9]*//g"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/\"pid\":[0-9]*/d"'
+
+# Filter out ts and its value.  These can change
+COMPONENT_TEST_TRANSFORMS +=    '-e "/\"ts\":[0-9]*/d"'
+
+# Filter out build lines
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[ALL\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[BIN\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[C  \].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[CHK\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[CMP\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[CUS\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[CUT\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[CXX\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[DEP\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[ECH\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[HPC\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[HPP\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[JAR\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[JCS\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[JUT\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[JVM\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[LNK\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[MOD\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[PKG\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[PYT\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[SCK\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[SLC\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[UNI\].*/d"'
+COMPONENT_TEST_TRANSFORMS +=    '-e "/^\[UNO\].*/d"'
 
 # debug specific test
 testtrace:
@@ -553,9 +592,11 @@ REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += gnome/accessibility/at-spi2-core
 REQUIRED_PACKAGES += gnome/config/dconf
 REQUIRED_PACKAGES += image/library/libpng16
@@ -590,7 +631,6 @@ REQUIRED_PACKAGES += library/desktop/gtk4
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/expat
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/icu-78
 REQUIRED_PACKAGES += library/lcms2
 REQUIRED_PACKAGES += library/liblangtag
 REQUIRED_PACKAGES += library/libpoppler
