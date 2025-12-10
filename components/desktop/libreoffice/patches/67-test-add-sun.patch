@@ -20,26 +20,6 @@
      CPPUNIT_ASSERT_MESSAGE("[LINUX] Could not find .thm in lowercase",
                             comphelper::DirectoryHelper::fileExists(
                                 aGalleryURL + "/" + myThemeName.toAsciiLowerCase() + ".thm"));
---- a/sal/qa/osl/mutex/osl_Mutex.cxx	Fri May  6 16:49:44 2022
-+++ b/sal/qa/osl/mutex/osl_Mutex.cxx	Fri Oct 28 16:24:42 2022
-@@ -855,7 +855,7 @@
-                 bRes1 );
-         }
- 
--#ifdef LINUX
-+#if defined(LINUX) || defined(SUN)
-         void reset_002( )
-         {
-             Mutex aMutex;
-@@ -878,7 +878,7 @@
- 
-         CPPUNIT_TEST_SUITE(reset);
-         CPPUNIT_TEST(reset_001);
--#ifdef LINUX
-+#if defined(LINUX) || defined(SUN)
-         CPPUNIT_TEST(reset_002);
- #endif
-         CPPUNIT_TEST_SUITE_END();
 --- a/cppu/qa/cppumaker/test_cppumaker.cxx	Fri May  6 16:49:44 2022
 +++ b/cppu/qa/cppumaker/test_cppumaker.cxx	Fri Oct 28 16:25:28 2022
 @@ -445,7 +445,7 @@
