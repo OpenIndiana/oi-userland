@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		transaction
 HUMAN_VERSION =			5.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Transaction management for Python
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/transaction
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,14 +34,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Force no colors and more verbose output via tox posargs
 TOX_POSARGS += -vv
 
-# Normalize pointers
-COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/zope-interface
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
