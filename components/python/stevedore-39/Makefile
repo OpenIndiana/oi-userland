@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project stevedore
+#   $WS_TOOLS/python-integrate-project -d python/stevedore-39 stevedore
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stevedore
-HUMAN_VERSION =			5.6.0
+HUMAN_VERSION =			5.5.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Manage dynamic plugins for Python applications
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/stevedore
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f22d15c6ead40c5bbfa9ca54aa7e7b4a07d59b36ae03ed12ced1a54cf0b51945
+	sha256:d31496a4f4df9825e1a1e4f1f74d19abb0154aff311c3b376fcc89dae8fccd73
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# stevedore --> stestr ==> cliff ==> stevedore
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by stevedore >= 5.6.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# stevedore >= 5.6.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
