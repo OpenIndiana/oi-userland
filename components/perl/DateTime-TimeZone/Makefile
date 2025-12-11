@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-TimeZone
-HUMAN_VERSION =			2.65
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.66
 COMPONENT_SUMMARY =		Time zone object base class and factory
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:019e99ca8e8c655d70d6813b6df3f351c2bee5983e0f4732f18c5788e1d38e62
+	sha256:6fbd61b2d5d7563a8e738341c3790e0d4302dffd4a879b9c268812fe44b54dc1
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,16 +44,16 @@ PERL_TEST_BOOTSTRAP = yes
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/datetime
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/class-singleton
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
-PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/class-singleton
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/module-runtime
+REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
+REQUIRED_PACKAGES.perl += library/perl-5/params-validationcompiler
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/specio
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
