@@ -282,501 +282,520 @@ Wordsplit
 268: custom delimiters (no squeeze)                  ok
 269: custom, with returned delimiters                ok
 270: custom, with returned & squeezed delimiters     ok
-271: sed expressions                                 ok
-272: C escapes on                                    ok
-273: C escapes off                                   ok
-274: C escapes on (unquoted)                         ok
-275: ws elimination                                  ok
-276: ws elimination + return delim                   ok
-277: empty quotes                                    ok
-278: delimiter following empty quotes                ok
-279: suppress ws trimming within quotes              ok
-280: unescape                                        ok
-281: unescape: word/quote                            ok
-282: dquote                                          ok
-283: squote                                          ok
-284: incremental                                     ok
-285: incremental append                              ok
-286: incremental ws                                  ok
-287: incremental nosplit                             ok
-288: simple command substitution                     ok
-289: quoted command substitution                     ok
-290: coalesced command substitution                  ok
-291: quoted coalesced command substitution           ok
-292: variable and command substitution               ok
-293: variable expansion and command substitution in quotes ok
-294: nested commands                                 ok
-295: pathname expansion                              ok
-296: pathname expansion: no match                    ok
-297: pathname expansion: nullglob                    ok
-298: pathname expansion: failglob                    ok
-299: append                                          ok
-300: append + dooffs + env                           ok
-301: maxwords                                        ok
-302: maxwords return_delims                          ok
-303: maxwords return_delims -squeeze_delims          ok
-304: maxwords incremental                            ok
-305: variable nosplit                                ok
-306: command nosplit                                 ok
-307: positional parameters                           ok
-308: $* and $@                                       ok
-309: $* and $@ in nosplit mode                       ok
-310: $* and $@ in nosplit mode with delimiter        ok
-311: namechar modification                           ok
-312: default value                                   ok
-313: default value (defined)                         ok
-314: default value (:- null)                         ok
-315: default value (- null)                          ok
-316: default value (- null, unset)                   ok
-317: assign default values                           ok
-318: default error message (var defined)             ok
-319: default error message                           ok
-320: custom error message (defined)                  ok
-321: custom error message                            ok
-322: alternate value (defined)                       ok
-323: alternate value                                 ok
+271: custom, with returned & squeezed delimiters (compat) ok
+272: with maxwords limit                             ok
+273: sed expressions                                 ok
+274: C escapes on                                    ok
+275: C escapes off                                   ok
+276: C escapes on (unquoted)                         ok
+277: ws elimination                                  ok
+278: ws elimination + return delim                   ok
+279: empty quotes                                    ok
+280: delimiter following empty quotes                ok
+281: suppress ws trimming within quotes              ok
+282: unescape                                        ok
+283: unescape: word/quote                            ok
+284: dquote                                          ok
+285: squote                                          ok
+286: incremental                                     ok
+287: incremental append                              ok
+288: incremental ws                                  ok
+289: incremental nosplit                             ok
+290: simple command substitution                     ok
+291: quoted command substitution                     ok
+292: coalesced command substitution                  ok
+293: quoted coalesced command substitution           ok
+294: variable and command substitution               ok
+295: variable expansion and command substitution in quotes ok
+296: nested commands                                 ok
+297: pathname expansion                              ok
+298: pathname expansion: no match                    ok
+299: pathname expansion: nullglob                    ok
+300: pathname expansion: failglob                    ok
+301: append                                          ok
+302: append + dooffs + env                           ok
+303: maxwords                                        ok
+304: maxwords return_delims                          ok
+305: maxwords return_delims -squeeze_delims          ok
+306: maxwords return_delims -squeeze_delims (compat) ok
+307: maxwords incremental                            ok
+308: variable nosplit                                ok
+309: command nosplit                                 ok
+310: positional parameters                           ok
+311: $* and $@                                       ok
+312: $* and $@ in nosplit mode                       ok
+313: $* and $@ in nosplit mode with delimiter        ok
+314: namechar modification                           ok
+315: default value                                   ok
+316: default value (defined)                         ok
+317: default value (:- null)                         ok
+318: default value (- null)                          ok
+319: default value (- null, unset)                   ok
+320: assign default values                           ok
+321: default error message (var defined)             ok
+322: default error message                           ok
+323: custom error message (defined)                  ok
+324: custom error message                            ok
+325: alternate value (defined)                       ok
+326: alternate value                                 ok
+327: strip shortest prefix                           ok
+328: strip longest prefix                            ok
+329: strip shortest suffix                           ok
+330: strip longest suffix                            ok
+331: Replace first match                             ok
+332: Remove first match                              ok
+333: Replace all matches                             ok
+334: Remove all matches                              ok
+335: No match at the beginning                       ok
+336: Replace match at the beginning                  ok
+337: Remove match at the beginning                   ok
+338: Replace match at the end                        ok
+339: Remove match at the end                         ok
+340: Escape special chars                            ok
+341: If unset                                        ok
+342: If nul or unset                                 ok
 Variable and command expansion
-324: Expand: variable expansion                      ok
-325: Expand: domainpart                              ok
-326: Expand: localpart                               ok
-327: Expand: shell                                   ok
-328: Expand: mu_str_vexpand                          ok
+343: Expand: variable expansion                      ok
+344: Expand: domainpart                              ok
+345: Expand: localpart                               ok
+346: Expand: shell                                   ok
+347: Expand: mu_str_vexpand                          ok
 URL
-329: Url: scheme:                                    ok
-330: Url: scheme:/absolute/path                      ok
-331: Url: scheme:relative/path                       ok
-332: Url: scheme:///absolute/path                    ok
-333: Url: scheme://~/file                            ok
-334: Url: scheme://~/file                            ok
-335: Url: scheme://%75%73%65%72:%70%61%73%73@%68%6f%73%74 ok
-336: Url: ftp://user:pass@host//a/path               ok
-337: Url: ftp://:pass@host//a/path                   ok
-338: Url: ftp://user:@host//a/path                   ok
-339: Url: ftp://user:pass@//a/path                   ok
-340: Url: ftp://user:@//a/path                       ok
-341: Url: ftp://:@host//a/path                       ok
-342: Url: ftp://:pass@//a/path                       ok
-343: Url: ftp://:@//a/path                           ok
-344: Url: ftp://://a/path                            ok
-345: Url: ftp://@//a/path                            ok
-346: Url: ftp:///a/path                              ok
-347: Url: ftp://user:pass@host/a/path                ok
-348: Url: ftp://:pass@host/a/path                    ok
-349: Url: ftp://user:@host/a/path                    ok
-350: Url: ftp://user:pass@/a/path                    ok
-351: Url: ftp://user:@/a/path                        ok
-352: Url: ftp://:@host/a/path                        ok
-353: Url: ftp://:pass@/a/path                        ok
-354: Url: ftp://:@/a/path                            ok
-355: Url: ftp://:/a/path                             ok
-356: Url: ftp://@/a/path                             ok
-357: Url: ftp:///a/path                              ok
-358: Url: pop://pop.example.net                      ok
-359: Url: pop://user@pop.example.net                 ok
-360: Url: pop://user:passwd@pop.example.net          ok
-361: Url: pop://user;auth=*@pop.example.net          ok
-362: Url: pop://pop.example.net:111                  ok
-363: Url: pop://user@pop.example.net:111             ok
-364: Url: pop://user:passwd@pop.example.net:111      ok
-365: Url: pop://user;auth=*@pop.example.net:111      ok
-366: Url: imap://imap.example.net                    ok
-367: Url: imap://user@imap.example.net               ok
-368: Url: imap://user:passwd@imap.example.net        ok
-369: Url: imap://user;auth=*@imap.example.net        ok
-370: Url: imap://imap.example.net:111                ok
-371: Url: imap://user@imap.example.net:111           ok
-372: Url: imap://user:passwd@imap.example.net:111    ok
-373: Url: imap://user;auth=*@imap.example.net:111    ok
-374: Url: imap://imap.example.net/mbox               ok
-375: Url: imap://user@imap.example.net/mbox          ok
-376: Url: imap://user:passwd@imap.example.net/mbox   ok
-377: Url: imap://user;auth=*@imap.example.net/mbox   ok
-378: Url: imap://imap.example.net:111/mbox           ok
-379: Url: imap://user@imap.example.net:111/mbox      ok
-380: Url: imap://user:passwd@imap.example.net:111/mbox ok
-381: Url: imap://user;auth=*@imap.example.net:111/mbox ok
-382: Url: imap://imap.example.net/mbox/user@host     ok
-383: Url: imap://user@imap.example.net/mbox/user@host ok
-384: Url: imap://user:passwd@imap.example.net/mbox/user@host ok
-385: Url: imap://user;auth=*@imap.example.net/mbox/user@host ok
-386: Url: imap://imap.example.net:111/mbox/user@host ok
-387: Url: imap://user@imap.example.net:111/mbox/user@host ok
-388: Url: imap://user:passwd@imap.example.net:111/mbox/user@host ok
-389: Url: imap://user;auth=*@imap.example.net:111/mbox/user@host ok
-390: Url: ftp://ftp.example.org/mbox/user%40host     ok
-391: Url: ftp://ftp.example.org:111/mbox/user%40host ok
-392: Url: ftp://ftp.example.org:111/mbox/user%40host;type=pass ok
-393: Url: mbox:/var/spool/mail;type=index;param=2;user=gray ok
-394: Url: mbox:///var/spool/mail;type=index;param=2;user=gray ok
-395: Url: http://gnu.org.ua/home/gray?prog&arg1&arg2 ok
-396: Url: http://gnu.org.ua/home/gray;foo=bar;baz=qux?prog&arg%201&arg%202 ok
-397: Url: /usr/sbin/sendmail                         ok
-398: Url: /var/spool/mail/gray%40gnu.org             ok
-399: Url: ./file.db                                  ok
-400: Url: (gdbm) ./file.db                           ok
-401: Url: local                                      ok
-402: Url: | /bin/mailman request list%40dom          ok
-403: Url: (ext) | /bin/mailman request list%40dom    ok
-404: Url: prog:///bin/mailman?request&list%40dom     ok
+348: Url: scheme:                                    ok
+349: Url: scheme:/absolute/path                      ok
+350: Url: scheme:relative/path                       ok
+351: Url: scheme:///absolute/path                    ok
+352: Url: scheme://~/file                            ok
+353: Url: scheme://~/file                            ok
+354: Url: scheme://%75%73%65%72:%70%61%73%73@%68%6f%73%74 ok
+355: Url: ftp://user:pass@host//a/path               ok
+356: Url: ftp://:pass@host//a/path                   ok
+357: Url: ftp://user:@host//a/path                   ok
+358: Url: ftp://user:pass@//a/path                   ok
+359: Url: ftp://user:@//a/path                       ok
+360: Url: ftp://:@host//a/path                       ok
+361: Url: ftp://:pass@//a/path                       ok
+362: Url: ftp://:@//a/path                           ok
+363: Url: ftp://://a/path                            ok
+364: Url: ftp://@//a/path                            ok
+365: Url: ftp:///a/path                              ok
+366: Url: ftp://user:pass@host/a/path                ok
+367: Url: ftp://:pass@host/a/path                    ok
+368: Url: ftp://user:@host/a/path                    ok
+369: Url: ftp://user:pass@/a/path                    ok
+370: Url: ftp://user:@/a/path                        ok
+371: Url: ftp://:@host/a/path                        ok
+372: Url: ftp://:pass@/a/path                        ok
+373: Url: ftp://:@/a/path                            ok
+374: Url: ftp://:/a/path                             ok
+375: Url: ftp://@/a/path                             ok
+376: Url: ftp:///a/path                              ok
+377: Url: pop://pop.example.net                      ok
+378: Url: pop://user@pop.example.net                 ok
+379: Url: pop://user:passwd@pop.example.net          ok
+380: Url: pop://user;auth=*@pop.example.net          ok
+381: Url: pop://pop.example.net:111                  ok
+382: Url: pop://user@pop.example.net:111             ok
+383: Url: pop://user:passwd@pop.example.net:111      ok
+384: Url: pop://user;auth=*@pop.example.net:111      ok
+385: Url: imap://imap.example.net                    ok
+386: Url: imap://user@imap.example.net               ok
+387: Url: imap://user:passwd@imap.example.net        ok
+388: Url: imap://user;auth=*@imap.example.net        ok
+389: Url: imap://imap.example.net:111                ok
+390: Url: imap://user@imap.example.net:111           ok
+391: Url: imap://user:passwd@imap.example.net:111    ok
+392: Url: imap://user;auth=*@imap.example.net:111    ok
+393: Url: imap://imap.example.net/mbox               ok
+394: Url: imap://user@imap.example.net/mbox          ok
+395: Url: imap://user:passwd@imap.example.net/mbox   ok
+396: Url: imap://user;auth=*@imap.example.net/mbox   ok
+397: Url: imap://imap.example.net:111/mbox           ok
+398: Url: imap://user@imap.example.net:111/mbox      ok
+399: Url: imap://user:passwd@imap.example.net:111/mbox ok
+400: Url: imap://user;auth=*@imap.example.net:111/mbox ok
+401: Url: imap://imap.example.net/mbox/user@host     ok
+402: Url: imap://user@imap.example.net/mbox/user@host ok
+403: Url: imap://user:passwd@imap.example.net/mbox/user@host ok
+404: Url: imap://user;auth=*@imap.example.net/mbox/user@host ok
+405: Url: imap://imap.example.net:111/mbox/user@host ok
+406: Url: imap://user@imap.example.net:111/mbox/user@host ok
+407: Url: imap://user:passwd@imap.example.net:111/mbox/user@host ok
+408: Url: imap://user;auth=*@imap.example.net:111/mbox/user@host ok
+409: Url: ftp://ftp.example.org/mbox/user%40host     ok
+410: Url: ftp://ftp.example.org:111/mbox/user%40host ok
+411: Url: ftp://ftp.example.org:111/mbox/user%40host;type=pass ok
+412: Url: mbox:/var/spool/mail;type=index;param=2;user=gray ok
+413: Url: mbox:///var/spool/mail;type=index;param=2;user=gray ok
+414: Url: http://gnu.org.ua/home/gray?prog&arg1&arg2 ok
+415: Url: http://gnu.org.ua/home/gray;foo=bar;baz=qux?prog&arg%201&arg%202 ok
+416: Url: /usr/sbin/sendmail                         ok
+417: Url: /var/spool/mail/gray%40gnu.org             ok
+418: Url: ./file.db                                  ok
+419: Url: (gdbm) ./file.db                           ok
+420: Url: local                                      ok
+421: Url: | /bin/mailman request list%40dom          ok
+422: Url: (ext) | /bin/mailman request list%40dom    ok
+423: Url: prog:///bin/mailman?request&list%40dom     ok
 URL Composition
-405:  =>                                             ok
-406: path=foo => foo                                 ok
-407: scheme=file => file://                          ok
-408: scheme=file path=foo => file://foo              ok
-409: scheme=smtp host=localhost port=587 => smtp://localhost:587 ok
-410: scheme=smtp host=localhost port=587 param=strip-domain param=domain=example.com => smtp://localhost:587;strip-domain;domain=example.com ok
-411: scheme=imap user=gray host=localhost path=INBOX => imap://gray@localhost/INBOX ok
-412: scheme=imap user=gray pass=test host=localhost path=INBOX => imap://gray:***@localhost/INBOX ok
-413: scheme=pop user=gray pass=test auth=+APOP host=localhost path=INBOX => pop://gray:***;AUTH=+APOP@localhost/INBOX ok
-414: scheme=prog path=/bin/mailman query=request query=list => prog:///bin/mailman?request&list ok
-415: scheme=prog path=/bin/mailman query=request query=list param=test => prog:///bin/mailman;test?request&list ok
-416: url=imap://gray@localhost/INBOX path= => imap://gray@localhost ok
-417: url=imap://gray@localhost/INBOX path= user= => imap://localhost ok
-418: url='prog:///bin/mailman;test?request&list' query= param= => prog:///bin/mailman ok
-419: url=smtp://gray@localhost/test host= =>         ok
+424:  =>                                             ok
+425: path=foo => foo                                 ok
+426: scheme=file => file://                          ok
+427: scheme=file path=foo => file://foo              ok
+428: scheme=smtp host=localhost port=587 => smtp://localhost:587 ok
+429: scheme=smtp host=localhost port=587 param=strip-domain param=domain=example.com => smtp://localhost:587;strip-domain;domain=example.com ok
+430: scheme=imap user=gray host=localhost path=INBOX => imap://gray@localhost/INBOX ok
+431: scheme=imap user=gray pass=test host=localhost path=INBOX => imap://gray:***@localhost/INBOX ok
+432: scheme=pop user=gray pass=test auth=+APOP host=localhost path=INBOX => pop://gray:***;AUTH=+APOP@localhost/INBOX ok
+433: scheme=prog path=/bin/mailman query=request query=list => prog:///bin/mailman?request&list ok
+434: scheme=prog path=/bin/mailman query=request query=list param=test => prog:///bin/mailman;test?request&list ok
+435: url=imap://gray@localhost/INBOX path= => imap://gray@localhost ok
+436: url=imap://gray@localhost/INBOX path= user= => imap://localhost ok
+437: url='prog:///bin/mailman;test?request&list' query= param= => prog:///bin/mailman ok
+438: url=smtp://gray@localhost/test host= =>         ok
 Reconstructed message envelope
-420: From Return-Path                                ok
-421: Fall back to From if invalid Return-Path        ok
+439: From Return-Path                                ok
+440: Fall back to From if invalid Return-Path        ok
 Mailcap
-422: Content-type matcher                            ok
-423: Mailcap: 1                                      ok
-424: Mailcap: 2                                      ok
-425: Mailcap: 3                                      ok
-426: Mailcap: 4                                      ok
-427: Mailcap: 5                                      ok
-428: Mailcap: 6                                      ok
-429: Mailcap: 7                                      ok
-430: Mailcap: 8                                      ok
-431: Mailcap: 9                                      ok
-432: Mailcap: 10                                     ok
-433: Mailcap: 11                                     ok
-434: Mailcap: 12                                     ok
-435: Mailcap: 13                                     ok
-436: Mailcap: 14                                     ok
-437: Mailcap: 15                                     ok
-438: Mailcap: 16                                     ok
-439: Mailcap: 17                                     ok
-440: Mailcap: 18                                     ok
-441: Mailcap: 19                                     ok
-442: Mailcap: 20                                     ok
-443: Mailcap: 21                                     ok
-444: Mailcap: 22                                     ok
-445: Mailcap: 23                                     ok
-446: Mailcap: Locations                              ok
-447: Mailcap: mu_mailcap_parse_file                  ok
-448: mailcap_finder                                  ok
+441: Content-type matcher                            ok
+442: Mailcap: 1                                      ok
+443: Mailcap: 2                                      ok
+444: Mailcap: 3                                      ok
+445: Mailcap: 4                                      ok
+446: Mailcap: 5                                      ok
+447: Mailcap: 6                                      ok
+448: Mailcap: 7                                      ok
+449: Mailcap: 8                                      ok
+450: Mailcap: 9                                      ok
+451: Mailcap: 10                                     ok
+452: Mailcap: 11                                     ok
+453: Mailcap: 12                                     ok
+454: Mailcap: 13                                     ok
+455: Mailcap: 14                                     ok
+456: Mailcap: 15                                     ok
+457: Mailcap: 16                                     ok
+458: Mailcap: 17                                     ok
+459: Mailcap: 18                                     ok
+460: Mailcap: 19                                     ok
+461: Mailcap: 20                                     ok
+462: Mailcap: 21                                     ok
+463: Mailcap: 22                                     ok
+464: Mailcap: 23                                     ok
+465: Mailcap: Locations                              ok
+466: Mailcap: mu_mailcap_parse_file                  ok
+467: mailcap_finder                                  ok
 Wicket
-449: Wicket: pop://localhost                         ok
-450: Wicket: pop://smith@localhost                   ok
-451: Wicket: pop://foo@localhost                     ok
-452: Wicket: pop://gnu.org                           ok
-453: Wicket: smtp://gnu.org                          ok
-454: Wicket: smtp://gray@gnu.org                     ok
-455: Wicket: smtp://localhost                        ok
+468: Wicket: pop://localhost                         ok
+469: Wicket: pop://smith@localhost                   ok
+470: Wicket: pop://foo@localhost                     ok
+471: Wicket: pop://gnu.org                           ok
+472: Wicket: smtp://gnu.org                          ok
+473: Wicket: smtp://gray@gnu.org                     ok
+474: Wicket: smtp://localhost                        ok
 Property
-456: prop: set                                       ok
-457: prop: overwrite                                 ok
-458: prop: set without overwrite                     ok
-459: prop: set/unset                                 ok
-460: prop: read/save                                 ok
-461: prop: clear                                     ok
-462: prop: invalidate                                ok
+475: prop: set                                       ok
+476: prop: overwrite                                 ok
+477: prop: set without overwrite                     ok
+478: prop: set/unset                                 ok
+479: prop: read/save                                 ok
+480: prop: clear                                     ok
+481: prop: invalidate                                ok
 File-system folder
-463: List                                            ok
-464: Subscriptions                                   ok
-465: Rename                                          ok
-466: Maxdepth                                        ok
-467: Type selection                                  ok
+482: List                                            ok
+483: Subscriptions                                   ok
+484: Rename                                          ok
+485: Maxdepth                                        ok
+486: Type selection                                  ok
 Base64
-468: base64 encoding (read)                          ok
-469: base64 encoding (write)                         ok
-470: base64 decoding (read)                          ok
-471: base64 decoding (write)                         ok
+487: base64 encoding (read)                          ok
+488: base64 encoding (write)                         ok
+489: base64 decoding (read)                          ok
+490: base64 decoding (write)                         ok
 RFC 2047
-472: Decode 2047: =?US-ASCII?Q?Keith_Moore?= <moore@cs.utk.edu> ok
-473: Decode 2047: =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@dkuug.dk> ok
-474: Decode 2047: =?ISO-8859-1?Q?Andr=E9?= Pirard <PIRARD@vm1.ulg.ac.be> ok
-475: Decode 2047: =?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?= ... =?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?= FAILED (decode2047.at:48)
-476: Decode 2047: malformed input                    ok
-477: Encode 2047: 8-bit input                        ok
-478: Encode 2047: padding 1                          ok
-479: Encode 2047: padding 2                          ok
-480: Encode 2047: padding 3                          ok
-481: Encode 2047: specials                           ok
-482: Encode 2047: length limit                       ok
+491: Decode 2047: =?US-ASCII?Q?Keith_Moore?= <moore@cs.utk.edu> ok
+492: Decode 2047: =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?= <keld@dkuug.dk> ok
+493: Decode 2047: =?ISO-8859-1?Q?Andr=E9?= Pirard <PIRARD@vm1.ulg.ac.be> ok
+494: Decode 2047: =?ISO-8859-1?B?SWYgeW91IGNhbiByZWFkIHRoaXMgeW8=?= ... =?ISO-8859-2?B?dSB1bmRlcnN0YW5kIHRoZSBleGFtcGxlLg==?= FAILED (decode2047.at:48)
+495: Decode 2047: malformed input                    ok
+496: Encode 2047: 8-bit input                        ok
+497: Encode 2047: padding 1                          ok
+498: Encode 2047: padding 2                          ok
+499: Encode 2047: padding 3                          ok
+500: Encode 2047: specials                           ok
+501: Encode 2047: length limit                       ok
 Filters
-483: from filter encoding (read)                     ok
-484: from filter encoding (write)                    ok
-485: from filter decoding (read)                     ok
-486: from filter decoding (write)                    ok
-487: FROMRD filter                                   ok
-488: inline-comment: default                         ok
-489: inline-comment: change comment starter          ok
-490: inline-comment: remove empty lines              ok
-491: inline-comment: remove empty lines/squeeze whitespace ok
-492: inline-comment: multichar comment starter       ok
-493: inline-comment: multichar comment starter; follow ws; follow ws mode ok
-494: inline-comment: multichar; squeeze; remove empty ok
-495: inline-comment: line info facility              ok
-496: inline-comment: line info: newline after comment ok
-497: inline-comment: line info with follow ws        ok
-498: inline-comment: encode                          ok
-499: inline-comment: encode multichar; add ws        ok
-500: header filter                                   ok
-501: header exclusion copy                           ok
-502: linecon filter                                  ok
-503: linecon filter: line info facility              ok
-504: htmlent filter                                  ok
-505: xml filter                                      ok
-506: DOT encode                                      ok
-507: DOT decode                                      ok
-508: DOT empty input                                 ok
-509: DOT decode single line input                    ok
-510: DOT reversibility                               ok
+502: from filter encoding (read)                     ok
+503: from filter encoding (write)                    ok
+504: from filter decoding (read)                     ok
+505: from filter decoding (write)                    ok
+506: FROMRD filter                                   ok
+507: inline-comment: default                         ok
+508: inline-comment: change comment starter          ok
+509: inline-comment: remove empty lines              ok
+510: inline-comment: remove empty lines/squeeze whitespace ok
+511: inline-comment: multichar comment starter       ok
+512: inline-comment: multichar comment starter; follow ws; follow ws mode ok
+513: inline-comment: multichar; squeeze; remove empty ok
+514: inline-comment: line info facility              ok
+515: inline-comment: line info: newline after comment ok
+516: inline-comment: line info with follow ws        ok
+517: inline-comment: encode                          ok
+518: inline-comment: encode multichar; add ws        ok
+519: header filter                                   ok
+520: header exclusion copy                           ok
+521: linecon filter                                  ok
+522: linecon filter: line info facility              ok
+523: htmlent filter                                  ok
+524: xml filter                                      ok
+525: DOT encode                                      ok
+526: DOT decode                                      ok
+527: DOT empty input                                 ok
+528: DOT decode single line input                    ok
+529: DOT reversibility                               ok
 crlf filter
-511: normal input (read)                             ok
-512: normal input (write)                            ok
-513: crlf input (read)                               ok
-514: crlf input (write)                              ok
-515: crlf input - normalize (read)                   ok
-516: crlf input - normalize (write)                  ok
-517: mixed input (read)                              ok
-518: mixed input (write)                             ok
-519: mixed input - normalize (read)                  ok
-520: mixed input - normalize (write)                 ok
-521: decode (read)                                   ok
-522: decode (write)                                  ok
+530: normal input (read)                             ok
+531: normal input (write)                            ok
+532: crlf input (read)                               ok
+533: crlf input (write)                              ok
+534: crlf input - normalize (read)                   ok
+535: crlf input - normalize (write)                  ok
+536: mixed input (read)                              ok
+537: mixed input (write)                             ok
+538: mixed input - normalize (read)                  ok
+539: mixed input - normalize (write)                 ok
+540: decode (read)                                   ok
+541: decode (write)                                  ok
 crlfdot filter
-523: normal input (read)                             ok
-524: normal input (write)                            ok
-525: crlf input (read)                               ok
-526: crlf input (write)                              ok
-527: crlf input - normalize (read)                   ok
-528: crlf input - normalize (write)                  ok
-529: mixed input (read)                              ok
-530: mixed input (write)                             ok
-531: mixed input - normalize (read)                  ok
-532: mixed input - normalize (write)                 ok
-533: decode (read)                                   ok
-534: decode (write)                                  ok
-535: decode single line (read)                       ok
-536: decode single line (write)                      ok
-537: input reference counter in filter chains        ok
+542: normal input (read)                             ok
+543: normal input (write)                            ok
+544: crlf input (read)                               ok
+545: crlf input (write)                              ok
+546: crlf input - normalize (read)                   ok
+547: crlf input - normalize (write)                  ok
+548: mixed input (read)                              ok
+549: mixed input (write)                             ok
+550: mixed input - normalize (read)                  ok
+551: mixed input - normalize (write)                 ok
+552: decode (read)                                   ok
+553: decode (write)                                  ok
+554: decode single line (read)                       ok
+555: decode single line (write)                      ok
+556: input reference counter in filter chains        ok
 Debug Specification
-538: debugspec: mailbox                              ok
-539: debugspec: mailbox.=trace2                      ok
-540: debugspec: mailbox.trace3                       ok
-541: debugspec: mailbox.!trace3                      ok
-542: debugspec: mailbox.!=trace3                     ok
-543: debugspec: mailbox.!=prot                       ok
-544: debugspec: mailbox.prot,!=trace4                ok
-545: debugspec: mailbox.prot,!trace4                 ok
-546: debugspec: mailbox.trace2-trace5                ok
-547: debugspec: mailbox.trace2-trace5,trace7-prot    ok
-548: debugspec: 'mailbox.error,=trace3,=trace7,=trace9;mailer.trace7,!trace2' ok
-549: debugspec: -showunset -names='mailbox;mailer;filter'  'mailbox.error,=trace3,=trace7,=trace9;mailer.trace7,!trace2' ok
-550: debugspec: -sort all                            ok
-551: debugspec: -sort -names 'url;address;server;mailbox' all ok
-552: debugspec: -sort -showunset 'all;!mailer;!config;auth.prot,!=trace4' ok
-553: debugspec: -sort -compress 'all;!mailer;!config;auth.prot,!=trace4' ok
-554: debugspec: -quiet 'mailer' mailer.error mailer.trace0 mailer.prot auth.error auth.prot  ok
-555: debugspec: -quiet 'mailer.trace3' mailer.error mailer.trace0 mailer.trace1 mailer.trace2  mailer.trace3 mailer.trace4 mailer.prot ok
-556: debugspec: -quiet 'mailer.=trace3' mailer.error mailer.trace0 mailer.trace1  mailer.trace2 mailer.trace3 mailer.trace4 mailer.prot ok
-557: debugspec: -quiet 'all;!mailer;auth.!=prot' mailer.error mailer.prot  auth.error auth.prot  app.error app.prot ok
+557: debugspec: mailbox                              ok
+558: debugspec: mailbox.=trace2                      ok
+559: debugspec: mailbox.trace3                       ok
+560: debugspec: mailbox.!trace3                      ok
+561: debugspec: mailbox.!=trace3                     ok
+562: debugspec: mailbox.!=prot                       ok
+563: debugspec: mailbox.prot,!=trace4                ok
+564: debugspec: mailbox.prot,!trace4                 ok
+565: debugspec: mailbox.trace2-trace5                ok
+566: debugspec: mailbox.trace2-trace5,trace7-prot    ok
+567: debugspec: 'mailbox.error,=trace3,=trace7,=trace9;mailer.trace7,!trace2' ok
+568: debugspec: -showunset -names='mailbox;mailer;filter'  'mailbox.error,=trace3,=trace7,=trace9;mailer.trace7,!trace2' ok
+569: debugspec: -sort all                            ok
+570: debugspec: -sort -names 'url;address;server;mailbox' all ok
+571: debugspec: -sort -showunset 'all;!mailer;!config;auth.prot,!=trace4' ok
+572: debugspec: -sort -compress 'all;!mailer;!config;auth.prot,!=trace4' ok
+573: debugspec: -quiet 'mailer' mailer.error mailer.trace0 mailer.prot auth.error auth.prot  ok
+574: debugspec: -quiet 'mailer.trace3' mailer.error mailer.trace0 mailer.trace1 mailer.trace2  mailer.trace3 mailer.trace4 mailer.prot ok
+575: debugspec: -quiet 'mailer.=trace3' mailer.error mailer.trace0 mailer.trace1  mailer.trace2 mailer.trace3 mailer.trace4 mailer.prot ok
+576: debugspec: -quiet 'all;!mailer;auth.!=prot' mailer.error mailer.prot  auth.error auth.prot  app.error app.prot ok
 IMAP IO
-558: imapio: simple string                           ok
-559: imapio: quoted string                           ok
-560: imapio: server response                         ok
-561: imapio: server response with code               ok
-562: imapio: literals (client)                       ok
-563: imapio: literals (server)                       ok
-564: imapio: non-synchronized literals (server)      ok
-565: Reading message from stream                     ok
+577: imapio: simple string                           ok
+578: imapio: quoted string                           ok
+579: imapio: server response                         ok
+580: imapio: server response with code               ok
+581: imapio: literals (client)                       ok
+582: imapio: literals (server)                       ok
+583: imapio: non-synchronized literals (server)      ok
+584: Reading message from stream                     ok
 Message modification
-566: unmodified message                              ok
-567: add headers                                     ok
-568: modify body                                     ok
-569: modify body 2                                   ok
-570: modify headers and body                         ok
+585: unmodified message                              ok
+586: add headers                                     ok
+587: modify body                                     ok
+588: modify body 2                                   ok
+589: modify headers and body                         ok
 mu_scan_datetime
-571: scantime: Envelope (From) time                  ok
-572: scantime: IMAP INTERNALDATE                     ok
-573: scantime: IMAP INTERNALDATE (optional time)     ok
-574: scantime: RFC-822 Strict                        ok
-575: scantime: RFC-822                               ok
-576: scantime: Any char                              ok
-577: scantime: Percent                               ok
-578: scantime: Fixed WS                              ok
-579: scantime: endp return                           ok
-580: scantime: Optional blocks                       ok
-581: scantime: Nested optional blocks                ok
-582: scantime: Optional alternatives                 ok
-583: scantime: Alternatives                          ok
-584: scantime: MBOX From_ time                       ok
-585: scantime: MBOX From_ time (alternative)         ok
-586: scantime: MBOX From_ time (simplified)          ok
+590: scantime: Envelope (From) time                  ok
+591: scantime: IMAP INTERNALDATE                     ok
+592: scantime: IMAP INTERNALDATE (optional time)     ok
+593: scantime: RFC-822 Strict                        ok
+594: scantime: RFC-822                               ok
+595: scantime: Any char                              ok
+596: scantime: Percent                               ok
+597: scantime: Fixed WS                              ok
+598: scantime: endp return                           ok
+599: scantime: Optional blocks                       ok
+600: scantime: Nested optional blocks                ok
+601: scantime: Optional alternatives                 ok
+602: scantime: Alternatives                          ok
+603: scantime: MBOX From_ time                       ok
+604: scantime: MBOX From_ time (alternative)         ok
+605: scantime: MBOX From_ time (simplified)          ok
 mu_c_streamftime
-587: streamftime: %a                                 ok
-588: streamftime: %A                                 ok
-589: streamftime: %b                                 ok
-590: streamftime: %h                                 ok
-591: streamftime: %B                                 ok
-592: streamftime: %C                                 ok
-593: streamftime: %d                                 ok
-594: streamftime: %e                                 ok
-595: streamftime: %EC                                ok
-596: streamftime: %G                                 ok
-597: streamftime: %g                                 ok
-598: streamftime: %H                                 ok
-599: streamftime: %I                                 ok
-600: streamftime: %j                                 ok
-601: streamftime: %k                                 ok
-602: streamftime: %l                                 ok
-603: streamftime: %m                                 ok
-604: streamftime: %M                                 ok
-605: streamftime: <%n>                               ok
-606: streamftime: %OC                                ok
-607: streamftime: %p                                 ok
-608: streamftime: %P                                 ok
-609: streamftime: %s                                 ok
-610: streamftime: %S                                 ok
-611: streamftime: <%t>                               ok
-612: streamftime: %u                                 ok
-613: streamftime: %U                                 ok
-614: streamftime: %V                                 ok
-615: streamftime: %w                                 ok
-616: streamftime: %W                                 ok
-617: streamftime: %y                                 ok
-618: streamftime: %Y                                 ok
-619: streamftime: %z                                 ok
-620: streamftime: %z                                 ok
-621: streamftime: <%%>                               ok
-622: streamftime: <%5d>                              ok
-623: streamftime: Today is %A, %B %e %Y%n%H:%M:%S (%z). ok
-624: streamftime: %c                                 ok
-625: streamftime: %D                                 ok
-626: streamftime: %F                                 ok
-627: streamftime: %r                                 ok
-628: streamftime: %R                                 ok
-629: streamftime: %T                                 ok
-630: streamftime: %x                                 ok
-631: streamftime: %X                                 ok
+606: streamftime: %a                                 ok
+607: streamftime: %A                                 ok
+608: streamftime: %b                                 ok
+609: streamftime: %h                                 ok
+610: streamftime: %B                                 ok
+611: streamftime: %C                                 ok
+612: streamftime: %d                                 ok
+613: streamftime: %e                                 ok
+614: streamftime: %EC                                ok
+615: streamftime: %G                                 ok
+616: streamftime: %g                                 ok
+617: streamftime: %H                                 ok
+618: streamftime: %I                                 ok
+619: streamftime: %j                                 ok
+620: streamftime: %k                                 ok
+621: streamftime: %l                                 ok
+622: streamftime: %m                                 ok
+623: streamftime: %M                                 ok
+624: streamftime: <%n>                               ok
+625: streamftime: %OC                                ok
+626: streamftime: %p                                 ok
+627: streamftime: %P                                 ok
+628: streamftime: %s                                 ok
+629: streamftime: %S                                 ok
+630: streamftime: <%t>                               ok
+631: streamftime: %u                                 ok
+632: streamftime: %U                                 ok
+633: streamftime: %V                                 ok
+634: streamftime: %w                                 ok
+635: streamftime: %W                                 ok
+636: streamftime: %y                                 ok
+637: streamftime: %Y                                 ok
+638: streamftime: %z                                 ok
+639: streamftime: %z                                 ok
+640: streamftime: <%%>                               ok
+641: streamftime: <%5d>                              ok
+642: streamftime: Today is %A, %B %e %Y%n%H:%M:%S (%z). ok
+643: streamftime: %c                                 ok
+644: streamftime: %D                                 ok
+645: streamftime: %F                                 ok
+646: streamftime: %r                                 ok
+647: streamftime: %R                                 ok
+648: streamftime: %T                                 ok
+649: streamftime: %x                                 ok
+650: streamftime: %X                                 ok
 File Safety
-632: default                                         ok
-633: +awrfil                                         ok
-634: +gwrfil                                         ok
-635: +linkwrdir                                      ok
-636: +linkwrdir                                      ok
-637: +awrdir                                         ok
-638: +gwrdir                                         ok
-639: +ardfil                                         ok
-640: +grdfil                                         ok
+651: default                                         ok
+652: +awrfil                                         ok
+653: +gwrfil                                         ok
+654: +linkwrdir                                      ok
+655: +linkwrdir                                      ok
+656: +awrdir                                         ok
+657: +gwrdir                                         ok
+658: +ardfil                                         ok
+659: +grdfil                                         ok
 File Safety to File Mode
-641: all                                             ok
-642: none                                            ok
-643: grdfil ardfil                                   ok
-644: grdfil ardfil awrfil                            ok
-645: grdfil gwrfil ardfil awrfil                     ok
+660: all                                             ok
+661: none                                            ok
+662: grdfil ardfil                                   ok
+663: grdfil ardfil awrfil                            ok
+664: grdfil gwrfil ardfil awrfil                     ok
 File Mode to File Safety
-646: 600                                             ok
-647: 666                                             ok
-648: 622                                             ok
-649: 644                                             ok
-650: 620                                             ok
+665: 600                                             ok
+666: 666                                             ok
+667: 622                                             ok
+668: 644                                             ok
+669: 620                                             ok
 RFC 2231 header fields
-651: mimehdr: simple                                 ok
-652: mimehdr: continuation                           ok
-653: mimehdr: charset (2047)                         ok
-654: mimehdr: charset with language (2047)           ok
-655: mimehdr: no charset (2231)                      ok
-656: mimehdr: charset (2231)                         ok
-657: mimehdr: charset with language (2231)           ok
-658: mimehdr: charset with language and continuation (2231) ok
-659: mimehdr: combined charset, lang and cset        ok
-660: mimehdr: format: simple                         ok
-661: mimehdr: format: split                          ok
-662: mimehdr: format: split 2                        ok
-663: mimehdr: format: language info 1                ok
-664: mimehdr: format: language info 2                ok
-665: mimehdr: format: language info 3                ok
-666: mimehdr: format: language info 4                ok
-667: mimehdr: format: language info 5                ok
-668: mimehdr: missing parameters                     ok
-669: mimehdr: surrounding whitespace                 ok
-670: mimehdr: empty input                            ok
-671: mimehdr: missing semicolon after type           ok
-672: mimehdr: whitespace in type                     ok
-673: mimehdr: error tolerance                        ok
-674: content-type: no parameters                     ok
-675: content-type: with parameters                   ok
-676: content-type: missing subtype                   ok
-677: content-type: whitespace                        ok
+670: mimehdr: simple                                 ok
+671: mimehdr: continuation                           ok
+672: mimehdr: charset (2047)                         ok
+673: mimehdr: charset with language (2047)           ok
+674: mimehdr: no charset (2231)                      ok
+675: mimehdr: charset (2231)                         ok
+676: mimehdr: charset with language (2231)           ok
+677: mimehdr: charset with language and continuation (2231) ok
+678: mimehdr: combined charset, lang and cset        ok
+679: mimehdr: format: simple                         ok
+680: mimehdr: format: split                          ok
+681: mimehdr: format: split 2                        ok
+682: mimehdr: format: language info 1                ok
+683: mimehdr: format: language info 2                ok
+684: mimehdr: format: language info 3                ok
+685: mimehdr: format: language info 4                ok
+686: mimehdr: format: language info 5                ok
+687: mimehdr: missing parameters                     ok
+688: mimehdr: surrounding whitespace                 ok
+689: mimehdr: empty input                            ok
+690: mimehdr: missing semicolon after type           ok
+691: mimehdr: whitespace in type                     ok
+692: mimehdr: error tolerance                        ok
+693: content-type: no parameters                     ok
+694: content-type: with parameters                   ok
+695: content-type: missing subtype                   ok
+696: content-type: whitespace                        ok
 Message sets
-678: Aggregation: simple                             ok
-679: Aggregation: open range (1)                     ok
-680: Aggregation: coalescing open ranges             ok
-681: Aggregation: open range (3)                     ok
-682: Aggregation: open range (4)                     ok
-683: Aggregation: open range (5)                     ok
-684: Create simple set                               ok
-685: Create complex set                              ok
-686: Subtract: no match                              ok
-687: Subtract: exact match                           ok
-688: Subtract: contained range                       ok
-689: Subtract: contained range (left border case)    ok
-690: Subtract: contained range (right border case)   ok
-691: Subtract: initial subrange                      ok
-692: Subtract: trailing subrange                     ok
-693: Subtract: overlapping subrange                  ok
-694: Subtract: 4, 5 and 6 combined                   ok
-695: open range                                      ok
-696: add to open range                               ok
-697: subtract from open range                        ok
-698: subtract from open range an equal range         ok
-699: subtract from open range a broader range        ok
-700: subtract from open range a narrower range       ok
-701: subtract an open range with matching left boundary ok
-702: subtract an open range with greater left boundary ok
-703: subtract an open range with smaller left boundary ok
-704: first                                           ok
-705: last                                            ok
+697: Aggregation: simple                             ok
+698: Aggregation: open range (1)                     ok
+699: Aggregation: coalescing open ranges             ok
+700: Aggregation: open range (3)                     ok
+701: Aggregation: open range (4)                     ok
+702: Aggregation: open range (5)                     ok
+703: Create simple set                               ok
+704: Create complex set                              ok
+705: Subtract: no match                              ok
+706: Subtract: exact match                           ok
+707: Subtract: contained range                       ok
+708: Subtract: contained range (left border case)    ok
+709: Subtract: contained range (right border case)   ok
+710: Subtract: initial subrange                      ok
+711: Subtract: trailing subrange                     ok
+712: Subtract: overlapping subrange                  ok
+713: Subtract: 4, 5 and 6 combined                   ok
+714: open range                                      ok
+715: add to open range                               ok
+716: subtract from open range                        ok
+717: subtract from open range an equal range         ok
+718: subtract from open range a broader range        ok
+719: subtract from open range a narrower range       ok
+720: subtract an open range with matching left boundary ok
+721: subtract an open range with greater left boundary ok
+722: subtract an open range with smaller left boundary ok
+723: first                                           ok
+724: last                                            ok
 Globbing patterns
-706: abab                                            ok
-707: a*c                                             ok
-708: a*c?d sub                                       ok
-709: a***c                                           ok
-710: a***c sub                                       ok
-711: a***c sub collapse                              ok
-712: {$|a$$                                          ok
-713: a[0-9A-Z]c                                      ok
-714: a[!a-z]c                                        ok
-715: a[!]z]                                          ok
-716: a[cde                                           ok
-717: a[[ba]                                          ok
-718: *.c                                             ok
-719: a\                                              ok
+725: abab                                            ok
+726: a*c                                             ok
+727: a*c?d sub                                       ok
+728: a***c                                           ok
+729: a***c sub                                       ok
+730: a***c sub collapse                              ok
+731: {$|a$$                                          ok
+732: a[0-9A-Z]c                                      ok
+733: a[!a-z]c                                        ok
+734: a[!]z]                                          ok
+735: a[cde                                           ok
+736: a[[ba]                                          ok
+737: *.c                                             ok
+738: a\                                              ok
 Line tracker
-720: normal operation                                ok
-721: retreat                                         ok
-722: retreat over several lines                      ok
-723: retreat to the beginning                        ok
-724: too big retreat                                 ok
-725: origin 1                                        ok
-726: origin 2                                        ok
-727: origin 3                                        ok
-728: origin 4                                        ok
-729: retreat over origin                             ok
-730: retreat over two origins                        ok
-731: rebase                                          ok
-732: #line directive                                 ok
+739: normal operation                                ok
+740: retreat                                         ok
+741: retreat over several lines                      ok
+742: retreat to the beginning                        ok
+743: too big retreat                                 ok
+744: origin 1                                        ok
+745: origin 2                                        ok
+746: origin 3                                        ok
+747: origin 4                                        ok
+748: retreat over origin                             ok
+749: retreat over two origins                        ok
+750: rebase                                          ok
+751: #line directive                                 ok
 Locking
-733: retries                                         ok
-734: conflict with previous locker                   ok
-735: abandoned lock                                  ok
-736: PID check                                       ok
-737: lock expiration                                 ok
-738: default settings                                ok
-739: external locker                                 ok
-ERROR: All 739 tests were run,
+752: retries                                         ok
+753: conflict with previous locker                   ok
+754: abandoned lock                                  ok
+755: PID check                                       ok
+756: lock expiration                                 ok
+757: default settings                                ok
+758: external locker                                 ok
+ERROR: All 758 tests were run,
 1 failed unexpectedly.
-   Subject: [GNU Mailutils 3.20] testsuite: 475 failed
+   Subject: [GNU Mailutils 3.21] testsuite: 494 failed

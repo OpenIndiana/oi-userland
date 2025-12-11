@@ -26,11 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mailutils
-COMPONENT_VERSION=	3.20
+COMPONENT_VERSION=	3.21
 COMPONENT_SUMMARY=	GNU-mailutils provides IMAP4D LMTPD MDA POP3D servers and various mail programs
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a8f3faab1edda5188bb5ca3e4e9c0c5bc72cd0dadf4e1f4799d27fa75c6ae829
+COMPONENT_ARCHIVE_HASH=	sha256:e47c1edc699b8d6675fdbc77db3a84ae837f18e1f2094fe29d48bb58a97ef5e9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://mailutils.org/
 COMPONENT_FMRI=		mail/mailutils
@@ -108,7 +108,6 @@ COMPONENT_TEST_TRANSFORMS= \
 REQUIRED_PACKAGES += editor/gnu-emacs
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
@@ -125,3 +124,4 @@ REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/gss
+REQUIRED_PACKAGES.python += runtime/python
