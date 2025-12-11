@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/BTrees btrees
+#   $WS_TOOLS/python-integrate-project -d python/BTrees-39 btrees
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		btrees
-HUMAN_VERSION =			6.3
+HUMAN_VERSION =			6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Scalable persistent object containers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1606bdffa7ab28c6800984540b695eee848f6e15b0145d858ff4b0c6264e8ed2
+	sha256:e18746f8641869a20f45328c9b5f97dc6c71a1195960356aef63b75f5c8d445f
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by BTrees >= 6.2
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# BTrees >= 6.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -42,6 +43,9 @@ REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/persistent
+TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/transaction
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
