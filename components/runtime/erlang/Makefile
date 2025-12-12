@@ -31,6 +31,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= erlang
 COMPONENT_VERSION= 28.3
+COMPONENT_REVISION= 1
 COMPONENT_VERSION_SHORT= $(shell echo $(COMPONENT_VERSION) | cut -d'.' -f1-2)
 COMPONENT_SUMMARY= Erlang programming language and OTP libraries
 COMPONENT_PROJECT_URL= https://erlang.org/
