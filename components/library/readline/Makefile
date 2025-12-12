@@ -27,14 +27,14 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
-HUMAN_VERSION=		8.2p13
+HUMAN_VERSION=		8.3p3
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	GNU readline provides interactive line-editing and history
 COMPONENT_DESCRIPTION= The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in
 COMPONENT_PROJECT_URL= https://tiswww.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(firstword $(subst p, ,$(HUMAN_VERSION)))
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:08835e57b5eb84f07f8fa50c7530e4b13b08265ffef340e4a4cce4ad6fb575fe
+COMPONENT_ARCHIVE_HASH= sha256:fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc
 COMPONENT_ARCHIVE_URL= https://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 COMPONENT_VERSION_MAJOR=	$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_FMRI=		library/readline-$(COMPONENT_VERSION_MAJOR)
@@ -51,7 +51,14 @@ PATCH_LEVEL = 0
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-shared-termcap-library
+CONFIGURE_OPTIONS += --with-shared-termcap-library=-lcurses
+
+# Use the standard compliant libcurses
+XPG4_PATH = /usr/xpg4
+CONFIGURE_ENV += CPPFLAGS=-I$(XPG4_PATH)/include
+LIBCURSESDIR.32 = $(XPG4_PATH)/lib
+LIBCURSESDIR.64 = $(XPG4_PATH)/lib/$(MACH64)
+LDFLAGS += -L$(LIBCURSESDIR.$(BITS)) -R$(LIBCURSESDIR.$(BITS))
 
 # Build the readline examples as well (see the INSTALL file).
 COMPONENT_BUILD_TARGETS= everything
@@ -80,7 +87,8 @@ TEST_LIBPATH.32= $(PROTOUSRLIBDIR)
 TEST_LIBPATH.64= $(PROTOUSRLIBDIR64)
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(TEST_LIBPATH.$(BITS))
 
-test:		install $(TEST_64_and_32)
+# Testing needs to find libreadline.so.6 in the proto area.
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
 
 # Sanity check
 ifneq ($(strip $(COMPONENT_VERSION_MAJOR)),$(strip $(READLINE_VERSION)))
