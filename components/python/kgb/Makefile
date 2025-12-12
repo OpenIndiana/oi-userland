@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		kgb
-HUMAN_VERSION =			7.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			7.3
 COMPONENT_SUMMARY =		Utilities for spying on function calls in unit tests.
 COMPONENT_PROJECT_URL =		https://github.com/beanbaginc/kgb
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:58dcae53a843a7121829e187dfcc13b80785a8a66ca459705371cb74cff8f155
+	sha256:b8af7e79cb8b0df5a2ec596010b8e5d014845cfaa9203577b85b99d4df192927
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
