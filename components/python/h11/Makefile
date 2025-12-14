@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		h11
 HUMAN_VERSION =			0.16.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A pure-Python, bring-your-own-I/O implementation of HTTP/1.1
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/h11
 COMPONENT_ARCHIVE_URL =		\
@@ -32,7 +33,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
