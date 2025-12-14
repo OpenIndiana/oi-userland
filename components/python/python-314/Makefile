@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Python
 COMPONENT_VERSION =		3.14.2
+COMPONENT_REVISION =		1
 PYTHON_VERSION =		$(basename $(COMPONENT_VERSION))
 PYV =				$(subst .,,$(PYTHON_VERSION))
 COMPONENT_SUMMARY =		The Python interpreter, libraries and utilities
