@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.security zope_security
+#   $WS_TOOLS/python-integrate-project -d python/zope.security-39 zope_security
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_security
-HUMAN_VERSION =			8.3
+HUMAN_VERSION =			8.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope Security Framework
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb35ae07165a8fe8699e98482f5f4d81a60540ceaaef71353bcaf976c899d936
+	sha256:8dad1f138b92dc8a9ac51cc20e5af56753233968d59d8d0a7d4bebb5ff622be8
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.security >= 8.2
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.security >= 8.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -46,7 +47,10 @@ REQUIRED_PACKAGES.python += library/python/zope-proxy
 REQUIRED_PACKAGES.python += library/python/zope-schema
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/btrees
+TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-component
 TEST_REQUIRED_PACKAGES.python += library/python/zope-configuration
 TEST_REQUIRED_PACKAGES.python += library/python/zope-location
