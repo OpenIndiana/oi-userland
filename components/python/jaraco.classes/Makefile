@@ -11,32 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.classes
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.classes jaraco_classes
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.classes
+COMPONENT_NAME =		jaraco_classes
 HUMAN_VERSION =			3.4.0
-COMPONENT_SUMMARY =		jaraco.classes - Utility functions for Python class constructs
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Utility functions for Python class constructs
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.classes
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:47a024b51d0239c0dd8c8540c6c7f484be3b8fcf0b2d85c13825780d3b3f3acd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+COMPONENT_SRC =			jaraco.classes-$(HUMAN_VERSION)
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/more-itertools
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
