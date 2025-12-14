@@ -20,7 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansi2html
 HUMAN_VERSION =			1.9.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Convert text with ANSI color codes to HTML or to LaTeX
+COMPONENT_PROJECT_URL =		https://github.com/pycontribs/ansi2html
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:3453bf87535d37b827b05245faaa756dbab4ec3d69925e352b6319c3c955c0a5
 COMPONENT_LICENSE =		LGPL-3.0-only
@@ -29,9 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
