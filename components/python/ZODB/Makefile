@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodb
 HUMAN_VERSION =			6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ZODB, a Python object-oriented database
 COMPONENT_PROJECT_URL =		http://zodb-docs.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
