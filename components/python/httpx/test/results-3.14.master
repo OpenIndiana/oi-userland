@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1300 items
+collecting ... collected 1289 items / 11 deselected / 1278 selected
 
 tests/client/test_async_client.py::test_get[asyncio] PASSED
 tests/client/test_async_client.py::test_get_invalid_url[asyncio-scheme-not-http(s)] PASSED
@@ -68,8 +68,7 @@ tests/client/test_auth.py::test_async_auth_reads_response_body[asyncio] PASSED
 tests/client/test_auth.py::test_async_auth[asyncio] PASSED
 tests/client/test_auth.py::test_netrc_auth_credentials_exist PASSED
 tests/client/test_auth.py::test_netrc_auth_credentials_do_not_exist PASSED
-tests/client/test_auth.py::test_netrc_auth_nopassword SKIPPED (netrc...)
-tests/client/test_auth.py::test_netrc_auth_nopassword_parse_error PASSED
+tests/client/test_auth.py::test_netrc_auth_nopassword_parse_error SKIPPED
 tests/client/test_auth.py::test_auth_hidden_url PASSED
 tests/client/test_auth.py::test_digest_auth_returns_no_auth_if_alternate_auth_scheme PASSED
 tests/client/test_auth.py::test_sync_digest_auth_raises_protocol_error_on_malformed_header[Digest realm="httpx@example.org", qop="auth"] PASSED
@@ -133,9 +132,15 @@ tests/client/test_headers.py::test_header_repeated_items PASSED
 tests/client/test_headers.py::test_header_repeated_multi_items PASSED
 tests/client/test_headers.py::test_remove_default_header PASSED
 tests/client/test_headers.py::test_header_does_not_exist PASSED
+tests/client/test_headers.py::test_header_with_incorrect_value PASSED
 tests/client/test_headers.py::test_host_with_auth_and_port_in_url PASSED
 tests/client/test_headers.py::test_host_with_non_default_port_in_url PASSED
 tests/client/test_headers.py::test_request_auto_headers PASSED
+tests/client/test_headers.py::test_same_origin PASSED
+tests/client/test_headers.py::test_not_same_origin PASSED
+tests/client/test_headers.py::test_is_https_redirect PASSED
+tests/client/test_headers.py::test_is_not_https_redirect PASSED
+tests/client/test_headers.py::test_is_not_https_redirect_if_not_default_ports PASSED
 tests/client/test_properties.py::test_client_base_url PASSED
 tests/client/test_properties.py::test_client_base_url_without_trailing_slash PASSED
 tests/client/test_properties.py::test_client_base_url_with_trailing_slash PASSED
@@ -144,41 +149,32 @@ tests/client/test_properties.py::test_client_cookies PASSED
 tests/client/test_properties.py::test_client_timeout PASSED
 tests/client/test_properties.py::test_client_event_hooks PASSED
 tests/client/test_properties.py::test_client_trust_env PASSED
-tests/client/test_proxies.py::test_proxies_parameter[http://127.0.0.1-expected_proxies0] PASSED
-tests/client/test_proxies.py::test_proxies_parameter[proxies1-expected_proxies1] PASSED
-tests/client/test_proxies.py::test_proxies_parameter[proxies2-expected_proxies2] PASSED
-tests/client/test_proxies.py::test_proxies_parameter[proxies3-expected_proxies3] PASSED
-tests/client/test_proxies.py::test_proxies_parameter[proxies4-expected_proxies4] PASSED
-tests/client/test_proxies.py::test_socks_proxy_deprecated PASSED
 tests/client/test_proxies.py::test_socks_proxy PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-None-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies0-None] PASSED
 tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies1-None] PASSED
 tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies2-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies3-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies4-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[https://example.com-proxies5-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies6-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies7-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies8-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies9-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies10-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies11-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://wwwexample.com-proxies12-None] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com:443-proxies13-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies3-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[https://example.com-proxies4-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies5-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies6-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies7-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies8-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies9-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://www.example.com-proxies10-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://wwwexample.com-proxies11-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com:443-proxies12-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies13-http://[::1]] PASSED
 tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies14-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies15-None] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies15-http://[::1]] PASSED
 tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies16-http://[::1]] PASSED
 tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies17-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies18-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies19-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com:8080-proxies20-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com:8080-proxies21-http://[::1]] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies22-http://[::1]:4] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies23-http://[::1]:3] PASSED
-tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies24-http://[::1]:2] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com:8080-proxies18-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com:8080-proxies19-http://[::1]] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies20-http://[::1]:4] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies21-http://[::1]:3] PASSED
+tests/client/test_proxies.py::test_transport_for_request[http://example.com-proxies22-http://[::1]:2] PASSED
 tests/client/test_proxies.py::test_async_proxy_close[asyncio] PASSED
 tests/client/test_proxies.py::test_sync_proxy_close PASSED
-tests/client/test_proxies.py::test_unsupported_proxy_scheme_deprecated PASSED
 tests/client/test_proxies.py::test_unsupported_proxy_scheme PASSED
 tests/client/test_proxies.py::test_proxies_environ[Client-http://google.com-env0-None] PASSED
 tests/client/test_proxies.py::test_proxies_environ[Client-http://google.com-env1-http://example.com] PASSED
@@ -220,7 +216,6 @@ tests/client/test_proxies.py::test_for_deprecated_proxy_params[proxies2-False] P
 tests/client/test_proxies.py::test_for_deprecated_proxy_params[proxies3-True] PASSED
 tests/client/test_proxies.py::test_for_deprecated_proxy_params[proxies4-True] PASSED
 tests/client/test_proxies.py::test_for_deprecated_proxy_params[proxies5-True] PASSED
-tests/client/test_proxies.py::test_proxy_and_proxies_together PASSED
 tests/client/test_proxies.py::test_proxy_with_mounts PASSED
 tests/client/test_queryparams.py::test_client_queryparams PASSED
 tests/client/test_queryparams.py::test_client_queryparams_string PASSED
@@ -278,6 +273,15 @@ tests/models/test_headers.py::test_headers_decode_explicit_encoding PASSED
 tests/models/test_headers.py::test_multiple_headers PASSED
 tests/models/test_headers.py::test_sensitive_headers[authorization] PASSED
 tests/models/test_headers.py::test_sensitive_headers[proxy-authorization] PASSED
+tests/models/test_headers.py::test_obfuscate_sensitive_headers[headers0-output0] PASSED
+tests/models/test_headers.py::test_obfuscate_sensitive_headers[headers1-output1] PASSED
+tests/models/test_headers.py::test_obfuscate_sensitive_headers[headers2-output2] PASSED
+tests/models/test_headers.py::test_parse_header_links[<http:/.../front.jpeg>; rel=front; type="image/jpeg"-expected0] PASSED
+tests/models/test_headers.py::test_parse_header_links[<http:/.../front.jpeg>-expected1] PASSED
+tests/models/test_headers.py::test_parse_header_links[<http:/.../front.jpeg>;-expected2] PASSED
+tests/models/test_headers.py::test_parse_header_links[<http:/.../front.jpeg>; type="image/jpeg",<http://.../back.jpeg>;-expected3] PASSED
+tests/models/test_headers.py::test_parse_header_links[-expected4] PASSED
+tests/models/test_headers.py::test_parse_header_links_no_link PASSED
 tests/models/test_queryparams.py::test_queryparams[a=123&a=456&b=789] PASSED
 tests/models/test_queryparams.py::test_queryparams[source1] PASSED
 tests/models/test_queryparams.py::test_queryparams[source2] PASSED
@@ -313,6 +317,7 @@ tests/models/test_requests.py::test_override_content_length_header PASSED
 tests/models/test_requests.py::test_url PASSED
 tests/models/test_requests.py::test_request_picklable PASSED
 tests/models/test_requests.py::test_request_generator_content_picklable PASSED
+tests/models/test_requests.py::test_request_params PASSED
 tests/models/test_responses.py::test_response PASSED
 tests/models/test_responses.py::test_response_content PASSED
 tests/models/test_responses.py::test_response_text PASSED
@@ -433,7 +438,7 @@ tests/models/test_url.py::test_url_escaped_path PASSED
 tests/models/test_url.py::test_url_leading_dot_prefix_on_absolute_url PASSED
 tests/models/test_url.py::test_url_leading_dot_prefix_on_relative_url PASSED
 tests/models/test_url.py::test_param_with_space PASSED
-tests/models/test_url.py::test_param_does_not_require_encoding PASSED
+tests/models/test_url.py::test_param_requires_encoding PASSED
 tests/models/test_url.py::test_param_with_percent_encoded PASSED
 tests/models/test_url.py::test_param_with_existing_escape_requires_encoding PASSED
 tests/models/test_url.py::test_query_with_existing_percent_encoding PASSED
@@ -492,7 +497,6 @@ tests/models/test_url.py::test_ipv6_url_copy_with_host[[::ffff:192.168.0.1]-http
 tests/models/test_url.py::test_ipv6_url_copy_with_host[::ffff:192.168.0.1-http://127.0.0.1:1234] PASSED
 tests/models/test_url.py::test_ipv6_url_copy_with_host[::ffff:192.168.0.1-http://example.com:1234] PASSED
 tests/models/test_url.py::test_ipv6_url_copy_with_host[::ffff:192.168.0.1-http://[::ffff:127.0.0.1]:1234] PASSED
-tests/models/test_url.py::test_url_raw_compatibility PASSED
 tests/models/test_whatwg.py::test_urlparse[test_case0] PASSED
 tests/models/test_whatwg.py::test_urlparse[test_case1] PASSED
 tests/models/test_whatwg.py::test_urlparse[test_case2] PASSED
@@ -1067,6 +1071,7 @@ tests/test_api.py::test_patch PASSED
 tests/test_api.py::test_delete PASSED
 tests/test_api.py::test_stream PASSED
 tests/test_api.py::test_get_invalid_url PASSED
+tests/test_api.py::test_httpcore_lazy_loading PASSED
 tests/test_asgi.py::test_asgi_transport[asyncio] PASSED
 tests/test_asgi.py::test_asgi_transport_no_body[asyncio] PASSED
 tests/test_asgi.py::test_asgi[asyncio] PASSED
@@ -1079,7 +1084,6 @@ tests/test_asgi.py::test_asgi_exc[asyncio] PASSED
 tests/test_asgi.py::test_asgi_exc_after_response[asyncio] PASSED
 tests/test_asgi.py::test_asgi_disconnect_after_response_complete[asyncio] PASSED
 tests/test_asgi.py::test_asgi_exc_no_raise[asyncio] PASSED
-tests/test_asgi.py::test_deprecated_shortcut[asyncio] PASSED
 tests/test_auth.py::test_basic_auth PASSED
 tests/test_auth.py::test_digest_auth_with_200 PASSED
 tests/test_auth.py::test_digest_auth_with_401 PASSED
@@ -1089,10 +1093,9 @@ tests/test_auth.py::test_digest_auth_rfc_2069 PASSED
 tests/test_auth.py::test_digest_auth_rfc_7616_md5 PASSED
 tests/test_auth.py::test_digest_auth_rfc_7616_sha_256 PASSED
 tests/test_config.py::test_load_ssl_config PASSED
-tests/test_config.py::test_load_ssl_config_verify_non_existing_path PASSED
+tests/test_config.py::test_load_ssl_config_verify_non_existing_file PASSED
+tests/test_config.py::test_load_ssl_with_keylog PASSED
 tests/test_config.py::test_load_ssl_config_verify_existing_file PASSED
-tests/test_config.py::test_load_ssl_config_verify_env_file[SSL_CERT_FILE] PASSED
-tests/test_config.py::test_load_ssl_config_verify_env_file[SSL_CERT_DIR] PASSED
 tests/test_config.py::test_load_ssl_config_verify_directory PASSED
 tests/test_config.py::test_load_ssl_config_cert_and_key PASSED
 tests/test_config.py::test_load_ssl_config_cert_and_encrypted_key[password0] PASSED
@@ -1100,8 +1103,7 @@ tests/test_config.py::test_load_ssl_config_cert_and_encrypted_key[password1] PAS
 tests/test_config.py::test_load_ssl_config_cert_and_key_invalid_password PASSED
 tests/test_config.py::test_load_ssl_config_cert_without_key_raises PASSED
 tests/test_config.py::test_load_ssl_config_no_verify PASSED
-tests/test_config.py::test_load_ssl_context PASSED
-tests/test_config.py::test_create_ssl_context_with_get_request PASSED
+tests/test_config.py::test_SSLContext_with_get_request PASSED
 tests/test_config.py::test_limits_repr PASSED
 tests/test_config.py::test_limits_eq PASSED
 tests/test_config.py::test_timeout_eq PASSED
@@ -1115,7 +1117,6 @@ tests/test_config.py::test_timeout_missing_default PASSED
 tests/test_config.py::test_timeout_from_tuple PASSED
 tests/test_config.py::test_timeout_from_config_instance PASSED
 tests/test_config.py::test_timeout_repr PASSED
-tests/test_config.py::test_ssl_config_support_for_keylog_file PASSED
 tests/test_config.py::test_proxy_from_url PASSED
 tests/test_config.py::test_proxy_with_auth_from_url PASSED
 tests/test_config.py::test_invalid_proxy_scheme PASSED
@@ -1140,12 +1141,17 @@ tests/test_content.py::test_response_iterator_content[asyncio] PASSED
 tests/test_content.py::test_response_aiterator_content[asyncio] PASSED
 tests/test_content.py::test_invalid_argument PASSED
 tests/test_content.py::test_response_invalid_argument PASSED
+tests/test_content.py::test_ensure_ascii_false_with_french_characters PASSED
+tests/test_content.py::test_separators_for_compact_json PASSED
+tests/test_content.py::test_allow_nan_false PASSED
 tests/test_decoders.py::test_deflate PASSED
 tests/test_decoders.py::test_zlib PASSED
 tests/test_decoders.py::test_gzip PASSED
 tests/test_decoders.py::test_brotli PASSED
 tests/test_decoders.py::test_zstd PASSED
 tests/test_decoders.py::test_zstd_decoding_error PASSED
+tests/test_decoders.py::test_zstd_empty PASSED
+tests/test_decoders.py::test_zstd_truncated PASSED
 tests/test_decoders.py::test_zstd_multiframe PASSED
 tests/test_decoders.py::test_multi PASSED
 tests/test_decoders.py::test_multi_with_identity PASSED
@@ -1176,17 +1182,6 @@ tests/test_exceptions.py::test_httpcore_all_exceptions_mapped PASSED
 tests/test_exceptions.py::test_httpcore_exception_mapping PASSED
 tests/test_exceptions.py::test_request_attribute PASSED
 tests/test_exported_members.py::test_all_imports_are_exported PASSED
-tests/test_main.py::test_help PASSED
-tests/test_main.py::test_get PASSED
-tests/test_main.py::test_json PASSED
-tests/test_main.py::test_binary PASSED
-tests/test_main.py::test_redirects PASSED
-tests/test_main.py::test_follow_redirects PASSED
-tests/test_main.py::test_post PASSED
-tests/test_main.py::test_verbose PASSED
-tests/test_main.py::test_auth PASSED
-tests/test_main.py::test_download PASSED
-tests/test_main.py::test_errors PASSED
 tests/test_multipart.py::test_multipart[abc-abc0] PASSED
 tests/test_multipart.py::test_multipart[abc-abc1] PASSED
 tests/test_multipart.py::test_multipart_explicit_boundary[multipart/form-data; boundary=+++; charset=utf-8] PASSED
@@ -1249,16 +1244,8 @@ tests/test_utils.py::test_guess_by_bom[utf-16-be-utf-16] PASSED
 tests/test_utils.py::test_guess_by_bom[utf-16-le-utf-16] PASSED
 tests/test_utils.py::test_guess_by_bom[utf-32-be-utf-32] PASSED
 tests/test_utils.py::test_guess_by_bom[utf-32-le-utf-32] PASSED
-tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>; rel=front; type="image/jpeg"-expected0] PASSED
-tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>-expected1] PASSED
-tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>;-expected2] PASSED
-tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>; type="image/jpeg",<http://.../back.jpeg>;-expected3] PASSED
-tests/test_utils.py::test_parse_header_links[-expected4] PASSED
-tests/test_utils.py::test_parse_header_links_no_link PASSED
 tests/test_utils.py::test_logging_request PASSED
 tests/test_utils.py::test_logging_redirect_chain PASSED
-tests/test_utils.py::test_logging_ssl PASSED
-tests/test_utils.py::test_get_ssl_cert_file PASSED
 tests/test_utils.py::test_get_environment_proxies[environment0-proxies0] PASSED
 tests/test_utils.py::test_get_environment_proxies[environment1-proxies1] PASSED
 tests/test_utils.py::test_get_environment_proxies[environment2-proxies2] PASSED
@@ -1271,14 +1258,6 @@ tests/test_utils.py::test_get_environment_proxies[environment8-proxies8] PASSED
 tests/test_utils.py::test_get_environment_proxies[environment9-proxies9] PASSED
 tests/test_utils.py::test_get_environment_proxies[environment10-proxies10] PASSED
 tests/test_utils.py::test_get_environment_proxies[environment11-proxies11] PASSED
-tests/test_utils.py::test_obfuscate_sensitive_headers[headers0-output0] PASSED
-tests/test_utils.py::test_obfuscate_sensitive_headers[headers1-output1] PASSED
-tests/test_utils.py::test_obfuscate_sensitive_headers[headers2-output2] PASSED
-tests/test_utils.py::test_same_origin PASSED
-tests/test_utils.py::test_not_same_origin PASSED
-tests/test_utils.py::test_is_https_redirect PASSED
-tests/test_utils.py::test_is_not_https_redirect PASSED
-tests/test_utils.py::test_is_not_https_redirect_if_not_default_ports PASSED
 tests/test_utils.py::test_url_matches[http://example.com-http://example.com-True] PASSED
 tests/test_utils.py::test_url_matches[http://example.com-https://example.com-False] PASSED
 tests/test_utils.py::test_url_matches[http://example.com-http://other.com-False] PASSED
@@ -1304,7 +1283,6 @@ tests/test_wsgi.py::test_wsgi_server_port[auto-http] PASSED
 tests/test_wsgi.py::test_wsgi_server_port[auto-https] PASSED
 tests/test_wsgi.py::test_wsgi_server_port[explicit-port] PASSED
 tests/test_wsgi.py::test_wsgi_server_protocol PASSED
-tests/test_wsgi.py::test_deprecated_shortcut PASSED
 
 =========================== short test summary info ============================
-======== 1299 passed, 1 skipped ========
+======== 1277 passed, 1 skipped, 11 deselected ========
