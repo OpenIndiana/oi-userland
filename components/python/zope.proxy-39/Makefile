@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.proxy zope_proxy
+#   $WS_TOOLS/python-integrate-project -d python/zope.proxy-39 zope_proxy
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_proxy
-HUMAN_VERSION =			7.1
+HUMAN_VERSION =			7.0
 COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Generic Transparent Proxies
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32a24c39867ae1a4d63b24e64cccb38e9cbf9345b309d2d6e3deac96e1905b1c
+	sha256:19cddee4b376ae9791fd6ddb491e861e3a7317a97b49a946b2e3c3f78254564c
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# zope.proxy --> zope.security ==> zope.proxy
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
+COMPONENT_VERSION =		7.1
 
-# Python 3.9 is not supported by zope.proxy >= 7.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.proxy >= 7.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -52,6 +43,9 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/repoze-sphinx-autointerface
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx
+TEST_REQUIRED_PACKAGES.python += library/python/sphinx-rtd-theme
 TEST_REQUIRED_PACKAGES.python += library/python/zope-security
 TEST_REQUIRED_PACKAGES.python += library/python/zope-testrunner
