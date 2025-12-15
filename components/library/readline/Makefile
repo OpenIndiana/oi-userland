@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
 HUMAN_VERSION=		8.3p3
+COMPONENT_REVISION=	1
 COMPONENT_VERSION=	$(subst p,.,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	GNU readline provides interactive line-editing and history
 COMPONENT_DESCRIPTION= The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in
@@ -51,14 +52,10 @@ PATCH_LEVEL = 0
 
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --with-shared-termcap-library=-lcurses
+CONFIGURE_OPTIONS += --with-shared-termcap-library=-lncurses
 
-# Use the standard compliant libcurses
-XPG4_PATH = /usr/xpg4
-CONFIGURE_ENV += CPPFLAGS=-I$(XPG4_PATH)/include
-LIBCURSESDIR.32 = $(XPG4_PATH)/lib
-LIBCURSESDIR.64 = $(XPG4_PATH)/lib/$(MACH64)
-LDFLAGS += -L$(LIBCURSESDIR.$(BITS)) -R$(LIBCURSESDIR.$(BITS))
+# Make sure configure is able to find ncurses includes
+CONFIGURE_ENV += CPPFLAGS=-I$(USRINCDIR)/ncurses
 
 # Build the readline examples as well (see the INSTALL file).
 COMPONENT_BUILD_TARGETS= everything
@@ -96,4 +93,5 @@ $(error READLINE_VERSION does not match the readline version)
 endif
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += system/library
