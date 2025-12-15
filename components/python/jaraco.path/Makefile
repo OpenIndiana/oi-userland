@@ -11,31 +11,26 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.path
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.path jaraco_path
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.path
+COMPONENT_NAME =		jaraco_path
 HUMAN_VERSION =			3.7.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		miscellaneous path functions
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1263c4bb481002e83a96e9253915b33241ac3e1ed6219a2793d3121f65159107
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_SRC =			jaraco_path-$(HUMAN_VERSION)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
