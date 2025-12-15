@@ -1,14 +1,11 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 44 items
+collecting ... collected 39 items
 
-conftest.py::mypy PASSED
-docs/conf.py::mypy PASSED
 jaraco/functools/__init__.py::jaraco.functools.apply PASSED
 jaraco/functools/__init__.py::jaraco.functools.assign_params PASSED
 jaraco/functools/__init__.py::jaraco.functools.bypass_unless PASSED
@@ -20,6 +17,7 @@ jaraco/functools/__init__.py::jaraco.functools.identity PASSED
 jaraco/functools/__init__.py::jaraco.functools.invoke PASSED
 jaraco/functools/__init__.py::jaraco.functools.method_cache PASSED
 jaraco/functools/__init__.py::jaraco.functools.none_as PASSED
+jaraco/functools/__init__.py::jaraco.functools.noop PASSED
 jaraco/functools/__init__.py::jaraco.functools.once PASSED
 jaraco/functools/__init__.py::jaraco.functools.pass_none PASSED
 jaraco/functools/__init__.py::jaraco.functools.passthrough PASSED
@@ -28,10 +26,6 @@ jaraco/functools/__init__.py::jaraco.functools.result_invoke PASSED
 jaraco/functools/__init__.py::jaraco.functools.retry PASSED
 jaraco/functools/__init__.py::jaraco.functools.save_method_args PASSED
 jaraco/functools/__init__.py::jaraco.functools.splat PASSED
-jaraco/functools/__init__.pyi::mypy PASSED
-.::project PASSED
-.::project PASSED
-test_functools.py::mypy PASSED
 test_functools.py::TestThrottler::test_function_throttled PASSED
 test_functools.py::TestThrottler::test_reconstruct_unwraps PASSED
 test_functools.py::TestThrottler::test_throttled_method PASSED
@@ -52,26 +46,6 @@ test_functools.py::TestRetry::test_with_arg PASSED
 test_functools.py::TestRetry::test_decorator PASSED
 test_functools.py::TestRetry::test_decorator_with_arg PASSED
 
-=============================== warnings summary ===============================
-.::project
-.::project
-  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
-    parts = docutils.core.publish_parts(
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-===================================== mypy =====================================
-Success: no issues found in 4 source files
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
-
-Name                           Stmts   Miss  Cover   Missing
-------------------------------------------------------------
-conftest.py                        5      0   100%
-docs/conf.py                      16      0   100%
-jaraco/functools/__init__.py     175      0   100%
-test_functools.py                159      0   100%
-------------------------------------------------------------
-TOTAL                            355      0   100%
-======== 42 passed, 2 xfailed, 2 warnings ========
+======== 37 passed, 2 xfailed ========
   py$(PYV): OK
   congratulations :)
