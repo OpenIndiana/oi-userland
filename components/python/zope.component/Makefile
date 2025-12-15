@@ -15,12 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_component
 HUMAN_VERSION =			7.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Zope Component Architecture
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
 COMPONENT_ARCHIVE_HASH =	\
