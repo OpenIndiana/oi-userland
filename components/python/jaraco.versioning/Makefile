@@ -11,35 +11,30 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.versioning
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.versioning jaraco_versioning
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.versioning
+COMPONENT_NAME =		jaraco_versioning
 HUMAN_VERSION =			1.1.0
-COMPONENT_SUMMARY =		jaraco.versioning - More sophisticated version manipulation (than packaging)
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		More sophisticated version manipulation (than packaging)
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.versioning
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/5a/55/f40cf50537e6c9d7908fa2a80432f93f8427ab6f598bdcabec6c5ab8a37b/jaraco.versioning-1.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:5ab6e6751157d31a6405036b3f8ee5a28f4d1df7244cd099aa788f4b57421d0f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+COMPONENT_SRC =			jaraco.versioning-$(HUMAN_VERSION)
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
