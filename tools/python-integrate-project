@@ -135,8 +135,7 @@ if [[ -z "$VERSION" ]] ; then
 
 	# Get requires_python
 	REQUIRES_PYTHON=$(printf "%s" "$PYPI_PROJECT" | /usr/bin/jq -r '.info.requires_python')
-	if (($? != 0)) || [[ -z "$REQUIRES_PYTHON" || "$REQUIRES_PYTHON" == "null" ]] ; then
-		printf 'WARNING: Failed to get requires_python from PyPI\n' >&2
+	if (($? != 0)) || [[ "$REQUIRES_PYTHON" == "null" ]] ; then
 		REQUIRES_PYTHON=
 	fi
 fi
@@ -206,7 +205,7 @@ if [[ -z "$REQUIRES_PYTHON" ]] ; then
 	# Get requires_python
 	REQUIRES_PYTHON=$(printf "%s" "$PYPI_PROJECT_RELEASE" | /usr/bin/jq -r '.info.requires_python')
 	if (($? != 0)) || [[ -z "$REQUIRES_PYTHON" || "$REQUIRES_PYTHON" == "null" ]] ; then
-		printf 'ERROR: Failed to get requires_python for version %s from PyPI\n' "$VERSION" >&2
+		printf 'WARNING: Failed to get requires_python for version %s from PyPI\n' "$VERSION" >&2
 		REQUIRES_PYTHON=
 	fi
 fi
