@@ -33,6 +33,20 @@ depend type=require fmri=system/qemu/kvm
 <transform file path=usr/share/qemu/.*\.img$ -> \
 	add pkg.linted.userland.action001.2 true>
 
+# Do not substitute these files with the packaging macro $(MACH),
+# they otherwise don't get delivered on NONE x86_64 architectures.
+file path=usr/share/doc/qemu/system/i386/amd-memory-encryption.html
+file path=usr/share/doc/qemu/system/i386/cpu.html
+file path=usr/share/doc/qemu/system/i386/hyperv.html
+file path=usr/share/doc/qemu/system/i386/kvm-pv.html
+file path=usr/share/doc/qemu/system/i386/microvm.html
+file path=usr/share/doc/qemu/system/i386/nitro-enclave.html
+file path=usr/share/doc/qemu/system/i386/pc.html
+file path=usr/share/doc/qemu/system/i386/sgx.html
+file path=usr/share/doc/qemu/system/i386/tdx.html
+file path=usr/share/doc/qemu/system/i386/xen.html
+file path=usr/share/doc/qemu/system/i386/xenpvh.html
+
 # Do not include files found in system/qemu/kvm package
 <transform path=usr/share/qemu/keymaps/.* -> drop>
 <transform path=usr/bin/qemu-keymap -> drop>
@@ -304,17 +318,6 @@ file path=usr/share/doc/qemu/specs/virt-ctlr.html
 file path=usr/share/doc/qemu/specs/vmcoreinfo.html
 file path=usr/share/doc/qemu/specs/vmgenid.html
 file path=usr/share/doc/qemu/specs/vmw_pvscsi-spec.html
-file path=usr/share/doc/qemu/system/$(MACH)/amd-memory-encryption.html
-file path=usr/share/doc/qemu/system/$(MACH)/cpu.html
-file path=usr/share/doc/qemu/system/$(MACH)/hyperv.html
-file path=usr/share/doc/qemu/system/$(MACH)/kvm-pv.html
-file path=usr/share/doc/qemu/system/$(MACH)/microvm.html
-file path=usr/share/doc/qemu/system/$(MACH)/nitro-enclave.html
-file path=usr/share/doc/qemu/system/$(MACH)/pc.html
-file path=usr/share/doc/qemu/system/$(MACH)/sgx.html
-file path=usr/share/doc/qemu/system/$(MACH)/tdx.html
-file path=usr/share/doc/qemu/system/$(MACH)/xen.html
-file path=usr/share/doc/qemu/system/$(MACH)/xenpvh.html
 file path=usr/share/doc/qemu/system/arm/aspeed.html
 file path=usr/share/doc/qemu/system/arm/b-l475e-iot01a.html
 file path=usr/share/doc/qemu/system/arm/bananapi_m2u.html

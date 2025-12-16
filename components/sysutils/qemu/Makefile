@@ -22,6 +22,7 @@ PATH= $(PATH.gnu)
 
 COMPONENT_NAME=		qemu
 COMPONENT_VERSION=	10.1.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	\
 		A generic and open source machine emulator and virtualizer
 COMPONENT_PROJECT_URL=	https://www.qemu.org/
