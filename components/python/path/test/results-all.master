@@ -1,15 +1,11 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 151 items
+collecting ... collected 143 items
 
-docs/conf.py::mypy PASSED
-docs/conf.py::mypy-status PASSED
-path/__init__.py::mypy PASSED
 path/__init__.py::path.ExtantFile PASSED
 path/__init__.py::path.ExtantPath PASSED
 path/__init__.py::path.Path.access PASSED
@@ -32,19 +28,11 @@ path/__init__.py::path.Path.with_suffix PASSED
 path/__init__.py::path.TempDir PASSED
 path/__init__.py::path.Traversal PASSED
 path/__init__.py::path._strip_newlines PASSED
-path/classes.py::mypy PASSED
-path/compat/py38.py::mypy PASSED
-path/masks.py::mypy PASSED
 path/masks.py::path.masks.Permissions PASSED
 path/masks.py::path.masks.compound PASSED
 path/masks.py::path.masks.gen_bit_values PASSED
 path/masks.py::path.masks.padded PASSED
 path/masks.py::path.masks.simple PASSED
-path/matchers.py::mypy PASSED
-.::project PASSED
-.::project PASSED
-tests/conftest.py::mypy PASSED
-tests/test_path.py::mypy PASSED
 tests/test_path.py::TestBasics::test_relpath PASSED
 tests/test_path.py::TestBasics::test_construction_without_args PASSED
 tests/test_path.py::TestBasics::test_construction_from_none PASSED
@@ -129,6 +117,9 @@ tests/test_path.py::TestTempDir::test_next_class PASSED
 tests/test_path.py::TestTempDir::test_context_manager PASSED
 tests/test_path.py::TestTempDir::test_context_manager_using_with PASSED
 tests/test_path.py::TestTempDir::test_cleaned_up_on_interrupt PASSED
+tests/test_path.py::TestTempDir::test_constructor_dir_argument PASSED
+tests/test_path.py::TestTempDir::test_constructor_prefix_argument PASSED
+tests/test_path.py::TestTempDir::test_constructor_suffix_argument PASSED
 tests/test_path.py::TestUnicode::test_walkdirs_with_unicode_name PASSED
 tests/test_path.py::TestPatternMatching::test_fnmatch_simple PASSED
 tests/test_path.py::TestPatternMatching::test_fnmatch_custom_mod PASSED
@@ -159,9 +150,6 @@ tests/test_path.py::TestHandlers::test_warn PASSED
 tests/test_path.py::TestHandlers::test_ignore PASSED
 tests/test_path.py::TestHandlers::test_invalid_handler PASSED
 
-===================================== mypy =====================================
-
-Success: no issues found in 8 source files
-======== 150 passed, 1 skipped ========
+======== 142 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
