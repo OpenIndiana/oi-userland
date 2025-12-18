@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.testing zope_testing
+#   $WS_TOOLS/python-integrate-project -d python/zope.testing-39 zope_testing
 #
 
 BUILD_STYLE = pyproject
@@ -19,21 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testing
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Zope testing helpers
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:69d2efef597a3e817de4ce9163270a27e6ed9f82f440dbbffdd5743450e78f60
+	sha256:7b34133a8f4a7135f3732fa5ba31d9968e9b9029881157d2a24493356d7fd54a
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.testing >= 6.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.testing >= 6.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Force no colors and more verbose output via tox posargs
 TOX_POSARGS += -vv
+
+# https://github.com/zopefoundation/zope.testing/issues/56
+TOX_POSARGS += --test !doctestcase
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
