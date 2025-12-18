@@ -11,37 +11,32 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.envs
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.envs jaraco_envs
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.envs
+COMPONENT_NAME =		jaraco_envs
 HUMAN_VERSION =			2.6.0
-COMPONENT_SUMMARY =		jaraco.envs - Classes for orchestrating Python (virtual) environments
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Classes for orchestrating Python (virtual) environments
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.envs
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/a7/10/233134945fdba69d4b87224e8a76bd39c6770a5215c3056d592b936d96d7/jaraco.envs-2.6.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:809195c406640db256ee01eebf4f6a369dd85759d8178c3921704308dd0360f5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+COMPONENT_SRC =			jaraco.envs-$(HUMAN_VERSION)
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/path
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tox
-PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/path
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tox
+REQUIRED_PACKAGES.python += library/python/virtualenv
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
