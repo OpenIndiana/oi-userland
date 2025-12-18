@@ -14,13 +14,14 @@
 #   $WS_TOOLS/python-integrate-project pytest-reporter
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-reporter
 HUMAN_VERSION =			0.5.3
-COMPONENT_SUMMARY =		pytest-reporter - Generate Pytest reports with templates
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Generate Pytest reports with templates
 COMPONENT_PROJECT_URL =		https://github.com/christiansandberg/pytest-reporter
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:426ae38f3c5304659635eff1d4080c8acf4dc6cd833469caed427a9a80bb41aa
@@ -29,15 +30,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
