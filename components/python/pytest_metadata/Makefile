@@ -15,12 +15,14 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_metadata
 HUMAN_VERSION =			3.1.1
-COMPONENT_SUMMARY =		pytest_metadata - pytest plugin for test session metadata
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		pytest plugin for test session metadata
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-metadata
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d2a29b0355fbc03f168aa96d41ff88b1a3b44a3b02acbe491801c98a048017c8
@@ -34,15 +36,8 @@ TOX_POSARGS += --color=no
 # override -s in tox.ini to suppress annoying test output
 TOX_POSARGS += --capture=fd
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += runtime/python
