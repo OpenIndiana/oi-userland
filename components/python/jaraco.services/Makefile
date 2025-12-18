@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_services
 HUMAN_VERSION =			4.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Service orchestration and pytest plugins
 COMPONENT_PROJECT_URL =		https://github.com/jaraco/jaraco.services
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,15 +32,11 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
-PYTHON_REQUIRED_PACKAGES += library/python/path
-PYTHON_REQUIRED_PACKAGES += library/python/portend
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tempora
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/jaraco-classes
+REQUIRED_PACKAGES.python += library/python/path
+REQUIRED_PACKAGES.python += library/python/portend
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tempora
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
