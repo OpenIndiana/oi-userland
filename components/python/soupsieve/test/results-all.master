@@ -1,7 +1,6 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest $(@D)
+py$(PYV): commands[0]> python -m pytest $(@D)
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
@@ -237,7 +236,7 @@ tests/test_level3/test_nth_of_type.py::TestNthOfType::test_nth_of_type PASSED
 tests/test_level3/test_nth_of_type.py::TestNthOfType::test_nth_of_type_complex PASSED
 tests/test_level3/test_only_child.py::TestOnlyChild::test_only_child PASSED
 tests/test_level3/test_only_of_type.py::TestOnlyOfType::test_only_of_type PASSED
-tests/test_level3/test_root.py::TestRoot::test_iframe PASSED
+tests/test_level3/test_root.py::TestRoot::test_iframe SKIPPED (Requi...)
 tests/test_level3/test_root.py::TestRoot::test_no_iframe PASSED
 tests/test_level3/test_root.py::TestRoot::test_no_root_cdata PASSED
 tests/test_level3/test_root.py::TestRoot::test_no_root_double_tag PASSED
@@ -394,6 +393,6 @@ tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
 tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
-======== 371 passed, 15 skipped ========
+======== 370 passed, 16 skipped ========
   py$(PYV): OK
   congratulations :)
