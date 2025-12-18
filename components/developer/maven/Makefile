@@ -14,23 +14,23 @@
 # Copyright 2018 Olaf Bohlen.  All rights reserved.
 #
 
+BUILD_STYLE=archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maven
-COMPONENT_VERSION= 3.9.11
+COMPONENT_VERSION= 3.9.12
 COMPONENT_SUMMARY= Apache Maven is a software project management and comprehension tool
 COMPONENT_PROJECT_URL=	https://maven.apache.org
 COMPONENT_SRC= apache-maven-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-bin.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4b7195b6a4f5c81af4c0212677a32ee8143643401bc6e1e8412e6b06ea82beac
+COMPONENT_ARCHIVE_HASH= sha256:fa2c9948729296c23afd18fd01a90f62cdda09a46191b54a8bc3764c2eee812e
 COMPONENT_ARCHIVE_URL=	https://archive.apache.org/dist/maven/maven-3/$(COMPONENT_VERSION)/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= developer/build/maven
 COMPONENT_CLASSIFICATION= Development/Java
 COMPONENT_LICENSE= Apache 2.0
 COMPONENT_LICENSE_FILE= LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 build:
 
@@ -40,6 +40,7 @@ install: prep
 
 clean::
 	rm -rf $(BUILD_DIR)
+	rm -rf $(SOURCE_DIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/ksh93
