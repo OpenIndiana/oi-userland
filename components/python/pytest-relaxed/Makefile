@@ -14,13 +14,14 @@
 #   $WS_TOOLS/python-integrate-project pytest-relaxed
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-relaxed
 HUMAN_VERSION =			2.0.2
-COMPONENT_SUMMARY =		pytest-relaxed - Relaxed test discovery/organization for pytest
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Relaxed test discovery/organization for pytest
 COMPONENT_PROJECT_URL =		https://pytest-relaxed.readthedocs.io/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/bitprophet/pytest-relaxed/archive/refs/tags/$(HUMAN_VERSION).tar.gz
@@ -33,16 +34,8 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/pytest-dev/pluggy/issues/457
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-checkdocs
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-console-scripts
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-enabler
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-randomly
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-salt-factories
-TEST_CONFLICTING_PACKAGES.python += library/python/pytest-system-statistics
-TEST_CONFLICTING_PACKAGES.python += library/python/typeguard
-
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/decorator
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/decorator
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
