@@ -1,34 +1,15 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 11 items
+collecting ... collected 3 items
 
-docs/conf.py::mypy PASSED
-docs/conf.py::mypy-status PASSED
-.::project PASSED
-pytest_ignore_flaky/__init__.py::mypy PASSED
-.::project PASSED
-tests/sample succeed.py::mypy PASSED
-tests/sample.py::mypy PASSED
-tests/test_functional.py::mypy PASSED
 tests/test_functional.py::test_ignore_flaky PASSED
 tests/test_functional.py::test_fail_flaky PASSED
-tests/test_functional.py::test_success_flaky SKIPPED (fails with typ...)
+tests/test_functional.py::test_success_flaky PASSED
 
-=============================== warnings summary ===============================
-tests/test_functional.py::test_ignore_flaky
-tests/test_functional.py::test_fail_flaky
-  $(PYTHON_DIR)/vendor-packages/pytest_benchmark/logger.py:46: PytestBenchmarkWarning: Benchmarks are automatically disabled because xdist plugin is active.Benchmarks cannot be performed reliably in a parallelized environment.
-    warner(PytestBenchmarkWarning(text))
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-===================================== mypy =====================================
-Success: no issues found in 5 source files
-======== 10 passed, 1 skipped, 2 warnings ========
+======== 3 passed ========
   py$(PYV): OK
   congratulations :)
