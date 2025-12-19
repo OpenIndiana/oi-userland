@@ -1,7 +1,4 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> black --diff .
-No Python files are present to be formatted. Nothing to do 😴
-py$(PYV): commands[1]> python -m pytest --cov --cov-report=html --cov-fail-under=100
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -44,11 +41,6 @@ tests/test_option_nounset.py::test_expandvars_option_nounset PASSED
 tests/test_option_nounset.py::test_expandvars_option_nounset_with_strict PASSED
 tests/test_recover_null.py::test_strict_parsing_recover_null PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
-
-Coverage HTML written to dir htmlcov
-Required test coverage of 100% reached. Total coverage: 100.00%
 ======== 34 passed ========
   py$(PYV): OK
   congratulations :)
