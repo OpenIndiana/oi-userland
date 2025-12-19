@@ -24,9 +24,8 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeradius
-COMPONENT_VERSION=	3.2.7
+COMPONENT_VERSION=	3.2.8
 COMPONENT_VERSION_=	$(subst .,_,$(COMPONENT_VERSION))
-COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
 		configurable multi-protocol policy server, supporting RADIUS, DHCPv4 DHCPv6, DNS, \
@@ -37,7 +36,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-server-release_$(COMPONENT_VERSION_)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://freeradius.org/
 COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_$(COMPONENT_VERSION_).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ebb906a236a8db71ba96875c9e53405bc8493e363c3815af65ae829cb6c288a3
+COMPONENT_ARCHIVE_HASH=	sha256:7a42562d4c1b0dfd67783b995b33df6ea0983573b2a3b2b99c368dda647e562c
 COMPONENT_FMRI=		network/radius
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
@@ -46,11 +45,16 @@ COMPONENT_LICENSE_FILE=	LICENSE
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# rlm_python no longer possible because of missing python2
+#
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
+        $(RM) -r $(SOURCE_DIR)/src/modules/rlm_python; \
+        $(RM) -r $(SOURCE_DIR)/doc/modules/rlm_python; \
 	$(GSED) -i -e 's/-D_LIBRADIUS/-D_LIBRADIUS -D_XPG4_2/' $(@D)/src/lib/all.mk; );
 
-CFLAGS += $(XPG6MODE)
+CFLAGS += $(XPG6MODE) -std=c23
 
 CONFIGURE_OPTIONS += CFLAGS="-I/usr/include/odbc"
 CONFIGURE_OPTIONS += LDFLAGS="-lldap_r"
@@ -75,11 +79,7 @@ COMPONENT_POST_INSTALL_ACTION =  \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_unixodbc.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_unixodbc.so ; \
 	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(PG_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_postgresql.so ; \
-	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PG_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_postgresql.so ; \
-	/usr/bin/elfedit -e 'dyn:delete NEEDED' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
-	/usr/bin/elfedit -e 'dyn:value -s  NEEDED "libpython$(PYTHON_VERSION).so.1.0"' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
-	/usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ; \
-	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(GCC_LIBDIR):$(USRLIBDIR)/python$(PYTHON_VERSION)/config-$(PYTHON_VERSION)"' $(PROTOUSRLIBDIR64)/rlm_python.so ;
+	/usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PG_LIBDIR)"' $(PROTOUSRLIBDIR64)/rlm_sql_postgresql.so ;
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
