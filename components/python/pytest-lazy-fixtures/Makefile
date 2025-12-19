@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_lazy_fixtures
-HUMAN_VERSION =			1.1.4
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		Allows you to use fixtures in @pytest.mark.parametrize.
 COMPONENT_PROJECT_URL =		https://github.com/dev-petrov/pytest-lazy-fixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c494b52d798890033d64b28687a4d52807c8b0f606d56316e139df0cbe116c57
+	sha256:f544b60c96b909b307558a62cc1f28f026f11e9f03d7f583a1dc636de3dbcb10
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -31,7 +31,12 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# We have no pytest-deadfixtures packaged
+PYTEST_ADDOPTS += --ignore tests/test_deadfixtures_support.py
+# We have no pytest-fixture-classes packaged
+PYTEST_ADDOPTS += --deselect tests/tests.py::test_fixture_classes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += runtime/python
