@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hyperframe
 HUMAN_VERSION =			6.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure-Python HTTP/2 framing
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/hyperframe/
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,8 +31,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
