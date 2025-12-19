@@ -1,6 +1,4 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m coverage erase
-py$(PYV): commands[1]> python -m coverage run -m pytest tests
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -54,11 +52,5 @@ tests/tokenize_rt_test.py::test_curly_escape[\\N{SNOWMAN}-\\N{SNOWMAN}] PASSED
 tests/tokenize_rt_test.py::test_curly_escape[\\N{SNOWMAN} {bar}-\\N{SNOWMAN} {{bar}}] PASSED
 
 ======== 44 passed, 1 skipped ========
-py$(PYV): commands[2]> python -m coverage report
-Name    Stmts   Miss Branch BrPart  Cover   Missing
----------------------------------------------------
-TOTAL     240      0     46      0   100%
-
-3 files skipped due to complete coverage.
   py$(PYV): OK
   congratulations :)
