@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mutagen
 HUMAN_VERSION =			1.47.0
-COMPONENT_SUMMARY =		mutagen - read and write audio tags for many formats
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		read and write audio tags for many formats
 COMPONENT_PROJECT_URL =		https://github.com/quodlibet/mutagen
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/81/e6/64bc71b74eef4b68e61eb921dcf72dabd9e4ec4af1e11891bbd312ccbb77/mutagen-1.47.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99
 COMPONENT_LICENSE =		GPL-2.0-only
@@ -32,6 +31,9 @@ COMPONENT_LICENSE_FILE =	COPYING
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += dev
 
 # Rename section 1 man page(s) to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
@@ -44,10 +46,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	done ;
 
 # Replace Python version in man page file paths
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's|\(usr/share/man/man.*-\)3\.[0-9]\{1,\}\(\.[0-9]\)|\1$$(PYVER)\2|' | uniq
+GENERATE_EXTRA_SED += -e 's|\(usr/share/man/man.*-\)3\.[0-9]\{1,\}\(\.[0-9]\)|\1$$(PYVER)\2|'
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
