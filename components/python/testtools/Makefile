@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testtools
-HUMAN_VERSION =			2.8.1
+HUMAN_VERSION =			2.8.2
 COMPONENT_SUMMARY =		Extensions to the Python standard library unit testing framework
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/testtools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:da5102b02b6d9924607d31dda6deb26a085a78afa78826bf44e3b8717fc77208
+	sha256:b5c73332456ff54152062d47a58bc4f15f8e23514afec4e84775af124fb7db43
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
