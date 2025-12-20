@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		iso8601
 HUMAN_VERSION =			2.1.0
-COMPONENT_SUMMARY =		iso8601 - Simple module to parse ISO 8601 dates
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Simple module to parse ISO 8601 dates
 COMPONENT_PROJECT_URL =		https://github.com/micktwomey/pyiso8601
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/b9/f3/ef59cee614d5e0accf6fd0cbba025b93b272e626ca89fb70a3e9187c5d15/iso8601-2.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:6b1d3829ee8921c4301998c909f7829fa9ed3cbdac0d3b16af2d743aed1ba8df
 COMPONENT_LICENSE =		MIT
@@ -34,5 +33,5 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += runtime/python
