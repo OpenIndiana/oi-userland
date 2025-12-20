@@ -27,12 +27,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
-COMPONENT_VERSION=	4.15.7
+COMPONENT_VERSION=	4.15.8
 COMPONENT_SUMMARY=	GNU a2ps - 'Anything to PostScript' converter and pretty printer
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:715f38670afd950b4ca71c01f468feefad265ca52d3f112934c63c0a8bfbb8af
+COMPONENT_ARCHIVE_HASH= sha256:8d13915a36ebbfa8e7b236b350cc81adc714acb217a18e8d8c60747c0ad353f9
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		print/filter/a2ps
 COMPONENT_CLASSIFICATION= System/Printing
@@ -75,6 +75,5 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/gc
 REQUIRED_PACKAGES += library/libpaper
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

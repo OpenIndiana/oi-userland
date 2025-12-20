@@ -25,52 +25,61 @@ a: 0, errno: 12, strerror: Not enough space
 $ ggrep -r ENOMEM /usr/include/sys/errno.h
 #define ENOMEM  12      /* Not enough core                      */
 
---- a/m4/malloc.m4
-+++ b/m4/malloc.m4
-@@ -130,12 +130,9 @@
-       case "$host_os" in
-         mingw*)
-           gl_cv_func_malloc_posix=no ;;
--        irix* | solaris*)
-+        irix*)
-           dnl On IRIX 6.5, the three functions return NULL with errno unset
-           dnl when the argument is larger than PTRDIFF_MAX.
+--- a2ps-4.15.8/m4/malloc.m4.~1~
++++ a2ps-4.15.8/m4/malloc.m4
+@@ -187,44 +187,6 @@
+             [gl_cv_func_malloc_posix="guessing yes"],
+             [gl_cv_func_malloc_posix="guessing no"])
+           ;;
+-        solaris*)
 -          dnl On Solaris 11.3, the three functions return NULL with errno set
 -          dnl to EAGAIN, not ENOMEM, when the argument is larger than
 -          dnl PTRDIFF_MAX.
-           dnl Here is a test program:
- m4_divert_push([KILL])
- #include <errno.h>
+-          dnl Here is a test program:
+-m4_divert_push([KILL])
+-#include <errno.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#define ptrdiff_t long
+-#ifndef PTRDIFF_MAX
+-# define PTRDIFF_MAX ((ptrdiff_t) ((1UL << (8 * sizeof (ptrdiff_t) - 1)) - 1))
+-#endif
+-
+-int main ()
+-{
+-  void *p;
+-
+-  fprintf (stderr, "PTRDIFF_MAX = %lu\n", (unsigned long) PTRDIFF_MAX);
+-
+-  errno = 0;
+-  p = malloc ((unsigned long) PTRDIFF_MAX + 1);
+-  fprintf (stderr, "p=%p errno=%d\n", p, errno);
+-
+-  errno = 0;
+-  p = calloc (PTRDIFF_MAX / 2 + 1, 2);
+-  fprintf (stderr, "p=%p errno=%d\n", p, errno);
+-
+-  errno = 0;
+-  p = realloc (NULL, (unsigned long) PTRDIFF_MAX + 1);
+-  fprintf (stderr, "p=%p errno=%d\n", p, errno);
+-
+-  return 0;
+-}
+-m4_divert_pop([KILL])
+-          gl_cv_func_malloc_posix=no ;;
+-        *)
+-          gl_cv_func_malloc_posix=yes ;;
+       esac
+     ])
+ ])
 
-Solaris grep doesn't know -F.
---- a/tests/deleg-2.tst
-+++ b/tests/deleg-2.tst
-@@ -18,7 +18,7 @@
- . $SRCDIR/defs || exit 1
- 
- # a2ps should fail, saying it does not know the sheet test_delegation.ssh
--$CHK $OPT $TST_FILE -P void 2>&1 | grep -F 'cannot find style sheet' > /dev/null 2>&1
-+$CHK $OPT $TST_FILE -P void 2>&1 | ggrep -F 'cannot find style sheet' > /dev/null 2>&1
- 
- # Return status of grep
- exit $?
-
-Solaris rm cannot remove current working directory.
---- a/tests/styles.tst
-+++ b/tests/styles.tst
-@@ -110,6 +110,7 @@
-   cat $builddir/sum-ps-diff
-   failure=1
- else
-+  cd -
-   rm -rf $builddir/sum-ps-diff $DIFF
- fi
- 
-@@ -121,6 +122,7 @@
-   cat $builddir/sum-gps-diff
-   failure=1
- else
-+  cd -
-   rm -rf $builddir/sum-gps-diff $GDIFF
- fi
+This is a fix for:
+38408752 Fix a2ps-lpr-wrapper to properly detect /usr/bin/lp
+--- a/src/a2ps-lpr-wrapper
++++ b/src/a2ps-lpr-wrapper
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/usr/bin/env bash
+ #
+ # a2ps-lpr-wrapper - lp/lpr wrapper script for GNU a2ps
  
