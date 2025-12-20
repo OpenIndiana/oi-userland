@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		frozenlist
 HUMAN_VERSION =			1.8.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A list-like structure which implements collections.abc.MutableSequence
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/frozenlist
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +32,10 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += requirements/test.txt
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/cython
@@ -38,3 +43,5 @@ REQUIRED_PACKAGES.python += library/python/expandvars
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cython
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
