@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hpack
 HUMAN_VERSION =			4.1.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Pure-Python HPACK header encoding
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/hpack/
 COMPONENT_ARCHIVE_URL =		\
@@ -31,10 +33,12 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
