@@ -19,21 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		crashtest
-COMPONENT_VERSION =		0.4.1
-COMPONENT_SUMMARY =		crashtest - Manage Python errors with ease
+HUMAN_VERSION =			0.4.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Manage Python errors with ease
 COMPONENT_PROJECT_URL =		https://github.com/sdispater/crashtest
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/6e/5d/d79f51058e75948d6c9e7a3d679080a47be61c84d3cc8f71ee31255eb22b/crashtest-0.4.1.tar.gz
+	https://github.com/python-poetry/crashtest/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:80d7b1f316ebfbd429f648076d6275c877ba30ba48979de4191714a75266f0ce
+	sha256:4ff59d9bee6d2bc581d462888ec28beb30ad448042c885a2b4ab45dc4910780b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# https://github.com/sdispater/crashtest/issues/11
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += runtime/python
