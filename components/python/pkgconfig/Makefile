@@ -20,21 +20,19 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pkgconfig
 HUMAN_VERSION =			1.5.5
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		pkgconfig - Interface Python with pkg-config
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		Interface Python with pkg-config
 COMPONENT_PROJECT_URL =		https://github.com/matze/pkgconfig
 COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c4/e0/e05fee8b5425db6f83237128742e7e5ef26219b687ab8f0d41ed0422125e/pkgconfig-1.5.5.tar.gz
+	https://github.com/matze/pkgconfig/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:deb4163ef11f75b520d822d9505c1f462761b4309b1bb713d08689759ea8b899
+	sha256:58ee1926b23ddb766a55eb9932441201a60e8e476d3798d0c5def167604f3b6c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-# https://github.com/matze/pkgconfig/issues/45
-TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
