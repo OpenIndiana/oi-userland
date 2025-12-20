@@ -14,12 +14,14 @@
 #   $WS_TOOLS/python-integrate-project objgraph
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		objgraph
 HUMAN_VERSION =			3.6.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Draws Python object reference graphs with graphviz
 COMPONENT_PROJECT_URL =		https://mg.pov.lt/objgraph/
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,5 +32,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
