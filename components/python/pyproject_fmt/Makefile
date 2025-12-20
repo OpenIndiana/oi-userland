@@ -15,26 +15,21 @@
 #
 
 BUILD_STYLE = pyproject
+CARGO_VENDOR = yes
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			2.7.0
+HUMAN_VERSION =			2.8.0
 COMPONENT_SUMMARY =		Format your pyproject.toml file
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/tox-dev/toml-fmt/archive/refs/tags/pyproject-fmt/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3dbe43d000a3f267e5b4365bc0eb144a6690de86b046b6ff903655bd71f830f9
+	sha256:7daff2eaa257bc3fc4e812cca37747830da94db9f6b7424c42cafe96cd38f432
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-COMPONENT_SRC = toml-fmt-pyproject-fmt-$(HUMAN_VERSION)
-COMPONENT_SUBDIR = pyproject-fmt
+TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
-
-# https://www.illumos.org/issues/15767
-LD_Z_IGNORE=
 
 # During testing the /usr/bin is added to PATH (due to a bug) and so when we
 # try to run pyproject-fmt we always run the installed one, not the currently
@@ -46,13 +41,15 @@ TEST_CONFLICTING_PACKAGES.python += library/python/pyproject-fmt
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_PEP735 += test
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/maturin
 REQUIRED_PACKAGES.python += library/python/toml-fmt-common
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
