@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomlkit
 HUMAN_VERSION =			0.13.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Style preserving TOML library
 COMPONENT_PROJECT_URL =		https://github.com/sdispater/tomlkit
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,6 +35,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += runtime/python
