@@ -14,13 +14,14 @@
 #   $WS_TOOLS/python-integrate-project detect_test_pollution
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		detect_test_pollution
 HUMAN_VERSION =			1.2.0
-COMPONENT_SUMMARY =		detect_test_pollution - a tool to detect test pollution
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		a tool to detect test pollution
 COMPONENT_PROJECT_URL =		https://github.com/asottile/detect-test-pollution
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/detect-test-pollution/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
@@ -35,9 +36,6 @@ COMPONENT_SRC =		detect-test-pollution-$(HUMAN_VERSION)
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
