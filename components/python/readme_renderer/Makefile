@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readme_renderer
 HUMAN_VERSION =			44.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		readme_renderer is a library for rendering readme descriptions for Warehouse
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8712034eabbfa6805cacf1402b4eeb2a73028f72d1166d6f5cb7f9c047c5d1e1
@@ -28,12 +29,14 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/docutils
-PYTHON_REQUIRED_PACKAGES += library/python/nh3
-PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/docutils
+REQUIRED_PACKAGES.python += library/python/nh3
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cmarkgfm
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
