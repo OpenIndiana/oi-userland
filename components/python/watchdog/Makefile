@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		watchdog
 HUMAN_VERSION =			6.0.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Filesystem events monitoring
 COMPONENT_PROJECT_URL =		https://github.com/gorakhargosh/watchdog
 COMPONENT_ARCHIVE_HASH =	\
@@ -36,14 +37,8 @@ PYTEST_ADDOPTS += --ignore=tests/test_emitter.py
 PYTEST_ADDOPTS += --deselect tests/test_0_watchmedo.py::test_auto_restart_on_file_change_debounce
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx
-TEST_REQUIRED_PACKAGES.python += library/python/types-pyyaml
