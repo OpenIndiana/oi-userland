@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohappyeyeballs
 HUMAN_VERSION =			2.6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Happy Eyeballs for asyncio
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c3f9d0113123803ccadfdf3f0faa505bc78e6a72d1cc4806cbd719826e943558
@@ -34,8 +36,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_POETRY += dev
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
