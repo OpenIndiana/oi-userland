@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		process-tests
 HUMAN_VERSION =			3.0.0
-COMPONENT_SUMMARY =		process-tests - Tools for testing processes.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Tools for testing processes.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/python-process-tests
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/23/61/f19c3474c8c87ebb13210e83391f156c971281773623f292fcab26b8c5be/process-tests-3.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:e5d57dea7161251e91cadb84bf3ecc85275fb121fd478e579f800777b1d424bd
 COMPONENT_LICENSE =		BSD-2-Clause
@@ -32,8 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
