@@ -1,13 +1,12 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest --cov-report=xml --cov-report=term --cov=hyperframe
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 collecting ... collected 109 items
 
-tests/test_external_collection.py::TestExternalCollection::test[tc_filepath0] SKIPPED
+tests/test_external_collection.py::TestExternalCollection::test[NOTSET] SKIPPED
 tests/test_flags.py::TestFlags::test_add PASSED
 tests/test_flags.py::TestFlags::test_remove PASSED
 tests/test_flags.py::TestFlags::test_validation PASSED
@@ -116,8 +115,6 @@ tests/test_frames.py::TestAltSvcFrame::test_short_altsvc_frame_errors PASSED
 tests/test_frames.py::TestAltSvcFrame::test_altsvc_with_unicode_origin_fails PASSED
 tests/test_frames.py::TestAltSvcFrame::test_altsvc_with_unicode_field_fails PASSED
 tests/test_frames.py::TestExtensionFrame::test_repr PASSED
-
-Required test coverage of 100.0% reached. Total coverage: 100.00%
 
 ======== 108 passed, 1 skipped ========
   py$(PYV): OK
