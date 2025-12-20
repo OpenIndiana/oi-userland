@@ -1,11 +1,10 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 132 items
+collecting ... collected 130 items
 
 keyring/backend.py::keyring.backend.SchemeSelectable PASSED
 keyring/backends/chainer.py::keyring.backends.chainer.ChainerBackend PASSED
@@ -18,8 +17,6 @@ keyring/core.py::keyring.core._load_keyring_class PASSED
 keyring/core.py::keyring.core.disable PASSED
 keyring/credentials.py::keyring.credentials.EnvironCredential PASSED
 keyring/devpi_client.py::keyring.devpi_client.devpiclient_get_password PASSED
-.::project PASSED
-.::project PASSED
 tests/backends/test_SecretService.py::TestSecretServiceKeyring::test_password_set_get SKIPPED
 tests/backends/test_SecretService.py::TestSecretServiceKeyring::test_set_after_set_blank SKIPPED
 tests/backends/test_SecretService.py::TestSecretServiceKeyring::test_difficult_chars SKIPPED
@@ -141,12 +138,15 @@ tests/util/test_platform.py::test_platform_Linux SKIPPED (condition:...)
 tests/util/test_platform.py::test_platform_Windows SKIPPED (conditio...)
 
 =============================== warnings summary ===============================
+keyring/core.py::keyring.core.disable
+  $(PYTHON_DIR)/vendor-packages/pyfakefs/fake_legacy_modules.py:26: DeprecationWarning: You are using the legacy package 'pathlib2' instead of the built-in module.Patching this package will no longer be supported in pyfakefs >= 6
+    warnings.warn(msg, category=DeprecationWarning)
+
 tests/test_core.py::test_init_recommended
   $(PYTHON_DIR)/vendor-packages/keyrings/alt/Gnome.py:27: DeprecationWarning: GnomeKeyring.get_default_keyring_sync is deprecated
     result = GnomeKeyring.get_default_keyring_sync()[0]
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 37 passed, 95 skipped, 1 warning ========
+======== 35 passed, 95 skipped, 2 warnings ========
   py$(PYV): OK
   congratulations :)
