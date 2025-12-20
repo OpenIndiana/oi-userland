@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		expandvars
 HUMAN_VERSION =			1.1.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Expand system variables Unix style
 COMPONENT_PROJECT_URL =		https://github.com/sayanarijit/expandvars
 COMPONENT_ARCHIVE_HASH =	\
@@ -32,6 +33,4 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
