@@ -11,20 +11,20 @@
 #
 # Copyright (c) 2016 Sergey Avseyev
 # Copyright (c) 2019 Alexander Pyhalov
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.3-ext-memcached
 COMPONENT_REAL_NAME=	memcached
-COMPONENT_VERSION=	3.3.0
+COMPONENT_VERSION=	3.4.0
 COMPONENT_FMRI=		web/php-83/extension/php-memcached
 COMPONENT_SUMMARY=	PHP extension for interfacing with memcached via libmemcached library
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_REAL_NAME)
 COMPONENT_SRC=		$(COMPONENT_REAL_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:2b85bf6699497170801fb4d06eb9c9a06bfc551cdead04101dd75c980be9eebf
+COMPONENT_ARCHIVE_HASH=	sha256:c163434eb0da97c8f45c7ad41d979d381f8b81c49402b1b90b063987fb37972e
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_SUMMARY=	PHP extension for interfacing with memcached via libmemcached library
 COMPONENT_LICENSE=	PHP3.01
