@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dill
 HUMAN_VERSION =			0.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		serialize all of Python
 COMPONENT_PROJECT_URL =		https://github.com/uqfoundation/dill
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,9 +32,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Normalize pointers
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(lambda> at \)0x[0-9a-f]\{1,\}/\1\$$(POINTER)/g'"
+COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{12\}/\$$(POINTER)/g'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/objgraph
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/objgraph
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
