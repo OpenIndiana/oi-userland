@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/python-subunit python_subunit
+#   $WS_TOOLS/python-integrate-project -d python/python-subunit-39 python_subunit
 #
 
 BUILD_STYLE = pyproject
@@ -19,13 +19,14 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_subunit
-HUMAN_VERSION =			1.4.5
+HUMAN_VERSION =			1.4.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python implementation of subunit test streaming protocol
 COMPONENT_PROJECT_URL =		http://launchpad.net/subunit
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/testing-cabal/subunit/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c55b39d0802ca15c18fbf267faf3a1cf67b4fe2482abbb00755c31b53c833bf7
+	sha256:395787f52b8b36830c331faca546ea6c248b6cbd8de95989c2f64d432cc90531
 COMPONENT_LICENSE =		(Apache-2.0 OR BSD-3-Clause) AND MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
@@ -34,8 +35,8 @@ COMPONENT_SRC =			subunit-$(HUMAN_VERSION)
 # https://bugs.launchpad.net/subunit/+bug/2046453/comments/2
 TEST_STYLE = unittest
 
-# Python 3.9 is not supported by python-subunit >= 1.4.5
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# python-subunit >= 1.4.5 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
