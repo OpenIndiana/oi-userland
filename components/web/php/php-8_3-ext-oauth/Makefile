@@ -9,14 +9,14 @@
 #
 
 #
-# Copyright (c) 2024 Friedrich Kink
+# Copyright (c) 2024,2025 Friedrich Kink
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php-8.3-ext-oauth
 COMPONENT_REAL_NAME=	oauth
-COMPONENT_VERSION=	2.0.9
+COMPONENT_VERSION=	2.0.10
 COMPONENT_FMRI=		web/php-83/extension/php-oauth
 COMPONENT_SUMMARY=	oauth consumer extension
 COMPONENT_DESCRIPTION=	OAuth is an authorization protocol built on top of HTTP which \
@@ -25,7 +25,7 @@ COMPONENT_DESCRIPTION=	OAuth is an authorization protocol built on top of HTTP w
 COMPONENT_PROJECT_URL=	https://pecl.php.net/package/$(COMPONENT_REAL_NAME)
 COMPONENT_SRC=		$(COMPONENT_REAL_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:05fe20322256db62e7bcb5a45693ebc59829eae264f855d5b1438003ab34efe1
+COMPONENT_ARCHIVE_HASH=	sha256:1fd5e074dacf5149603493c454b476d69850bec0a71d7ea69a36a00db728a0fb
 COMPONENT_ARCHIVE_URL=	https://pecl.php.net/get/$(COMPONENT_SRC).tgz
 COMPONENT_LICENSE=	BSD
 COMPONENT_LICENSE_FILE=	LICENSE
