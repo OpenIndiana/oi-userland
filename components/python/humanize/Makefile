@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		humanize
-HUMAN_VERSION =			4.14.0
+HUMAN_VERSION =			4.15.0
 COMPONENT_SUMMARY =		Python humanize utilities
 COMPONENT_PROJECT_URL =		https://github.com/python-humanize/humanize
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2fa092705ea640d605c435b1ca82b2866a1b601cdf96f076d70b79a855eba90d
+	sha256:1dd098483eb1c7ee8e32eb2e99ad1910baefa4b75c3aff3a82f4d78688993b10
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENCE
 
