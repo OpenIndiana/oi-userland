@@ -31,6 +31,7 @@ COMPONENT_NAME=		openssh
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
 COMPONENT_VERSION=	10.2.0.1
 HUMAN_VERSION=		10.2p1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	OpenSSH client and associated utilities
 # OpenSSH made a mistake when releasing openssh 10.0p1 which identifies itself as 10.0p2.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -98,7 +99,6 @@ REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/libedit
 REQUIRED_PACKAGES += library/zlib
-REQUIRED_PACKAGES += network/ssh-askpass
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93

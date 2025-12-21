@@ -12,6 +12,7 @@
 #
 # Copyright (c) 2013, 2015, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2018 Till Wegmüller
+# Copyright 2025 Klaus Ziegler
 #
 
 # A full copy of the text of the CDDL should have accompanied this
@@ -34,8 +35,11 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=conditional fmri=pkg:/x11/session/xauth \
     predicate=pkg:/x11/library/libxau
 
-depend type=conditional fmri=pkg:/network/ssh-askpass \
-    predicate=pkg:/x11/server/xserver-common
+# Note:
+# this pulls in gnome/zenity package, which makes it impossible
+# to install a server system without all the needed X-windows stuff.
+# depend type=conditional fmri=pkg:/network/ssh-askpass \
+#    predicate=pkg:/x11/server/xserver-common
 
 # We have to preserve original_name as file was once moved to
 # ssh-common and back again
