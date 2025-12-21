@@ -1,15 +1,15 @@
 We have no hatch packaged yet.
 
---- incremental-24.7.2/requirements_tests.in.orig
-+++ incremental-24.7.2/requirements_tests.in
+--- incremental-24.11.0/requirements_tests.in.orig
++++ incremental-24.11.0/requirements_tests.in
 @@ -2,4 +2,3 @@
  coverage
  coverage-p
  twisted
 -hatch
---- incremental-24.7.2/tests/test_examples.py.orig
-+++ incremental-24.7.2/tests/test_examples.py
-@@ -197,40 +197,6 @@
+--- incremental-24.11.0/tests/test_examples.py.orig
++++ incremental-24.11.0/tests/test_examples.py
+@@ -196,40 +196,6 @@
          )
          self.assertEqual(metadata.version("example_hatchling"), "24.7.0")
  
@@ -30,7 +30,7 @@ We have no hatch packaged yet.
 -    def test_hatch_version_set(self):
 -        """
 -        The ``hatch version`` command can't set the version so its output
--        tells the user to use ``incremental.update`` instead.
+-        tells the user to use ``incremental`` instead.
 -        """
 -        proc = run(
 -            ["hatch", "--no-color", "version", "24.8.0"],
@@ -38,7 +38,7 @@ We have no hatch packaged yet.
 -            check=False,
 -            capture_output=True,
 -        )
--        suggestion = b"Run `python -m incremental.version --newversion 24.8.0` to set the version."
+-        suggestion = b"Run `incremental update example_hatchling --newversion 24.8.0` to set the version."
 -
 -        self.assertGreater(proc.returncode, 0)
 -        self.assertRegex(
