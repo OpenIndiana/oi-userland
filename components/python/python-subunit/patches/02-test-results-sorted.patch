@@ -1,0 +1,22 @@
+We need deterministic test results order.
+
+--- subunit-1.4.5/python/subunit/tests/test_output_filter.py.orig
++++ subunit-1.4.5/python/subunit/tests/test_output_filter.py
+@@ -45,7 +45,7 @@
+ 
+ 
+ class TestStatusArgParserTests(TestCase):
+-    scenarios = [(cmd, dict(command=cmd, option="--" + cmd)) for cmd in _ALL_ACTIONS]
++    scenarios = [(cmd, dict(command=cmd, option="--" + cmd)) for cmd in sorted(_ALL_ACTIONS)]
+ 
+     def test_can_parse_all_commands_with_test_id(self):
+         test_id = self.getUniqueString()
+@@ -166,7 +166,7 @@
+ 
+ 
+ class StatusStreamResultTests(TestCase):
+-    scenarios = [(s, dict(status=s, option="--" + s)) for s in _ALL_ACTIONS]
++    scenarios = [(s, dict(status=s, option="--" + s)) for s in sorted(_ALL_ACTIONS)]
+ 
+     _dummy_timestamp = datetime.datetime(2013, 1, 1, 0, 0, 0, 0, UTC)
+ 
