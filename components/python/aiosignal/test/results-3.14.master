@@ -1,0 +1,31 @@
+py$(PYV): commands[0]> $(PYTHON) -bb -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+configfile: pytest.ini
+testpaths: tests/
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 13 items
+
+tests/test_signals.py::test_signal_positional_args PASSED
+tests/test_signals.py::test_add_signal_handler_not_a_callable PASSED
+tests/test_signals.py::test_function_signal_dispatch_kwargs PASSED
+tests/test_signals.py::test_function_signal_dispatch_args_kwargs PASSED
+tests/test_signals.py::test_non_coroutine PASSED
+tests/test_signals.py::test_setitem PASSED
+tests/test_signals.py::test_delitem PASSED
+tests/test_signals.py::test_cannot_append_to_frozen_signal PASSED
+tests/test_signals.py::test_cannot_setitem_in_frozen_signal PASSED
+tests/test_signals.py::test_cannot_delitem_in_frozen_signal PASSED
+tests/test_signals.py::test_cannot_send_non_frozen_signal PASSED
+tests/test_signals.py::test_repr PASSED
+tests/test_signals.py::test_decorator_callback_dispatch_args_kwargs PASSED
+
+============================= slowest 10 durations =============================
+======== 13 passed ========
+py$(PYV): commands_post[0]> $(PYTHON) -bb -E -s -I -Werror -c 'import atexit, os, sys; os.getenv("GITHUB_ACTIONS") == "true" or sys.exit(); import coverage; gh_summary_fd = open(os.environ["GITHUB_STEP_SUMMARY"], encoding="utf-8", mode="a",); atexit.register(gh_summary_fd.close); cov = coverage.Coverage(); cov.load(); cov.report(file=gh_summary_fd, output_format="markdown")'
+py$(PYV): commands_post[1]> $(PYTHON) -bb -E -s -I -Werror -c 'import os, pathlib, sys; os.getenv("GITHUB_ACTIONS") == "true" or sys.exit(); cov_report_arg_prefix = "--cov-report=xml:"; test_report_arg_prefix = "--junitxml="; cov_reports = [arg[len(cov_report_arg_prefix):] for arg in sys.argv if arg.startswith(cov_report_arg_prefix)]; test_reports = [arg[len(test_report_arg_prefix):] for arg in sys.argv if arg.startswith(test_report_arg_prefix)]; cov_report_file = cov_reports[-1] if cov_reports else None; test_report_file = test_reports[-1] if test_reports else None; gh_output_fd = open(os.environ["GITHUB_OUTPUT"], encoding="utf-8", mode="a",); cov_report_file and print(f"cov-report-files={cov_report_file !s}", file=gh_output_fd); test_report_file and print(f"test-result-files={test_report_file !s}", file=gh_output_fd); print("codecov-flags=pytest", file=gh_output_fd); gh_output_fd.close()'
+py$(PYV): commands_post[2]> $(PYTHON) -bb -E -s -I -Werror '-cimport pathlib, shlex, sys; cov_html_report_arg_prefix = "--cov-report=html:"; cov_html_reports = [arg[len(cov_html_report_arg_prefix):] for arg in sys.argv if arg.startswith(cov_html_report_arg_prefix)]; cov_html_reports or sys.exit(); cov_html_report_dir = pathlib.Path(cov_html_reports[-1]); index_file = cov_html_report_dir / "index.html";index_file.exists() or sys.exit(); html_url = f"file://{index_file}";browse_cmd = shlex.join(("python3", "-Im", "webbrowser", html_url)); serve_cmd = shlex.join(("python3", "-Im", "http.server", "--directory", str(cov_html_report_dir), "0", )); print(f"\nTo open the HTML coverage report, run\n\n\t{browse_cmd !s}\n");print(f"To serve the HTML coverage report with a local web server, use\n\n\t{serve_cmd !s}\n")' --cov-report=html:$(@D)/.tox/py$(PYV)/tmp/htmlcov/
+  py$(PYV): OK
+  congratulations :)
