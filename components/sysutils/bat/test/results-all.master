@@ -1,11 +1,12 @@
-     Running unittests src/lib.rs (target/release/deps/bat-643393b904f29590)
+     Running unittests src/lib.rs (target/release/deps/bat-XXXXXXXXXXXXXXXX)
 
-running 87 tests
+running 110 tests
 test assets::build_assets::acknowledgements::tests::test_append_to_acknowledgements_adds_newline_if_missing ... ok
 test assets::build_assets::acknowledgements::tests::test_normalize_license_text ... ok
 test assets::build_assets::acknowledgements::tests::test_normalize_license_text_with_windows_line_endings ... ok
 test assets::tests::syntax_detection_basic ... ok
 test assets::tests::syntax_detection_first_line ... ok
+test assets::tests::syntax_detection_first_line_with_utf8_bom ... ok
 test assets::tests::syntax_detection_for_symlinked_file ... ok
 test assets::tests::syntax_detection_invalid_utf8 ... ok
 test assets::tests::syntax_detection_is_case_insensitive ... ok
@@ -16,8 +17,19 @@ test assets::tests::syntax_detection_with_custom_mapping ... ok
 test assets::tests::syntax_detection_with_extension_mapping_to_unknown ... ok
 test config::default_config_should_highlight_no_lines ... ok
 test config::default_config_should_include_all_lines ... ok
+test config::get_pager_executable_default ... ok
+test config::get_pager_executable_empty_config ... ok
+test config::get_pager_executable_invalid_command ... ok
+test config::get_pager_executable_name_ignoring_arguments ... ok
+test config::get_pager_executable_name_ignoring_path ... ok
+test config::get_pager_executable_with_bat_pager ... ok
+test config::get_pager_executable_with_config_pager_builtin ... ok
+test config::get_pager_executable_with_config_pager_less ... ok
+test config::get_pager_executable_with_config_pager_more ... ok
+test config::get_pager_executable_with_pager_more_switches_to_less ... ok
 test input::basic ... ok
 test input::utf16le ... ok
+test input::utf16le_issue3367 ... ok
 test less::test_parse_less_version_487 ... ok
 test less::test_parse_less_version_529 ... ok
 test less::test_parse_less_version_551 ... ok
@@ -25,6 +37,10 @@ test less::test_parse_less_version_581_2 ... ok
 test less::test_parse_less_version_busybox ... ok
 test less::test_parse_less_version_invalid_utf_8 ... ok
 test less::test_parse_less_version_wrong_program ... ok
+test line_range::test_parse_context_edge_cases ... ok
+test line_range::test_parse_context_fail ... ok
+test line_range::test_parse_context_range ... ok
+test line_range::test_parse_context_single_line ... ok
 test line_range::test_parse_fail ... ok
 test line_range::test_parse_full ... ok
 test line_range::test_parse_minus_edge_cases_success ... ok
@@ -32,15 +48,22 @@ test line_range::test_parse_minus_fail ... ok
 test line_range::test_parse_minus_success ... ok
 test line_range::test_parse_partial_max ... ok
 test line_range::test_parse_partial_min ... ok
+test line_range::test_parse_partial_relative_negative_from_back ... ok
 test line_range::test_parse_plus ... ok
 test line_range::test_parse_plus_fail ... ok
 test line_range::test_parse_plus_overflow ... ok
+test line_range::test_parse_relative_negative_from_back_partial ... ok
 test line_range::test_parse_single ... ok
+test line_range::test_ranges_3_from_back_up_to_end ... ok
+test line_range::test_ranges_absolute_bound_and_offset ... ok
 test line_range::test_ranges_advanced ... ok
 test line_range::test_ranges_all ... ok
+test line_range::test_ranges_multiple_negative_from_back ... ok
+test line_range::test_ranges_multiple_negative_offsets_to_end ... ok
 test line_range::test_ranges_none ... ok
 test line_range::test_ranges_open_high ... ok
 test line_range::test_ranges_open_low ... ok
+test line_range::test_ranges_open_up_to_3_from_end ... ok
 test line_range::test_ranges_simple ... ok
 test preprocessor::test_strip_ansi ... ok
 test preprocessor::test_try_parse_utf8_char ... ok
@@ -89,9 +112,9 @@ test vscreen::tests::test_escape_sequence_offsets_iterator_parses_text ... ok
 test vscreen::tests::test_escape_sequence_offsets_iterator_parses_text_stops_at_esc ... ok
 test vscreen::tests::test_sgr_attributes_do_not_leak_into_wrong_field ... ok
 
-test result: ok. 87 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 110 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running unittests src/bin/bat/main.rs (target/release/deps/bat-ecaef023feb64845)
+     Running unittests src/bin/bat/main.rs (target/release/deps/bat-XXXXXXXXXXXXXXXX)
 
 running 7 tests
 test clap_app::verify_app ... ok
@@ -104,28 +127,29 @@ test config::single ... ok
 
 test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/assets.rs (target/release/deps/assets-0e56acf130b61c2b)
+     Running tests/assets.rs (target/release/deps/assets-XXXXXXXXXXXXXXXX)
 
 running 1 test
 test all_themes_are_present ... ignored
 
 test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/github-actions.rs (target/release/deps/github_actions-306edf585c90dff1)
+     Running tests/github-actions.rs (target/release/deps/github_actions-XXXXXXXXXXXXXXXX)
 
 running 1 test
 test all_jobs_not_missing_any_jobs ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/integration_tests.rs (target/release/deps/integration_tests-e824dcc40dc1201e)
+     Running tests/integration_tests.rs (target/release/deps/integration_tests-XXXXXXXXXXXXXXXX)
 
-running 153 tests
+running 198 tests
 test accepts_no_custom_assets_arg ... ok
 test acknowledgements ... ok
 test alias_pager_disable ... ok
 test alias_pager_disable_long_overrides_short ... ok
 test all_global_git_config_locations_syntax_mapping_work ... ok
+test ansi_highlight_json_keys ... ok
 test ansi_highlight_underline ... ok
 test ansi_hyperlink_emitted_when_wrapped ... ok
 test ansi_passthrough_emit ... ok
@@ -134,11 +158,13 @@ test ansi_sgr_joins_attributes_when_wrapped ... ok
 test basic ... ok
 test basic_io_cycle ... ok
 test basic_set_terminal_title ... ok
+test bat_error_to_stderr ... ok
 test binary_as_text ... ok
 test bom_not_stripped_in_loop_through_mode ... ok
 test bom_stripped_when_colored_output ... ok
 test bom_stripped_when_no_color_and_not_loop_through ... ok
 test cache_build ... ok
+test cache_build_blank ... ok
 test cache_clear ... ok
 test can_print_file_named_cache ... ok
 test can_print_file_named_cache_with_additional_argument ... ok
@@ -157,6 +183,7 @@ test config_location_test ... ok
 test config_location_when_generating ... ok
 test config_read_arguments_from_file ... ok
 test diagnostic_sanity_check ... ok
+test diagnostic_works_with_invalid_config ... ok
 test disable_pager_if_disable_paging_flag_comes_after_paging ... ok
 test disable_pager_if_pp_flag_comes_after_paging ... ok
 test do_not_detect_different_syntax_for_stdin_and_files ... ok
@@ -180,6 +207,7 @@ test filename_stdin_binary ... ok
 test first_file_cyclic_is_ok ... ok
 test grid_for_file_without_newline ... ok
 test grid_overrides_rule ... ok
+test header_and_changes_only ... ok
 test header_arg_overrides_env ... ok
 test header_basic ... ok
 test header_binary ... ok
@@ -190,23 +218,48 @@ test header_full_basic ... ok
 test header_full_binary ... ok
 test header_full_padding ... ok
 test header_full_padding_rule ... ok
+test header_narrow_terminal_with_multibyte_chars ... ok
 test header_padding ... ok
 test header_padding_rule ... ok
 test header_very_narrow_terminal ... ok
+test help_uses_valid_config ... ok
+test help_with_color_never ... ok
+test help_works_with_invalid_config ... ok
 test highlighting_independant_from_map_syntax_case ... ok
 test highlighting_is_skipped_on_long_lines ... ok
 test ignored_suffix_arg ... ok
 test line_numbers ... ok
+test line_numbers_from_cli_in_loop_through_mode ... ok
 test line_range_2_3 ... ok
+test line_range_context_around_range ... ok
+test line_range_context_around_single_line ... ok
+test line_range_context_around_single_line_minimal ... ok
+test line_range_context_at_end_of_file ... ok
+test line_range_context_at_file_boundaries ... ok
+test line_range_context_negative_range ... ok
+test line_range_context_negative_single_line ... ok
+test line_range_context_non_numeric_range ... ok
+test line_range_context_non_numeric_single_line ... ok
+test line_range_context_very_large ... ok
+test line_range_context_zero ... ok
 test line_range_first_two ... ok
+test line_range_from_back_last_two ... ok
+test line_range_from_back_last_two_single_line_eq_sep ... ok
+test line_range_from_back_last_two_single_line_no_sep ... ok
 test line_range_last_3 ... ok
 test line_range_multiple ... ok
+test line_range_multiple_with_context ... ok
+test line_range_up_to_2_from_back ... ok
+test line_range_up_to_2_from_back_single_line_is_empty ... ok
 test line_wrapping_when_auto ... ok
+test list_languages ... ok
 test list_themes_to_piped_output ... ok
 test list_themes_with_colors ... ok
 test list_themes_without_colors ... ok
 test long_help ... ok
+test long_help_with_highlighting ... ok
 test map_syntax_and_ignored_suffix_work_together ... ok
+test map_syntax_target_syntax_case_insensitive ... ok
 test no_args_doesnt_break ... ok
 test no_broken_osc_emit_with_line_wrapping ... ok
 test no_first_line_fallback_when_mapping_to_invalid_syntax ... ok
@@ -216,6 +269,8 @@ test no_pager_arg ... ok
 test no_paging_arg ... ok
 test no_paging_short_arg ... ok
 test no_wrapping_with_chop_long_lines ... ok
+test numbers_honored_from_cli_when_preceeded_by_plain_in_loop_through_mode ... ok
+test numbers_ignored_from_cli_when_followed_by_plain_in_loop_through_mode ... ok
 test pager_arg_override_env_noconfig ... ok
 test pager_arg_override_env_withconfig ... ok
 test pager_basic ... ok
@@ -232,8 +287,15 @@ test pager_most_with_arg ... ok
 test pager_overwrite ... ok
 test pager_value_bat ... ok
 test paging_does_not_override_simple_plain ... ok
+test piped_output_with_auto_style ... ok
+test piped_output_with_default_style_flag ... ok
+test piped_output_with_implicit_auto_style ... ok
+test piped_output_with_line_number_flag ... ok
+test piped_output_with_line_numbers_style_flag ... ok
+test piped_output_with_line_numbers_with_header_grid_style_flag ... ok
 test plain_mode_does_not_add_nonexisting_newline ... ok
 test short_help ... ok
+test short_help_with_highlighting ... ok
 test show_all_extends_tab_markers_to_next_tabstop ... ok
 test show_all_extends_tab_markers_to_next_tabstop_width_8 ... ok
 test show_all_mode ... ok
@@ -259,6 +321,7 @@ test style_components_can_be_overidden ... ok
 test style_components_can_be_removed ... ok
 test style_components_will_merge ... ok
 test style_components_will_merge_with_env_var ... ok
+test style_from_env_var_ignored_and_line_numbers_from_cli_in_loop_through_mode ... ok
 test tabs_4 ... ok
 test tabs_4_arg_overrides_env ... ok
 test tabs_4_arg_overrides_env_noconfig ... ok
@@ -271,20 +334,25 @@ test tabs_passthrough ... ok
 test tabs_passthrough_wrapped ... ok
 test theme_arg_overrides_env ... ok
 test theme_arg_overrides_env_withconfig ... ok
+test theme_dark_env_var_is_respected ... ok
 test theme_env_overrides_config ... ok
+test theme_light_env_var_is_respected ... ok
 test unicode_wrap ... ok
 test utf16 ... ok
+test utf16be ... ok
+test utf16le ... ok
+test version_works_with_invalid_config ... ok
 
-test result: ok. 153 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 198 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/no_duplicate_extensions.rs (target/release/deps/no_duplicate_extensions-081b9138048a492b)
+     Running tests/no_duplicate_extensions.rs (target/release/deps/no_duplicate_extensions-XXXXXXXXXXXXXXXX)
 
 running 1 test
 test no_duplicate_extensions ... ok
 
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/snapshot_tests.rs (target/release/deps/snapshot_tests-f42c42b2466c992c)
+     Running tests/snapshot_tests.rs (target/release/deps/snapshot_tests-XXXXXXXXXXXXXXXX)
 
 running 27 tests
 test changes ... ok
@@ -317,7 +385,7 @@ test rule ... ok
 
 test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/system_wide_config.rs (target/release/deps/system_wide_config-fb529edd8599aa18)
+     Running tests/system_wide_config.rs (target/release/deps/system_wide_config-XXXXXXXXXXXXXXXX)
 
 running 2 tests
 test config_overrides_system_config ... ignored
@@ -325,7 +393,7 @@ test use_systemwide_config ... ignored
 
 test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished
 
-     Running tests/test_pretty_printer.rs (target/release/deps/test_pretty_printer-fd3a43229f46b543)
+     Running tests/test_pretty_printer.rs (target/release/deps/test_pretty_printer-XXXXXXXXXXXXXXXX)
 
 running 1 test
 test syntaxes ... ok
