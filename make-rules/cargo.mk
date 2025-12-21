@@ -58,6 +58,7 @@ COMPONENT_TEST_ENV += $(CARGO_ENV)
 COMPONENT_TEST_TRANSFORMS += "-e '0,/Finished/d'"
 # remove timing
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(finished\) in [0-9]\{1,\}\.[0-9]\{2\}s\$$/\1/g'"
+COMPONENT_TEST_TRANSFORMS += "-e '/^all doctests ran in [0-9]\{1,\}\.[0-9]\{2\}s; merged doctests compilation took [0-9]\{1,\}\.[0-9]\{2\}s\$$/d'"
 # normalize variable hash in filename
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(Running .* (.*-\)[0-9a-f]\{16\})/\1XXXXXXXXXXXXXXXX)/'"
 # sort tests
