@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		venusian
 HUMAN_VERSION =			3.1.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A library for deferring decorator actions
 COMPONENT_PROJECT_URL =		https://pylonsproject.org/
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,8 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
