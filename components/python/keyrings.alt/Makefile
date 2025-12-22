@@ -11,36 +11,32 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project keyrings.alt
+#   $WS_TOOLS/python-integrate-project -d python/keyrings.alt keyrings_alt
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		keyrings.alt
+COMPONENT_NAME =		keyrings_alt
 HUMAN_VERSION =			5.0.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Alternate keyring implementations
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:8f097ebe9dc8b185106502b8cdb066c926d2180e13b4689fd4771a3eab7d69fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_SRC =			keyrings_alt-$(HUMAN_VERSION)
-
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/jaraco-classes
+REQUIRED_PACKAGES.python += library/python/jaraco-context
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/keyring
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodome
 TEST_REQUIRED_PACKAGES.python += library/python/pycryptodomex
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
