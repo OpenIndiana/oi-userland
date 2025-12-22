@@ -1,0 +1,20 @@
+--- libdatrie-0.2.14/tools/trietool.c.orig	2025-05-15 11:25:23.000000000 +0200
++++ libdatrie-0.2.14/tools/trietool.c	2025-12-22 01:49:37.149348030 +0100
+@@ -121,7 +121,7 @@
+     assert (sizeof (AlphaChar) == 4);
+ 
+     /* convert to UCS-4LE */
+-    res = iconv (env->to_alpha_conv, (char **) &in_p, &in_left,
++    res = iconv (env->to_alpha_conv, (const char **) &in_p, &in_left,
+                  &out_p, &out_left);
+ 
+     if (res == (size_t) -1)
+@@ -166,7 +166,7 @@
+     }
+ 
+     /* convert UCS-4LE to locale codeset */
+-    res = iconv (env->from_alpha_conv, (char **) &in, &in_left,
++    res = iconv (env->from_alpha_conv, (const char **) &in, &in_left,
+                  &out, &out_size);
+     *out = 0;
+ 
