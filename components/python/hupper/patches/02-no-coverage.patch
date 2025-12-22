@@ -1,0 +1,37 @@
+We do not need to check coverage for this project.
+
+--- hupper-1.12.1/setup.cfg.orig
++++ hupper-1.12.1/setup.cfg
+@@ -61,7 +61,6 @@
+ testing = 
+ 	watchdog
+ 	pytest
+-	pytest-cov
+ 	mock
+ 
+ [check-manifest]
+--- hupper-1.12.1/tox.ini.orig
++++ hupper-1.12.1/tox.ini
+@@ -8,7 +8,7 @@
+ 
+ [testenv]
+ commands =
+-    py.test --cov --cov-report= {posargs:}
++    py.test {posargs:}
+ 
+ setenv =
+     COVERAGE_FILE=.coverage.{envname}
+--- hupper-1.12.1/tests/myapp/__init__.py.orig
++++ hupper-1.12.1/tests/myapp/__init__.py
+@@ -1,11 +1,8 @@
+-import pytest_cov.embed
+ import signal
+ import sys
+ 
+ 
+ def cleanup(*args, **kwargs):  # pragma: no cover
+-    # see https://github.com/pytest-dev/pytest-cov/issues/139
+-    pytest_cov.embed.cleanup()
+     sys.exit(1)
+ 
+ 
