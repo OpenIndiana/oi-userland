@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pyfakefs
+#   $WS_TOOLS/python-integrate-project -d python/pyfakefs-39 pyfakefs
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyfakefs
-HUMAN_VERSION =			6.0.0
+HUMAN_VERSION =			5.10.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Implements a fake file system that mocks the Python file system modules.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pyfakefs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:059fd0b2174bfeed499ecb0a59bccff557f267cc6d885afc0e5b76e78b6d50da
+	sha256:8ae0e5421e08de4e433853a4609a06a1835f4bc2a3ce13b54f36713a897474ba
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
-# Python 3.9 is not supported by pyfakefs >= 6.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pyfakefs >= 6.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
