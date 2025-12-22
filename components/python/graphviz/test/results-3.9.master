@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -X dev run-tests.py
 run ['run-tests.py']
 pytest.main([])
@@ -366,48 +365,15 @@ tests/test_tools.py::test_deprecate_positional_args[DeprecationWarning] PASSED
 tests/test_tools.py::test_deprecate_positional_args[PendingDeprecationWarning] PASSED
 tests/test_tools.py::test_deprecate_positional_args_category_none_should_disable PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
+=============================== warnings summary ===============================
+tests/test_all_classes.py::test_render_raises_before_save[Graph-kwargs0]
+tests/test_all_classes.py::test_render_raises_before_save[Digraph-kwargs0]
+tests/test_all_classes.py::test_render_raises_before_save[Source-kwargs0]
+  $(PYTHON_DIR)/vendor-packages/_pytest/raises.py:624: PytestWarning: matching against an empty string will *always* pass. If you want to check for an empty message you need to pass '^$'. If you don't want to match you should pass `None` or leave out the parameter.
+    super().__init__(match=match, check=check)
 
-Name                                   Stmts   Miss  Cover
-----------------------------------------------------------
-graphviz/__init__.py                      28      0   100%
-graphviz/_compat.py                        4      0   100%
-graphviz/_defaults.py                     21      0   100%
-graphviz/_tools.py                        73      0   100%
-graphviz/backend/__init__.py               9      0   100%
-graphviz/backend/dot_command.py           20      0   100%
-graphviz/backend/execute.py               61      0   100%
-graphviz/backend/mixins.py                37      0   100%
-graphviz/backend/piping.py                26      0   100%
-graphviz/backend/rendering.py             83      0   100%
-graphviz/backend/unflattening.py          21      0   100%
-graphviz/backend/upstream_version.py      15      0   100%
-graphviz/backend/viewing.py               34      0   100%
-graphviz/base.py                           7      0   100%
-graphviz/copying.py                        7      0   100%
-graphviz/dot.py                          124      0   100%
-graphviz/encoding.py                      22      0   100%
-graphviz/exceptions.py                     7      0   100%
-graphviz/graphs.py                        28      0   100%
-graphviz/jupyter_integration.py           34      0   100%
-graphviz/parameters/__init__.py            6      0   100%
-graphviz/parameters/base.py                7      0   100%
-graphviz/parameters/engines.py            32      0   100%
-graphviz/parameters/formats.py            32      0   100%
-graphviz/parameters/formatters.py         32      0   100%
-graphviz/parameters/mixins.py             26      0   100%
-graphviz/parameters/renderers.py          32      0   100%
-graphviz/piping.py                        39      0   100%
-graphviz/quoting.py                       59      0   100%
-graphviz/rendering.py                     40      0   100%
-graphviz/saving.py                        43      0   100%
-graphviz/sources.py                       52      0   100%
-graphviz/unflattening.py                  14      0   100%
-----------------------------------------------------------
-TOTAL                                   1075      0   100%
-Coverage HTML written to dir htmlcov
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ============================= slowest 10 durations =============================
-======== 355 passed ========
+======== 355 passed, 3 warnings ========
   py$(PYV): OK
   congratulations :)

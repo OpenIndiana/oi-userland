@@ -1,0 +1,13 @@
+https://github.com/xflr6/graphviz/pull/238
+
+--- graphviz-0.21/tests/test_quoting.py.orig
++++ graphviz-0.21/tests/test_quoting.py
+@@ -17,7 +17,7 @@
+     assert len(recwarn) == 1
+     w = recwarn.pop(DeprecationWarning if sys.version_info < (3, 12)
+                     else SyntaxWarning)
+-    assert str(w.message).startswith('invalid escape sequence')
++    assert 'invalid escape sequence' in str(w.message)
+ 
+     assert escape == f'\\{char}'
+     assert quoting.quote(escape) == f'"\\{char}"'
