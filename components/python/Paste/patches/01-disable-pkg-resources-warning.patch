@@ -1,0 +1,39 @@
+https://github.com/alpinelinux/aports/commit/5040e7e13fec2b3a6282adfbca8443cce3331c43
+
+--- paste-3.10.1/paste/__init__.py.orig
++++ paste-3.10.1/paste/__init__.py
+@@ -6,6 +6,11 @@
+ try:
+     with warnings.catch_warnings():
+         warnings.simplefilter("ignore", category=DeprecationWarning)
++        # Temporarily filter deprecation warning until fixed upstream
++        # https://github.com/pasteorg/paste/issues/107
++        # https://github.com/pasteorg/paste/pull/105
++        warnings.filterwarnings("ignore", category=UserWarning,
++            message=".*pkg_resources is deprecated.*")
+         import pkg_resources
+         pkg_resources.declare_namespace(__name__)
+ except (AttributeError, ImportError):
+--- paste-3.10.1/tests/cgiapp_data/form.cgi.orig
++++ paste-3.10.1/tests/cgiapp_data/form.cgi
+@@ -4,20 +4,11 @@
+ print('')
+ 
+ import sys
+-import warnings
+ from os.path import dirname
+ 
+ base_dir = dirname(dirname(dirname(__file__)))
+ sys.path.insert(0, base_dir)
+ 
+-with warnings.catch_warnings():
+-    warnings.simplefilter("ignore", category=DeprecationWarning)
+-    try:
+-        import pkg_resources
+-    except ImportError:
+-        # Ignore
+-        pass
+-
+ from paste.util.field_storage import FieldStorage
+ 
+ class FormFieldStorage(FieldStorage):
