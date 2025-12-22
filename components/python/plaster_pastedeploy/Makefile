@@ -15,15 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		plaster_pastedeploy
 HUMAN_VERSION =			1.0.1
-COMPONENT_SUMMARY =		plaster_pastedeploy - A loader implementing the PasteDeploy syntax to be used by plaster.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A loader implementing the PasteDeploy syntax to be used by plaster.
 COMPONENT_PROJECT_URL =		https://github.com/Pylons/plaster_pastedeploy
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/c7/af/01a22f73ce97c6375c88d7ceaf6f5f4f345e940da93c94f98833d898a449/plaster_pastedeploy-1.0.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:be262e6d2e41a7264875daa2fe2850cbb0615728bcdc92828fdc72736e381412
 COMPONENT_LICENSE =		MIT
@@ -31,10 +31,14 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# With plaster-pastedeploy installed the testing finds both the installed and
+# the currently built plaster-pastedeploy which is unexpected and so some tests
+# fails.
+TEST_CONFLICTING_PACKAGES.python += library/python/plaster-pastedeploy
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pastedeploy
-PYTHON_REQUIRED_PACKAGES += library/python/plaster
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pastedeploy
+REQUIRED_PACKAGES.python += library/python/plaster
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
