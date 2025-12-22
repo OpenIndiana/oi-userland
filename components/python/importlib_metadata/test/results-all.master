@@ -1,17 +1,11 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 147 items
+collecting ... collected 116 items
 
-conftest.py::mypy PASSED
-docs/__init__.py::mypy PASSED
-docs/conf.py::mypy PASSED
-exercises.py::mypy PASSED
-importlib_metadata/__init__.py::mypy PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint._disallow_dist PASSED
 importlib_metadata/__init__.py::importlib_metadata.EntryPoint.matches PASSED
@@ -21,44 +15,19 @@ importlib_metadata/__init__.py::importlib_metadata.Prepared PASSED
 importlib_metadata/__init__.py::importlib_metadata.Sectioned PASSED
 importlib_metadata/__init__.py::importlib_metadata._get_toplevel_name PASSED
 importlib_metadata/__init__.py::importlib_metadata.packages_distributions PASSED
-importlib_metadata/_adapters.py::mypy PASSED
 importlib_metadata/_adapters.py::importlib_metadata._adapters.Message PASSED
-importlib_metadata/_collections.py::mypy PASSED
 importlib_metadata/_collections.py::importlib_metadata._collections.FreezableDefaultDict PASSED
-importlib_metadata/_compat.py::mypy PASSED
-importlib_metadata/_functools.py::mypy PASSED
 importlib_metadata/_functools.py::importlib_metadata._functools.method_cache PASSED
+importlib_metadata/_functools.py::importlib_metadata._functools.noop PASSED
 importlib_metadata/_functools.py::importlib_metadata._functools.pass_none PASSED
-importlib_metadata/_itertools.py::mypy PASSED
+importlib_metadata/_functools.py::importlib_metadata._functools.passthrough PASSED
 importlib_metadata/_itertools.py::importlib_metadata._itertools.always_iterable PASSED
 importlib_metadata/_itertools.py::importlib_metadata._itertools.bucket PASSED
-importlib_metadata/_meta.py::mypy PASSED
-importlib_metadata/_text.py::mypy PASSED
 importlib_metadata/_text.py::importlib_metadata._text.FoldedCase PASSED
-importlib_metadata/_typing.py::mypy PASSED
-importlib_metadata/compat/__init__.py::mypy PASSED
-importlib_metadata/compat/py311.py::mypy PASSED
-importlib_metadata/compat/py$(PYV).py::mypy PASSED
-importlib_metadata/diagnose.py::mypy PASSED
-.::project PASSED
-.::project PASSED
-tests/__init__.py::mypy PASSED
-tests/_context.py::mypy PASSED
 tests/_context.py::tests._context.suppress PASSED
-tests/_path.py::mypy PASSED
 tests/_path.py::tests._path.Recording PASSED
 tests/_path.py::tests._path.build PASSED
-tests/compat/__init__.py::mypy PASSED
-tests/compat/py312.py::mypy PASSED
-tests/compat/py$(PYV).py::mypy PASSED
-tests/compat/test_py$(PYV)_compat.py::mypy PASSED
 tests/compat/test_py$(PYV)_compat.py::OldStdlibFinderTests::test_compatibility_with_old_stdlib_path_distribution PASSED
-tests/data/__init__.py::mypy PASSED
-tests/data/sources/example/example/__init__.py::mypy PASSED
-tests/data/sources/example2/example2/__init__.py::mypy PASSED
-tests/data/sources/example2::project PASSED
-tests/fixtures.py::mypy PASSED
-tests/test_api.py::mypy PASSED
 tests/test_api.py::APITests::test_as_json PASSED
 tests/test_api.py::APITests::test_as_json_egg_info PASSED
 tests/test_api.py::APITests::test_as_json_odd_case PASSED
@@ -95,10 +64,8 @@ tests/test_api.py::OffSysPathTests::test_distribution_at_pathlib PASSED
 tests/test_api.py::OffSysPathTests::test_distribution_at_str PASSED
 tests/test_api.py::OffSysPathTests::test_find_distributions_specified_path PASSED
 tests/test_api.py::InvalidateCache::test_invalidate_cache PASSED
-tests/test_integration.py::mypy PASSED
 tests/test_integration.py::IntegrationTests::test_package_spec_installed PASSED
 tests/test_integration.py::FinderTests::test_finder_without_module PASSED
-tests/test_main.py::mypy PASSED
 tests/test_main.py::BasicTests::test_abc_enforced PASSED
 tests/test_main.py::BasicTests::test_for_name_does_not_exist PASSED
 tests/test_main.py::BasicTests::test_invalid_inputs_to_from_name PASSED
@@ -138,8 +105,8 @@ tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_neith
 tests/test_main.py::PackagesDistributionsTest::test_packages_distributions_symlinked_top_level PASSED
 tests/test_main.py::PackagesDistributionsEggTest::test_packages_distributions_on_eggs PASSED
 tests/test_main.py::EditableDistributionTest::test_origin PASSED
-tests/test_zip.py::mypy PASSED
 tests/test_zip.py::TestZip::test_case_insensitive PASSED
+tests/test_zip.py::TestZip::test_fastpath_cache_cleared_in_forked_child PASSED
 tests/test_zip.py::TestZip::test_files PASSED
 tests/test_zip.py::TestZip::test_missing_metadata PASSED
 tests/test_zip.py::TestZip::test_one_distribution PASSED
@@ -147,6 +114,7 @@ tests/test_zip.py::TestZip::test_zip_entry_points PASSED
 tests/test_zip.py::TestZip::test_zip_version PASSED
 tests/test_zip.py::TestZip::test_zip_version_does_not_match PASSED
 tests/test_zip.py::TestEgg::test_case_insensitive PASSED
+tests/test_zip.py::TestEgg::test_fastpath_cache_cleared_in_forked_child PASSED
 tests/test_zip.py::TestEgg::test_files PASSED
 tests/test_zip.py::TestEgg::test_missing_metadata PASSED
 tests/test_zip.py::TestEgg::test_normalized_name PASSED
@@ -156,41 +124,11 @@ tests/test_zip.py::TestEgg::test_zip_version PASSED
 tests/test_zip.py::TestEgg::test_zip_version_does_not_match PASSED
 
 =============================== warnings summary ===============================
-.::project
-.::project
-tests/data/sources/example2::project
-  $(PYTHON_DIR)/vendor-packages/pytest_checkdocs/__init__.py:65: PendingDeprecationWarning: Argument "writer_name" will be removed in Docutils 2.0.  Specify writer name in the "writer" argument.
-    parts = docutils.core.publish_parts(
-
 tests/test_main.py::InaccessibleSysPath::test_discovery
   $(PYTHON_DIR)/vendor-packages/pyfakefs/fake_legacy_modules.py:26: DeprecationWarning: You are using the legacy package 'pathlib2' instead of the built-in module.Patching this package will no longer be supported in pyfakefs >= 6
     warnings.warn(msg, category=DeprecationWarning)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-===================================== mypy =====================================
-Success: no issues found in 32 source files
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
-
-Name                                    Stmts   Miss  Cover   Missing
----------------------------------------------------------------------
-conftest.py                                 9      0   100%
-docs/__init__.py                            0      0   100%
-docs/conf.py                               18      0   100%
-importlib_metadata/__init__.py            409      1    99%   336
-importlib_metadata/_adapters.py            46      0   100%
-importlib_metadata/_collections.py         13      0   100%
-importlib_metadata/_compat.py              17      2    88%   55-56
-importlib_metadata/_functools.py           17      0   100%
-importlib_metadata/_meta.py                 5      0   100%
-importlib_metadata/_text.py                25      0   100%
-importlib_metadata/_typing.py               5      0   100%
-importlib_metadata/compat/__init__.py       0      0   100%
-importlib_metadata/compat/py$(PYV).py          16      0   100%
-importlib_metadata/compat/py311.py          5      0   100%
-importlib_metadata/diagnose.py             14      9    36%   7-12, 16-17, 21
----------------------------------------------------------------------
-TOTAL                                     599     12    98%
-======== 147 passed, 4 warnings ========
+======== 116 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)
