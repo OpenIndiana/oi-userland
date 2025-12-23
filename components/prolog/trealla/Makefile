@@ -17,13 +17,13 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
-COMPONENT_VERSION= 2.88.1
+COMPONENT_VERSION= 2.88.2
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://trealla-prolog.github.io/trealla
 COMPONENT_ARCHIVE_URL= https://github.com/trealla-prolog/trealla/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:619085998035afcd5d19de4c2dee17a76aae5feafcbb0d5f0cf0fe9d8d6cf592
+COMPONENT_ARCHIVE_HASH= sha256:e2f47bb7614a57afd2b15907b483934e57ab8c9161e3dc0b9a875039d5a4b80c
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_FMRI= runtime/$(COMPONENT_NAME)-prolog
 COMPONENT_LICENSE= MIT
