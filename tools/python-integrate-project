@@ -101,6 +101,7 @@ HOMEPAGE=
 DOWNLOAD_URL=
 LICENSE_FILE=
 SUMMARY=
+CARGO_VENDOR=
 
 # Execute hook-begin snippet
 if [[ -f "$CONF" ]] ; then
@@ -246,7 +247,7 @@ cat <<EOF
 #
 
 BUILD_STYLE = pyproject
-CARGO_VENDOR = no
+_CARGO_VENDOR = no
 USE_COMMON_TEST_MASTER = no
 EOF
 [[ -f "$CONF" ]] && gsed -e '0,/^%include-1%/d' -e '/^%/,$d' < "$CONF"
@@ -268,7 +269,7 @@ COMPONENT_LICENSE =		license:TODO
 COMPONENT_LICENSE_FILE =	licfile:TODO
 
 _TEST_STYLE = TODO
-CARGO_TOML_SUBDIR =
+_CARGO_TOML_SUBDIR =
 EOF
 [[ -f "$CONF" ]] && cat "$CONF" | gsed -e '0,/^%include-2%/d' -e '/^%/,$d' | gsed -e '1s/^./\n&/'
 printf "\ninclude \$(WS_MAKE_RULES)/common.mk\n"
@@ -322,25 +323,39 @@ rm -f patches/*.patch_cargo
 
 # Handle CARGO_VENDOR
 CARGO_TOML_SUBDIR=$($GMAKE print-value-CARGO_TOML_SUBDIR)
-if [[ -z "$CARGO_TOML_SUBDIR" ]] ; then
+# Sanity check when the Cargo.toml path was provided
+if [[ -n "$CARGO_TOML_SUBDIR" ]] ; then
+	[[ -z "$CARGO_VENDOR" ]] && CARGO_VENDOR='yes'
+	[[ "$CARGO_VENDOR" == 'no' ]] && \
+		printf 'ERROR: Cargo vendor disabled, but CARGO_TOML_SUBDIR set to %s\n' "$CARGO_TOML_SUBDIR" >&2
+fi
+# Find Cargo.toml if the path is not known yet
+if [[ "$CARGO_VENDOR" != 'no' && -z "$CARGO_TOML_SUBDIR" ]] ; then
 	CARGO_TOML_SUBDIRS=$(cd "$SOURCE_DIR$COMPONENT_SUBDIR" ; find . -name Cargo.toml)
 	if [[ -n "$CARGO_TOML_SUBDIRS" ]] ; then
+		[[ -z "$CARGO_VENDOR" ]] && CARGO_VENDOR='yes'
 		CARGO_TOML_SUBDIR=$(printf '%s\n' "$CARGO_TOML_SUBDIRS" \
 			| sed -e 's/^\.\(.*\)\/Cargo\.toml$/\1/' -e 's/^\///' \
 			| LC_ALL=C sort | head -n 1 \
 		)
 		(($(printf '%s\n' "$CARGO_TOML_SUBDIRS" | wc -l) > 1)) \
 			&& printf 'WARNING: Multiple Cargo.toml files found\n' >&2
-		[[ -n "$CARGO_TOML_SUBDIR" ]] && sed -i -e 's|^CARGO_TOML_SUBDIR =$|& '"$CARGO_TOML_SUBDIR|" Makefile
+		[[ -n "$CARGO_TOML_SUBDIR" ]] && sed -i -e 's|^_\(CARGO_TOML_SUBDIR =\)$|\1 '"$CARGO_TOML_SUBDIR|" Makefile
+	else
+		[[ -z "$CARGO_VENDOR" ]] && CARGO_VENDOR='no'
 	fi
 fi
-if [[ -f "$SOURCE_DIR$COMPONENT_SUBDIR/$CARGO_TOML_SUBDIR/Cargo.toml" ]] ; then
-	sed -i -e 's/^\(CARGO_VENDOR = \)no$/\1yes/' Makefile
+# Finally make sure there is Cargo.toml file
+[[ "$CARGO_VENDOR" != 'no' && ! -f "$SOURCE_DIR$COMPONENT_SUBDIR/$CARGO_TOML_SUBDIR/Cargo.toml" ]] \
+	&& printf 'ERROR: Cargo vendor forced, but %sCargo.toml not found\n' "$CARGO_TOML_SUBDIR${CARGO_TOML_SUBDIR:+/}" >&2
+# Update Makefile with the detected CARGO_VENDOR value
+if [[ "$CARGO_VENDOR" != 'no' ]] ; then
+	sed -i -e 's/^_\(CARGO_VENDOR = \)no$/\1yes/' Makefile
 else
-	sed -i -e '/^CARGO_VENDOR = no$/d' Makefile
-	[[ -n "$CARGO_TOML_SUBDIR" ]] && printf 'ERROR: %s/Cargo.toml not found\n' "$CARGO_TOML_SUBDIR" >&2
+	sed -i -e '/^_CARGO_VENDOR = no$/d' Makefile
 fi
-sed -i -e '/^CARGO_TOML_SUBDIR =$/d' Makefile
+# Remove the empty CARGO_TOML_SUBDIR template
+sed -i -e '/^_CARGO_TOML_SUBDIR =$/d' Makefile
 git add Makefile
 
 # Apply patches again in a case there are some cargo patches
