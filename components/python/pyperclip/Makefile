@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyperclip
 HUMAN_VERSION =			1.11.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A cross-platform clipboard module for Python. (Only handles plain text for now.)
 COMPONENT_PROJECT_URL =		https://github.com/asweigart/pyperclip
 COMPONENT_ARCHIVE_HASH =	\
@@ -41,6 +43,10 @@ COMPONENT_PRE_TEST_ACTION += $(MKDIR) $(COMPONENT_TEST_BUILD_DIR)/runtime ;
 COMPONENT_PRE_TEST_ACTION += $(CHMOD) 0700 $(COMPONENT_TEST_BUILD_DIR)/runtime ;
 COMPONENT_TEST_ENV += XDG_RUNTIME_DIR=$(COMPONENT_TEST_BUILD_DIR)/runtime
 COMPONENT_POST_TEST_ACTION += $(RM) -r $(COMPONENT_TEST_BUILD_DIR)/runtime ;
+
+# Testing needs HOME
+COMPONENT_TEST_ENV += HOME="$(@D)/.test_home"
+COMPONENT_PRE_TEST_ACTION += $(RM) -r "$(@D)/.test_home" ; $(MKDIR) "$(@D)/.test_home" ;
 
 # https://github.com/asweigart/pyperclip/issues/246
 COMPONENT_TEST_TRANSFORMS += "-e 's/TEST//g'"
