@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		graphviz
 HUMAN_VERSION =			0.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Simple Python interface for Graphviz
 COMPONENT_PROJECT_URL =		https://github.com/xflr6/graphviz
 COMPONENT_ARCHIVE_HASH =	\
@@ -33,10 +35,13 @@ include $(WS_MAKE_RULES)/common.mk
 PYTEST_ADDOPTS += --ignore tests/backend/conftest.py
 PYTEST_ADDOPTS += --ignore tests/conftest.py
 
+# Testing needs HOME environment variable (the directory does not need to
+# exist) because otherwise Fontconfig complains it is unable to find a writable
+# cache directories and so testing fails.
+COMPONENT_TEST_ENV += HOME="$(@D)/.test_home"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
