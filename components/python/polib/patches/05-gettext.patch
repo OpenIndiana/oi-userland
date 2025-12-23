@@ -1,0 +1,13 @@
+https://github.com/izimobil/polib/pull/168
+
+--- polib-1.2.0/tests/tests.py.orig
++++ polib-1.2.0/tests/tests.py
+@@ -646,7 +646,7 @@
+             os.close(fd)
+             po = polib.pofile(reffile, autodetect_encoding=False, encoding=encoding)
+             po.save_as_mofile(tmpfile1)
+-            subprocess.call([msgfmt, '--no-hash', '-o', tmpfile2, reffile])
++            subprocess.call([msgfmt, '--no-hash', '--no-convert', '-o', tmpfile2, reffile])
+             try:
+                 f = open(tmpfile1, 'rb')
+                 s1 = f.read()
