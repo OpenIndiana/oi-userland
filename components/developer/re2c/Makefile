@@ -29,7 +29,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			re2c
-COMPONENT_VERSION=		4.3.1
+COMPONENT_VERSION=		4.4
 COMPONENT_SUMMARY=		re2c is a free and open-source lexer generator for C, C++ and Go.
 COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 	fast as their reasonably optimized hand-coded counterparts. Instead of \
@@ -44,7 +44,7 @@ COMPONENT_DESCRIPTION=	Its main goal is generating fast lexers: at least as \
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://re2c.org
-COMPONENT_ARCHIVE_HASH=	sha256:5f5e8a618960f68bb46ee8728ecd4132e1275b595cfc7a48476f977afd01d0cc
+COMPONENT_ARCHIVE_HASH=	sha256:6b6b865924447ef992d5db4e52fb9307e5f65f26edd43efa91395da810f4280a
 COMPONENT_ARCHIVE_URL=	https://github.com/skvadrik/$(COMPONENT_NAME)/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			developer/lexer/re2c
 COMPONENT_CLASSIFICATION=	Development/Other Languages
