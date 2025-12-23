@@ -1,0 +1,129 @@
+https://github.com/wichert/lingua/pull/113
+
+--- lingua-4.15.0/src/lingua/extract.py.orig
++++ lingua-4.15.0/src/lingua/extract.py
+@@ -14,7 +14,10 @@
+ try:
+     from configparser import SafeConfigParser
+ except ImportError:
+-    from ConfigParser import SafeConfigParser
++    try:
++        from configparser import ConfigParser as SafeConfigParser
++    except ImportError:
++        from ConfigParser import SafeConfigParser
+ import click
+ import polib
+ from lingua.extractors import get_extractor
+--- lingua-4.15.0/src/lingua/extractors/__init__.py.orig
++++ lingua-4.15.0/src/lingua/extractors/__init__.py
+@@ -1,12 +1,13 @@
+ from __future__ import print_function
+-from pkg_resources import DistributionNotFound
+-from pkg_resources import working_set
+ import abc
+ import collections
+ import os
+ import re
+ import sys
+ from .compat import add_metaclass
++from .compat import EntryPointLoadError
++from .compat import iter_entry_points
++from .compat import load_entry_point
+ 
+ 
+ Message = collections.namedtuple(
+@@ -162,10 +163,10 @@
+ 
+ 
+ def register_extractors():
+-    for entry_point in working_set.iter_entry_points("lingua.extractors"):
++    for entry_point in iter_entry_points("lingua.extractors"):
+         try:
+-            extractor = entry_point.load(require=True)
+-        except DistributionNotFound:
++            extractor = load_entry_point(entry_point)
++        except EntryPointLoadError:
+             # skip this entry point since at least one required dependency can
+             # not be found
+             extractor = None
+--- lingua-4.15.0/src/lingua/extractors/babel.py.orig
++++ lingua-4.15.0/src/lingua/extractors/babel.py
+@@ -1,5 +1,6 @@
+-from pkg_resources import DistributionNotFound
+-from pkg_resources import working_set
++from .compat import EntryPointLoadError
++from .compat import iter_entry_points
++from .compat import load_entry_point
+ from .python import KEYWORDS
+ from .python import parse_keyword
+ from . import EXTRACTORS
+@@ -58,11 +59,11 @@
+ 
+ 
+ def register_babel_plugins():
+-    for entry_point in working_set.iter_entry_points("babel.extractors"):
++    for entry_point in iter_entry_points("babel.extractors"):
+         name = entry_point.name
+         try:
+-            extractor = entry_point.load(require=True)
+-        except DistributionNotFound:
++            extractor = load_entry_point(entry_point)
++        except EntryPointLoadError:
+             # skip this entry point since at least one required dependency can
+             # not be found
+             extractor = None
+--- lingua-4.15.0/src/lingua/extractors/compat.py.orig
++++ lingua-4.15.0/src/lingua/extractors/compat.py
+@@ -1,6 +1,41 @@
+ # Python compatibility support code
+ # This is taken from six
+ 
++# Entry points compatibility for importlib.metadata vs pkg_resources
++try:
++    from importlib.metadata import entry_points
++
++    try:
++        # Python 3.10+ returns SelectableGroups with select() method
++        entry_points(group="test")
++
++        def iter_entry_points(group):
++            return entry_points(group=group)
++    except TypeError:
++        # Python 3.9 returns a dict-like object
++        def iter_entry_points(group):
++            eps = entry_points()
++            return eps.get(group, [])
++
++    # In importlib.metadata, entry_point.load() doesn't have require parameter.
++    # Missing dependencies raise ModuleNotFoundError instead of DistributionNotFound.
++    EntryPointLoadError = ModuleNotFoundError
++
++    def load_entry_point(entry_point):
++        return entry_point.load()
++
++except ImportError:
++    from pkg_resources import DistributionNotFound
++    from pkg_resources import working_set
++
++    def iter_entry_points(group):
++        return working_set.iter_entry_points(group)
++
++    EntryPointLoadError = DistributionNotFound
++
++    def load_entry_point(entry_point):
++        return entry_point.load(require=True)
++
+ 
+ def add_metaclass(metaclass):
+     """Class decorator for creating a class with a metaclass."""
+--- lingua-4.15.0/tests/extractors/test_python.py.orig
++++ lingua-4.15.0/tests/extractors/test_python.py
+@@ -227,7 +227,7 @@
+     options = mock.Mock()
+     options.keywords = []
+     options.comment_tag = "I18N:"
+-    source = u"""_('word', func('foo', 2'))"""
++    source = u"""_('word', func('foo', 2))"""
+     messages = list(python_extractor("filename", options))
+     assert len(messages) == 1
+     assert messages[0].msgid == "word"
