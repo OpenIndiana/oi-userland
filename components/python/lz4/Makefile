@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lz4
-HUMAN_VERSION =			4.4.4
+HUMAN_VERSION =			4.4.5
 COMPONENT_SUMMARY =		LZ4 Bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-lz4/python-lz4
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:070fd0627ec4393011251a094e08ed9fdcc78cb4e7ab28f507638eee4e39abda
+	sha256:5f0b9e53c1e82e88c10d7c180069363980136b9d7a8306c4dca4f760d60c39f0
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -50,14 +51,16 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/lz4 $(@D)/lz4-RENAMED ;
 COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/lz4-RENAMED $(@D)/lz4 ;
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pkgconfig
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/pkgconfig
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
