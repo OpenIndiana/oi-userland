@@ -1,21 +1,23 @@
---- pyparsing-3.2.5/tox.ini.orig
-+++ pyparsing-3.2.5/tox.ini
-@@ -6,14 +6,14 @@
+--- pyparsing-3.3.1/tox.ini.orig
++++ pyparsing-3.3.1/tox.ini
+@@ -6,16 +6,16 @@
  
  [testenv]
  deps =
 -    unit: pytest
--    unit: matplotlib; implementation_name != 'pypy' and python_version <= '3.14'
+-    unit: matplotlib; implementation_name != 'pypy' and python_version <= '3.15'
 +    pytest
-+    matplotlib; implementation_name != 'pypy' and python_version <= '3.14'
++    matplotlib; implementation_name != 'pypy' and python_version <= '3.15'
      doctest: sphinx
      doctest: myst-parser
      doctest: alabaster
 -extras = unit: diagrams
 +extras = diagrams
+ setenv =
+     PYTHONPATH = {env:PYTHONPATH}{:}{toxinidir}
  commands =
--    unit: pytest tests {posargs}
-+    pytest tests {posargs}
+-    unit: pytest tests examples/tiny/tests {posargs}
++    pytest tests examples/tiny/tests {posargs}
      doctest: sphinx-build -b doctest docs docs\_build\doctest
  allowlist_externals =
      pytest
