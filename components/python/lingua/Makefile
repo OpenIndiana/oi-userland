@@ -15,14 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lingua
 HUMAN_VERSION =			4.15.0
-COMPONENT_SUMMARY =		lingua - Translation toolset
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/ba/85/50f030e20ca64562ac8fd36b65338c4da626739afd49200936f3d99a6047/lingua-4.15.0.tar.gz
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Translation toolset
+COMPONENT_PROJECT_URL =		https://github.com/wichert/lingua
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0e1a946741db288a40361ad04ff38fe04bf0819834b8abb84c4b535fed9ba4ef
 COMPONENT_LICENSE =		BSD-3-Clause
@@ -33,7 +34,7 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/click
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += library/python/polib
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/click
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/polib
+REQUIRED_PACKAGES.python += runtime/python
