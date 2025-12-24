@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project fixtures
+#   $WS_TOOLS/python-integrate-project -d python/fixtures-39 fixtures
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fixtures
-HUMAN_VERSION =			4.2.8
+HUMAN_VERSION =			4.2.6
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Fixtures, reusable state for writing clean tests and more.
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/fixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ea146564a6666106c481f7c35f97a4d65485c84b0cc86a507597164b6cc0d849
+	sha256:95472b15b145063a672fbe33b1244ccff829fbec97d530d862d26f416d16c90b
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
-# Python 3.9 is not supported by fixtures >= 4.2.7
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# fixtures >= 4.2.7 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
