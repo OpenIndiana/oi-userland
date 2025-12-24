@@ -16,12 +16,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ngtcp2
-COMPONENT_VERSION=	1.18.0
+COMPONENT_VERSION=	1.19.0
 COMPONENT_SUMMARY=	ngtcp2 project is an effort to implement RFC9000 QUIC protocol
 COMPONENT_PROJECT_URL=	https://ngtcp2.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:aac91fbcb8af77216862cc1bf6e9ddcabfe42b4c373a438b7b1d36b763a4ac5f
+COMPONENT_ARCHIVE_HASH= sha256:f11f7da5065f2298f8b5f079a11f1a6f72389271b8dedd893c8eb26aba94bce9
 COMPONENT_ARCHIVE_URL=	https://github.com/ngtcp2/ngtcp2/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/ngtcp2
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -42,6 +42,7 @@ CONFIGURE_OPTIONS += --disable-static
 
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/cunit
+
 # According to the documentation the following packages are needed to build the examples:
 REQUIRED_PACKAGES += library/libev
 REQUIRED_PACKAGES += library/nghttp3
