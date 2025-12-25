@@ -1,12 +1,11 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --cov=hyperlink --cov-report=term-missing:skip-covered --doctest-modules src/hyperlink
+py$(PYV): commands[0]> python -m pytest --doctest-modules src/hyperlink
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase('$(@D)/.tox/hypothesis/examples')
-rootdir: $(@D), configfile: pytest.ini
-asyncio: mode=strict
-collecting ... collected 133 items
+hypothesis profile 'default'
+rootdir: $(@D)
+configfile: pytest.ini
+collecting ... collected 133 items / 3 deselected / 130 selected
 
 src/hyperlink/_url.py::hyperlink._url PASSED
 src/hyperlink/_url.py::hyperlink._url.DecodedURL PASSED
@@ -49,10 +48,7 @@ src/hyperlink/test/test_decoded_url.py::TestURL::test_twisted_compat PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_decoded_urls PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_encoded_urls PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_long_idn_punycode PASSED
-src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_valid_ascii PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_valid_idn PASSED
-src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii PASSED
-src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii_nolead PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_idn PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_idn_nolead PASSED
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_idna_text_min_max PASSED
@@ -144,13 +140,10 @@ src/hyperlink/test/test_url.py::TestURL::test_wrong_constructor PASSED
 
 =============================== warnings summary ===============================
 src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_long_idn_punycode
-  $(PYTHON_DIR)/vendor-packages/hypothesis/strategies/_internal/core.py:1563: HypothesisDeprecationWarning: There is no reason to use @st.composite on a function which does not call the provided draw() function internally.
-    has_codemod=False,
+  $(PYTHON_DIR)/vendor-packages/hypothesis/strategies/_internal/core.py:1959: HypothesisDeprecationWarning: There is no reason to use @st.composite on a function which does not call the provided draw() function internally.
+    note_deprecation(
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-6 files skipped due to complete coverage.
-
-======== 133 passed, 1 warning ========
+======== 130 passed, 3 deselected, 1 warning ========
   py$(PYV): OK
   congratulations :)

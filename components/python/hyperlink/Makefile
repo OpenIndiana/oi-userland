@@ -15,16 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hyperlink
 HUMAN_VERSION =			21.0.0
-COMPONENT_REVISION =		1
-COMPONENT_SUMMARY =		hyperlink - A featureful, immutable, and correct URL for Python.
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		A featureful, immutable, and correct URL for Python.
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/hyperlink
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3a/51/1947bd81d75af87e3bb9e34593a4cf118115a8feb451ce7a69044ef1412e/hyperlink-21.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:427af957daa58bc909471c6c40f74c5450fa123dd093fc53efd2e91d2705a56b
 COMPONENT_LICENSE =		MIT
@@ -32,13 +31,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# https://github.com/python-hyper/hyperlink/issues/186
+PYTEST_ADDOPTS += --deselect src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostname_labels_valid_ascii
+PYTEST_ADDOPTS += --deselect src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii
+PYTEST_ADDOPTS += --deselect src/hyperlink/test/test_hypothesis.py::TestHypothesisStrategies::test_hostnames_ascii_nolead
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/idna
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/idna
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/idna
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
