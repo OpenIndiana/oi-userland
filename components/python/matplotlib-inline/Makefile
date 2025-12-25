@@ -19,20 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		matplotlib_inline
-HUMAN_VERSION =			0.1.7
-COMPONENT_SUMMARY =		matplotlib_inline - Inline Matplotlib backend for Jupyter
+HUMAN_VERSION =			0.2.1
+COMPONENT_SUMMARY =		Inline Matplotlib backend for Jupyter
 COMPONENT_PROJECT_URL =		https://github.com/ipython/matplotlib-inline
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8423b23ec666be3d16e16b60bdd8ac4e86e840ebd1dd11a30b9f117f2fa0ab90
+	sha256:e1ee949c340d771fc39e241ea75683deb94762c8fa5f2927ec57c83c4dffa9fe
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = setup.py
+# Testing requires matplotlib.  We do not have it packaged yet.
+TEST_STYLE = none
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/traitlets
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/traitlets
+REQUIRED_PACKAGES.python += runtime/python
