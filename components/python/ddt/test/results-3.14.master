@@ -1,5 +1,4 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m pytest --cov=ddt --cov-report html
+py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -84,27 +83,27 @@ test/test_example.py::YamlOnlyTestCase::test_custom_yaml_loader_08_python_str PA
 test/test_example.py::YamlOnlyTestCase::test_custom_yaml_loader_09_python_int PASSED
 test/test_example.py::YamlOnlyTestCase::test_custom_yaml_loader_10_python_float PASSED
 test/test_functional.py::test_data_decorator PASSED
+test/test_functional.py::test_file_data_decorator_with_dict PASSED
 test/test_functional.py::test_ddt PASSED
-test/test_functional.py::test_ddt_data_doc_attribute PASSED
-test/test_functional.py::test_ddt_data_name_attribute PASSED
-test/test_functional.py::test_ddt_data_object PASSED
-test/test_functional.py::test_ddt_data_unicode PASSED
-test/test_functional.py::test_ddt_format_test_name_default PASSED
 test/test_functional.py::test_ddt_format_test_name_index_only PASSED
+test/test_functional.py::test_ddt_format_test_name_default PASSED
+test/test_functional.py::test_idata_single_argument PASSED
+test/test_functional.py::test_idata_automatic_zero_padding PASSED
+test/test_functional.py::test_idata_override_index_len PASSED
+test/test_functional.py::test_idata_consumable_iterator PASSED
+test/test_functional.py::test_file_data_test_creation PASSED
+test/test_functional.py::test_file_data_test_names_dict PASSED
 test/test_functional.py::test_feed_data_data PASSED
 test/test_functional.py::test_feed_data_file_data PASSED
 test/test_functional.py::test_feed_data_file_data_missing_json PASSED
 test/test_functional.py::test_feed_data_file_data_missing_yaml PASSED
+test/test_functional.py::test_ddt_data_name_attribute PASSED
+test/test_functional.py::test_ddt_data_doc_attribute PASSED
+test/test_functional.py::test_ddt_data_unicode PASSED
+test/test_functional.py::test_ddt_data_object PASSED
 test/test_functional.py::test_feed_data_with_invalid_identifier PASSED
-test/test_functional.py::test_file_data_decorator_with_dict PASSED
-test/test_functional.py::test_file_data_test_creation PASSED
-test/test_functional.py::test_file_data_test_names_dict PASSED
-test/test_functional.py::test_idata_automatic_zero_padding PASSED
-test/test_functional.py::test_idata_consumable_iterator PASSED
-test/test_functional.py::test_idata_override_index_len PASSED
-test/test_functional.py::test_idata_single_argument PASSED
-test/test_functional.py::test_load_yaml_with_python_tag PASSED
 test/test_functional.py::test_load_yaml_without_yaml_support PASSED
+test/test_functional.py::test_load_yaml_with_python_tag PASSED
 test/test_named_data.py::TestNamedData::test_dict_with_nontrivial_type_1_Passes PASSED
 test/test_named_data.py::TestNamedData::test_dict_with_nontrivial_type_2_Fails PASSED
 test/test_named_data.py::TestNamedData::test_missing_name_dict PASSED
@@ -119,13 +118,16 @@ test/test_named_data.py::TestNamedData::test_seq_with_nontrivial_type_2_Fails PA
 test/test_named_data.py::TestNamedData::test_single_named_value_1_Single PASSED
 
 =============================== warnings summary ===============================
+ddt.py:289: 8 warnings
+test/test_functional.py: 2 warnings
+  $(@D)/ddt.py:289: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
+    with codecs.open(data_file_path, 'r', 'utf-8') as f:
+
 ddt.py:67
   $(@D)/ddt.py:67: PytestCollectionWarning: cannot collect test class 'TestNameFormat' because it has a __new__ constructor (from: test/test_functional.py)
     @unique
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-
-======== 111 passed, 1 warning ========
-py$(PYV): commands[1]> flake8 --extend-ignore=B,D,YTT ddt.py test
+======== 111 passed, 11 warnings ========
   py$(PYV): OK
   congratulations :)
