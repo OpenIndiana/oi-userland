@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/dogpile.cache dogpile_cache
+#   $WS_TOOLS/python-integrate-project -d python/dogpile.cache-39 dogpile_cache
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dogpile_cache
-HUMAN_VERSION =			1.5.0
+HUMAN_VERSION =			1.4.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A caching front-end based on the Dogpile lock.
 COMPONENT_PROJECT_URL =		https://github.com/sqlalchemy/dogpile.cache
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:849c5573c9a38f155cd4173103c702b637ede0361c12e864876877d0cd125eec
+	sha256:e25c60e677a5e28ff86124765fbf18c53257bcd7830749cd5ba350ace2a12989
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by dogpile.cache >= 1.5.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# dogpile.cache >= 1.5.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,6 +37,7 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES.python += library/python/decorator
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/stevedore
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/decorator
 TEST_REQUIRED_PACKAGES.python += library/python/mako
