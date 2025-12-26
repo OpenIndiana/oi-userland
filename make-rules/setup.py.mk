@@ -479,6 +479,7 @@ $(eval $(call pytest-plugin,typeguard,typeguard))
 # needed or useful.
 #
 # pytest-datadir is required by pytest-regressions and pytest-regressions is required by coincidence
+$(eval $(call pytest-plugin,pytest-regressions,pytest-datadir))
 $(eval $(call pytest-plugin,coincidence,regressions))
 $(eval $(call pytest-plugin,coincidence,pytest-datadir))
 
