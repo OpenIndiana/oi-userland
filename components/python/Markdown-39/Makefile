@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/Markdown markdown
+#   $WS_TOOLS/python-integrate-project -d python/Markdown-39 markdown
 #
 
 BUILD_STYLE = pyproject
@@ -19,20 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown
-HUMAN_VERSION =			3.10
+HUMAN_VERSION =			3.9
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python implementation of John Gruber's Markdown.
 COMPONENT_PROJECT_URL =		https://Python-Markdown.github.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:37062d4f2aa4b2b6b32aefb80faa300f82cc790cb949a35b8caede34f2b68c0e
+	sha256:d2900fe1782bd33bdbbd56859defef70c2e78fc46668f8eb9df3128138f2cb6a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
-# Python 3.9 is not supported by Markdown >= 3.10
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# Markdown >= 3.10 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytidylib

@@ -1,0 +1,25 @@
+We do not need to check coverage for this project.
+
+--- markdown-3.9/tox.ini.orig
++++ markdown-3.9/tox.ini
+@@ -7,9 +7,7 @@
+ deps = pytidylib
+ allowlist_externals = coverage
+ commands =
+-    coverage run --source=markdown -m unittest discover {toxinidir}/tests
+-    coverage xml
+-    coverage report --show-missing
++    python -m unittest discover {toxinidir}/tests
+ 
+ [testenv:pygments]
+ # Run tests with pygments installed (override deps only).
+--- markdown-3.9/pyproject.toml.orig
++++ markdown-3.9/pyproject.toml
+@@ -49,7 +49,6 @@
+ 
+ [project.optional-dependencies]
+ testing = [
+-    'coverage',
+     'pyyaml'
+ ]
+ docs = [
