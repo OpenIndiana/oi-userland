@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project rapidfuzz
+#   $WS_TOOLS/python-integrate-project -d python/rapidfuzz-39 rapidfuzz
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rapidfuzz
-HUMAN_VERSION =			3.14.3
+HUMAN_VERSION =			3.13.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		rapid fuzzy string matching
 COMPONENT_PROJECT_URL =		https://github.com/rapidfuzz/RapidFuzz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2491937177868bc4b1e469087601d53f925e8d270ccc21e07404b4b5814b7b5f
+	sha256:d2eaf3839e52cbcc0accbe9817a67b4b0fcf70aaeb229cfddc1c28061f9ce5d8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by RapidFuzz >= 3.14.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+COMPONENT_VERSION =		3.14.1
+
+# RapidFuzz >= 3.14.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
