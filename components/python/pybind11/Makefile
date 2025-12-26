@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pybind11
 HUMAN_VERSION =			3.0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Seamless operability between C++11 and Python
 COMPONENT_PROJECT_URL =		https://github.com/pybind/pybind11
 COMPONENT_ARCHIVE_HASH =	\
@@ -34,5 +35,5 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/scikit-build-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/scikit-build-core
+REQUIRED_PACKAGES.python += runtime/python
