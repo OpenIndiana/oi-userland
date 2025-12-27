@@ -1,5 +1,6 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0] $(@D)/tests> python -m coverage run -m pytest -v
+$(PYTHON_DIR)/vendor-packages/setuptools_scm/_integration/version_inference.py:51: UserWarning: version of pytest-xprocess already set
+  warnings.warn(self.message)
+py$(PYV): commands[0] $(@D)/tests> python -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -61,21 +62,5 @@ test_startup_timeout.py::test_timeout_raise_exception[s3] PASSED
 
 ======== 51 passed ========
 pytest-xprocess reminder::Be sure to terminate the started process by running 'pytest --xkill' if you have not explicitly done so in your fixture with 'xprocess.getinfo(<process_name>).terminate()'.
-py$(PYV): commands[1] $(@D)/tests> python -m coverage report '--omit=*/.tox/*,*/test_functional_work_flow.py' --fail-under=90
-Name                                                                                                                                                Stmts   Miss  Cover
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/__init__.py              5      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/pytest_xprocess.py      67     12    82%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/xprocess/xprocess.py            226     19    92%
-conftest.py                                                                                                                                            19      0   100%
-test_callback.py                                                                                                                                       36      0   100%
-test_functional_workflow.py                                                                                                                            10      0   100%
-test_interruption_clean_up.py                                                                                                                          17      0   100%
-test_process_initialization.py                                                                                                                        103      0   100%
-test_process_termination.py                                                                                                                            65      2    97%
-test_resource_cleanup.py                                                                                                                                6      0   100%
-test_startup_timeout.py                                                                                                                                28      0   100%
------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                 582     33    94%
   py$(PYV): OK
   congratulations :)
