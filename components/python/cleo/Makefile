@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cleo
 HUMAN_VERSION =			2.1.0
-COMPONENT_SUMMARY =		cleo - Cleo allows you to create beautiful and testable command-line interfaces.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Cleo allows you to create beautiful and testable command-line interfaces.
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/cleo
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/3c/30/f7960ed7041b158301c46774f87620352d50a9028d111b4211187af13783/cleo-2.1.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:0b2c880b5d13660a7ea651001fb4acb527696c01f15c9ee650f377aa543fd523
 COMPONENT_LICENSE =		MIT
@@ -33,8 +32,13 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += dev
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/crashtest
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/rapidfuzz
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/crashtest
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += library/python/rapidfuzz
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
