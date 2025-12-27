@@ -14,12 +14,13 @@
 #   $WS_TOOLS/python-integrate-project StrEnum
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		StrEnum
 HUMAN_VERSION =			0.4.15
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		An Enum that inherits from str.
 COMPONENT_PROJECT_URL =		https://github.com/irgeek/StrEnum
 COMPONENT_ARCHIVE_URL =		\
@@ -38,8 +39,6 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_EXTRAS += test
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/pylint
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-black
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
