@@ -1203,10 +1203,25 @@ COMPONENT_BUILD_ENV += CARGO_HOME="$(CARGO_HOME)"
 COMPONENT_INSTALL_ENV += CARGO_HOME="$(CARGO_HOME)"
 COMPONENT_TEST_ENV += CARGO_HOME="$(CARGO_HOME)"
 
-# Pkg-config paths
-PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
+
+#
+# Pkg-config directories and paths
+#
+
+# Directories for architecture specific modules
+PKG_CONFIG_DIR.32 = $(USRLIBDIR.32)/pkgconfig
+PKG_CONFIG_DIR.64 = $(USRLIBDIR.64)/pkgconfig
+PROTOPKGCONFIGDIR.32 = $(PROTO_DIR)$(PKG_CONFIG_DIR.32)
+PROTOPKGCONFIGDIR.64 = $(PROTO_DIR)$(PKG_CONFIG_DIR.64)
+# Directory for non-architecture specific modules
+PKG_CONFIG_SHAREDIR = $(USRSHAREDIR)/pkgconfig
+PROTOPKGCONFIGSHAREDIR = $(PROTO_DIR)$(PKG_CONFIG_SHAREDIR)
+
+# Additional pkg-config search paths
+PKG_CONFIG_PATH.32 = $(PKG_CONFIG_DIR.32)
+PKG_CONFIG_PATH.64 = $(PKG_CONFIG_DIR.64)
 PKG_CONFIG_PATH = $(subst $(space),:,$(strip $(PKG_CONFIG_PATH.prepend))):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
+
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
