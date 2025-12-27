@@ -11,21 +11,31 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pytest-benchmark
+#   $WS_TOOLS/python-integrate-project -d python/pytest-benchmark pytest_benchmark
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		pytest-benchmark
-HUMAN_VERSION =			5.1.0
+COMPONENT_NAME =		pytest_benchmark
+HUMAN_VERSION =			5.2.3
 COMPONENT_SUMMARY =		A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
-COMPONENT_PROJECT_URL =		https://github.com/ionelmc/pytest-benchmark
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ea661cdc292e8231f7cd4c10b0319e56a2118e2c09d9f50e1b3d150d2aca105
+	sha256:deb7317998a23c650fd4ff76e1230066a76cb45dcece0aca5607143c619e7779
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# pytest-benchmark --> elasticsearch ==> elastic-transport --> aiohttp --> trustme ==> cryptography --> pytest-benchmark
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -54,10 +64,10 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} benchmark:/,/^$$/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} cProfile/,/^$$/d'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/py-cpuinfo
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/py-cpuinfo
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/elasticsearch
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
