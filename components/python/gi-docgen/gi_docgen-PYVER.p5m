@@ -104,8 +104,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/gidocgen/templates/basic/style.
 file path=usr/lib/python$(PYVER)/vendor-packages/gidocgen/templates/basic/type_func.html
 file path=usr/lib/python$(PYVER)/vendor-packages/gidocgen/templates/basic/vfunc.html
 file path=usr/lib/python$(PYVER)/vendor-packages/gidocgen/utils.py
-file path=usr/share/man/man1/gi-docgen.1
-file path=usr/share/pkgconfig/gi-docgen.pc
+file path=usr/share/man/man1/gi-docgen-$(PYVER).1
+file path=usr/share/pkgconfig/gi-docgen-$(PYVER).pc
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
@@ -119,3 +119,5 @@ depend type=require fmri=pkg:/library/python/packaging-$(PYV)
 depend type=require fmri=pkg:/library/python/pygments-$(PYV)
 depend type=require fmri=pkg:/library/python/tomli-$(PYV)
 depend type=require fmri=pkg:/library/python/typogrify-$(PYV)
+<transform file path=(usr/share/man/man1/)([^/]+)-(3\.\d+)\.1$ -> emit link path=%<1>%<2>.1 target=%<2>-%<3>.1 mediator=python mediator-version=%<3> >
+<transform file path=(usr/share/pkgconfig/)([^/]+)-(3\.\d+)\.pc$ -> emit link path=%<1>%<2>.pc target=%<2>-%<3>.pc mediator=python mediator-version=%<3> >
