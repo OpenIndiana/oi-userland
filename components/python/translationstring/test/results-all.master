@@ -1,22 +1,74 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python setup.py test -q
-running test
-WARNING: Testing via this command is deprecated and will be removed in a future version. Users looking for a generic test entry point independent of test runner are encouraged to use tox.
-running egg_info
-writing translationstring.egg-info/PKG-INFO
-writing dependency_links to translationstring.egg-info/dependency_links.txt
-writing requirements to translationstring.egg-info/requires.txt
-writing top-level names to translationstring.egg-info/top_level.txt
-reading manifest file 'translationstring.egg-info/SOURCES.txt'
-reading manifest template 'MANIFEST.in'
-no previously-included directories found matching 'docs/_build'
-adding license file 'LICENSE.txt'
-writing manifest file 'translationstring.egg-info/SOURCES.txt'
-running build_ext
-...............................................................
-----------------------------------------------------------------------
-Ran 63 tests
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 63 items
 
-OK
+translationstring/tests/test__init__.py::TestTranslationString::test___getstate__ PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test___reduce__ PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_allargs PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_default_None PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_default_not_None PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_format_extend_existing_mapping PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_format_no_exising_mapping PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_format_required_dict_argument PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_double_dollar_escape PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_missing_mapping PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_missing_not_interpolated PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_passed_translated PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_subsitution_more_than_once PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_interpolate_substitution PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_is_text_type_subclass PASSED
+translationstring/tests/test__init__.py::TestTranslationString::test_msgid_is_translation_string PASSED
+translationstring/tests/test__init__.py::TestTranslationStringFactory::test_allargs PASSED
+translationstring/tests/test__init__.py::TestTranslationStringFactory::test_msgid_is_translation_string_override_domain PASSED
+translationstring/tests/test__init__.py::TestTranslationStringFactory::test_msgid_is_translation_string_override_kwarg PASSED
+translationstring/tests/test__init__.py::TestTranslationStringFactory::test_msgid_is_translation_string_update_mapping PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_chameleon_default_marker_returned PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_nonstring PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_not_none_not_string PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_text_type_translator_is_None PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_text_type_translator_is_not_None PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_translationstring_translator_is_None PASSED
+translationstring/tests/test__init__.py::TestChameleonTranslate::test_msgid_translationstring_translator_is_not_None PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_policy_returns_msgid PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_policy_returns_translation PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_translate_normal_string_with_domain PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_translate_normal_string_with_mapping PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_translate_normal_string_with_no_domain PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_translations_None_interpolation_not_required PASSED
+translationstring/tests/test__init__.py::TestTranslator::test_translations_None_interpolation_required PASSED
+translationstring/tests/test__init__.py::TestPluralizer::test_policy_returns_translated PASSED
+translationstring/tests/test__init__.py::TestPluralizer::test_translations_None_interpolation_not_required PASSED
+translationstring/tests/test__init__.py::TestPluralizer::test_translations_None_interpolation_required PASSED
+translationstring/tests/test__init__.py::Test_ugettext_policy::test_it PASSED
+translationstring/tests/test__init__.py::Test_ugettext_policy::test_msgctxt PASSED
+translationstring/tests/test__init__.py::Test_ugettext_policy::test_msgctxt_no_translation_found PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_it_translations_has_no_dugettext PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_it_use_default_domain PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_it_use_explicit_domain PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_it_use_translations_domain PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_it_use_tstring_domain PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_msgctxt_from_tstring PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_msgctxt_no_translation_found PASSED
+translationstring/tests/test__init__.py::Test_dugettext_policy::test_msgctxt_override PASSED
+translationstring/tests/test__init__.py::Test_ungettext_policy::test_it PASSED
+translationstring/tests/test__init__.py::Test_ungettext_policy::test_msgctxt PASSED
+translationstring/tests/test__init__.py::Test_ungettext_policy::test_msgctxt_no_translation PASSED
+translationstring/tests/test__init__.py::Test_dungettext_policy::test_it_translations_has_no_dungettext PASSED
+translationstring/tests/test__init__.py::Test_dungettext_policy::test_it_use_default_domain PASSED
+translationstring/tests/test__init__.py::Test_dungettext_policy::test_it_use_passed_domain PASSED
+translationstring/tests/test__init__.py::Test_dungettext_policy::test_it_use_translation_domain PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_dugettext_policy PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_ugettext_policy PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_with_interpolation PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_with_interpolation_in_translate PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_with_interpolation_overridden_in_translate PASSED
+translationstring/tests/test_integration.py::TranslatorIntegrationTests::test_translator_with_interpolation_partially_overridden_in_translate PASSED
+translationstring/tests/test_integration.py::PluralizerIntegrationTests::test_pluralizer_dungettext_policy PASSED
+translationstring/tests/test_integration.py::PluralizerIntegrationTests::test_pluralizer_ungettext_policy PASSED
+
+======== 63 passed ========
   py$(PYV): OK
   congratulations :)
