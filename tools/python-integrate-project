@@ -451,7 +451,7 @@ for v in $PYTHON_VERSIONS ; do
 		printf 'WARNING: Missing packaging for Python %s (bootstrap?)\n' "$v" >&2
 		continue
 	fi
-	if ! python$v -c "import sys; from packaging.specifiers import SpecifierSet; sys.exit(0 if '$v' in SpecifierSet('$REQUIRES_PYTHON') else 1)" ; then
+	if ! python$v -c "import platform; import sys; from packaging.specifiers import SpecifierSet; sys.exit(0 if platform.python_version() in SpecifierSet('$REQUIRES_PYTHON') else 1)" ; then
 		printf 'ERROR: version %s does not support Python %s\n' "$VERSION" "$v" >&2
 	fi
 done
