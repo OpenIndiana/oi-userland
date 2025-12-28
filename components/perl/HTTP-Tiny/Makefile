@@ -19,27 +19,26 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTTP-Tiny
-HUMAN_VERSION =			0.090
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.092
 COMPONENT_SUMMARY =		A small, simple, correct HTTP/1.1 client
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:faaf60b3f9baf4b8f703632aba223648aaa58b0107e64ca515ed00247978d83e
+	sha256:aeb59ac39d2f7bcbc6d09dd94ff5621e03d8a95abb12b49b392ccd35088c8ac1
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/http-cookiejar
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ssl
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/time-local
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/http-cookiejar
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/net-ssleay
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/time-local
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
