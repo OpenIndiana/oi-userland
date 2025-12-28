@@ -1,12 +1,12 @@
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
-benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-OpenSSL: OpenSSL 3.5.2 5 Aug 2025
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+OpenSSL: OpenSSL 3.5.4 30 Sep 2025
 FIPS Enabled: False
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 3542 items
+collecting ... collected 3568 items
 
 tests/bench/test_aead.py::test_chacha20poly1305_encrypt PASSED
 tests/bench/test_aead.py::test_chacha20poly1305_decrypt PASSED
@@ -22,12 +22,31 @@ tests/bench/test_ec_load.py::test_load_ec_public_numbers PASSED
 tests/bench/test_ec_load.py::test_load_ec_private_numbers PASSED
 tests/bench/test_fernet.py::test_fernet_encrypt PASSED
 tests/bench/test_hashes.py::test_sha256 PASSED
+tests/bench/test_hkdf.py::test_hkdf PASSED
 tests/bench/test_hmac.py::test_hmac_sha256 PASSED
 tests/bench/test_x509.py::test_object_identifier_constructor PASSED
 tests/bench/test_x509.py::test_aki_public_bytes PASSED
 tests/bench/test_x509.py::test_load_der_certificate PASSED
 tests/bench/test_x509.py::test_load_pem_certificate PASSED
 tests/bench/test_x509.py::test_verify_docs_python_org SKIPPED (no 'x...)
+tests/hazmat/asn1/test_api.py::TestClassAPI::test_fail_unsupported_field PASSED
+tests/hazmat/asn1/test_api.py::TestClassAPI::test_fail_init_incorrect_field_name PASSED
+tests/hazmat/asn1/test_api.py::TestClassAPI::test_fail_init_missing_field_name PASSED
+tests/hazmat/asn1/test_api.py::TestClassAPI::test_fail_positional_field_initialization PASSED
+tests/hazmat/asn1/test_api.py::TestClassAPI::test_fail_malformed_root_type PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[0-\x02\x01\x00] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[1-\x02\x01\x01] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[42-\x02\x01*] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[127-\x02\x01\x7f] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[128-\x02\x02\x00\x80] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[255-\x02\x02\x00\xff] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[256-\x02\x02\x01\x00] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[-1-\x02\x01\xff] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[-128-\x02\x01\x80] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeInteger::test_encode_int[-129-\x02\x02\xff\x7f] PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeSequence::test_encode_ok_sequence_single_field PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeSequence::test_encode_ok_sequence_multiple_fields PASSED
+tests/hazmat/asn1/test_encoding.py::TestEncodeSequence::test_encode_ok_nested_sequence PASSED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_backend_exists PASSED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_is_default_backend PASSED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_openssl_version_text PASSED
@@ -523,7 +542,7 @@ tests/hazmat/primitives/test_dh.py::TestDH::test_exchange_algorithm PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_symmetric_key_padding PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_bad_exchange[vector0] PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_bad_exchange[vector1] PASSED
-tests/hazmat/primitives/test_dh.py::TestDH::test_load_256bit_key_from_pkcs8 SKIPPED
+tests/hazmat/primitives/test_dh.py::TestDH::test_load_256bit_key_from_pkcs8 PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector0] SKIPPED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector1] PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector2] PASSED
@@ -767,7 +786,6 @@ tests/hazmat/primitives/test_ec.py::test_ec_public_numbers_repr PASSED
 tests/hazmat/primitives/test_ec.py::test_ec_public_numbers_hash PASSED
 tests/hazmat/primitives/test_ec.py::test_ec_private_numbers_hash PASSED
 tests/hazmat/primitives/test_ec.py::test_ec_key_key_size PASSED
-tests/hazmat/primitives/test_ec.py::test_deprecated_generate_private_key_with_curve_class PASSED
 tests/hazmat/primitives/test_ec.py::TestECWithNumbers::test_with_numbers PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_signing_with_example_keys PASSED
 tests/hazmat/primitives/test_ec.py::TestECDSAVectors::test_generate_vector_curves[curve0] PASSED
@@ -1009,6 +1027,7 @@ tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_type[SHAK
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_size[SHAKE128] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_size[SHAKE256] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSM3::test_sm3 PASSED
+tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_overflow_protection_enormous_digest_size PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_length_limit PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_already_finalized PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_verify PASSED
@@ -1023,6 +1042,8 @@ tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_verify PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_invalid_verify PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_already_finalized PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_unicode_error PASSED
+tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_overflow_protection_enormous_digest_size PASSED
+tests/hazmat/primitives/test_hkdf.py::TestHKDFExpand::test_length_limit PASSED
 tests/hazmat/primitives/test_hkdf_vectors.py::TestHKDFSHA1::test_hkdfsha1 PASSED
 tests/hazmat/primitives/test_hkdf_vectors.py::TestHKDFSHA256::test_hkdfsha256 PASSED
 tests/hazmat/primitives/test_hmac.py::TestHMACCopy::test_copy PASSED
@@ -1717,6 +1738,7 @@ tests/hazmat/primitives/test_rsa.py::TestRSANumbersEquality::test_public_numbers
 tests/hazmat/primitives/test_rsa.py::TestRSANumbersEquality::test_private_numbers_hash PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPrimeFactorRecovery::test_recover_prime_factors PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPrimeFactorRecovery::test_invalid_recover_prime_factors PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSAPartial::test_rsa_partial PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPrivateKeySerialization::test_private_bytes_encrypted_pem[PrivateFormat.TraditionalOpenSSL-s] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPrivateKeySerialization::test_private_bytes_encrypted_pem[PrivateFormat.TraditionalOpenSSL-longerpassword] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPrivateKeySerialization::test_private_bytes_encrypted_pem[PrivateFormat.TraditionalOpenSSL-!*$&(@#$*&($T@%_somesymbols] PASSED
@@ -2325,12 +2347,10 @@ tests/wycheproof/test_aes.py::test_aes_gcm_aead_api[aes_gcm_test.json] SKIPPED
 tests/wycheproof/test_aes.py::test_aes_ccm_aead_api[aes_ccm_test.json] SKIPPED
 tests/wycheproof/test_chacha20poly1305.py::test_chacha20poly1305[chacha20_poly1305_test.json] SKIPPED
 tests/wycheproof/test_cmac.py::test_aes_cmac[aes_cmac_test.json] SKIPPED
-tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_224_sha224_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_224_sha256_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_256_sha256_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_3072_256_sha256_test.json] SKIPPED
-tests/wycheproof/test_ecdh.py::test_ecdh[ecdh_test.json] SKIPPED (no...)
 tests/wycheproof/test_ecdh.py::test_ecdh[ecdh_brainpoolP224r1_test.json] SKIPPED
 tests/wycheproof/test_ecdh.py::test_ecdh[ecdh_brainpoolP256r1_test.json] SKIPPED
 tests/wycheproof/test_ecdh.py::test_ecdh[ecdh_brainpoolP320r1_test.json] SKIPPED
@@ -2351,7 +2371,6 @@ tests/wycheproof/test_ecdh.py::test_ecdh_ecpoint[ecdh_secp224r1_ecpoint_test.jso
 tests/wycheproof/test_ecdh.py::test_ecdh_ecpoint[ecdh_secp256r1_ecpoint_test.json] SKIPPED
 tests/wycheproof/test_ecdh.py::test_ecdh_ecpoint[ecdh_secp384r1_ecpoint_test.json] SKIPPED
 tests/wycheproof/test_ecdh.py::test_ecdh_ecpoint[ecdh_secp521r1_ecpoint_test.json] SKIPPED
-tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_test.json] SKIPPED
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_brainpoolP224r1_sha224_test.json] SKIPPED
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_brainpoolP256r1_sha256_test.json] SKIPPED
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_brainpoolP320r1_sha384_test.json] SKIPPED
@@ -2382,7 +2401,7 @@ tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_secp160r1_sha256_test
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_secp160r2_sha256_test.json] SKIPPED
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_secp192k1_sha256_test.json] SKIPPED
 tests/wycheproof/test_ecdsa.py::test_ecdsa_signature[ecdsa_secp192r1_sha256_test.json] SKIPPED
-tests/wycheproof/test_eddsa.py::test_ed25519_signature[eddsa_test.json] SKIPPED
+tests/wycheproof/test_eddsa.py::test_ed25519_signature[ed25519_test.json] SKIPPED
 tests/wycheproof/test_eddsa.py::test_ed448_signature[ed448_test.json] SKIPPED
 tests/wycheproof/test_hkdf.py::test_hkdf[hkdf_sha1_test.json] SKIPPED
 tests/wycheproof/test_hkdf.py::test_hkdf[hkdf_sha256_test.json] SKIPPED
@@ -2397,14 +2416,13 @@ tests/wycheproof/test_hmac.py::test_hmac[hmac_sha3_256_test.json] SKIPPED
 tests/wycheproof/test_hmac.py::test_hmac[hmac_sha3_384_test.json] SKIPPED
 tests/wycheproof/test_hmac.py::test_hmac[hmac_sha3_512_test.json] SKIPPED
 tests/wycheproof/test_hmac.py::test_hmac[hmac_sha512_test.json] SKIPPED
-tests/wycheproof/test_keywrap.py::test_keywrap_with_padding[kwp_test.json] SKIPPED
-tests/wycheproof/test_keywrap.py::test_keywrap[kw_test.json] SKIPPED
+tests/wycheproof/test_keywrap.py::test_keywrap_with_padding[aes_kwp_test.json] SKIPPED
+tests/wycheproof/test_keywrap.py::test_keywrap[aes_wrap_test.json] SKIPPED
 tests/wycheproof/test_pbkdf2.py::test_pbkdf2[pbkdf2_hmacsha1_test.json] SKIPPED
 tests/wycheproof/test_pbkdf2.py::test_pbkdf2[pbkdf2_hmacsha224_test.json] SKIPPED
 tests/wycheproof/test_pbkdf2.py::test_pbkdf2[pbkdf2_hmacsha256_test.json] SKIPPED
 tests/wycheproof/test_pbkdf2.py::test_pbkdf2[pbkdf2_hmacsha384_test.json] SKIPPED
 tests/wycheproof/test_pbkdf2.py::test_pbkdf2[pbkdf2_hmacsha512_test.json] SKIPPED
-tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_2048_sha224_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_2048_sha256_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_2048_sha384_test.json] SKIPPED
@@ -2422,14 +2440,22 @@ tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_3072_sha
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_3072_sha3_256_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_3072_sha3_384_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_3072_sha3_512_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_4096_sha256_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_4096_sha384_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_4096_sha512_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_4096_sha512_256_test.json] SKIPPED
-tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_sig_gen_misc_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_8192_sha256_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_8192_sha384_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature[rsa_signature_8192_sha512_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_pkcs1_1024_sig_gen_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_pkcs1_1536_sig_gen_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_pkcs1_2048_sig_gen_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_pkcs1_3072_sig_gen_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pkcs1v15_signature_generation[rsa_pkcs1_4096_sig_gen_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha1_mgf1_20_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha256_mgf1_0_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha256_mgf1_32_test.json] SKIPPED
-tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha512_256_mgf1_28_test.json] SKIPPED
+tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha512_224_mgf1_28_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_2048_sha512_256_mgf1_32_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_3072_sha256_mgf1_32_test.json] SKIPPED
 tests/wycheproof/test_rsa.py::test_rsa_pss_signature[rsa_pss_4096_sha256_mgf1_32_test.json] SKIPPED
@@ -3552,4 +3578,4 @@ tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_wrong_subject_alt_name PASSED
 
 =========================== short test summary info ============================
-======== 3371 passed, 171 skipped ========
+======== 3394 passed, 174 skipped ========
