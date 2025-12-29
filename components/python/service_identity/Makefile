@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		service_identity
 HUMAN_VERSION =			24.2.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Service identity verification for pyOpenSSL & cryptography.
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b8683ba13f0d39c6cd5d625d2c5f65421d6d707b013b375c355751557cbe8e09
@@ -28,15 +29,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This optional test dependency is needed to get reproducible test results
+TEST_REQUIRED_PACKAGES.python += library/python/pyopenssl
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/attrs
-PYTHON_REQUIRED_PACKAGES += library/python/cryptography
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/pyasn1
-PYTHON_REQUIRED_PACKAGES += library/python/pyasn1-modules
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/cryptography
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/pyasn1
+REQUIRED_PACKAGES.python += library/python/pyasn1-modules
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
