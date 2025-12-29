@@ -20,21 +20,33 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		trustme
 HUMAN_VERSION =			1.2.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		\#1 quality TLS certs while you wait, for the discerning tester
 COMPONENT_PROJECT_URL =		https://github.com/python-trio/trustme
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/python-trio/trustme/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6528ba2bbc7f2db41f33825c8dd13e3e3eb9d334ba0f909713c8c3139f4ae47f
+	sha256:a668a9c96e2f2c5def167e6065afe799beb94e378203f3773f7ad18d35c9cefe
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS += test-requirements.in
+
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/cryptography
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/idna
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/cryptography
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/idna
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cryptography
+TEST_REQUIRED_PACKAGES.python += library/python/idna
+TEST_REQUIRED_PACKAGES.python += library/python/pyopenssl
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/service-identity
