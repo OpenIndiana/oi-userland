@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -v
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -6,8 +5,8 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
-asyncio: mode=strict, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 87 items
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collecting ... collected 90 items
 
 tests/test_compatibility.py::test_is_double_callable PASSED
 tests/test_compatibility.py::test_double_to_single_signature PASSED
@@ -83,8 +82,11 @@ tests/test_sync.py::test_sync_to_async_overlapping_kwargs PASSED
 tests/test_sync.py::test_nested_task PASSED
 tests/test_sync.py::test_nested_task_later PASSED
 tests/test_sync.py::test_double_nested_task PASSED
+tests/test_sync.py::test_two_nested_tasks_with_asyncio_run PASSED
 tests/test_sync_contextvars.py::test_thread_sensitive_with_context_different PASSED
 tests/test_sync_contextvars.py::test_sync_to_async_contextvars PASSED
+tests/test_sync_contextvars.py::test_sync_to_async_contextvars_with_custom_context PASSED
+tests/test_sync_contextvars.py::test_sync_to_async_contextvars_with_custom_context_and_parallel_tasks PASSED
 tests/test_sync_contextvars.py::test_async_to_sync_contextvars PASSED
 tests/test_testing.py::test_receive_nothing PASSED
 tests/test_testing.py::test_receive_nothing_lazy_loop PASSED
@@ -97,6 +99,6 @@ tests/test_wsgi.py::test_wsgi_stops_iterating_after_content_length_bytes PASSED
 tests/test_wsgi.py::test_wsgi_multiple_start_response PASSED
 tests/test_wsgi.py::test_wsgi_multi_body PASSED
 
-======== 86 passed, 1 xfailed ========
+======== 89 passed, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
