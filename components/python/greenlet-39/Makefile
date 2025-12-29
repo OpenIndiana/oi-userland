@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project greenlet
+#   $WS_TOOLS/python-integrate-project -d python/greenlet-39 greenlet
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		greenlet
-HUMAN_VERSION =			3.3.0
+HUMAN_VERSION =			3.2.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Lightweight in-process concurrent programming
 COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a82bb225a4e9e4d653dd2fb7b8b2d36e4fb25bc0165422a11e48b88e9e6f78fb
+	sha256:0dca0d95ff849f9a364385f36ab49f50065d76964944638be9691e1832e9f86d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by greenlet >= 3.3.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# greenlet >= 3.3.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
