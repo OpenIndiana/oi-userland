@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project elementpath
+#   $WS_TOOLS/python-integrate-project -d python/elementpath-39 elementpath
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		elementpath
-HUMAN_VERSION =			5.1.0
+HUMAN_VERSION =			5.0.4
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/elementpath
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61618f64686ce73cf6f191b17298e2568e9a1763b125fc7f2cb796ad0eacfd1e
+	sha256:85ed93565d6e94aefa160b12f36b12cbe4be6bf9bbde06b80f2c5c94829a25fb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# elementpath --> xmlschema ==> elementpath
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by elementpath >= 5.1.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# elementpath >= 5.1.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
