@@ -1,0 +1,13 @@
+We need to select TCP (6) only in create_tcp_listener() to filter out SCTP.
+
+--- anyio-4.12.0/src/anyio/_core/_sockets.py.orig
++++ anyio-4.12.0/src/anyio/_core/_sockets.py
+@@ -359,7 +359,7 @@
+ 
+     # The set comprehension is here to work around a glibc bug:
+     # https://sourceware.org/bugzilla/show_bug.cgi?id=14969
+-    sockaddrs = sorted({res for res in gai_res if res[1] == SocketKind.SOCK_STREAM})
++    sockaddrs = sorted({res for res in gai_res if res[1] == SocketKind.SOCK_STREAM and res[2] == 6})
+ 
+     # Special case for dual-stack binding on the "any" interface
+     if (
