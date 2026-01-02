@@ -21,18 +21,19 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-frontends
 COMPONENT_VERSION=	1.0.14
-COMPONENT_REVISION=     2
+COMPONENT_REVISION=     3
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		frontends-RELEASE_$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e7839dac1b70b5bb39124615aba8a136f5275d0e78bafd3d52ed76964ffea4a9
-COMPONENT_ARCHIVE_URL=	https://fossies.org/linux/misc/old/$(COMPONENT_ARCHIVE)
+    sha256:fc2269e4c782bf0adcd5df9d61c7e9e7c39108ece37b02965f9fcbacfdf269b1
+COMPONENT_ARCHIVE_URL=	\
+	https://gitlab.com/sane-project/frontends/-/archive/RELEASE_$(subst .,_,$(COMPONENT_VERSION))/$(COMPONENT_ARCHIVE)
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -46,7 +47,6 @@ CONFIGURE_OPTIONS +=	--disable-gtktest
 CONFIGURE_OPTIONS +=	--disable-gimptest
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += image/editor/gimp
 REQUIRED_PACKAGES += image/scanner/xsane/sane-backends
 REQUIRED_PACKAGES += library/desktop/gtk2
 REQUIRED_PACKAGES += library/glib2
