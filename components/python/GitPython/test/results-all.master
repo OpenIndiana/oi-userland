@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
-collecting ... collected 680 items
+collecting ... collected 696 items
 
 test/deprecation/test_basic.py::test_diff_renamed_warns PASSED
 test/deprecation/test_basic.py::test_diff_renamed_file_does_not_warn PASSED
@@ -73,6 +73,20 @@ test/test_blob_filter.py::test_blob_filter[paths1-path1-True] PASSED
 test/test_blob_filter.py::test_blob_filter[paths2-path2-False] PASSED
 test/test_blob_filter.py::test_blob_filter[paths3-path3-True] PASSED
 test/test_clone.py::TestClone::test_checkout_in_non_empty_dir PASSED
+test/test_clone.py::TestClone::test_clone_from_pathlib PASSED
+test/test_clone.py::TestClone::test_clone_from_pathlib_withConfig PASSED
+test/test_clone.py::TestClone::test_clone_from_pathlike PASSED
+test/test_clone.py::TestClone::test_clone_from_safe_options PASSED
+test/test_clone.py::TestClone::test_clone_from_unsafe_options PASSED
+test/test_clone.py::TestClone::test_clone_from_unsafe_options_allowed PASSED
+test/test_clone.py::TestClone::test_clone_from_unsafe_protocol PASSED
+test/test_clone.py::TestClone::test_clone_from_unsafe_protocol_allowed PASSED
+test/test_clone.py::TestClone::test_clone_from_unsafe_protocol_allowed_and_enabled PASSED
+test/test_clone.py::TestClone::test_clone_from_with_path_contains_unicode PASSED
+test/test_clone.py::TestClone::test_clone_safe_options PASSED
+test/test_clone.py::TestClone::test_clone_unsafe_options PASSED
+test/test_clone.py::TestClone::test_clone_unsafe_options_allowed PASSED
+test/test_clone.py::TestClone::test_leaking_password_in_clone_logs SKIPPED
 test/test_commit.py::TestCommit::test_ambiguous_arg_iteration PASSED
 test/test_commit.py::TestCommit::test_bake PASSED
 test/test_commit.py::TestCommit::test_commit_co_authors PASSED
@@ -105,6 +119,7 @@ test/test_config.py::TestBase::test_complex_aliases PASSED
 test/test_config.py::TestBase::test_conditional_includes_from_branch_name PASSED
 test/test_config.py::TestBase::test_conditional_includes_from_branch_name_error PASSED
 test/test_config.py::TestBase::test_conditional_includes_from_git_dir PASSED
+test/test_config.py::TestBase::test_conditional_includes_remote_url PASSED
 test/test_config.py::TestBase::test_config_include PASSED
 test/test_config.py::TestBase::test_config_value_with_trailing_new_line PASSED
 test/test_config.py::TestBase::test_config_with_empty_quotes PASSED
@@ -419,11 +434,14 @@ test/test_index.py::TestIndex::test_compare_write_tree PASSED
 test/test_index.py::TestIndex::test_hook_uses_shell_not_from_cwd_1__False__ PASSED
 test/test_index.py::TestIndex::test_hook_uses_shell_not_from_cwd_2__True__ PASSED
 test/test_index.py::TestIndex::test_index_add_non_normalized_path PASSED
+test/test_index.py::TestIndex::test_index_add_pathlib PASSED
 test/test_index.py::TestIndex::test_index_add_pathlike PASSED
 test/test_index.py::TestIndex::test_index_bare_add PASSED
 test/test_index.py::TestIndex::test_index_file_base PASSED
 test/test_index.py::TestIndex::test_index_file_diffing PASSED
 test/test_index.py::TestIndex::test_index_file_from_tree PASSED
+test/test_index.py::TestIndex::test_index_file_v3 PASSED
+test/test_index.py::TestIndex::test_index_file_v3_with_git_command PASSED
 test/test_index.py::TestIndex::test_index_lock_handling PASSED
 test/test_index.py::TestIndex::test_index_merge_tree PASSED
 test/test_index.py::TestIndex::test_index_mutation PASSED
@@ -441,6 +459,7 @@ test/test_reflog.py::TestRefLog::test_base PASSED
 test/test_reflog.py::TestRefLog::test_reflogentry PASSED
 test/test_refs.py::TestRefs::test_dereference_recursive PASSED
 test/test_refs.py::TestRefs::test_from_path PASSED
+test/test_refs.py::TestRefs::test_from_pathlike PASSED
 test/test_refs.py::TestRefs::test_head_checkout_detached_head PASSED
 test/test_refs.py::TestRefs::test_head_reset PASSED
 test/test_refs.py::TestRefs::test_heads PASSED
@@ -492,18 +511,6 @@ test/test_repo.py::TestRepo::test_blame_real PASSED
 test/test_repo.py::TestRepo::test_clone_command_injection PASSED
 test/test_repo.py::TestRepo::test_clone_from_command_injection PASSED
 test/test_repo.py::TestRepo::test_clone_from_keeps_env PASSED
-test/test_repo.py::TestRepo::test_clone_from_pathlib PASSED
-test/test_repo.py::TestRepo::test_clone_from_pathlib_withConfig PASSED
-test/test_repo.py::TestRepo::test_clone_from_safe_options PASSED
-test/test_repo.py::TestRepo::test_clone_from_unsafe_options PASSED
-test/test_repo.py::TestRepo::test_clone_from_unsafe_options_allowed PASSED
-test/test_repo.py::TestRepo::test_clone_from_unsafe_protocol PASSED
-test/test_repo.py::TestRepo::test_clone_from_unsafe_protocol_allowed PASSED
-test/test_repo.py::TestRepo::test_clone_from_unsafe_protocol_allowed_and_enabled PASSED
-test/test_repo.py::TestRepo::test_clone_from_with_path_contains_unicode PASSED
-test/test_repo.py::TestRepo::test_clone_safe_options PASSED
-test/test_repo.py::TestRepo::test_clone_unsafe_options PASSED
-test/test_repo.py::TestRepo::test_clone_unsafe_options_allowed PASSED
 test/test_repo.py::TestRepo::test_commit_from_revision PASSED
 test/test_repo.py::TestRepo::test_commits PASSED
 test/test_repo.py::TestRepo::test_comparison_and_hash PASSED
@@ -533,8 +540,8 @@ test/test_repo.py::TestRepo::test_is_dirty PASSED
 test/test_repo.py::TestRepo::test_is_dirty_pathspec PASSED
 test/test_repo.py::TestRepo::test_is_dirty_with_bare_repository PASSED
 test/test_repo.py::TestRepo::test_is_dirty_with_path PASSED
+test/test_repo.py::TestRepo::test_is_dirty_with_pathlib_and_pathlike PASSED
 test/test_repo.py::TestRepo::test_is_valid_object PASSED
-test/test_repo.py::TestRepo::test_leaking_password_in_clone_logs SKIPPED
 test/test_repo.py::TestRepo::test_max_chunk_size PASSED
 test/test_repo.py::TestRepo::test_merge_base PASSED
 test/test_repo.py::TestRepo::test_new_should_raise_on_invalid_repo_location PASSED
@@ -545,6 +552,7 @@ test/test_repo.py::TestRepo::test_rebasing PASSED
 test/test_repo.py::TestRepo::test_remote_method PASSED
 test/test_repo.py::TestRepo::test_repo_creation_from_different_paths PASSED
 test/test_repo.py::TestRepo::test_repo_creation_pathlib PASSED
+test/test_repo.py::TestRepo::test_repo_creation_pathlike PASSED
 test/test_repo.py::TestRepo::test_repo_odbtype PASSED
 test/test_repo.py::TestRepo::test_repr PASSED
 test/test_repo.py::TestRepo::test_rev_parse PASSED
@@ -589,6 +597,14 @@ test/test_submodule.py::TestSubmodule::test_to_relative_path_with_super_at_root_
 test/test_submodule.py::TestSubmodule::test_update_clone_multi_options_argument PASSED
 test/test_submodule.py::TestSubmodule::test_update_no_clone_multi_options_argument PASSED
 test/test_submodule.py::TestSubmodule::test_update_submodule_with_relative_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_folder_pathlike_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_folder_string_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_invalid_pathlike_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_invalid_string_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_nested_pathlike_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_nested_string_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_pathlike_path PASSED
+test/test_tree.py::TestTree::test_repo_lookup_string_path PASSED
 test/test_tree.py::TestTree::test_serializable PASSED
 test/test_tree.py::TestTree::test_traverse PASSED
 test/test_tree.py::TestTree::test_tree_modifier_ordering PASSED
@@ -688,16 +704,6 @@ test/test_util.py::TestUtils::test_remove_password_from_command_line PASSED
 test/test_util.py::TestUtils::test_user_id PASSED
 test/test_util.py::TestUtils::test_utctz_to_altz PASSED
 
-=============================== warnings summary ===============================
-test/test_remote.py:44
-  $(@D)/test/test_remote.py:44: PytestCollectionWarning: cannot collect test class 'TestRemoteProgress' because it has a __init__ constructor (from: test/test_remote.py)
-    class TestRemoteProgress(RemoteProgress):
-
-test/test_submodule.py:54
-  $(@D)/test/test_submodule.py:54: PytestCollectionWarning: cannot collect test class 'TestRootProgress' because it has a __init__ constructor (from: test/test_submodule.py)
-    class TestRootProgress(RootUpdateProgress):
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 606 passed, 73 skipped, 1 xfailed, 2 warnings ========
+======== 622 passed, 73 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
