@@ -19,20 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-SQLite
-HUMAN_VERSION =			1.76
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.78
 COMPONENT_SUMMARY =		Self Contained SQLite RDBMS in a DBI Driver
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0a33a7a935be63371071dbe600cfaefa67cd971b67580a917bbf6ebaf723c584
+	sha256:efbad7794bafaa4e7476c07445a33bbfe1040e380baa3395a02635eebe3859d5
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/dbi
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/dbi
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
