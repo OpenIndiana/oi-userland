@@ -15,19 +15,17 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		GitPython
-HUMAN_VERSION =			3.1.45
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.1.46
 COMPONENT_SUMMARY =		GitPython is a Python library used to interact with Git repositories
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/GitPython
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gitpython-developers/GitPython/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67a52b150bf206612fefa478e6e5d5a31a3a379cd346577a386194878b9f8762
+	sha256:51890d1ac8e9a70194696e3746df454ff76dce8c1b75b44d34c8d9660d321e2a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
