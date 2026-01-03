@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Devel-Hide
-HUMAN_VERSION =			0.0015
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.0016
 COMPONENT_SUMMARY =		Forces the unavailability of specified Perl modules (for testing)
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fc8dbeb7f7d75a78ed496b1e0e05cfc99c68acab3a2e92cff155ca5f0fa5df58
+	sha256:7830b4a57f7ec7410620d6c0150185449d7b4c9964c39a7dc397056032c32a08
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -34,7 +33,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
-PERL_REQUIRED_PACKAGES += runtime/perl
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
