@@ -1,0 +1,3462 @@
+This is the miscellaneous changes for SPARC. It's not clear how
+much of this is actually necessary in the long run.
+
+This will need reworking a bit through the rest of jdk17 as there were
+many cleanups to the main patch that need to be restored.
+
+--- a/make/modules/java.desktop/lib/Awt2dLibraries.gmk	Sun Feb 18 11:10:24 2024
++++ b/make/modules/java.desktop/lib/Awt2dLibraries.gmk	Sun Feb 18 11:17:31 2024
+@@ -109,6 +109,10 @@
+ 
+ LIBAWT_CFLAGS += -D__MEDIALIB_OLD_NAMES -D__USE_J2D_NAMES $(X_CFLAGS)
+ 
++ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpu, sparcv9)), true)
++  LIBAWT_ASFLAGS = -P -xarch=v9a
++endif
++
+ LIBAWT_CFLAGS += -DMLIB_NO_LIBSUNMATH
+ 
+ ifeq ($(call isTargetOs, windows), true)
+@@ -148,6 +152,7 @@
+     DISABLED_WARNINGS_clang := logical-op-parentheses extern-initializer \
+         sign-compare format-nonliteral deprecated-non-prototype, \
+     DISABLED_WARNINGS_microsoft := 4244 4267 4996, \
++    ASFLAGS := $(LIBAWT_ASFLAGS), \
+     LDFLAGS := $(LDFLAGS_JDKLIB) $(call SET_SHARED_LIBRARY_ORIGIN), \
+     LDFLAGS_macosx := -L$(INSTALL_LIBRARIES_HERE), \
+     LDFLAGS_windows := -delayload:user32.dll -delayload:gdi32.dll \
+diff -ur jdk-jdk-15-26/src/hotspot/cpu/zero/bytecodeInterpreter_zero.hpp jdk-jdk-15-25/src/hotspot/cpu/zero/bytecodeInterpreter_zero.hpp
+--- jdk-jdk-15-26/src/hotspot/cpu/zero/bytecodeInterpreter_zero.hpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/cpu/zero/bytecodeInterpreter_zero.hpp	   :: 
+@@ -28,7 +28,7 @@
+ 
+ // Platform specific for C++ based Interpreter
+ 
+-#if defined(PPC) || defined(IA64)
++#if defined(PPC) || defined(SPARC) || defined(IA64)
+ #define LOTS_OF_REGS   // Use plenty of registers
+ #else
+ #undef LOTS_OF_REGS    // Loser platforms
+diff -ur jdk-jdk-15-26/src/hotspot/os/posix/os_posix.cpp jdk-jdk-15-25/src/hotspot/os/posix/os_posix.cpp
+--- jdk-jdk-15-26/src/hotspot/os/posix/signals_posix.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/os/posix/signals_posix.cpp	   :: 
+@@ -933,6 +933,21 @@
+ #if defined(IA64) && !defined(AIX)
+     { SIGSEGV, SEGV_PSTKOVF, "SEGV_PSTKOVF", "Paragraph stack overflow" },
+ #endif
++#if defined(__sparc) && defined(SOLARIS)
++// define Solaris Sparc M7 ADI SEGV signals
++#if !defined(SEGV_ACCADI)
++#define SEGV_ACCADI 3
++#endif
++    { SIGSEGV, SEGV_ACCADI,  "SEGV_ACCADI",  "ADI not enabled for mapped object." },
++#if !defined(SEGV_ACCDERR)
++#define SEGV_ACCDERR 4
++#endif
++    { SIGSEGV, SEGV_ACCDERR, "SEGV_ACCDERR", "ADI disrupting exception." },
++#if !defined(SEGV_ACCPERR)
++#define SEGV_ACCPERR 5
++#endif
++    { SIGSEGV, SEGV_ACCPERR, "SEGV_ACCPERR", "ADI precise exception." },
++#endif // defined(__sparc) && defined(SOLARIS)
+     { SIGBUS,  BUS_ADRALN,   "BUS_ADRALN",   "Invalid address alignment." },
+     { SIGBUS,  BUS_ADRERR,   "BUS_ADRERR",   "Nonexistent physical address." },
+     { SIGBUS,  BUS_OBJERR,   "BUS_OBJERR",   "Object-specific hardware error." },
+diff -ur jdk-jdk-15-26/src/hotspot/share/adlc/formssel.cpp jdk-jdk-15-25/src/hotspot/share/adlc/formssel.cpp
+--- jdk-jdk-15-26/src/hotspot/share/adlc/formssel.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/adlc/formssel.cpp	   :: 
+@@ -1059,7 +1059,11 @@
+     const char  *opType   = NULL;
+     while (_matrule->base_operand(position, globals, result, name, opType)) {
+       if ( strcmp(opType,"ConP") == 0 ) {
++#ifdef SPARC
++        reloc_entries += 2; // 1 for sethi + 1 for setlo
++#else
+         ++reloc_entries;
++#endif
+       }
+       ++position;
+     }
+@@ -1093,7 +1097,13 @@
+   // Check for any component being an immediate float or double.
+   Form::DataType data_type = is_chain_of_constant(globals);
+   if( data_type==idealD || data_type==idealF ) {
++#ifdef SPARC
++    // sparc required more relocation entries for floating constants
++    // (expires 9/98)
++    reloc_entries += 6;
++#else
+     reloc_entries++;
++#endif
+   }
+ 
+   return reloc_entries;
+diff -ur jdk-jdk-15-26/src/hotspot/share/adlc/output_c.cpp jdk-jdk-15-25/src/hotspot/share/adlc/output_c.cpp
+--- jdk-jdk-15-26/src/hotspot/share/adlc/output_c.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/adlc/output_c.cpp	   :: 
+@@ -738,7 +748,13 @@
+   if (!_pipeline)
+     /* Do Nothing */;
+ 
+-  else if (_pipeline->_maxcycleused <= 32) {
++  else if (_pipeline->_maxcycleused <=
++#ifdef SPARC
++    64
++#else
++    32
++#endif
++      ) {
+     fprintf(fp_cpp, "Pipeline_Use_Cycle_Mask operator&(const Pipeline_Use_Cycle_Mask &in1, const Pipeline_Use_Cycle_Mask &in2) {\n");
+     fprintf(fp_cpp, "  return Pipeline_Use_Cycle_Mask(in1._mask & in2._mask);\n");
+     fprintf(fp_cpp, "}\n\n");
+diff -ur jdk-jdk-15-26/src/hotspot/share/adlc/output_h.cpp jdk-jdk-15-25/src/hotspot/share/adlc/output_h.cpp
+--- jdk-jdk-15-26/src/hotspot/share/adlc/output_h.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/adlc/output_h.cpp	   :: 
+@@ -741,7 +741,13 @@
+   fprintf(fp_hpp, "// Pipeline_Use_Cycle_Mask Class\n");
+   fprintf(fp_hpp, "class Pipeline_Use_Cycle_Mask {\n");
+ 
+-  if (_pipeline->_maxcycleused <= 32) {
++  if (_pipeline->_maxcycleused <=
++#ifdef SPARC
++    64
++#else
++    32
++#endif
++      ) {
+     fprintf(fp_hpp, "protected:\n");
+     fprintf(fp_hpp, "  %s _mask;\n\n", _pipeline->_maxcycleused <= 32 ? "uint" : "uint64_t" );
+     fprintf(fp_hpp, "public:\n");
+diff -ur jdk-jdk-15-26/src/hotspot/share/compiler/oopMap.cpp jdk-jdk-15-25/src/hotspot/share/compiler/oopMap.cpp
+--- jdk-jdk-15-26/src/hotspot/share/compiler/oopMap.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/compiler/oopMap.cpp	   :: 
+@@ -341,7 +341,8 @@
+         narrowOop *nl = (narrowOop*)loc;
+ #ifndef VM_LITTLE_ENDIAN
+         VMReg vmReg = omv.reg();
+-        if (!vmReg->is_stack()) {
++        // Don't do this on SPARC float registers as they can be individually addressed
++        if (!vmReg->is_stack() SPARC_ONLY(&& !vmReg->is_FloatRegister())) {
+           // compressed oops in registers only take up 4 bytes of an
+           // 8 byte register but they are in the wrong part of the
+           // word so adjust loc to point at the right place.
+--- a/src/hotspot/share/compiler/compilerDefinitions.cpp	Wed Feb  3 18:05:52 2021
++++ b/src/hotspot/share/compiler/compilerDefinitions.cpp	Sun Feb 11 11:04:34 2024
+@@ -393,7 +393,7 @@
+   if (CompilerConfig::is_tiered() && CompilerConfig::is_c2_enabled()) {
+ #ifdef COMPILER2
+     // Some inlining tuning
+-#if defined(X86) || defined(AARCH64) || defined(RISCV64)
++#if defined(SPARC) || defined(X86) || defined(AARCH64) || defined(RISCV64)
+     if (FLAG_IS_DEFAULT(InlineSmallCode)) {
+       FLAG_SET_DEFAULT(InlineSmallCode, 2500);
+     }
+diff -ur jdk-jdk-15-26/src/hotspot/share/gc/g1/g1HeapRegionAttr.hpp jdk-jdk-15-25/src/hotspot/share/gc/g1/g1HeapRegionAttr.hpp
+--- jdk-jdk-15-26/src/hotspot/share/gc/g1/g1HeapRegionAttr.hpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/gc/g1/g1HeapRegionAttr.hpp	   :: 
+@@ -32,6 +32,12 @@
+ // lookups for that information all over the place.
+ struct G1HeapRegionAttr {
+ public:
++  // We use different types to represent the state value depending on platform as
++  // some have issues loading parts of words.
++#ifdef SPARC
++  typedef int32_t region_type_t;
++  typedef uint32_t needs_remset_update_t;
++#else
+ #if defined(_M_ARM64)&& defined(_MSC_VER) && _MSC_VER <= 1927
+   // workaround for MSCV ARM64 bug
+   // https://developercommunity.visualstudio.com/content/problem/1079221/arm64-bad-code-generation-around-signed-char-arith.html
+@@ -40,6 +46,7 @@
+   typedef int8_t region_type_t;
+ #endif
+   typedef uint8_t needs_remset_update_t;
++#endif
+ 
+ private:
+   needs_remset_update_t _needs_remset_update;
+diff -ur jdk-jdk-15-26/src/hotspot/share/interpreter/abstractInterpreter.hpp jdk-jdk-15-25/src/hotspot/share/interpreter/abstractInterpreter.hpp
+--- jdk-jdk-15-26/src/hotspot/share/interpreter/abstractInterpreter.hpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/interpreter/abstractInterpreter.hpp	   :: 
+@@ -230,7 +230,7 @@
+   }
+ 
+   static int expr_offset_in_bytes(int i) {
+-#if !defined(ZERO) && (defined(PPC) || defined(S390))
++#if !defined(ZERO) && (defined(PPC) || defined(S390) || defined(SPARC))
+     return stackElementSize * i + wordSize;  // both point to one word past TOS
+ #else
+     return stackElementSize * i;
+diff -ur jdk-jdk-15-26/src/hotspot/share/jvmci/vmStructs_jvmci.cpp jdk-jdk-15-25/src/hotspot/share/jvmci/vmStructs_jvmci.cpp
+--- jdk-jdk-15-26/src/hotspot/share/jvmci/vmStructs_jvmci.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/jvmci/vmStructs_jvmci.cpp	   :: 
+@@ -772,6 +772,61 @@
+ 
+ #endif
+ 
++
++#ifdef SPARC
++
++#define VM_STRUCTS_CPU(nonstatic_field, static_field, unchecked_nonstatic_field, volatile_nonstatic_field, nonproduct_nonstatic_field, c2_nonstatic_field, unchecked_c1_static_field, unchecked_c2_static_field) \
++  volatile_nonstatic_field(JavaFrameAnchor, _flags, int)
++
++#define VM_INT_CONSTANTS_CPU(declare_constant, declare_preprocessor_constant, declare_c1_constant, declare_c2_constant, declare_c2_preprocessor_constant) \
++  declare_constant(VM_Version::ISA_V9)                  \
++  declare_constant(VM_Version::ISA_POPC)                \
++  declare_constant(VM_Version::ISA_VIS1)                \
++  declare_constant(VM_Version::ISA_VIS2)                \
++  declare_constant(VM_Version::ISA_BLK_INIT)            \
++  declare_constant(VM_Version::ISA_FMAF)                \
++  declare_constant(VM_Version::ISA_VIS3)                \
++  declare_constant(VM_Version::ISA_HPC)                 \
++  declare_constant(VM_Version::ISA_IMA)                 \
++  declare_constant(VM_Version::ISA_AES)                 \
++  declare_constant(VM_Version::ISA_DES)                 \
++  declare_constant(VM_Version::ISA_KASUMI)              \
++  declare_constant(VM_Version::ISA_CAMELLIA)            \
++  declare_constant(VM_Version::ISA_MD5)                 \
++  declare_constant(VM_Version::ISA_SHA1)                \
++  declare_constant(VM_Version::ISA_SHA256)              \
++  declare_constant(VM_Version::ISA_SHA512)              \
++  declare_constant(VM_Version::ISA_MPMUL)               \
++  declare_constant(VM_Version::ISA_MONT)                \
++  declare_constant(VM_Version::ISA_PAUSE)               \
++  declare_constant(VM_Version::ISA_CBCOND)              \
++  declare_constant(VM_Version::ISA_CRC32C)              \
++  declare_constant(VM_Version::ISA_VIS3B)               \
++  declare_constant(VM_Version::ISA_ADI)                 \
++  declare_constant(VM_Version::ISA_SPARC5)              \
++  declare_constant(VM_Version::ISA_MWAIT)               \
++  declare_constant(VM_Version::ISA_XMPMUL)              \
++  declare_constant(VM_Version::ISA_XMONT)               \
++  declare_constant(VM_Version::ISA_PAUSE_NSEC)          \
++  declare_constant(VM_Version::ISA_VAMASK)              \
++  declare_constant(VM_Version::ISA_SPARC6)              \
++  declare_constant(VM_Version::ISA_DICTUNP)             \
++  declare_constant(VM_Version::ISA_FPCMPSHL)            \
++  declare_constant(VM_Version::ISA_RLE)                 \
++  declare_constant(VM_Version::ISA_SHA3)                \
++  declare_constant(VM_Version::ISA_VIS3C)               \
++  declare_constant(VM_Version::ISA_SPARC5B)             \
++  declare_constant(VM_Version::ISA_MME)                 \
++  declare_constant(VM_Version::CPU_FAST_IDIV)           \
++  declare_constant(VM_Version::CPU_FAST_RDPC)           \
++  declare_constant(VM_Version::CPU_FAST_BIS)            \
++  declare_constant(VM_Version::CPU_FAST_LD)             \
++  declare_constant(VM_Version::CPU_FAST_CMOVE)          \
++  declare_constant(VM_Version::CPU_FAST_IND_BR)         \
++  declare_constant(VM_Version::CPU_BLK_ZEROING)
++#endif
++
++
+ /*
+  * Dummy defines for architectures that don't use these.
+  */
+diff -ur jdk-jdk-15-26/src/hotspot/share/memory/arena.hpp jdk-jdk-15-25/src/hotspot/share/memory/arena.hpp
+--- jdk-jdk-15-26/src/hotspot/share/memory/arena.hpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/memory/arena.hpp	   :: 
+@@ -171,6 +171,11 @@
+   void* Amalloc_D(size_t x, AllocFailType alloc_failmode = AllocFailStrategy::EXIT_OOM) {
+     assert( (x&(sizeof(char*)-1)) == 0, "misaligned size" );
+     debug_only(if (UseMallocOnly) return malloc(x);)
++#if defined(SPARC) && !defined(_LP64)
++#define DALIGN_M1 7
++    size_t delta = (((size_t)_hwm + DALIGN_M1) & ~DALIGN_M1) - (size_t)_hwm;
++    x += delta;
++#endif
+     if (!check_for_overflow(x, "Arena::Amalloc_D", alloc_failmode))
+       return NULL;
+     if (_hwm + x > _max) {
+@@ -178,6 +183,9 @@
+     } else {
+       char *old = _hwm;
+       _hwm += x;
++#if defined(SPARC) && !defined(_LP64)
++      old += delta; // align to 8-bytes
++#endif
+       return old;
+     }
+   }
+diff -ur jdk-jdk-15-26/src/hotspot/share/opto/chaitin.cpp jdk-jdk-15-25/src/hotspot/share/opto/chaitin.cpp
+--- jdk-jdk-15-26/src/hotspot/share/opto/chaitin.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/opto/chaitin.cpp	   :: 
+@@ -888,7 +888,11 @@
+           // SPARCV9  2     2     2          2    2         48 (24)     52 (26)
+           // AMD64    1     1     1          1    1         14          15
+           // -----------------------------------------------------
++#if defined(SPARC)
++          lrg.set_reg_pressure(2);  // use for v9 as well
++#else
+           lrg.set_reg_pressure(1);  // normally one value per register
++#endif
+           if( n_type->isa_oop_ptr() ) {
+             lrg._is_oop = 1;
+           }
+@@ -897,7 +901,7 @@
+         case Op_RegD:
+           lrg.set_num_regs(2);
+           // Define platform specific register pressure
+-#if defined(ARM32)
++#if defined(SPARC) || defined(ARM32)
+           lrg.set_reg_pressure(2);
+ #elif defined(IA32)
+           if( ireg == Op_RegL ) {
+@@ -928,7 +932,11 @@
+         case Op_RegFlags:
+         case 0:                 // not an ideal register
+           lrg.set_num_regs(1);
++#ifdef SPARC
++          lrg.set_reg_pressure(2);
++#else
+           lrg.set_reg_pressure(1);
++#endif
+           break;
+         case Op_VecA:
+           assert(Matcher::supports_scalable_vector(), "does not support scalable vector");
+@@ -1547,6 +1555,10 @@
+ 
+     // Check if a color is available and if so pick the color
+     OptoReg::Name reg = choose_color( *lrg, chunk );
++#ifdef SPARC
++    debug_only(lrg->compute_set_mask_size());
++    assert(lrg->num_regs() < 2 || lrg->is_bound() || is_even(reg-1), "allocate all doubles aligned");
++#endif
+ 
+     //---------------
+     // If we fail to color and the AllStack flag is set, trigger
+diff -ur jdk-jdk-15-26/src/hotspot/share/opto/generateOptoStub.cpp jdk-jdk-15-25/src/hotspot/share/opto/generateOptoStub.cpp
+--- jdk-jdk-15-26/src/hotspot/share/opto/generateOptoStub.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/opto/generateOptoStub.cpp	   :: 
+@@ -93,7 +93,14 @@
+                                             thread,
+                                             in_bytes(JavaThread::frame_anchor_offset()) +
+                                             in_bytes(JavaFrameAnchor::last_Java_pc_offset()));
++#if defined(SPARC)
++  Node* adr_flags = basic_plus_adr(top(),
++                                   thread,
++                                   in_bytes(JavaThread::frame_anchor_offset()) +
++                                   in_bytes(JavaFrameAnchor::flags_offset()));
++#endif /* defined(SPARC) */
+ 
++
+   // Drop in the last_Java_sp.  last_Java_fp is not touched.
+   // Always do this after the other "last_Java_frame" fields are set since
+   // as soon as last_Java_sp != nullptr the has_last_Java_frame is true and
+@@ -222,8 +229,11 @@
+ 
+   // Clear last_Java_sp
+   store_to_memory(control(), adr_sp, null(), T_ADDRESS, NoAlias, MemNode::unordered);
+-  // Clear last_Java_pc
++  // Clear last_Java_pc and (optionally)_flags
+   store_to_memory(control(), adr_last_Java_pc, null(), T_ADDRESS, NoAlias, MemNode::unordered);
++#if defined(SPARC)
++  store_to_memory(control(), adr_flags, intcon(0), T_INT, NoAlias, MemNode::unordered);
++#endif /* defined(SPARC) */
+ #if (defined(IA64) && !defined(AIX))
+   Node* adr_last_Java_fp = basic_plus_adr(top(), thread, in_bytes(JavaThread::last_Java_fp_offset()));
+   store_to_memory(control(), adr_last_Java_fp, null(), T_ADDRESS, NoAlias, MemNode::unordered);
+diff -ur jdk-jdk-15-26/src/hotspot/share/opto/output.cpp jdk-jdk-15-25/src/hotspot/share/opto/output.cpp
+--- jdk-jdk-15-26/src/hotspot/share/opto/output.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/opto/output.cpp	   :: 
+@@ -877,6 +877,14 @@
+       array->append(new_loc_value( C->regalloc(), regnum, Location::lng ));
+     }
+ #else //_LP64
++#ifdef SPARC
++    if (t->base() == Type::Long && OptoReg::is_reg(regnum)) {
++      // For SPARC we have to swap high and low words for
++      // long values stored in a single-register (g0-g7).
++      array->append(new_loc_value( C->regalloc(),              regnum   , Location::normal ));
++      array->append(new_loc_value( C->regalloc(), OptoReg::add(regnum,1), Location::normal ));
++    } else
++#endif //SPARC
+     if( t->base() == Type::DoubleBot || t->base() == Type::DoubleCon || t->base() == Type::Long ) {
+       // Repack the double/long as two jints.
+       // The convention the interpreter uses is that the second local
+diff -ur jdk-jdk-15-26/src/hotspot/share/opto/type.cpp jdk-jdk-15-25/src/hotspot/share/opto/type.cpp
+--- jdk-jdk-15-26/src/hotspot/share/opto/type.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/opto/type.cpp	   :: 
+@@ -62,7 +62,15 @@
+   { Bad,             T_ILLEGAL,    "tuple:",        false, Node::NotAMachineReg, relocInfo::none          },  // Tuple
+   { Bad,             T_ARRAY,      "array:",        false, Node::NotAMachineReg, relocInfo::none          },  // Array
+ 
+-#if defined(PPC64)
++#if defined(SPARC)
++  { Bad,             T_ILLEGAL,    "vectormask:",   false, Op_RegVectMask,       relocInfo::none          },  // VectorMask.
++  { Bad,             T_ILLEGAL,    "vectora:",      false, Op_VecA,              relocInfo::none          },  // VectorA.
++  { Bad,             T_ILLEGAL,    "vectors:",      false, 0,                    relocInfo::none          },  // VectorS
++  { Bad,             T_ILLEGAL,    "vectord:",      false, Op_RegD,              relocInfo::none          },  // VectorD
++  { Bad,             T_ILLEGAL,    "vectorx:",      false, 0,                    relocInfo::none          },  // VectorX
++  { Bad,             T_ILLEGAL,    "vectory:",      false, 0,                    relocInfo::none          },  // VectorY
++  { Bad,             T_ILLEGAL,    "vectorz:",      false, 0,                    relocInfo::none          },  // VectorZ
++#elif defined(PPC64)
+   { Bad,             T_ILLEGAL,    "vectormask:",   false, Op_RegVectMask,       relocInfo::none          },  // VectorMask.
+   { Bad,             T_ILLEGAL,    "vectora:",      false, Op_VecA,              relocInfo::none          },  // VectorA.
+   { Bad,             T_ILLEGAL,    "vectors:",      false, 0,                    relocInfo::none          },  // VectorS
+diff -ur jdk-jdk-15-26/src/hotspot/share/runtime/abstract_vm_version.cpp jdk-jdk-15-25/src/hotspot/share/runtime/abstract_vm_version.cpp
+--- jdk-jdk-15-26/src/hotspot/share/runtime/abstract_vm_version.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/runtime/abstract_vm_version.cpp	   :: 
+@@ -184,7 +184,8 @@
+                  AMD64_ONLY("amd64")             \
+                  IA32_ONLY("x86")                \
+                  IA64_ONLY("ia64")               \
+-                 S390_ONLY("s390")               \
++                 S390_ONLY("s390")               \
++                 SPARC_ONLY("sparc")             \
+                  RISCV64_ONLY("riscv64")
+ #endif // !ZERO
+ #endif // !CPU
+diff -ur jdk-jdk-15-26/src/hotspot/share/runtime/deoptimization.cpp jdk-jdk-15-25/src/hotspot/share/runtime/deoptimization.cpp
+--- jdk-jdk-15-26/src/hotspot/share/runtime/deoptimization.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/runtime/deoptimization.cpp	   :: 
+@@ -1217,7 +1217,12 @@
+ #ifdef _LP64
+       jlong res = (jlong)low->get_int();
+ #else
++#ifdef SPARC
++      // For SPARC we have to swap high and low words.
++      jlong res = jlong_from((jint)low->get_int(), (jint)value->get_int());
++#else
+       jlong res = jlong_from((jint)value->get_int(), (jint)low->get_int());
++#endif //SPARC
+ #endif
+       obj->long_at_put(index, res);
+       break;
+@@ -1246,7 +1251,12 @@
+   #ifdef _LP64
+         jlong res = (jlong)low->get_int();
+   #else
++  #ifdef SPARC
++        // For SPARC we have to swap high and low words.
++        jlong res = jlong_from((jint)low->get_int(), (jint)value->get_int());
++  #else
+         jlong res = jlong_from((jint)value->get_int(), (jint)low->get_int());
++  #endif //SPARC
+   #endif
+         obj->int_at_put(index, (jint)*((jint*)&res));
+         obj->int_at_put(++index, (jint)*(((jint*)&res) + 1));
+@@ -1391,7 +1401,12 @@
+ #ifdef _LP64
+         jlong res = (jlong)low->get_int();
+ #else
++#ifdef SPARC
++        // For SPARC we have to swap high and low words.
++        jlong res = jlong_from((jint)low->get_int(), (jint)value->get_int());
++#else
+         jlong res = jlong_from((jint)value->get_int(), (jint)low->get_int());
++#endif //SPARC
+ #endif
+         obj->long_field_put(offset, res);
+         break;
+diff -ur jdk-jdk-15-26/src/hotspot/share/runtime/stackValue.cpp jdk-jdk-15-25/src/hotspot/share/runtime/stackValue.cpp
+--- jdk-jdk-15-26/src/hotspot/share/runtime/stackValue.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/runtime/stackValue.cpp	   :: 
+@@ -41,6 +41,12 @@
+     // Stack or register value
+     Location loc = ((LocationValue *)sv)->location();
+ 
++#ifdef SPARC
++    // %%%%% Callee-save floats will NOT be working on a Sparc until we
++    // handle the case of a 2 floats in a single double register.
++    assert( !(loc.is_register() && loc.type() == Location::float_in_dbl), "Sparc does not handle callee-save floats yet" );
++#endif // SPARC
++
+     // First find address of value
+ 
+     address value_addr = loc.is_register()
+diff -ur jdk-jdk-15-26/src/hotspot/share/runtime/flags/jvmFlagConstraintsCompiler.cpp jdk-jdk-15-25/src/hotspot/share/runtime/flags/jvmFlagConstraintsCompiler.cpp
+--- jdk-jdk-15-26/src/hotspot/share/runtime/flags/jvmFlagConstraintsCompiler.cpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/runtime/flags/jvmFlagConstraintsCompiler.cpp	   :: 
+@@ -105,7 +105,9 @@
+ 
+ JVMFlag::Error AllocatePrefetchInstrConstraintFunc(intx value, bool verbose) {
+   intx max_value = max_intx;
+-#if defined(X86)
++#if defined(SPARC)
++  max_value = 1;
++#elif defined(X86)
+   max_value = 3;
+ #endif
+   if (value < 0 || value > max_value) {
+@@ -321,6 +323,15 @@
+     return JVMFlag::VIOLATES_CONSTRAINT;
+   }
+ 
++#ifdef SPARC
++  if (InteriorEntryAlignment % relocInfo::addr_unit() != 0) {
++    JVMFlag::printError(verbose,
++                        "InteriorEntryAlignment (" INTX_FORMAT ") must be "
++                        "multiple of NOP size\n");
++    return JVMFlag::VIOLATES_CONSTRAINT;
++  }
++#endif
++
+   if (!is_power_of_2(value)) {
+      JVMFlag::printError(verbose,
+                          "InteriorEntryAlignment (" INTX_FORMAT ") must be "
+@@ -329,7 +340,7 @@
+    }
+ 
+   int minimum_alignment = 16;
+-#if defined(X86) && !defined(AMD64)
++#if defined(SPARC) || (defined(X86) && !defined(AMD64))
+   minimum_alignment = 4;
+ #elif defined(S390)
+   minimum_alignment = 2;
+diff -ur jdk-jdk-15-26/src/hotspot/share/utilities/macros.hpp jdk-jdk-15-25/src/hotspot/share/utilities/macros.hpp
+--- jdk-jdk-15-26/src/hotspot/share/utilities/macros.hpp	   :: 
++++ jdk-jdk-15-25/src/hotspot/share/utilities/macros.hpp	   :: 
+@@ -496,6 +496,14 @@
+ #define NOT_S390(code) code
+ #endif
+ 
++#ifdef SPARC
++#define SPARC_ONLY(code) code
++#define NOT_SPARC(code)
++#else
++#define SPARC_ONLY(code)
++#define NOT_SPARC(code) code
++#endif
++
+ #if defined(PPC32) || defined(PPC64)
+ #ifndef PPC
+ #define PPC
+diff -ur jdk-jdk-15-26/src/java.base/share/conf/security/java.security jdk-jdk-15-25/src/java.base/share/conf/security/java.security
+--- jdk-jdk-15-26/src/java.base/share/conf/security/java.security	   :: 
++++ jdk-jdk-15-25/src/java.base/share/conf/security/java.security	   :: 
+@@ -118,6 +118,12 @@
+ #   jdk.security.provider.preferred=AES/GCM/NoPadding:SunJCE, \
+ #         MessageDigest.SHA-256:SUN, Group.HmacSHA2:SunJCE
+ #
++#ifdef solaris-sparc
++# Optional Solaris-SPARC configuration for non-FIPS 140 configurations.
++#   jdk.security.provider.preferred=AES:SunJCE, SHA1:SUN, Group.SHA2:SUN, \
++#   HmacSHA1:SunJCE, Group.HmacSHA2:SunJCE
++#
++#endif
+ #jdk.security.provider.preferred=
+ 
+ 
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libawt/java2d/loops/TransformHelper.c jdk-jdk-15-25/src/java.desktop/share/native/libawt/java2d/loops/TransformHelper.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libawt/java2d/loops/TransformHelper.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libawt/java2d/loops/TransformHelper.c	   :: 
+@@ -693,6 +693,10 @@
+         val += max;           /* range is now [0 -> max] */ \
+     } while (0)
+ 
++#ifdef __sparc
++/* For sparc, floating point multiplies are faster than integer */
++#define BICUBIC_USE_DBL_LUT
++#else
+ /* For x86, integer multiplies are faster than floating point */
+ /* Note that on x86 Linux the choice of best algorithm varies
+  * depending on the compiler optimization and the processor type.
+@@ -702,6 +706,7 @@
+  * build until the (lack of) optimization issues on Linux are resolved.
+  */
+ #define BICUBIC_USE_INT_MATH
++#endif
+ 
+ #ifdef BICUBIC_USE_DBL_CAST
+ 
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConvKernelConvert.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConvKernelConvert.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConvKernelConvert.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConvKernelConvert.c	   :: 
+@@ -61,7 +61,13 @@
+ #include "mlib_ImageConv.h"
+ 
+ /***************************************************************/
++#ifdef __sparc
+ 
++#define CLAMP_S32(dst, src)                                     \
++  dst = (mlib_s32)(src)
++
++#else
++
+ #define CLAMP_S32(dst, src) {                                   \
+   mlib_d64 s0 = (mlib_d64)(src);                                \
+   if (s0 > (mlib_d64)MLIB_S32_MAX) s0 = (mlib_d64)MLIB_S32_MAX; \
+@@ -69,6 +75,8 @@
+   dst = (mlib_s32)s0;                                           \
+ }
+ 
++#endif /* __sparc */
++
+ /***************************************************************/
+ JNIEXPORT
+ mlib_status mlib_ImageConvKernelConvert(mlib_s32       *ikernel,
+@@ -142,10 +150,15 @@
+     }
+ 
+     /* try to round coefficients */
++#ifdef __sparc
++    scale1 = 16;                            /* shift of coefficients is 16 */
++#else
++
+     if (chk_flag == 3)
+       scale1 = 16;                          /* MMX */
+     else
+       scale1 = (type == MLIB_BYTE) ? 8 : 16;
++#endif /* __sparc */
+     norm = (1u << (scale - scale1));
+ 
+     for (i = 0; i < m * n; i++) {
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConvMxN.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConvMxN.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConvMxN.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConvMxN.c	   :: 
+@@ -182,16 +182,26 @@
+           ret = mlib_convMxNnw_u8(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
+           break;
+         case MLIB_SHORT:
++#ifdef __sparc
++          ret = mlib_convMxNnw_s16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
++#else
++
+           if (mlib_ImageConvVersion(m, n, scale, type) == 0)
+             ret = mlib_convMxNnw_s16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
+           else
+             ret = mlib_i_convMxNnw_s16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
++#endif /* __sparc */
+           break;
+         case MLIB_USHORT:
++#ifdef __sparc
++          ret = mlib_convMxNnw_u16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
++#else
++
+           if (mlib_ImageConvVersion(m, n, scale, type) == 0)
+             ret = mlib_convMxNnw_u16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
+           else
+             ret = mlib_i_convMxNnw_u16(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
++#endif /* __sparc */
+           break;
+         case MLIB_INT:
+           ret = mlib_convMxNnw_s32(dst_i, src_i, kernel, m, n, dm, dn, scale, cmask);
+@@ -238,6 +248,12 @@
+                              cmask);
+         break;
+       case MLIB_SHORT:
++#ifdef __sparc
++        ret =
++          mlib_convMxNext_s16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b, scale,
++                              cmask);
++#else
++
+         if (mlib_ImageConvVersion(m, n, scale, type) == 0)
+           ret =
+             mlib_convMxNext_s16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b, scale,
+@@ -246,8 +262,15 @@
+           ret =
+             mlib_i_convMxNext_s16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b,
+                                   scale, cmask);
++#endif /* __sparc */
+         break;
+       case MLIB_USHORT:
++#ifdef __sparc
++        ret =
++          mlib_convMxNext_u16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b, scale,
++                              cmask);
++#else
++
+         if (mlib_ImageConvVersion(m, n, scale, type) == 0)
+           ret =
+             mlib_convMxNext_u16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b, scale,
+@@ -256,6 +279,7 @@
+           ret =
+             mlib_i_convMxNext_u16(dst_e, src_e, kernel, m, n, dx_l, dx_r, dy_t, dy_b,
+                                   scale, cmask);
++#endif /* __sparc */
+         break;
+       case MLIB_INT:
+         ret =
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16ext.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16ext.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16ext.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16ext.c	   :: 
+@@ -179,6 +179,7 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
+ #if IMG_TYPE == 1
+ 
+ /*
+@@ -222,6 +223,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -885,7 +950,7 @@
+ }
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc /* for x86, using integer multiplies is faster */
+ 
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+@@ -1316,4 +1429,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16nw.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16nw.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16nw.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_16nw.c	   :: 
+@@ -163,6 +163,8 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
++
+ #if IMG_TYPE == 1
+ 
+ /* Test for the presence of any "1" bit in bits
+@@ -205,6 +207,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -790,7 +853,7 @@
+ }
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc /* for x86, using integer multiplies is faster */
+ 
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+@@ -1158,3 +1266,6 @@
+ }
+ 
+ /***************************************************************/
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
++/***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8ext.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8ext.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8ext.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8ext.c	   :: 
+@@ -164,6 +164,7 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
+ #if IMG_TYPE == 1
+ 
+ /*
+@@ -207,6 +208,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -870,7 +935,7 @@
+ }
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc /* for x86, using integer multiplies is faster */
+ 
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+@@ -1301,4 +1414,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8nw.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8nw.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8nw.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_8nw.c	   :: 
+@@ -164,6 +164,8 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
++
+ #if IMG_TYPE == 1
+ 
+ /* Test for the presence of any "1" bit in bits
+@@ -206,6 +208,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -791,7 +854,7 @@
+ }
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc /* for x86, using integer multiplies is faster */
+ 
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+@@ -1159,3 +1267,6 @@
+ }
+ 
+ /***************************************************************/
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
++/***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16ext.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16ext.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16ext.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16ext.c	   :: 
+@@ -189,6 +189,7 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
+ #if IMG_TYPE == 1
+ 
+ /*
+@@ -232,6 +233,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -895,6 +960,8 @@
+ }
+ 
+ /***************************************************************/
++#ifndef __sparc /* for x86, using integer multiplies is faster */
++
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+   CLAMP_STORE(res, x)
+@@ -1324,4 +1439,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16nw.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16nw.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16nw.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageConv_u16nw.c	   :: 
+@@ -163,6 +163,8 @@
+   adr_dst = (type *)mlib_ImageGetData(dst)
+ 
+ /***************************************************************/
++#ifndef __sparc
++
+ #if IMG_TYPE == 1
+ 
+ /* Test for the presence of any "1" bit in bits
+@@ -205,6 +207,7 @@
+     dst = (mlib_u16)val
+ 
+ #endif /* IMG_TYPE == 1 */
++#endif /* __sparc */
+ 
+ /***************************************************************/
+ #define MAX_KER   7
+@@ -790,7 +853,7 @@
+ }
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc /* for x86, using integer multiplies is faster */
+ 
+ #define STORE_RES(res, x)                                       \
+   x >>= shift2;                                                 \
+@@ -1158,3 +1266,6 @@
+ }
+ 
+ /***************************************************************/
++#endif /* __sparc ( for x86, using integer multiplies is faster ) */
++
++/***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.c	   :: 
+@@ -1658,7 +1658,7 @@
+   -0.0002439022f,    0.2502439022f,  255.9995119572f,   -0.2495119572f
+ };
+ 
+-/* for x86, using integer multiplies is faster */
++#ifndef __sparc         /* for x86, using integer multiplies is faster */
+ 
+ /***************************************************************/
+ const mlib_s16 mlib_filters_u8_bc[] = {
+@@ -3213,3 +3213,5 @@
+ };
+ 
+ /***************************************************************/
++
++#endif  /* #ifndef __sparc */
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.h jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.h
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.h	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_ImageFilters.h	   :: 
+@@ -48,11 +48,15 @@
+ extern const mlib_f32 mlib_filters_s16f_bc[];
+ extern const mlib_f32 mlib_filters_s16f_bc2[];
+ 
++#ifndef __sparc
++
+ extern const mlib_s16 mlib_filters_u8_bc[];
+ extern const mlib_s16 mlib_filters_u8_bc2[];
+ extern const mlib_s16 mlib_filters_s16_bc[];
+ extern const mlib_s16 mlib_filters_s16_bc2[];
+ 
++#endif /* __sparc */
++
+ #ifdef __cplusplus
+ }
+ #endif /* __cplusplus */
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC.c	   :: 
+@@ -71,8 +71,529 @@
+ #define FILTER_BITS   8
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
++#undef  FILTER_ELEM_BITS
++#define FILTER_ELEM_BITS  4
++
++#ifdef MLIB_USE_FTOI_CLAMPING
++
++#define SAT8(DST)                                               \
++  DST = ((mlib_s32)(val0 - sat) >> 24) ^ 0x80
++
++#else
++
++#define SAT8(DST)                                               \
++  val0 -= sat;                                                  \
++  if (val0 >= MLIB_S32_MAX)                                     \
++    DST = MLIB_U8_MAX;                                          \
++  else if (val0 <= MLIB_S32_MIN)                                \
++    DST = MLIB_U8_MIN;                                          \
++  else                                                          \
++    DST = ((mlib_s32)val0 >> 24) ^ 0x80
++
++#endif /* MLIB_USE_FTOI_CLAMPING */
++
++/***************************************************************/
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  mlib_d64 sat = (mlib_d64) 0x7F800000;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_u8f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_u8f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos;
++    mlib_f32 *fptr;
++    mlib_u8 s0, s1, s2, s3;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    xf0 = fptr[0];
++    xf1 = fptr[1];
++    xf2 = fptr[2];
++    xf3 = fptr[3];
++
++    filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    yf0 = fptr[0];
++    yf1 = fptr[1];
++    yf2 = fptr[2];
++    yf3 = fptr[3];
++
++    xSrc = (X >> MLIB_SHIFT) - 1;
++    ySrc = (Y >> MLIB_SHIFT) - 1;
++
++    srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++    s0 = srcPixelPtr[0];
++    s1 = srcPixelPtr[1];
++    s2 = srcPixelPtr[2];
++    s3 = srcPixelPtr[3];
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr <= (dstLineEnd - 1); dstPixelPtr++) {
++      X += dX;
++      Y += dY;
++
++      c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++            mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++            mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++            mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++            mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++
++      filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      SAT8(dstPixelPtr[0]);
++
++      xSrc = (X >> MLIB_SHIFT) - 1;
++      ySrc = (Y >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[1];
++      s2 = srcPixelPtr[2];
++      s3 = srcPixelPtr[3];
++    }
++
++    c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++          mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++          mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++          mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[1]] * xf1 +
++          mlib_U82D64[srcPixelPtr[2]] * xf2 + mlib_U82D64[srcPixelPtr[3]] * xf3);
++
++    val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++    SAT8(dstPixelPtr[0]);
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  mlib_d64 sat = (mlib_d64) 0x7F800000;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_u8f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_u8f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_u8 s0, s1, s2, s3;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    for (k = 0; k < 2; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[2];
++      s2 = srcPixelPtr[4];
++      s3 = srcPixelPtr[6];
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 2) {
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++              mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++              mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++              mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++              mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT8(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[2];
++        s2 = srcPixelPtr[4];
++        s3 = srcPixelPtr[6];
++      }
++
++      c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++            mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++            mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++            mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[2]] * xf1 +
++            mlib_U82D64[srcPixelPtr[4]] * xf2 + mlib_U82D64[srcPixelPtr[6]] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      SAT8(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  mlib_d64 sat = (mlib_d64) 0x7F800000;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_u8f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_u8f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_u8 s0, s1, s2, s3;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    for (k = 0; k < 3; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[3];
++      s2 = srcPixelPtr[6];
++      s3 = srcPixelPtr[9];
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 3) {
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++              mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++              mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++              mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++              mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT8(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[3];
++        s2 = srcPixelPtr[6];
++        s3 = srcPixelPtr[9];
++      }
++
++      c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++            mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++            mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++            mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[3]] * xf1 +
++            mlib_U82D64[srcPixelPtr[6]] * xf2 + mlib_U82D64[srcPixelPtr[9]] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      SAT8(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  mlib_d64 sat = (mlib_d64) 0x7F800000;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_u8f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_u8f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_u8 s0, s1, s2, s3;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    for (k = 0; k < 4; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[4];
++      s2 = srcPixelPtr[8];
++      s3 = srcPixelPtr[12];
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 4) {
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++              mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++              mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++              mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++              mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT8(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[4];
++        s2 = srcPixelPtr[8];
++        s3 = srcPixelPtr[12];
++      }
++
++      c0 = (mlib_U82D64[s0] * xf0 + mlib_U82D64[s1] * xf1 +
++            mlib_U82D64[s2] * xf2 + mlib_U82D64[s3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c1 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++            mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++            mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (mlib_U82D64[srcPixelPtr[0]] * xf0 + mlib_U82D64[srcPixelPtr[4]] * xf1 +
++            mlib_U82D64[srcPixelPtr[8]] * xf2 + mlib_U82D64[srcPixelPtr[12]] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      SAT8(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++#else       /* for x86, using integer multiplies is faster */
++
+ #define SHIFT_X  12
+ #define ROUND_X  0 /* (1 << (SHIFT_X - 1)) */
+ 
+@@ -573,4 +1106,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for SPARC, using floating-point multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_S16.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_S16.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_S16.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_S16.c	   :: 
+@@ -68,8 +68,536 @@
+ #define FUN_NAME(CHAN)  mlib_ImageAffine_s16_##CHAN##_bc
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
++#undef  FILTER_ELEM_BITS
++#define FILTER_ELEM_BITS  4
++
++#ifdef MLIB_USE_FTOI_CLAMPING
++
++#define SAT16(DST)                                              \
++  DST = ((mlib_s32)val0) >> 16
++
++#else
++
++#define SAT16(DST)                                              \
++  if (val0 >= MLIB_S32_MAX)                                     \
++    DST = MLIB_S16_MAX;                                         \
++  else if (val0 <= MLIB_S32_MIN)                                \
++    DST = MLIB_S16_MIN;                                         \
++  else                                                          \
++    DST = ((mlib_s32)val0) >> 16
++
++#endif /* MLIB_USE_FTOI_CLAMPING */
++
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    xf0 = fptr[0];
++    xf1 = fptr[1];
++    xf2 = fptr[2];
++    xf3 = fptr[3];
++
++    filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    yf0 = fptr[0];
++    yf1 = fptr[1];
++    yf2 = fptr[2];
++    yf3 = fptr[3];
++
++    xSrc = (X >> MLIB_SHIFT) - 1;
++    ySrc = (Y >> MLIB_SHIFT) - 1;
++
++    srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++    s0 = srcPixelPtr[0];
++    s1 = srcPixelPtr[1];
++    s2 = srcPixelPtr[2];
++    s3 = srcPixelPtr[3];
++
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    s4 = srcPixelPtr[0];
++    s5 = srcPixelPtr[1];
++    s6 = srcPixelPtr[2];
++    s7 = srcPixelPtr[3];
++
++    for (; dstPixelPtr <= (dstLineEnd - 1); dstPixelPtr++) {
++
++      X += dX;
++      Y += dY;
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++            srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++            srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++
++      filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      SAT16(dstPixelPtr[0]);
++
++      xSrc = (X >> MLIB_SHIFT) - 1;
++      ySrc = (Y >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[1];
++      s2 = srcPixelPtr[2];
++      s3 = srcPixelPtr[3];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[1];
++      s6 = srcPixelPtr[2];
++      s7 = srcPixelPtr[3];
++    }
++
++    c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++    c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++          srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++          srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++
++    val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++    SAT16(dstPixelPtr[0]);
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    for (k = 0; k < 2; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[2];
++      s2 = srcPixelPtr[4];
++      s3 = srcPixelPtr[6];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[2];
++      s6 = srcPixelPtr[4];
++      s7 = srcPixelPtr[6];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 2) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++              srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++              srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[2];
++        s2 = srcPixelPtr[4];
++        s3 = srcPixelPtr[6];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[2];
++        s6 = srcPixelPtr[4];
++        s7 = srcPixelPtr[6];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++            srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++            srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    for (k = 0; k < 3; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[3];
++      s2 = srcPixelPtr[6];
++      s3 = srcPixelPtr[9];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[3];
++      s6 = srcPixelPtr[6];
++      s7 = srcPixelPtr[9];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 3) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++              srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++              srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[3];
++        s2 = srcPixelPtr[6];
++        s3 = srcPixelPtr[9];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[3];
++        s6 = srcPixelPtr[6];
++        s7 = srcPixelPtr[9];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++            srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++            srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    for (k = 0; k < 4; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[4];
++      s2 = srcPixelPtr[8];
++      s3 = srcPixelPtr[12];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[4];
++      s6 = srcPixelPtr[8];
++      s7 = srcPixelPtr[12];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 4) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++              srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++              srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[4];
++        s2 = srcPixelPtr[8];
++        s3 = srcPixelPtr[12];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[4];
++        s6 = srcPixelPtr[8];
++        s7 = srcPixelPtr[12];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++            srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++            srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++#else       /* for x86, using integer multiplies is faster */
++
+ #define SHIFT_X  15
+ #define ROUND_X  0 /* (1 << (SHIFT_X - 1)) */
+ 
+@@ -590,4 +1118,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for SPARC, using floating-point multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_U16.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_U16.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_U16.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BC_U16.c	   :: 
+@@ -70,8 +70,542 @@
+ #define FILTER_BITS   9
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
++/***************************************************************/
++#undef  FILTER_ELEM_BITS
++#define FILTER_ELEM_BITS  4
++
++/***************************************************************/
++#ifdef MLIB_USE_FTOI_CLAMPING
++
++#define SAT_U16(DST)                                            \
++  DST = ((mlib_s32)(val0 - (mlib_d64)0x7FFF8000) >> 16) ^ 0x8000
++
++#else
++
++#define SAT_U16(DST)                                            \
++  if (val0 >= MLIB_U32_MAX)                                     \
++    DST = MLIB_U16_MAX;                                         \
++  else if (val0 <= MLIB_U32_MIN)                                \
++    DST = MLIB_U16_MIN;                                         \
++  else                                                          \
++    DST = ((mlib_u32)val0) >> 16
++
++#endif /* MLIB_USE_FTOI_CLAMPING */
++
++/***************************************************************/
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    xf0 = fptr[0];
++    xf1 = fptr[1];
++    xf2 = fptr[2];
++    xf3 = fptr[3];
++
++    filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++    fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++    yf0 = fptr[0];
++    yf1 = fptr[1];
++    yf2 = fptr[2];
++    yf3 = fptr[3];
++
++    xSrc = (X >> MLIB_SHIFT) - 1;
++    ySrc = (Y >> MLIB_SHIFT) - 1;
++
++    srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++    s0 = srcPixelPtr[0];
++    s1 = srcPixelPtr[1];
++    s2 = srcPixelPtr[2];
++    s3 = srcPixelPtr[3];
++
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    s4 = srcPixelPtr[0];
++    s5 = srcPixelPtr[1];
++    s6 = srcPixelPtr[2];
++    s7 = srcPixelPtr[3];
++
++    for (; dstPixelPtr <= (dstLineEnd - 1); dstPixelPtr++) {
++
++      X += dX;
++      Y += dY;
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++            srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++            srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++
++      filterpos = (X >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++      filterpos = (Y >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      SAT_U16(dstPixelPtr[0]);
++
++      xSrc = (X >> MLIB_SHIFT) - 1;
++      ySrc = (Y >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + xSrc;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[1];
++      s2 = srcPixelPtr[2];
++      s3 = srcPixelPtr[3];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[1];
++      s6 = srcPixelPtr[2];
++      s7 = srcPixelPtr[3];
++    }
++
++    c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++    c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++          srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++    srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++    c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[1] * xf1 +
++          srcPixelPtr[2] * xf2 + srcPixelPtr[3] * xf3);
++
++    val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++    SAT_U16(dstPixelPtr[0]);
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    for (k = 0; k < 2; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[2];
++      s2 = srcPixelPtr[4];
++      s3 = srcPixelPtr[6];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[2];
++      s6 = srcPixelPtr[4];
++      s7 = srcPixelPtr[6];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 2) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++              srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++              srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT_U16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 2 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[2];
++        s2 = srcPixelPtr[4];
++        s3 = srcPixelPtr[6];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[2];
++        s6 = srcPixelPtr[4];
++        s7 = srcPixelPtr[6];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++            srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[2] * xf1 +
++            srcPixelPtr[4] * xf2 + srcPixelPtr[6] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT_U16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    for (k = 0; k < 3; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[3];
++      s2 = srcPixelPtr[6];
++      s3 = srcPixelPtr[9];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[3];
++      s6 = srcPixelPtr[6];
++      s7 = srcPixelPtr[9];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 3) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++              srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++              srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT_U16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 3 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[3];
++        s2 = srcPixelPtr[6];
++        s3 = srcPixelPtr[9];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[3];
++        s6 = srcPixelPtr[6];
++        s7 = srcPixelPtr[9];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++            srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[3] * xf1 +
++            srcPixelPtr[6] * xf2 + srcPixelPtr[9] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT_U16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BC();
++  DTYPE *dstLineEnd;
++  const mlib_f32 *mlib_filters_table;
++
++  if (filter == MLIB_BICUBIC) {
++    mlib_filters_table = mlib_filters_s16f_bc;
++  }
++  else {
++    mlib_filters_table = mlib_filters_s16f_bc2;
++  }
++
++  for (j = yStart; j <= yFinish; j++) {
++    mlib_d64 xf0, xf1, xf2, xf3;
++    mlib_d64 yf0, yf1, yf2, yf3;
++    mlib_d64 c0, c1, c2, c3, val0;
++    mlib_s32 filterpos, k;
++    mlib_f32 *fptr;
++    mlib_s32 s0, s1, s2, s3;
++    mlib_s32 s4, s5, s6, s7;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    for (k = 0; k < 4; k++) {
++      mlib_s32 X1 = X;
++      mlib_s32 Y1 = Y;
++      DTYPE *dPtr = dstPixelPtr + k;
++
++      filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      xf0 = fptr[0];
++      xf1 = fptr[1];
++      xf2 = fptr[2];
++      xf3 = fptr[3];
++
++      filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++      fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++      yf0 = fptr[0];
++      yf1 = fptr[1];
++      yf2 = fptr[2];
++      yf3 = fptr[3];
++
++      xSrc = (X1 >> MLIB_SHIFT) - 1;
++      ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++      srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++      s0 = srcPixelPtr[0];
++      s1 = srcPixelPtr[4];
++      s2 = srcPixelPtr[8];
++      s3 = srcPixelPtr[12];
++
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      s4 = srcPixelPtr[0];
++      s5 = srcPixelPtr[4];
++      s6 = srcPixelPtr[8];
++      s7 = srcPixelPtr[12];
++
++      for (; dPtr <= (dstLineEnd - 1); dPtr += 4) {
++
++        X1 += dX;
++        Y1 += dY;
++
++        c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++        c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++              srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++              srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++
++        filterpos = (X1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        xf0 = fptr[0];
++        xf1 = fptr[1];
++        xf2 = fptr[2];
++        xf3 = fptr[3];
++
++        val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++
++        filterpos = (Y1 >> FILTER_SHIFT) & FILTER_MASK;
++        fptr = (mlib_f32 *) ((mlib_u8 *) mlib_filters_table + filterpos);
++
++        yf0 = fptr[0];
++        yf1 = fptr[1];
++        yf2 = fptr[2];
++        yf3 = fptr[3];
++
++        SAT_U16(dPtr[0]);
++
++        xSrc = (X1 >> MLIB_SHIFT) - 1;
++        ySrc = (Y1 >> MLIB_SHIFT) - 1;
++
++        srcPixelPtr = ((DTYPE **) lineAddr)[ySrc] + 4 * xSrc + k;
++        s0 = srcPixelPtr[0];
++        s1 = srcPixelPtr[4];
++        s2 = srcPixelPtr[8];
++        s3 = srcPixelPtr[12];
++
++        srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++        s4 = srcPixelPtr[0];
++        s5 = srcPixelPtr[4];
++        s6 = srcPixelPtr[8];
++        s7 = srcPixelPtr[12];
++      }
++
++      c0 = (s0 * xf0 + s1 * xf1 + s2 * xf2 + s3 * xf3);
++      c1 = (s4 * xf0 + s5 * xf1 + s6 * xf2 + s7 * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c2 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++            srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++      srcPixelPtr = (DTYPE *) ((mlib_addr) srcPixelPtr + srcYStride);
++      c3 = (srcPixelPtr[0] * xf0 + srcPixelPtr[4] * xf1 +
++            srcPixelPtr[8] * xf2 + srcPixelPtr[12] * xf3);
++
++      val0 = (c0 * yf0 + c1 * yf1 + c2 * yf2 + c3 * yf3);
++      SAT_U16(dPtr[0]);
++    }
++  }
++
++  return MLIB_SUCCESS;
++}
++
++#else       /* for x86, using integer multiplies is faster */
++
+ #define SHIFT_X  15
+ #define ROUND_X  0 /* (1 << (SHIFT_X - 1)) */
+ 
+@@ -596,4 +1130,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for SPARC, using floating-point multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL.c	   :: 
+@@ -77,8 +77,224 @@
+ #define FUN_NAME(CHAN) mlib_ImageAffine_u8_##CHAN##_bl
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
++/***************************************************************/
++#define GET_POINTERS(ind)                                       \
++  fdx = (FTYPE)(X & MLIB_MASK) * scale;                         \
++  fdy = (FTYPE)(Y & MLIB_MASK) * scale;                         \
++  ySrc = MLIB_POINTER_SHIFT(Y);  Y += dY;                       \
++  xSrc = X >> MLIB_SHIFT;  X += dX;                             \
++  srcPixelPtr = MLIB_POINTER_GET(lineAddr, ySrc) + ind * xSrc;  \
++  srcPixelPtr2 = (DTYPE *)((mlib_u8 *)srcPixelPtr + srcYStride)
++
++/***************************************************************/
++#define COUNT(ind)                                              \
++  pix0_##ind = a00_##ind + fdy * (a10_##ind - a00_##ind);       \
++  pix1_##ind = a01_##ind + fdy * (a11_##ind - a01_##ind);       \
++  res##ind = ROUND(pix0_##ind + fdx * (pix1_##ind - pix0_##ind))
++
++/***************************************************************/
++#define LOAD(ind, ind1, ind2)                                   \
++  a00_##ind = I2F(srcPixelPtr[ind1]);                           \
++  a01_##ind = I2F(srcPixelPtr[ind2]);                           \
++  a10_##ind = I2F(srcPixelPtr2[ind1]);                          \
++  a11_##ind = I2F(srcPixelPtr2[ind2])
++
++/***************************************************************/
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE pix0_0, pix1_0, res0;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    GET_POINTERS(1);
++    LOAD(0, 0, 1);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr++) {
++      COUNT(0);
++      GET_POINTERS(1);
++      LOAD(0, 0, 1);
++      dstPixelPtr[0] = (DTYPE) res0;
++    }
++
++    COUNT(0);
++    dstPixelPtr[0] = (DTYPE) res0;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    GET_POINTERS(2);
++    LOAD(0, 0, 2);
++    LOAD(1, 1, 3);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 2) {
++      COUNT(0);
++      COUNT(1);
++      GET_POINTERS(2);
++      LOAD(0, 0, 2);
++      LOAD(1, 1, 3);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    FTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE a00_2, a01_2, a10_2, a11_2;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    GET_POINTERS(3);
++    LOAD(0, 0, 3);
++    LOAD(1, 1, 4);
++    LOAD(2, 2, 5);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 3) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      GET_POINTERS(3);
++      LOAD(0, 0, 3);
++      LOAD(1, 1, 4);
++      LOAD(2, 2, 5);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    TTYPE a00_2, a01_2, a10_2, a11_2;
++    TTYPE a00_3, a01_3, a10_3, a11_3;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++    FTYPE pix0_3, pix1_3, res3;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    GET_POINTERS(4);
++    LOAD(0, 0, 4);
++    LOAD(1, 1, 5);
++    LOAD(2, 2, 6);
++    LOAD(3, 3, 7);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 4) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      COUNT(3);
++      GET_POINTERS(4);
++      LOAD(0, 0, 4);
++      LOAD(1, 1, 5);
++      LOAD(2, 2, 6);
++      LOAD(3, 3, 7);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++      dstPixelPtr[3] = (DTYPE) res3;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    COUNT(3);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++    dstPixelPtr[3] = (DTYPE) res3;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++#else       /* for x86, using integer multiplies is faster */
++
+ /* for SHORT/USHORT decrease MLIB_SHIFT due to
+  * overflow in multiplies like fdy * (a10 - a00)
+  */
+@@ -325,4 +553,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for SPARC, using floating-point multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_S16.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_S16.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_S16.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_S16.c	   :: 
+@@ -77,9 +77,217 @@
+ #define FUN_NAME(CHAN) mlib_ImageAffine_s16_##CHAN##_bl
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
+ /***************************************************************/
++#define GET_POINTERS(ind)                                       \
++  fdx = (FTYPE)(X & MLIB_MASK) * scale;                         \
++  fdy = (FTYPE)(Y & MLIB_MASK) * scale;                         \
++  ySrc = MLIB_POINTER_SHIFT(Y);  Y += dY;                       \
++  xSrc = X >> MLIB_SHIFT;  X += dX;                             \
++  srcPixelPtr = MLIB_POINTER_GET(lineAddr, ySrc) + ind * xSrc;  \
++  srcPixelPtr2 = (DTYPE *)((mlib_u8 *)srcPixelPtr + srcYStride)
++
++/***************************************************************/
++#define COUNT(ind)                                              \
++  pix0_##ind = a00_##ind + fdy * (a10_##ind - a00_##ind);       \
++  pix1_##ind = a01_##ind + fdy * (a11_##ind - a01_##ind);       \
++  res##ind = ROUND(pix0_##ind + fdx * (pix1_##ind - pix0_##ind))
++
++/***************************************************************/
++#define LOAD(ind, ind1, ind2)                                   \
++  a00_##ind = I2F(srcPixelPtr[ind1]);                           \
++  a01_##ind = I2F(srcPixelPtr[ind2]);                           \
++  a10_##ind = I2F(srcPixelPtr2[ind1]);                          \
++  a11_##ind = I2F(srcPixelPtr2[ind2])
++
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE pix0_0, pix1_0, res0;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    GET_POINTERS(1);
++    LOAD(0, 0, 1);
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr++) {
++      COUNT(0);
++      GET_POINTERS(1);
++      LOAD(0, 0, 1);
++      dstPixelPtr[0] = (DTYPE) res0;
++    }
++
++    COUNT(0);
++    dstPixelPtr[0] = (DTYPE) res0;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    GET_POINTERS(2);
++    LOAD(0, 0, 2);
++    LOAD(1, 1, 3);
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 2) {
++      COUNT(0);
++      COUNT(1);
++      GET_POINTERS(2);
++      LOAD(0, 0, 2);
++      LOAD(1, 1, 3);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    FTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE a00_2, a01_2, a10_2, a11_2;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    GET_POINTERS(3);
++    LOAD(0, 0, 3);
++    LOAD(1, 1, 4);
++    LOAD(2, 2, 5);
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 3) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      GET_POINTERS(3);
++      LOAD(0, 0, 3);
++      LOAD(1, 1, 4);
++      LOAD(2, 2, 5);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    TTYPE a00_2, a01_2, a10_2, a11_2;
++    TTYPE a00_3, a01_3, a10_3, a11_3;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++    FTYPE pix0_3, pix1_3, res3;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    GET_POINTERS(4);
++    LOAD(0, 0, 4);
++    LOAD(1, 1, 5);
++    LOAD(2, 2, 6);
++    LOAD(3, 3, 7);
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 4) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      COUNT(3);
++      GET_POINTERS(4);
++      LOAD(0, 0, 4);
++      LOAD(1, 1, 5);
++      LOAD(2, 2, 6);
++      LOAD(3, 3, 7);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++      dstPixelPtr[3] = (DTYPE) res3;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    COUNT(3);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++    dstPixelPtr[3] = (DTYPE) res3;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++#else       /* for x86, using integer multiplies is faster */
++
++/***************************************************************/
+ /* for SHORT/USHORT decrease MLIB_SHIFT due to
+  * overflow in multiplies like fdy * (a10 - a00)
+  */
+@@ -344,4 +564,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* __sparc ( for SPARC, using floating-point multiplies is faster ) */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_U16.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_U16.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_U16.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageAffine_BL_U16.c	   :: 
+@@ -77,9 +77,226 @@
+ #define FUN_NAME(CHAN) mlib_ImageAffine_u16_##CHAN##_bl
+ 
+ /***************************************************************/
+-/* for x86, using integer multiplies is faster */
++#ifdef __sparc /* for SPARC, using floating-point multiplies is faster */
+ 
+ /***************************************************************/
++#define GET_POINTERS(ind)                                       \
++  fdx = (FTYPE)(X & MLIB_MASK) * scale;                         \
++  fdy = (FTYPE)(Y & MLIB_MASK) * scale;                         \
++  ySrc = MLIB_POINTER_SHIFT(Y);  Y += dY;                       \
++  xSrc = X >> MLIB_SHIFT;  X += dX;                             \
++  srcPixelPtr = MLIB_POINTER_GET(lineAddr, ySrc) + ind * xSrc;  \
++  srcPixelPtr2 = (DTYPE *)((mlib_u8 *)srcPixelPtr + srcYStride)
++
++/***************************************************************/
++#define COUNT(ind)                                              \
++  pix0_##ind = a00_##ind + fdy * (a10_##ind - a00_##ind);       \
++  pix1_##ind = a01_##ind + fdy * (a11_##ind - a01_##ind);       \
++  res##ind = ROUND(pix0_##ind + fdx * (pix1_##ind - pix0_##ind))
++
++/***************************************************************/
++#define LOAD(ind, ind1, ind2)                                   \
++  a00_##ind = I2F(srcPixelPtr[ind1]);                           \
++  a01_##ind = I2F(srcPixelPtr[ind2]);                           \
++  a10_##ind = I2F(srcPixelPtr2[ind1]);                          \
++  a11_##ind = I2F(srcPixelPtr2[ind2])
++
++/***************************************************************/
++mlib_status FUN_NAME(1ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE pix0_0, pix1_0, res0;
++
++    CLIP(1);
++    dstLineEnd = (DTYPE *) dstData + xRight;
++
++    GET_POINTERS(1);
++    LOAD(0, 0, 1);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr++) {
++      COUNT(0);
++      GET_POINTERS(1);
++      LOAD(0, 0, 1);
++      dstPixelPtr[0] = (DTYPE) res0;
++    }
++
++    COUNT(0);
++    dstPixelPtr[0] = (DTYPE) res0;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(2ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++
++    CLIP(2);
++    dstLineEnd = (DTYPE *) dstData + 2 * xRight;
++
++    GET_POINTERS(2);
++    LOAD(0, 0, 2);
++    LOAD(1, 1, 3);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 2) {
++      COUNT(0);
++      COUNT(1);
++      GET_POINTERS(2);
++      LOAD(0, 0, 2);
++      LOAD(1, 1, 3);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(3ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    FTYPE a00_0, a01_0, a10_0, a11_0;
++    FTYPE a00_1, a01_1, a10_1, a11_1;
++    FTYPE a00_2, a01_2, a10_2, a11_2;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++
++    CLIP(3);
++    dstLineEnd = (DTYPE *) dstData + 3 * xRight;
++
++    GET_POINTERS(3);
++    LOAD(0, 0, 3);
++    LOAD(1, 1, 4);
++    LOAD(2, 2, 5);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 3) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      GET_POINTERS(3);
++      LOAD(0, 0, 3);
++      LOAD(1, 1, 4);
++      LOAD(2, 2, 5);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++mlib_status FUN_NAME(4ch)(mlib_affine_param *param)
++{
++  DECLAREVAR_BL();
++  DTYPE *dstLineEnd;
++  DTYPE *srcPixelPtr2;
++  FTYPE scale = (FTYPE) 1.0 / MLIB_PREC;
++
++  for (j = yStart; j <= yFinish; j++) {
++    FTYPE fdx, fdy;
++    TTYPE a00_0, a01_0, a10_0, a11_0;
++    TTYPE a00_1, a01_1, a10_1, a11_1;
++    TTYPE a00_2, a01_2, a10_2, a11_2;
++    TTYPE a00_3, a01_3, a10_3, a11_3;
++    FTYPE pix0_0, pix1_0, res0;
++    FTYPE pix0_1, pix1_1, res1;
++    FTYPE pix0_2, pix1_2, res2;
++    FTYPE pix0_3, pix1_3, res3;
++
++    CLIP(4);
++    dstLineEnd = (DTYPE *) dstData + 4 * xRight;
++
++    GET_POINTERS(4);
++    LOAD(0, 0, 4);
++    LOAD(1, 1, 5);
++    LOAD(2, 2, 6);
++    LOAD(3, 3, 7);
++
++#ifdef __SUNPRO_C
++#pragma pipeloop(0)
++#endif /* __SUNPRO_C */
++    for (; dstPixelPtr < dstLineEnd; dstPixelPtr += 4) {
++      COUNT(0);
++      COUNT(1);
++      COUNT(2);
++      COUNT(3);
++      GET_POINTERS(4);
++      LOAD(0, 0, 4);
++      LOAD(1, 1, 5);
++      LOAD(2, 2, 6);
++      LOAD(3, 3, 7);
++      dstPixelPtr[0] = (DTYPE) res0;
++      dstPixelPtr[1] = (DTYPE) res1;
++      dstPixelPtr[2] = (DTYPE) res2;
++      dstPixelPtr[3] = (DTYPE) res3;
++    }
++
++    COUNT(0);
++    COUNT(1);
++    COUNT(2);
++    COUNT(3);
++    dstPixelPtr[0] = (DTYPE) res0;
++    dstPixelPtr[1] = (DTYPE) res1;
++    dstPixelPtr[2] = (DTYPE) res2;
++    dstPixelPtr[3] = (DTYPE) res3;
++  }
++
++  return MLIB_SUCCESS;
++}
++
++/***************************************************************/
++#else       /* for x86, using integer multiplies is faster */
++
++/***************************************************************/
+ /* for SHORT/USHORT decrease MLIB_SHIFT due to overflow in multiplies like fdy * (a10 - a00) */
+ #undef  MLIB_SHIFT
+ #define MLIB_SHIFT  15
+@@ -346,4 +575,6 @@
+   return MLIB_SUCCESS;
+ }
+ 
++#endif /* #ifdef __sparc */
++
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv.h jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv.h
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv.h	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv.h	   :: 
+@@ -61,7 +61,7 @@
+                                  mlib_s32         scale,
+                                  mlib_s32         cmask);
+ 
+-/* for x86, using integer multiplies is faster */
++#if ! defined ( __sparc ) /* for x86, using integer multiplies is faster */
+ 
+ mlib_status mlib_i_convMxNnw_s16(mlib_image       *dst,
+                                  const mlib_image *src,
+@@ -129,6 +129,8 @@
+                                   mlib_s32         scale,
+                                   mlib_s32         cmask);
+ 
++#endif /* ! defined ( __sparc ) ( for x86, using integer multiplies is faster ) */
++
+ #ifdef __cplusplus
+ }
+ #endif /* __cplusplus */
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConvVersion.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConvVersion.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConvVersion.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConvVersion.c	   :: 
+@@ -51,6 +51,9 @@
+                                mlib_s32 scale,
+                                mlib_type type)
+ {
++#ifdef __sparc
++  return 0;
++#else
+   mlib_d64 dscale = 1.0 / (1 << scale); /* 16 < scale <= 31 */
+ 
+   if (type == MLIB_BYTE) {
+@@ -66,6 +69,7 @@
+   }
+   else
+     return 0;
++#endif /* __sparc */
+ }
+ 
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv_f.c jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv_f.c
+--- jdk-jdk-15-26/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv_f.c	   :: 
++++ jdk-jdk-15-25/src/java.desktop/share/native/libmlib_image/mlib_c_ImageConv_f.c	   :: 
+@@ -66,19 +66,29 @@
+ /***************************************************************/
+ mlib_status mlib_convMxNnw_u8(MLIB_PARAMS_CONV_MN_NW)
+ {
++#ifdef __sparc
++  return mlib_c_convMxNnw_u8(MLIB_CALL_PARAMS_CONV_MN_NW);
++#else
++
+   if (mlib_ImageConvVersion(m, n, scale, MLIB_BYTE) == 0)
+     return mlib_c_convMxNnw_u8(MLIB_CALL_PARAMS_CONV_MN_NW);
+   else
+     return mlib_i_convMxNnw_u8(MLIB_CALL_PARAMS_CONV_MN_NW);
++#endif /* __sparc */
+ }
+ 
+ /***************************************************************/
+ mlib_status mlib_convMxNext_u8(MLIB_PARAMS_CONV_MN_EXT)
+ {
++#ifdef __sparc
++  return mlib_c_convMxNext_u8(MLIB_CALL_PARAMS_CONV_MN_EXT);
++#else
++
+   if (mlib_ImageConvVersion(m, n, scale, MLIB_BYTE) == 0)
+     return mlib_c_convMxNext_u8(MLIB_CALL_PARAMS_CONV_MN_EXT);
+   else
+     return mlib_i_convMxNext_u8(MLIB_CALL_PARAMS_CONV_MN_EXT);
++#endif /* __sparc */
+ }
+ 
+ /***************************************************************/
+diff -ur jdk-jdk-15-26/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java jdk-jdk-15-25/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java
+--- jdk-jdk-15-26/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java	   :: 
++++ jdk-jdk-15-25/src/jdk.hotspot.agent/share/classes/sun/jvm/hotspot/utilities/PlatformInfo.java	   :: 
+@@ -54,7 +54,7 @@
+ 
+   public static boolean knownCPU(String cpu) {
+     final String[] KNOWN =
+-        new String[] {"i386", "x86", "x86_64", "amd64", "ppc64", "ppc64le", "aarch64", "riscv64"};
++        new String[] {"i386", "x86", "x86_64", "amd64", "sparc", "sparcv9", "ppc64", "ppc64le", "aarch64", "riscv64"};
+ 
+     for(String s : KNOWN) {
+       if(s.equals(cpu))
+@@ -81,6 +81,9 @@
+     if (cpu.equals("i386"))
+       return "x86";
+ 
++    if (cpu.equals("sparcv9"))
++      return "sparc";
++
+     if (cpu.equals("x86_64"))
+       return "amd64";
+ 
+diff -ur jdk-jdk-15-26/src/jdk.internal.vm.ci/share/classes/module-info.java jdk-jdk-15-25/src/jdk.internal.vm.ci/share/classes/module-info.java
+--- jdk-jdk-15-26/src/jdk.internal.vm.ci/share/classes/module-info.java	   :: 
++++ jdk-jdk-15-25/src/jdk.internal.vm.ci/share/classes/module-info.java	   :: 
+@@ -39,5 +39,6 @@
+ 
+     provides jdk.vm.ci.hotspot.HotSpotJVMCIBackendFactory with
+         jdk.vm.ci.hotspot.aarch64.AArch64HotSpotJVMCIBackendFactory,
+-        jdk.vm.ci.hotspot.amd64.AMD64HotSpotJVMCIBackendFactory;
++        jdk.vm.ci.hotspot.amd64.AMD64HotSpotJVMCIBackendFactory,
++        jdk.vm.ci.hotspot.sparc.SPARCHotSpotJVMCIBackendFactory;
+ }
+diff -ur jdk-jdk-15-26/src/jdk.internal.vm.ci/share/classes/jdk/vm/ci/hotspot/HotSpotVMConfig.java jdk-jdk-15-25/src/jdk.internal.vm.ci/share/classes/jdk/vm/ci/hotspot/HotSpotVMConfig.java
+--- jdk-jdk-15-26/src/jdk.internal.vm.ci/share/classes/jdk/vm/ci/hotspot/HotSpotVMConfig.java	   :: 
++++ jdk-jdk-15-25/src/jdk.internal.vm.ci/share/classes/jdk/vm/ci/hotspot/HotSpotVMConfig.java	   :: 
+@@ -62,6 +62,8 @@
+             case "x86_64":
+                 return "amd64";
+ 
++            case "sparcv9":
++                return "sparc";
+             default:
+                 return arch;
+         }
+diff -ur jdk-jdk-15-26/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c jdk-jdk-15-25/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c
+--- jdk-jdk-15-26/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c	   :: 
++++ jdk-jdk-15-25/src/jdk.sctp/unix/native/libsctp/SctpChannelImpl.c	   :: 
+@@ -485,6 +485,20 @@
+                 bufp = newBuf;
+                 rv += rvSAVE;
+             }
++#ifdef __sparc
++              else if ((intptr_t)addr & 0x3) {
++                /* the given buffer is not 4 byte aligned */
++                char* newBuf;
++                if ((newBuf = malloc(SCTP_NOTIFICATION_SIZE)) == NULL) {
++                    JNU_ThrowOutOfMemoryError(env, "Out of native heap space.");
++                    return -1;
++                }
++                allocated = JNI_TRUE;
++
++                memcpy(newBuf, addr, rv);
++                bufp = newBuf;
++            }
++#endif
+             snp = (union sctp_notification *) bufp;
+             if (handleNotification(env, fd, resultContainerObj, snp, rv,
+                                    (msg->msg_flags & MSG_EOR),
+diff -ur jdk-jdk-15-26/src/utils/hsdis/hsdis.c jdk-jdk-15-25/src/utils/hsdis/hsdis.c
+--- jdk-jdk-15-26/src/utils/hsdis/hsdis.c	   :: 
++++ jdk-jdk-15-25/src/utils/hsdis/hsdis.c	   :: 
+@@ -484,6 +484,12 @@
+ #ifdef LIBARCH_amd64
+   res = "i386:x86-64";
+ #endif
++#ifdef LIBARCH_sparc
++  res = "sparc:v8plusb";
++#endif
++#ifdef LIBARCH_sparcv9
++  res = "sparc:v9b";
++#endif
+ #if  defined(LIBARCH_ppc64) || defined(LIBARCH_ppc64le)
+   res = "powerpc:common64";
+ #endif
+--- old/make/test/JtregNativeHotspot.gmk	2020-05-20 17:59:33.301561154 -0700
++++ new/make/test/JtregNativeHotspot.gmk	2020-05-20 17:59:32.909553627 -0700
+@@ -852,6 +852,10 @@
+ ################################################################################
+ 
+ # Platform specific setup
++ifeq ($(call And, $(call isTargetOs, solaris) $(call isTargetCpuArch, sparc)), false)
++  BUILD_HOTSPOT_JTREG_EXCLUDE += liboverflow.c exeThreadSignalMask.c
++endif
++
+ ifeq ($(call isTargetOs, linux), true)
+     BUILD_HOTSPOT_JTREG_LIBRARIES_LDFLAGS_libtest-rw := -z noexecstack
+     BUILD_HOTSPOT_JTREG_LIBRARIES_LDFLAGS_libtest-rwx := -z execstack
+--- old/src/java.desktop/share/classes/sun/awt/image/ImagingLib.java	2020-05-20 18:01:43.720065285 -0700
++++ new/src/java.desktop/share/classes/sun/awt/image/ImagingLib.java	2020-05-20 18:01:43.384058832 -0700
+@@ -95,12 +95,15 @@
+                 public Boolean run() {
+                     String arch = System.getProperty("os.arch");
+ 
++                    if (arch == null || !arch.startsWith("sparc")) {
++                        try {
++                            System.loadLibrary("mlib_image");
++                        } catch (UnsatisfiedLinkError e) {
++                            return Boolean.FALSE;
++                        }
++
+-                    try {
+-                        System.loadLibrary("mlib_image");
+-                    } catch (UnsatisfiedLinkError e) {
+-                        return Boolean.FALSE;
+                     }
++                    boolean success =  init();
+-                    boolean success = init();
+                     return Boolean.valueOf(success);
+                 }
+             };

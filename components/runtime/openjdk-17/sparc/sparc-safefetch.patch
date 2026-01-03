@@ -1,0 +1,11 @@
+--- a/src/hotspot/share/runtime/safefetch.hpp	Wed Oct 11 19:18:14 2023
++++ b/src/hotspot/share/runtime/safefetch.hpp	Thu Mar 28 11:15:01 2024
+@@ -34,7 +34,7 @@
+ #ifdef _WIN32
+   // Windows uses Structured Exception Handling
+   #include "safefetch_windows.hpp"
+-#elif defined(ZERO) || defined (_AIX)
++#elif defined(ZERO) || defined (_AIX) || defined(SPARC)
+   // These platforms implement safefetch via Posix sigsetjmp/longjmp.
+   // This is slower than the other methods and uses more thread stack,
+   // but its safe and portable.

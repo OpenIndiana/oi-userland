@@ -1,0 +1,87 @@
+diff -ur a/src/hotspot/share/c1/c1_FrameMap.cpp b/src/hotspot/share/c1/c1_FrameMap.cpp
+--- a/src/hotspot/share/c1/c1_FrameMap.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_FrameMap.cpp	   :: 
+@@ -82,7 +82,7 @@
+     if (opr->is_address()) {
+       LIR_Address* addr = opr->as_address_ptr();
+       assert(addr->disp() == (int)addr->disp(), "out of range value");
+-      out_preserve = MAX2(out_preserve, (intptr_t)addr->disp() / 4);
++      out_preserve = MAX2(out_preserve, (intptr_t)(addr->disp() - STACK_BIAS) / 4);
+     }
+     i += type2size[t];
+   }
+@@ -133,7 +133,7 @@
+     args->append(opr);
+     if (opr->is_address()) {
+       LIR_Address* addr = opr->as_address_ptr();
+-      out_preserve = MAX2(out_preserve, (intptr_t)addr->disp() / 4);
++      out_preserve = MAX2(out_preserve, (intptr_t)(addr->disp() - STACK_BIAS) / 4);
+     }
+     i += type2size[t];
+   }
+@@ -174,7 +174,7 @@
+     LIR_Opr opr = _incoming_arguments->at(i);
+     if (opr->is_address()) {
+       LIR_Address* address = opr->as_address_ptr();
+-      _argument_locations->at_put(java_index, address->disp());
++      _argument_locations->at_put(java_index, address->disp() - STACK_BIAS);
+       _incoming_arguments->args()->at_put(i, LIR_OprFact::stack(java_index, as_BasicType(as_ValueType(address->type()))));
+     }
+     java_index += type2size[opr->type()];
+diff -ur a/src/hotspot/share/jvmci/vmStructs_jvmci.cpp b/src/hotspot/share/jvmci/vmStructs_jvmci.cpp
+--- a/src/hotspot/share/jvmci/vmStructs_jvmci.cpp	   :: 
++++ b/src/hotspot/share/jvmci/vmStructs_jvmci.cpp	   :: 
+@@ -385,6 +385,7 @@
+ #define VM_INT_CONSTANTS(declare_constant, declare_constant_with_value, declare_preprocessor_constant) \
+   declare_preprocessor_constant("ASSERT", DEBUG_ONLY(1) NOT_DEBUG(0))     \
+   declare_preprocessor_constant("FIELDINFO_TAG_SIZE", FIELDINFO_TAG_SIZE) \
++  declare_preprocessor_constant("STACK_BIAS", STACK_BIAS)                 \
+                                                                           \
+   declare_constant(CompLevel_none)                                        \
+   declare_constant(CompLevel_simple)                                      \
+diff -ur a/src/hotspot/share/opto/generateOptoStub.cpp b/src/hotspot/share/opto/generateOptoStub.cpp
+--- a/src/hotspot/share/opto/generateOptoStub.cpp	   :: 
++++ b/src/hotspot/share/opto/generateOptoStub.cpp	   :: 
+@@ -100,7 +100,7 @@
+   // users will look at the other fields.
+   //
+   Node *adr_sp = basic_plus_adr(top(), thread, in_bytes(JavaThread::last_Java_sp_offset()));
+-  Node *last_sp = frameptr();
++  Node *last_sp = basic_plus_adr(top(), frameptr(), (intptr_t) STACK_BIAS);
+   store_to_memory(control(), adr_sp, last_sp, T_ADDRESS, NoAlias, MemNode::unordered);
+ 
+   // Set _thread_in_native
+diff -ur a/src/hotspot/share/runtime/vmStructs.cpp b/src/hotspot/share/runtime/vmStructs.cpp
+--- a/src/hotspot/share/runtime/vmStructs.cpp	   :: 
++++ b/src/hotspot/share/runtime/vmStructs.cpp	   :: 
+@@ -2058,6 +2058,12 @@
+                                                                           \
+   declare_preprocessor_constant("ASSERT", DEBUG_ONLY(1) NOT_DEBUG(0))     \
+                                                                           \
++  /**************/                                                        \
++  /* Stack bias */                                                        \
++  /**************/                                                        \
++                                                                          \
++  declare_preprocessor_constant("STACK_BIAS", STACK_BIAS)                 \
++                                                                          \
+   /****************/                                                      \
+   /* Object sizes */                                                      \
+   /****************/                                                      \
+--- a/src/hotspot/share/utilities/globalDefinitions.hpp	Thu May 28 00:44:10 2020
++++ b/src/hotspot/share/utilities/globalDefinitions.hpp	Wed May 20 19:29:11 2020
+@@ -871,6 +871,15 @@
+ };
+ 
+ 
++#define STACK_BIAS      0
++// V9 Sparc CPU's running in 64 Bit mode use a stack bias of 7ff
++// in order to extend the reach of the stack pointer.
++#if defined(SPARC) && defined(_LP64)
++#undef STACK_BIAS
++#define STACK_BIAS      0x7ff
++#endif
++
++
+ // TosState describes the top-of-stack state before and after the execution of
+ // a bytecode or method. The top-of-stack value may be cached in one or more CPU
+ // registers. The TosState corresponds to the 'machine representation' of this cached

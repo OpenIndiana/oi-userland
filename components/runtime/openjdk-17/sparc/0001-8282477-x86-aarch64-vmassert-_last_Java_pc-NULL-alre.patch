@@ -1,0 +1,313 @@
+From 041924ab32602bf0c77a50dfe33667866c5b6b37 Mon Sep 17 00:00:00 2001
+From: Johannes Bechberger <johannes.bechberger@sap.com>
+Date: Tue, 7 Jun 2022 08:08:06 +0000
+Subject: [PATCH] 8282477: [x86, aarch64] vmassert(_last_Java_pc == NULL,
+ "already walkable"); fails with async profiler
+
+Reviewed-by: mdoerr
+Backport-of: 4b2c82200fdc01de868cf414e40a4d891e753f89
+---
+ src/hotspot/cpu/aarch64/frame_aarch64.cpp     | 16 +++----------
+ .../cpu/aarch64/javaFrameAnchor_aarch64.hpp   |  4 ++--
+ src/hotspot/cpu/arm/javaFrameAnchor_arm.hpp   |  2 +-
+ src/hotspot/cpu/ppc/javaFrameAnchor_ppc.hpp   |  2 +-
+ src/hotspot/cpu/s390/javaFrameAnchor_s390.hpp |  2 +-
+ src/hotspot/cpu/x86/frame_x86.cpp             | 24 ++++---------------
+ src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp   |  3 +--
+ src/hotspot/cpu/zero/javaFrameAnchor_zero.hpp |  2 +-
+ src/hotspot/share/prims/jvmtiExport.cpp       |  2 +-
+ .../share/runtime/interfaceSupport.inline.hpp |  8 +++----
+ src/hotspot/share/runtime/java.cpp            |  2 +-
+ src/hotspot/share/runtime/safepoint.cpp       |  2 +-
+ src/hotspot/share/runtime/thread.cpp          |  2 +-
+ src/hotspot/share/runtime/thread.hpp          |  2 +-
+ 14 files changed, 23 insertions(+), 50 deletions(-)
+
+diff --git a/src/hotspot/cpu/aarch64/frame_aarch64.cpp b/src/hotspot/cpu/aarch64/frame_aarch64.cpp
+index 760eb2467c8..f9299d22006 100644
+--- a/src/hotspot/cpu/aarch64/frame_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/frame_aarch64.cpp
+@@ -350,13 +350,9 @@ frame frame::sender_for_entry_frame(RegisterMap* map) const {
+   assert(jfa->last_Java_sp() > sp(), "must be above this frame on stack");
+   // Since we are walking the stack now this nested anchor is obviously walkable
+   // even if it wasn't when it was stacked.
+-  if (!jfa->walkable()) {
+-    // Capture _last_Java_pc (if needed) and mark anchor walkable.
+-    jfa->capture_last_Java_pc();
+-  }
++  jfa->make_walkable();
+   map->clear();
+   assert(map->include_argument_oops(), "should be set by clear");
+-  vmassert(jfa->last_Java_pc() != NULL, "not walkable");
+   frame fr(jfa->last_Java_sp(), jfa->last_Java_fp(), jfa->last_Java_pc());
+ 
+   return fr;
+@@ -817,20 +813,14 @@ frame::frame(void* sp, void* fp, void* pc) {
+ void frame::pd_ps() {}
+ #endif
+ 
+-void JavaFrameAnchor::make_walkable(JavaThread* thread) {
++void JavaFrameAnchor::make_walkable() {
+   // last frame set?
+   if (last_Java_sp() == NULL) return;
+   // already walkable?
+   if (walkable()) return;
+-  vmassert(Thread::current() == (Thread*)thread, "not current thread");
+   vmassert(last_Java_sp() != NULL, "not called from Java code?");
+   vmassert(last_Java_pc() == NULL, "already walkable");
+-  capture_last_Java_pc();
++  _last_Java_pc = (address)_last_Java_sp[-1];
+   vmassert(walkable(), "something went wrong");
+ }
+ 
+-void JavaFrameAnchor::capture_last_Java_pc() {
+-  vmassert(_last_Java_sp != NULL, "no last frame set");
+-  vmassert(_last_Java_pc == NULL, "already walkable");
+-  _last_Java_pc = (address)_last_Java_sp[-1];
+-}
+diff --git a/src/hotspot/cpu/aarch64/javaFrameAnchor_aarch64.hpp b/src/hotspot/cpu/aarch64/javaFrameAnchor_aarch64.hpp
+index 6ff3c037407..a11bf0dca81 100644
+--- a/src/hotspot/cpu/aarch64/javaFrameAnchor_aarch64.hpp
++++ b/src/hotspot/cpu/aarch64/javaFrameAnchor_aarch64.hpp
+@@ -65,8 +65,8 @@ public:
+   }
+ 
+   bool walkable(void)                            { return _last_Java_sp != NULL && _last_Java_pc != NULL; }
+-  void make_walkable(JavaThread* thread);
+-  void capture_last_Java_pc(void);
++
++  void make_walkable();
+ 
+   intptr_t* last_Java_sp(void) const             { return _last_Java_sp; }
+ 
+diff --git a/src/hotspot/cpu/arm/javaFrameAnchor_arm.hpp b/src/hotspot/cpu/arm/javaFrameAnchor_arm.hpp
+index 85585543f49..6aefc1b0a8c 100644
+--- a/src/hotspot/cpu/arm/javaFrameAnchor_arm.hpp
++++ b/src/hotspot/cpu/arm/javaFrameAnchor_arm.hpp
+@@ -65,7 +65,7 @@ public:
+   // Always walkable
+   bool walkable(void) { return true; }
+   // Never any thing to do since we are always walkable and can find address of return addresses
+-  void make_walkable(JavaThread* thread) { }
++  void make_walkable() { }
+ 
+   intptr_t* last_Java_sp(void) const             { return _last_Java_sp; }
+ 
+diff --git a/src/hotspot/cpu/ppc/javaFrameAnchor_ppc.hpp b/src/hotspot/cpu/ppc/javaFrameAnchor_ppc.hpp
+index a30ea1c175b..d78ba49cd64 100644
+--- a/src/hotspot/cpu/ppc/javaFrameAnchor_ppc.hpp
++++ b/src/hotspot/cpu/ppc/javaFrameAnchor_ppc.hpp
+@@ -67,7 +67,7 @@ public:
+   // Always walkable.
+   bool walkable(void) { return true; }
+   // Never any thing to do since we are always walkable and can find address of return addresses.
+-  void make_walkable(JavaThread* thread) { }
++  void make_walkable() { }
+ 
+   intptr_t* last_Java_sp(void) const  { return _last_Java_sp; }
+ 
+diff --git a/src/hotspot/cpu/s390/javaFrameAnchor_s390.hpp b/src/hotspot/cpu/s390/javaFrameAnchor_s390.hpp
+index 6c17541883d..9f401d89c28 100644
+--- a/src/hotspot/cpu/s390/javaFrameAnchor_s390.hpp
++++ b/src/hotspot/cpu/s390/javaFrameAnchor_s390.hpp
+@@ -72,7 +72,7 @@
+ 
+   // We don't have to flush registers, so the stack is always walkable.
+   inline bool walkable(void) { return true; }
+-  inline void make_walkable(JavaThread* thread) { }
++  inline void make_walkable() { }
+ 
+  public:
+ 
+diff --git a/src/hotspot/cpu/x86/frame_x86.cpp b/src/hotspot/cpu/x86/frame_x86.cpp
+index cc4e33f47e8..3faf6f99db8 100644
+--- a/src/hotspot/cpu/x86/frame_x86.cpp
++++ b/src/hotspot/cpu/x86/frame_x86.cpp
+@@ -344,13 +344,9 @@ frame frame::sender_for_entry_frame(RegisterMap* map) const {
+   assert(jfa->last_Java_sp() > sp(), "must be above this frame on stack");
+   // Since we are walking the stack now this nested anchor is obviously walkable
+   // even if it wasn't when it was stacked.
+-  if (!jfa->walkable()) {
+-    // Capture _last_Java_pc (if needed) and mark anchor walkable.
+-    jfa->capture_last_Java_pc();
+-  }
++  jfa->make_walkable();
+   map->clear();
+   assert(map->include_argument_oops(), "should be set by clear");
+-  vmassert(jfa->last_Java_pc() != NULL, "not walkable");
+   frame fr(jfa->last_Java_sp(), jfa->last_Java_fp(), jfa->last_Java_pc());
+ 
+   return fr;
+@@ -380,13 +376,9 @@ frame frame::sender_for_optimized_entry_frame(RegisterMap* map) const {
+   assert(jfa->last_Java_sp() > sp(), "must be above this frame on stack");
+   // Since we are walking the stack now this nested anchor is obviously walkable
+   // even if it wasn't when it was stacked.
+-  if (!jfa->walkable()) {
+-    // Capture _last_Java_pc (if needed) and mark anchor walkable.
+-    jfa->capture_last_Java_pc();
+-  }
++  jfa->make_walkable();
+   map->clear();
+   assert(map->include_argument_oops(), "should be set by clear");
+-  vmassert(jfa->last_Java_pc() != NULL, "not walkable");
+   frame fr(jfa->last_Java_sp(), jfa->last_Java_fp(), jfa->last_Java_pc());
+ 
+   return fr;
+@@ -724,20 +716,12 @@ frame::frame(void* sp, void* fp, void* pc) {
+ void frame::pd_ps() {}
+ #endif
+ 
+-void JavaFrameAnchor::make_walkable(JavaThread* thread) {
++void JavaFrameAnchor::make_walkable() {
+   // last frame set?
+   if (last_Java_sp() == NULL) return;
+   // already walkable?
+   if (walkable()) return;
+-  vmassert(Thread::current() == (Thread*)thread, "not current thread");
+-  vmassert(last_Java_sp() != NULL, "not called from Java code?");
+   vmassert(last_Java_pc() == NULL, "already walkable");
+-  capture_last_Java_pc();
+-  vmassert(walkable(), "something went wrong");
+-}
+-
+-void JavaFrameAnchor::capture_last_Java_pc() {
+-  vmassert(_last_Java_sp != NULL, "no last frame set");
+-  vmassert(_last_Java_pc == NULL, "already walkable");
+   _last_Java_pc = (address)_last_Java_sp[-1];
++  vmassert(walkable(), "something went wrong");
+ }
+diff --git a/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp b/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp
+index 6fa2b55033b..050e36e9dc4 100644
+--- a/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp
++++ b/src/hotspot/cpu/x86/javaFrameAnchor_x86.hpp
+@@ -63,8 +63,7 @@ public:
+   }
+ 
+   bool walkable(void)                            { return _last_Java_sp != NULL && _last_Java_pc != NULL; }
+-  void make_walkable(JavaThread* thread);
+-  void capture_last_Java_pc(void);
++  void make_walkable();
+ 
+   intptr_t* last_Java_sp(void) const             { return _last_Java_sp; }
+ 
+diff --git a/src/hotspot/cpu/zero/javaFrameAnchor_zero.hpp b/src/hotspot/cpu/zero/javaFrameAnchor_zero.hpp
+index a51e60a5070..cb92f1b97a4 100644
+--- a/src/hotspot/cpu/zero/javaFrameAnchor_zero.hpp
++++ b/src/hotspot/cpu/zero/javaFrameAnchor_zero.hpp
+@@ -73,7 +73,7 @@
+     return true;
+   }
+ 
+-  void make_walkable(JavaThread* thread) {
++  void make_walkable() {
+     // nothing to do
+   }
+ 
+diff --git a/src/hotspot/share/prims/jvmtiExport.cpp b/src/hotspot/share/prims/jvmtiExport.cpp
+index dd0f1885c8b..ceab8da5c49 100644
+--- a/src/hotspot/share/prims/jvmtiExport.cpp
++++ b/src/hotspot/share/prims/jvmtiExport.cpp
+@@ -169,7 +169,7 @@ public:
+     thread->set_active_handles(new_handles);
+ #endif
+     assert(thread == JavaThread::current(), "thread must be current!");
+-    thread->frame_anchor()->make_walkable(thread);
++    thread->frame_anchor()->make_walkable();
+   };
+ 
+   ~JvmtiEventMark() {
+diff --git a/src/hotspot/share/runtime/interfaceSupport.inline.hpp b/src/hotspot/share/runtime/interfaceSupport.inline.hpp
+index 1e345b01caa..7cb6eeff078 100644
+--- a/src/hotspot/share/runtime/interfaceSupport.inline.hpp
++++ b/src/hotspot/share/runtime/interfaceSupport.inline.hpp
+@@ -138,7 +138,7 @@ class ThreadInVMForHandshake : public ThreadStateTransition {
+       _original_state(thread->thread_state()) {
+ 
+     if (thread->has_last_Java_frame()) {
+-      thread->frame_anchor()->make_walkable(thread);
++      thread->frame_anchor()->make_walkable();
+     }
+ 
+     thread->set_thread_state(_thread_in_vm);
+@@ -209,7 +209,7 @@ class ThreadInVMfromNative : public ThreadStateTransition {
+     // we call known native code using this wrapper holding locks.
+     _thread->check_possible_safepoint();
+     // Once we are in native vm expects stack to be walkable
+-    _thread->frame_anchor()->make_walkable(_thread);
++    _thread->frame_anchor()->make_walkable();
+     OrderAccess::storestore(); // Keep thread_state change and make_walkable() separate.
+     _thread->set_thread_state(_thread_in_native);
+   }
+@@ -222,7 +222,7 @@ class ThreadToNativeFromVM : public ThreadStateTransition {
+     // We are leaving the VM at this point and going directly to native code.
+     // Block, if we are in the middle of a safepoint synchronization.
+     assert(!thread->owns_locks(), "must release all locks when leaving VM");
+-    thread->frame_anchor()->make_walkable(thread);
++    thread->frame_anchor()->make_walkable();
+     trans(_thread_in_vm, _thread_in_native);
+     // Check for pending. async. exceptions or suspends.
+     if (_thread->has_special_runtime_exit_condition()) _thread->handle_special_runtime_exit_condition(false);
+@@ -250,7 +250,7 @@ class ThreadBlockInVMPreprocess : public ThreadStateTransition {
+     assert(thread->thread_state() == _thread_in_vm, "coming from wrong thread state");
+     thread->check_possible_safepoint();
+     // Once we are blocked vm expects stack to be walkable
+-    thread->frame_anchor()->make_walkable(thread);
++    thread->frame_anchor()->make_walkable();
+     OrderAccess::storestore(); // Keep thread_state change and make_walkable() separate.
+     thread->set_thread_state(_thread_blocked);
+   }
+diff --git a/src/hotspot/share/runtime/java.cpp b/src/hotspot/share/runtime/java.cpp
+index 820bb5c3505..996bb7dbca1 100644
+--- a/src/hotspot/share/runtime/java.cpp
++++ b/src/hotspot/share/runtime/java.cpp
+@@ -617,7 +617,7 @@ void vm_perform_shutdown_actions() {
+       JavaThread* jt = thread->as_Java_thread();
+       // Must always be walkable or have no last_Java_frame when in
+       // thread_in_native
+-      jt->frame_anchor()->make_walkable(jt);
++      jt->frame_anchor()->make_walkable();
+       jt->set_thread_state(_thread_in_native);
+     }
+   }
+diff --git a/src/hotspot/share/runtime/safepoint.cpp b/src/hotspot/share/runtime/safepoint.cpp
+index 3db6cc8b3ee..3191275884c 100644
+--- a/src/hotspot/share/runtime/safepoint.cpp
++++ b/src/hotspot/share/runtime/safepoint.cpp
+@@ -722,7 +722,7 @@ void SafepointSynchronize::block(JavaThread *thread) {
+   }
+ 
+   JavaThreadState state = thread->thread_state();
+-  thread->frame_anchor()->make_walkable(thread);
++  thread->frame_anchor()->make_walkable();
+ 
+   uint64_t safepoint_id = SafepointSynchronize::safepoint_counter();
+   // Check that we have a valid thread_state at this point
+diff --git a/src/hotspot/share/runtime/thread.cpp b/src/hotspot/share/runtime/thread.cpp
+index 8aed9a450b6..50ecc4d4688 100644
+--- a/src/hotspot/share/runtime/thread.cpp
++++ b/src/hotspot/share/runtime/thread.cpp
+@@ -1676,7 +1676,7 @@ void JavaThread::check_and_handle_async_exceptions() {
+ void JavaThread::handle_special_runtime_exit_condition(bool check_asyncs) {
+ 
+   if (is_obj_deopt_suspend()) {
+-    frame_anchor()->make_walkable(this);
++    frame_anchor()->make_walkable();
+     wait_for_object_deoptimization();
+   }
+ 
+diff --git a/src/hotspot/share/runtime/thread.hpp b/src/hotspot/share/runtime/thread.hpp
+index 9700d6be2a5..9a3fe0efe6e 100644
+--- a/src/hotspot/share/runtime/thread.hpp
++++ b/src/hotspot/share/runtime/thread.hpp
+@@ -1428,7 +1428,7 @@ class JavaThread: public Thread {
+  public:
+   // Accessing frames
+   frame last_frame() {
+-    _anchor.make_walkable(this);
++    _anchor.make_walkable();
+     return pd_last_frame();
+   }
+   javaVFrame* last_java_vframe(RegisterMap* reg_map);
+-- 
+2.43.2
+

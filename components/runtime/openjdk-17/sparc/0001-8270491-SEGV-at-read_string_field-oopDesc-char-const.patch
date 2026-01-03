@@ -1,0 +1,175 @@
+From f662127390eac6d44581ffca444556d236983314 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Markus=20Gr=C3=B6nlund?= <mgronlun@openjdk.org>
+Date: Tue, 27 Jul 2021 17:14:04 +0000
+Subject: [PATCH] 8270491: SEGV at read_string_field(oopDesc*, char const*,
+ JavaThread*)+0x54
+
+Reviewed-by: egahlin
+---
+ src/hotspot/share/jfr/dcmd/jfrDcmds.cpp | 59 ++++++++++++++++++-------
+ src/hotspot/share/jfr/dcmd/jfrDcmds.hpp | 18 ++++----
+ 2 files changed, 53 insertions(+), 24 deletions(-)
+
+diff --git a/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp b/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
+index d5d1aca378e..875e7f8e475 100644
+--- a/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
++++ b/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
+@@ -171,19 +171,19 @@ static void print_message(outputStream* output, oop content, TRAPS) {
+ }
+ 
+ static void log(oop content, TRAPS) {
+-    LogMessage(jfr,startup) msg;
+-    objArrayOop lines = objArrayOop(content);
+-    assert(lines != NULL, "invariant");
+-    assert(lines->is_array(), "must be array");
+-    const int length = lines->length();
+-    for (int i = 0; i < length; ++i) {
+-      const char* text = JfrJavaSupport::c_str(lines->obj_at(i), THREAD);
+-      if (text == NULL) {
+-        // An oome has been thrown and is pending.
+-        break;
+-      }
+-      msg.info("%s", text);
++  LogMessage(jfr,startup) msg;
++  objArrayOop lines = objArrayOop(content);
++  assert(lines != NULL, "invariant");
++  assert(lines->is_array(), "must be array");
++  const int length = lines->length();
++  for (int i = 0; i < length; ++i) {
++    const char* text = JfrJavaSupport::c_str(lines->obj_at(i), THREAD);
++    if (text == NULL) {
++      // An oome has been thrown and is pending.
++      break;
+     }
++    msg.info("%s", text);
++  }
+ }
+ 
+ static void handle_dcmd_result(outputStream* output,
+@@ -232,6 +232,8 @@ static oop construct_dcmd_instance(JfrJavaArguments* args, TRAPS) {
+   return args->result()->get_oop();
+ }
+ 
++JfrDCmd::JfrDCmd(outputStream* output, bool heap, int num_arguments) : DCmd(output, heap), _args(NULL), _num_arguments(num_arguments), _delimiter('\0') {}
++
+ void JfrDCmd::invoke(JfrJavaArguments& method, TRAPS) const {
+   JavaValue constructor_result(T_OBJECT);
+   JfrJavaArguments constructor_args(&constructor_result);
+@@ -291,6 +293,20 @@ void JfrDCmd::print_help(const char* name) const {
+   handle_dcmd_result(output(), result.get_oop(), DCmd_Source_MBean, thread);
+ }
+ 
++static void initialize_dummy_descriptors(GrowableArray<DCmdArgumentInfo*>* array) {
++  assert(array != NULL, "invariant");
++  DCmdArgumentInfo * const dummy = new DCmdArgumentInfo(NULL,
++                                                        NULL,
++                                                        NULL,
++                                                        NULL,
++                                                        false,
++                                                        true, // a DcmdFramework "option"
++                                                        false);
++  for (int i = 0; i < array->max_length(); ++i) {
++    array->append(dummy);
++  }
++}
++
+ // Since the DcmdFramework does not support dynamically allocated strings,
+ // we keep them in a thread local arena. The arena is reset between invocations.
+ static THREAD_LOCAL Arena* dcmd_arena = NULL;
+@@ -357,16 +373,29 @@ static DCmdArgumentInfo* create_info(oop argument, TRAPS) {
+ GrowableArray<DCmdArgumentInfo*>* JfrDCmd::argument_info_array() const {
+   static const char signature[] = "()[Ljdk/jfr/internal/dcmd/Argument;";
+   JavaThread* thread = JavaThread::current();
++  GrowableArray<DCmdArgumentInfo*>* const array = new GrowableArray<DCmdArgumentInfo*>(_num_arguments);
+   JavaValue result(T_OBJECT);
+   JfrJavaArguments getArgumentInfos(&result, javaClass(), "getArgumentInfos", signature, thread);
+   invoke(getArgumentInfos, thread);
++  if (thread->has_pending_exception()) {
++    // Most likely an OOME, but the DCmdFramework is not the best place to handle it.
++    // We handle it locally by clearing the exception and returning an array with dummy descriptors.
++    // This lets the MBean server initialization routine complete successfully,
++    // but this particular command will have no argument descriptors exposed.
++    // Hence we postpone, or delegate, handling of OOME's to code that is better suited.
++    log_debug(jfr, system)("Exception in DCmd getArgumentInfos");
++    thread->clear_pending_exception();
++    initialize_dummy_descriptors(array);
++    assert(array->length() == _num_arguments, "invariant");
++    return array;
++  }
+   objArrayOop arguments = objArrayOop(result.get_oop());
+   assert(arguments != NULL, "invariant");
+   assert(arguments->is_array(), "must be array");
+-  GrowableArray<DCmdArgumentInfo*>* const array = new GrowableArray<DCmdArgumentInfo*>();
+-  const int length = arguments->length();
++  const int num_arguments = arguments->length();
++  assert(num_arguments == _num_arguments, "invariant");
+   prepare_dcmd_string_arena();
+-  for (int i = 0; i < length; ++i) {
++  for (int i = 0; i < num_arguments; ++i) {
+     DCmdArgumentInfo* const dai = create_info(arguments->obj_at(i), thread);
+     assert(dai != NULL, "invariant");
+     array->append(dai);
+diff --git a/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp b/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
+index dce5205854b..df6f586b266 100644
+--- a/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
++++ b/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
+@@ -31,23 +31,23 @@ class JfrJavaArguments;
+ class JfrDCmd : public DCmd {
+  private:
+   const char* _args;
++  const int _num_arguments;
+   char _delimiter;
++ protected:
++  JfrDCmd(outputStream* output, bool heap, int num_arguments);
++  virtual const char* javaClass() const = 0;
++  void invoke(JfrJavaArguments& method, TRAPS) const;
+  public:
+-  JfrDCmd(outputStream* output, bool heap) : DCmd(output,heap), _args(NULL), _delimiter('\0')  {}
+-
+   virtual void execute(DCmdSource source, TRAPS);
+   virtual void print_help(const char* name) const;
+   virtual GrowableArray<const char*>* argument_name_array() const;
+   virtual GrowableArray<DCmdArgumentInfo*>* argument_info_array() const;
+   virtual void parse(CmdLine* line, char delim, TRAPS);
+- protected:
+-  virtual const char* javaClass() const = 0;
+-  void invoke(JfrJavaArguments& method, TRAPS) const;
+ };
+ 
+ class JfrStartFlightRecordingDCmd : public JfrDCmd {
+  public:
+-  JfrStartFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap) {}
++  JfrStartFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap, num_arguments()) {}
+ 
+   static const char* name() {
+     return "JFR.start";
+@@ -72,7 +72,7 @@ class JfrStartFlightRecordingDCmd : public JfrDCmd {
+ 
+ class JfrDumpFlightRecordingDCmd : public JfrDCmd {
+  public:
+-  JfrDumpFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap) {}
++  JfrDumpFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap, num_arguments()) {}
+ 
+   static const char* name() {
+     return "JFR.dump";
+@@ -97,7 +97,7 @@ class JfrDumpFlightRecordingDCmd : public JfrDCmd {
+ 
+ class JfrCheckFlightRecordingDCmd : public JfrDCmd {
+  public:
+-  JfrCheckFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap) {}
++  JfrCheckFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap, num_arguments()) {}
+ 
+   static const char* name() {
+     return "JFR.check";
+@@ -122,7 +122,7 @@ class JfrCheckFlightRecordingDCmd : public JfrDCmd {
+ 
+ class JfrStopFlightRecordingDCmd : public JfrDCmd {
+  public:
+-  JfrStopFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap) {}
++  JfrStopFlightRecordingDCmd(outputStream* output, bool heap) : JfrDCmd(output, heap, num_arguments()) {}
+ 
+   static const char* name() {
+     return "JFR.stop";
+-- 
+2.43.2
+

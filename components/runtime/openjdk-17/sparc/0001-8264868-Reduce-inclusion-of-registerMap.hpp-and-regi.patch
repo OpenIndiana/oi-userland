@@ -1,0 +1,641 @@
+This has been modified slightly from the original patch to make it apply
+cleanly in subsequent builds.
+
+From c15680e7428335651232a28c9cb5a9b9b42a7d56 Mon Sep 17 00:00:00 2001
+From: Ioi Lam <iklam@openjdk.org>
+Date: Sat, 10 Apr 2021 06:09:52 +0000
+Subject: [PATCH] 8264868: Reduce inclusion of registerMap.hpp and register.hpp
+
+Reviewed-by: coleenp, dholmes
+---
+ .../gc/shared/barrierSetNMethod_aarch64.cpp   |  3 +-
+ src/hotspot/cpu/x86/frame_x86.inline.hpp      |  3 +-
+ src/hotspot/share/code/vmreg.hpp              |  3 +-
+ src/hotspot/share/code/vmregTypes.hpp         | 35 +++++++++
+ src/hotspot/share/gc/z/zVerify.cpp            |  1 +
+ .../leakprofiler/checkpoint/rootResolver.cpp  |  1 +
+ src/hotspot/share/jvmci/jvmciCompilerToVM.cpp |  1 +
+ .../share/prims/jvmtiEventController.cpp      |  3 +-
+ src/hotspot/share/prims/whitebox.cpp          |  1 +
+ src/hotspot/share/runtime/deoptimization.cpp  |  1 +
+ src/hotspot/share/runtime/escapeBarrier.cpp   |  3 +-
+ src/hotspot/share/runtime/frame.cpp           | 11 ---
+ src/hotspot/share/runtime/frame.hpp           | 38 +---------
+ src/hotspot/share/runtime/frame.inline.hpp    |  5 +-
+ .../share/runtime/interfaceSupport.cpp        |  1 +
+ .../share/runtime/stackFrameStream.cpp        | 34 +++++++++
+ .../share/runtime/stackFrameStream.hpp        | 72 +++++++++++++++++++
+ .../share/runtime/stackFrameStream.inline.hpp | 37 ++++++++++
+ src/hotspot/share/runtime/stackWatermark.cpp  |  1 +
+ .../share/runtime/stackWatermark.inline.hpp   |  3 +-
+ src/hotspot/share/runtime/thread.cpp          |  1 +
+ src/hotspot/share/runtime/vframe.cpp          |  1 +
+ src/hotspot/share/runtime/vframe.hpp          |  3 +
+ src/hotspot/share/runtime/vframeArray.hpp     |  3 +-
+ src/hotspot/share/runtime/vmOperations.cpp    |  3 +-
+ src/hotspot/share/utilities/vmError.cpp       |  1 +
+ 27 files changed, 212 insertions(+), 60 deletions(-)
+ create mode 100644 src/hotspot/share/code/vmregTypes.hpp
+ create mode 100644 src/hotspot/share/runtime/stackFrameStream.cpp
+ create mode 100644 src/hotspot/share/runtime/stackFrameStream.hpp
+ create mode 100644 src/hotspot/share/runtime/stackFrameStream.inline.hpp
+
+diff --git a/src/hotspot/cpu/aarch64/gc/shared/barrierSetNMethod_aarch64.cpp b/src/hotspot/cpu/aarch64/gc/shared/barrierSetNMethod_aarch64.cpp
+index 99b213ddab4..8598fb7e7c1 100644
+--- a/src/hotspot/cpu/aarch64/gc/shared/barrierSetNMethod_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/gc/shared/barrierSetNMethod_aarch64.cpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2018, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2018, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -29,6 +29,7 @@
+ #include "logging/log.hpp"
+ #include "memory/resourceArea.hpp"
+ #include "runtime/sharedRuntime.hpp"
++#include "runtime/registerMap.hpp"
+ #include "runtime/thread.hpp"
+ #include "utilities/align.hpp"
+ #include "utilities/debug.hpp"
+diff --git a/src/hotspot/cpu/x86/frame_x86.inline.hpp b/src/hotspot/cpu/x86/frame_x86.inline.hpp
+index 1a207f0bd28..60847fbf391 100644
+--- a/src/hotspot/cpu/x86/frame_x86.inline.hpp
++++ b/src/hotspot/cpu/x86/frame_x86.inline.hpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 1997, 2019, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 1997, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -27,6 +27,7 @@
+ 
+ #include "code/codeCache.hpp"
+ #include "code/vmreg.inline.hpp"
++#include "runtime/registerMap.hpp"
+ 
+ // Inline functions for Intel frames:
+ 
+diff --git a/src/hotspot/share/code/vmreg.hpp b/src/hotspot/share/code/vmreg.hpp
+index 1d4c93649bc..3ebd0c278f4 100644
+--- a/src/hotspot/share/code/vmreg.hpp
++++ b/src/hotspot/share/code/vmreg.hpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 1998, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 1998, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -26,6 +26,7 @@
+ #define SHARE_CODE_VMREG_HPP
+ 
+ #include "asm/register.hpp"
++#include "code/vmregTypes.hpp"
+ #include "runtime/globals.hpp"
+ #include "utilities/globalDefinitions.hpp"
+ #include "utilities/macros.hpp"
+diff --git a/src/hotspot/share/code/vmregTypes.hpp b/src/hotspot/share/code/vmregTypes.hpp
+new file mode 100644
+index 00000000000..c0deacfbe68
+--- /dev/null
++++ b/src/hotspot/share/code/vmregTypes.hpp
+@@ -0,0 +1,35 @@
++/*
++ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef SHARE_CODE_VMREGTYPES_HPP
++#define SHARE_CODE_VMREGTYPES_HPP
++
++// Headers that just need a forward declaration of VMReg (e.g., frame.hpp)
++// should include this file. Include vmreg.hpp only if you need to use
++// the full definition of VMReg.
++
++class VMRegImpl;
++typedef VMRegImpl* VMReg;
++
++#endif // SHARE_CODE_VMREGTYPES_HPP
+diff --git a/src/hotspot/share/gc/z/zVerify.cpp b/src/hotspot/share/gc/z/zVerify.cpp
+index 83cec9c6882..97c1260260c 100644
+--- a/src/hotspot/share/gc/z/zVerify.cpp
++++ b/src/hotspot/share/gc/z/zVerify.cpp
+@@ -41,6 +41,7 @@
+ #include "runtime/globals.hpp"
+ #include "runtime/handles.hpp"
+ #include "runtime/safepoint.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stackWatermark.inline.hpp"
+ #include "runtime/stackWatermarkSet.inline.hpp"
+ #include "runtime/thread.hpp"
+diff --git a/src/hotspot/share/jfr/leakprofiler/checkpoint/rootResolver.cpp b/src/hotspot/share/jfr/leakprofiler/checkpoint/rootResolver.cpp
+index 6564cff136f..b0e1ef3480c 100644
+--- a/src/hotspot/share/jfr/leakprofiler/checkpoint/rootResolver.cpp
++++ b/src/hotspot/share/jfr/leakprofiler/checkpoint/rootResolver.cpp
+@@ -39,6 +39,7 @@
+ #include "runtime/frame.inline.hpp"
+ #include "runtime/jniHandles.hpp"
+ #include "runtime/mutexLocker.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/vframe_hp.hpp"
+ #include "services/management.hpp"
+ #include "utilities/enumIterator.hpp"
+diff --git a/src/hotspot/share/jvmci/jvmciCompilerToVM.cpp b/src/hotspot/share/jvmci/jvmciCompilerToVM.cpp
+index 5c41d3937c4..959a998187f 100644
+--- a/src/hotspot/share/jvmci/jvmciCompilerToVM.cpp
++++ b/src/hotspot/share/jvmci/jvmciCompilerToVM.cpp
+@@ -59,6 +59,7 @@
+ #include "runtime/interfaceSupport.inline.hpp"
+ #include "runtime/jniHandles.inline.hpp"
+ #include "runtime/reflectionUtils.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/timerTrace.hpp"
+ #include "runtime/vframe_hp.hpp"
+ 
+diff --git a/src/hotspot/share/prims/jvmtiEventController.cpp b/src/hotspot/share/prims/jvmtiEventController.cpp
+index 97f3ccac797..2bdf5ea3a0d 100644
+--- a/src/hotspot/share/prims/jvmtiEventController.cpp
++++ b/src/hotspot/share/prims/jvmtiEventController.cpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2003, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -35,6 +35,7 @@
+ #include "prims/jvmtiThreadState.inline.hpp"
+ #include "runtime/deoptimization.hpp"
+ #include "runtime/frame.inline.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/thread.inline.hpp"
+ #include "runtime/threadSMR.hpp"
+ #include "runtime/vframe.hpp"
+diff --git a/src/hotspot/share/prims/whitebox.cpp b/src/hotspot/share/prims/whitebox.cpp
+index d0a0a476cc7..2f99e88bd4e 100644
+--- a/src/hotspot/share/prims/whitebox.cpp
++++ b/src/hotspot/share/prims/whitebox.cpp
+@@ -79,6 +79,7 @@
+ #include "runtime/javaCalls.hpp"
+ #include "runtime/jniHandles.inline.hpp"
+ #include "runtime/os.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/sweeper.hpp"
+ #include "runtime/synchronizer.hpp"
+ #include "runtime/thread.hpp"
+diff --git a/src/hotspot/share/runtime/deoptimization.cpp b/src/hotspot/share/runtime/deoptimization.cpp
+index 3b2ba88e5aa..66e248cafff 100644
+--- a/src/hotspot/share/runtime/deoptimization.cpp
++++ b/src/hotspot/share/runtime/deoptimization.cpp
+@@ -71,6 +71,7 @@
+ #include "runtime/safepointVerifiers.hpp"
+ #include "runtime/sharedRuntime.hpp"
+ #include "runtime/signature.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stackWatermarkSet.hpp"
+ #include "runtime/stubRoutines.hpp"
+ #include "runtime/thread.hpp"
+diff --git a/src/hotspot/share/runtime/escapeBarrier.cpp b/src/hotspot/share/runtime/escapeBarrier.cpp
+index cc101d86b3e..f4684de04b5 100644
+--- a/src/hotspot/share/runtime/escapeBarrier.cpp
++++ b/src/hotspot/share/runtime/escapeBarrier.cpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 1997, 2021, Oracle and/or its affiliates. All rights reserved.
+  * Copyright (c) 2020 SAP SE. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+@@ -36,6 +36,7 @@
+ #include "runtime/keepStackGCProcessed.hpp"
+ #include "runtime/mutexLocker.hpp"
+ #include "runtime/registerMap.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stackValue.hpp"
+ #include "runtime/stackValueCollection.hpp"
+ #include "runtime/threadSMR.hpp"
+diff --git a/src/hotspot/share/runtime/frame.cpp b/src/hotspot/share/runtime/frame.cpp
+index cc7cb1d0235..b97ae72c2c9 100644
+--- a/src/hotspot/share/runtime/frame.cpp
++++ b/src/hotspot/share/runtime/frame.cpp
+@@ -1248,17 +1248,6 @@ void frame::describe(FrameValues& values, int frame_no) {
+ 
+ #endif
+ 
+-
+-//-----------------------------------------------------------------------------------
+-// StackFrameStream implementation
+-
+-StackFrameStream::StackFrameStream(JavaThread *thread, bool update, bool process_frames) : _reg_map(thread, update, process_frames) {
+-  assert(thread->has_last_Java_frame(), "sanity check");
+-  _fr = thread->last_frame();
+-  _is_done = false;
+-}
+-
+-
+ #ifndef PRODUCT
+ 
+ void FrameValues::describe(int owner, intptr_t* location, const char* description, int priority) {
+diff --git a/src/hotspot/share/runtime/frame.hpp b/src/hotspot/share/runtime/frame.hpp
+index c3040b65f1f..3d03802d2ea 100644
+--- a/src/hotspot/share/runtime/frame.hpp
++++ b/src/hotspot/share/runtime/frame.hpp
+@@ -25,9 +25,9 @@
+ #ifndef SHARE_RUNTIME_FRAME_HPP
+ #define SHARE_RUNTIME_FRAME_HPP
+ 
++#include "code/vmregTypes.hpp"
+ #include "runtime/basicLock.hpp"
+ #include "runtime/monitorChunk.hpp"
+-#include "runtime/registerMap.hpp"
+ #include "utilities/growableArray.hpp"
+ #include "utilities/macros.hpp"
+ #ifdef ZERO
+@@ -43,6 +43,7 @@ class vframeArray;
+ class JavaCallWrapper;
+ class Method;
+ class methodHandle;
++class RegisterMap;
+ 
+ enum class DerivedPointerIterationMode {
+   _with_table,
+@@ -459,40 +460,5 @@ class FrameValues {
+ 
+ #endif
+ 
+-//
+-// StackFrameStream iterates through the frames of a thread starting from
+-// top most frame. It automatically takes care of updating the location of
+-// all (callee-saved) registers iff the update flag is set. It also
+-// automatically takes care of lazily applying deferred GC processing
+-// onto exposed frames, such that all oops are valid iff the process_frames
+-// flag is set.
+-//
+-// Notice: If a thread is stopped at a safepoint, all registers are saved,
+-// not only the callee-saved ones.
+-//
+-// Use:
+-//
+-//   for(StackFrameStream fst(thread, true /* update */, true /* process_frames */);
+-//       !fst.is_done();
+-//       fst.next()) {
+-//     ...
+-//   }
+-//
+-class StackFrameStream : public StackObj {
+- private:
+-  frame       _fr;
+-  RegisterMap _reg_map;
+-  bool        _is_done;
+- public:
+-  StackFrameStream(JavaThread *thread, bool update, bool process_frames);
+-
+-  // Iteration
+-  inline bool is_done();
+-  void next()                     { if (!_is_done) _fr = _fr.sender(&_reg_map); }
+-
+-  // Query
+-  frame *current()                { return &_fr; }
+-  RegisterMap* register_map()     { return &_reg_map; }
+-};
+ 
+ #endif // SHARE_RUNTIME_FRAME_HPP
+diff --git a/src/hotspot/share/runtime/frame.inline.hpp b/src/hotspot/share/runtime/frame.inline.hpp
+index 45d66657dda..e83c8aaaad0 100644
+--- a/src/hotspot/share/runtime/frame.inline.hpp
++++ b/src/hotspot/share/runtime/frame.inline.hpp
+@@ -30,6 +30,7 @@
+ #include "code/compiledMethod.inline.hpp"
+ #include "interpreter/interpreter.hpp"
+ #include "oops/method.hpp"
++#include "runtime/registerMap.hpp"
+ #include "runtime/stubRoutines.hpp"
+ #include "utilities/macros.hpp"
+ #ifdef ZERO
+@@ -72,8 +73,4 @@ inline oop* frame::oopmapreg_to_oop_location(VMReg reg, const RegisterMap* reg_m
+   return (oop*)oopmapreg_to_location(reg, reg_map);
+ }
+ 
+-inline bool StackFrameStream::is_done() {
+-  return (_is_done) ? true : (_is_done = _fr.is_first_frame(), false);
+-}
+-
+ #endif // SHARE_RUNTIME_FRAME_INLINE_HPP
+diff --git a/src/hotspot/share/runtime/interfaceSupport.cpp b/src/hotspot/share/runtime/interfaceSupport.cpp
+index 99b7592f68b..d5ea58da362 100644
+--- a/src/hotspot/share/runtime/interfaceSupport.cpp
++++ b/src/hotspot/share/runtime/interfaceSupport.cpp
+@@ -36,6 +36,7 @@
+ #include "runtime/os.hpp"
+ #include "runtime/thread.inline.hpp"
+ #include "runtime/safepointVerifiers.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/vframe.hpp"
+ #include "runtime/vmOperations.hpp"
+ #include "runtime/vmThread.hpp"
+diff --git a/src/hotspot/share/runtime/stackFrameStream.cpp b/src/hotspot/share/runtime/stackFrameStream.cpp
+new file mode 100644
+index 00000000000..53178f86149
+--- /dev/null
++++ b/src/hotspot/share/runtime/stackFrameStream.cpp
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "precompiled.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
++#include "utilities/debug.hpp"
++
++StackFrameStream::StackFrameStream(JavaThread *thread, bool update, bool process_frames) : _reg_map(thread, update, process_frames) {
++  assert(thread->has_last_Java_frame(), "sanity check");
++  _fr = thread->last_frame();
++  _is_done = false;
++}
++
+diff --git a/src/hotspot/share/runtime/stackFrameStream.hpp b/src/hotspot/share/runtime/stackFrameStream.hpp
+new file mode 100644
+index 00000000000..8175624044f
+--- /dev/null
++++ b/src/hotspot/share/runtime/stackFrameStream.hpp
+@@ -0,0 +1,72 @@
++/*
++ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef SHARE_RUNTIME_STACKFRAMESTREAM_HPP
++#define SHARE_RUNTIME_STACKFRAMESTREAM_HPP
++
++#include "memory/allocation.hpp"
++#include "runtime/frame.hpp"
++#include "runtime/registerMap.hpp"
++
++class JavaThread;
++
++//
++// StackFrameStream iterates through the frames of a thread starting from
++// top most frame. It automatically takes care of updating the location of
++// all (callee-saved) registers iff the update flag is set. It also
++// automatically takes care of lazily applying deferred GC processing
++// onto exposed frames, such that all oops are valid iff the process_frames
++// flag is set.
++//
++// Notice: If a thread is stopped at a safepoint, all registers are saved,
++// not only the callee-saved ones.
++//
++// Use:
++//
++//   for(StackFrameStream fst(thread, true /* update */, true /* process_frames */);
++//       !fst.is_done();
++//       fst.next()) {
++//     ...
++//   }
++//
++class StackFrameStream : public StackObj {
++ private:
++  frame       _fr;
++  RegisterMap _reg_map;
++  bool        _is_done;
++ public:
++  StackFrameStream(JavaThread *thread, bool update, bool process_frames);
++
++  // Iteration
++  inline bool is_done();
++  void next()                     { if (!_is_done) _fr = _fr.sender(&_reg_map); }
++
++  // Query
++  frame *current()                { return &_fr; }
++  RegisterMap* register_map()     { return &_reg_map; }
++};
++
++#endif // SHARE_RUNTIME_STACKFRAMESTREAM_HPP
++
++
+diff --git a/src/hotspot/share/runtime/stackFrameStream.inline.hpp b/src/hotspot/share/runtime/stackFrameStream.inline.hpp
+new file mode 100644
+index 00000000000..fcc63db68fb
+--- /dev/null
++++ b/src/hotspot/share/runtime/stackFrameStream.inline.hpp
+@@ -0,0 +1,38 @@
++/*
++ * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef SHARE_RUNTIME_STACKFRAMESTREAM_INLINE_HPP
++#define SHARE_RUNTIME_STACKFRAMESTREAM_INLINE_HPP
++
++#include "runtime/stackFrameStream.hpp"
++
++#include "runtime/frame.inline.hpp"
++
++inline bool StackFrameStream::is_done() {
++  return (_is_done) ? true : (_is_done = _fr.is_first_frame(), false);
++}
++
++#endif // SHARE_RUNTIME_STACKFRAMESTREAM_INLINE_HPP
++
++
+diff --git a/src/hotspot/share/runtime/stackWatermark.cpp b/src/hotspot/share/runtime/stackWatermark.cpp
+index 69189738bf6..2ceb9383e9c 100644
+--- a/src/hotspot/share/runtime/stackWatermark.cpp
++++ b/src/hotspot/share/runtime/stackWatermark.cpp
+@@ -28,6 +28,7 @@
+ #include "runtime/frame.inline.hpp"
+ #include "runtime/osThread.hpp"
+ #include "runtime/safepoint.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stackWatermark.inline.hpp"
+ #include "runtime/thread.hpp"
+ #include "utilities/debug.hpp"
+diff --git a/src/hotspot/share/runtime/stackWatermark.inline.hpp b/src/hotspot/share/runtime/stackWatermark.inline.hpp
+index 93c92234457..24f555e51b3 100644
+--- a/src/hotspot/share/runtime/stackWatermark.inline.hpp
++++ b/src/hotspot/share/runtime/stackWatermark.inline.hpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2020, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -28,6 +28,7 @@
+ #include "runtime/stackWatermark.hpp"
+ 
+ #include "code/nmethod.hpp"
++#include "runtime/registerMap.hpp"
+ #include "runtime/thread.hpp"
+ 
+ static inline bool is_above_watermark(uintptr_t sp, uintptr_t watermark) {
+diff --git a/src/hotspot/share/runtime/thread.cpp b/src/hotspot/share/runtime/thread.cpp
+index 6a16838801b..1c3f8422eb9 100644
+--- a/src/hotspot/share/runtime/thread.cpp
++++ b/src/hotspot/share/runtime/thread.cpp
+@@ -101,6 +101,7 @@
+ #include "runtime/safepointVerifiers.hpp"
+ #include "runtime/serviceThread.hpp"
+ #include "runtime/sharedRuntime.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stackWatermarkSet.hpp"
+ #include "runtime/statSampler.hpp"
+ #include "runtime/task.hpp"
+diff --git a/src/hotspot/share/runtime/vframe.cpp b/src/hotspot/share/runtime/vframe.cpp
+index d66895a71a3..c9b93535ecf 100644
+--- a/src/hotspot/share/runtime/vframe.cpp
++++ b/src/hotspot/share/runtime/vframe.cpp
+@@ -44,6 +44,7 @@
+ #include "runtime/objectMonitor.inline.hpp"
+ #include "runtime/osThread.hpp"
+ #include "runtime/signature.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/stubRoutines.hpp"
+ #include "runtime/synchronizer.hpp"
+ #include "runtime/thread.inline.hpp"
+diff --git a/src/hotspot/share/runtime/vframe.hpp b/src/hotspot/share/runtime/vframe.hpp
+index bdbdd85ff2e..f736bc71783 100644
+--- a/src/hotspot/share/runtime/vframe.hpp
++++ b/src/hotspot/share/runtime/vframe.hpp
+@@ -31,6 +31,7 @@
+ #include "oops/oop.hpp"
+ #include "runtime/frame.hpp"
+ #include "runtime/handles.hpp"
++#include "runtime/registerMap.hpp"
+ #include "runtime/stackValue.hpp"
+ #include "runtime/stackValueCollection.hpp"
+ #include "utilities/growableArray.hpp"
+@@ -51,6 +52,8 @@
+ 
+ // - BasicLock
+ 
++class StackFrameStream;
++
+ class vframe: public ResourceObj {
+  protected:
+   frame        _fr;      // Raw frame behind the virtual frame.
+diff --git a/src/hotspot/share/runtime/vframeArray.hpp b/src/hotspot/share/runtime/vframeArray.hpp
+index 25ed7fd5ed8..fa2ab054186 100644
+--- a/src/hotspot/share/runtime/vframeArray.hpp
++++ b/src/hotspot/share/runtime/vframeArray.hpp
+@@ -30,6 +30,7 @@
+ #include "runtime/deoptimization.hpp"
+ #include "runtime/frame.hpp"
+ #include "runtime/monitorChunk.hpp"
++#include "runtime/registerMap.hpp"
+ #include "utilities/growableArray.hpp"
+ 
+ // A vframeArray is an array used for momentarily storing off stack Java method activations
+diff --git a/src/hotspot/share/runtime/vmOperations.cpp b/src/hotspot/share/runtime/vmOperations.cpp
+index c6ecf5ea1a9..9b408f620fa 100644
+--- a/src/hotspot/share/runtime/vmOperations.cpp
++++ b/src/hotspot/share/runtime/vmOperations.cpp
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 1997, 2021, Oracle and/or its affiliates. All rights reserved.
+  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+  *
+  * This code is free software; you can redistribute it and/or modify it
+@@ -42,6 +42,7 @@
+ #include "runtime/frame.inline.hpp"
+ #include "runtime/interfaceSupport.inline.hpp"
+ #include "runtime/jniHandles.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/synchronizer.hpp"
+ #include "runtime/thread.inline.hpp"
+ #include "runtime/threadSMR.inline.hpp"
+diff --git a/src/hotspot/share/utilities/vmError.cpp b/src/hotspot/share/utilities/vmError.cpp
+index 31b78ee97ff..d2d2af60c12 100644
+--- a/src/hotspot/share/utilities/vmError.cpp
++++ b/src/hotspot/share/utilities/vmError.cpp
+@@ -47,6 +47,7 @@
+ #include "runtime/osThread.hpp"
+ #include "runtime/safefetch.hpp"
+ #include "runtime/safepointMechanism.hpp"
++#include "runtime/stackFrameStream.inline.hpp"
+ #include "runtime/thread.inline.hpp"
+ #include "runtime/threadSMR.hpp"
+ #include "runtime/trimNativeHeap.hpp"
+-- 
+2.43.2
+

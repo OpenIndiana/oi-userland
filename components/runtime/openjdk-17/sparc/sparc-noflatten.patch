@@ -1,0 +1,20 @@
+We're seeing crashes on SPARC in g1ParScanThreadState. These seemed to start,
+or at least get worse, with the following fix.
+8250597: G1: Improve inlining around trim_queue
+https://bugs.openjdk.org/browse/JDK-8250597
+Most of that was shuffling code around, but also added ATTRIBUTE_FLATTEN
+We disable it on SPARC, which seems to help, and if we do get a crash we
+will get a better stack trace.
+
+--- a/src/hotspot/share/utilities/globalDefinitions_gcc.hpp	Wed Dec  4 13:28:49 2024
++++ b/src/hotspot/share/utilities/globalDefinitions_gcc.hpp	Mon Jan 20 09:22:43 2025
+@@ -259,7 +259,9 @@
+ // Inlining support
+ #define NOINLINE     __attribute__ ((noinline))
+ #define ALWAYSINLINE inline __attribute__ ((always_inline))
++#ifndef SPARC
+ #define ATTRIBUTE_FLATTEN __attribute__ ((flatten))
++#endif
+ 
+ // Alignment
+ //

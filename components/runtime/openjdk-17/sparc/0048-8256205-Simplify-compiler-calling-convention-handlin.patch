@@ -1,0 +1,1038 @@
+This is a straight revert of the original commit, less noise.
+
+We need most of this, because the SPARC calling convention is different,
+but should drop the other architectures, and pare it back to the changes
+that are necessary.
+
+In particular, we could easily switch to the new mechanism of
+in_preserve_stack_slots (SPARC is 0, for future reference).
+
+From 6e35bcbf038cec0210c38428a8e1c233e102911a Mon Sep 17 00:00:00 2001
+From: Claes Redestad <redestad@openjdk.org>
+Date: Mon, 16 Nov 2020 19:39:36 +0000
+Subject: [PATCH 048/798] 8256205: Simplify compiler calling convention
+ handling
+
+Reviewed-by: kvn, neliasso
+---
+ src/hotspot/cpu/aarch64/aarch64.ad            | 30 +----------
+ .../cpu/aarch64/c1_CodeStubs_aarch64.cpp      |  2 +-
+ .../cpu/aarch64/c1_FrameMap_aarch64.cpp       |  2 +-
+ .../cpu/aarch64/sharedRuntime_aarch64.cpp     | 12 ++++-
+ src/hotspot/cpu/arm/arm.ad                    | 22 --------
+ src/hotspot/cpu/arm/c1_CodeStubs_arm.cpp      |  2 +-
+ src/hotspot/cpu/arm/sharedRuntime_arm.cpp     | 13 +++--
+ src/hotspot/cpu/ppc/ppc.ad                    | 36 -------------
+ src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp     |  7 ++-
+ src/hotspot/cpu/s390/s390.ad                  | 34 -------------
+ src/hotspot/cpu/s390/sharedRuntime_s390.cpp   |  7 ++-
+ src/hotspot/cpu/x86/c1_CodeStubs_x86.cpp      |  2 +-
+ src/hotspot/cpu/x86/c1_FrameMap_x86.cpp       |  2 +-
+ src/hotspot/cpu/x86/sharedRuntime_x86_32.cpp  | 11 +++-
+ src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp  | 12 ++++-
+ src/hotspot/cpu/x86/x86_32.ad                 | 29 -----------
+ src/hotspot/cpu/x86/x86_64.ad                 | 25 ----------
+ src/hotspot/cpu/zero/sharedRuntime_zero.cpp   |  3 +-
+ src/hotspot/share/adlc/adlparse.cpp           | 50 +++----------------
+ src/hotspot/share/adlc/adlparse.hpp           |  2 -
+ src/hotspot/share/adlc/formsopt.cpp           |  3 --
+ src/hotspot/share/adlc/formsopt.hpp           |  3 --
+ src/hotspot/share/adlc/output_c.cpp           | 18 +------
+ src/hotspot/share/c1/c1_FrameMap.cpp          |  2 +-
+ src/hotspot/share/code/nmethod.cpp            |  2 +-
+ src/hotspot/share/opto/callnode.cpp           | 17 ++++---
+ src/hotspot/share/opto/compile.hpp            | 11 ++--
+ src/hotspot/share/opto/matcher.cpp            |  8 +--
+ src/hotspot/share/opto/matcher.hpp            | 15 ++----
+ src/hotspot/share/runtime/sharedRuntime.cpp   | 16 +++---
+ src/hotspot/share/runtime/sharedRuntime.hpp   | 11 ++--
+ 31 files changed, 104 insertions(+), 305 deletions(-)
+
+diff --git a/src/hotspot/cpu/aarch64/aarch64.ad b/src/hotspot/cpu/aarch64/aarch64.ad
+index a9df812c634..2ec3d26ac81 100644
+--- a/src/hotspot/cpu/aarch64/aarch64.ad
++++ b/src/hotspot/cpu/aarch64/aarch64.ad
+@@ -4035,13 +4035,6 @@ frame %{
+   // Stack alignment requirement
+   stack_alignment(StackAlignmentInBytes); // Alignment size in bytes (128-bit -> 16 bytes)
+ 
+-  // Number of stack slots between incoming argument block and the start of
+-  // a new frame.  The PROLOG must add this many slots to the stack.  The
+-  // EPILOG must remove this many slots. aarch64 needs two slots for
+-  // return address and fp.
+-  // TODO think this is correct but check
+-  in_preserve_stack_slots(4);
+-
+   // Number of outgoing stack slots killed above the out_preserve_stack_slots
+   // for calls to C.  Supports the var-args backing area for register parms.
+   varargs_C_out_slots_killed(frame::arg_reg_save_area_bytes/BytesPerInt);
+@@ -4060,25 +4053,6 @@ frame %{
+                         Compile::current()->fixed_slots()),
+                        stack_alignment_in_slots()));
+ 
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots.  Passed an array
+-  // of ideal registers called "sig" and a "length" count.  Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE.  Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-
+-  calling_convention
+-  %{
+-    // No difference between ingoing/outgoing just pass false
+-    SharedRuntime::java_calling_convention(sig_bt, regs, length, false);
+-  %}
+-
+-  c_calling_convention
+-  %{
+-    // This is obviously always outgoing
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, NULL, length);
+-  %}
+-
+   // Location of compiled Java return values.  Same as C for now.
+   return_value
+   %{
+diff --git a/src/hotspot/cpu/aarch64/c1_CodeStubs_aarch64.cpp b/src/hotspot/cpu/aarch64/c1_CodeStubs_aarch64.cpp
+index 119bc979e0a..63f03db2dc5 100644
+--- a/src/hotspot/cpu/aarch64/c1_CodeStubs_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/c1_CodeStubs_aarch64.cpp
+@@ -323,7 +323,7 @@ void ArrayCopyStub::emit_code(LIR_Assembler* ce) {
+   //
+   VMRegPair args[5];
+   BasicType signature[5] = { T_OBJECT, T_INT, T_OBJECT, T_INT, T_INT};
+-  SharedRuntime::java_calling_convention(signature, args, 5, true);
++  SharedRuntime::java_calling_convention(signature, args, 5);
+ 
+   // push parameters
+   // (src, src_pos, dest, destPos, length)
+diff --git a/src/hotspot/cpu/aarch64/c1_FrameMap_aarch64.cpp b/src/hotspot/cpu/aarch64/c1_FrameMap_aarch64.cpp
+index 42ff62a986c..0da37ae08a6 100644
+--- a/src/hotspot/cpu/aarch64/c1_FrameMap_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/c1_FrameMap_aarch64.cpp
+@@ -290,7 +290,7 @@ void FrameMap::initialize() {
+ 
+   VMRegPair regs;
+   BasicType sig_bt = T_OBJECT;
+-  SharedRuntime::java_calling_convention(&sig_bt, &regs, 1, true);
++  SharedRuntime::java_calling_convention(&sig_bt, &regs, 1);
+   receiver_opr = as_oop_opr(regs.first()->as_Register());
+ 
+   for (int i = 0; i < nof_caller_save_fpu_regs; i++) {
+diff --git a/src/hotspot/cpu/aarch64/sharedRuntime_aarch64.cpp b/src/hotspot/cpu/aarch64/sharedRuntime_aarch64.cpp
+index 92a07a84d2a..e13ef62593b 100644
+--- a/src/hotspot/cpu/aarch64/sharedRuntime_aarch64.cpp
++++ b/src/hotspot/cpu/aarch64/sharedRuntime_aarch64.cpp
+@@ -278,8 +278,7 @@ static int reg2offset_out(VMReg r) {
+ 
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+ 
+   // Create the mapping between argument positions and
+   // registers.
+@@ -2550,6 +2549,15 @@ void SharedRuntime::generate_deopt_blob() {
+ #endif
+ }
+ 
++// Number of stack slots between incoming argument block and the start of
++// a new frame.  The PROLOG must add this many slots to the stack.  The
++// EPILOG must remove this many slots. aarch64 needs two slots for
++// return address and fp.
++// TODO think this is correct but check
++uint SharedRuntime::in_preserve_stack_slots() {
++  return 4;
++}
++
+ uint SharedRuntime::out_preserve_stack_slots() {
+   return 0;
+ }
+diff --git a/src/hotspot/cpu/arm/arm.ad b/src/hotspot/cpu/arm/arm.ad
+index 7ea64d1d1ac..1c23d72e0af 100644
+--- a/src/hotspot/cpu/arm/arm.ad
++++ b/src/hotspot/cpu/arm/arm.ad
+@@ -1580,12 +1580,6 @@ frame %{
+   //  LP64: Alignment size in bytes (128-bit -> 16 bytes)
+   // !LP64: Alignment size in bytes (64-bit  ->  8 bytes)
+ 
+-  // Number of stack slots between incoming argument block and the start of
+-  // a new frame.  The PROLOG must add this many slots to the stack.  The
+-  // EPILOG must remove this many slots.
+-  // FP + LR
+-  in_preserve_stack_slots(2 * VMRegImpl::slots_per_word);
+-
+   // Number of outgoing stack slots killed above the out_preserve_stack_slots
+   // for calls to C.  Supports the var-args backing area for register parms.
+   // ADLC doesn't support parsing expressions, so I folded the math by hand.
+@@ -1602,22 +1596,6 @@ frame %{
+                         Compile::current()->fixed_slots()),
+                        stack_alignment_in_slots()));
+ 
+-  // Body of function which returns an OptoRegs array locating
+-  // arguments either in registers or in stack slots for calling
+-  // java
+-  calling_convention %{
+-    (void) SharedRuntime::java_calling_convention(sig_bt, regs, length, is_outgoing);
+-
+-  %}
+-
+-  // Body of function which returns an OptoRegs array locating
+-  // arguments either in registers or in stack slots for callin
+-  // C.
+-  c_calling_convention %{
+-    // This is obviously always outgoing
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, /*regs2=*/NULL, length);
+-  %}
+-
+   // Location of compiled Java return values.  Same as C
+   return_value %{
+     return c2::return_value(ideal_reg);
+diff --git a/src/hotspot/cpu/arm/c1_CodeStubs_arm.cpp b/src/hotspot/cpu/arm/c1_CodeStubs_arm.cpp
+index 6b390c1cda3..b0ace8d21f9 100644
+--- a/src/hotspot/cpu/arm/c1_CodeStubs_arm.cpp
++++ b/src/hotspot/cpu/arm/c1_CodeStubs_arm.cpp
+@@ -421,7 +421,7 @@ void ArrayCopyStub::emit_code(LIR_Assembler* ce) {
+ 
+   VMRegPair args[5];
+   BasicType signature[5] = { T_OBJECT, T_INT, T_OBJECT, T_INT, T_INT };
+-  SharedRuntime::java_calling_convention(signature, args, 5, true);
++  SharedRuntime::java_calling_convention(signature, args, 5);
+ 
+   Register r[5];
+   r[0] = src()->as_pointer_register();
+diff --git a/src/hotspot/cpu/arm/sharedRuntime_arm.cpp b/src/hotspot/cpu/arm/sharedRuntime_arm.cpp
+index a4216785e4e..cb139977684 100644
+--- a/src/hotspot/cpu/arm/sharedRuntime_arm.cpp
++++ b/src/hotspot/cpu/arm/sharedRuntime_arm.cpp
+@@ -363,13 +363,11 @@ int SharedRuntime::c_calling_convention(const BasicType *sig_bt,
+ 
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+ #ifdef __SOFTFP__
+   // soft float is the same as the C calling convention.
+   return c_calling_convention(sig_bt, regs, NULL, total_args_passed);
+ #endif // __SOFTFP__
+-  (void) is_outgoing;
+   int slot = 0;
+   int ireg = 0;
+   int freg = 0;
+@@ -1366,11 +1364,18 @@ int Deoptimization::last_frame_adjust(int callee_parameters, int callee_locals)
+ }
+ 
+ 
++// Number of stack slots between incoming argument block and the start of
++// a new frame.  The PROLOG must add this many slots to the stack.  The
++// EPILOG must remove this many slots.
++// FP + LR
++uint SharedRuntime::in_preserve_stack_slots() {
++  return 2 * VMRegImpl::slots_per_word;
++}
++
+ uint SharedRuntime::out_preserve_stack_slots() {
+   return 0;
+ }
+ 
+-
+ //------------------------------generate_deopt_blob----------------------------
+ void SharedRuntime::generate_deopt_blob() {
+   ResourceMark rm;
+diff --git a/src/hotspot/cpu/ppc/ppc.ad b/src/hotspot/cpu/ppc/ppc.ad
+index 27dad6cff94..8bbbc3d4aa3 100644
+--- a/src/hotspot/cpu/ppc/ppc.ad
++++ b/src/hotspot/cpu/ppc/ppc.ad
+@@ -3776,8 +3776,6 @@ frame %{
+ 
+   stack_alignment(frame::alignment_in_bytes);
+ 
+-  in_preserve_stack_slots((frame::jit_in_preserve_size / VMRegImpl::stack_slot_size));
+-
+   // Number of outgoing stack slots killed above the
+   // out_preserve_stack_slots for calls to C. Supports the var-args
+   // backing area for register parms.
+@@ -3802,40 +3800,6 @@ frame %{
+   //    4 what apparently works and saves us some spills.
+   return_addr(STACK 4);
+ 
+-  // This is the body of the function
+-  //
+-  // void Matcher::calling_convention(OptoRegPair* sig, // array of ideal regs
+-  //                                  uint length,      // length of array
+-  //                                  bool is_outgoing)
+-  //
+-  // The `sig' array is to be updated. sig[j] represents the location
+-  // of the j-th argument, either a register or a stack slot.
+-
+-  // Comment taken from x86_32.ad:
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots. Passed an array
+-  // of ideal registers called "sig" and a "length" count. Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE. Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  calling_convention %{
+-    // No difference between ingoing/outgoing. Just pass false.
+-    SharedRuntime::java_calling_convention(sig_bt, regs, length, false);
+-  %}
+-
+-  // Comment taken from x86_32.ad:
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots. Passed an array
+-  // of ideal registers called "sig" and a "length" count. Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE. Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  c_calling_convention %{
+-    // This is obviously always outgoing.
+-    // C argument in register AND stack slot.
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, /*regs2=*/NULL, length);
+-  %}
+-
+   // Location of native (C/C++) and interpreter return values. This
+   // is specified to be the same as Java. In the 32-bit VM, long
+   // values are actually returned from native calls in O0:O1 and
+diff --git a/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp b/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp
+index e8498ba0ed3..59c249151be 100644
+--- a/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp
++++ b/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp
+@@ -626,8 +626,7 @@ const int num_java_farg_registers = sizeof(java_farg_reg) / sizeof(java_farg_reg
+ 
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+   // C2c calling conventions for compiled-compiled calls.
+   // Put 8 ints/longs into registers _AND_ 13 float/doubles into
+   // registers _AND_ put the rest on the stack.
+@@ -2522,6 +2521,10 @@ int Deoptimization::last_frame_adjust(int callee_parameters, int callee_locals)
+   return align_up((callee_locals - callee_parameters) * Interpreter::stackElementWords, frame::alignment_in_bytes);
+ }
+ 
++uint SharedRuntime::in_preserve_stack_slots() {
++  return frame::jit_in_preserve_size / VMRegImpl::stack_slot_size;
++}
++
+ uint SharedRuntime::out_preserve_stack_slots() {
+ #if defined(COMPILER1) || defined(COMPILER2)
+   return frame::jit_out_preserve_size / VMRegImpl::stack_slot_size;
+diff --git a/src/hotspot/cpu/s390/s390.ad b/src/hotspot/cpu/s390/s390.ad
+index 98194c73047..9a574ac0854 100644
+--- a/src/hotspot/cpu/s390/s390.ad
++++ b/src/hotspot/cpu/s390/s390.ad
+@@ -2368,8 +2368,6 @@ frame %{
+   // Use alignment_in_bytes instead of log_2_of_alignment_in_bits.
+   stack_alignment(frame::alignment_in_bytes);
+ 
+-  in_preserve_stack_slots(frame::jit_in_preserve_size_in_4_byte_units);
+-
+   // A `slot' is assumed 4 bytes here!
+   // out_preserve_stack_slots(frame::jit_out_preserve_size_in_4_byte_units);
+ 
+@@ -2384,38 +2382,6 @@ frame %{
+   // stack slot.
+   return_addr(REG Z_R14);
+ 
+-  // This is the body of the function
+-  //
+-  // void Matcher::calling_convention(OptoRegPair* sig /* array of ideal regs */,
+-  //                                  uint length      /* length of array */,
+-  //                                  bool is_outgoing)
+-  //
+-  // The `sig' array is to be updated. Sig[j] represents the location
+-  // of the j-th argument, either a register or a stack slot.
+-
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots. Passed an array
+-  // of ideal registers called "sig" and a "length" count. Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE. Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  calling_convention %{
+-    // No difference between ingoing/outgoing just pass false.
+-    SharedRuntime::java_calling_convention(sig_bt, regs, length, false);
+-  %}
+-
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots. Passed an array
+-  // of ideal registers called "sig" and a "length" count. Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE. Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  c_calling_convention %{
+-    // This is obviously always outgoing.
+-    // C argument must be in register AND stack slot.
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, /*regs2=*/NULL, length);
+-  %}
+-
+   // Location of native (C/C++) and interpreter return values. This
+   // is specified to be the same as Java. In the 32-bit VM, long
+   // values are actually returned from native calls in O0:O1 and
+diff --git a/src/hotspot/cpu/s390/sharedRuntime_s390.cpp b/src/hotspot/cpu/s390/sharedRuntime_s390.cpp
+index a0c46b182ff..c18d5319257 100644
+--- a/src/hotspot/cpu/s390/sharedRuntime_s390.cpp
++++ b/src/hotspot/cpu/s390/sharedRuntime_s390.cpp
+@@ -643,8 +643,7 @@ void SharedRuntime::restore_native_result(MacroAssembler *masm,
+ // advantage out of it.
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+   // c2c calling conventions for compiled-compiled calls.
+ 
+   // An int/float occupies 1 slot here.
+@@ -2581,6 +2580,10 @@ int Deoptimization::last_frame_adjust(int callee_parameters, int callee_locals)
+          frame::z_parent_ijava_frame_abi_size / BytesPerWord;
+ }
+ 
++uint SharedRuntime::in_preserve_stack_slots() {
++  return frame::jit_in_preserve_size_in_4_byte_units;
++}
++
+ uint SharedRuntime::out_preserve_stack_slots() {
+   return frame::z_jit_out_preserve_size/VMRegImpl::stack_slot_size;
+ }
+diff --git a/src/hotspot/cpu/x86/c1_CodeStubs_x86.cpp b/src/hotspot/cpu/x86/c1_CodeStubs_x86.cpp
+index 6853953f0eb..1ba5061a574 100644
+--- a/src/hotspot/cpu/x86/c1_CodeStubs_x86.cpp
++++ b/src/hotspot/cpu/x86/c1_CodeStubs_x86.cpp
+@@ -509,7 +509,7 @@ void ArrayCopyStub::emit_code(LIR_Assembler* ce) {
+   //
+   VMRegPair args[5];
+   BasicType signature[5] = { T_OBJECT, T_INT, T_OBJECT, T_INT, T_INT};
+-  SharedRuntime::java_calling_convention(signature, args, 5, true);
++  SharedRuntime::java_calling_convention(signature, args, 5);
+ 
+   // push parameters
+   // (src, src_pos, dest, destPos, length)
+diff --git a/src/hotspot/cpu/x86/c1_FrameMap_x86.cpp b/src/hotspot/cpu/x86/c1_FrameMap_x86.cpp
+index f25cefb8a44..a7411412d18 100644
+--- a/src/hotspot/cpu/x86/c1_FrameMap_x86.cpp
++++ b/src/hotspot/cpu/x86/c1_FrameMap_x86.cpp
+@@ -299,7 +299,7 @@ void FrameMap::initialize() {
+ 
+   VMRegPair regs;
+   BasicType sig_bt = T_OBJECT;
+-  SharedRuntime::java_calling_convention(&sig_bt, &regs, 1, true);
++  SharedRuntime::java_calling_convention(&sig_bt, &regs, 1);
+   receiver_opr = as_oop_opr(regs.first()->as_Register());
+ 
+ }
+diff --git a/src/hotspot/cpu/x86/sharedRuntime_x86_32.cpp b/src/hotspot/cpu/x86/sharedRuntime_x86_32.cpp
+index 3e2b3a118c7..fd6c7ab5f70 100644
+--- a/src/hotspot/cpu/x86/sharedRuntime_x86_32.cpp
++++ b/src/hotspot/cpu/x86/sharedRuntime_x86_32.cpp
+@@ -434,8 +434,7 @@ static int reg2offset_out(VMReg r) {
+ // the doubles will grab the registers before the floats will.
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+   uint    stack = 0;          // Starting stack position for args on stack
+ 
+ 
+@@ -2215,6 +2214,14 @@ int Deoptimization::last_frame_adjust(int callee_parameters, int callee_locals )
+ }
+ 
+ 
++// Number of stack slots between incoming argument block and the start of
++// a new frame.  The PROLOG must add this many slots to the stack.  The
++// EPILOG must remove this many slots.  Intel needs one slot for
++// return address and one for rbp, (must save rbp)
++uint SharedRuntime::in_preserve_stack_slots() {
++  return 2+VerifyStackAtCalls;
++}
++
+ uint SharedRuntime::out_preserve_stack_slots() {
+   return 0;
+ }
+diff --git a/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp b/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp
+index b238b0e0d35..635ea4288c9 100644
+--- a/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp
++++ b/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp
+@@ -483,8 +483,7 @@ static int reg2offset_out(VMReg r) {
+ 
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+ 
+   // Create the mapping between argument positions and
+   // registers.
+@@ -2438,6 +2437,15 @@ uint SharedRuntime::out_preserve_stack_slots() {
+   return 0;
+ }
+ 
++
++// Number of stack slots between incoming argument block and the start of
++// a new frame.  The PROLOG must add this many slots to the stack.  The
++// EPILOG must remove this many slots.  amd64 needs two slots for
++// return address.
++uint SharedRuntime::in_preserve_stack_slots() {
++  return 4 + 2 * VerifyStackAtCalls;
++}
++
+ //------------------------------generate_deopt_blob----------------------------
+ void SharedRuntime::generate_deopt_blob() {
+   // Allocate space for the code
+diff --git a/src/hotspot/cpu/x86/x86_32.ad b/src/hotspot/cpu/x86/x86_32.ad
+index 130cdbed3e1..4d815e62240 100644
+--- a/src/hotspot/cpu/x86/x86_32.ad
++++ b/src/hotspot/cpu/x86/x86_32.ad
+@@ -3127,12 +3127,6 @@ frame %{
+   // Alignment size in bytes (128-bit -> 16 bytes)
+   stack_alignment(StackAlignmentInBytes);
+ 
+-  // Number of stack slots between incoming argument block and the start of
+-  // a new frame.  The PROLOG must add this many slots to the stack.  The
+-  // EPILOG must remove this many slots.  Intel needs one slot for
+-  // return address and one for rbp, (must save rbp)
+-  in_preserve_stack_slots(2+VerifyStackAtCalls);
+-
+   // Number of outgoing stack slots killed above the out_preserve_stack_slots
+   // for calls to C.  Supports the var-args backing area for register parms.
+   varargs_C_out_slots_killed(0);
+@@ -3148,29 +3142,6 @@ frame %{
+                         Compile::current()->fixed_slots()),
+                        stack_alignment_in_slots()));
+ 
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots.  Passed an array
+-  // of ideal registers called "sig" and a "length" count.  Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE.  Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  calling_convention %{
+-    // No difference between ingoing/outgoing just pass false
+-    SharedRuntime::java_calling_convention(sig_bt, regs, length, false);
+-  %}
+-
+-
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots.  Passed an array
+-  // of ideal registers called "sig" and a "length" count.  Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE.  Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-  c_calling_convention %{
+-    // This is obviously always outgoing
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, /*regs2=*/NULL, length);
+-  %}
+-
+   // Location of C & interpreter return values
+   c_return_value %{
+     assert( ideal_reg >= Op_RegI && ideal_reg <= Op_RegL, "only return normal values" );
+diff --git a/src/hotspot/cpu/x86/x86_64.ad b/src/hotspot/cpu/x86/x86_64.ad
+index 16cf230d602..8ae83fb298b 100644
+--- a/src/hotspot/cpu/x86/x86_64.ad
++++ b/src/hotspot/cpu/x86/x86_64.ad
+@@ -2794,12 +2794,6 @@ frame
+   // Stack alignment requirement
+   stack_alignment(StackAlignmentInBytes); // Alignment size in bytes (128-bit -> 16 bytes)
+ 
+-  // Number of stack slots between incoming argument block and the start of
+-  // a new frame.  The PROLOG must add this many slots to the stack.  The
+-  // EPILOG must remove this many slots.  amd64 needs two slots for
+-  // return address.
+-  in_preserve_stack_slots(4 + 2 * VerifyStackAtCalls);
+-
+   // Number of outgoing stack slots killed above the out_preserve_stack_slots
+   // for calls to C.  Supports the var-args backing area for register parms.
+   varargs_C_out_slots_killed(frame::arg_reg_save_area_bytes/BytesPerInt);
+@@ -2815,25 +2809,6 @@ frame
+                         Compile::current()->fixed_slots()),
+                        stack_alignment_in_slots()));
+ 
+-  // Body of function which returns an integer array locating
+-  // arguments either in registers or in stack slots.  Passed an array
+-  // of ideal registers called "sig" and a "length" count.  Stack-slot
+-  // offsets are based on outgoing arguments, i.e. a CALLER setting up
+-  // arguments for a CALLEE.  Incoming stack arguments are
+-  // automatically biased by the preserve_stack_slots field above.
+-
+-  calling_convention
+-  %{
+-    // No difference between ingoing/outgoing just pass false
+-    SharedRuntime::java_calling_convention(sig_bt, regs, length, false);
+-  %}
+-
+-  c_calling_convention
+-  %{
+-    // This is obviously always outgoing
+-    (void) SharedRuntime::c_calling_convention(sig_bt, regs, /*regs2=*/NULL, length);
+-  %}
+-
+   // Location of compiled Java return values.  Same as C for now.
+   return_value
+   %{
+diff --git a/src/hotspot/cpu/zero/sharedRuntime_zero.cpp b/src/hotspot/cpu/zero/sharedRuntime_zero.cpp
+index 12b66b74387..f4aaeb6ea1e 100644
+--- a/src/hotspot/cpu/zero/sharedRuntime_zero.cpp
++++ b/src/hotspot/cpu/zero/sharedRuntime_zero.cpp
+@@ -50,8 +50,7 @@ static address zero_null_code_stub() {
+ 
+ int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
+                                            VMRegPair *regs,
+-                                           int total_args_passed,
+-                                           int is_outgoing) {
++                                           int total_args_passed) {
+   return 0;
+ }
+ 
+diff --git a/src/hotspot/share/adlc/adlparse.cpp b/src/hotspot/share/adlc/adlparse.cpp
+index 7d62f861686..ecb722c56b2 100644
+--- a/src/hotspot/share/adlc/adlparse.cpp
++++ b/src/hotspot/share/adlc/adlparse.cpp
+@@ -1020,7 +1020,8 @@ void ADLParser::frame_parse(void) {
+         return_addr_parse(frame, false);
+       }
+       if (strcmp(token,"in_preserve_stack_slots")==0) {
+-        preserve_stack_parse(frame);
++        parse_err(WARN, "Using obsolete token, in_preserve_stack_slots");
++        skipws();
+       }
+       if (strcmp(token,"out_preserve_stack_slots")==0) {
+         parse_err(WARN, "Using obsolete token, out_preserve_stack_slots");
+@@ -1030,7 +1031,8 @@ void ADLParser::frame_parse(void) {
+         frame->_varargs_C_out_slots_killed = parse_one_arg("varargs C out slots killed");
+       }
+       if (strcmp(token,"calling_convention")==0) {
+-        frame->_calling_convention = calling_convention_parse();
++        parse_err(WARN, "Using obsolete token, calling_convention");
++        skipws();
+       }
+       if (strcmp(token,"return_value")==0) {
+         frame->_return_value = return_value_parse();
+@@ -1042,7 +1044,8 @@ void ADLParser::frame_parse(void) {
+         return_addr_parse(frame, true);
+       }
+       if (strcmp(token,"c_calling_convention")==0) {
+-        frame->_c_calling_convention = calling_convention_parse();
++        parse_err(WARN, "Using obsolete token, c_calling_convention");
++        skipws();
+       }
+       if (strcmp(token,"c_return_value")==0) {
+         frame->_c_return_value = return_value_parse();
+@@ -1073,18 +1076,10 @@ void ADLParser::frame_parse(void) {
+     parse_err(SYNERR, "missing return address location in frame section.\n");
+     return;
+   }
+-  if(frame->_in_preserve_slots == NULL) {
+-    parse_err(SYNERR, "missing stack slot preservation definition in frame section.\n");
+-    return;
+-  }
+   if(frame->_varargs_C_out_slots_killed == NULL) {
+     parse_err(SYNERR, "missing varargs C out slots killed definition in frame section.\n");
+     return;
+   }
+-  if(frame->_calling_convention == NULL) {
+-    parse_err(SYNERR, "missing calling convention definition in frame section.\n");
+-    return;
+-  }
+   if(frame->_return_value == NULL) {
+     parse_err(SYNERR, "missing return value definition in frame section.\n");
+     return;
+@@ -1097,9 +1092,6 @@ void ADLParser::frame_parse(void) {
+     frame->_c_return_addr = frame->_return_addr;
+     frame->_c_return_addr_loc = frame->_return_addr_loc;
+   }
+-  if(frame->_c_calling_convention == NULL) {
+-    frame->_c_calling_convention = frame->_calling_convention;
+-  }
+   if(frame->_c_return_value == NULL) {
+     frame->_c_return_value = frame->_return_value;
+   }
+@@ -1222,37 +1214,9 @@ void ADLParser::return_addr_parse(FrameForm *frame, bool native) {
+   }
+ }
+ 
+-//------------------------------preserve_stack_parse---------------------------
+-void ADLParser::preserve_stack_parse(FrameForm *frame) {
+-  if(_curchar == '(') {
+-    char *token = get_paren_expr("preserve_stack_slots");
+-    frame->_in_preserve_slots   = token;
+-
+-    if(_curchar != ';') {  // check for semi-colon
+-      parse_err(SYNERR, "missing %c in preserve stack slot entry.\n", ';');
+-      return;
+-    }
+-    next_char();           // skip the semi-colon
+-  }
+-  else {
+-    parse_err(SYNERR, "Missing %c in preserve stack slot entry.\n", '(');
+-  }
+-}
+-
+-//------------------------------calling_convention_parse-----------------------
+-char *ADLParser::calling_convention_parse() {
+-  char   *desc = NULL;          // String representation of calling_convention
+-
+-  skipws();                     // Skip leading whitespace
+-  if ( (desc = find_cpp_block("calling convention block")) == NULL ) {
+-    parse_err(SYNERR, "incorrect or missing block for 'calling_convention'.\n");
+-  }
+-  return desc;
+-}
+-
+ //------------------------------return_value_parse-----------------------------
+ char *ADLParser::return_value_parse() {
+-  char   *desc = NULL;          // String representation of calling_convention
++  char   *desc = NULL;          // String representation of return_value
+ 
+   skipws();                     // Skip leading whitespace
+   if ( (desc = find_cpp_block("return value block")) == NULL ) {
+diff --git a/src/hotspot/share/adlc/adlparse.hpp b/src/hotspot/share/adlc/adlparse.hpp
+index f73c3a5c365..0435144318f 100644
+--- a/src/hotspot/share/adlc/adlparse.hpp
++++ b/src/hotspot/share/adlc/adlparse.hpp
+@@ -119,8 +119,6 @@ protected:
+   void cisc_spilling_operand_name_parse(FrameForm *frame, bool native);
+   void stack_alignment_parse(FrameForm *frame);
+   void return_addr_parse(FrameForm *frame, bool native);
+-  void preserve_stack_parse(FrameForm *frame);
+-  char *calling_convention_parse();
+   char *return_value_parse();
+ 
+   // Parse components of the register section
+diff --git a/src/hotspot/share/adlc/formsopt.cpp b/src/hotspot/share/adlc/formsopt.cpp
+index 85aaac495fe..351904bbb29 100644
+--- a/src/hotspot/share/adlc/formsopt.cpp
++++ b/src/hotspot/share/adlc/formsopt.cpp
+@@ -441,10 +441,7 @@ FrameForm::FrameForm() {
+   _alignment = NULL;
+   _return_addr = NULL;
+   _c_return_addr = NULL;
+-  _in_preserve_slots = NULL;
+   _varargs_C_out_slots_killed = NULL;
+-  _calling_convention = NULL;
+-  _c_calling_convention = NULL;
+   _return_value = NULL;
+   _c_return_value = NULL;
+   _interpreter_frame_pointer_reg = NULL;
+diff --git a/src/hotspot/share/adlc/formsopt.hpp b/src/hotspot/share/adlc/formsopt.hpp
+index 400c2690a9a..6e872b5c647 100644
+--- a/src/hotspot/share/adlc/formsopt.hpp
++++ b/src/hotspot/share/adlc/formsopt.hpp
+@@ -345,10 +345,7 @@ public:
+   bool  _c_return_addr_loc;
+   char *_return_addr;
+   char *_c_return_addr;
+-  char *_in_preserve_slots;
+   char *_varargs_C_out_slots_killed;
+-  char *_calling_convention;
+-  char *_c_calling_convention;
+   char *_return_value;
+   char *_c_return_value;
+ 
+diff --git a/src/hotspot/share/adlc/output_c.cpp b/src/hotspot/share/adlc/output_c.cpp
+index c6083533b58..a044ceab00b 100644
+--- a/src/hotspot/share/adlc/output_c.cpp
++++ b/src/hotspot/share/adlc/output_c.cpp
+@@ -4175,29 +4175,15 @@ void ArchDesc::buildFrameMethods(FILE *fp_cpp) {
+     fprintf(fp_cpp," return OptoReg::stack2reg(%s); }\n\n",
+             _frame->_return_addr);
+   }
+-  // Java Stack Slot Preservation
+-  fprintf(fp_cpp,"uint Compile::in_preserve_stack_slots() ");
+-  fprintf(fp_cpp,"{ return %s; }\n\n", _frame->_in_preserve_slots);
+-  // Top Of Stack Slot Preservation, for both Java and C
+-  fprintf(fp_cpp,"uint Compile::out_preserve_stack_slots() ");
+-  fprintf(fp_cpp,"{ return SharedRuntime::out_preserve_stack_slots(); }\n\n");
+   // varargs C out slots killed
+   fprintf(fp_cpp,"uint Compile::varargs_C_out_slots_killed() const ");
+   fprintf(fp_cpp,"{ return %s; }\n\n", _frame->_varargs_C_out_slots_killed);
+-  // Java Argument Position
+-  fprintf(fp_cpp,"void Matcher::calling_convention(BasicType *sig_bt, VMRegPair *regs, uint length, bool is_outgoing) {\n");
+-  fprintf(fp_cpp,"%s\n", _frame->_calling_convention);
+-  fprintf(fp_cpp,"}\n\n");
+-  // Native Argument Position
+-  fprintf(fp_cpp,"void Matcher::c_calling_convention(BasicType *sig_bt, VMRegPair *regs, uint length) {\n");
+-  fprintf(fp_cpp,"%s\n", _frame->_c_calling_convention);
+-  fprintf(fp_cpp,"}\n\n");
+   // Java Return Value Location
+-  fprintf(fp_cpp,"OptoRegPair Matcher::return_value(uint ideal_reg, bool is_outgoing) {\n");
++  fprintf(fp_cpp,"OptoRegPair Matcher::return_value(uint ideal_reg) {\n");
+   fprintf(fp_cpp,"%s\n", _frame->_return_value);
+   fprintf(fp_cpp,"}\n\n");
+   // Native Return Value Location
+-  fprintf(fp_cpp,"OptoRegPair Matcher::c_return_value(uint ideal_reg, bool is_outgoing) {\n");
++  fprintf(fp_cpp,"OptoRegPair Matcher::c_return_value(uint ideal_reg) {\n");
+   fprintf(fp_cpp,"%s\n", _frame->_c_return_value);
+   fprintf(fp_cpp,"}\n\n");
+ 
+diff --git a/src/hotspot/share/c1/c1_FrameMap.cpp b/src/hotspot/share/c1/c1_FrameMap.cpp
+index 1a517c9f549..fe934d54146 100644
+--- a/src/hotspot/share/c1/c1_FrameMap.cpp
++++ b/src/hotspot/share/c1/c1_FrameMap.cpp
+@@ -72,7 +72,7 @@ CallingConvention* FrameMap::java_calling_convention(const BasicTypeArray* signa
+     }
+   }
+ 
+-  intptr_t out_preserve = SharedRuntime::java_calling_convention(sig_bt, regs, sizeargs, outgoing);
++  intptr_t out_preserve = SharedRuntime::java_calling_convention(sig_bt, regs, sizeargs);
+   LIR_OprList* args = new LIR_OprList(signature->length());
+   for (i = 0; i < sizeargs;) {
+     BasicType t = sig_bt[i];
+diff --git a/src/hotspot/share/code/nmethod.cpp b/src/hotspot/share/code/nmethod.cpp
+index 4e21b69836b..9f03c16ef96 100644
+--- a/src/hotspot/share/code/nmethod.cpp
++++ b/src/hotspot/share/code/nmethod.cpp
+@@ -3237,7 +3237,7 @@ void nmethod::print_nmethod_labels(outputStream* stream, address block_begin, bo
+         assert(sig_index == sizeargs, "");
+       }
+       const char* spname = "sp"; // make arch-specific?
+-      intptr_t out_preserve = SharedRuntime::java_calling_convention(sig_bt, regs, sizeargs, false);
++      intptr_t out_preserve = SharedRuntime::java_calling_convention(sig_bt, regs, sizeargs);
+       int stack_slot_offset = this->frame_size() * wordSize;
+       int tab1 = 14, tab2 = 24;
+       int sig_index = 0;
+diff --git a/src/hotspot/share/opto/callnode.cpp b/src/hotspot/share/opto/callnode.cpp
+index 78a632bf8ac..1e1692dc6f1 100644
+--- a/src/hotspot/share/opto/callnode.cpp
++++ b/src/hotspot/share/opto/callnode.cpp
+@@ -67,8 +67,8 @@ Node *StartNode::Ideal(PhaseGVN *phase, bool can_reshape){
+ }
+ 
+ //------------------------------calling_convention-----------------------------
+-void StartNode::calling_convention( BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt ) const {
+-  Matcher::calling_convention( sig_bt, parm_regs, argcnt, false );
++void StartNode::calling_convention(BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt) const {
++  SharedRuntime::java_calling_convention(sig_bt, parm_regs, argcnt);
+ }
+ 
+ //------------------------------Registers--------------------------------------
+@@ -713,9 +713,9 @@ const Type* CallNode::Value(PhaseGVN* phase) const {
+ }
+ 
+ //------------------------------calling_convention-----------------------------
+-void CallNode::calling_convention( BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt ) const {
++void CallNode::calling_convention(BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt) const {
+   // Use the standard compiler calling convention
+-  Matcher::calling_convention( sig_bt, parm_regs, argcnt, true );
++  SharedRuntime::java_calling_convention(sig_bt, parm_regs, argcnt);
+ }
+ 
+ 
+@@ -739,8 +739,8 @@ Node *CallNode::match( const ProjNode *proj, const Matcher *match ) {
+     OptoRegPair regs = Opcode() == Op_CallLeafVector
+       ? match->vector_return_value(ideal_reg)      // Calls into assembly vector routine
+       : is_CallRuntime()
+-        ? match->c_return_value(ideal_reg,true)  // Calls into C runtime
+-        : match->  return_value(ideal_reg,true); // Calls into compiled Java code
++        ? match->c_return_value(ideal_reg)  // Calls into C runtime
++        : match->  return_value(ideal_reg); // Calls into compiled Java code
+     RegMask rm = RegMask(regs.first());
+ 
+     if (Opcode() == Op_CallLeafVector) {
+@@ -1287,8 +1287,8 @@ void CallRuntimeNode::dump_spec(outputStream *st) const {
+ #endif
+ 
+ //------------------------------calling_convention-----------------------------
+-void CallRuntimeNode::calling_convention( BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt ) const {
+-  Matcher::c_calling_convention( sig_bt, parm_regs, argcnt );
++void CallRuntimeNode::calling_convention(BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt) const {
++  SharedRuntime::c_calling_convention(sig_bt, parm_regs, /*regs2=*/nullptr, argcnt);
+ }
+ 
+ void CallLeafVectorNode::calling_convention( BasicType* sig_bt, VMRegPair *parm_regs, uint argcnt ) const {
+diff --git a/src/hotspot/share/opto/compile.hpp b/src/hotspot/share/opto/compile.hpp
+index 46c4dcfb9c6..72e216d7bc9 100644
+--- a/src/hotspot/share/opto/compile.hpp
++++ b/src/hotspot/share/opto/compile.hpp
+@@ -41,6 +41,7 @@
+ #include "opto/phase.hpp"
+ #include "opto/regmask.hpp"
+ #include "runtime/deoptimization.hpp"
++#include "runtime/sharedRuntime.hpp"
+ #include "runtime/timerTrace.hpp"
+ #include "runtime/vmThread.hpp"
+ #include "utilities/ticks.hpp"
+@@ -1064,14 +1065,16 @@ class Compile : public Phase {
+   // Stack slots that may be unused by the calling convention but must
+   // otherwise be preserved.  On Intel this includes the return address.
+   // On PowerPC it includes the 4 words holding the old TOC & LR glue.
+-  uint in_preserve_stack_slots();
++  uint in_preserve_stack_slots() {
++    return SharedRuntime::in_preserve_stack_slots();
++  }
+ 
+   // "Top of Stack" slots that may be unused by the calling convention but must
+   // otherwise be preserved.
+   // On Intel these are not necessary and the value can be zero.
+-  // On Sparc this describes the words reserved for storing a register window
+-  // when an interrupt occurs.
+-  static uint out_preserve_stack_slots();
++  static uint out_preserve_stack_slots() {
++    return SharedRuntime::out_preserve_stack_slots();
++  }
+ 
+   // Number of outgoing stack slots killed above the out_preserve_stack_slots
+   // for calls to C.  Supports the var-args backing area for register parms.
+diff --git a/src/hotspot/share/opto/matcher.cpp b/src/hotspot/share/opto/matcher.cpp
+index 0846cad3c3f..a06252cab8a 100644
+--- a/src/hotspot/share/opto/matcher.cpp
++++ b/src/hotspot/share/opto/matcher.cpp
+@@ -206,7 +206,7 @@ void Matcher::match( ) {
+     uint ireg = range->field_at(TypeFunc::Parms)->ideal_reg();
+     // Get machine return register
+     uint sop = C->start()->Opcode();
+-    OptoRegPair regs = return_value(ireg, false);
++    OptoRegPair regs = return_value(ireg);
+ 
+     // And mask for same
+     _return_value_mask = RegMask(regs.first());
+@@ -760,7 +760,7 @@ void Matcher::Fixup_Save_On_Entry( ) {
+   uint reth_edge_cnt = TypeFunc::Parms+1;
+   RegMask *reth_rms  = init_input_masks( reth_edge_cnt + soe_cnt, _return_addr_mask, c_frame_ptr_mask );
+   // Rethrow takes exception oop only, but in the argument 0 slot.
+-  OptoReg::Name reg = find_receiver(false);
++  OptoReg::Name reg = find_receiver();
+   if (reg >= 0) {
+     reth_rms[TypeFunc::Parms] = mreg2regmask[reg];
+ #ifdef _LP64
+@@ -2022,10 +2022,10 @@ void Matcher::ReduceOper( State *s, int rule, Node *&mem, MachNode *mach ) {
+ 
+ //------------------------------find_receiver----------------------------------
+ // For a given signature, return the OptoReg for parameter 0.
+-OptoReg::Name Matcher::find_receiver( bool is_outgoing ) {
++OptoReg::Name Matcher::find_receiver() {
+   VMRegPair regs;
+   BasicType sig_bt = T_OBJECT;
+-  calling_convention(&sig_bt, &regs, 1, is_outgoing);
++  SharedRuntime::java_calling_convention(&sig_bt, &regs, 1);
+   // Return argument 0 register.  In the LP64 build pointers
+   // take 2 registers, but the VM wants only the 'main' name.
+   return OptoReg::as_OptoReg(regs.first());
+diff --git a/src/hotspot/share/opto/matcher.hpp b/src/hotspot/share/opto/matcher.hpp
+index 285f33d8e93..6616a9e972b 100644
+--- a/src/hotspot/share/opto/matcher.hpp
++++ b/src/hotspot/share/opto/matcher.hpp
+@@ -362,20 +362,16 @@ public:
+     return stack_alignment_in_bytes() / (VMRegImpl::stack_slot_size);
+   }
+ 
+-  // Array mapping arguments to registers.  Argument 0 is usually the 'this'
+-  // pointer.  Registers can include stack-slots and regular registers.
+-  static void calling_convention( BasicType *, VMRegPair *, uint len, bool is_outgoing );
+-
+   // Convert a sig into a calling convention register layout
+   // and find interesting things about it.
+-  static OptoReg::Name  find_receiver( bool is_outgoing );
++  static OptoReg::Name  find_receiver();
+   // Return address register.  On Intel it is a stack-slot.  On PowerPC
+   // it is the Link register.  On Sparc it is r31?
+   virtual OptoReg::Name return_addr() const;
+   RegMask              _return_addr_mask;
+-  // Return value register.  On Intel it is EAX.  On Sparc i0/o0.
+-  static OptoRegPair   return_value(uint ideal_reg, bool is_outgoing);
+-  static OptoRegPair c_return_value(uint ideal_reg, bool is_outgoing);
++  // Return value register.  On Intel it is EAX.
++  static OptoRegPair   return_value(uint ideal_reg);
++  static OptoRegPair c_return_value(uint ideal_reg);
+   RegMask                     _return_value_mask;
+   // Inline Cache Register
+   static OptoReg::Name  inline_cache_reg();
+@@ -413,9 +409,6 @@ public:
+   // Java-Native calling convention
+   // (what you use when intercalling between Java and C++ code)
+ 
+-  // Array mapping arguments to registers.  Argument 0 is usually the 'this'
+-  // pointer.  Registers can include stack-slots and regular registers.
+-  static void c_calling_convention( BasicType*, VMRegPair *, uint );
+   // Frame pointer. The frame pointer is kept at the base of the stack
+   // and so is probably the stack pointer for most machines.  On Intel
+   // it is ESP.  On the PowerPC it is R1.  On Sparc it is SP.
+diff --git a/src/hotspot/share/runtime/sharedRuntime.cpp b/src/hotspot/share/runtime/sharedRuntime.cpp
+index 95369e6272e..ef2b688c7f1 100644
+--- a/src/hotspot/share/runtime/sharedRuntime.cpp
++++ b/src/hotspot/share/runtime/sharedRuntime.cpp
+@@ -1898,8 +1898,7 @@ void SharedRuntime::check_member_name_argument_is_last_argument(const methodHand
+   assert(member_arg_pos >= 0 && member_arg_pos < total_args_passed, "oob");
+   assert(sig_bt[member_arg_pos] == T_OBJECT, "dispatch argument must be an object");
+ 
+-  const bool is_outgoing = method->is_method_handle_intrinsic();
+-  int comp_args_on_stack = java_calling_convention(sig_bt, regs_without_member_name, total_args_passed - 1, is_outgoing);
++  int comp_args_on_stack = java_calling_convention(sig_bt, regs_without_member_name, total_args_passed - 1);
+ 
+   for (int i = 0; i < member_arg_pos; i++) {
+     VMReg a =    regs_with_member_name[i].first();
+@@ -2899,7 +2898,7 @@ AdapterHandlerEntry* AdapterHandlerLibrary::get_adapter0(const methodHandle& met
+   VMRegPair* regs = (total_args_passed <= 16) ? stack_regs : NEW_RESOURCE_ARRAY(VMRegPair, total_args_passed);
+ 
+   // Get a description of the compiled java calling convention and the largest used (VMReg) stack slot usage
+-  int comp_args_on_stack = SharedRuntime::java_calling_convention(sig_bt, regs, total_args_passed, false);
++  int comp_args_on_stack = SharedRuntime::java_calling_convention(sig_bt, regs, total_args_passed);
+   BufferBlob* buf = buffer_blob(); // the temporary code buffer in CodeCache
+   CodeBuffer buffer(buf);
+   short buffer_locs[20];
+@@ -3076,11 +3075,8 @@ void AdapterHandlerLibrary::create_native_wrapper(const methodHandle& method) {
+       assert(si.slots() == total_args_passed, "");
+       BasicType ret_type = si.return_type();
+ 
+-      // Now get the compiled-Java layout as input (or output) arguments.
+-      // NOTE: Stubs for compiled entry points of method handle intrinsics
+-      // are just trampolines so the argument registers must be outgoing ones.
+-      const bool is_outgoing = method->is_method_handle_intrinsic();
+-      int comp_args_on_stack = SharedRuntime::java_calling_convention(sig_bt, regs, total_args_passed, is_outgoing);
++      // Now get the compiled-Java arguments layout.
++      int comp_args_on_stack = SharedRuntime::java_calling_convention(sig_bt, regs, total_args_passed);
+ 
+       // Generate the compiled-to-native wrapper code
+       nm = SharedRuntime::generate_native_wrapper(&_masm, method, compile_id, sig_bt, regs, ret_type, critical_entry);
+@@ -3124,7 +3120,7 @@ void AdapterHandlerLibrary::create_native_wrapper(const methodHandle& method) {
+ VMReg SharedRuntime::name_for_receiver() {
+   VMRegPair regs;
+   BasicType sig_bt = T_OBJECT;
+-  (void) java_calling_convention(&sig_bt, &regs, 1, true);
++  (void) java_calling_convention(&sig_bt, &regs, 1);
+   // Return argument 0 register.  In the LP64 build pointers
+   // take 2 registers, but the VM wants only the 'main' name.
+   return regs.first();
+@@ -3155,7 +3151,7 @@ VMRegPair *SharedRuntime::find_callee_arguments(Symbol* sig, bool has_receiver,
+   assert(cnt < 256, "grow table size");
+ 
+   int comp_args_on_stack;
+-  comp_args_on_stack = java_calling_convention(sig_bt, regs, cnt, true);
++  comp_args_on_stack = java_calling_convention(sig_bt, regs, cnt);
+ 
+   // the calling convention doesn't count out_preserve_stack_slots so
+   // we must add that in to get "true" stack offsets.
+diff --git a/src/hotspot/share/runtime/sharedRuntime.hpp b/src/hotspot/share/runtime/sharedRuntime.hpp
+index 1dc5294c1d9..4468022d4bc 100644
+--- a/src/hotspot/share/runtime/sharedRuntime.hpp
++++ b/src/hotspot/share/runtime/sharedRuntime.hpp
+@@ -360,11 +360,9 @@ class SharedRuntime: AllStatic {
+   // registers, those above refer to 4-byte stack slots.  All stack slots are
+   // based off of the window top.  SharedInfo::stack0 refers to the first usable
+   // slot in the bottom of the frame. SharedInfo::stack0+1 refers to the memory word
+-  // 4-bytes higher. So for sparc because the register window save area is at
+-  // the bottom of the frame the first 16 words will be skipped and SharedInfo::stack0
+-  // will be just above it. (
++  // 4-bytes higher.
+   // return value is the maximum number of VMReg stack slots the convention will use.
+-  static int java_calling_convention(const BasicType* sig_bt, VMRegPair* regs, int total_args_passed, int is_outgoing);
++  static int java_calling_convention(const BasicType* sig_bt, VMRegPair* regs, int total_args_passed);
+ 
+   static void check_member_name_argument_is_last_argument(const methodHandle& method,
+                                                           const BasicType* sig_bt,
+@@ -455,6 +453,11 @@ class SharedRuntime: AllStatic {
+   // when an interrupt occurs.
+   static uint out_preserve_stack_slots();
+ 
++  // Stack slots that may be unused by the calling convention but must
++  // otherwise be preserved.  On Intel this includes the return address.
++  // On PowerPC it includes the 4 words holding the old TOC & LR glue.
++  static uint in_preserve_stack_slots();
++
+   // Is vector's size (in bytes) bigger than a size saved by default?
+   // For example, on x86 16 bytes XMM registers are saved by default.
+   static bool is_wide_vector(int size);
+-- 
+2.43.0
+
