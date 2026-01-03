@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
 COMPONENT_VERSION= 2.88.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://trealla-prolog.github.io/trealla
@@ -29,6 +30,8 @@ COMPONENT_FMRI= runtime/$(COMPONENT_NAME)-prolog
 COMPONENT_LICENSE= MIT
 
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_BUILD_ACTION += $(GSED) -i -e 's|MACH64|$(MACH64)|' $(COMPONENT_SRC)/Makefile
 
 # Replace the 0.0.0 with the correct version information
 COMPONENT_POST_UNPACK_ACTION += $(GSED) -i -e 's|0\.0\.0|$(COMPONENT_VERSION)|' $(COMPONENT_SRC)/src/version.c ;
