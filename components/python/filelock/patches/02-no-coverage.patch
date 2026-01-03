@@ -1,0 +1,39 @@
+We do not need to check coverage for this project.
+
+--- filelock-3.20.2/pyproject.toml.orig
++++ filelock-3.20.2/pyproject.toml
+@@ -56,10 +56,8 @@
+ ]
+ 
+ test = [
+-  "covdefaults>=2.3",
+   "pytest>=8.4.2",
+   "pytest-asyncio>=1.2",
+-  "pytest-cov>=7",
+   "pytest-mock>=3.15.1",
+   "pytest-timeout>=2.4",
+   "virtualenv>=20.34",
+--- filelock-3.20.2/tox.toml.orig
++++ filelock-3.20.2/tox.toml
+@@ -17,21 +17,6 @@
+     "--junitxml",
+     "{env_tmp_dir}{/}junit.xml",
+     { replace = "posargs", extend = true, default = [
+-      "--no-cov-on-fail",
+-      "--cov",
+-      "{env_site_packages_dir}{/}filelock",
+-      "--cov",
+-      "{tox_root}{/}tests",
+-      "--cov-config",
+-      "{tox_root}{/}pyproject.toml",
+-      "--cov-context",
+-      "test",
+-      "--cov-report",
+-      "term-missing:skip-covered",
+-      "--cov-report",
+-      "html:{env_tmp_dir}{/}htmlcov",
+-      "--cov-report",
+-      "xml:{env_tmp_dir}{/}coverage.xml",
+     ] },
+ 
+     "tests",
