@@ -1,0 +1,223 @@
+From f8df953e61372b396f351403ff6ba165720881bb Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Markus=20Gr=C3=B6nlund?= <mgronlun@openjdk.org>
+Date: Mon, 21 Jun 2021 11:16:41 +0000
+Subject: [PATCH] 8268702: JFR diagnostic commands lack argument descriptors
+ when viewed using Platform MBean Server
+
+Reviewed-by: egahlin
+---
+ src/hotspot/share/jfr/dcmd/jfrDcmds.cpp       | 94 +++++++++++++++++--
+ src/hotspot/share/jfr/dcmd/jfrDcmds.hpp       | 12 +++
+ .../jdk/jfr/internal/dcmd/AbstractDCmd.java   |  5 +-
+ 3 files changed, 101 insertions(+), 10 deletions(-)
+
+diff --git a/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp b/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
+index f821de98a51..d5d1aca378e 100644
+--- a/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
++++ b/src/hotspot/share/jfr/dcmd/jfrDcmds.cpp
+@@ -23,7 +23,7 @@
+  */
+ 
+ #include "precompiled.hpp"
+-#include "classfile/javaClasses.hpp"
++#include "classfile/javaClasses.inline.hpp"
+ #include "classfile/vmSymbols.hpp"
+ #include "jfr/jfr.hpp"
+ #include "jfr/dcmd/jfrDcmds.hpp"
+@@ -33,6 +33,7 @@
+ #include "logging/log.hpp"
+ #include "logging/logConfiguration.hpp"
+ #include "logging/logMessage.hpp"
++#include "memory/arena.hpp"
+ #include "memory/resourceArea.hpp"
+ #include "oops/objArrayOop.inline.hpp"
+ #include "oops/oop.inline.hpp"
+@@ -236,7 +237,6 @@ void JfrDCmd::invoke(JfrJavaArguments& method, TRAPS) const {
+   JfrJavaArguments constructor_args(&constructor_result);
+   constructor_args.set_klass(javaClass(), CHECK);
+ 
+-  ResourceMark rm(THREAD);
+   HandleMark hm(THREAD);
+   JNIHandleBlockManager jni_handle_management(THREAD);
+ 
+@@ -258,12 +258,10 @@ void JfrDCmd::parse(CmdLine* line, char delim, TRAPS) {
+ }
+ 
+ void JfrDCmd::execute(DCmdSource source, TRAPS) {
+-  static const char signature[] = "(Ljava/lang/String;Ljava/lang/String;C)[Ljava/lang/String;";
+-
+   if (invalid_state(output(), THREAD)) {
+     return;
+   }
+-
++  static const char signature[] = "(Ljava/lang/String;Ljava/lang/String;C)[Ljava/lang/String;";
+   JavaValue result(T_OBJECT);
+   JfrJavaArguments execute(&result, javaClass(), "execute", signature, CHECK);
+   jstring argument = JfrJavaSupport::new_string(_args, CHECK);
+@@ -288,13 +286,92 @@ void JfrDCmd::print_help(const char* name) const {
+   static const char signature[] = "()[Ljava/lang/String;";
+   JavaThread* thread = JavaThread::current();
+   JavaValue result(T_OBJECT);
+-  JfrJavaArguments print_help(&result, javaClass(), "printHelp", signature, thread);
+-  invoke(print_help, thread);
++  JfrJavaArguments printHelp(&result, javaClass(), "printHelp", signature, thread);
++  invoke(printHelp, thread);
+   handle_dcmd_result(output(), result.get_oop(), DCmd_Source_MBean, thread);
+ }
+ 
++// Since the DcmdFramework does not support dynamically allocated strings,
++// we keep them in a thread local arena. The arena is reset between invocations.
++static THREAD_LOCAL Arena* dcmd_arena = NULL;
++
++static void prepare_dcmd_string_arena() {
++  if (dcmd_arena == NULL) {
++    dcmd_arena = new (mtTracing) Arena(mtTracing);
++  } else {
++    dcmd_arena->destruct_contents(); // will grow on next allocation
++  }
++}
++
++static char* dcmd_arena_allocate(size_t size) {
++  assert(dcmd_arena != NULL, "invariant");
++  return (char*)dcmd_arena->Amalloc(size);
++}
++
++static const char* get_as_dcmd_arena_string(oop string, JavaThread* t) {
++  char* str = NULL;
++  const typeArrayOop value = java_lang_String::value(string);
++  if (value != NULL) {
++    const size_t length = static_cast<size_t>(java_lang_String::utf8_length(string, value)) + 1;
++    str = dcmd_arena_allocate(length);
++    assert(str != NULL, "invariant");
++    java_lang_String::as_utf8_string(string, value, str, static_cast<int>(length));
++  }
++  return str;
++}
++
++static const char* read_string_field(oop argument, const char* field_name, TRAPS) {
++  JavaValue result(T_OBJECT);
++  JfrJavaArguments args(&result);
++  args.set_klass(argument->klass());
++  args.set_name(field_name);
++  args.set_signature("Ljava/lang/String;");
++  args.set_receiver(argument);
++  JfrJavaSupport::get_field(&args, THREAD);
++  const oop string_oop = result.get_oop();
++  return string_oop != NULL ? get_as_dcmd_arena_string(string_oop, (JavaThread*)THREAD) : NULL;
++}
++
++static bool read_boolean_field(oop argument, const char* field_name, TRAPS) {
++  JavaValue result(T_BOOLEAN);
++  JfrJavaArguments args(&result);
++  args.set_klass(argument->klass());
++  args.set_name(field_name);
++  args.set_signature("Z");
++  args.set_receiver(argument);
++  JfrJavaSupport::get_field(&args, THREAD);
++  return (result.get_jint() & 1) == 1;
++}
++
++static DCmdArgumentInfo* create_info(oop argument, TRAPS) {
++  return new DCmdArgumentInfo(
++    read_string_field(argument, "name", THREAD),
++    read_string_field(argument, "description", THREAD),
++    read_string_field(argument, "type", THREAD),
++    read_string_field(argument, "defaultValue", THREAD),
++    read_boolean_field(argument, "mandatory", THREAD),
++    true, // a DcmdFramework "option"
++    read_boolean_field(argument, "allowMultiple", THREAD));
++}
++
+ GrowableArray<DCmdArgumentInfo*>* JfrDCmd::argument_info_array() const {
+-  return new GrowableArray<DCmdArgumentInfo*>();
++  static const char signature[] = "()[Ljdk/jfr/internal/dcmd/Argument;";
++  JavaThread* thread = JavaThread::current();
++  JavaValue result(T_OBJECT);
++  JfrJavaArguments getArgumentInfos(&result, javaClass(), "getArgumentInfos", signature, thread);
++  invoke(getArgumentInfos, thread);
++  objArrayOop arguments = objArrayOop(result.get_oop());
++  assert(arguments != NULL, "invariant");
++  assert(arguments->is_array(), "must be array");
++  GrowableArray<DCmdArgumentInfo*>* const array = new GrowableArray<DCmdArgumentInfo*>();
++  const int length = arguments->length();
++  prepare_dcmd_string_arena();
++  for (int i = 0; i < length; ++i) {
++    DCmdArgumentInfo* const dai = create_info(arguments->obj_at(i), thread);
++    assert(dai != NULL, "invariant");
++    array->append(dai);
++  }
++  return array;
+ }
+ 
+ GrowableArray<const char*>* JfrDCmd::argument_name_array() const {
+@@ -404,7 +481,6 @@ void JfrConfigureFlightRecorderDCmd::execute(DCmdSource source, TRAPS) {
+     return;
+   }
+ 
+-  ResourceMark rm(THREAD);
+   HandleMark hm(THREAD);
+   JNIHandleBlockManager jni_handle_management(THREAD);
+ 
+diff --git a/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp b/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
+index 605c4033c5e..dce5205854b 100644
+--- a/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
++++ b/src/hotspot/share/jfr/dcmd/jfrDcmds.hpp
+@@ -65,6 +65,9 @@ class JfrStartFlightRecordingDCmd : public JfrDCmd {
+   virtual const char* javaClass() const {
+     return "jdk/jfr/internal/dcmd/DCmdStart";
+   }
++  static int num_arguments() {
++    return 11;
++  }
+ };
+ 
+ class JfrDumpFlightRecordingDCmd : public JfrDCmd {
+@@ -87,6 +90,9 @@ class JfrDumpFlightRecordingDCmd : public JfrDCmd {
+   virtual const char* javaClass() const {
+     return "jdk/jfr/internal/dcmd/DCmdDump";
+   }
++  static int num_arguments() {
++    return 7;
++  }
+ };
+ 
+ class JfrCheckFlightRecordingDCmd : public JfrDCmd {
+@@ -109,6 +115,9 @@ class JfrCheckFlightRecordingDCmd : public JfrDCmd {
+   virtual const char* javaClass() const {
+     return "jdk/jfr/internal/dcmd/DCmdCheck";
+   }
++  static int num_arguments() {
++    return 2;
++  }
+ };
+ 
+ class JfrStopFlightRecordingDCmd : public JfrDCmd {
+@@ -131,6 +140,9 @@ class JfrStopFlightRecordingDCmd : public JfrDCmd {
+   virtual const char* javaClass() const {
+     return "jdk/jfr/internal/dcmd/DCmdStop";
+   }
++  static int num_arguments() {
++    return 2;
++  }
+ };
+ 
+ class JfrConfigureFlightRecorderDCmd : public DCmdWithParser {
+diff --git a/src/jdk.jfr/share/classes/jdk/jfr/internal/dcmd/AbstractDCmd.java b/src/jdk.jfr/share/classes/jdk/jfr/internal/dcmd/AbstractDCmd.java
+index dda13ef67bb..9949ca3689e 100644
+--- a/src/jdk.jfr/share/classes/jdk/jfr/internal/dcmd/AbstractDCmd.java
++++ b/src/jdk.jfr/share/classes/jdk/jfr/internal/dcmd/AbstractDCmd.java
+@@ -58,7 +58,10 @@ abstract class AbstractDCmd {
+     // Called by native
+     public abstract String[] printHelp();
+ 
+-    // Called by native
++    // Called by native. The number of arguments for each command is
++    // reported to the DCmdFramework as a hardcoded number in native.
++    // This is to avoid an upcall as part of DcmdFramework enumerating existing commands.
++    // Remember to keep the two sides in synch.
+     public abstract Argument[] getArgumentInfos();
+ 
+     // Called by native
+-- 
+2.43.2
+

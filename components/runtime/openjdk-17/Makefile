@@ -15,46 +15,71 @@
 # Copyright 2021 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2022-2025 Niklas Poslovski
 # Copyright 2023 Franklin Ronald <franklin@wiselabs.com.br>
+# Copyright 2026 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	17
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	16
+OPENJDK_BUILD=	17
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
-COMPONENT_REVISION=	1
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
 COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:bc339edfa44646fa3c80971237ba4681e43a28877912cda2839aa42a15f0c7e7
+	sha256:e2d1d92a4a593d9a87054ea54f76fcb6119f782c57945506a2ec4adff6ddc123
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
 
-COMPONENT_NAME_1= jdk17
-COMPONENT_SRC_1= $(COMPONENT_NAME_1)-jdk-17-35
-COMPONENT_ARCHIVE_1= $(COMPONENT_SRC_1).tar.bz2
-COMPONENT_ARCHIVE_HASH_1= sha256:973b576b3ba0b78451cf26c835162fba10216ac2d5a6141a6040dddcde9ac6c6
-COMPONENT_ARCHIVE_URL_1= http://pkgs.tribblix.org/openjdk/$(COMPONENT_ARCHIVE_1)
-PKG_PROTO_DIRS += $(COMPONENT_SRC_1)
-
 OPENJDK_INSTANCE=	openjdk$(COMPONENT_VERSION)
 CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
 
+COMPONENT_POST_UNPACK_ACTION= ( cd $(@D) ; \
+	$(GPATCH) -p1 -R < ../patches/readd-jdk-17.0.17-ga.illumos )
+
+# some of them break x86_64 builds, that's why they are here.
+ifeq ($(MACH), sparc)
+COMPONENT_PRE_CONFIGURE_ACTION += cd $(COMPONENT_SRC) ; \
+	$(GPATCH) -p1 -R < ../sparc/0011-8256238-Remove-Matcher-pass_original_key_for_aes.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0048-8256205-Simplify-compiler-calling-convention-handlin.patch ; \
+	$(GPATCH) -p1 < ../sparc/restore_cpu_sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/restore_os_cpu_solaris_sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/TemplateInterpreterGenerator-sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/c1-sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/jfr-sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/memset-sparc.patch ; \
+	$(GPATCH) -p1 < ../sparc/stack_bias.25.patch ; \
+	$(GPATCH) -p1 < ../sparc/sparc-misc.patch ; \
+	$(GPATCH) -p1 < ../sparc/assembler-hpp.patch ; \
+	$(GPATCH) -p1 < ../sparc/8254231-for-sparc.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0001-8264868-Reduce-inclusion-of-registerMap.hpp-and-regi.patch ; \
+	$(GPATCH) -p1 < ../sparc/sparc-linker.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0001-8282477-x86-aarch64-vmassert-_last_Java_pc-NULL-alre.patch ; \
+	$(GPATCH) -p1 < ../sparc/sparc-safefetch.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0001-8283520-JFR-Memory-leak-in-dcmd_arena.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0001-8270491-SEGV-at-read_string_field-oopDesc-char-const.patch ; \
+	$(GPATCH) -p1 -R < ../sparc/0001-8268702-JFR-diagnostic-commands-lack-argument-descri.patch ; \
+	$(GPATCH) -p1 < ../sparc/sparc-noflatten.patch ; \
+	$(GPATCH) -p1 < ../sparc/fix-allocate_new_tlab-crash.patch ; \
+	$(GPATCH) -p1 < ../sparc/c1_CodeStubs_sparc.cpp.patch ; \
+	$(GPATCH) -p1 < ../sparc/c1_Runtime1_sparc.cpp.patch ; \
+	$(GPATCH) -p1 < ../sparc/templateInterpreterGenerator_sparc.cpp.patch ; \
+	$(GPATCH) -p1 < ../sparc/templateTable_sparc.cpp.patch
+endif
+
 PKG_MACROS  += OPENJDK_INSTANCE=$(OPENJDK_INSTANCE)
 PKG_MACROS  += OPENJDK_VERSION=$(OPENJDK_VERSION)
 
 CLEAN_PATHS += $(BUILD_DIR)
-CLEAN_PATHS += $(CACERTS_STORE)
-CLEAN_PATHS += $(COMPONENT_SRC_1)
+CLEAN_PATHS += $(CACERTS_STORE) install
 
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
@@ -66,7 +91,7 @@ CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
 CONFIGURE_OPTIONS+=        --x-libraries=$(USRLIBDIR64)
 CONFIGURE_OPTIONS+=        --with-version-pre=
 CONFIGURE_OPTIONS+=        --with-conf-name=oi
-CONFIGURE_OPTIONS+=        --with-boot-jdk=$(COMPONENT_DIR)/$(COMPONENT_SRC_1)
+CONFIGURE_OPTIONS+=        --with-boot-jdk=/usr/jdk/openjdk17
 CONFIGURE_OPTIONS+=        --with-freetype=system
 CONFIGURE_OPTIONS+=        --with-giflib=system
 CONFIGURE_OPTIONS+=        --with-harfbuzz=system
@@ -91,11 +116,6 @@ CONFIGURE_OPTIONS+=        --disable-precompiled-headers
 CONFIGURE_OPTIONS+=        --disable-ccache
 CONFIGURE_OPTIONS+=        --disable-option-checking
 CONFIGURE_OPTIONS+=        --enable-deprecated-ports=yes
-
-CONFIGURE_ENV+= LD=/usr/bin/gld
-CONFIGURE_ENV+= LD_LIBRARY_PATH=/usr/gcc/7/lib/amd64
-COMPONENT_BUILD_ENV+= LD=/usr/bin/gld
-COMPONENT_BUILD_ENV+= LD_LIBRARY_PATH=/usr/gcc/7/lib/amd64
 
 COMPONENT_POST_BUILD_ACTION=	($(LN) -s server/libjvm.so $(@D)/images/jdk/lib/libjvm.so)
 
@@ -135,6 +155,9 @@ install: $(BUILD_DIR_64)/.built	$(CACERTS_STORE)
 	$(TOUCH) $@
 
 test:		$(NO_TESTS)
+
+# manually added to use common BOOT-JDK.
+REQUIRED_PACKAGES += runtime/java/openjdk17
 
 # manually added to support audio
 REQUIRED_PACKAGES += system/header/header-audio

@@ -1,0 +1,25 @@
+Further investigation required as to whether SPARC actually does
+require special handling.
+
+--- a/src/hotspot/share/gc/shared/memset_with_concurrent_readers.hpp	   :: 
++++ b/src/hotspot/share/gc/shared/memset_with_concurrent_readers.hpp	   :: 
+@@ -32,8 +32,19 @@
+ 
+ // Fill a block of memory with value, like memset, but with the
+ // understanding that there may be concurrent readers of that memory.
++void memset_with_concurrent_readers(void* to, int value, size_t size);
++
++#ifdef SPARC
++
++// SPARC requires special handling.  See SPARC-specific definition.
++
++#else
++// All others just use memset.
++
+ inline void memset_with_concurrent_readers(void* to, int value, size_t size) {
+   ::memset(to, value, size);
+ }
+ 
++#endif // End of target dispatch.
++
+ #endif // SHARE_GC_SHARED_MEMSET_WITH_CONCURRENT_READERS_HPP

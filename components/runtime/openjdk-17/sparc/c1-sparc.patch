@@ -1,0 +1,623 @@
+diff -ur a/src/hotspot/share/c1/c1_Compiler.cpp b/src/hotspot/share/c1/c1_Compiler.cpp
+--- a/src/hotspot/share/c1/c1_Compiler.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_Compiler.cpp	   :: 
+@@ -212,7 +212,7 @@
+   case vmIntrinsics::_updateCRC32:
+   case vmIntrinsics::_updateBytesCRC32:
+   case vmIntrinsics::_updateByteBufferCRC32:
+-#if defined(S390) || defined(PPC64) || defined(AARCH64)
++#if defined(SPARC) || defined(S390) || defined(PPC64) || defined(AARCH64)
+   case vmIntrinsics::_updateBytesCRC32C:
+   case vmIntrinsics::_updateDirectByteBufferCRC32C:
+ #endif
+diff -ur a/src/hotspot/share/c1/c1_GraphBuilder.cpp b/src/hotspot/share/c1/c1_GraphBuilder.cpp
+--- a/src/hotspot/share/c1/c1_GraphBuilder.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_GraphBuilder.cpp	   :: 
+@@ -4056,7 +4056,7 @@
+             if (ciMethod::is_consistent_info(callee, target)) {
+               Bytecodes::Code bc = target->is_static() ? Bytecodes::_invokestatic : Bytecodes::_invokevirtual;
+               ignore_return = ignore_return || (callee->return_type()->is_void() && !target->return_type()->is_void());
+-              if (try_inline(target, /*holder_known*/ !callee->is_static(), ignore_return, bc)) {
++              if (try_inline(target, /*holder_known*/ true, ignore_return, bc)) {
+                 return true;
+               }
+             } else {
+@@ -4127,7 +4127,7 @@
+           // We don't do CHA here so only inline static and statically bindable methods.
+           if (target->is_static() || target->can_be_statically_bound()) {
+             Bytecodes::Code bc = target->is_static() ? Bytecodes::_invokestatic : Bytecodes::_invokevirtual;
+-            if (try_inline(target, /*holder_known*/ !callee->is_static(), ignore_return, bc)) {
++            if (try_inline(target, /*holder_known*/ true, ignore_return, bc)) {
+               return true;
+             }
+           } else {
+diff -ur a/src/hotspot/share/c1/c1_LIR.cpp b/src/hotspot/share/c1/c1_LIR.cpp
+--- a/src/hotspot/share/c1/c1_LIR.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_LIR.cpp	   :: 
+@@ -240,13 +240,14 @@
+ }
+ 
+ 
+-LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, BlockBegin* block)
++LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, BasicType type, BlockBegin* block)
+ #ifdef RISCV
+   : LIR_Op2(lir_branch, cond, LIR_OprFact::illegalOpr, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+ #else
+   : LIR_Op(lir_branch, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+   , _cond(cond)
+ #endif
++  , _type(type)
+   , _label(block->label())
+   , _block(block)
+   , _ublock(NULL)
+@@ -253,13 +254,14 @@
+   , _stub(NULL) {
+ }
+ 
+-LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, CodeStub* stub) :
++LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, BasicType type, CodeStub* stub) :
+ #ifdef RISCV
+   LIR_Op2(lir_branch, cond, LIR_OprFact::illegalOpr, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+ #else
+   LIR_Op(lir_branch, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+   , _cond(cond)
+ #endif
++  , _type(type)
+   , _label(stub->entry())
+   , _block(NULL)
+   , _ublock(NULL)
+@@ -266,13 +268,14 @@
+   , _stub(stub) {
+ }
+ 
+-LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, BlockBegin* block, BlockBegin* ublock)
++LIR_OpBranch::LIR_OpBranch(LIR_Condition cond, BasicType type, BlockBegin* block, BlockBegin* ublock)
+ #ifdef RISCV
+   : LIR_Op2(lir_cond_float_branch, cond, LIR_OprFact::illegalOpr, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+ #else
+   : LIR_Op(lir_cond_float_branch, LIR_OprFact::illegalOpr, (CodeEmitInfo*)NULL)
+   , _cond(cond)
+ #endif
++  , _type(type)
+   , _label(block->label())
+   , _block(block)
+   , _ublock(ublock)
+@@ -1520,7 +1523,7 @@
+     // Emit an explicit null check and deoptimize if opr is null
+     CodeStub* deopt = new DeoptimizeStub(info, Deoptimization::Reason_null_check, Deoptimization::Action_none);
+     cmp(lir_cond_equal, opr, LIR_OprFact::oopConst(NULL));
+-    branch(lir_cond_equal, deopt);
++    branch(lir_cond_equal, T_OBJECT, deopt);
+   } else {
+     // Emit an implicit null check
+     append(new LIR_Op1(lir_null_check, opr, info));
+diff -ur a/src/hotspot/share/c1/c1_LIR.hpp b/src/hotspot/share/c1/c1_LIR.hpp
+--- a/src/hotspot/share/c1/c1_LIR.hpp	   :: 
++++ b/src/hotspot/share/c1/c1_LIR.hpp	   :: 
+@@ -1708,6 +1708,7 @@
+ #ifndef RISCV
+   LIR_Condition _cond;
+ #endif
++  BasicType     _type;
+   Label*        _label;
+   BlockBegin*   _block;  // if this is a branch to a block, this is the block
+   BlockBegin*   _ublock; // if this is a float-branch, this is the unordered block
+@@ -1714,31 +1715,33 @@
+   CodeStub*     _stub;   // if this is a branch to a stub, this is the stub
+ 
+  public:
+-  LIR_OpBranch(LIR_Condition cond, Label* lbl)
++  LIR_OpBranch(LIR_Condition cond, BasicType type, Label* lbl)
+ #ifdef RISCV
+     : LIR_Op2(lir_branch, cond, LIR_OprFact::illegalOpr, LIR_OprFact::illegalOpr, (CodeEmitInfo*) NULL)
+ #else
+     : LIR_Op(lir_branch, LIR_OprFact::illegalOpr, (CodeEmitInfo*) NULL)
+     , _cond(cond)
+ #endif
++    , _type(type)
+     , _label(lbl)
+     , _block(NULL)
+     , _ublock(NULL)
+     , _stub(NULL) { }
+ 
+-  LIR_OpBranch(LIR_Condition cond, BlockBegin* block);
+-  LIR_OpBranch(LIR_Condition cond, CodeStub* stub);
++  LIR_OpBranch(LIR_Condition cond, BasicType type, BlockBegin* block);
++  LIR_OpBranch(LIR_Condition cond, BasicType type, CodeStub* stub);
+ 
+   // for unordered comparisons
+-  LIR_OpBranch(LIR_Condition cond, BlockBegin* block, BlockBegin* ublock);
++  LIR_OpBranch(LIR_Condition cond, BasicType type, BlockBegin* block, BlockBegin* ublock);
+ 
+ #ifdef RISCV
+   LIR_Condition cond()        const              { return condition();  }
+   void set_cond(LIR_Condition cond)              { set_condition(cond); }
+ #else
+   LIR_Condition cond()        const              { return _cond;        }
+   void set_cond(LIR_Condition cond)              { _cond = cond;        }
+ #endif
++  BasicType     type()        const              { return _type;        }
+   Label*        label()       const              { return _label;       }
+   BlockBegin*   block()       const              { return _block;       }
+   BlockBegin*   ublock()      const              { return _ublock;      }
+@@ -1943,7 +1946,7 @@
+   LIR_OpDelay(LIR_Op* op, CodeEmitInfo* info):
+     LIR_Op(lir_delay_slot, LIR_OprFact::illegalOpr, info),
+     _op(op) {
+-    assert(op->code() == lir_nop, "should be filling with nops");
++    NOT_SPARC(assert(op->code() == lir_nop, "should be filling with nops");)
+   }
+   virtual void emit_code(LIR_Assembler* masm);
+   virtual LIR_OpDelay* as_OpDelay() { return this; }
+@@ -2333,26 +2336,24 @@
+ 
+   // jump is an unconditional branch
+   void jump(BlockBegin* block) {
+-    append(new LIR_OpBranch(lir_cond_always, block));
++    append(new LIR_OpBranch(lir_cond_always, T_ILLEGAL, block));
+   }
+   void jump(CodeStub* stub) {
+-    append(new LIR_OpBranch(lir_cond_always, stub));
++    append(new LIR_OpBranch(lir_cond_always, T_ILLEGAL, stub));
+   }
+-  void branch(LIR_Condition cond, Label* lbl) {
+-    append(new LIR_OpBranch(cond, lbl));
++  void branch(LIR_Condition cond, BasicType type, Label* lbl)        { append(new LIR_OpBranch(cond, type, lbl)); }
++  void branch(LIR_Condition cond, BasicType type, BlockBegin* block) {
++    assert(type != T_FLOAT && type != T_DOUBLE, "no fp comparisons");
++    append(new LIR_OpBranch(cond, type, block));
+   }
+-  // Should not be used for fp comparisons
+-  void branch(LIR_Condition cond, BlockBegin* block) {
+-    append(new LIR_OpBranch(cond, block));
++  void branch(LIR_Condition cond, BasicType type, CodeStub* stub)    {
++    assert(type != T_FLOAT && type != T_DOUBLE, "no fp comparisons");
++    append(new LIR_OpBranch(cond, type, stub));
+   }
+-  // Should not be used for fp comparisons
+-  void branch(LIR_Condition cond, CodeStub* stub) {
+-    append(new LIR_OpBranch(cond, stub));
++  void branch(LIR_Condition cond, BasicType type, BlockBegin* block, BlockBegin* unordered) {
++    assert(type == T_FLOAT || type == T_DOUBLE, "fp comparisons only");
++    append(new LIR_OpBranch(cond, type, block, unordered));
+   }
+-  // Should only be used for fp comparisons
+-  void branch(LIR_Condition cond, BlockBegin* block, BlockBegin* unordered) {
+-    append(new LIR_OpBranch(cond, block, unordered));
+-  }
+ 
+   void shift_left(LIR_Opr value, LIR_Opr count, LIR_Opr dst, LIR_Opr tmp);
+   void shift_right(LIR_Opr value, LIR_Opr count, LIR_Opr dst, LIR_Opr tmp);
+diff -ur a/src/hotspot/share/c1/c1_LIRGenerator.cpp b/src/hotspot/share/c1/c1_LIRGenerator.cpp
+--- a/src/hotspot/share/c1/c1_LIRGenerator.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_LIRGenerator.cpp	   :: 
+@@ -478,11 +478,11 @@
+   if (index->is_constant()) {
+     cmp_mem_int(lir_cond_belowEqual, array, arrayOopDesc::length_offset_in_bytes(),
+                 index->as_jint(), null_check_info);
+-    __ branch(lir_cond_belowEqual, stub); // forward branch
++    __ branch(lir_cond_belowEqual, T_INT, stub); // forward branch
+   } else {
+     cmp_reg_mem(lir_cond_aboveEqual, index, array,
+                 arrayOopDesc::length_offset_in_bytes(), T_INT, null_check_info);
+-    __ branch(lir_cond_aboveEqual, stub); // forward branch
++    __ branch(lir_cond_aboveEqual, T_INT, stub); // forward branch
+   }
+ }
+ 
+@@ -491,11 +491,11 @@
+   CodeStub* stub = new RangeCheckStub(info, index);
+   if (index->is_constant()) {
+     cmp_mem_int(lir_cond_belowEqual, buffer, java_nio_Buffer::limit_offset(), index->as_jint(), info);
+-    __ branch(lir_cond_belowEqual, stub); // forward branch
++    __ branch(lir_cond_belowEqual, T_INT, stub); // forward branch
+   } else {
+     cmp_reg_mem(lir_cond_aboveEqual, index, buffer,
+                 java_nio_Buffer::limit_offset(), T_INT, info);
+-    __ branch(lir_cond_aboveEqual, stub); // forward branch
++    __ branch(lir_cond_aboveEqual, T_INT, stub); // forward branch
+   }
+   __ move(index, result);
+ }
+@@ -670,7 +670,7 @@
+                        oopDesc::header_size(), instance_size, klass_reg, !klass->is_initialized(), slow_path);
+   } else {
+     CodeStub* slow_path = new NewInstanceStub(klass_reg, dst, klass, info, Runtime1::new_instance_id);
+-    __ branch(lir_cond_always, slow_path);
++    __ branch(lir_cond_always, T_ILLEGAL, slow_path);
+     __ branch_destination(slow_path->continuation());
+   }
+ }
+@@ -1366,7 +1366,7 @@
+   LabelObj* L_array = new LabelObj();
+ 
+   __ cmp(lir_cond_lessEqual, layout, 0);
+-  __ branch(lir_cond_lessEqual, L_array->label());
++  __ branch(lir_cond_lessEqual, T_OBJECT, L_array->label());
+ 
+   // Instance case: the layout helper gives us instance size almost directly,
+   // but we need to mask out the _lh_instance_slow_path_bit.
+@@ -1376,7 +1376,7 @@
+   jlong mask = ~(jlong) right_n_bits(LogBytesPerLong);
+   __ logical_and(result_reg, LIR_OprFact::longConst(mask), result_reg);
+ 
+-  __ branch(lir_cond_always, L_done->label());
++  __ branch(lir_cond_always, T_OBJECT, L_done->label());
+ 
+   // Array case: size is round(header + element_size*arraylength).
+   // Since arraylength is different for every array instance, we have to
+@@ -1420,7 +1420,7 @@
+ 
+   __ branch_destination(L_shift_loop->label());
+   __ cmp(lir_cond_equal, layout, 0);
+-  __ branch(lir_cond_equal, L_shift_exit->label());
++  __ branch(lir_cond_equal, T_OBJECT, L_shift_exit->label());
+ 
+ #ifdef _LP64
+   __ shift_left(length, 1, length);
+@@ -1430,7 +1430,7 @@
+ 
+   __ sub(layout, LIR_OprFact::intConst(1), layout);
+ 
+-  __ branch(lir_cond_always, L_shift_loop->label());
++  __ branch(lir_cond_always, T_OBJECT, L_shift_loop->label());
+   __ branch_destination(L_shift_exit->label());
+ 
+   // Mix all up, round, and push to the result.
+@@ -1720,7 +1720,7 @@
+   if (GenerateRangeChecks && needs_range_check) {
+     if (use_length) {
+       __ cmp(lir_cond_belowEqual, length.result(), index.result());
+-      __ branch(lir_cond_belowEqual, new RangeCheckStub(range_check_info, index.result(), array.result()));
++      __ branch(lir_cond_belowEqual, T_INT, new RangeCheckStub(range_check_info, index.result(), array.result()));
+     } else {
+       array_range_check(array.result(), index.result(), null_check_info, range_check_info);
+       // range_check also does the null check
+@@ -1899,11 +1899,11 @@
+     CodeStub* stub = new RangeCheckStub(info, index.result());
+     if (index.result()->is_constant()) {
+       cmp_mem_int(lir_cond_belowEqual, buf.result(), java_nio_Buffer::limit_offset(), index.result()->as_jint(), info);
+-      __ branch(lir_cond_belowEqual, stub);
++      __ branch(lir_cond_belowEqual, T_INT, stub);
+     } else {
+       cmp_reg_mem(lir_cond_aboveEqual, index.result(), buf.result(),
+                   java_nio_Buffer::limit_offset(), T_INT, info);
+-      __ branch(lir_cond_aboveEqual, stub);
++      __ branch(lir_cond_aboveEqual, T_INT, stub);
+     }
+     __ move(index.result(), result);
+   } else {
+@@ -1977,12 +1977,12 @@
+ 
+   if (GenerateRangeChecks && needs_range_check) {
+     if (StressLoopInvariantCodeMotion && range_check_info->deoptimize_on_exception()) {
+-      __ branch(lir_cond_always, new RangeCheckStub(range_check_info, index.result(), array.result()));
++      __ branch(lir_cond_always, T_ILLEGAL, new RangeCheckStub(range_check_info, index.result(), array.result()));
+     } else if (use_length) {
+       // TODO: use a (modified) version of array_range_check that does not require a
+       //       constant length to be loaded to a register
+       __ cmp(lir_cond_belowEqual, length.result(), index.result());
+-      __ branch(lir_cond_belowEqual, new RangeCheckStub(range_check_info, index.result(), array.result()));
++      __ branch(lir_cond_belowEqual, T_INT, new RangeCheckStub(range_check_info, index.result(), array.result()));
+     } else {
+       array_range_check(array.result(), index.result(), null_check_info, range_check_info);
+       // The range check performs the null check, so clear it out for the load
+@@ -2358,18 +2358,18 @@
+     BlockBegin* dest = one_range->sux();
+     if (low_key == high_key) {
+       __ cmp(lir_cond_equal, value, low_key);
+-      __ branch(lir_cond_equal, dest);
++      __ branch(lir_cond_equal, T_INT, dest);
+     } else if (high_key - low_key == 1) {
+       __ cmp(lir_cond_equal, value, low_key);
+-      __ branch(lir_cond_equal, dest);
++      __ branch(lir_cond_equal, T_INT, dest);
+       __ cmp(lir_cond_equal, value, high_key);
+-      __ branch(lir_cond_equal, dest);
++      __ branch(lir_cond_equal, T_INT, dest);
+     } else {
+       LabelObj* L = new LabelObj();
+       __ cmp(lir_cond_less, value, low_key);
+-      __ branch(lir_cond_less, L->label());
++      __ branch(lir_cond_less, T_INT, L->label());
+       __ cmp(lir_cond_lessEqual, value, high_key);
+-      __ branch(lir_cond_lessEqual, dest);
++      __ branch(lir_cond_lessEqual, T_INT, dest);
+       __ branch_destination(L->label());
+     }
+   }
+@@ -2489,7 +2489,7 @@
+   } else {
+     for (int i = 0; i < len; i++) {
+       __ cmp(lir_cond_equal, value, i + lo_key);
+-      __ branch(lir_cond_equal, x->sux_at(i));
++      __ branch(lir_cond_equal, T_INT, x->sux_at(i));
+     }
+     __ jump(x->default_sux());
+   }
+@@ -2548,7 +2548,7 @@
+     int len = x->length();
+     for (int i = 0; i < len; i++) {
+       __ cmp(lir_cond_equal, value, x->key_at(i));
+-      __ branch(lir_cond_equal, x->sux_at(i));
++      __ branch(lir_cond_equal, T_INT, x->sux_at(i));
+     }
+     __ jump(x->default_sux());
+   }
+@@ -3052,18 +3052,16 @@
+ void LIRGenerator::do_getEventWriter(Intrinsic* x) {
+   LabelObj* L_end = new LabelObj();
+ 
+-  // FIXME T_ADDRESS should actually be T_METADATA but it can't because the
+-  // meaning of these two is mixed up (see JDK-8026837).
+   LIR_Address* jobj_addr = new LIR_Address(getThreadPointer(),
+                                            in_bytes(THREAD_LOCAL_WRITER_OFFSET_JFR),
+-                                           T_ADDRESS);
++                                           T_OBJECT);
+   LIR_Opr result = rlock_result(x);
+-  __ move(LIR_OprFact::oopConst(NULL), result);
+-  LIR_Opr jobj = new_register(T_METADATA);
+-  __ move_wide(jobj_addr, jobj);
+-  __ cmp(lir_cond_equal, jobj, LIR_OprFact::metadataConst(0));
+-  __ branch(lir_cond_equal, L_end->label());
++  __ move_wide(jobj_addr, result);
++  __ cmp(lir_cond_equal, result, LIR_OprFact::oopConst(NULL));
++  __ branch(lir_cond_equal, T_OBJECT, L_end->label());
+ 
++  LIR_Opr jobj = new_register(T_OBJECT);
++  __ move(result, jobj);
+   access_load(IN_NATIVE, T_OBJECT, LIR_OprFact::address(new LIR_Address(jobj, T_OBJECT)), result);
+ 
+   __ branch_destination(L_end->label());
+@@ -3427,7 +3425,7 @@
+     CodeStub* deopt = new DeoptimizeStub(info, Deoptimization::Reason_tenured,
+                                          Deoptimization::Action_make_not_entrant);
+     __ cmp(lir_cond_lessEqual, result, LIR_OprFact::intConst(0));
+-    __ branch(lir_cond_lessEqual, deopt);
++    __ branch(lir_cond_lessEqual, T_INT, deopt);
+   }
+ }
+ 
+@@ -3474,9 +3472,9 @@
+     if (freq == 0) {
+       if (!step->is_constant()) {
+         __ cmp(lir_cond_notEqual, step, LIR_OprFact::intConst(0));
+-        __ branch(lir_cond_notEqual, overflow);
++        __ branch(lir_cond_notEqual, T_ILLEGAL, overflow);
+       } else {
+-        __ branch(lir_cond_always, overflow);
++        __ branch(lir_cond_always, T_ILLEGAL, overflow);
+       }
+     } else {
+       LIR_Opr mask = load_immediate(freq, T_INT);
+@@ -3487,7 +3485,7 @@
+       }
+       __ logical_and(result, mask, result);
+       __ cmp(lir_cond_equal, result, LIR_OprFact::intConst(0));
+-      __ branch(lir_cond_equal, overflow);
++      __ branch(lir_cond_equal, T_INT, overflow);
+     }
+     __ branch_destination(overflow->continuation());
+   }
+@@ -3601,7 +3599,7 @@
+     CodeStub* stub = new PredicateFailedStub(info);
+ 
+     __ cmp(lir_cond(cond), left, right);
+-    __ branch(lir_cond(cond), stub);
++    __ branch(lir_cond(cond), right->type(), stub);
+   }
+ }
+ 
+diff -ur a/src/hotspot/share/c1/c1_LinearScan.cpp b/src/hotspot/share/c1/c1_LinearScan.cpp
+--- a/src/hotspot/share/c1/c1_LinearScan.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_LinearScan.cpp	   :: 
+@@ -2155,11 +2155,11 @@
+ #ifdef _LP64
+         return LIR_OprFact::double_cpu(assigned_reg, assigned_reg);
+ #else
+-#if defined(PPC32)
++#if defined(SPARC) || defined(PPC32)
+         return LIR_OprFact::double_cpu(assigned_regHi, assigned_reg);
+ #else
+         return LIR_OprFact::double_cpu(assigned_reg, assigned_regHi);
+-#endif // PPC32
++#endif // SPARC
+ #endif // LP64
+       }
+ 
+@@ -2199,10 +2199,15 @@
+         }
+ #endif // X86
+ 
+-#if defined(ARM32)
++#ifdef SPARC
+         assert(assigned_reg >= pd_first_fpu_reg && assigned_reg <= pd_last_fpu_reg, "no fpu register");
+         assert(interval->assigned_regHi() >= pd_first_fpu_reg && interval->assigned_regHi() <= pd_last_fpu_reg, "no fpu register");
+         assert(assigned_reg % 2 == 0 && assigned_reg + 1 == interval->assigned_regHi(), "must be sequential and even");
++        LIR_Opr result = LIR_OprFact::double_fpu(interval->assigned_regHi() - pd_first_fpu_reg, assigned_reg - pd_first_fpu_reg);
++#elif defined(ARM32)
++        assert(assigned_reg >= pd_first_fpu_reg && assigned_reg <= pd_last_fpu_reg, "no fpu register");
++        assert(interval->assigned_regHi() >= pd_first_fpu_reg && interval->assigned_regHi() <= pd_last_fpu_reg, "no fpu register");
++        assert(assigned_reg % 2 == 0 && assigned_reg + 1 == interval->assigned_regHi(), "must be sequential and even");
+         LIR_Opr result = LIR_OprFact::double_fpu(assigned_reg - pd_first_fpu_reg, interval->assigned_regHi() - pd_first_fpu_reg);
+ #else
+         assert(assigned_reg >= pd_first_fpu_reg && assigned_reg <= pd_last_fpu_reg, "no fpu register");
+@@ -2799,6 +2804,9 @@
+ #ifdef AMD64
+       assert(false, "FPU not used on x86-64");
+ #endif
++#ifdef SPARC
++      assert(opr->fpu_regnrLo() == opr->fpu_regnrHi() + 1, "assumed in calculation (only fpu_regnrHi is used)");
++#endif
+ #ifdef ARM32
+       assert(opr->fpu_regnrHi() == opr->fpu_regnrLo() + 1, "assumed in calculation (only fpu_regnrLo is used)");
+ #endif
+diff -ur a/src/hotspot/share/c1/c1_Runtime1.cpp b/src/hotspot/share/c1/c1_Runtime1.cpp
+--- a/src/hotspot/share/c1/c1_Runtime1.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_Runtime1.cpp	   :: 
+@@ -244,7 +244,7 @@
+   case fpu2long_stub_id:
+   case unwind_exception_id:
+   case counter_overflow_id:
+-#if defined(PPC32)
++#if defined(SPARC) || defined(PPC32)
+   case handle_exception_nofpu_id:
+ #endif
+     expect_oop_map = false;
+@@ -1131,7 +1131,7 @@
+           ShouldNotReachHere();
+         }
+ 
+-#if defined(PPC32)
++#if defined(SPARC) || defined(PPC32)
+         if (load_klass_or_mirror_patch_id ||
+             stub_id == Runtime1::load_appendix_patching_id) {
+           // Update the location in the nmethod with the proper
+@@ -1222,6 +1222,13 @@
+             RelocIterator iter(nm, (address)instr_pc, (address)(instr_pc + 1));
+             relocInfo::change_reloc_info_for_address(&iter, (address) instr_pc,
+                                                      relocInfo::none, rtype);
++#ifdef SPARC
++            // Sparc takes two relocations for an metadata so update the second one.
++            address instr_pc2 = instr_pc + NativeMovConstReg::add_offset;
++            RelocIterator iter2(nm, instr_pc2, instr_pc2 + 1);
++            relocInfo::change_reloc_info_for_address(&iter2, (address) instr_pc2,
++                                                     relocInfo::none, rtype);
++#endif
+ #ifdef PPC32
+           { address instr_pc2 = instr_pc + NativeMovConstReg::lo_offset;
+             RelocIterator iter2(nm, instr_pc2, instr_pc2 + 1);
+diff -ur a/src/hotspot/share/gc/g1/c1/g1BarrierSetC1.cpp b/src/hotspot/share/gc/g1/c1/g1BarrierSetC1.cpp
+--- a/src/hotspot/share/gc/g1/c1/g1BarrierSetC1.cpp	   :: 
++++ b/src/hotspot/share/gc/g1/c1/g1BarrierSetC1.cpp	   :: 
+@@ -103,7 +103,7 @@
+     slow = new G1PreBarrierStub(pre_val);
+   }
+ 
+-  __ branch(lir_cond_notEqual, slow);
++  __ branch(lir_cond_notEqual, T_INT, slow);
+   __ branch_destination(slow->continuation());
+ }
+ 
+@@ -171,7 +171,7 @@
+   __ cmp(lir_cond_notEqual, xor_shift_res, LIR_OprFact::intptrConst(NULL_WORD));
+ 
+   CodeStub* slow = new G1PostBarrierStub(addr, new_val);
+-  __ branch(lir_cond_notEqual, slow);
++  __ branch(lir_cond_notEqual, LP64_ONLY(T_LONG) NOT_LP64(T_INT), slow);
+   __ branch_destination(slow->continuation());
+ }
+ 
+diff -ur a/src/hotspot/share/gc/shared/c1/barrierSetC1.cpp b/src/hotspot/share/gc/shared/c1/barrierSetC1.cpp
+--- a/src/hotspot/share/gc/shared/c1/barrierSetC1.cpp	   :: 
++++ b/src/hotspot/share/gc/shared/c1/barrierSetC1.cpp	   :: 
+@@ -194,7 +194,7 @@
+   if (mask_boolean) {
+     LabelObj* equalZeroLabel = new LabelObj();
+     __ cmp(lir_cond_equal, result, 0);
+-    __ branch(lir_cond_equal, equalZeroLabel->label());
++    __ branch(lir_cond_equal, T_BOOLEAN, equalZeroLabel->label());
+     __ move(LIR_OprFact::intConst(1), result);
+     __ branch_destination(equalZeroLabel->label());
+   }
+@@ -322,13 +322,13 @@
+         __ move(LIR_OprFact::longConst(java_lang_ref_Reference::referent_offset()), referent_off);
+       }
+       __ cmp(lir_cond_notEqual, offset, referent_off);
+-      __ branch(lir_cond_notEqual, cont->label());
++      __ branch(lir_cond_notEqual, offset->type(), cont->label());
+     }
+     if (gen_source_check) {
+       // offset is a const and equals referent offset
+       // if (source == null) -> continue
+       __ cmp(lir_cond_equal, base_reg, LIR_OprFact::oopConst(NULL));
+-      __ branch(lir_cond_equal, cont->label());
++      __ branch(lir_cond_equal, T_OBJECT, cont->label());
+     }
+     LIR_Opr src_klass = gen->new_register(T_METADATA);
+     if (gen_type_check) {
+@@ -339,7 +339,7 @@
+       LIR_Opr reference_type = gen->new_register(T_INT);
+       __ move(reference_type_addr, reference_type);
+       __ cmp(lir_cond_equal, reference_type, LIR_OprFact::intConst(REF_NONE));
+-      __ branch(lir_cond_equal, cont->label());
++      __ branch(lir_cond_equal, T_INT, cont->label());
+     }
+   }
+ }
+diff -ur a/src/hotspot/share/gc/shared/c1/cardTableBarrierSetC1.cpp b/src/hotspot/share/gc/shared/c1/cardTableBarrierSetC1.cpp
+--- a/src/hotspot/share/gc/shared/c1/cardTableBarrierSetC1.cpp	   :: 
++++ b/src/hotspot/share/gc/shared/c1/cardTableBarrierSetC1.cpp	   :: 
+@@ -87,7 +87,7 @@
+ 
+     LabelObj* L_already_dirty = new LabelObj();
+     __ cmp(lir_cond_equal, cur_value, dirty);
+-    __ branch(lir_cond_equal, L_already_dirty->label());
++    __ branch(lir_cond_equal, T_BYTE, L_already_dirty->label());
+     __ move(dirty, card_addr);
+     __ branch_destination(L_already_dirty->label());
+   } else {
+diff -ur a/src/hotspot/share/gc/shenandoah/c1/shenandoahBarrierSetC1.cpp b/src/hotspot/share/gc/shenandoah/c1/shenandoahBarrierSetC1.cpp
+--- a/src/hotspot/share/gc/shenandoah/c1/shenandoahBarrierSetC1.cpp	   :: 
++++ b/src/hotspot/share/gc/shenandoah/c1/shenandoahBarrierSetC1.cpp	   :: 
+@@ -106,7 +106,7 @@
+     slow = new ShenandoahPreBarrierStub(pre_val);
+   }
+ 
+-  __ branch(lir_cond_notEqual, slow);
++  __ branch(lir_cond_notEqual, T_INT, slow);
+   __ branch_destination(slow->continuation());
+ }
+ 
+@@ -156,7 +156,7 @@
+   __ cmp(lir_cond_notEqual, flag_val, LIR_OprFact::intConst(0));
+ 
+   CodeStub* slow = new ShenandoahLoadReferenceBarrierStub(obj, addr, result, tmp1, tmp2, decorators);
+-  __ branch(lir_cond_notEqual, slow);
++  __ branch(lir_cond_notEqual, T_INT, slow);
+   __ branch_destination(slow->continuation());
+ 
+   return result;
+diff -ur a/src/hotspot/share/gc/z/c1/zBarrierSetC1.cpp b/src/hotspot/share/gc/z/c1/zBarrierSetC1.cpp
+--- a/src/hotspot/share/gc/z/c1/zBarrierSetC1.cpp	   :: 
++++ b/src/hotspot/share/gc/z/c1/zBarrierSetC1.cpp	   :: 
+@@ -153,7 +153,7 @@
+   // Slow path
+   const address runtime_stub = load_barrier_on_oop_field_preloaded_runtime_stub(access.decorators());
+   CodeStub* const stub = new ZLoadBarrierStubC1(access, result, runtime_stub);
+-  __ branch(lir_cond_notEqual, stub);
++  __ branch(lir_cond_notEqual, T_ADDRESS, stub);
+   __ branch_destination(stub->continuation());
+ }
+ 
+--- a/src/hotspot/share/c1/c1_LIRAssembler.cpp	   :: 
++++ b/src/hotspot/share/c1/c1_LIRAssembler.cpp	   :: 
+@@ -578,6 +578,16 @@
+       monitor_address(op->in_opr()->as_constant_ptr()->as_jint(), op->result_opr());
+       break;
+ 
++#ifdef SPARC
++    case lir_pack64:
++      pack64(op->in_opr(), op->result_opr());
++      break;
++
++    case lir_unpack64:
++      unpack64(op->in_opr(), op->result_opr());
++      break;
++#endif
++
+     case lir_unwind:
+       unwind_op(op->in_opr());
+       break;
+@@ -844,7 +854,11 @@
+         if (!r->is_stack()) {
+           stringStream st;
+           st.print("bad oop %s at %d", r->as_Register()->name(), _masm->offset());
++#ifdef SPARC
++          _masm->_verify_oop(r->as_Register(), os::strdup(st.as_string(), mtCompiler), __FILE__, __LINE__);
++#else
+           _masm->verify_oop(r->as_Register());
++#endif
+         } else {
+           _masm->verify_stack_oop(r->reg2stack() * VMRegImpl::stack_slot_size);
+         }
