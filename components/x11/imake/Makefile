@@ -12,16 +12,16 @@
 #
 # Copyright 2015 Aurelien Larcher
 #
-BUILD_BITS= 64
+
 X11_CATEGORY= UTIL
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           imake
-COMPONENT_VERSION=        1.0.10
+COMPONENT_VERSION=        1.0.11
 COMPONENT_SUMMARY=  imake - makefile generation tool
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:75decbcea8d7b354cf36adc9675e53c4790ee3de56a14bd87b42c8e8aad2ecf5
+COMPONENT_ARCHIVE_HASH=   sha256:55955527eaebe94633e4083d4fe5f2160a65fe4c6dafdee48b89fea5f1ca8a78
 COMPONENT_FMRI=           developer/build/imake
 COMPONENT_LICENSE_FILE=   COPYING
 
