@@ -12,23 +12,24 @@
 # Copyright 2014 Ken Mays. All rights reserved.
 # Copyright 2016 Adam Stevko. All rights reserved.
 # Copyright 2019 Michal Nowak
-# Copyright 2020, 2025 Andreas Wacknitz
+# Copyright 2020, 2026 Andreas Wacknitz
 #
 
+BUILD_STYLE= meson
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	4.19.0
+COMPONENT_VERSION=	4.20.1
 COMPONENT_SUMMARY=	ISO code lists and translations
 COMPONENT_SRC=		$(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:fbb26e873f360badc72234fb34848cf9c5eff58c1506ebc7a1ccdf5a70bcb197
+COMPONENT_ARCHIVE_HASH= sha256:66ea9879f9a4d6f767f424bf74bc5471215d36d54f8940f6d32dd7737ceef046
 COMPONENT_PROJECT_URL=	https://salsa.debian.org/iso-codes-team/$(COMPONENT_NAME)
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/-/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		data/iso-codes
 COMPONENT_CLASSIFICATION= Desktop (GNOME)/Localizations
-COMPONENT_LICENSE=	LGPLv2.1
-COMPONENT_LICENSE_FILE=	COPYING
+COMPONENT_LICENSE=	LGPLv2.1+
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,10 +37,6 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CLEAN_PATHS	+= build
-
-# Failure to update symlinks
-COMPONENT_POST_CONFIGURE_ACTION= \
-  ( cd $(@D); $(GSED) -i '/^LN_S/s/s/sfvn/' */Makefile )
 
 # bin/xml_from_json.py script requires a Python 3 interpreter
 PYTHON_REQUIRED_PACKAGES += runtime/python
