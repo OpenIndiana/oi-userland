@@ -20,11 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pathspec
-HUMAN_VERSION =			0.12.1
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			1.0.0
 COMPONENT_SUMMARY =		Utility library for gitignore style pattern matching of file paths.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712
+	sha256:9ada63a23541746b0cf7d5672a39ea77eac31dd23a80470be90df83537512131
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
