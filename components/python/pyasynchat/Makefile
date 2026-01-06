@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasynchat
-HUMAN_VERSION =			1.0.4
+HUMAN_VERSION =			1.0.5
 COMPONENT_SUMMARY =		Make asynchat available for Python 3.12 onwards
 COMPONENT_PROJECT_URL =		https://github.com/simonrob/pyasynchat
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3f5333df649e46c56d48c57e6a4b7163fd07f626bfd884e22ef373ab3c3a4670
+	sha256:36665473ae730dac51e6d7dad70f8295962120c830ab692f0a31efba32687e24
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
