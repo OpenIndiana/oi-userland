@@ -1,0 +1,25 @@
+Provide a time for NowIncludingSuspendMs
+
+--- thunderbird-144.0.1/mozglue/misc/Now.cpp.~1~	2025-10-15 23:20:31.000000000 -0400
++++ thunderbird-144.0.1/mozglue/misc/Now.cpp	2025-10-19 23:01:23.636220624 -0400
+@@ -93,7 +93,20 @@
+ 
+ Maybe<uint64_t> NowIncludingSuspendMs() {
+ #  ifndef CLOCK_BOOTTIME
++
++#ifdef XP_SOLARIS
++// Illumos does not suspend.  No need for BOOTTIME (which is not in Illumos)
++  struct timespec ts = {0};
++
++  if (clock_gettime(CLOCK_MONOTONIC, &ts)) {
++    return Nothing();
++  }
++  return Some(TimespecToMilliseconds(ts));
++
++#else // XP_SOLARIS
+   return Nothing();
++#endif 
++
+ #  else
+   struct timespec ts = {0};
+ 

@@ -16,14 +16,14 @@
 # Copyright 2019 Geoffrey Weiss
 # Copyright 2019 Michal Nowak
 # Copyright 2021 Carsten Grzemba
-# Copyright 2023-2025 Niklas Poslovski
+# Copyright 2023-2026 Niklas Poslovski
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	144.0
+COMPONENT_MAJOR_VERSION =	146.0.1
 COMPONENT_MINOR_VERSION =	1
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
@@ -32,12 +32,12 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7dbf8ebee436fd3efc5895b5151af0e23063ef1d3a47ff3da6d55dfcc1b047c6
+COMPONENT_ARCHIVE_HASH= sha256:f872b12327543e1e454f9a50be9a7675450aed3e04cc87e1a8c7fb4f235c2bf7
 COMPONENT_ARCHIVE_URL =	https://gitlab.com/api/v4/projects/32320088/packages/generic/librewolf-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.89.0
+RUST_VERSION= 1.91.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -52,13 +52,7 @@ PATH= $(CARGO_HOME)/bin:$(PATH.gnu)
 MOZCONFIG= $(SOURCE_DIR)/mozconfig
 GNU_ARCH= x86_64-unknown-illumos
 
-# Clang 20 does not work with Mozilla patches
-# CLANG_VERSION= 19
-
 ifdef DEBUG
-# disable code optimization
-CFLAGS =
-CXXFLAGS =
 
 MOZCONFIG_DEBUG =	$(MOZCONFIG)
 MOZCONFIG_NON_DEBUG =	/dev/null
@@ -129,7 +123,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.28.0 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
