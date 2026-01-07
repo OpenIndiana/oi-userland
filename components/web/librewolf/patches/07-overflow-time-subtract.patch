@@ -1,0 +1,16 @@
+In DEBUG build.
+09: core::panicking::panic_const::panic_const_sub_overflow::hfd95b26b6f045e4b[/usr/lib/amd64/thunderbird/libxul.so +0x2dc450f6]
+
+Work around by avoid subtraction.
+
+--- thunderbird-144.0.1/gfx/wr/webrender/src/profiler.rs.old	2025-10-21 15:35:53.374237784 -0400
++++ thunderbird-144.0.1/gfx/wr/webrender/src/profiler.rs	2025-10-21 15:41:00.448394832 -0400
+@@ -654,7 +654,7 @@
+         if update_avg {
+             self.start = now;
+         }
+-        let one_second_ago = now - ONE_SECOND_NS;
++        let one_second_ago = now;
+         self.frame_timestamps_within_last_second.retain(|t| *t > one_second_ago);
+         self.frame_timestamps_within_last_second.push(now);
+ 
