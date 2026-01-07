@@ -22,9 +22,9 @@ include ../../../../make-rules/shared-macros.mk
 # Odd minor versions are unstable.
 
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.58.1
+HUMAN_VERSION=			2.58.3
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:7f374a6a38cd70ff4b32c9d3a0310bfa804d946fed4c9e69a7d49facdcb95e9c
+COMPONENT_ARCHIVE_HASH=		sha256:b0fabea6c9742eda8c9c675f9b8c1d1babba1da82da03ea1103710233717c1b0
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -56,13 +56,22 @@ COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTO_DIR)/$(PYTHON_DIR) ;
 # Move all modules from default site-packages directory to vendor-packages
 # directory where we place modules shipped by the OS but not included in the
 # core Python distribution.
-COMPONENT_POST_INSTALL_ACTION.64 += $(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+COMPONENT_POST_INSTALL_ACTION.64 += $(MV) $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ;
 
 # Testing needs dbus up and running
 TEST_REQUIRED_PACKAGES += system/library/dbus/dbus-x11
-COMPONENT_PRE_TEST_ACTION += /usr/bin/dbus-launch > $(BUILD_DIR_$(BITS))/.dbus-env ;
+COMPONENT_PRE_TEST_ACTION += $(ENV) /usr/bin/dbus-launch > $(BUILD_DIR_$(BITS))/.dbus-env ;
 COMPONENT_TEST_ENV += $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env)
 COMPONENT_POST_TEST_ACTION += . $(BUILD_DIR_$(BITS))/.dbus-env ; kill $$DBUS_SESSION_BUS_PID ; $(RM) $(BUILD_DIR_$(BITS))/.dbus-env ;
+
+# We need to start the currently built at-spi-bus-launcher and
+# at-spi2-registryd because otherwise the installed one will be started (and so
+# tested).  The sleep after the at-spi-bus-launcher start is needed to make
+# sure it is properly running before we start at-spi2-registryd.  We do not
+# need to kill at-spi-bus-launcher because it will end automatically.
+COMPONENT_PRE_TEST_ACTION += $(ENV) $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env) $(BUILD_DIR_$(BITS))/bus/at-spi-bus-launcher & sleep 5 ;
+COMPONENT_PRE_TEST_ACTION += $(ENV) $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env) $(BUILD_DIR_$(BITS))/registryd/at-spi2-registryd & echo $$! > $(BUILD_DIR_$(BITS))/.registry ;
+COMPONENT_POST_TEST_ACTION += kill $$($(CAT) $(BUILD_DIR_$(BITS))/.registry) ; $(RM) $(BUILD_DIR_$(BITS))/.registry ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
