@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		anyio
-HUMAN_VERSION =			4.12.0
+HUMAN_VERSION =			4.12.1
 COMPONENT_SUMMARY =		High-level concurrency and networking framework on top of asyncio or Trio
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:73c693b567b0c55130c104d0b43a9baf3aa6a31fc6110116509f27bf75e21ec0
+	sha256:41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
