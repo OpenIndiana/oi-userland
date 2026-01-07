@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		types_requests
-HUMAN_VERSION =			2.32.4.20250913
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.32.4.20260107
 COMPONENT_SUMMARY =		Typing stubs for requests
 COMPONENT_PROJECT_URL =		https://github.com/python/typeshed
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:abd6d4f9ce3a9383f269775a9835a4c24e5cd6b9f647d64f88aa4613c33def5d
+	sha256:018a11ac158f801bfa84857ddec1650750e393df8a004a8a9ae2a9bec6fcb24f
 COMPONENT_LICENSE =		Apache-2.0 AND MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
