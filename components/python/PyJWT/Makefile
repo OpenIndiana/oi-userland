@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyjwt
 HUMAN_VERSION =			2.10.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		JSON Web Token implementation in Python
 COMPONENT_PROJECT_URL =		https://github.com/jpadilla/pyjwt
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,9 +30,10 @@ COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This optional test dependency is needed to get consistent test results
+TEST_REQUIRED_PACKAGES.python += library/python/cryptography
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
