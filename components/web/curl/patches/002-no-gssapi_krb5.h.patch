@@ -1,0 +1,13 @@
+--- curl-8.18.0/lib/urldata.h.old	2026-01-08 08:04:05.818085314 -0500
++++ curl-8.18.0/lib/urldata.h	2026-01-08 08:05:07.550747308 -0500
+@@ -186,7 +186,9 @@
+ #  include <gssapi.h>
+ # else /* MIT Kerberos */
+ #  include <gssapi/gssapi.h>
+-#  include <gssapi/gssapi_krb5.h> /* for GSS_C_CHANNEL_BOUND_FLAG, in 1.19+ */
++#  ifdef GSS_C_CHANNEL_BOUND_FLAG
++#   include <gssapi/gssapi_krb5.h> /* for GSS_C_CHANNEL_BOUND_FLAG, in 1.19+ */
++#  endif
+ # endif
+ #endif
+ 
