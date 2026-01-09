@@ -18,15 +18,15 @@ BUILD_STYLE = archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unicode-ucd
-COMPONENT_VERSION=		16.0.0
+COMPONENT_VERSION=		17.0.0
 COMPONENT_SUMMARY=		Unicode Character Database data files
 COMPONENT_PROJECT_URL=		https://www.unicode.org/ucd/
 COMPONENT_FMRI=			data/unicode-ucd
 COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=		UCD.zip
-COMPONENT_ARCHIVE_URL=		https://www.unicode.org/Public/zipped/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:c86dd81f2b14a43b0cc064aa5f89aa7241386801e35c59c7984e579832634eb2
+COMPONENT_ARCHIVE=		UCD-$(HUMAN_VERSION).zip
+COMPONENT_ARCHIVE_URL=		https://www.unicode.org/Public/$(HUMAN_VERSION)/ucd/UCD.zip
+COMPONENT_ARCHIVE_HASH=		sha256:2066d1909b2ea93916ce092da1c0ee4808ea3ef8407c94b4f14f5b7eb263d28e
 COMPONENT_LICENSE=		Unicode-3.0
 
 BUILD_TARGET = $(BUILD_DIR)/.built
@@ -34,6 +34,10 @@ INSTALL_TARGET = $(BUILD_DIR)/.installed
 TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file:
+	curl -s https://www.unicode.org/license.txt > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLEAN_PATHS += $(PROTO_DIR)
