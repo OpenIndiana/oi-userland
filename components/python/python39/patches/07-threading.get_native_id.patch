@@ -1,0 +1,34 @@
+https://github.com/python/cpython/pull/137927
+
+--- Python-3.9.25/Include/pythread.h.orig
++++ Python-3.9.25/Include/pythread.h
+@@ -25,7 +25,8 @@
+ PyAPI_FUNC(void) _Py_NO_RETURN PyThread_exit_thread(void);
+ PyAPI_FUNC(unsigned long) PyThread_get_thread_ident(void);
+ 
+-#if defined(__APPLE__) || defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(_WIN32) || defined(_AIX)
++#if defined(__APPLE__) || defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(_WIN32) || defined(_AIX) \
++    || (defined(__sun__) && SIZEOF_LONG >= 8)
+ #define PY_HAVE_THREAD_NATIVE_ID
+ PyAPI_FUNC(unsigned long) PyThread_get_thread_native_id(void);
+ #endif
+--- Python-3.9.25/Python/thread_pthread.h.orig
++++ Python-3.9.25/Python/thread_pthread.h
+@@ -23,6 +23,8 @@
+ #   include <sys/thread.h>      /* thread_self() */
+ #elif defined(__NetBSD__)
+ #   include <lwp.h>             /* _lwp_self() */
++#elif defined(__sun__) && SIZEOF_LONG >= 8
++#   include <thread.h>
+ #endif
+ 
+ /* The POSIX spec requires that use of pthread_attr_setstacksize
+@@ -356,6 +358,8 @@
+ #elif defined(__NetBSD__)
+     lwpid_t native_id;
+     native_id = _lwp_self();
++#elif defined(__sun__) && SIZEOF_LONG >= 8
++    unsigned long native_id = (unsigned long)getpid() << 32 | thr_self();
+ #endif
+     return (unsigned long) native_id;
+ }
