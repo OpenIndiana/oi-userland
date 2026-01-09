@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		barman
-HUMAN_VERSION =			3.16.2
+HUMAN_VERSION =			3.17.0
 COMPONENT_SUMMARY =		Backup and Recovery Manager for PostgreSQL
 COMPONENT_PROJECT_URL =		https://www.pgbarman.org/
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/EnterpriseDB/barman/archive/refs/tags/release/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:02206acb70dcfe3a6b51329e9c2b5848114e357f94dda86ba483aab1b11765ae
+	sha256:7ecf6730abf5abe06cb8229bc5230cfad1c91627d87a330d0f4119426b53eae0
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -69,6 +69,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(INSTALL) $(COMPONENT_DIR)/files/barman.conf.4 $(PROTOUSRSHAREMAN4DIR) ;
 
 # We have no packages needed for cloud testing so we need to skip following tests
+PYTEST_ADDOPTS += --ignore tests/test_barman_cloud_backup_delete.py
 PYTEST_ADDOPTS += --ignore tests/test_barman_cloud_backup_show.py
 PYTEST_ADDOPTS += --ignore tests/test_barman_cloud_wal_archive.py
 PYTEST_ADDOPTS += --ignore tests/test_cloud.py
