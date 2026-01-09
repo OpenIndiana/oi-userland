@@ -150,8 +150,8 @@ CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
 # during ./configure).
 COMPONENT_BUILD_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
-MESON = /usr/bin/meson
-USERLAND_REQUIRED_PACKAGES += developer/build/meson
+MESON = /usr/bin/meson-$(PYTHON_VERSION)
+USERLAND_REQUIRED_PACKAGES.python += library/python/meson
 
 # Configure
 CLONEY_MODE = none
