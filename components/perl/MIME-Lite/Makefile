@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		MIME-Lite
-HUMAN_VERSION =			3.033
-COMPONENT_REVISION =		4
-COMPONENT_SUMMARY =		Handy-dandy MIME mailing class
+HUMAN_VERSION =			3.035
+COMPONENT_SUMMARY =		low-calorie MIME generator
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:78a279f1d2e242551c347ef97a13fc675766602cb84c2a80c569400f4f368bab
+	sha256:f5ca81e248de17e4c69bcb3671433985258cfe84447f94bb17c7eb8c77c4af13
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/email-date-format
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/mailtools
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-types
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/email-date-format
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/mailtools
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/mime-types
+REQUIRED_PACKAGES.perl += runtime/perl
