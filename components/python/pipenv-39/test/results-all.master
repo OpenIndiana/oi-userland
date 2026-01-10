@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 200 items / 11 deselected / 189 selected
+collecting ... collected 165 items / 12 deselected / 153 selected
 
 tests/unit/test_cmdparse.py::test_parse PASSED
 tests/unit/test_cmdparse.py::test_parse_error PASSED
@@ -16,24 +16,8 @@ tests/unit/test_core.py::test_suppress_nested_venv_warning PASSED
 tests/unit/test_core.py::test_load_dot_env_from_environment_variable_location PASSED
 tests/unit/test_core.py::test_doesnt_load_dot_env_if_disabled PASSED
 tests/unit/test_core.py::test_load_dot_env_warns_if_file_doesnt_exist PASSED
-tests/unit/test_core.py::test_load_dot_env_quiet_with_verbosity PASSED
-tests/unit/test_core.py::test_load_dot_env_shows_message_without_quiet PASSED
-tests/unit/test_core.py::test_load_dot_env_suppresses_message_when_pipenv_active PASSED
-tests/unit/test_core.py::test_deactivate_wrapper_script_includes_unset_pipenv_active PASSED
 tests/unit/test_dependencies.py::test_clean_resolved_dep_with_vcs_url PASSED
 tests/unit/test_dependencies.py::test_clean_resolved_dep_with_vcs_url_and_extras PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_specifier_with_prerelease_version_enables_prereleases PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_filter_with_explicit_false_excludes_prereleases PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_filter_with_explicit_false_no_fallback PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_filter_with_none_uses_specifier_prereleases PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_issue_6395_transitive_prerelease_specifier PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_prerelease_only_package_with_none_fallback PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_issue_6485_prerelease_only_package PASSED
-tests/unit/test_dependencies.py::TestPrereleaseFiltering::test_mixed_versions_no_fallback_to_prereleases PASSED
-tests/unit/test_dependencies.py::TestCandidateEvaluatorPrereleases::test_prerelease_only_package_allowed PASSED
-tests/unit/test_dependencies.py::TestCandidateEvaluatorPrereleases::test_mixed_versions_excludes_prereleases PASSED
-tests/unit/test_dependencies.py::TestCandidateEvaluatorPrereleases::test_allow_prereleases_flag_includes_all PASSED
-tests/unit/test_dependencies.py::TestCandidateEvaluatorPrereleases::test_specifier_constraint_with_prerelease_only PASSED
 tests/unit/test_environments.py::test_get_from_env[ENABLE_SOMETHING-FAKEPREFIX-True] PASSED
 tests/unit/test_environments.py::test_get_from_env[ENABLE_SOMETHING-FAKEPREFIX-False] PASSED
 tests/unit/test_environments.py::test_get_from_env[ENABLE_SOMETHING-None-True] PASSED
@@ -55,24 +39,10 @@ tests/unit/test_funktools.py::test_is_iterable[None-False] PASSED
 tests/unit/test_funktools.py::test_is_iterable[1234-False] PASSED
 tests/unit/test_funktools.py::test_unnest_none PASSED
 tests/unit/test_funktools.py::test_dedup PASSED
-tests/unit/test_pylock.py::test_pylock_file_from_path PASSED
-tests/unit/test_pylock.py::test_pylock_file_invalid_version PASSED
-tests/unit/test_pylock.py::test_pylock_file_missing_version PASSED
-tests/unit/test_pylock.py::test_find_pylock_file PASSED
-tests/unit/test_pylock.py::test_convert_to_pipenv_lockfile PASSED
-tests/unit/test_pylock.py::test_from_lockfile PASSED
-tests/unit/test_pylock.py::test_wildcard_version_handling PASSED
-tests/unit/test_pylock.py::test_write_method PASSED
-tests/unit/test_pylock.py::test_get_packages_for_environment_marker_evaluation PASSED
-tests/unit/test_pylock.py::test_from_lockfile_with_custom_dev_groups PASSED
-tests/unit/test_pylock.py::test_from_lockfile_adds_package_index PASSED
-tests/unit/test_pylock.py::test_from_pyproject PASSED
-tests/unit/test_pylock.py::test_from_pyproject_missing_file PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps0-expected0] PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps1-expected1] PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps2-expected2] PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way_uvicorn PASSED
-tests/unit/test_utils.py::test_convert_deps_to_pip_vcs_with_markers PASSED
 tests/unit/test_utils.py::test_get_constraints_from_deps[deps0-expected0] PASSED
 tests/unit/test_utils.py::test_get_constraints_from_deps[deps1-expected1] PASSED
 tests/unit/test_utils.py::test_get_constraints_from_deps[deps2-expected2] PASSED
@@ -107,7 +77,6 @@ tests/unit/test_utils.py::TestUtils::test_python_version_output_variants[Python 
 tests/unit/test_utils.py::TestUtils::test_python_version_output_variants[Python 3.6.20 :: Continuum Analytics, Inc.-3.6.20] PASSED
 tests/unit/test_utils.py::TestUtils::test_python_version_output_variants[Python 3.5.3 (3f6eaa010fce78cc7973bdc1dfdb95970f08fed2, Jan 13 2018, 18:14:01)\n[PyPy 5.10.1 with GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.39.2)]-3.5.3] PASSED
 tests/unit/test_utils.py::TestUtils::test_is_valid_url PASSED
-tests/unit/test_utils.py::TestUtils::test_download_file PASSED
 tests/unit/test_utils.py::TestUtils::test_is_python_command[python-True] PASSED
 tests/unit/test_utils.py::TestUtils::test_is_python_command[python3.7-True] PASSED
 tests/unit/test_utils.py::TestUtils::test_is_python_command[python2.7-True] PASSED
@@ -158,11 +127,6 @@ tests/unit/test_utils.py::TestUtils::test_is_env_truthy_exists_false PASSED
 tests/unit/test_utils.py::TestUtils::test_is_env_truthy_does_not_exisxt PASSED
 tests/unit/test_utils.py::TestUtils::test_virtualenv_scripts_dir_nt SKIPPED
 tests/unit/test_utils.py::TestUtils::test_virtualenv_scripts_dir_posix PASSED
-tests/unit/test_utils.py::TestUtils::test_find_package_name_from_directory_ignores_subdirectory_setup PASSED
-tests/unit/test_utils.py::TestUtils::test_find_package_name_from_directory_finds_egg_info_metadata PASSED
-tests/unit/test_utils.py::TestPipConfigurationParsing::test_pip_configuration_dictionary_format PASSED
-tests/unit/test_utils.py::TestPipConfigurationParsing::test_project_parses_pip_conf_index_url PASSED
-tests/unit/test_utils.py::TestPipConfigurationParsing::test_project_parses_multiple_pip_conf_indexes PASSED
 tests/unit/test_utils_windows_executable.py::test_find_windows_executable_when_not_found SKIPPED
 tests/unit/test_utils_windows_executable.py::test_find_windows_executable_when_found SKIPPED
 tests/unit/test_vcs.py::test_vcs_url_processor_basic_expansion PASSED
@@ -196,11 +160,11 @@ tests/unit/test_vendor.py::test_token_date[dt5-1992-08-19T15:10:00Z] PASSED
 tests/unit/test_vendor.py::test_token_date[dt6-1992-08-19T15:10:00+08:00] PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1428
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1428: PytestConfigWarning: Unknown config option: plugins
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1474
+  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1474: PytestConfigWarning: Unknown config option: plugins
   
     self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 180 passed, 9 skipped, 11 deselected, 1 warning ========
+======== 144 passed, 9 skipped, 12 deselected, 1 warning ========
