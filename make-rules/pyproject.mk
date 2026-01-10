@@ -92,7 +92,7 @@ $(BUILD_DIR)/%/.depend-test-pyproject: $(BUILD_DIR)/%/.installed
 	if [ -f $$cfg ] ; then \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval \
-			| $(PYTHON) $(WS_TOOLS)/python-requires - > $@ ; \
+			| PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires - > $@ ; \
 	fi
 	$(TOUCH) $@
 
