@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     rgb
-COMPONENT_VERSION=  1.1.0
+COMPONENT_VERSION=  1.1.1
 COMPONENT_SUMMARY=  the X11 rgb color name mapping list data and utility
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:fc03d7f56e5b2a617668167f8927948cce54f93097e7ccd9f056077f479ed37b
+COMPONENT_ARCHIVE_HASH=	sha256:c80ff280a02f56c30fadc2dfa210fc6979c4ab968afa315278cb97768b64ecab
 COMPONENT_FMRI=     x11/rgb
 
 include $(WS_MAKE_RULES)/common.mk
