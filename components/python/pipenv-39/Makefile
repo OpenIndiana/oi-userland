@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project pipenv
+#   $WS_TOOLS/python-integrate-project -d python/pipenv-39 pipenv
 #
 
 BUILD_STYLE = pyproject
@@ -19,23 +19,36 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pipenv
-HUMAN_VERSION =			2026.0.3
+HUMAN_VERSION =			2025.0.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python Development Workflow for Humans.
 COMPONENT_PROJECT_URL =		https://github.com/pypa/pipenv
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/pypa/pipenv/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a39d13a41ed8e4368ad50620941191f357319c8ffb7df45875c7c5dc6604ff6
+	sha256:d7a481a3a97c954be21e3b4be48a0105fe24c8f02d90875ee026c80af122f9a0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by pipenv >= 2025.1.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pipenv >= 2025.1.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Remove misplaced docs and examples files
+# https://github.com/pypa/pipenv/issues/5937
+COMPONENT_POST_INSTALL_ACTION += \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/docs ; \
+	$(RM) -r $(PROTO_DIR)/$(PYTHON_LIB)/examples ;
+
 # https://github.com/pypa/pipenv/issues/6294#issuecomment-2537370184
 PYTEST_ADDOPTS += -m "not cli and not needs_internet" tests/unit/
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/certifi
