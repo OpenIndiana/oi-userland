@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.interface zope_interface
+#   $WS_TOOLS/python-integrate-project -d python/zope.interface-39 zope_interface
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_interface
-HUMAN_VERSION =			8.2
+HUMAN_VERSION =			8.0.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Interfaces for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:afb20c371a601d261b4f6edb53c3c418c249db1a9717b0baafc9a9bb39ba1224
+	sha256:eba5610d042c3704a48222f7f7c6ab5b243ed26f917e2bc69379456b115e02d1
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# zope.interface --> zope.testing --> zope.interface
-# zope.interface --> zope.event --> zope.testrunner ==> zope.interface
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
+COMPONENT_VERSION =		8.1.1
 
-# Python 3.9 is not supported by zope.interface >= 8.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.interface >= 8.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
