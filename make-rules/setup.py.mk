@@ -374,7 +374,7 @@ $(BUILD_DIR)/%/.depend-test-tox: $(BUILD_DIR)/%/.installed
 		( PATH=$(PATH) $(TOX) -qq --no-provision --print-deps-to=- $(TOX_TESTENV) \
 			| $(WS_TOOLS)/python-resolve-deps \
 				PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
-			| $(PYTHON) $(WS_TOOLS)/python-requires - ; \
+			| PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires - ; \
 		for e in $$(PATH=$(PATH) $(TOX) -qq --no-provision --print-extras-to=- $(TOX_TESTENV)) ; do \
 			PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 		done \
@@ -647,7 +647,7 @@ $(BUILD_DIR)/%/.depend-test: $(BUILD_DIR)/%/.installed
 		PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) $$e ; \
 	done ) | $(WS_TOOLS)/python-resolve-deps \
 		PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires $(COMPONENT_NAME) \
-	| $(PYTHON) $(WS_TOOLS)/python-requires - > $@
+	| PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires - > $@
 
 # Convert raw per version lists of test dependencies to single list of
 # TEST_REQUIRED_PACKAGES entries.  Some Python projects lists their own project
