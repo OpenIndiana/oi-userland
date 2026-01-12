@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_vcs
 HUMAN_VERSION =			2.4.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Facilities for working with VCS repositories
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:1b3b1a4a9bebe14c0bba1ff17f30e01b4eacc3d64724fad6b51a3ee657fc4de5
@@ -29,21 +30,16 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-classes
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-path
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-versioning
-PYTHON_REQUIRED_PACKAGES += library/python/more-itertools
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/python-dateutil
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/tempora
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/jaraco-classes
+REQUIRED_PACKAGES.python += library/python/jaraco-path
+REQUIRED_PACKAGES.python += library/python/jaraco-versioning
+REQUIRED_PACKAGES.python += library/python/more-itertools
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/python-dateutil
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/tempora
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pygments
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-home
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
-TEST_REQUIRED_PACKAGES.python += library/python/types-python-dateutil
