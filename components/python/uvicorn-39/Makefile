@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project uvicorn
+#   $WS_TOOLS/python-integrate-project -d python/uvicorn-39 uvicorn
 #
 
 BUILD_STYLE = pyproject
@@ -19,29 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uvicorn
-HUMAN_VERSION =			0.40.0
+HUMAN_VERSION =			0.39.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		The lightning-fast ASGI server.
 COMPONENT_PROJECT_URL =		https://uvicorn.dev/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:839676675e87e73694518b5574fd0f24c9d97b46bea16df7b8c05ea1a51071ea
+	sha256:610512b19baa93423d2892d7823741f6d27717b642c8964000d7194dded19302
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
 TEST_STYLE = pytest
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# uvicorn --> httpx --> uvicorn
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by uvicorn >= 0.40.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# uvicorn >= 0.40.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -59,6 +49,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 REQUIRED_PACKAGES.python += library/python/click
 REQUIRED_PACKAGES.python += library/python/h11
 REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/anyio
 TEST_REQUIRED_PACKAGES.python += library/python/cryptography
