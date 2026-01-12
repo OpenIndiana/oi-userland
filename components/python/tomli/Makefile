@@ -20,26 +20,21 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomli
-HUMAN_VERSION =			2.3.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.4.0
 COMPONENT_SUMMARY =		A lil' TOML parser
 COMPONENT_PROJECT_URL =		https://github.com/hukkin/tomli
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/hukkin/tomli/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:438851e2e43c7b5c43f211bd40fefdf9e59eb733477dc48525e61de09eb33339
+	sha256:6d9e3a3f690db54a42eb9e98591ec5e9731779d3650c39668a220982f587a699
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - build
-# - flit_scm (test bootstrap)
 # - hatchling (test bootstrap)
-# - pyproject_api (test bootstrap)
-# - pytest (test bootstrap)
 # - setuptools-scm
-# - tox (test bootstrap)
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
