@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tomlkit
-HUMAN_VERSION =			0.13.3
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.14.0
 COMPONENT_SUMMARY =		Style preserving TOML library
 COMPONENT_PROJECT_URL =		https://github.com/sdispater/tomlkit
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1
+	sha256:cf00efca415dbd57575befb1f6634c4f42d2d87dbba376128adb42c121b87064
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
