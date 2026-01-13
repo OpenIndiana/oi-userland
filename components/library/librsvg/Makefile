@@ -21,6 +21,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
 COMPONENT_VERSION=	2.61.3
+COMPONENT_REVISION=	1
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
@@ -39,6 +40,9 @@ RUST_ARCH=              x86_64-unknown-illumos
 CARGO_HOME=             $(@D)/.cargo
 # if -z ignore is added to LD_OPTIONS the build will fail
 LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld/map.pagealign -Bdirect
+
+# Disable avif since it is encumbered
+CONFIGURE_OPTIONS += -Davif=disabled
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(GSED) -i -e 's/= .*version-script.*$$/= []/' $(SOURCE_DIR)/rsvg/meson.build
 
