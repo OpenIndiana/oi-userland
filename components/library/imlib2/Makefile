@@ -26,13 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         imlib2
-COMPONENT_VERSION=      1.12.5
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.12.6
 COMPONENT_SUMMARY=      Library that does image file loading and saving as well as rendering, manipulation, arbitrary polygon support
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/enlightenment/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:fa2315f28379b430a6e6605b4284b07be06a3ef422d4f5e1c9bb24714c4cf6dd
+COMPONENT_ARCHIVE_HASH= sha256:250f9752f69dc522e529a81aaa9395705f7fc312ff2453e5de59ac2ba1f2858f
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/enlightenment/imlib2-src//$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -41,7 +40,7 @@ COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc/imlib2
+CONFIGURE_OPTIONS += --sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
