@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project identify
+#   $WS_TOOLS/python-integrate-project -d python/identify-39 identify
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-HUMAN_VERSION =			2.6.16
+HUMAN_VERSION =			2.6.15
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pre-commit/identify/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a22c206a996684b2a29870aa4fd829b08ba1a61f3a2b68e1a3861b558a7f0517
+	sha256:bcdb19f63ead0dc06c0bc603e21bb00c24da550ac40f16b7461bc405a05f2155
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by identify >= 2.6.16
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# identify >= 2.6.16 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
