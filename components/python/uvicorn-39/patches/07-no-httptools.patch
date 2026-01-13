@@ -1,8 +1,8 @@
 We have no httptools packaged yet.
 
---- uvicorn-0.40.0/pyproject.toml.orig
-+++ uvicorn-0.40.0/pyproject.toml
-@@ -40,7 +40,6 @@
+--- uvicorn-0.39.0/pyproject.toml.orig
++++ uvicorn-0.39.0/pyproject.toml
+@@ -41,7 +41,6 @@
  [project.optional-dependencies]
  standard = [
      "colorama>=0.4; sys_platform == 'win32'",
@@ -10,9 +10,9 @@ We have no httptools packaged yet.
      "python-dotenv>=0.13",
      "PyYAML>=5.1",
      "websockets>=10.4",
---- uvicorn-0.40.0/tests/test_server.py.orig
-+++ uvicorn-0.40.0/tests/test_server.py
-@@ -20,7 +20,6 @@
+--- uvicorn-0.39.0/tests/test_server.py.orig
++++ uvicorn-0.39.0/tests/test_server.py
+@@ -21,7 +21,6 @@
  from uvicorn.config import Config
  from uvicorn.protocols.http.flow_control import HIGH_WATER_LIMIT
  from uvicorn.protocols.http.h11_impl import H11Protocol
@@ -20,7 +20,7 @@ We have no httptools packaged yet.
  
  pytestmark = pytest.mark.anyio
  
-@@ -88,7 +87,7 @@
+@@ -89,7 +88,7 @@
  
  
  async def test_request_than_limit_max_requests_warn_log(
@@ -29,7 +29,7 @@ We have no httptools packaged yet.
  ):
      caplog.set_level(logging.WARNING, logger="uvicorn.error")
      config = Config(app=app, limit_max_requests=1, port=unused_tcp_port, http=http_protocol_cls)
-@@ -101,7 +100,7 @@
+@@ -102,7 +101,7 @@
  
  
  @contextlib.asynccontextmanager
@@ -38,7 +38,7 @@ We have no httptools packaged yet.
      config = Config(app=app, port=port, loop="asyncio", http=http_protocol_cls)
      server = Server(config=config)
      task = asyncio.create_task(server.serve())
-@@ -131,7 +130,7 @@
+@@ -132,7 +131,7 @@
  
  
  async def test_no_contextvars_pollution_asyncio(
