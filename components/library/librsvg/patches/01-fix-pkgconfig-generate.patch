@@ -1,0 +1,14 @@
+Fix problem:
+librsvg-2.61.3/rsvg/meson.build:299:21: ERROR: requires argument not a string, library with pkgconfig-generated file or pkgconfig-dependency object, got <ExternalLibrary socket: True>
+
+--- librsvg-2.61.3/meson.build.old
++++ librsvg-2.61.3/meson.build
+@@ -377,7 +377,7 @@
+ endif
+ 
+ private_libraries += [m_dep]
+-private_dependencies += network_deps
++# private_dependencies += network_deps
+ # appleframeworks cannot be exposed to pkg-config
+ library_dependencies += foundation_dep
+ library_dependencies += other_library_dependencies
