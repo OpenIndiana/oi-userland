@@ -1,11 +1,13 @@
---- webkitgtk-2.48.1/Source/JavaScriptCore/heap/BlockDirectory.cpp.orig
-+++ webkitgtk-2.48.1/Source/JavaScriptCore/heap/BlockDirectory.cpp
+Solaris mincore(2) uses caddr_t instead of void*.
+
+--- webkit/Source/JavaScriptCore/heap/BlockDirectory.cpp.~1~	2025-07-01 13:35:10.646959481 +0000
++++ webkit/Source/JavaScriptCore/heap/BlockDirectory.cpp	2025-07-01 13:36:06.335536521 +0000
 @@ -85,7 +85,7 @@
          auto markedBlockSizeInBytes = handle->backingStorageSize();
          RELEASE_ASSERT(markedBlockSizeInBytes / pageSize <= numberOfPagesInMarkedBlock);
          // We could cache this in bulk (e.g. 25 MB chunks) but we haven't seen any data that it actually matters.
--        auto result = mincore(pageStart, markedBlockSizeInBytes, pagedBits.data());
-+        auto result = mincore((char *) pageStart, markedBlockSizeInBytes, pagedBits.data());
+-        auto result = mincore(pageStart, markedBlockSizeInBytes, pagedBits.mutableSpan().data());
++        auto result = mincore(static_cast<caddr_t>(pageStart), markedBlockSizeInBytes, pagedBits.mutableSpan().data());
          RELEASE_ASSERT(!result);
          constexpr unsigned pageIsResidentAndNotCompressed = 1;
          for (unsigned i = 0; i < numberOfPagesInMarkedBlock; ++i)
