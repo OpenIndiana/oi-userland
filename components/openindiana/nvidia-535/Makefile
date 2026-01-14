@@ -22,26 +22,29 @@ include ../../../make-rules/shared-macros.mk
 # Support for this NVIDIA Long Term Support Branch driver ends in June 2026
 # https://docs.nvidia.com/datacenter/tesla/drivers/index.html
 
-COMPONENT_NAME =		nvidia-$(COMPONENT_MJR_VERSION)
-HUMAN_VERSION =			535.274.02
+COMPONENT_NAME =		nvidia
+HUMAN_VERSION =			535.288.01
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
-COMPONENT_MJR_VERSION =		$(firstword $(subst ., ,$(HUMAN_VERSION)))
-COMPONENT_FMRI =		driver/graphics/nvidia-$(COMPONENT_MJR_VERSION)
+COMPONENT_FMRI =		driver/graphics/nvidia-$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
 COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:97aaa1674ab8c7d694c9cde74981b1ec8f6123c0495405b98fddba480409d9ea
+COMPONENT_ARCHIVE_HASH =	sha256:69b8138d1cbed8fa1280f599aef63e89b2b9130ccc7e5417dd682e2c6aa580f4
 COMPONENT_ARCHIVE_URL =		https://us.download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
-COMPONENT_LICENSE_FILE =	nvidia.license
 
 BUILD_TARGET = $(BUILD_$(MK_BITS))
 INSTALL_TARGET = $(INSTALL_$(MK_BITS))
 TEST_TARGET = $(NO_TESTS)
 
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file:
+	curl -s https://download.nvidia.com/solaris/$(HUMAN_VERSION)/license.txt \
+		> $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CLEAN_PATHS += $(BUILD_DIR)
 
