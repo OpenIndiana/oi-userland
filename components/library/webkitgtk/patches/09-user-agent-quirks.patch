@@ -1,0 +1,32 @@
+To be consistent with Firefox, Solaris identifies itself as Linux.
+Similarly, the platform architecture is always given as x86_64.
+
+See:
+	https://bugzilla.mozilla.org/show_bug.cgi?id=1861847
+	https://github.com/w3ctag/design-reviews/issues/640
+
+and `netwerk/protocol/http/nsHttpHandler.cpp` in the Firefox source.
+
+
+--- a/Source/WebCore/platform/glib/UserAgentGLib.cpp	2024-07-15 20:11:14.000000000 +0000
++++ b/Source/WebCore/platform/glib/UserAgentGLib.cpp	2024-08-28 11:01:51.662141029 +0000
+@@ -60,7 +60,9 @@
+ 
+ static const String platformVersionForUAString()
+ {
+-#if OS(UNIX)
++#if OS(SOLARIS)
++    return "Linux x86_64"_s;
++#elif OS(UNIX)
+     if (chassisType() == WTF::ChassisType::Mobile)
+         return "like Android 4.4"_s;
+ 
+@@ -111,7 +113,7 @@
+         //
+         // But beware, because some websites also discriminate against high Safari versions.
+         // https://webkit.org/b/284775
+-        uaString.append("Version/60.5 "_s);
++        uaString.append("Version/18.1 "_s);
+ 
+     if (chassisType() == WTF::ChassisType::Mobile)
+         uaString.append("Mobile "_s);

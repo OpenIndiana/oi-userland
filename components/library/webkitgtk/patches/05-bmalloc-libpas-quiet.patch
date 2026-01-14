@@ -1,0 +1,102 @@
+Silence `warning: cast to 'void *' from smaller integer type
+'pthread_t' (aka 'unsigned int') [-Wint-to-void-pointer-cast]`
+
+Suitable for upstream, as pthread_t is not guaranteed to be a pointer.
+
+
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c~	2024-10-29 10:12:27.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c	2025-07-29 18:01:47.245185262 +0000
+@@ -177,7 +177,7 @@
+     const char* reason)
+ {
+     pas_start_crash_logging();
+-    pas_log("Thread %p encountered bitfit alloaction error.\n", (void*)pthread_self());
++    pas_log("Thread %p encountered bitfit alloaction error.\n", (void*)(uintptr_t)pthread_self());
+     pas_log("Bits for page %p (%s):\n",
+             page, pas_bitfit_page_config_kind_get_string(config_kind));
+     pas_bitfit_page_log_bits(page, offset, offset + 1);
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page_inlines.h~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page_inlines.h	2025-07-25 19:47:19.993791614 +0000
+@@ -235,7 +235,7 @@
+ 
+     if (verbose) {
+         pas_log("%p: bitfit allocated %p of size %zu in %p\n",
+-                (void*)pthread_self(), (void*)begin, size, page);
++                (void*)(uintptr_t)pthread_self(), (void*)begin, size, page);
+     }
+ 
+     if (verbose) {
+@@ -840,7 +840,7 @@
+ 
+         if (verbose) {
+             pas_log("%p: bitfit deallocated %p of size %zu in %p with modified_offset = %zu\n",
+-                    (void*)pthread_self(), (void*)begin, size, page, modified_offset);
++                    (void*)(uintptr_t)pthread_self(), (void*)begin, size, page, modified_offset);
+         }
+         
+         if (page_config.base.page_size > page_config.base.granule_size) {
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_scavenger.c~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_scavenger.c	2025-07-29 18:02:43.293044205 +0000
+@@ -190,7 +190,7 @@
+     PAS_ASSERT(pas_scavenger_current_state == pas_scavenger_state_polling);
+ 
+     if (verbose)
+-        pas_log("Scavenger is running in thread %p\n", (void*)pthread_self());
++        pas_log("Scavenger is running in thread %p\n", (void*)(uintptr_t)pthread_self());
+ 
+ #if PAS_OS(DARWIN) || PAS_PLATFORM(PLAYSTATION)
+ #if PAS_BMALLOC
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_segregated_heap.c~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_segregated_heap.c	2025-07-29 18:03:36.919932848 +0000
+@@ -873,7 +873,7 @@
+     PAS_ASSERT(!pas_heap_config_is_utility(config), pas_heap_config_is_utility(config));
+     
+     if (verbose)
+-        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", (void*)pthread_self(), size);
++        pas_log("%p: In pas_segregated_heap_ensure_allocator_index, size = %zu\n", (void*)(uintptr_t)pthread_self(), size);
+     index = pas_segregated_heap_index_for_size(size, *config);
+     if (verbose)
+         pas_log("index = %zu\n", index);
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_thread_local_cache.c	2025-07-29 18:05:43.721330657 +0000
+@@ -224,9 +224,9 @@
+     getname_result = pthread_getname_np(thread, thread_name, sizeof(thread_name));
+ #endif
+     if (!getname_result)
+-        pas_log("[%d] thread %p has name %s\n", getpid(), (void*)thread, thread_name);
++        pas_log("[%d] thread %p has name %s\n", getpid(), (void*)(uintptr_t)thread, thread_name);
+     else
+-        pas_log("[%d] thread %p does not have name\n", getpid(), (void*)thread);
++        pas_log("[%d] thread %p does not have name\n", getpid(), (void*)(uintptr_t)thread);
+ }
+ 
+ pas_thread_local_cache* pas_thread_local_cache_create(void)
+@@ -244,7 +244,7 @@
+     thread_local_cache->node = pas_thread_local_cache_node_allocate();
+ 
+     if (verbose) {
+-        pas_log("[%d] TLC %p created with thread %p\n", getpid(), thread_local_cache, (void*)pthread_self());
++        pas_log("[%d] TLC %p created with thread %p\n", getpid(), thread_local_cache, (void*)(uintptr_t)pthread_self());
+         dump_thread_diagnostics(pthread_self());
+     }
+     thread_local_cache->thread = pthread_self();
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_try_allocate_primitive.h~	2024-03-14 12:45:57.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_try_allocate_primitive.h	2025-07-25 19:46:42.724782866 +0000
+@@ -83,7 +83,7 @@
+        the more interesting part, since */
+ 
+     if (verbose)
+-        pas_log("%p: getting allocator index.\n", (void*)pthread_self());
++        pas_log("%p: getting allocator index.\n", (void*)(uintptr_t)pthread_self());
+     
+     if (index == heap_ref->cached_index) {
+         if (verbose)
+@@ -117,7 +117,7 @@
+         allocator_index, config.config_ptr);
+ 
+     if (verbose && !allocator.did_succeed)
+-        pas_log("%p: Failed to quickly get the allocator, allocator_index = %u.\n", (void*)pthread_self(), allocator_index);
++        pas_log("%p: Failed to quickly get the allocator, allocator_index = %u.\n", (void*)(uintptr_t)pthread_self(), allocator_index);
+     
+     /* This should be specialized out in the non-alignment case because of ALWAYS_INLINE and
+        alignment being the constant 1. */
