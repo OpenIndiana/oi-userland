@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_run_parallel
-HUMAN_VERSION =			0.8.1
+HUMAN_VERSION =			0.8.2
 COMPONENT_SUMMARY =		A simple pytest plugin to run tests concurrently
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:459f5fcf4cb63c64edbe48c74f68d6b41a217289e3e2f2d105d3175ddc0ada93
+	sha256:ccc625bb79b3759a8c280a635a2332371af183020289c9215d04631b55ecfe3e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
