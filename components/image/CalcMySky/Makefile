@@ -18,12 +18,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		CalcMySky
-COMPONENT_VERSION=	0.3.5
+COMPONENT_VERSION=	0.4.0
 COMPONENT_SUMMARY=	CalcMySky simulates scattering of light by the atmosphere to render daytime and twilight skies (without stars)
 COMPONENT_PROJECT_URL=	https://github.com/10110111/CalcMySky
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d49eab6bc70a2c82bf294dd8ace9ef2fc6df0afbb72ba493bb6d3f1f8cd8829d
+COMPONENT_ARCHIVE_HASH=	sha256:1096f3c6067e05dd8c4df601b745cca5e88b843ad1328938e5dba69c1fcfb84f
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/calcmysky
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
