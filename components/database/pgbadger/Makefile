@@ -18,11 +18,11 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	pgbadger
-COMPONENT_VERSION= 	13.1
+COMPONENT_VERSION= 	13.2
 COMPONENT_SUMMARY= 	A fast PostgreSQL log analyzer
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9658ff222ed7b387d3cb76c3e3d90d1862b885c13b26aa9ff652e133f5d018f1
+COMPONENT_ARCHIVE_HASH= sha256:94074714bb4928c69c9e977da02d50e197a9d428fa3f235f25c103ef3c7d9a9d
 COMPONENT_ARCHIVE_URL=	https://github.com/darold/pgbadger/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL=	https://dalibo.github.io/pgbadger/
 COMPONENT_FMRI=	database/postgres/$(COMPONENT_NAME)
@@ -40,4 +40,4 @@ COMPONENT_PRE_BUILD_ACTION = ( cd $(BUILD_DIR_64) && $(PERL) Makefile.PL )
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += runtime/perl
