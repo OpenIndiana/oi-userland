@@ -18,12 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=		25.3
+COMPONENT_VERSION=		25.4
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:37daa99ba5182fa89da348001e0ca35eed1e94092caa5dab656569e36c139757
+COMPONENT_ARCHIVE_HASH=	sha256:5b7042e626afe4ed49a996c5aa737ede3079e3409039560e7d5909f2ab16204c
 COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
