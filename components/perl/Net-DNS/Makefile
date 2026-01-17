@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-DNS
-HUMAN_VERSION =			1.53
+HUMAN_VERSION =			1.54
 COMPONENT_SUMMARY =		Perl Interface to the Domain Name System
 COMPONENT_CPAN_AUTHOR =		NLNETLABS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04acb4f177d57c147dcedc4bd70e23806af3db75a532f46f95461b2bc9a94959
+	sha256:7abe0e03e8eead04bfe432d0d90ec0dd61b8ba71afad324a9c76acc6a6fbe2a4
 COMPONENT_LICENSE =		MIT
 
 include $(WS_MAKE_RULES)/common.mk
@@ -32,19 +32,19 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-bubblebabble
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/net-libidn2
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/time-local
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/digest-bubblebabble
+REQUIRED_PACKAGES.perl += library/perl-5/digest-hmac
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/net-libidn2
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/time-local
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
