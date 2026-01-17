@@ -20,6 +20,7 @@ open(X11,">>","stack-spur-display-X11.p5m") || die "Can't open stack-spur-displa
 
 open(SSL,">>","stack-spur-ssl.p5m") || die "Can't open stack-spur-ssl.p5m";
 open(VEP,">>","stack-spur-vep.p5m") || die "Can't open stack-spur-vep.p5m";
+open(PTY,">>","stack-spur-pty.p5m") || die "Can't open stack-spur-pty.p5m";
 
 open(REST,">>","stack-spur.p5m") || die "Can't open stack-spur.p5m";
 
@@ -69,6 +70,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
+		} elsif (/PseudoTTYPlugin/) {
+			print PTY $_;
 		} elsif (/MD5Plugin/) {
 			print NODISPLAY $_;
 		} elsif (/SHA2Plugin/) {

@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025, 2026 David Stes
 #
 
 
@@ -49,9 +49,9 @@ include ../../../../make-rules/shared-macros.mk
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		stack-spur
-COMPONENT_VERSION=	5.0.3704
-GIT_TAG=		sun-v5.0.80
-PLUGIN_REV=		7.0-202512121941
+COMPONENT_VERSION=	5.0.3719
+GIT_TAG=		sun-v5.0.81
+PLUGIN_REV=		7.0-202601110734
 COMPONENT_SUMMARY=	The OpenSmalltalk Stack Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/stack-spur
@@ -65,7 +65,7 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6acac2f8165a3de5954759ed4bff704625582629a3022260e32dda199a076369
+COMPONENT_ARCHIVE_HASH=	sha256:8d2b006f10a137164e49cdc0ded80b391c735c165d4b8b91b4a9ea7a8ef6d6a0
 COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
@@ -166,6 +166,7 @@ rebuild-manifests::
 	cp manifests/stack-spur.p5m stack-spur.p5m
 	cp manifests/stack-spur-ssl.p5m stack-spur-ssl.p5m
 	cp manifests/stack-spur-vep.p5m stack-spur-vep.p5m
+	cp manifests/stack-spur-pty.p5m stack-spur-pty.p5m
 	cp manifests/stack-spur-display-X11.p5m stack-spur-display-X11.p5m
 	cp manifests/stack-spur-nodisplay.p5m stack-spur-nodisplay.p5m
 	cp manifests/sample-manifest.p5m sample-manifest.p5m
