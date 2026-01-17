@@ -20,6 +20,7 @@ open(X11,">>","cog-spur-display-X11.p5m") || die "Can't open cog-spur-display-X1
 
 open(SSL,">>","cog-spur-ssl.p5m") || die "Can't open cog-spur-ssl.p5m";
 open(VEP,">>","cog-spur-vep.p5m") || die "Can't open cog-spur-vep.p5m";
+open(PTY,">>","cog-spur-pty.p5m") || die "Can't open cog-spur-pty.p5m";
 
 open(REST,">>","cog-spur.p5m") || die "Can't open cog-spur.p5m";
 
@@ -69,6 +70,8 @@ while (<>) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
+		} elsif (/PseudoTTYPlugin/) {
+			print PTY $_;
 		} elsif (/MD5Plugin/) {
 			print NODISPLAY $_;
 		} elsif (/SHA2Plugin/) {
