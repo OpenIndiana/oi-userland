@@ -15,17 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dill
-HUMAN_VERSION =			0.4.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.4.1
 COMPONENT_SUMMARY =		serialize all of Python
 COMPONENT_PROJECT_URL =		https://github.com/uqfoundation/dill
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0633f1d2df477324f53a895b02c901fb961bdbf65a17122586ea7019292cbcf0
+	sha256:423092df4182177d4d8ba8290c8a5b640c66ab35ec7da59ccfa00f6fa3eea5fa
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
