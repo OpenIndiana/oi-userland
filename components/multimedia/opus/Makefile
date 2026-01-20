@@ -18,12 +18,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			opus
-COMPONENT_VERSION=		1.6
+COMPONENT_VERSION=		1.6.1
 COMPONENT_SUMMARY=		Opus is an open, royalty-free, versatile audio codec for interactive speech and music transmission over the Internet
 COMPONENT_PROJECT_URL=	https://opus-codec.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=		sha256:b7637334527201fdfd6dd6a02e67aceffb0e5e60155bbd89175647a80301c92c
+COMPONENT_ARCHIVE_HASH=		sha256:6ffcb593207be92584df15b32466ed64bbec99109f007c82205f0194572411a1
 COMPONENT_ARCHIVE_URL=	https://downloads.xiph.org/releases/opus/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/opus
 COMPONENT_CLASSIFICATION= System/Libraries
