@@ -27,13 +27,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openblas
-COMPONENT_VERSION=	0.3.30
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.3.31
 COMPONENT_SUMMARY=     	Optimized BLAS library based on GotoBLAS2
 COMPONENT_SRC=			OpenBLAS-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.openblas.net
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d
+COMPONENT_ARCHIVE_HASH= sha256:6dd2a63ac9d32643b7cc636eab57bf4e57d0ed1fff926dfbc5d3d97f2d2be3a6
 COMPONENT_ARCHIVE_URL=	https://github.com/xianyi/OpenBLAS/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=     	library/math/openblas
 COMPONENT_CLASSIFICATION= Development/High Performance Computing
