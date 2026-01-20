@@ -17,14 +17,14 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= seaweedfs
-COMPONENT_VERSION= 4.0.6
-HUMAN_VERSION= 4.06
+COMPONENT_VERSION= 4.0.7
+HUMAN_VERSION= 4.07
 COMPONENT_SUMMARY= SeaweedFS is a fast distributed storage system for blobs, objects, files
 COMPONENT_PROJECT_URL= https://github.com/seaweedfs/seaweedfs
 COMPONENT_SRC= $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/archive/refs/tags/$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:bb51f900c5c8fbe466e9eccaee67a6480aa541e1debf6cde160d8336db2b1338
+COMPONENT_ARCHIVE_HASH= sha256:0689e47a1906d14f6149652bd7dad659ff92567ab88b43b8d533a462d750db4a
 COMPONENT_FMRI= network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Web Services/Application and Web Servers
 
