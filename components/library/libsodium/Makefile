@@ -18,11 +18,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsodium
-COMPONENT_VERSION= 1.0.20
+COMPONENT_VERSION= 1.0.21
 COMPONENT_SUMMARY= Sodium is an easy-to-use software library for encryption, decryption, signatures, password hashing, and more
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:ebb65ef6ca439333c2bb41a0c1990587288da07f6c7fd07cb3a18cc18d30ce19
+COMPONENT_ARCHIVE_HASH= sha256:9e4285c7a419e82dedb0be63a72eea357d6943bc3e28e6735bf600dd4883feaf
 COMPONENT_ARCHIVE_URL=	https://download.libsodium.org/$(COMPONENT_NAME)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://download.libsodium.org/doc/
 COMPONENT_FMRI= library/security/libsodium
