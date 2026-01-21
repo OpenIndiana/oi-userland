@@ -1,0 +1,19 @@
+--- dash-0.5.13/src/expand.c.old
++++ dash-0.5.13/src/expand.c
+@@ -1727,9 +1727,16 @@
+ 
+ 		if (*dname == '.' && !matchdot)
+ 			goto check_int;
++#ifdef __sun
++		struct stat s;
++		stat(dp->d_name, &s);
++		if (c && !(s.st_mode & S_IFDIR) && !(s.st_mode & S_IFLNK) )
++			goto check_int;
++#else
+ 		if (c && dp->d_type != DT_DIR && dp->d_type != DT_LNK &&
+ 		    dp->d_type != DT_UNKNOWN)
+ 			goto check_int;
++#endif
+ 		len = strlen(dname) + 1;
+ 		p = dname;
+ 		if (!FNMATCH_IS_ENABLED) {
