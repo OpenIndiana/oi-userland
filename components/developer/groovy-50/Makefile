@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groovy
 COMPONENT_MAJOR_VERSION=	5.0
-COMPONENT_MINOR_VERSION=	3
+COMPONENT_MINOR_VERSION=	4
 COMPONENT_VERSION=	$(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_ARCHIVE=	apache-$(COMPONENT_NAME)-binary-$(COMPONENT_VERSION).zip
 COMPONENT_FMRI=		developer/groovy-50
@@ -25,7 +25,7 @@ COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://groovy-lang.org/
 COMPONENT_ARCHIVE_HASH=	\
-	sha256:9d711dcb1dea94df9119558365beb6ac2909a22e30b58ae31de8bcb0dcf33698
+	sha256:5e5e9a468d4344e0c8ee0cd68c62751ccf4e5f8f84d7ad9b8abc6a01014b9f79
 COMPONENT_ARCHIVE_URL=\
 	https://groovy.jfrog.io/artifactory/dist-release-local/groovy-zips/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		Apache-2.0, BSD, MIT, Eclipse 1.0, Eclipse 2.0, Public Domain, 3-clause BSD, JSR223
@@ -52,10 +52,6 @@ install: prep
 clean::
 	rm -rf $(BUILD_DIR)
 	rm -rf $(SOURCE_DIR)
-
-
-# JDK does not get picked up by gmake REQUIRED_PACKAGES
-REQUIRED_PACKAGES += runtime/java/openjdk21
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
