@@ -2,22 +2,22 @@ Solaris-specific system paths. Our bash configuration lives in /etc/bash/inputrc
 
 --- doc/bash.info.orig	2020-11-18 21:13:06.000000000 +0000
 +++ doc/bash.info	2020-12-08 12:17:05.628090856 +0000
-@@ -7586,7 +7586,7 @@
+@@ -8788,7 +8788,7 @@
  directory.  The name of this file is taken from the value of the shell
- variable 'INPUTRC'.  If that variable is unset, the default is
- '~/.inputrc'.  If that file does not exist or cannot be read, the
--ultimate default is '/etc/inputrc'.  The 'bind' builtin command can also
-+ultimate default is '/etc/bash/inputrc'.  The 'bind' builtin command can also
- be used to set Readline keybindings and variables.  *Note Bash
- Builtins::.
+ variable ‘INPUTRC’.  If that variable is unset, the default is
+ ‘~/.inputrc’.  If that file does not exist or cannot be read, Readline
+-looks for ‘/etc/inputrc’.  The ‘bind’ builtin command can also be used
++looks for ‘/etc/bash/inputrc’.  The ‘bind’ builtin command can also be used
+ to set Readline keybindings and variables.  *Note Bash Builtins::.
  
-@@ -8135,8 +8135,8 @@
- '$include'
+    When a program that uses the Readline library starts up, Readline
+@@ -9424,8 +9424,8 @@
+ ‘$include’
       This directive takes a single filename as an argument and reads
-      commands and bindings from that file.  For example, the following
--     directive reads from '/etc/inputrc':
+      commands and key bindings from that file.  For example, the
+-     following directive reads from ‘/etc/inputrc’:
 -          $include /etc/inputrc
-+     directive reads from '/etc/bash/inputrc':
++     following directive reads from ‘/etc/bash/inputrc’:
 +          $include /etc/bash/inputrc
  
  
@@ -35,22 +35,22 @@ Solaris-specific system paths. Our bash configuration lives in /etc/bash/inputrc
       # Set various bindings for emacs mode.
 --- doc/bashref.info.orig	2020-11-18 21:12:25.000000000 +0000
 +++ doc/bashref.info	2020-12-08 12:16:14.823974296 +0000
-@@ -7586,7 +7586,7 @@
+@@ -8789,7 +8789,7 @@
  directory.  The name of this file is taken from the value of the shell
- variable 'INPUTRC'.  If that variable is unset, the default is
- '~/.inputrc'.  If that file does not exist or cannot be read, the
--ultimate default is '/etc/inputrc'.  The 'bind' builtin command can also
-+ultimate default is '/etc/bash/inputrc'.  The 'bind' builtin command can also
- be used to set Readline keybindings and variables.  *Note Bash
- Builtins::.
+ variable ‘INPUTRC’.  If that variable is unset, the default is
+ ‘~/.inputrc’.  If that file does not exist or cannot be read, Readline
+-looks for ‘/etc/inputrc’.  The ‘bind’ builtin command can also be used
++looks for ‘/etc/bash/inputrc’.  The ‘bind’ builtin command can also be used
+ to set Readline keybindings and variables.  *Note Bash Builtins::.
  
-@@ -8135,8 +8135,8 @@
- '$include'
+    When a program that uses the Readline library starts up, Readline
+@@ -9425,8 +9425,8 @@
+ ‘$include’
       This directive takes a single filename as an argument and reads
-      commands and bindings from that file.  For example, the following
--     directive reads from '/etc/inputrc':
+      commands and key bindings from that file.  For example, the
+-     following directive reads from ‘/etc/inputrc’:
 -          $include /etc/inputrc
-+     directive reads from '/etc/bash/inputrc':
++     following directive reads from ‘/etc/bash/inputrc’:
 +          $include /etc/bash/inputrc
  
  
@@ -68,22 +68,22 @@ Solaris-specific system paths. Our bash configuration lives in /etc/bash/inputrc
       # Set various bindings for emacs mode.
 --- doc/bash.1.orig	2020-11-18 21:03:59.000000000 +0000
 +++ doc/bash.1	2020-12-08 12:21:43.110560302 +0000
-@@ -5508,7 +5508,7 @@
- variable.  If that variable is unset, the default is
- .IR ~/.inputrc .
- If that file  does not exist or cannot be read, the ultimate default is
--.IR /etc/inputrc .
-+.IR /etc/bash/inputrc .
- When a program which uses the readline library starts up, the
- initialization file is read, and the key bindings and variables
- are set.
-@@ -6114,11 +6114,11 @@
- .IP \fB$include\fP
+@@ -6632,7 +6632,7 @@
+ If that variable is unset, the default is
+ .FN \*~/.inputrc .
+ If that file  does not exist or cannot be read, \fBreadline\fP looks for
+-.FN /etc/inputrc .
++.FN /etc/bash/inputrc .
+ When a program that uses the \fBreadline\fP library starts up,
+ \fBreadline\fP reads the initialization file
+ and sets the key bindings and variables found there,
+@@ -7398,11 +7398,11 @@
  This directive takes a single filename as an argument and reads commands
- and bindings from that file.  For example, the following directive
--would read \fI/etc/inputrc\fP:
-+would read \fI/etc/bash/inputrc\fP:
- .sp 1
+ and key bindings from that file.
+ For example, the following directive would read
+-.FN /etc/inputrc :
++.FN /etc/bash/inputrc :
+ .PP
  .RS
  .nf
 -\fB$include\fP \^ \fI/etc/inputrc\fP

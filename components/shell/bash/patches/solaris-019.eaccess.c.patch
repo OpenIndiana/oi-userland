@@ -32,7 +32,7 @@
 +  /* The way CVE-2012-3410 was fixed is wrong */
 +      (void) memset (pbuf, '\0', sizeof(pbuf));
        strcpy (pbuf, DEV_FD_PREFIX);
--      strcat (pbuf, path + 8);
+-      strcpy (pbuf + sizeof (DEV_FD_PREFIX) - 1, path + 8);
 +      strncat (pbuf, path + 8,
 +          (size_t) (sizeof(pbuf) - sizeof(DEV_FD_PREFIX)));
        return (stat (pbuf, finfo));

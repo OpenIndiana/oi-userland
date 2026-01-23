@@ -13,30 +13,29 @@
  #htmldir=
  
  dnl some systems should be configured without the bash malloc by default
-@@ -499,10 +499,10 @@ if test "$opt_static_link" = yes; then
+@@ -530,11 +530,11 @@
  	prefer_shared=no
  	# if we're using gcc, add `-static' to LDFLAGS, except on Solaris >= 2
  	if test "$GCC" = "yes"; then
 -		STATIC_LD="-static" 
 +		STATIC_LD="" 
  		case "$host_os" in
- 		solaris2*|linux*)	;;
+ 		solaris2*)	;;
+ 		linux*)		test "$opt_profiling" = "no" && LDFLAGS="$LDFLAGS -static" ;;
 -		*)		LDFLAGS="$LDFLAGS -static" ;;	# XXX experimental
 +		*)		LDFLAGS="$LDFLAGS" ;;	# XXX experimental
  		esac
  	fi
  fi
-@@ -508,7 +514,7 @@
+@@ -562,7 +562,7 @@
  	CC_FOR_BUILD=${CC_FOR_BUILD-"gcc"}
  	CPPFLAGS_FOR_BUILD=${CPPFLAGS_FOR_BUILD-""}
  	LDFLAGS_FOR_BUILD=${LDFLAGS_FOR_BUILD-""}
 -	CFLAGS_FOR_BUILD=${CFLAGS_FOR_BUILD="-g"}
 +	CFLAGS_FOR_BUILD=${CFLAGS_FOR_BUILD=""}
--	BASE_CFLAGS_FOR_BUILD=${BASE_CFLAGS_FOR_BUILD="-g"}
-+	BASE_CFLAGS_FOR_BUILD=${BASE_CFLAGS_FOR_BUILD=""}
  	LIBS_FOR_BUILD=${LIBS_FOR_BUILD-""}
  fi
- 
+  
 @@ -1088,7 +1094,8 @@
  solaris2.5*)	LOCAL_CFLAGS="-DSunOS5 -DSOLARIS" ;;
  solaris2.8*)	LOCAL_CFLAGS=-DSOLARIS  ;;
