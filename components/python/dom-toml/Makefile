@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		dom_toml
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			2.3.0
 COMPONENT_SUMMARY =		Dom's tools for Tom's Obvious, Minimal Language.
 COMPONENT_PROJECT_URL =		https://github.com/domdfcoding/dom_toml
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/domdfcoding/dom_toml/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30e7ea6beff628e7da9ebc01b4d6491a284a57943f4472868e391baf0a683c8c
+	sha256:1afc0682e13a930a3826b46b0a4f6399d93ffbc0d551b101ca5b2c4db626ea84
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -55,3 +55,4 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/tomli-w
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
