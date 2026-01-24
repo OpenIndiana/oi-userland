@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			80.9.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			80.10.1
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
+	sha256:bf2e513eb8144c3298a3bd28ab1a5edb739131ec5c22e045ff93cd7f5319703a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +33,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
 # - importlib_metadata
+# - iniconfig (test bootstrap)
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
 # - setuptools-scm
@@ -43,6 +43,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/pypa/setuptools/issues/5159
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOPYTHONVENDORDIR)/setuptools/_vendor/bin/wheel
 
 # nose causes the test_pyproject_sets_attribute test to fail
 TEST_CONFLICTING_PACKAGES.python += library/python/nose
