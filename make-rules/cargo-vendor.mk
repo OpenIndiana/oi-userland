@@ -46,6 +46,9 @@ $(CARGO_TOML_DIR)/Cargo.toml: unpack
 $(SOURCE_DIR)/.cargo-fetched: $(CARGO_TOML_DIR)/Cargo.toml
 	$(ENV) CARGO_HOME=$(CARGO_ARCHIVES) \
 		$(CARGO) fetch --manifest-path $(CARGO_TOML_DIR)/Cargo.toml
+	# Some crates contains files with limited permissions and so we should
+	# make sure all fetched files are fully readable.
+	$(FIND) $(CARGO_ARCHIVES) ! -perm -=r -exec $(CHMOD) +r {} \;
 	$(TOUCH) $@
 
 # Vendor all dependencies locally
