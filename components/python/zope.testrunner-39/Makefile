@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.testrunner zope_testrunner
+#   $WS_TOOLS/python-integrate-project -d python/zope.testrunner-39 zope_testrunner
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testrunner
-HUMAN_VERSION =			8.2
+HUMAN_VERSION =			8.1
+COMPONENT_REVISION =		3
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1f4016c3ee8503a069946000a55479646db0a83ed4cd2bc8e54cfb6c27d88946
+	sha256:65389bb17634291cab3590bb9addc6ff010e6907440e772a04dcb2b8029acfde
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# zope.testrunner --> zope.testing --> zope.testrunner
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by zope.testrunner >= 8.2
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.testrunner >= 8.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
