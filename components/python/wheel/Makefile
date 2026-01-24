@@ -19,37 +19,28 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.45.1
-COMPONENT_REVISION =		2
-COMPONENT_SUMMARY =		A built-package format for Python
+HUMAN_VERSION =			0.46.3
+COMPONENT_SUMMARY =		Command line tool for manipulating wheel files
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:661e1abd9198507b1409a20c02106d9670b2576e916d58f520316666abca6729
+	sha256:e3e79874b07d776c40bd6033f8ddf76a7dad46a7b8aa1b2787a83083519a1803
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
 # - cachetools (test bootstrap)
-# - chardet (test bootstrap)
 # - distlib (test bootstrap)
 # - tox-current-env (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
-# Version 0.46.1 was yanked but we had it packaged.
-COMPONENT_VERSION =		0.46.1
-
 include $(WS_MAKE_RULES)/common.mk
-
-# https://github.com/pypa/wheel/issues/658
-PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_default
-PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_deprecated
-PYTEST_ADDOPTS += --deselect tests/test_bdist_wheel.py::test_licenses_override
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
