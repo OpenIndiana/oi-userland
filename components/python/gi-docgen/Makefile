@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gi_docgen
-HUMAN_VERSION =			2025.5
+HUMAN_VERSION =			2026.1
 COMPONENT_SUMMARY =		Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7fb2b5370d99849e52e74e9e584b7eeb5b5a3a95493d6752c88c0d251777f4bf
+	sha256:65ac3c4f2b4255d1c616fb8eae55139b6ca10071545ca2272759ffd2ccf2c7b5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
 
