@@ -9,21 +9,21 @@
 #
 
 #
-# Copyright 2025 Friedrich Kink. All rights reserved.
+# Copyright 2025-2026 Friedrich Kink. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.5
-COMPONENT_MNR_VERSION=	1
+COMPONENT_MNR_VERSION=	2
 COMPONENT_SUMMARY=      PHP 8.5
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:55f428c426e7241752ea9afff160bb64c32a9321cbd6d17d1c145b8df8823737
+COMPONENT_ARCHIVE_HASH= sha256:f7efdeccc3a810b18920692306536b99a3ba86610dbd0795a296cf77d3fb3a06
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-85
@@ -219,19 +219,32 @@ REQUIRED_PACKAGES += text/tidy
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
+REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libxml2
+REQUIRED_PACKAGES += library/libxslt
+REQUIRED_PACKAGES += library/libzip
+REQUIRED_PACKAGES += library/openldap
 REQUIRED_PACKAGES += library/pcre2
+REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/security/openssl
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/unixodbc
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += security/argon2
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += system/management/snmp/net-snmp
+REQUIRED_PACKAGES += text/oniguruma
+REQUIRED_PACKAGES += text/tidy
+REQUIRED_PACKAGES += web/curl
