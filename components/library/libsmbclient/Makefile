@@ -21,7 +21,7 @@
 
 #
 # Copyright (c) 2011, 2015, Oracle and/or its affiliates. All rights reserved.
-# Copyright 2023,2025 Friedrich Kink. All rights reserved.
+# Copyright 2023-2026 Friedrich Kink. All rights reserved.
 # Copyright 2025 Klaus Ziegler. All rights reserved.
 #
 
@@ -29,12 +29,12 @@ BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.23.4
+COMPONENT_VERSION=	4.23.5
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:af429d078a86f1ce16d0d1ecee35c42a3610790b47b84468f31284a8c4060140
+COMPONENT_ARCHIVE_HASH=	sha256:593a43ddd0d57902237dfa76888f7b02cb7fc7747111369cb31e126db4836b9f
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
