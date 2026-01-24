@@ -24,7 +24,7 @@
 # Copyright 2018, Aurelien Larcher
 # Copyright 2018, Michal Nowak
 # Copyright 2021, Carsten Grzemba
-# Copyright 2023,2025 Friedrich Kink
+# Copyright 2023-2026 Friedrich Kink
 #
 
 # This build is a mixture of configure and python style
@@ -35,12 +35,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rustc
-COMPONENT_VERSION=	1.92.0
+COMPONENT_VERSION=	1.93.0
 COMPONENT_SUMMARY=	Rust - Safe, concurrent, practical language
 COMPONENT_PROJECT_URL=	https://www.rust-lang.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:9e0d2ca75c7e275fdc758255bf4b03afb3d65d1543602746907c933b6901c3b8
+COMPONENT_ARCHIVE_HASH=	sha256:69112bd83c321943ffc390b7db2f59ef3febb95dac700f67c2156fbf6b50a705
 COMPONENT_ARCHIVE_URL=	https://static.rust-lang.org/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/lang/rustc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
