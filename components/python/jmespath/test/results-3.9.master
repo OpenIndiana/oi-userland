@@ -1,0 +1,1010 @@
+py$(PYV): commands[0]> python -m pytest tests
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+rootdir: $(@D)
+collecting ... collected 992 items
+
+tests/test_compliance.py::test_expression[given0-`foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given1-`foo\\"quote`-foo"quote-literal.json] PASSED
+tests/test_compliance.py::test_expression[given2-`\u2713`-\u2713-literal.json] PASSED
+tests/test_compliance.py::test_expression[given3-`foo\\"bar`-foo"bar-literal.json] PASSED
+tests/test_compliance.py::test_expression[given4-`1\\``-1`-literal.json] PASSED
+tests/test_compliance.py::test_expression[given5-`\\\\`.{a:`b`}-expected5-literal.json] PASSED
+tests/test_compliance.py::test_expression[given6-`foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given7-`      foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given8-@-expected8-current.json] PASSED
+tests/test_compliance.py::test_expression[given9-@.bar-expected9-current.json] PASSED
+tests/test_compliance.py::test_expression[given10-@.foo[0]-expected10-current.json] PASSED
+tests/test_compliance.py::test_expression[given11-b-True-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given12-c.d-True-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given13-a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p.q.r.s-None-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given14-a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p-True-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given15-not_there || b-True-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given16-a && b && c && d && e && f && g && h && i && j && k && l && m && n && o && p && q && r && s && t && u && v && w && x && y && z-25-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given17-z || y || x || w || v || u || t || s || r || q || p || o || n || m || l || k || j || i || h || g || f || e || d || c || b || a-25-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given18-sum([z, y, x, w, v, u, t, s, r, q, p, o, n, m, l, k, j, i, h, g, f, e, d, c, b, a])-325-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given19-sum([z, sum([y, sum([x, sum([w, sum([v, sum([u, sum([t, sum([s, sum([r, sum([q, sum([p, sum([o, sum([n, sum([m, sum([l, sum([k, sum([j, sum([i, sum([h, sum([g, sum([f, sum([e, sum([d, sum([c, sum([b, a])])])])])])])])])])])])])])])])])])])])])])])])])-325-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given20-[z, y, x, w, v, u, t, s, r, q, p, o, n, m, l, k, j, i, h, g, f, e, d, c, b, a]-expected20-benchmarks.json] PASSED
+tests/test_compliance.py::test_expression[given21-foo-expected21-basic.json] PASSED
+tests/test_compliance.py::test_expression[given22-foo.bar-expected22-basic.json] PASSED
+tests/test_compliance.py::test_expression[given23-foo.bar.baz-correct-basic.json] PASSED
+tests/test_compliance.py::test_expression[given24-foo\n.\nbar\n.baz-correct-basic.json] PASSED
+tests/test_compliance.py::test_expression[given25-foo.bar.baz.bad-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given26-foo.bar.bad-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given27-foo.bad-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given28-bad-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given29-bad.morebad.morebad-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given30-foo-expected30-basic.json] PASSED
+tests/test_compliance.py::test_expression[given31-foo.bar-expected31-basic.json] PASSED
+tests/test_compliance.py::test_expression[given32-one-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given33-two-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given34-three-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given35-one.two-None-basic.json] PASSED
+tests/test_compliance.py::test_expression[given36-foo."1"-expected36-basic.json] PASSED
+tests/test_compliance.py::test_expression[given37-foo."1"[0]-one-basic.json] PASSED
+tests/test_compliance.py::test_expression[given38-foo."-1"-bar-basic.json] PASSED
+tests/test_compliance.py::test_expression[given39-foo[]."\u2713"-expected39-unicode.json] PASSED
+tests/test_compliance.py::test_expression[given40-"\u262f"-True-unicode.json] PASSED
+tests/test_compliance.py::test_expression[given41-"\u266a\u266b\u2022*\xa8*\u2022.\xb8\xb8\u2764\xb8\xb8.\u2022*\xa8*\u2022\u266b\u266a"-True-unicode.json] PASSED
+tests/test_compliance.py::test_expression[given42-"\u2603"-True-unicode.json] PASSED
+tests/test_compliance.py::test_expression[given43-foo.{bar: bar}-expected43-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given44-foo.{"bar": bar}-expected44-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given45-foo.{"foo.bar": bar}-expected45-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given46-foo.{bar: bar, baz: baz}-expected46-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given47-foo.{"bar": bar, "baz": baz}-expected47-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given48-{"baz": baz, "qux\\"": "qux\\""}-expected48-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given49-foo.{bar:bar,baz:baz}-expected49-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given50-foo.{bar: bar,qux: qux}-expected50-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given51-foo.{bar: bar, noexist: noexist}-expected51-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given52-foo.{noexist: noexist, alsonoexist: alsonoexist}-expected52-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given53-foo.badkey.{nokey: nokey, alsonokey: alsonokey}-None-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given54-foo.nested.*.{a: a,b: b}-expected54-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given55-foo.nested.three.{a: a, cinner: c.inner}-expected55-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given56-foo.nested.three.{a: a, c: c.inner.bad.key}-expected56-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given57-foo.{a: nested.one.a, b: nested.two.b}-expected57-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given58-{bar: bar, baz: baz}-expected58-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given59-{bar: bar}-expected59-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given60-{otherkey: bar}-expected60-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given61-{no: no, exist: exist}-expected61-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given62-foo.[bar]-expected62-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given63-foo.[bar,baz]-expected63-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given64-foo.[bar,qux]-expected64-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given65-foo.[bar,noexist]-expected65-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given66-foo.[noexist,alsonoexist]-expected66-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given67-foo.{bar:bar,baz:baz}-expected67-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given68-foo.[bar,baz[0]]-expected68-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given69-foo.[bar,baz[1]]-expected69-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given70-foo.[bar,baz[2]]-expected70-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given71-foo.[bar,baz[3]]-expected71-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given72-foo.[bar[0],baz[3]]-expected72-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given73-foo.{bar: bar, baz: baz}-expected73-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given74-foo.[bar,baz]-expected74-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given75-foo.{bar: bar.baz[1],includeme: includeme}-expected75-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given76-foo.{"bar.baz.two": bar.baz[1].two, includeme: includeme}-expected76-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given77-foo.[includeme, bar.baz[*].common]-expected77-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given78-foo.[includeme, bar.baz[*].none]-expected78-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given79-foo.[includeme, bar.baz[].common]-expected79-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given80-reservations[*].instances[*].{id: id, name: name}-expected80-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given81-reservations[].instances[].{id: id, name: name}-expected81-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given82-reservations[].instances[].[id, name]-expected82-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given83-foo-expected83-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given84-foo[]-expected84-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given85-foo[].bar-expected85-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given86-foo[].bar[]-expected86-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given87-foo[].bar[].[baz, qux]-expected87-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given88-foo[].bar[].[baz]-expected88-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given89-foo[].bar[].[baz, qux][]-expected89-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given90-foo.[baz[*].bar, qux[0]]-expected90-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given91-foo.[baz[*].[bar, boo], qux[0]]-expected91-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given92-foo.[baz[*].not_there || baz[*].bar, qux[0]]-expected92-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given93-[[*],*]-expected93-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given94-[[*]]-expected94-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given95-missing.{foo: bar}-None-multiselect.json] PASSED
+tests/test_compliance.py::test_expression[given96-foo.*.baz-expected96-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given97-foo.bar.*-expected97-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given98-foo.*.notbaz-expected98-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given99-foo.*.notbaz[0]-expected99-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given100-foo.*.notbaz[-1]-expected100-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given101-foo.*-expected101-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given102-foo.*.*-expected102-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given103-foo.*.*.*-expected103-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given104-foo.*.*.*.*-expected104-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given105-*.bar-expected105-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given106-*-expected106-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given107-*.sub1-expected107-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given108-*.*-expected108-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given109-*.*.foo[]-expected109-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given110-*.sub1.foo-expected110-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given111-foo[*].bar-expected111-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given112-foo[*].notbar-expected112-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given113-[*]-expected113-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given114-[*].bar-expected114-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given115-[*].notbar-expected115-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given116-foo.bar[*].baz-expected116-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given117-foo.bar[*].baz[0]-expected117-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given118-foo.bar[*].baz[1]-expected118-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given119-foo.bar[*].baz[2]-expected119-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given120-foo.bar[*].baz[3]-expected120-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given121-foo.bar[*]-expected121-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given122-foo.bar[0]-expected122-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given123-foo.bar[0][0]-one-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given124-foo.bar[0][0][0]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given125-foo.bar[0][0][0][0]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given126-foo[0][0]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given127-foo[*].bar[*].kind-expected127-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given128-foo[*].bar[0].kind-expected128-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given129-foo[*].bar.kind-expected129-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given130-foo[*].bar[0]-expected130-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given131-foo[*].bar[1]-expected131-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given132-foo[*].bar[2]-expected132-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given133-foo[*].bar[0]-expected133-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given134-foo[*][0]-expected134-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given135-foo[*][1]-expected135-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given136-foo[*][0]-expected136-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given137-foo[*][1]-expected137-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given138-foo[*][0][0]-expected138-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given139-foo[*][1][0]-expected139-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given140-foo[*][0][1]-expected140-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given141-foo[*][1][1]-expected141-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given142-foo[*][2]-expected142-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given143-foo[*][2][2]-expected143-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given144-bar[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given145-bar[*].baz[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given146-string[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given147-hash[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given148-number[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given149-nullvalue[*]-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given150-string[*].foo-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given151-hash[*].foo-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given152-number[*].foo-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given153-nullvalue[*].foo-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given154-nullvalue[*].foo[*].bar-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given155-string.*-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given156-hash.*-expected156-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given157-number.*-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given158-array.*-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given159-nullvalue.*-None-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given160-*[0]-expected160-wildcard.json] PASSED
+tests/test_compliance.py::test_expression[given161-bar[0:10]-None-slice.json] PASSED
+tests/test_compliance.py::test_expression[given162-foo[0:10:1]-expected162-slice.json] PASSED
+tests/test_compliance.py::test_expression[given163-foo[0:10]-expected163-slice.json] PASSED
+tests/test_compliance.py::test_expression[given164-foo[0:10:]-expected164-slice.json] PASSED
+tests/test_compliance.py::test_expression[given165-foo[0::1]-expected165-slice.json] PASSED
+tests/test_compliance.py::test_expression[given166-foo[0::]-expected166-slice.json] PASSED
+tests/test_compliance.py::test_expression[given167-foo[0:]-expected167-slice.json] PASSED
+tests/test_compliance.py::test_expression[given168-foo[:10:1]-expected168-slice.json] PASSED
+tests/test_compliance.py::test_expression[given169-foo[::1]-expected169-slice.json] PASSED
+tests/test_compliance.py::test_expression[given170-foo[:10:]-expected170-slice.json] PASSED
+tests/test_compliance.py::test_expression[given171-foo[::]-expected171-slice.json] PASSED
+tests/test_compliance.py::test_expression[given172-foo[:]-expected172-slice.json] PASSED
+tests/test_compliance.py::test_expression[given173-foo[1:9]-expected173-slice.json] PASSED
+tests/test_compliance.py::test_expression[given174-foo[0:10:2]-expected174-slice.json] PASSED
+tests/test_compliance.py::test_expression[given175-foo[5:]-expected175-slice.json] PASSED
+tests/test_compliance.py::test_expression[given176-foo[5::2]-expected176-slice.json] PASSED
+tests/test_compliance.py::test_expression[given177-foo[::2]-expected177-slice.json] PASSED
+tests/test_compliance.py::test_expression[given178-foo[::-1]-expected178-slice.json] PASSED
+tests/test_compliance.py::test_expression[given179-foo[1::2]-expected179-slice.json] PASSED
+tests/test_compliance.py::test_expression[given180-foo[10:0:-1]-expected180-slice.json] PASSED
+tests/test_compliance.py::test_expression[given181-foo[10:5:-1]-expected181-slice.json] PASSED
+tests/test_compliance.py::test_expression[given182-foo[8:2:-2]-expected182-slice.json] PASSED
+tests/test_compliance.py::test_expression[given183-foo[0:20]-expected183-slice.json] PASSED
+tests/test_compliance.py::test_expression[given184-foo[10:-20:-1]-expected184-slice.json] PASSED
+tests/test_compliance.py::test_expression[given185-foo[10:-20]-expected185-slice.json] PASSED
+tests/test_compliance.py::test_expression[given186-foo[-4:-1]-expected186-slice.json] PASSED
+tests/test_compliance.py::test_expression[given187-foo[:-5:-1]-expected187-slice.json] PASSED
+tests/test_compliance.py::test_expression[given188-foo[:2].a-expected188-slice.json] PASSED
+tests/test_compliance.py::test_expression[given189-foo[:2].b-expected189-slice.json] PASSED
+tests/test_compliance.py::test_expression[given190-foo[:2].a.b-expected190-slice.json] PASSED
+tests/test_compliance.py::test_expression[given191-bar[::-1].a.b-expected191-slice.json] PASSED
+tests/test_compliance.py::test_expression[given192-bar[:2].a.b-expected192-slice.json] PASSED
+tests/test_compliance.py::test_expression[given193-baz[:2].a-None-slice.json] PASSED
+tests/test_compliance.py::test_expression[given194-[:]-expected194-slice.json] PASSED
+tests/test_compliance.py::test_expression[given195-[:2].a-expected195-slice.json] PASSED
+tests/test_compliance.py::test_expression[given196-[::-1].a-expected196-slice.json] PASSED
+tests/test_compliance.py::test_expression[given197-[:2].b-expected197-slice.json] PASSED
+tests/test_compliance.py::test_expression[given198-foo.bar-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given199-foo-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given200-*-expected200-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given201-*.*-expected201-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given202-*.foo-expected202-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given203-*[0]-expected203-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given204-[]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given205-[0]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given206-[*]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given207-*.["0"]-expected207-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given208-[*].bar-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given209-[*][0]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given210-foo[0]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given211-foo.[*]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given212-foo.[abc]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given213-foo.[abc, def]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given214-a.{foo: bar}-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given215-a.{foo: bar, baz: bam}-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given216-{"\\\\":{" ":*}}-expected216-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given217-foo || bar-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given218-foo.[a || b]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given219-foo[?bar==`"baz"`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given220-foo[? bar == `"baz"` ]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given221-foo[?a.b.c==d.e.f]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given222-foo[?bar==`[0, 1, 2]`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given223-foo[?bar==`["a", "b", "c"]`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given224-foo[?bar==`["foo\\`bar"]`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given225-[?"\\\\">`"foo"`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given226-[?"\\\\" > `"foo"`]-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given227-foo-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given228-"foo"-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given229-"\\\\"-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given230-*||*|*|*-None-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given231-*[]||[*]-expected231-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given232-[*.*]-expected232-syntax.json] PASSED
+tests/test_compliance.py::test_expression[given233-abs(foo)-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given234-abs(foo)-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given235-abs(array[1])-3-functions.json] PASSED
+tests/test_compliance.py::test_expression[given236-abs(array[1])-3-functions.json] PASSED
+tests/test_compliance.py::test_expression[given237-abs(`-24`)-24-functions.json] PASSED
+tests/test_compliance.py::test_expression[given238-abs(`-24`)-24-functions.json] PASSED
+tests/test_compliance.py::test_expression[given239-avg(numbers)-2.75-functions.json] PASSED
+tests/test_compliance.py::test_expression[given240-avg(empty_list)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given241-ceil(`1.2`)-2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given242-ceil(decimals[0])-2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given243-ceil(decimals[1])-2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given244-ceil(decimals[2])--1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given245-contains('abc', 'a')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given246-contains('abc', 'd')-False-functions.json] PASSED
+tests/test_compliance.py::test_expression[given247-contains(strings, 'a')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given248-contains(decimals, `1.2`)-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given249-contains(decimals, `false`)-False-functions.json] PASSED
+tests/test_compliance.py::test_expression[given250-ends_with(str, 'r')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given251-ends_with(str, 'tr')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given252-ends_with(str, 'Str')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given253-ends_with(str, 'SStr')-False-functions.json] PASSED
+tests/test_compliance.py::test_expression[given254-ends_with(str, 'foo')-False-functions.json] PASSED
+tests/test_compliance.py::test_expression[given255-floor(`1.2`)-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given256-floor(decimals[0])-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given257-floor(foo)--1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given258-length('abc')-3-functions.json] PASSED
+tests/test_compliance.py::test_expression[given259-length('\u2713foo')-4-functions.json] PASSED
+tests/test_compliance.py::test_expression[given260-length('')-0-functions.json] PASSED
+tests/test_compliance.py::test_expression[given261-length(@)-12-functions.json] PASSED
+tests/test_compliance.py::test_expression[given262-length(strings[0])-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given263-length(str)-3-functions.json] PASSED
+tests/test_compliance.py::test_expression[given264-length(array)-6-functions.json] PASSED
+tests/test_compliance.py::test_expression[given265-length(objects)-2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given266-length(strings[0])-1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given267-max(numbers)-5-functions.json] PASSED
+tests/test_compliance.py::test_expression[given268-max(decimals)-1.2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given269-max(strings)-c-functions.json] PASSED
+tests/test_compliance.py::test_expression[given270-max(decimals)-1.2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given271-max(empty_list)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given272-merge(`{}`)-expected272-functions.json] PASSED
+tests/test_compliance.py::test_expression[given273-merge(`{}`, `{}`)-expected273-functions.json] PASSED
+tests/test_compliance.py::test_expression[given274-merge(`{"a": 1}`, `{"b": 2}`)-expected274-functions.json] PASSED
+tests/test_compliance.py::test_expression[given275-merge(`{"a": 1}`, `{"a": 2}`)-expected275-functions.json] PASSED
+tests/test_compliance.py::test_expression[given276-merge(`{"a": 1, "b": 2}`, `{"a": 2, "c": 3}`, `{"d": 4}`)-expected276-functions.json] PASSED
+tests/test_compliance.py::test_expression[given277-min(numbers)--1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given278-min(decimals)--1.5-functions.json] PASSED
+tests/test_compliance.py::test_expression[given279-min(empty_list)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given280-min(decimals)--1.5-functions.json] PASSED
+tests/test_compliance.py::test_expression[given281-min(strings)-a-functions.json] PASSED
+tests/test_compliance.py::test_expression[given282-type('abc')-string-functions.json] PASSED
+tests/test_compliance.py::test_expression[given283-type(`1.0`)-number-functions.json] PASSED
+tests/test_compliance.py::test_expression[given284-type(`2`)-number-functions.json] PASSED
+tests/test_compliance.py::test_expression[given285-type(`true`)-boolean-functions.json] PASSED
+tests/test_compliance.py::test_expression[given286-type(`false`)-boolean-functions.json] PASSED
+tests/test_compliance.py::test_expression[given287-type(`null`)-null-functions.json] PASSED
+tests/test_compliance.py::test_expression[given288-type(`[0]`)-array-functions.json] PASSED
+tests/test_compliance.py::test_expression[given289-type(`{"a": "b"}`)-object-functions.json] PASSED
+tests/test_compliance.py::test_expression[given290-type(@)-object-functions.json] PASSED
+tests/test_compliance.py::test_expression[given291-sort(keys(objects))-expected291-functions.json] PASSED
+tests/test_compliance.py::test_expression[given292-sort(values(objects))-expected292-functions.json] PASSED
+tests/test_compliance.py::test_expression[given293-keys(empty_hash)-expected293-functions.json] PASSED
+tests/test_compliance.py::test_expression[given294-join(', ', strings)-a, b, c-functions.json] PASSED
+tests/test_compliance.py::test_expression[given295-join(', ', strings)-a, b, c-functions.json] PASSED
+tests/test_compliance.py::test_expression[given296-join(',', `["a", "b"]`)-a,b-functions.json] PASSED
+tests/test_compliance.py::test_expression[given297-join('|', strings)-a|b|c-functions.json] PASSED
+tests/test_compliance.py::test_expression[given298-join('|', decimals[].to_string(@))-1.01|1.2|-1.5-functions.json] PASSED
+tests/test_compliance.py::test_expression[given299-join('|', empty_list)--functions.json] PASSED
+tests/test_compliance.py::test_expression[given300-reverse(numbers)-expected300-functions.json] PASSED
+tests/test_compliance.py::test_expression[given301-reverse(array)-expected301-functions.json] PASSED
+tests/test_compliance.py::test_expression[given302-reverse(`[]`)-expected302-functions.json] PASSED
+tests/test_compliance.py::test_expression[given303-reverse('')--functions.json] PASSED
+tests/test_compliance.py::test_expression[given304-reverse('hello world')-dlrow olleh-functions.json] PASSED
+tests/test_compliance.py::test_expression[given305-starts_with(str, 'S')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given306-starts_with(str, 'St')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given307-starts_with(str, 'Str')-True-functions.json] PASSED
+tests/test_compliance.py::test_expression[given308-starts_with(str, 'String')-False-functions.json] PASSED
+tests/test_compliance.py::test_expression[given309-sum(numbers)-11-functions.json] PASSED
+tests/test_compliance.py::test_expression[given310-sum(decimals)-0.71-functions.json] PASSED
+tests/test_compliance.py::test_expression[given311-sum(array[].to_number(@))-111-functions.json] PASSED
+tests/test_compliance.py::test_expression[given312-sum(`[]`)-0-functions.json] PASSED
+tests/test_compliance.py::test_expression[given313-to_array('foo')-expected313-functions.json] PASSED
+tests/test_compliance.py::test_expression[given314-to_array(`0`)-expected314-functions.json] PASSED
+tests/test_compliance.py::test_expression[given315-to_array(objects)-expected315-functions.json] PASSED
+tests/test_compliance.py::test_expression[given316-to_array(`[1, 2, 3]`)-expected316-functions.json] PASSED
+tests/test_compliance.py::test_expression[given317-to_array(false)-expected317-functions.json] PASSED
+tests/test_compliance.py::test_expression[given318-to_string('foo')-foo-functions.json] PASSED
+tests/test_compliance.py::test_expression[given319-to_string(`1.2`)-1.2-functions.json] PASSED
+tests/test_compliance.py::test_expression[given320-to_string(`[0, 1]`)-[0,1]-functions.json] PASSED
+tests/test_compliance.py::test_expression[given321-to_number('1.0')-1.0-functions.json] PASSED
+tests/test_compliance.py::test_expression[given322-to_number('1e21')-1e+21-functions.json] PASSED
+tests/test_compliance.py::test_expression[given323-to_number('1.1')-1.1-functions.json] PASSED
+tests/test_compliance.py::test_expression[given324-to_number('4')-4-functions.json] PASSED
+tests/test_compliance.py::test_expression[given325-to_number('notanumber')-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given326-to_number(`false`)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given327-to_number(`null`)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given328-to_number(`[0]`)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given329-to_number(`{"foo": 0}`)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given330-sort(numbers)-expected330-functions.json] PASSED
+tests/test_compliance.py::test_expression[given331-sort(strings)-expected331-functions.json] PASSED
+tests/test_compliance.py::test_expression[given332-sort(decimals)-expected332-functions.json] PASSED
+tests/test_compliance.py::test_expression[given333-sort(empty_list)-expected333-functions.json] PASSED
+tests/test_compliance.py::test_expression[given334-not_null(unknown_key, str)-Str-functions.json] PASSED
+tests/test_compliance.py::test_expression[given335-not_null(unknown_key, foo.bar, empty_list, str)-expected335-functions.json] PASSED
+tests/test_compliance.py::test_expression[given336-not_null(unknown_key, null_key, empty_list, str)-expected336-functions.json] PASSED
+tests/test_compliance.py::test_expression[given337-not_null(all, expressions, are_null)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given338-numbers[].to_string(@)-expected338-functions.json] PASSED
+tests/test_compliance.py::test_expression[given339-array[].to_number(@)-expected339-functions.json] PASSED
+tests/test_compliance.py::test_expression[given340-foo[].not_null(f, e, d, c, b, a)-expected340-functions.json] PASSED
+tests/test_compliance.py::test_expression[given341-sort_by(people, &age)-expected341-functions.json] PASSED
+tests/test_compliance.py::test_expression[given342-sort_by(people, &age_str)-expected342-functions.json] PASSED
+tests/test_compliance.py::test_expression[given343-sort_by(people, &to_number(age_str))-expected343-functions.json] PASSED
+tests/test_compliance.py::test_expression[given344-sort_by(people, &age)[].name-expected344-functions.json] PASSED
+tests/test_compliance.py::test_expression[given345-sort_by(people, &age)[].extra-expected345-functions.json] PASSED
+tests/test_compliance.py::test_expression[given346-sort_by(`[]`, &age)-expected346-functions.json] PASSED
+tests/test_compliance.py::test_expression[given347-max_by(people, &age)-expected347-functions.json] PASSED
+tests/test_compliance.py::test_expression[given348-max_by(people, &age_str)-expected348-functions.json] PASSED
+tests/test_compliance.py::test_expression[given349-max_by(people, &to_number(age_str))-expected349-functions.json] PASSED
+tests/test_compliance.py::test_expression[given350-max_by(`[]`, &age)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given351-min_by(people, &age)-expected351-functions.json] PASSED
+tests/test_compliance.py::test_expression[given352-min_by(people, &age_str)-expected352-functions.json] PASSED
+tests/test_compliance.py::test_expression[given353-min_by(people, &to_number(age_str))-expected353-functions.json] PASSED
+tests/test_compliance.py::test_expression[given354-min_by(`[]`, &age)-None-functions.json] PASSED
+tests/test_compliance.py::test_expression[given355-sort_by(people, &age)-expected355-functions.json] PASSED
+tests/test_compliance.py::test_expression[given356-map(&a, people)-expected356-functions.json] PASSED
+tests/test_compliance.py::test_expression[given357-map(&c, people)-expected357-functions.json] PASSED
+tests/test_compliance.py::test_expression[given358-map(&foo, empty)-expected358-functions.json] PASSED
+tests/test_compliance.py::test_expression[given359-map(&foo.bar, array)-expected359-functions.json] PASSED
+tests/test_compliance.py::test_expression[given360-map(&foo1.bar, array)-expected360-functions.json] PASSED
+tests/test_compliance.py::test_expression[given361-map(&foo.bar.baz, array)-expected361-functions.json] PASSED
+tests/test_compliance.py::test_expression[given362-map(&[], array)-expected362-functions.json] PASSED
+tests/test_compliance.py::test_expression[given363-foo[?name == 'a']-expected363-filters.json] PASSED
+tests/test_compliance.py::test_expression[given364-*[?[0] == `0`]-expected364-filters.json] PASSED
+tests/test_compliance.py::test_expression[given365-foo[?first == last]-expected365-filters.json] PASSED
+tests/test_compliance.py::test_expression[given366-foo[?first == last].first-expected366-filters.json] PASSED
+tests/test_compliance.py::test_expression[given367-foo[?age > `25`]-expected367-filters.json] PASSED
+tests/test_compliance.py::test_expression[given368-foo[?age >= `25`]-expected368-filters.json] PASSED
+tests/test_compliance.py::test_expression[given369-foo[?age > `30`]-expected369-filters.json] PASSED
+tests/test_compliance.py::test_expression[given370-foo[?age < `25`]-expected370-filters.json] PASSED
+tests/test_compliance.py::test_expression[given371-foo[?age <= `25`]-expected371-filters.json] PASSED
+tests/test_compliance.py::test_expression[given372-foo[?age < `20`]-expected372-filters.json] PASSED
+tests/test_compliance.py::test_expression[given373-foo[?age == `20`]-expected373-filters.json] PASSED
+tests/test_compliance.py::test_expression[given374-foo[?age != `20`]-expected374-filters.json] PASSED
+tests/test_compliance.py::test_expression[given375-foo[?weight > `44.4`]-expected375-filters.json] PASSED
+tests/test_compliance.py::test_expression[given376-foo[?weight >= `44.4`]-expected376-filters.json] PASSED
+tests/test_compliance.py::test_expression[given377-foo[?weight > `55.5`]-expected377-filters.json] PASSED
+tests/test_compliance.py::test_expression[given378-foo[?weight < `44.4`]-expected378-filters.json] PASSED
+tests/test_compliance.py::test_expression[given379-foo[?weight <= `44.4`]-expected379-filters.json] PASSED
+tests/test_compliance.py::test_expression[given380-foo[?weight < `33.3`]-expected380-filters.json] PASSED
+tests/test_compliance.py::test_expression[given381-foo[?weight == `33.3`]-expected381-filters.json] PASSED
+tests/test_compliance.py::test_expression[given382-foo[?weight != `33.3`]-expected382-filters.json] PASSED
+tests/test_compliance.py::test_expression[given383-foo[?top.name == 'a']-expected383-filters.json] PASSED
+tests/test_compliance.py::test_expression[given384-foo[?top.first == top.last]-expected384-filters.json] PASSED
+tests/test_compliance.py::test_expression[given385-foo[?top == `{"first": "foo", "last": "bar"}`]-expected385-filters.json] PASSED
+tests/test_compliance.py::test_expression[given386-foo[?key == `true`]-expected386-filters.json] PASSED
+tests/test_compliance.py::test_expression[given387-foo[?key == `false`]-expected387-filters.json] PASSED
+tests/test_compliance.py::test_expression[given388-foo[?key == `0`]-expected388-filters.json] PASSED
+tests/test_compliance.py::test_expression[given389-foo[?key == `1`]-expected389-filters.json] PASSED
+tests/test_compliance.py::test_expression[given390-foo[?key == `[0]`]-expected390-filters.json] PASSED
+tests/test_compliance.py::test_expression[given391-foo[?key == `{"bar": [0]}`]-expected391-filters.json] PASSED
+tests/test_compliance.py::test_expression[given392-foo[?key == `null`]-expected392-filters.json] PASSED
+tests/test_compliance.py::test_expression[given393-foo[?key == `[1]`]-expected393-filters.json] PASSED
+tests/test_compliance.py::test_expression[given394-foo[?key == `{"a":2}`]-expected394-filters.json] PASSED
+tests/test_compliance.py::test_expression[given395-foo[?`true` == key]-expected395-filters.json] PASSED
+tests/test_compliance.py::test_expression[given396-foo[?`false` == key]-expected396-filters.json] PASSED
+tests/test_compliance.py::test_expression[given397-foo[?`0` == key]-expected397-filters.json] PASSED
+tests/test_compliance.py::test_expression[given398-foo[?`1` == key]-expected398-filters.json] PASSED
+tests/test_compliance.py::test_expression[given399-foo[?`[0]` == key]-expected399-filters.json] PASSED
+tests/test_compliance.py::test_expression[given400-foo[?`{"bar": [0]}` == key]-expected400-filters.json] PASSED
+tests/test_compliance.py::test_expression[given401-foo[?`null` == key]-expected401-filters.json] PASSED
+tests/test_compliance.py::test_expression[given402-foo[?`[1]` == key]-expected402-filters.json] PASSED
+tests/test_compliance.py::test_expression[given403-foo[?`{"a":2}` == key]-expected403-filters.json] PASSED
+tests/test_compliance.py::test_expression[given404-foo[?key != `true`]-expected404-filters.json] PASSED
+tests/test_compliance.py::test_expression[given405-foo[?key != `false`]-expected405-filters.json] PASSED
+tests/test_compliance.py::test_expression[given406-foo[?key != `0`]-expected406-filters.json] PASSED
+tests/test_compliance.py::test_expression[given407-foo[?key != `1`]-expected407-filters.json] PASSED
+tests/test_compliance.py::test_expression[given408-foo[?key != `null`]-expected408-filters.json] PASSED
+tests/test_compliance.py::test_expression[given409-foo[?key != `[1]`]-expected409-filters.json] PASSED
+tests/test_compliance.py::test_expression[given410-foo[?key != `{"a":2}`]-expected410-filters.json] PASSED
+tests/test_compliance.py::test_expression[given411-foo[?`true` != key]-expected411-filters.json] PASSED
+tests/test_compliance.py::test_expression[given412-foo[?`false` != key]-expected412-filters.json] PASSED
+tests/test_compliance.py::test_expression[given413-foo[?`0` != key]-expected413-filters.json] PASSED
+tests/test_compliance.py::test_expression[given414-foo[?`1` != key]-expected414-filters.json] PASSED
+tests/test_compliance.py::test_expression[given415-foo[?`null` != key]-expected415-filters.json] PASSED
+tests/test_compliance.py::test_expression[given416-foo[?`[1]` != key]-expected416-filters.json] PASSED
+tests/test_compliance.py::test_expression[given417-foo[?`{"a":2}` != key]-expected417-filters.json] PASSED
+tests/test_compliance.py::test_expression[given418-foo[?key == `true`]-expected418-filters.json] PASSED
+tests/test_compliance.py::test_expression[given419-foo[?key == `false`]-expected419-filters.json] PASSED
+tests/test_compliance.py::test_expression[given420-foo[?key]-expected420-filters.json] PASSED
+tests/test_compliance.py::test_expression[given421-foo[? !key]-expected421-filters.json] PASSED
+tests/test_compliance.py::test_expression[given422-foo[? !!key]-expected422-filters.json] PASSED
+tests/test_compliance.py::test_expression[given423-foo[? `true`]-expected423-filters.json] PASSED
+tests/test_compliance.py::test_expression[given424-foo[? `false`]-expected424-filters.json] PASSED
+tests/test_compliance.py::test_expression[given425-reservations[].instances[?bar==`1`]-expected425-filters.json] PASSED
+tests/test_compliance.py::test_expression[given426-reservations[*].instances[?bar==`1`]-expected426-filters.json] PASSED
+tests/test_compliance.py::test_expression[given427-reservations[].instances[?bar==`1`][]-expected427-filters.json] PASSED
+tests/test_compliance.py::test_expression[given428-foo[?bar==`1`].bar[0]-expected428-filters.json] PASSED
+tests/test_compliance.py::test_expression[given429-foo[?a==`1`].b.c-expected429-filters.json] PASSED
+tests/test_compliance.py::test_expression[given430-foo[?name == 'a' || name == 'b']-expected430-filters.json] PASSED
+tests/test_compliance.py::test_expression[given431-foo[?name == 'a' || name == 'e']-expected431-filters.json] PASSED
+tests/test_compliance.py::test_expression[given432-foo[?name == 'a' || name == 'b' || name == 'c']-expected432-filters.json] PASSED
+tests/test_compliance.py::test_expression[given433-foo[?a == `1` && b == `2`]-expected433-filters.json] PASSED
+tests/test_compliance.py::test_expression[given434-foo[?a == `1` && b == `4`]-expected434-filters.json] PASSED
+tests/test_compliance.py::test_expression[given435-foo[?c == `3` || a == `1` && b == `4`]-expected435-filters.json] PASSED
+tests/test_compliance.py::test_expression[given436-foo[?b == `2` || a == `3` && b == `4`]-expected436-filters.json] PASSED
+tests/test_compliance.py::test_expression[given437-foo[?a == `3` && b == `4` || b == `2`]-expected437-filters.json] PASSED
+tests/test_compliance.py::test_expression[given438-foo[?(a == `3` && b == `4`) || b == `2`]-expected438-filters.json] PASSED
+tests/test_compliance.py::test_expression[given439-foo[?((a == `3` && b == `4`)) || b == `2`]-expected439-filters.json] PASSED
+tests/test_compliance.py::test_expression[given440-foo[?a == `3` && (b == `4` || b == `2`)]-expected440-filters.json] PASSED
+tests/test_compliance.py::test_expression[given441-foo[?a == `3` && ((b == `4` || b == `2`))]-expected441-filters.json] PASSED
+tests/test_compliance.py::test_expression[given442-foo[?a == `1` || b ==`2` && c == `5`]-expected442-filters.json] PASSED
+tests/test_compliance.py::test_expression[given443-foo[?(a == `1` || b ==`2`) && c == `5`]-expected443-filters.json] PASSED
+tests/test_compliance.py::test_expression[given444-foo[?!(a == `1` || b ==`2`)]-expected444-filters.json] PASSED
+tests/test_compliance.py::test_expression[given445-foo[?key]-expected445-filters.json] PASSED
+tests/test_compliance.py::test_expression[given446-foo[?!key]-expected446-filters.json] PASSED
+tests/test_compliance.py::test_expression[given447-foo[?key == `null`]-expected447-filters.json] PASSED
+tests/test_compliance.py::test_expression[given448-foo[?@ < `5`]-expected448-filters.json] PASSED
+tests/test_compliance.py::test_expression[given449-foo[?`5` > @]-expected449-filters.json] PASSED
+tests/test_compliance.py::test_expression[given450-foo[?@ == @]-expected450-filters.json] PASSED
+tests/test_compliance.py::test_expression[given451-foo.*.baz | [0]-subkey-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given452-foo.*.baz | [1]-subkey-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given453-foo.*.baz | [2]-subkey-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given454-foo.bar.* | [0]-subkey-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given455-foo.*.notbaz | [*]-expected455-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given456-{"a": foo.bar, "b": foo.other} | *.baz-expected456-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given457-foo | bar-expected457-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given458-foo | bar | baz-one-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given459-foo|bar| baz-one-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given460-not_there | [0]-None-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given461-not_there | [0]-None-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given462-[foo.bar, foo.other] | [0]-expected462-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given463-{"a": foo.bar, "b": foo.other} | a-expected463-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given464-{"a": foo.bar, "b": foo.other} | b-expected464-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given465-foo.bam || foo.bar | baz-one-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given466-foo | not_there || bar-expected466-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given467-foo[*].bar[*] | [0][0]-expected467-pipe.json] PASSED
+tests/test_compliance.py::test_expression[given468-"foo.bar"-dot-escape.json] PASSED
+tests/test_compliance.py::test_expression[given469-"foo bar"-space-escape.json] PASSED
+tests/test_compliance.py::test_expression[given470-"foo\\nbar"-newline-escape.json] PASSED
+tests/test_compliance.py::test_expression[given471-"foo\\"bar"-doublequote-escape.json] PASSED
+tests/test_compliance.py::test_expression[given472-"c:\\\\\\\\windows\\\\path"-windows-escape.json] PASSED
+tests/test_compliance.py::test_expression[given473-"/unix/path"-unix-escape.json] PASSED
+tests/test_compliance.py::test_expression[given474-"\\"\\"\\""-threequotes-escape.json] PASSED
+tests/test_compliance.py::test_expression[given475-"bar"."baz"-qux-escape.json] PASSED
+tests/test_compliance.py::test_expression[given476-foo.bar[0]-zero-indices.json] PASSED
+tests/test_compliance.py::test_expression[given477-foo.bar[1]-one-indices.json] PASSED
+tests/test_compliance.py::test_expression[given478-foo.bar[2]-two-indices.json] PASSED
+tests/test_compliance.py::test_expression[given479-foo.bar[3]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given480-foo.bar[-1]-two-indices.json] PASSED
+tests/test_compliance.py::test_expression[given481-foo.bar[-2]-one-indices.json] PASSED
+tests/test_compliance.py::test_expression[given482-foo.bar[-3]-zero-indices.json] PASSED
+tests/test_compliance.py::test_expression[given483-foo.bar[-4]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given484-foo.bar-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given485-foo[0].bar-one-indices.json] PASSED
+tests/test_compliance.py::test_expression[given486-foo[1].bar-two-indices.json] PASSED
+tests/test_compliance.py::test_expression[given487-foo[2].bar-three-indices.json] PASSED
+tests/test_compliance.py::test_expression[given488-foo[3].notbar-four-indices.json] PASSED
+tests/test_compliance.py::test_expression[given489-foo[3].bar-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given490-foo[0]-expected490-indices.json] PASSED
+tests/test_compliance.py::test_expression[given491-foo[1]-expected491-indices.json] PASSED
+tests/test_compliance.py::test_expression[given492-foo[2]-expected492-indices.json] PASSED
+tests/test_compliance.py::test_expression[given493-foo[3]-expected493-indices.json] PASSED
+tests/test_compliance.py::test_expression[given494-foo[4]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given495-[0]-one-indices.json] PASSED
+tests/test_compliance.py::test_expression[given496-[1]-two-indices.json] PASSED
+tests/test_compliance.py::test_expression[given497-[2]-three-indices.json] PASSED
+tests/test_compliance.py::test_expression[given498-[-1]-three-indices.json] PASSED
+tests/test_compliance.py::test_expression[given499-[-2]-two-indices.json] PASSED
+tests/test_compliance.py::test_expression[given500-[-3]-one-indices.json] PASSED
+tests/test_compliance.py::test_expression[given501-reservations[].instances[].foo-expected501-indices.json] PASSED
+tests/test_compliance.py::test_expression[given502-reservations[].instances[].bar-expected502-indices.json] PASSED
+tests/test_compliance.py::test_expression[given503-reservations[].notinstances[].foo-expected503-indices.json] PASSED
+tests/test_compliance.py::test_expression[given504-reservations[].notinstances[].foo-expected504-indices.json] PASSED
+tests/test_compliance.py::test_expression[given505-reservations[].instances[].foo[].bar-expected505-indices.json] PASSED
+tests/test_compliance.py::test_expression[given506-reservations[].instances[].foo[].baz-expected506-indices.json] PASSED
+tests/test_compliance.py::test_expression[given507-reservations[].instances[].notfoo[].bar-expected507-indices.json] PASSED
+tests/test_compliance.py::test_expression[given508-reservations[].instances[].notfoo[].notbar-expected508-indices.json] PASSED
+tests/test_compliance.py::test_expression[given509-reservations[].notinstances[].foo-expected509-indices.json] PASSED
+tests/test_compliance.py::test_expression[given510-reservations[].instances[].foo[].notbar-expected510-indices.json] PASSED
+tests/test_compliance.py::test_expression[given511-reservations[].instances[].bar[].baz-expected511-indices.json] PASSED
+tests/test_compliance.py::test_expression[given512-reservations[].instances[].baz[].baz-expected512-indices.json] PASSED
+tests/test_compliance.py::test_expression[given513-reservations[].instances[].qux[].baz-expected513-indices.json] PASSED
+tests/test_compliance.py::test_expression[given514-reservations[].instances[].qux[].baz[]-expected514-indices.json] PASSED
+tests/test_compliance.py::test_expression[given515-foo[]-expected515-indices.json] PASSED
+tests/test_compliance.py::test_expression[given516-foo[][0]-expected516-indices.json] PASSED
+tests/test_compliance.py::test_expression[given517-foo[][1]-expected517-indices.json] PASSED
+tests/test_compliance.py::test_expression[given518-foo[][0][0]-expected518-indices.json] PASSED
+tests/test_compliance.py::test_expression[given519-foo[][2][2]-expected519-indices.json] PASSED
+tests/test_compliance.py::test_expression[given520-foo[][0][0][100]-expected520-indices.json] PASSED
+tests/test_compliance.py::test_expression[given521-foo-expected521-indices.json] PASSED
+tests/test_compliance.py::test_expression[given522-foo[]-expected522-indices.json] PASSED
+tests/test_compliance.py::test_expression[given523-foo[].bar-expected523-indices.json] PASSED
+tests/test_compliance.py::test_expression[given524-foo[].bar[]-expected524-indices.json] PASSED
+tests/test_compliance.py::test_expression[given525-foo[].bar[].baz-expected525-indices.json] PASSED
+tests/test_compliance.py::test_expression[given526-string[]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given527-hash[]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given528-number[]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given529-nullvalue[]-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given530-string[].foo-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given531-hash[].foo-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given532-number[].foo-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given533-nullvalue[].foo-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given534-nullvalue[].foo[].bar-None-indices.json] PASSED
+tests/test_compliance.py::test_expression[given535-`"foo"`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given536-`"\\u03a6"`-\u03a6-literal.json] PASSED
+tests/test_compliance.py::test_expression[given537-`"\u2713"`-\u2713-literal.json] PASSED
+tests/test_compliance.py::test_expression[given538-`[1, 2, 3]`-expected538-literal.json] PASSED
+tests/test_compliance.py::test_expression[given539-`{"a": "b"}`-expected539-literal.json] PASSED
+tests/test_compliance.py::test_expression[given540-`true`-True-literal.json] PASSED
+tests/test_compliance.py::test_expression[given541-`false`-False-literal.json] PASSED
+tests/test_compliance.py::test_expression[given542-`null`-None-literal.json] PASSED
+tests/test_compliance.py::test_expression[given543-`0`-0-literal.json] PASSED
+tests/test_compliance.py::test_expression[given544-`1`-1-literal.json] PASSED
+tests/test_compliance.py::test_expression[given545-`2`-2-literal.json] PASSED
+tests/test_compliance.py::test_expression[given546-`3`-3-literal.json] PASSED
+tests/test_compliance.py::test_expression[given547-`4`-4-literal.json] PASSED
+tests/test_compliance.py::test_expression[given548-`5`-5-literal.json] PASSED
+tests/test_compliance.py::test_expression[given549-`6`-6-literal.json] PASSED
+tests/test_compliance.py::test_expression[given550-`7`-7-literal.json] PASSED
+tests/test_compliance.py::test_expression[given551-`8`-8-literal.json] PASSED
+tests/test_compliance.py::test_expression[given552-`9`-9-literal.json] PASSED
+tests/test_compliance.py::test_expression[given553-`"foo\\`bar"`-foo`bar-literal.json] PASSED
+tests/test_compliance.py::test_expression[given554-`"foo\\"bar"`-foo"bar-literal.json] PASSED
+tests/test_compliance.py::test_expression[given555-`"1\\`"`-1`-literal.json] PASSED
+tests/test_compliance.py::test_expression[given556-`"\\\\"`.{a:`"b"`}-expected556-literal.json] PASSED
+tests/test_compliance.py::test_expression[given557-`{"a": "b"}`.a-b-literal.json] PASSED
+tests/test_compliance.py::test_expression[given558-`{"a": {"b": "c"}}`.a.b-c-literal.json] PASSED
+tests/test_compliance.py::test_expression[given559-`[0, 1, 2]`[1]-1-literal.json] PASSED
+tests/test_compliance.py::test_expression[given560-`  {"foo": true}`-expected560-literal.json] PASSED
+tests/test_compliance.py::test_expression[given561-`{"foo": true}   `-expected561-literal.json] PASSED
+tests/test_compliance.py::test_expression[given562-'foo'-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given563-'  foo  '-  foo  -literal.json] PASSED
+tests/test_compliance.py::test_expression[given564-'0'-0-literal.json] PASSED
+tests/test_compliance.py::test_expression[given565-'newline\n'-newline\n-literal.json] PASSED
+tests/test_compliance.py::test_expression[given566-'\n'-\n-literal.json] PASSED
+tests/test_compliance.py::test_expression[given567-'\u2713'-\u2713-literal.json] PASSED
+tests/test_compliance.py::test_expression[given568-'\U0001d11e'-\U0001d11e-literal.json] PASSED
+tests/test_compliance.py::test_expression[given569-'  [foo]  '-  [foo]  -literal.json] PASSED
+tests/test_compliance.py::test_expression[given570-'[foo]'-[foo]-literal.json] PASSED
+tests/test_compliance.py::test_expression[given571-'\\u03a6'-\\u03a6-literal.json] PASSED
+tests/test_compliance.py::test_expression[given572-'foo\\'bar'-foo'bar-literal.json] PASSED
+tests/test_compliance.py::test_expression[given573-'\\z'-\\z-literal.json] PASSED
+tests/test_compliance.py::test_expression[given574-'\\\\'-\\\\-literal.json] PASSED
+tests/test_compliance.py::test_expression[given575-outer.foo || outer.bar-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given576-outer.foo||outer.bar-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given577-outer.bar || outer.baz-bar-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given578-outer.bar||outer.baz-bar-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given579-outer.bad || outer.foo-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given580-outer.bad||outer.foo-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given581-outer.foo || outer.bad-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given582-outer.foo||outer.bad-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given583-outer.bad || outer.alsobad-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given584-outer.bad||outer.alsobad-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given585-outer.empty_string || outer.foo-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given586-outer.nokey || outer.bool || outer.empty_list || outer.empty_string || outer.foo-foo-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given587-True && False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given588-False && True-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given589-True && True-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given590-False && False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given591-True && Number-5-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given592-Number && True-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given593-Number && False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given594-Number && EmptyList-expected594-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given595-Number && True-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given596-EmptyList && True-expected596-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given597-EmptyList && False-expected597-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given598-True || False-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given599-True || True-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given600-False || True-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given601-False || False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given602-Number || EmptyList-5-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given603-Number || True-5-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given604-Number || True && False-5-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given605-(Number || True) && False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given606-Number || (True && False)-5-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given607-!True-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given608-!False-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given609-!Number-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given610-!EmptyList-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given611-True && !False-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given612-True && !EmptyList-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given613-!False && !EmptyList-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given614-!True && False-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given615-!(True && False)-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given616-!Zero-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given617-!!Zero-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given618-Zero || Number-0-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given619-ZeroFloat || Number-0.0-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given620-one < two-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given621-one <= two-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given622-one == one-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given623-one == two-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given624-one > two-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given625-one >= two-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given626-one != two-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given627-emptylist < one-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given628-emptylist < nullvalue-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given629-emptylist < boolvalue-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given630-one < boolvalue-None-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given631-one < two && three > one-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given632-one < two || three > one-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given633-one < two || three < one-True-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given634-two < one || three < one-False-boolean.json] PASSED
+tests/test_compliance.py::test_expression[given635-__L-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given636-"!\\r"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given637-Y_1623-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given638-x-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given639-"\\tF\\uCebb"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given640-" \\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given641-" "-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given642-v2-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given643-"\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given644-_X-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given645-"\\t4\\ud9da\\udd15"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given646-v24_W-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given647-"H"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given648-"\\f"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given649-"E4"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given650-"!"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given651-tM-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given652-" ["-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given653-"R!"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given654-_6W-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given655-"\\uaBA1\\r"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given656-tL7-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given657-"<<U\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given658-"\\ubBcE\\ufAfB"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given659-sNA_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given660-"9"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given661-"\\\\\\b\\ud8cb\\udc83"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given662-"r"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given663-Q-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given664-_Q__7GL8-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given665-"\\\\"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given666-RR9_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given667-"\\r\\f:"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given668-r7-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given669-"-"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given670-p9-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given671-__-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given672-"\\b\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given673-O_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given674-_r_8-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given675-_j-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given676-":"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given677-"\\rB"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given678-Obf-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given679-"\\n"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given680-"\\f\U000e5333"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given681-"\\\\\\u4FDc"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given682-"\\r"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given683-m_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given684-"\\r\\fB "-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given685-"+\\"\\""-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given686-Mg-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given687-"\\"!\\/"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given688-"7\\""-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given689-"\\\\\U000de8a4S"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given690-"\\""-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given691-Kl-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given692-"\\b\\b"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given693-">"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given694-hvu-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given695-"; !"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given696-hU-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given697-"!I\\n\\/"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given698-"\\uEEbF"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given699-"U)\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given700-fa0_9-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given701-"/"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given702-Gy-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given703-"\\b"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given704-"<"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given705-"\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given706-"\\t&\\\\\\r"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given707-"#"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given708-B__-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given709-"\\nS \\n"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given710-Bp-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given711-",\\t;"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given712-B_q-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given713-"\\/+\\t\\n\\b!Z"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given714-"\U000c77c7\\\\ueFAc"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given715-":\\f"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given716-"\\/"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given717-_BW_6Hg_Gl-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given718-"\U00103c02"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given719-zs1DC-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given720-__434-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given721-"\U000f5141"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given722-Z_5-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given723-z_M_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given724-YU_2-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given725-_0-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given726-"\\b+"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given727-"\\""-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given728-D7-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given729-_62L-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given730-"\\tK\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given731-"\\n\\\\\\f"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given732-I_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given733-W_a0_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given734-BQ-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given735-"\\tX$\\uABBb"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given736-Z9-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given737-"\\b%\\"\U0009e10f"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given738-_F-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given739-"!,"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given740-"\\"!"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given741-Hh-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given742-"&"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given743-"9\\r\\\\R"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given744-M_k-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given745-"!\\b\\n\U000d1a52\\"\\""-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given746-"6"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given747-_7-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given748-"0"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given749-"\\\\8\\\\"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given750-b7eo-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given751-xIUo9-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given752-"5"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given753-"?"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given754-sU-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given755-"VH2&H\\\\\\/"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given756-_C-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given757-_-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given758-"<\\t"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given759-"\\uD834\\uDD1E"-True-identifiers.json] PASSED
+tests/test_compliance.py::test_expression[given760-`foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given761-`foo\\"quote`-foo"quote-literal.json] PASSED
+tests/test_compliance.py::test_expression[given762-`\u2713`-\u2713-literal.json] PASSED
+tests/test_compliance.py::test_expression[given763-`foo\\"bar`-foo"bar-literal.json] PASSED
+tests/test_compliance.py::test_expression[given764-`1\\``-1`-literal.json] PASSED
+tests/test_compliance.py::test_expression[given765-`\\\\`.{a:`b`}-expected765-literal.json] PASSED
+tests/test_compliance.py::test_expression[given766-`foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_expression[given767-`      foo`-foo-literal.json] PASSED
+tests/test_compliance.py::test_error_expression[given0-foo.`bar`-syntax-literal.json] PASSED
+tests/test_compliance.py::test_error_expression[given1-foo[8:2:0]-invalid-value-slice.json] PASSED
+tests/test_compliance.py::test_error_expression[given2-foo[8:2:0:1]-syntax-slice.json] PASSED
+tests/test_compliance.py::test_error_expression[given3-foo[8:2&]-syntax-slice.json] PASSED
+tests/test_compliance.py::test_error_expression[given4-foo[2:a:3]-syntax-slice.json] PASSED
+tests/test_compliance.py::test_error_expression[given5-foo.1-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given6-foo.-11-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given7-foo.-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given8-.foo-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given9-foo..bar-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given10-foo.bar.-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given11-foo[.]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given12-.-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given13-:-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given14-,-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given15-]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given16-[-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given17-}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given18-{-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given19-)-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given20-(-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given21-((&-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given22-a[-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given23-a]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given24-a][-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given25-!-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given26-@=-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given27-@``-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given28-![!(!-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given29-(@-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given30-@(foo)-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given31-"foo"(bar)-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given32-.*-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given33-*foo-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given34-*0-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given35-foo[*]bar-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given36-foo[*]*-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given37-*.[0]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given38-foo[#]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given39-led[*-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given40-[:@]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given41-[:::]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given42-[:@:]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given43-[:1@]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given44-foo[0, 1]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given45-foo.[0]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given46-foo[0, ]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given47-foo[0,-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given48-foo.[a-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given49-foo[0,, 1]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given50-foo[abc]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given51-foo[abc, def]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given52-foo[abc, 1]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given53-foo[abc, ]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given54-foo.[abc, 1]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given55-foo.[abc, ]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given56-foo.[abc,, def]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given57-foo.[0, 1]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given58-a{}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given59-a{-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given60-a{foo}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given61-a{foo:-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given62-a{foo: 0-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given63-a{foo:}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given64-a{foo: 0, -syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given65-a{foo: ,}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given66-a{foo: bar}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given67-a{foo: 0}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given68-a.{}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given69-a.{foo}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given70-a.{foo:}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given71-a.{foo: ,}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given72-a.{foo: bar, }-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given73-a.{foo: bar, baz}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given74-a.{foo: bar, baz:}-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given75-a.{foo: bar, baz: bam, }-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given76-{a: @-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given77-foo ||-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given78-foo.|| bar-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given79- || foo-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given80-foo || || foo-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given81-foo.[a ||]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given82-"foo-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given83-foo[ ?bar==`"baz"`]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given84-foo[?bar==]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given85-foo[?==]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given86-foo[?==bar]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given87-foo[?bar==baz?]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given88-foo[?bar==`["foo`bar"]`]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given89-foo[?bar<>baz]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given90-foo[?bar^baz]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given91-foo[bar==baz]-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given92-bar.`"anything"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given93-bar.baz.noexists.`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given94-foo[*].`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given95-foo[*].name.`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given96-foo[].name.`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given97-foo[].name.`"literal"`.`"subliteral"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given98-foo[*].name.noexist.`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given99-foo[].name.noexist.`"literal"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given100-twolen[*].`"foo"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given101-twolen[*].threelen[*].`"bar"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given102-twolen[].threelen[].`"bar"`-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given103-foo[? @ | @-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given104-"\\u"-syntax-syntax.json] PASSED
+tests/test_compliance.py::test_error_expression[given105-abs(str)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given106-abs(`false`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given107-abs(`1`, `2`)-invalid-arity-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given108-abs()-invalid-arity-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given109-unknown_function(`1`, `2`)-unknown-function-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given110-avg(array)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given111-avg('abc')-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given112-avg(foo)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given113-avg(@)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given114-avg(strings)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given115-ceil('string')-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given116-contains(`false`, 'd')-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given117-ends_with(str, `0`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given118-floor('string')-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given119-floor(str)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given120-length(`false`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given121-length(foo)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given122-max(abc)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given123-max(array)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given124-min(abc)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given125-min(array)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given126-keys(foo)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given127-keys(strings)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given128-keys(`false`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given129-values(foo)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given130-join(',', `["a", 0]`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given131-join(', ', str)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given132-join(`2`, strings)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given133-join('|', decimals)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given134-starts_with(str, `0`)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given135-sum(array)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given136-"to_string"(`1.0`)-syntax-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given137-sort(array)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given138-sort(abc)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given139-sort(@)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given140-not_null()-invalid-arity-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given141-sort_by(people, &extra)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given142-sort_by(people, &bool)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given143-sort_by(people, &name)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given144-sort_by(people, name)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given145-max_by(people, &bool)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given146-max_by(people, &extra)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given147-min_by(people, &bool)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given148-min_by(people, &extra)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given149-map(&a, badkey)-invalid-type-functions.json] PASSED
+tests/test_compliance.py::test_error_expression[given150-foo.`"bar"`-syntax-literal.json] PASSED
+tests/test_compliance.py::test_error_expression[given151-foo.`bar`-syntax-literal.json] PASSED
+tests/test_custom_functions.py::TestCustomFunctions::test_null_to_nonetype PASSED
+tests/test_functions.py::TestFunctions::test_can_max_datetimes PASSED
+tests/test_functions.py::TestFunctions::test_error_message_is_pluralized PASSED
+tests/test_functions.py::TestFunctions::test_singular_in_error_message PASSED
+tests/test_functions.py::TestFunctions::test_type_error_messages PASSED
+tests/test_functions.py::TestFunctions::test_variadic_is_pluralized PASSED
+tests/test_lexer.py::TestRegexLexer::test_adds_quotes_when_invalid_json PASSED
+tests/test_lexer.py::TestRegexLexer::test_bad_first_character PASSED
+tests/test_lexer.py::TestRegexLexer::test_empty_string PASSED
+tests/test_lexer.py::TestRegexLexer::test_field PASSED
+tests/test_lexer.py::TestRegexLexer::test_json_escaped_value PASSED
+tests/test_lexer.py::TestRegexLexer::test_literal PASSED
+tests/test_lexer.py::TestRegexLexer::test_literal_number PASSED
+tests/test_lexer.py::TestRegexLexer::test_literal_string PASSED
+tests/test_lexer.py::TestRegexLexer::test_literal_with_empty_string PASSED
+tests/test_lexer.py::TestRegexLexer::test_literal_with_invalid_json PASSED
+tests/test_lexer.py::TestRegexLexer::test_negative_number PASSED
+tests/test_lexer.py::TestRegexLexer::test_number PASSED
+tests/test_lexer.py::TestRegexLexer::test_number_expressions PASSED
+tests/test_lexer.py::TestRegexLexer::test_position_information PASSED
+tests/test_lexer.py::TestRegexLexer::test_position_multiple_tokens PASSED
+tests/test_lexer.py::TestRegexLexer::test_quoted_identifier PASSED
+tests/test_lexer.py::TestRegexLexer::test_space_separated PASSED
+tests/test_lexer.py::TestRegexLexer::test_unknown_character PASSED
+tests/test_lexer.py::TestRegexLexer::test_unknown_character_with_identifier PASSED
+tests/test_parser.py::TestParser::test_complex_or_expression PASSED
+tests/test_parser.py::TestParser::test_dot_syntax PASSED
+tests/test_parser.py::TestParser::test_field PASSED
+tests/test_parser.py::TestParser::test_function_call_with_and_statement PASSED
+tests/test_parser.py::TestParser::test_index PASSED
+tests/test_parser.py::TestParser::test_multiple_dots PASSED
+tests/test_parser.py::TestParser::test_multiselect PASSED
+tests/test_parser.py::TestParser::test_multiselect_subexpressions PASSED
+tests/test_parser.py::TestParser::test_multiselect_with_all_quoted_keys PASSED
+tests/test_parser.py::TestParser::test_or_expression PASSED
+tests/test_parser.py::TestParser::test_or_repr PASSED
+tests/test_parser.py::TestParser::test_parse_empty_string_raises_exception PASSED
+tests/test_parser.py::TestParser::test_quoted_subexpression PASSED
+tests/test_parser.py::TestParser::test_unicode_literals_escaped PASSED
+tests/test_parser.py::TestParser::test_wildcard PASSED
+tests/test_parser.py::TestParser::test_wildcard_with_children PASSED
+tests/test_parser.py::TestErrorMessages::test_bad_lexer_values PASSED
+tests/test_parser.py::TestErrorMessages::test_bad_parse PASSED
+tests/test_parser.py::TestErrorMessages::test_bad_parse_error_message PASSED
+tests/test_parser.py::TestErrorMessages::test_bad_parse_error_message_with_multiselect PASSED
+tests/test_parser.py::TestErrorMessages::test_bad_unicode_string PASSED
+tests/test_parser.py::TestErrorMessages::test_incomplete_expression_with_missing_paren PASSED
+tests/test_parser.py::TestParserWildcards::test_consecutive_escape_sequences PASSED
+tests/test_parser.py::TestParserWildcards::test_escape_sequence_at_end_of_string_not_allowed PASSED
+tests/test_parser.py::TestParserWildcards::test_escape_sequences PASSED
+tests/test_parser.py::TestParserWildcards::test_indices_out_of_bounds PASSED
+tests/test_parser.py::TestParserWildcards::test_multiple_index_wildcards PASSED
+tests/test_parser.py::TestParserWildcards::test_only_wildcard PASSED
+tests/test_parser.py::TestParserWildcards::test_root_indices PASSED
+tests/test_parser.py::TestParserWildcards::test_root_wildcard PASSED
+tests/test_parser.py::TestParserWildcards::test_wildcard_mix_last PASSED
+tests/test_parser.py::TestParserWildcards::test_wildcard_mix_with_indices PASSED
+tests/test_parser.py::TestParserWildcards::test_wildcard_with_multiselect PASSED
+tests/test_parser.py::TestMergedLists::test_merge_with_indices PASSED
+tests/test_parser.py::TestMergedLists::test_trailing_merged_operator PASSED
+tests/test_parser.py::TestParserCaching::test_cache_purge PASSED
+tests/test_parser.py::TestParserCaching::test_compile_lots_of_expressions PASSED
+tests/test_parser.py::TestParserCaching::test_thread_safety_of_cache PASSED
+tests/test_parser.py::TestParserAddsExpressionAttribute::test_expression_available_from_parser PASSED
+tests/test_parser.py::TestParsedResultAddsOptions::test_can_have_ordered_dict PASSED
+tests/test_parser.py::TestRenderGraphvizFile::test_dot_file_rendered PASSED
+tests/test_parser.py::TestRenderGraphvizFile::test_dot_file_subexpr PASSED
+tests/test_search.py::TestSearchOptions::test_can_provide_custom_functions PASSED
+tests/test_search.py::TestSearchOptions::test_can_provide_dict_cls PASSED
+tests/test_search.py::TestPythonSpecificCases::test_can_compare_strings PASSED
+tests/test_search.py::TestPythonSpecificCases::test_can_handle_decimals_as_numeric_type PASSED
+tests/test_search.py::TestPythonSpecificCases::test_can_handle_long_ints SKIPPED
+
+=============================== warnings summary ===============================
+tests/test_compliance.py: 19 warnings
+tests/test_lexer.py: 3 warnings
+  $(@D)/jmespath/lexer.py:169: PendingDeprecationWarning: deprecated string literal syntax
+    warnings.warn("deprecated string literal syntax",
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 991 passed, 1 skipped, 22 warnings ========
+  py$(PYV): OK
+  congratulations :)
