@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/ZODB zodb
+#   $WS_TOOLS/python-integrate-project -d python/ZODB-39 zodb
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zodb
-HUMAN_VERSION =			6.2
+HUMAN_VERSION =			6.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		ZODB, a Python object-oriented database
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a930e215e7c8d0591e4f7e6d19e33848e1abc180fc32d0065b15c47f2806a29d
+	sha256:854a269f78977cdfda06aff08e93a8aa512c214202caae301222db2ef98ba365
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by ZODB >= 6.2
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# ZODB >= 6.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
