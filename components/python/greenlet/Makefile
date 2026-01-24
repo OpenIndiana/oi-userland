@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		greenlet
-HUMAN_VERSION =			3.3.0
+HUMAN_VERSION =			3.3.1
 COMPONENT_SUMMARY =		Lightweight in-process concurrent programming
-COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io/
+COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a82bb225a4e9e4d653dd2fb7b8b2d36e4fb25bc0165422a11e48b88e9e6f78fb
+	sha256:41848f3230b58c08bb43dee542e74a2a2e34d3c59dc3076cec9151aeeedcae98
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
