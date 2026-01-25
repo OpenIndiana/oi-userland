@@ -22,20 +22,20 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2019, Michal Nowak
-# Copyright (c) 2023,2025 Friedrich Kink
+# Copyright (c) 2023-2026 Friedrich Kink
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      7.3
+COMPONENT_VERSION=      7.4
 COMPONENT_SUMMARY=      Squid Web Proxy Cache
 COMPONENT_DESCRIPTION=	Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more.
 COMPONENT_PROJECT_URL=  https://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_URL=  https://github.com/squid-cache/$(COMPONENT_NAME)/releases/download/SQUID_7_3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:dadc2a9a3926ce1b3babeaa7a7d7b21cbb089025876daa3f5c19e7eb6391ddcd
+COMPONENT_ARCHIVE_URL=  https://github.com/squid-cache/$(COMPONENT_NAME)/releases/download/SQUID_7_4/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:e31976edd755c295bd5842a349c9c7dad16a683d066337cc09033c1302b4fed4
 COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME)-langpack-20240307.tar.gz
 COMPONENT_ARCHIVE_URL_1=$(COMPONENT_PROJECT_URL)Versions/langpack/$(COMPONENT_ARCHIVE_1)
 COMPONENT_ARCHIVE_HASH_1= sha256:5cd2ac5c5aa718090487909d623fa20b076f0bb628a4eff96842c8fa1dd5427f
