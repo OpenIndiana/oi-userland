@@ -19,19 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Config-Perl-V
-HUMAN_VERSION =			0.38
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.39
 COMPONENT_SUMMARY =		Structured data retrieval of perl -V output
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Config-Perl-V-0.38.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Config-Perl-V-0.39.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ea89e60b0f2120c55aca39d71b9e1c12809abf0909be444d294f3f502307762e
+	sha256:a83e8e28f416d9a3f70afee8a37cb0ac1515cbf941c677e9f1f97b643bffedab
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
