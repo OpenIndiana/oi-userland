@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 2197 items
+collecting ... collected 2237 items
 
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa7-SECTION_SIGN] PASSED
@@ -67,9 +67,18 @@ tests/test_benchmarks.py::test_wrap_short_ascii PASSED
 tests/test_benchmarks.py::test_wrap_long_text PASSED
 tests/test_benchmarks.py::test_wrap_japanese PASSED
 tests/test_benchmarks.py::test_wrap_with_ansi PASSED
+tests/test_benchmarks.py::test_wrap_with_ansi_no_propagate PASSED
+tests/test_benchmarks.py::test_wrap_complex_sgr PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_no_id PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_with_id PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_mixed PASSED
 tests/test_benchmarks.py::test_clip_ascii PASSED
 tests/test_benchmarks.py::test_clip_japanese PASSED
 tests/test_benchmarks.py::test_clip_with_ansi PASSED
+tests/test_benchmarks.py::test_clip_with_ansi_no_propagate PASSED
+tests/test_benchmarks.py::test_clip_complex_sgr PASSED
+tests/test_benchmarks.py::test_propagate_sgr_multiline PASSED
+tests/test_benchmarks.py::test_propagate_sgr_no_sequences PASSED
 tests/test_benchmarks.py::test_strip_sequences_simple PASSED
 tests/test_benchmarks.py::test_strip_sequences_complex PASSED
 tests/test_benchmarks.py::test_iter_sequences_plain PASSED
@@ -141,6 +150,7 @@ tests/test_clip.py::test_clip_sequences_multiple PASSED
 tests/test_clip.py::test_clip_sequences_only PASSED
 tests/test_clip.py::test_clip_sequences_osc_hyperlink PASSED
 tests/test_clip.py::test_clip_sequences_cjk_with_sequences PASSED
+tests/test_clip.py::test_clip_sequences_partial_wide_at_start PASSED
 tests/test_clip.py::test_clip_sequences_between_chars PASSED
 tests/test_clip.py::test_clip_sequences_lone_esc PASSED
 tests/test_clip.py::test_clip_emoji[\U0001f600-2] PASSED
@@ -150,6 +160,8 @@ tests/test_clip.py::test_clip_emoji[\U0001f1fa\U0001f1f8-2] PASSED
 tests/test_clip.py::test_clip_emoji_with_sequences PASSED
 tests/test_clip.py::test_clip_combining_accent PASSED
 tests/test_clip.py::test_clip_combining_multiple PASSED
+tests/test_clip.py::test_clip_zero_width_position_bounds PASSED
+tests/test_clip.py::test_clip_prepend_grapheme PASSED
 tests/test_clip.py::test_clip_ambiguous_width_1 PASSED
 tests/test_clip.py::test_clip_ambiguous_width_2 PASSED
 tests/test_clip.py::test_clip_tab_expansion[a\tb-0-10-8-a       b] PASSED
@@ -170,6 +182,7 @@ tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[5Ccd-0-4-ab\x1b
 tests/test_clip.py::test_clip_cursor_sequences_zero_width[abcde\x1b[2Df-0-6-abcde\x1b[2Df] PASSED
 tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[10Ccd-0-4-ab\x1b[10Ccd] PASSED
 tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[Ccd-0-4-ab\x1b[Ccd] PASSED
+tests/test_clip.py::test_clip_tab_first_visible_with_sgr PASSED
 tests/test_core.py::test_package_version PASSED
 tests/test_core.py::test_empty_string PASSED
 tests/test_core.py::test_hello_jp PASSED
@@ -186,7 +199,6 @@ tests/test_core.py::test_devanagari_script PASSED
 tests/test_core.py::test_tamil_script PASSED
 tests/test_core.py::test_kannada_script PASSED
 tests/test_core.py::test_kannada_script_2 PASSED
-tests/test_core.py::test_zero_wide_conflict PASSED
 tests/test_core.py::test_soft_hyphen PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1536-ARABIC NUMBER SIGN] PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1537-ARABIC SIGN SANAH] PASSED
@@ -207,8 +219,7 @@ tests/test_emojis.py::test_another_emoji_zwj_sequence PASSED
 tests/test_emojis.py::test_longer_emoji_zwj_sequence PASSED
 tests/test_emojis.py::test_recommended_emoji_zwj_sequences PASSED
 tests/test_emojis.py::test_recommended_variation_16_sequences PASSED
-tests/test_emojis.py::test_unicode_9_vs16 PASSED
-tests/test_emojis.py::test_unicode_8_vs16 PASSED
+tests/test_emojis.py::test_vs16_effect PASSED
 tests/test_grapheme.py::test_core_grapheme[-expected0] PASSED
 tests/test_grapheme.py::test_core_grapheme[a-expected1] PASSED
 tests/test_grapheme.py::test_core_grapheme[abc-expected2] PASSED
@@ -1804,6 +1815,28 @@ tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases PASSED
 tests/test_justify.py::test_ljust PASSED
 tests/test_justify.py::test_rjust PASSED
 tests/test_justify.py::test_center PASSED
+tests/test_sgr_state.py::test_wrap_propagates_sgr PASSED
+tests/test_sgr_state.py::test_wrap_reset_and_no_sgr PASSED
+tests/test_sgr_state.py::test_wrap_propagate_sgr_disabled PASSED
+tests/test_sgr_state.py::test_wrap_preserves_non_sgr_sequences PASSED
+tests/test_sgr_state.py::test_clip_propagates_sgr PASSED
+tests/test_sgr_state.py::test_clip_no_active_style_and_plain PASSED
+tests/test_sgr_state.py::test_clip_propagate_sgr_disabled PASSED
+tests/test_sgr_state.py::test_clip_preserves_non_sgr_sequences PASSED
+tests/test_sgr_state.py::test_clip_sgr_only_no_visible_content PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_on PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_off PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_colors PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_colors_colon_format PASSED
+tests/test_sgr_state.py::test_sgr_state_color_override PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_default_colors PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_compound_and_reset PASSED
+tests/test_sgr_state.py::test_sgr_state_to_sequence PASSED
+tests/test_sgr_state.py::test_sgr_state_to_sequence_all_attributes PASSED
+tests/test_sgr_state.py::test_sgr_state_is_active PASSED
+tests/test_sgr_state.py::test_propagate_sgr PASSED
+tests/test_sgr_state.py::test_propagate_sgr_empty_lines PASSED
+tests/test_sgr_state.py::test_sgr_malformed_sequences PASSED
 tests/test_table_integrity.py::test_verify_table_integrity SKIPPED (Test
 only with a single version of python)
 tests/test_textwrap.py::test_wrap_edge_cases[-10-expected0] PASSED
@@ -1818,6 +1851,7 @@ tests/test_textwrap.py::test_wrap_hyphen_long_words[a-b-c-d-3-False-expected1] P
 tests/test_textwrap.py::test_wrap_hyphen_long_words[----2-True-expected2] PASSED
 tests/test_textwrap.py::test_wrap_hyphen_long_words[a---b-2-True-expected3] PASSED
 tests/test_textwrap.py::test_wrap_hyphen_long_words[a-\x1b[31mb-2-True-expected4] PASSED
+tests/test_textwrap.py::test_wrap_hyphen_long_words_no_propagate[a-\x1b[31mb-2-True-expected0] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs0] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs2] PASSED
@@ -2021,6 +2055,11 @@ tests/test_textwrap.py::test_wrap_sequences[\x1b[5Ctext here-10-expected5] PASSE
 tests/test_textwrap.py::test_wrap_sequences[\x07alert text-6-expected6] PASSED
 tests/test_textwrap.py::test_wrap_sequences[x\x1b[31mabcdefghij\x1b[0m-3-expected7] PASSED
 tests/test_textwrap.py::test_wrap_sequences[abc\x1bdefghij-3-expected8] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[\x1b[31mred\x1b[0m blue-4-expected0] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[hello\x1b[31m world-6-expected1] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[\x1b[31m\x1b[0m-10-expected2] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[hello \x1b[31m\x1b[0mworld-6-expected3] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[x\x1b[31mabcdefghij\x1b[0m-3-expected4] PASSED
 tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\u4e2d\u6587\x1b[0m ab-5-expected0] PASSED
 tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\U0001f469\u200d\U0001f469\u200d\U0001f467\x1b[0m ab-4-expected1] PASSED
 tests/test_textwrap.py::test_wrap_mixed[\x1b[1m\u4e2d\x1b[0my z-4-expected2] PASSED
@@ -2039,19 +2078,20 @@ tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;ht
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;http://example.com\x07link\x1b]8;;\x07\x1b[0m bar-6-expected7] PASSED
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x1b\\\x1b[31mlink\x1b[0m\x1b]8;;\x1b\\ bar-6-expected8] PASSED
 tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x07\x1b[31mlink\x1b[0m\x1b]8;;\x07 bar-6-expected9] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x1b\\Click here\x1b]8;;\x1b\\ now-5-expected10] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x07Click here\x1b]8;;\x07 now-5-expected11] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;id=my-link;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected12] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\one two three\x1b]8;;\x1b\\-5-expected13] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\ab cd\x1b]8;;\x1b\\ \x1b]8;;http://example.com\x07ef gh\x1b]8;;\x07-4-expected14] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\abcdefgh\x1b]8;;\x1b\\-3-expected15] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected16] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar:id=mylink;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected17] PASSED
+tests/test_ucslevel.py::test_list_versions_single PASSED
 tests/test_ucslevel.py::test_latest PASSED
-tests/test_ucslevel.py::test_exact_410_str PASSED
-tests/test_ucslevel.py::test_exact_410_unicode PASSED
-tests/test_ucslevel.py::test_nearest_505_str PASSED
-tests/test_ucslevel.py::test_nearest_505_unicode PASSED
-tests/test_ucslevel.py::test_nearest_lowint40_str PASSED
-tests/test_ucslevel.py::test_nearest_lowint40_unicode PASSED
-tests/test_ucslevel.py::test_nearest_800_str PASSED
-tests/test_ucslevel.py::test_nearest_800_unicode PASSED
-tests/test_ucslevel.py::test_nearest_999_str PASSED
-tests/test_ucslevel.py::test_nearest_999_unicode PASSED
-tests/test_ucslevel.py::test_nonint_unicode PASSED
-tests/test_ucslevel.py::test_nonint_str PASSED
+tests/test_ucslevel.py::test_auto PASSED
+tests/test_ucslevel.py::test_wcmatch_version_always_latest PASSED
+tests/test_ucslevel.py::test_env_var_ignored PASSED
+tests/test_ucslevel.py::test_unicode_version_param_ignored PASSED
 tests/test_width.py::test_width_basic[-0-empty] PASSED
 tests/test_width.py::test_width_basic[hello-5-ASCII] PASSED
 tests/test_width.py::test_width_basic[\u30b3\u30f3\u30cb\u30c1\u30cf-10-CJK] PASSED
@@ -2207,6 +2247,6 @@ tests/test_width.py::test_soft_hyphen_exception PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
 ============================= slowest 3 durations ==============================
-======== 2196 passed, 1 skipped ========
+======== 2236 passed, 1 skipped ========
   py$(PYV): OK
   congratulations :)
