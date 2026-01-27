@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
 HUMAN_VERSION =			25.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
@@ -67,7 +69,6 @@ REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/immutables
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
