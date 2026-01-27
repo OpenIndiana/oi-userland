@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ukkonen
+#   $WS_TOOLS/python-integrate-project -d python/ukkonen-39 ukkonen
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ukkonen
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.0.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Implementation of bounded Levenshtein distance (Ukkonen)
 COMPONENT_PROJECT_URL =		https://www.github.com/asottile/ukkonen
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/asottile/ukkonen/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d238ac2751c967594a5ffd4d3e76a01ddcc63d01088a5c54e5fdd9e3cc7e1211
+	sha256:5f3fd0e9c1b2a7ea669382ec3928370f11882cec991c4d3757955b56d18895f6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by ukkonen >= 1.1.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# ukkonen >= 1.1.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
