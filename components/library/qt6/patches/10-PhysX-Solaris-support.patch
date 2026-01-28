@@ -233,15 +233,15 @@ diff -Nru qt-everywhere-src-6.4.2.orig/qtquick3dphysics/src/3rdparty/PhysX/sourc
  #include <asm/unistd.h>
  #include <sys/resource.h>
  #endif
-@@ -115,7 +115,7 @@
+@@ -110,7 +110,7 @@ _ThreadImpl* getThread(ThreadImpl* impl)
+ static void setTid(_ThreadImpl& threadImpl)
+ {
+ // query TID
+-#if PX_PS4 || (defined (TARGET_OS_TV) && TARGET_OS_TV)
++#if PX_PS4 || (defined (TARGET_OS_TV) && TARGET_OS_TV) || PX_SOLARIS
  // AM: TODO: neither of the below are implemented
  #elif PX_APPLE_FAMILY
  	threadImpl.tid = syscall(SYS_gettid);
--#elif PX_EMSCRIPTEN
-+#elif PX_EMSCRIPTEN || PX_SOLARIS
- 	threadImpl.tid = pthread_self();
- #else
- 	threadImpl.tid = syscall(__NR_gettid);
 @@ -313,6 +313,8 @@
  		prevMask = setAffinityMaskPS4(getThread(this)->thread, mask);
  #elif PX_EMSCRIPTEN
