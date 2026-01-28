@@ -137,6 +137,7 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
