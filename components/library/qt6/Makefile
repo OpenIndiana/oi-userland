@@ -12,18 +12,23 @@
 # Copyright 2022 Daniel Chan
 # Copyright 2023 Niklas Poslovski
 #
+
+BUILD_STYLE = cmake
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
-COMPONENT_VERSION_MJR=		6.9
-COMPONENT_VERSION=			$(COMPONENT_VERSION_MJR).3
+COMPONENT_VERSION=		6.9.3
+COMPONENT_REVISION=		1
+QTV=				$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=				$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
 	sha256:59d4fbf50d2524a9082f85d565f0197316cde89c26e97cfc6c157cb255b7ea18
-COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(COMPONENT_VERSION_MJR)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(QTV)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=				library/qt6
 COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=			FDLv1.3, GPLv2, GPLv3, LGPLv2.1, LGPLv3
@@ -32,19 +37,21 @@ COMPONENT_LICENSE_FILE=		qt6.license
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
-PATH=$(PG_BINDIR):$(MYSQL_BINDIR):$(GCC_BINDIR):$(PATH.gnu)
-
 QT_PREFIX= $(QT6_BASEDIR)
 
 QT_ARCHSUBDIR= $(MACH64)
 QT_PLATFORM= solaris-g++-64
-QTV= $(COMPONENT_VERSION_MJR)
 PKG_VARS += QTV
 
 CFLAGS += -Wno-unused-variable
 LDFLAGS += -Wl,-rpath,$(QT6_LIBDIR):$(USRLIBDIR)/xorg/$(MACH64)/:$(CLANG_LIBDIR):$(MYSQL_LIBDIR):$(PG_LIBDIR):$(JPEG_LIBDIR)
 
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+COMPONENT_CONFIGURE_ACTION = \
+	cd $(@D)$(COMPONENT_SUBDIR:%=/%) ; $(ENV) $(CONFIGURE_ENV) \
+	$(CONFIG_SHELL) \
+	$(CONFIGURE_SCRIPT) $(CONFIGURE_OPTIONS)
+
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/configure
 
 CONFIGURE_OPTIONS = -prefix $(QT_PREFIX)
 CONFIGURE_OPTIONS += -opensource
@@ -68,6 +75,7 @@ CONFIGURE_OPTIONS += -sql-psql
 CONFIGURE_OPTIONS += -sql-sqlite
 CONFIGURE_OPTIONS += -plugin-system-sqlite
 CONFIGURE_OPTIONS += -no-pch
+CONFIGURE_OPTIONS += -no-gstreamer
 CONFIGURE_OPTIONS += -skip qtgrpc
 CONFIGURE_OPTIONS += CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake"
 CONFIGURE_OPTIONS += MySQL_LIBRARY=$(MYSQL_LIBDIR)/libmysqlclient.so
@@ -82,36 +90,31 @@ COMPONENT_POST_CONFIGURE_ACTION += $(GSED) -i 's;LINK_LIBRARIES =;LINK_LIBRARIES
 
 COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
 
-include $(WS_MAKE_RULES)/cmake.mk
+# We do not want to distribute compiled Python files
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTO_DIR)/$(QT6_BINDIR)/__pycache__/ ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTO_DIR)/$(QT6_BASEDIR)/mkspecs/features/uikit/__pycache__/ ;
 
-$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
-	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
-	$(COMPONENT_PRE_CONFIGURE_ACTION)
-	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
-		$(CONFIGURE_SCRIPT) $(CONFIGURE_OPTIONS))
-	$(COMPONENT_POST_CONFIGURE_ACTION)
-	$(TOUCH) $@
-
-# build the configured source
-$(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
-	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
-		cmake --build . --parallel)
-	$(COMPONENT_POST_BUILD_ACTION)
-	$(TOUCH) $@
-
-# install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
-	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
-		cmake --install .)
-	$(COMPONENT_POST_INSTALL_ACTION)
-	$(TOUCH) $@
+# Create symlinks with the -qt6 suffix in /usr/bin
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in assistant designer lconvert linguist lrelease lupdate moc \
+	    pixeltool qdbus qdbuscpp2xml qdbusviewer qdbusviewer qdbusxml2cpp \
+	    qhelpgenerator qmake qmlplugindump rcc uic ; do \
+		$(call create-symlinks,$(QT6_BINDIR)/$$f,$(USRBINDIR),-qt6) ; \
+	done ;
 
 PYTHON_SCRIPTS += $(QT6_BASEDIR)/mkspecs/features/uikit/devices.py
 PYTHON_SCRIPTS += $(QT6_BINDIR)/sanitizer-testrunner.py
 PYTHON_SCRIPTS += $(QT6_BINDIR)/qt-testrunner.py
 PYTHON_SCRIPTS += $(QT6_BINDIR)/qt-android-runner.py
+
+PKG_HARDLINKS += $(QT6_BINDIR:/%=%)/androiddeployqt
+PKG_HARDLINKS += $(QT6_BINDIR:/%=%)/qmake
+PKG_HARDLINKS += $(QT6_BINDIR:/%=%)/qtdiag
+PKG_HARDLINKS += $(QT6_BINDIR:/%=%)/qtpaths
+
+# Replace qt version number by QTV
+QTV_RE = $(subst .,\.,$(QTV))
+GENERATE_EXTRA_SED += -e 's/$(QTV_RE)/$$(QTV)/'
 
 # Build dependencies
 REQUIRED_PACKAGES += $(CLANG_DEVELOPER_PKG)

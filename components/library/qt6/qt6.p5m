@@ -18,18 +18,18 @@
 # Copyright 2025 Carsten Grzemba
 #
 
-
 <transform file -> add pkg.depend.bypass-generate libEGL\.so\.1>
 <transform file -> add pkg.depend.bypass-generate libGL\.so\.1>
-set name=pkg.fmri \
-    value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
 set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
-set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-license $(COMPONENT_LICENSE_FILE) license="$(COMPONENT_LICENSE)"
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 link path=usr/bin/assistant-qt6 target=../lib/qt/$(QTV)/bin/$(MACH64)/assistant
 link path=usr/bin/designer-qt6 target=../lib/qt/$(QTV)/bin/$(MACH64)/designer
@@ -120,8 +120,8 @@ file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qt-internal-configure-examples
 file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qt-internal-configure-tests
 file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qt-testrunner.py
 file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtattributionsscanner
-hardlink path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtdiag target=qtdiag6
-file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtdiag6
+file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtdiag
+hardlink path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtdiag6 target=qtdiag
 file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtpaths
 hardlink path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtpaths6 target=qtpaths
 file path=usr/lib/qt/$(QTV)/bin/$(MACH64)/qtplugininfo
@@ -4505,6 +4505,12 @@ file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/p
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qplatformvideoframeinput_p.h
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qplatformvideosink_p.h
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qplatformvideosource_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulseaudio_contextmanager_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulseaudiodevice_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulseaudiodevices_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulseaudiosink_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulseaudiosource_p.h
+file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qpulsehelpers_p.h
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qrhitextureformats_p.h
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qrhivaluemapper_p.h
 file path=usr/lib/qt/$(QTV)/include/QtMultimedia/$(HUMAN_VERSION)/QtMultimedia/private/qsamplecache_p.h
@@ -12338,7 +12344,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DAnimation.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DAnimation.so.6 \
     target=libQt63DAnimation.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DCore.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DCore.so target=libQt63DCore.so.6
+link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DCore.so \
+    target=libQt63DCore.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DCore.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt63DCore.so.6 \
     target=libQt63DCore.so.$(HUMAN_VERSION)
@@ -12429,7 +12436,8 @@ link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Bodymovin.so.6 \
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6BundledPhysX.a
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6BundledResonanceAudio.a
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Charts.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Charts.so target=libQt6Charts.so.6
+link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Charts.so \
+    target=libQt6Charts.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Charts.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Charts.so.6 \
     target=libQt6Charts.so.$(HUMAN_VERSION)
@@ -12523,7 +12531,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6ExamplesAssetDownloader.prl
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6FbSupport.a
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6FbSupport.prl
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Graphs.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Graphs.so target=libQt6Graphs.so.6
+link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Graphs.so \
+    target=libQt6Graphs.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Graphs.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Graphs.so.6 \
     target=libQt6Graphs.so.$(HUMAN_VERSION)
@@ -12657,7 +12666,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpcUa.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpcUa.so.6 \
     target=libQt6OpcUa.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpenGL.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpenGL.so target=libQt6OpenGL.so.6
+link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpenGL.so \
+    target=libQt6OpenGL.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpenGL.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6OpenGL.so.6 \
     target=libQt6OpenGL.so.$(HUMAN_VERSION)
@@ -12862,10 +12872,12 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Basic.so.$(HUMAN_V
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Basic.so.6 \
     target=libQt6QuickControls2Basic.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.so \
+link \
+    path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.so \
     target=libQt6QuickControls2BasicStyleImpl.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.so.$(HUMAN_VERSION)
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.so.6 \
+link \
+    path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2BasicStyleImpl.so.6 \
     target=libQt6QuickControls2BasicStyleImpl.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2FluentWinUI3StyleImpl.prl
 link \
@@ -12882,7 +12894,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Fusion.so.$(HUMAN_
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Fusion.so.6 \
     target=libQt6QuickControls2Fusion.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2FusionStyleImpl.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2FusionStyleImpl.so \
+link \
+    path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2FusionStyleImpl.so \
     target=libQt6QuickControls2FusionStyleImpl.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2FusionStyleImpl.so.$(HUMAN_VERSION)
 link \
@@ -12895,7 +12908,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Imagine.so.$(HUMAN
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2Imagine.so.6 \
     target=libQt6QuickControls2Imagine.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2ImagineStyleImpl.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2ImagineStyleImpl.so \
+link \
+    path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2ImagineStyleImpl.so \
     target=libQt6QuickControls2ImagineStyleImpl.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6QuickControls2ImagineStyleImpl.so.$(HUMAN_VERSION)
 link \
@@ -13182,7 +13196,8 @@ file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Widgets.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6Widgets.so.6 \
     target=libQt6Widgets.so.$(HUMAN_VERSION)
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6XcbQpa.prl
-link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6XcbQpa.so target=libQt6XcbQpa.so.6
+link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6XcbQpa.so \
+    target=libQt6XcbQpa.so.6
 file path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6XcbQpa.so.$(HUMAN_VERSION)
 link path=usr/lib/qt/$(QTV)/lib/$(MACH64)/libQt6XcbQpa.so.6 \
     target=libQt6XcbQpa.so.$(HUMAN_VERSION)

@@ -1,9 +1,7 @@
 mostly backport from upstream https://github.com/open62541/open62541.git
 
-diff --git a/qtopcua/src/3rdparty/open62541/open62541.c b/qtopcua/src/3rdparty/open62541/open62541.c
-index 8cafa7b..bb0aca7 100644
---- a/qtopcua/src/3rdparty/open62541/open62541.c
-+++ b/qtopcua/src/3rdparty/open62541/open62541.c
+--- qt-everywhere-src-6.9.3/qtopcua/src/3rdparty/open62541/open62541.c.orig
++++ qt-everywhere-src-6.9.3/qtopcua/src/3rdparty/open62541/open62541.c
 @@ -123774,7 +123774,7 @@
  UA_StatusCode
  UA_EventLoopPOSIX_setReusable(UA_FD sockfd) {
@@ -13,7 +11,7 @@ index 8cafa7b..bb0aca7 100644
      int res = UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
                              (const char*)&enableReuseVal, sizeof(enableReuseVal));
      res |= UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
-@@ -125235,7 +125235,7 @@ typedef enum {
+@@ -125228,7 +125228,7 @@
  } MultiCastType;
  
  typedef union {
@@ -22,7 +20,7 @@ index 8cafa7b..bb0aca7 100644
      struct ip_mreq ipv4;
  #else
      struct ip_mreqn ipv4;
-@@ -125391,10 +125391,12 @@ setMulticastInterface(const char *netif, struct addrinfo *info,
+@@ -125384,10 +125384,12 @@
          return UA_STATUSCODE_BADINTERNALERROR;
  
      /* Write the interface index */
@@ -37,7 +35,7 @@ index 8cafa7b..bb0aca7 100644
          req->ipv6.ipv6mr_interface = idx;
  #endif
      return UA_STATUSCODE_GOOD;
-@@ -125409,7 +125411,7 @@ setupMulticastRequest(UA_FD socket, MulticastRequest *req, const UA_KeyValueMap
+@@ -125402,7 +125404,7 @@
      if(info->ai_family == AF_INET) {
          struct sockaddr_in *sin = (struct sockaddr_in *)info->ai_addr;
          req->ipv4.imr_multiaddr = sin->sin_addr;
