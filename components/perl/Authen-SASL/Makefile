@@ -15,26 +15,28 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Authen-SASL
-HUMAN_VERSION =			2.1900
+HUMAN_VERSION =			2.2000
 COMPONENT_SUMMARY =		SASL Authentication framework
 COMPONENT_CPAN_AUTHOR =		EHUELS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be3533a6891b2e677150b479c1a0d4bf11c8bbeebed3e7b8eba34053e93923b0
+	sha256:8cdf5a7f185448b614471675dae5b26f8c6e330b62264c3ff5d91172d6889b99
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+# The order and wording of these messages can vary
+COMPONENT_TEST_TRANSFORMS += '-e "/^The .*-MD5 SASL mechanism is .*deprecated by RFC/d"'
+
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-urandom
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-urandom
+REQUIRED_PACKAGES.perl += library/perl-5/digest-hmac
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/pod-coverage-trustpod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
