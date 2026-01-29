@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cachetools
-HUMAN_VERSION =			6.2.5
+HUMAN_VERSION =			6.2.6
 COMPONENT_SUMMARY =		Extensible memoizing collections and decorators
 COMPONENT_PROJECT_URL =		https://github.com/tkem/cachetools/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6d8bfbba1ba94412fb9d9196c4da7a87e9d4928fffc5e93542965dca4740c77f
+	sha256:16c33e1f276b9a9c0b49ab5782d901e3ad3de0dd6da9bf9bcd29ac5672f2f9e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
