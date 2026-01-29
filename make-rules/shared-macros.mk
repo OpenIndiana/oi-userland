@@ -1607,7 +1607,7 @@ define create-symlinks
 		[ "$$t" ] && t=$$t/ ; \
 		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
 		$(MKDIR) $(PROTO_DIR)/$(2) ; \
-		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f) ; \
+		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f)$(3) ; \
 	done
 endef
 
