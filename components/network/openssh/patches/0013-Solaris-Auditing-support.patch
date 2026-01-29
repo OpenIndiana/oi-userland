@@ -1,6 +1,6 @@
 diff -wpruN --no-dereference '--exclude=*.orig' a~/INSTALL a/INSTALL
---- openssh-10.2p1/INSTALL.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/INSTALL	1970-01-01 00:00:00
+--- a~/INSTALL	1970-01-01 00:00:00
++++ a/INSTALL	1970-01-01 00:00:00
 @@ -105,9 +105,13 @@ http://www.gnu.org/software/automake/
  
  Basic Security Module (BSM):
@@ -31,8 +31,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/INSTALL a/INSTALL
  --with-pam enables PAM support. If PAM support is compiled in, it must
  also be enabled in sshd_config (refer to the UsePAM directive).
 diff -wpruN --no-dereference '--exclude=*.orig' a~/Makefile.in a/Makefile.in
---- openssh-10.2p1/Makefile.in.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/Makefile.in	1970-01-01 00:00:00
+--- a~/Makefile.in	1970-01-01 00:00:00
++++ a/Makefile.in	1970-01-01 00:00:00
 @@ -124,7 +124,7 @@ SSHDOBJS=sshd.o \
  	$(P11OBJS) $(SKOBJS)
  
@@ -52,8 +52,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/Makefile.in a/Makefile.in
  	sandbox-null.o sandbox-rlimit.o sandbox-darwin.o \
  	sandbox-seccomp-filter.o sandbox-capsicum.o  sandbox-solaris.o \
 diff -wpruN --no-dereference '--exclude=*.orig' a~/README.platform a/README.platform
---- openssh-10.2p1/README.platform.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/README.platform	1970-01-01 00:00:00
+--- a~/README.platform	1970-01-01 00:00:00
++++ a/README.platform	1970-01-01 00:00:00
 @@ -72,10 +72,10 @@ zlib-devel and pam-devel, on Debian base
  libssl-dev, libz-dev and libpam-dev.
  
@@ -80,8 +80,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/README.platform a/README.plat
  Platforms using PAM
  -------------------
 diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
---- openssh-10.2p1/audit-bsm.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/audit-bsm.c	1970-01-01 00:00:00
+--- a~/audit-bsm.c	1970-01-01 00:00:00
++++ a/audit-bsm.c	1970-01-01 00:00:00
 @@ -348,7 +348,7 @@ bsm_audit_bad_login(const char *what)
  /* Below is the sshd audit API code */
  
@@ -92,8 +92,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-bsm.c a/audit-bsm.c
  	AuditInfoTermID *tid = &ssh_bsm_tid;
  	char buf[1024];
 diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
---- openssh-10.2p1/audit-linux.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/audit-linux.c	1970-01-01 00:00:00
+--- a~/audit-linux.c	1970-01-01 00:00:00
++++ a/audit-linux.c	1970-01-01 00:00:00
 @@ -73,7 +73,7 @@ linux_audit_record_event(int uid, const
  /* Below is the sshd audit API code */
  
@@ -104,8 +104,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-linux.c a/audit-linux.c
  	/* not implemented */
  }
 diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-solaris.c a/audit-solaris.c
---- openssh-10.2p1/audit-solaris.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/audit-solaris.c	1970-01-01 00:00:00
+--- a~/audit-solaris.c	1970-01-01 00:00:00
++++ a/audit-solaris.c	1970-01-01 00:00:00
 @@ -0,0 +1,574 @@
 +/*
 + * CDDL HEADER START
@@ -468,7 +468,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-solaris.c a/audit-solar
 +void
 +audit_session_open(struct logininfo *li)
 +{
-+	const char *t = li->line ? li->line : "(no tty)";
++	const char *t = *li->line ? li->line : "(no tty)";
 +
 +	debug("adt audit_session_open: user=%s:tty=%s", audit_username(),
 +	    t);
@@ -489,7 +489,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-solaris.c a/audit-solar
 +void
 +audit_session_close(struct logininfo *li)
 +{
-+	const char *t = li->line ? li->line : "(no tty)";
++	const char *t = *li->line ? li->line : "(no tty)";
 +
 +	debug("adt audit_session_close: user=%s:tty=%s", audit_username(),
 +	    t);
@@ -682,8 +682,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit-solaris.c a/audit-solar
 +}
 +#endif	/* USE_SOLARIS_AUDIT */
 diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.c a/audit.c
---- openssh-10.2p1/audit.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/audit.c	1970-01-01 00:00:00
+--- a~/audit.c	1970-01-01 00:00:00
++++ a/audit.c	1970-01-01 00:00:00
 @@ -120,7 +120,7 @@ audit_event_lookup(ssh_audit_event_t ev)
   * has been attempted.
   */
@@ -694,8 +694,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.c a/audit.c
  	debug("audit connection from %s port %d euid %d", host, port,
  	    (int)geteuid());
 diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.h a/audit.h
---- openssh-10.2p1/audit.h.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/audit.h	1970-01-01 00:00:00
+--- a~/audit.h	1970-01-01 00:00:00
++++ a/audit.h	1970-01-01 00:00:00
 @@ -47,7 +47,7 @@ enum ssh_audit_event_type {
  };
  typedef enum ssh_audit_event_type ssh_audit_event_t;
@@ -706,8 +706,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/audit.h a/audit.h
  void	audit_session_open(struct logininfo *);
  void	audit_session_close(struct logininfo *);
 diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
---- openssh-10.2p1/configure.ac.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/configure.ac	1970-01-01 00:00:00
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
 @@ -1923,7 +1923,7 @@ AC_ARG_WITH([wtmpdb],
  
  AUDIT_MODULE=none
@@ -732,8 +732,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
  		AUDIT_MODULE=debug
  		AC_MSG_RESULT([debug])
 diff -wpruN --no-dereference '--exclude=*.orig' a~/defines.h a/defines.h
---- openssh-10.2p1/defines.h.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/defines.h	1970-01-01 00:00:00
+--- a~/defines.h	1970-01-01 00:00:00
++++ a/defines.h	1970-01-01 00:00:00
 @@ -764,6 +764,11 @@ struct winsize {
  # define CUSTOM_SSH_AUDIT_EVENTS
  #endif
@@ -747,8 +747,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/defines.h a/defines.h
  #  define __func__ __FUNCTION__
  #elif !defined(HAVE___func__)
 diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
---- openssh-10.2p1/sshd-session.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/sshd-session.c	1970-01-01 00:00:00
+--- a~/sshd-session.c	1970-01-01 00:00:00
++++ a/sshd-session.c	1970-01-01 00:00:00
 @@ -1213,7 +1213,7 @@ main(int ac, char **av)
  	remote_ip = ssh_remote_ipaddr(ssh);
  
@@ -769,3 +769,15 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {
+@@ -1327,6 +1329,11 @@ main(int ac, char **av)
+ 	}
+ #endif
+ 
++#ifdef USE_SOLARIS_AUDIT
++	/* Audit should take place after all successful pam */
++	audit_event(ssh, SSH_AUTH_SUCCESS);
++#endif
++
+ 	/*
+ 	 * In privilege separation, we fork another child and prepare
+ 	 * file descriptor passing.
