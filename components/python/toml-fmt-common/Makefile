@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		toml_fmt_common
-HUMAN_VERSION =			1.1.0
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		Common logic to the TOML formatter.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/toml-fmt-common
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4ba8f13e5fe25cfe0bfc60342ad7deb91c741fd31f2e5522e6a51bfbf1427d3
+	sha256:9c3630dc9409157e866b27ee0cdacf453636735b26dcf0fff385d3d2c1166698
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
