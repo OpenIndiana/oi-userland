@@ -19,19 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-Server
-HUMAN_VERSION =			2.014
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			2.016
 COMPONENT_SUMMARY =		Extensible Perl internet server
-COMPONENT_CPAN_AUTHOR =		RHANDOM
+COMPONENT_CPAN_AUTHOR =		BBB
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3406b9ca5a662a0075eed47fb78de1316b601c94f62a0ee34a5544db9baa3720
+	sha256:f6f82a2a36a715b6bfe0d1ca02d8ac4de695bcbdd0b39f3aa04be3c8135d3a47
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += runtime/perl
