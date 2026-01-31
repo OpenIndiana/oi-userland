@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project cssselect
+#   $WS_TOOLS/python-integrate-project -d python/cssselect-39 cssselect
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cssselect
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.3.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		cssselect parses CSS3 Selectors and translates them to XPath 1.0
 COMPONENT_PROJECT_URL =		https://github.com/scrapy/cssselect
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fdaf0a1425e17dfe8c5cf66191d211b357cf7872ae8afc4c6762ddd8ac47fc92
+	sha256:57f8a99424cfab289a1b6a816a43075a4b00948c86b4dcf3ef4ee7e15f7ab0c7
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by cssselect >= 1.4.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# cssselect >= 1.4.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/lxml
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/sybil
