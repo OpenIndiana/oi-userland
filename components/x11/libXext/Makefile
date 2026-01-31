@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXext
-COMPONENT_VERSION= 1.3.6
+COMPONENT_VERSION= 1.3.7
 COMPONENT_SUMMARY= libXext - X11 protocol common extensions client library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:edb59fa23994e405fdc5b400afdf5820ae6160b94f35e3dc3da4457a16e89753
+COMPONENT_ARCHIVE_HASH= sha256:6c643c7035cdacf67afd68f25d01b90ef889d546c9fcd7c0adf7c2cf91e3a32d
 COMPONENT_FMRI =   x11/library/libxext
 COMPONENT_LICENSE_FILE = COPYING
 
@@ -30,6 +30,7 @@ DROP_STATIC_LIBRARIES = yes
 include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -DSUNSOFT
+CFLAGS += -Wno-error=int-conversion
 
 LD_OPTIONS += -M $(COMPONENT_DIR)/mapfile-vers
 
