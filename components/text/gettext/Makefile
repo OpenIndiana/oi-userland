@@ -28,13 +28,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gettext
-COMPONENT_VERSION=	0.26
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.0
 COMPONENT_SUMMARY=	GNU gettext - message handling utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:d1fb86e260cfe7da6031f94d2e44c0da55903dbae0a2fa0fae78c91ae1b56f00
+COMPONENT_ARCHIVE_HASH=	sha256:71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/gnu-gettext
 COMPONENT_CLASSIFICATION=	Development/GNU
@@ -74,9 +73,11 @@ TEST_REQUIRED_PACKAGES += runtime/clisp
 TEST_REQUIRED_PACKAGES += runtime/tcl-8
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libunistring
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES += web/curl
