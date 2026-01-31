@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyjwt
-HUMAN_VERSION =			2.10.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.11.0
 COMPONENT_SUMMARY =		JSON Web Token implementation in Python
 COMPONENT_PROJECT_URL =		https://github.com/jpadilla/pyjwt
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3cc5772eb20009233caf06e9d8a0577824723b44e6648ee0a2aedb6cf9381953
+	sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
