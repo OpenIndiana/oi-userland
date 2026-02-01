@@ -1,6 +1,16 @@
---- trealla-2.88.3/Makefile.orig	2025-12-24 09:41:45.000000000 +0100
-+++ trealla-2.88.3/Makefile	2026-01-03 05:46:50.605650722 +0100
-@@ -1,13 +1,16 @@
+--- trealla-2.89.13/Makefile.orig	2026-01-30 00:24:35.000000000 +0100
++++ trealla-2.89.13/Makefile	2026-02-01 21:12:08.257628249 +0100
+@@ -1,22 +1,25 @@
+ # Installation paths
+-PREFIX ?= /usr/local
++PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ LIBDIR ?= $(PREFIX)/share/trealla
+ MANDIR ?= $(PREFIX)/share/man
+ 
+-HOST_CC ?= cc
++HOST_CC ?= gcc
+ 
  GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
  COMPILER_IS_GCC := $(shell $(CC) --version | grep -E -o 'g?cc')
  
@@ -9,6 +19,7 @@
 +	-Wno-error=int-conversion \
 +	-Wno-error=implicit-function-declaration \
 +	$(XPG8MODE) \
+ 	-DDEFAULT_LIBRARY_PATH='"$(LIBDIR)/library"' \
  	-O3 $(OPT) -D_GNU_SOURCE \
  	-Wall -Wextra \
  	-Wno-unused-but-set-variable \
@@ -19,14 +30,14 @@
  
  ifdef HOMEBREW_PREFIX
  LDFLAGS += -L$(HOMEBREW_PREFIX)/opt/libffi/lib -L$(HOMEBREW_PREFIX)/opt/openssl@3/lib -L$(HOMEBREW_PREFIX)/opt/readline/lib
-@@ -51,12 +54,12 @@
+@@ -60,12 +63,12 @@
  endif
  
  ifndef NOFFI
 -CFLAGS += -DUSE_FFI=1 -I/usr/local/opt/libffi/include
 -LDFLAGS += -lffi -ldl
-+CFLAGS += -DUSE_FFI=1 -I/usr/lib/MACH64/libffi-3.2.1/include
-+LDFLAGS += -lffi -ldl -L/usr/openssl/3/lib/MACH64
++CFLAGS += -DUSE_FFI=1 -I/usr/lib/amd64/libffi-3.2.1/include
++LDFLAGS += -lffi -ldl -L/usr/openssl/3/lib/amd64
  endif
  
  ifndef NOSSL
@@ -35,12 +46,3 @@
  LDFLAGS += -lssl -lcrypto
  endif
  
-@@ -188,7 +191,7 @@
- 	$(MAKE) 'OPT=$(OPT) -DNDEBUG'
- 
- install:
--	ln -s $(PWD)/tpl ~/bin/tpl
-+	echo "nothing to do"
- 
- tpl.wasm:
- 	$(MAKE) WASI=1 'OPT=$(OPT) -DNDEBUG'
