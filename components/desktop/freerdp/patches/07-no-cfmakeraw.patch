@@ -1,0 +1,20 @@
+No cfmakeraw on Illumos.  Set bits manually as per https://www.perkin.org.uk/posts/solaris-portability-cfmakeraw.html
+
+--- freerdp-3.22.0/libfreerdp/utils/passphrase.c.old
++++ freerdp-3.22.0/libfreerdp/utils/passphrase.c
+@@ -316,7 +316,15 @@
+ 		}
+ 
+ 		struct termios now = termios;
++		#ifdef __sun
++			now.c_iflag &= ~(IMAXBEL|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
++			now.c_oflag &= ~OPOST;
++			now.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
++			now.c_cflag &= ~(CSIZE|PARENB);
++			now.c_cflag |= CS8;
++#else
+ 		cfmakeraw(&now);
++#endif
+ 		const int rc3 = tcsetattr(fd, TCSANOW, &now);
+ 		if (rc3 != 0)
+ 		{

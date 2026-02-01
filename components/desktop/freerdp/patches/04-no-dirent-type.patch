@@ -1,0 +1,48 @@
+--- freerdp-3.11.0/winpr/libwinpr/timezone/TimeZoneIanaAbbrevMap.c.old
++++ freerdp-3.11.0/winpr/libwinpr/timezone/TimeZoneIanaAbbrevMap.c
+@@ -79,7 +79,12 @@
+ 	const time_t t = time(NULL);
+ 	struct tm lt = { 0 };
+ 	(void)localtime_r(&t, &lt);
++#if defined(__sun)
++	const bool is_dst = lt.tm_isdst > 0;
++	append(tz, tzname[is_dst]);
++#else
+ 	append(tz, lt.tm_zone);
++#endif
+ 	restoreSavedTZ(oldtz);
+ 	free(tz);
+ }
+@@ -127,6 +132,24 @@
+ 		// NOLINTNEXTLINE(concurrency-mt-unsafe)
+ 		while ((dp = readdir(d)) != NULL)
+ 		{
++#if defined(__sun)
++/* adapt code from handle_link function in this file */
++			struct stat s = { 0 };
++			const int rc3 = stat(path, &s);
++			if (rc3 == 0) {
++				if ( S_ISDIR(s.st_mode) ) {
++					if (strcmp(dp->d_name, ".") == 0)
++						continue;
++					if (strcmp(dp->d_name, "..") == 0)
++						continue;
++					iterate_subdir_recursive(path, dp->d_name, NULL);
++				}
++				if ( S_ISLNK(s.st_mode) ) 
++					handle_link(base, bname, dp->d_name);
++				if ( S_ISREG(s.st_mode) ) 
++					append_timezone(bname, dp->d_name);
++			}
++#else
+ 			switch (dp->d_type)
+ 			{
+ 				case DT_DIR:
+@@ -147,6 +170,7 @@
+ 				default:
+ 					break;
+ 			}
++#endif
+ 		}
+ 		closedir(d);
+ 	}
