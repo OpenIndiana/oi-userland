@@ -1,0 +1,104 @@
+Test is broken.  Do not run it.
+--- heimdal-7.8.0/lib/hcrypto/Makefile.in
++++ heimdal-7.8.0/lib/hcrypto/Makefile.in
+@@ -156,7 +156,7 @@
+ CONFIG_HEADER = $(top_builddir)/include/config.h
+ CONFIG_CLEAN_FILES =
+ CONFIG_CLEAN_VPATH_FILES =
+-am__EXEEXT_1 = destest$(EXEEXT) mdtest$(EXEEXT) rc2test$(EXEEXT) \
++am__EXEEXT_1 = destest$(EXEEXT) rc2test$(EXEEXT) \
+ 	rctest$(EXEEXT) test_bn$(EXEEXT) test_bulk$(EXEEXT) \
+ 	test_cipher$(EXEEXT) test_engine_dso$(EXEEXT) \
+ 	test_hmac$(EXEEXT) test_pkcs12$(EXEEXT) test_pkcs5$(EXEEXT)
+@@ -357,11 +357,6 @@
+ example_evp_cipher_LDADD = $(LDADD)
+ example_evp_cipher_DEPENDENCIES = $(lib_LTLIBRARIES) \
+ 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+-mdtest_SOURCES = mdtest.c
+-mdtest_OBJECTS = mdtest.$(OBJEXT)
+-mdtest_LDADD = $(LDADD)
+-mdtest_DEPENDENCIES = $(lib_LTLIBRARIES) $(am__DEPENDENCIES_1) \
+-	$(am__DEPENDENCIES_1)
+ rc2test_SOURCES = rc2test.c
+ rc2test_OBJECTS = rc2test.$(OBJEXT)
+ rc2test_LDADD = $(LDADD)
+@@ -474,7 +469,7 @@
+ 	./$(DEPDIR)/libhcrypto_la-sha256.Plo \
+ 	./$(DEPDIR)/libhcrypto_la-sha512.Plo \
+ 	./$(DEPDIR)/libhcrypto_la-ui.Plo \
+-	./$(DEPDIR)/libhcrypto_la-validate.Plo ./$(DEPDIR)/mdtest.Po \
++	./$(DEPDIR)/libhcrypto_la-validate.Plo \
+ 	./$(DEPDIR)/rc2test.Po ./$(DEPDIR)/rctest.Po \
+ 	./$(DEPDIR)/test_bn.Po ./$(DEPDIR)/test_bulk.Po \
+ 	./$(DEPDIR)/test_cipher.Po ./$(DEPDIR)/test_dh.Po \
+@@ -623,11 +618,11 @@
+ am__v_CCLD_0 = @echo "  CCLD    " $@;
+ am__v_CCLD_1 = 
+ SOURCES = $(libhcrypto_la_SOURCES) $(libhctest_la_SOURCES) destest.c \
+-	example_evp_cipher.c mdtest.c rc2test.c rctest.c test_bn.c \
++	example_evp_cipher.c rc2test.c rctest.c test_bn.c \
+ 	test_bulk.c test_cipher.c test_dh.c test_engine_dso.c \
+ 	test_hmac.c test_pkcs12.c test_pkcs5.c test_rand.c test_rsa.c
+ DIST_SOURCES = $(libhcrypto_la_SOURCES) $(libhctest_la_SOURCES) \
+-	destest.c example_evp_cipher.c mdtest.c rc2test.c rctest.c \
++	destest.c example_evp_cipher.c rc2test.c rctest.c \
+ 	test_bn.c test_bulk.c test_cipher.c test_dh.c \
+ 	test_engine_dso.c test_hmac.c test_pkcs12.c test_pkcs5.c \
+ 	test_rand.c test_rsa.c
+@@ -1143,7 +1138,6 @@
+ 
+ PROGRAM_TESTS = \
+ 	destest \
+-	mdtest \
+ 	rc2test  \
+ 	rctest \
+ 	test_bn \
+@@ -1821,10 +1815,6 @@
+ 	@rm -f example_evp_cipher$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(example_evp_cipher_OBJECTS) $(example_evp_cipher_LDADD) $(LIBS)
+ 
+-mdtest$(EXEEXT): $(mdtest_OBJECTS) $(mdtest_DEPENDENCIES) $(EXTRA_mdtest_DEPENDENCIES) 
+-	@rm -f mdtest$(EXEEXT)
+-	$(AM_V_CCLD)$(LINK) $(mdtest_OBJECTS) $(mdtest_LDADD) $(LIBS)
+-
+ rc2test$(EXEEXT): $(rc2test_OBJECTS) $(rc2test_DEPENDENCIES) $(EXTRA_rc2test_DEPENDENCIES) 
+ 	@rm -f rc2test$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(rc2test_OBJECTS) $(rc2test_LDADD) $(LIBS)
+@@ -1921,7 +1911,6 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhcrypto_la-sha512.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhcrypto_la-ui.Plo@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhcrypto_la-validate.Plo@am__quote@ # am--include-marker
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdtest.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rc2test.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rctest.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_bn.Po@am__quote@ # am--include-marker
+@@ -3421,13 +3410,6 @@
+ 	--log-file $$b.log --trs-file $$b.trs \
+ 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+ 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+-mdtest.log: mdtest$(EXEEXT)
+-	@p='mdtest$(EXEEXT)'; \
+-	b='mdtest'; \
+-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+-	--log-file $$b.log --trs-file $$b.trs \
+-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ rc2test.log: rc2test$(EXEEXT)
+ 	@p='rc2test$(EXEEXT)'; \
+ 	b='rc2test'; \
+@@ -3645,7 +3627,6 @@
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-sha512.Plo
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-ui.Plo
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-validate.Plo
+-	-rm -f ./$(DEPDIR)/mdtest.Po
+ 	-rm -f ./$(DEPDIR)/rc2test.Po
+ 	-rm -f ./$(DEPDIR)/rctest.Po
+ 	-rm -f ./$(DEPDIR)/test_bn.Po
+@@ -3866,7 +3847,6 @@
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-sha512.Plo
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-ui.Plo
+ 	-rm -f ./$(DEPDIR)/libhcrypto_la-validate.Plo
+-	-rm -f ./$(DEPDIR)/mdtest.Po
+ 	-rm -f ./$(DEPDIR)/rc2test.Po
+ 	-rm -f ./$(DEPDIR)/rctest.Po
+ 	-rm -f ./$(DEPDIR)/test_bn.Po
