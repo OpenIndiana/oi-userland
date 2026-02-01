@@ -1,7 +1,6 @@
-diff -Nru qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qplugin.h qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qplugin.h
---- qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qplugin.h	2023-09-19 16:19:55.659890584 +0200
-+++ qt-everywhere-src-6.3.2/qtbase/src/corelib/plugin/qplugin.h	2023-09-19 16:23:09.763222161 +0200
-@@ -174,13 +174,6 @@
+--- qt-everywhere-src-6.9.3/qtbase/src/corelib/plugin/qplugin.h.orig
++++ qt-everywhere-src-6.9.3/qtbase/src/corelib/plugin/qplugin.h
+@@ -142,13 +142,6 @@
  // Since Qt 6.3
  template <auto (&PluginMetaData)> class QPluginMetaDataV2
  {
@@ -15,7 +14,7 @@ diff -Nru qt-everywhere-src-6.3.2.orig/qtbase/src/corelib/plugin/qplugin.h qt-ev
      struct RegularPayload : QPluginMetaData::MagicHeader {
          static constexpr size_t HeaderOffset = offsetof(QPluginMetaData::MagicHeader, header);
          quint8 payload[sizeof(PluginMetaData)] = {};
-@@ -197,16 +190,6 @@
+@@ -165,16 +158,6 @@
  #if defined(QT_STATICPLUGIN)
  #  define QT_PLUGIN_METADATAV2_SECTION
      using Payload = StaticPayload;
