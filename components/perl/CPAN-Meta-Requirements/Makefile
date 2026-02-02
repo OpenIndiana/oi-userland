@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta-Requirements
-HUMAN_VERSION =			2.144
+HUMAN_VERSION =			2.145
 COMPONENT_SUMMARY =		a set of version requirements for a CPAN dist
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ddaffba8a1ff8fd82229d9e696ceba6cf0e70fc7f47cfee405be45a3d5d6ff0f
+	sha256:1557093e3ff0d650262a8340a1dafc5d033af986f98ee3e8a889d04b53e18019
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
