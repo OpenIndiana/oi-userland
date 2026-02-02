@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DB_File
-HUMAN_VERSION =			1.859
-COMPONENT_REVISION =		5
-COMPONENT_SUMMARY =		Perl5 access to Berkeley DB version 1.x
+HUMAN_VERSION =			1.860
+COMPONENT_SUMMARY =		Perl access to Berkeley DB 1.x
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5674e0d2cd0b060c4d1253670ea022c64d842a55257f9eb8edb19c0f53e2565c
+	sha256:cbe5e90b0e40e0d566f505789b73196e93c56709f660ca316af50662260749a0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += database/berkeleydb-5
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
