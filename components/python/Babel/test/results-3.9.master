@@ -2,17 +2,17 @@ py$(PYV): commands[0]> gmake clean-cldr test
 rm -f babel/locale-data/*.dat
 rm -f babel/global.dat
 python scripts/download_import_cldr.py
-Local copy '$(@D)/cldr/cldr-common-46.0.zip' not found
-Downloading 'cldr-common-46.0.zip' from https://unicode.org/Public/cldr/46/cldr-common-46.0.zip
-Extracting CLDR to '$(@D)/cldr/cldr-common-46.0'
+Local copy '$(@D)/cldr/cldr-common-47.0.zip' not found
+Downloading https://unicode.org/Public/cldr/47/cldr-common-47.zip to $(@D)/cldr/cldr-common-47.0.zip.tmp: 33354 KiB
+Extracting CLDR to '$(@D)/cldr/cldr-common-47.0'
 
 python  -m pytest 
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
-collecting ... collected 7353 items
+configfile: pyproject.toml
+collecting ... collected 7482 items
 
 babel/core.py::babel.core.Locale PASSED
 babel/core.py::babel.core.Locale.__init__ PASSED
@@ -65,6 +65,7 @@ babel/core.py::babel.core.Locale.weekend_end PASSED
 babel/core.py::babel.core.Locale.weekend_start PASSED
 babel/core.py::babel.core.Locale.zone_formats PASSED
 babel/core.py::babel.core.default_locale PASSED
+babel/core.py::babel.core.get_cldr_version PASSED
 babel/core.py::babel.core.get_global PASSED
 babel/core.py::babel.core.get_locale_identifier PASSED
 babel/core.py::babel.core.negotiate_locale PASSED
@@ -173,189 +174,208 @@ babel/units.py::babel.units.get_unit_name PASSED
 babel/util.py::babel.util.distinct PASSED
 babel/util.py::babel.util.pathmatch PASSED
 tests/interop/test_jinja2_interop.py::test_jinja2_interop PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_add_returns_message_instance PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_duplicate_auto_comment PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_duplicate_location PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_duplicate_user_comment PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_fuzzy_matching_regarding_plurals PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_mime_headers_contain_same_information_as_attributes PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_stores_datetime_correctly PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_two_messages_with_same_singular PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_long_string PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_no_cascading PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_no_msgstr PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_with_case_change PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_with_changed_context PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_with_char_change PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_fuzzy_matching_with_new_context PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_message_changed_to_plural PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_message_changed_to_simple PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_message_updates_comments PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_no_template_mutation PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_po_ignores_pot_creation_date PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_po_keeps_po_revision_date PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_po_updates_pot_creation_date PASSED
-tests/messages/test_catalog.py::CatalogTestCase::test_update_without_fuzzy_matching PASSED
-tests/messages/test_catalog.py::MessageTestCase::test_clone_message_object PASSED
-tests/messages/test_catalog.py::MessageTestCase::test_python_brace_format PASSED
-tests/messages/test_catalog.py::MessageTestCase::test_python_format PASSED
-tests/messages/test_catalog.py::MessageTestCase::test_translator_comments PASSED
+tests/messages/frontend/test_cli.py::test_check PASSED
+tests/messages/frontend/test_cli.py::test_check_pot_creation_date PASSED
+tests/messages/frontend/test_cli.py::test_compile_catalog PASSED
+tests/messages/frontend/test_cli.py::test_compile_catalog_multidomain PASSED
+tests/messages/frontend/test_cli.py::test_compile_catalog_with_more_than_2_plural_forms PASSED
+tests/messages/frontend/test_cli.py::test_compile_fuzzy_catalog PASSED
+tests/messages/frontend/test_cli.py::test_extract_with_default_mapping PASSED
+tests/messages/frontend/test_cli.py::test_extract_with_exact_file PASSED
+tests/messages/frontend/test_cli.py::test_extract_with_mapping_file PASSED
+tests/messages/frontend/test_cli.py::test_frontend_can_log_to_predefined_handler PASSED
+tests/messages/frontend/test_cli.py::test_help PASSED
+tests/messages/frontend/test_cli.py::test_init_more_than_2_plural_forms PASSED
+tests/messages/frontend/test_cli.py::test_init_singular_plural_forms PASSED
+tests/messages/frontend/test_cli.py::test_init_with_output_dir PASSED
+tests/messages/frontend/test_cli.py::test_list_locales PASSED
+tests/messages/frontend/test_cli.py::test_no_duplicated_output_for_multiple_runs PASSED
+tests/messages/frontend/test_cli.py::test_update PASSED
+tests/messages/frontend/test_cli.py::test_update_init_missing PASSED
+tests/messages/frontend/test_cli.py::test_update_init_missing_creates_dest_dir PASSED
+tests/messages/frontend/test_cli.py::test_update_pot_creation_date PASSED
+tests/messages/frontend/test_cli.py::test_usage PASSED
+tests/messages/frontend/test_compile.py::test_no_directory_or_input_file_specified PASSED
+tests/messages/frontend/test_compile.py::test_no_directory_or_output_file_specified PASSED
+tests/messages/frontend/test_extract.py::test_both_sort_output_and_sort_by_file PASSED
+tests/messages/frontend/test_extract.py::test_extraction_add_location_file PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_default_mapping PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_mapping_dict[**/ignored/**.*] PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_mapping_dict[ignored] PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_mapping_file PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_mapping_file_with_comments PASSED
+tests/messages/frontend/test_extract.py::test_extraction_with_mapping_file_with_keywords PASSED
+tests/messages/frontend/test_extract.py::test_input_dirs_is_alias_for_input_paths PASSED
+tests/messages/frontend/test_extract.py::test_input_dirs_is_mutually_exclusive_with_input_paths PASSED
+tests/messages/frontend/test_extract.py::test_input_paths_handle_spaces_after_comma PASSED
+tests/messages/frontend/test_extract.py::test_input_paths_is_treated_as_list PASSED
+tests/messages/frontend/test_extract.py::test_invalid_file_or_dir_input_path PASSED
+tests/messages/frontend/test_extract.py::test_neither_default_nor_custom_keywords PASSED
+tests/messages/frontend/test_extract.py::test_no_output_file_specified PASSED
+tests/messages/frontend/test_frontend.py::test_compile_catalog_dir PASSED
+tests/messages/frontend/test_frontend.py::test_compile_catalog_explicit PASSED
+tests/messages/frontend/test_frontend.py::test_extract_add_location PASSED
+tests/messages/frontend/test_frontend.py::test_extract_cli_knows_dash_dash_last_dash_translator PASSED
+tests/messages/frontend/test_frontend.py::test_extract_cli_knows_dash_s PASSED
+tests/messages/frontend/test_frontend.py::test_extract_error_code PASSED
+tests/messages/frontend/test_frontend.py::test_extract_header_comment PASSED
+tests/messages/frontend/test_frontend.py::test_extract_ignore_dirs[False] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_ignore_dirs[True] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[--keyword-False] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[--keyword-True] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[--keywords-False] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[--keywords-True] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[-k-False] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_keyword_args_384[-k-True] PASSED
+tests/messages/frontend/test_frontend.py::test_extract_messages_with_t PASSED
+tests/messages/frontend/test_frontend.py::test_parse_keywords PASSED
+tests/messages/frontend/test_frontend.py::test_parse_keywords_with_t PASSED
+tests/messages/frontend/test_frontend.py::test_parse_mapping[cfg] PASSED
+tests/messages/frontend/test_frontend.py::test_parse_mapping[pyproject-toml] PASSED
+tests/messages/frontend/test_frontend.py::test_parse_mapping[toml] PASSED
+tests/messages/frontend/test_frontend.py::test_pr_1121[cfg] PASSED
+tests/messages/frontend/test_frontend.py::test_pr_1121[toml] PASSED
+tests/messages/frontend/test_frontend.py::test_update_catalog_boolean_args PASSED
+tests/messages/frontend/test_frontend.py::test_update_dir[explicit] PASSED
+tests/messages/frontend/test_frontend.py::test_update_dir[implicit] PASSED
+tests/messages/frontend/test_init.py::test_correct_init_more_than_2_plurals PASSED
+tests/messages/frontend/test_init.py::test_correct_init_singular_plural_forms PASSED
+tests/messages/frontend/test_init.py::test_keeps_catalog_non_fuzzy PASSED
+tests/messages/frontend/test_init.py::test_no_input_file PASSED
+tests/messages/frontend/test_init.py::test_no_locale PASSED
+tests/messages/frontend/test_init.py::test_supports_no_wrap PASSED
+tests/messages/frontend/test_init.py::test_supports_width PASSED
+tests/messages/frontend/test_init.py::test_with_output_dir PASSED
 tests/messages/test_catalog.py::test_catalog PASSED
 tests/messages/test_catalog.py::test_catalog_add PASSED
+tests/messages/test_catalog.py::test_catalog_add_returns_message_instance PASSED
+tests/messages/test_catalog.py::test_catalog_duplicate_auto_comment PASSED
+tests/messages/test_catalog.py::test_catalog_duplicate_location PASSED
+tests/messages/test_catalog.py::test_catalog_duplicate_user_comment PASSED
+tests/messages/test_catalog.py::test_catalog_fuzzy_matching_regarding_plurals PASSED
 tests/messages/test_catalog.py::test_catalog_mime_headers PASSED
+tests/messages/test_catalog.py::test_catalog_mime_headers_contain_same_information_as_attributes PASSED
 tests/messages/test_catalog.py::test_catalog_mime_headers_set_locale PASSED
 tests/messages/test_catalog.py::test_catalog_mime_headers_type_coercion PASSED
 tests/messages/test_catalog.py::test_catalog_num_plurals PASSED
 tests/messages/test_catalog.py::test_catalog_plural_expr PASSED
 tests/messages/test_catalog.py::test_catalog_plural_forms PASSED
 tests/messages/test_catalog.py::test_catalog_setitem PASSED
+tests/messages/test_catalog.py::test_catalog_stores_datetime_correctly PASSED
+tests/messages/test_catalog.py::test_catalog_two_messages_with_same_singular PASSED
+tests/messages/test_catalog.py::test_catalog_tz_pickleable PASSED
 tests/messages/test_catalog.py::test_catalog_update PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_long_string PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_no_cascading PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_no_msgstr PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_with_case_change PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_with_changed_context PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_with_char_change PASSED
+tests/messages/test_catalog.py::test_catalog_update_fuzzy_matching_with_new_context PASSED
+tests/messages/test_catalog.py::test_catalog_update_message_changed_to_plural PASSED
+tests/messages/test_catalog.py::test_catalog_update_message_changed_to_simple PASSED
+tests/messages/test_catalog.py::test_catalog_update_message_updates_comments PASSED
+tests/messages/test_catalog.py::test_catalog_update_no_template_mutation PASSED
+tests/messages/test_catalog.py::test_catalog_update_po_ignores_pot_creation_date PASSED
+tests/messages/test_catalog.py::test_catalog_update_po_keeps_po_revision_date PASSED
+tests/messages/test_catalog.py::test_catalog_update_po_updates_pot_creation_date PASSED
+tests/messages/test_catalog.py::test_catalog_update_without_fuzzy_matching PASSED
 tests/messages/test_catalog.py::test_datetime_parsing PASSED
+tests/messages/test_catalog.py::test_message_clone_message_object PASSED
 tests/messages/test_catalog.py::test_message_fuzzy PASSED
 tests/messages/test_catalog.py::test_message_pluralizable PASSED
 tests/messages/test_catalog.py::test_message_python_brace_format PASSED
+tests/messages/test_catalog.py::test_message_python_brace_format_2 PASSED
 tests/messages/test_catalog.py::test_message_python_format PASSED
+tests/messages/test_catalog.py::test_message_python_format_2 PASSED
+tests/messages/test_catalog.py::test_message_translator_comments PASSED
 tests/messages/test_catalog.py::test_update_catalog_comments PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_1_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_2_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_3_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_4_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_5_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::CheckersTestCase::test_6_num_plurals_checkers PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%(foo)s-%(bar)d-unknown named placeholder 'bar'] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%(foo)s-%(bar)s-unknown named placeholder 'bar'] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%(foo)s-%(foo)d-incompatible format for placeholder 'foo': 'd' and 's' are not compatible] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%s %(foo)s-%s %(foo)s-format string mixes positional and named placeholders] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%s %s %d-%s %s %s-incompatible format for placeholder 3: 'd' and 's' are not compatible] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%s-%(foo)s-the format strings are of different kinds] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%s-%d-incompatible format for placeholder 1: 's' and 'd' are not compatible] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[%s-%s %d-positional format placeholders are unbalanced] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_invalid[foo %s-foo-placeholders are incompatible] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%(bar)s foo %(n)d-%(n)d foo %(bar)s] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%(foo)s-%(foo)s %(foo)s] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%(foo)s-foo] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%F-%g] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%d-%u] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%f-%F] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%g-%G] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%i-%d] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%s foo-foo %s] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[%x-%X] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[foo-foo %s] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test__validate_format_valid[foo-foo] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_invalid[foo %s-foo] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_invalid[msgid1-msgstr1] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_invalid[msgid2-msgstr2] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_invalid[msgid3-foo] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_valid[foo-foo %s] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_valid[foo-foo] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_valid[msgid2-msgstr2] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_valid[msgid3-msgstr3] PASSED
-tests/messages/test_checkers.py::TestPythonFormat::test_python_format_valid[msgid4-foo] PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_comment_tag PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_comment_tag_multiline PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_comment_tag_with_leading_space PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_comment_tags_not_on_start_of_comment PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_comments_with_calls_that_spawn_multiple_lines PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_concatenated_strings PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_declarations PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_different_signatures PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_extract_default_encoding_ascii PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_extract_default_encoding_utf8 PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_extract_strip_comment_tags PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_invalid_translator_comments PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_invalid_translator_comments2 PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_invalid_translator_comments3 PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_multiline PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_multiline_strings PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_multiple_comment_tags PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_nested_calls PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_nested_comments PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_nested_messages PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_npgettext PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_translator_comments_with_previous_non_translator_comments PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_triple_quoted_strings PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_two_succeeding_comments PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_unicode_string_arg PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_bom_with_latin_magic_comment_fails PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_message PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_message_with_magic_comment PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_message_with_utf8_bom PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_message_with_utf8_bom_and_magic_comment PASSED
-tests/messages/test_extract.py::ExtractPythonTestCase::test_utf8_raw_strings_match_unicode_strings PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_different_signatures PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_empty_string_msgid PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_extract_allows_callable PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_f_strings PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_f_strings_non_utf8 PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_future PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_invalid_extract_method PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_invalid_filter PASSED
-tests/messages/test_extract.py::ExtractTestCase::test_warn_if_empty_string_msgid_found_in_context_aware_extraction_method PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_check PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_check_pot_creation_date PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_compile_catalog PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_compile_catalog_multidomain PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_compile_catalog_with_more_than_2_plural_forms PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_compile_fuzzy_catalog PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_extract_with_default_mapping PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_extract_with_exact_file PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_extract_with_mapping_file PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_frontend_can_log_to_predefined_handler PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_help PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_init_more_than_2_plural_forms PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_init_singular_plural_forms PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_init_with_output_dir PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_list_locales PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_no_duplicated_output_for_multiple_runs PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_update PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_update_init_missing PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_update_pot_creation_date PASSED
-tests/messages/test_frontend.py::CommandLineInterfaceTestCase::test_usage PASSED
-tests/messages/test_frontend.py::CompileCatalogTestCase::test_no_directory_or_input_file_specified PASSED
-tests/messages/test_frontend.py::CompileCatalogTestCase::test_no_directory_or_output_file_specified PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_both_sort_output_and_sort_by_file PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_extraction_add_location_file PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_extraction_with_default_mapping PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_extraction_with_mapping_dict PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_extraction_with_mapping_file PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_input_dirs_is_alias_for_input_paths PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_input_dirs_is_mutually_exclusive_with_input_paths PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_input_paths_handle_spaces_after_comma PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_input_paths_is_treated_as_list PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_invalid_file_or_dir_input_path PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_neither_default_nor_custom_keywords PASSED
-tests/messages/test_frontend.py::ExtractMessagesTestCase::test_no_output_file_specified PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_correct_init_more_than_2_plurals PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_correct_init_singular_plural_forms PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_keeps_catalog_non_fuzzy PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_no_input_file PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_no_locale PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_supports_no_wrap PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_supports_width PASSED
-tests/messages/test_frontend.py::InitCatalogTestCase::test_with_output_dir PASSED
-tests/messages/test_frontend.py::test_extract_add_location PASSED
-tests/messages/test_frontend.py::test_extract_cli_knows_dash_dash_last_dash_translator PASSED
-tests/messages/test_frontend.py::test_extract_cli_knows_dash_s PASSED
-tests/messages/test_frontend.py::test_extract_error_code PASSED
-tests/messages/test_frontend.py::test_extract_header_comment PASSED
-tests/messages/test_frontend.py::test_extract_ignore_dirs[False] PASSED
-tests/messages/test_frontend.py::test_extract_ignore_dirs[True] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[--keyword-False] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[--keyword-True] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[--keywords-False] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[--keywords-True] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[-k-False] PASSED
-tests/messages/test_frontend.py::test_extract_keyword_args_384[-k-True] PASSED
-tests/messages/test_frontend.py::test_extract_messages_with_t PASSED
-tests/messages/test_frontend.py::test_parse_keywords PASSED
-tests/messages/test_frontend.py::test_parse_keywords_with_t PASSED
-tests/messages/test_frontend.py::test_parse_mapping[cfg] PASSED
-tests/messages/test_frontend.py::test_parse_mapping[pyproject-toml] PASSED
-tests/messages/test_frontend.py::test_parse_mapping[toml] PASSED
-tests/messages/test_frontend.py::test_pr_1121[cfg] PASSED
-tests/messages/test_frontend.py::test_pr_1121[toml] PASSED
-tests/messages/test_frontend.py::test_update_catalog_boolean_args PASSED
+tests/messages/test_checkers.py::test_1_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test_2_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test_3_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test_4_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test_5_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test_6_num_plurals_checkers PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%(foo)s-%(bar)d-unknown named placeholder 'bar'] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%(foo)s-%(bar)s-unknown named placeholder 'bar'] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%(foo)s-%(foo)d-incompatible format for placeholder 'foo': 'd' and 's' are not compatible] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%s %(foo)s-%s %(foo)s-format string mixes positional and named placeholders] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%s %s %d-%s %s %s-incompatible format for placeholder 3: 'd' and 's' are not compatible] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%s-%(foo)s-the format strings are of different kinds] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%s-%d-incompatible format for placeholder 1: 's' and 'd' are not compatible] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[%s-%s %d-positional format placeholders are unbalanced] PASSED
+tests/messages/test_checkers.py::test__validate_format_invalid[foo %s-foo-placeholders are incompatible] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%(bar)s foo %(n)d-%(n)d foo %(bar)s] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%(foo)s-%(foo)s %(foo)s] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%(foo)s-foo] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%F-%g] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%d-%u] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%f-%F] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%g-%G] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%i-%d] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%s foo-foo %s] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[%x-%X] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[foo-foo %s] PASSED
+tests/messages/test_checkers.py::test__validate_format_valid[foo-foo] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[foo %s-foo] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[msgid1-msgstr1] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[msgid2-msgstr2] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[msgid3-foo] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[msgid4-msgstr4] PASSED
+tests/messages/test_checkers.py::test_python_format_invalid[msgid5-msgstr5] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[foo %s-] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[foo-foo %s] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[foo-foo] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid3-msgstr3] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid4-msgstr4] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid5-foo] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid6-msgstr6] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid7-msgstr7] PASSED
+tests/messages/test_checkers.py::test_python_format_valid[msgid8-msgstr8] PASSED
+tests/messages/test_extract.py::test_different_signatures PASSED
+tests/messages/test_extract.py::test_empty_string_msgid PASSED
+tests/messages/test_extract.py::test_extract_allows_callable PASSED
+tests/messages/test_extract.py::test_f_strings PASSED
+tests/messages/test_extract.py::test_f_strings_non_utf8 PASSED
+tests/messages/test_extract.py::test_future PASSED
+tests/messages/test_extract.py::test_invalid_extract_method PASSED
+tests/messages/test_extract.py::test_invalid_filter PASSED
+tests/messages/test_extract.py::test_issue_1195 PASSED
+tests/messages/test_extract.py::test_issue_1195_2 PASSED
+tests/messages/test_extract.py::test_warn_if_empty_string_msgid_found_in_context_aware_extraction_method PASSED
+tests/messages/test_extract_python.py::test_comment_tag PASSED
+tests/messages/test_extract_python.py::test_comment_tag_multiline PASSED
+tests/messages/test_extract_python.py::test_comment_tag_with_leading_space PASSED
+tests/messages/test_extract_python.py::test_comment_tags_not_on_start_of_comment PASSED
+tests/messages/test_extract_python.py::test_comments_with_calls_that_spawn_multiple_lines PASSED
+tests/messages/test_extract_python.py::test_concatenated_strings PASSED
+tests/messages/test_extract_python.py::test_declarations PASSED
+tests/messages/test_extract_python.py::test_different_signatures PASSED
+tests/messages/test_extract_python.py::test_dnpgettext PASSED
+tests/messages/test_extract_python.py::test_dpgettext PASSED
+tests/messages/test_extract_python.py::test_extract_default_encoding_ascii PASSED
+tests/messages/test_extract_python.py::test_extract_default_encoding_utf8 PASSED
+tests/messages/test_extract_python.py::test_extract_strip_comment_tags PASSED
+tests/messages/test_extract_python.py::test_invalid_translator_comments PASSED
+tests/messages/test_extract_python.py::test_invalid_translator_comments2 PASSED
+tests/messages/test_extract_python.py::test_invalid_translator_comments3 PASSED
+tests/messages/test_extract_python.py::test_multiline PASSED
+tests/messages/test_extract_python.py::test_multiline_strings PASSED
+tests/messages/test_extract_python.py::test_multiple_comment_tags PASSED
+tests/messages/test_extract_python.py::test_nested_calls PASSED
+tests/messages/test_extract_python.py::test_nested_comments PASSED
+tests/messages/test_extract_python.py::test_nested_messages PASSED
+tests/messages/test_extract_python.py::test_npgettext PASSED
+tests/messages/test_extract_python.py::test_translator_comments_with_previous_non_translator_comments PASSED
+tests/messages/test_extract_python.py::test_triple_quoted_strings PASSED
+tests/messages/test_extract_python.py::test_two_succeeding_comments PASSED
+tests/messages/test_extract_python.py::test_unicode_string_arg PASSED
+tests/messages/test_extract_python.py::test_utf8_bom_with_latin_magic_comment_fails PASSED
+tests/messages/test_extract_python.py::test_utf8_message PASSED
+tests/messages/test_extract_python.py::test_utf8_message_with_magic_comment PASSED
+tests/messages/test_extract_python.py::test_utf8_message_with_utf8_bom PASSED
+tests/messages/test_extract_python.py::test_utf8_message_with_utf8_bom_and_magic_comment PASSED
+tests/messages/test_extract_python.py::test_utf8_raw_strings_match_unicode_strings PASSED
 tests/messages/test_js_extract.py::test_dotted_keyword_extract PASSED
 tests/messages/test_js_extract.py::test_ignore_function_definitions PASSED
 tests/messages/test_js_extract.py::test_inside_nested_template_string PASSED
@@ -376,11 +396,10 @@ tests/messages/test_jslexer.py::test_dotted_name_end PASSED
 tests/messages/test_jslexer.py::test_jsx PASSED
 tests/messages/test_jslexer.py::test_template_string PASSED
 tests/messages/test_jslexer.py::test_unquote PASSED
-tests/messages/test_mofile.py::ReadMoTestCase::test_basics PASSED
-tests/messages/test_mofile.py::WriteMoTestCase::test_empty_translation_with_fallback PASSED
-tests/messages/test_mofile.py::WriteMoTestCase::test_more_plural_forms PASSED
-tests/messages/test_mofile.py::WriteMoTestCase::test_sorting PASSED
-tests/messages/test_normalized_string.py::test_normalized_string PASSED
+tests/messages/test_mofile.py::test_basics PASSED
+tests/messages/test_mofile.py::test_empty_translation_with_fallback PASSED
+tests/messages/test_mofile.py::test_more_plural_forms PASSED
+tests/messages/test_mofile.py::test_sorting PASSED
 tests/messages/test_plurals.py::test_get_plural PASSED
 tests/messages/test_plurals.py::test_get_plural_accepts_strings PASSED
 tests/messages/test_plurals.py::test_get_plural_falls_back_to_default PASSED
@@ -391,67 +410,7 @@ tests/messages/test_plurals.py::test_get_plural_selection[locale3-1-0] PASSED
 tests/messages/test_plurals.py::test_get_plural_selection[locale4-1-0] PASSED
 tests/messages/test_plurals.py::test_get_plural_selection[locale5-1-0] PASSED
 tests/messages/test_plurals.py::test_get_plural_selection[locale6-1-0] PASSED
-tests/messages/test_pofile.py::PofileFunctionsTestCase::test_denormalize_on_msgstr_without_empty_first_line PASSED
-tests/messages/test_pofile.py::PofileFunctionsTestCase::test_unescape PASSED
-tests/messages/test_pofile.py::PofileFunctionsTestCase::test_unescape_of_quoted_newline PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_abort_invalid_po_file PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_applies_specified_encoding_during_read PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_encoding_header_read PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_fuzzy_header PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_header_entry PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_invalid_pofile_with_abort_flag PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_locale_gets_overridden_by_file PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_missing_plural PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_missing_plural_in_the_middle PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_more_than_two_plural_forms PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_multi_line_obsolete_message PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_multiline_context PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_not_fuzzy_header PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_message PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_message_ignored PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_message_with_context PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_messages_roundtrip PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_messages_with_context PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_obsolete_plural_with_square_brackets PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_plural_forms_header_parsed PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_plural_with_square_brackets PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_preserve_domain PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_preserve_locale PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_read_multiline PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_single_plural_form PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_singular_plural_form PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_unit_before_obsolete_is_not_obsoleted PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_unit_following_multi_line_obsolete_message PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_with_context PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_with_context_two PASSED
-tests/messages/test_pofile.py::ReadPoTestCase::test_with_location PASSED
-tests/messages/test_pofile.py::RoundtripPoTestCase::test_enclosed_filenames_in_location_comment PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_duplicate_comments PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_file_sorted_po PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_file_with_no_lineno PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_include_lineno PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_join_locations PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_no_include_lineno PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_no_wrap_and_width_behaviour_on_comments PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_po_with_multiline_obsolete_message PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_po_with_obsolete_message PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_po_with_obsolete_message_ignored PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_po_with_previous_msgid PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_po_with_previous_msgid_plural PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_pot_with_translator_comments PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_silent_location_fallback PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_sorted_po PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_sorted_po_context PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_tab_in_location PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_tab_in_location_already_enclosed PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_white_space_in_location PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_white_space_in_location_already_enclosed PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_wrap_locations_with_hyphens PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_wrap_long_lines PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_wrap_long_lines_in_header PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_wrap_long_lines_with_long_word PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_wrap_with_enclosed_file_locations PASSED
-tests/messages/test_pofile.py::WritePoTestCase::test_write_po_file_with_specified_charset PASSED
+tests/messages/test_pofile.py::test_denormalize_on_msgstr_without_empty_first_line PASSED
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_enclosed[file a.po] PASSED
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_enclosed[file\ta.po] PASSED
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_no_change[\u2068file a.po\u2069] PASSED
@@ -460,6 +419,7 @@ tests/messages/test_pofile.py::test_enclose_filename_if_necessary_no_change[file
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_no_change[file.po] PASSED
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_no_change[file\n.po] PASSED
 tests/messages/test_pofile.py::test_enclose_filename_if_necessary_no_change[file_a.po] PASSED
+tests/messages/test_pofile.py::test_enclosed_filenames_in_location_comment PASSED
 tests/messages/test_pofile.py::test_extract_locations_invalid_location_comment[\u2068file 1.po:1 \u2068file 2.po\u2069:2] PASSED
 tests/messages/test_pofile.py::test_extract_locations_invalid_location_comment[\u2068file 1.po\u2069:1 file 2.po\u2069:2] PASSED
 tests/messages/test_pofile.py::test_extract_locations_invalid_location_comment[\u2068file 1.po] PASSED
@@ -476,9 +436,70 @@ tests/messages/test_pofile.py::test_issue_1134[False-msgid "foo"\nmsgid_plural "
 tests/messages/test_pofile.py::test_issue_1134[False-msgid "foo"] PASSED
 tests/messages/test_pofile.py::test_issue_1134[True-msgid "foo"\nmsgid_plural "foos"] PASSED
 tests/messages/test_pofile.py::test_issue_1134[True-msgid "foo"] PASSED
+tests/messages/test_pofile.py::test_iterable_of_mismatching_strings[-1] PASSED
+tests/messages/test_pofile.py::test_iterable_of_mismatching_strings[1] PASSED
 tests/messages/test_pofile.py::test_iterable_of_strings PASSED
+tests/messages/test_pofile.py::test_unescape PASSED
+tests/messages/test_pofile.py::test_unescape_of_quoted_newline PASSED
 tests/messages/test_pofile.py::test_unknown_language_roundtrip PASSED
 tests/messages/test_pofile.py::test_unknown_language_write PASSED
+tests/messages/test_pofile_read.py::test_abort_invalid_po_file PASSED
+tests/messages/test_pofile_read.py::test_applies_specified_encoding_during_read PASSED
+tests/messages/test_pofile_read.py::test_encoding_header_read PASSED
+tests/messages/test_pofile_read.py::test_fuzzy_header PASSED
+tests/messages/test_pofile_read.py::test_header_entry PASSED
+tests/messages/test_pofile_read.py::test_invalid_pofile_with_abort_flag PASSED
+tests/messages/test_pofile_read.py::test_locale_gets_overridden_by_file PASSED
+tests/messages/test_pofile_read.py::test_missing_plural PASSED
+tests/messages/test_pofile_read.py::test_missing_plural_in_the_middle PASSED
+tests/messages/test_pofile_read.py::test_more_than_two_plural_forms PASSED
+tests/messages/test_pofile_read.py::test_multi_line_obsolete_message PASSED
+tests/messages/test_pofile_read.py::test_multiline_context PASSED
+tests/messages/test_pofile_read.py::test_not_fuzzy_header PASSED
+tests/messages/test_pofile_read.py::test_obsolete_message PASSED
+tests/messages/test_pofile_read.py::test_obsolete_message_ignored PASSED
+tests/messages/test_pofile_read.py::test_obsolete_message_with_context PASSED
+tests/messages/test_pofile_read.py::test_obsolete_messages_roundtrip PASSED
+tests/messages/test_pofile_read.py::test_obsolete_messages_with_context PASSED
+tests/messages/test_pofile_read.py::test_obsolete_plural_with_square_brackets PASSED
+tests/messages/test_pofile_read.py::test_plural_forms_header_parsed PASSED
+tests/messages/test_pofile_read.py::test_plural_with_square_brackets PASSED
+tests/messages/test_pofile_read.py::test_preserve_domain PASSED
+tests/messages/test_pofile_read.py::test_preserve_locale PASSED
+tests/messages/test_pofile_read.py::test_read_multiline PASSED
+tests/messages/test_pofile_read.py::test_single_plural_form PASSED
+tests/messages/test_pofile_read.py::test_singular_plural_form PASSED
+tests/messages/test_pofile_read.py::test_unit_before_obsolete_is_not_obsoleted PASSED
+tests/messages/test_pofile_read.py::test_unit_following_multi_line_obsolete_message PASSED
+tests/messages/test_pofile_read.py::test_with_context PASSED
+tests/messages/test_pofile_read.py::test_with_context_two PASSED
+tests/messages/test_pofile_read.py::test_with_location PASSED
+tests/messages/test_pofile_write.py::test_duplicate_comments PASSED
+tests/messages/test_pofile_write.py::test_file_sorted_po PASSED
+tests/messages/test_pofile_write.py::test_file_with_no_lineno PASSED
+tests/messages/test_pofile_write.py::test_include_lineno PASSED
+tests/messages/test_pofile_write.py::test_join_locations PASSED
+tests/messages/test_pofile_write.py::test_no_include_lineno PASSED
+tests/messages/test_pofile_write.py::test_no_wrap_and_width_behaviour_on_comments PASSED
+tests/messages/test_pofile_write.py::test_po_with_multiline_obsolete_message PASSED
+tests/messages/test_pofile_write.py::test_po_with_obsolete_message PASSED
+tests/messages/test_pofile_write.py::test_po_with_obsolete_message_ignored PASSED
+tests/messages/test_pofile_write.py::test_po_with_previous_msgid PASSED
+tests/messages/test_pofile_write.py::test_po_with_previous_msgid_plural PASSED
+tests/messages/test_pofile_write.py::test_pot_with_translator_comments PASSED
+tests/messages/test_pofile_write.py::test_silent_location_fallback PASSED
+tests/messages/test_pofile_write.py::test_sorted_po PASSED
+tests/messages/test_pofile_write.py::test_sorted_po_context PASSED
+tests/messages/test_pofile_write.py::test_tab_in_location PASSED
+tests/messages/test_pofile_write.py::test_tab_in_location_already_enclosed PASSED
+tests/messages/test_pofile_write.py::test_white_space_in_location PASSED
+tests/messages/test_pofile_write.py::test_white_space_in_location_already_enclosed PASSED
+tests/messages/test_pofile_write.py::test_wrap_locations_with_hyphens PASSED
+tests/messages/test_pofile_write.py::test_wrap_long_lines PASSED
+tests/messages/test_pofile_write.py::test_wrap_long_lines_in_header PASSED
+tests/messages/test_pofile_write.py::test_wrap_long_lines_with_long_word PASSED
+tests/messages/test_pofile_write.py::test_wrap_with_enclosed_file_locations PASSED
+tests/messages/test_pofile_write.py::test_write_po_file_with_specified_charset PASSED
 tests/messages/test_setuptools_frontend.py::test_extract_distutils_keyword_arg_388[LW_ QQ Q-expected1] PASSED
 tests/messages/test_setuptools_frontend.py::test_extract_distutils_keyword_arg_388[LW_-expected0] PASSED
 tests/messages/test_setuptools_frontend.py::test_extract_distutils_keyword_arg_388[yiy         aia-expected2] PASSED
@@ -495,6 +516,14 @@ tests/messages/test_toml_config.py::test_bad_toml_test_case[bad.pattern-type-2.t
 tests/messages/test_toml_config.py::test_bad_toml_test_case[bad.pattern-type.toml] PASSED
 tests/messages/test_toml_config.py::test_bad_toml_test_case[bad.pyproject-without-tool-babel.toml] PASSED
 tests/messages/test_toml_config.py::test_bad_toml_test_case[bad.standalone-with-babel-prefix.toml] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_add_comments_parsing["SPECIAL SAUCE"-expected0] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_add_comments_parsing[["SPECIAL", "SAUCE"]-expected1] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_add_comments_parsing[[]-None] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_keywords_parsing[empty] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_keywords_parsing[l-args] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_keywords_parsing[list] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_keywords_parsing[s-args] PASSED
+tests/messages/test_toml_config.py::test_toml_mapping_keywords_parsing[string] PASSED
 tests/messages/test_toml_config.py::test_toml_mapping_multiple_patterns PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[aa] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[aa_DJ] PASSED
@@ -650,6 +679,8 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[ckb_IR] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[co] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[co_FR] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[cop] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[cop_EG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[cs] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[cs_CZ] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[csw] PASSED
@@ -719,6 +750,7 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_CM] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_CX] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_CY] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_CZ] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_DE] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_DG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_DK] PASSED
@@ -726,25 +758,30 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_Dsrt] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_Dsrt_US] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_ER] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_ES] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_FI] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_FJ] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_FK] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_FM] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_FR] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GB] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GD] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GH] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GI] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GM] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GS] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GU] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_GY] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_HK] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_HU] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_ID] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IE] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IL] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IM] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IN] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IO] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_IT] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_JE] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_JM] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_KE] PASSED
@@ -768,15 +805,19 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NF] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NL] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NO] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NR] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NU] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_NZ] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PH] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PK] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PL] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PN] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PR] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PT] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_PW] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_RO] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_RW] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SB] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SC] PASSED
@@ -785,6 +826,7 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SG] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SH] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SI] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SK] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SL] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SS] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[en_SX] PASSED
@@ -983,6 +1025,8 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hr_HR] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hsb] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hsb_DE] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[ht] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[ht_HT] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hu] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hu_HU] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[hy] PASSED
@@ -1542,6 +1586,7 @@ tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_sys
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[yue_Hant] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[yue_Hant_CN] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[yue_Hant_HK] PASSED
+tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[yue_Hant_MO] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[za] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[za_CN] PASSED
 tests/test_core.py::TestLocaleClass::test_all_locales_have_default_numbering_system[zgh] PASSED
@@ -1613,7 +1658,7 @@ tests/test_core.py::test_compatible_classes_in_global_and_localedata[babel/local
 tests/test_core.py::test_default_locale PASSED
 tests/test_core.py::test_default_locale_bad_arg PASSED
 tests/test_core.py::test_default_locale_multiple_args PASSED
-tests/test_core.py::test_get_global PASSED
+tests/test_core.py::test_get_cldr_version PASSED
 tests/test_core.py::test_hash PASSED
 tests/test_core.py::test_ignore_invalid_locales_in_lc_ctype PASSED
 tests/test_core.py::test_issue_1112 PASSED
@@ -1626,6 +1671,7 @@ tests/test_core.py::test_locale_provides_access_to_cldr_locale_data PASSED
 tests/test_core.py::test_locale_repr PASSED
 tests/test_core.py::test_negotiate_locale PASSED
 tests/test_core.py::test_parse_locale PASSED
+tests/test_core.py::test_zone_aliases_and_territories PASSED
 tests/test_date_intervals.py::test_format_interval_12_hour PASSED
 tests/test_date_intervals.py::test_format_interval_in_tz[pytz.timezone] PASSED
 tests/test_date_intervals.py::test_format_interval_in_tz[zoneinfo.ZoneInfo] PASSED
@@ -1703,6 +1749,9 @@ tests/test_dates.py::test_issue_1162[sv_SE-long-False-om 3 timmar] PASSED
 tests/test_dates.py::test_issue_1162[sv_SE-long-True-f\xf6r 3 timmar sedan] PASSED
 tests/test_dates.py::test_issue_1162[sv_SE-short-False-om 3 tim] PASSED
 tests/test_dates.py::test_issue_1162[sv_SE-short-True-f\xf6r 3 tim sedan] PASSED
+tests/test_dates.py::test_issue_1192 PASSED
+tests/test_dates.py::test_issue_1192_fmt[pytz.timezone] XFAIL
+tests/test_dates.py::test_issue_1192_fmt[zoneinfo.ZoneInfo] XFAIL
 tests/test_dates.py::test_issue_798 PASSED
 tests/test_dates.py::test_issue_892 PASSED
 tests/test_dates.py::test_lithuanian_long_format PASSED
@@ -1868,6 +1917,8 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-ckb_IR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-co] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-co_FR] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-cop] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-cop_EG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-cs] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-cs_CZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-csw] PASSED
@@ -1937,6 +1988,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_CM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_CX] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_CY] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_CZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_DE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_DG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_DK] PASSED
@@ -1944,25 +1996,30 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_Dsrt] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_Dsrt_US] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_ER] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_ES] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_FI] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_FJ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_FK] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_FM] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_FR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GB] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GD] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GI] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GM] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GS] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_GY] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_HK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_HU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_ID] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IO] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_IT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_JE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_JM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_KE] PASSED
@@ -1986,15 +2043,19 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NF] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NL] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_NZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PR] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_PW] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_RO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_RW] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SB] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SC] PASSED
@@ -2003,6 +2064,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SI] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SK] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SS] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-en_SX] PASSED
@@ -2201,6 +2263,8 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hr_HR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hsb] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hsb_DE] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-ht] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-ht_HT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hu] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hu_HU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-hy] PASSED
@@ -2760,6 +2824,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-yue_Hant] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-yue_Hant_CN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-yue_Hant_HK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-yue_Hant_MO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-za] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-za_CN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[pytz.timezone-zgh] PASSED
@@ -2934,6 +2999,8 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-ckb_IR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-co] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-co_FR] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-cop] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-cop_EG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-cs] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-cs_CZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-csw] PASSED
@@ -3003,6 +3070,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_CM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_CX] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_CY] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_CZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_DE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_DG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_DK] PASSED
@@ -3010,25 +3078,30 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_Dsrt] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_Dsrt_US] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_ER] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_ES] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_FI] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_FJ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_FK] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_FM] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_FR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GB] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GD] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GI] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GM] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GS] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_GY] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_HK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_HU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_ID] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IO] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_IT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_JE] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_JM] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_KE] PASSED
@@ -3052,15 +3125,19 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NF] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NL] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_NZ] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PR] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_PW] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_RO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_RW] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SB] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SC] PASSED
@@ -3069,6 +3146,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SG] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SH] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SI] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SK] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SL] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SS] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-en_SX] PASSED
@@ -3267,6 +3345,8 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hr_HR] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hsb] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hsb_DE] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-ht] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-ht_HT] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hu] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hu_HU] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-hy] PASSED
@@ -3826,6 +3906,7 @@ tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.Zo
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-yue_Hant] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-yue_Hant_CN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-yue_Hant_HK] PASSED
+tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-yue_Hant_MO] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-za] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-za_CN] PASSED
 tests/test_dates.py::test_no_inherit_metazone_marker_never_in_output[zoneinfo.ZoneInfo-zgh] PASSED
@@ -3887,7 +3968,7 @@ tests/test_day_periods.py::test_day_period_rules[de-time0-morning1] PASSED
 tests/test_day_periods.py::test_day_period_rules[de-time1-night1] PASSED
 tests/test_day_periods.py::test_day_period_rules[en_US-time3-noon] PASSED
 tests/test_day_periods.py::test_day_period_rules[en_US-time4-night1] PASSED
-tests/test_day_periods.py::test_day_period_rules[en_US-time5-night1] PASSED
+tests/test_day_periods.py::test_day_period_rules[en_US-time5-morning1] PASSED
 tests/test_day_periods.py::test_day_period_rules[en_US-time6-morning1] PASSED
 tests/test_day_periods.py::test_day_period_rules[fi-time2-midnight] PASSED
 tests/test_languages.py::test_get_language_info PASSED
@@ -3901,10 +3982,6 @@ tests/test_lists.py::test_format_list[list5-ne-string1,string2, string3 \u0930 s
 tests/test_lists.py::test_format_list_error PASSED
 tests/test_lists.py::test_issue_1098 PASSED
 tests/test_lists.py::test_lists_default_locale_deprecation PASSED
-tests/test_localedata.py::MergeResolveTestCase::test_merge_items PASSED
-tests/test_localedata.py::MergeResolveTestCase::test_merge_nested_dict PASSED
-tests/test_localedata.py::MergeResolveTestCase::test_merge_nested_dict_no_overlap PASSED
-tests/test_localedata.py::MergeResolveTestCase::test_merge_with_alias_and_resolve PASSED
 tests/test_localedata.py::test_load PASSED
 tests/test_localedata.py::test_load_inheritance PASSED
 tests/test_localedata.py::test_locale_argument_acceptance PASSED
@@ -3912,24 +3989,16 @@ tests/test_localedata.py::test_locale_identification PASSED
 tests/test_localedata.py::test_locale_identifiers_cache PASSED
 tests/test_localedata.py::test_locale_name_cleanup PASSED
 tests/test_localedata.py::test_merge PASSED
+tests/test_localedata.py::test_merge_items PASSED
+tests/test_localedata.py::test_merge_nested_dict PASSED
+tests/test_localedata.py::test_merge_nested_dict_no_overlap PASSED
+tests/test_localedata.py::test_merge_with_alias_and_resolve PASSED
 tests/test_localedata.py::test_mixedcased_locale PASSED
 tests/test_localedata.py::test_reserved_locale_names SKIPPED (window...)
 tests/test_localedata.py::test_unique_ids PASSED
 tests/test_localtime.py::test_issue_1092_with_pytz PASSED
 tests/test_localtime.py::test_issue_1092_without_pytz PASSED
 tests/test_localtime.py::test_issue_990 PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_compact PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_decimals PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_default_rounding PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_formatting_of_very_small_decimals PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_group_separator PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_nan_and_infinity PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_patterns PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_scientific_notation PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_significant_digits PASSED
-tests/test_numbers.py::FormatDecimalTestCase::test_subpatterns PASSED
-tests/test_numbers.py::NumberParsingTestCase::test_can_parse_decimals PASSED
-tests/test_numbers.py::NumberParsingTestCase::test_parse_decimal_strict_mode PASSED
 tests/test_numbers.py::test_decimal_precision PASSED
 tests/test_numbers.py::test_default_scientific_format PASSED
 tests/test_numbers.py::test_format_compact_currency PASSED
@@ -4060,18 +4129,18 @@ tests/test_numbers.py::test_parse_static_pattern PASSED
 tests/test_numbers.py::test_single_quotes_in_pattern PASSED
 tests/test_numbers.py::test_validate_currency PASSED
 tests/test_numbers.py::test_very_small_decimal_no_quantization PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_and PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_eq_relation PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_error_when_unexpected_end PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_in_range_relation PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_negate PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_or PASSED
-tests/test_plural.py::PluralRuleParserTestCase::test_or_and PASSED
-tests/test_plural.py::TestNextTokenTestCase::test_empty PASSED
-tests/test_plural.py::TestNextTokenTestCase::test_type_not_ok_and_value_ok PASSED
-tests/test_plural.py::TestNextTokenTestCase::test_type_ok_and_no_value PASSED
-tests/test_plural.py::TestNextTokenTestCase::test_type_ok_and_not_value PASSED
-tests/test_plural.py::TestNextTokenTestCase::test_type_ok_and_value_ok PASSED
+tests/test_numbers_format_decimal.py::test_compact PASSED
+tests/test_numbers_format_decimal.py::test_decimals PASSED
+tests/test_numbers_format_decimal.py::test_default_rounding PASSED
+tests/test_numbers_format_decimal.py::test_formatting_of_very_small_decimals PASSED
+tests/test_numbers_format_decimal.py::test_group_separator PASSED
+tests/test_numbers_format_decimal.py::test_nan_and_infinity PASSED
+tests/test_numbers_format_decimal.py::test_patterns PASSED
+tests/test_numbers_format_decimal.py::test_scientific_notation PASSED
+tests/test_numbers_format_decimal.py::test_significant_digits PASSED
+tests/test_numbers_format_decimal.py::test_subpatterns PASSED
+tests/test_numbers_parsing.py::test_can_parse_decimals PASSED
+tests/test_numbers_parsing.py::test_parse_decimal_strict_mode PASSED
 tests/test_plural.py::test_cldr_modulo PASSED
 tests/test_plural.py::test_extract_operands[-1-1-1-0-0-0-0] PASSED
 tests/test_plural.py::test_extract_operands[1-1-1-0-0-0-0] PASSED
@@ -4086,6 +4155,11 @@ tests/test_plural.py::test_gettext_compilation[pl] PASSED
 tests/test_plural.py::test_gettext_compilation[ru] PASSED
 tests/test_plural.py::test_in_range_list PASSED
 tests/test_plural.py::test_locales_with_no_plural_rules_have_default PASSED
+tests/test_plural.py::test_next_token_empty PASSED
+tests/test_plural.py::test_next_token_type_not_ok_and_value_ok PASSED
+tests/test_plural.py::test_next_token_type_ok_and_no_value PASSED
+tests/test_plural.py::test_next_token_type_ok_and_not_value PASSED
+tests/test_plural.py::test_next_token_type_ok_and_value_ok PASSED
 tests/test_plural.py::test_plural_other_is_ignored PASSED
 tests/test_plural.py::test_plural_rule PASSED
 tests/test_plural.py::test_plural_rule_operands_f PASSED
@@ -4105,6 +4179,13 @@ tests/test_plural.py::test_tokenize_well_formed[n = 1 @integer 1-tokens2] PASSED
 tests/test_plural.py::test_tokenize_well_formed[n = 1-tokens1] PASSED
 tests/test_plural.py::test_tokenize_well_formed[n is 1-tokens3] PASSED
 tests/test_plural.py::test_within_range_list PASSED
+tests/test_plural_rule_parser.py::test_and PASSED
+tests/test_plural_rule_parser.py::test_eq_relation PASSED
+tests/test_plural_rule_parser.py::test_error_when_unexpected_end PASSED
+tests/test_plural_rule_parser.py::test_in_range_relation PASSED
+tests/test_plural_rule_parser.py::test_negate PASSED
+tests/test_plural_rule_parser.py::test_or PASSED
+tests/test_plural_rule_parser.py::test_or_and PASSED
 tests/test_smoke.py::test_smoke_dates[aa] PASSED
 tests/test_smoke.py::test_smoke_dates[aa_DJ] PASSED
 tests/test_smoke.py::test_smoke_dates[aa_ER] PASSED
@@ -4259,6 +4340,8 @@ tests/test_smoke.py::test_smoke_dates[ckb_IQ] PASSED
 tests/test_smoke.py::test_smoke_dates[ckb_IR] PASSED
 tests/test_smoke.py::test_smoke_dates[co] PASSED
 tests/test_smoke.py::test_smoke_dates[co_FR] PASSED
+tests/test_smoke.py::test_smoke_dates[cop] PASSED
+tests/test_smoke.py::test_smoke_dates[cop_EG] PASSED
 tests/test_smoke.py::test_smoke_dates[cs] PASSED
 tests/test_smoke.py::test_smoke_dates[cs_CZ] PASSED
 tests/test_smoke.py::test_smoke_dates[csw] PASSED
@@ -4328,6 +4411,7 @@ tests/test_smoke.py::test_smoke_dates[en_CK] PASSED
 tests/test_smoke.py::test_smoke_dates[en_CM] PASSED
 tests/test_smoke.py::test_smoke_dates[en_CX] PASSED
 tests/test_smoke.py::test_smoke_dates[en_CY] PASSED
+tests/test_smoke.py::test_smoke_dates[en_CZ] PASSED
 tests/test_smoke.py::test_smoke_dates[en_DE] PASSED
 tests/test_smoke.py::test_smoke_dates[en_DG] PASSED
 tests/test_smoke.py::test_smoke_dates[en_DK] PASSED
@@ -4335,25 +4419,30 @@ tests/test_smoke.py::test_smoke_dates[en_DM] PASSED
 tests/test_smoke.py::test_smoke_dates[en_Dsrt] PASSED
 tests/test_smoke.py::test_smoke_dates[en_Dsrt_US] PASSED
 tests/test_smoke.py::test_smoke_dates[en_ER] PASSED
+tests/test_smoke.py::test_smoke_dates[en_ES] PASSED
 tests/test_smoke.py::test_smoke_dates[en_FI] PASSED
 tests/test_smoke.py::test_smoke_dates[en_FJ] PASSED
 tests/test_smoke.py::test_smoke_dates[en_FK] PASSED
 tests/test_smoke.py::test_smoke_dates[en_FM] PASSED
+tests/test_smoke.py::test_smoke_dates[en_FR] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GB] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GD] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GG] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GH] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GI] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GM] PASSED
+tests/test_smoke.py::test_smoke_dates[en_GS] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GU] PASSED
 tests/test_smoke.py::test_smoke_dates[en_GY] PASSED
 tests/test_smoke.py::test_smoke_dates[en_HK] PASSED
+tests/test_smoke.py::test_smoke_dates[en_HU] PASSED
 tests/test_smoke.py::test_smoke_dates[en_ID] PASSED
 tests/test_smoke.py::test_smoke_dates[en_IE] PASSED
 tests/test_smoke.py::test_smoke_dates[en_IL] PASSED
 tests/test_smoke.py::test_smoke_dates[en_IM] PASSED
 tests/test_smoke.py::test_smoke_dates[en_IN] PASSED
 tests/test_smoke.py::test_smoke_dates[en_IO] PASSED
+tests/test_smoke.py::test_smoke_dates[en_IT] PASSED
 tests/test_smoke.py::test_smoke_dates[en_JE] PASSED
 tests/test_smoke.py::test_smoke_dates[en_JM] PASSED
 tests/test_smoke.py::test_smoke_dates[en_KE] PASSED
@@ -4377,15 +4466,19 @@ tests/test_smoke.py::test_smoke_dates[en_NA] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NF] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NG] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NL] PASSED
+tests/test_smoke.py::test_smoke_dates[en_NO] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NR] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NU] PASSED
 tests/test_smoke.py::test_smoke_dates[en_NZ] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PG] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PH] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PK] PASSED
+tests/test_smoke.py::test_smoke_dates[en_PL] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PN] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PR] PASSED
+tests/test_smoke.py::test_smoke_dates[en_PT] PASSED
 tests/test_smoke.py::test_smoke_dates[en_PW] PASSED
+tests/test_smoke.py::test_smoke_dates[en_RO] PASSED
 tests/test_smoke.py::test_smoke_dates[en_RW] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SB] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SC] PASSED
@@ -4394,6 +4487,7 @@ tests/test_smoke.py::test_smoke_dates[en_SE] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SG] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SH] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SI] PASSED
+tests/test_smoke.py::test_smoke_dates[en_SK] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SL] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SS] PASSED
 tests/test_smoke.py::test_smoke_dates[en_SX] PASSED
@@ -4592,6 +4686,8 @@ tests/test_smoke.py::test_smoke_dates[hr_BA] PASSED
 tests/test_smoke.py::test_smoke_dates[hr_HR] PASSED
 tests/test_smoke.py::test_smoke_dates[hsb] PASSED
 tests/test_smoke.py::test_smoke_dates[hsb_DE] PASSED
+tests/test_smoke.py::test_smoke_dates[ht] PASSED
+tests/test_smoke.py::test_smoke_dates[ht_HT] PASSED
 tests/test_smoke.py::test_smoke_dates[hu] PASSED
 tests/test_smoke.py::test_smoke_dates[hu_HU] PASSED
 tests/test_smoke.py::test_smoke_dates[hy] PASSED
@@ -5151,6 +5247,7 @@ tests/test_smoke.py::test_smoke_dates[yue_Hans_CN] PASSED
 tests/test_smoke.py::test_smoke_dates[yue_Hant] PASSED
 tests/test_smoke.py::test_smoke_dates[yue_Hant_CN] PASSED
 tests/test_smoke.py::test_smoke_dates[yue_Hant_HK] PASSED
+tests/test_smoke.py::test_smoke_dates[yue_Hant_MO] PASSED
 tests/test_smoke.py::test_smoke_dates[za] PASSED
 tests/test_smoke.py::test_smoke_dates[za_CN] PASSED
 tests/test_smoke.py::test_smoke_dates[zgh] PASSED
@@ -5325,6 +5422,8 @@ tests/test_smoke.py::test_smoke_numbers[ckb_IQ] PASSED
 tests/test_smoke.py::test_smoke_numbers[ckb_IR] PASSED
 tests/test_smoke.py::test_smoke_numbers[co] PASSED
 tests/test_smoke.py::test_smoke_numbers[co_FR] PASSED
+tests/test_smoke.py::test_smoke_numbers[cop] PASSED
+tests/test_smoke.py::test_smoke_numbers[cop_EG] PASSED
 tests/test_smoke.py::test_smoke_numbers[cs] PASSED
 tests/test_smoke.py::test_smoke_numbers[cs_CZ] PASSED
 tests/test_smoke.py::test_smoke_numbers[csw] PASSED
@@ -5394,6 +5493,7 @@ tests/test_smoke.py::test_smoke_numbers[en_CK] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_CM] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_CX] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_CY] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_CZ] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_DE] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_DG] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_DK] PASSED
@@ -5401,25 +5501,30 @@ tests/test_smoke.py::test_smoke_numbers[en_DM] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_Dsrt] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_Dsrt_US] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_ER] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_ES] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_FI] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_FJ] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_FK] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_FM] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_FR] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GB] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GD] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GG] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GH] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GI] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GM] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_GS] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GU] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_GY] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_HK] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_HU] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_ID] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_IE] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_IL] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_IM] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_IN] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_IO] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_IT] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_JE] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_JM] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_KE] PASSED
@@ -5443,15 +5548,19 @@ tests/test_smoke.py::test_smoke_numbers[en_NA] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NF] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NG] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NL] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_NO] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NR] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NU] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_NZ] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PG] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PH] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PK] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_PL] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PN] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PR] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_PT] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_PW] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_RO] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_RW] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SB] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SC] PASSED
@@ -5460,6 +5569,7 @@ tests/test_smoke.py::test_smoke_numbers[en_SE] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SG] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SH] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SI] PASSED
+tests/test_smoke.py::test_smoke_numbers[en_SK] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SL] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SS] PASSED
 tests/test_smoke.py::test_smoke_numbers[en_SX] PASSED
@@ -5658,6 +5768,8 @@ tests/test_smoke.py::test_smoke_numbers[hr_BA] PASSED
 tests/test_smoke.py::test_smoke_numbers[hr_HR] PASSED
 tests/test_smoke.py::test_smoke_numbers[hsb] PASSED
 tests/test_smoke.py::test_smoke_numbers[hsb_DE] PASSED
+tests/test_smoke.py::test_smoke_numbers[ht] PASSED
+tests/test_smoke.py::test_smoke_numbers[ht_HT] PASSED
 tests/test_smoke.py::test_smoke_numbers[hu] PASSED
 tests/test_smoke.py::test_smoke_numbers[hu_HU] PASSED
 tests/test_smoke.py::test_smoke_numbers[hy] PASSED
@@ -6217,6 +6329,7 @@ tests/test_smoke.py::test_smoke_numbers[yue_Hans_CN] PASSED
 tests/test_smoke.py::test_smoke_numbers[yue_Hant] PASSED
 tests/test_smoke.py::test_smoke_numbers[yue_Hant_CN] PASSED
 tests/test_smoke.py::test_smoke_numbers[yue_Hant_HK] PASSED
+tests/test_smoke.py::test_smoke_numbers[yue_Hant_MO] PASSED
 tests/test_smoke.py::test_smoke_numbers[za] PASSED
 tests/test_smoke.py::test_smoke_numbers[za_CN] PASSED
 tests/test_smoke.py::test_smoke_numbers[zgh] PASSED
@@ -6391,6 +6504,8 @@ tests/test_smoke.py::test_smoke_units[ckb_IQ] PASSED
 tests/test_smoke.py::test_smoke_units[ckb_IR] PASSED
 tests/test_smoke.py::test_smoke_units[co] PASSED
 tests/test_smoke.py::test_smoke_units[co_FR] PASSED
+tests/test_smoke.py::test_smoke_units[cop] PASSED
+tests/test_smoke.py::test_smoke_units[cop_EG] PASSED
 tests/test_smoke.py::test_smoke_units[cs] PASSED
 tests/test_smoke.py::test_smoke_units[cs_CZ] PASSED
 tests/test_smoke.py::test_smoke_units[csw] PASSED
@@ -6460,6 +6575,7 @@ tests/test_smoke.py::test_smoke_units[en_CK] PASSED
 tests/test_smoke.py::test_smoke_units[en_CM] PASSED
 tests/test_smoke.py::test_smoke_units[en_CX] PASSED
 tests/test_smoke.py::test_smoke_units[en_CY] PASSED
+tests/test_smoke.py::test_smoke_units[en_CZ] PASSED
 tests/test_smoke.py::test_smoke_units[en_DE] PASSED
 tests/test_smoke.py::test_smoke_units[en_DG] PASSED
 tests/test_smoke.py::test_smoke_units[en_DK] PASSED
@@ -6467,25 +6583,30 @@ tests/test_smoke.py::test_smoke_units[en_DM] PASSED
 tests/test_smoke.py::test_smoke_units[en_Dsrt] PASSED
 tests/test_smoke.py::test_smoke_units[en_Dsrt_US] PASSED
 tests/test_smoke.py::test_smoke_units[en_ER] PASSED
+tests/test_smoke.py::test_smoke_units[en_ES] PASSED
 tests/test_smoke.py::test_smoke_units[en_FI] PASSED
 tests/test_smoke.py::test_smoke_units[en_FJ] PASSED
 tests/test_smoke.py::test_smoke_units[en_FK] PASSED
 tests/test_smoke.py::test_smoke_units[en_FM] PASSED
+tests/test_smoke.py::test_smoke_units[en_FR] PASSED
 tests/test_smoke.py::test_smoke_units[en_GB] PASSED
 tests/test_smoke.py::test_smoke_units[en_GD] PASSED
 tests/test_smoke.py::test_smoke_units[en_GG] PASSED
 tests/test_smoke.py::test_smoke_units[en_GH] PASSED
 tests/test_smoke.py::test_smoke_units[en_GI] PASSED
 tests/test_smoke.py::test_smoke_units[en_GM] PASSED
+tests/test_smoke.py::test_smoke_units[en_GS] PASSED
 tests/test_smoke.py::test_smoke_units[en_GU] PASSED
 tests/test_smoke.py::test_smoke_units[en_GY] PASSED
 tests/test_smoke.py::test_smoke_units[en_HK] PASSED
+tests/test_smoke.py::test_smoke_units[en_HU] PASSED
 tests/test_smoke.py::test_smoke_units[en_ID] PASSED
 tests/test_smoke.py::test_smoke_units[en_IE] PASSED
 tests/test_smoke.py::test_smoke_units[en_IL] PASSED
 tests/test_smoke.py::test_smoke_units[en_IM] PASSED
 tests/test_smoke.py::test_smoke_units[en_IN] PASSED
 tests/test_smoke.py::test_smoke_units[en_IO] PASSED
+tests/test_smoke.py::test_smoke_units[en_IT] PASSED
 tests/test_smoke.py::test_smoke_units[en_JE] PASSED
 tests/test_smoke.py::test_smoke_units[en_JM] PASSED
 tests/test_smoke.py::test_smoke_units[en_KE] PASSED
@@ -6509,15 +6630,19 @@ tests/test_smoke.py::test_smoke_units[en_NA] PASSED
 tests/test_smoke.py::test_smoke_units[en_NF] PASSED
 tests/test_smoke.py::test_smoke_units[en_NG] PASSED
 tests/test_smoke.py::test_smoke_units[en_NL] PASSED
+tests/test_smoke.py::test_smoke_units[en_NO] PASSED
 tests/test_smoke.py::test_smoke_units[en_NR] PASSED
 tests/test_smoke.py::test_smoke_units[en_NU] PASSED
 tests/test_smoke.py::test_smoke_units[en_NZ] PASSED
 tests/test_smoke.py::test_smoke_units[en_PG] PASSED
 tests/test_smoke.py::test_smoke_units[en_PH] PASSED
 tests/test_smoke.py::test_smoke_units[en_PK] PASSED
+tests/test_smoke.py::test_smoke_units[en_PL] PASSED
 tests/test_smoke.py::test_smoke_units[en_PN] PASSED
 tests/test_smoke.py::test_smoke_units[en_PR] PASSED
+tests/test_smoke.py::test_smoke_units[en_PT] PASSED
 tests/test_smoke.py::test_smoke_units[en_PW] PASSED
+tests/test_smoke.py::test_smoke_units[en_RO] PASSED
 tests/test_smoke.py::test_smoke_units[en_RW] PASSED
 tests/test_smoke.py::test_smoke_units[en_SB] PASSED
 tests/test_smoke.py::test_smoke_units[en_SC] PASSED
@@ -6526,6 +6651,7 @@ tests/test_smoke.py::test_smoke_units[en_SE] PASSED
 tests/test_smoke.py::test_smoke_units[en_SG] PASSED
 tests/test_smoke.py::test_smoke_units[en_SH] PASSED
 tests/test_smoke.py::test_smoke_units[en_SI] PASSED
+tests/test_smoke.py::test_smoke_units[en_SK] PASSED
 tests/test_smoke.py::test_smoke_units[en_SL] PASSED
 tests/test_smoke.py::test_smoke_units[en_SS] PASSED
 tests/test_smoke.py::test_smoke_units[en_SX] PASSED
@@ -6724,6 +6850,8 @@ tests/test_smoke.py::test_smoke_units[hr_BA] PASSED
 tests/test_smoke.py::test_smoke_units[hr_HR] PASSED
 tests/test_smoke.py::test_smoke_units[hsb] PASSED
 tests/test_smoke.py::test_smoke_units[hsb_DE] PASSED
+tests/test_smoke.py::test_smoke_units[ht] PASSED
+tests/test_smoke.py::test_smoke_units[ht_HT] PASSED
 tests/test_smoke.py::test_smoke_units[hu] PASSED
 tests/test_smoke.py::test_smoke_units[hu_HU] PASSED
 tests/test_smoke.py::test_smoke_units[hy] PASSED
@@ -7283,6 +7411,7 @@ tests/test_smoke.py::test_smoke_units[yue_Hans_CN] PASSED
 tests/test_smoke.py::test_smoke_units[yue_Hant] PASSED
 tests/test_smoke.py::test_smoke_units[yue_Hant_CN] PASSED
 tests/test_smoke.py::test_smoke_units[yue_Hant_HK] PASSED
+tests/test_smoke.py::test_smoke_units[yue_Hant_MO] PASSED
 tests/test_smoke.py::test_smoke_units[za] PASSED
 tests/test_smoke.py::test_smoke_units[za_CN] PASSED
 tests/test_smoke.py::test_smoke_units[zgh] PASSED
@@ -7354,10 +7483,10 @@ tests/test_units.py::test_new_cldr46_units[duration-night-5-5 noc\xed] PASSED
 tests/test_units.py::test_new_cldr46_units[speed-light-speed-1-1 sv\u011btlo] PASSED
 tests/test_units.py::test_new_cldr46_units[speed-light-speed-2-2 sv\u011btla] PASSED
 tests/test_units.py::test_new_cldr46_units[speed-light-speed-5-5 sv\u011btel] PASSED
-tests/test_util.py::FixedOffsetTimezoneTestCase::test_zone_negative_offset PASSED
-tests/test_util.py::FixedOffsetTimezoneTestCase::test_zone_positive_offset PASSED
-tests/test_util.py::FixedOffsetTimezoneTestCase::test_zone_zero_offset PASSED
 tests/test_util.py::test_distinct PASSED
+tests/test_util.py::test_fixed_zone_negative_offset PASSED
+tests/test_util.py::test_fixed_zone_positive_offset PASSED
+tests/test_util.py::test_fixed_zone_zero_offset PASSED
 tests/test_util.py::test_parse_encoding_defined PASSED
 tests/test_util.py::test_parse_encoding_non_ascii PASSED
 tests/test_util.py::test_parse_encoding_undefined PASSED
@@ -7373,34 +7502,34 @@ babel/messages/_compat.py:29
   $(@D)/babel/messages/_compat.py:29: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
     from pkg_resources import working_set
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('paste')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze.sphinx')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2558
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2558: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2560
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:2560: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('repoze')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(parent)
 
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146
-  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3146: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148
+  $(PYTHON_DIR)/vendor-packages/pkg_resources/__init__.py:3148: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('sphinxcontrib')`.
   Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
     declare_namespace(pkg)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 7347 passed, 6 skipped, 8 warnings ========
+======== 7474 passed, 6 skipped, 2 xfailed, 8 warnings ========
   py$(PYV): OK
   congratulations :)

@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		babel
-HUMAN_VERSION =			2.17.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.18.0
 COMPONENT_SUMMARY =		Internationalization utilities
 COMPONENT_PROJECT_URL =		https://babel.pocoo.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d
+	sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
