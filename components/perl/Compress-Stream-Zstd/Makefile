@@ -19,12 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Stream-Zstd
-HUMAN_VERSION =			0.206
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.217
 COMPONENT_SUMMARY =		Perl interface to the Zstd (Zstandard) (de)compressor
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b72d253c17999f6f7758969577046531dab3ab5ca52cdc762970fa967b75eb95
+	sha256:5c33e0a9ea34c19fd5f2b97216f81ce08b95193706d915dbd04398039d05af1f
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,8 +33,8 @@ include $(WS_MAKE_RULES)/common.mk
 PATH=$(PATH.gnu)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/module-build
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
