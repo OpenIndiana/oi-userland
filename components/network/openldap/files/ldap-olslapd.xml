@@ -86,6 +86,27 @@ CDDL HEADER END
 				value='core,signal' />
 		</property_group>
 
+		<property_group name='config' type='application'>
+			<!-- configure the list of URLs to be served
+			     by slapd.
+
+			     slapd's -h flag takes a single string
+			     argument containing a space-separated list
+			     of URLs to serve.
+			     The method script assembles that argument
+			     from this multi-valued property
+
+			     Set with something like:
+			     # svccfg -s network/ldap/server:openldap_26
+			     svc:/network/ldap/server:openldap_26> setprop config/serve_urls = astring:("ldapi:///" "ldaps:///")
+			-->
+			<property name='serve_urls' type='astring' >
+				<astring_list>
+					<value_node value='' />
+				</astring_list>
+			</property>
+		</property_group>
+
         <template>
             <common_name>
                 <loctext xml:lang='C'>

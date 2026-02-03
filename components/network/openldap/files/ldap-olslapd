@@ -38,6 +38,13 @@ typeset -r PIDFILE=${VARRUNDIR}/slapd.pid
 typeset -r CONF_FILE=/etc/openldap/slapd.conf
 typeset -r SLAPD="/usr/lib/${ARCH64}/slapd -u ${LDAPUSR} -g ${LDAPGRP} -f ${CONF_FILE}"
 
+# slapd's -h flag takes a single string argument containing a space-separated list
+# of URLs to serve; trying to fold that into the value of ${SLAPD} would be a
+# quoting nightmare, so handle it separately:
+SERVE_URLS=$(svcprop -p config/serve_urls ${SMF_FMRI} 2>/dev/null)
+[[ "${SERVE_URLS}" == '""' ]] && SERVE_URLS=""
+typeset -r SERVE_URLS
+
 [[ ! -f ${CONF_FILE} ]] && exit $SMF_EXIT_ERR_CONFIG
 
 
@@ -52,7 +59,11 @@ start)
 
 	cd ${VARDATADIR}
 	/usr/bin/db_recover >/dev/null 2>&1
-        exec ${SLAPD} 2>&1
+	if [[ -n "${SERVE_URLS}" ]] && ; then
+		exec ${SLAPD} -h "${SERVE_URLS}" 2>&1
+	else
+	        exec ${SLAPD} 2>&1
+	fi
         ;;
 stop)
 	# Use the actual contract, not ${PIDFILE}
