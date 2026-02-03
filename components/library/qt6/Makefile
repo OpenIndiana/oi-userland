@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
 COMPONENT_VERSION=		6.9.3
-COMPONENT_REVISION=		1
+COMPONENT_REVISION=		2
 QTV=				$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=			Qt cross-platform application and UI framework
 COMPONENT_PROJECT_URL=		https://www.qt.io/
@@ -77,7 +77,7 @@ CONFIGURE_OPTIONS += -plugin-system-sqlite
 CONFIGURE_OPTIONS += -no-pch
 CONFIGURE_OPTIONS += -no-gstreamer
 CONFIGURE_OPTIONS += -skip qtgrpc
-CONFIGURE_OPTIONS += CMAKE_PREFIX_PATH="$(BUILD_DIR)/amd64/qtbase/lib/amd64/cmake"
+CONFIGURE_OPTIONS += CMAKE_PREFIX_PATH="$(BUILD_DIR)/$(MACH64)/qtbase/lib/$(MACH64)/cmake"
 CONFIGURE_OPTIONS += MySQL_LIBRARY=$(MYSQL_LIBDIR)/libmysqlclient.so
 CONFIGURE_OPTIONS += MySQL_INCLUDE_DIR=$(MYSQL_INCDIR)
 CONFIGURE_OPTIONS += PostgreSQL_LIBRARY=$(PG_LIBDIR)/libpq.so
@@ -85,7 +85,7 @@ CONFIGURE_OPTIONS += PostgreSQL_INCLUDE_DIR=$(PG_INCDIR)
 # needed by 3rdparty/open62541
 CONFIGURE_OPTIONS += -D__EXTENSIONS__
 
-COMPONENT_POST_CONFIGURE_ACTION= mkdir -p $(BUILD_DIR)/amd64/qtbase/translations ;
+COMPONENT_POST_CONFIGURE_ACTION= mkdir -p $(BUILD_DIR)/$(MACH64)/qtbase/translations ;
 COMPONENT_POST_CONFIGURE_ACTION += $(GSED) -i 's;LINK_LIBRARIES =;LINK_LIBRARIES = -lgcc ;' $(@D)/build.ninja ;
 
 COMPONENT_INSTALL_ENV += DESTDIR=$(PROTO_DIR)
