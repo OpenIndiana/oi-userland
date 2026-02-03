@@ -26,11 +26,13 @@
 #
 
 
+USE_PARALLEL_BUILD=yes
 BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openldap
 COMPONENT_VERSION=      2.6.10
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      OpenLDAP is an open source implementation of the Lightweight Directory Access Protocol
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
@@ -62,6 +64,7 @@ CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-syslog
 CONFIGURE_OPTIONS += --enable-ipv6
 CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --enable-crypt
 
 # SLAPD related options
 # Note: we build 64-bit slapd only
@@ -96,7 +99,18 @@ CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/odbc"
 CONFIGURE_ENV += PERLBIN=$(PERL)
 
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOUSRLIBDIR):$(PROTOUSRLIBDIR64):"
-COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):/usr/bin:$(PATH.gnu)"
+# Put /usr/gnu/bin before /usr/bin first as the test suite uses "date -d"
+COMPONENT_TEST_ENV += PATH="$(PROTOUSRSBINDIR):$(PROTOUSRBINDIR):$(PATH.gnu):/usr/bin"
+
+# Tests take about 40 minutes to run.  Note that many of the
+# replication tests are flaky.  The increased sleep times help, as
+# does running the tests in tmpfs (if you have the memory for it)
+
+# Keep going after a test failure
+COMPONENT_TEST_ENV += NOEXIT=1
+# Wait a little longer for convergence
+COMPONENT_TEST_ENV += SLEEP1=20
+COMPONENT_TEST_ENV += SLEEP2=40
 
 # to remove plugin.la dependency
 COMPONENT_POST_INSTALL_ACTION.64 = $(GSED) -i -e 's:.la$$:.so:' $(PROTOETCDIR)/$(COMPONENT_NAME)/slapd.*
@@ -112,7 +126,6 @@ COMPONENT_TEST_TRANSFORMS += \
 	' -e "/succeeded/p" '
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
@@ -123,3 +136,4 @@ REQUIRED_PACKAGES += security/argon2
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/security/libsasl
+REQUIRED_PACKAGES.perl += runtime/perl
