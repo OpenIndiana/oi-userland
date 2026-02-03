@@ -10,14 +10,14 @@
 
 #
 # Copyright 2016 Adam Stevko 
-# Copyright 2024 Klaus Ziegler
+# Copyright 2026 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -84,3 +84,4 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 test:		$(TEST_32)
+# Auto-generated dependencies
