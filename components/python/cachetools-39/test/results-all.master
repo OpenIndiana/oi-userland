@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 251 items
+collecting ... collected 223 items
 
 tests/test_cache.py::CacheTest::test_defaults PASSED
 tests/test_cache.py::CacheTest::test_delete PASSED
@@ -33,6 +33,7 @@ tests/test_cached.py::CacheWrapperTest::test_decorator_lock PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_lock_condition PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_lock_condition_info PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_lock_info PASSED
+tests/test_cached.py::CacheWrapperTest::test_decorator_lock_info_deprecated PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_typed PASSED
 tests/test_cached.py::CacheWrapperTest::test_decorator_wrapped PASSED
 tests/test_cached.py::CacheWrapperTest::test_zero_size_cache_decorator PASSED
@@ -57,58 +58,29 @@ tests/test_cached.py::NoneWrapperTest::test_decorator PASSED
 tests/test_cached.py::NoneWrapperTest::test_decorator_attributes PASSED
 tests/test_cached.py::NoneWrapperTest::test_decorator_clear PASSED
 tests/test_cached.py::NoneWrapperTest::test_decorator_info PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_cond_nospace PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_attributes PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_clear PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_cond PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_cond_clear PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_cond_error PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_cond_info PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_different_names PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_immutable_dict PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_info PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_lock PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_lock_clear PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_lock_cond_info PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_lock_info PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_no_set_name PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_slots PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_typed PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_unhashable PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_decorator_wrapped PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_lock_nospace PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_nospace PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_shared_cache PASSED
-tests/test_cachedmethod.py::CacheMethodTest::test_value_too_large PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_attributes PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_clear PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_cond PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_cond_clear PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_cond_error PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_cond_info PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_different_names PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_immutable_dict PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_info PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_lock PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_lock_clear PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_lock_cond_info PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_lock_info PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_no_set_name PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_slots PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_typed PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_unhashable PASSED
-tests/test_cachedmethod.py::DictMethodTest::test_decorator_wrapped PASSED
-tests/test_cachedmethod.py::WeakRefMethodTest::test_weakref PASSED
-tests/test_cachedmethod.py::NoneMethodTest::test_none_info PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_clear PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_clear_condition PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_clear_locked PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_condition PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_locked PASSED
-tests/test_classmethod.py::CachedClassMethodTest::test_typed PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_attributes PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_attributes_cond PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_attributes_lock PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_clear PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_clear_condition PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_clear_locked PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_condition_dict PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_condition_nocache PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_condition_nospace PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_dict PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_locked_dict PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_locked_nocache PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_locked_nospace PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_lru PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_nocache PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_nospace PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_typedmethod_dict PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_typedmethod_lru PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_unhashable PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_weakref PASSED
+tests/test_cachedmethod.py::CachedMethodTest::test_wrapped PASSED
+tests/test_cachedmethod.py::CachedClassMethodTest::test PASSED
+tests/test_cachedmethod.py::CachedClassMethodTest::test_typedmethod PASSED
 tests/test_fifo.py::FIFOCacheTest::test_defaults PASSED
 tests/test_fifo.py::FIFOCacheTest::test_delete PASSED
 tests/test_fifo.py::FIFOCacheTest::test_fifo PASSED
@@ -258,6 +230,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_lru PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
-======== 251 passed ========
+======== 223 passed ========
   py$(PYV): OK
   congratulations :)
