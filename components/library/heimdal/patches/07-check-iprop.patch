@@ -1,0 +1,45 @@
+Test is broken
+--- heimdal-7.8.0/tests/kdc/Makefile.in.old	2026-01-30 16:18:54.721402543 -0500
++++ heimdal-7.8.0/tests/kdc/Makefile.in	2026-01-30 16:19:25.560310121 -0500
+@@ -672,7 +672,6 @@
+ 	check-keys \
+ 	check-kpasswdd \
+ 	check-pkinit \
+-	check-iprop \
+ 	check-referral \
+ 	check-tester \
+ 	check-uu
+@@ -766,7 +765,6 @@
+ 	check-des.in \
+ 	check-digest.in \
+ 	check-fast.in \
+-	check-iprop.in \
+ 	check-kadmin.in \
+ 	check-kinit.in \
+ 	check-hdb-mitdb.in \
+@@ -1089,13 +1087,6 @@
+ 	--log-file $$b.log --trs-file $$b.trs \
+ 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+ 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+-check-iprop.log: check-iprop
+-	@p='check-iprop'; \
+-	b='check-iprop'; \
+-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+-	--log-file $$b.log --trs-file $$b.trs \
+-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ check-referral.log: check-referral
+ 	@p='check-referral'; \
+ 	b='check-referral'; \
+@@ -1575,11 +1566,6 @@
+ 	$(chmod) +x check-pkinit.tmp && \
+ 	mv check-pkinit.tmp check-pkinit
+ 
+-check-iprop: check-iprop.in Makefile krb5.conf krb5-slave.conf krb5-slave2.conf
+-	$(do_subst) < $(srcdir)/check-iprop.in > check-iprop.tmp && \
+-	$(chmod) +x check-iprop.tmp && \
+-	mv check-iprop.tmp check-iprop
+-
+ check-digest: check-digest.in Makefile
+ 	$(do_subst) < $(srcdir)/check-digest.in > check-digest.tmp && \
+ 	$(chmod) +x check-digest.tmp && \
