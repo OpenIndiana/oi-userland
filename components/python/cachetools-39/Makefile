@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project cachetools
+#   $WS_TOOLS/python-integrate-project -d python/cachetools-39 cachetools
 #
 
 BUILD_STYLE = pyproject
@@ -19,21 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cachetools
-HUMAN_VERSION =			7.0.0
+HUMAN_VERSION =			6.2.6
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Extensible memoizing collections and decorators
 COMPONENT_PROJECT_URL =		https://github.com/tkem/cachetools/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a9abf18ff3b86c7d05b27ead412e235e16ae045925e531fae38d5fada5ed5b08
+	sha256:16c33e1f276b9a9c0b49ab5782d901e3ad3de0dd6da9bf9bcd29ac5672f2f9e6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by cachetools >= 7.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# cachetools >= 7.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
