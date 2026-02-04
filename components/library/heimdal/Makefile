@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         heimdal
 COMPONENT_VERSION=      7.8.0
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      Kerberos 5 implementation
 COMPONENT_PROJECT_URL=  https://heimdal.software/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -24,7 +25,7 @@ COMPONENT_ARCHIVE_HASH= sha256:fd87a207846fa650fd377219adc4b8a8193e55904d8a752c2
 COMPONENT_ARCHIVE_URL=  https://github.com/heimdal/heimdal/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         system/library/heimdal
 COMPONENT_CLASSIFICATION=System/Libraries
-COMPONENT_LICENSE=      BSD-2-Clause, BSD-3-Clause, HPND-export-US, HPND-export2-US
+COMPONENT_LICENSE=      BSD-2-Clause AND BSD-3-Clause AND HPND-export-US AND HPND-export2-US
 COMPONENT_LICENSE_FILE= heimdal.license
 
 DROP_STATIC_LIBRARIES = yes
@@ -35,8 +36,10 @@ CFLAGS += -Wno-error=implicit-function-declaration
 
 CONFIGURE_OPTIONS += --bindir=/usr/heimdal/bin
 CONFIGURE_OPTIONS += --includedir=/usr/heimdal/include
+CONFIGURE_OPTIONS += --infodir=/usr/heimdal/share/info
 CONFIGURE_OPTIONS += --libdir=/usr/heimdal/lib/$(MACH64)
 CONFIGURE_OPTIONS += --libexecdir=/usr/heimdal/libexec
+CONFIGURE_OPTIONS += --mandir=/usr/heimdal/share/man
 CONFIGURE_OPTIONS += --sbindir=/usr/heimdal/sbin
 CONFIGURE_OPTIONS += --sysconfdir=/etc/hemidal
 CONFIGURE_OPTIONS += --disable-afs-support
@@ -49,26 +52,10 @@ CONFIGURE_OPTIONS += --without-krb4
 
 COMPONENT_INSTALL_ENV += INSTALL_CATPAGES=no
 
-# remove unneeded files and rename conflicting files
+# Fix gmake publish error "Error: packaged texinfo directory file (%<action.path>)"
+
 COMPONENT_POST_INSTALL_ACTION += ( \
-	$(RM) $(PROTOUSRBINDIR)/bsearch ; \
-	$(RM) $(PROTOUSRBINDIR)/idn-lookup ; \
-	$(RM) $(PROTOUSRSHAREDIR)/info/dir ; \
-	$(RM) $(PROTOUSRSHAREMAN1DIR)/bsearch.1 ; \
-	$(RM) $(PROTOUSRSHAREMAN1DIR)/idn-lookup.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/kadmin.1 $(PROTOUSRSHAREMAN1DIR)/kadmin.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/kdestroy.1 $(PROTOUSRSHAREMAN1DIR)/kdestrooy.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/kinit.1 $(PROTOUSRSHAREMAN1DIR)/kinit.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/klist.1 $(PROTOUSRSHAREMAN1DIR)/klist.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/kpasswd.1 $(PROTOUSRSHAREMAN1DIR)/kpasswd.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/krb5-config.1 $(PROTOUSRSHAREMAN1DIR)/krb5-config.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/kswitch.1 $(PROTOUSRSHAREMAN1DIR)/kswitch.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/ktutil.1 $(PROTOUSRSHAREMAN1DIR)/ktutil.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/pagsh.1 $(PROTOUSRSHAREMAN1DIR)/pagsh.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN1DIR)/su.1 $(PROTOUSRSHAREMAN1DIR)/su.heimdal.1 ; \
-	$(MV) $(PROTOUSRSHAREMAN5DIR)/krb5.conf.5 $(PROTOUSRSHAREMAN5DIR)/krb5.conf.heimdal.5 ; \
-	$(MV) $(PROTOUSRSHAREMAN5DIR)/mech.5 $(PROTOUSRSHAREMAN5DIR)/mech.heimdal.5 ; \
-	$(MV) $(PROTOUSRSHAREMAN5DIR)/qop.5 $(PROTOUSRSHAREMAN5DIR)/qop.heimdal.5 ; \
+	$(RM) $(PROTO_DIR)/usr/heimdal/share/info/dir ; \
 	)
 
 # Auto-generated dependencies
