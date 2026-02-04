@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asgiref
-HUMAN_VERSION =			3.11.0
+HUMAN_VERSION =			3.11.1
 COMPONENT_SUMMARY =		ASGI specs, helper code, and adapters
 COMPONENT_PROJECT_URL =		https://github.com/django/asgiref/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:13acff32519542a1736223fb79a715acdebe24286d98e8b164a73085f40da2c4
+	sha256:5f184dc43b7e763efe848065441eac62229c9f7b0475f41f80e207a114eda4ce
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
