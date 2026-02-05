@@ -11,36 +11,3 @@ mostly backport from upstream https://github.com/open62541/open62541.git
      int res = UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
                              (const char*)&enableReuseVal, sizeof(enableReuseVal));
      res |= UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,
-@@ -125228,7 +125228,7 @@
- } MultiCastType;
- 
- typedef union {
--#ifdef UA_ARCHITECTURE_WIN32
-+#if !defined(ip_mreqn)
-     struct ip_mreq ipv4;
- #else
-     struct ip_mreqn ipv4;
-@@ -125384,10 +125384,12 @@
-         return UA_STATUSCODE_BADINTERNALERROR;
- 
-     /* Write the interface index */
--    if(info->ai_family == AF_INET)
-+    if(info->ai_family == AF_INET) {
-+#if defined(ip_mreqn)
-         req->ipv4.imr_ifindex = idx;
-+#endif
- #if UA_IPV6
--    else /* if(info->ai_family == AF_INET6) */
-+     } else /* if(info->ai_family == AF_INET6) */
-         req->ipv6.ipv6mr_interface = idx;
- #endif
-     return UA_STATUSCODE_GOOD;
-@@ -125402,7 +125404,7 @@
-     if(info->ai_family == AF_INET) {
-         struct sockaddr_in *sin = (struct sockaddr_in *)info->ai_addr;
-         req->ipv4.imr_multiaddr = sin->sin_addr;
--#ifdef UA_ARCHITECTURE_WIN32
-+#if !defined(ip_mreqn)
-         req->ipv4.imr_interface.s_addr = htonl(INADDR_ANY); /* default ANY */
- #else
-         req->ipv4.imr_address.s_addr = htonl(INADDR_ANY); /* default ANY */
