@@ -76,7 +76,7 @@ METACPAN_DATA=$( (printf '{"query":{"bool":{"must":[{"term":{"maturity":"release
 	printf '"size":1,"sort":[{"date":"desc"}],' ; \
 	printf '"fields":["distribution","version","author","download_url","abstract"]}') \
 		| $CURL "$APIURL/release/_search" -d @- \
-		| /usr/bin/jq -r '.hits.hits[].fields')
+		| /usr/bin/jq -r '.hits.hits[0].fields')
 if (($? != 0)) ; then
 	printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
 	exit 1
@@ -89,7 +89,7 @@ if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 		printf '"must_not":{"term":{"status":"backpan"}}}},' ; \
 		printf '"size":1,"fields":["distribution"]}') \
 			| $CURL "$APIURL/module/_search" -d @- \
-			| /usr/bin/jq -r '.hits.hits[].fields.distribution')
+			| /usr/bin/jq -r '.hits.hits[0].fields.distribution')
 	if (($? != 0)) || [[ -z "$DISTRIBUTION" || "$DISTRIBUTION" == "null" ]] ; then
 		printf 'FATAL: Failed to find distribution for %s at MetaCPAN\n' "$MODULE" >&2
 		exit 1
@@ -100,7 +100,7 @@ if [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 		printf '"size":1,"sort":[{"date":"desc"}],' ; \
 		printf '"fields":["distribution","version","author","download_url","abstract"]}') \
 			| $CURL "$APIURL/release/_search" -d @- \
-			| /usr/bin/jq -r '.hits.hits[].fields')
+			| /usr/bin/jq -r '.hits.hits[0].fields')
 	if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 		printf 'FATAL: Failed to get distribution info from MetaCPAN\n' >&2
 		exit 1
@@ -215,7 +215,7 @@ if [[ -z "$DOWNLOAD_URL" ]] ; then
 			printf '"size":1,' ; \
 			printf '"fields":["author","download_url","abstract"]}') \
 				| $CURL "$APIURL/release/_search" -d @- \
-				| /usr/bin/jq -r '.hits.hits[].fields')
+				| /usr/bin/jq -r '.hits.hits[0].fields')
 		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
 			exit 1
@@ -351,7 +351,7 @@ if [[ -z "$SUMMARY" ]] ; then
 			printf '{"term":{"version":"%s"}}]}},' "$VERSION" ; \
 			printf '"size":1,"fields":["abstract"]}') \
 				| $CURL "$APIURL/release/_search" -d @- \
-				| /usr/bin/jq -r '.hits.hits[].fields')
+				| /usr/bin/jq -r '.hits.hits[0].fields')
 		if (($? != 0)) || [[ -z "$METACPAN_DATA" || "$METACPAN_DATA" == "null" ]] ; then
 			printf 'FATAL: Failed to get data from MetaCPAN\n' >&2
 			exit 1
