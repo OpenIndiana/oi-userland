@@ -17,14 +17,13 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
-COMPONENT_VERSION= 2.89.13
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 2.90.2
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://trealla-prolog.github.io/trealla
 COMPONENT_ARCHIVE_URL= https://github.com/trealla-prolog/trealla/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c9269b0d361ce53be4c877ba47d70caf97ba227ff3d7873190ae22a2dcf2e64b
+COMPONENT_ARCHIVE_HASH= sha256:fff45d883dd9bee73d4b2eadd02cb0d48674470978f3c4d7bf03e65b310a1d3f
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_FMRI= runtime/$(COMPONENT_NAME)-prolog
 COMPONENT_LICENSE= MIT
@@ -38,13 +37,10 @@ COMPONENT_POST_UNPACK_ACTION += $(GSED) -i -e 's|0\.0\.0|$(COMPONENT_VERSION)|' 
 
 # Fill the prototype area with the binary and some files from the sources
 COMPONENT_POST_INSTALL_ACTION += ( \
-	$(MKDIR) -p $(PROTOUSRLIBDIR)/trealla/library ; \
-	$(MKDIR) -p $(PROTOUSRLIBDIR)/trealla/docs/samples ; \
-	$(CP) $(BUILD_DIR_64)/tpl $(PROTOUSRLIBDIR)/trealla/ ; \
-	$(CP) $(BUILD_DIR_64)/library/* $(PROTOUSRLIBDIR)/trealla/library/ ; \
-	$(CP) $(SOURCE_DIR)/docs/* $(PROTOUSRLIBDIR)/trealla/docs/ ; \
-	$(CP) $(SOURCE_DIR)/samples/* $(PROTOUSRLIBDIR)/trealla/docs/samples/ ; \
-	$(CP) $(SOURCE_DIR)/README.md $(PROTOUSRLIBDIR)/trealla/docs/ ; ) ;
+	$(MKDIR) -p $(PROTOUSRSHAREDIR)/trealla/docs/samples ; \
+	$(CP) $(SOURCE_DIR)/docs/* $(PROTOUSRSHAREDIR)/trealla/docs/ ; \
+	$(CP) $(SOURCE_DIR)/samples/* $(PROTOUSRSHAREDIR)/trealla/docs/samples/ ; \
+	$(CP) $(SOURCE_DIR)/README.md $(PROTOUSRSHAREDIR)/trealla/docs/ ; ) ;
 
 # Manually added dependencies
 TEST_REQUIRED_PACKAGES += developer/debug/valgrind
