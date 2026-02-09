@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress-Zstd
-HUMAN_VERSION =			2.214
+HUMAN_VERSION =			2.217
 COMPONENT_SUMMARY =		Write zstd files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cd18b6cdf98711fc3d251139bf6481a5ccd3c45ce5de94e6c36855291ebea18e
+	sha256:6fc52453cb5fef4e47629d1ba6b7f4ea9f67069c3b6ef913aff43b5c0adf478b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
