@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		autopage
-HUMAN_VERSION =			0.5.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.6.0
 COMPONENT_SUMMARY =		A library to provide automatic paging for console output
 COMPONENT_PROJECT_URL =		https://github.com/zaneb/autopage
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:826996d74c5aa9f4b6916195547312ac6384bac3810b8517063f293248257b72
+	sha256:42d07de90de63e83762828028bfd56d19906a18f7c951ef6eef3e9ad48a3071d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
