@@ -50,7 +50,7 @@ testVerboseOption (test_apis.TestCliOptionParsing.testVerboseOption) ... ok
 testBooleansParsing (test_apis.TestConfigParsing.testBooleansParsing) ... ok
 testInvalidBooleansParsing (test_apis.TestConfigParsing.testInvalidBooleansParsing) ... ok
 testPreserveNone (test_apis.TestConfigParsing.testPreserveNone) ... ok
-testFileNames (test_apis.TestConvertFile.testFileNames) ... $(@D)/markdown/core.py:436: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
+testFileNames (test_apis.TestConvertFile.testFileNames) ... $(@D)/markdown/core.py:450: DeprecationWarning: codecs.open() is deprecated. Use open() instead.
   output_file = codecs.open(output, "w",
 ok
 testFileObjects (test_apis.TestConvertFile.testFileObjects) ... ok
@@ -424,6 +424,8 @@ test_hr_start_and_end (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_h
 test_hr_with_content (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_hr_with_content) ... ok
 test_inline_script_tags (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_inline_script_tags) ... ok
 test_invalid_comment_end (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_invalid_comment_end) ... ok
+test_issue_1590 (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_issue_1590)
+Test case with comments in table for issue #1590. ... ok
 test_multiline_attributes (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_multiline_attributes) ... ok
 test_multiline_markdown_with_code_span (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_multiline_markdown_with_code_span) ... ok
 test_multiline_raw (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_multiline_raw) ... ok
@@ -519,8 +521,12 @@ test_script_tags (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_script
 test_startendtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_startendtag) ... ok
 test_startendtag_with_attrs (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_startendtag_with_attrs) ... ok
 test_startendtag_with_space (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_startendtag_with_space) ... ok
+test_stress_comment_handling (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_stress_comment_handling)
+Stress test the comment handling. ... ok
 test_text_links_ignored (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_text_links_ignored) ... ok
 test_unclosed_comment (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unclosed_comment) ... ok
+test_unclosed_endtag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unclosed_endtag)
+Ensure unclosed end tag does not have side effects. ... ok
 test_unclosed_script_tag (test_syntax.blocks.test_html_blocks.TestHTMLBlocks.test_unclosed_script_tag) ... ok
 test_2_paragraphs_long_line (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_2_paragraphs_long_line) ... ok
 test_blank_line_before_paragraph (test_syntax.blocks.test_paragraphs.TestParagraphBlocks.test_blank_line_before_paragraph) ... ok
@@ -748,6 +754,8 @@ test_hr_start_and_end (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHT
 test_hr_with_content (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_hr_with_content) ... ok
 test_inline_script_tags (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_inline_script_tags) ... ok
 test_invalid_comment_end (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_invalid_comment_end) ... ok
+test_issue_1590 (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_issue_1590)
+Test case with comments in table for issue #1590. ... ok
 test_multiline_attributes (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_multiline_attributes) ... ok
 test_multiline_markdown_with_code_span (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_multiline_markdown_with_code_span) ... ok
 test_multiline_raw (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_multiline_raw) ... ok
@@ -843,8 +851,12 @@ test_script_tags (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.te
 test_startendtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_startendtag) ... ok
 test_startendtag_with_attrs (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_startendtag_with_attrs) ... ok
 test_startendtag_with_space (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_startendtag_with_space) ... ok
+test_stress_comment_handling (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_stress_comment_handling)
+Stress test the comment handling. ... ok
 test_text_links_ignored (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_text_links_ignored) ... ok
 test_unclosed_comment (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unclosed_comment) ... ok
+test_unclosed_endtag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unclosed_endtag)
+Ensure unclosed end tag does not have side effects. ... ok
 test_unclosed_script_tag (test_syntax.extensions.test_md_in_html.TestDefaultwMdInHTML.test_unclosed_script_tag) ... ok
 test_complex_nested_case (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_complex_nested_case) ... ok
 test_complex_nested_case_whitespace (test_syntax.extensions.test_md_in_html.TestMdInHTML.test_complex_nested_case_whitespace) ... ok
@@ -1121,7 +1133,7 @@ test_markdown_nested_in_inline_comment (test_syntax.inline.test_raw_html.TestRaw
 test_noname_tag (test_syntax.inline.test_raw_html.TestRawHtml.test_noname_tag) ... ok
 
 ----------------------------------------------------------------------
-Ran 1033 tests
+Ran 1039 tests
 
 OK (skipped=64)
   py$(PYV): OK
