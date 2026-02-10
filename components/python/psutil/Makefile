@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		psutil
-HUMAN_VERSION =			7.2.1
+HUMAN_VERSION =			7.2.2
 COMPONENT_SUMMARY =		Cross-platform lib for process and system monitoring.
 COMPONENT_PROJECT_URL =		https://github.com/giampaolo/psutil
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f7583aec590485b43ca601dd9cea0dcd65bd7bb21d30ef4ddbf4ea6b5ed1bdd3
+	sha256:0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
