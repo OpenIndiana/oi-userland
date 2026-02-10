@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		illumos-closed
 COMPONENT_VERSION=	5.11
-COMPONENT_REVISION=	7
+COMPONENT_REVISION=	8
 COMPONENT_SUMMARY=	illumos-closed - illumos closed binaries
 COMPONENT_PROJECT_URL=	https://www.openindiana.org/
 COMPONENT_FMRI=		developer/illumos-closed
@@ -43,7 +43,7 @@ COMPONENT_ARCHIVE_HASH_1.sparc= \
 COMPONENT_ARCHIVE_URL_2= \
     https://dlc.openindiana.aurora-opencloud.org/SPARC/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_HASH_2.sparc= \
-    sha256:6dfa3569dd1ca2e6168e02b9b1e7c224ea7ae4d868955a1b5deb1927e20077c0
+    sha256:43c01c62c27e7a2270ff12fc5311d9899aca491c0b77e6c67d5462398128ee8d
 endif
 COMPONENT_ARCHIVE_HASH_1=       $(COMPONENT_ARCHIVE_HASH_1.$(MACH))
 COMPONENT_ARCHIVE_HASH_2=       $(COMPONENT_ARCHIVE_HASH_2.$(MACH))
