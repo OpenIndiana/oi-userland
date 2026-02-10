@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 591 items / 8 deselected / 583 selected
+collecting ... collected 597 items / 8 deselected / 589 selected
 
 tests/test_aix.py::AIXSpecificTestCase::test_cpu_count_logical SKIPPED
 tests/test_aix.py::AIXSpecificTestCase::test_cpu_stats SKIPPED (AIX ...)
@@ -115,7 +115,6 @@ tests/test_contracts.py::TestSystemAPITypes::test_net_io_counters PASSED
 tests/test_contracts.py::TestSystemAPITypes::test_sensors_fans SKIPPED
 tests/test_contracts.py::TestSystemAPITypes::test_sensors_temperatures SKIPPED
 tests/test_contracts.py::TestSystemAPITypes::test_users PASSED
-tests/test_contracts.py::TestProcessWaitType::test_negative_signal PASSED
 tests/test_heap.py::TestHeap::test_heap_used SKIPPED (heap_info() no...)
 tests/test_heap.py::TestHeap::test_mmap_used SKIPPED (heap_info() no...)
 tests/test_heap.py::TestHeapWindows::test_heap_count SKIPPED (heap_i...)
@@ -311,9 +310,6 @@ tests/test_posix.py::TestProcess::test_username PASSED
 tests/test_posix.py::TestProcess::test_username_no_resolution PASSED
 tests/test_posix.py::TestProcess::test_vsz_memory PASSED
 tests/test_posix.py::TestSystemAPIs::test_nic_names SKIPPED (unrelia...)
-tests/test_posix.py::TestSystemAPIs::test_os_waitpid_bad_ret_status PASSED
-tests/test_posix.py::TestSystemAPIs::test_os_waitpid_eintr PASSED
-tests/test_posix.py::TestSystemAPIs::test_os_waitpid_let_raise PASSED
 tests/test_posix.py::TestSystemAPIs::test_pid_exists_let_raise PASSED
 tests/test_posix.py::TestSystemAPIs::test_pids PASSED
 tests/test_posix.py::TestSystemAPIs::test_users PASSED
@@ -386,15 +382,25 @@ tests/test_process.py::TestProcess::test_threads PASSED
 tests/test_process.py::TestProcess::test_threads_2 PASSED
 tests/test_process.py::TestProcess::test_uids PASSED
 tests/test_process.py::TestProcess::test_username PASSED
-tests/test_process.py::TestProcess::test_wait_exited PASSED
-tests/test_process.py::TestProcess::test_wait_non_children PASSED
-tests/test_process.py::TestProcess::test_wait_stopped PASSED
-tests/test_process.py::TestProcess::test_wait_timeout PASSED
-tests/test_process.py::TestProcess::test_wait_timeout_nonblocking PASSED
 tests/test_process.py::TestProcess::test_weird_environ PASSED
 tests/test_process.py::TestProcess::test_zombie_process PASSED
 tests/test_process.py::TestProcess::test_zombie_process_is_running_w_exc PASSED
 tests/test_process.py::TestProcess::test_zombie_process_status_w_exc PASSED
+tests/test_process.py::TestProcessWait::test_kqueue_control_errors SKIPPED
+tests/test_process.py::TestProcessWait::test_kqueue_errors SKIPPED (...)
+tests/test_process.py::TestProcessWait::test_kqueue_race SKIPPED (MA...)
+tests/test_process.py::TestProcessWait::test_os_waitpid_bad_ret_status PASSED
+tests/test_process.py::TestProcessWait::test_os_waitpid_error PASSED
+tests/test_process.py::TestProcessWait::test_pidfd_open_errors SKIPPED
+tests/test_process.py::TestProcessWait::test_pidfd_open_race SKIPPED
+tests/test_process.py::TestProcessWait::test_wait_errors PASSED
+tests/test_process.py::TestProcessWait::test_wait_exited PASSED
+tests/test_process.py::TestProcessWait::test_wait_non_children PASSED
+tests/test_process.py::TestProcessWait::test_wait_signaled PASSED
+tests/test_process.py::TestProcessWait::test_wait_stopped PASSED
+tests/test_process.py::TestProcessWait::test_wait_timeout PASSED
+tests/test_process.py::TestProcessWait::test_wait_timeout_nonblocking PASSED
+tests/test_process.py::TestProcessWait::test_wait_zombie PASSED
 tests/test_process.py::TestPopen::test__getattribute__ PASSED
 tests/test_process.py::TestPopen::test_ctx_manager PASSED
 tests/test_process.py::TestPopen::test_kill_terminate PASSED
@@ -589,4 +595,4 @@ tests/test_windows.py::RemoteProcessTestCase::test_environ_64 SKIPPED
 tests/test_windows.py::TestServices::test_win_service_get SKIPPED (W...)
 tests/test_windows.py::TestServices::test_win_service_iter SKIPPED (...)
 
-======== 285 passed, 298 skipped, 8 deselected ========
+======== 286 passed, 303 skipped, 8 deselected ========
