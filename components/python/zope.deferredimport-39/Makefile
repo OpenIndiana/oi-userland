@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.deferredimport zope_deferredimport
+#   $WS_TOOLS/python-integrate-project -d python/zope.deferredimport-39 zope_deferredimport
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_deferredimport
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			6.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		zope.deferredimport allows you to perform imports names that will only be resolved when used in the code.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9bd1013753859e189dd185bf1398eb44d33b0a8216ac10ce069ea8ddf946de47
+	sha256:dcceab59470497adb1bf32051a12355cde4e7f629ae1d21ac16ba830bc717fed
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.deferredimport >= 6.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.deferredimport >= 6.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
