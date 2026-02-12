@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-Server
-HUMAN_VERSION =			2.016
+HUMAN_VERSION =			2.017
 COMPONENT_SUMMARY =		Extensible Perl internet server
 COMPONENT_CPAN_AUTHOR =		BBB
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6f82a2a36a715b6bfe0d1ca02d8ac4de695bcbdd0b39f3aa04be3c8135d3a47
+	sha256:7b36d5d234d1beca248a1e63dff3606cbae9888cc5ff91c70d418bdca9111483
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
