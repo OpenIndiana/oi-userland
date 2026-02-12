@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		MIME-Lite
-HUMAN_VERSION =			3.035
+HUMAN_VERSION =			3.037
 COMPONENT_SUMMARY =		low-calorie MIME generator
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f5ca81e248de17e4c69bcb3671433985258cfe84447f94bb17c7eb8c77c4af13
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
+	sha256:2c77d33ff73e4d37e6fd5020e53968b97452d33e307932afbf10a84c031ebadc
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -32,7 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 # Auto-generated dependencies
 REQUIRED_PACKAGES.perl += library/perl-5/email-date-format
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/libnet
 REQUIRED_PACKAGES.perl += library/perl-5/mailtools
-REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
 REQUIRED_PACKAGES.perl += library/perl-5/mime-types
 REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
