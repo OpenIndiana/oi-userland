@@ -270,8 +270,9 @@ ok 51 - native object mode attributes work with --cached
 ok 52 - check object mode attributes work for submodules
 ok 53 - we do not allow user defined builtin_* attributes
 ok 54 - user defined builtin_objectmode values are ignored
-# passed all 54 test(s)
-1..54
+ok 55 - deep macro recursion
+# passed all 55 test(s)
+1..55
 *** t0004-unwritable.sh ***
 ok 1 - setup
 ok 2 - write-tree should notice unwritable repository
@@ -5908,8 +5909,9 @@ ok 43 - git pack-refs --all --auto scales with size of packed-refs
 ok 44 - git maintenance run --task=pack-refs --auto does not repack below 16 refs without packed-refs
 ok 45 - git maintenance run --task=pack-refs --auto does not repack below 16 refs with small packed-refs
 ok 46 - git maintenance run --task=pack-refs --auto scales with size of packed-refs
-# passed all 46 test(s)
-1..46
+ok 47 - pack-refs does not store invalid peeled tag value
+# passed all 47 test(s)
+1..47
 *** t0602-reffiles-fsck.sh ***
 ok 1 - ref name should be checked
 ok 2 - ref name check should be adapted into fsck messages
@@ -5932,8 +5934,10 @@ ok 18 - packed-refs content should be checked
 ok 19 - packed-ref with sorted trait should be checked
 ok 20 - packed-ref without sorted trait should not be checked
 ok 21 - --[no-]references option should apply to fsck
-# passed all 21 test(s)
-1..21
+ok 22 - complains about broken root ref
+ok 23 - complains about broken root ref in worktree
+# passed all 23 test(s)
+1..23
 *** t0610-reftable-basics.sh ***
 ok 1 - pack-refs does not crash with -h
 ok 2 - init: creates basic reftable structures
@@ -6025,8 +6029,9 @@ ok 87 - worktree: can create shared and per-worktree ref in one transaction
 ok 88 - worktree: can access common refs
 ok 89 - worktree: adds worktree with detached HEAD
 ok 90 - fetch: accessing FETCH_HEAD special ref works
-# passed all 90 test(s)
-1..90
+ok 91 - writes do not persist peeled value for invalid tags
+# passed all 91 test(s)
+1..91
 *** t0611-reftable-httpd.sh ***
 1..0 # SKIP no web server found at ''
 *** t0612-reftable-jgit-compatibility.sh ***
@@ -6051,8 +6056,10 @@ ok 2 - table name foo-bar-e4d12d59.ref should be checked
 ok 3 - table name 0x00000000zzzz-0x00000000zzzz-e4d12d59.ref should be checked
 ok 4 - table name 0x000000000001-0x000000000002-e4d12d59.abc should be checked
 ok 5 - table name 0x000000000001-0x000000000002-e4d12d59.refabc should be checked
-# passed all 5 test(s)
-1..5
+ok 6 - worktree stacks can be verified
+ok 7 - invalid symref gets reported
+# passed all 7 test(s)
+1..7
 *** t1000-read-tree-m-3way.sh ***
 ok 1 - adding test file NN and Z/NN
 ok 2 - adding test file ND and Z/ND
@@ -8066,6 +8073,12 @@ ok 4 - dies when --default cannot be parsed
 ok 5 - does not allow --default without --get
 # passed all 5 test(s)
 1..5
+*** t1311-config-optional.sh ***
+ok 1 - var=:(optional)path-exists
+ok 2 - missing optional value is ignored
+ok 3 - missing optional value is ignored in multi-value config
+# passed all 3 test(s)
+1..3
 *** t1350-config-hooks-path.sh ***
 ok 1 - set up a pre-commit hook in core.hooksPath
 ok 2 - Check that various forms of specifying core.hooksPath work
@@ -9595,8 +9608,9 @@ ok 43 - git refs optimize --all --auto scales with size of packed-refs
 ok 44 - git maintenance run --task=refs optimize --auto does not repack below 16 refs without packed-refs
 ok 45 - git maintenance run --task=refs optimize --auto does not repack below 16 refs with small packed-refs
 ok 46 - git maintenance run --task=refs optimize --auto scales with size of packed-refs
-# passed all 46 test(s)
-1..46
+ok 47 - pack-refs does not store invalid peeled tag value
+# passed all 47 test(s)
+1..47
 *** t1500-rev-parse.sh ***
 ok 1 - setup
 ok 2 - toplevel: --is-bare-repository
@@ -10683,8 +10697,10 @@ ok 28 - git-repo-info outputs data even if there is an invalid field
 ok 29 - git-repo-info aborts when requesting an invalid format
 ok 30 - -z uses nul-terminated format
 ok 31 - git repo info uses the last requested format
-# passed all 31 test(s)
-1..31
+ok 32 - git repo info --all returns all key-value pairs
+ok 33 - git repo info --all <key> aborts
+# passed all 33 test(s)
+1..33
 *** t1901-repo-structure.sh ***
 ok 1 - empty repository
 ok 2 - repository with references and objects
@@ -11722,31 +11738,32 @@ ok 13 - not prune proper worktrees inside linked worktree with relative paths
 ok 1 - setup
 ok 2 - rev-parse --git-common-dir on main worktree
 ok 3 - rev-parse --git-path objects linked worktree
-ok 4 - "list" all worktrees from main
-ok 5 - "list" all worktrees from linked
-ok 6 - "list" all worktrees --porcelain
-ok 7 - "list" all worktrees --porcelain -z
-ok 8 - "list" -z fails without --porcelain
-ok 9 - "list" all worktrees with locked annotation
-ok 10 - "list" all worktrees --porcelain with locked
-ok 11 - "list" all worktrees --porcelain with locked reason newline escaped
-ok 12 - "list" all worktrees with prunable annotation
-ok 13 - "list" all worktrees --porcelain with prunable
-ok 14 - "list" all worktrees with prunable consistent with "prune"
-ok 15 - "list" --verbose and --porcelain mutually exclusive
-ok 16 - "list" all worktrees --verbose with locked
-ok 17 - "list" all worktrees --verbose with prunable
-ok 18 - bare repo setup
-ok 19 - "list" all worktrees from bare main
-ok 20 - "list" all worktrees --porcelain from bare main
-ok 21 - "list" all worktrees from linked with a bare main
-ok 22 - bare repo cleanup
-ok 23 - broken main worktree still at the top
-ok 24 - linked worktrees are sorted
-ok 25 - linked worktrees with relative paths are shown with absolute paths
-ok 26 - worktree path when called in .git directory
-# passed all 26 test(s)
-1..26
+ok 4 - "list" all worktrees from main core.quotepath=false
+ok 5 - "list" all worktrees from main core.quotepath=true
+ok 6 - "list" all worktrees from linked
+ok 7 - "list" all worktrees --porcelain
+ok 8 - "list" all worktrees --porcelain -z
+ok 9 - "list" -z fails without --porcelain
+ok 10 - "list" all worktrees with locked annotation
+ok 11 - "list" all worktrees --porcelain with locked
+ok 12 - "list" all worktrees --porcelain with locked reason newline escaped
+ok 13 - "list" all worktrees with prunable annotation
+ok 14 - "list" all worktrees --porcelain with prunable
+ok 15 - "list" all worktrees with prunable consistent with "prune"
+ok 16 - "list" --verbose and --porcelain mutually exclusive
+ok 17 - "list" all worktrees --verbose with locked
+ok 18 - "list" all worktrees --verbose with prunable
+ok 19 - bare repo setup
+ok 20 - "list" all worktrees from bare main
+ok 21 - "list" all worktrees --porcelain from bare main
+ok 22 - "list" all worktrees from linked with a bare main
+ok 23 - bare repo cleanup
+ok 24 - broken main worktree still at the top
+ok 25 - linked worktrees are sorted
+ok 26 - linked worktrees with relative paths are shown with absolute paths
+ok 27 - worktree path when called in .git directory
+# passed all 27 test(s)
+1..27
 *** t2403-worktree-move.sh ***
 ok 1 - setup
 ok 2 - lock main worktree
@@ -16477,21 +16494,35 @@ ok 13 - refuse to remove non-skip-worktree file from sparse dir
 *** t3650-replay-basics.sh ***
 ok 1 - setup
 ok 2 - setup bare
-ok 3 - using replay to rebase two branches, one on top of other
-ok 4 - using replay on bare repo to rebase two branches, one on top of other
-ok 5 - using replay to rebase with a conflict
-ok 6 - using replay on bare repo to rebase with a conflict
-ok 7 - using replay to perform basic cherry-pick
-ok 8 - using replay on bare repo to perform basic cherry-pick
-ok 9 - replay on bare repo fails with both --advance and --onto
-ok 10 - replay fails when both --advance and --onto are omitted
-ok 11 - using replay to also rebase a contained branch
-ok 12 - using replay on bare repo to also rebase a contained branch
-ok 13 - using replay to rebase multiple divergent branches
-ok 14 - using replay on bare repo to rebase multiple divergent branches, including contained ones
-ok 15 - merge.directoryRenames=false
-# passed all 15 test(s)
-1..15
+ok 3 - argument to --advance must be a reference
+ok 4 - --onto with invalid commit-ish
+ok 5 - option --onto or --advance is mandatory
+ok 6 - no base or negative ref gives no-replaying down to root error
+ok 7 - options --advance and --contained cannot be used together
+ok 8 - cannot advance target ... ordering would be ill-defined
+ok 9 - replaying merge commits is not supported yet
+ok 10 - using replay to rebase two branches, one on top of other
+ok 11 - using replay on bare repo to rebase two branches, one on top of other
+ok 12 - using replay to rebase with a conflict
+ok 13 - using replay on bare repo to rebase with a conflict
+ok 14 - using replay to perform basic cherry-pick
+ok 15 - using replay on bare repo to perform basic cherry-pick
+ok 16 - replay on bare repo fails with both --advance and --onto
+ok 17 - replay fails when both --advance and --onto are omitted
+ok 18 - using replay to also rebase a contained branch
+ok 19 - using replay on bare repo to also rebase a contained branch
+ok 20 - using replay to rebase multiple divergent branches
+ok 21 - using replay on bare repo to rebase multiple divergent branches, including contained ones
+ok 22 - merge.directoryRenames=false
+ok 23 - default atomic behavior updates refs directly
+ok 24 - atomic behavior in bare repository
+ok 25 - reflog message for --advance mode
+ok 26 - replay.refAction=print config option
+ok 27 - replay.refAction=update config option
+ok 28 - command-line --ref-action overrides config
+ok 29 - invalid replay.refAction value
+# passed all 29 test(s)
+1..29
 *** t3700-add.sh ***
 ok 1 - Test of git add
 ok 2 - Test with no pathspecs
@@ -16549,9 +16580,10 @@ ok 53 - git add --chmod --dry-run reports error for unmatched pathspec
 ok 54 - no file status change if no pathspec is given
 ok 55 - no file status change if no pathspec is given in subdir
 ok 56 - all statuses changed in folder if . is given
-ok 57 # skip path is case-insensitive (missing CASE_INSENSITIVE_FS)
-# passed all 57 test(s)
-1..57
+ok 57 - cannot add a submodule of a different algorithm
+ok 58 # skip path is case-insensitive (missing CASE_INSENSITIVE_FS)
+# passed all 58 test(s)
+1..58
 *** t3701-add-interactive.sh ***
 ok 1 - unknown command
 ok 2 - setup (initial)
@@ -17399,12 +17431,17 @@ ok 1 - prepare reference tree
 ok 2 - prepare work tree
 ok 3 - copy detection
 ok 4 - copy detection, cached
-ok 5 - copy, limited to a subtree
-ok 6 - tweak work tree
-ok 7 - rename detection
-ok 8 - rename, limited to a subtree
-# passed all 8 test(s)
-1..8
+ok 5 - exit code of quiet copy detection
+ok 6 - exit code of quiet copy detection with --no-ext-diff
+ok 7 - copy, limited to a subtree
+ok 8 - tweak work tree
+ok 9 - copy detection, files to index
+ok 10 - copy detection, files to preloaded index
+ok 11 - tweak index
+ok 12 - rename detection
+ok 13 - rename, limited to a subtree
+# passed all 13 test(s)
+1..13
 *** t4008-diff-break-rewrite.sh ***
 ok 1 - setup
 ok 2 - change file1 with copy-edit of file0 and remove file0
@@ -17965,103 +18002,107 @@ ok 33 - status with  (different)
 ok 34 - status with  (mode differs)
 ok 35 - status with  (removing an empty file)
 ok 36 - status with  (different but equivalent)
-ok 37 - Ray Lehtiniemi's example
-ok 38 - another test, without options
-ok 39 - ignore-blank-lines: only new lines
-ok 40 - ignore-blank-lines: only new lines with space
-ok 41 - ignore-blank-lines: after change
-ok 42 - ignore-blank-lines: before change
-ok 43 - ignore-blank-lines: between changes
-ok 44 - ignore-blank-lines: between changes (with interhunkctx)
-ok 45 - ignore-blank-lines: scattered spaces
-ok 46 - ignore-blank-lines: spaces coalesce
-ok 47 - ignore-blank-lines: mix changes and blank lines
-ok 48 - check mixed spaces and tabs in indent
-ok 49 - check mixed tabs and spaces in indent
-ok 50 - check with no whitespace errors
-ok 51 - check with trailing whitespace
-ok 52 - check with space before tab in indent
-ok 53 - --check and --exit-code are not exclusive
-ok 54 - --check and --quiet are not exclusive
-ok 55 - -w and --exit-code interact sensibly
-ok 56 - -I and --exit-code interact sensibly
-ok 57 - check staged with no whitespace errors
-ok 58 - check staged with trailing whitespace
-ok 59 - check staged with space before tab in indent
-ok 60 - check with no whitespace errors (diff-index)
-ok 61 - check with trailing whitespace (diff-index)
-ok 62 - check with space before tab in indent (diff-index)
-ok 63 - check staged with no whitespace errors (diff-index)
-ok 64 - check staged with trailing whitespace (diff-index)
-ok 65 - check staged with space before tab in indent (diff-index)
-ok 66 - check with no whitespace errors (diff-tree)
-ok 67 - check with trailing whitespace (diff-tree)
-ok 68 - check with space before tab in indent (diff-tree)
-ok 69 - check with ignored trailing whitespace attr (diff-tree)
-ok 70 - check trailing whitespace (trailing-space: off)
-ok 71 - check trailing whitespace (trailing-space: on)
-ok 72 - check space before tab in indent (space-before-tab: off)
-ok 73 - check space before tab in indent (space-before-tab: on)
-ok 74 - check spaces as indentation (indent-with-non-tab: off)
-ok 75 - check spaces as indentation (indent-with-non-tab: on)
-ok 76 - ditto, but tabwidth=9
-ok 77 - check tabs and spaces as indentation (indent-with-non-tab: on)
-ok 78 - ditto, but tabwidth=10
-ok 79 - ditto, but tabwidth=20
-ok 80 - check tabs as indentation (tab-in-indent: off)
-ok 81 - check tabs as indentation (tab-in-indent: on)
-ok 82 - check tabs and spaces as indentation (tab-in-indent: on)
-ok 83 - ditto, but tabwidth=1 (must be irrelevant)
-ok 84 - check tab-in-indent and indent-with-non-tab conflict
-ok 85 - check tab-in-indent excluded from wildcard whitespace attribute
-ok 86 - line numbers in --check output are correct
-ok 87 - checkdiff detects new trailing blank lines (1)
-ok 88 - checkdiff detects new trailing blank lines (2)
-ok 89 - checkdiff allows new blank lines
-ok 90 - whitespace-only changes not reported (diff)
-ok 91 - whitespace-only changes not reported (diffstat)
-ok 92 - whitespace changes with modification reported (diffstat)
-ok 93 - whitespace-only changes reported across renames (diffstat)
-ok 94 - whitespace-only changes reported across renames
-ok 95 - rename empty
-ok 96 - combined diff with autocrlf conversion
-ok 97 - setup diff colors
-ok 98 - diff that introduces a line with only tabs
-ok 99 - diff that introduces and removes ws breakages
-ok 100 - ws-error-highlight test setup
-ok 101 - test --ws-error-highlight option
-ok 102 - test diff.wsErrorHighlight config
-ok 103 - option overrides diff.wsErrorHighlight
-ok 104 - detect moved code, complete file
-ok 105 - --color-moved with --no-ext-diff
-ok 106 - detect malicious moved code, inside file
-ok 107 - plain moved code, inside file
-ok 108 - detect blocks of moved code
-ok 109 - detect permutations inside moved code -- dimmed-zebra
-ok 110 - zebra alternate color is only used when necessary
-ok 111 - short lines of opposite sign do not get marked as moved
-ok 112 - cmd option assumes configured colored-moved
-ok 113 - no effect on diff from --color-moved with --word-diff
-ok 114 - no effect on show from --color-moved with --word-diff
-ok 115 - set up whitespace tests
-ok 116 - move detection ignoring whitespace 
-ok 117 - move detection ignoring whitespace changes
-ok 118 - move detection ignoring whitespace at eol
-ok 119 - clean up whitespace-test colors
-ok 120 - --color-moved block at end of diff output respects MIN_ALNUM_COUNT
-ok 121 - --color-moved respects MIN_ALNUM_COUNT
-ok 122 - --color-moved treats adjacent blocks as separate for MIN_ALNUM_COUNT
-ok 123 - --color-moved rewinds for MIN_ALNUM_COUNT
-ok 124 - move detection with submodules
-ok 125 - only move detection ignores white spaces
-ok 126 - compare whitespace delta across moved blocks
-ok 127 - bogus settings in move detection erroring out
-ok 128 - compare whitespace delta incompatible with other space options
-ok 129 - compare mixed whitespace delta across moved blocks
-ok 130 - combine --ignore-blank-lines with --function-context
-ok 131 - combine --ignore-blank-lines with --function-context 2
-# passed all 131 test(s)
-1..131
+ok 37 - incomplete line in both pre- and post-image context
+ok 38 - incomplete lines on both pre- and post-image
+ok 39 - fix incomplete line in pre-image
+ok 40 - new incomplete line in post-image
+ok 41 - Ray Lehtiniemi's example
+ok 42 - another test, without options
+ok 43 - ignore-blank-lines: only new lines
+ok 44 - ignore-blank-lines: only new lines with space
+ok 45 - ignore-blank-lines: after change
+ok 46 - ignore-blank-lines: before change
+ok 47 - ignore-blank-lines: between changes
+ok 48 - ignore-blank-lines: between changes (with interhunkctx)
+ok 49 - ignore-blank-lines: scattered spaces
+ok 50 - ignore-blank-lines: spaces coalesce
+ok 51 - ignore-blank-lines: mix changes and blank lines
+ok 52 - check mixed spaces and tabs in indent
+ok 53 - check mixed tabs and spaces in indent
+ok 54 - check with no whitespace errors
+ok 55 - check with trailing whitespace
+ok 56 - check with space before tab in indent
+ok 57 - --check and --exit-code are not exclusive
+ok 58 - --check and --quiet are not exclusive
+ok 59 - -w and --exit-code interact sensibly
+ok 60 - -I and --exit-code interact sensibly
+ok 61 - check staged with no whitespace errors
+ok 62 - check staged with trailing whitespace
+ok 63 - check staged with space before tab in indent
+ok 64 - check with no whitespace errors (diff-index)
+ok 65 - check with trailing whitespace (diff-index)
+ok 66 - check with space before tab in indent (diff-index)
+ok 67 - check staged with no whitespace errors (diff-index)
+ok 68 - check staged with trailing whitespace (diff-index)
+ok 69 - check staged with space before tab in indent (diff-index)
+ok 70 - check with no whitespace errors (diff-tree)
+ok 71 - check with trailing whitespace (diff-tree)
+ok 72 - check with space before tab in indent (diff-tree)
+ok 73 - check with ignored trailing whitespace attr (diff-tree)
+ok 74 - check trailing whitespace (trailing-space: off)
+ok 75 - check trailing whitespace (trailing-space: on)
+ok 76 - check space before tab in indent (space-before-tab: off)
+ok 77 - check space before tab in indent (space-before-tab: on)
+ok 78 - check spaces as indentation (indent-with-non-tab: off)
+ok 79 - check spaces as indentation (indent-with-non-tab: on)
+ok 80 - ditto, but tabwidth=9
+ok 81 - check tabs and spaces as indentation (indent-with-non-tab: on)
+ok 82 - ditto, but tabwidth=10
+ok 83 - ditto, but tabwidth=20
+ok 84 - check tabs as indentation (tab-in-indent: off)
+ok 85 - check tabs as indentation (tab-in-indent: on)
+ok 86 - check tabs and spaces as indentation (tab-in-indent: on)
+ok 87 - ditto, but tabwidth=1 (must be irrelevant)
+ok 88 - check tab-in-indent and indent-with-non-tab conflict
+ok 89 - check tab-in-indent excluded from wildcard whitespace attribute
+ok 90 - line numbers in --check output are correct
+ok 91 - checkdiff detects new trailing blank lines (1)
+ok 92 - checkdiff detects new trailing blank lines (2)
+ok 93 - checkdiff allows new blank lines
+ok 94 - whitespace-only changes not reported (diff)
+ok 95 - whitespace-only changes not reported (diffstat)
+ok 96 - whitespace changes with modification reported (diffstat)
+ok 97 - whitespace-only changes reported across renames (diffstat)
+ok 98 - whitespace-only changes reported across renames
+ok 99 - rename empty
+ok 100 - combined diff with autocrlf conversion
+ok 101 - setup diff colors
+ok 102 - diff that introduces a line with only tabs
+ok 103 - diff that introduces and removes ws breakages
+ok 104 - ws-error-highlight test setup
+ok 105 - test --ws-error-highlight option
+ok 106 - test diff.wsErrorHighlight config
+ok 107 - option overrides diff.wsErrorHighlight
+ok 108 - detect moved code, complete file
+ok 109 - --color-moved with --no-ext-diff
+ok 110 - detect malicious moved code, inside file
+ok 111 - plain moved code, inside file
+ok 112 - detect blocks of moved code
+ok 113 - detect permutations inside moved code -- dimmed-zebra
+ok 114 - zebra alternate color is only used when necessary
+ok 115 - short lines of opposite sign do not get marked as moved
+ok 116 - cmd option assumes configured colored-moved
+ok 117 - no effect on diff from --color-moved with --word-diff
+ok 118 - no effect on show from --color-moved with --word-diff
+ok 119 - set up whitespace tests
+ok 120 - move detection ignoring whitespace 
+ok 121 - move detection ignoring whitespace changes
+ok 122 - move detection ignoring whitespace at eol
+ok 123 - clean up whitespace-test colors
+ok 124 - --color-moved block at end of diff output respects MIN_ALNUM_COUNT
+ok 125 - --color-moved respects MIN_ALNUM_COUNT
+ok 126 - --color-moved treats adjacent blocks as separate for MIN_ALNUM_COUNT
+ok 127 - --color-moved rewinds for MIN_ALNUM_COUNT
+ok 128 - move detection with submodules
+ok 129 - only move detection ignores white spaces
+ok 130 - compare whitespace delta across moved blocks
+ok 131 - bogus settings in move detection erroring out
+ok 132 - compare whitespace delta incompatible with other space options
+ok 133 - compare mixed whitespace delta across moved blocks
+ok 134 - combine --ignore-blank-lines with --function-context
+ok 135 - combine --ignore-blank-lines with --function-context 2
+# passed all 135 test(s)
+1..135
 *** t4016-diff-quote.sh ***
 ok 1 - setup
 ok 2 - setup expected files
@@ -19495,10 +19536,11 @@ ok 2 - diff batches blobs
 ok 3 - diff skips same-OID blobs
 ok 4 - when fetching missing objects, diff skips GITLINKs
 ok 5 - diff with rename detection batches blobs
-ok 6 - diff does not fetch anything if inexact rename detection is not needed
-ok 7 - diff --break-rewrites fetches only if necessary, and batches blobs if it does
-# passed all 7 test(s)
-1..7
+ok 6 - diff succeeds even if entries are removed from queue
+ok 7 - diff does not fetch anything if inexact rename detection is not needed
+ok 8 - diff --break-rewrites fetches only if necessary, and batches blobs if it does
+# passed all 8 test(s)
+1..8
 *** t4068-diff-symmetric-merge-base.sh ***
 ok 1 - setup
 ok 2 - diff with one merge base
@@ -20013,8 +20055,14 @@ ok 75 - CR-LF line endings && change line && text=auto
 ok 76 - LF in repo, CRLF in worktree && change line && text=auto
 ok 77 - whitespace=fix to expand
 ok 78 - whitespace check skipped for excluded paths
-# passed all 78 test(s)
-1..78
+ok 79 - check incomplete lines (setup)
+ok 80 - incomplete context line (not an error)
+ok 81 - last line made incomplete (error)
+ok 82 - incomplete line removed at the end (not an error)
+ok 83 - incomplete line corrected at the end (not an error)
+ok 84 - incomplete line modified at the end (error)
+# passed all 84 test(s)
+1..84
 *** t4125-apply-ws-fuzz.sh ***
 ok 1 - setup
 ok 2 - nofix
@@ -21629,9 +21677,10 @@ ok 74 -  validate that -diff files are unchanged
 ok 75 -  validate that custom diff is unchanged 
 ok 76 -  validate extra file one/untracked
 ok 77 -  validate extra file two/untracked
-# passed all 77 test(s)
+ok 78 - git-archive --format=zip with bigFile delta chains
+# passed all 78 test(s)
 # SKIP no web server found at ''
-1..77
+1..78
 *** t5004-archive-corner-cases.sh ***
 ok 1 - create commit with empty tree and fake empty tar
 ok 2 - tar archive of commit with empty tree
@@ -21839,8 +21888,9 @@ ok 32 - index-pack --strict warns upon missing tagger in tag
 ok 33 - index-pack --fsck-objects also warns upon missing tagger in tag
 ok 34 - index-pack -v --stdin produces progress for both phases
 ok 35 - too-large packs report the breach
-# passed all 35 test(s)
-1..35
+ok 36 - index-pack --fsck-objects outside of a repo
+# passed all 36 test(s)
+1..36
 *** t5303-pack-corruption-resilience.sh ***
 ok 1 - initial setup validation
 ok 2 - create corruption in header of first object
@@ -22466,14 +22516,7 @@ ok 7 - check normal git operations: one v2 pack
 ok 8 - corrupt idx reports errors
 ok 9 - add more objects
 ok 10 - write midx with two packs
-not ok 11 - check normal git operations: two packs
-#	
-#			midx_git_two_modes "rev-list --objects --all" &&
-#			midx_git_two_modes "log --raw" &&
-#			midx_git_two_modes "count-objects --verbose" &&
-#			midx_git_two_modes "cat-file --batch-all-objects --batch-check" &&
-#			midx_git_two_modes "cat-file --batch-all-objects --batch-check --unordered" sorted
-#		
+ok 11 - check normal git operations: two packs
 ok 12 - write midx with --stdin-packs
 ok 13 - check normal git operations: mixed mode (one pack + extra)
 ok 14 - write with no objects and preferred pack
@@ -22489,76 +22532,78 @@ ok 23 - warn on improper hash version
 ok 24 - midx picks objects from preferred pack
 ok 25 - preferred packs must be non-empty
 ok 26 - preferred pack from existing MIDX without bitmaps
-ok 27 - verify multi-pack-index success
-ok 28 - verify progress off for redirected stderr
-ok 29 - verify force progress on for stderr
-ok 30 - verify with the --no-progress option
-ok 31 - verify bad signature
-ok 32 - verify bad version
-ok 33 - verify bad OID version
-ok 34 - verify truncated chunk count
-ok 35 - verify extended chunk count
-ok 36 - verify missing required chunk
-ok 37 - verify invalid chunk offset
-ok 38 - verify packnames out of order
-ok 39 - verify packnames out of order
-ok 40 - verify oid fanout out of order
-ok 41 - verify oid lookup out of order
-ok 42 - verify incorrect pack-int-id
-ok 43 - verify incorrect offset
-ok 44 - git-fsck incorrect offset
-ok 45 - git fsck shows MIDX output with --progress
-ok 46 - git fsck suppresses MIDX output with --no-progress
-ok 47 - corrupt MIDX is not reused
-ok 48 - verify incorrect checksum
-ok 49 - repack progress off for redirected stderr
-ok 50 - repack force progress on for stderr
-ok 51 - repack with the --no-progress option
-ok 52 - repack removes multi-pack-index when deleting packs
-ok 53 - repack preserves multi-pack-index when creating packs
-ok 54 - check normal git operations: after repack
-ok 55 - multi-pack-index and pack-bitmap
-ok 56 - multi-pack-index and alternates
-ok 57 - check normal git operations: with alternate (local midx)
-ok 58 - multi-pack-index in an alternate
-ok 59 - check normal git operations: with alternate (remote midx)
-ok 60 - force some 64-bit offsets with pack-objects
-ok 61 - verify multi-pack-index with 64-bit offsets
-ok 62 - verify incorrect 64-bit offset
-ok 63 - setup expire tests
-ok 64 - expire does not remove any packs
-ok 65 - expire progress off for redirected stderr
-ok 66 - expire force progress on for stderr
-ok 67 - expire with the --no-progress option
-ok 68 - expire removes unreferenced packs
-ok 69 - repack with minimum size does not alter existing packs
-ok 70 - repack respects repack.packKeptObjects=false
-ok 71 - repack creates a new pack
-ok 72 - repack (all) ignores cruft pack
-ok 73 - repack (--batch-size) ignores cruft pack
-ok 74 - expire removes repacked packs
-ok 75 - expire works when adding new packs
-ok 76 - expire respects .keep files
-ok 77 - expiring unreferenced cruft pack retains pack
-ok 78 - repack --batch-size=0 repacks everything
-ok 79 # skip repack/expire with many packs (missing EXPENSIVE)
-ok 80 - repack --batch-size=<large> repacks everything
-ok 81 - repack/expire loop
-ok 82 - load reverse index when missing .idx, .pack
-ok 83 - usage shown without sub-command
-ok 84 - complains when run outside of a repository
-ok 85 - repack with delta islands
-ok 86 - reader notices too-small oid fanout chunk
-ok 87 - reader notices too-small oid lookup chunk
-ok 88 - reader notices too-small pack names chunk
-ok 89 - reader handles unaligned chunks
-ok 90 - reader notices too-small object offset chunk
-ok 91 - reader bounds-checks large offset table
-ok 92 - reader notices too-small revindex chunk
-ok 93 - reader notices out-of-bounds fanout
-ok 94 - bitmapped packs are stored via the BTMP chunk
-# failed 1 among 94 test(s)
-1..94
+ok 27 - preferred pack cannot be determined without bitmap
+ok 28 - up-to-date multi-pack-index is retained
+ok 29 - verify multi-pack-index success
+ok 30 - verify progress off for redirected stderr
+ok 31 - verify force progress on for stderr
+ok 32 - verify with the --no-progress option
+ok 33 - verify bad signature
+ok 34 - verify bad version
+ok 35 - verify bad OID version
+ok 36 - verify truncated chunk count
+ok 37 - verify extended chunk count
+ok 38 - verify missing required chunk
+ok 39 - verify invalid chunk offset
+ok 40 - verify packnames out of order
+ok 41 - verify packnames out of order
+ok 42 - verify oid fanout out of order
+ok 43 - verify oid lookup out of order
+ok 44 - verify incorrect pack-int-id
+ok 45 - verify incorrect offset
+ok 46 - git-fsck incorrect offset
+ok 47 - git fsck shows MIDX output with --progress
+ok 48 - git fsck suppresses MIDX output with --no-progress
+ok 49 - corrupt MIDX is not reused
+ok 50 - verify incorrect checksum
+ok 51 - repack progress off for redirected stderr
+ok 52 - repack force progress on for stderr
+ok 53 - repack with the --no-progress option
+ok 54 - repack removes multi-pack-index when deleting packs
+ok 55 - repack preserves multi-pack-index when creating packs
+ok 56 - check normal git operations: after repack
+ok 57 - multi-pack-index and pack-bitmap
+ok 58 - multi-pack-index and alternates
+ok 59 - check normal git operations: with alternate (local midx)
+ok 60 - multi-pack-index in an alternate
+ok 61 - check normal git operations: with alternate (remote midx)
+ok 62 - force some 64-bit offsets with pack-objects
+ok 63 - verify multi-pack-index with 64-bit offsets
+ok 64 - verify incorrect 64-bit offset
+ok 65 - setup expire tests
+ok 66 - expire does not remove any packs
+ok 67 - expire progress off for redirected stderr
+ok 68 - expire force progress on for stderr
+ok 69 - expire with the --no-progress option
+ok 70 - expire removes unreferenced packs
+ok 71 - repack with minimum size does not alter existing packs
+ok 72 - repack respects repack.packKeptObjects=false
+ok 73 - repack creates a new pack
+ok 74 - repack (all) ignores cruft pack
+ok 75 - repack (--batch-size) ignores cruft pack
+ok 76 - expire removes repacked packs
+ok 77 - expire works when adding new packs
+ok 78 - expire respects .keep files
+ok 79 - expiring unreferenced cruft pack retains pack
+ok 80 - repack --batch-size=0 repacks everything
+ok 81 # skip repack/expire with many packs (missing EXPENSIVE)
+ok 82 - repack --batch-size=<large> repacks everything
+ok 83 - repack/expire loop
+ok 84 - load reverse index when missing .idx, .pack
+ok 85 - usage shown without sub-command
+ok 86 - complains when run outside of a repository
+ok 87 - repack with delta islands
+ok 88 - reader notices too-small oid fanout chunk
+ok 89 - reader notices too-small oid lookup chunk
+ok 90 - reader notices too-small pack names chunk
+ok 91 - reader handles unaligned chunks
+ok 92 - reader notices too-small object offset chunk
+ok 93 - reader bounds-checks large offset table
+ok 94 - reader notices too-small revindex chunk
+ok 95 - reader notices out-of-bounds fanout
+ok 96 - bitmapped packs are stored via the BTMP chunk
+# passed all 96 test(s)
+1..96
 *** t5320-delta-islands.sh ***
 ok 1 - setup commits
 ok 2 - vanilla repack deltas one against two
@@ -23414,11 +23459,12 @@ ok 8 - pack-objects --stdin with same packfile excluded and included
 ok 9 - pack-objects --stdin with packfiles from alternate object database
 ok 10 - pack-objects --stdin with packfiles from main and alternate object database
 ok 11 - --stdin-packs=follow walks into unknown packs
-ok 12 - --stdin-packs=follow tolerates missing blobs
-ok 13 - --stdin-packs=follow tolerates missing trees
-ok 14 - --stdin-packs=follow tolerates missing commits
-# passed all 14 test(s)
-1..14
+ok 12 - --stdin-packs with promisors
+ok 13 - --stdin-packs=follow tolerates missing blobs
+ok 14 - --stdin-packs=follow tolerates missing trees
+ok 15 - --stdin-packs=follow tolerates missing commits
+# passed all 15 test(s)
+1..15
 *** t5332-multi-pack-reuse.sh ***
 ok 1 - preferred pack is reused for single-pack reuse
 ok 2 - multi-pack reuse is disabled by default
@@ -24631,9 +24677,16 @@ ok 204 - existing reference lock in repo
 ok 205 # skip F/D conflict on case insensitive filesystem (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
 ok 206 # skip D/F conflict on case insensitive filesystem (missing CASE_INSENSITIVE_FS of CASE_INSENSITIVE_FS,REFFILES)
 ok 207 - D/F conflict on case sensitive filesystem with lock
-# passed all 207 test(s)
+ok 208 - fetch --tags fetches existing tags
+ok 209 - fetch --tags fetches non-conflicting tags
+ok 210 - backfill tags when providing a refspec
+ok 211 - FETCH_HEAD is updated even if ref updates fail
+ok 212 - upstream tracking info is added with --set-upstream
+ok 213 - upstream tracking info is added even with conflicts
+ok 214 - HEAD is updated even with conflicts
+# passed all 214 test(s)
 # SKIP no web server found at ''
-1..207
+1..214
 *** t5511-refspec.sh ***
 ok 1 - push  (invalid)
 ok 2 - push :
@@ -25610,6 +25663,11 @@ ok 16 - empty CONTENT_LENGTH
 1..0 # SKIP no web server found at ''
 *** t5564-http-proxy.sh ***
 1..0 # SKIP no web server found at ''
+*** t5565-push-multiple.sh ***
+ok 1 - setup
+ok 2 - push to group
+# passed all 2 test(s)
+1..2
 *** t5570-git-daemon.sh ***
 ok 1 - daemon rejects invalid --init-timeout values
 ok 2 - daemon rejects invalid --timeout values
@@ -26293,20 +26351,7 @@ ok 4 - pull with git:// using protocol v1
 ok 5 - push with git:// using protocol v1
 ok 6 - create repo to be served by file:// transport
 ok 7 - clone with file:// using protocol v1
-not ok 8 - fetch with file:// using protocol v1
-#	
-#		test_commit -C file_parent two &&
-#	
-#		GIT_TRACE_PACKET=1 git -C file_child -c protocol.version=1 \
-#			fetch 2>log &&
-#	
-#		git -C file_child log -1 --format=%s origin/main >actual &&
-#		git -C file_parent log -1 --format=%s >expect &&
-#		test_cmp expect actual &&
-#	
-#		# Server responded using protocol v1
-#		grep "fetch< version 1" log
-#	
+ok 8 - fetch with file:// using protocol v1
 ok 9 - pull with file:// using protocol v1
 ok 10 - push with file:// using protocol v1
 ok 11 - cloning branchless tagless but not refless remote
@@ -26317,7 +26362,8 @@ ok 15 - fetch with ssh:// using protocol v1
 ok 16 - pull with ssh:// using protocol v1
 ok 17 - push with ssh:// using protocol v1
 ok 18 - clone propagates object-format from empty repo
-# failed 1 among 18 test(s)
+# passed all 18 test(s)
+# SKIP no web server found at ''
 1..18
 *** t5701-git-serve.sh ***
 ok 1 - setup to generate files with expected content
@@ -26551,8 +26597,10 @@ ok 8 - parse config format: relative URIs
 ok 9 - parse config format edge cases: empty key or value
 ok 10 - parse config format: creationToken heuristic
 ok 11 - parse config format edge cases: creationToken heuristic
-# passed all 11 test(s)
-1..11
+ok 12 - parse config format: bundle with missing uri
+ok 13 - parse config format: bundle with url instead of uri
+# passed all 13 test(s)
+1..13
 *** t5801-remote-helpers.sh ***
 ok 1 - setup repository
 ok 2 - cloning from local repo
@@ -29125,9 +29173,10 @@ ok 22 - check simple add/rename conflict
 ok 23 - check simple add/add conflict
 ok 24 - check nested conflicts from rename/rename(2to1)
 ok 25 - rename/rename(1to2) with a binary file
+ok 26 - submodule/directory preliminary conflict
 # still have 7 known breakage(s)
-# passed all remaining 18 test(s)
-1..25
+# passed all remaining 19 test(s)
+1..26
 *** t6423-merge-rename-directories.sh ***
 ok 1 - 1a: Simple directory rename detection
 ok 2 - 1b: Merge a directory with another
@@ -29284,8 +29333,9 @@ ok 7 - dir rename unneeded, then rename existing file into old dir
 ok 8 - caching renames only on upstream side, part 1
 ok 9 - caching renames only on upstream side, part 2
 ok 10 - avoid assuming we detected renames
-# passed all 10 test(s)
-1..10
+ok 11 - rename a file, use it on first pick, but irrelevant on second
+# passed all 11 test(s)
+1..11
 *** t6430-merge-recursive.sh ***
 ok 1 - setup 1
 ok 2 - setup 2
@@ -30043,8 +30093,9 @@ ok 227 - --contains combined with --no-contains
 ok 228 - Does --[no-]contains stop at commits? Yes!
 ok 229 - If tag is created then tag message file is unlinked
 ok 230 - If tag cannot be created then tag message file is not unlinked
-# passed all 230 test(s)
-1..230
+ok 231 - annotated tag version sort
+# passed all 231 test(s)
+1..231
 *** t7005-editor.sh ***
 ok 1 - determine default editor
 ok 2 - setup
@@ -30442,7 +30493,7 @@ ok 4 - checking initial files exist after rewind
 ok 5 - checking lack of path1/path2/COPYING
 ok 6 - checking lack of path1/COPYING
 ok 7 - checking lack of COPYING
-ok 8 - checking checking lack of path1/COPYING-TOO
+ok 8 - checking lack of path0/COPYING-TOO
 ok 9 - checking lack of path1/path2
 ok 10 - checking lack of path1
 # passed all 10 test(s)
@@ -30854,123 +30905,125 @@ ok 4 - submodule usage: status --
 ok 5 - submodule usage: status --quiet
 ok 6 - submodule usage: status --cached
 ok 7 - submodule deinit works on empty repository
-ok 8 - setup - initial commit
-ok 9 - submodule init aborts on missing .gitmodules file
-ok 10 - submodule update aborts on missing .gitmodules file
-ok 11 - submodule update aborts on missing gitmodules url
-ok 12 - add aborts on repository with no commits
-ok 13 - status should ignore inner git repo when not added
-ok 14 - setup - repository in init subdirectory
-ok 15 - setup - commit with gitlink
-ok 16 - setup - hide init subdirectory
-ok 17 - setup - repository to add submodules to
-ok 18 - submodule add
-ok 19 - submodule add (absolute path)
-ok 20 - setup parent and one repository
-ok 21 - redirected submodule add does not show progress
-ok 22 - redirected submodule add --progress does show progress
-ok 23 - submodule add to .gitignored path fails
-ok 24 - submodule add to .gitignored path with --force
-ok 25 - submodule add to path with tracked content fails
-ok 26 - submodule add to reconfigure existing submodule with --force
-ok 27 - submodule add relays add --dry-run stderr
-ok 28 - submodule add --branch
-ok 29 - submodule add with ./ in path
-ok 30 - submodule add with /././ in path
-ok 31 - submodule add with // in path
-ok 32 - submodule add with /.. in path
-ok 33 - submodule add with ./, /.. and // in path
-ok 34 - submodule add with \\ in path
-ok 35 - submodule add in subdirectory
-ok 36 - submodule add in subdirectory with relative path should fail
-ok 37 - setup - add an example entry to .gitmodules
-ok 38 - status should fail for unmapped paths
-ok 39 - setup - map path in .gitmodules
-ok 40 - status should only print one line
-ok 41 - status from subdirectory should have the same SHA1
-ok 42 - setup - fetch commit name from submodule
-ok 43 - status should initially be "missing"
-ok 44 - init should register submodule url in .git/config
-ok 45 - status should still be "missing" after initializing
-ok 46 - init should fail with unknown submodule
-ok 47 - update should fail with unknown submodule
-ok 48 - status should fail with unknown submodule
-ok 49 - sync should fail with unknown submodule
-ok 50 - update should fail when path is used by a file
-ok 51 - update should fail when path is used by a nonempty directory
-ok 52 - update should work when path is an empty dir
-ok 53 - status should be "up-to-date" after update
-ok 54 - status "up-to-date" from subdirectory
-ok 55 - status "up-to-date" from subdirectory with path
-ok 56 - status should be "modified" after submodule commit
-ok 57 - "submodule --cached" command forms should be identical
-ok 58 - the --cached sha1 should be rev1
-ok 59 - git diff should report the SHA1 of the new submodule commit
-ok 60 - update should checkout rev1
-ok 61 - status should be "up-to-date" after update
-ok 62 - checkout superproject with subproject already present
-ok 63 - apply submodule diff
-ok 64 - update --init
-ok 65 - update --init from subdirectory
-ok 66 - do not add files from a submodule
-ok 67 - gracefully add/reset submodule with a trailing slash
-ok 68 - ls-files gracefully handles trailing slash
-ok 69 - moving to a commit without submodule does not leave empty dir
-ok 70 - submodule <invalid-subcommand> fails
-ok 71 - add submodules without specifying an explicit path
-ok 72 - add should fail when path is used by a file
-ok 73 - add should fail when path is used by an existing directory
-ok 74 - use superproject as upstream when path is relative and no url is set there
-ok 75 - set up for relative path tests
-ok 76 - ../subrepo works with URL - ssh://hostname/repo
-ok 77 - ../subrepo works with port-qualified URL - ssh://hostname:22/repo
-ok 78 - ../subrepo path works with local path - //somewhere else/repo
-ok 79 - ../subrepo works with file URL - file:///tmp/repo
-ok 80 - ../subrepo works with helper URL- helper:://hostname/repo
-ok 81 - ../subrepo works with scp-style URL - user@host:repo
-ok 82 - ../subrepo works with scp-style URL - user@host:path/to/repo
-ok 83 - ../subrepo works with relative local path - foo
-ok 84 - ../subrepo works with relative local path - foo/bar
-ok 85 - ../subrepo works with relative local path - ./foo
-ok 86 - ../subrepo works with relative local path - ./foo/bar
-ok 87 - ../subrepo works with relative local path - ../foo
-ok 88 - ../subrepo works with relative local path - ../foo/bar
-ok 89 - ../bar/a/b/c works with relative local path - ../foo/bar.git
-ok 90 - moving the superproject does not break submodules
-ok 91 - moving the submodule does not break the superproject
-ok 92 - submodule add --name allows to replace a submodule with another at the same path
-ok 93 - recursive relative submodules stay relative
-ok 94 - submodule add with an existing name fails unless forced
-ok 95 - set up a second submodule
-ok 96 - submodule deinit works on repository without submodules
-ok 97 - submodule deinit should remove the whole submodule section from .git/config
-ok 98 - submodule deinit should unset core.worktree
-ok 99 - submodule deinit from subdirectory
-ok 100 - submodule deinit . deinits all initialized submodules
-ok 101 - submodule deinit --all deinits all initialized submodules
-ok 102 - submodule deinit deinits a submodule when its work tree is missing or empty
-ok 103 - submodule deinit fails when the submodule contains modifications unless forced
-ok 104 - submodule deinit fails when the submodule contains untracked files unless forced
-ok 105 - submodule deinit fails when the submodule HEAD does not match unless forced
-ok 106 - submodule deinit is silent when used on an uninitialized submodule
-ok 107 - submodule deinit absorbs .git directory if .git is a directory
-ok 108 - submodule with UTF-8 name
-ok 109 - submodule add clone shallow submodule
-ok 110 - setup superproject with submodules
-ok 111 - submodule update --init with a specification
-ok 112 - submodule update --init with submodule.active set
-ok 113 - submodule update and setting submodule.<name>.active
-ok 114 - clone active submodule without submodule url set
-ok 115 - update submodules without url set in .gitconfig
-ok 116 - clone --recurse-submodules with a pathspec works
-ok 117 - clone with multiple --recurse-submodules options
-ok 118 - clone and subsequent updates correctly auto-initialize submodules
-ok 119 - init properly sets the config
-ok 120 - recursive clone respects -q
-ok 121 - `submodule init` and `init.templateDir`
-ok 122 - submodule add fails when name is reused
-# passed all 122 test(s)
-1..122
+ok 8 - submodule add with incomplete .gitmodules
+ok 9 - setup - initial commit
+ok 10 - submodule init aborts on missing .gitmodules file
+ok 11 - submodule update aborts on missing .gitmodules file
+ok 12 - submodule update aborts on missing gitmodules url
+ok 13 - add aborts on repository with no commits
+ok 14 - status should ignore inner git repo when not added
+ok 15 - setup - repository in init subdirectory
+ok 16 - setup - commit with gitlink
+ok 17 - setup - hide init subdirectory
+ok 18 - setup - repository to add submodules to
+ok 19 - submodule add
+ok 20 - submodule add (absolute path)
+ok 21 - setup parent and one repository
+ok 22 - redirected submodule add does not show progress
+ok 23 - redirected submodule add --progress does show progress
+ok 24 - submodule add to .gitignored path fails
+ok 25 - submodule add to .gitignored path with --force
+ok 26 - submodule add to path with tracked content fails
+ok 27 - submodule add to reconfigure existing submodule with --force
+ok 28 - submodule add relays add --dry-run stderr
+ok 29 - submodule add --branch
+ok 30 - submodule add with ./ in path
+ok 31 - submodule add with /././ in path
+ok 32 - submodule add with // in path
+ok 33 - submodule add with /.. in path
+ok 34 - submodule add with ./, /.. and // in path
+ok 35 - submodule add with \\ in path
+ok 36 - submodule add in subdirectory
+ok 37 - submodule add in subdirectory with relative path should fail
+ok 38 - submodule add of a different algorithm fails
+ok 39 - setup - add an example entry to .gitmodules
+ok 40 - status should fail for unmapped paths
+ok 41 - setup - map path in .gitmodules
+ok 42 - status should only print one line
+ok 43 - status from subdirectory should have the same SHA1
+ok 44 - setup - fetch commit name from submodule
+ok 45 - status should initially be "missing"
+ok 46 - init should register submodule url in .git/config
+ok 47 - status should still be "missing" after initializing
+ok 48 - init should fail with unknown submodule
+ok 49 - update should fail with unknown submodule
+ok 50 - status should fail with unknown submodule
+ok 51 - sync should fail with unknown submodule
+ok 52 - update should fail when path is used by a file
+ok 53 - update should fail when path is used by a nonempty directory
+ok 54 - update should work when path is an empty dir
+ok 55 - status should be "up-to-date" after update
+ok 56 - status "up-to-date" from subdirectory
+ok 57 - status "up-to-date" from subdirectory with path
+ok 58 - status should be "modified" after submodule commit
+ok 59 - "submodule --cached" command forms should be identical
+ok 60 - the --cached sha1 should be rev1
+ok 61 - git diff should report the SHA1 of the new submodule commit
+ok 62 - update should checkout rev1
+ok 63 - status should be "up-to-date" after update
+ok 64 - checkout superproject with subproject already present
+ok 65 - apply submodule diff
+ok 66 - update --init
+ok 67 - update --init from subdirectory
+ok 68 - do not add files from a submodule
+ok 69 - gracefully add/reset submodule with a trailing slash
+ok 70 - ls-files gracefully handles trailing slash
+ok 71 - moving to a commit without submodule does not leave empty dir
+ok 72 - submodule <invalid-subcommand> fails
+ok 73 - add submodules without specifying an explicit path
+ok 74 - add should fail when path is used by a file
+ok 75 - add should fail when path is used by an existing directory
+ok 76 - use superproject as upstream when path is relative and no url is set there
+ok 77 - set up for relative path tests
+ok 78 - ../subrepo works with URL - ssh://hostname/repo
+ok 79 - ../subrepo works with port-qualified URL - ssh://hostname:22/repo
+ok 80 - ../subrepo path works with local path - //somewhere else/repo
+ok 81 - ../subrepo works with file URL - file:///tmp/repo
+ok 82 - ../subrepo works with helper URL- helper:://hostname/repo
+ok 83 - ../subrepo works with scp-style URL - user@host:repo
+ok 84 - ../subrepo works with scp-style URL - user@host:path/to/repo
+ok 85 - ../subrepo works with relative local path - foo
+ok 86 - ../subrepo works with relative local path - foo/bar
+ok 87 - ../subrepo works with relative local path - ./foo
+ok 88 - ../subrepo works with relative local path - ./foo/bar
+ok 89 - ../subrepo works with relative local path - ../foo
+ok 90 - ../subrepo works with relative local path - ../foo/bar
+ok 91 - ../bar/a/b/c works with relative local path - ../foo/bar.git
+ok 92 - moving the superproject does not break submodules
+ok 93 - moving the submodule does not break the superproject
+ok 94 - submodule add --name allows to replace a submodule with another at the same path
+ok 95 - recursive relative submodules stay relative
+ok 96 - submodule add with an existing name fails unless forced
+ok 97 - set up a second submodule
+ok 98 - submodule deinit works on repository without submodules
+ok 99 - submodule deinit should remove the whole submodule section from .git/config
+ok 100 - submodule deinit should unset core.worktree
+ok 101 - submodule deinit from subdirectory
+ok 102 - submodule deinit . deinits all initialized submodules
+ok 103 - submodule deinit --all deinits all initialized submodules
+ok 104 - submodule deinit deinits a submodule when its work tree is missing or empty
+ok 105 - submodule deinit fails when the submodule contains modifications unless forced
+ok 106 - submodule deinit fails when the submodule contains untracked files unless forced
+ok 107 - submodule deinit fails when the submodule HEAD does not match unless forced
+ok 108 - submodule deinit is silent when used on an uninitialized submodule
+ok 109 - submodule deinit absorbs .git directory if .git is a directory
+ok 110 - submodule with UTF-8 name
+ok 111 - submodule add clone shallow submodule
+ok 112 - setup superproject with submodules
+ok 113 - submodule update --init with a specification
+ok 114 - submodule update --init with submodule.active set
+ok 115 - submodule update and setting submodule.<name>.active
+ok 116 - clone active submodule without submodule url set
+ok 117 - update submodules without url set in .gitconfig
+ok 118 - clone --recurse-submodules with a pathspec works
+ok 119 - clone with multiple --recurse-submodules options
+ok 120 - clone and subsequent updates correctly auto-initialize submodules
+ok 121 - init properly sets the config
+ok 122 - recursive clone respects -q
+ok 123 - `submodule init` and `init.templateDir`
+ok 124 - submodule add fails when name is reused
+# passed all 124 test(s)
+1..124
 *** t7401-submodule-summary.sh ***
 ok 1 - setup submodule
 ok 2 - added submodule
@@ -32690,13 +32743,16 @@ ok 7 - --geometric ignores kept packs
 ok 8 - --geometric ignores --keep-pack packs
 ok 9 - --geometric chooses largest MIDX preferred pack
 ok 10 - --geometric with pack.packSizeLimit
-ok 11 - --geometric --write-midx with packfiles in main and alternate ODB
-ok 12 - --geometric --with-midx with no local objects
-ok 13 - --geometric with same pack in main and alternate ODB
-ok 14 - --geometric -l with non-intact geometric sequence across ODBs
-ok 15 - --geometric -l disables writing bitmaps with non-local packfiles
-# passed all 15 test(s)
-1..15
+ok 11 - --geometric --write-midx retains up-to-date MIDX without bitmap index
+ok 12 - --geometric --write-midx retains up-to-date MIDX with bitmap index
+ok 13 - --geometric --write-midx with packfiles in main and alternate ODB
+ok 14 - --geometric --with-midx with no local objects
+ok 15 - --geometric with same pack in main and alternate ODB
+ok 16 - --geometric -l with non-intact geometric sequence across ODBs
+ok 17 - --geometric -l disables writing bitmaps with non-local packfiles
+ok 18 - geometric repack works with promisor packs
+# passed all 18 test(s)
+1..18
 *** t7704-repack-cruft.sh ***
 ok 1 - --expire-to stores pruned objects (now)
 ok 2 - --expire-to stores pruned objects (5.minutes.ago)
@@ -33374,26 +33430,26 @@ ok 13 - maintenance.<task>.enabled
 ok 14 - run --task=<task>
 ok 15 - core.commitGraph=false prevents write process
 ok 16 - commit-graph auto condition
-ok 17 - run --task=bogus
-ok 18 - run --task duplicate
-ok 19 - run --task=prefetch with no remotes
-ok 20 - prefetch multiple remotes
-ok 21 - loose-objects task
-ok 22 - maintenance.loose-objects.auto
-ok 23 - maintenance.loose-objects.batchSize
-ok 24 - incremental-repack task
-ok 25 # skip incremental-repack 2g limit (missing EXPENSIVE)
-ok 26 - maintenance.incremental-repack.auto
-ok 27 - maintenance.incremental-repack.auto (when config is unset)
-ok 28 - geometric repacking task
-ok 29 - geometric repacking with --auto
-ok 30 - geometric repacking honors configured split factor
-ok 31 - pack-refs task
-ok 32 - reflog-expire task
-ok 33 - reflog-expire task --auto only packs when exceeding limits
-ok 34 - worktree-prune task without --auto always prunes
-ok 35 - worktree-prune task --auto only prunes with prunable worktree
-ok 36 - worktree-prune task with --auto honors maintenance.worktree-prune.auto
+ok 17 - commit-graph auto condition with merges
+ok 18 - run --task=bogus
+ok 19 - run --task duplicate
+ok 20 - run --task=prefetch with no remotes
+ok 21 - prefetch multiple remotes
+ok 22 - loose-objects task
+ok 23 - maintenance.loose-objects.auto
+ok 24 - maintenance.loose-objects.batchSize
+ok 25 - incremental-repack task
+ok 26 # skip incremental-repack 2g limit (missing EXPENSIVE)
+ok 27 - maintenance.incremental-repack.auto
+ok 28 - maintenance.incremental-repack.auto (when config is unset)
+ok 29 - geometric repacking task
+ok 30 - geometric repacking with --auto
+ok 31 - geometric repacking honors configured split factor
+ok 32 - pack-refs task
+ok 33 - reflog-expire task
+ok 34 - reflog-expire task --auto only packs when exceeding limits
+ok 35 - worktree-prune task without --auto always prunes
+ok 36 - worktree-prune task --auto only prunes with prunable worktree
 ok 37 - worktree-prune task with --auto honors maintenance.worktree-prune.auto
 ok 38 - worktree-prune task honors gc.worktreePruneExpire
 ok 39 - rerere-gc task without --auto always collects garbage
@@ -33975,6 +34031,16 @@ ok 15 - position matching
 ok 16 - preserve order
 # passed all 16 test(s)
 1..16
+*** t8015-blame-diff-algorithm.sh ***
+ok 1 - setup
+ok 2 - blame uses Myers diff algorithm by default
+ok 3 - blame honors --diff-algorithm option
+ok 4 - blame honors diff.algorithm config variable
+ok 5 - blame gives priority to --diff-algorithm over diff.algorithm
+ok 6 - blame honors --minimal option
+ok 7 - blame respects the order of diff options
+# passed all 7 test(s)
+1..7
 *** t8020-last-modified.sh ***
 ok 1 - setup
 ok 2 - cannot run last-modified on two trees
@@ -33983,21 +34049,22 @@ ok 4 - last-modified recursive
 ok 5 - last-modified recursive with show-trees
 ok 6 - last-modified non-recursive with show-trees
 ok 7 - last-modified subdir
-ok 8 - last-modified subdir recursive
-ok 9 - last-modified from non-HEAD commit
-ok 10 - last-modified from subdir defaults to root
-ok 11 - last-modified from subdir uses relative pathspecs
-ok 12 - limit last-modified traversal by count
-ok 13 - limit last-modified traversal by commit
-ok 14 - only last-modified files in the current tree
-ok 15 - subdirectory modified via merge
-ok 16 - cross merge boundaries in blaming
-ok 17 - last-modified merge for resolved conflicts
-ok 18 - last-modified merge ignores content from branch
-ok 19 - last-modified merge undoes changes
-ok 20 - last-modified complains about unknown arguments
-# passed all 20 test(s)
-1..20
+ok 8 - last-modified in sparse checkout
+ok 9 - last-modified subdir recursive
+ok 10 - last-modified from non-HEAD commit
+ok 11 - last-modified from subdir defaults to root
+ok 12 - last-modified from subdir uses relative pathspecs
+ok 13 - limit last-modified traversal by count
+ok 14 - limit last-modified traversal by commit
+ok 15 - only last-modified files in the current tree
+ok 16 - subdirectory modified via merge
+ok 17 - cross merge boundaries in blaming
+ok 18 - last-modified merge for resolved conflicts
+ok 19 - last-modified merge ignores content from branch
+ok 20 - last-modified merge undoes changes
+ok 21 - last-modified complains about unknown arguments
+# passed all 21 test(s)
+1..21
 *** t9001-send-email.sh ***
 ok 1 - prepare reference tree
 ok 2 - Setup helper tool
@@ -34774,8 +34841,13 @@ ok 7 - set up SSH signed commit
 ok 8 - strip SSH signature with --signed-commits=strip
 ok 9 # skip setup a commit with dual OpenPGP signatures on its SHA-1 and SHA-256 formats (missing GPG)
 ok 10 # skip strip both OpenPGP signatures with --signed-commits=warn-strip (missing GPG)
-# passed all 10 test(s)
-1..10
+ok 11 # skip import commit with no signature with --signed-commits=strip-if-invalid (missing GPG)
+ok 12 # skip keep valid OpenPGP signature with --signed-commits=strip-if-invalid (missing GPG)
+ok 13 # skip strip signature invalidated by message change with --signed-commits=strip-if-invalid (missing GPG)
+ok 14 # skip keep valid X.509 signature with --signed-commits=strip-if-invalid (missing GPGSM)
+ok 15 - keep valid SSH signature with --signed-commits=strip-if-invalid
+# passed all 15 test(s)
+1..15
 *** t9306-fast-import-signed-tags.sh ***
 ok 1 - set up unsigned initial commit and import repo
 ok 2 - import no signed tag with --signed-tags=abort
@@ -35635,10 +35707,10 @@ ok 67 - prompt - conflict indicator
 missing prereq: !LONG_IS_64BIT !PCRE !PTHREADS !SYMLINKS AUTOIDENT BUILTIN_ADOC_CHECKOUT__WORKER BUILTIN_ADOC_MERGE_OURS BUILTIN_ADOC_MERGE_RECURSIVE BUILTIN_ADOC_MERGE_RECURSIVE_OURS BUILTIN_ADOC_MERGE_RECURSIVE_THEIRS BUILTIN_ADOC_MERGE_SUBTREE BUILTIN_ADOC_PICKAXE BUILTIN_ADOC_SUBMODULE__HELPER BUILTIN_ADOC_UPLOAD_ARCHIVE__WRITER CASE_INSENSITIVE_FS EXPENSIVE FSMONITOR_DAEMON GETCWD_IGNORES_PERMS GPG GPG2 GPGSM HIGHLIGHT JGIT LONG_REF MINGW NATIVE_CRLF PERLJSON RFC1991 RUNTIME_PREFIX SANITIZE_LEAK SETFACL SYMLINKS_WINDOWS TAR_NEEDS_PAX_FALLBACK UTF8_NFD_TO_NFC WINDOWS WITH_BREAKING_CHANGES
 
 
-failed test(s): t0200 t0204 t5303 t5319 t5700 t5701 t6011 t9400
+failed test(s): t0200 t0204 t5303 t5701 t6011 t9400
 
 fixed   1
-success 31441
-failed  26
+success 31521
+failed  24
 broken  394
-total   32412
+total   32494
