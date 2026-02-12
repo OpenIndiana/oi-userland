@@ -19,12 +19,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         abseil-cpp
-COMPONENT_VERSION=	20250127.1
+COMPONENT_VERSION=	20250127.2
 COMPONENT_SUMMARY=      Collection of C++ library code designed to augment the C++ standard library
 COMPONENT_PROJECT_URL=  https://abseil.io
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811
+COMPONENT_ARCHIVE_HASH=	sha256:f5a67394128fb4d9a18124820026014591942d9c882d9055d4d2412b13bf1c91
 COMPONENT_ARCHIVE_URL=	https://github.com/abseil/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/abseil-cpp
 COMPONENT_CLASSIFICATION=       Development/C++
@@ -49,10 +49,10 @@ CMAKE_OPTIONS += -DABSL_USE_EXTERNAL_GOOGLETEST=ON
 SOVER := $(shell echo $(COMPONENT_VERSION) | $(CUT) -c 3-6)
 
 # Replace library version number by SOVER
-GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER)/$$(SOVER)/'
+GENERATE_EXTRA_SED += -e 's/$(SOVER)/$$(SOVER)/'
 
 # SOVER is needed for manifest processing
-PKG_MACROS += SOVER=$(SOVER)
+PKG_VARS += SOVER
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
