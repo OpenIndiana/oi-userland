@@ -1,12 +1,11 @@
-illumos doesn't support netstat -l.
---- gnutls-3.8.1/tests/scripts/common.sh.orig
-+++ gnutls-3.8.1/tests/scripts/common.sh
+--- gnutls-3.8.12/tests/scripts/common.sh.orig	2026-02-09 15:41:57.000000000 +0100
++++ gnutls-3.8.12/tests/scripts/common.sh	2026-02-13 10:08:12.932555884 +0100
 @@ -79,7 +79,7 @@
  check_if_port_listening() {
  	local PORT=$1
  	have_port_finder
--	$PFCMD -anl|grep "[\:\.]$PORT"|grep LISTEN >/dev/null 2>&1
-+	$PFCMD -an|grep "[\:\.]$PORT"|grep LISTEN >/dev/null 2>&1
+-	$PFCMD -anl|grep -v ::|grep "[\:\.]$PORT"|grep LISTEN >/dev/null 2>&1
++	$PFCMD -an|grep -v ::|grep "[\:\.]$PORT"|grep LISTEN >/dev/null 2>&1
  }
  
  # Find a port number not currently in use.
