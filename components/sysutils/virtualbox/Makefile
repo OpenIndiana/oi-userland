@@ -21,7 +21,7 @@ gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
 COMPONENT_VERSION=      7.2.6
-COMPONENT_REVISION=	0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
