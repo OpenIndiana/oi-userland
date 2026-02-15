@@ -46,6 +46,7 @@ COMPONENT_FULL_VERSION=$(COMPONENT_FULL_VERSION)-buildfix$(BUILD_FIX)
 endif
 # repology wants to use HUMAN_VERSION
 HUMAN_VERSION=          $(COMPONENT_FULL_VERSION)
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      LibreOffice is a powerful office suite
 COMPONENT_PROJECT_URL=  https://www.libreoffice.org/
 ifdef BUILD_GITHUB
