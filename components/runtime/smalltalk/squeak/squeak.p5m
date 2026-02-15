@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2026 David Stes
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -30,6 +30,10 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 # the minimal installation consists of the squeak-nodisplay package
 # which can run "headless" squeak -nodisplay images
 # with only minimal installation requirements (only ksh, libc, math)
+# the minimal installation does not install the MATE/GNOME icon/desktop files
+file files/inisqueak.desktop path=usr/share/applications/inisqueak.desktop restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file files/squeak.desktop path=usr/share/applications/squeak.desktop restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file files/icons/scalable/apps/squeak.svg path=usr/share/icons/hicolor/scalable/apps/squeak.svg restart_fmri=svc:/application/desktop-cache/icon-cache:default
 
 depend type=require fmri=pkg:/runtime/smalltalk/squeak-ssl@$(IPS_COMPONENT_VERSION)-$(BRANCHID)
 depend type=require fmri=pkg:/runtime/smalltalk/squeak-display-X11@$(IPS_COMPONENT_VERSION)-$(BRANCHID)

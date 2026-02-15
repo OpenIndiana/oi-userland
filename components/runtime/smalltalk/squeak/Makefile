@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright 2020, 2021, 2022, 2023, 2024, 2025 David Stes
+# Copyright 2020, 2021, 2022, 2023, 2024, 2025, 2026 David Stes
 #
 
 
@@ -71,6 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.21.3
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -87,14 +88,14 @@ COMPONENT_NAME_0=	$(COMPONENT_NAME)-src
 COMPONENT_NAME_1=	$(COMPONENT_NAME)-platforms-Cross
 COMPONENT_NAME_2=	$(COMPONENT_NAME)-platforms-unix
 # also update squeak.ips when changing SQREV
-SQREV=                  3837
+SQREV=                  3840
 SVN_REV_0=              $(SQREV)
 SVN_REV_1=              $(SQREV)
 SVN_REV_2=              $(SQREV)
 # userland-fetch from archives
-SVN_HASH_0=  sha256:9f088eb620ca1262f4372ef5569365be99f3f29ca74e02ba0dc285aabac2aa56
-SVN_HASH_1=  sha256:1b23c6b1fc4b8f06bbaa1072d12a7136504730b15eeab5292d38fa8802075fcd
-SVN_HASH_2=  sha256:19308395ba1555e50629bdf86fe9bbb2fa5eadd4830e50afc83acbf6d3b100e5
+SVN_HASH_0=  sha256:afbfc87122465980c4857cb9f6c1ea1bf7b9fc25642ec3daefffd0472f889680
+SVN_HASH_1=  sha256:dfa24407f16894d82ab527cce04a5e3b5cd108f8fe4d76aaf2027c60d1e37b44
+SVN_HASH_2=  sha256:ddbf596e0b067848c3dd976d7a247bd8c6aa388c7e5e4decb81c8b8919e49938
 
 # See http://wiki.squeak.org/squeak/933
 # See http://wiki.squeak.org/squeak/159
