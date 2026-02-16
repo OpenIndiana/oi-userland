@@ -19,12 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest-dependency
-HUMAN_VERSION =			0.6.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.6.1
 COMPONENT_SUMMARY =		Manage dependencies of tests
 COMPONENT_PROJECT_URL =		https://github.com/RKrahl/pytest-dependency
+COMPONENT_ARCHIVE_URL =		\
+	https://files.pythonhosted.org/packages/c2/ea/84509533e0f6477960b8a9179d240d93c909c6543e4dd8209932026d7815/pytest_dependency-0.6.1.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:934b0e6a39d95995062c193f7eaeed8a8ffa06ff1bcef4b62b0dc74a708bacc1
+	sha256:246c24d2a5fc743a942cec4408853640e56a05ba58d46e5b213a1d4b738a2464
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
