@@ -19,22 +19,21 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-AuthenticationResults
-HUMAN_VERSION =			2.20250709
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.20260216
 COMPONENT_SUMMARY =		Object Oriented Authentication-Results Headers
 COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ca8568638a7839417e04332c6915d4c7a55496bef212faff4d59a93ba9eb4ec0
+	sha256:9a53c1b7c7f160e898e6cb5be9948d64141d2819ade2d7a873d0e87d1e83f666
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/clone
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/json
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/clone
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/json
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
