@@ -21,9 +21,9 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdk-pixbuf
-HUMAN_VERSION=		2.43.5
+HUMAN_VERSION=		2.44.5
 COMPONENT_SUMMARY=	GdkPixbuf: Image loading library
-COMPONENT_ARCHIVE_HASH=	sha256:a723ec2428427f857b8727dfbbe9dab77142a13fb6d0c47f95222251ae36ff15
+COMPONENT_ARCHIVE_HASH=	sha256:69b93e09139b80c0ee661503d60deb5a5874a31772b5184b9cd5462a4100ab68
 COMPONENT_FMRI=         library/desktop/gdk-pixbuf
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=	LGPL-2.0-only
@@ -44,9 +44,12 @@ CONFIGURE_OPTIONS += -Dothers=enabled
 CONFIGURE_OPTIONS += -Dbuiltin_loaders=none
 # Do not install tests
 CONFIGURE_OPTIONS += -Dinstalled_tests=false
+CONFIGURE_OPTIONS += -Ddocumentation=true
+CONFIGURE_OPTIONS += -Dgtk_doc=true
+CONFIGURE_OPTIONS += -Dman=true
 
 # Dynamic library version number
-SOVER := 0.$(shell printf '%s0%s.0' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
 SOVER_RE = $(subst .,\.,$(SOVER))
 
 # Replace library version number by SOVER
