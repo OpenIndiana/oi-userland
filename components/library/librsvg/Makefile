@@ -20,14 +20,13 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		librsvg
-COMPONENT_VERSION=	2.61.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	2.61.4
 COMPONENT_MAJOR_VERSION=$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	Library for SVG support for GNOME
 COMPONENT_PROJECT_URL= https://wiki.gnome.org/Projects/LibRsvg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a56d2c80d744ad2f2718f85df466fe71d24ff1f9bc3e5ef588bde4d7e87815f2
+COMPONENT_ARCHIVE_HASH= sha256:fca0ea28d1f28f95c8407d2579f4702dac085e7c758644daca8b40d1e072ca0c
 COMPONENT_ARCHIVE_URL= https://download.gnome.org/sources/$(COMPONENT_NAME)/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/library/librsvg
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
@@ -43,6 +42,7 @@ LD_OPTIONS=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.noexdata -M /usr/lib/ld
 
 # Disable avif since it is encumbered
 CONFIGURE_OPTIONS += -Davif=disabled
+CONFIGURE_OPTIONS += -Dpixbuf-loader=enabled
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(GSED) -i -e 's/= .*version-script.*$$/= []/' $(SOURCE_DIR)/rsvg/meson.build
 
