@@ -1,7 +1,7 @@
 We do not have devpi_process available (yet)
 
---- tox-4.36.0/pyproject.toml.orig
-+++ tox-4.36.0/pyproject.toml
+--- tox-4.36.1/pyproject.toml.orig
++++ tox-4.36.1/pyproject.toml
 @@ -82,7 +82,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "flaky>=3.8.1",
---- tox-4.36.0/src/tox/pytest.py.orig
-+++ tox-4.36.0/src/tox/pytest.py
+--- tox-4.36.1/src/tox/pytest.py.orig
++++ tox-4.36.1/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,8 +36,8 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.36.0/tests/test_provision.py.orig
-+++ tox-4.36.0/tests/test_provision.py
+--- tox-4.36.1/tests/test_provision.py.orig
++++ tox-4.36.1/tests/test_provision.py
 @@ -19,7 +19,6 @@
      from collections.abc import Callable, Iterator, Sequence
  
@@ -86,17 +86,18 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -150,96 +116,6 @@
+@@ -150,97 +116,6 @@
  
  
  @pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_self")
+-@pytest.mark.skipif(sys.platform == "win32", reason="Windows subprocess deadlocks during provision recreate")
 -def test_provision_requires_ok(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
 -    proj = tox_project({"tox.ini": "[tox]\nrequires=demo-pkg-inline\n[testenv]\npackage=skip"})
 -    log = tmp_path / "out.log"
 -
 -    # initial run
--    result_first = proj.run("r", "--result-json", str(log))
+-    result_first = proj.run("r", "--result-json", str(log), "--no-list-dependencies")
 -    result_first.assert_success()
 -    prov_msg = (
 -        f"ROOT: will run in automatically provisioned tox, host {sys.executable} is missing"
@@ -110,13 +111,13 @@ We do not have devpi_process available (yet)
 -
 -    # recreate without recreating the provisioned env
 -    provision_env = result_first.env_conf(".tox")["env_dir"]
--    result_recreate_no_pr = proj.run("r", "--recreate", "--no-recreate-provision")
+-    result_recreate_no_pr = proj.run("r", "--recreate", "--no-recreate-provision", "--no-list-dependencies")
 -    result_recreate_no_pr.assert_success()
 -    assert prov_msg in result_recreate_no_pr.out
 -    assert f"ROOT: remove tox env folder {provision_env}" not in result_recreate_no_pr.out, result_recreate_no_pr.out
 -
 -    # recreate with recreating the provisioned env
--    result_recreate = proj.run("r", "--recreate")
+-    result_recreate = proj.run("r", "--recreate", "--no-list-dependencies")
 -    result_recreate.assert_success()
 -    assert prov_msg in result_recreate.out
 -    assert f"ROOT: remove tox env folder {provision_env}" in result_recreate.out, result_recreate.out
@@ -183,7 +184,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -248,17 +124,6 @@
+@@ -249,17 +124,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -201,7 +202,7 @@ We do not have devpi_process available (yet)
  @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
  def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
      ini = r"""
-@@ -273,33 +138,3 @@
+@@ -274,34 +138,3 @@
      outcome = project.run(subcommand)
      for argument in ["result_json", "hash_seed", "discover", "list_dependencies"]:
          assert hasattr(outcome.state.conf.options, argument)
@@ -209,6 +210,7 @@ We do not have devpi_process available (yet)
 -
 -@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_mirrored")
+-@pytest.mark.flaky(max_runs=3, min_passes=1)
 -def test_provision_install_pkg_pep517(
 -    tmp_path_factory: TempPathFactory,
 -    tox_project: ToxProjectCreator,
@@ -233,5 +235,5 @@ We do not have devpi_process available (yet)
 -    commands = python -c "print(42)"
 -    """
 -    project = tox_project({"tox.ini": tox_ini}, base=example)
--    result = project.run("r", "-e", "py", "--installpkg", str(sdist), "--notest")
+-    result = project.run("r", "-e", "py", "--installpkg", str(sdist), "--notest", "--no-list-dependencies")
 -    result.assert_success()
