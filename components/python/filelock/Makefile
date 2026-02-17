@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		filelock
-HUMAN_VERSION =			3.22.0
+HUMAN_VERSION =			3.24.2
 COMPONENT_SUMMARY =		A platform independent file lock.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61eb14cc8775af91381024c7282e3f526e1fb27f42bfdde706113c7e01a5544b
-COMPONENT_LICENSE =		Unlicense
+	sha256:c22803117490f156e59fafce621f0550a7a853e2bbf4f87f112b11d469b6c81b
+COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
