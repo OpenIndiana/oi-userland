@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_deferredimport
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			6.1.1
 COMPONENT_SUMMARY =		zope.deferredimport allows you to perform imports names that will only be resolved when used in the code.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9bd1013753859e189dd185bf1398eb44d33b0a8216ac10ce069ea8ddf946de47
+	sha256:959052d3f5e05c4c7854b88716971985e0b1b44a5c0163e12d9a0b90e4e3b6cc
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
