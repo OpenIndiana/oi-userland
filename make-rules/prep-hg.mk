@@ -75,7 +75,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
 		 $$(HG_BRANCH$(1):%=--branch %) \
 		    $$$${TMP_REPO} && \
 	 $(HG) -R $$$${TMP_REPO} archive --prefix $$(COMPONENT_SRC$(1)) $$@ && \
-	 $(RM) -rf $${TMP_REPO} && \
+	 $(RM) -r $${TMP_REPO} && \
 	 HG_HASH=$$$$(digest -a sha256 $$@) && \
 	 $(GSED) -i \
 		-e "s/\(HG_HASH$(1)[[:space:]]*=[[:space:]]*\).*/\1sha256:$$$${HG_HASH}/" \

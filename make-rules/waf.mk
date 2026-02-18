@@ -167,7 +167,7 @@ $(foreach pyver, $(PYTHON_VERSIONS), \
 )
 
 $(BUILD_DIR)/%/.tested-and-compared:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(RM) -r $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	-(cd $(COMPONENT_TEST_DIR) ; \
@@ -192,7 +192,7 @@ $(foreach pyver, $(PYTHON_VERSIONS), \
 
 $(BUILD_DIR)/%/.tested:    SHELLOPTS=pipefail
 $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(RM) -r $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(COMPONENT_PRE_TEST_ACTION)
 	(cd $(COMPONENT_TEST_DIR) ; \
@@ -211,7 +211,7 @@ $(BUILD_DIR)/%/.tested:    $(COMPONENT_TEST_DEP)
 # building; thus ideally, we would want to depend on .cloned here and below,
 # but since we don't have that, we depend on .prep and run $(CLONEY) here.
 $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(RM) -r $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)
@@ -229,7 +229,7 @@ $(BUILD_DIR)/%/.system-tested-and-compared:    $(SOURCE_DIR)/.prep
 
 $(BUILD_DIR)/%/.system-tested:    SHELLOPTS=pipefail
 $(BUILD_DIR)/%/.system-tested:    $(SOURCE_DIR)/.prep
-	$(RM) -rf $(COMPONENT_TEST_BUILD_DIR)
+	$(RM) -r $(COMPONENT_TEST_BUILD_DIR)
 	$(MKDIR) $(COMPONENT_TEST_BUILD_DIR)
 	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_SYSTEM_TEST_ACTION)

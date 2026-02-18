@@ -62,7 +62,7 @@ $$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	$(MAKEFILE_PREREQ)
               --sort=name --mtime="2018-10-05 00:00Z" --owner=0 --group=0 --numeric-owner \
 	      --transform="s;$$$${TMP_REPO};$$(COMPONENT_SRC$(1));g" \
 	      --bzip2 $$$${TMP_REPO} >$$@ && \
-	 $(RM) -rf $$$${TMP_REPO} && \
+	 $(RM) -r $$$${TMP_REPO} && \
 	 SVN_HASH=$$$$(digest -a sha256 $$@) && \
 	 $(GSED) -i \
 		-e "s/^SVN_HASH$(1)=.*/SVN_HASH$(1)=  sha256:$$$${SVN_HASH}/" \

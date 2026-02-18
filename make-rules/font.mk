@@ -128,7 +128,7 @@ COMPONENT_BUILD_ACTION = \
 endif
 
 $(BUILD_DIR)/%/.built: $(SOURCE_DIR)/.prep
-	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
+	($(RM) -r $(@D) ; $(MKDIR) $(@D))
 	$(ENV) $(CLONEY_ARGS) $(CLONEY) $(SOURCE_DIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	($(COMPONENT_BUILD_ACTION))
