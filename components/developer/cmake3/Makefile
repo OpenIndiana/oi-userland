@@ -30,13 +30,13 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_VERSION=	3.31.10
+COMPONENT_VERSION=	3.31.11
 CMAKE_VERSION=		$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cf06fadfd6d41fa8e1ade5099e54976d1d844fd1487ab99942341f91b13d3e29
+COMPONENT_ARCHIVE_HASH=	sha256:c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(CMAKE_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake3
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -46,8 +46,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 PKG_VARS += CMAKE_VERSION
 
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/$(subst .,\.,$(CMAKE_VERSION))/$$(CMAKE_VERSION)/g'
+GENERATE_EXTRA_SED += \
+	-e 's/$(subst .,\.,$(CMAKE_VERSION))/$$(CMAKE_VERSION)/g'
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation
