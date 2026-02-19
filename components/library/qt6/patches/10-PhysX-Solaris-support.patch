@@ -9,8 +9,8 @@
  #include "foundation/unix/PxUnixIntrinsics.h"
  #elif PX_XBOXONE
  #include "foundation/XboxOne/PxXboxOneIntrinsics.h"
---- qt-everywhere-src-6.9.3/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h.orig
-+++ qt-everywhere-src-6.9.3/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h
+--- qt-everywhere-src-6.10.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h.orig
++++ qt-everywhere-src-6.10.2/qtquick3dphysics/src/3rdparty/PhysX/pxshared/include/foundation/PxPreprocessor.h
 @@ -105,6 +105,8 @@
  #define PX_PS4 1
  #elif defined(__NX__)
@@ -20,7 +20,25 @@
  #else
  #error "Unknown operating system"
  #endif
-@@ -197,6 +199,9 @@
+@@ -124,6 +126,8 @@
+ #define PX_PPC 1
+ #elif defined(__mips__)
+ #define PX_X64 1
++#elif defined(__sparcv9)
++#define PX_WASM_64 1
+ #elif defined(__EMSCRIPTEN__)
+ #define PX_WASM
+     #if defined(__LP64__)
+@@ -151,7 +155,7 @@
+ #endif
+ 
+ /** Disable SIMD for webassembly, mips and arm64 */
+-#if defined(__EMSCRIPTEN__) || defined(__mips__) || defined(_M_ARM64) || defined(_M_ARM)
++#if defined(__EMSCRIPTEN__) || defined(__mips__) || defined(_M_ARM64) || defined(_M_ARM) || defined(__sparcv9)
+ #define PX_SIMD_DISABLED 1
+ #endif
+ 
+@@ -197,6 +201,9 @@
  #ifndef PX_SWITCH
  #define PX_SWITCH 0
  #endif
@@ -30,7 +48,7 @@
  #ifndef PX_UWP
  #define PX_UWP 0
  #endif
-@@ -266,7 +271,7 @@
+@@ -266,7 +273,7 @@
  #define PX_MICROSOFT_FAMILY (PX_XBOXONE || PX_WINDOWS_FAMILY || PX_XBOX_SERIES_X)
  #define PX_LINUX_FAMILY (PX_LINUX || PX_ANDROID)
  #define PX_APPLE_FAMILY (PX_IOS || PX_OSX)                  // equivalent to #if __APPLE__

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
 COMPONENT_VERSION=		6.10.2
+COMPONENT_REVISION=		1
 QTV=				$(basename $(COMPONENT_VERSION))
 QT6_VERSION=			$(QTV)
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
