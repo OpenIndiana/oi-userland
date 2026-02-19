@@ -5,38 +5,8 @@ benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=
 hypothesis profile 'tests' -> deadline=None, suppress_health_check=(HealthCheck.too_slow,)
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 957 items / 13 deselected / 944 selected
+collecting ... collected 962 items / 13 deselected / 949 selected
 
-bench/test_attrs_collections.py::test_unstructure_attrs_lists[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_lists[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_lists[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_lists[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_mappings[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_mappings[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_mappings[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_collections.py::test_unstructure_attrs_mappings[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_attrs_collections.py::test_structure_attrs_mappings[BaseConverter] PASSED
-bench/test_attrs_collections.py::test_structure_attrs_mappings[Converter] PASSED
-bench/test_attrs_nested.py::test_unstructure_attrs_nested[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_nested.py::test_unstructure_attrs_nested[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_nested.py::test_unstructure_attrs_nested[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_nested.py::test_unstructure_attrs_nested[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_attrs_nested.py::test_unstruct_attrs_deep_nest[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_nested.py::test_unstruct_attrs_deep_nest[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_nested.py::test_unstruct_attrs_deep_nest[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_nested.py::test_unstruct_attrs_deep_nest[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_attrs_primitives.py::test_unstructure_attrs_primitives[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_primitives.py::test_unstructure_attrs_primitives[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_primitives.py::test_unstructure_attrs_primitives[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_primitives.py::test_unstructure_attrs_primitives[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_attrs_primitives.py::test_structure_attrs_primitives[UnstructureStrategy.AS_DICT-BaseConverter] PASSED
-bench/test_attrs_primitives.py::test_structure_attrs_primitives[UnstructureStrategy.AS_DICT-Converter] PASSED
-bench/test_attrs_primitives.py::test_structure_attrs_primitives[UnstructureStrategy.AS_TUPLE-BaseConverter] PASSED
-bench/test_attrs_primitives.py::test_structure_attrs_primitives[UnstructureStrategy.AS_TUPLE-Converter] PASSED
-bench/test_primitives.py::test_unstructure_int[BaseConverter] PASSED
-bench/test_primitives.py::test_unstructure_int[Converter] PASSED
-bench/test_primitives.py::test_unstructure_float[BaseConverter] PASSED
-bench/test_primitives.py::test_unstructure_float[Converter] PASSED
 tests/preconf/test_pyyaml.py::test_pyyaml PASSED
 tests/preconf/test_pyyaml.py::test_pyyaml_converter PASSED
 tests/preconf/test_pyyaml.py::test_pyyaml_converter_unstruct_collection_overrides PASSED
@@ -216,6 +186,8 @@ tests/test_gen_dict.py::test_overriding_unstruct_hook[BaseConverter-True] PASSED
 tests/test_gen_dict.py::test_overriding_unstruct_hook[BaseConverter-False] PASSED
 tests/test_gen_dict.py::test_alias_keys[BaseConverter-True] PASSED
 tests/test_gen_dict.py::test_alias_keys[BaseConverter-False] PASSED
+tests/test_gen_dict.py::test_alias_implicit_rename[BaseConverter-True] PASSED
+tests/test_gen_dict.py::test_alias_implicit_rename[BaseConverter-False] PASSED
 tests/test_gen_dict.py::test_init_false[BaseConverter-True] PASSED
 tests/test_gen_dict.py::test_init_false[BaseConverter-False] PASSED
 tests/test_gen_dict.py::test_init_false_overridden[BaseConverter-True] PASSED
@@ -458,6 +430,8 @@ tests/test_gen_dict.py::test_overriding_unstruct_hook[Converter-True] PASSED
 tests/test_gen_dict.py::test_overriding_unstruct_hook[Converter-False] PASSED
 tests/test_gen_dict.py::test_alias_keys[Converter-True] PASSED
 tests/test_gen_dict.py::test_alias_keys[Converter-False] PASSED
+tests/test_gen_dict.py::test_alias_implicit_rename[Converter-True] PASSED
+tests/test_gen_dict.py::test_alias_implicit_rename[Converter-False] PASSED
 tests/test_gen_dict.py::test_init_false[Converter-True] PASSED
 tests/test_gen_dict.py::test_init_false[Converter-False] PASSED
 tests/test_gen_dict.py::test_init_false_overridden[Converter-True] PASSED
@@ -630,10 +604,30 @@ tests/strategies/test_include_subclasses.py::test_dataclasses[True] PASSED
 tests/strategies/test_include_subclasses.py::test_dataclasses[False] PASSED
 tests/strategies/test_include_subclasses.py::test_dataclasses_slots[True] PASSED
 tests/strategies/test_include_subclasses.py::test_dataclasses_slots[False] PASSED
+tests/strategies/test_include_subclasses.py::test_diamond_inheritance[True] PASSED
+tests/strategies/test_include_subclasses.py::test_diamond_inheritance[False] PASSED
 tests/strategies/test_tagged_unions.py::test_forbid_extra_keys PASSED
 tests/strategies/test_tagged_unions.py::test_forbid_extra_keys_default PASSED
 tests/strategies/test_tagged_unions.py::test_nested_sequence_union PASSED
+tests/strategies/test_tagged_unions_695.py::test_recursive_type_alias[True] PASSED
+tests/strategies/test_tagged_unions_695.py::test_recursive_type_alias[False] PASSED
 tests/strategies/test_union_passthrough.py::test_skip_optionals PASSED
+tests/test_annotated_overrides.py::test_annotated_override_attrs[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_attrs[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_dataclasses[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_dataclasses[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_typeddict[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_typeddict[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_namedtuple[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_namedtuple[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_precedence[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_precedence[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_hooks[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_hooks[False] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_omit_if_default[True] PASSED
+tests/test_annotated_overrides.py::test_annotated_override_omit_if_default[False] PASSED
+tests/test_annotated_overrides.py::test_overrides_attribute_populated[True] PASSED
+tests/test_annotated_overrides.py::test_overrides_attribute_populated[False] PASSED
 tests/test_baseconverter.py::test_simple_roundtrip PASSED
 tests/test_baseconverter.py::test_simple_roundtrip_defaults PASSED
 tests/test_baseconverter.py::test_nested_roundtrip PASSED
@@ -666,6 +660,7 @@ tests/test_converter.py::test_nested_roundtrip_tuple PASSED
 tests/test_converter.py::test_optional_field_roundtrip PASSED
 tests/test_converter.py::test_310_optional_field_roundtrip PASSED
 tests/test_converter.py::test_omit_default_roundtrip PASSED
+tests/test_converter.py::test_omit_default_with_attrs_converter_roundtrip PASSED
 tests/test_converter.py::test_dict_roundtrip_with_alias PASSED
 tests/test_converter.py::test_type_overrides PASSED
 tests/test_converter.py::test_calling_back PASSED
@@ -695,6 +690,8 @@ tests/test_disambiguators.py::test_default_no_literals PASSED
 tests/test_disambiguators.py::test_default_none PASSED
 tests/test_enums.py::test_structuring_enums PASSED
 tests/test_enums.py::test_enum_failure PASSED
+tests/test_enums.py::test_unstructure_complex_enum PASSED
+tests/test_enums.py::test_structure_complex_enum PASSED
 tests/test_errors.py::test_errors_pickling[StructureHandlerNotFoundError-err_args0] PASSED
 tests/test_errors.py::test_errors_pickling[ForbiddenExtraKeysError-err_args1] PASSED
 tests/test_errors.py::test_errors_pickling[ForbiddenExtraKeysError-err_args2] PASSED
@@ -712,6 +709,7 @@ tests/test_final.py::test_structure_bare_final[True] PASSED
 tests/test_final.py::test_structure_bare_final[False] PASSED
 tests/test_function_dispatch.py::test_function_dispatch PASSED
 tests/test_function_dispatch.py::test_function_clears_cache_after_function_added PASSED
+tests/test_function_dispatch.py::test_function_dispatch_exception PASSED
 tests/test_gen.py::test_structure_linecache PASSED
 tests/test_gen.py::test_unstructure_linecache PASSED
 tests/test_gen.py::test_no_linecache PASSED
@@ -770,6 +768,8 @@ tests/test_generics_696.py::test_structure_typevar_default[True] PASSED
 tests/test_generics_696.py::test_structure_typevar_default[False] PASSED
 tests/test_generics_696.py::test_unstructure_iterable[True] PASSED
 tests/test_generics_696.py::test_unstructure_iterable[False] PASSED
+tests/test_generics_nested.py::test_structure_nested_roundtrip[True] PASSED
+tests/test_generics_nested.py::test_structure_nested_roundtrip[False] PASSED
 tests/test_helpers.py::test_assert_only_unstructured_passes_for_primitives PASSED
 tests/test_helpers.py::test_assert_only_unstructured_fails_for_attrs_classes PASSED
 tests/test_multistrategy_dispatch.py::test_multistrategy_dispatch_register_cls PASSED
@@ -813,6 +813,10 @@ tests/test_preconf.py::test_tomlkit PASSED
 tests/test_preconf.py::test_tomlkit_converter PASSED
 tests/test_preconf.py::test_tomlkit_converter_unstruct_collection_overrides PASSED
 tests/test_preconf.py::test_tomlkit_unions PASSED
+tests/test_preconf.py::test_tomlkit_date_strings PASSED
+tests/test_preconf.py::test_tomllib_converter PASSED
+tests/test_preconf.py::test_tomllib_converter_dumps PASSED
+tests/test_preconf.py::test_tomllib_converter_unstruct_collection_overrides PASSED
 tests/test_preconf.py::test_cbor2 SKIPPED (no cbor2 available)
 tests/test_preconf.py::test_cbor2_converter SKIPPED (no cbor2 available)
 tests/test_preconf.py::test_cbor2_converter_unstruct_collection_overrides SKIPPED
@@ -822,6 +826,7 @@ tests/test_preconf.py::test_literal_dicts[make_converter1] PASSED
 tests/test_preconf.py::test_literal_dicts[make_converter2] PASSED
 tests/test_preconf.py::test_literal_dicts[make_converter3] PASSED
 tests/test_preconf.py::test_literal_dicts[make_converter4] PASSED
+tests/test_preconf.py::test_literal_dicts_tomllib PASSED
 tests/test_recursive.py::test_simple_recursive PASSED
 tests/test_self.py::test_self_roundtrip[True] PASSED
 tests/test_self.py::test_self_roundtrip[False] PASSED
@@ -952,5 +957,4 @@ tests/test_validation.py::test_error_derive PASSED
 tests/test_validation.py::test_iterable_note_grouping PASSED
 tests/test_validation.py::test_class_note_grouping PASSED
 
-
-======== 917 passed, 12 skipped, 13 deselected, 15 xfailed ========
+======== 922 passed, 12 skipped, 13 deselected, 15 xfailed ========
