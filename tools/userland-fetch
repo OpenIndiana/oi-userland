@@ -369,7 +369,7 @@ def download_paths(search, filenames, url):
     return local_urls + remote_urls
 
 
-def download_from_paths(search_list, file_arg, url, link_arg, quiet=False,get_signature=False,download_dir=None):
+def download_from_paths(search_list, file_arg, url, link_arg, quiet=False,get_signature=False,download_dir=None, user_agent_arg=None):
     """Attempts to download a file from a number of possible locations.
     Generates a list of paths where the file ends up on the local
     filesystem.  This is a generator because while a download might be
@@ -434,7 +434,7 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False,get_si
             if not quiet:
                 print("\n    downloading...", end=' ')
             if type(file_arg) == str:
-                name = download(url, file_arg, quiet,(scheme != 'ftp'))
+                name = download(url, file_arg, user_agent_arg, quiet,(scheme != 'ftp'))
             else:
                 if not download_dir:
                     download_dir = os.curdir
@@ -677,7 +677,7 @@ def realmain(opts, args):
         if get_signature:
             print("INFO: not searching with -g (--sigurl provided)")
         get_signature=False
-    for name, url in download_from_paths(search_list, file_arg, url_arg, link_arg,get_signature=get_signature):
+    for name, url in download_from_paths(search_list, file_arg, url_arg, link_arg, get_signature=get_signature, user_agent_arg=user_agent_arg):
         scheme = urlparse(url).scheme
         if not name:
             print("    was not downloaded")
