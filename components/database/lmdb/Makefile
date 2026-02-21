@@ -13,18 +13,17 @@
 # Copyright 2019 Rouven Weiler
 #
 
-BUILD_BITS= 64
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			lmdb
-COMPONENT_VERSION=		0.9.33
+COMPONENT_VERSION=		0.9.35
 COMPONENT_SUMMARY=		Lightning memory-mapped database library
 COMPONENT_SRC=			openldap-LMDB_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_PROJECT_URL=	https://www.symas.com/lmdb
 COMPONENT_ARCHIVE_URL=	https://git.openldap.org/openldap/openldap/-/archive/LMDB_$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:d19d52725800177b89d235161c0af8ae8b2932207e3c9eb87e95b61f1925206d
+COMPONENT_ARCHIVE_HASH=	sha256:98e28ab0a5c23fb2eb8ad12c12d7ad5fc5e4c3563f41d0b91e9420a075974d6f
 COMPONENT_FMRI=			database/lmdb
 COMPONENT_CLASSIFICATION=	System/Databases
 COMPONENT_LICENSE=		OpenLDAP Public License
