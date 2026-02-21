@@ -1,7 +1,7 @@
 We do not have devpi_process available (yet)
 
---- tox-4.38.0/pyproject.toml.orig
-+++ tox-4.38.0/pyproject.toml
+--- tox-4.44.0/pyproject.toml.orig
++++ tox-4.44.0/pyproject.toml
 @@ -82,7 +82,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "flaky>=3.8.1",
---- tox-4.38.0/src/tox/pytest.py.orig
-+++ tox-4.38.0/src/tox/pytest.py
+--- tox-4.44.0/src/tox/pytest.py.orig
++++ tox-4.44.0/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,17 +36,17 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.38.0/tests/test_provision.py.orig
-+++ tox-4.38.0/tests/test_provision.py
+--- tox-4.44.0/tests/test_provision.py.orig
++++ tox-4.44.0/tests/test_provision.py
 @@ -19,7 +19,6 @@
      from collections.abc import Callable, Iterator, Sequence
  
      from build import DistributionType
 -    from devpi_process import Index, IndexServer
  
+     from tox.execute.request import ExecuteRequest
      from tox.pytest import MonkeyPatch, TempPathFactory, ToxProjectCreator
- 
-@@ -104,39 +103,6 @@
+@@ -105,39 +104,6 @@
          return result
  
  
@@ -86,7 +86,7 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -150,97 +116,6 @@
+@@ -179,97 +145,6 @@
  
  
  @pytest.mark.integration
@@ -184,7 +184,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -249,17 +124,6 @@
+@@ -278,17 +153,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -199,18 +199,15 @@ We do not have devpi_process available (yet)
 -    result.assert_success()
 -
 -
- @pytest.mark.parametrize("subcommand", ["r", "p", "de", "l", "d", "c", "q", "e", "le"])
- def test_provision_default_arguments_exists(tox_project: ToxProjectCreator, subcommand: str) -> None:
-     ini = r"""
-@@ -274,35 +138,3 @@
-     outcome = project.run(subcommand)
-     for argument in ["result_json", "hash_seed", "discover", "list_dependencies"]:
+ def test_provision_acquires_file_lock(tox_project: ToxProjectCreator) -> None:
+     lock_held_during_provision: dict[str, bool] = {}
+ 
+@@ -357,37 +221,6 @@
          assert hasattr(outcome.state.conf.options, argument)
--
--
+ 
+ 
 -@pytest.mark.integration
 -@pytest.mark.usefixtures("_pypi_index_mirrored")
--@pytest.mark.flaky(max_runs=3, min_passes=1)
 -@pytest.mark.timeout(120)
 -def test_provision_install_pkg_pep517(
 -    tmp_path_factory: TempPathFactory,
@@ -227,7 +224,7 @@ We do not have devpi_process available (yet)
 -    version = "0.1.1337"
 -    """
 -    (example / "pyproject.toml").write_text(skeleton)
--    sdist = pkg_builder(example / "dist", example, ["sdist"], False)
+-    wheel = pkg_builder(example / "dist", example, ["wheel"], False)
 -
 -    tox_ini = r"""
 -    [tox]
@@ -236,5 +233,10 @@ We do not have devpi_process available (yet)
 -    commands = python -c "print(42)"
 -    """
 -    project = tox_project({"tox.ini": tox_ini}, base=example)
--    result = project.run("r", "-e", "py", "--installpkg", str(sdist), "--notest", "--no-list-dependencies")
+-    result = project.run("r", "-e", "py", "--installpkg", str(wheel), "--notest", "--no-list-dependencies")
 -    result.assert_success()
+-
+-
+ def test_provision_colored_passed_to_subprocess(tox_project: ToxProjectCreator) -> None:
+ 
+     captured_cmd = None
