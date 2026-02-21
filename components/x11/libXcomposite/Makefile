@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXcomposite
-COMPONENT_VERSION= 0.4.6
-COMPONENT_REVISION=1
+COMPONENT_VERSION= 0.4.7
 COMPONENT_SUMMARY= libXcomposite - X11 Composite extension library 
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:fe40bcf0ae1a09070eba24088a5eb9810efe57453779ec1e20a55080c6dc2c87
+COMPONENT_ARCHIVE_HASH= sha256:8bdf310967f484503fa51714cf97bff0723d9b673e0eecbf92b3f97c060c8ccb
 COMPONENT_FMRI=    x11/library/libxcomposite
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
