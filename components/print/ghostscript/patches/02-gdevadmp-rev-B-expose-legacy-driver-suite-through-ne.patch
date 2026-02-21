@@ -1,0 +1,617 @@
+From 9a9cd18170c2ddb61b64082c267300421b865341 Mon Sep 17 00:00:00 2001
+From: Josh Moyer <JMoyer@NODOMAIN.NET>
+Date: Sun, 15 Feb 2026 05:10:20 -0800
+Subject: [PATCH 2/3] gdevadmp-][ rev B: expose legacy driver suite through new
+ devices
+
+---
+ configure.ac                        |   2 +-
+ contrib/contrib.mak                 |  34 ++-
+ contrib/gdevadmp.c                  |  12 +-
+ contrib/gdevadmpl.c                 | 410 ++++++++++++++++++++++++++++
+ doc/src/Devices.rst                 |  28 +-
+ psi/msvc.mak                        |   2 +-
+ windows/ghostscript.vcxproj         |  10 +-
+ windows/ghostscript.vcxproj.filters |   6 +
+ 8 files changed, 478 insertions(+), 26 deletions(-)
+ create mode 100644 contrib/gdevadmpl.c
+
+diff --git a/configure.ac b/configure.ac
+index ddd0e76c16..1860a17c84 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2829,7 +2829,7 @@ if test "x$driversfile" != x; then
+         drivers="`tr '\n' ',' <$driversfile`"
+ fi
+ 
+-if echo $drivers | grep 'APPLE\|appledmp\|iwhi\|iwhic\|iwlo\|iwlow\|iwlq\|iwlqc' >/dev/null; then
++if echo $drivers | grep 'APPLE\|appledmp\|appledmpl\|iwhi\|iwhic\|iwhil\|iwlo\|iwlol\|iwlow\|iwlq\|iwlqc\|iwlql' >/dev/null; then
+    APPLE_DEVICES_REQUESTED="yes"
+ fi
+ 
+diff --git a/contrib/contrib.mak b/contrib/contrib.mak
+index 38b1dbe759..3fd62a10e8 100644
+--- a/contrib/contrib.mak
++++ b/contrib/contrib.mak
+@@ -60,13 +60,17 @@ CONTDEV=$(AK) $(ECHOGS_XE) $(GDEVH)
+ #	fmpr	 Fujitsu FMPR (japanese)
+ #	fmlbp	 Fujitsu FMLBP2xx Page Printer (japanese)
+ #	gdevadmp suite (Apple dot matrix)
+-#		appledmp  Apple Dot Matrix Printer
+-#		iwlo      Apple ImageWriter
+-#		iwlow     Apple ImageWriter 15"
+-#		iwhi      Apple ImageWriter II
+-#		iwhic     Apple ImageWriter II (color)
+-#		iwlq      Apple ImageWriter LQ
+-#		iwlqc     Apple ImageWriter LQ (color)
++#		appledmp   Apple Dot Matrix Printer
++#		appledmpl  Apple Dot Matrix Printer (legacy)
++#		iwlo       Apple ImageWriter
++#		iwlol      Apple ImageWriter (legacy)
++#		iwlow      Apple ImageWriter 15"
++#		iwhi       Apple ImageWriter II
++#		iwhic      Apple ImageWriter II (color)
++#		iwhil      Apple ImageWriter II (legacy)
++#		iwlq       Apple ImageWriter LQ
++#		iwlqc      Apple ImageWriter LQ (color)
++#		iwlql      Apple ImageWriter LQ (legacy)
+ #	gdi	 Samsung's old driver for their SmartGDI laser printers:
+ #		 ML-4500, ML-2xx, ML-1xxx, ML-5080, ML-6040, ... and
+ #		 Lexmark E210, same as "samsunggdi"
+@@ -158,22 +162,35 @@ CONTDEV=$(AK) $(ECHOGS_XE) $(GDEVH)
+ ###                                                                       ###
+ 
+ appledmp_=$(DEVOBJ)gdevadmp.$(OBJ)
++appledmpl_=$(DEVOBJ)gdevadmpl.$(OBJ)
+ 
+ $(DEVOBJ)gdevadmp.$(OBJ) : $(CONTRIBSRC)gdevadmp.c $(PDEVH) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(DEVCC) $(DEVO_)gdevadmp.$(OBJ) $(C_) $(CONTRIBSRC)gdevadmp.c
+ 
++$(DEVOBJ)gdevadmpl.$(OBJ) : $(CONTRIBSRC)gdevadmpl.c $(PDEVH) $(CONTRIB_MAK) $(MAKEDIRS)
++	$(DEVCC) $(DEVO_)gdevadmpl.$(OBJ) $(C_) $(CONTRIBSRC)gdevadmpl.c
++
+ $(DD)appledmp.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)appledmp $(appledmp_)
+ 
++$(DD)appledmpl.dev : $(appledmpl_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
++	$(SETPDEV) $(DD)appledmpl $(appledmpl_)
++
+ $(DD)iwhi.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)iwhi $(appledmp_)
+ 
+ $(DD)iwhic.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)iwhic $(appledmp_)
+ 
++$(DD)iwhil.dev : $(appledmpl_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
++	$(SETPDEV) $(DD)iwhil $(appledmpl_)
++
+ $(DD)iwlo.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)iwlo $(appledmp_)
+ 
++$(DD)iwlol.dev : $(appledmpl_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
++	$(SETPDEV) $(DD)iwlol $(appledmpl_)
++
+ $(DD)iwlow.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)iwlow $(appledmp_)
+ 
+@@ -183,6 +200,9 @@ $(DD)iwlq.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ $(DD)iwlqc.dev : $(appledmp_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
+ 	$(SETPDEV) $(DD)iwlqc $(appledmp_)
+ 
++$(DD)iwlql.dev : $(appledmpl_) $(DD)page.dev $(CONTDEV) $(CONTRIB_MAK) $(MAKEDIRS)
++	$(SETPDEV) $(DD)iwlql $(appledmpl_)
++
+ 
+ ### ----------------- The BJC-210/240/250/250ex/265/1000 ---------------- ###
+ 
+diff --git a/contrib/gdevadmp.c b/contrib/gdevadmp.c
+index df9e56bec4..435edaba20 100644
+--- a/contrib/gdevadmp.c
++++ b/contrib/gdevadmp.c
+@@ -26,12 +26,16 @@
+  *
+  * The devices:
+  *      appledmp:  120dpi x  72dpi - Dot Matrix Printer / C. Itoh 8510
++ *      appledmpl: 120dpi x  72dpi - Dot Matrix Printer in Legacy Mode / C. Itoh 8510 in Legacy Mode (new in version ][ rev. B)
+  *      iwlo:      160dpi x  72dpi - ImageWriter
++.*      iwlol:     160dpi x  72dpi - ImageWriter in Legacy Mode (new in version ][ rev. B)
+ .*      iwlow:     160dpi x  72dpi - ImageWriter 15" (new in version ][)
+  *      iwhi:      160dpi x 144dpi - ImageWriter II
+  *      iwhic:     160dpi x 144dpi - ImageWriter II color (new in version ][)
++ *      iwhil:     160dpi x 144dpi - ImageWriter II in Legacy Mode (new in version ][ rev. B)
+  *      iwlq:      320dpi x 216dpi - ImageWriter LQ
+  *      iwlqc      320dpi x 216dpi - ImageWriter LQ color (new in version ][)
++ *      iwlql:     320dpi x 216dpi - ImageWriter LQ  in Legacy Mode (new in version ][ rev. B)
+  *
+  * Thanks for support and inspiration to the folks on the ghostscript
+  * developers list, including at least (in no particular order):
+@@ -66,12 +70,16 @@
+  * + Improved comments and printer command macros in source.
+  * + Other minor and miscellaneous changes.
+  *
+- * Fixes in version ][ revision 1 (2.01) -- assisted by Claude Sonnet 4.5:
++ * Fixes in version ][ revision A (2.0.1) -- assisted by Claude Sonnet 4.5:
+  * + Fixed a bug that caused the driver to throw an error when printing
+  *   to A4 and other sheets that have a length not equal to a multiple of 1/8"
+  * + Adopted the more C-like XXX convention for source comments that describe
+  *   bugs or deficiencies.
+- *
++ * + Changed devtype to dev_type for better consistency with dev_rez & etc.
++ * 
++ * + * Fixes in version ][ revision B (2.0.2):
++ * + Enable legacy (pre-10.06.0) driver compatibility mode by appending l to device names.
++ * 
+  * Known issues include:
+  * + Rarely, some input files produce blank output unexpectedly.  I only ever
+  *   saw it once in the course of many varied test prints, so probably an
+diff --git a/contrib/gdevadmpl.c b/contrib/gdevadmpl.c
+new file mode 100644
+index 0000000000..fdf3216734
+--- /dev/null
++++ b/contrib/gdevadmpl.c
+@@ -0,0 +1,410 @@
++/* Copyright (C) 2001-2023 Artifex Software, Inc.
++   All Rights Reserved.
++
++   This software is provided AS-IS with no warranty, either express or
++   implied.
++
++   This software is distributed under license and may not be copied,
++   modified or distributed except as expressly authorized under the terms
++   of the license contained in the file LICENSE in this distribution.
++
++   Refer to licensing information at http://www.artifex.com or contact
++   Artifex Software, Inc.,  39 Mesa Street, Suite 108A, San Francisco,
++   CA 94129, USA, for further information.
++*/
++
++/*
++ * Apple DMP / Imagewriter driver
++ *
++ * This is a modification of Mark Wedel's Apple DMP and
++ * Jonathan Luckey's Imagewriter II driver to
++ * support the Imagewriter LQ's higher resolution (320x216):
++ *      appledmp:  120dpi x  72dpi is still supported (yuck)
++ *	iwlo:	   160dpi x  72dpi
++ *	iwhi:	   160dpi x 144dpi
++ *      iwlq:      320dpi x 216dpi
++ *
++ * This is also my first attempt to work with gs. I have not included the LQ's
++ * ability to print in colour. Perhaps at a later date I will tackle that.
++ *
++ * BTW, to get your Imagewriter LQ serial printer to work with a PC, attach it
++ * with a nullmodem serial cable.
++ *
++ * Scott Barker (barkers@cuug.ab.ca)
++ */
++
++/*
++ * This is a modification of Mark Wedel's Apple DMP driver to
++ * support 2 higher resolutions:
++ *      appledmp:  120dpi x  72dpi is still supported (yuck)
++ *	iwlo:	   160dpi x  72dpi
++ *	iwhi:	   160dpi x 144dpi
++ *
++ * The Imagewriter II is a bit odd.  In pinfeed mode, it thinks its
++ * First line is 1 inch from the top of the page. If you set the top
++ * form so that it starts printing at the top of the page, and print
++ * to near the bottom, it thinks it has run onto the next page and
++ * the formfeed will skip a whole page.  As a work around, I reverse
++ * the paper about a 1.5 inches at the end of the page before the
++ * formfeed to make it think its on the 'right' page.  bah. hack!
++ *
++ * This is  my first attempt to work with gs, so your milage may vary
++ *
++ * Jonathan Luckey (luckey@rtfm.mlb.fl.us)
++ */
++
++/* This is a bare bones driver I developed for my apple Dot Matrix Printer.
++ * This code originally was from the epson driver, but I removed a lot
++ * of stuff that was not needed.
++ *
++ * The Dot Matrix Printer was a predecessor to the apple Imagewriter.  Its
++ * main difference being that it was parallel.
++ *
++ * This code should work fine on Imagewriters, as they have a superset
++ * of commands compared to the DMP printer.
++ *
++ * This driver does not produce the smalles output files possible.  To
++ * do that, it should look through the output strings and find repeat
++ * occurances of characters, and use the escape sequence that allows
++ * printing repeat sequences.  However, as I see it, this the limiting
++ * factor in printing is not transmission speed to the printer itself,
++ * but rather, how fast the print head can move.  This is assuming the
++ * printer is set up with a reasonable speed (9600 bps)
++ *
++ * WHAT THE CODE DOES AND DOES NOT DO:
++ *
++ * To print out images, it sets the printer for unidirection printing
++ * and 15 cpi (120 dpi). IT sets line feed to 1/9 of an inch (72 dpi).
++ * When finished, it sets things back to bidirection print, 1/8" line
++ * feeds, and 12 cpi.  There does not appear to be a way to reset
++ * things to initial values.
++ *
++ * This code does not set for 8 bit characters (which is required). It
++ * also assumes that carriage return/newline is needed, and not just
++ * carriage return.  These are all switch settings on the DMP, and
++ * I have configured them for 8 bit data and cr only.
++ *
++ * You can search for the strings Init and Reset to find the strings
++ * that set up the printer and clear things when finished, and change
++ * them to meet your needs.
++ *
++ * Also, you need to make sure that the printer daemon (assuming unix)
++ * doesn't change the data as it is being printed.  I have set my
++ * printcap file (sunos 4.1.1) with the string:
++ * ms=pass8,-opost
++ * and it works fine.
++ *
++ * Feel free to improve this code if you want.  However, please make
++ * sure that the old DMP will still be supported by any changes.  This
++ * may mean making an imagewriter device, and just copying this file
++ * to something like gdevimage.c.
++ *
++ * The limiting factor of the DMP is the vertical resolution.  However, I
++ * see no way to do anything about this.  Horizontal resolution could
++ * be increased by using 17 cpi (136 dpi).  I believe the Imagewriter
++ * supports 24 cpi (192 dpi).  However, the higher dpi, the slower
++ * the printing.
++ *
++ * Dot Matrix Code by Mark Wedel (master@cats.ucsc.edu)
++ *
++ *
++ * As of Oct 2019, maintained by Mike Galatean (contact through https://bugs.ghostscript.com )
++ *
++ */
++
++#include "gdevprn.h"
++
++/* The device descriptors */
++static dev_proc_print_page(dmp_print_page);
++
++/* Standard DMP device */
++const gx_device_printer far_data gs_appledmpl_device =
++prn_device(gdev_prn_initialize_device_procs_mono_bg, "appledmpl",	/* The print_page proc is compatible with allowing bg printing */
++        85,				/* width_10ths, 8.5" */
++        110,				/* height_10ths, 11" */
++        120, 72,			/* X_DPI, Y_DPI */
++        0, 0.5, 0.5, 0,		/* margins */
++        1, dmp_print_page);
++
++/*  lowrez Imagewriter device */
++const gx_device_printer far_data gs_iwlol_device =
++prn_device(gdev_prn_initialize_device_procs_mono_bg, "iwlol",	/* The print_page proc is compatible with allowing bg printing */
++        85,				/* width_10ths, 8.5" */
++        110,				/* height_10ths, 11" */
++        160, 72,			/* X_DPI, Y_DPI */
++        0, 0.5, 0.5, 0,		/* margins */
++        1, dmp_print_page);
++
++/*  hirez Imagewriter device */
++const gx_device_printer far_data gs_iwhil_device =
++prn_device(gdev_prn_initialize_device_procs_mono_bg, "iwhil",	/* The print_page proc is compatible with allowing bg printing */
++        85,				/* width_10ths, 8.5" */
++        110,				/* height_10ths, 11" */
++        160, 144,			/* X_DPI, Y_DPI */
++        0, 0.5, 0.5, 0,		/* margins */
++        1, dmp_print_page);
++
++/* LQ hirez Imagewriter device */
++const gx_device_printer far_data gs_iwlql_device =
++prn_device(gdev_prn_initialize_device_procs_mono_bg, "iwlql",	/* The print_page proc is compatible with allowing bg printing */
++        85,				/* width_10ths, 8.5" */
++        110,				/* height_10ths, 11" */
++        320, 216,
++        0, 0, 0.5, 0,		/* margins */
++        1, dmp_print_page);
++
++/* ------ Internal routines ------ */
++
++#define DMP 1
++#define IWLO 2
++#define IWHI 3
++#define IWLQ 4
++
++/* Send the page to the printer. */
++static int
++dmp_print_page(gx_device_printer *pdev, gp_file *gprn_stream)
++{
++        int dev_type;
++
++        int line_size = gdev_mem_bytes_per_scan_line((gx_device *)pdev);
++        /* Note that in_size is a multiple of 8. */
++        int in_size = line_size * 8;
++        /* FIXME: It would be better if this device used the gp_file and the gp_ API,
++         * rather than this "back door" approach
++         */
++        FILE *prn_stream = gp_get_file(gprn_stream);
++
++
++        byte *buf1 = (byte *)gs_malloc(pdev->memory, in_size, 1, "dmp_print_page(buf1)");
++        byte *buf2 = (byte *)gs_malloc(pdev->memory, in_size, 1, "dmp_print_page(buf2)");
++        byte *prn = (byte *)gs_malloc(pdev->memory, 3*in_size, 1, "dmp_print_page(prn)");
++
++        byte *in = buf1;
++        byte *out = buf2;
++        int lnum = 0;
++
++        /* Check allocations */
++        if ( buf1 == 0 || buf2 == 0 || prn == 0 )
++        {
++                if ( buf1 )
++                        gs_free(pdev->memory, (char *)buf1, in_size, 1,
++                        "dmp_print_page(buf1)");
++                if ( buf2 )
++                        gs_free(pdev->memory, (char *)buf2, in_size, 1,
++                        "dmp_print_page(buf2)");
++                if ( prn )
++                        gs_free(pdev->memory, (char *)prn, in_size, 1,
++                        "dmp_print_page(prn)");
++                return_error(gs_error_VMerror);
++        }
++
++        if ( pdev->y_pixels_per_inch == 216 )
++                dev_type = IWLQ;
++        else if ( pdev->y_pixels_per_inch == 144 )
++                dev_type = IWHI;
++        else if ( pdev->x_pixels_per_inch == 160 )
++                dev_type = IWLO;
++        else
++                dev_type = DMP;
++
++        /* Initialize the printer and reset the margins. */
++
++        fputs("\r\n\033>\033T16", prn_stream);
++
++        switch(dev_type)
++        {
++        case IWLQ:
++                fputs("\033P\033a3", prn_stream);
++                break;
++        case IWHI:
++        case IWLO:
++                fputs("\033P", prn_stream);
++                break;
++        case DMP:
++        default:
++                fputs("\033q", prn_stream);
++                break;
++        }
++
++        /* Print lines of graphics */
++        while ( lnum < pdev->height )
++        {
++                byte *inp;
++                byte *in_end;
++                byte *out_end;
++                int lcnt,ltmp;
++                int count, passes;
++                byte *prn_blk, *prn_end, *prn_tmp;
++
++/* The apple DMP printer seems to be odd in that the bit order on
++ * each line is reverse what might be expected.  Meaning, an
++ * underscore would be done as a series of 0x80, while on overscore
++ * would be done as a series of 0x01.  So we get each
++ * scan line in reverse order.
++ */
++
++                switch (dev_type)
++                {
++                case IWLQ: passes = 3; break;
++                case IWHI: passes = 2; break;
++                case IWLO:
++                case DMP:
++                default: passes = 1; break;
++                }
++
++                for (count = 0; count < passes; count++)
++                {
++                        for (lcnt=0; lcnt<8; lcnt++)
++                        {
++                                switch(dev_type)
++                                {
++                                case IWLQ: ltmp = lcnt + 8*count; break;
++                                case IWHI: ltmp = 2*lcnt + count; break;
++                                case IWLO:
++                                case DMP:
++                                default: ltmp = lcnt; break;
++                                }
++
++                                if ((lnum+ltmp)>pdev->height)
++                                        memset(in+lcnt*line_size,0,line_size);
++                                else
++                                        gdev_prn_copy_scan_lines(pdev,
++                                        lnum+ltmp, in + line_size*(7 - lcnt),
++                                        line_size);
++                        }
++
++                        out_end = out;
++                        inp = in;
++                        in_end = inp + line_size;
++                        for ( ; inp < in_end; inp++, out_end += 8 )
++                        {
++                                gdev_prn_transpose_8x8(inp, line_size,
++                                out_end, 1);
++                        }
++
++                        out_end = out;
++
++                        switch (dev_type)
++                        {
++                        case IWLQ: prn_end = prn + count; break;
++                        case IWHI: prn_end = prn + in_size*count; break;
++                        case IWLO:
++                        case DMP:
++                        default: prn_end = prn; break;
++                        }
++
++                        while ( (int)(out_end-out) < in_size)
++                        {
++                                *prn_end = *(out_end++);
++                                if ((dev_type) == IWLQ) prn_end += 3;
++                                else prn_end++;
++                        }
++                }
++
++                switch (dev_type)
++                {
++                case IWLQ:
++                        prn_blk = prn;
++                        prn_end = prn_blk + in_size * 3;
++                        while (prn_end > prn && prn_end[-1] == 0 &&
++                                prn_end[-2] == 0 && prn_end[-3] == 0)
++                        {
++                                prn_end -= 3;
++                        }
++                        while (prn_blk < prn_end && prn_blk[0] == 0 &&
++                                prn_blk[1] == 0 && prn_blk[2] == 0)
++                        {
++                                prn_blk += 3;
++                        }
++                        if (prn_end != prn_blk)
++                        {
++                                if ((prn_blk - prn) > 7)
++                                        fprintf(prn_stream,"\033U%04d%c%c%c",
++                                                (int)((prn_blk - prn)/3),
++                                                0, 0, 0);
++                                else
++                                        prn_blk = prn;
++                                fprintf(prn_stream,"\033C%04d",
++                                        (int)((prn_end - prn_blk)/3));
++                                fwrite(prn_blk, 1, (int)(prn_end - prn_blk),
++                                        prn_stream);
++                        }
++                        break;
++                case IWHI:
++                        for (count = 0; count < 2; count++)
++                        {
++                                prn_blk = prn_tmp = prn + in_size*count;
++                                prn_end = prn_blk + in_size;
++                                while (prn_end > prn_blk && prn_end[-1] == 0)
++                                        prn_end--;
++                                while (prn_blk < prn_end && prn_blk[0] == 0)
++                                        prn_blk++;
++                                if (prn_end != prn_blk)
++                                {
++                                        if ((prn_blk - prn_tmp) > 7)
++                                                fprintf(prn_stream,
++                                                        "\033V%04d%c",
++                                                        (int)(prn_blk-prn_tmp),
++                                                         0);
++                                        else
++                                                prn_blk = prn_tmp;
++                                        fprintf(prn_stream,"\033G%04d",
++                                                (int)(prn_end - prn_blk));
++                                        fwrite(prn_blk, 1,
++                                                (int)(prn_end - prn_blk),
++                                                prn_stream);
++                                }
++                                if (!count) fputs("\033T01\r\n",prn_stream);
++                        }
++                        fputs("\033T15",prn_stream);
++                        break;
++                case IWLO:
++                case DMP:
++                default:
++                        prn_blk = prn;
++                        prn_end = prn_blk + in_size;
++                        while (prn_end > prn_blk && prn_end[-1] == 0)
++                                prn_end--;
++                        while (prn_blk < prn_end && prn_blk[0] == 0)
++                                prn_blk++;
++                        if (prn_end != prn_blk)
++                        {
++                                if ((prn_blk - prn) > 7)
++                                        fprintf(prn_stream,"\033V%04d%c",
++                                                (int)(prn_blk - prn), 0);
++                                else
++                                        prn_blk = prn;
++                                fprintf(prn_stream,"\033G%04d",
++                                        (int)(prn_end - prn_blk));
++                                fwrite(prn_blk, 1, (int)(prn_end - prn_blk),
++                                        prn_stream);
++                        }
++                        break;
++                }
++
++                fputs("\r\n",prn_stream);
++
++                switch (dev_type)
++                {
++                        case IWLQ: lnum += 24 ; break;
++                        case IWHI: lnum += 16 ; break;
++                        case IWLO:
++                        case DMP:
++                        default: lnum += 8 ; break;
++                }
++        }
++
++        /* ImageWriter will skip a whole page if too close to end */
++        /* so skip back more than an inch */
++        if ( !(dev_type == DMP) )
++                fputs("\033T99\n\n\033r\n\n\n\n\033f", prn_stream);
++
++        /* Formfeed and Reset printer */
++        fputs("\033T16\f\033<\033B\033E", prn_stream);
++        fflush(prn_stream);
++
++        gs_free(pdev->memory, (char *)prn, in_size, 1, "dmp_print_page(prn)");
++        gs_free(pdev->memory, (char *)buf2, in_size, 1, "dmp_print_page(buf2)");
++        gs_free(pdev->memory, (char *)buf1, in_size, 1, "dmp_print_page(buf1)");
++        return 0;
++}
+diff --git a/doc/src/Devices.rst b/doc/src/Devices.rst
+index f9b4247d13..eabb2f3bac 100644
+--- a/doc/src/Devices.rst
++++ b/doc/src/Devices.rst
+@@ -1147,17 +1147,23 @@ Credits for this documentation section and the associated driver(s) are at the t
+ 
+ The Apple Dot Matrix Printer (DMP) was the parallel predecessor to the serial ImageWriters.  ImageWriter commands are a superset of the Dot Matrix Printer's, so the driver suite supports all of Apple's dot-matrix printers.  (And, in theory, the C. Itoh 8510 on which they were originally based.)  Each printer supports all the resolutions of its predecessors.  Additionally, the driver could possibly even be adapted to support the Scribe, Apple's CMY/K thermal transfer printer with the same command set.
+ 
+-========================  ==================  =======================
+-Device                    Maximum Resolution  Ghostscript Device Name
+-========================  ==================  =======================
+-Dot Matrix Printer        120x72              :title:`appledmp`
+-ImageWriter               160x72              :title:`iwlo`
+-ImageWriter 15"           160x72              :title:`iwlow`
+-ImageWriter II            160x144             :title:`iwhi`
+-ImageWriter II (color)    160x144             :title:`iwhic`
+-ImageWriter LQ            320x216             :title:`iwlq`
+-ImageWriter LQ (color)    320x216             :title:`iwlqc`
+-========================  ==================  =======================
++===========================  ==================  =======================
++Device                       Maximum Resolution  Ghostscript Device Name
++===========================  ==================  =======================
++Dot Matrix Printer           120x72              :title:`appledmp`
++Dot Matrix Printer (legacy)  120x72              :title:`appledmpl`
++ImageWriter                  160x72              :title:`iwlo`
++ImageWriter (legacy)         160x72              :title:`iwlol`
++ImageWriter 15"              160x72              :title:`iwlow`
++ImageWriter II               160x144             :title:`iwhi`
++ImageWriter II (color)       160x144             :title:`iwhic`
++ImageWriter II (legacy)      160x144             :title:`iwhil`
++ImageWriter LQ               320x216             :title:`iwlq`
++ImageWriter LQ (color)       320x216             :title:`iwlqc`
++ImageWriter LQ (legacy)      320x216             :title:`iwlql`
++===========================  ==================  =======================
++
++The legacy modes are for backwards compatibility, implmenting the prior version of the driver suite.  No color, incorrect alignments, reverse and form-feeds for sheet ejection and etc.  Not recommended, unless the new driver has incompatibilities with your jobs.
+ 
+ The driver sets the printer for bidirectional (by default) or unidirectional (``-dUNIDIRECTIONAL``) printing and may vary the characters per inch (cpi) and line-height.  When finished, the driver sets the printer to bidirectional printing, 1/6-inch line feeds, and an elite character pitch (as suggested by Apple's documentation.)
+ 
+diff --git a/psi/msvc.mak b/psi/msvc.mak
+index 40b1b8ac73..fe559e0bb8 100644
+--- a/psi/msvc.mak
++++ b/psi/msvc.mak
+@@ -1096,7 +1096,7 @@ DEVICE_DEVS19=$(DD)lbp8.dev $(DD)m8510.dev $(DD)necp6.dev $(DD)bjc600.dev $(DD)b
+ DEVICE_DEVS20=$(DD)pnm.dev $(DD)pnmraw.dev $(DD)ppm.dev $(DD)ppmraw.dev $(DD)pamcmyk32.dev $(DD)pamcmyk4.dev $(DD)pnmcmyk.dev $(DD)pam.dev
+ DEVICE_DEVS21=$(DD)spotcmyk.dev $(DD)devicen.dev $(DD)bmpsep1.dev $(DD)bmpsep8.dev $(DD)bmp16m.dev $(DD)bmp32b.dev $(DD)psdcmyk.dev $(DD)psdrgb.dev $(DD)psdcmyk16.dev $(DD)psdrgb16.dev $(DD)psdrgbtags.dev $(DD)psdcmyktags.dev $(DD)psdcmyktags16.dev $(DD)psdrgbtags16.dev
+ !endif
+-CONTRIB_DEVS=$(DD)pcl3.dev $(DD)hpdjplus.dev $(DD)hpdjportable.dev $(DD)hpdj310.dev $(DD)hpdj320.dev $(DD)hpdj340.dev $(DD)hpdj400.dev $(DD)hpdj500.dev $(DD)hpdj500c.dev $(DD)hpdj510.dev $(DD)hpdj520.dev $(DD)hpdj540.dev $(DD)hpdj550c.dev $(DD)hpdj560c.dev $(DD)hpdj600.dev $(DD)hpdj660c.dev $(DD)hpdj670c.dev $(DD)hpdj680c.dev $(DD)hpdj690c.dev $(DD)hpdj850c.dev $(DD)hpdj855c.dev $(DD)hpdj870c.dev $(DD)hpdj890c.dev $(DD)hpdj1120c.dev $(DD)cdj670.dev $(DD)cdj850.dev $(DD)cdj880.dev $(DD)cdj890.dev $(DD)cdj970.dev $(DD)cdj1600.dev $(DD)cdnj500.dev $(DD)chp2200.dev $(DD)lips3.dev $(DD)lxm5700m.dev $(DD)lxm3200.dev $(DD)lex2050.dev $(DD)lxm3200.dev $(DD)lex5700.dev $(DD)lex7000.dev $(DD)okiibm.dev $(DD)oki182.dev $(DD)oki4w.dev $(DD)gdi.dev $(DD)samsunggdi.dev $(DD)dl2100.dev $(DD)la50.dev $(DD)la70.dev $(DD)la75.dev $(DD)la75plus.dev $(DD)ln03.dev $(DD)xes.dev $(DD)md2k.dev $(DD)md5k.dev $(DD)lips4.dev $(DD)lips4v.dev $(DD)bj10v.dev $(DD)bj10vh.dev $(DD)md50Mono.dev $(DD)md50Eco.dev $(DD)md1xMono.dev $(DD)lp2000.dev $(DD)escpage.dev $(DD)ap3250.dev $(DD)npdl.dev $(DD)rpdl.dev $(DD)fmpr.dev $(DD)fmlbp.dev $(DD)ml600.dev $(DD)jj100.dev $(DD)lbp310.dev $(DD)lbp320.dev $(DD)mj700v2c.dev $(DD)mj500c.dev $(DD)mj6000c.dev $(DD)mj8000c.dev $(DD)pr201.dev $(DD)pr150.dev $(DD)pr1000.dev $(DD)pr1000_4.dev $(DD)lips2p.dev $(DD)bjc880j.dev $(DD)bjcmono.dev $(DD)bjcgray.dev $(DD)bjccmyk.dev $(DD)bjccolor.dev $(DD)escp.dev $(DD)lp8000.dev $(DD)lq850.dev $(DD)photoex.dev $(DD)st800.dev $(DD)stcolor.dev $(DD)alc1900.dev $(DD)alc2000.dev $(DD)alc4000.dev $(DD)alc4100.dev $(DD)alc8500.dev $(DD)alc8600.dev $(DD)alc9100.dev $(DD)lp3000c.dev $(DD)lp8000c.dev $(DD)lp8200c.dev $(DD)lp8300c.dev $(DD)lp8500c.dev $(DD)lp8800c.dev $(DD)lp9000c.dev $(DD)lp9200c.dev $(DD)lp9500c.dev $(DD)lp9800c.dev $(DD)lps6500.dev $(DD)epl2050.dev $(DD)epl2050p.dev $(DD)epl2120.dev $(DD)epl2500.dev $(DD)epl2750.dev $(DD)epl5800.dev $(DD)epl5900.dev $(DD)epl6100.dev $(DD)epl6200.dev $(DD)lp1800.dev $(DD)lp1900.dev $(DD)lp2200.dev $(DD)lp2400.dev $(DD)lp2500.dev $(DD)lp7500.dev $(DD)lp7700.dev $(DD)lp7900.dev $(DD)lp8100.dev $(DD)lp8300f.dev $(DD)lp8400f.dev $(DD)lp8600.dev $(DD)lp8600f.dev $(DD)lp8700.dev $(DD)lp8900.dev $(DD)lp9000b.dev $(DD)lp9100.dev $(DD)lp9200b.dev $(DD)lp9300.dev $(DD)lp9400.dev $(DD)lp9600.dev $(DD)lp9600s.dev $(DD)lps4500.dev $(DD)eplcolor.dev $(DD)eplmono.dev $(DD)hl7x0.dev $(DD)hl1240.dev $(DD)hl1250.dev $(DD)appledmp.dev $(DD)iwhi.dev $(DD)iwhic.dev $(DD)iwlo.dev $(DD)iwlow.dev $(DD)iwlq.dev $(DD)iwlqc.dev $(DD)atx23.dev $(DD)atx24.dev $(DD)atx38.dev $(DD)itk24i.dev $(DD)itk38.dev $(DD)coslw2p.dev $(DD)coslwxl.dev $(DD)ccr.dev $(DD)cif.dev $(DD)inferno.dev $(DD)mgr4.dev $(DD)mgr8.dev $(DD)mgrgray2.dev $(DD)mgrgray4.dev $(DD)mgrgray8.dev $(DD)mgrmono.dev $(DD)miff24.dev $(DD)plan9bm.dev $(DD)xcf.dev
++CONTRIB_DEVS=$(DD)pcl3.dev $(DD)hpdjplus.dev $(DD)hpdjportable.dev $(DD)hpdj310.dev $(DD)hpdj320.dev $(DD)hpdj340.dev $(DD)hpdj400.dev $(DD)hpdj500.dev $(DD)hpdj500c.dev $(DD)hpdj510.dev $(DD)hpdj520.dev $(DD)hpdj540.dev $(DD)hpdj550c.dev $(DD)hpdj560c.dev $(DD)hpdj600.dev $(DD)hpdj660c.dev $(DD)hpdj670c.dev $(DD)hpdj680c.dev $(DD)hpdj690c.dev $(DD)hpdj850c.dev $(DD)hpdj855c.dev $(DD)hpdj870c.dev $(DD)hpdj890c.dev $(DD)hpdj1120c.dev $(DD)cdj670.dev $(DD)cdj850.dev $(DD)cdj880.dev $(DD)cdj890.dev $(DD)cdj970.dev $(DD)cdj1600.dev $(DD)cdnj500.dev $(DD)chp2200.dev $(DD)lips3.dev $(DD)lxm5700m.dev $(DD)lxm3200.dev $(DD)lex2050.dev $(DD)lxm3200.dev $(DD)lex5700.dev $(DD)lex7000.dev $(DD)okiibm.dev $(DD)oki182.dev $(DD)oki4w.dev $(DD)gdi.dev $(DD)samsunggdi.dev $(DD)dl2100.dev $(DD)la50.dev $(DD)la70.dev $(DD)la75.dev $(DD)la75plus.dev $(DD)ln03.dev $(DD)xes.dev $(DD)md2k.dev $(DD)md5k.dev $(DD)lips4.dev $(DD)lips4v.dev $(DD)bj10v.dev $(DD)bj10vh.dev $(DD)md50Mono.dev $(DD)md50Eco.dev $(DD)md1xMono.dev $(DD)lp2000.dev $(DD)escpage.dev $(DD)ap3250.dev $(DD)npdl.dev $(DD)rpdl.dev $(DD)fmpr.dev $(DD)fmlbp.dev $(DD)ml600.dev $(DD)jj100.dev $(DD)lbp310.dev $(DD)lbp320.dev $(DD)mj700v2c.dev $(DD)mj500c.dev $(DD)mj6000c.dev $(DD)mj8000c.dev $(DD)pr201.dev $(DD)pr150.dev $(DD)pr1000.dev $(DD)pr1000_4.dev $(DD)lips2p.dev $(DD)bjc880j.dev $(DD)bjcmono.dev $(DD)bjcgray.dev $(DD)bjccmyk.dev $(DD)bjccolor.dev $(DD)escp.dev $(DD)lp8000.dev $(DD)lq850.dev $(DD)photoex.dev $(DD)st800.dev $(DD)stcolor.dev $(DD)alc1900.dev $(DD)alc2000.dev $(DD)alc4000.dev $(DD)alc4100.dev $(DD)alc8500.dev $(DD)alc8600.dev $(DD)alc9100.dev $(DD)lp3000c.dev $(DD)lp8000c.dev $(DD)lp8200c.dev $(DD)lp8300c.dev $(DD)lp8500c.dev $(DD)lp8800c.dev $(DD)lp9000c.dev $(DD)lp9200c.dev $(DD)lp9500c.dev $(DD)lp9800c.dev $(DD)lps6500.dev $(DD)epl2050.dev $(DD)epl2050p.dev $(DD)epl2120.dev $(DD)epl2500.dev $(DD)epl2750.dev $(DD)epl5800.dev $(DD)epl5900.dev $(DD)epl6100.dev $(DD)epl6200.dev $(DD)lp1800.dev $(DD)lp1900.dev $(DD)lp2200.dev $(DD)lp2400.dev $(DD)lp2500.dev $(DD)lp7500.dev $(DD)lp7700.dev $(DD)lp7900.dev $(DD)lp8100.dev $(DD)lp8300f.dev $(DD)lp8400f.dev $(DD)lp8600.dev $(DD)lp8600f.dev $(DD)lp8700.dev $(DD)lp8900.dev $(DD)lp9000b.dev $(DD)lp9100.dev $(DD)lp9200b.dev $(DD)lp9300.dev $(DD)lp9400.dev $(DD)lp9600.dev $(DD)lp9600s.dev $(DD)lps4500.dev $(DD)eplcolor.dev $(DD)eplmono.dev $(DD)hl7x0.dev $(DD)hl1240.dev $(DD)hl1250.dev $(DD)appledmp.dev $(DD)appledmpl.dev $(DD)iwhi.dev $(DD)iwhic.dev $(DD)iwhil.dev $(DD)iwlo.dev $(DD)iwlol.dev $(DD)iwlow.dev $(DD)iwlq.dev $(DD)iwlqc.dev $(DD)iwlql.dev $(DD)atx23.dev $(DD)atx24.dev $(DD)atx38.dev $(DD)itk24i.dev $(DD)itk38.dev $(DD)coslw2p.dev $(DD)coslwxl.dev $(DD)ccr.dev $(DD)cif.dev $(DD)inferno.dev $(DD)mgr4.dev $(DD)mgr8.dev $(DD)mgrgray2.dev $(DD)mgrgray4.dev $(DD)mgrgray8.dev $(DD)mgrmono.dev $(DD)miff24.dev $(DD)plan9bm.dev $(DD)xcf.dev
+ 
+ !if "$(WITH_CONTRIB)" == "1"
+ DEVICE_DEVS16=$(DEVICE_DEVS16) $(CONTRIB_DEVS)
+-- 
+2.52.0.windows.1
+
