@@ -246,7 +246,6 @@ def download(url, filename=None, user_agent_arg=None, quiet=None,allow_partial=T
             filename = req.get_full_url().split('/')[-1]
         retry = 1
         dl = 0
-        req.method = "GET"
         i = urlopen(req)
         if 'transfer-encoding' in i.headers and i.headers['transfer-encoding'] == 'chunked':
             length = 0
@@ -266,6 +265,7 @@ def download(url, filename=None, user_agent_arg=None, quiet=None,allow_partial=T
                 print("No partial download support from server")
             allow_partial = False
         i.close()
+        req.method = "GET"
         # This might speed things up and keep memory usage down
         while retry <= 3:
             with open(filename + ".part","ab" if allow_partial else "wb") as o:
