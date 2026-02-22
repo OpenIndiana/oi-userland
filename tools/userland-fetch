@@ -68,6 +68,8 @@ from http.client import BadStatusLine
 #                       remote counterparts.
 #
 
+USER_AGENT = "curl/8.18.0"
+
 # convert environment variables to global python variables
 def prep_envvars():
     # This algorithm is set if it cannot be found in the filename
@@ -438,10 +440,10 @@ def download_from_paths(search_list, file_arg, url, link_arg, quiet=False,get_si
             else:
                 if not download_dir:
                     download_dir = os.curdir
-                name = download(url, os.path.join(download_dir,os.path.basename(url)),quiet,(scheme != 'ftp'))
+                name = download(url, os.path.join(download_dir,os.path.basename(url)), user_agent_arg, quiet, (scheme != 'ftp'))
             if get_signature and name:
                 for ext in SIGNATURE_EXTENSIONS:
-                    sig = download(url+"."+ext, name+"."+ext, quiet,(scheme != 'ftp'))
+                    sig = download(url+"."+ext, name+"."+ext, user_agent_arg, quiet, (scheme != 'ftp'))
                     if sig:
                         break
             if name is None:
@@ -520,7 +522,7 @@ def main():
 
 def realmain(opts, args):
     prep_envvars()
-    user_agent_arg = None
+    user_agent_arg = USER_AGENT
     file_arg = None
     link_arg = False
     keep_arg = False
