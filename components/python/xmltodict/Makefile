@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		xmltodict
-HUMAN_VERSION =			1.0.3
+HUMAN_VERSION =			1.0.4
 COMPONENT_SUMMARY =		Makes working with XML feel like you are working with JSON
 COMPONENT_PROJECT_URL =		https://github.com/martinblech/xmltodict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3bf1f49c7836df34cf6d9cc7e690c4351f7dfff2ab0b8a1988bba4a9b9474909
+	sha256:6d94c9f834dd9e44514162799d344d815a3a4faec913717a9ecbfa5be1bb8e61
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
