@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
 COMPONENT_VERSION=      0.69
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
@@ -76,21 +77,18 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += BUILD_ROOT=$(PROTO_DIR)
 
 COMPONENT_TEST_TRANSFORMS += \
- 	'-n ' \
+	'-n ' \
 	'-e "/commands/p" ' \
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += service/network/smtp/postfix
-REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/network/mailwrapper
+REQUIRED_PACKAGES += system/mta
 REQUIRED_PACKAGES += text/diffstat
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-diffutils
@@ -98,3 +96,4 @@ REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-patch
 REQUIRED_PACKAGES += text/gnu-sed
 REQUIRED_PACKAGES += text/text-utilities
+REQUIRED_PACKAGES.perl += runtime/perl
