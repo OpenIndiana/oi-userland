@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project chardet
+#   $WS_TOOLS/python-integrate-project -d python/chardet-39 chardet
 #
 
 BUILD_STYLE = pyproject
@@ -19,37 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		chardet
-HUMAN_VERSION =			6.0.0.post1
+HUMAN_VERSION =			5.2.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Universal encoding detector for Python 3
 COMPONENT_PROJECT_URL =		http://chardet.github.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b78048c3c97c7b2ed1fbad7a18f76f5a6547f7d34dbab536cc13887c9a92fa4
+	sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by chardet >= 6.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# chardet >= 6.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
-
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_PEP735 += test
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatch-vcs
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
