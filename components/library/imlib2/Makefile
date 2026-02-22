@@ -23,10 +23,12 @@
 # Copyright 2025 Geoff Weiss
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         imlib2
 COMPONENT_VERSION=      1.12.6
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      Library that does image file loading and saving as well as rendering, manipulation, arbitrary polygon support
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/enlightenment/
