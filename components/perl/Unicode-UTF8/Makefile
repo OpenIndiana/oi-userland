@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Unicode-UTF8
-HUMAN_VERSION =			0.63
+HUMAN_VERSION =			0.65
 COMPONENT_SUMMARY =		Encoding and decoding of UTF-8 encoding form
 COMPONENT_CPAN_AUTHOR =		CHANSEN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd1944165538d6eec0f9d1454034beb37e19663dba06f87a7d06345ad430f988
+	sha256:a10414b85516fddeeea3f8ac16118e4705b9a779b81360f5c8047d6273b3f43f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
