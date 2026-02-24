@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=9
+# CANDIDATE_BETA=14
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      147.0.4
+COMPONENT_VERSION=      148.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,11 +73,11 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:bc0742ac62b177987d3312352194d4a088396ccf7b02e94be88f8072d82e94f7
+COMPONENT_ARCHIVE_HASH=	sha256:ec93e5040a23b7dbe9ec77eb4a7ccda9820856d7851bf2f617f3673b6354cb6f
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
-RUST_VERSION = 1.91.0
+RUST_VERSION = 1.92.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -219,6 +219,10 @@ ENV += CARGO_HOME=$(CARGO_HOME)
 
 # This is needed to run bins/libs in .rustup
 ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+
+# set custom mozbuild path
+CONFIGURE_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
+COMPONENT_BUILD_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
