@@ -34,14 +34,14 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      9.7
+COMPONENT_VERSION=      9.10
 COMPONENT_SUMMARY=		GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf
+COMPONENT_ARCHIVE_HASH= sha256:16535a9adf0b10037364e2d612aad3d9f4eca3a344949ced74d12faf4bd51d25
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         file/gnu-coreutils	
+COMPONENT_FMRI=         file/gnu-coreutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
 COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
@@ -61,6 +61,7 @@ CONFIGURE_OPTIONS	+=	--libexecdir=$(USRLIBDIR.$(BITS))
 CONFIGURE_OPTIONS.32 +=	--disable-year2038
 # chcon and runcon are linux only
 CONFIGURE_OPTIONS += --enable-no-install-program=chcon,runcon
+CONFIGURE_OPTIONS += --enable-install-program=kill,uptime
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

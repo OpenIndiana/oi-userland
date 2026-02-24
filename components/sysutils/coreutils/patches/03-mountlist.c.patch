@@ -4,8 +4,8 @@ See the comments in CR# 15595871 for more details.
 This patch has not been passed upstream yet. It needs to be reworked into
 a format that would be acceptable.
 
---- coreutils-9.5/lib/mountlist.c.orig
-+++ coreutils-9.5/lib/mountlist.c
+--- coreutils-9.10/lib/mountlist.c.orig
++++ coreutils-9.10/lib/mountlist.c
 @@ -229,13 +229,13 @@
  #endif
  
@@ -21,4 +21,4 @@ a format that would be acceptable.
 +    ((strchr (Fs_name, ':') != NULL && strcmp (Fs_type, "pcfs") != 0) \
       || ((Fs_name)[0] == '/'                    \
           && (Fs_name)[1] == '/'                 \
-          && (strcmp (Fs_type, "smbfs") == 0     \
+          && (streq (Fs_type, "smbfs")     \
