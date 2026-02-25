@@ -2,9 +2,9 @@ GNU Coreutils bug 21062 coreutils-8.24 - cp(1) check failures on tmpfs filesyste
 
 /* Avoid spoiling errno when we are going to ignore it immediately anyway */
 
---- coreutils-9.5/lib/set-permissions.c.orig
-+++ coreutils-9.5/lib/set-permissions.c
-@@ -231,6 +231,7 @@
+--- coreutils-9.10/lib/set-permissions.c.orig
++++ coreutils-9.10/lib/set-permissions.c
+@@ -226,6 +226,7 @@
          {
            if (errno == ENOSYS)
              {
@@ -12,7 +12,7 @@ GNU Coreutils bug 21062 coreutils-8.24 - cp(1) check failures on tmpfs filesyste
                *must_chmod = true;
                return 0;
              }
-@@ -265,6 +266,7 @@
+@@ -260,6 +261,7 @@
        {
          if (errno == ENOSYS || errno == EOPNOTSUPP)
            {
@@ -20,7 +20,7 @@ GNU Coreutils bug 21062 coreutils-8.24 - cp(1) check failures on tmpfs filesyste
              *must_chmod = true;
              return 0;
            }
-@@ -635,6 +637,7 @@
+@@ -623,6 +625,7 @@
            if ((errno == ENOSYS || errno == EOPNOTSUPP || errno == EINVAL)
                && acl_nontrivial (ctx->count, ctx->entries) == 0)
              ret = 0;
@@ -28,7 +28,7 @@ GNU Coreutils bug 21062 coreutils-8.24 - cp(1) check failures on tmpfs filesyste
          }
        else
          *acls_set = true;
-@@ -652,6 +655,7 @@
+@@ -640,6 +643,7 @@
            if ((errno == ENOSYS || errno == EINVAL || errno == ENOTSUP)
                && acl_ace_nontrivial (ctx->ace_count, ctx->ace_entries) == 0)
              ret = 0;
