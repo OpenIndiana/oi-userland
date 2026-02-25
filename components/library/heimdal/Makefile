@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         heimdal
 COMPONENT_VERSION=      7.8.0
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      Kerberos 5 implementation
 COMPONENT_PROJECT_URL=  https://heimdal.software/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
