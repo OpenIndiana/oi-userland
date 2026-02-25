@@ -22,6 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		postfix
 COMPONENT_VERSION=	3.10.7
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Postfix is a free and open-source mail transfer agent (MTA) that routes and delivers electronic mail, intended as an alternative to Sendmail MTA.
 COMPONENT_PROJECT_URL=	https://www.postfix.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
