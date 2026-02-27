@@ -15,18 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lingua
-HUMAN_VERSION =			4.16.1
+HUMAN_VERSION =			4.16.2
 COMPONENT_SUMMARY =		Translation toolset
 COMPONENT_PROJECT_URL =		https://github.com/wichert/lingua
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/wichert/lingua/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:332401650fe7d9a90d496d41755a78de1a48340f3198887fa211905ce3406def
+	sha256:b1e5cbbbecd40afd39ef3d4fcb40e4e3fc9b96bc0e043e708844a6d226ee54bd
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
