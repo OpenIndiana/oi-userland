@@ -20,12 +20,13 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lingua
-HUMAN_VERSION =			4.15.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.16.1
 COMPONENT_SUMMARY =		Translation toolset
 COMPONENT_PROJECT_URL =		https://github.com/wichert/lingua
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/wichert/lingua/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0e1a946741db288a40361ad04ff38fe04bf0819834b8abb84c4b535fed9ba4ef
+	sha256:332401650fe7d9a90d496d41755a78de1a48340f3198887fa211905ce3406def
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,6 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/click
-REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += library/python/polib
+REQUIRED_PACKAGES.python += library/python/uv-build
 REQUIRED_PACKAGES.python += runtime/python
