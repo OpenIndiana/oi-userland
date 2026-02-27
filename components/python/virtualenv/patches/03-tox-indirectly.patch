@@ -1,0 +1,28 @@
+--- virtualenv-20.39.0/tox.toml.orig
++++ virtualenv-20.39.0/tox.toml
+@@ -30,8 +30,9 @@
+ set_env.COVERAGE_PROCESS_START = "{tox_root}{/}pyproject.toml"
+ set_env.PYTHONWARNDEFAULTENCODING = "1"
+ commands = [
+-  [ "coverage", "erase" ],
++  [ "python", "-m", "coverage", "erase" ],
+   [
++    "python", "-m",
+     "coverage",
+     "run",
+     "-m",
+@@ -47,10 +48,11 @@
+       "loadfile",
+     ] },
+   ],
+-  [ "coverage", "combine" ],
+-  [ "coverage", "report", "--skip-covered", "--show-missing" ],
+-  [ "coverage", "xml", "-o", "{work_dir}{/}coverage.{env_name}.xml" ],
++  [ "python", "-m", "coverage", "combine" ],
++  [ "python", "-m", "coverage", "report", "--skip-covered", "--show-missing" ],
++  [ "python", "-m", "coverage", "xml", "-o", "{work_dir}{/}coverage.{env_name}.xml" ],
+   [
++    "python", "-m",
+     "coverage",
+     "html",
+     "-d",

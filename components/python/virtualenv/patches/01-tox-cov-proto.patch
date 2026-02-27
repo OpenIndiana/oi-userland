@@ -1,13 +1,13 @@
 We test in proto area not in site-packages.
 
---- virtualenv-20.37.0/tox.ini.orig
-+++ virtualenv-20.37.0/tox.ini
-@@ -34,7 +34,7 @@
-     COVERAGE_FILE = {toxworkdir}/.coverage.{envname}
-     COVERAGE_PROCESS_START = {toxinidir}/pyproject.toml
-     PYTHONWARNDEFAULTENCODING = 1
--    _COVERAGE_SRC = {envsitepackagesdir}/virtualenv
-+    _COVERAGE_SRC = virtualenv
- commands =
-     !graalpy: coverage erase
-     !graalpy: coverage run -m pytest {posargs:--junitxml "{toxworkdir}/junit.{envname}.xml" tests --int -n auto --dist loadfile}
+--- virtualenv-20.39.0/tox.toml.orig
++++ virtualenv-20.39.0/tox.toml
+@@ -25,7 +25,7 @@
+ wheel_build_env = ".pkg"
+ dependency_groups = [ "test" ]
+ pass_env = [ "CI_RUN", "PYTEST_*", "TERM" ]
+-set_env._COVERAGE_SRC = "{env_site_packages_dir}{/}virtualenv"
++set_env._COVERAGE_SRC = "virtualenv"
+ set_env.COVERAGE_FILE = "{work_dir}{/}.coverage.{env_name}"
+ set_env.COVERAGE_PROCESS_START = "{tox_root}{/}pyproject.toml"
+ set_env.PYTHONWARNDEFAULTENCODING = "1"

@@ -1,0 +1,22 @@
+--- virtualenv-20.39.0/tests/unit/discovery/py_info/test_py_info.py.orig
++++ virtualenv-20.39.0/tests/unit/discovery/py_info/test_py_info.py
+@@ -549,7 +549,7 @@
+     assert isinstance(machine, str)
+     assert len(machine) > 0
+     # Should be a recognized ISA value
+-    known_isas = {"arm64", "x86_64", "x86", "ppc64le", "ppc64", "s390x", "riscv64"}
++    known_isas = {"arm64", "x86_64", "x86", "ppc64le", "ppc64", "s390x", "riscv64", "i86pc.64bit"}
+     assert machine in known_isas, f"unexpected machine value: {machine}"
+ 
+ 
+--- virtualenv-20.39.0/src/virtualenv/discovery/py_spec.py.orig
++++ virtualenv-20.39.0/src/virtualenv/discovery/py_spec.py
+@@ -16,7 +16,7 @@
+     (?P<version>[0-9.]+)?           # version (e.g. 3.12, 3.12.1)
+     (?P<threaded>t)?                # free-threaded flag
+     (?:-(?P<arch>32|64))?           # architecture bitness
+-    (?:-(?P<machine>[a-zA-Z0-9_]+))?  # ISA (e.g. arm64, x86_64)
++    (?:-(?P<machine>[a-zA-Z0-9_.]+))?  # ISA (e.g. arm64, x86_64)
+     $
+     """,
+     re.VERBOSE,
