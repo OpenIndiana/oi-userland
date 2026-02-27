@@ -18,12 +18,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libid3tag
-COMPONENT_VERSION=	0.16.3
+COMPONENT_VERSION=	0.16.4
 COMPONENT_SUMMARY=	ID3 tag reading library from the MAD project
 COMPONENT_PROJECT_URL=	https://www.underbit.com/products/mad/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0561009778513a95d91dac33cee8418d6622f710450a7cb56a74636d53b588cb
+COMPONENT_ARCHIVE_HASH= sha256:ceb88ada1aa867c87c1d748a8aa40e68db5b0d2df636a9dab0ab1f7741d5e009
 COMPONENT_ARCHIVE_URL=	https://codeberg.org/tenacityteam/libid3tag/archive/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/audio/libid3tag
 COMPONENT_CLASSIFICATION=System/Multimedia Libraries
