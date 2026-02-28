@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Zlib
-HUMAN_VERSION =			2.219
+HUMAN_VERSION =			2.221
 COMPONENT_SUMMARY =		Perl interface to zlib/zlib-ng compression libraries
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:beead3377e1a6ce3b0be49df348776d740329d35d66f3c488913a1f7ac43b959
+	sha256:78e3e32119d845fc29f593e36a1687fd03041b827c5cdf23586a4116ad6a9392
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
