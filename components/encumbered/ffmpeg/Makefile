@@ -18,11 +18,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.1.2
+COMPONENT_VERSION=	7.1.3
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:089bc60fb59d6aecc5d994ff530fd0dcb3ee39aa55867849a2bbc4e555f9c304
+COMPONENT_ARCHIVE_HASH=	sha256:f0bf043299db9e3caacb435a712fc541fbb07df613c4b893e8b77e67baf3adbe
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -37,9 +37,6 @@ COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-# gcc 14 complains about incompatible pointer types
-CFLAGS += -Wno-error=incompatible-pointer-types
 
 # helper target
 update-license-file: patch
@@ -112,7 +109,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 # suite, as we use binaries and libraries from $(PROTO_DIR) for tests
 # to reduce issues with all the test binaries not being able to find
 # ffmpeg's libraries.
-test:	install $(TEST_64)
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
