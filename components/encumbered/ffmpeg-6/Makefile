@@ -18,12 +18,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	6.1.2
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	6.1.4
 COMPONENT_SUMMARY=	A very fast video and audio converter (runtime libraries)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3b624649725ecdc565c903ca6643d41f33bd49239922e45c9b1442c63dca4e38
+COMPONENT_ARCHIVE_HASH=	sha256:a231e3d5742c44b1cdaebfb98ad7b6200d12763e0b6db9e1e2c5891f2c083a18
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/ffmpeg-6
@@ -35,6 +34,20 @@ COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file: patch
+	( \
+		$(CAT) $(SOURCE_DIR)/LICENSE.md ; \
+		printf '\n--- COPYING.LGPLv2.1 ------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv2.1 ; \
+		printf '\n--- COPYING.LGPLv3 --------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LGPLv3 ; \
+		printf '\n--- COPYING.GPLv2 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv2 ; \
+		printf '\n--- COPYING.GPLv3 ---------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.GPLv3 \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 CFLAGS += -I/usr/X11/include
 CFLAGS += $(CPP_LARGEFILES)
@@ -118,7 +131,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 # suite, as we use binaries and libraries from $(PROTO_DIR) for tests
 # to reduce issues with all the test binaries not being able to find
 # ffmpeg's libraries.
-test:	install $(TEST_64)
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
