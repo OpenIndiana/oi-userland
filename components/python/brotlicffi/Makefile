@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		brotlicffi
-HUMAN_VERSION =			1.2.0.0
+HUMAN_VERSION =			1.2.0.1
 COMPONENT_SUMMARY =		Python CFFI bindings to the Brotli library
 COMPONENT_PROJECT_URL =		https://github.com/python-hyper/brotlicffi
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:34345d8d1f9d534fcac2249e57a4c3c8801a33c9942ff9f8574f67a175e17adb
+	sha256:c20d5c596278307ad06414a6d95a892377ea274a5c6b790c2548c009385d621c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
