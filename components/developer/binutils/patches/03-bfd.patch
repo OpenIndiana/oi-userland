@@ -1,0 +1,35 @@
+In binutils 2.46
+https://sourceware.org/git/?p=binutils-gdb.git;a=commitdiff;h=7d0f24dfbdafc52d54316d3bfd688cbf8f8ae037;hp=2271dee682787051c0628c869d7cdb220bdd0e67
+
+included, for Solaris:
+
+> * On x86, the PE and PEI target vectors have been removed: they were only
+>   supported in binutils proper.  Their only use would be on EFI files
+>   e.g. in GRUB, which doesn't justify their inclusion.
+
+We need PEI support for building UEFI objects. See
+https://illumos.topicbox.com/groups/developer/T5f37e8c8f0687062-Mcec43129fb017b70a035e5fd/heads-up-build-changes-required-for-uefi
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/bfd/config.bfd a/bfd/config.bfd
+--- a~/bfd/config.bfd	1970-01-01 00:00:00
++++ a/bfd/config.bfd	1970-01-01 00:00:00
+@@ -596,8 +596,8 @@ case "${targ}" in
+     ;;
+   i[3-7]86-*-solaris2*)
+     targ_defvec=i386_elf32_sol2_vec
+-    targ_selvecs=i386_elf32_vec
+-    targ64_selvecs="x86_64_elf64_sol2_vec x86_64_elf64_vec"
++    targ_selvecs="i386_elf32_vec i386_pei_vec"
++    targ64_selvecs="x86_64_elf64_sol2_vec x86_64_elf64_vec x86_64_pe_vec x86_64_pei_vec"
+     # Include 64-bit support to match GCC.
+     want64=true
+     ;;
+@@ -729,7 +729,7 @@ case "${targ}" in
+     ;;
+   x86_64-*-solaris2*)
+     targ_defvec=x86_64_elf64_sol2_vec
+-    targ_selvecs="i386_elf32_sol2_vec x86_64_elf64_vec i386_elf32_vec"
++    targ_selvecs="i386_elf32_sol2_vec x86_64_elf64_vec i386_elf32_vec i386_pei_vec x86_64_pe_vec x86_64_pei_vec"
+     want64=true
+     ;;
+   x86_64-*-gnu*)
