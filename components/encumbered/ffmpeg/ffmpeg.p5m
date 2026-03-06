@@ -25,15 +25,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-# The ffmpeg-6 runtime libraries used to be in this package.  Since
-# network/megasync still depends on video/ffmpeg we need to add the explicit
-# dependency on library/ffmpeg-6 here.
-#
-# We need to rebuild network/megasync to update its runtime dependency.  Once
-# that's done and there is no other package that depends on video/ffmpeg we
-# should remove the following line.
-depend type=require fmri=library/ffmpeg-6
-
 file path=usr/bin/ffmpeg
 file path=usr/bin/ffplay
 file path=usr/bin/ffprobe

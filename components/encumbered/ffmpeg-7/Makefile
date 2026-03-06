@@ -18,12 +18,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	8.0.1
+COMPONENT_VERSION=	7.1.3
+COMPONENT_REVISION=	1
 FFMPEG_VERSION=		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41
+COMPONENT_ARCHIVE_HASH=	sha256:f0bf043299db9e3caacb435a712fc541fbb07df613c4b893e8b77e67baf3adbe
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
@@ -64,6 +65,7 @@ CONFIGURE_OPTIONS += --enable-avx
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
 CONFIGURE_OPTIONS += --enable-gpl
+CONFIGURE_OPTIONS += --enable-postproc
 CONFIGURE_OPTIONS += --enable-avfilter
 CONFIGURE_OPTIONS += --enable-swscale
 CONFIGURE_OPTIONS += --enable-libgsm
