@@ -1,8 +1,10 @@
 https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4091
 
---- gst-plugins-good-1.26.2/gst/flv/gstflvmux.c.orig
-+++ gst-plugins-good-1.26.2/gst/flv/gstflvmux.c
-@@ -1994,16 +1994,12 @@
+This needs more work. With this patch the error code returned changes from 1 to 26.
+
+--- gst-plugins-good-1.28.0/gst/flv/gstflvmux.c.orig	2026-01-27 18:02:33.000000000 +0100
++++ gst-plugins-good-1.28.0/gst/flv/gstflvmux.c	2026-02-27 16:47:52.186053941 +0100
+@@ -2753,16 +2753,12 @@
            break;
          }
  
@@ -24,29 +26,29 @@ https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4091
              (GST_CLOCK_TIME_IS_VALID (t) && t < best_ts)) {
            gst_object_replace ((GstObject **) & best, GST_OBJECT (apad));
            best_ts = t;
-@@ -2227,20 +2223,21 @@
+@@ -2986,8 +2982,8 @@
  gst_flv_mux_get_next_time (GstAggregator * aggregator)
  {
    GstFlvMux *mux = GST_FLV_MUX (aggregator);
 -  GstFlvMuxPad *best = NULL;
 -  GstClockTime best_time = GST_CLOCK_TIME_NONE;
-+  GstAggregatorPad *agg_audio_pad = GST_AGGREGATOR_PAD_CAST (mux->audio_pad);
-+  GstAggregatorPad *agg_video_pad = GST_AGGREGATOR_PAD_CAST (mux->video_pad);
++  GstAggregatorPad *agg_audio_pad = GST_AGGREGATOR_PAD_CAST (mux->audio_pads);
++  GstAggregatorPad *agg_video_pad = GST_AGGREGATOR_PAD_CAST (mux->video_pads);
  
    GST_OBJECT_LOCK (aggregator);
    if (mux->state == GST_FLV_MUX_STATE_HEADER &&
-       ((mux->audio_pad && mux->audio_pad->codec == G_MAXUINT) ||
-           (mux->video_pad && mux->video_pad->codec == G_MAXUINT)))
+@@ -2995,12 +2991,11 @@
+           || (mux->video_pads
+               && !gst_flv_mux_pads_codec_valid (mux->video_pads))))
      goto wait_for_data;
--  GST_OBJECT_UNLOCK (aggregator);
- 
++  if (!((agg_audio_pad && gst_aggregator_pad_has_buffer (agg_audio_pad)) ||
++              (agg_video_pad && gst_aggregator_pad_has_buffer (agg_video_pad))))
++      goto wait_for_data;
+   GST_OBJECT_UNLOCK (aggregator);
+-
 -  best = gst_flv_mux_find_best_pad (aggregator, &best_time, TRUE);
 -  gst_clear_object (&best);
-+  if (!((agg_audio_pad && gst_aggregator_pad_has_buffer (agg_audio_pad)) ||
-+          (agg_video_pad && gst_aggregator_pad_has_buffer (agg_video_pad))))
-+    goto wait_for_data;
-+  GST_OBJECT_UNLOCK (aggregator);
- 
+-
 -  return best_time;
 +  return gst_aggregator_simple_get_next_time (aggregator);
  
