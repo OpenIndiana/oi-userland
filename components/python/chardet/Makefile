@@ -19,29 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		chardet
-HUMAN_VERSION =			6.0.0.post1
-COMPONENT_SUMMARY =		Universal encoding detector for Python 3
-COMPONENT_PROJECT_URL =		http://chardet.github.io
+HUMAN_VERSION =			7.0.1
+COMPONENT_SUMMARY =		Universal character encoding detector
+COMPONENT_PROJECT_URL =		https://github.com/chardet/chardet
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b78048c3c97c7b2ed1fbad7a18f76f5a6547f7d34dbab536cc13887c9a92fa4
-COMPONENT_LICENSE =		LGPL-2.1-only
+	sha256:6fce895c12c5495bb598e59ae3cd89306969b4464ec7b6dd609b9c86e3397fe3
+COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
-
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
 
 # Python 3.9 is not supported by chardet >= 6.0.0
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
-
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_PEP735 += test
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
@@ -50,6 +41,3 @@ PYTEST_SORT_TESTS = yes
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
-TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
