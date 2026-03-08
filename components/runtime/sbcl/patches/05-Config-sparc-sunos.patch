@@ -1,0 +1,23 @@
+--- sbcl-2.6.2/src/runtime/Config.sparc-sunos.~1~	2026-02-27 19:08:09.000000000 +0100
++++ sbcl-2.6.2/src/runtime/Config.sparc-sunos	2026-03-08 19:43:21.637267000 +0100
+@@ -8,15 +8,13 @@
+ # public domain. The software is in the public domain and is
+ # provided with absolutely no warranty. See the COPYING and CREDITS
+ # files for more information.
++#
++# Note: this config is for gcc-7 - NOT for gcc > 7 !!!
+ 
+ CC = gcc
+-CFLAGS += -D__EXTENSIONS__ -DSVR4 -D_REENTRANT
+-ASFLAGS = -g -DSVR4 -Wa,-xarch=v8plus
+-#LINKFLAGS += -v
+-# This next line has nothing to do with disabling PIE. It has only to
+-# do with the problem that "grep" on the build machine I'm using can't
+-# parse "-e '[^f]nopie" and so gets an error in GNUmakefile.
+-DISABLE_PIE=no
++CFLAGS += -mcpu=ultrasparc -mvis -mfsmuld -std=gnu11 -D__EXTENSIONS__ -DSVR4 -D_REENTRANT -fno-omit-frame-pointer -D_POSIX_PTHREAD_SEMANTICS
++ASFLAGS = -Wa,-xarch=sparcvis
++GREP = ggrep
+ 
+ ASSEM_SRC = sparc-assem.S
+ ARCH_SRC = sparc-arch.c
