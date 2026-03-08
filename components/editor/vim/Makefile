@@ -32,6 +32,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
 COMPONENT_VERSION=	9.2.100
+COMPONENT_REVISION=	1
 HUMAN_VERSION=		9.2.0100
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
@@ -46,8 +47,7 @@ CFLAGS += -Wno-error=incompatible-pointer-types
 
 COMPONENT_POST_UNPACK_ACTION += ( \
 	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure ; \
-	find $(@D) -name \*.sh -exec chmod +x '{}' ';' ; \
-	rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
+	find $(@D) -name \*.sh -exec chmod +x '{}' ';' )
 
 NOX_VARIANT = $(BUILD_DIR)/$(MACH64)-vim
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
