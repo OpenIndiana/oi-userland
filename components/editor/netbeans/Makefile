@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
 COMPONENT_VERSION= 29
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -48,8 +49,11 @@ NARCH=x86_64
 endif
 
 ifeq ($(MACH), sparc)
-NARCH=sparcv9
+NARCH=sparc_64
 endif
+
+# these macros are used in the package manifest
+PKG_MACROS += NARCH=$(NARCH) JAVA_DEFAULT=$(JAVA_DEFAULT)
 
 $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	mkdir -p $(PROTO_DIR)/usr/netbeans/;
