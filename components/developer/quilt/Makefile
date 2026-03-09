@@ -28,7 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
 COMPONENT_VERSION=      0.69
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
@@ -37,8 +37,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:555ddffde22da3c86d1caf5a9c1fb8a152ac2b84730437bd3
 COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/quilt
 COMPONENT_CLASSIFICATION= Development/Source Code Management
-COMPONENT_LICENSE=      GPLv2 
-COMPONENT_LICENSE_FILE= COPYING 
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
