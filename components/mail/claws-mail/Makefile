@@ -19,14 +19,13 @@ USE_PARALLEL_BUILD= Yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
-COMPONENT_VERSION=	4.3.1
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	4.4.0
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:8fc4f0e0f274297063e5e7682089a32b65ac1b2d21cfa13c54b980520952def2
-COMPONENT_ARCHIVE_URL=	https://www.claws-mail.org/download.php?file=releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH= sha256:03e0549d5f0fcd7a59804186524105d05ebb5e534d42a4b86a9a90f729ca255b
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/download.php?file=releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		mail/claws-mail
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=	GPL-3
@@ -86,7 +85,6 @@ REQUIRED_PACKAGES += library/security/libgpg-error
 REQUIRED_PACKAGES += library/spell-checking/enchant
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus-glib
 REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += x11/library/libice
 REQUIRED_PACKAGES += x11/library/libsm
