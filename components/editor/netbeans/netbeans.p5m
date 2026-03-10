@@ -27,7 +27,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 depend type=require fmri=runtime/java/openjdk$(JAVA_DEFAULT)
 depend type=require fmri=runtime/python
 
-<transform file path=usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/unbuffer.so -> default pkg.linted.userland.action001.2 true >
+<transform file path=usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-$(BINARCH_64)/unbuffer.so -> default pkg.linted.userland.action001.2 true >
 
 <transform file path=.*\.built$ -> drop>
 <transform file path=.*\.lastModified$ -> drop>
@@ -36,8 +36,9 @@ depend type=require fmri=runtime/python
 <transform file path=.*\.bat$ -> drop>
 <transform file path=.*\.cmd$ -> drop>
 
-<transform path=.*/nativeexecution/SunOS-(x86|sparc.*)/.*$ -> drop>
-<transform path=.*/.*sparc.*/.*$ -> drop>
+<transform path=.*/.*SunOS-sparc.*/.*$ -> set variant.arch sparc>
+<transform path=.*/.*solaris-sparcv9.*/.*$ -> set variant.arch sparc>
+<transform path=.*/.*SunOS-x86.*/.*$ -> set variant.arch i386>
 <transform path=.*/nativeexecution/Linux.*$ -> drop>
 <transform path=.*/linux.*$ -> drop>
 <transform path=.*/freebsd.*$ -> drop>
@@ -46,6 +47,8 @@ depend type=require fmri=runtime/python
 <transform path=.*/bin/[^/]+$ -> default mode 0555>
 
 <transform file path=.*/runant.py -> add pkg.depend.bypass-generate .*>
+
+<transform file path=.*/x86_64 -> set variant.arch i386>
 
 link path=usr/bin/netbeans target=../netbeans/$(COMPONENT_VERSION)/bin/netbeans mode=0555
 
@@ -1135,14 +1138,14 @@ file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/MacOSX-x86_64/pt
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/MacOSX-x86_64/pty_open
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/MacOSX-x86_64/stat
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/MacOSX-x86_64/unbuffer.dylib
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/killall
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/killall
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/privp
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/process_start
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/pty
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/pty_open
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/sigqueue
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/stat
-file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/unbuffer.so
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/process_start
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/pty
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/pty_open
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/sigqueue
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/stat
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-sparc_64/unbuffer.so
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/killall
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/privp
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/process_start
@@ -1151,6 +1154,13 @@ file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/pty_op
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/sigqueue
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/stat
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86/unbuffer.so
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/killall
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/process_start
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/pty
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/pty_open
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/sigqueue
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/stat
+file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/SunOS-x86_64/unbuffer.so
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/Windows-x86/killall
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/Windows-x86/process_start
 file path=usr/netbeans/$(HUMAN_VERSION)/ide/bin/nativeexecution/Windows-x86/pty
