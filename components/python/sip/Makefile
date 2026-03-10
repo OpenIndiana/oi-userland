@@ -19,15 +19,15 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sip
-HUMAN_VERSION =			6.15.1
+HUMAN_VERSION =			6.15.2
 COMPONENT_SUMMARY =		A Python bindings generator for C/C++ libraries
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dc2e58c1798a74e1b31c28e837339822fe8fa55288ae30e8986eb28100ebca5a
+	sha256:01f8946062e94622f2de5954b9aa44ca27795ac1577a940a121ddd4d1da02568
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-TEST_STYLE = none
+TEST_STYLE = pytest
 
 # Python 3.9 is not supported by sip >= 6.15.0
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
