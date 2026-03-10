@@ -40,7 +40,7 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BETA= 6
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	148.0
+COMPONENT_VERSION =	148.0.1
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,7 +52,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:9ea77f583695a898c225baa065b3db5a0d196f4e1da8bacba994e4a8c564b0c3
+	 sha256:80b36b172876b62b697ced5995078d73b37fac5323a5e178e3b921f8c35d03e2
 
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
@@ -238,7 +238,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 $(SOURCE_DIR)/.built: $(SOURCE_DIR)/.prep
 	$(RM) -r $(BUILD_DIR); $(MKDIR) $(BUILD_DIR)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	$(ENV) $(COMPONENT_BUILD_ENV) $(SOURCE_DIR)/mach build
+	$(ENV) $(COMPONENT_BUILD_ENV) $(SOURCE_DIR)/mach build --verbose
 
 # gmake install does this:
 $(SOURCE_DIR)/.installed: $(SOURCE_DIR)/.built
