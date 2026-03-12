@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests, scripts/tests
-collecting ... collected 8010 items / 3 deselected / 8007 selected
+collecting ... collected 8099 items / 6 deselected / 8093 selected
 
 scripts/tests/test_confusion_training.py::test_compute_confusion_groups_finds_dos PASSED
 scripts/tests/test_confusion_training.py::test_compute_confusion_groups_finds_ebcdic PASSED
@@ -519,7 +519,7 @@ tests/test_accuracy.py::test_detect[hp-roman8-is/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-is/culturax_00002.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-it/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-it/culturax_00001.txt] PASSED
-tests/test_accuracy.py::test_detect[hp-roman8-it/culturax_00002.txt] XFAIL
+tests/test_accuracy.py::test_detect[hp-roman8-it/culturax_00002.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-ms/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-ms/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect[hp-roman8-ms/culturax_00002.txt] PASSED
@@ -3029,7 +3029,7 @@ tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-is/culturax_00001.txt
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-is/culturax_00002.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-it/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-it/culturax_00001.txt] PASSED
-tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-it/culturax_00002.txt] XFAIL
+tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-it/culturax_00002.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-ms/culturax_00000.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-ms/culturax_00001.txt] PASSED
 tests/test_accuracy.py::test_detect_era_filtered[hp-roman8-ms/culturax_00002.txt] PASSED
@@ -7555,15 +7555,20 @@ tests/test_accuracy.py::test_detect_streaming_parity[windows-1258-vi/culturax_OS
 tests/test_accuracy.py::test_detect_streaming_parity[windows-1258-vi/culturax_mC4_85693.txt] PASSED
 tests/test_accuracy.py::test_detect_streaming_parity[windows-1258-vi/culturax_mC4_85696.txt] PASSED
 tests/test_api.py::test_chunk_size_deprecation_warning PASSED
+tests/test_api.py::test_compat_names_eucjp PASSED
 tests/test_api.py::test_default_chunk_size_no_warning PASSED
 tests/test_api.py::test_detect_all_bytearray_input PASSED
+tests/test_api.py::test_detect_all_compat_names PASSED
 tests/test_api.py::test_detect_all_each_is_dict PASSED
 tests/test_api.py::test_detect_all_max_bytes_negative_raises PASSED
 tests/test_api.py::test_detect_all_max_bytes_zero_raises PASSED
+tests/test_api.py::test_detect_all_prefer_superset PASSED
 tests/test_api.py::test_detect_all_returns_list PASSED
 tests/test_api.py::test_detect_all_sorted_by_confidence PASSED
 tests/test_api.py::test_detect_ascii PASSED
 tests/test_api.py::test_detect_bytearray_input PASSED
+tests/test_api.py::test_detect_compat_names_false_returns_codec_names PASSED
+tests/test_api.py::test_detect_compat_names_true_returns_display_names PASSED
 tests/test_api.py::test_detect_cp273 PASSED
 tests/test_api.py::test_detect_empty PASSED
 tests/test_api.py::test_detect_hp_roman8 PASSED
@@ -7575,7 +7580,16 @@ tests/test_api.py::test_detect_iso_2022_kr_era_modern_web_skipped PASSED
 tests/test_api.py::test_detect_max_bytes_bool_raises PASSED
 tests/test_api.py::test_detect_max_bytes_negative_raises PASSED
 tests/test_api.py::test_detect_max_bytes_zero_raises PASSED
+tests/test_api.py::test_detect_pep263_bare_form PASSED
+tests/test_api.py::test_detect_pep263_emacs_style PASSED
+tests/test_api.py::test_detect_pep263_invalid_encoding_ignored PASSED
+tests/test_api.py::test_detect_pep263_line2_with_shebang PASSED
+tests/test_api.py::test_detect_pep263_line3_ignored PASSED
+tests/test_api.py::test_detect_prefer_superset_false_no_remap PASSED
+tests/test_api.py::test_detect_prefer_superset_remaps PASSED
+tests/test_api.py::test_detect_prefer_superset_with_raw_codec_names PASSED
 tests/test_api.py::test_detect_returns_dict PASSED
+tests/test_api.py::test_detect_should_rename_legacy_deprecation PASSED
 tests/test_api.py::test_detect_utf7 PASSED
 tests/test_api.py::test_detect_utf7_era_all PASSED
 tests/test_api.py::test_detect_utf7_era_modern_web_skipped PASSED
@@ -7584,6 +7598,9 @@ tests/test_api.py::test_detect_utf8_bom PASSED
 tests/test_api.py::test_detect_utf8_multibyte PASSED
 tests/test_api.py::test_detect_with_encoding_era PASSED
 tests/test_api.py::test_detect_with_max_bytes PASSED
+tests/test_api.py::test_detector_compat_names PASSED
+tests/test_api.py::test_detector_prefer_superset PASSED
+tests/test_api.py::test_detector_should_rename_legacy_deprecation PASSED
 tests/test_api.py::test_encoding_era_excludes_legacy PASSED
 tests/test_api.py::test_ignore_threshold_fallback PASSED
 tests/test_api.py::test_ignore_threshold_false_filters PASSED
@@ -7598,6 +7615,7 @@ tests/test_api.py::test_rename_legacy_detector PASSED
 tests/test_api.py::test_rename_legacy_detector_false PASSED
 tests/test_api.py::test_rename_legacy_false PASSED
 tests/test_api.py::test_rename_legacy_true PASSED
+tests/test_api.py::test_universaldetector_compat_import PASSED
 tests/test_api.py::test_version_exists PASSED
 tests/test_ascii.py::test_all_printable_ascii PASSED
 tests/test_ascii.py::test_ascii_with_common_whitespace PASSED
@@ -7607,6 +7625,16 @@ tests/test_ascii.py::test_null_byte_not_ascii PASSED
 tests/test_ascii.py::test_pure_ascii PASSED
 tests/test_ascii.py::test_single_ascii_byte PASSED
 tests/test_ascii.py::test_utf8_multibyte_not_ascii PASSED
+tests/test_benchmark.py::test_ratio_cold_vs_warm_model_loading PASSED
+tests/test_benchmark.py::test_ratio_detect_vs_detect_all PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[ASCII] PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[BOM] PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[Escape] PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[Markup] PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[UTF-16] PASSED
+tests/test_benchmark.py::test_ratio_fast_vs_statistical[UTF-8] PASSED
+tests/test_benchmark.py::test_scaling_statistical PASSED
+tests/test_benchmark.py::test_scaling_utf8 PASSED
 tests/test_binary.py::test_all_null_bytes_is_binary PASSED
 tests/test_binary.py::test_control_characters_indicate_binary PASSED
 tests/test_binary.py::test_empty_input_is_not_binary PASSED
@@ -7633,7 +7661,7 @@ tests/test_bom.py::test_utf32_le_bom_only PASSED
 tests/test_bom.py::test_utf32_le_checked_before_utf16_le PASSED
 tests/test_bom.py::test_utf8_bom PASSED
 tests/test_cjk_gating.py::test_ebcdic_not_detected_as_gb18030 PASSED
-tests/test_cjk_gating.py::test_german_macroman_not_detected_as_cjk SKIPPED
+tests/test_cjk_gating.py::test_german_macroman_not_detected_as_cjk PASSED
 tests/test_cjk_gating.py::test_latin_text_not_detected_as_cp932 PASSED
 tests/test_cjk_gating.py::test_real_chinese_still_detected PASSED
 tests/test_cjk_gating.py::test_real_cjk_still_detected PASSED
@@ -7653,18 +7681,25 @@ tests/test_cli.py::test_cli_stdin PASSED
 tests/test_cli.py::test_cli_stdin_success_in_process PASSED
 tests/test_cli.py::test_cli_version PASSED
 tests/test_cli.py::test_main_module_importable PASSED
+tests/test_confusion.py::test_bigram_rescore_no_variants_for_one_encoding PASSED
+tests/test_confusion.py::test_bigram_rescore_returns_enc_a PASSED
+tests/test_confusion.py::test_bigram_rescore_returns_enc_b PASSED
 tests/test_confusion.py::test_bigram_rescore_returns_valid_result PASSED
 tests/test_confusion.py::test_category_voting_prefers_letter_over_symbol PASSED
+tests/test_confusion.py::test_category_voting_returns_enc_b PASSED
 tests/test_confusion.py::test_category_voting_returns_none_on_no_distinguishing_bytes PASSED
 tests/test_confusion.py::test_load_confusion_data PASSED
 tests/test_confusion.py::test_load_confusion_data_corrupt_file PASSED
 tests/test_confusion.py::test_load_confusion_data_empty_file PASSED
 tests/test_confusion.py::test_resolve_by_bigram_rescore_empty_freq PASSED
 tests/test_confusion.py::test_resolve_by_bigram_rescore_short_data PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_bigram_wins_over_category PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_no_change_when_unrelated PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_no_swap_when_winner_is_top PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_none_encoding PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_preserves_all_results PASSED
 tests/test_confusion.py::test_resolve_confusion_groups_single_result PASSED
+tests/test_confusion.py::test_resolve_confusion_groups_swaps_top_and_second PASSED
 tests/test_detector.py::test_basic_lifecycle PASSED
 tests/test_detector.py::test_close_idempotent PASSED
 tests/test_detector.py::test_done_not_set_before_max_bytes PASSED
@@ -7719,6 +7754,7 @@ tests/test_equivalences.py::test_apply_legacy_rename_ascii PASSED
 tests/test_equivalences.py::test_apply_legacy_rename_no_match PASSED
 tests/test_equivalences.py::test_apply_legacy_rename_none PASSED
 tests/test_equivalences.py::test_base_letter_match_returns_true PASSED
+tests/test_equivalences.py::test_compat_names_maps_codec_to_display PASSED
 tests/test_equivalences.py::test_completely_different_decode_returns_false PASSED
 tests/test_equivalences.py::test_currency_vs_euro_sign_accepted PASSED
 tests/test_equivalences.py::test_decode_error_returns_false PASSED
@@ -7734,6 +7770,13 @@ tests/test_equivalences.py::test_is_correct_superset_reversed PASSED
 tests/test_equivalences.py::test_is_equivalent_expected_none_detected_encoding PASSED
 tests/test_equivalences.py::test_is_equivalent_expected_none_detected_none PASSED
 tests/test_equivalences.py::test_iso2022_jp_branches_bidirectional PASSED
+tests/test_equivalences.py::test_language_equivalent_czech_slovak PASSED
+tests/test_equivalences.py::test_language_equivalent_east_slavic_group PASSED
+tests/test_equivalences.py::test_language_equivalent_exact_match PASSED
+tests/test_equivalences.py::test_language_equivalent_malay_indonesian PASSED
+tests/test_equivalences.py::test_language_equivalent_non_equivalent PASSED
+tests/test_equivalences.py::test_language_equivalent_scandinavian_group PASSED
+tests/test_equivalences.py::test_language_equivalent_unknown_language PASSED
 tests/test_equivalences.py::test_none_detected_returns_false PASSED
 tests/test_equivalences.py::test_normalized_name_match_returns_true PASSED
 tests/test_equivalences.py::test_superset_equivalences_for_renamed_encodings PASSED
@@ -7748,8 +7791,13 @@ tests/test_escape.py::test_hz_gb_2312_rejects_english_with_tildes PASSED
 tests/test_escape.py::test_hz_gb_2312_rejects_odd_length_region PASSED
 tests/test_escape.py::test_hz_only_close_before_open PASSED
 tests/test_escape.py::test_iso2022_jp_2004_codes PASSED
+tests/test_escape.py::test_iso2022_jp_2004_esc_dollar_paren_q PASSED
+tests/test_escape.py::test_iso2022_jp_2004_without_base PASSED
 tests/test_escape.py::test_iso2022_jp_base_returns_jp2 PASSED
 tests/test_escape.py::test_iso2022_jp_ext_codes PASSED
+tests/test_escape.py::test_iso2022_jp_ext_esc_kana PASSED
+tests/test_escape.py::test_iso2022_jp_ext_esc_kana_only PASSED
+tests/test_escape.py::test_iso2022_jp_jis_x_0212_entry PASSED
 tests/test_escape.py::test_iso_2022_jp_esc_dollar_at PASSED
 tests/test_escape.py::test_iso_2022_jp_esc_dollar_b PASSED
 tests/test_escape.py::test_iso_2022_kr PASSED
@@ -7758,6 +7806,7 @@ tests/test_escape.py::test_random_bytes_returns_none PASSED
 tests/test_escape.py::test_utf7_b64_accepts_valid_surrogate_pair PASSED
 tests/test_escape.py::test_utf7_b64_rejects_consecutive_high_surrogates PASSED
 tests/test_escape.py::test_utf7_b64_rejects_high_surrogate_without_low PASSED
+tests/test_escape.py::test_utf7_b64_rejects_lone_low_surrogate PASSED
 tests/test_escape.py::test_utf7_b64_rejects_trailing_high_surrogate PASSED
 tests/test_escape.py::test_utf7_basic PASSED
 tests/test_escape.py::test_utf7_consecutive_shifted_sequences PASSED
@@ -7766,12 +7815,16 @@ tests/test_escape.py::test_utf7_literal_plus PASSED
 tests/test_escape.py::test_utf7_mixed_ascii_and_shifted PASSED
 tests/test_escape.py::test_utf7_multi_paragraph_document PASSED
 tests/test_escape.py::test_utf7_plain_ascii_with_plus PASSED
+tests/test_escape.py::test_utf7_rejects_all_lowercase_base64 PASSED
 tests/test_escape.py::test_utf7_rejects_cpp_version PASSED
+tests/test_escape.py::test_utf7_rejects_double_plus_at_end PASSED
 tests/test_escape.py::test_utf7_rejects_hex_hash_in_requirements_file PASSED
+tests/test_escape.py::test_utf7_rejects_increment_operator PASSED
 tests/test_escape.py::test_utf7_rejects_mime_boundary PASSED
 tests/test_escape.py::test_utf7_rejects_pem_base64 PASSED
 tests/test_escape.py::test_utf7_rejects_sha1_git_hash PASSED
 tests/test_escape.py::test_utf7_rejects_short_base64_in_text PASSED
+tests/test_escape.py::test_utf7_rejects_triple_plus_variable PASSED
 tests/test_escape.py::test_utf7_rejects_url_with_plus PASSED
 tests/test_escape.py::test_utf7_shifted_sequence PASSED
 tests/test_escape.py::test_utf7_short_base64_rejected PASSED
@@ -7818,8 +7871,8 @@ tests/test_github_issues.py::TestWrongEncodingModernWeb::test_latin1_accented_ch
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_portuguese_iso88591 PASSED
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_smart_apostrophe_win1252 PASSED
 tests/test_github_issues.py::TestWrongEncodingModernWeb::test_subtitle_acute_apostrophes PASSED
-tests/test_koi8t.py::test_koi8t_with_tajik_bytes SKIPPED (KOI8-T tes...)
-tests/test_koi8t.py::test_russian_text_stays_koi8r SKIPPED (KOI8-R t...)
+tests/test_koi8t.py::test_koi8t_with_tajik_bytes PASSED
+tests/test_koi8t.py::test_russian_text_stays_koi8r PASSED
 tests/test_markup.py::test_case_insensitive_meta PASSED
 tests/test_markup.py::test_charset_beyond_scan_limit_ignored PASSED
 tests/test_markup.py::test_charset_with_whitespace PASSED
@@ -7829,6 +7882,8 @@ tests/test_markup.py::test_html4_content_type PASSED
 tests/test_markup.py::test_html5_meta_charset PASSED
 tests/test_markup.py::test_lying_charset_declaration_rejected PASSED
 tests/test_markup.py::test_no_markup PASSED
+tests/test_markup.py::test_non_ascii_charset_name_ignored PASSED
+tests/test_markup.py::test_pep263_non_ascii_coding_name PASSED
 tests/test_markup.py::test_unknown_encoding_returns_none PASSED
 tests/test_markup.py::test_valid_charset_declaration_accepted PASSED
 tests/test_markup.py::test_xml_encoding_declaration PASSED
@@ -7840,14 +7895,17 @@ tests/test_models.py::test_bigram_profile_single_byte PASSED
 tests/test_models.py::test_deserialize_empty_file PASSED
 tests/test_models.py::test_deserialize_missing_file PASSED
 tests/test_models.py::test_deserialize_trailing_bytes_raises PASSED
+tests/test_models.py::test_enc_index_alias_resolution PASSED
 tests/test_models.py::test_enc_index_resolves_aliases PASSED
 tests/test_models.py::test_load_models_empty_file PASSED
 tests/test_models.py::test_load_models_has_entries PASSED
+tests/test_models.py::test_load_models_invalid_utf8_name PASSED
 tests/test_models.py::test_load_models_name_len_exceeds_limit PASSED
 tests/test_models.py::test_load_models_num_encodings_exceeds_limit PASSED
 tests/test_models.py::test_load_models_num_entries_exceeds_limit PASSED
 tests/test_models.py::test_load_models_returns_dict PASSED
 tests/test_models.py::test_load_models_truncated_data PASSED
+tests/test_models.py::test_load_models_truncated_header PASSED
 tests/test_models.py::test_model_keys_are_strings PASSED
 tests/test_models.py::test_roundtrip_empty_bigrams PASSED
 tests/test_models.py::test_roundtrip_matches_load_models PASSED
@@ -7879,6 +7937,7 @@ tests/test_orchestrator.py::test_fallback_when_no_valid_candidates PASSED
 tests/test_orchestrator.py::test_fill_language_produces_language PASSED
 tests/test_orchestrator.py::test_max_bytes_truncation PASSED
 tests/test_orchestrator.py::test_promote_koi8t_no_promote_without_tajik_bytes PASSED
+tests/test_orchestrator.py::test_promote_koi8t_returns_early_when_koi8t_absent PASSED
 tests/test_orchestrator.py::test_promote_koi8t_with_tajik_bytes PASSED
 tests/test_orchestrator.py::test_pure_ascii PASSED
 tests/test_orchestrator.py::test_returns_list PASSED
@@ -7901,6 +7960,7 @@ tests/test_pipeline_types.py::test_pipeline_context_mb_coverage PASSED
 tests/test_registry.py::test_big5_family_uses_broadest_superset PASSED
 tests/test_registry.py::test_cp037_flipped_to_cp1140 PASSED
 tests/test_registry.py::test_encoding_info_is_frozen PASSED
+tests/test_registry.py::test_encoding_name_literal_matches_registry PASSED
 tests/test_registry.py::test_euc_jp_family_uses_broadest_superset PASSED
 tests/test_registry.py::test_gb18030_has_subset_aliases PASSED
 tests/test_registry.py::test_get_candidates_all_returns_everything PASSED
@@ -7909,9 +7969,16 @@ tests/test_registry.py::test_get_candidates_filters_by_era PASSED
 tests/test_registry.py::test_iso2022_jp_split_into_branches PASSED
 tests/test_registry.py::test_language_agnostic_encodings PASSED
 tests/test_registry.py::test_languages_field_exists PASSED
+tests/test_registry.py::test_lookup_encoding_alias PASSED
+tests/test_registry.py::test_lookup_encoding_by_name PASSED
+tests/test_registry.py::test_lookup_encoding_canonical PASSED
+tests/test_registry.py::test_lookup_encoding_codecs_fallback PASSED
+tests/test_registry.py::test_lookup_encoding_unknown PASSED
+tests/test_registry.py::test_lookup_encoding_unknown_codec PASSED
+tests/test_registry.py::test_lookup_encoding_uppercase_preserved PASSED
 tests/test_registry.py::test_multi_language_encodings PASSED
 tests/test_registry.py::test_multibyte_encodings_flagged PASSED
-tests/test_registry.py::test_python_codec_is_valid PASSED
+tests/test_registry.py::test_name_is_valid_codec PASSED
 tests/test_registry.py::test_registry_cp037_is_mainframe PASSED
 tests/test_registry.py::test_registry_cp273_is_mainframe PASSED
 tests/test_registry.py::test_registry_cp437_is_dos PASSED
@@ -7940,11 +8007,15 @@ tests/test_structural.py::test_diversity_no_analyzer_returns_256 PASSED
 tests/test_structural.py::test_empty_data_returns_zero PASSED
 tests/test_structural.py::test_euc_jis_2004_scores_high_on_euc_jp_data PASSED
 tests/test_structural.py::test_euc_jp_scores_high_on_euc_jp_data PASSED
+tests/test_structural.py::test_euc_jp_ss2_coverage PASSED
 tests/test_structural.py::test_euc_jp_ss2_invalid_trail PASSED
+tests/test_structural.py::test_euc_jp_ss2_valid_sequence PASSED
 tests/test_structural.py::test_euc_jp_ss3_invalid_trail PASSED
 tests/test_structural.py::test_euc_jp_ss3_valid PASSED
 tests/test_structural.py::test_euc_kr_scores_high_on_korean_data PASSED
 tests/test_structural.py::test_gb18030_scores_high_on_chinese_data PASSED
+tests/test_structural.py::test_johab_lead_byte_at_end_of_data PASSED
+tests/test_structural.py::test_johab_lead_byte_invalid_trail PASSED
 tests/test_structural.py::test_lead_byte_diversity_empty_data PASSED
 tests/test_structural.py::test_multibyte_byte_coverage_all_ascii PASSED
 tests/test_structural.py::test_shift_jis_2004_scores_high_on_shift_jis_data PASSED
@@ -7965,7 +8036,11 @@ tests/test_utf1632.py::test_plain_ascii_returns_none PASSED
 tests/test_utf1632.py::test_random_bytes_returns_none PASSED
 tests/test_utf1632.py::test_result_is_detection_result_instance PASSED
 tests/test_utf1632.py::test_single_byte_returns_none PASSED
+tests/test_utf1632.py::test_text_quality_ascii_letters PASSED
+tests/test_utf1632.py::test_text_quality_no_letters PASSED
 tests/test_utf1632.py::test_text_quality_rejects_many_combining_marks PASSED
+tests/test_utf1632.py::test_text_quality_rejects_many_controls PASSED
+tests/test_utf1632.py::test_text_quality_with_spaces PASSED
 tests/test_utf1632.py::test_too_short_for_utf16_returns_none PASSED
 tests/test_utf1632.py::test_too_short_for_utf32_returns_none PASSED
 tests/test_utf1632.py::test_utf16_be_ascii_text PASSED
@@ -7973,6 +8048,7 @@ tests/test_utf1632.py::test_utf16_be_cjk_text PASSED
 tests/test_utf1632.py::test_utf16_be_longer_text PASSED
 tests/test_utf1632.py::test_utf16_be_mixed_scripts PASSED
 tests/test_utf1632.py::test_utf16_both_candidates_low_quality PASSED
+tests/test_utf1632.py::test_utf16_both_candidates_tiebreak PASSED
 tests/test_utf1632.py::test_utf16_le_ascii_text PASSED
 tests/test_utf1632.py::test_utf16_le_cjk_text PASSED
 tests/test_utf1632.py::test_utf16_le_japanese_text PASSED
@@ -7982,6 +8058,7 @@ tests/test_utf1632.py::test_utf16_le_mixed_scripts PASSED
 tests/test_utf1632.py::test_utf16_le_mostly_ascii_with_some_non_ascii PASSED
 tests/test_utf1632.py::test_utf16_odd_byte_count_trimmed PASSED
 tests/test_utf1632.py::test_utf16_single_candidate_decode_error PASSED
+tests/test_utf1632.py::test_utf16_tiebreak_one_side_decode_error PASSED
 tests/test_utf1632.py::test_utf32_be_ascii_text PASSED
 tests/test_utf1632.py::test_utf32_be_decode_error PASSED
 tests/test_utf1632.py::test_utf32_be_longer_text PASSED
@@ -8007,6 +8084,15 @@ tests/test_utf8.py::test_truncated_multibyte PASSED
 tests/test_utf8.py::test_valid_utf8_chinese PASSED
 tests/test_utf8.py::test_valid_utf8_emoji PASSED
 tests/test_utf8.py::test_valid_utf8_with_multibyte PASSED
+tests/test_utils.py::TestGetDataDir::test_cache_hit_skips_clone PASSED
+tests/test_utils.py::TestGetDataDir::test_cache_miss_triggers_reclone PASSED
+tests/test_utils.py::TestGetDataDir::test_empty_dir_triggers_clone PASSED
+tests/test_utils.py::TestGetDataDir::test_missing_ref_file_triggers_reclone PASSED
+tests/test_utils.py::TestGetDataDir::test_symlink_used_as_is PASSED
+tests/test_utils.py::TestGetTestDataRef::test_dev_version PASSED
+tests/test_utils.py::TestGetTestDataRef::test_post_version PASSED
+tests/test_utils.py::TestGetTestDataRef::test_rc_version PASSED
+tests/test_utils.py::TestGetTestDataRef::test_release_version PASSED
 tests/test_validity.py::test_eliminates_impossible_encodings PASSED
 tests/test_validity.py::test_empty_input_returns_all PASSED
 tests/test_validity.py::test_latin1_text_invalid_under_strict_multibyte PASSED
@@ -8016,228 +8102,240 @@ tests/test_validity.py::test_utf8_text_valid_under_utf8 PASSED
 
 =============================== warnings summary ===============================
 tests/test_accuracy.py::test_detect[ascii-en/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=id (encoding=ascii, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=id (encoding=ascii, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/book-stats.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=fr (encoding=ascii, file=book-stats.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=fr (encoding=ascii, file=book-stats.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/dummy-1.pem]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=hr (encoding=ascii, file=dummy-1.pem)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=hr (encoding=ascii, file=dummy-1.pem)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/empty.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=None (encoding=ascii, file=empty.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=None (encoding=ascii, file=empty.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/parchments.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=it (encoding=ascii, file=parchments.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=it (encoding=ascii, file=parchments.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[ascii-en/simple.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=et (encoding=ascii, file=simple.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=et (encoding=ascii, file=simple.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp775-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=et, got=lt (encoding=cp775, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=et, got=lt (encoding=cp775, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[cp852-cs/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=cs, got=hr (encoding=cp852, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=cs, got=hr (encoding=cp852, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-13-et/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-13, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-13, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-br/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=br, got=nl (encoding=iso-8859-14, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=br, got=nl (encoding=iso-8859-14, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-br/culturax_00001.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=br, got=nl (encoding=iso-8859-14, file=culturax_00001.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=br, got=nl (encoding=iso-8859-14, file=culturax_00001.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-br/culturax_00002.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=br, got=sv (encoding=iso-8859-14, file=culturax_00002.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=br, got=sv (encoding=iso-8859-14, file=culturax_00002.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-ga/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-ga/culturax_00001.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00001.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00001.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-ga/culturax_00002.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00002.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=ga, got=is (encoding=iso-8859-14, file=culturax_00002.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00000.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00000.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00000.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00001.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00001.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00001.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-14-gd/culturax_00002.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00002.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=gd, got=en (encoding=iso-8859-14, file=culturax_00002.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[iso-8859-4-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-4, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=et, got=lt (encoding=iso-8859-4, file=_ude_1.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[maclatin2-hr/_enca_macce_hr.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=hr, got=sl (encoding=maclatin2, file=_enca_macce_hr.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=hr, got=sl (encoding=maclatin2, file=_enca_macce_hr.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-en/iris-utf-16.csv]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-16, file=iris-utf-16.csv)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-16, file=iris-utf-16.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2201_88371.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2201_88371.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/nobom-utf16be.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16be, file=nobom-utf16be.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16be, file=nobom-utf16be.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-en/plane1-utf-16be.html]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-16be, file=plane1-utf-16be.html)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-16be, file=plane1-utf-16be.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2201_88371.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2201_88371.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16be-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16be, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/nobom-utf16le.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16le, file=nobom-utf16le.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-16le, file=nobom-utf16le.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-en/plane1-utf-16le.html]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-16le, file=plane1-utf-16le.html)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-16le, file=plane1-utf-16le.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-fr/culturax_OSCAR-2201_88371.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2201_88371.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2201_88371.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-16le-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-16le, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/iris-utf-32.csv]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-32, file=iris-utf-32.csv)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-32, file=iris-utf-32.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-en/iris-utf-32.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-32, file=iris-utf-32.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-32, file=iris-utf-32.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/nobom-utf32be.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32be, file=nobom-utf32be.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32be, file=nobom-utf32be.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-en/plane1-utf-32be.html]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-32be, file=plane1-utf-32be.html)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-32be, file=plane1-utf-32be.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32be-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32be, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32be, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/nobom-utf32le.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32le, file=nobom-utf32le.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=eo (encoding=utf-32le, file=nobom-utf32le.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-en/plane1-utf-32le.html]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-32le, file=plane1-utf-32le.html)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=it (encoding=utf-32le, file=plane1-utf-32le.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-32le-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32le, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-32le, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-7-en/_ude_3.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-7, file=_ude_3.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-7, file=_ude_3.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-7-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-7, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-7, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/_mozilla_bug306272_text.html]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=fi (encoding=utf-8, file=_mozilla_bug306272_text.html)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=fi (encoding=utf-8, file=_mozilla_bug306272_text.html)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/_ude_3.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-8, file=_ude_3.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=is (encoding=utf-8, file=_ude_3.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/iris-utf-8.csv]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-8, file=iris-utf-8.csv)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-8, file=iris-utf-8.csv)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/iris-utf-8.json]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-8, file=iris-utf-8.json)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=lt (encoding=utf-8, file=iris-utf-8.json)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-en/playlist.m3u]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-8, file=playlist.m3u)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=en, got=et (encoding=utf-8, file=playlist.m3u)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[utf-8-sig-fr/culturax_OSCAR-2301_88370.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8-sig, file=culturax_OSCAR-2301_88370.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=fr, got=hu (encoding=utf-8-sig, file=culturax_OSCAR-2301_88370.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.forum.xml]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.forum.xml)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.forum.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.learningenglish.xml]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.learningenglish.xml)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.learningenglish.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.pressreview.xml]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.pressreview.xml)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.pressreview.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1250-hu/bbc.co.uk.hu.xml]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.xml)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=hu, got=ro (encoding=windows-1250, file=bbc.co.uk.hu.xml)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1251-bg/_enca_cp1251_bg.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=bg, got=sr (encoding=windows-1251, file=_enca_cp1251_bg.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=bg, got=sr (encoding=windows-1251, file=_enca_cp1251_bg.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1252-ga/culturax_mC4_63469.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=ga, got=is (encoding=windows-1252, file=culturax_mC4_63469.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=ga, got=is (encoding=windows-1252, file=culturax_mC4_63469.txt)
     warnings.warn(
 
 tests/test_accuracy.py::test_detect[windows-1257-et/_ude_1.txt]
-  $(@D)/tests/test_accuracy.py:194: UserWarning: Language mismatch: expected=et, got=lt (encoding=windows-1257, file=_ude_1.txt)
+  $(@D)/tests/test_accuracy.py:189: UserWarning: Language mismatch: expected=et, got=lt (encoding=windows-1257, file=_ude_1.txt)
     warnings.warn(
 
+tests/test_api.py::test_rename_legacy_true
+  $(@D)/tests/test_api.py:124: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+    result = chardet.detect(
+
+tests/test_api.py::test_rename_legacy_detect_all
+  $(@D)/tests/test_api.py:140: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+    results = chardet.detect_all(b"Hello world", should_rename_legacy=True)
+
+tests/test_api.py::test_rename_legacy_detector
+  $(@D)/tests/test_api.py:154: DeprecationWarning: should_rename_legacy is deprecated, use prefer_superset instead
+    det = UniversalDetector(should_rename_legacy=True)
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 7926 passed, 3 skipped, 3 deselected, 78 xfailed, 56 warnings ========
+======== 8017 passed, 6 deselected, 76 xfailed, 59 warnings ========
