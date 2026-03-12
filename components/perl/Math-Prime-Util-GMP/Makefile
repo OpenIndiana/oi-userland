@@ -19,22 +19,35 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Prime-Util-GMP
-HUMAN_VERSION =			0.52
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.53
 COMPONENT_SUMMARY =		Utilities related to prime numbers, using GMP
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2697c7fd5c7e35fdec7f50ed56a67be807a2f22657589e637dad3592744003be
+	sha256:0d763bfc5a2f327ee688ca7b6ade7b013e733b3f0bcfe291b72b31d57607b163
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
+#
+# There is circular runtime dependency:
+#
+#	Math-Prime-Util-GMP recommends Math-Prime-Util
+#	Math-Prime-Util requires Math-Prime-Util-GMP
+#
+# To bootstrap both components we need to build Math-Prime-Util-GMP first and remove any
+# unresolved runtime dependency on Math-Prime-Util.
+#
+BOOTSTRAP_SKIP_REQUIRED_PACKAGES.perl += library/perl-5/math-prime-util
+MANGLE_DEPEND_RUNTIME += | \
+	$(GNU_GREP) -v '^depend type=require fmri=__TBD pkg\.debug\.depend\.file=Math/Prime/Util\.pm'
+
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/math-prime-util
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
