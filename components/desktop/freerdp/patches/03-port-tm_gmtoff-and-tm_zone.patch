@@ -31,9 +31,9 @@
  	{
 +#if defined(__sun)
 +		const bool is_dst = local_time->tm_isdst > 0;
-+		const size_t len = TimeZoneIanaAbbrevGet(tzname[is_dst], NULL, 0);
++		const size_t len = TimeZoneIanaAbbrevGet(tzname[is_dst], nullptr, 0);
 +#else
- 		const size_t len = TimeZoneIanaAbbrevGet(local_time->tm_zone, NULL, 0);
+ 		const size_t len = TimeZoneIanaAbbrevGet(local_time->tm_zone, nullptr, 0);
 +#endif
  		list = (const char**)calloc(len, sizeof(const char*));
  		if (!list)
