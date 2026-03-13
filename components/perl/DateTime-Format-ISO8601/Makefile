@@ -19,26 +19,25 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-Format-ISO8601
-HUMAN_VERSION =			0.17
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.19
 COMPONENT_SUMMARY =		Parses ISO8601 formats
-COMPONENT_CPAN_AUTHOR =		DROLSKY
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:04899f3b1896b2e0933a1d728b3094ccd2f7d09e434c4eac2696cd931bbf0551
+	sha256:104fe5f79523cde5494ba7654b6b4357a2d8bb71f18ca6eb836e1475a70bcc1b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/datetime
-PERL_REQUIRED_PACKAGES += library/perl-5/datetime-format-builder
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
-PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/datetime
+REQUIRED_PACKAGES.perl += library/perl-5/datetime-format-builder
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
+REQUIRED_PACKAGES.perl += library/perl-5/params-validationcompiler
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/specio
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
