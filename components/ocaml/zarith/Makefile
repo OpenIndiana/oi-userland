@@ -12,19 +12,18 @@
 # Copyright 2023 Friedrich Kink
 #
 
-BUILD_BITS= 64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	Zarith
-COMPONENT_VERSION=	1.12
+COMPONENT_VERSION=	1.14
 COMPONENT_SUMMARY=	The Zarith library - This library implements arithmetic and logical operations over arbitrary-precision integers.
 COMPONENT_PROJECT_URL=	https://github.com/ocaml/Zarith
-COMPONENT_FMRI=	library/ocaml/Zarith
-COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_SRC=		$(COMPONENT_NAME)-release-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/ocaml/Zarith/archive/refs/tags/release-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:cc32563c3845c86d0f609c86d83bf8607ef12354863d31d3bffc0dacf1ed2881
+COMPONENT_ARCHIVE_HASH=	sha256:5db9dcbd939153942a08581fabd846d0f3f2b8c67fe68b855127e0472d4d1859
+COMPONENT_FMRI=	library/ocaml/Zarith
+COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE=	GPLv2
 COMPONENT_LICENSE_FILE= LICENSE
 
@@ -43,7 +42,6 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_TEST_TRANSFORMS = \
         '-n ' \
         '-e "/ passed$$/p" '
-
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
