@@ -17,10 +17,10 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gsettings-desktop-schemas
-HUMAN_VERSION =			48.0
+HUMAN_VERSION =			50.0
 COMPONENT_SUMMARY =		Collection of GSettings schemas for settings shared by various components of a desktop
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e68f155813bf18f865a8b2c8e9d473588b6ccadcafbb666ab788857c6c2d1bd3
+	sha256:358f07cb253727650e132805df3c69f7bf90448040bce171b6f6f2cb1b9c37ef
 COMPONENT_FMRI =		gnome/config/gsettings-desktop-schemas
 COMPONENT_LICENSE =		LGPL-2.1-only
 COMPONENT_LICENSE_FILE =	COPYING
