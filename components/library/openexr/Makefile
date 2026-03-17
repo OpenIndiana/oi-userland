@@ -30,12 +30,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.4.6
+COMPONENT_VERSION=      3.4.7
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:f8cfe743a81c8cc1dd3cbaafa7fa76f75ad31456b0fc45a42b086d12530a4e35
+COMPONENT_ARCHIVE_HASH= sha256:6f57641fb12b019867a766e602252ed4ccb26d7354e3a15688fe9c85a391716e
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries
