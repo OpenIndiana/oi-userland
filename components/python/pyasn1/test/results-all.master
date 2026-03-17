@@ -3,11 +3,13 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1191 items
+collecting ... collected 1242 items
 
+tests/codec/ber/test_decoder.py::LargeTagDecoderTestCase::testExcessiveLongTag PASSED
 tests/codec/ber/test_decoder.py::LargeTagDecoderTestCase::testLargeTag PASSED
 tests/codec/ber/test_decoder.py::LargeTagDecoderTestCase::testLongTag PASSED
 tests/codec/ber/test_decoder.py::LargeTagDecoderTestCase::testTagsEquivalence PASSED
+tests/codec/ber/test_decoder.py::LargeTagDecoderTestCase::testVeryLongTagRoundTrip PASSED
 tests/codec/ber/test_decoder.py::DecoderCacheTestCase::testCache PASSED
 tests/codec/ber/test_decoder.py::IntegerDecoderTestCase::testMinusOne PASSED
 tests/codec/ber/test_decoder.py::IntegerDecoderTestCase::testNegInt PASSED
@@ -69,6 +71,7 @@ tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testLeading0x8
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testLeading0x80Case2 PASSED
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testLeading0x80Case3 PASSED
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testLeading0x80Case4 PASSED
+tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testManySingleByteArcs PASSED
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testMaxAllowedContinuationOctets PASSED
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testMultipleArcsAtLimit PASSED
 tests/codec/ber/test_decoder.py::ObjectIdentifierDecoderTestCase::testNonLeading0x80 PASSED
@@ -83,6 +86,7 @@ tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testExcessiveContin
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testIndefiniteLength PASSED
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testLarge PASSED
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testLeading0x80 PASSED
+tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testManySingleByteArcs PASSED
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testMaxAllowedContinuationOctets PASSED
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testMultipleArcsAtLimit PASSED
 tests/codec/ber/test_decoder.py::RelativeOIDDecoderTestCase::testNonLeading0x80 PASSED
@@ -98,8 +102,13 @@ tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin2 PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin3 PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin4 PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin5 PASSED
+tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin6 PASSED
+tests/codec/ber/test_decoder.py::RealDecoderTestCase::testBin7 PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testChar PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testEmpty PASSED
+tests/codec/ber/test_decoder.py::RealDecoderTestCase::testLargeBinaryPrettyPrintOverflow PASSED
+tests/codec/ber/test_decoder.py::RealDecoderTestCase::testLargeBinaryRoundTrip PASSED
+tests/codec/ber/test_decoder.py::RealDecoderTestCase::testLongFormBinaryRealExponentLength PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testMinusInf PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testPlusInf PASSED
 tests/codec/ber/test_decoder.py::RealDecoderTestCase::testShortEncoding PASSED
@@ -246,6 +255,20 @@ tests/codec/ber/test_decoder.py::RestartableDecoderTestCase::testPartialReadingF
 tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testGzip PASSED
 tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testZipfile PASSED
 tests/codec/ber/test_decoder.py::CompressedFilesTestCase::testZipfileMany PASSED
+tests/codec/ber/test_decoder.py::LengthFieldLimitTestCase::testErrorMessageContainsLimit PASSED
+tests/codec/ber/test_decoder.py::LengthFieldLimitTestCase::testMaxAllowedLengthFieldWorks PASSED
+tests/codec/ber/test_decoder.py::LengthFieldLimitTestCase::testNoOverflowError PASSED
+tests/codec/ber/test_decoder.py::LengthFieldLimitTestCase::testNormalLengthFieldWorks PASSED
+tests/codec/ber/test_decoder.py::LengthFieldLimitTestCase::testOversizedLengthField PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testDefiniteLenNesting PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testErrorMessageContainsLimit PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testIndefLenSequenceNesting PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testIndefLenSetNesting PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testMixedNesting PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testNestingUnderLimitWorks PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testNoRecursionError PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testSiblingsDontIncreaseDepth PASSED
+tests/codec/ber/test_decoder.py::NestingDepthLimitTestCase::testWithSchema PASSED
 tests/codec/ber/test_decoder.py::NonStreamingCompatibilityTestCase::testPartialDecodeWithCustomSubstrateFun PASSED
 tests/codec/ber/test_decoder.py::NonStreamingCompatibilityTestCase::testPartialDecodeWithDefaultSubstrateFun PASSED
 tests/codec/ber/test_decoder.py::NonStreamingCompatibilityTestCase::testPropagateUserException PASSED
@@ -305,9 +328,11 @@ tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testImpossible
 tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testImpossible4 PASSED
 tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testLarge1 PASSED
 tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testLarge2 PASSED
+tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testManySingleByteArcs PASSED
 tests/codec/ber/test_encoder.py::ObjectIdentifierEncoderTestCase::testOne PASSED
 tests/codec/ber/test_encoder.py::ObjectIdentifierWithSchemaEncoderTestCase::testOne PASSED
 tests/codec/ber/test_encoder.py::RelativeOIDEncoderTestCase::testLarge PASSED
+tests/codec/ber/test_encoder.py::RelativeOIDEncoderTestCase::testManySingleByteArcs PASSED
 tests/codec/ber/test_encoder.py::RelativeOIDEncoderTestCase::testOne PASSED
 tests/codec/ber/test_encoder.py::RelativeOIDEncoderTestCase::testThree PASSED
 tests/codec/ber/test_encoder.py::RelativeOIDEncoderTestCase::testTwo PASSED
@@ -450,6 +475,8 @@ tests/codec/cer/test_decoder.py::BitStringDecoderTestCase::testLongMode PASSED
 tests/codec/cer/test_decoder.py::BitStringDecoderTestCase::testShortMode PASSED
 tests/codec/cer/test_decoder.py::OctetStringDecoderTestCase::testLongMode PASSED
 tests/codec/cer/test_decoder.py::OctetStringDecoderTestCase::testShortMode PASSED
+tests/codec/cer/test_decoder.py::LargeTagDecoderTestCase::testExcessiveLongTag PASSED
+tests/codec/cer/test_decoder.py::RealDecoderTestCase::testLargeBinaryRoundTrip PASSED
 tests/codec/cer/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesChoiceOne PASSED
 tests/codec/cer/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesChoiceTwo PASSED
 tests/codec/cer/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
@@ -470,6 +497,8 @@ tests/codec/cer/test_decoder.py::SequenceDecoderWithImplicitlyTaggedSetOfOpenTyp
 tests/codec/cer/test_decoder.py::SequenceDecoderWithImplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
 tests/codec/cer/test_decoder.py::SequenceDecoderWithExplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesChoiceOne PASSED
 tests/codec/cer/test_decoder.py::SequenceDecoderWithExplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
+tests/codec/cer/test_decoder.py::NestingDepthLimitTestCase::testIndefLenNesting PASSED
+tests/codec/cer/test_decoder.py::NestingDepthLimitTestCase::testNoRecursionError PASSED
 tests/codec/cer/test_encoder.py::BooleanEncoderTestCase::testFalse PASSED
 tests/codec/cer/test_encoder.py::BooleanEncoderTestCase::testTrue PASSED
 tests/codec/cer/test_encoder.py::BitStringEncoderTestCase::testLongMode PASSED
@@ -561,6 +590,9 @@ tests/codec/der/test_decoder.py::BitStringDecoderTestCase::testShortMode PASSED
 tests/codec/der/test_decoder.py::OctetStringDecoderTestCase::testChunkedMode PASSED
 tests/codec/der/test_decoder.py::OctetStringDecoderTestCase::testIndefMode PASSED
 tests/codec/der/test_decoder.py::OctetStringDecoderTestCase::testShortMode PASSED
+tests/codec/der/test_decoder.py::LargeTagDecoderTestCase::testExcessiveLongTag PASSED
+tests/codec/der/test_decoder.py::RealDecoderTestCase::testCanonicalLargeBinaryReal PASSED
+tests/codec/der/test_decoder.py::RealDecoderTestCase::testLargeBinaryRoundTrip PASSED
 tests/codec/der/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesChoiceOne PASSED
 tests/codec/der/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesChoiceTwo PASSED
 tests/codec/der/test_decoder.py::SequenceDecoderWithUntaggedOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
@@ -581,6 +613,8 @@ tests/codec/der/test_decoder.py::SequenceDecoderWithImplicitlyTaggedSetOfOpenTyp
 tests/codec/der/test_decoder.py::SequenceDecoderWithImplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
 tests/codec/der/test_decoder.py::SequenceDecoderWithExplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesChoiceOne PASSED
 tests/codec/der/test_decoder.py::SequenceDecoderWithExplicitlyTaggedSetOfOpenTypesTestCase::testDecodeOpenTypesUnknownId PASSED
+tests/codec/der/test_decoder.py::NestingDepthLimitTestCase::testDefiniteLenNesting PASSED
+tests/codec/der/test_decoder.py::NestingDepthLimitTestCase::testNoRecursionError PASSED
 tests/codec/der/test_encoder.py::OctetStringEncoderTestCase::testDefModeLong PASSED
 tests/codec/der/test_encoder.py::OctetStringEncoderTestCase::testDefModeShort PASSED
 tests/codec/der/test_encoder.py::BitStringEncoderTestCase::testDefModeLong PASSED
@@ -827,11 +861,14 @@ tests/type/test_namedval.py::NamedValuesCaseBase::testStrRepr PASSED
 tests/type/test_opentype.py::UntaggedAnyTestCase::testTypeCheckOnAssignment PASSED
 tests/type/test_opentype.py::TaggedAnyTestCase::testTypeCheckOnAssignment PASSED
 tests/type/test_opentype.py::TaggedAnyOpenTypeTestCase::testTypeCheckOnAssignment PASSED
+tests/type/test_tag.py::TagReprTestCase::testNegativeHugeTagId PASSED
 tests/type/test_tag.py::TagReprTestCase::testRepr PASSED
+tests/type/test_tag.py::TagReprTestCase::testReprHugeTagId PASSED
 tests/type/test_tag.py::TagCmpTestCase::testCmp PASSED
 tests/type/test_tag.py::TagCmpTestCase::testHash PASSED
 tests/type/test_tag.py::TagCmpTestCase::testSequence PASSED
 tests/type/test_tag.py::TagSetReprTestCase::testRepr PASSED
+tests/type/test_tag.py::TagSetReprTestCase::testReprHugeTagId PASSED
 tests/type/test_tag.py::TagSetCmpTestCase::testCmp PASSED
 tests/type/test_tag.py::TagSetCmpTestCase::testHash PASSED
 tests/type/test_tag.py::TagSetCmpTestCase::testLen PASSED
@@ -1006,7 +1043,13 @@ tests/type/test_univ.py::RealTestCase::testCeil PASSED
 tests/type/test_univ.py::RealTestCase::testDiv PASSED
 tests/type/test_univ.py::RealTestCase::testFloat PASSED
 tests/type/test_univ.py::RealTestCase::testFloat4BinEnc PASSED
+tests/type/test_univ.py::RealTestCase::testFloatBase10NormalizedOverflow PASSED
+tests/type/test_univ.py::RealTestCase::testFloatBase10Overflow PASSED
+tests/type/test_univ.py::RealTestCase::testFloatBase10Precision PASSED
 tests/type/test_univ.py::RealTestCase::testFloatInf PASSED
+tests/type/test_univ.py::RealTestCase::testFloatOverflow PASSED
+tests/type/test_univ.py::RealTestCase::testFloatUnderflow PASSED
+tests/type/test_univ.py::RealTestCase::testFloatZeroMantissa PASSED
 tests/type/test_univ.py::RealTestCase::testFloor PASSED
 tests/type/test_univ.py::RealTestCase::testInt PASSED
 tests/type/test_univ.py::RealTestCase::testIntInf PASSED
@@ -1020,6 +1063,7 @@ tests/type/test_univ.py::RealTestCase::testPlusInf PASSED
 tests/type/test_univ.py::RealTestCase::testPos PASSED
 tests/type/test_univ.py::RealTestCase::testPow PASSED
 tests/type/test_univ.py::RealTestCase::testPrettyIn PASSED
+tests/type/test_univ.py::RealTestCase::testPrettyInBigBase10Mantissa PASSED
 tests/type/test_univ.py::RealTestCase::testPrettyInInf PASSED
 tests/type/test_univ.py::RealTestCase::testRadd PASSED
 tests/type/test_univ.py::RealTestCase::testRaddInf PASSED
@@ -1177,6 +1221,9 @@ tests/type/test_univ.py::ChoicePicklingTestCase::testSchemaPickling PASSED
 tests/type/test_univ.py::ChoicePicklingTestCase::testValuePickling PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testCopy PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testFromDateTime PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testFromDateTimeFullMicrosecond PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testFromDateTimeNoMicrosecond PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testFromDateTimeRoundTrip PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime0 PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime1 PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime2 PASSED
@@ -1186,6 +1233,10 @@ tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime5 PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime6 PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime7 PASSED
 tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTime8 PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTimeSevenDigitFractionTruncated PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTimeSixDigitFraction PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTimeThreeDigitFraction PASSED
+tests/type/test_useful.py::GeneralizedTimeTestCase::testToDateTimeTwoDigitFraction PASSED
 tests/type/test_useful.py::GeneralizedTimePicklingTestCase::testSchemaPickling PASSED
 tests/type/test_useful.py::GeneralizedTimePicklingTestCase::testValuePickling PASSED
 tests/type/test_useful.py::UTCTimeTestCase::testFromDateTime PASSED
@@ -1197,4 +1248,4 @@ tests/type/test_useful.py::UTCTimeTestCase::testToDateTime4 PASSED
 tests/type/test_useful.py::UTCTimePicklingTestCase::testSchemaPickling PASSED
 tests/type/test_useful.py::UTCTimePicklingTestCase::testValuePickling PASSED
 
-======== 1191 passed ========
+======== 1242 passed ========
