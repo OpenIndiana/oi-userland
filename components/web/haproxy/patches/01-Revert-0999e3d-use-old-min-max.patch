@@ -1,0 +1,30 @@
+include/haproxy/compat.h:116:19: error: braced-group within expression allowed only inside a function
+  116 | #define MAX(a, b) ({                            \
+      |                   ^
+
+Revert commit 0999e3d. https://github.com/haproxy/haproxy/commit/0999e3d9597c5a1ad01a4288ee0093a58d6f75d0
+
+--- haproxy-3.3.5/include/haproxy/compat.h.old	2026-03-15 22:12:16.432358583 -0400
++++ haproxy-3.3.5/include/haproxy/compat.h	2026-03-15 22:14:36.863598119 -0400
+@@ -105,19 +105,11 @@
+ 
+ /* safe versions for use anywhere except in initializers */
+ #ifndef MIN
+-#define MIN(a, b) ({				\
+-	typeof(a) _a = (a);			\
+-	typeof(a) _b = (b);			\
+-	_MIN(_a, _b);				\
+-})
++#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+ #endif
+ 
+ #ifndef MAX
+-#define MAX(a, b) ({				\
+-	typeof(a) _a = (a);			\
+-	typeof(a) _b = (b);			\
+-	_MAX(_a, _b);				\
+-})
++#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+ #endif
+ 
+ /* always set a _POSIX_VERSION if there isn't any, in order to ease compares */
