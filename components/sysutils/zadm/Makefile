@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			zadm
 COMPONENT_VERSION=		0.15.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		zadm - zone management tool
 COMPONENT_PROJECT_URL=		https://github.com/omniosorg/zadm
 COMPONENT_FMRI=			system/zones/zadm
