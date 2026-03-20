@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.49.1
+HUMAN_VERSION =			4.50.2
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4130d02e1d53648d7107d121ed79f69a27b717817c5e9da521d50319dd261212
+	sha256:dd9e99fcf54660cde07bf2def4a242990447f440038e1d7c5133509aec2f7184
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,6 +47,7 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/cachetools
 REQUIRED_PACKAGES.python += library/python/colorama
+REQUIRED_PACKAGES.python += library/python/docutils
 REQUIRED_PACKAGES.python += library/python/filelock
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
@@ -62,6 +63,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
 TEST_REQUIRED_PACKAGES.python += library/python/distlib
+TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
 TEST_REQUIRED_PACKAGES.python += library/python/hatchling
