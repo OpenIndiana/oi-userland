@@ -1,0 +1,55 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2020, 2021, 2022, 2023, 2026 David Stes
+#
+
+
+set name=pkg.fmri value=pkg:/runtime/smalltalk/dtlsqueak-nodisplay@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+
+license dtlsqueak.license license='MIT'
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# 32-bit objects in 64-bit multiarch build are rejected by lint
+# since 2023 version 4.20.6 we only deliver 64bit binaries
+<transform file path=usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/* -> set pkg.linted.userland.action001.2 true>
+
+# since 2023 version 4.20.6 32bit do not provide 32bit binaries
+file inidtlsqueak4 path=usr/bin/inidtlsqueak4
+file dtlsqueak.ips path=usr/bin/dtlsqueak4
+file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/ckformat path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/ckformat mode=0555
+file usr/lib/squeak/$(COMPONENT_VERSION)-$(SVN_REV)_64bit/squeakvm64 path=usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/squeakvm64 mode=0555
+
+file usr/share/man/man1/squeak.1 path=usr/share/man/man1/dtlsqueak4.1
+
+# the squeak script uses test -L (test for symbolic link) - use hardlink
+
+hardlink path=usr/bin/squeak target=dtlsqueak4 mediator=squeak \
+    mediator-version=4 mediator-implementation=dtl
+hardlink path=usr/bin/inisqueak target=inidtlsqueak4 mediator=squeak \
+    mediator-version=4 mediator-implementation=dtl
+hardlink path=usr/bin/ckformat target=/usr/lib/amd64/squeak/$(COMPONENT_VERSION)-$(SVN_REV)/ckformat mediator=squeak \
+    mediator-version=4 mediator-implementation=dtl
+hardlink path=usr/share/man/man1/squeak.1 target=dtlsqueak4.1 mediator=squeak \
+    mediator-version=4 mediator-implementation=dtl
+
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.AioPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.AioPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.FileCopyPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.FileCopyPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.UnixOSProcessPlugin path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.UnixOSProcessPlugin
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.vm-display-null path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.vm-display-null
+file usr/lib/squeak/$(HUMAN_VERSION)-$(SVN_REV)_64bit/so.vm-sound-null path=usr/lib/amd64/squeak/$(HUMAN_VERSION)-$(SVN_REV)/so.vm-sound-null

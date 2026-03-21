@@ -1,0 +1,23 @@
+--- platforms/Cross/plugins/JPEGReadWriter2Plugin/jmemdatadst.c	Mon Jun 16 08:44:10 2025
++++ p0/platforms/Cross/plugins/JPEGReadWriter2Plugin/jmemdatadst.c	Tue Jun 17 11:44:51 2025
+@@ -115,13 +115,12 @@
+   }
+ }
+ 
+-#if !defined(USE_LIBRARY_SHARED)
+ /*
+  * Prepare for output to a stdio stream.
+  * The caller must have already opened the stream, and is responsible
+  * for closing it after finishing compression.
+  */
+-GLOBAL(void) jpeg_mem_dest (j_compress_ptr cinfo, char * pDestination, unsigned *pDestinationSize) {
++GLOBAL(void) sqJpeg_mem_dest (j_compress_ptr cinfo, char * pDestination, unsigned *pDestinationSize) {
+   my_dest_ptr dest;
+ 
+   /* The destination object is made permanent so that multiple JPEG images
+@@ -145,5 +144,4 @@
+   dest->pSpaceUsed = pDestinationSize;
+   *(dest->pSpaceUsed) = 0;
+ }
+-#endif
+ 
