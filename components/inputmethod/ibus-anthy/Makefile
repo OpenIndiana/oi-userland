@@ -17,13 +17,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ibus-anthy
-COMPONENT_VERSION=      1.5.17
+COMPONENT_VERSION=      1.5.18
 COMPONENT_REVISION=       1
 COMPONENT_CLASSIFICATION=System/Internationalization
 COMPONENT_SUMMARY=      iBus Japanese IME - anthy
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:9e1d28ad7da2be5e0d9c0eb0d8fb7557fc89770aa2237272debe197bd61abd40
+COMPONENT_ARCHIVE_HASH= sha256:cad0d6e2c6fd27ea71299efdfa19954ad098fa9e54c6a232161bd25786c492e6
 COMPONENT_ARCHIVE_URL=  https://github.com/ibus/ibus-anthy/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://github.com/fujiwarat/ibus-anthy/wiki
 COMPONENT_FMRI=         system/input-method/ibus/anthy
