@@ -1,12 +1,14 @@
---- trealla-2.90.2/Makefile.orig
-+++ trealla-2.90.2/Makefile
-@@ -1,22 +1,25 @@
+--- trealla-2.92.3/Makefile.orig	2026-03-26 22:21:28.000000000 +0100
++++ trealla-2.92.3/Makefile	2026-03-28 00:55:30.157870837 +0100
+@@ -1,17 +1,20 @@
  # Installation paths
 -PREFIX ?= /usr/local
 +PREFIX ?= /usr
  BINDIR ?= $(PREFIX)/bin
  LIBDIR ?= $(PREFIX)/share/trealla
  MANDIR ?= $(PREFIX)/share/man
+ 
+ EMBED ?= 1
  
 -HOST_CC ?= cc
 +HOST_CC ?= gcc
@@ -22,15 +24,16 @@
  	-DDEFAULT_LIBRARY_PATH='"$(LIBDIR)/library"' \
  	-O3 $(OPT) -D_GNU_SOURCE \
  	-Wall -Wextra \
- 	-Wno-unused-but-set-variable \
- 	-Wno-unused-parameter \
- 	-Wno-unused-variable
+@@ -23,7 +26,7 @@
+ CFLAGS += -DEMBED=1
+ endif
+ 
 -LDFLAGS = -L/usr/local/lib -lm
 +LDFLAGS = -lm -lsocket -lnsl
  
  ifdef HOMEBREW_PREFIX
  LDFLAGS += -L$(HOMEBREW_PREFIX)/opt/libffi/lib -L$(HOMEBREW_PREFIX)/opt/openssl@3/lib -L$(HOMEBREW_PREFIX)/opt/readline/lib
-@@ -60,12 +63,12 @@
+@@ -67,12 +70,12 @@
  endif
  
  ifndef NOFFI
