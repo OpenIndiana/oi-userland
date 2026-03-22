@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		TimeDate
-HUMAN_VERSION =			2.34
+HUMAN_VERSION =			2.35
 COMPONENT_SUMMARY =		Date and time formatting subroutines
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4571da8fad4393e7051be0098bd3ad028b3c60c2d75adf88b1f81b912154d6d2
+	sha256:baddd0306ae2e86e9ec28d3de5439e514643e80b3735e43bd0fbb426d73304de
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
