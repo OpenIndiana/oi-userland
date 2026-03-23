@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-RIPEMD160
-HUMAN_VERSION =			0.09
+HUMAN_VERSION =			0.11
 COMPONENT_SUMMARY =		Perl extension for the RIPEMD-160 Hash function
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b91e75637d696782cf73953a38fd7c032f62cf4eef3e02a24b071427a39d40a4
+	sha256:ca57cca1a57769e049d79b899c4a0229ae4d3e4721378e37a5830cf94496e85a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
