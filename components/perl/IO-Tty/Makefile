@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Tty
-HUMAN_VERSION =			1.20
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			1.24
 COMPONENT_SUMMARY =		Pseudo ttys and constants
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b15309fc85623893289cb9b2b88dfa9ed1e69156b75f29938553a45be6d730af
+	sha256:6f1e264e5002699fbb931e48a9e67cd539b8da25e42e4d9483f58fa85b1d8744
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
