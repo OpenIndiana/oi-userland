@@ -8,7 +8,7 @@ Fix the non-Linux case so it at least compiles.
          return { };
 -    return CString(readLinkBuffer, result);
 +WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-+    return CString({ readLinkBuffer, static_cast<size_t>(result) });
++    return CString(std::span { readLinkBuffer, static_cast<size_t>(result) });
 +WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
  }
  #elif OS(WINDOWS)
