@@ -19,19 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IPC-Run
-HUMAN_VERSION =			20250809.0
+HUMAN_VERSION =			20260322.0
 COMPONENT_SUMMARY =		system() and background procs w/ piping, redirs, ptys (Unix, Win32)
-COMPONENT_CPAN_AUTHOR =		NJM
+COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b1e85a30405786ed8378b68dd57159315ad7ddc0a55e432aa9eeca6166ca53fe
+	sha256:532f580ab598621eb385311c7cef540e72a52ab2f061c2177735823be832aeff
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-tty
-PERL_REQUIRED_PACKAGES += library/perl-5/readonly
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-tty
+REQUIRED_PACKAGES.perl += library/perl-5/readonly
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
