@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=14
+# CANDIDATE_BETA=10
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      148.0.2
+COMPONENT_VERSION=      149.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     39bc83bb8632d54d70542dc5d98c046a317ec99d
+COMPONENT_GIT_HASH=     9911a26f5083f4a3b13c628f056b882a7b24db7f9d8b8a42f2fdb4f60d22ea91
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:a6cb8e4d5e596cd52475bab9b4d399240f10c4211718b9d72ca6b2e9c9244e90
+COMPONENT_ARCHIVE_HASH=	sha256:b861fdee999d9b6404e1e865d6f707c41b4bded1b5ea62affc176288c1484b8a
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
-RUST_VERSION = 1.92.0
+RUST_VERSION = 1.93.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
