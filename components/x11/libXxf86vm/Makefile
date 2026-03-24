@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libXxf86vm
-COMPONENT_VERSION=		1.1.6
+COMPONENT_VERSION=		1.1.7
 COMPONENT_SUMMARY= 		libXxf86vm - VidMode extension for modifying video attributes
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:96af414c73ce1d5449ad04be7f9f27fa8330f844b6dda843ef22e3e1befb3ee3
+COMPONENT_ARCHIVE_HASH=	sha256:ae50c0f669e0af5a67cc4cd0f54f21d64a64d2660af883e80e95d3fe51b945d8
 COMPONENT_FMRI=			x11/library/libxxf86vm
 COMPONENT_LICENSE_FILE= COPYING
 
