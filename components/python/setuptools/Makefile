@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		setuptools
-HUMAN_VERSION =			80.9.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			80.10.2
 COMPONENT_SUMMARY =		Easily download, build, install, upgrade, and uninstall Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c
+	sha256:8b0e9d10c784bf7d262c4e5ec5d4ec94127ce206e8738f29a437945fbc219b70
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,6 +33,7 @@ COMPONENT_LICENSE_FILE =	LICENSE
 # - chardet (test bootstrap)
 # - distlib (test bootstrap)
 # - importlib_metadata
+# - iniconfig (test bootstrap)
 # - pluggy (test bootstrap)
 # - pytest (test bootstrap)
 # - setuptools-scm

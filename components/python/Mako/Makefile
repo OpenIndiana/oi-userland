@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mako
 HUMAN_VERSION =			1.3.10
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A super-fast templating language that borrows the best ideas from the existing templating languages.
 COMPONENT_PROJECT_URL =		https://www.makotemplates.org/
 COMPONENT_ARCHIVE_HASH =	\
@@ -27,13 +28,24 @@ COMPONENT_ARCHIVE_HASH =	\
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# Mako --> dogpile.cache --> Mako
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/markupsafe
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/babel
 TEST_REQUIRED_PACKAGES.python += library/python/dogpile-cache
 TEST_REQUIRED_PACKAGES.python += library/python/lingua

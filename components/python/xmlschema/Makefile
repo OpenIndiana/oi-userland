@@ -15,18 +15,20 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		xmlschema
-HUMAN_VERSION =			4.2.0
+HUMAN_VERSION =			4.3.1
 COMPONENT_SUMMARY =		An XML Schema validator and decoder
 COMPONENT_PROJECT_URL =		https://github.com/sissaschool/xmlschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b1f88c53493b2e75471977cbf218d939b872d0c7046bb63d48cc219fa7e241b9
+	sha256:853effdfaf127849d4724368c17bd669e7f1486e15a0376404ad7954ec31a338
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by xmlschema >= 4.3.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

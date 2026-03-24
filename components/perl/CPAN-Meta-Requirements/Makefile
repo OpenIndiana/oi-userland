@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta-Requirements
-HUMAN_VERSION =			2.143
-COMPONENT_REVISION =		5
+HUMAN_VERSION =			2.145
 COMPONENT_SUMMARY =		a set of version requirements for a CPAN dist
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6ec7e4697bb5a8cea0ee3c8bd5d4b20ce086168a8084778d6e7a4c37356fdf8b
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:1557093e3ff0d650262a8340a1dafc5d033af986f98ee3e8a889d04b53e18019
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/version
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

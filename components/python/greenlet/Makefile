@@ -19,23 +19,25 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		greenlet
-HUMAN_VERSION =			3.2.4
+HUMAN_VERSION =			3.3.1
 COMPONENT_SUMMARY =		Lightweight in-process concurrent programming
-COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io/
+COMPONENT_PROJECT_URL =		https://greenlet.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0dca0d95ff849f9a364385f36ab49f50065d76964944638be9691e1832e9f86d
+	sha256:41848f3230b58c08bb43dee542e74a2a2e34d3c59dc3076cec9151aeeedcae98
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by greenlet >= 3.3.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/objgraph
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
-TEST_REQUIRED_PACKAGES.python += library/python/sphinx

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		named
 HUMAN_VERSION =			1.4.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Named types.
 COMPONENT_PROJECT_URL =		https://github.com/nekitdev/named
 COMPONENT_ARCHIVE_URL =		\
@@ -37,9 +38,7 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_POETRY += test
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/poetry-core
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/poetry-core
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

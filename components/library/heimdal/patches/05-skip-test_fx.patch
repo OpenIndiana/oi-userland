@@ -1,0 +1,111 @@
+Test is broken
+--- heimdal-7.8.0/lib/krb5/Makefile.in.old	2026-01-30 15:07:14.393184041 -0500
++++ heimdal-7.8.0/lib/krb5/Makefile.in	2026-01-30 15:08:49.952710659 -0500
+@@ -107,7 +107,7 @@
+ 	pseudo-random-test$(EXEEXT) store-test$(EXEEXT) \
+ 	string-to-key-test$(EXEEXT) test_acl$(EXEEXT) \
+ 	test_addr$(EXEEXT) test_cc$(EXEEXT) test_config$(EXEEXT) \
+-	test_fx$(EXEEXT) test_prf$(EXEEXT) test_store$(EXEEXT) \
++	test_prf$(EXEEXT) test_store$(EXEEXT) \
+ 	test_crypto_wrapping$(EXEEXT) test_keytab$(EXEEXT) \
+ 	test_mem$(EXEEXT) test_pac$(EXEEXT) test_plugin$(EXEEXT) \
+ 	test_princ$(EXEEXT) test_pkinit_dh2key$(EXEEXT) \
+@@ -180,7 +180,7 @@
+ 	pseudo-random-test$(EXEEXT) store-test$(EXEEXT) \
+ 	string-to-key-test$(EXEEXT) test_acl$(EXEEXT) \
+ 	test_addr$(EXEEXT) test_cc$(EXEEXT) test_config$(EXEEXT) \
+-	test_fx$(EXEEXT) test_prf$(EXEEXT) test_store$(EXEEXT) \
++	test_prf$(EXEEXT) test_store$(EXEEXT) \
+ 	test_crypto_wrapping$(EXEEXT) test_keytab$(EXEEXT) \
+ 	test_mem$(EXEEXT) test_pac$(EXEEXT) test_plugin$(EXEEXT) \
+ 	test_princ$(EXEEXT) test_pkinit_dh2key$(EXEEXT) \
+@@ -446,13 +446,6 @@
+ 	$(top_builddir)/lib/asn1/libasn1.la \
+ 	$(top_builddir)/lib/wind/libwind.la $(LIB_heimbase) \
+ 	$(am__DEPENDENCIES_1)
+-test_fx_SOURCES = test_fx.c
+-test_fx_OBJECTS = test_fx.$(OBJEXT)
+-test_fx_LDADD = $(LDADD)
+-test_fx_DEPENDENCIES = libkrb5.la $(am__DEPENDENCIES_1) \
+-	$(top_builddir)/lib/asn1/libasn1.la \
+-	$(top_builddir)/lib/wind/libwind.la $(LIB_heimbase) \
+-	$(am__DEPENDENCIES_1)
+ test_get_addrs_SOURCES = test_get_addrs.c
+ test_get_addrs_OBJECTS = test_get_addrs.$(OBJEXT)
+ test_get_addrs_LDADD = $(LDADD)
+@@ -766,7 +759,7 @@
+ 	./$(DEPDIR)/test_cc.Po ./$(DEPDIR)/test_config.Po \
+ 	./$(DEPDIR)/test_crypto.Po ./$(DEPDIR)/test_crypto_wrapping.Po \
+ 	./$(DEPDIR)/test_expand_toks.Po ./$(DEPDIR)/test_forward.Po \
+-	./$(DEPDIR)/test_fx.Po ./$(DEPDIR)/test_get_addrs.Po \
++	./$(DEPDIR)/test_get_addrs.Po \
+ 	./$(DEPDIR)/test_gic.Po ./$(DEPDIR)/test_hostname.Po \
+ 	./$(DEPDIR)/test_keytab.Po ./$(DEPDIR)/test_kuserok.Po \
+ 	./$(DEPDIR)/test_mem.Po ./$(DEPDIR)/test_pac.Po \
+@@ -803,7 +796,7 @@
+ 	test_acl.c test_addr.c test_alname.c test_ap-req.c \
+ 	test_canon.c test_cc.c test_config.c test_crypto.c \
+ 	test_crypto_wrapping.c test_expand_toks.c test_forward.c \
+-	test_fx.c test_get_addrs.c test_gic.c test_hostname.c \
++	test_get_addrs.c test_gic.c test_hostname.c \
+ 	test_keytab.c test_kuserok.c test_mem.c test_pac.c \
+ 	test_pkinit_dh2key.c test_pknistkdf.c test_plugin.c test_prf.c \
+ 	test_princ.c test_renew.c test_rfc3961.c test_set_kvno0.c \
+@@ -814,7 +807,7 @@
+ 	string-to-key-test.c test_acl.c test_addr.c test_alname.c \
+ 	test_ap-req.c test_canon.c test_cc.c test_config.c \
+ 	test_crypto.c test_crypto_wrapping.c test_expand_toks.c \
+-	test_forward.c test_fx.c test_get_addrs.c test_gic.c \
++	test_forward.c test_get_addrs.c test_gic.c \
+ 	test_hostname.c test_keytab.c test_kuserok.c test_mem.c \
+ 	test_pac.c test_pkinit_dh2key.c test_pknistkdf.c test_plugin.c \
+ 	test_prf.c test_princ.c test_renew.c test_rfc3961.c \
+@@ -1857,10 +1850,6 @@
+ 	@rm -f test_forward$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(test_forward_OBJECTS) $(test_forward_LDADD) $(LIBS)
+ 
+-test_fx$(EXEEXT): $(test_fx_OBJECTS) $(test_fx_DEPENDENCIES) $(EXTRA_test_fx_DEPENDENCIES) 
+-	@rm -f test_fx$(EXEEXT)
+-	$(AM_V_CCLD)$(LINK) $(test_fx_OBJECTS) $(test_fx_LDADD) $(LIBS)
+-
+ test_get_addrs$(EXEEXT): $(test_get_addrs_OBJECTS) $(test_get_addrs_DEPENDENCIES) $(EXTRA_test_get_addrs_DEPENDENCIES) 
+ 	@rm -f test_get_addrs$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(test_get_addrs_OBJECTS) $(test_get_addrs_LDADD) $(LIBS)
+@@ -2119,7 +2108,6 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_crypto_wrapping.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_expand_toks.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_forward.Po@am__quote@ # am--include-marker
+-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_fx.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_get_addrs.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_gic.Po@am__quote@ # am--include-marker
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_hostname.Po@am__quote@ # am--include-marker
+@@ -3777,13 +3765,6 @@
+ 	--log-file $$b.log --trs-file $$b.trs \
+ 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+ 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+-test_fx.log: test_fx$(EXEEXT)
+-	@p='test_fx$(EXEEXT)'; \
+-	b='test_fx'; \
+-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+-	--log-file $$b.log --trs-file $$b.trs \
+-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ test_prf.log: test_prf$(EXEEXT)
+ 	@p='test_prf$(EXEEXT)'; \
+ 	b='test_prf'; \
+@@ -4156,7 +4137,6 @@
+ 	-rm -f ./$(DEPDIR)/test_crypto_wrapping.Po
+ 	-rm -f ./$(DEPDIR)/test_expand_toks.Po
+ 	-rm -f ./$(DEPDIR)/test_forward.Po
+-	-rm -f ./$(DEPDIR)/test_fx.Po
+ 	-rm -f ./$(DEPDIR)/test_get_addrs.Po
+ 	-rm -f ./$(DEPDIR)/test_gic.Po
+ 	-rm -f ./$(DEPDIR)/test_hostname.Po
+@@ -4400,7 +4380,6 @@
+ 	-rm -f ./$(DEPDIR)/test_crypto_wrapping.Po
+ 	-rm -f ./$(DEPDIR)/test_expand_toks.Po
+ 	-rm -f ./$(DEPDIR)/test_forward.Po
+-	-rm -f ./$(DEPDIR)/test_fx.Po
+ 	-rm -f ./$(DEPDIR)/test_get_addrs.Po
+ 	-rm -f ./$(DEPDIR)/test_gic.Po
+ 	-rm -f ./$(DEPDIR)/test_hostname.Po

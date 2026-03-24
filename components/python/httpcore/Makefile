@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		httpcore
 HUMAN_VERSION =			1.0.9
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A minimal low-level HTTP client.
 COMPONENT_PROJECT_URL =		https://www.encode.io/httpcore/
 COMPONENT_ARCHIVE_HASH =	\
@@ -42,11 +43,11 @@ TEST_REQUIRED_PACKAGES.python += library/python/hpack
 TEST_REQUIRED_PACKAGES.python += library/python/hyperframe
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/certifi
-PYTHON_REQUIRED_PACKAGES += library/python/h11
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-fancy-pypi-readme
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/certifi
+REQUIRED_PACKAGES.python += library/python/h11
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/anyio
 TEST_REQUIRED_PACKAGES.python += library/python/h2
 TEST_REQUIRED_PACKAGES.python += library/python/socksio

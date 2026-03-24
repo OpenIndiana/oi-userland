@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.28.0
+HUMAN_VERSION =			1.29.0
 COMPONENT_SUMMARY =		Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8
+	sha256:793c31816d952cee405b83488ce001c719f325d9cda69f1fc4cd750527640ea6
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -44,12 +44,14 @@ TEST_STYLE = none
 # - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
+# Python 3.9 is not supported by hatchling >= 1.28.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/pathspec
 REQUIRED_PACKAGES.python += library/python/pluggy
-REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += library/python/trove-classifiers
 REQUIRED_PACKAGES.python += runtime/python

@@ -20,21 +20,15 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Type-Tiny
-HUMAN_VERSION =			2.008006
+HUMAN_VERSION =			2.010001
 COMPONENT_SUMMARY =		tiny, yet Moo(se)-compatible type constraint
 COMPONENT_CPAN_AUTHOR =		TOBYINK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bfd5a718e4da72875bfa467e8933d4daa6937a802804bd19336582ac0c351726
+	sha256:cd583e4983039f35052d490f0c4439124ba667d4f09c4e3aec47de5200f9921a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Optional test dependencies missing from metadata
-# https://github.com/tobyink/p5-type-tiny/issues/171
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/specio
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.perl += library/perl-5/class-xsaccessor
@@ -48,8 +42,10 @@ REQUIRED_PACKAGES.perl += library/perl-5/regexp-util
 REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 REQUIRED_PACKAGES.perl += library/perl-5/type-tiny-xs
 REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/devel-hide
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/moo
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/mouse
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/namespace-clean
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-memory-cycle
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

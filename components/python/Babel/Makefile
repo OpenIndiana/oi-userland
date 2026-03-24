@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		babel
-HUMAN_VERSION =			2.17.0
+HUMAN_VERSION =			2.18.0
 COMPONENT_SUMMARY =		Internationalization utilities
 COMPONENT_PROJECT_URL =		https://babel.pocoo.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0c54cffb19f690cdcc52a3b50bcbf71e07a808d1c80d549f2459b9d2cf0afb9d
+	sha256:b80b99a14bd085fcacfa15c9165f651fbb3406e66cc603abf11c5750937c992d
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,12 +40,17 @@ COMPONENT_TEST_ENV += TZ=UTC
 COMPONENT_TEST_TRANSFORMS += "-e '/^INFO:import_cldr:/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^WARNING:import_cldr:/d'"
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/freezegun
 TEST_REQUIRED_PACKAGES.python += library/python/jinja2
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytz
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools

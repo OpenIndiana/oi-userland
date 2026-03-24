@@ -9,21 +9,21 @@
 #
 
 #
-# Copyright 2025 Friedrich Kink. All rights reserved.
+# Copyright 2025-2026 Friedrich Kink. All rights reserved.
 #
 
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.4
-COMPONENT_MNR_VERSION=	16
+COMPONENT_MNR_VERSION=	19
 COMPONENT_SUMMARY=      PHP 8.4
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:6c48c65eba6a2f7a102925d08772239b1f45110aed2187fdd81b933ed439c692
+COMPONENT_ARCHIVE_HASH= sha256:bceb7798ed37b442fe523ae7ef345ccc2231db0b022d30735c2e378d3254a0d4
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL=	https://www.php.net/distributions/$(COMPONENT_ARCHIVE).asc
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-84
@@ -210,15 +210,16 @@ REQUIRED_PACKAGES += web/server/apache-24
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += library/icu-78
 REQUIRED_PACKAGES += library/libffi
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/libxslt

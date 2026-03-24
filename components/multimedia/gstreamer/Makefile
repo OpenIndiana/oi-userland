@@ -22,12 +22,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gstreamer
-COMPONENT_VERSION=	1.26.9
+COMPONENT_VERSION=	1.28.1
 COMPONENT_SUMMARY=      GNOME streaming media framework
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:8ee8772e468102ebe86d414d8c4c7440dd91d9f3e9396952ff23aecde80670c8
+COMPONENT_ARCHIVE_HASH=	sha256:b65e2ffa35bdbf8798cb75c23ffc3d05e484e48346ff7546844ba85217664504
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/audio/gstreamer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -51,13 +51,13 @@ SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERS
 SOVER_RE = $(subst .,\.,$(SOVER))
 
 # Replace library version number by SOVER
-GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+GENERATE_EXTRA_SED += -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # Testing fails without TZ set
 COMPONENT_TEST_ENV += TZ=UTC
 
 # SOVER is needed for manifest processing
-PKG_MACROS += SOVER=$(SOVER)
+PKG_VARS += SOVER
 
 # not picked up by REQUIRED_PACKAGES but still needed
 REQUIRED_PACKAGES += library/desktop/gobject/gobject-introspection

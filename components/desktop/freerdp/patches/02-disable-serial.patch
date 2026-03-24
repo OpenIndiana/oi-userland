@@ -1,0 +1,38 @@
+--- freerdp-3.22.0/winpr/libwinpr/comm/CMakeLists.txt.old
++++ freerdp-3.22.0/winpr/libwinpr/comm/CMakeLists.txt
+@@ -18,7 +18,7 @@
+ set(MODULE_NAME "winpr-comm")
+ set(MODULE_PREFIX "WINPR_COMM")
+ 
+-if(NOT WIN32)
++if(NOT WIN32 AND NOT ${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
+   set(${MODULE_PREFIX}_SRCS comm.c comm.h)
+   if(NOT EMSCRIPTEN AND NOT APPLE)
+     winpr_definition_add(WINPR_HAVE_SERIAL_SUPPORT)
+--- freerdp-3.22.0/winpr/libwinpr/file/generic.c.~1~
++++ freerdp-3.22.0/winpr/libwinpr/file/generic.c
+@@ -198,9 +198,6 @@
+ 	 * Register all file handle creators.
+ 	 */
+ 	ArrayList_Append(HandleCreators, GetNamedPipeClientHandleCreator());
+-	const HANDLE_CREATOR* serial = GetCommHandleCreator();
+-	if (serial)
+-		ArrayList_Append(HandleCreators, serial);
+ 	ArrayList_Append(HandleCreators, GetFileHandleCreator());
+ }
+ 
+--- freerdp-3.22.0/channels/serial/ChannelOptions.cmake.old
++++ freerdp-3.22.0/channels/serial/ChannelOptions.cmake	
+@@ -20,6 +20,12 @@
+   message("Serial redirection not supported on apple")
+ endif()
+ 
++if(${CMAKE_SYSTEM_NAME} MATCHES "SunOS")
++  set(OPTION_CLIENT_DEFAULT OFF)
++  set(OPTION_SERVER_DEFAULT OFF)
++  message("Serial redirection not supported on apple")
++endif()
++
+ define_channel_options(
+   NAME
+   "serial"

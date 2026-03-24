@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		virtualenv
-HUMAN_VERSION =			20.35.4
+HUMAN_VERSION =			20.37.0
 COMPONENT_SUMMARY =		Virtual Python Environment builder
 COMPONENT_PROJECT_URL =		https://github.com/pypa/virtualenv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:643d3914d73d3eeb0c552cbb12d7e82adf0e504dbf86a3182f8771a153a1971c
+	sha256:6f7e2064ed470aa7418874e70b6369d53b66bcd9e9fd5389763e96b6c94ccb7c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -58,5 +58,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/pytest-env
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-randomly
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
 TEST_REQUIRED_PACKAGES.python += library/python/time-machine

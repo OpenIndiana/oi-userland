@@ -14,13 +14,15 @@
 #   $WS_TOOLS/python-integrate-project ddt
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ddt
 HUMAN_VERSION =			1.7.2
-COMPONENT_SUMMARY =		ddt - Data-Driven/Decorated Tests
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Data-Driven/Decorated Tests
 COMPONENT_PROJECT_URL =		https://github.com/datadriventests/ddt
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:d215d6b083963013c4a19b1e4dcd6a96e80e43ab77519597a6acfcf2e9a3e04b
@@ -30,10 +32,8 @@ COMPONENT_LICENSE_FILE =	LICENSE.md
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/flake8
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pyyaml
 TEST_REQUIRED_PACKAGES.python += library/python/six

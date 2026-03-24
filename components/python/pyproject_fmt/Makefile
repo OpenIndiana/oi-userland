@@ -20,14 +20,17 @@ CARGO_VENDOR = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_fmt
-HUMAN_VERSION =			2.8.0
+HUMAN_VERSION =			2.11.1
 COMPONENT_SUMMARY =		Format your pyproject.toml file
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7daff2eaa257bc3fc4e812cca37747830da94db9f6b7424c42cafe96cd38f432
+	sha256:86f4ebc71d658b848bd14da5f2d2f156a238687e5c9adc0e787ecbf925fd24b1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by pyproject-fmt >= 2.9.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

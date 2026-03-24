@@ -15,14 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		anyio
-HUMAN_VERSION =			4.11.0
+HUMAN_VERSION =			4.12.1
 COMPONENT_SUMMARY =		High-level concurrency and networking framework on top of asyncio or Trio
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:82a8d0b81e318cc5ce71a5f1f8b5c4e63619620b63141ef8c995fa0db95a57c4
+	sha256:41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,19 +36,19 @@ COMPONENT_POST_UNPACK_ACTION += $(RM) $(COMPONENT_SRC)/src/anyio/_backends/_trio
 # https://github.com/agronholm/anyio/issues/986
 PYTEST_ADDOPTS += --deselect tests/test_sockets.py::TestTCPStream::test_unretrieved_future_exception_server_crash
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/exceptiongroup
 REQUIRED_PACKAGES.python += library/python/idna
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
-REQUIRED_PACKAGES.python += library/python/sniffio
 REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/trustme

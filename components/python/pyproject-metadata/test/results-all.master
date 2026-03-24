@@ -4,10 +4,27 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 308 items
+collecting ... collected 334 items
 
 tests/test_internals.py::test_all PASSED
 tests/test_internals.py::test_project_table_all PASSED
+tests/test_project_table.py::test_conversion_error[Invalid dynamic value] PASSED
+tests/test_project_table.py::test_conversion_error[bad build-system.requires type] PASSED
+tests/test_project_table.py::test_conversion_error[bad nested in dictionary type] PASSED
+tests/test_project_table.py::test_conversion_error[bad optional-dependencies type] PASSED
+tests/test_project_table.py::test_conversion_error[bad project.name type] PASSED
+tests/test_project_table.py::test_conversion_error[missing required project.name] PASSED
+tests/test_project_table.py::test_conversion_error[nested dicts of dicts bad type] PASSED
+tests/test_project_table.py::test_conversion_error[project.license.text bad nested dict type] PASSED
+tests/test_project_table.py::test_conversion_errors[missing name and bad entry-point] PASSED
+tests/test_project_table.py::test_conversion_errors[name and build-system.requires bad types] PASSED
+tests/test_project_table.py::test_conversion_fn[dynamic field] PASSED
+tests/test_project_table.py::test_conversion_fn[extra keys are ignored] PASSED
+tests/test_project_table.py::test_conversion_fn[large example] PASSED
+tests/test_project_table.py::test_conversion_fn[license as str] PASSED
+tests/test_project_table.py::test_conversion_fn[minimal example] PASSED
+tests/test_project_table.py::test_project_table PASSED
+tests/test_project_table.py::test_project_table_type_only PASSED
 tests/test_rfc822.py::test_body PASSED
 tests/test_rfc822.py::test_convert_author_email PASSED
 tests/test_rfc822.py::test_convert_optional_dependencies PASSED
@@ -54,7 +71,6 @@ tests/test_standard_metadata.py::test_load[all_errors-Absolute license-files glo
 tests/test_standard_metadata.py::test_load[all_errors-Both keys for license] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Both license files and classic license] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Both readme fields] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Got made-up license field] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid authors item type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid authors type] PASSED
@@ -72,9 +88,10 @@ tests/test_standard_metadata.py::test_load[all_errors-Invalid gui-scripts type] 
 tests/test_standard_metadata.py::test_load[all_errors-Invalid keyword type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid keywords item type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers empty] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers item type] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type0] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type with extra key] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers nested type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid maintainers type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid name type] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Invalid optional-dependencies item type] PASSED
@@ -102,9 +119,9 @@ tests/test_standard_metadata.py::test_load[all_errors-License invalid type] PASS
 tests/test_standard_metadata.py::test_load[all_errors-Matching entry in import-names and import-namespaces with private tags] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Matching entry in import-names and import-namespaces0] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Matching entry in import-names and import-namespaces1] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme file] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme0] PASSED
-tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme (file only)] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing content-type for readme (text only)] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-Missing file/text in readme table] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Missing license keys] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Missing project section] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Missing version] PASSED
@@ -123,11 +140,11 @@ tests/test_standard_metadata.py::test_load[all_errors-Unsupported field in proje
 tests/test_standard_metadata.py::test_load[all_errors-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Unsupported type in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load[all_errors-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load[all_errors-import-names invalid type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Absolute license-files glob] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Both keys for license] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Both license files and classic license] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Both readme fields] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Got made-up license field] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid authors item type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid authors type] PASSED
@@ -145,9 +162,10 @@ tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid gui-scripts ty
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keyword type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keywords item type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers empty] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers item type] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type0] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type with extra key] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers nested type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid maintainers type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid name type] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Invalid optional-dependencies item type] PASSED
@@ -175,9 +193,9 @@ tests/test_standard_metadata.py::test_load[exceptiongroup-License invalid type] 
 tests/test_standard_metadata.py::test_load[exceptiongroup-Matching entry in import-names and import-namespaces with private tags] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Matching entry in import-names and import-namespaces0] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Matching entry in import-names and import-namespaces1] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme file] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme0] PASSED
-tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme (file only)] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing content-type for readme (text only)] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-Missing file/text in readme table] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Missing license keys] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Missing project section] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Missing version] PASSED
@@ -196,11 +214,11 @@ tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported field in p
 tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Unsupported type in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load[exceptiongroup-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load[exceptiongroup-import-names invalid type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Absolute license-files glob] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Both keys for license] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Both license files and classic license] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Both readme fields] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Got made-up license field] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid authors item type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid authors type] PASSED
@@ -218,9 +236,10 @@ tests/test_standard_metadata.py::test_load[one_error-Invalid gui-scripts type] P
 tests/test_standard_metadata.py::test_load[one_error-Invalid keyword type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid keywords item type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid keywords type] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers empty] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers item type] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type0] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type1] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type with extra key] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers nested type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid maintainers type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid name type] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Invalid optional-dependencies item type] PASSED
@@ -248,9 +267,9 @@ tests/test_standard_metadata.py::test_load[one_error-License invalid type] PASSE
 tests/test_standard_metadata.py::test_load[one_error-Matching entry in import-names and import-namespaces with private tags] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Matching entry in import-names and import-namespaces0] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Matching entry in import-names and import-namespaces1] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme file] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme0] PASSED
-tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme1] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme (file only)] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing content-type for readme (text only)] PASSED
+tests/test_standard_metadata.py::test_load[one_error-Missing file/text in readme table] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Missing license keys] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Missing project section] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Missing version] PASSED
@@ -269,21 +288,28 @@ tests/test_standard_metadata.py::test_load[one_error-Unsupported field in projec
 tests/test_standard_metadata.py::test_load[one_error-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Unsupported type in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load[one_error-Wrong content-type type for readme] PASSED
+tests/test_standard_metadata.py::test_load[one_error-import-names invalid type] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Four errors including extra keys] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Missing project name] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Multiple errors related to names/namespaces] PASSED
+tests/test_standard_metadata.py::test_load_multierror[all_errors-Only made up license field] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported field in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load_multierror[all_errors-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Four errors including extra keys] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Missing project name] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Multiple errors related to names/namespaces] PASSED
+tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Only made up license field] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported field in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load_multierror[exceptiongroup-Unsupported type in project.dynamic] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Empty readme table] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Four errors including extra keys] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Missing project name] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Multiple errors related to names/namespaces] PASSED
+tests/test_standard_metadata.py::test_load_multierror[one_error-Only made up license field] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported field in project.dynamic] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported filename in readme] PASSED
 tests/test_standard_metadata.py::test_load_multierror[one_error-Unsupported type in project.dynamic] PASSED
@@ -315,4 +341,4 @@ tests/test_standard_metadata.py::test_value_25[False] PASSED
 tests/test_standard_metadata.py::test_value_25[True] PASSED
 tests/test_standard_metadata.py::test_version_dynamic PASSED
 
-======== 308 passed ========
+======== 334 passed ========

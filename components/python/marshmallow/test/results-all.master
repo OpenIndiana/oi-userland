@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1119 items
+collecting ... collected 1132 items
 
 tests/test_context.py::TestContext::test_context_load_dump PASSED
 tests/test_context.py::TestContext::test_context_method PASSED
@@ -319,6 +319,7 @@ tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deseri
 tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deserialize_invalid_length PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_constant_field_deserialization PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_constant_is_always_included_in_deserialized_data PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_constant_none_allows_none_value PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_function PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_validator_with_nonascii_input PASSED
@@ -470,6 +471,8 @@ tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_custom_error P
 tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_list PASSED
 tests/test_error_store.py::TestMergeErrors::test_merging_dict_and_dict PASSED
 tests/test_error_store.py::TestMergeErrors::test_deep_merging_dicts PASSED
+tests/test_error_store.py::TestMergeErrors::test_list_not_changed PASSED
+tests/test_error_store.py::TestMergeErrors::test_dict_not_changed PASSED
 tests/test_exceptions.py::TestValidationError::test_stores_message_in_list PASSED
 tests/test_exceptions.py::TestValidationError::test_can_pass_list_of_messages PASSED
 tests/test_exceptions.py::TestValidationError::test_stores_dictionaries PASSED
@@ -692,6 +695,8 @@ tests/test_schema.py::test_nested_only_then_exclude_inheritance PASSED
 tests/test_schema.py::test_nested_exclude_then_only_inheritance PASSED
 tests/test_schema.py::test_nested_exclude_and_only_inheritance PASSED
 tests/test_schema.py::test_nested_instance_many PASSED
+tests/test_schema.py::test_nested_many_should_override_schema_many_case1 PASSED
+tests/test_schema.py::test_nested_many_should_override_schema_many_case2 PASSED
 tests/test_schema.py::test_nested_instance_only PASSED
 tests/test_schema.py::test_nested_instance_exclude PASSED
 tests/test_schema.py::test_meta_nested_exclude PASSED
@@ -1047,6 +1052,14 @@ tests/test_validate.py::test_url_accepts_valid_file_urls[file:///home/user/docum
 tests/test_validate.py::test_url_accepts_valid_file_urls[file:///tmp/test%20file.txt] PASSED
 tests/test_validate.py::test_url_accepts_valid_file_urls[file:///] PASSED
 tests/test_validate.py::test_url_accepts_valid_file_urls[file://localhost/] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/tmp1234] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/tmp/tmp1234] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///C:/Users/test/file.txt] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/C:/Program%20Files/file.exe] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///home/user/documents/test.pdf] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///tmp/test%20file.txt] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE:///] PASSED
+tests/test_validate.py::test_url_accepts_valid_file_urls[FILE://localhost/] PASSED
 tests/test_validate.py::test_url_rejects_invalid_file_urls[file://] PASSED
 tests/test_validate.py::test_url_rejects_invalid_file_urls[file:/tmp/file.txt] PASSED
 tests/test_validate.py::test_url_rejects_invalid_file_urls[file:tmp/file.txt] PASSED
@@ -1126,6 +1139,6 @@ tests/test_validate.py::test_containsnoneof_custom_message PASSED
 tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 
-======== 1119 passed ========
+======== 1132 passed ========
   py$(PYV): OK
   congratulations :)

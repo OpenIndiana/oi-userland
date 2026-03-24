@@ -92,12 +92,13 @@ $(BUILD_DIR)/%/.depend-test-pyproject: $(BUILD_DIR)/%/.installed
 	if [ -f $$cfg ] ; then \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg sync ; \
 		$(PYTHON) -m pyproject_installer deps --depsconfig $$cfg eval \
-			| $(PYTHON) $(WS_TOOLS)/python-requires - > $@ ; \
+			| PYTHONPATH=$(PROTOPYTHONVENDORDIR) $(PYTHON) $(WS_TOOLS)/python-requires - > $@ ; \
 	fi
 	$(TOUCH) $@
 
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
+$(BUILD_DIR)/META.depend.res: PYTHON_VERSION = $(firstword $(PYTHON_VERSIONS))
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR)
 	# PYTHON_ENV is needed four times here to have the PYTHONPATH set

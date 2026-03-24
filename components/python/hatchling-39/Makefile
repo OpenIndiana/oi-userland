@@ -1,0 +1,49 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/hatchling-39 hatchling
+#
+
+BUILD_STYLE = pyproject
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		hatchling
+HUMAN_VERSION =			1.27.0
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Modern, extensible Python build backend
+COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+TEST_STYLE = none
+
+COMPONENT_VERSION =		1.28.0
+
+# This project is missing tests
+# See https://github.com/pypa/hatch/issues/329
+
+# hatchling >= 1.28.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pathspec
+REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/trove-classifiers
+REQUIRED_PACKAGES.python += runtime/python

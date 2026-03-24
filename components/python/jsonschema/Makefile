@@ -19,16 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonschema
-HUMAN_VERSION =			4.25.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.26.0
 COMPONENT_SUMMARY =		An implementation of JSON Schema validation for Python
 COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85
+	sha256:0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by jsonschema >= 4.26.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyqt5_sip
-HUMAN_VERSION =			12.17.2
+HUMAN_VERSION =			12.18.0
 COMPONENT_SUMMARY =		The sip module support for PyQt5
 COMPONENT_PROJECT_URL =		https://github.com/Python-SIP/sip
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7f66565c2a13d34d8ad6aad08e953d355ea3fe466d991d51aa5a0966a5289f05
+	sha256:71c37db75a0664325de149f43e2a712ec5fa1f90429a21dafbca005cb6767f94
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 

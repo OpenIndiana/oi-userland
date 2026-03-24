@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libfontenc
-COMPONENT_VERSION=  1.1.8
+COMPONENT_VERSION=  1.1.9
 COMPONENT_SUMMARY=  libfontenc - font encoding table parser and mapping library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7b02c3d405236e0d86806b1de9d6868fe60c313628b38350b032914aa4fd14c6
+COMPONENT_ARCHIVE_HASH= sha256:9d8392705cb10803d5fe1d27d236cbab3f664e26841ce01916bbbe430cf273e2
 COMPONENT_FMRI=     x11/library/libfontenc
 COMPONENT_LICENSE_FILE= COPYING
 

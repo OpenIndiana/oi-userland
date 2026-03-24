@@ -15,27 +15,25 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiosignal
-HUMAN_VERSION =			1.3.2
+HUMAN_VERSION =			1.4.0
 COMPONENT_SUMMARY =		aiosignal: a list of registered asynchronous callbacks
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/aiosignal
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/aio-libs/aiosignal/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2457af49c0ab2e6559778cf105df527d038e9efd99dc294b57d2b80f9352527a
+	sha256:f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/frozenlist
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/frozenlist
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist

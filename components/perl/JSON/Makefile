@@ -19,18 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		JSON
-HUMAN_VERSION =			4.10
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			4.11
 COMPONENT_SUMMARY =		JSON (JavaScript Object Notation) encoder/decoder
 COMPONENT_CPAN_AUTHOR =		ISHIGAKI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:df8b5143d9a7de99c47b55f1a170bd1f69f711935c186a6dc0ab56dd05758e35
+	sha256:713bdbe724dbb915ed50265ffe47e079a511980cb2427aa19076788bb64c3182
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/json-xs
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/json-xs
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl

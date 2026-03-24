@@ -1,0 +1,13 @@
+--- a/src/hotspot/share/interpreter/templateInterpreterGenerator.hpp	   :: 
++++ b/src/hotspot/share/interpreter/templateInterpreterGenerator.hpp	   :: 
+@@ -109,6 +109,10 @@
+   void generate_counter_overflow(Label& continue_entry);
+ 
+   void generate_fixed_frame(bool native_call);
++#ifdef SPARC
++  void save_native_result(void);
++  void restore_native_result(void);
++#endif // SPARC
+ 
+ #ifdef AARCH64
+   void generate_transcendental_entry(AbstractInterpreter::MethodKind kind, int fpargs);

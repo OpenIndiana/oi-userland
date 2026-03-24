@@ -1,0 +1,53 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/jsonschema-39 jsonschema
+#
+
+BUILD_STYLE = pyproject
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		jsonschema
+HUMAN_VERSION =			4.25.1
+COMPONENT_REVISION =		2
+COMPONENT_SUMMARY =		An implementation of JSON Schema validation for Python
+COMPONENT_PROJECT_URL =		https://github.com/python-jsonschema/jsonschema
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85
+COMPONENT_LICENSE =		MIT
+COMPONENT_LICENSE_FILE =	COPYING
+
+TEST_STYLE = pytest
+
+# jsonschema >= 4.26.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_PEP735 += test
+
+# We have no jsonpath-ng packaged (yet)
+PYTEST_ADDOPTS += --ignore jsonschema/tests/test_exceptions.py
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/attrs
+REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/jsonschema-specifications
+REQUIRED_PACKAGES.python += library/python/referencing
+REQUIRED_PACKAGES.python += library/python/rpds-py
+REQUIRED_PACKAGES.python += runtime/python

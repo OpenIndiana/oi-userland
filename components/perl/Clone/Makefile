@@ -15,16 +15,16 @@
 #
 
 BUILD_STYLE = makemaker
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone
-HUMAN_VERSION =			0.47
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.48
 COMPONENT_SUMMARY =		recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c2c0cb9a483efbf970cb1a75b2ca75b0e18cb84bcb5c09624f86e26b09c211d
+	sha256:321d4cd1078e19519600abd7bda2991b468603c58455479e3d2e25a5acb1911f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,8 +33,8 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{1,\}/POINTER/g'"
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/b-cow
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

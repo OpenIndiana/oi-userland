@@ -1,0 +1,33 @@
+We have no hypothesmith packaged yet.
+
+--- mccabe-0.7.0/tox.ini.orig
++++ mccabe-0.7.0/tox.ini
+@@ -6,7 +6,6 @@
+ deps =
+     pytest
+     hypothesis ; python_version >= "3.6"
+-    hypothesmith ; python_version >= "3.6"
+ commands =
+     pytest
+ 
+--- mccabe-0.7.0/test_mccabe.py.orig
++++ mccabe-0.7.0/test_mccabe.py
+@@ -7,9 +7,9 @@
+     from io import StringIO
+ 
+ import pytest
++from hypothesis import HealthCheck, given, settings, strategies as st
+ try:
+     import hypothesmith
+-    from hypothesis import HealthCheck, given, settings, strategies as st
+ except ImportError:
+     hypothesmith = None
+ 
+@@ -251,7 +251,6 @@
+     # Note that while Hypothesmith might generate code unlike that written by
+     # humans, it's a general test that should pass for any *valid* source code.
+     # (so e.g. running it against code scraped of the internet might also help)
+-    src_contents=hypothesmith.from_grammar() | hypothesmith.from_node(),
+     max_complexity=st.integers(min_value=1),
+ )
+ @pytest.mark.skipif(not hypothesmith, reason="hypothesmith could not be imported")

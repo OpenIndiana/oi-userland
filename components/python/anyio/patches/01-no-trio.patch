@@ -1,9 +1,9 @@
 We have no trio packaged yet.
 https://github.com/python-trio/trio/issues/1437
 
---- anyio-4.11.0/src/anyio/_core/_eventloop.py.orig
-+++ anyio-4.11.0/src/anyio/_core/_eventloop.py
-@@ -19,7 +19,7 @@
+--- anyio-4.12.1/src/anyio/_core/_eventloop.py.orig
++++ anyio-4.12.1/src/anyio/_core/_eventloop.py
+@@ -26,7 +26,7 @@
      from ..abc import AsyncBackend
  
  # This must be updated when new backends are introduced
@@ -12,34 +12,23 @@ https://github.com/python-trio/trio/issues/1437
  
  T_Retval = TypeVar("T_Retval")
  PosArgsT = TypeVarTuple("PosArgsT")
---- anyio-4.11.0/pyproject.toml.orig
-+++ anyio-4.11.0/pyproject.toml
-@@ -48,7 +48,6 @@
+--- anyio-4.12.1/pyproject.toml.orig
++++ anyio-4.12.1/pyproject.toml
+@@ -153,7 +153,6 @@
+ package = "editable"
+ commands = [["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }]]
+ dependency_groups = ["test"]
+-extras = ["trio"]
+ set_env = { PYTEST_DISABLE_PLUGIN_AUTOLOAD = "1" }
  
- [dependency-groups]
- test = [
--    "anyio[trio]",
-     "blockbuster >= 1.5.23",
-     "coverage[toml] >= 7",
-     "exceptiongroup >= 1.2.0",
---- anyio-4.11.0/tests/test_taskgroups.py.orig
-+++ anyio-4.11.0/tests/test_taskgroups.py
+ [tool.tox.env.pypy3]
+--- anyio-4.12.1/tests/test_taskgroups.py.orig
++++ anyio-4.12.1/tests/test_taskgroups.py
 @@ -72,7 +72,6 @@
-     "module",
+     "modulename",
      [
-         pytest.param(asyncio, id="asyncio"),
--        pytest.param(pytest.importorskip("trio"), id="trio"),
+         pytest.param("asyncio"),
+-        pytest.param("trio"),
      ],
  )
- def test_run_natively(module: Any) -> None:
---- anyio-4.11.0/tests/conftest.py.orig
-+++ anyio-4.11.0/tests/conftest.py
-@@ -83,7 +83,7 @@
-         blockbuster.deactivate()
- 
- 
--@pytest.fixture(params=[*asyncio_params, pytest.param("trio")])
-+@pytest.fixture(params=[*asyncio_params])
- def anyio_backend(request: SubRequest) -> tuple[str, dict[str, Any]]:
-     return request.param
- 
+ def test_run_natively(modulename: str) -> None:

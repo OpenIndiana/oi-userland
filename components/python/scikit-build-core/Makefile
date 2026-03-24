@@ -19,15 +19,26 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scikit_build_core
-HUMAN_VERSION =			0.11.6
+HUMAN_VERSION =			0.12.2
 COMPONENT_SUMMARY =		Build backend for CMake based projects
 COMPONENT_PROJECT_URL =		https://github.com/scikit-build/scikit-build-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5982ccd839735be99cfd3b92a8847c6c196692f476c215da84b79d2ad12f9f1b
+	sha256:562e0bbc9de1a354c87825ccf732080268d6582a0200f648e8c4a2dcb1e3736d
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# scikit-build-core --> pybind11 ==> scikit-build-core
+#
+# To break loops we need to allow this component to integrate without testing in
+# a case the required packages are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,7 +47,8 @@ COMPONENT_TEST_ENV += CMAKE_PREFIX_PATH=$(shell /usr/bin/pybind11-config-$(PYTHO
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS_EXTRAS += test
+TEST_REQUIREMENTS_PEP735 += test-parallel
+TEST_REQUIREMENTS_PEP735 += test-pybind11
 
 # When testing finds numpy already pre-installed it tries to install own copy
 # of numpy using pip.  This fails because of
@@ -53,21 +65,29 @@ TEST_CONFLICTING_PACKAGES.python += library/python/validate-pyproject
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
+# Test results order varies between runs
+PYTEST_SORT_TESTS = yes
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/exceptiongroup
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pathspec
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pathspec
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cattrs
+TEST_REQUIRED_PACKAGES.python += library/python/filelock
+TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
+TEST_REQUIRED_PACKAGES.python += library/python/hatchling
 TEST_REQUIRED_PACKAGES.python += library/python/pip
 TEST_REQUIRED_PACKAGES.python += library/python/pybind11
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-subprocess
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
 TEST_REQUIRED_PACKAGES.python += library/python/wheel

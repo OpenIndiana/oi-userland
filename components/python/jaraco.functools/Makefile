@@ -19,24 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_functools
-HUMAN_VERSION =			4.3.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.4.0
 COMPONENT_SUMMARY =		Functools like those found in stdlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cfd13ad0dd2c47a3600b439ef72d8615d482cedcff1632930d6f28924d92f294
+	sha256:da21933b0417b89515562656547a77b4931f98176eb173644c0d35032a33d6bb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# jaraco.functools --> pytest-enabler ==> jaraco.functools
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -48,7 +36,3 @@ REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-classes
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy

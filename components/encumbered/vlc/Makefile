@@ -15,27 +15,33 @@
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= vlc
-COMPONENT_VERSION= 3.0.21
-COMPONENT_REVISION= 2
+COMPONENT_VERSION=	3.0.23
 COMPONENT_SUMMARY= Cross-platform media player and streaming server
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:24dbbe1d7dfaeea0994d5def0bbde200177347136dbfe573f5b6a4cee25afbb0
+COMPONENT_ARCHIVE_HASH=	sha256:e891cae6aa3ccda69bf94173d5105cbc55c7a7d9b1d21b9b21666e69eff3e7e0
 COMPONENT_ARCHIVE_URL=	https://download.videolan.org/pub/videolan/vlc/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.videolan.org/vlc
 COMPONENT_FMRI= media/vlc
 COMPONENT_CLASSIFICATION= Applications/Sound and Video
-COMPONENT_LICENSE= GPLv2.0,LGPLv2.1
-
-# We need to force compilation with ffmpeg 6
-# https://code.videolan.org/videolan/vlc/-/issues/28605
-FFMPEG_VERSION = 6
+COMPONENT_LICENSE=	GPL-2.0-only AND LGPL-2.1-only
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
+
+# helper target
+update-license-file: patch
+	( \
+		printf -- '--- COPYING ---------------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING ; \
+		printf '\n--- COPYING.LIB -----------------------------------------------------------\n\n' ; \
+		$(CAT) $(SOURCE_DIR)/COPYING.LIB \
+	) > $(COMPONENT_DIR)/$(COMPONENT_LICENSE_FILE)
 
 PATH= $(PATH.gnu)
 
@@ -55,9 +61,9 @@ CFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 # Use Qt5
-PKG_CONFIG_PATH +=:$(QT5_PKG_CONFIG_PATH)
+PKG_CONFIG_PATH.prepend += $(QT5_PKG_CONFIG_PATH)
 
-COMPONENT_PREP_ACTION = ( cd $(@D); autoreconf )
+COMPONENT_PREP_ACTION = ( cd $(@D); $(ENV) $(AUTORECONF) )
 
 CONFIGURE_ENV += LUAC=$(USRBINDIR64)/luac
 
@@ -185,14 +191,12 @@ CONFIGURE_OPTIONS += --enable-gnutls
 CONFIGURE_OPTIONS += --enable-taglib
 CONFIGURE_OPTIONS += --enable-notify
 
-
-QT5_ROOT = $(QT5_BASEDIR)
 QT5_RPATH = $(GCC_LIBDIR):$(QT5_LIBDIR)
 QT5_PLUGIN = /usr/lib/$(MACH64)/vlc/plugins/gui/libqt_plugin.so
 
-COMPONENT_POST_INSTALL_ACTION = \
-	/usr/bin/elfedit -e 'dyn:value -s RUNPATH "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN) &&\
-        /usr/bin/elfedit -e 'dyn:value -s RPATH   "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN)
+COMPONENT_POST_INSTALL_ACTION += \
+	$(ELFEDIT) -e 'dyn:value -s RUNPATH "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN) && \
+	$(ELFEDIT) -e 'dyn:value -s RPATH   "$(QT5_RPATH)"' $(PROTO_DIR)$(QT5_PLUGIN) ;
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
@@ -207,11 +211,10 @@ REQUIRED_PACKAGES += codec/flac
 REQUIRED_PACKAGES += codec/flac-15
 REQUIRED_PACKAGES += codec/libtheora
 REQUIRED_PACKAGES += codec/speex
-REQUIRED_PACKAGES += developer/ffmpeg-6
+REQUIRED_PACKAGES += developer/ffmpeg-7
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/librsvg
 REQUIRED_PACKAGES += image/library/sdl-image
-REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libdca
 REQUIRED_PACKAGES += library/audio/libmad
 REQUIRED_PACKAGES += library/audio/libmpcdec
@@ -222,11 +225,11 @@ REQUIRED_PACKAGES += library/c++/abseil-cpp
 REQUIRED_PACKAGES += library/c++/abseil-cpp-2501
 REQUIRED_PACKAGES += library/c++/harfbuzz
 REQUIRED_PACKAGES += library/c++/protobuf
-REQUIRED_PACKAGES += library/c++/protobuf-302
+REQUIRED_PACKAGES += library/c++/protobuf-340
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 REQUIRED_PACKAGES += library/desktop/gtk3
-REQUIRED_PACKAGES += library/ffmpeg-6
+REQUIRED_PACKAGES += library/ffmpeg-7
 REQUIRED_PACKAGES += library/fribidi
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/gnutls-3

@@ -1,16 +1,24 @@
 $(SOURCE_DIR)/tests/TESTrun
 Running tests from $(SOURCE_DIR)/tests
 with ./tcpdump, version:
-tcpdump version 4.99.5
-libpcap version 1.10.5
+tcpdump version 4.99.6
+libpcap version 1.10.6 (64-bit time_t)
 64-bit build, 64-bit time_t
 ./tcpdump --fp-type => HAVE_FPTYPE1
+./tcpdump --time-t-size => 64
+
     print-x                                 : passed
     print-xx                                : passed
     print-X                                 : passed
     print-XX                                : passed
     print-A                                 : passed
     print-AA                                : passed
+    timestamp_invalid_micro                 : passed
+    timestamp_invalid_nano                  : passed
+    tcp_rst_data                            : passed
+    tcp_rst_data                            : passed
+    tcp_rst_data-trunc                      : passed
+    tcp_rst_data-trunc                      : passed
     bgp_vpn_attrset                         : passed
     mpbgp-linklocal-nexthop                 : passed
     bgp_infloop-v                           : passed
@@ -51,11 +59,7 @@ libpcap version 1.10.5
     ldp-common-session                      : passed
     ldp_infloop                             : passed
     lspping-fec-ldp                         : passed
-    lspping-fec-ldp-v                       : passed
-    lspping-fec-ldp-vv                      : passed
     lspping-fec-rsvp                        : passed
-    lspping-fec-rsvp-v                      : passed
-    lspping-fec-rsvp-vv                     : passed
     mpls-traceroute                         : passed
     mpls-traceroute-v                       : passed
     mpls-over-udp                           : passed
@@ -114,6 +118,10 @@ libpcap version 1.10.5
     icmpv6-RFC2894-RR                       : passed
     icmpv6-RFC2894-RR-v                     : passed
     icmpv6-ni-flags                         : passed
+    icmpv6_nodeinfo_queryipv4               : passed
+    icmpv6_nodeinfo_replyipv4               : passed
+    icmpv6_nodeinfo_queryipv6               : passed
+    icmpv6_nodeinfo_replyipv6               : passed
     spb                                     : passed
     spb_bpduv4                              : passed
     spb_bpduv4-v                            : passed
@@ -179,6 +187,9 @@ libpcap version 1.10.5
     dns_udp-v                               : passed
     dns_udp-vv                              : passed
     dns_udp-vvv                             : passed
+    ppp_ip_udp_dns-vv                       : passed
+    dns_udp-g                               : passed
+    dns_udp-vg                              : passed
     dns_tcp_8053                            : passed
     dns_tcp_8053-T                          : passed
     dns_udp_8053                            : passed
@@ -277,6 +288,7 @@ libpcap version 1.10.5
     dhcp-rfc4388                            : passed
     dhcp-rfc5859                            : passed
     dhcp-mud                                : passed
+    dhcp-option-33                          : passed
     vxlan                                   : passed
     pptp                                    : passed
     pptp-v                                  : passed
@@ -298,6 +310,9 @@ libpcap version 1.10.5
     lisp_eid_notify                         : passed
     lisp_eid_register                       : passed
     lisp_ipv6_eid                           : passed
+    lisp_eid_notify-v                       : passed
+    lisp_eid_register-v                     : passed
+    lisp_ipv6_eid-v                         : passed
     nsh                                     : passed
     nsh-vvv                                 : passed
     nsh-over-vxlan-gpe                      : passed
@@ -354,8 +369,6 @@ libpcap version 1.10.5
     relts-0x80000000                        : passed
     ipv6hdr-heapoverflow                    : passed
     ipv6hdr-heapoverflow-v                  : passed
-    otv-heapoverflow-1                      : passed
-    otv-heapoverflow-2                      : passed
     q933-heapoverflow-2                     : passed
     atm-heapoverflow                        : passed
     ipv6-next-header-oobr-1                 : passed
@@ -468,6 +481,7 @@ libpcap version 1.10.5
     pim_header_asan-3                       : passed
     pim_header_asan-4                       : passed
     ip6_frag_asan                           : passed
+    ip6_frag_asan-v                         : passed
     radius_attr_asan                        : passed
     ospf6_decode_v3_asan                    : passed
     ip_ts_opts_asan                         : passed
@@ -493,6 +507,7 @@ libpcap version 1.10.5
     rsvp_uni-oobr-2                         : passed
     rsvp_uni-oobr-3                         : passed
     rpki-rtr-oobr                           : passed
+    rpki-rtr-oobr-vv                        : passed
     lldp_8023_mtu-oobr                      : passed
     bgp_vpn_rt-oobr                         : passed
     cfm_sender_id-oobr                      : passed
@@ -536,7 +551,6 @@ libpcap version 1.10.5
     dns-zlip-2                              : passed
     dns-zlip-3                              : passed
     ntp                                     : passed
-    ntp-v                                   : passed
     ntp-time                                : passed
     ntp-time--v                             : passed
     ntp-control                             : passed
@@ -570,6 +584,7 @@ libpcap version 1.10.5
     ptp_ethernet                            : passed
     ptp_corrections                         : passed
     ptp_v2_1                                : passed
+    ptp_management                          : passed
     ldp_tlv_print-oobr                      : passed
     dns-badlabel                            : passed
     igrp-oobr                               : passed
@@ -589,6 +604,9 @@ libpcap version 1.10.5
     lwres-pointer-arithmetic-ub             : passed
     ospf-signed-integer-ubsan               : passed
     bgp-ub                                  : passed
+    fletcher-checksum-negative-shift        : passed
+    ipv6_mobility_1                         : passed
+    ipv6_mobility_1-v                       : passed
 FILE: $(SOURCE_DIR)/tests/crypto.tests
     esp1                                    : skipped (HAVE_LIBCRYPTO not set)
     esp2                                    : skipped (HAVE_LIBCRYPTO not set)
@@ -626,7 +644,23 @@ FILE: $(SOURCE_DIR)/tests/smb.tests
     smb_data_print-oobr-nosmb               : skipped (ENABLE_SMB set)
     smb_data_print-segv                     : passed
     smb_data_print-segv-nosmb               : skipped (ENABLE_SMB set)
+FILE: $(SOURCE_DIR)/tests/time.tests
+    time_2038                               : passed
+    time_2038_max                           : passed
+    time_2038_overflow                      : passed
+    time_2039                               : passed
+    time_2106                               : passed
+    time_2106_max                           : passed
+    time_2106_overflow                      : passed
+    time_2107                               : passed
+    time_2106_overflow-tt                   : passed
+    time_2107-tt                            : passed
+    lspping-fec-ldp-v                       : passed
+    lspping-fec-ldp-vv                      : passed
+    lspping-fec-rsvp-v                      : passed
+    lspping-fec-rsvp-vv                     : passed
+    ntp-v                                   : passed
 ------------------------------------------------
   19 tests skipped
    0 tests failed
- 597 tests passed
+ 628 tests passed

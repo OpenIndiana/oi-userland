@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-URandom
-HUMAN_VERSION =			0.54
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			0.55
 COMPONENT_SUMMARY =		Provide non blocking randomness
 COMPONENT_CPAN_AUTHOR =		DDICK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4a73cd394933328da484aaeb8645d735b35465df60109e559e0a28b066053a57
+	sha256:ef9f44141073c13573e85b148ff9a9089c45825b7d6608d832e4263899d3a2d4
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

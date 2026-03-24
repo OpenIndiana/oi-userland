@@ -25,13 +25,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget2
-COMPONENT_VERSION=      2.2.0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      2.2.1
 COMPONENT_SUMMARY=		GNU Wget2 is the successor of GNU Wget, a file and recursive website downloader
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:ffa5e49db90c9ddc0c830b66e473630c679b1b0a26a53d24981d4f0efa1c90b6
+COMPONENT_ARCHIVE_HASH= sha256:f77397cce50b60670f48cfca5867517caed93f7c07ebea76541984d5d8d5c6d1
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet

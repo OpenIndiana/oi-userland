@@ -4,22 +4,20 @@ annoyingly (e.g. pkg update -n).
 
 See also https://github.com/pyca/cryptography/issues/12948
 
-As of 2025-05-22 we do have following certificates with zero serial number:
+As of 2025-12-28 we do have following certificates with zero serial number:
 
 $ for c in $(ls /etc/certs/CA) ; do openssl x509 -serial -noout < /etc/certs/CA/$c | grep -q '^serial=00$' && echo $c ; done
-Go_Daddy_Class_2_CA.pem
 Go_Daddy_Root_Certificate_Authority_-_G2.pem
 Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
 Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
 Security_Communication_RootCA2.pem
-Starfield_Class_2_CA.pem
 Starfield_Root_Certificate_Authority_-_G2.pem
 Starfield_Services_Root_Certificate_Authority_-_G2.pem
 $
 
---- cryptography-45.0.7/src/rust/src/x509/certificate.rs.orig
-+++ cryptography-45.0.7/src/rust/src/x509/certificate.rs
-@@ -437,9 +437,9 @@
+--- cryptography-46.0.5/src/rust/src/x509/certificate.rs.orig
++++ cryptography-46.0.5/src/rust/src/x509/certificate.rs
+@@ -440,9 +440,9 @@
  }
  
  fn warn_if_not_positive(py: pyo3::Python<'_>, bytes: &[u8]) -> pyo3::PyResult<()> {

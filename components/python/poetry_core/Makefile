@@ -15,21 +15,22 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		poetry_core
-HUMAN_VERSION =			2.2.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.3.1
 COMPONENT_SUMMARY =		Poetry PEP 517 Build Backend
 COMPONENT_PROJECT_URL =		https://github.com/python-poetry/poetry-core
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:97e50d8593c8729d3f49364b428583e044087ee3def1e010c6496db76bd65ac5
+	sha256:96f791d5d7d4e040f3983d76779425cf9532690e2756a24fd5ca0f86af19ef82
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by poetry-core >= 2.3.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

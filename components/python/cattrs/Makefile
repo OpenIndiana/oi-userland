@@ -19,21 +19,27 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
-HUMAN_VERSION =			25.3.0
+HUMAN_VERSION =			26.1.0
 COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1ac88d9e5eda10436c4517e390a4142d88638fe682c436c93db7ce4a277b884a
+	sha256:fa239e0f0ec0715ba34852ce813986dfed1e12117e209b816ab87401271cdd40
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# Python 3.9 is not supported by cattrs >= 26.1.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS_PEP735 += test
+
+# We do not need to run benchmarks
+PYTEST_ADDOPTS += --ignore bench
 
 # We have no msgspec packaged yet
 PYTEST_ADDOPTS += --ignore tests/preconf/test_msgspec_cpython.py
@@ -62,12 +68,10 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/attrs
-REQUIRED_PACKAGES.python += library/python/exceptiongroup
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/immutables
 TEST_REQUIRED_PACKAGES.python += library/python/pytest

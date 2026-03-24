@@ -1,0 +1,30 @@
+We do not need to check coverage for this project.
+
+--- pytest_env-1.2.0/pyproject.toml.orig
++++ pytest_env-1.2.0/pyproject.toml
+@@ -40,8 +40,6 @@
+   "tomli>=2.2.1; python_version<'3.11'",
+ ]
+ optional-dependencies.testing = [
+-  "covdefaults>=2.3",
+-  "coverage>=7.10.7",
+   "pytest-mock>=3.15.1",
+ ]
+ urls.Homepage = "https://github.com/pytest-dev/pytest-env"
+--- pytest_env-1.2.0/tox.ini.orig
++++ pytest_env-1.2.0/tox.ini
+@@ -24,13 +24,9 @@
+ set_env =
+     COVERAGE_FILE = {env:COVERAGE_FILE:{toxworkdir}{/}.coverage.{envname}}
+ commands =
+-    coverage erase
+-    coverage run -m pytest \
++    python -m pytest \
+       --junitxml {toxworkdir}{/}junit.{envname}.xml \
+       {posargs:tests}
+-    coverage combine
+-    coverage report
+-    coverage html -d {envtmpdir}{/}htmlcov
+ 
+ [testenv:fix]
+ description = run static analysis and style check using flake8

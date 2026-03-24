@@ -15,17 +15,15 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testrunner
-HUMAN_VERSION =			8.1
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			8.2
 COMPONENT_SUMMARY =		Zope testrunner script.
 COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65389bb17634291cab3590bb9addc6ff010e6907440e772a04dcb2b8029acfde
+	sha256:1f4016c3ee8503a069946000a55479646db0a83ed4cd2bc8e54cfb6c27d88946
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -39,6 +37,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.md
 # a case the required projects are not available yet (bootstrap).
 #
 PYTHON_TEST_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by zope.testrunner >= 8.2
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

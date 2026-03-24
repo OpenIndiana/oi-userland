@@ -1,0 +1,54 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/zope.testrunner-39 zope_testrunner
+#
+
+BUILD_STYLE = pyproject
+
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		zope_testrunner
+HUMAN_VERSION =			8.1
+COMPONENT_REVISION =		3
+COMPONENT_SUMMARY =		Zope testrunner script.
+COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testrunner
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:65389bb17634291cab3590bb9addc6ff010e6907440e772a04dcb2b8029acfde
+COMPONENT_LICENSE =		ZPL-2.1
+COMPONENT_LICENSE_FILE =	LICENSE.md
+
+# zope.testrunner >= 8.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
+# Force no colors and more verbose output via tox posargs
+TOX_POSARGS += -vv
+
+# https://github.com/zopefoundation/zope.testrunner/issues/189
+TOX_POSARGS += --test !testrunner-edge-cases
+# https://github.com/zopefoundation/zope.testrunner/issues/203
+TOX_POSARGS += --test !testrunner-colors
+
+# Random pid
+COMPONENT_TEST_TRANSFORMS += "-e 's/\(subprocess \)[0-9]\{1,\}\( is still running\)/\1\$$(PID)\2/'"
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += library/python/zope-exceptions
+REQUIRED_PACKAGES.python += library/python/zope-interface
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/setuptools
+TEST_REQUIRED_PACKAGES.python += library/python/zope-testing

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.32.0
+HUMAN_VERSION =			4.50.2
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		http://tox.readthedocs.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1ad476b5f4d3679455b89a992849ffc3367560bbc7e9495ee8a3963542e7c8ff
+	sha256:dd9e99fcf54660cde07bf2def4a242990447f440038e1d7c5133509aec2f7184
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -46,8 +46,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/cachetools
-REQUIRED_PACKAGES.python += library/python/chardet
 REQUIRED_PACKAGES.python += library/python/colorama
+REQUIRED_PACKAGES.python += library/python/docutils
 REQUIRED_PACKAGES.python += library/python/filelock
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
@@ -55,6 +55,7 @@ REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/platformdirs
 REQUIRED_PACKAGES.python += library/python/pluggy
 REQUIRED_PACKAGES.python += library/python/pyproject-api
+REQUIRED_PACKAGES.python += library/python/tomli-w
 REQUIRED_PACKAGES.python += library/python/virtualenv
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
@@ -62,6 +63,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/detect-test-pollution
 TEST_REQUIRED_PACKAGES.python += library/python/distlib
+TEST_REQUIRED_PACKAGES.python += library/python/docutils
 TEST_REQUIRED_PACKAGES.python += library/python/flaky
 TEST_REQUIRED_PACKAGES.python += library/python/hatch-vcs
 TEST_REQUIRED_PACKAGES.python += library/python/hatchling
@@ -70,6 +72,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/re-assert
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools

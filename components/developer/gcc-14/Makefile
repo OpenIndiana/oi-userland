@@ -17,6 +17,7 @@ BOOTSTRAP_COMPONENT= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 14.3.0
+COMPONENT_REVISION= 1
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -77,6 +78,7 @@ CONFIGURE_OPTIONS += --with-system-zlib
 CONFIGURE_OPTIONS += --enable-plugins
 CONFIGURE_OPTIONS += --enable-__cxa_atexit
 CONFIGURE_OPTIONS += --enable-initfini-array
+CONFIGURE_OPTIONS += --enable-clocale=dragonfly
 CONFIGURE_OPTIONS += --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS += enable_frame_pointer=yes
 

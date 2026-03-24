@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pynacl
-HUMAN_VERSION =			1.6.1
+HUMAN_VERSION =			1.6.2
 COMPONENT_SUMMARY =		Python binding to the Networking and Cryptography (NaCl) library
 COMPONENT_PROJECT_URL =		https://github.com/pyca/pynacl/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8d361dac0309f2b6ad33b349a56cd163c98430d409fa503b10b70b3ad66eaa1d
+	sha256:018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 

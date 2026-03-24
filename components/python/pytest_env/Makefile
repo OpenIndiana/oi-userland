@@ -19,22 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_env
-HUMAN_VERSION =			1.1.5
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		pytest plugin that allows you to add environment variables.
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-env
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:91209840aa0e43385073ac464a554ad2947cc2fd663a9debf88d03b01e0cc1cf
+	sha256:475e2ebe8626cee01f491f304a74b12137742397d6c784ea4bc258f069232b80
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# Python 3.9 is not supported by pytest-env >= 1.2.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatch-vcs
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/pytest
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/hatch-vcs
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/pytest
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock

@@ -12,8 +12,8 @@
 #
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2020 Michal Nowak
-# Copyright 2021 Klaus Ziegler
 # Copyright 2023 Friedrich Kink
+# Copyright 2026 Klaus Ziegler
 #
 
 USE_PARALLEL_BUILD = yes
@@ -21,24 +21,17 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webkitgtk
-COMPONENT_VERSION=	2.48.7
+COMPONENT_VERSION=	2.52.0
 COMPONENT_SUMMARY=	Web content engine library for GTK+
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2c62aebb608e09f930a539f3623a5cc8023b5068029f42a208f45f9124da6e30
+COMPONENT_ARCHIVE_HASH= sha256:b31c55f18194ac83ba08c9b93bbeffef57a7ecff7f41c874d17a9e7853dca19f
 COMPONENT_ARCHIVE_URL=	https://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://webkitgtk.org
 COMPONENT_FMRI=		library/desktop/webkitgtk2
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	BSD,LGPLv2,CCASA3.0
 COMPONENT_LICENSE_FILE=	webkitgtk.license
-
-ifeq ($(MACH), sparc)
-ADDITIONAL_PATCHES += patches/mapfile.$(MACH)
-endif
-ifeq ($(MACH), i386)
-ADDITIONAL_PATCHES += patches/mapfile.$(MACH)
-endif
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
@@ -83,6 +76,9 @@ CMAKE_OPTIONS += -DUSE_SYSPROF_CAPTURE=NO
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
 COMPONENT_INSTALL_ARGS = 
+
+# manual dependencies for SPARC
+REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
 
 # Build time dependencies
 REQUIRED_PACKAGES += developer/icu

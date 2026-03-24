@@ -1,12 +1,28 @@
 pytest-instafail is not needed to run tests.
 
---- psutil-7.1.3/setup.py.orig
-+++ psutil-7.1.3/setup.py
-@@ -78,7 +78,6 @@
- # `make install-pydeps-test`.
+--- psutil-7.2.2/setup.py.orig
++++ psutil-7.2.2/setup.py
+@@ -79,7 +79,6 @@
  TEST_DEPS = [
+     "psleak",
      "pytest",
 -    "pytest-instafail",
-     "pytest-subtests",
      "pytest-xdist",
      "setuptools",
+     'pywin32 ; os_name == "nt" and implementation_name != "pypy"',
+--- psutil-7.2.2/pyproject.toml.orig
++++ psutil-7.2.2/pyproject.toml
+@@ -243,13 +243,11 @@
+ [tool.pytest]
+ addopts = [
+     "--capture=no",
+-    "--instafail",
+     "--no-header",
+     "--strict-config",
+     "--strict-markers",
+     "--tb=short",
+     "--verbose",
+-    "-p instafail",
+     "-p no:doctest",
+     "-p no:junitxml",
+     "-p no:nose",

@@ -18,8 +18,8 @@ BUILD_STYLE=ant
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= netbeans
-COMPONENT_VERSION= 28
-COMPONENT_REVISION= 1
+COMPONENT_VERSION= 29
+COMPONENT_REVISION= 2
 COMPONENT_SUMMARY= Apache Netbeans IDE
 COMPONENT_FMRI= editor/netbeans
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -29,7 +29,7 @@ COMPONENT_DESCRIPTION=  IDE for C/C++, Java, PHP, Perl Python, and more \
                         stages of development.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.zip
-COMPONENT_ARCHIVE_HASH=	sha256:209e924f36cf3da4be02f56d3676f45e7eb75a052ad82bfb474a5b538d03a5ea
+COMPONENT_ARCHIVE_HASH=	sha256:fcf90957dc8e5911faeda51c042ba60b78ca1b86e41de66fc4d2627cdf4b5baf
 COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE= Apache-2.0
 COMPONENT_LICENSE_FILE= LICENSE
@@ -45,17 +45,20 @@ COMPONENT_BUILD_ARGS=
 PYTHON_SHEBANG="\#\!\/usr\/bin\/python$(PYTHON_VERSION)"
 
 ifeq ($(MACH), i386)
-NARCH=x86_64
+BINARCH_64=x86_64
 endif
 
 ifeq ($(MACH), sparc)
-NARCH=sparcv9
+BINARCH_64=sparc_64
 endif
+
+# these macros are used in the package manifest
+PKG_MACROS += JAVA_DEFAULT=$(JAVA_DEFAULT) BINARCH_64=$(BINARCH_64)
 
 $(BUILD_DIR_64)/.installed: $(BUILD_DIR_64)/.built
 	mkdir -p $(PROTO_DIR)/usr/netbeans/;
 	[ -d $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION) ] || cp -R $(BUILD_DIR_64)/nbbuild/netbeans $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION);
-	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-$(NARCH)/{pty,pty_open,process_start,killall}; do \
+	for FILE in $(PROTO_DIR)/usr/netbeans/$(COMPONENT_VERSION)/ide/bin/nativeexecution/SunOS-$(BINARCH_64)/{pty,pty_open,process_start,killall}; do \
 		/usr/bin/elfedit -e 'dyn:delete RUNPATH' $$FILE; \
 		/usr/bin/elfedit -e 'dyn:delete RPATH' $$FILE; \
 	done;

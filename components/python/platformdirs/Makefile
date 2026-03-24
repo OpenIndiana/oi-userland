@@ -19,15 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			4.5.1
+HUMAN_VERSION =			4.9.2
 COMPONENT_SUMMARY =		A small Python package for determining appropriate platform-specific dirs, e.g. a \`user data dir\`.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/platformdirs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:61d5cdcc6065745cdd94f0f878977f8de9437be93de97c1c12f853c9c0cdcbda
+	sha256:9a33809944b9db043ad67ca0db94b14bf452cc6aeaac46a88ea55b26e2e9d291
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
-
-TEST_STYLE = pytest
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
@@ -35,11 +33,10 @@ TEST_STYLE = pytest
 # - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
 
-include $(WS_MAKE_RULES)/common.mk
+# Python 3.9 is not supported by platformdirs >= 4.5.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_EXTRAS += test
+include $(WS_MAKE_RULES)/common.mk
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"

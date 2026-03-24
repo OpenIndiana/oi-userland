@@ -1,0 +1,29 @@
+We have no wsproto packaged yet.
+
+--- uvicorn-0.39.0/pyproject.toml.orig
++++ uvicorn-0.39.0/pyproject.toml
+@@ -70,7 +70,6 @@
+     # check dist
+     "twine==6.1.0",
+     # Explicit optionals,
+-    "wsproto==1.2.0",
+     "websockets==13.1",
+ ]
+ docs = [
+--- uvicorn-0.39.0/tests/protocols/test_websocket.py.orig
++++ uvicorn-0.39.0/tests/protocols/test_websocket.py
+@@ -916,12 +916,8 @@
+         response = await wsresponse(url)
+         assert response.status_code == 403
+         assert response.content == b"hardbody"
+-        if ws_protocol_cls == _WSProtocol:
+-            # wsproto automatically makes the message chunked
+-            assert response.headers["transfer-encoding"] == "chunked"
+-        else:
+-            # websockets automatically adds a content-length
+-            assert response.headers["content-length"] == "8"
++        # websockets automatically adds a content-length
++        assert response.headers["content-length"] == "8"
+ 
+     config = Config(app=app, ws=ws_protocol_cls, http=http_protocol_cls, lifespan="off", port=unused_tcp_port)
+     async with run_server(config):

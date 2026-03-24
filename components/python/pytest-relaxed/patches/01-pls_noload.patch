@@ -1,0 +1,22 @@
+https://github.com/bitprophet/pytest-relaxed/pull/34
+
+--- pytest-relaxed-2.0.2/pytest_relaxed/classes.py.orig
++++ pytest-relaxed-2.0.2/pytest_relaxed/classes.py
+@@ -6,6 +6,7 @@
+ 
+ # NOTE: don't see any other way to get access to pytest innards besides using
+ # the underscored name :(
++from _pytest.fixtures import getfixturemarker
+ from _pytest.python import PyCollector
+ 
+ 
+@@ -27,8 +28,7 @@
+         "teardown",
+         "teardown_method",
+     )
+-    # TODO: is this reliable? how about __pytest_wrapped__?
+-    is_fixture = hasattr(obj, "_pytestfixturefunction")
++    is_fixture = getfixturemarker(obj) is not None
+     return not (is_hidden_name or is_fixture)
+ 
+ 

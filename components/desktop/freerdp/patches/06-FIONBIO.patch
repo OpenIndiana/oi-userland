@@ -1,0 +1,14 @@
+--- freerdp-3.22.0/libfreerdp/core/tcp.c.old
++++ freerdp-3.22.0/libfreerdp/core/tcp.c
+@@ -90,6 +90,11 @@
+ #include <linux/vm_sockets.h>
+ #endif
+ 
++/* provide header for FIONBIO */
++#if defined(__sun)
++#include <sys/filio.h>
++#endif
++
+ #define TAG FREERDP_TAG("core")
+ 
+ /* Simple Socket BIO */

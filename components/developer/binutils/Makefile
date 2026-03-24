@@ -34,13 +34,14 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.45.1
+COMPONENT_VERSION=	2.46.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNU collection of binary tools like ld, as
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/binutils/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:5fe101e6fe9d18fdec95962d81ed670fdee5f37e3f48f0bef87bddf862513aa5
+COMPONENT_ARCHIVE_HASH=	sha256:d75a94f4d73e7a4086f7513e67e439e8fcdcbb726ffe63f4661744e6256b2cf2
 COMPONENT_FMRI=		developer/gnu-binutils
 COMPONENT_CLASSIFICATION=Development/GNU
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
@@ -48,6 +49,8 @@ COMPONENT_LICENSE=	GPLv3, FDLv1.3
 include $(WS_MAKE_RULES)/common.mk
 
 PATH= $(PATH.gnu)
+
+CFLAGS += -Wno-error=format-truncation
 
 CONFIGURE_PREFIX= /usr/gnu
 

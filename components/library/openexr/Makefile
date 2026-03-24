@@ -25,16 +25,17 @@
 # Copyright 2023, Niklas Poslovski
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         openexr
-COMPONENT_VERSION=      3.4.4
+COMPONENT_VERSION=      3.4.7
 COMPONENT_SUMMARY=      OpenEXR header files and libraries used to read and write OpenEXR images
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:7c663c3c41da9354b5af277bc2fd1d2360788050b4e0751a32bcd50e8abaef8f
+COMPONENT_ARCHIVE_HASH= sha256:6f57641fb12b019867a766e602252ed4ccb26d7354e3a15688fe9c85a391716e
 COMPONENT_ARCHIVE_URL=  https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/openexr
 COMPONENT_CLASSIFICATION=System/Libraries

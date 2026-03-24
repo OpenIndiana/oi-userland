@@ -20,11 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			25.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			26.0
 COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
+	sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
@@ -44,7 +43,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS += tests/requirements.txt
+TEST_REQUIREMENTS_PEP735 += test
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
@@ -54,3 +53,5 @@ REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/tomli
+TEST_REQUIRED_PACKAGES.python += library/python/tomli-w

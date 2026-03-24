@@ -1,5 +1,5 @@
---- trealla-2.82.28/src/network.c.orig
-+++ trealla-2.82.28/src/network.c
+--- trealla-2.90.2/src/network.c.orig
++++ trealla-2.90.2/src/network.c
 @@ -43,10 +43,13 @@
  #endif
  #include <netinet/in.h>
@@ -13,8 +13,8 @@
 +#include <fcntl.h>
  #endif
  
- int net_domain_connect(const char *name, bool udp)
-@@ -128,7 +131,7 @@
+ 
+@@ -156,7 +159,7 @@
  		int flag = 1;
  		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
  		int flag2 = 1;
@@ -23,7 +23,7 @@
  
  		if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
  			break;
-@@ -183,7 +186,7 @@
+@@ -211,7 +214,7 @@
  		int flag = 1;
  		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
  		int flag2 = 1;
@@ -32,7 +32,7 @@
  
  		if (bind(fd, rp->ai_addr, rp->ai_addrlen) == 0)
  			break;
-@@ -263,8 +266,8 @@
+@@ -291,8 +294,8 @@
  void net_set_nonblocking(stream *str)
  {
  #if !defined(_WIN32) && !defined(__wasi__)

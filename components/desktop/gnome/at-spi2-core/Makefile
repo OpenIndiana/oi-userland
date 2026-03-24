@@ -13,7 +13,6 @@
 # Copyright 2024 Marcel Telka
 #
 
-BUILD_BITS = 64_and_32
 BUILD_STYLE = meson
 USE_DEFAULT_TEST_TRANSFORMS = yes
 
@@ -22,54 +21,58 @@ include ../../../../make-rules/shared-macros.mk
 # Odd minor versions are unstable.
 
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.58.1
+HUMAN_VERSION=			2.60.0
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:7f374a6a38cd70ff4b32c9d3a0310bfa804d946fed4c9e69a7d49facdcb95e9c
+COMPONENT_ARCHIVE_HASH=		sha256:80e50c1a97d8fd660a3fadb02ca35876df881c266d3d6108fc5b4c113614cb99
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
 COMPONENT_LICENSE_FILE=		COPYING
-
-COMPONENT_FMRI.$(COMPONENT_NAME)-32 =		$(COMPONENT_FMRI)/32
-COMPONENT_SUMMARY.$(COMPONENT_NAME)-32 =	$(COMPONENT_SUMMARY) (32-bit)
 
 include $(WS_MAKE_RULES)/gnome.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # We do not need the systemd support (obviously)
 CONFIGURE_OPTIONS += -Duse_systemd=false
-# There is no 32-bit introspection
-CONFIGURE_OPTIONS.32 += -Dintrospection=disabled
 
 # to get declaration of timersub()
 CPPFLAGS += -D__EXTENSIONS__
 
-# Drop etc files installed for 32-bit build
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOETCDIR) ;
-# Drop include files installed for 32-bit build
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRINCDIR) ;
-# Drop share files installed for 32-bit build
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTOUSRSHAREDIR) ;
-# Drop Python support installed for 32-bit build
-COMPONENT_POST_INSTALL_ACTION.32 += $(RM) -r $(PROTO_DIR)/$(PYTHON_DIR) ;
-
 # Move all modules from default site-packages directory to vendor-packages
 # directory where we place modules shipped by the OS but not included in the
 # core Python distribution.
-COMPONENT_POST_INSTALL_ACTION.64 += $(MV) $(PROTO_DIR)/$(PYTHON_DIR)/site-packages $(PROTO_DIR)/$(PYTHON_LIB) ;
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PROTOPYTHONSITEDIR) $(PROTOPYTHONVENDORDIR) ;
 
 # Testing needs dbus up and running
 TEST_REQUIRED_PACKAGES += system/library/dbus/dbus-x11
-COMPONENT_PRE_TEST_ACTION += /usr/bin/dbus-launch > $(BUILD_DIR_$(BITS))/.dbus-env ;
+COMPONENT_PRE_TEST_ACTION += $(ENV) /usr/bin/dbus-launch > $(BUILD_DIR_$(BITS))/.dbus-env ;
 COMPONENT_TEST_ENV += $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env)
 COMPONENT_POST_TEST_ACTION += . $(BUILD_DIR_$(BITS))/.dbus-env ; kill $$DBUS_SESSION_BUS_PID ; $(RM) $(BUILD_DIR_$(BITS))/.dbus-env ;
 
+# We need to start the currently built at-spi-bus-launcher and
+# at-spi2-registryd because otherwise the installed one will be started (and so
+# tested).  The sleep after the at-spi-bus-launcher start is needed to make
+# sure it is properly running before we start at-spi2-registryd.  We do not
+# need to kill at-spi-bus-launcher because it will end automatically.
+COMPONENT_PRE_TEST_ACTION += $(ENV) $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env) $(BUILD_DIR_$(BITS))/bus/at-spi-bus-launcher & sleep 5 ;
+COMPONENT_PRE_TEST_ACTION += $(ENV) $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env) $(BUILD_DIR_$(BITS))/registryd/at-spi2-registryd & echo $$! > $(BUILD_DIR_$(BITS))/.registry ;
+COMPONENT_POST_TEST_ACTION += kill $$($(CAT) $(BUILD_DIR_$(BITS))/.registry) ; $(RM) $(BUILD_DIR_$(BITS))/.registry ;
+
+# Dynamic library version number
+SOVER = 26009.1
+SOVER_RE = $(subst .,\.,$(SOVER))
+
+# Replace library version number by SOVER
+GENERATE_EXTRA_SED += -e 's/$(SOVER_RE)/$$(SOVER)/'
+
+# SOVER is needed for manifest processing
+PKG_VARS += SOVER
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/glib2/32
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libdbus
-REQUIRED_PACKAGES += system/library/libdbus/32
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxi
+REQUIRED_PACKAGES += x11/library/libxres
 REQUIRED_PACKAGES += x11/library/libxtst

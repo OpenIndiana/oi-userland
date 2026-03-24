@@ -21,11 +21,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-base
-COMPONENT_VERSION=	1.26.9
+COMPONENT_VERSION=	1.28.1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:11db4ec9ae5be2194ff8ccf2b5fecdc069252fe4416921b083a921ef71dd000a
+COMPONENT_ARCHIVE_HASH=	sha256:1446a4c2a92ff5d78d88e85a599f0038441d53333236f0c72d72f21a9c132497
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/base
@@ -61,10 +61,10 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(PROTOUSRLIBDIR.$(BITS))/libgstallocators-1.0.so.$(SOVER) ;
 
 # Replace library version number by SOVER
-GENERATE_EXTRA_CMD += | $(GSED) -e 's/$(SOVER_RE)/$$(SOVER)/'
+GENERATE_EXTRA_SED += -e 's/$(SOVER_RE)/$$(SOVER)/'
 
 # SOVER is needed for manifest processing
-PKG_MACROS += SOVER=$(SOVER)
+PKG_VARS += SOVER
 
 # Build dependencies
 REQUIRED_PACKAGES += x11/library/mesa

@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		soupsieve
-HUMAN_VERSION =			2.8.1
+HUMAN_VERSION =			2.8.3
 COMPONENT_SUMMARY =		A modern CSS selector implementation for Beautiful Soup.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/soupsieve
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4cf733bc50fa805f5df4b8ef4740fc0e0fa6218cf3006269afd3f9d6d80fd350
+	sha256:3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 

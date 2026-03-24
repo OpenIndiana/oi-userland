@@ -1,0 +1,35 @@
+py$(PYV): commands[0]> python -m pytest
+============================= test session starts ==============================
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
+hypothesis profile 'default'
+rootdir: $(@D)
+collecting ... collected 16 items
+
+test_mccabe.py::McCabeTestCase::test_annotated_assignment PASSED
+test_mccabe.py::McCabeTestCase::test_async_keywords PASSED
+test_mccabe.py::McCabeTestCase::test_expr_as_statement PASSED
+test_mccabe.py::McCabeTestCase::test_for_else_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_for_loop_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_if_elif_else_dead_path_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_nested_functions_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_print_message PASSED
+test_mccabe.py::McCabeTestCase::test_recursive_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_sequential_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_sequential_unencapsulated_snippet PASSED
+test_mccabe.py::McCabeTestCase::test_trivial PASSED
+test_mccabe.py::McCabeTestCase::test_try_else PASSED
+test_mccabe.py::RegressionTests::test_get_module_complexity PASSED
+test_mccabe.py::RegressionTests::test_max_complexity_is_always_an_int PASSED
+test_mccabe.py::test_idempotent_any_syntatically_valid_python SKIPPED
+
+=============================== warnings summary ===============================
+test_mccabe.py:248
+  $(@D)/test_mccabe.py:248: HypothesisDeprecationWarning: `HealthCheck.all()` is deprecated; use `list(HealthCheck)` instead.
+      The `hypothesis codemod` command-line tool can automatically refactor your code to fix this warning.
+    suppress_health_check=HealthCheck.all(),  # this is slow and filter-heavy.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 15 passed, 1 skipped, 1 warning ========
+  py$(PYV): OK
+  congratulations :)

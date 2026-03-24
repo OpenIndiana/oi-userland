@@ -12,7 +12,7 @@
 #
 # Copyright 2014 Alexander Pyhalov. All rights reserved.
 # Copyright 2018 Michal Nowak
-# Copyright 2023 Friedrich Kink
+# Copyright 2023-2026 Friedrich Kink
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -25,14 +25,6 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/lib/.*/loaders/.* ->  default refresh_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
-
-# This hack allows us to run pixbuf-loaders refresh on each package republish despite file changes.
-# See https://www.illumos.org/issues/12329 for details.
-<transform set name=userland.info.git-rev ->  default refresh_fmri svc:/application/desktop-cache/pixbuf-loaders-installer:default>
-
-depend type=require fmri=pkg:/service/gnome/desktop-cache
-
 file path=usr/bin/rsvg-convert
 file path=usr/include/librsvg-2.0/librsvg/rsvg-cairo.h
 file path=usr/include/librsvg-2.0/librsvg/rsvg-features.h
@@ -40,8 +32,6 @@ file path=usr/include/librsvg-2.0/librsvg/rsvg-pixbuf.h
 file path=usr/include/librsvg-2.0/librsvg/rsvg-version.h
 file path=usr/include/librsvg-2.0/librsvg/rsvg.h
 file path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader_svg.so
-# Gimp doesn't find the lib with an underscore in its name. Thus, provide an alternative name
-link path=usr/lib/$(MACH64)/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-svg.so target=libpixbufloader_svg.so
 file path=usr/lib/$(MACH64)/girepository-1.0/Rsvg-2.0.typelib
 link path=usr/lib/$(MACH64)/librsvg-2.so target=librsvg-2.so.2
 file path=usr/lib/$(MACH64)/librsvg-2.so.$(HUMAN_VERSION)

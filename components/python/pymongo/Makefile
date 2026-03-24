@@ -20,12 +20,12 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pymongo
-HUMAN_VERSION =			4.15.5
-COMPONENT_REVISION =		17
+HUMAN_VERSION =			4.16.0
+COMPONENT_REVISION =		18
 COMPONENT_SUMMARY =		PyMongo - the Official MongoDB Python driver
 COMPONENT_PROJECT_URL =		https://www.mongodb.org
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3a8d6bf2610abe0c97c567cf98bf5bba3e90ccc93cc03c9dde75fa11e4267b42
+	sha256:8ba8405065f6e258a6f872fe62d797a28f383a12178c7153c01ed04e845c600c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -52,5 +52,6 @@ REQUIRED_PACKAGES.python += library/python/hatch-requirements-txt
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio

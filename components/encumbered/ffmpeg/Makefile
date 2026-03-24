@@ -18,28 +18,26 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
-COMPONENT_VERSION=	7.1.2
+COMPONENT_VERSION=	8.0.1
+FFMPEG_VERSION=		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:089bc60fb59d6aecc5d994ff530fd0dcb3ee39aa55867849a2bbc4e555f9c304
+COMPONENT_ARCHIVE_HASH=	sha256:05ee0b03119b45c0bdb4df654b96802e909e0a752f72e4fe3794f487229e5a41
 COMPONENT_PROJECT_URL=  https://www.ffmpeg.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         video/ffmpeg
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=      LGPLv2.1+, GPLv2, MIT/X11/BSD-style
 
-COMPONENT_FMRI.library =	library/ffmpeg-7
+COMPONENT_FMRI.library =	library/ffmpeg-$(FFMPEG_VERSION)
 COMPONENT_SUMMARY.library =	$(COMPONENT_SUMMARY) (runtime libraries)
 
-COMPONENT_FMRI.developer =	developer/ffmpeg-7
+COMPONENT_FMRI.developer =	developer/ffmpeg-$(FFMPEG_VERSION)
 COMPONENT_SUMMARY.developer =	$(COMPONENT_SUMMARY) (development files)
 
 include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
-
-# gcc 14 complains about incompatible pointer types
-CFLAGS += -Wno-error=incompatible-pointer-types
 
 # helper target
 update-license-file: patch
@@ -66,7 +64,6 @@ CONFIGURE_OPTIONS += --enable-avx
 CONFIGURE_OPTIONS += --disable-debug
 CONFIGURE_OPTIONS += --enable-nonfree
 CONFIGURE_OPTIONS += --enable-gpl
-CONFIGURE_OPTIONS += --enable-postproc
 CONFIGURE_OPTIONS += --enable-avfilter
 CONFIGURE_OPTIONS += --enable-swscale
 CONFIGURE_OPTIONS += --enable-libgsm
@@ -103,6 +100,20 @@ CONFIGURE_OPTIONS += --ignore-tests=source
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
+ifneq ($(FFMPEG_VERSION),$(FFMPEG_DEFAULT))
+# We do not need documentation for non-default ffmpeg version
+CONFIGURE_OPTIONS += --disable-doc
+# Install development support into dedicated directories
+CONFIGURE_OPTIONS += --incdir=$(CONFIGURE_INCLUDEDIR)/ffmpeg-$(FFMPEG_VERSION)
+CONFIGURE_OPTIONS += --pkgconfigdir=$(PKG_CONFIG_DIR)/ffmpeg-$(FFMPEG_VERSION)
+
+# We do not need programs in /usr/bin.  We cannot use --disable-programs
+# configure option because testing needs the ffmpeg binary.
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRBINDIR) ;
+# We do not need examples and other share files needed for programs
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PROTOUSRSHAREDIR)/ffmpeg ;
+endif
+
 COMPONENT_TEST_ENV += PATH=$(PROTO_DIR)/$(CONFIGURE_BINDIR.$(BITS)):$(PATH)
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH=$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 
@@ -112,7 +123,7 @@ COMPONENT_TEST_TRANSFORMS+= '-n -e "/TEST/p" -e "/^IGNORE/p" '
 # suite, as we use binaries and libraries from $(PROTO_DIR) for tests
 # to reduce issues with all the test binaries not being able to find
 # ffmpeg's libraries.
-test:	install $(TEST_64)
+COMPONENT_TEST_DEP += $(BUILD_DIR)/%/.installed
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)

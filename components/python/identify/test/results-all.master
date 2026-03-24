@@ -1,11 +1,9 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> python -m coverage erase
-py$(PYV): commands[1]> python -m coverage run -m pytest tests
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 516 items
+collecting ... collected 519 items
 
 tests/cli_test.py::test_identify_cli PASSED
 tests/cli_test.py::test_identify_cli_filename_only PASSED
@@ -133,6 +131,7 @@ tests/extensions_test.py::test_extensions_have_binary_or_text[ino] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[inx] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[ipynb] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[ipp] PASSED
+tests/extensions_test.py::test_extensions_have_binary_or_text[ipxe] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[ixx] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[j2] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[jade] PASSED
@@ -310,6 +309,8 @@ tests/extensions_test.py::test_extensions_have_binary_or_text[wsgi] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xhtml] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xacro] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xctestplan] PASSED
+tests/extensions_test.py::test_extensions_have_binary_or_text[xlf] PASSED
+tests/extensions_test.py::test_extensions_have_binary_or_text[xliff] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xml] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xq] PASSED
 tests/extensions_test.py::test_extensions_have_binary_or_text[xql] PASSED
@@ -524,12 +525,6 @@ tests/identify_test.py::test_license_identification PASSED
 tests/identify_test.py::test_license_exact_identification PASSED
 tests/identify_test.py::test_license_not_identified PASSED
 
-======== 516 passed ========
-py$(PYV): commands[2]> python -m coverage report
-Name    Stmts   Miss Branch BrPart  Cover   Missing
----------------------------------------------------
-TOTAL     370      0     74      0   100%
-
-11 files skipped due to complete coverage.
+======== 519 passed ========
   py$(PYV): OK
   congratulations :)

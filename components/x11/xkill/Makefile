@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xkill
-COMPONENT_VERSION=        1.0.6
+COMPONENT_VERSION=        1.0.7
 COMPONENT_SUMMARY=        xkill - kill a client by its X resource
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:e5a8aa78c475677b11504646da8d93dacc30744258076a2ca418a24438aeb907
+COMPONENT_ARCHIVE_HASH=   sha256:5ff264bc4eebc0459255a92036dc8dc84b6d48caef8509f88a783beaadea750b
 COMPONENT_FMRI=           x11/xkill
+COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 

@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         quilt
 COMPONENT_VERSION=      0.69
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=      Quilt - tool to manage series of patches
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://savannah.nongnu.org/projects/quilt/
@@ -36,8 +37,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:555ddffde22da3c86d1caf5a9c1fb8a152ac2b84730437bd3
 COMPONENT_ARCHIVE_URL= 	https://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/quilt
 COMPONENT_CLASSIFICATION= Development/Source Code Management
-COMPONENT_LICENSE=      GPLv2 
-COMPONENT_LICENSE_FILE= COPYING 
+COMPONENT_LICENSE=      GPLv2
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -76,21 +77,18 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += BUILD_ROOT=$(PROTO_DIR)
 
 COMPONENT_TEST_TRANSFORMS += \
- 	'-n ' \
+	'-n ' \
 	'-e "/commands/p" ' \
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += archiver/gnu-tar
 REQUIRED_PACKAGES += compress/p7zip
 REQUIRED_PACKAGES += file/gnu-coreutils
 REQUIRED_PACKAGES += file/gnu-findutils
-REQUIRED_PACKAGES += service/network/smtp/postfix
-REQUIRED_PACKAGES += service/network/smtp/sendmail
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/gnu-getopt
 REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += system/network/mailwrapper
+REQUIRED_PACKAGES += system/mta
 REQUIRED_PACKAGES += text/diffstat
 REQUIRED_PACKAGES += text/gawk
 REQUIRED_PACKAGES += text/gnu-diffutils
@@ -98,3 +96,4 @@ REQUIRED_PACKAGES += text/gnu-grep
 REQUIRED_PACKAGES += text/gnu-patch
 REQUIRED_PACKAGES += text/gnu-sed
 REQUIRED_PACKAGES += text/text-utilities
+REQUIRED_PACKAGES.perl += runtime/perl

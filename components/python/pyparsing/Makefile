@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyparsing
-HUMAN_VERSION =			3.2.5
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.3.2
 COMPONENT_SUMMARY =		pyparsing - Classes and methods to define and execute parsing grammars
 COMPONENT_PROJECT_URL =		https://github.com/pyparsing/pyparsing/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6
+	sha256:c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 

@@ -1,0 +1,48 @@
+--- freerdp-3.11.0/winpr/libwinpr/timezone/timezone.c.old
++++ freerdp-3.11.0/winpr/libwinpr/timezone/timezone.c
+@@ -382,7 +382,24 @@
+ static LONG get_gmtoff_min(const struct tm* t)
+ {
+ 	WINPR_ASSERT(t);
++#if defined(__sun)
++/* port code from https://docs.diesel.rs/1.4.x/src/chrono/sys/unix.rs.html */
++	long gmtoff;
++
++	tzset();
++	if (t->tm_isdst == 0) {
++		gmtoff = -(timezone/60);
++	}
++	else if (t->tm_isdst > 0) {
++		gmtoff = -(altzone/60);
++	}
++	else { /* assume not in dst */
++		gmtoff = -(timezone/60);
++	}
++	return gmtoff;
++#else
+ 	return -(LONG)(t->tm_gmtoff / 60l);
++#endif
+ }
+ 
+ static struct tm next_day(const struct tm* start)
+@@ -779,11 +796,20 @@
+ 	tzid = winpr_guess_time_zone();
+ 	if (!map_iana_id(tzid, pTimeZoneInformation))
+ 	{
++#if defined(__sun)
++		const bool is_dst = local_time->tm_isdst > 0;
++		const size_t len = TimeZoneIanaAbbrevGet(tzname[is_dst], nullptr, 0);
++#else
+ 		const size_t len = TimeZoneIanaAbbrevGet(local_time->tm_zone, nullptr, 0);
++#endif
+ 		list = (const char**)calloc(len, sizeof(const char*));
+ 		if (!list)
+ 			goto out_error;
++#if defined(__sun)
++		const size_t size = TimeZoneIanaAbbrevGet(tzname[is_dst], list, len);
++#else
+ 		const size_t size = TimeZoneIanaAbbrevGet(local_time->tm_zone, list, len);
++#endif
+ 		for (size_t x = 0; x < size; x++)
+ 		{
+ 			const char* id = list[x];

@@ -15,17 +15,14 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_component
-HUMAN_VERSION =			7.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			7.1
 COMPONENT_SUMMARY =		Zope Component Architecture
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.component
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1256ca091ccd7e368ec4faaede45211c824038546d6961776223d99db79896a9
+	sha256:1b3e06647a8bd3c071c6bc9b80d708ded120bce981185c2db5647fd9a0d5279d
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -39,6 +36,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # a case the required projects are not available yet (bootstrap).
 #
 PYTHON_TEST_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by zope.component >= 7.1
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

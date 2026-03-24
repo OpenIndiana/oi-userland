@@ -1,0 +1,16 @@
+"ldapadd" is just a link to "ldapmodify".  We ship it as "openldapadd"
+so detect that as well.
+
+--- openldap-2.6.10/clients/tools/ldapmodify.c.~1~	Thu May 22 10:56:21 2025
++++ openldap-2.6.10/clients/tools/ldapmodify.c	Thu Jan 29 17:39:22 2026
+@@ -233,8 +233,8 @@
+ 
+ 	prog = lutil_progname( "ldapmodify", argc, argv );
+ 
+-	/* strncmp instead of strcmp since NT binaries carry .exe extension */
+-	ldapadd = ( strncasecmp( prog, "ldapadd", sizeof("ldapadd")-1 ) == 0 );
++	/* detect "openldapadd" as "ldapadd" */
++	ldapadd = ( strcasestr( prog, "ldapadd" ) != NULL );
+ 
+ 	tool_init( ldapadd ? TOOL_ADD : TOOL_MODIFY );
+ 

@@ -22,11 +22,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-ugly
-COMPONENT_VERSION=	1.26.9
+COMPONENT_VERSION=	1.28.1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:184e4c6e765bc463ed806b2263cb9b2aaa3a65415df0a3c22fd520d5d1bacb4d
+COMPONENT_ARCHIVE_HASH=	sha256:4082f3cb063fccc3ffc04e5ab0854bafde82d1b373eb3c9eaa28115dd3f95a78
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/ugly
@@ -48,7 +48,6 @@ REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
 REQUIRED_PACKAGES += library/audio/liba52
 REQUIRED_PACKAGES += library/audio/libcdio
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/orc
 REQUIRED_PACKAGES += library/video/libdvdread
 REQUIRED_PACKAGES += library/video/libmpeg2
 REQUIRED_PACKAGES += library/video/x264

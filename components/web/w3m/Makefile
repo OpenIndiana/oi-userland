@@ -17,16 +17,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= w3m
-COMPONENT_VERSION=  0.5.5
+COMPONENT_VERSION=  0.5.6
 COMPONENT_SUMMARY= A text-based web browser
-COMPONENT_SRC= $(COMPONENT_NAME)-v0.5.5
+COMPONENT_SRC= $(COMPONENT_NAME)-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:b271c86b13be2207700230cb3f9061271ea37fd1ace199f48b72ea542a529a0f
+  sha256:8dd652cd3f31817d68c7263c34eeffb50118c80be19e1159bf8cbf763037095e
 COMPONENT_ARCHIVE_URL= \
   https://git.sr.ht/~rkta/w3m/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_PROJECT_URL= https://sr.ht/~rkta/w3m/
-COMPONENT_FMRI= web/browser/w3m
+COMPONENT_FMRI= web/browser/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE= MIT
 
@@ -36,8 +36,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS+= --sysconfdir=/etc
-CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 CONFIGURE_OPTIONS+= --with-browser=/usr/bin/firefox
 CONFIGURE_OPTIONS+= --with-imagelib=imlib2
 

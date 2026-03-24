@@ -1,13 +1,12 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> pytest -vv --ignore=src
+py$(PYV): commands[0]> python -m pytest -vv --ignore=src
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-benchmark: 5.1.0 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
+benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
 rootdir: $(@D)
 configfile: pytest.ini
 testpaths: tests
-collecting ... collected 234 items / 31 deselected / 203 selected
+collecting ... collected 242 items / 35 deselected / 207 selected
 
 tests/test_benchmark.py::test_help PASSED
 tests/test_benchmark.py::test_groups PASSED
@@ -122,7 +121,9 @@ tests/test_normal.py::test_parametrized[3] PASSED
 tests/test_normal.py::test_parametrized[4] PASSED
 tests/test_pedantic.py::test_single PASSED
 tests/test_pedantic.py::test_setup PASSED
+tests/test_pedantic.py::test_teardown PASSED
 tests/test_pedantic.py::test_setup_cprofile PASSED
+tests/test_pedantic.py::test_teardown_cprofile PASSED
 tests/test_pedantic.py::test_args_kwargs PASSED
 tests/test_pedantic.py::test_iterations PASSED
 tests/test_pedantic.py::test_rounds_iterations PASSED
@@ -133,6 +134,8 @@ tests/test_pedantic.py::test_rounds_must_be_int[x] PASSED
 tests/test_pedantic.py::test_warmup_rounds_must_be_int[-15] PASSED
 tests/test_pedantic.py::test_warmup_rounds_must_be_int[x] PASSED
 tests/test_pedantic.py::test_setup_many_rounds PASSED
+tests/test_pedantic.py::test_teardown_many_rounds PASSED
+tests/test_pedantic.py::test_teardown_many_iterations PASSED
 tests/test_pedantic.py::test_cant_use_both_args_and_setup_with_return PASSED
 tests/test_pedantic.py::test_can_use_both_args_and_setup_without_return PASSED
 tests/test_pedantic.py::test_cant_use_setup_with_many_iterations PASSED
@@ -217,7 +220,13 @@ tests/test_with_testcase.py::TerribleTerribleWayToWriteTests::test_foo PASSED
 Legend:
   Outliers: 1 Standard Deviation from Mean; 1.5 IQR (InterQuartile Range) from 1st Quartile and 3rd Quartile.
   OPS: Operations Per Second, computed as 1 / Mean
+tests/test_pedantic.py::test_teardown_cprofile
+ncalls	tottime	percall	cumtime	percall	filename:lineno(function)
+1	0.0000	0.0000	0.0000	0.0000	amd64-3.9/tests/test_pedantic.py:56(stuff)
+1	0.0000	0.0000	0.0000	0.0000	~:0(<method 'append' of 'list' objects>)
+1	0.0000	0.0000	0.0000	0.0000	~:0(<method 'disable' of '_lsprof.Profiler' objects>)
+
 =========================== short test summary info ============================
-======== 202 passed, 1 skipped, 31 deselected ========
+======== 206 passed, 1 skipped, 35 deselected ========
   py$(PYV): OK
   congratulations :)

@@ -1,0 +1,87 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/bin/chardetect-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(HUMAN_VERSION).dist-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(HUMAN_VERSION).dist-info/licenses/LICENSE
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet-$(HUMAN_VERSION).dist-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/__main__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/big5freq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/big5prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/chardistribution.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/charsetgroupprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/charsetprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cli/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cli/chardetect.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/codingstatemachine.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/codingstatemachinedict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/cp949prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/enums.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/escprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/escsm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/eucjpprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/euckrfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/euckrprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/euctwfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/euctwprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/gb2312freq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/gb2312prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/hebrewprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/jisfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/johabfreq.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/johabprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/jpcntx.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langbulgarianmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langgreekmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langhebrewmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langhungarianmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langrussianmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langthaimodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/langturkishmodel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/latin1prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/macromanprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/mbcharsetprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/mbcsgroupprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/mbcssm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/metadata/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/metadata/languages.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/resultdict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sbcharsetprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sbcsgroupprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/sjisprober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/universaldetector.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf1632prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/utf8prober.py
+file path=usr/lib/python$(PYVER)/vendor-packages/chardet/version.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata

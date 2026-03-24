@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-MakeMaker
-HUMAN_VERSION =			7.76
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			7.78
 COMPONENT_SUMMARY =		Create a module Makefile
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:30bcfd75fec4d512e9081c792f7cb590009d9de2fe285ffa8eec1be35a5ae7ca
+	sha256:43b33c20f8d82dba7cc48f8cd702f8fc9811e9d07880886dfd31b7077bd4a3a6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/podlators
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/podlators
+REQUIRED_PACKAGES.perl += runtime/perl

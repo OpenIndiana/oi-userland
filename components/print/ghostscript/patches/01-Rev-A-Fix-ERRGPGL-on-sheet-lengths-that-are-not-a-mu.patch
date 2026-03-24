@@ -1,0 +1,274 @@
+From 92778f00c0a04fdfaaa788066181e0d879fc0b18 Mon Sep 17 00:00:00 2001
+From: Josh Moyer <JMoyer@NODOMAIN.NET>
+Date: Sat, 14 Feb 2026 23:50:14 -0800
+Subject: [PATCH 1/3] Rev A: Fix ERRGPGL on sheet lengths that are not a
+ multiple of 1/8"
+
+---
+ contrib/gdevadmp.c | 101 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 73 insertions(+), 28 deletions(-)
+
+diff --git a/contrib/gdevadmp.c b/contrib/gdevadmp.c
+index 044808eb56..df9e56bec4 100644
+--- a/contrib/gdevadmp.c
++++ b/contrib/gdevadmp.c
+@@ -1,4 +1,4 @@
+-/* Copyright (C) 2001-2023 Artifex Software, Inc.
++/* Copyright (C) 2001-2026 Artifex Software, Inc.
+    All Rights Reserved.
+ 
+    This software is provided AS-IS with no warranty, either express or
+@@ -13,11 +13,12 @@
+    CA 94129, USA, for further information.
+ */
+ 
+-/* April 2021 - March 2025, from across The Emerald City
+- * ghostscript Apple Dot Matrix Printer / ImageWriter driver, version ][
++/* April 2021 - February 2026, from across The Emerald City
++ * ghost[script|pdl] Apple Dot Matrix Printer / ImageWriter driver, version ][ rev. A
+  *
+- * By: Josh Moyer, Mike Galatean, Scott Barker, Jonathan Luckey,
+- * Mark Wedel and the authors of the epson and other drivers.
++ * By: Josh Moyer (assisted by Claude Sonnet 4.5), Mike Galatean,
++ * Scott Barker, Jonathan Luckey, Mark Wedel and the authors of the epson
++ * and other drivers.
+  *
+  * This is version ][ (2.0) of the Apple dot-matrix printers driver for
+  * ghostscript.  Please see the docs and release notes in the Devices
+@@ -65,14 +66,18 @@
+  * + Improved comments and printer command macros in source.
+  * + Other minor and miscellaneous changes.
+  *
++ * Fixes in version ][ revision 1 (2.01) -- assisted by Claude Sonnet 4.5:
++ * + Fixed a bug that caused the driver to throw an error when printing
++ *   to A4 and other sheets that have a length not equal to a multiple of 1/8"
++ * + Adopted the more C-like XXX convention for source comments that describe
++ *   bugs or deficiencies.
++ *
+  * Known issues include:
+  * + Rarely, some input files produce blank output unexpectedly.  I only ever
+  *   saw it once in the course of many varied test prints, so probably an
+  *   issue with the input file, rather than the driver.  Please e-mail me if
+  *   you see this.
+- * + Source lines marked with the word "bug" in them below.  Hopefully, these
+- *   will be fixed in the planned and upcoming ][+ release.
+- *
++ * 
+  *    _____    Josh Moyer (he/him) <JMoyer@NODOMAIN.NET>
+  *   | * * |   http://jmoyer.nodomain.net/
+  *   |*(*)*|   http://www.nodomain.net/
+@@ -266,6 +271,7 @@
+ #define ERRPOS DRIVERNAME ": Positioning failure.\n"
+ #define ERRPOSLQ DRIVERNAME ": Letter quality positioning failure.\n"
+ #define ERRPOSNLQ DRIVERNAME ": Near letter quality positioning failure.\n"
++#define ERRREMAINDER DRIVERNAME ": Remainder line feed failure.\n"
+ #define ERRRENDERMODE DRIVERNAME ": Invalid RENDERMODE specified: %d\n"
+ #define ERRRESET DRIVERNAME ": Reset failure.\n"
+ #define ERRREZSELECT DRIVERNAME ": Resolution select failed.\n"
+@@ -283,7 +289,7 @@ struct gx_device_admp_s {
+         bool unidirectional;
+         char bin;
+         int rendermode;
+-        char devtype;
++        char dev_type;
+         bool unsafemargins;
+         float platen; /* MS compiler warns of truncation with a float,
+                         but a double doesn't make sense here, it seems */
+@@ -401,7 +407,7 @@ admp_get_params(gx_device* pdev, gs_param_list* plist)
+         if (code < 0 ||
+                 (code = param_write_bool(plist, "UNIDIRECTIONAL", &((gx_device_admp*)pdev)->unidirectional)) < 0 ||
+                 (code = param_write_bool(plist, "UNSAFEMARGINS", &((gx_device_admp*)pdev)->unsafemargins)) < 0 ||
+-                (code = param_write_int(plist, "RENDERMODE", &((gx_device_admp*)pdev)->rendermode)) < 0 )
++                (code = param_write_int(plist, "RENDERMODE", &((gx_device_admp*)pdev)->rendermode)) < 0)
+                 return code;
+ 
+         return code;
+@@ -459,7 +465,7 @@ admp_put_params(gx_device* pdev, gs_param_list* plist)
+         /* https://bugs.ghostscript.com/show_bug.cgi?id=707616 */
+         pdev->Margins[1] = 0;
+ 
+-        switch (((gx_device_admp*)pdev)->devtype)
++        switch (((gx_device_admp*)pdev)->dev_type)
+         {
+         case IWLQ:
+                 if (pdev->HWResolution[0] == 320)
+@@ -497,11 +503,11 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+         /* Init */
+         int code, dev_rez, lnum;
+         unsigned char color = 0;
+-        char pcmd[255];
++        char band_height, band_remainder, pcmd[255];
+         size_t line_size = gdev_mem_bytes_per_scan_line((gx_device*)pdev);
+         size_t in_size = line_size * 8; /* Note that in_size is a multiple of 8 dots in height. */
+         unsigned char color_order[4] = { -1, -1, -1, -1 };
+-        gx_render_plane_t render_planes[4] = {{ -1, -1, -1}, { -1, -1, -1}, { -1, -1, -1}, { -1, -1, -1}};
++        gx_render_plane_t render_planes[4] = { { -1, -1, -1}, { -1, -1, -1}, { -1, -1, -1}, { -1, -1, -1} };
+         byte* buf_in = NULL;
+         byte* buf_out = NULL;
+         byte* row = NULL;
+@@ -509,7 +515,7 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+         byte* in, * out;
+ 
+         if (line_size > max_int / 24)
+-            return_error(gs_error_rangecheck);
++                return_error(gs_error_rangecheck);
+ 
+         /* Allocate memory */
+         row = (byte*)gs_alloc_bytes(pdev->memory, line_size, "admp_print_page(row)");
+@@ -517,6 +523,7 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+         buf_out = (byte*)gs_alloc_bytes(pdev->memory, in_size, "admp_print_page(buf_out)");
+         prn = (byte*)gs_alloc_bytes(pdev->memory, in_size * 3, "admp_print_page(prn)");
+ 
++        /* Check allocations */
+         if (row == NULL ||
+                 buf_in == NULL ||
+                 buf_out == NULL ||
+@@ -575,12 +582,14 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+                 goto xit;
+         }
+ 
++        /* XXX: Should we send the perforation skip disable command (with -dUNSAFEMARGINS)? */
++
+         /* Notify user if -dUNSAFEMARGINS */
+         if (((gx_device_admp*)pdev)->unsafemargins == 1)
+                 (void)errprintf(pdev->memory, ERRUNSAFEMARGINS);
+ 
+         /* Select paper bin (ImageWriter LQ only) */
+-        if (((gx_device_admp*)pdev)->devtype == IWLQ)
++        if (((gx_device_admp*)pdev)->dev_type == IWLQ)
+         {
+                 switch (((gx_device_admp*)pdev)->bin)
+                 {
+@@ -631,32 +640,33 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+         }
+ 
+         /* Configure resolution */
++        /* XXX; The printers variously support more resolutions than this. */
+         switch ((int)pdev->y_pixels_per_inch)
+         {
+         case 216:
+                 if (pdev->x_pixels_per_inch == 320 &&
+-                        ((gx_device_admp*)pdev)->devtype == IWLQ)
++                        ((gx_device_admp*)pdev)->dev_type == IWLQ)
+                 {
+                         dev_rez = H320V216;
+                         break;
+                 }
+         case 144:
+                 if (pdev->x_pixels_per_inch == 160 &&
+-                        ((gx_device_admp*)pdev)->devtype >= IWHI)
++                        ((gx_device_admp*)pdev)->dev_type >= IWHI)
+                 {
+                         dev_rez = H160V144;
+                         break;
+                 }
+         case 72:
+                 if (pdev->x_pixels_per_inch == 160 &&
+-                        ((gx_device_admp*)pdev)->devtype >= IWLO)
++                        ((gx_device_admp*)pdev)->dev_type >= IWLO)
+                 {
+                         dev_rez = H160V72;
+                         break;
+                 }
+ 
+                 if (pdev->x_pixels_per_inch == 120 &&
+-                        ((gx_device_admp*)pdev)->devtype >= DMP)
++                        ((gx_device_admp*)pdev)->dev_type >= DMP)
+                 {
+                         dev_rez = H120V72;
+                         break;
+@@ -706,15 +716,25 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+                 }
+         }
+ 
+-        /* Bug: Zero the scanline buffer because the output file fills
++        /* XXX: Zero the scanline buffer because the output file fills
+          * with patterns of 0xFF and 0x00 otherwise.  Additionally,
+          * not zeroing the row causes the 320x216 color IWLQ test
+          * case to hit ERRCMDLQ.  (When using new GPGL rendermode.)
+          */
+         (void)memset(row, 0, line_size);
+ 
+-        /* For each scan line in the main buffer... */
+-        while (lnum < pdev->height)
++        /* Calculate band height */
++        switch (dev_rez)
++        {
++        case H320V216: band_height = 24; break;
++        case H160V144: band_height = 16; break;
++        case H160V72: /* falls through */
++        case H120V72: /* falls through */
++        default: band_height = 8; break;
++        }
++
++        /* For each whole band in the main buffer... */
++        while (lnum + band_height < pdev->height)
+         {
+                 byte* actual_row, * inp, * in_end, * out_end, * prn_blk, * prn_end, * prn_tmp;
+                 int count, lcnt, ltmp, passes;
+@@ -731,7 +751,7 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+                 }
+ 
+                 /* For each colorant, copy, transpose, copy and write a band of dots
+-                 * Bug: Too many copies in here...
++                 * XXX: Too many copies in here...
+                  */
+                 for (color = 0; color < pdev->color_info.num_components; ++color)
+                 {
+@@ -777,7 +797,7 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+                                                 switch (((gx_device_admp*)pdev)->rendermode)
+                                                 {
+                                                 case GPGL: /* gdev_prn_get_lines */
+-                                                        /* Bug: Here, we retrieve the scanlines with y=1 and then a copy.
++                                                        /* XXX: Here, we retrieve the scanlines with y=1 and then a copy.
+                                                          * It would be better to avoid the copy and set y=8 (or maybe 24
+                                                          * for the LQ.)  However, this code works.
+                                                          */
+@@ -1200,15 +1220,40 @@ admp_print_page(gx_device_printer* pdev, gp_file* gprn_stream)
+                 } /* for color */
+ 
+                 /* Set lnum to reflect the number of 1-dot tall bands printed */
++                lnum += band_height;
++        } /* while lnum + band_height < pdev->height */
++
++        /* Handle partial band by advancing paper the remaining amount to
++         * ensure proper ejection
++         */
++        band_remainder = pdev->height - lnum;
++
++        if (band_remainder > 0)
++        {
+                 switch (dev_rez)
+                 {
+-                case H320V216: lnum += 24; break;
+-                case H160V144: lnum += 16; break;
++                case H320V216:
++                        /* (void)snprintf(pcmd, sizeof(pcmd), ESC LINEHEIGHT "%d" CR LF, (band_remainder * 2 + 1) / 3); */
++                        (void)snprintf(pcmd, sizeof(pcmd), ESC LINEHEIGHT "%d" CR LF, (band_remainder * 2) / 3);
++                        break;
++                case H160V144:
++                        (void)snprintf(pcmd, sizeof(pcmd), ESC LINEHEIGHT "%d" CR LF, band_remainder);
++                        break;
+                 case H160V72: /* falls through */
+                 case H120V72: /* falls through */
+-                default: lnum += 8; break;
++                default:
++                        (void)snprintf(pcmd, sizeof(pcmd), ESC LINEHEIGHT "%d" CR LF, band_remainder * 2);
++                        break;
++                }
++
++                code = gp_fputs(pcmd, gprn_stream);
++                if (code != strlen(pcmd))
++                {
++                        (void)errprintf(pdev->memory, ERRREMAINDER);
++                        code = gs_note_error(gs_error_ioerror);
++                        goto xit;
+                 }
+-        } /* while lnum < pdev->height */
++        }
+ 
+         /* Page should auto-eject since there were line-feeds for every
+          * band -- no need for a form-feed.
+-- 
+2.52.0.windows.1
+

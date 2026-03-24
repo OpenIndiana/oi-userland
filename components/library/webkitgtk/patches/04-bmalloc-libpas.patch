@@ -1,0 +1,106 @@
+--- webkitgtk-2.49.90/Source/bmalloc/bmalloc/BPlatform.h.~2~	2025-09-02 16:34:26.285424660 +0000
++++ webkitgtk-2.49.90/Source/bmalloc/bmalloc/BPlatform.h	2025-09-03 18:19:37.160688282 +0000
+@@ -353,7 +353,7 @@
+ 
+ /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
+ #if !defined(BENABLE_LIBPAS)
+-#if BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
++#if BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(SOLARIS) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
+ #define BENABLE_LIBPAS 1
+ #ifndef PAS_BMALLOC
+ #define PAS_BMALLOC 1
+@@ -365,7 +365,7 @@
+ 
+ /* BUSE(LIBPAS) is using libpas for bmalloc replacement. */
+ #if !defined(BUSE_LIBPAS)
+-#if defined(BENABLE_LIBPAS) && BENABLE_LIBPAS
++#if defined(BENABLE_LIBPAS) && BENABLE_LIBPAS && !BOS(SOLARIS)
+ #define BUSE_LIBPAS 1
+ #else
+ #define BUSE_LIBPAS 0
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_platform.h~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_platform.h	2025-07-01 15:58:59.097739710 +0000
+@@ -140,6 +140,10 @@
+ #define PAS_OS_FREEBSD 1
+ #endif
+ 
++#if defined(__sun)
++#define PAS_OS_SOLARIS 1
++#endif
++
+ #if defined(WIN32) || defined(_WIN32)
+ #define PAS_OS_WINDOWS 1
+ #endif
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_committed_pages_vector.h~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_committed_pages_vector.h	2025-07-01 15:54:48.229643471 +0000
+@@ -32,6 +32,21 @@
+ #include <sys/mman.h>
+ #endif
+ 
++#if PAS_OS(SOLARIS)
++#ifndef MINCORE_REFERENCED
++#define MINCORE_REFERENCED       0x1
++#endif
++#ifndef MINCORE_REFERENCED_OTHER
++#define MINCORE_REFERENCED_OTHER 0x1
++#endif
++#ifndef MINCORE_MODIFIED
++#define MINCORE_MODIFIED         0x0
++#endif
++#ifndef MINCORE_MODIFIED_OTHER
++#define MINCORE_MODIFIED_OTHER   0x0
++#endif
++#endif
++
+ PAS_BEGIN_EXTERN_C;
+ 
+ struct pas_allocation_config;
+--- webkitgtk-2.49.90/Source/bmalloc/libpas/src/libpas/pas_monotonic_time.c.~1~	2025-08-08 10:17:56.292456200 +0000
++++ webkitgtk-2.49.90/Source/bmalloc/libpas/src/libpas/pas_monotonic_time.c	2025-09-07 15:28:31.473975261 +0000
+@@ -40,6 +40,10 @@
+ #include <time.h>
+ #endif
+ 
++#if PAS_OS(SOLARIS)
++#include <sys/time.h>
++#endif
++
+ #if PAS_OS(DARWIN)
+ static mach_timebase_info_data_t timebase_info;
+ static mach_timebase_info_data_t* timebase_info_ptr;
+@@ -79,6 +83,15 @@
+     return result;
+ }
+ 
++#elif PAS_OS(SOLARIS)
++
++uint64_t pas_get_current_monotonic_time_nanoseconds(void)
++{
++    // this function is in a hotpath; gethrtime(3C) is a monotonic
++    // nanosecond clock that runs with no syscall overhead
++    return gethrtime();
++}
++
+ #elif PAS_OS(LINUX)
+ 
+ uint64_t pas_get_current_monotonic_time_nanoseconds(void)
+--- webkit/Source/bmalloc/libpas/src/libpas/pas_page_malloc.c~	2025-07-01 12:43:55.000000000 +0000
++++ webkit/Source/bmalloc/libpas/src/libpas/pas_page_malloc.c	2025-07-02 17:35:13.694435809 +0000
+@@ -325,6 +325,8 @@
+     // We don't need to call madvise to map page.
+ #elif PAS_OS(FREEBSD)
+     PAS_SYSCALL(madvise(ptr, size, MADV_NORMAL));
++#elif PAS_OS(SOLARIS)
++    PAS_SYSCALL(posix_madvise(ptr, size, POSIX_MADV_NORMAL));
+ #endif
+ }
+ 
+@@ -368,6 +370,8 @@
+         PAS_SYSCALL(madvise(ptr, size, MADV_FREE_REUSABLE));
+ #elif PAS_OS(FREEBSD)
+     PAS_SYSCALL(madvise(ptr, size, MADV_FREE));
++#elif PAS_OS(SOLARIS)
++    PAS_SYSCALL(posix_madvise(ptr, size, POSIX_MADV_DONTNEED));
+ #elif PAS_OS(LINUX)
+     PAS_SYSCALL(madvise(ptr, size, MADV_DONTNEED));
+     PAS_SYSCALL(madvise(ptr, size, MADV_DONTDUMP));

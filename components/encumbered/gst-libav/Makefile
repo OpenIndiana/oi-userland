@@ -23,11 +23,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gst-libav
-COMPONENT_VERSION=	1.26.9
+COMPONENT_VERSION=	1.28.1
 COMPONENT_SUMMARY=      GNOME streaming media framework plugins
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:08a8e944fc61ef26df515784a089c8ac41765304a5d55b98199835b28a98dbdf
+COMPONENT_ARCHIVE_HASH=	sha256:bfa91aaca38d0fd8addcdd559e35b7541e3f32a5f410194ec4ba18040defee9b
 COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_SRC_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/gstreamer/plugin/libav
@@ -41,9 +41,9 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_OPTIONS += -Dpackage-origin="https://github.com/OpenIndiana/oi-userland"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += developer/ffmpeg-7
+REQUIRED_PACKAGES += developer/ffmpeg-8
 REQUIRED_PACKAGES += library/audio/gstreamer
 REQUIRED_PACKAGES += library/audio/gstreamer/plugin/base
-REQUIRED_PACKAGES += library/ffmpeg-7
+REQUIRED_PACKAGES += library/ffmpeg-8
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += system/library

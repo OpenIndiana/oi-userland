@@ -18,10 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bat
-HUMAN_VERSION =			0.25.0
+HUMAN_VERSION =			0.26.1
 COMPONENT_SUMMARY =     A cat(1) clone with wings. 
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2ab792c2ad113a666f08856c88cdec0a62d732559b1f3982eedf0142571e669a
+	sha256:cf66d0164db6827afe1694b8d4939f36a5507b7186f8d3cc529c66baf03b0d09
 COMPONENT_FMRI =		utilities/bat
 COMPONENT_CLASSIFICATION =	Applications/System Utilities
 COMPONENT_LICENSE =		Apache-2.0
@@ -37,7 +37,7 @@ CARGO_ENV += RUSTONIG_DYNAMIC_LIBONIG=1
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += text/oniguruma

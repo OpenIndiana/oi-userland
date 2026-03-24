@@ -1,14 +1,14 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> $(PYTHON) -b -m coverage run -m pytest
+py$(PYV): commands[0]> $(PYTHON) -b -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: tox.ini
+configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 291 items
+collecting ... collected 337 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
+tests/test_algorithms.py::TestAlgorithms::test_check_crypto_key_type_should_fail_when_not_using_crypto PASSED
 tests/test_algorithms.py::TestAlgorithms::test_none_algorithm_should_throw_exception_if_key_is_not_none PASSED
 tests/test_algorithms.py::TestAlgorithms::test_none_algorithm_should_throw_exception_on_to_jwk PASSED
 tests/test_algorithms.py::TestAlgorithms::test_none_algorithm_should_throw_exception_on_from_jwk PASSED
@@ -68,10 +68,15 @@ tests/test_algorithms.py::TestAlgorithmsRFC7520::test_rsa_verify_should_return_t
 tests/test_algorithms.py::TestAlgorithmsRFC7520::test_rsapss_verify_should_return_true_for_test_vector PASSED
 tests/test_algorithms.py::TestAlgorithmsRFC7520::test_ec_verify_should_return_true_for_test_vector PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_should_reject_non_string_key PASSED
-tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_sign_should_generate_correct_signature_value PASSED
-tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_false_if_signature_invalid PASSED
-tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_true_if_signature_valid PASSED
-tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_prepare_key_should_be_idempotent PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_sign_should_generate_correct_signature_value[testkey_ed25519-testkey_ed25519.pub-hello_world_sig] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_sign_should_generate_correct_signature_value[testkey_ed25519.pem-testkey_ed25519.pub.pem-hello_world_sig_pem] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_false_if_signature_invalid[testkey_ed25519.pub-hello_world_sig] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_false_if_signature_invalid[testkey_ed25519.pub.pem-hello_world_sig_pem] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_true_if_signature_valid[testkey_ed25519.pub-hello_world_sig] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_verify_should_return_true_if_signature_valid[testkey_ed25519.pub.pem-hello_world_sig_pem] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_prepare_key_should_be_idempotent[testkey_ed25519.pub] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_prepare_key_should_be_idempotent[testkey_ed25519.pub.pem] PASSED
+tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_prepare_key_should_reject_invalid_key PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_jwk_private_key_should_parse_and_verify PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_jwk_private_key_should_parse_and_verify_with_private_key_as_is PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed25519_jwk_public_key_should_parse_and_verify PASSED
@@ -88,6 +93,40 @@ tests/test_algorithms.py::TestOKPAlgorithms::test_okp_ed448_to_jwk_works_with_fr
 tests/test_algorithms.py::TestOKPAlgorithms::test_rsa_can_compute_digest PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_hmac_can_compute_digest PASSED
 tests/test_algorithms.py::TestOKPAlgorithms::test_rsa_prepare_key_raises_invalid_key_error_on_invalid_pem PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_rejects_wrong_curve_for_es256 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_rejects_wrong_curve_for_es384 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_rejects_wrong_curve_for_es512 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_rejects_wrong_curve_for_es256k PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_accepts_correct_curve_for_es256 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_accepts_correct_curve_for_es384 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_accepts_correct_curve_for_es512 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_accepts_correct_curve_for_es256k PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_rejects_p192_for_es256 PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_algorithm_without_expected_curve_accepts_any_curve PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_default_algorithms_have_correct_expected_curve PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_ec_curve_validation_with_pem_key PASSED
+tests/test_algorithms.py::TestECCurveValidation::test_jwt_encode_decode_rejects_wrong_curve PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs256 PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs384 PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs512 PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_empty_key_returns_warning_message PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_exact_minimum_no_warning PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_above_minimum_no_warning PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_exact_minimum_hs384 PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_exact_minimum_hs512 PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_rsa_small_key_returns_warning_message PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_rsa_small_public_key_returns_warning_message PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_rsa_2048_key_no_warning PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_rsa_pss_inherits_validation PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_rsa_pem_weak_key_validated PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjws_encode_warns_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjws_encode_enforces_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjws_encode_no_warning_adequate_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_warns_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_enforces_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_decode_enforces_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_no_warning_adequate_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_global_register_algorithm_works_with_encode PASSED
 tests/test_api_jwk.py::TestPyJWK::test_should_load_key_from_jwk_data_dict PASSED
 tests/test_api_jwk.py::TestPyJWK::test_should_load_key_from_jwk_data_json_string PASSED
 tests/test_api_jwk.py::TestPyJWK::test_should_load_key_without_alg_from_dict PASSED
@@ -105,6 +144,7 @@ tests/test_api_jwk.py::TestPyJWK::test_missing_crypto_library_raises_missing_cry
 tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_dict PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_json_string PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_should_index_by_kid PASSED
+tests/test_api_jwk.py::TestPyJWKSet::test_keyset_iterator PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_with_unknown_alg PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_invalid_keys_list PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_empty_keys_list PASSED
@@ -166,10 +206,10 @@ tests/test_api_jws.py::TestJWS::test_encode_decode_rsa_related_algorithms[RS256]
 tests/test_api_jws.py::TestJWS::test_encode_decode_rsa_related_algorithms[RS384] PASSED
 tests/test_api_jws.py::TestJWS::test_encode_decode_rsa_related_algorithms[RS512] PASSED
 tests/test_api_jws.py::TestJWS::test_rsa_related_algorithms PASSED
-tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES256] PASSED
-tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES256K] PASSED
-tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES384] PASSED
-tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES512] PASSED
+tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES256-jwk_ec_key_P-256.json-jwk_ec_pub_P-256.json] PASSED
+tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES256K-jwk_ec_key_secp256k1.json-jwk_ec_pub_secp256k1.json] PASSED
+tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES384-jwk_ec_key_P-384.json-jwk_ec_pub_P-384.json] PASSED
+tests/test_api_jws.py::TestJWS::test_encode_decode_ecdsa_related_algorithms[ES512-jwk_ec_key_P-521.json-jwk_ec_pub_P-521.json] PASSED
 tests/test_api_jws.py::TestJWS::test_ecdsa_related_algorithms PASSED
 tests/test_api_jws.py::TestJWS::test_skip_check_signature PASSED
 tests/test_api_jws.py::TestJWS::test_decode_options_must_be_dict PASSED
@@ -185,6 +225,7 @@ tests/test_api_jws.py::TestJWS::test_encode_detached_content_with_b64_header PAS
 tests/test_api_jws.py::TestJWS::test_decode_detached_content_without_proper_argument PASSED
 tests/test_api_jws.py::TestJWS::test_decode_warns_on_unsupported_kwarg PASSED
 tests/test_api_jws.py::TestJWS::test_decode_complete_warns_on_unuspported_kwarg PASSED
+tests/test_api_jwt.py::TestJWT::test_jwt_with_options PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_complete_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_load_verify_valid_jwt PASSED
@@ -194,13 +235,14 @@ tests/test_api_jwt.py::TestJWT::test_decode_with_invalid_audience_param_throws_e
 tests/test_api_jwt.py::TestJWT::test_decode_with_nonlist_aud_claim_throws_exception PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_with_invalid_aud_list_member_throws_exception PASSED
 tests/test_api_jwt.py::TestJWT::test_encode_bad_type PASSED
+tests/test_api_jwt.py::TestJWT::test_encode_with_non_str_iss PASSED
 tests/test_api_jwt.py::TestJWT::test_encode_with_typ PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_exp_is_not_int PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_iat_is_not_int PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_iat_is_greater_than_now PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_works_if_iat_is_str_of_a_number PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_nbf_is_not_int PASSED
-tests/test_api_jwt.py::TestJWT::test_decode_raises_exception_if_aud_is_none PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_allows_aud_to_be_none PASSED
 tests/test_api_jwt.py::TestJWT::test_encode_datetime PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_es256_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_rs384_jwt PASSED
@@ -258,6 +300,9 @@ tests/test_api_jwt.py::TestJWT::test_encode_decode_with_valid_jti_claim PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_missing_jti_when_required_claim PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_missing_jti_claim PASSED
 tests/test_api_jwt.py::TestJWT::test_jti_claim_with_invalid_int_value PASSED
+tests/test_api_jwt.py::TestJWT::test_validate_iss_with_container_of_str PASSED
+tests/test_api_jwt.py::TestJWT::test_validate_iss_with_non_str PASSED
+tests/test_api_jwt.py::TestJWT::test_validate_iss_with_non_str_issuer PASSED
 tests/test_compressed_jwt.py::test_decodes_complete_valid_jwt_with_compressed_payload PASSED
 tests/test_exceptions.py::test_missing_required_claim_error_has_proper_str PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_forwards_headers_to_correct_url PASSED
@@ -301,6 +346,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 287 passed, 4 skipped ========
+======== 333 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)

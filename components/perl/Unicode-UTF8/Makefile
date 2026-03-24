@@ -19,19 +19,23 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Unicode-UTF8
-HUMAN_VERSION =			0.63
+HUMAN_VERSION =			0.70
 COMPONENT_SUMMARY =		Encoding and decoding of UTF-8 encoding form
 COMPONENT_CPAN_AUTHOR =		CHANSEN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dd1944165538d6eec0f9d1454034beb37e19663dba06f87a7d06345ad430f988
+	sha256:4ed46cdd3b6196e3f803ce3d01fa94fba9834ab86a0b1d3978e547fe60cd2e26
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/devel-checkcompiler
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
-REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
-REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

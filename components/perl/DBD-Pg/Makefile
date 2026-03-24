@@ -19,16 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-Pg
-HUMAN_VERSION =			3.18.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			3.20.0
 COMPONENT_SUMMARY =		DBI PostgreSQL interface
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:92bbe8a363040f8ce6a3f1963f128132e245861a9b4dc5a84178b42d625a7807
+	sha256:6fd64fb4580674479c42c713d026cdaec4e80104017f6166f218bfec385b782f
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
-
-# Don't depend on host default pg_config
-PATH = $(PG_BINDIR):$(PATH.illumos)
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,13 +41,13 @@ COMPONENT_TEST_TRANSFORMS += '-e "/^Please wait, creating new database/d"'
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/dbi
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-temp
-PERL_REQUIRED_PACKAGES += library/perl-5/module-signature
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/version
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/dbi
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+REQUIRED_PACKAGES.perl += library/perl-5/module-signature
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += runtime/perl

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zstandard
 HUMAN_VERSION =			0.25.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zstandard bindings for Python
 COMPONENT_PROJECT_URL =		https://github.com/indygreg/python-zstandard
 COMPONENT_ARCHIVE_HASH =	\

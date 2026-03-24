@@ -27,13 +27,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         curl
-COMPONENT_VERSION=      8.17.0
+COMPONENT_VERSION=      8.19.0
 COMPONENT_SUMMARY=      The CURL Network Utility and Library
 COMPONENT_DESCRIPTION=	A command-line tool and library for transforming data with URL syntax
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  https://curl.haxx.se
+COMPONENT_PROJECT_URL=  https://curl.se
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:955f6e729ad6b3566260e8fef68620e76ba3c31acf0a18524416a185acf77992
+COMPONENT_ARCHIVE_HASH= sha256:4eb41489790d19e190d7ac7e18e82857cdd68af8f4e66b292ced562d333f11df
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -65,7 +65,7 @@ CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR) $(CPPFLAGS) -I/usr/include/openld
 
 CONFIGURE_OPTIONS += LDFLAGS="-L$(OPENSSL_LIBDIR.$(BITS)) $(LDFLAGS)"
 CONFIGURE_OPTIONS += --disable-dependency-tracking
-CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
+#CONFIGURE_OPTIONS += --localstatedir=$(VARDIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp

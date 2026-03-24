@@ -13,16 +13,17 @@
 # Copyright 2025 Jiwon Na
 #
 
+USDE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	R
-COMPONENT_VERSION= 	4.5.2
+COMPONENT_VERSION= 	4.5.3
 COMPONENT_SUMMARY= 	R is a free software environment for statistical computing and graphics
 COMPONENT_PROJECT_URL=	https://www.r-project.org
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://cran.r-project.org/src/base/R-4/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:0d71ff7106ec69cd7c67e1e95ed1a3cee355880931f2eb78c530014a9e379f20
+COMPONENT_ARCHIVE_HASH= sha256:aa5c1ed4293c7271ac513d654670356ac0e8a6ad5e42be014365d11150b5b8f2
 COMPONENT_FMRI=			scientific/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Other Languages
 COMPONENT_LICENSE=		GPLv2
@@ -48,17 +49,18 @@ COMPONENT_TEST_TARGETS = check
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GFORTRAN_RUNTIME_PKG)
+REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += image/library/libpng16
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/glib2
-REQUIRED_PACKAGES += library/icu-78
 REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/tcl-8

@@ -1,7 +1,4 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
-py$(PYV): commands[0]> $(PYTHON) -m mypy
-Success: no issues found in 3 source files
-py$(PYV): commands[1]> $(PYTHON) -m pytest --cov bracex --cov-append tests
+py$(PYV): commands[0]> $(PYTHON) -m pytest tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
@@ -229,28 +226,6 @@ tests/test_versions.py::TestVersion::test_version_comparison PASSED
 tests/test_versions.py::TestVersion::test_version_output PASSED
 tests/test_versions.py::TestVersion::test_version_parsing PASSED
 
-================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.23-final-0 _______________
-
-Name                 Stmts   Miss  Cover
-----------------------------------------
-bracex/__init__.py     231      0   100%
-bracex/__main__.py      15      0   100%
-bracex/__meta__.py      69      0   100%
-----------------------------------------
-TOTAL                  315      0   100%
 ======== 219 passed ========
-py$(PYV): commands[2]> $(PYTHON) -m coverage html -d $(@D)/.tox/py$(PYV)/tmp/coverage
-Wrote HTML report to $(@D)/.tox/py$(PYV)/tmp/coverage/index.html
-py$(PYV): commands[3]> $(PYTHON) -m coverage xml
-Wrote XML report to coverage.xml
-py$(PYV): commands[4]> $(PYTHON) -m coverage report --show-missing
-Name                 Stmts   Miss  Cover   Missing
---------------------------------------------------
-bracex/__init__.py     231      0   100%
-bracex/__main__.py      15      0   100%
-bracex/__meta__.py      69      0   100%
---------------------------------------------------
-TOTAL                  315      0   100%
   py$(PYV): OK
   congratulations :)

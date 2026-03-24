@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Socket-SSL
-HUMAN_VERSION =			2.095
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.098
 COMPONENT_SUMMARY =		Nearly transparent SSL encapsulation for IO::Socket::INET.
 COMPONENT_CPAN_AUTHOR =		SULLR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7e764392b1b8bd44e654183c082b75be47800e98d7cd325f0e1b76c7d9a6b768
+	sha256:b38473be20256b1a06447dd6769ad162bfad6a258234ed2c7e2e1819c16c4df7
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/net-ssleay
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/net-ssleay
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += runtime/perl

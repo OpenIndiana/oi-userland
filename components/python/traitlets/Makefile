@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		traitlets
 HUMAN_VERSION =			5.14.3
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Traitlets Python configuration system
 COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
 COMPONENT_ARCHIVE_HASH =	\
@@ -36,10 +36,14 @@ include $(WS_MAKE_RULES)/common.mk
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
 
+# https://github.com/ipython/traitlets/issues/925
+PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_simple_app
+PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_custom_completers
+PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_subcommands_subapp1
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock

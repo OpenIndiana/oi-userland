@@ -3,7 +3,8 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 26948 items
+testpaths: tests
+collecting ... collected 27489 items
 
 tests/test_elffile.py::test_elffile_bad_ident[no-magic] PASSED
 tests/test_elffile.py::test_elffile_bad_ident[unknown-format] PASSED
@@ -65,6 +66,7 @@ tests/test_markers.py::TestMarker::test_different_markers_different_hashes[pytho
 tests/test_markers.py::TestMarker::test_different_markers_different_hashes[python_version == "2.7"-python_version == "3.7"] PASSED
 tests/test_markers.py::TestMarker::test_environment_assumes_empty_extra PASSED
 tests/test_markers.py::TestMarker::test_environment_with_extra_none PASSED
+tests/test_markers.py::TestMarker::test_environment_with_no_extras PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[os.name == 'posix'-None-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.machine=='x86_64'-environment3-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.python_implementation=='Jython'-environment4-False] PASSED
@@ -2284,6 +2286,12 @@ tests/test_markers.py::TestMarker::test_str_repr_eq_hash[python_version == "2.7"
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[python_version == "2.7" or os_name == "linux"-python_version == "2.7" or os_name == "linux"] PASSED
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[python_version == "2.7"-python_version == "2.7"] PASSED
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[python_version == '2.7'-python_version == "2.7"] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2"-None-False] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2"-environment1-False] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2"-environment2-True] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2"-environment3-False] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2a3"-environment4-False] PASSED
+tests/test_markers.py::TestMarker::test_version_like_equality[extra == "v2a3"-environment5-True] PASSED
 tests/test_markers.py::TestNode::test_accepts_value[3] PASSED
 tests/test_markers.py::TestNode::test_accepts_value[5] PASSED
 tests/test_markers.py::TestNode::test_accepts_value[None] PASSED
@@ -2297,7 +2305,7 @@ tests/test_markers.py::TestNode::test_str[one] PASSED
 tests/test_markers.py::TestNode::test_str[two] PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_allows_prerelease PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_fails_when_undefined PASSED
-tests/test_markers.py::TestOperatorEvaluation::test_falls_back_to_python PASSED
+tests/test_markers.py::TestOperatorEvaluation::test_new_string_rules PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_prefers_pep440 PASSED
 tests/test_metadata.py::TestExceptionGroup::test_attributes PASSED
 tests/test_metadata.py::TestExceptionGroup::test_repr PASSED
@@ -2306,6 +2314,7 @@ tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[metadata-version] 
 tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[name] PASSED
 tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[version] PASSED
 tests/test_metadata.py::TestMetadata::test_from_email PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_empty_import_name PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_unparsed PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_unparsed_valid_field_name PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_validate PASSED
@@ -2316,7 +2325,22 @@ tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=ascii] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=utf-8] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_dynamic_value PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[not-valid-import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[not-valid-import_namespaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[still.not-valid-import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[still.not-valid-import_namespaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[stuff; extra-import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[stuff; extra-import_namespaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[stuff;-import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[stuff;-import_namespaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_keyword[import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_import_names_keyword[import_namespaces] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) or mit and ( )] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) or mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) with ( ) or mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[()] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[(mit] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[) mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Apache-2.0 OR 2-BSD-Clause] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License with spaces] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License_with_underscores] PASSED
@@ -2324,10 +2348,13 @@ tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Use-it-aft
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit (] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit and ( )] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit and] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or apache-2.0 (bsd-3-clause and MPL-2.0)] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or or apache-2.0] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit with ( ) with ( ) or mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit with] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit)] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[or mit] PASSED
@@ -2372,6 +2399,8 @@ tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[description
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[download_url] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[dynamic] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[home_page] PASSED
+tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[import_namespaces] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[keywords] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[license] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[license_expression] PASSED
@@ -2417,9 +2446,15 @@ tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/p
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst; charset=UTF-8] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_dynamic PASSED
+tests/test_metadata.py::TestMetadata::test_valid_import_names[import_names] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_import_names[import_namespaces] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[ mIt -MIT] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[(( MIT ))-((MIT))] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[((MIT AND (MIT)))-((MIT AND (MIT)))] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[((MIT))-((MIT))] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense-(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[(LicenseRef-Special-License OR licenseref-OtherLicense) OR unlicense-(LicenseRef-Special-License OR LicenseRef-OtherLicense) OR Unlicense] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_license_expression[(MIT)-(MIT)] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[BSD-3-Clause-BSD-3-Clause] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[Bsd-3-clause-BSD-3-Clause] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_license_expression[GPL-3.0-only WITH Classpath-exception-2.0 OR BSD-3-Clause-GPL-3.0-only WITH Classpath-exception-2.0 OR BSD-3-Clause] PASSED
@@ -2460,6 +2495,24 @@ tests/test_metadata.py::TestMetadata::test_valid_requires_python[>=3] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_requires_python[~=2.6] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_summary PASSED
 tests/test_metadata.py::TestMetadata::test_valid_version PASSED
+tests/test_metadata.py::TestMetadataWriting::test__import_names PASSED
+tests/test_metadata.py::TestMetadataWriting::test_body PASSED
+tests/test_metadata.py::TestMetadataWriting::test_empty_import_names PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[emoji] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[empty] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[multiline] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[multiple keys] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[multiple] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[none] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[order 1] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[order 2] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[simple] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers[unicode] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_large PASSED
+tests/test_metadata.py::TestMetadataWriting::test_modern_license PASSED
+tests/test_metadata.py::TestMetadataWriting::test_multiline_license PASSED
+tests/test_metadata.py::TestMetadataWriting::test_write_metadata PASSED
+tests/test_metadata.py::TestMetadataWriting::test_write_metadata_with_description PASSED
 tests/test_metadata.py::TestRawMetadata::test_bytes_input PASSED
 tests/test_metadata.py::TestRawMetadata::test_complete PASSED
 tests/test_metadata.py::TestRawMetadata::test_description[description: hello] PASSED
@@ -2519,6 +2572,8 @@ tests/test_metadata.py::TestRawMetadata::test_project_urls_parsing[A,B-expected2
 tests/test_metadata.py::TestRawMetadata::test_project_urls_parsing[A-expected1] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[classifiers] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[dynamic] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[import_names] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[import_namespaces] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[license_files] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[obsoletes] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[obsoletes_dist] PASSED
@@ -2532,6 +2587,8 @@ tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[require
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_only_once[supported_platforms] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[classifiers] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[dynamic] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[import_names] PASSED
+tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[import_namespaces] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[license_files] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[obsoletes] PASSED
 tests/test_metadata.py::TestRawMetadata::test_repeating_fields_repeated[obsoletes_dist] PASSED
@@ -2554,6 +2611,45 @@ tests/test_musllinux.py::test_parse_musl_version[amd64-1.2.2] PASSED
 tests/test_musllinux.py::test_parse_musl_version[i386-1.2.1] PASSED
 tests/test_musllinux.py::test_parse_musl_version[invalid] PASSED
 tests/test_musllinux.py::test_parse_musl_version[unknown] PASSED
+tests/test_pylock.py::test_extras_name_validation PASSED
+tests/test_pylock.py::test_hash_validation[hashes0-Hash values must be strings in 'hashes'] PASSED
+tests/test_pylock.py::test_hash_validation[hashes1-At least one hash must be provided in 'hashes'] PASSED
+tests/test_pylock.py::test_hash_validation[sha256:...-Unexpected type str (expected Mapping) in 'hashes'] PASSED
+tests/test_pylock.py::test_is_direct PASSED
+tests/test_pylock.py::test_package_name_validation PASSED
+tests/test_pylock.py::test_pylock_basic_package PASSED
+tests/test_pylock.py::test_pylock_extras_and_groups PASSED
+tests/test_pylock.py::test_pylock_file_name[pylock..toml-False] PASSED
+tests/test_pylock.py::test_pylock_file_name[pylock.json-False] PASSED
+tests/test_pylock.py::test_pylock_file_name[pylock.spam.toml-True] PASSED
+tests/test_pylock.py::test_pylock_file_name[pylock.toml-True] PASSED
+tests/test_pylock.py::test_pylock_invalid_archive PASSED
+tests/test_pylock.py::test_pylock_invalid_environments PASSED
+tests/test_pylock.py::test_pylock_invalid_environments_type PASSED
+tests/test_pylock.py::test_pylock_invalid_vcs PASSED
+tests/test_pylock.py::test_pylock_invalid_version PASSED
+tests/test_pylock.py::test_pylock_invalid_wheel PASSED
+tests/test_pylock.py::test_pylock_missing_created_by PASSED
+tests/test_pylock.py::test_pylock_missing_packages PASSED
+tests/test_pylock.py::test_pylock_missing_version PASSED
+tests/test_pylock.py::test_pylock_package_not_a_table PASSED
+tests/test_pylock.py::test_pylock_packages_with_archive_directory_and_vcs PASSED
+tests/test_pylock.py::test_pylock_packages_with_dist_and_archive PASSED
+tests/test_pylock.py::test_pylock_packages_without_dist PASSED
+tests/test_pylock.py::test_pylock_tool PASSED
+tests/test_pylock.py::test_pylock_unexpected_type PASSED
+tests/test_pylock.py::test_pylock_unsupported_version[0.9] PASSED
+tests/test_pylock.py::test_pylock_unsupported_version[2.0] PASSED
+tests/test_pylock.py::test_pylock_unsupported_version[2.1] PASSED
+tests/test_pylock.py::test_pylock_unsupported_version[2] PASSED
+tests/test_pylock.py::test_pylock_vcs_package PASSED
+tests/test_pylock.py::test_pylock_version[1.0] PASSED
+tests/test_pylock.py::test_pylock_version[1.1] PASSED
+tests/test_pylock.py::test_toml_roundtrip PASSED
+tests/test_pylock.py::test_validate PASSED
+tests/test_pylock.py::test_validate_attestation_identity_invalid_kind PASSED
+tests/test_pylock.py::test_validate_attestation_identity_missing_kind PASSED
+tests/test_pylock.py::test_validate_sequence_of_str PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_compare_with_string PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_different_reqs_different_hashes[appdirs>=1.4.4,<2; os_name=="posix" and extra=="testing"-appdirs>=1.4.4,<2; os_name == 'posix' and extra == 'docs'] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_different_reqs_different_hashes[importlib-metadata; python_version<"3.8"-importlib-metadata; python_version<'3.7'] PASSED
@@ -2567,53 +2663,53 @@ tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hash
 tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hashes[packaging>20.1-packaging>20.1] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hashes[requests[security, tests]>=2.8.1,==2.8.*;python_version<"2.7"-requests [security,tests] >= 2.8.1, == 2.8.* ; python_version < "2.7"] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[scikit-learn==1.0.1-scikit_learn==1.0.1] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a,b]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a,b]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a,b]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a,b]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a,b]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a1,b1,b2]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a1,b1,b2]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a1,b1,b2]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a1,b1,b2]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a1,b1,b2]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-[a]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version--!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version--==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version--@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version--] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a,b]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a,b]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a,b]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a,b]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a,b]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a1,b1,b2]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a1,b1,b2]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a1,b1,b2]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a1,b1,b2]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a1,b1,b2]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; "3." not in python_version-[a]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"--!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"--==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"--@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"--] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a,b]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a,b]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a,b]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a,b]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a,b]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a1,b1,b2]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a1,b1,b2]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a1,b1,b2]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a1,b1,b2]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a1,b1,b2]-] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a]- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a]-!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a]-==2.*] PASSED
-tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a]-@ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[; python_version == "3.11"-[a]-] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_types_with_nothing PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_types_with_specifier_and_marker PASSED
@@ -2630,6 +2726,7 @@ tests/test_requirements.py::TestRequirementParsing::test_error_no_name PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_no_space_after_url PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_no_url_after_at PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_on_legacy_version_outside_triple_equals PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_on_missing_comma_in_specifier PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_on_missing_op_after_name PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_on_missing_version_after_op PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_on_random_char_after_specifier PASSED
@@ -7840,6 +7937,55 @@ tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-ssh://user:pass%20word@example.com/packagename.zip--extras3-installer] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-ssh://user:pass%20word@example.com/packagename.zip--extras3-pAcKaGe] PASSED
 tests/test_requirements.py::test_basic_valid_requirement_parsing[\t-sys_platform{ws}!={ws}'linux' and(os_name{ws}=={ws}'linux' or python_version{ws}>={ws}'3.3'{ws}){ws}-ssh://user:pass%20word@example.com/packagename.zip--extras3-package] PASSED
+tests/test_requirements.py::test_normalized_requirements[mariadb>=1.0.1; extra == "mariadb_connector"-mariadb>=1.0.1; extra == "mariadb-connector"] PASSED
+tests/test_requirements.py::test_normalized_requirements[mariadb>=1.0.1; python_version >= "3" and extra == "mariadb_connector"-mariadb>=1.0.1; python_version >= "3" and extra == "mariadb-connector"] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+ABC.DEF-===1.0+ABC.DEF-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+ABC.DEF-===1.0+abc.def-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+AbC-===1.0+ABC-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+AbC-===1.0+AbC-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+AbC-===1.0+abc-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+LOCAL-===1.0+LOCAL-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+LOCAL-===1.0+local-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+abc.def-===1.0+ABC.DEF-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+abc.def-===1.0+abc.def-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+downstream1-===1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+local-===1.0+LOCAL-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0+local-===1.0+local-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0-===1.0+downstream1-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0-===1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.0-===1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.DEV1-===1.0.DEV1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.DEV1-===1.0.dev1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.POST1-===1.0.POST1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.POST1-===1.0.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.dev0-===1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.dev0-===1.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.dev1-===1.0.DEV1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.dev1-===1.0.dev1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.post1-===1.0.POST1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0.post1-===1.0.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0A1-===1.0A1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0A1-===1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0A1.POST2.DEV3-===1.0A1.POST2.DEV3-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0A1.POST2.DEV3-===1.0a1.post2.dev3-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0B1-===1.0B1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0B1-===1.0b1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0RC1-===1.0RC1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0RC1-===1.0rc1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0a1-===1.0A1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0a1-===1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0a1.post2.dev3-===1.0A1.POST2.DEV3-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0a1.post2.dev3-===1.0a1.post2.dev3-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0b1-===1.0B1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0b1-===1.0b1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0rc1-===1.0RC1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[1.0rc1-===1.0rc1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[LOLWAT-===lolwat-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[LoLWaT-===lOlwAt-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[foobar-===baz-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[foobar-===foobar-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[lolwat-===LOLWAT-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_arbitrary_equality[lolwat-===LoLWaT-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_comparison_canonicalizes[==2.8.0-==2.8] PASSED
 tests/test_specifiers.py::TestSpecifier::test_comparison_false[!=2.2.*-!=2.2.*-ne] PASSED
 tests/test_specifiers.py::TestSpecifier::test_comparison_false[!=2.2.*-!=2.2.0.5-eq] PASSED
@@ -8004,6 +8150,17 @@ tests/test_specifiers.py::TestSpecifier::test_comparison_true[~=2.0-==2.1.0.3-ne
 tests/test_specifiers.py::TestSpecifier::test_comparison_true[~=2.0->2.0.post1-ne] PASSED
 tests/test_specifiers.py::TestSpecifier::test_comparison_true[~=2.0->=7.9a1-ne] PASSED
 tests/test_specifiers.py::TestSpecifier::test_comparison_true[~=2.0-~=2.0-eq] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[!=1.*-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[!=1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[<1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[<=1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[==1.*-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[==1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[===foobar-invalid-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[===invalid-invalid-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[>1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[>=1.0-not a valid version-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_invalid_version[~=1.0-not a valid version-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_iteration[-expected_items0] PASSED
 tests/test_specifiers.py::TestSpecifier::test_iteration[==2.0-expected_items1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_iteration[>=2.0,<3,==2.4-expected_items4] PASSED
@@ -8014,15 +8171,48 @@ tests/test_specifiers.py::TestSpecifier::test_length[==2.0-1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_length[>=2.0,<3,==2.4-3] PASSED
 tests/test_specifiers.py::TestSpecifier::test_length[>=2.0,<3-2] PASSED
 tests/test_specifiers.py::TestSpecifier::test_length[>=2.0-1] PASSED
+tests/test_specifiers.py::TestSpecifier::test_match_args PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_equal_for_compatible_operator PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=2.0a1-None-input3-expected3] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[<2.0a1-None-input6-expected6] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[==2.0a1-None-input4-expected4] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>2.0a1-None-input5-expected5] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-None-input0-expected0] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-False-input2-expected2] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-None-input1-expected1] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifier_filter[~=2.0a1-None-input7-expected7] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-False-False-input33-expected33] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-False-None-input31-expected31] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-None-False-input29-expected29] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-None-None-input24-expected24] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-None-None-input25-expected25] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-None-True-input28-expected28] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-True-None-input30-expected30] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=1.0-True-True-input32-expected32] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=2.0.*-None-None-input26-expected26] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=2.0.*-None-None-input27-expected27] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[!=2.0a1-None-None-input4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[<2.0a1-None-None-input7-expected7] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[==2.0a1-None-None-input5-expected5] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===1.0-None-None-input20-expected20] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===1.0-None-None-input21-expected21] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===1.0-None-None-input23-expected23] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-False-False-input39-expected39] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-False-None-input37-expected37] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-None-False-input35-expected35] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-None-None-input18-expected18] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-None-None-input19-expected19] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-None-None-input22-expected22] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-None-True-input34-expected34] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-True-None-input36-expected36] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[===foobar-True-True-input38-expected38] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>2.0a1-None-None-input6-expected6] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-False-False-input15-expected15] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-False-True-input13-expected13] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-None-None-input16-expected16] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-None-None-input17-expected17] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-None-None-input3-expected3] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-True-False-input12-expected12] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0-True-True-input14-expected14] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-False-None-input11-expected11] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-None-False-input9-expected9] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-None-None-input0-expected0] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.0.dev1-True-None-input10-expected10] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.2.3-None-None-input1-expected1] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[>=1.2.3-None-None-input2-expected2] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_filter[~=2.0a1-None-None-input8-expected8] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_hash_for_compatible_operator PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[!=2.2.*-!=] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_operator_property[!=2.2.0.5-!=] PASSED
@@ -8048,6 +8238,22 @@ tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>=
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[>=1.0.dev1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[~=1.0-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_detection[~=1.0.dev1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[<1.0.dev1-None-False-0.9.dev1-True-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[==2.0.*-None-False-2.0.dev1-True-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[==2.0.*-None-True-2.0.dev1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-False-None-2.0.dev1-False-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-False-True-2.0.dev1-False-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-False-2.0.dev1-True-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-True-1.0.dev1-False-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-True-2.0.dev1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-True-2.0a1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-True-2.0b1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-None-True-2.0rc1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-True-False-2.0.dev1-True-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0-True-None-2.0.dev1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>1.0.dev1-None-None-1.1.dev1-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>=2.0.dev1-None-False-2.0a1-True-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifier_prereleases_set[>=2.0.dev1-None-True-2.0a1-True-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_version_property[!=2.2.*-2.2.*] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_version_property[!=2.2.0.5-2.2.0.5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifier_version_property[<1.0.dev1-1.0.dev1] PASSED
@@ -8064,6 +8270,7 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers[1-<=2-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1->2-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1->=2-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1-~=1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers[1.0+local->1.0.dev1-False] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1.0-!=2!1.0-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1.0-<2!0.1-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers[1.0-<=2!0.1-True] PASSED
@@ -8230,10 +8437,6 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[==2.1.0.3] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[>2.0.post1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[>=7.9a1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_hash[~=2.0] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_identity[1.0-===1.0-True] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_identity[1.0.0-===1.0-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_identity[1.0.dev0-===1.0-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_identity[1.0.dev0-===1.0.dev0-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[!=1.0+deadbeef.*] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[!=1.0.*+deadbeef] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[!=1.0.dev1.*] PASSED
@@ -8264,7 +8467,7 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[~=1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[  \r \x0c \x0b v1.0\t\n] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[00!1.2] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[0100!0.0] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0+AbC1.01] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0+AbC] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0-5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0-A1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0-ALPHA1] PASSED
@@ -8329,6 +8532,7 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0.post000]
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0.post] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0.rc1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0.rc] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.01] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0ALPHA] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0A] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0BETA] PASSED
@@ -8355,11 +8559,21 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0rc09] PAS
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.0rc] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[1.1.dev09000] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_normalized[v1.0] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0.dev1-1.0a1-True] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[==2.0.*-2.0a1.dev1-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[>=1.0-2.0.dev1-False] PASSED
-tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[>=2.0.dev1-2.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<2.0-2.0a1-None-None-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<2.0a2-2.0a1-None-None-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-False-None-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-False-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-None-None-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0-1.0.dev1-True-False-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0.dev1-1.0a1-None-None-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0a1-1.0.dev1-False-None-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0a1-1.0.dev1-False-True-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0a1-1.0.dev1-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[<=2.0a1-1.0.dev1-True-False-False] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[==2.0.*-2.0a1.dev1-None-None-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[>=1.0-2.0.dev1-None-None-True] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_prereleases[>=2.0.dev1-2.0a1-None-None-True] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_str_and_repr[!=2.0-!=2.0] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_str_and_repr[< 2-<2] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_str_and_repr[<2.0-<2.0] PASSED
@@ -8377,6 +8591,32 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_valid[==2.1.0.3] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_valid[>2.0.post1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_valid[>=7.9a1] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_valid[~=2.0] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_compatible_operator[~=1.4.2-versions0] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[!=1.0-test_versions5] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[<1.0-test_versions3] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[<=1.0-test_versions1] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[==1.0+local-test_versions10] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[==1.0-test_versions4] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>1.0-test_versions2] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>=1!1.0-test_versions11] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>=1.0-test_versions0] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>=1.0.dev1-test_versions9] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>=1.0.post1-test_versions8] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[>=1.0a1-test_versions7] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_consistency[~=1.0-test_versions6] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_with_arbitrary_equality[===1.0.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_with_arbitrary_equality[===1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_with_arbitrary_equality[===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_with_wildcards[!=1.0.*-test_versions1] PASSED
+tests/test_specifiers.py::TestSpecifierInternal::test_spec_version_cache_with_wildcards[==1.0.*-test_versions0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0+local-===1.0-input_versions5] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0+local-===1.0-input_versions7] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0-===1.0+local-input_versions4] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0-===1.0+local-input_versions6] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0-===1.0.0-input_versions0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0-===1.0.0-input_versions2] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0.0-===1.0-input_versions1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_arbitrary_equality_is_intersection_preserving[===1.0.0-===1.0-input_versions3] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_canonicalizes[==2.8.0-==2.8] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_false[!=2.2.*-!=2.2.*-ne] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_false[!=2.2.*-!=2.2.0.5-eq] PASSED
@@ -8547,6 +8787,103 @@ tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0-==2.1.0.3
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0->2.0.post1-ne] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0->=7.9a1-ne] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_comparison_true[~=2.0-~=2.0-eq] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.0+downstream1-===1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.0-===1.0+downstream1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.0-===1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.0-===foobar,!=1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.0.0-===1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.5->=1.0,!=2.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.5->=1.0,===1.5-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[1.5->=2.0,===1.5-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[2.5->=1.0,===2.5-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[bar-===foobar-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foo-===foobar-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foobar-!=1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foobar-===foobar,!=1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foobar-===foobar-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foobar->=1.0,!=2.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[foobar->=1.0,===foobar-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[invalid-!=1.0,!=2.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[invalid-!=1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_arbitrary_equality_contains[invalid-!=2.0.*-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-False-0.9.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-False-1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-False-1.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-False-1.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-0.9.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-1.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-1.0.post1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-True-0.9.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-True-1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-True-1.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=0.9,!=0.9,<=1.0-True-1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-False-0!5.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-False-1!0.5-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-0!5.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-1!0.5-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-1!2.5-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-2!0.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-True-0!5.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-True-1!0.5-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-False-3.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-False-3.1.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-0.5-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-3.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-3.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-3.1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-3.1.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-5.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-True-3.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-True-3.1.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-False-3.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-False-3.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-0.9-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-2.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-3.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-3.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-3.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-4.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-True-3.0.dev0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-True-3.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-False-1.0.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-False-1.1.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-1.0.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-1.1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-1.1.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-2.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-True-1.0.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-True-1.1.post1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-False-1.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-None-1.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-None-2.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-None-3.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-True-1.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-True-2.0.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-False-1.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-False-2.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-None-1.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-None-2.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-None-3.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-True-1.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-True-2.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-False-1.0a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-False-1.0b1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-0.9-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.0b1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.1.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-1.1a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-1.0a1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-1.0b1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-1.1.dev0-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-1.1a1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_rejects_invalid_specifier[>=1.0-not a valid version] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_with_compatible_operator PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_create_from_specifiers PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1!1.0.dev456] PASSED
@@ -8603,22 +8940,183 @@ tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1.2+abc123def] 
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1.2+abc] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1.2.r32+123456] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier[1.2.rev33+123456] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[False-versions1-expected1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[False-versions4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[False-versions7-expected7] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[None-versions0-expected0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[None-versions3-expected3] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[None-versions6-expected6] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[True-versions2-expected2] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[True-versions5-expected5] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_empty_specifier_arbitrary_string[True-versions8-expected8] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=0.9,!=0.9,<=1.0-False-input27-expected27] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-input24-expected24] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=0.9,!=0.9,<=1.0-None-input25-expected25] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=0.9,!=0.9,<=1.0-True-input26-expected26] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-False-input31-expected31] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-input28-expected28] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-None-input29-expected29] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1!0,!=1!1.*,!=1!2.*,<1!3-True-input30-expected30] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-False-input17-expected17] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-input14-expected14] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-None-input15-expected15] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,!=3.1,<4-True-input16-expected16] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-False-input3-expected3] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-input0-expected0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-None-input1-expected1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1,!=1.*,!=2.*,!=3.0,<=3.0-True-input2-expected2] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-False-input13-expected13] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-input10-expected10] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-None-input11-expected11] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0,!=1.0,!=1.1,<2.0-True-input12-expected12] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-False-input9-expected9] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-None-input7-expected7] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0.dev0,!=1.*,!=2.*,<3.0.dev0-True-input8-expected8] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-False-input6-expected6] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-None-input4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.*,!=2.*,<3.0-True-input5-expected5] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-False-input23-expected23] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-input18-expected18] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-input19-expected19] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-input20-expected20] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-input21-expected21] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-input22-expected22] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_match_args PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[!=2.0-2.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[<1.0-0.9.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[<1.0-1.0.0.dev1-None-None-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[<=1.0-1.0.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[==1.*-1.5.0a1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[==1.0.0.dev1-1.0.0.dev1-False-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0,<3.0-2.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0-1.0.0.dev1-None-None-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0-2.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0.dev1-1.0.0.dev1-False-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0.dev1-1.0.0.dev1-False-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0.dev1-1.0.0.dev1-None-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=1.0.dev1-1.0.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=2.0-1.9.0.dev1-None-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=2.0-1.9.0.dev1-None-True-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=2.0-1.9.0.dev1-True-None-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[>=2.0-1.9.0.dev1-True-True-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0-False-False-False-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0-True-False-False-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-False-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-False-False-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-False-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-False-True-False-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-None-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-None-False-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-None-True-False-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-True-False-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-True-False-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.dev1-True-None-False-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0.post1.dev1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0a1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0b1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-1.1.0rc1-None-None-True-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-False-False-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-None-None-False-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-None-None-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-None-True-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-True-None-True-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[~=1.0-3.0.0.dev1-True-True-True-False] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_prereleases PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input12-expected12] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input8-expected8] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-False-input4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=1.0,!=2.0-None-None-input60-expected60] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=1.0-None-None-input56-expected56] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=1.0-None-None-input57-expected57] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=2.0,===foobar-None-None-input50-expected50] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=2.0.*-None-None-input58-expected58] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=2.0.*-None-None-input59-expected59] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[!=2.0a1-None-None-input7-expected7] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input16-expected16] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input20-expected20] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input41-expected41] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-False-None-input44-expected44] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-False-input12-expected12] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-False-input40-expected40] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-False-input43-expected43] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input0-expected0] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input2-expected2] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input3-expected3] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-True-input6-expected6] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-True-None-input11-expected11] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-True-None-input7-expected7] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-False-None-input10-expected10] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-None-False-input5-expected5] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input39-expected39] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input42-expected42] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-None-input5-expected5] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-None-True-input14-expected14] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-True-None-input15-expected15] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[-True-None-input19-expected19] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[<2.0a1-None-None-input10-expected10] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[==2.0a1-None-None-input8-expected8] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===1.0-None-None-input47-expected47] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===1.0-None-None-input48-expected48] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===1.0-None-None-input54-expected54] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-False-False-input67-expected67] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-False-None-input65-expected65] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-None-False-input63-expected63] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-None-None-input45-expected45] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-None-None-input46-expected46] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-None-None-input53-expected53] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-None-True-input62-expected62] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-True-None-input64-expected64] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[===foobar-True-True-input66-expected66] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>2.0a1-None-None-input9-expected9] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,!=2.0-None-None-input61-expected61] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-False-None-input28-expected28] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-False-True-input36-expected36] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-None-False-input31-expected31] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-None-None-input25-expected25] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-None-True-input32-expected32] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-True-False-input35-expected35] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0-True-None-input27-expected27] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-False-None-input29-expected29] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-False-True-input38-expected38] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-None-False-input33-expected33] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-None-None-input26-expected26] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-None-True-input34-expected34] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-True-False-input37-expected37] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,<=2.0dev-True-None-input30-expected30] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,===1.5-None-None-input51-expected51] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,===1.5-None-None-input55-expected55] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0,===foobar-None-None-input49-expected49] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0-False-False-input24-expected24] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0-False-True-input22-expected22] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0-None-None-input6-expected6] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0-True-False-input21-expected21] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0-True-True-input23-expected23] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-False-None-input18-expected18] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-None-False-input13-expected13] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-None-None-input1-expected1] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-True-None-input9-expected9] PASSED
-tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.0.dev1-True-None-input17-expected17] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.2.3-None-None-input3-expected3] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=1.2.3-None-None-input4-expected4] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[>=2.0,===1.5-None-None-input52-expected52] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_filter[~=2.0a1-None-None-input11-expected11] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-None-1.0.dev1-False-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-None-2.0.dev1-False-True->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-True-1.0.dev1-False-True-!=2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-True-1.0.dev1-False-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-True-1.0.post1.dev1-False-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[False-True-1.5b1-False-True->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-False-0.9.dev0-True-False-<1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-False-1.0a1-True-False->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-False-2.0.dev1-True-False-==2.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-False-2.0a1-True-False-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.0.dev1-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.0.dev4-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.0a1-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.0b2-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.0rc3-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-1.5a1-True-True->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[None-True-2.0b1-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.0.dev1-False-False->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.0.dev1-True-False-==1.*] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.0.dev1-True-False-==1.0.*] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.0.dev1-True-False-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.0rc1-True-False-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-False-1.5rc1-True-False->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-None-1.0.dev1-True-True-] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_specifier_prereleases_explicit[True-None-2.0.dev1-True-True->=1.0] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifiers_combine[>2.0-<5.0->2.0,<5.0] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifiers_combine_not_implemented PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifiers_hash[!=2.2.*] PASSED
@@ -8833,6 +9331,7 @@ tests/test_tags.py::TestTag::test_hashing PASSED
 tests/test_tags.py::TestTag::test_lowercasing PASSED
 tests/test_tags.py::TestTag::test_repr PASSED
 tests/test_tags.py::TestTag::test_str PASSED
+tests/test_tags.py::test_pickle PASSED
 tests/test_tags.py::test_platform_tags[Android-android_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Darwin-mac_platforms] PASSED
 tests/test_tags.py::test_platform_tags[Generic-_generic_platforms] PASSED
@@ -8849,7 +9348,13 @@ tests/test_utils.py::test_canonicalize_name[foo-foo] PASSED
 tests/test_utils.py::test_canonicalize_name[foo.bar-foo-bar] PASSED
 tests/test_utils.py::test_canonicalize_name[foo___bar-foo-bar] PASSED
 tests/test_utils.py::test_canonicalize_name[foo_bar-foo-bar] PASSED
-tests/test_utils.py::test_canonicalize_name_invalid PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[\nhi-\nhi] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[\rhi-\rhi] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[_not_legal--not-legal] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[h\ni-h\ni] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[h\ri-h\ri] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[hi\n-hi\n] PASSED
+tests/test_utils.py::test_canonicalize_name_invalid[hi\r-hi\r] PASSED
 tests/test_utils.py::test_canonicalize_version[1.0+abc-1+abc] PASSED
 tests/test_utils.py::test_canonicalize_version[1.0-1] PASSED
 tests/test_utils.py::test_canonicalize_version[1.0.1-test7-1.0.1-test7] PASSED
@@ -26404,6 +26909,7 @@ tests/test_version.py::TestVersion::test_invalid_versions[1.0+a+] PASSED
 tests/test_version.py::TestVersion::test_invalid_versions[1.0+foo&asd] PASSED
 tests/test_version.py::TestVersion::test_invalid_versions[french toast] PASSED
 tests/test_version.py::TestVersion::test_major_version PASSED
+tests/test_version.py::TestVersion::test_match_args PASSED
 tests/test_version.py::TestVersion::test_micro_version PASSED
 tests/test_version.py::TestVersion::test_minor_version PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[   v1.0\t\n-1.0] PASSED
@@ -26507,6 +27013,40 @@ tests/test_version.py::TestVersion::test_normalized_versions[1.0rc09-1.0rc9] PAS
 tests/test_version.py::TestVersion::test_normalized_versions[1.0rev-1.0.post0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[1.1.dev09000-1.1.dev9000] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[v1.0-1.0] PASSED
+tests/test_version.py::TestVersion::test_replace_change_pre_type PASSED
+tests/test_version.py::TestVersion::test_replace_clear_all_optional PASSED
+tests/test_version.py::TestVersion::test_replace_dev PASSED
+tests/test_version.py::TestVersion::test_replace_dev_none PASSED
+tests/test_version.py::TestVersion::test_replace_epoch PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_dev_negative PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_dev_type PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_epoch_negative PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_epoch_type PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_local_string PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_post_negative PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_post_type PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_pre_format PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_pre_negative PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_pre_type PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_release_empty PASSED
+tests/test_version.py::TestVersion::test_replace_invalid_release_tuple_content PASSED
+tests/test_version.py::TestVersion::test_replace_local_none PASSED
+tests/test_version.py::TestVersion::test_replace_local_string PASSED
+tests/test_version.py::TestVersion::test_replace_multiple_components PASSED
+tests/test_version.py::TestVersion::test_replace_no_args PASSED
+tests/test_version.py::TestVersion::test_replace_post PASSED
+tests/test_version.py::TestVersion::test_replace_post_none PASSED
+tests/test_version.py::TestVersion::test_replace_pre_alpha PASSED
+tests/test_version.py::TestVersion::test_replace_pre_alpha_none PASSED
+tests/test_version.py::TestVersion::test_replace_pre_beta PASSED
+tests/test_version.py::TestVersion::test_replace_pre_beta_none PASSED
+tests/test_version.py::TestVersion::test_replace_pre_rc PASSED
+tests/test_version.py::TestVersion::test_replace_pre_rc_none PASSED
+tests/test_version.py::TestVersion::test_replace_preserves_comparison PASSED
+tests/test_version.py::TestVersion::test_replace_preserves_hash PASSED
+tests/test_version.py::TestVersion::test_replace_release_none PASSED
+tests/test_version.py::TestVersion::test_replace_release_tuple PASSED
+tests/test_version.py::TestVersion::test_replace_returns_same_instance_when_unchanged PASSED
 tests/test_version.py::TestVersion::test_valid_versions[1!1.0.dev456] PASSED
 tests/test_version.py::TestVersion::test_valid_versions[1!1.0.post456.dev34] PASSED
 tests/test_version.py::TestVersion::test_valid_versions[1!1.0.post456] PASSED
@@ -26951,7 +27491,10 @@ tests/test_version.py::TestVersion::test_version_str_repr[7!1.0b2.post345.dev456
 tests/test_version.py::TestVersion::test_version_str_repr[7!1.0rc1-7!1.0rc1] PASSED
 tests/test_version.py::TestVersion::test_version_str_repr[7!1.0rc1.dev456-7!1.0rc1.dev456] PASSED
 tests/test_version.py::TestVersion::test_version_str_repr[7!1.1.dev1-7!1.1.dev1] PASSED
+tests/test_version.py::test_deprecated__version PASSED
+tests/test_version.py::test_hatchling_usage__version PASSED
 tests/test_version.py::test_parse PASSED
 tests/test_version.py::test_parse_raises PASSED
 
-======== 26947 passed, 1 skipped ========
+=========================== short test summary info ============================
+======== 27488 passed, 1 skipped ========

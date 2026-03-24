@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		async_timeout
 HUMAN_VERSION =			5.0.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Timeout context manager for asyncio programs
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/async-timeout
 COMPONENT_ARCHIVE_HASH =	\
@@ -36,13 +38,10 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/docutils
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/twine

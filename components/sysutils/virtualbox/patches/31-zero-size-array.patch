@@ -1,0 +1,13 @@
+GCC complains about zero size array if no VBOX_WITH_3D_ACCELERATION
+
+--- VirtualBox-7.2.4/src/VBox/Main/src-server/SystemPropertiesImpl.cpp	Fri Oct 17 11:01:57 2025
++++ VirtualBox-7.2.4/src/VBox/Main/src-server/SystemPropertiesImpl.cpp	Thu Jan 22 18:07:21 2026
+@@ -1183,7 +1183,7 @@
+ HRESULT SystemProperties::getSupportedGraphicsFeatures(std::vector<GraphicsFeature_T> &aSupportedGraphicsFeatures)
+ {
+ #if defined(RT_ARCH_X86) || defined(RT_ARCH_AMD64)
+-    static const GraphicsFeature_T s_aGraphicsFeatures[] =
++    static const GraphicsFeature_T s_aGraphicsFeatures[1] =
+     {
+ # ifdef VBOX_WITH_3D_ACCELERATION
+         GraphicsFeature_Acceleration3D

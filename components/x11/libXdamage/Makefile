@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=    libXdamage
-COMPONENT_VERSION= 1.1.6
+COMPONENT_VERSION= 1.1.7
 COMPONENT_SUMMARY= libXdamage - X Damage extension library
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:52733c1f5262fca35f64e7d5060c6fcd81a880ba8e1e65c9621cf0727afb5d11
+COMPONENT_ARCHIVE_HASH= sha256:127067f521d3ee467b97bcb145aeba1078e2454d448e8748eb984d5b397bde24
 COMPONENT_FMRI=    x11/library/libxdamage
 
 include $(WS_MAKE_RULES)/common.mk

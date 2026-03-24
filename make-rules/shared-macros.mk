@@ -862,7 +862,7 @@ QT5_INCDIR = $(QT5_BASEDIR)/include
 QT5_PKG_CONFIG_PATH = $(QT5_LIBDIR)/pkgconfig
 
 # We deliver version 6 only in a 64-bit variant.
-QT6_VERSION = 6.6
+QT6_VERSION ?= 6.10
 QT6_BASEDIR = $(USRLIBDIR)/qt/$(QT6_VERSION)
 QT6_BINDIR = $(QT6_BASEDIR)/bin/$(MACH64)
 QT6_LIBDIR = $(QT6_BASEDIR)/lib/$(MACH64)
@@ -1203,10 +1203,27 @@ COMPONENT_BUILD_ENV += CARGO_HOME="$(CARGO_HOME)"
 COMPONENT_INSTALL_ENV += CARGO_HOME="$(CARGO_HOME)"
 COMPONENT_TEST_ENV += CARGO_HOME="$(CARGO_HOME)"
 
-# Pkg-config paths
-PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
+
+#
+# Pkg-config directories and paths
+#
+
+# Directories for architecture specific modules
+PKG_CONFIG_DIR.32 = $(USRLIBDIR.32)/pkgconfig
+PKG_CONFIG_DIR.64 = $(USRLIBDIR.64)/pkgconfig
+PKG_CONFIG_DIR = $(PKG_CONFIG_DIR.$(BITS))
+PROTOPKGCONFIGDIR.32 = $(PROTO_DIR)$(PKG_CONFIG_DIR.32)
+PROTOPKGCONFIGDIR.64 = $(PROTO_DIR)$(PKG_CONFIG_DIR.64)
+PROTOPKGCONFIGDIR = $(PROTOPKGCONFIGDIR.$(BITS))
+# Directory for non-architecture specific modules
+PKG_CONFIG_SHAREDIR = $(USRSHAREDIR)/pkgconfig
+PROTOPKGCONFIGSHAREDIR = $(PROTO_DIR)$(PKG_CONFIG_SHAREDIR)
+
+# Additional pkg-config search paths
+PKG_CONFIG_PATH.32 = $(PKG_CONFIG_DIR.32)
+PKG_CONFIG_PATH.64 = $(PKG_CONFIG_DIR.64)
 PKG_CONFIG_PATH = $(subst $(space),:,$(strip $(PKG_CONFIG_PATH.prepend))):$(PKG_CONFIG_PATH.$(BITS)):$(PKG_CONFIG_PATH.32)
+
 
 # Set default path for environment modules
 MODULE_VERSION =	3.2.10
@@ -1592,7 +1609,7 @@ define create-symlinks
 		[ "$$t" ] && t=$$t/ ; \
 		f=$$(echo $$t | $(GSED) -e 's|[^/]\{1,\}|..|g')$$f ; \
 		$(MKDIR) $(PROTO_DIR)/$(2) ; \
-		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f) ; \
+		$(SYMLINK) $$f $(PROTO_DIR)/$(2)/$$(basename $$f)$(3) ; \
 	done
 endef
 

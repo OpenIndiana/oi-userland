@@ -1,0 +1,31 @@
+https://gitlab.gnome.org/GNOME/libnotify/-/issues/65
+
+--- libnotify-0.8.8/tests/test_notify_send.py.orig
++++ libnotify-0.8.8/tests/test_notify_send.py
+@@ -622,26 +622,6 @@
+             },
+         )
+ 
+-    def test_file_image_only(self):
+-        """notify-send with local image"""
+-
+-        image_path = self.get_local_asset("applet-critical.png")
+-        self.notify_send(["image-path-only", "-i", image_path])
+-
+-        with open(image_path, 'rb') as image_file:
+-            image_bytes = image_file.read()
+-            notification = self.assertDaemonCall("AddNotification")
+-            self.assertNotificationMatches(
+-                notification,
+-                exp_id="libnotify-flatpak.(null)-notify-send-1",
+-                exp_notification={
+-                    "title": "image-path-only",
+-                    "body": "",
+-                    "priority": "normal",
+-                    "icon": ("bytes", dbus.Array(image_bytes, signature="y")),
+-                },
+-            )
+-
+     def test_missing_file_image_only(self):
+         """notify-send with missing local image"""
+ 

@@ -12,18 +12,18 @@
 # Copyright 2016 Andrey Sokolov. All rights reserved.
 # Copyright 2017 Alexander Pyhalov
 # Copyright 2021 Olaf Bohlen
-# Copyright 2023,2025 Friedrich Kink
+# Copyright 2023-2026 Friedrich Kink
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	22.7.0
+COMPONENT_VERSION=	22.8.2
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5b0e5d276aeb014bf8a08a94d1055a9e97b9dce3375846eea70da5221bf9efe7
+COMPONENT_ARCHIVE_HASH=	sha256:8dd373ce0771a9ed40bb54a72a889ccdd14c0cee458ed68da9ce913a668e4b22
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk

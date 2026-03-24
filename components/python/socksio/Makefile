@@ -20,16 +20,26 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		socksio
 HUMAN_VERSION =			1.0.0
-COMPONENT_SUMMARY =		socksio - Sans-I/O implementation of SOCKS4, SOCKS4A, and SOCKS5.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Sans-I/O implementation of SOCKS4, SOCKS4A, and SOCKS5.
 COMPONENT_PROJECT_URL =		https://github.com/sethmlarson/socksio
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/f8/5c/48a7d9495be3d1c651198fd99dbb6ce190e2274d0f28b9051307bdec6b85/socksio-1.0.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f88beb3da5b5c38b9890469de67d0cb0f9d494b78b106ca1845f96c10b91c4ac
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# socksio --> isort --> httpx ==> httpcore --> socksio
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -38,8 +48,8 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS += test-requirements.txt
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/flit-core
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/flit-core
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/black
 TEST_REQUIRED_PACKAGES.python += library/python/flake8
 TEST_REQUIRED_PACKAGES.python += library/python/flake8-bugbear

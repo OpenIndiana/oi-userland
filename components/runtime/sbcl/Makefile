@@ -11,18 +11,20 @@
 #
 # Copyright 2014 Josef 'Jeff' Sipek <jeffpc@josefsipek.net>
 # Copyright 2021, 2025, Andreas Wacknitz
+# Copyright 2026 Klaus Ziegler
 #
 
 BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sbcl
-COMPONENT_VERSION=	2.5.11
+COMPONENT_VERSION=	2.6.2
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	sbcl - Steel Bank Common Lisp
 COMPONENT_PROJECT_URL=	https://sbcl.sourceforge.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:eaec6a0d4feb291946b3b61698cc0652b51fed4c72aea0a37ba28856d4a27404
+COMPONENT_ARCHIVE_HASH=	sha256:afb49358fa58484ffeed0b26a1dfdd829a6fb066d4a8b25f2b0bbccfcae571d7
 COMPONENT_ARCHIVE_URL=	https://downloads.sourceforge.net/project/sbcl/sbcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		runtime/sbcl
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -32,11 +34,17 @@ COMPONENT_LICENSE_FILE=	COPYING
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
+ifeq ($(MACH64), sparcv9)
+GCC_VERSION= 7
+COMPONENT_BUILD_ARGS +=	--arch=sparc
+else
+COMPONENT_BUILD_ARGS +=	--arch=x86-64
+endif
+
 COMPONENT_ENV  =	PATH="$(PATH)"
 COMPONENT_ENV +=	GNUMAKE=$(GMAKE)
 COMPONENT_ENV +=	CC="$(CC)"
 COMPONENT_BUILD_ARGS  =	--prefix=$(USRDIR)
-COMPONENT_BUILD_ARGS +=	--arch=x86-64
 # This is currently --with-sb-thread --with-sb-core-compression
 # --with-sb-xref-internals and :sb-after-xc-core as a build feature.
 COMPONENT_BUILD_ARGS +=	--fancy

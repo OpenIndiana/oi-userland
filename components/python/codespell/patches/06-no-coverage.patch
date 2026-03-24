@@ -1,0 +1,32 @@
+We do not need to check coverage for this project.
+
+--- codespell-2.4.1/pyproject.toml.orig
++++ codespell-2.4.1/pyproject.toml
+@@ -36,7 +36,6 @@
+     "build",
+     "chardet",
+     "pytest",
+-    "pytest-cov",
+     "Pygments",
+     "tomli",
+ ]
+@@ -99,7 +98,7 @@
+ testpaths = ["codespell_lib/tests"]
+ log_cli_level = "INFO"
+ xfail_strict = true
+-addopts = ["--cov=codespell_lib", "-rs", "--strict-config", "--strict-markers", "--cov-report=", "--tb=short", "--junit-xml=junit-results.xml"]
++addopts = ["-rs", "--strict-config", "--strict-markers", "--tb=short", "--junit-xml=junit-results.xml"]
+ filterwarnings = ["error"]
+ 
+ [tool.ruff]
+--- codespell-2.4.1/tox.ini.orig
++++ codespell-2.4.1/tox.ini
+@@ -5,7 +5,7 @@
+ [testenv]
+ description = run unit tests
+ extras = dev
+-commands = pytest --cov=codespell_lib codespell_lib
++commands = pytest codespell_lib
+ 
+ [testenv:type]
+ description = run type checks

@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		GitPython
-HUMAN_VERSION =			3.1.45
+HUMAN_VERSION =			3.1.46
 COMPONENT_SUMMARY =		GitPython is a Python library used to interact with Git repositories
 COMPONENT_PROJECT_URL =		https://github.com/gitpython-developers/GitPython
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/gitpython-developers/GitPython/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:67a52b150bf206612fefa478e6e5d5a31a3a379cd346577a386194878b9f8762
+	sha256:51890d1ac8e9a70194696e3746df454ff76dce8c1b75b44d34c8d9660d321e2a
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -56,16 +56,15 @@ TOX_POSARGS += --color=no
 # Manually added test dependencies
 TEST_REQUIRED_PACKAGES += developer/versioning/git
 
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/gitdb
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/typing-extensions
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/gitdb
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/ddt
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
-TEST_REQUIRED_PACKAGES.python += library/python/tomli
 TEST_REQUIRED_PACKAGES.python += library/python/typing-extensions

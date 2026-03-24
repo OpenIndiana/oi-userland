@@ -15,17 +15,14 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_interface
-HUMAN_VERSION =			8.1.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			8.2
 COMPONENT_SUMMARY =		Interfaces for Python
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.interface
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:51b10e6e8e238d719636a401f44f1e366146912407b58453936b781a19be19ec
+	sha256:afb20c371a601d261b4f6edb53c3c418c249db1a9717b0baafc9a9bb39ba1224
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -40,6 +37,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 # a case the required projects are not available yet (bootstrap).
 #
 PYTHON_TEST_BOOTSTRAP = yes
+
+# Python 3.9 is not supported by zope.interface >= 8.1
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

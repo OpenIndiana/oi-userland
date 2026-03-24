@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hypothesis
-HUMAN_VERSION =			6.148.7
+HUMAN_VERSION =			6.151.9
 COMPONENT_SUMMARY =		The property-based testing library for Python
 COMPONENT_PROJECT_URL =		https://hypothesis.works
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/HypothesisWorks/hypothesis/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc413dba8292a0f12d9f59619b2633e65f9fe1ff49138868315b26c38e358432
+	sha256:10094acb7d8cd872dd96e39876f4ba8ba9b91620882409c1d145828eb428ec84
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 

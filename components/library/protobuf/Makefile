@@ -31,12 +31,12 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=	30.2
+COMPONENT_VERSION=	34.1
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:07a43d88fe5a38e434c7f94129cad56a4c43a51f99336074d0799c2f7d4e44c5
+COMPONENT_ARCHIVE_HASH=	sha256:a83103b7ed3afaeedee9a212c8f65825444f58144f5e075b73c83f2b4ff27b62
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -52,9 +52,8 @@ include $(WS_MAKE_RULES)/common.mk
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
 # Make pkglint happy by avoiding $ORIGIN in rpath
 CMAKE_OPTIONS += -DCMAKE_SKIP_INSTALL_RPATH=TRUE
-# Use external (our packaged) googletest
-CMAKE_OPTIONS += -Dprotobuf_USE_EXTERNAL_GTEST=ON
-CMAKE_OPTIONS += -Dprotobuf_ABSL_PROVIDER=package
+# Enable building tests
+CMAKE_OPTIONS += -Dprotobuf_BUILD_TESTS=ON
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

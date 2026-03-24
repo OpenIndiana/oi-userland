@@ -21,12 +21,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fish
-COMPONENT_VERSION=	4.2.1
+COMPONENT_VERSION=	4.5.0
 COMPONENT_SUMMARY=	Fish is a smart and user-friendly command line shell
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://fishshell.com
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:0f99222a3063377c91fbf78d9850edab7a0b91bdbed201cf79da48ea3a41f393
+COMPONENT_ARCHIVE_HASH=	sha256:89151f8cf14b634e080226fe696f9ce7d4d153c77629996ca4431c80482c64ed
 COMPONENT_ARCHIVE_URL=	https://github.com/fish-shell/fish-shell/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		shell/fish
 COMPONENT_CLASSIFICATION=	System/Shells
@@ -39,7 +39,6 @@ PATH= $(PATH.gnu)
 CMAKE_OPTIONS += -DCMAKE_INSTALL_SYSCONFDIR="/etc"
 CMAKE_OPTIONS += -DSYS_PCRE2_INCLUDE_DIR=/usr/include/pcre
 CMAKE_OPTIONS += -DFISH_USE_SYSTEM_PCRE2=ON
-CMAKE_OPTIONS += -DWITH_GETTEXT=ON
 
 # Need to compile dynamic rust crates. See https://www.illumos.org/issues/15767
 LD_Z_IGNORE=
@@ -66,6 +65,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's/\x1B\[31mFAILED\x1B\[0m/FAILED/g'"
 COMPONENT_TEST_TRANSFORMS += -n
 COMPONENT_TEST_TRANSFORMS += '-e "/FAILED/p" '
 COMPONENT_TEST_TRANSFORMS += '-e "/PASSED/p" '
+
+PKG_HARDLINKS += usr/bin/fish
 
 # Manually added dependencies (for tests)
 PYTHON_REQUIRED_PACKAGES += library/python/pexpect

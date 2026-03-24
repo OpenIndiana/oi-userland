@@ -19,13 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		incremental
-HUMAN_VERSION =			24.7.2
-COMPONENT_SUMMARY =		A small library that versions your Python projects.
+HUMAN_VERSION =			24.11.0
+COMPONENT_SUMMARY =		A CalVer version manager that supports the future.
 COMPONENT_PROJECT_URL =		https://github.com/twisted/incremental
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb4f1d47ee60efe87d4f6f0ebb5f70b9760db2b2574c59c8e8912be4ebd464c9
+	sha256:87d3480dbb083c1d736222511a8cf380012a8176c2456d01ef483242abbbcf8c
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
+
+#
+# Following dependency loops were detected (where 'A --> B' means 'A needs B to
+# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
+#
+# incremental --> twisted ==> incremental
+#
+# To break loops we need to allow this project to integrate without testing in
+# a case the required projects are not available yet (bootstrap).
+#
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,11 +52,9 @@ COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/tests/example_setuptools/src/example
 COMPONENT_TEST_TRANSFORMS += "-e 's|\(/\.tmp-\).\{8\}/|\1XXXXXXXX/|'"
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
-TEST_REQUIRED_PACKAGES.python += library/python/click
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
 TEST_REQUIRED_PACKAGES.python += library/python/twisted
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

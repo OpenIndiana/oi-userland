@@ -31,12 +31,13 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	9.1.2000
+COMPONENT_VERSION=	9.2.200
+HUMAN_VERSION=		9.2.0200
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://www.vim.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/vim/vim/archive/v$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:fce301c7d6b2fb703a5ecc891f1c1131e32b74f983a5825c69a3426a81ae8975
+COMPONENT_ARCHIVE_HASH=	sha256:8456b6e7688e742df5df0498f80081a0ec323c0c213d4565dd5d41aff4cd5c9d
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,8 +46,7 @@ CFLAGS += -Wno-error=incompatible-pointer-types
 
 COMPONENT_POST_UNPACK_ACTION += ( \
 	chmod +x $(@D)/configure $(@D)/src/auto/configure $(@D)/src/configure ; \
-	find $(@D) -name \*.sh -exec chmod +x '{}' ';' ; \
-	rm $(@D)/src/po/{ko.po,zh_CN.po} ; )
+	find $(@D) -name \*.sh -exec chmod +x '{}' ';' )
 
 NOX_VARIANT = $(BUILD_DIR)/$(MACH64)-vim
 X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim

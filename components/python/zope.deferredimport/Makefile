@@ -15,19 +15,19 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_deferredimport
-HUMAN_VERSION =			6.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			6.1.1
 COMPONENT_SUMMARY =		zope.deferredimport allows you to perform imports names that will only be resolved when used in the code.
-COMPONENT_PROJECT_URL =		http://github.com/zopefoundation/zope.deferredimport
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:dcceab59470497adb1bf32051a12355cde4e7f629ae1d21ac16ba830bc717fed
+	sha256:959052d3f5e05c4c7854b88716971985e0b1b44a5c0163e12d9a0b90e4e3b6cc
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
+
+# Python 3.9 is not supported by zope.deferredimport >= 6.1
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
 

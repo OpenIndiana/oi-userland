@@ -30,13 +30,13 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmake
-COMPONENT_VERSION=	3.31.8
+COMPONENT_VERSION=	3.31.11
 CMAKE_VERSION=		$(basename $(COMPONENT_VERSION))
 COMPONENT_SUMMARY=      A cross-platform, open-source make system
 COMPONENT_PROJECT_URL=  https://www.cmake.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa
+COMPONENT_ARCHIVE_HASH=	sha256:c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/files/v$(CMAKE_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/cmake3
 COMPONENT_CLASSIFICATION=Development/Distribution Tools
@@ -44,10 +44,10 @@ COMPONENT_LICENSE=      BSD 3 Clause, MIT, GPLv2, LGPLv2.1, LGPLv3, Curl, PD
 
 include $(WS_MAKE_RULES)/common.mk
 
-PKG_MACROS += CMAKE_VERSION=$(CMAKE_VERSION)
+PKG_VARS += CMAKE_VERSION
 
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's/$(subst .,\.,$(CMAKE_VERSION))/$$(CMAKE_VERSION)/g'
+GENERATE_EXTRA_SED += \
+	-e 's/$(subst .,\.,$(CMAKE_VERSION))/$$(CMAKE_VERSION)/g'
 
 # Need to remove this option from LD_OPTIONS (only affects sparc build);
 # it causes a SegFault failure in kwsys/testSystemInformation

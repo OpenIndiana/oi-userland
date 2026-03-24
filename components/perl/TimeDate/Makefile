@@ -19,18 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		TimeDate
-HUMAN_VERSION =			2.33
-COMPONENT_REVISION =		4
-COMPONENT_SUMMARY =		miscellaneous timezone manipulations routines
+HUMAN_VERSION =			2.35
+COMPONENT_SUMMARY =		Date and time formatting subroutines
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c0b69c4b039de6f501b0d9f13ec58c86b040c1f7e9b27ef249651c143d605eb2
+	sha256:baddd0306ae2e86e9ec28d3de5439e514643e80b3735e43bd0fbb426d73304de
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
-
-COMPONENT_PROJECT_URL =		https://metacpan.org/dist/TimeDate
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

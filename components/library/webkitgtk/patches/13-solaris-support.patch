@@ -44,14 +44,14 @@ Potentially suitable to send upstream
  constexpr size_t CeilingOnPageSize = 64 * KB;
  #elif OS(WINDOWS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
  constexpr size_t CeilingOnPageSize = 4 * KB;
---- webkitgtk-2.48.1/Source/WTF/wtf/PlatformHave.h.orig
-+++ webkitgtk-2.48.1/Source/WTF/wtf/PlatformHave.h
-@@ -237,16 +237,16 @@
- #define HAVE_HOSTED_CORE_ANIMATION 1
+--- webkitgtk-2.50.4/Source/WTF/wtf/PlatformHave.h.~1~	2025-08-08 11:17:54.468492000 +0200
++++ webkitgtk-2.50.4/Source/WTF/wtf/PlatformHave.h	2026-01-15 13:59:04.043430400 +0100
+@@ -229,16 +229,16 @@
+ #define HAVE_MACH_MEMORY_ENTRY 1
  #endif
  
 -#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
-+#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
++#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64) || CPU(SPARC)))
  #define HAVE_MACHINE_CONTEXT 1
  #endif
  
@@ -66,12 +66,12 @@ Potentially suitable to send upstream
  #define HAVE_DLADDR 1
  #endif
  
-@@ -402,7 +402,7 @@
+@@ -397,7 +397,7 @@
  #define HAVE_URL_FORMATTING 1
  #endif
  
--#if !OS(WINDOWS)
-+#if !OS(WINDOWS) && !OS(SOLARIS)
+-#if !OS(WINDOWS) && !OS(QNX)
++#if !OS(WINDOWS) && !OS(QNX) && !OS(SOLARIS)
  #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
  #endif
  
@@ -139,8 +139,8 @@ Potentially suitable to send upstream
  #else
      return "unknown"_s;
  #endif
---- webkitgtk-2.48.1/Source/JavaScriptCore/runtime/MachineContext.h.orig
-+++ webkitgtk-2.48.1/Source/JavaScriptCore/runtime/MachineContext.h
+--- webkitgtk-2.50.4/Source/JavaScriptCore/runtime/MachineContext.h.~1~	2025-08-08 11:17:51.604548200 +0200
++++ webkitgtk-2.50.4/Source/JavaScriptCore/runtime/MachineContext.h	2026-01-15 13:49:23.635058900 +0100
 @@ -33,6 +33,7 @@
  #include <wtf/PlatformRegisters.h>
  #include <wtf/PointerPreparations.h>
@@ -149,7 +149,7 @@ Potentially suitable to send upstream
  
  WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
  
-@@ -182,7 +183,7 @@
+@@ -177,7 +178,7 @@
  #error Unknown Architecture
  #endif
  
@@ -158,7 +158,16 @@ Potentially suitable to send upstream
  
  #if CPU(X86_64)
      return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RSP]);
-@@ -305,7 +306,7 @@
+@@ -187,6 +188,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.sp);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_SP]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_SP]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -294,7 +297,7 @@
  #error Unknown Architecture
  #endif
  
@@ -167,7 +176,16 @@ Potentially suitable to send upstream
  
  // The following sequence depends on glibc's sys/ucontext.h.
  #if CPU(X86_64)
-@@ -467,7 +468,7 @@
+@@ -305,6 +308,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[29]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_S0]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_CCR]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -452,7 +457,7 @@
  #error Unknown Architecture
  #endif
  
@@ -176,7 +194,16 @@ Potentially suitable to send upstream
  
  // The following sequence depends on glibc's sys/ucontext.h.
  #if CPU(X86_64)
-@@ -655,7 +656,7 @@
+@@ -463,6 +468,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_PC]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_PC]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -624,7 +631,7 @@
  #error Unknown Architecture
  #endif
  
@@ -185,7 +212,16 @@ Potentially suitable to send upstream
  
  // The following sequence depends on glibc's sys/ucontext.h.
  #if CPU(X86_64)
-@@ -712,7 +713,7 @@
+@@ -635,6 +642,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[1]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_A0 + 1]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ASI + 1]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -681,7 +690,7 @@
  #error Unknown Architecture
  #endif
  
@@ -194,7 +230,16 @@ Potentially suitable to send upstream
  
  // The following sequence depends on glibc's sys/ucontext.h.
  #if CPU(X86_64)
-@@ -834,7 +835,7 @@
+@@ -692,6 +701,8 @@
+     return reinterpret_cast<void*>((uintptr_t) machineContext.regs[19]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[9]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*>((uintptr_t) machineContext.gregs[9]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -798,7 +809,7 @@
  #error Unknown Architecture
  #endif
  

@@ -19,19 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Date-Manip
-HUMAN_VERSION =			6.98
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			6.99
 COMPONENT_SUMMARY =		Date manipulation routines
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:acfd8a60519ba4cd181c8a67a83d7f029c6d9ab4e8b0212dc47e41d6210fda49
+	sha256:3239e5f671e1af74d4a91b8278f3ae64f214184f7fc27ed4f80409ec2e6c4f54
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-inter
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple

@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bracex
 HUMAN_VERSION =			2.6
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Bash style brace expander.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/bracex
 COMPONENT_ARCHIVE_HASH =	\
@@ -30,9 +31,6 @@ COMPONENT_LICENSE_FILE =	LICENSE.md
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
-TEST_REQUIRED_PACKAGES.python += library/python/mypy
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

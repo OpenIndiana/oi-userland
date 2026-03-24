@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 102 items
+collecting ... collected 119 items
 
 tests/test_dicttoxml.py::test_root PASSED
 tests/test_dicttoxml.py::test_simple_cdata PASSED
@@ -27,6 +27,9 @@ tests/test_dicttoxml.py::test_unparse_with_element_comment PASSED
 tests/test_dicttoxml.py::test_unparse_with_multiple_element_comments PASSED
 tests/test_dicttoxml.py::test_unparse_with_top_level_comment PASSED
 tests/test_dicttoxml.py::test_unparse_with_multiple_top_level_comments PASSED
+tests/test_dicttoxml.py::test_unparse_with_bytes_comment_uses_output_encoding PASSED
+tests/test_dicttoxml.py::test_unparse_invalid_bytes_comment_replaced_by_default PASSED
+tests/test_dicttoxml.py::test_unparse_rejects_invalid_bytes_comment_for_encoding_with_strict PASSED
 tests/test_dicttoxml.py::test_unparse_rejects_comment_with_double_hyphen PASSED
 tests/test_dicttoxml.py::test_unparse_rejects_comment_ending_with_hyphen PASSED
 tests/test_dicttoxml.py::test_pretty_print_with_int_indent PASSED
@@ -37,7 +40,19 @@ tests/test_dicttoxml.py::test_non_string_value PASSED
 tests/test_dicttoxml.py::test_non_string_attr PASSED
 tests/test_dicttoxml.py::test_short_empty_elements PASSED
 tests/test_dicttoxml.py::test_namespace_support PASSED
+tests/test_dicttoxml.py::test_xmlns_values_use_consistent_boolean_coercion PASSED
+tests/test_dicttoxml.py::test_xmlns_values_decode_bytes_with_output_encoding PASSED
+tests/test_dicttoxml.py::test_xmlns_values_replace_invalid_bytes_by_default PASSED
+tests/test_dicttoxml.py::test_xmlns_values_reject_invalid_bytes_with_strict PASSED
 tests/test_dicttoxml.py::test_boolean_unparse PASSED
+tests/test_dicttoxml.py::test_unparse_bytes_in_attributes_and_cdata_use_output_encoding PASSED
+tests/test_dicttoxml.py::test_unparse_bytes_text_node_uses_output_encoding PASSED
+tests/test_dicttoxml.py::test_unparse_bytes_text_node_with_expand_iter_uses_output_encoding PASSED
+tests/test_dicttoxml.py::test_unparse_invalid_bytes_in_attributes_and_cdata_replaced_by_default PASSED
+tests/test_dicttoxml.py::test_unparse_invalid_bytes_text_node_replaced_by_default PASSED
+tests/test_dicttoxml.py::test_unparse_rejects_invalid_bytes_in_attributes_and_cdata_for_encoding_with_strict PASSED
+tests/test_dicttoxml.py::test_unparse_rejects_invalid_bytes_text_node_for_encoding_with_strict PASSED
+tests/test_dicttoxml.py::test_unparse_rejects_invalid_bytes_errors_handler PASSED
 tests/test_dicttoxml.py::test_rejects_tag_name_with_angle_brackets PASSED
 tests/test_dicttoxml.py::test_rejects_attribute_name_with_angle_brackets PASSED
 tests/test_dicttoxml.py::test_rejects_malicious_xmlns_prefix PASSED
@@ -60,6 +75,8 @@ tests/test_dicttoxml.py::test_empty_list_filtering_with_short_empty_elements_fal
 tests/test_dicttoxml.py::test_non_empty_lists_are_not_filtered PASSED
 tests/test_dicttoxml.py::test_empty_dict_vs_empty_list_behavior PASSED
 tests/test_dicttoxml.py::test_non_string_text_with_attributes PASSED
+tests/test_dicttoxml.py::test_none_text_with_short_empty_elements_and_attributes PASSED
+tests/test_dicttoxml.py::test_none_attribute_serializes_as_empty_string PASSED
 tests/test_xmltodict.py::test_string_vs_file PASSED
 tests/test_xmltodict.py::test_minimal PASSED
 tests/test_xmltodict.py::test_simple PASSED
@@ -108,4 +125,4 @@ tests/test_xmltodict.py::test_streaming_memory_usage PASSED
 tests/test_xmltodict.py::test_streaming_attrs PASSED
 tests/test_xmltodict.py::test_namespace_on_root_without_other_attrs PASSED
 
-======== 102 passed ========
+======== 119 passed ========

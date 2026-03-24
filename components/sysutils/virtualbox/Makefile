@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.1.10
+COMPONENT_VERSION=      7.2.6
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -231,7 +231,6 @@ REQUIRED_PACKAGES += system/header/header-agp
 REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += system/header/header-usb
 REQUIRED_PACKAGES += x11/library/libxinerama
-REQUIRED_PACKAGES += library/libvncserver
 REQUIRED_PACKAGES += developer/build/onbld
 REQUIRED_PACKAGES += developer/object-file
 

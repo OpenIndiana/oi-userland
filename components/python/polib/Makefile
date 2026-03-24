@@ -14,16 +14,16 @@
 #   $WS_TOOLS/python-integrate-project polib
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		polib
 HUMAN_VERSION =			1.2.0
-COMPONENT_SUMMARY =		polib - A library to manipulate gettext files (po and mo files).
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A library to manipulate gettext files (po and mo files).
 COMPONENT_PROJECT_URL =		https://github.com/izimobil/polib/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/10/9a/79b1067d27e38ddf84fe7da6ec516f1743f31f752c6122193e7bce38bdbf/polib-1.2.0.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f3ef94aefed6e183e342a8a269ae1fc4742ba193186ad76f175938621dbfc26b
 COMPONENT_LICENSE =		MIT
@@ -32,6 +32,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/coverage
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/importlib-metadata

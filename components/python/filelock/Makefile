@@ -19,12 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		filelock
-HUMAN_VERSION =			3.20.1
+HUMAN_VERSION =			3.24.3
 COMPONENT_SUMMARY =		A platform independent file lock.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/py-filelock
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8360948b351b80f420878d8516519a2204b07aefcdcfd24912a5d33127f188c
-COMPONENT_LICENSE =		Unlicense
+	sha256:011a5644dc937c22699943ebbfc46e969cdde3e171470a6e40b9533e5a72affa
+COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
@@ -48,10 +48,8 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-timeout
 TEST_REQUIRED_PACKAGES.python += library/python/virtualenv

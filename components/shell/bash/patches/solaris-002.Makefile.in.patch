@@ -21,20 +21,20 @@
  	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
 @@ -580,7 +581,7 @@
  
- $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+ $(Program): $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP) .build
  	$(RM) $@
--	$(PURIFY) $(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
-+	$(PURIFY) $(CC) $(CFLAGS) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
+-	$(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
++	$(CC) $(CFLAGS) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
  	ls -l $(Program)
  	-$(SIZE) $(Program)
  
 @@ -594,7 +595,7 @@
  	@echo
  
- bashbug: $(SDIR)/bashbug.sh $(VERSPROG)
+ bashbug: $(SUPPORT_DIR)/bashbug.sh $(VERSPROG)
 -	@sed -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
 +	@sed -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
- 	     $(SDIR)/bashbug.sh > $@
+ 	     $(SUPPORT_DIR)/bashbug.sh > $@
  	@chmod a+rx bashbug
  
 @@ -619,7 +620,7 @@

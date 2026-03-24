@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gi_docgen
-HUMAN_VERSION =			2025.4
+HUMAN_VERSION =			2026.1
 COMPONENT_SUMMARY =		Documentation tool for GObject-based libraries
 COMPONENT_PROJECT_URL =		https://gitlab.gnome.org/GNOME/gi-docgen
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7fe066da082a4edcf924063767404f9d04a998f6c0f0c475b180fd9823a72dc5
+	sha256:65ac3c4f2b4255d1c616fb8eae55139b6ca10071545ca2272759ffd2ccf2c7b5
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSES/Apache-2.0.txt
 
@@ -31,13 +32,39 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# Rename section 1 man page(s) to contain version number
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(PROTOUSRSHAREMAN1DIR)/*.1 ; do \
+		[[ -f $$f ]] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[[ "$$f" == "$${f%%$$v.1}" ]] || continue 2 ; \
+		done ; \
+		$(MV) $$f $${f%%.1}-$(PYTHON_VERSION).1 ; \
+	done ;
+
+# Rename pkg-config file(s) to contain version number
+COMPONENT_POST_INSTALL_ACTION += \
+	for f in $(PROTOPKGCONFIGSHAREDIR)/*.pc ; do \
+		[[ -f $$f ]] || continue ; \
+		for v in $(PYTHON_VERSIONS) ; do \
+			[[ "$$f" == "$${f%%$$v.pc}" ]] || continue 2 ; \
+		done ; \
+		$(MV) $$f $${f%%.pc}-$(PYTHON_VERSION).pc ; \
+	done ;
+
+# Replace Python version in man page file paths
+GENERATE_EXTRA_SED += -e 's|\(usr/share/man/man.*-\)3\.[0-9]\{1,\}\(\.[0-9]\)|\1$$(PYVER)\2|'
+
+# Replace Python version in pkg-config file paths
+GENERATE_EXTRA_SED += -e 's|\(usr/share/pkgconfig/.*-\)3\.[0-9]\{1,\}\.pc|\1$$(PYVER).pc|'
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/jinja2
-PYTHON_REQUIRED_PACKAGES += library/python/markdown
-PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pygments
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += library/python/typogrify
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/jinja2
+REQUIRED_PACKAGES.python += library/python/markdown
+REQUIRED_PACKAGES.python += library/python/markupsafe
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pygments
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += library/python/typogrify
+REQUIRED_PACKAGES.python += runtime/python

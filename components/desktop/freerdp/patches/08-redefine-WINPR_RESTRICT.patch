@@ -1,0 +1,19 @@
+freerdp-3.22.0/winpr/include/winpr/wlog.h:268:84: warning: 'format' attribute argument 2 value '6' exceeds the number of function parameters 1 [-Wattributes]
+  268 |                                               WINPR_FORMAT_ARG const char* fmt, ...)
+      |                                                                                    ^
+
+--- freerdp-3.22.0/winpr/include/winpr/platform.h.old
++++ freerdp-3.22.0/winpr/include/winpr/platform.h
+@@ -58,6 +58,12 @@
+ #define WINPR_RESTRICT
+ #endif
+ 
++#if defined(__sun)
++#undef WINPR_RESTRICT
++#define WINPR_RESTRICT
++#endif
++
++
+ // C23 related macros
+ #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201904L)
+ #define WINPR_FALLTHROUGH \

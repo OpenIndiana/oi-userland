@@ -1,0 +1,23 @@
+We do not need to check coverage for this project.
+
+--- hyperlink-21.0.0/tox.ini.orig
++++ hyperlink-21.0.0/tox.ini
+@@ -56,9 +56,7 @@
+     py{35,36,37,38,39,py3}: pytest==5.2.4
+ 
+     # For code coverage
+-    {[testenv:coverage_report]deps}
+     py{26,27,34,py2}: pytest-cov==2.8.1  # rq.filter: <2.9
+-    py{35,36,37,38,39,py3}: pytest-cov==2.10.1
+ 
+     # For hypothesis. Note Python 3.4 isn't supported by hypothesis.
+     py{26,27,py2}: hypothesis==4.43.9  # rq.filter: <4.44
+@@ -73,7 +71,7 @@
+ passenv = CI
+ 
+ commands =
+-    pytest --cov={env:PY_MODULE} --cov-report=term-missing:skip-covered --doctest-modules {posargs:src/{env:PY_MODULE}}
++    pytest --doctest-modules {posargs:src/{env:PY_MODULE}}
+ 
+ 
+ ##

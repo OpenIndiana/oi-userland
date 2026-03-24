@@ -20,12 +20,12 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		icu
-COMPONENT_VERSION =		78.1
-COMPONENT_REVISION =		1
+COMPONENT_VERSION =		78.3
+COMPONENT_REVISION =		0
 COMPONENT_SUMMARY =		International Components for Unicode
 COMPONENT_SRC =			$(COMPONENT_NAME)
 COMPONENT_ARCHIVE =		icu4c-$(HUMAN_VERSION)-sources.tgz
-COMPONENT_ARCHIVE_HASH =	sha256:6217f58ca39b23127605cfc6c7e0d3475fe4b0d63157011383d716cb41617886
+COMPONENT_ARCHIVE_HASH =	sha256:3a2e7a47604ba702f345878308e6fefeca612ee895cf4a5f222e7955fabfe0c0
 COMPONENT_PROJECT_URL =		https://icu.unicode.org/
 COMPONENT_ARCHIVE_URL =		https://github.com/unicode-org/icu/releases/download/release-$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_VERSION_MAJOR =	$(firstword $(subst ., ,$(HUMAN_VERSION)))
@@ -102,9 +102,9 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^PASS: config selfcheck OK/p" '
 
 # Replace COMPONENT_VERSION_MAJOR in library symlink path
-GENERATE_EXTRA_CMD += | \
-	$(GSED) -e 's|^\(link .*path=usr/lib/.*lib.*\.so\.\)$(COMPONENT_VERSION_MAJOR) |\1$$(COMPONENT_VERSION_MAJOR) |'
-PKG_MACROS += COMPONENT_VERSION_MAJOR=$(COMPONENT_VERSION_MAJOR)
+GENERATE_EXTRA_SED += \
+	-e 's|^\(link .*path=usr/lib/.*lib.*\.so\.\)$(COMPONENT_VERSION_MAJOR) |\1$$(COMPONENT_VERSION_MAJOR) |'
+PKG_VARS += COMPONENT_VERSION_MAJOR
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)

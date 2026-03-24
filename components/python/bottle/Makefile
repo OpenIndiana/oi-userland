@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bottle
 HUMAN_VERSION =			0.13.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Fast and simple WSGI-framework for small web-applications.
 COMPONENT_PROJECT_URL =		http://bottlepy.org/
 COMPONENT_ARCHIVE_HASH =	\
@@ -31,6 +32,11 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIRED_PACKAGES.python += library/python/jinja2
+TEST_REQUIRED_PACKAGES.python += library/python/mako
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python

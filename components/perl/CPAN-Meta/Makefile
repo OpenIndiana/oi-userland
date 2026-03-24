@@ -19,26 +19,25 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CPAN-Meta
-HUMAN_VERSION =			2.150010
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			2.150013
 COMPONENT_SUMMARY =		the distribution metadata for a CPAN dist
-COMPONENT_CPAN_AUTHOR =		DAGOLDEN
+COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e4f80f2ec73e0741455f957bbfc992b167ecbfa1c9e23ba358df3b37b86ba3d6
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:7c2bcbaf988d50ba8902a0d0cdf3c66b22aa7e968f5b67d1339a8995aff25dbd
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-requirements
-PERL_REQUIRED_PACKAGES += library/perl-5/cpan-meta-yaml
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/json-pp
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/version
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
+REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-yaml
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/json-pp
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/version
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp

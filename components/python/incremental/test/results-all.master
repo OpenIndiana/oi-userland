@@ -1,13 +1,8 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -V
-Python 3.9.19
-py$(PYV): commands[1]> coverage --version
-Coverage.py, version 7.6.0 with C extension
-Full documentation is at https://coverage.readthedocs.io/en/7.6.0
-py$(PYV): commands[2]> /usr/bin/trial --version
-Twisted version: 24.3.0
-py$(PYV): commands[3]> coverage erase
-py$(PYV): commands[4]> coverage run /usr/bin/trial incremental
+Python 3.9.25
+py$(PYV): commands[1]> /usr/bin/trial --version
+Twisted version: 24.11.0
+py$(PYV): commands[2]> /usr/bin/trial incremental
 incremental.tests.test_pyproject
   VerifyPyprojectDotTomlTests
     test_brokenToml ...                                                    [OK]
@@ -46,8 +41,9 @@ incremental.tests.test_update
   NonCreatedUpdateTests
     test_create ...                                                        [OK]
   ScriptTests
-    test_insufficient_args ...                                             [OK]
-    test_run ...                                                           [OK]
+    test_help ...                                                          [OK]
+    test_incrementalDotUpdate ...                                          [OK]
+    test_incrementalUpdate ...                                             [OK]
 incremental.tests.test_version
   VersionsTests
     testShort ...                                                          [OK]
@@ -105,27 +101,8 @@ incremental.tests.test_version
     test_versionComparisonNonVersion ...                                   [OK]
 
 -------------------------------------------------------------------------------
-Ran 85 tests
+Ran 86 tests
 
-PASSED (successes=85)
-py$(PYV): commands[5]> coverage combine
-py$(PYV): commands[6]> coverage report
-Name                                                                                                                                                Stmts   Miss Branch BrPart  Cover
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/__init__.py                 222     22     90      1    91%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_hatch.py                    19     19      0      0     0%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/_version.py                   3      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/__init__.py             0      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_pyproject.py      54      0     12      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_update.py        243      0     10      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/tests/test_version.py       242      0      0      0   100%
-$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/incremental/update.py                    99      0     44      0   100%
-tests/test_examples.py                                                                                                                                 76     76      0      0     0%
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TOTAL                                                                                                                                                 958    117    156      1    89%
-py$(PYV): commands[7]> coverage html
-Wrote HTML report to htmlcov/index.html
-py$(PYV): commands[8]> coverage xml
-Wrote XML report to coverage.xml
+PASSED (successes=86)
   py$(PYV): OK
   congratulations :)

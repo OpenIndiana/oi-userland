@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2023-2024, Jonathan Schleifer. All rights reserved.
+# Copyright (c) 2023-2026, Jonathan Schleifer. All rights reserved.
 #
 
 BUILD_BITS = 64
@@ -29,11 +29,11 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = objfw
-COMPONENT_VERSION = 1.4.3
+COMPONENT_VERSION = 1.5.1
 COMPONENT_SUMMARY = A portable, lightweight framework for the Objective-C language
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH = sha256:0e987c82bd482a957360a1cd7e8d14716442f9bfba68f58fef9b81750db301d9
+COMPONENT_ARCHIVE_HASH = sha256:fde83565ad1c6aaea2713770ede8f47f1b1e464c9251dde4801e1c614930cdf6
 COMPONENT_ARCHIVE_URL = https://objfw.nil.im/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://objfw.nil.im/
 COMPONENT_FMRI = library/objfw

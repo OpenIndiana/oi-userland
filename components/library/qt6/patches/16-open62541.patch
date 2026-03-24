@@ -1,0 +1,13 @@
+mostly backport from upstream https://github.com/open62541/open62541.git
+
+--- qt-everywhere-src-6.9.3/qtopcua/src/3rdparty/open62541/open62541.c.orig
++++ qt-everywhere-src-6.9.3/qtopcua/src/3rdparty/open62541/open62541.c
+@@ -123774,7 +123774,7 @@
+ UA_StatusCode
+ UA_EventLoopPOSIX_setReusable(UA_FD sockfd) {
+     int enableReuseVal = 1;
+-#ifndef UA_ARCHITECTURE_WIN32
++#ifdef SO_REUSEPORT
+     int res = UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR,
+                             (const char*)&enableReuseVal, sizeof(enableReuseVal));
+     res |= UA_setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT,

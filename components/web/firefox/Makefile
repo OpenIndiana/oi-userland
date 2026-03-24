@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=9
+# CANDIDATE_BETA=14
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
-COMPONENT_NAME =	firefox
-COMPONENT_VERSION =	146.0.1
+COMPONENT_NAME=         firefox
+COMPONENT_VERSION=      148.0.2
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     16f979184458f531fce47706d2fa7f2902e75ad3
+COMPONENT_GIT_HASH=     39bc83bb8632d54d70542dc5d98c046a317ec99d
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -69,15 +69,15 @@ MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPON
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/candidates/$(COMPONENT_VERSION)b$(CANDIDATE_BETA)$(ESR)-candidates/build$(CANDIDATE_BUILD)
     endif
   endif
-COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
-COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
+COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH= sha256:e9678a0e8473923953e1dc312c37919068623b6aa20adade16266049258191eb
+COMPONENT_ARCHIVE_HASH=	sha256:a6cb8e4d5e596cd52475bab9b4d399240f10c4211718b9d72ca6b2e9c9244e90
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
-COMPONENT_FMRI=		web/browser/firefox
+COMPONENT_FMRI=         web/browser/firefox
 
-RUST_VERSION = 1.91.0
+RUST_VERSION = 1.92.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -219,6 +219,10 @@ ENV += CARGO_HOME=$(CARGO_HOME)
 
 # This is needed to run bins/libs in .rustup
 ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+
+# set custom mozbuild path
+CONFIGURE_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
+COMPONENT_BUILD_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 

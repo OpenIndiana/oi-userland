@@ -20,10 +20,9 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		plaster
 HUMAN_VERSION =			1.1.2
-COMPONENT_SUMMARY =		plaster - A loader interface around multiple config file formats.
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		A loader interface around multiple config file formats.
 COMPONENT_PROJECT_URL =		https://docs.pylonsproject.org/projects/plaster/en/latest/
-COMPONENT_ARCHIVE_URL =		\
-	https://files.pythonhosted.org/packages/26/93/66df0f87f1442d8afea8531ae8a4a9eca656006a54eac2b4489427e92c10/plaster-1.1.2.tar.gz
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:f8befc54bf8c1147c10ab40297ec84c2676fa2d4ea5d6f524d9436a80074ef98
 COMPONENT_LICENSE =		MIT
@@ -31,9 +30,11 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 include $(WS_MAKE_RULES)/common.mk
 
+# With plaster installed the testing finds both the installed and the currently
+# built plaster which is unexpected and so some tests fails.
+TEST_CONFLICTING_PACKAGES.python += library/python/plaster
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov

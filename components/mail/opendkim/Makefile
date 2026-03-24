@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         opendkim
 COMPONENT_VERSION=      2.10.3
-COMPONENT_REVISION =	3
+COMPONENT_REVISION =	4
 COMPONENT_SUMMARY=      OpenDKIM is an open source implementation of the DKIM (Domain Keys Identified Mail) sender authentication system
 COMPONENT_DESCRIPTION=	OpenDKIM is an open source implementation of the DKIM \
 			(Domain Keys Identified Mail) sender authentication system proposed \

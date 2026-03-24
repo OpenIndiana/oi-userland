@@ -15,11 +15,13 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		immutables
 HUMAN_VERSION =			0.21
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Immutable Collections
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:b55ffaf0449790242feb4c56ab799ea7af92801a0a43f9e2f4f8af2ab24dfc4a
@@ -29,8 +31,16 @@ TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
+# This project does not support tox so we need to provide test requirements
+# manually.
+TEST_REQUIREMENTS_EXTRAS += test
+
+# We do not need to check typing for this project.
+PYTEST_ADDOPTS += --ignore tests/test_mypy.py
+
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
