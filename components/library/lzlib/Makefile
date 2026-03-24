@@ -16,12 +16,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lzlib
-COMPONENT_VERSION=	1.15
+COMPONENT_VERSION=	1.16
 COMPONENT_SUMMARY=	Lzlib is a data compression library providing in-memory LZMA compression and decompression functions
 COMPONENT_PROJECT_URL=	https://lzip.nongnu.org/lzlib.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:9d45480e7c8171c64fa1d5beee2cbd82e69febe910f0ce628b876a8fe2141534
+COMPONENT_ARCHIVE_HASH= sha256:cd2a96fbc685f7e3dc32b9f0e5e34046a77e3c10fcfebe62f9951e317d0a8cf4
 COMPONENT_ARCHIVE_URL=	https://download.savannah.gnu.org/releases/lzip/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
