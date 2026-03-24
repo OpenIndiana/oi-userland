@@ -27,20 +27,25 @@
 # Copyright 2023 Niklas Poslovski
 #
 
+# Define MACH_BUILD to use Mozilla's mach framework
+MACH_BUILD= 1
+
 # Need to set BITS since BUILD_STYLE is archive
 BITS=64
+ifdef MACH_BUILD
 # BUILD_STYLE archive is not really appropriate, but this is being used since there is no userland support for mach build environment
 BUILD_STYLE=archive
+endif
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
 # CANDIDATE_BUILD= 1
-# CANDIDATE_BETA= 6
+# CANDIDATE_BETA= 4
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	148.0.1
+COMPONENT_VERSION =	149.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -52,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:80b36b172876b62b697ced5995078d73b37fac5323a5e178e3b921f8c35d03e2
+	 sha256:edea1dcf73753656dffb2d38b529f6f870ceab01487ac02ce4fe29065c32dbdc
 
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
@@ -97,7 +102,7 @@ endif
 CONFIGURE_DEFAULT_DIRS=no
 
 # Use rust version specified at https://firefox-source-docs.mozilla.org/writing-rust-code/update-policy.html
-RUST_VERSION = 1.92.0
+RUST_VERSION = 1.93.0
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -128,6 +133,17 @@ MOZCONFIG_DEBUG =	/dev/null
 MOZCONFIG_NON_DEBUG =	$(MOZCONFIG)
 endif
 
+ifndef MACH__BUILD
+CONFIGURE_ENV=
+CONFIGURE_OPTIONS=
+
+# clang or gcc
+CC_TYPE = gcc
+COMPILER.gcc= gcc
+COMPILER.clang= clang
+COMPILER = $(COMPILER.$(CC_TYPE))
+endif
+
 THUNDERBIRD_LIBDIR = /usr/lib/$(MACH64)
 
 CXXFLAGS += -Wno-invalid-offsetof -fpermissive
@@ -146,9 +162,11 @@ COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 CONFIGURE_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 COMPONENT_BUILD_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 
+ifdef MACH_BUILD
 # use pip to get python modules
 CONFIGURE_ENV += MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=pip
 COMPONENT_BUILD_ENV += MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE=pip
+endif
 
 # Make sure the local rust install from rustup is found
 RUSTUP_HOME = $(BUILD_DIR)/.rust_up
@@ -159,9 +177,29 @@ CONFIGURE_ENV += CARGO_HOME=$(CARGO_HOME)
 COMPONENT_BUILD_ENV += RUSTUP_HOME=$(RUSTUP_HOME)
 COMPONENT_BUILD_ENV += CARGO_HOME=$(CARGO_HOME)
 
+ifndef MACH_BUILD
+ENV +=  CFLAGS="$(CFLAGS)"
+ENV +=  CXXFLAGS="$(CXXFLAGS)"
+ENV += PKG_CONFIG=/usr/bin/amd64/pkg-config
+ENV += RUSTUP_HOME=$(RUSTUP_HOME)
+ENV += CARGO_HOME=$(CARGO_HOME)
+
+# This is needed to run bins/libs in .rustup
+ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
+
+COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
+
+CONFIGURE_ENV = $(ENV)
+COMPONENT_BUILD_ENV =   $(ENV)
+COMPONENT_INSTALL_ENV += HOME=/tmp
+endif
+
+ifdef MACH_BUILD
 # mach sets up a python 3.13 virtual environment and provides its own python modules.  python 3.14 is not supported as of February 2026.  Python version can not be set to 3.13 in userland due to missing dependecies.
 COMPONENT_PRE_BUILD_ACTION += \
 	gsed -i -e 's|/usr/bin/env python3|/usr/bin/python3.13|' $(SOURCE_DIR)/mach ; \
+
+endif
 
 COMPONENT_PRE_BUILD_ACTION += \
 	rm -f  $(MOZCONFIG); \
@@ -198,6 +236,7 @@ COMPONENT_PRE_BUILD_ACTION += \
         echo "ac_add_options --without-wasm-sandboxed-libraries" >> $(MOZCONFIG) ; \
 
 # Use version of rust specific for this thunderbird version
+ifdef MACH_BUILD
 COMPONENT_PRE_BUILD_ACTION += ( \
         export RUSTUP_HOME=$(RUSTUP_HOME); \
         export CARGO_HOME=$(CARGO_HOME); \
@@ -210,6 +249,20 @@ COMPONENT_PRE_BUILD_ACTION += ( \
         rustup show; \
 	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
 	);
+else
+COMPONENT_PRE_CONFIGURE_ACTION += ( \
+        export RUSTUP_HOME=$(RUSTUP_HOME); \
+        export CARGO_HOME=$(CARGO_HOME); \
+        export RUSTUP_INIT_SKIP_PATH_CHECK=yes; \
+        export LD_LIBRARY_PATH=$(GCC_LIBDIR); \
+        curl https://sh.rustup.rs -sSf | bash -s -- -y --no-modify-path; \
+        source $(CARGO_HOME)/env; \
+        rustup install $(RUST_VERSION); \
+        rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
+        rustup show; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
+	);
+endif
 
 COMPONENT_POST_INSTALL_ACTION  += \
     for file in `find $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird -name "*.so"`; \
@@ -229,11 +282,14 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION  += \
      unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
      | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
+
+CLEAN_PATHS += $(COMPONENT_NAME).license
  
 # copy distribution.ini to install staging area
 COMPONENT_POST_INSTALL_ACTION += \
    $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(THUNDERBIRD_LIBDIR)/thunderbird/distribution/distribution.ini ;
 
+ifdef MACH_BUILD
 # gmake build does this:
 $(SOURCE_DIR)/.built: $(SOURCE_DIR)/.prep
 	$(RM) -r $(BUILD_DIR); $(MKDIR) $(BUILD_DIR)
@@ -248,14 +304,17 @@ $(SOURCE_DIR)/.installed: $(SOURCE_DIR)/.built
 build: $(SOURCE_DIR)/.built
 
 install: $(SOURCE_DIR)/.installed
+endif
 
 # the license file is dynamically built, thus we need to remove it
-# remove the .xpi language files.
+# remove the .xpi language files
+ifdef MACH_BUILD
 clean::
 	$(RM) $(COMPONENT_LICENSE_FILE)
 	$(RM) *.xpi
 	rm -rf $(BUILD_DIR)
 	rm -rf $(SOURCE_DIR)
+endif
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
@@ -267,7 +326,12 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Build dependencies
+ifdef MACH_BUILD
 REQUIRED_PACKAGES += runtime/python-313
+else
+PYTHON_REQUIRED_PACKAGES += library/python/psutil
+REQUIRED_PACKAGES += runtime/python
+endif
 REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/build/autoconf-213
 REQUIRED_PACKAGES += library/audio/pulseaudio
