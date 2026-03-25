@@ -12,7 +12,7 @@
 #
 # Copyright 2015 Alexander Pyhalov
 # Copyright 2019 Michal Nowak
-# Copyright 2025 Andreas Wacknitz
+# Copyright 2025, 2026 Andreas Wacknitz
 #
 
 BUILD_STYLE= meson
@@ -20,9 +20,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pango
-HUMAN_VERSION=		1.57.0
+HUMAN_VERSION=		1.57.1
 COMPONENT_SUMMARY=      GNOME core text and font handling libraries
-COMPONENT_ARCHIVE_HASH=	sha256:890640c841dae77d3ae3d8fe8953784b930fa241b17423e6120c7bfdf8b891e7
+COMPONENT_ARCHIVE_HASH=	sha256:e65d6d117080dc3aeeb7d8b4b3b518f7383aa2e6cfce23117c623cd624764c2f
 COMPONENT_PROJECT_URL=  https://www.pango.org/
 COMPONENT_FMRI=         library/desktop/pango
 COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
@@ -46,7 +46,7 @@ PATH= $(PATH.gnu)
 CONFIGURE_OPTIONS += -Dintrospection=enabled
 
 # Dynamic library version number
-SOVER := 0.$(shell printf '%s00.%s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
+SOVER := 0.$(shell printf '%s0%s.0' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION))))
 SOVER_RE = $(subst .,\.,$(SOVER))
 
 # Replace library version number by SOVER
