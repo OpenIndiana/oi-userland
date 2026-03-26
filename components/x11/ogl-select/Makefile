@@ -13,11 +13,13 @@
 # Copyright 2019 Michal Nowak
 #
 
+BUILD_STYLE = pkg
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ogl-select
 COMPONENT_VERSION=	0.5.11
-COMPONENT_REVISION=	6
+COMPONENT_REVISION=	7
 COMPONENT_SUMMARY=	ogl-select - boot time selection of OpenGL vendor files
 COMPONENT_PROJECT_URL = https://www.openindiana.org/
 COMPONENT_FMRI=		service/opengl/ogl-select
@@ -25,20 +27,7 @@ COMPONENT_LICENSE=	MIT
 COMPONENT_LICENSE_FILE=	ogl-select.license
 COMPONENT_CLASSIFICATION= System/X11
 
-
-include $(WS_MAKE_RULES)/ips.mk
-
-download:
-
-prep:
-
-build:
-
-install:
-	[ -d $(PROTO_DIR) ] || mkdir -p $(PROTO_DIR)
-
-clean:
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
+include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
