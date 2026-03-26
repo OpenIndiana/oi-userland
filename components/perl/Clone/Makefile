@@ -15,22 +15,18 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone
-HUMAN_VERSION =			0.48
+HUMAN_VERSION =			0.49
 COMPONENT_SUMMARY =		recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:321d4cd1078e19519600abd7bda2991b468603c58455479e3d2e25a5acb1911f
+	sha256:3b06f57eba4d27934a2fd37e7b457ddbe41ccd5dcebc02a81002fd10c96071a4
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
-
-# Pointers varies with every run
-COMPONENT_TEST_TRANSFORMS += "-e 's/0x[0-9a-f]\{1,\}/POINTER/g'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
