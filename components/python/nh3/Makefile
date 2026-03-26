@@ -21,10 +21,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		nh3
-HUMAN_VERSION =			0.3.3
+HUMAN_VERSION =			0.3.4
 COMPONENT_SUMMARY =		Python binding to Ammonia HTML sanitizer Rust crate
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:185ed41b88c910b9ca8edc89ca3b4be688a12cb9de129d84befa2f74a0039fee
+	sha256:96709a379997c1b28c8974146ca660b0dcd3794f4f6d50c1ea549bab39ac6ade
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
