@@ -1,0 +1,35 @@
+
+krb5_enctype_to_string usage not compatible with Heimdal Kerberos
+
+FreeRDP-3.24.2/winpr/libwinpr/sspi/Kerberos/kerberos.c:164:32: error: passing argument 1 of 'krb5_enctype_to_string' makes pointer from integer without a cast [-Wint-conversion]
+  164 |         krb5_enctype_to_string(enctype, buffer, sizeof(buffer));
+      |                                ^~~~~~~
+      |                                |
+      |                                krb5_enctype {aka ENCTYPE}
+
+FreeRDP-3.24.2/winpr/libwinpr/sspi/Kerberos/kerberos.c:164:41: error: incompatible type for argument 2 of 'krb5_enctype_to_string'
+  164 |         krb5_enctype_to_string(enctype, buffer, sizeof(buffer));
+      |                                         ^~~~~~
+      |                                         |
+      |                                         char *
+FreeRDP-3.24.2/winpr/libwinpr/sspi/Kerberos/kerberos.c:164:49: error: passing argument 3 of 'krb5_enctype_to_string' makes pointer from integer without a cast [-Wint-conversion]
+  164 |         krb5_enctype_to_string(enctype, buffer, sizeof(buffer));
+      |                                                 ^~~~~~~~~~~~~~
+      |                                                 |
+      |                                                 long unsigned int
+
+--- FreeRDP-3.24.2/winpr/libwinpr/sspi/Kerberos/kerberos.c.old	2026-03-25 16:31:56.215873898 -0400
++++ FreeRDP-3.24.2/winpr/libwinpr/sspi/Kerberos/kerberos.c	2026-03-25 16:33:37.846477545 -0400
+@@ -161,10 +161,12 @@
+ 
++#if !defined(__sun)
+ 	krb5_error_code rv =
+ 	    krb_log_exec(krb5_get_etype_info, ctx, princ, &opt, &enctype, &salt, &s2kparam);
+ 	krb5_enctype_to_string(enctype, buffer, sizeof(buffer));
+ 	const char* msg = krb5_get_error_message(ctx, rv);
+ 	WLog_DBG(TAG, "[%s] enctype=%s, salt[%u]=%s, s2kparam[%u]=%s", msg, buffer, salt.length,
+ 	         salt.data, s2kparam.length, s2kparam.data);
++#endif
+ }
+ 
+ static void credentials_unref(KRB_CREDENTIALS* credentials);
