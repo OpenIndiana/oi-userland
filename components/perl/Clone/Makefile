@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone
-HUMAN_VERSION =			0.49
+HUMAN_VERSION =			0.50
 COMPONENT_SUMMARY =		recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		ATOOMIC
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3b06f57eba4d27934a2fd37e7b457ddbe41ccd5dcebc02a81002fd10c96071a4
+	sha256:f9732a4a857974db30905233589113003301b585b0cecda29a21cfba5bb014f9
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
