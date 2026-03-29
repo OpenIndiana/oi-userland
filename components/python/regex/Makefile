@@ -15,49 +15,27 @@
 #
 
 BUILD_STYLE = pyproject
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		regex
-HUMAN_VERSION =			2026.1.15
+HUMAN_VERSION =			2026.3.32
 COMPONENT_SUMMARY =		Alternative regular expression module, to replace re.
 COMPONENT_PROJECT_URL =		https://github.com/mrabarnett/mrab-regex
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:164759aa25575cbc0651bef59a0b18353e54300d79ace8084c818ad8ac72b7d5
+	sha256:f1574566457161678297a116fa5d1556c5a4159d64c5ff7c760e7c564bf66f16
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
+# Python 3.9 is not supported by regex >= 2026.2.19
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+
 include $(WS_MAKE_RULES)/common.mk
 
-#
-# Tests are run from build directory that contains cloned copy of sdist.  We
-# try to ask Python to find tested modules in the proto area (the PYTHONPATH is
-# set accordingly), but Python (< 3.11) always adds the current directory to
-# sys.path and there is no known (simple) way how to avoid that.  Except -I,
-# but that would cause Python to ignore PYTHONPATH too so we would not have
-# access to the proto area either.  The -P option together with PYTHONSAFEPATH
-# environment variable were added to Python 3.11 only so we cannot use them yet
-# for all Python versions we support.
-#
-# Since sdist for this project contains the main module in the top-level
-# directory we cannot force Python to skip it.  But, unfortunately, this module
-# does not contain built dynamic libraries, so Python cannot find them while
-# testing.
-#
-# To workaround this we rename the main module in the build directory during
-# testing so Python will need to defer to PYTHONPATH.
-#
-COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/regex $(@D)/regex-RENAMED ;
-COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/regex-RENAMED $(@D)/regex ;
-
 # https://github.com/mrabarnett/mrab-regex/issues/448#issuecomment-2222396902
-PYTEST_ADDOPTS += --deselect regex-RENAMED/tests/test_regex.py::test_main
-
-# Remove extra -RENAMED from test report
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(regex\)-RENAMED/\1/g'"
+PYTEST_ADDOPTS += --deselect regex/tests/test_regex.py::test_main
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
