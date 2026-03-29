@@ -226,6 +226,8 @@ COMPONENT_TEST_DEP +=	$(BUILD_DIR)/%/.installed
 COMPONENT_TEST_ENV +=	PYTHONPATH=$(PROTOPYTHONVENDORDIR)
 # Make sure testing is able to find own installed executables (if any)
 COMPONENT_TEST_ENV +=	PATH=$(PROTOUSRBINDIR):$(PATH)
+# Do not prepend the build directory to sys.path
+COMPONENT_TEST_ENV +=	PYTHONSAFEPATH=y
 
 # Suppress the unnecessary warning that pollutes the test results and is
 # causing many tests to fail.
