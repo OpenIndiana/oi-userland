@@ -28,9 +28,9 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=     	vala
-HUMAN_VERSION=		0.56.18
+HUMAN_VERSION=		0.56.19
 COMPONENT_SUMMARY=  	Vala programming language
-COMPONENT_ARCHIVE_HASH=	sha256:f2affe7d40ab63db8e7b9ecc3f6bdc9c2fc7e3134c84ff2d795f482fe926a382
+COMPONENT_ARCHIVE_HASH=	sha256:5ad7cbbfcc0de61b403d6797c9ef60455bfbebd8e162aec33b5b0b097adfb9d5
 COMPONENT_FMRI=     	developer/vala
 COMPONENT_CLASSIFICATION=   Development/Other Languages
 COMPONENT_LICENSE=	LGPL-2.1-only
