@@ -1,0 +1,20 @@
+Quick fix for:
+
+/build/ports/components/desktop/webkitgtk/webkitgtk41/webkitgtk-2.52.1/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp:1085:10: error: variable has incomplete type 'void'
+1085 | auto result = handler->postMessage(*globalObject, toJS(globalObject, jsStringValue), adoptRef(*(promise.leakRef())));
+     |      ^
+1 error generated.
+
+--- webkitgtk-2.52.1/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp~	2026-02-23 14:40:56.684294000 +0000
++++ webkitgtk-2.52.1/Source/WebKit/WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.cpp	2026-03-27 19:33:25.919481889 +0000
+@@ -1082,9 +1082,7 @@
+     JSRetainPtr<JSStringRef> jsString(Adopt, JSStringCreateWithUTF8CString(message));
+     JSValueRef jsStringValue = JSValueMakeString(toRef(globalObject), jsString.get());
+ 
+-    auto result = handler->postMessage(*globalObject, toJS(globalObject, jsStringValue), adoptRef(*(promise.leakRef())));
+-    if (result.hasException())
+-        return FALSE;
++    handler->postMessage(*globalObject, toJS(globalObject, jsStringValue), adoptRef(*(promise.leakRef())));
+ 
+     return TRUE;
+ #else

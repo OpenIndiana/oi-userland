@@ -110,7 +110,7 @@ Potentially suitable to send upstream
  #elif OS(UNIX) || OS(HAIKU)
  
  #include <pthread.h>
-@@ -81,6 +85,17 @@
+@@ -81,6 +85,19 @@
      return newThreadStackBounds(pthread_self());
  }
  
@@ -121,7 +121,9 @@ Potentially suitable to send upstream
 +    stack_t s;
 +    thr_stksegment(&s);
 +    void* origin = s.ss_sp;
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 +    void* bound = static_cast<char*>(origin) - s.ss_size;
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 +    return StackBounds { origin, bound };
 +}
 +

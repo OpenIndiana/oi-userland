@@ -1,0 +1,68 @@
+--- webkit/Source/ThirdParty/skia/src/codec/SkPngCodec.cpp~	2024-03-14 12:45:49.000000000 +0000
++++ webkit/Source/ThirdParty/skia/src/codec/SkPngCodec.cpp	2024-05-17 12:23:03.331847216 +0000
+@@ -37,6 +37,8 @@
+ #include <png.h>
+ #include <pngconf.h>
+ 
++#define png_const_bytep png_bytep
++
+ using namespace skia_private;
+ 
+ class SkSampler;
+--- webkit/Source/ThirdParty/skia/src/core/SkMeshPriv.h~	2024-03-14 12:45:49.000000000 +0000
++++ webkit/Source/ThirdParty/skia/src/core/SkMeshPriv.h	2024-05-17 12:33:27.003234393 +0000
+@@ -12,6 +12,11 @@
+ #include "include/core/SkMesh.h"
+ #include "src/core/SkSLTypeShared.h"
+
++#if defined(__sun)
++#include <sys/regset.h>
++#undef FS
++#endif
++
+ struct SkMeshSpecificationPriv {
+     using Varying   = SkMeshSpecification::Varying;
+     using Attribute = SkMeshSpecification::Attribute;
+--- webkit/Source/ThirdParty/skia/src/ports/SkMemory_malloc.cpp~	2024-03-14 12:45:49.000000000 +0000
++++ webkit/Source/ThirdParty/skia/src/ports/SkMemory_malloc.cpp	2024-09-30 14:40:20.000552670 +0000
+@@ -126,7 +126,7 @@
+     #elif defined(SK_BUILD_FOR_ANDROID) && __ANDROID_API__ >= 17
+         completeSize = malloc_usable_size(addr);
+         SkASSERT(completeSize >= size);
+-    #elif defined(SK_BUILD_FOR_UNIX)
++    #elif defined(SK_BUILD_FOR_UNIX) && !defined(__sun)
+         completeSize = malloc_usable_size(addr);
+         SkASSERT(completeSize >= size);
+     #elif defined(SK_BUILD_FOR_WIN)
+--- webkitgtk-2.52.0/Source/ThirdParty/skia/CMakeLists.txt~	2026-01-23 08:35:24.201422200 +0000
++++ webkitgtk-2.52.0/Source/ThirdParty/skia/CMakeLists.txt	2026-03-23 12:48:56.255405788 +0000
+@@ -189,6 +189,7 @@
+     src/core/SkPath.cpp
+     src/core/SkPathBuilder.cpp
+     src/core/SkPathData.cpp
++    src/core/SkPathDump.cpp
+     src/core/SkPathEffect.cpp
+     src/core/SkPathIter.cpp
+     src/core/SkPathMeasure.cpp
+--- webkit/Source/cmake/OptionsGTK.cmake.~1~	2024-07-24 18:47:18.000000000 +0000
++++ webkit/Source/cmake/OptionsGTK.cmake	2024-07-24 19:05:15.819249087 +0000
+@@ -135,7 +135,7 @@
+ WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSPROF_CAPTURE PRIVATE ON)
+ 
+ if (CMAKE_CXX_BYTE_ORDER STREQUAL "LITTLE_ENDIAN")
+-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PRIVATE ON)
++    WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PUBLIC ON)
+ else ()
+     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SKIA PRIVATE OFF)
+ endif ()
+--- webkit/Source/WebKit/UIProcess/API/glib/WebKitWebContext.cpp~	2024-05-24 12:45:41.000000000 +0000
++++ webkit/Source/WebKit/UIProcess/API/glib/WebKitWebContext.cpp	2024-05-24 14:07:45.259997353 +0000
+@@ -586,7 +586,7 @@
+         g_param_spec_boolean(
+             "use-system-appearance-for-scrollbars",
+             nullptr, nullptr,
+-            FALSE,
++            USE_CAIRO,
+             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_DEPRECATED));
+ #endif
+ 
