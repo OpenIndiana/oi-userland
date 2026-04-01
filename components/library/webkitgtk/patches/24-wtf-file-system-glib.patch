@@ -1,9 +1,16 @@
-Fix the non-Linux case so it at least compiles.
-
---- webkitgtk-2.48.1/Source/WTF/wtf/glib/FileSystemGlib.cpp.orig
-+++ webkitgtk-2.48.1/Source/WTF/wtf/glib/FileSystemGlib.cpp
-@@ -82,7 +82,9 @@
+--- webkitgtk-2.52.0/Source/WTF/wtf/glib/FileSystemGlib.cpp.~1~	2026-01-23 03:35:24.965636000 -0500
++++ webkitgtk-2.52.0/Source/WTF/wtf/glib/FileSystemGlib.cpp	2026-03-24 15:08:53.129922650 -0400
+@@ -93,10 +93,18 @@
+ CString currentExecutablePath()
+ {
+     static char readLinkBuffer[PATH_MAX];
++#if OS(SOLARIS)
++    static char path[PATH_MAX];
++    sprintf(path, "/proc/%ld/path/a.out", static_cast<long>(getpid()));
++    ssize_t result = readlink(path, readLinkBuffer, PATH_MAX);
++#else
      ssize_t result = readlink("/proc/curproc/file", readLinkBuffer, PATH_MAX);
++#endif
      if (result == -1)
          return { };
 -    return CString(readLinkBuffer, result);

@@ -1,0 +1,38 @@
+On Solaris, after browser exit, we often find one or more orphaned
+WebKitWebProcess processes that have been reparented by init.  All are
+in the SIGSTOP state.
+
+Theoretically, at time of parent exit, Solaris sends a SIGHUP to the
+children, but apparently, it is being ignored by WebKitWebProcess when
+it is stopped.
+
+This patch prevents the web process cache from stopping these processes.
+On Solaris, WebKitWebProcess then terminates when the parent exits.
+
+Ideally, we would find a way to handle this better on Solaris, but for now,
+this is preferred to the accumulation of stopped WebProcess workers.
+
+See:
+    https://bugs.webkit.org/show_bug.cgi?id=236971
+    https://bugs.webkit.org/show_bug.cgi?id=239298
+
+--- a/Source/WebKit/UIProcess/glib/WebProcessProxyGLib.cpp	2022-06-04 19:13:27.000000000 +0000
++++ b/Source/WebKit/UIProcess/glib/WebProcessProxyGLib.cpp	2022-06-10 19:10:37.304290885 +0000
+@@ -69,6 +69,10 @@
+     sendMessageToWebContextWithReply(WTFMove(message), [](UserMessage&&) { });
+ }
+ 
++#if OS(SOLARIS)
++void WebProcessProxy::platformSuspendProcess() {}
++void WebProcessProxy::platformResumeProcess() {}
++#else
+ void WebProcessProxy::platformSuspendProcess()
+ {
+     auto id = processIdentifier();
+@@ -88,5 +92,6 @@
+     RELEASE_LOG(Process, "%p - [PID=%i] WebProcessProxy::platformResumeProcess", this, id);
+     kill(id, SIGCONT);
+ }
++#endif 
+ 
+ } // namespace WebKit
