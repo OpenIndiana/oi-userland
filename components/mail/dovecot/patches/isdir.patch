@@ -1,0 +1,32 @@
+--- dovecot-2.4.3/src/plugins/fts-flatcurve/fts-backend-flatcurve-xapian.cc	2026-03-25 13:35:43.000000000 +0100
++++ dovecot-2.4.3/src/plugins/fts-flatcurve/fts-backend-flatcurve-xapian.cc.orig	2026-03-31 18:35:33.279717982 +0200
+@@ -1046,6 +1046,9 @@
+ 	bool valid = FALSE;
+ 	do {
+ 		errno = 0;
++		size_t len = 0;
++		char   *filename = NULL;
++		struct stat t_statbuf = {};
+ 		struct dirent *entry = readdir(dir);
+ 		if (errno != 0) {
+ 			*error_r = t_strdup_printf("readdir(%s) failed: %m", path);
+@@ -1057,9 +1060,18 @@
+ 		if (entry == NULL)
+ 			break;
+ 
+-		valid = (entry->d_type & DT_DIR) != 0 &&
++		len = strlen(path) + strlen(entry->d_name) + 2;
++               if ((filename = (char *) malloc(sizeof (char) * len)) == NULL) {
++		    i_error("No memory available for filename string (%s): %m", filename);
++                   exit(ENOMEM);
++               }
++               snprintf(filename, len, "%s/%s", path, entry->d_name);
++               errno = 0;
++               if (lstat(filename, &t_statbuf) == 0) {
++		    valid = S_ISDIR(t_statbuf.st_mode) &&
+ 			(str_begins_with(entry->d_name, FLATCURVE_XAPIAN_DB_CURRENT_PREFIX) ||
+ 			 str_begins_with(entry->d_name, FLATCURVE_XAPIAN_DB_PREFIX));
++               }
+ 	}
+ 	while (!valid);
+ 
