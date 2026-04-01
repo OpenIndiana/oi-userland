@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
 COMPONENT_VERSION=      2.4.3
+COMPONENT_REVISION=     1
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -57,12 +58,17 @@ CONFIGURE_OPTIONS += --with-pgsql
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += LDAP_LIBS="-lldap_r"
-CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/openldap"
-CONFIGURE_OPTIONS += CFLAGS="-Wno-incompatible-pointer-types -Dsun -D__EXTENSIONS__ -DHAVE___GSS_USEROK -DHAVE_GSSAPI_GSSAPI_EXT_H"
+CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/kerberosv5 -I/usr/include/openldap"
+CONFIGURE_OPTIONS += CFLAGS="-Wno-incompatible-pointer-types -D__EXTENSIONS__"
 CONFIGURE_OPTIONS += PGSQL_LIBS="-L$(PG_LIBDIR)"
 CONFIGURE_OPTIONS += PGSQL_CFLAGS="-I$(PG_INCDIR)"
 CONFIGURE_OPTIONS += MARIADB_LIBS="-L$(MYSQL_LIBDIR)"
 CONFIGURE_OPTIONS += MARIADB_CFLAGS="-I$(MYSQL_INCDIR) -lmariadb"
+
+# python interpreter
+COMPONENT_POST_INSTALL_ACTION += \
+        $(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' \
+        $(PROTOUSRLIBDIR)/dovecot/settings-history.py ;
 
 COMPONENT_TEST_ARGS+=   -k
 COMPONENT_TEST_TRANSFORMS = \
@@ -91,5 +97,7 @@ REQUIRED_PACKAGES += library/security/libsodium
 REQUIRED_PACKAGES += library/xapian
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += runtime/lua-54
+REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
