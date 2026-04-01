@@ -9,14 +9,13 @@
 #
 
 #
-# Copyright 2023 Friedrich Kink
+# Copyright 2023-2026 Friedrich Kink
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pigeonhole
-COMPONENT_VERSION=      0.5.21.1
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      2.4.3
 COMPONENT_SUMMARY=      Sieve Support for Dovecot
 COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin for \
 			Dovecot's Local Delivery Agent (LDA) and also for its LMTP \
@@ -29,11 +28,11 @@ COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin
 COMPONENT_PROJECT_URL=  https://dovecot.org/
 COMPONENT_FMRI=         mail/dovecot/pigeonhole
 COMPONENT_CLASSIFICATION=Applications/Internet
-COMPONENT_SRC=          dovecot-2.3-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=          dovecot-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_SIG_URL=	https://pigeonhole.dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE).sig
-COMPONENT_ARCHIVE_URL=  https://pigeonhole.dovecot.org/releases/2.3/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:0377db284b620723de060431115fb2e7791e1df4321411af718201d6925c4692
+#COMPONENT_SIG_URL=	https://pigeonhole.dovecot.org/releases/2.4/$(COMPONENT_ARCHIVE).sig
+COMPONENT_ARCHIVE_URL=  https://pigeonhole.dovecot.org/releases/2.4/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:219c472a5fa3e6f7a6cb76ff5118bcbead73e14cd4157d3701425245756cb5f8
 COMPONENT_LICENSE=      MIT,LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
@@ -42,7 +41,7 @@ include $(WS_MAKE_RULES)/common.mk
 CONFIGURE_ENV+=		PANDOC=false
 CONFIGURE_ENV+=		CPPFLAGS=-I/usr/include/openldap
 
-PATH=$(PATH.gnu):/usr/mariadb/10.3/bin
+PATH=$(PATH.gnu):/usr/mariadb/11.4/bin
 
 CONFIGURE_OPTIONS+= --sysconfdir=/etc \
 		    --libexecdir=/usr/lib \
@@ -50,6 +49,7 @@ CONFIGURE_OPTIONS+= --sysconfdir=/etc \
 		    --enable-static=no \
 		    --with-dovecot=/usr/lib/$(MACH64)/dovecot \
 		    --with-dovecot-install-dirs \
+		    CFLAGS="-D__XOPEN_OR_POSIX -D__EXTENSIONS__" \
 		    LDFLAGS="-Wl,-rpath=/usr/lib/$(MACH64)/dovecot -lldap_r"
 
 COMPONENT_TEST_TRANSFORMS = \
@@ -57,6 +57,9 @@ COMPONENT_TEST_TRANSFORMS = \
         '-e "/: ok$$/p" ' \
         '-e "/tests failed$$/p" ' \
         '-e "/: FAILED$$/p" '
+
+# manually added dependencies
+REQUIRED_PACKAGES += developer/debug/valgrind
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/openldap
