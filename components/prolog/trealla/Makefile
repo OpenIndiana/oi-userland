@@ -17,18 +17,20 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
-COMPONENT_VERSION= 2.92.7
+COMPONENT_VERSION= 2.92.11
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://trealla-prolog.github.io/trealla
 COMPONENT_ARCHIVE_URL= https://github.com/trealla-prolog/trealla/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b858844d11e6d8a48c409550183de5092d0ae3f1f518e66ddb90b1043c6afa31
+COMPONENT_ARCHIVE_HASH= sha256:5221eb674014c527f9d1232fd894e20cd215e2d21a636fa3357f2fad1c769427
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_FMRI= runtime/$(COMPONENT_NAME)-prolog
 COMPONENT_LICENSE= MIT
 
 include $(WS_MAKE_RULES)/common.mk
+
+PATH= $(PATH.gnu)
 
 COMPONENT_PRE_BUILD_ACTION += $(GSED) -i -e 's|MACH64|$(MACH64)|' $(COMPONENT_SRC)/Makefile
 
@@ -42,8 +44,9 @@ COMPONENT_POST_INSTALL_ACTION += ( \
 	$(CP) $(SOURCE_DIR)/samples/* $(PROTOUSRSHAREDIR)/trealla/docs/samples/ ; \
 	$(CP) $(SOURCE_DIR)/README.md $(PROTOUSRSHAREDIR)/trealla/docs/ ; ) ;
 
+COMPONENT_TEST_TARGETS = test
+
 # Manually added dependencies
-TEST_REQUIRED_PACKAGES += developer/debug/valgrind
 # xxd is being used
 REQUIRED_PACKAGES += editor/vim
 
