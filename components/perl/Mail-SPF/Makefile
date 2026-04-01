@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-SPF
-HUMAN_VERSION =			3.20250505
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.20260331
 COMPONENT_SUMMARY =		An object-oriented implementation of Sender Policy Framework
-COMPONENT_CPAN_AUTHOR =		ADAVIS
+COMPONENT_CPAN_AUTHOR =		MBRADSHAW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ac60d00b957e849bafe90a8defdeee2e5ffab1c87ac5a4abc452875e9904863
+	sha256:e0715c109280ec39a39833d021b738c7a7c8d263519c48b4aeb4e88098546421
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,14 +34,14 @@ GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfd
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v spfquery
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/error
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/getopt-long
-PERL_REQUIRED_PACKAGES += library/perl-5/net-dns
-PERL_REQUIRED_PACKAGES += library/perl-5/netaddr-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/error
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
+REQUIRED_PACKAGES.perl += library/perl-5/net-dns
+REQUIRED_PACKAGES.perl += library/perl-5/netaddr-ip
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/net-dns-resolver-programmable
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
