@@ -19,7 +19,7 @@ include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xorg-server
 COMPONENT_VERSION=      1.19.7
-COMPONENT_REVISION=     11
+COMPONENT_REVISION=     12
 COMPONENT_SUMMARY=      Xorg - X11R7 X server
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
@@ -44,6 +44,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D) &&\
 
 # Enabling gcc optimization leads to crashes
 gcc_OPT =
+
+# Make gcc-14 happy
+CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=implicit-function-declaration
 
 CPPFLAGS += -DSUNSOFT -DTSOL
 CPPFLAGS += -I$(USRINCDIR)/pixman-1
@@ -70,6 +74,7 @@ LDFLAGS += -L$(X11_SERVERLIBS_DIR) -R$(X11_SERVERLIBS_DIR)
 
 CONFIGURE_SCRIPT = $(@D)/configure
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --bindir=$(USRBINDIR)
 CONFIGURE_OPTIONS += --disable-install-setuid
 CONFIGURE_OPTIONS += --disable-static
