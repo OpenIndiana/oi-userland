@@ -18,18 +18,16 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= xtrans
-COMPONENT_VERSION= 1.5.2
+COMPONENT_VERSION= 1.6.0
 COMPONENT_SUMMARY= xtrans - X network protocol transport layer development files
 COMPONENT_FMRI=    x11/library/$(COMPONENT_NAME)
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:5c5cbfe34764a9131d048f03c31c19e57fb4c682d67713eab6a65541b4dff86c
+COMPONENT_ARCHIVE_HASH= sha256:faafea166bf2451a173d9d593352940ec6404145c5d1da5c213423ce4d359e92
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
 PATH = $(PATH.gnu)
-
-CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)
 
 COMPONENT_INSTALL_ARGS += pkgconfigdir=/usr/share/pkgconfig
 
