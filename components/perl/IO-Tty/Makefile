@@ -19,14 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Tty
-HUMAN_VERSION =			1.24
+HUMAN_VERSION =			1.25
 COMPONENT_SUMMARY =		Pseudo ttys and constants
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6f1e264e5002699fbb931e48a9e67cd539b8da25e42e4d9483f58fa85b1d8744
+	sha256:e425dd6ec503d1225581085b45a775396d0b221a0ad43647f04f7a10e1f59daf
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
+
+# This line varies between test runs
+COMPONENT_TEST_TRANSFORMS += '-e "/^trying to open \/dev\/pts\//d"'
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
