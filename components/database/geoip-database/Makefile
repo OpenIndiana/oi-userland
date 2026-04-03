@@ -18,7 +18,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= geoip-database
-COMPONENT_VERSION= 20250914
+COMPONENT_VERSION= 20260329
 COMPONENT_SUMMARY= GeoLite geolocation databases compiled by MaxMind
 COMPONENT_PROJECT_URL= https://mailfud.org/geoip-legacy
 COMPONENT_FMRI= database/$(COMPONENT_NAME)
