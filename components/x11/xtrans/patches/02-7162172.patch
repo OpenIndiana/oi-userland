@@ -1,15 +1,24 @@
---- xtrans-1.5.0/Xtranssock.c.orig	2023-06-03 02:34:28.000000000 +0200
-+++ xtrans-1.5.0/Xtranssock.c	2023-06-22 07:00:27.362261937 +0200
-@@ -1636,7 +1636,7 @@
+From 76e51a6343000165747b39228c0070bbbfa346ba Mon Sep 17 00:00:00 2001
+From: Arvind Umrao <arvind.umrao@oracle.com>
+Date: Tue, 8 May 2012 11:58:06 +0530
+Subject: [PATCH] 7162172
+
+---
+ Xtranssock.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+--- xtrans-1.6.0/Xtranssock.c.orig
++++ xtrans-1.6.0/Xtranssock.c
+@@ -1653,7 +1653,7 @@
  	 * only affect one of a set of addresses.
  	 */
  
 -	if (olderrno == ECONNREFUSED || olderrno == EINTR
-+	if (olderrno == ECONNREFUSED 
- #if defined(IPv6) && defined(AF_INET6)
++	if (olderrno == ECONNREFUSED
+ #ifdef HAVE_GETADDRINFO
  	  || (((addrlist->addr->ai_next != NULL) ||
  	        (addrlist->addr != addrlist->firstaddr)) &&
-@@ -1649,7 +1649,7 @@
+@@ -1666,7 +1666,7 @@
  #endif
  	    )
  	    res = TRANS_TRY_CONNECT_AGAIN;
@@ -18,7 +27,7 @@
  	    res = TRANS_IN_PROGRESS;
  	else
  	{
-@@ -1922,7 +1922,7 @@
+@@ -1941,7 +1941,7 @@
  	    if (olderrno == EWOULDBLOCK || olderrno == EINPROGRESS)
  		return TRANS_IN_PROGRESS;
  	    else if (olderrno == EINTR)

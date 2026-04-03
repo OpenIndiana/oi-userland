@@ -28,11 +28,9 @@ zones from the global zone. A link is created from /tmp/.X11-unix
 to the above loopback mounted dir.
 (See LSARC/2008/506)
 
-diff --git a/Xtranssock.c b/Xtranssock.c
-index 8c11b9d..8428314 100644
---- a/Xtranssock.c
-+++ b/Xtranssock.c
-@@ -95,6 +95,9 @@ from the copyright holders.
+--- xtrans-1.6.0/Xtranssock.c.orig
++++ xtrans-1.6.0/Xtranssock.c
+@@ -95,6 +95,9 @@
  #include <sys/stat.h>
  #endif
  
@@ -42,7 +40,7 @@ index 8c11b9d..8428314 100644
  
  #ifndef NO_TCP_H
  #if defined(linux) || defined(__GLIBC__)
-@@ -213,6 +216,7 @@ static int TRANS(SocketINETClose) (XtransConnInfo ciptr);
+@@ -238,6 +241,7 @@
  #if defined(X11_t)
  #define UNIX_PATH "/tmp/.X11-unix/X"
  #define UNIX_DIR "/tmp/.X11-unix"
@@ -50,7 +48,7 @@ index 8c11b9d..8428314 100644
  #endif /* X11_t */
  #if defined(XIM_t)
  #define UNIX_PATH "/tmp/.XIM-unix/XIM"
-@@ -1086,6 +1090,29 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, char *port,
+@@ -995,6 +999,29 @@
  #else
      mode = 0777;
  #endif
@@ -80,7 +78,7 @@ index 8c11b9d..8428314 100644
      if (!abstract && trans_mkdir(UNIX_DIR, mode) == -1) {
  	prmsg (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
  	       UNIX_DIR, errno);
-@@ -1967,6 +1994,24 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr, char *host, char *port)
+@@ -1887,6 +1914,24 @@
  	return TRANS_CONNECT_FAILED;
      }
  
