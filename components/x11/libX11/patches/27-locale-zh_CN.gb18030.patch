@@ -21,30 +21,26 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
-diff --git a/nls/zh_CN.gb18030/XI18N_OBJS b/nls/zh_CN.gb18030/XI18N_OBJS
-index a92b403..0a5a137 100644
---- a/nls/zh_CN.gb18030/XI18N_OBJS
-+++ b/nls/zh_CN.gb18030/XI18N_OBJS
+--- libX11-1.8.13/nls/zh_CN.gb18030/XI18N_OBJS.orig	2026-02-07 23:26:26.000000000 +0100
++++ libX11-1.8.13/nls/zh_CN.gb18030/XI18N_OBJS	2026-04-04 15:57:44.890844814 +0200
 @@ -2,6 +2,6 @@
  #
  #	XI18N objects table for zh_CN.gb18030 locale
  #
 -XLC	common/xlcUTF8Load	_XlcUtf8Loader	# XLC_open
-+XLC	common/xlcGB18030	_XlcGb18030Loader	# XLC_open
++common/xlcGB18030   _XlcGb18030Loader   # XLC_open
  XIM	common/ximcp	_XimOpenIM _XimRegisterIMInstantiateCallback  _XimUnRegisterIMInstantiateCallback # XIM_open	XIM_register XIM_unregister
  XOM	common/xomGeneric 	_XomGenericOpenOM	# XOM_open
-diff --git a/nls/zh_CN.gb18030/XLC_LOCALE.pre b/nls/zh_CN.gb18030/XLC_LOCALE.pre
-index f9544c7..8950080 100644
---- a/nls/zh_CN.gb18030/XLC_LOCALE.pre
-+++ b/nls/zh_CN.gb18030/XLC_LOCALE.pre
-@@ -1,70 +1,51 @@
+--- libX11-1.8.13/nls/zh_CN.gb18030/XLC_LOCALE.pre.orig	2026-02-07 23:26:26.000000000 +0100
++++ libX11-1.8.13/nls/zh_CN.gb18030/XLC_LOCALE.pre	2026-04-04 15:57:44.890908561 +0200
+@@ -1,70 +1,52 @@
  XCOMM     XFree86 NLS for Chinese encoding GB18030
 -XCOMM		Modified from xc/nls/XLC_LOCALE/en_US.UTF-8
 -XCOMM    	by James Su <suzhe@turbolinux.com.cn>
  
- XCOMM 
+ XCOMM
  XCOMM 	XLC_FONTSET category
- XCOMM 
+ XCOMM
  XLC_FONTSET
  
 -on_demand_loading	True
@@ -62,46 +58,47 @@ index f9544c7..8950080 100644
 -		primary	ISO8859-1:GL
 -		vertical_rotate	all
 -	}
-+	charset		ISO8859-1:GL
-+	font		GBK1988.1989-0:GL;ISO8859-1:GL
++	charset     ISO8859-1:GL                                                                                                         
++    font        GBK1988.1989-0:GL;ISO8859-1:GL
  }
--
+ 
 -XCOMM	fs1 class (ISO8859 families)
-+XCOMM 	fs1 class
++XCOMM	fs1 class
  fs1	{
 -	charset	{
 -		name	ISO8859-1:GR
 -	}
 -	font	{
 -		primary	ISO8859-1:GR
-+	charset		GB18030.2000-0:GLGR
-+	font {
-+		primary GB18030.2000-0:GLGR,[\x8140,\xA0FE]
-+		supplement sunudczh.GB18030.2000-0:GLGR,[\xA140,\xA1A0]->\x2121,\
-+					    [\xA240,\xA2A0]->\x2221,\
-+					    [\xA340,\xA3A0]->\x2321,\
-+					    [\xA440,\xA4A0]->\x2421,\
-+					    [\xA540,\xA5A0]->\x2521,\
-+					    [\xA640,\xA6A0]->\x2621,\
-+					    [\xA740,\xA7A0]->\x2721,\
-+					    [\xAAA1,\xAAFE]->\x2821,\
-+					    [\xABA1,\xABFE]->\x2921,\
-+					    [\xACA1,\xACFE]->\x2A21,\
-+					    [\xADA1,\xADFE]->\x2B21,\
-+					    [\xAEA1,\xAEFE]->\x2C21,\
-+					    [\xAFA1,\xAFFE]->\x2D21,\
-+					    [\xF8A1,\xF8FE]->\x2E21,\
-+					    [\xF9A1,\xF9FE]->\x2F21,\
-+					    [\xFAA1,\xFAFE]->\x3021,\
-+					    [\xFBA1,\xFBFE]->\x3121,\
-+					    [\xFCA1,\xFCFE]->\x3221,\
-+					    [\xFDA1,\xFDFE]->\x3321,\
-+					    [\xFEA1,\xFEFE]->\x3421
- 	}
+-	}
++	charset     GB18030.2000-0:GLGR
++    font {
++       primary GB18030.2000-0:GLGR,[\x8140,\xA0FE]
++       supplement sunudczh.GB18030.2000-0:GLGR,[\xA140,\xA1A0]->\x2121,\
++                       [\xA240,\xA2A0]->\x2221,\
++                       [\xA340,\xA3A0]->\x2321,\
++                       [\xA440,\xA4A0]->\x2421,\
++                       [\xA540,\xA5A0]->\x2521,\
++                       [\xA640,\xA6A0]->\x2621,\
++                       [\xA740,\xA7A0]->\x2721,\
++                       [\xAAA1,\xAAFE]->\x2821,\
++                       [\xABA1,\xABFE]->\x2921,\
++                       [\xACA1,\xACFE]->\x2A21,\
++                       [\xADA1,\xADFE]->\x2B21,\
++                       [\xAEA1,\xAEFE]->\x2C21,\
++                       [\xAFA1,\xAFFE]->\x2D21,\
++                       [\xF8A1,\xF8FE]->\x2E21,\
++                       [\xF9A1,\xF9FE]->\x2F21,\
++                       [\xFAA1,\xFAFE]->\x3021,\
++                       [\xFBA1,\xFBFE]->\x3121,\
++                       [\xFCA1,\xFCFE]->\x3221,\
++                       [\xFDA1,\xFDFE]->\x3321,\
++                       [\xFEA1,\xFEFE]->\x3421
++    }
  }
  
 -XCOMM	fs2 class (Chinese Han Character)
-+XCOMM 	fs2 class
++XCOMM	fs2 class
  fs2	{
 -	charset	{
 -		name	GB2312.1980-0:GL
@@ -109,8 +106,10 @@ index f9544c7..8950080 100644
 -	font	{
 -		primary	GB2312.1980-0:GL
 -	}
--}
--
++    charset     GB18030.2000-1:GLGR                                                                                                  
++    font        GB18030.2000-1:GLGR
+ }
+ 
 -XCOMM	fs3 class (Chinese Han Character GBK)
 -fs3	{
 -	charset	{
@@ -120,10 +119,8 @@ index f9544c7..8950080 100644
 -		primary GBK-0:GLGR
 -		substitute GB13000.1993-1:GLGR
 -	}
-+	charset		GB18030.2000-1:GLGR
-+	font 		GB18030.2000-1:GLGR
- }
- 
+-}
+-
 -XCOMM	fs4 class
 -fs4	{
 -	charset	{
@@ -136,14 +133,13 @@ index f9544c7..8950080 100644
 -}
  END XLC_FONTSET
  
- XCOMM 
-@@ -75,32 +56,33 @@ XLC_XLOCALE
+ XCOMM
+@@ -75,32 +57,23 @@
  encoding_name		GB18030
  mb_cur_max		4
  state_depend_encoding	False
-+wc_encoding_mask	\x00000000
-+wc_shift_bits		7
-+
++wc_encoding_mask   \x00000000                                                                                                       
++wc_shift_bits      7
  
  XCOMM	cs0 class
  cs0	{
@@ -152,8 +148,8 @@ index f9544c7..8950080 100644
 -	ct_encoding	ISO8859-1:GL
 +	side		GLGR:Default
 +	length		2
-+	wc_encoding	\x00000000
-+	ct_encoding	GB18030.2000-0:GLGR
++	wc_encoding \x00000000                                                                                                           
++    ct_encoding GB18030.2000-0:GLGR
  }
  
  XCOMM	cs1 class
@@ -161,16 +157,10 @@ index f9544c7..8950080 100644
 -	side            GR:Default
 -	length          1
 -	ct_encoding     ISO8859-1:GR
-+	side		GLGR:Default
-+	length		2
-+	mb_encoding	\x81\x30\x81\x30
-+	wc_encoding	\x00005e84
-+	ct_encoding	GB18030.2000-1:GLGR
- }
-- 
-+
- XCOMM	cs2 class
- cs2	{
+-}
+-
+-XCOMM	cs2 class
+-cs2	{
 -	side            GR
 -	length          2
 -	ct_encoding     GB2312.1980-0:GL; GB2312.1980-0:GR
@@ -180,10 +170,10 @@ index f9544c7..8950080 100644
 -cs3	{
 -	side		none
 -	ct_encoding	ISO10646-1
-+	side		GL:Default
-+	length		1
-+	wc_encoding	\x00000000
-+	ct_encoding	ISO8859-1:GL
++    side        GL:Default                                                                                                           
++    length      1                                                                                                                    
++    wc_encoding \x00000000                                                                                                           
++    ct_encoding ISO8859-1:GL
  }
  
  END XLC_XLOCALE
