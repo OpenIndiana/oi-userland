@@ -19,13 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IPC-Run
-HUMAN_VERSION =			20260322.0
+HUMAN_VERSION =			20260402.0
 COMPONENT_SUMMARY =		system() and background procs w/ piping, redirs, ptys (Unix, Win32)
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:532f580ab598621eb385311c7cef540e72a52ab2f061c2177735823be832aeff
-COMPONENT_LICENSE =		GPL-2.0-only
-COMPONENT_LICENSE_FILE =	LICENSE
+	sha256:d6a326a8b1ffb19495dea4ff5a09ef138bf3562ab1b069d3fb7efbc77b9f6aca
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
