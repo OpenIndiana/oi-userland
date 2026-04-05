@@ -20,12 +20,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL3
-COMPONENT_VERSION=	3.4.2
+COMPONENT_VERSION=	3.4.4
 COMPONENT_SUMMARY=	Simple DirectMedia Layer is a cross-platform library to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware
 COMPONENT_PROJECT_URL=	https://www.libsdl.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ef39a2e3f9a8a78296c40da701967dd1b0d0d6e267e483863ce70f8a03b4050c
+COMPONENT_ARCHIVE_HASH=	sha256:ee712dbe6a89bb140bbfc2ce72358fb5ee5cc2240abeabd54855012db30b3864
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/release/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =	library/sdl3
 COMPONENT_CLASSIFICATION =	System/Libraries
