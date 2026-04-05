@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
 COMPONENT_VERSION=      2.4.3
-COMPONENT_REVISION=     1
+COMPONENT_REVISION=     2
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -42,6 +42,8 @@ CONFIGURE_ENV += CPPFLAGS="-I$(OPENSSL_INCDIR)"
 
 PATH = $(PATH.gnu):$(MYSQL_BINDIR)
 
+COMPONENT_POST_CONFIGURE_ACTION = ( $(GSED) -i -e 's|^\#IMAP_HIBERNATE|IMAP_HIBERNATE|' $(@D)/src/Makefile )
+
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
@@ -53,22 +55,28 @@ CONFIGURE_OPTIONS += --with-ioloop=poll
 CONFIGURE_OPTIONS += --with-notify=none
 CONFIGURE_OPTIONS += --with-sodium
 CONFIGURE_OPTIONS += --with-ssldir=$(OPENSSL_PREFIX)
+CONFIGURE_OPTIONS += --with-sql=plugin
 CONFIGURE_OPTIONS += --with-mysql
 CONFIGURE_OPTIONS += --with-pgsql
+CONFIGURE_OPTIONS += --with-sqlite
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += LDAP_LIBS="-lldap_r"
 CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/kerberosv5 -I/usr/include/openldap"
-CONFIGURE_OPTIONS += CFLAGS="-Wno-incompatible-pointer-types -D__EXTENSIONS__"
-CONFIGURE_OPTIONS += PGSQL_LIBS="-L$(PG_LIBDIR)"
+CONFIGURE_OPTIONS += CFLAGS="-Wno-incompatible-pointer-types -D__EXTENSIONS__ -DBUILD_IMAP_HIBERNATE"
+CONFIGURE_OPTIONS += PGSQL_LIBS="-L$(PG_LIBDIR) -lpq"
 CONFIGURE_OPTIONS += PGSQL_CFLAGS="-I$(PG_INCDIR)"
-CONFIGURE_OPTIONS += MARIADB_LIBS="-L$(MYSQL_LIBDIR)"
-CONFIGURE_OPTIONS += MARIADB_CFLAGS="-I$(MYSQL_INCDIR) -lmariadb"
+CONFIGURE_OPTIONS += MARIADB_LIBS="-L$(MYSQL_LIBDIR) -lmariadb"
+CONFIGURE_OPTIONS += MARIADB_CFLAGS="-I$(MYSQL_INCDIR)"
 
 # python interpreter
-COMPONENT_POST_INSTALL_ACTION += \
+COMPONENT_POST_INSTALL_ACTION += ( \
         $(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' \
-        $(PROTOUSRLIBDIR)/dovecot/settings-history.py ;
+        $(PROTOUSRLIBDIR)/dovecot/settings-history.py ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/dovecot/libdriver_mysql.so ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(MYSQL_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/dovecot/libdriver_mysql.so; \
+        /usr/bin/elfedit -e 'dyn:value -s  RUNPATH "$(PG_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/dovecot/libdriver_pgsql.so ; \
+        /usr/bin/elfedit -e 'dyn:value -s  RPATH "$(PG_LIBDIR)"' $(PROTOUSRDIR)/lib/$(MACH64)/dovecot/libdriver_pgsql.so; )
 
 COMPONENT_TEST_ARGS+=   -k
 COMPONENT_TEST_TRANSFORMS = \
@@ -77,18 +85,17 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/tests failed$$/p" ' \
 	'-e "/: FAILED$$/p" '
 
-# manually added dependencies
-REQUIRED_PACKAGES += $(MYSQL_BASEPKG)
-REQUIRED_PACKAGES += $(MYSQL_CLIENT_PKG)
-
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
+REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += library/openldap
