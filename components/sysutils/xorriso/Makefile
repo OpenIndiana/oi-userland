@@ -23,16 +23,16 @@
 # Copyright (c) 2021, Nona Hansel
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         xorriso
-COMPONENT_VERSION=      1.5.7
-COMPONENT_REVISION=     1
+COMPONENT_VERSION=      1.5.8
 COMPONENT_SUMMARY=	command line ISO-9660 and Rock Ridge manipulation tool
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/xorriso/
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0d9cf80df436a16b4c4051fb4893307d109f2394c58fa94138a2270160eaca4d
+COMPONENT_ARCHIVE_HASH= sha256:319e3675cd7d986bf71d36596ca7b03dac172a758462bedcbbd298a7f86f36cc
 COMPONENT_ARCHIVE_URL=  https://www.gnu.org/software/xorriso/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			media/xorriso
 COMPONENT_CLASSIFICATION=	System/Media
