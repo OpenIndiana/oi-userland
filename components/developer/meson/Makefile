@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson
 HUMAN_VERSION =			1.7.2
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY =		A high performance build system
 COMPONENT_PROJECT_URL =		https://mesonbuild.com
 COMPONENT_ARCHIVE_URL =		\
@@ -89,6 +90,6 @@ TEST_REQUIRED_PACKAGES += library/qt5
 TEST_REQUIRED_PACKAGES += library/qt6
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/wheel
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/wheel
+REQUIRED_PACKAGES.python += runtime/python
