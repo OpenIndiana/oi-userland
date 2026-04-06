@@ -28,13 +28,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.10.15
+COMPONENT_VERSION=	1.10.16
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-bin.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:87f48d18ba11c115688c37ef97583ec6ff89ea6033f89d818a67248da4710c4b
+COMPONENT_ARCHIVE_HASH= sha256:9db035edac6bff5451717a358c5d5d5d5c8da6f0d79311498ca89a75ac0dc3d0
 COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org//ant/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
@@ -87,6 +87,6 @@ clean::
 #      $(PROTO_DIR)/usr/share/ant/bin/runant.py
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES.python += runtime/python
