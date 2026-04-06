@@ -17,12 +17,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		SDL3_image
-COMPONENT_VERSION=	3.4.0
+COMPONENT_VERSION=	3.4.2
 COMPONENT_SUMMARY=	Simple DirectMedia Layer - Sample Image Loading Library
 COMPONENT_PROJECT_URL=	https://libsdl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:2ceb75eab4235c2c7e93dafc3ef3268ad368ca5de40892bf8cffdd510f29d9d8
+COMPONENT_ARCHIVE_HASH= sha256:82fdb88cf1a9cbdc1c77797aaa3292e6d22ce12586be718c8ea43530df1536b4
 COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_image/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	image/library/sdl3-image
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
