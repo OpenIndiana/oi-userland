@@ -19,20 +19,19 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Pod-Simple
-HUMAN_VERSION =			3.47
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.48
 COMPONENT_SUMMARY =		framework for parsing Pod
 COMPONENT_CPAN_AUTHOR =		KHW
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ab3e3845337b78ee14b50fdbc68197c71f5ea66ebdde0870dee4e642c305c514
+	sha256:3297cf3c078de9d8297942423ec6ab59e85e30dfb38b782242699e386727c63a
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/pod-escapes
-PERL_REQUIRED_PACKAGES += library/perl-5/text-tabs+wrap
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/pod-escapes
+REQUIRED_PACKAGES.perl += library/perl-5/text-tabs+wrap
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
