@@ -12,17 +12,18 @@
 # Copyright 2024 Andreas Wacknitz
 #
 
+BUILD_STYLE= cmake
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libde265
-COMPONENT_VERSION=      1.0.16
+COMPONENT_VERSION=      1.0.18
 COMPONENT_SUMMARY=      libde265 is an open source implementation of the h.265 video codec
 COMPONENT_PROJECT_URL=  https://github.com/strukturag/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:b92beb6b53c346db9a8fae968d686ab706240099cdd5aff87777362d668b0de7
+COMPONENT_ARCHIVE_HASH=	sha256:800478f3bf35f0621b14928ceb317579f3e8b23de4bd2aac29b6cb8be962bbd8
 COMPONENT_FMRI=         library/video/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-3
@@ -34,12 +35,11 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += $(XPG6MODE)
 
-CONFIGURE_OPTIONS += --disable-static
-CONFIGURE_OPTIONS += --disable-sherlock265
-CONFIGURE_OPTIONS += --disable-dec265
+CMAKE_OPTIONS += -DCMAKE_INSTALL_PREFIX=/usr
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
+REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math

@@ -1,0 +1,32 @@
+--- libde265-1.0.18/libde265/fallback-motion.cc.orig	2026-03-19 11:38:53.000000000 +0100
++++ libde265-1.0.18/libde265/fallback-motion.cc	2026-04-06 09:24:05.051839128 +0200
+@@ -184,6 +184,7 @@
+ }
+ 
+ #include <stdlib.h>
++#include <alloca.h>
+ 
+ void put_weighted_pred_16_fallback(uint16_t *dst, ptrdiff_t dststride,
+                                    const int16_t *src, ptrdiff_t srcstride,
+--- libde265-1.0.18/libde265/refpic.cc.orig	2026-03-19 11:38:53.000000000 +0100
++++ libde265-1.0.18/libde265/refpic.cc	2026-04-06 09:26:39.600959973 +0200
+@@ -26,7 +26,7 @@
+ #include <stdlib.h>
+ #if defined(_MSC_VER) || defined(__MINGW32__)
+ # include <malloc.h>
+-#elif defined(HAVE_ALLOCA_H)
++#else
+ # include <alloca.h>
+ #endif
+ 
+--- libde265-1.0.18/libde265/pps.cc.orig	2026-03-19 11:38:53.000000000 +0100
++++ libde265-1.0.18/libde265/pps.cc	2026-04-06 09:28:46.783740864 +0200
+@@ -27,7 +27,7 @@
+ #include <string.h>
+ #if defined(_MSC_VER) || defined(__MINGW32__)
+ # include <malloc.h>
+-#elif defined(HAVE_ALLOCA_H)
++#else
+ # include <alloca.h>
+ #endif
+ 
