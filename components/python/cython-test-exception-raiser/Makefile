@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cython_test_exception_raiser
-HUMAN_VERSION =			25.11.1
+HUMAN_VERSION =			26.4.1
 COMPONENT_SUMMARY =		A trivial extension that just raises an exception.
 COMPONENT_PROJECT_URL =		https://github.com/twisted/cython-test-exception-raiser
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c17bd58bf8ee754f17eafdf38bc9e70b595f33b76c356d93f7f6a6240caa4ee5
+	sha256:42299b93c72e8be9dbb66ea193a0ce6fbd996af0ca39bc073915e2ca4222254d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
