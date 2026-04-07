@@ -1,0 +1,33 @@
+--- solvespace-3.2/src/graphicswin.cpp.old	2026-04-06 16:11:47.759271947 -0400
++++ solvespace-3.2/src/graphicswin.cpp	2026-04-06 16:12:06.208287359 -0400
+@@ -474,7 +474,7 @@
+         Vector normal      = normalRight.Cross(normalUp);
+         if(normalRight.z != 0) {
+             double theta = atan2(normalUp.z, normalRight.z);
+-            theta -= atan2(1, 0);
++            theta -= atan2(1., 0.);
+             normalRight = normalRight.RotatedAbout(normal, theta);
+             normalUp    = normalUp.RotatedAbout(normal, theta);
+             quatf       = Quaternion::From(normalRight, normalUp);
+--- solvespace-3.2/src/solvespace.cpp.old	2026-04-06 16:18:11.713769454 -0400
++++ solvespace-3.2/src/solvespace.cpp	2026-04-06 16:18:33.437743399 -0400
+@@ -398,7 +398,7 @@
+     }
+ 
+     int digits = UnitDigitsAfterDecimal();
+-    double minimum = 0.5 * pow(10,-digits);
++    double minimum = 0.5 * pow(10.,-digits);
+     while ((v < minimum) && (v > LENGTH_EPS)) {
+         digits++;
+         minimum *= 0.1;
+--- solvespace-3.2/test/harness.cpp.old	2026-04-06 16:24:03.446524574 -0400
++++ solvespace-3.2/test/harness.cpp	2026-04-06 16:24:23.566006265 -0400
+@@ -95,7 +95,7 @@
+ // to get rid of irrelevant differences in LSB.
+ static std::string PrepareSavefile(std::string data) {
+     // Round everything to 2**30 ~ 1e9
+-    const double precision = pow(2, 30);
++    const double precision = pow(2., 30.);
+ 
+     size_t lineBegin = 0;
+     while(lineBegin < data.length()) {
