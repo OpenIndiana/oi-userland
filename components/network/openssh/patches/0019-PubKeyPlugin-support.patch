@@ -7,9 +7,8 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 
-diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
---- openssh-10.2p1/auth2-pubkey.c	1970-01-01 00:00:00
-+++ openssh-10.2p1/auth2-pubkey.c	1970-01-01 00:00:00
+--- openssh-10.3p1/auth2-pubkey.c.orig
++++ openssh-10.3p1/auth2-pubkey.c
 @@ -23,6 +23,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -22,15 +21,13 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  
  #include "includes.h"
  
-@@ -39,6 +44,7 @@
+@@ -40,11 +45,13 @@
  #include <time.h>
  #include <unistd.h>
  #include <limits.h>
 +#include <dlfcn.h>
- #ifdef USE_SYSTEM_GLOB
- # include <glob.h>
- #else
-@@ -49,6 +55,7 @@
+ 
+ #include "xmalloc.h"
  #include "ssh.h"
  #include "ssh2.h"
  #include "packet.h"
@@ -38,7 +35,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
-@@ -88,6 +95,15 @@ format_key(const struct sshkey *key)
+@@ -84,6 +91,15 @@
  	return ret;
  }
  
@@ -54,7 +51,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -786,6 +802,135 @@ user_key_command_allowed2(struct passwd
+@@ -783,6 +799,135 @@
  	return found_key;
  }
  
@@ -190,7 +187,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -860,6 +1005,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -857,6 +1002,10 @@
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -201,10 +198,9 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
-diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
---- openssh-10.2p1/servconf.c.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/servconf.c	1970-01-01 00:00:00
-@@ -226,6 +226,7 @@ initialize_server_options(ServerOptions
+--- openssh-10.3p1/servconf.c.orig
++++ openssh-10.3p1/servconf.c
+@@ -224,6 +224,7 @@
  	options->sshd_session_path = NULL;
  	options->sshd_auth_path = NULL;
  	options->refuse_connection = -1;
@@ -212,7 +208,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  }
  
  /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -593,6 +594,7 @@ typedef enum {
+@@ -596,6 +597,7 @@
  	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
  	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
  	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
@@ -220,7 +216,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
  	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
  	sStreamLocalBindMask, sStreamLocalBindUnlink,
-@@ -776,6 +778,7 @@ static struct {
+@@ -781,6 +783,7 @@
  	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
  	{ "rdomain", sRDomain, SSHCFG_ALL },
  	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
@@ -228,7 +224,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
  	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
  	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
-@@ -2805,6 +2808,18 @@ process_server_config_line_depth(ServerO
+@@ -2838,6 +2841,18 @@
  		multistate_ptr = multistate_flag;
  		goto parse_multistate;
  
@@ -247,14 +243,13 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
-diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
---- openssh-10.2p1/servconf.h.orig	1970-01-01 00:00:00
-+++ openssh-10.2p1/servconf.h	1970-01-01 00:00:00
-@@ -243,6 +243,7 @@ typedef struct {
+--- openssh-10.3p1/servconf.h.orig
++++ openssh-10.3p1/servconf.h
+@@ -246,6 +246,7 @@
  
  	int	fingerprint_hash;
  	int	expose_userauth_info;
 +	char	*pubkey_plugin;
- 	u_int64_t timing_secret;
+ 	uint64_t timing_secret;
  	char   *sk_provider;
  	int	required_rsa_size;	/* minimum size of RSA keys */
