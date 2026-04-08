@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Image-ExifTool
-HUMAN_VERSION =			13.50
+HUMAN_VERSION =			13.55
 COMPONENT_SUMMARY =		Read and write meta information
 COMPONENT_CPAN_AUTHOR =		EXIFTOOL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27e2d66eb21568cc0d59520f89afcaaa50735e1ad9fa4b36d0a4ccf916c70d31
+	sha256:5f4c81d34ad406538c2871ad72dbfceb5d9b412b2f16cbbeb4d712d270846667
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
