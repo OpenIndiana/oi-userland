@@ -24,17 +24,17 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
+USE_PARALLEL_BUILD= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.23.0
-COMPONENT_REVISION=	4
+COMPONENT_VERSION=	1.24.1
 COMPONENT_SUMMARY=	GNU troff Text Formatting
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:6b9757f592b7518b4902eb6af7e54570bdccba37a871fddb2d30ae3863511c13
+COMPONENT_ARCHIVE_HASH= sha256:74e2819795b6aff431aeac983d63a9c8968eeaba2a2eba7df8ba4c7b41e7cfd8
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/groff
 COMPONENT_CLASSIFICATION=	System/Text Tools
@@ -46,6 +46,7 @@ COMPONENT_SUMMARY.groff-core =	$(COMPONENT_SUMMARY) (core system components)
 
 include $(WS_TOP)/make-rules/common.mk
 
+CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --with-appdefdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 CONFIGURE_OPTIONS += --with-urw-fonts-dir=/usr/share/ghostscript/fonts
@@ -70,7 +71,6 @@ REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += library/uchardet
 REQUIRED_PACKAGES += runtime/perl
-REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
