@@ -24,14 +24,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         joe
-COMPONENT_VERSION=      4.6
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      4.7
 COMPONENT_SUMMARY=		Joe's Own Editor - a full featured terminal-based screen editor
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://joe-editor.sourceforge.net/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:495a0a61f26404070fe8a719d80406dc7f337623788e445b92a9f6de512ab9de
+	sha256:712b23a83a3757a93d2b4a76325b9dabba554c182b209d2675537c272867fcba
 COMPONENT_ARCHIVE_URL=  http://downloads.sourceforge.net/project/joe-editor/JOE%20sources/$(COMPONENT_NAME)-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         editor/joe
 COMPONENT_CLASSIFICATION=System/Text Tools
@@ -42,7 +41,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -Wno-error=incompatible-pointer-types
 
-COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f)
+COMPONENT_PREP_ACTION += ( cd $(@D) && autoreconf -f )
 
 # Joe uses incorrect relative paths
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
