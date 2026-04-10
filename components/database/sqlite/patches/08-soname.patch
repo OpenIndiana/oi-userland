@@ -1,0 +1,23 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/autosetup/proj.tcl a/autosetup/proj.tcl
+--- a~/autosetup/proj.tcl	1970-01-01 00:00:00
++++ a/autosetup/proj.tcl	1970-01-01 00:00:00
+@@ -1199,19 +1199,8 @@ proc proj-check-rpath {} {
+ # name here (which shows up in the "checking..." output).
+ #
+ proc proj-check-soname {{libname "libfoo.so.0"}} {
+-  cc-with {-link 1} {
+-    if {[cc-check-flags "-Wl,-soname,${libname}"]} {
+       define LDFLAGS_SONAME_PREFIX "-Wl,-soname,"
+       return 1
+-    } elseif {[cc-check-flags "-Wl,+h,${libname}"]} {
+-      # HP-UX: https://sqlite.org/forum/forumpost/d80ecdaddd
+-      define LDFLAGS_SONAME_PREFIX "-Wl,+h,"
+-      return 1
+-    } else {
+-      define LDFLAGS_SONAME_PREFIX ""
+-      return 0
+-    }
+-  }
+ }
+ 
+ #
