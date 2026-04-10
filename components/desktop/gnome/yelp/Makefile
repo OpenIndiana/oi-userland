@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         yelp
 COMPONENT_VERSION=      42.2
+COMPONENT_REVISION=		1
 COMPONENT_VERSION_MAJOR=$(word 1,$(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      The GNOME Help Browser
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -61,4 +62,4 @@ REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/man
-REQUIRED_PACKAGES += text/groff/groff-core
+REQUIRED_PACKAGES += text/groff
