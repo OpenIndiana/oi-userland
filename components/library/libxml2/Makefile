@@ -22,7 +22,7 @@
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2013  Erol Zavidic. All rights reserved.
-# Copyright (c) 2022,2026  Friedrich Kink. All rights reserved.
+# Copyright (c) 2022  Friedrich Kink. All rights reserved.
 #
 
 BUILD_BITS= 64_and_32
@@ -30,9 +30,10 @@ USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-HUMAN_VERSION=		2.15.2
+HUMAN_VERSION=		2.13.9
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
-COMPONENT_ARCHIVE_HASH=	sha256:c8b9bc81f8b590c33af8cc6c336dbff2f53409973588a351c95f1c621b13d09d
+COMPONENT_ARCHIVE_HASH=	sha256:a2c9ae7b770da34860050c309f903221c67830c86e4a7e760692b803df95143a
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	MIT
@@ -53,14 +54,11 @@ CFLAGS += $(XPG7MODE)
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --with-docs
+CONFIGURE_OPTIONS += --with-ftp
+CONFIGURE_OPTIONS += --with-xptr-locs
 CONFIGURE_OPTIONS += --with-history
-CONFIGURE_OPTIONS += --with-readline
-CONFIGURE_OPTIONS += --with-icu
-CONFIGURE_OPTIONS += --with-tls
 CONFIGURE_OPTIONS += --with-legacy
 CONFIGURE_OPTIONS.32 += --with-python=no
-CONFIGURE_OPTIONS.64 += --with-python=yes
 
 CONFIGURE_ENV.64     += PYTHON=$(PYTHON)
 CONFIGURE_ENV.64     += am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
@@ -81,8 +79,7 @@ COMPONENT_POST_INSTALL_ACTION.64 = ( \
 );
 
 # It's nice to test also python modules (LC_ALL is set to avoid test failure).
-# Currently python test fails with memory leak error
-#COMPONENT_POST_TEST_ACTION.64 = \
+COMPONENT_POST_TEST_ACTION.64 = \
     cd $(@D)/python; \
     LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) check
 
@@ -96,11 +93,9 @@ COMPONENT_TEST_TRANSFORMS = \
 	'-e "/.*/d" '
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
-REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)/32
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)/32
-REQUIRED_PACKAGES += developer/icu
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
