@@ -1,0 +1,21 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/src/preproc/preconv/preconv.cpp a/src/preproc/preconv/preconv.cpp
+--- a~/src/preproc/preconv/preconv.cpp	1970-01-01 00:00:00
++++ a/src/preproc/preconv/preconv.cpp	1970-01-01 00:00:00
+@@ -702,7 +702,7 @@ conversion_iconv(FILE *fp, const string
+   char *limit;
+   while (inbytes_left > 0) {
+     size_t status = iconv(handle,
+-			  const_cast<ICONV_CONST char **>(&inptr),
++			  (char **)&inptr,
+ 			  &inbytes_left, &outptr, &outbytes_left);
+     if (status == static_cast<size_t>(-1)) {
+       if (EILSEQ == errno) {
+@@ -737,7 +737,7 @@ conversion_iconv(FILE *fp, const string
+     inbytes_left += read_bytes;
+     while (inbytes_left > 0) {
+       size_t status = iconv(handle,
+-			    const_cast<ICONV_CONST char **>(&inptr),
++			    (char **)&inptr,
+ 			    &inbytes_left, &outptr, &outbytes_left);
+       if (status == (size_t)-1) {
+ 	if (EILSEQ == errno) {
