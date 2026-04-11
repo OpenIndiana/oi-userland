@@ -23,8 +23,8 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	147.0.4
-COMPONENT_MINOR_VERSION =	1
+COMPONENT_MAJOR_VERSION =	149.0.2
+COMPONENT_MINOR_VERSION =	2
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY=      LibreWolf Web browser
@@ -32,13 +32,13 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:44f291b45211f50a5accfcd5d2a4a219ff3e4a7ad5e4115201c0a5ed5c80a45e
-#	https://codeberg.org/api/packages/librewolf/generic/librewolf-source/147.0.4-1/librewolf-147.0.4-1.source.tar.gz
-COMPONENT_ARCHIVE_URL =	https://codeberg.org/api/packages/$(COMPONENT_NAME)/generic/$(COMPONENT_NAME)-source/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:4f182ca27f11fd35aa2fb62ca099ff0533bfce2190a719d3b601eab86f7d3317
+# Go to https://codeberg.org/librewolf/-/packages . Click on librewolf-source.  Get URL for source.tar.gz file.
+COMPONENT_ARCHIVE_URL =	https://codeberg.org/$(COMPONENT_NAME)/-/packages/generic/$(COMPONENT_NAME)-source/$(HUMAN_VERSION)/files/8996337
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.91.0
+RUST_VERSION= 1.93.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -136,6 +136,9 @@ ENV += CARGO_HOME=$(CARGO_HOME)
 # This is needed to run bins/libs in .rustup
 ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
+# set custom mozbuild path
+ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
+
 COMPONENT_BUILD_ARGS += $(JOBS:%=-j%)
 
 CONFIGURE_ENV =	$(ENV)
@@ -172,12 +175,13 @@ clean::
 # Build dependencies
 PYTHON_REQUIRED_PACKAGES += runtime/python
 PYTHON_REQUIRED_PACKAGES += library/python/psutil
-REQUIRED_PACKAGES += developer/build/autoconf-213
-REQUIRED_PACKAGES += library/audio/pulseaudio
-REQUIRED_PACKAGES += system/header/header-audio
-REQUIRED_PACKAGES += developer/lang/rustc
 REQUIRED_PACKAGES += database/sqlite-3
+REQUIRED_PACKAGES += developer/build/autoconf-213
+REQUIRED_PACKAGES += developer/lang/rustc
+REQUIRED_PACKAGES += library/audio/pulseaudio
 REQUIRED_PACKAGES += library/http-parser
+REQUIRED_PACKAGES += runtime/nodejs-24
+REQUIRED_PACKAGES += system/header/header-audio
 REQUIRED_PACKAGES += web/browser/lynx
 
 # Auto-generated dependencies
