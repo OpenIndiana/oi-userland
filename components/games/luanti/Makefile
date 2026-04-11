@@ -13,15 +13,16 @@
 #
 
 BUILD_STYLE= cmake
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         luanti
-COMPONENT_VERSION=      5.14.0
+COMPONENT_VERSION=      5.15.1
 COMPONENT_SUMMARY=      Multiplayer infinite-world block sandbox game
 COMPONENT_PROJECT_URL=  https://www.luanti.org
 COMPONENT_SRC=          luanti-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:b9f561fa37db3c7ea1b8ba15cfede8282b7a79b9e939b0357269c8b037cf5aea
+COMPONENT_ARCHIVE_HASH= sha256:fe0b10df866f57c0047d84a4c6f6cd848650f52d9b0cab563fbbedc81632d616
 COMPONENT_ARCHIVE_URL=	https://github.com/luanti-org/luanti/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         games/luanti
 COMPONENT_CLASSIFICATION=	Applications/Games
@@ -47,7 +48,6 @@ REQUIRED_PACKAGES += library/audio/openal
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/jsoncpp
 REQUIRED_PACKAGES += library/libvorbis
-REQUIRED_PACKAGES += library/ncurses
 REQUIRED_PACKAGES += library/sdl2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
