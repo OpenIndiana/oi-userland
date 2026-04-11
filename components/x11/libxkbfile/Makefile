@@ -14,21 +14,20 @@
 #
 
 X11_CATEGORY=LIB
+BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     libxkbfile
-COMPONENT_VERSION=  1.1.3
+COMPONENT_VERSION=  1.2.0
 COMPONENT_SUMMARY=  libxkbfile - XKB file library
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:a9b63eea997abb9ee6a8b4fbb515831c841f471af845a09de443b28003874bec
+COMPONENT_ARCHIVE_HASH= sha256:7f71884e5faf56fb0e823f3848599cf9b5a9afce51c90982baeb64f635233ebf
 COMPONENT_FMRI=     x11/library/libxkbfile
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+= --disable-static
-CONFIGURE_OPTIONS+= --enable-shared
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += x11/library/libx11
