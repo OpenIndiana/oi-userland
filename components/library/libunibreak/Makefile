@@ -18,12 +18,12 @@ BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libunibreak
-COMPONENT_VERSION= 6.1
+COMPONENT_VERSION= 7.0
 COMPONENT_SUMMARY= Implementation of the line and word breaking algorithm for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cc4de0099cf7ff05005ceabff4afed4c582a736abc38033e70fdac86335ce93f
-COMPONENT_ARCHIVE_URL=	https://github.com/adah1972/libunibreak/releases/download/libunibreak_6_1/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:8c9a6e121736cd0d5c890ae3ae96f3f4010a19aa040f1dbded833a62a87717d3
+COMPONENT_ARCHIVE_URL=	https://github.com/adah1972/libunibreak/releases/download/libunibreak_7_0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://vimgadgets.sourceforge.net/libunibreak/
 COMPONENT_FMRI=			library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Libraries
