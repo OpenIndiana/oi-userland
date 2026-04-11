@@ -21,11 +21,9 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
-$(libXmuu_la_SOURCES) removed from libXmu_la_SOURCES to avoid LD multiply defined errors between libs and mapfile
-
---- libXmu-1.2.1/src/Makefile.am.orig
-+++ libXmu-1.2.1/src/Makefile.am
-@@ -9,11 +9,15 @@
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -9,11 +9,17 @@
  
  AM_CFLAGS = $(CWARNFLAGS) $(XMU_CFLAGS)
  
@@ -35,26 +33,25 @@ $(libXmuu_la_SOURCES) removed from libXmu_la_SOURCES to avoid LD multiply define
  libXmuu_la_LDFLAGS = -version-number 1:0:0 -no-undefined
 +libXmuu_la_LDFLAGS += -Wl,-M,../../../mapfile-Xmuu
  
--libXmu_la_LIBADD = $(LTLIBOBJS) $(XMU_LIBS)
--libXmuu_la_LIBADD = $(XMUU_LIBS)
-+EXTRA_libXmu_la_DEPENDENCIES = libXmuu.la
++libXmu_la_DEPENDENCIES = libXmuu.la
 +
-+libXmu_la_LIBADD = $(LTLIBOBJS) $(XMU_LIBS) libXmuu.la -lX11 -lc -lm
-+libXmuu_la_LIBADD = $(XMUU_LIBS) -lc
+ libXmu_la_LIBADD = $(LTLIBOBJS) $(XMU_LIBS)
++libXmu_la_LIBADD += libXmuu.la -lX11 -lc -lm
+ libXmuu_la_LIBADD = $(XMUU_LIBS)
++libXmuu_la_LIBADD += -lc
  
  libXmuu_la_SOURCES = \
  	ClientWin.c \
-@@ -23,7 +27,8 @@
- 	Lower.c
- 
+@@ -25,6 +31,8 @@
  libXmu_la_SOURCES = \
--	$(libXmuu_la_SOURCES) \
+ 	$(libXmuu_la_SOURCES) \
+ 	Xmuint.h \
 +	CmapEquiv.c \
 +	VisGamma.c \
- 	Xmuint.h \
  	AllCmap.c \
  	Atoms.c \
-@@ -79,7 +84,7 @@
+ 	Clip.c \
+@@ -79,7 +87,7 @@
  
  lintlib_DATA = $(LINTLIB) $(LINTLIBUU)
  
@@ -63,3 +60,15 @@ $(libXmuu_la_SOURCES) removed from libXmu_la_SOURCES to avoid LD multiply define
  	$(LINT) -y -oXmu -x $(ALL_LINT_FLAGS) $(libXmu_la_SOURCES)
  
  $(LINTLIBUU): $(libXmuu_la_SOURCES)
+
+Avoid LD multiply defined errors between libs and mapfile
+--- a/src/Makefile.am	2022-11-11 11:40:32.993834806 -0800
++++ b/src/Makefile.am	2022-11-11 11:40:48.942864166 -0800
+@@ -29,7 +29,6 @@
+ 	Lower.c
+ 
+ libXmu_la_SOURCES = \
+-	$(libXmuu_la_SOURCES) \
+ 	Xmuint.h \
+ 	CmapEquiv.c \
+ 	VisGamma.c \
