@@ -27,11 +27,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmodbus
-COMPONENT_VERSION=	3.1.11
+COMPONENT_VERSION=	3.1.12
 COMPONENT_SUMMARY=	Cross-platform library to send/receive data according to the Modbus protocol with RTU (serial) and TCP (Ethernet) communications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:15b4b2e0f68122c2da9b195de5c330489a9c97d40b4a95d2822378dc14d780e7
+COMPONENT_ARCHIVE_HASH=	sha256:2f4d4191cd196c1fba131daec03b621db75129d8255c832fc66b259d9fc46e7b
 COMPONENT_ARCHIVE_URL=	https://github.com/stephane/libmodbus/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://libmodbus.org/
 COMPONENT_FMRI=		library/$(COMPONENT_NAME)
