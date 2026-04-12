@@ -44,6 +44,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3738
+COMPONENT_REVISION=	1
 GIT_TAG=		sun-v5.0.83
 PLUGIN_REV=		7.0-202603081138-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
