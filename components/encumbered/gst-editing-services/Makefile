@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-editing-services
-COMPONENT_VERSION=	1.28.1
+COMPONENT_VERSION=	1.28.2
 COMPONENT_SUMMARY=	Multimedia graph framework - editing services
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:3d6000cbe1356beebe2a573dabd496e92348c30c843ffa13050469ec3da115dc
+COMPONENT_ARCHIVE_HASH=	sha256:ca1236f7e7364fc2734bb204d016bb74c7be9f0fc2a646e78a9449e21bda88fb
 COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
@@ -35,10 +35,12 @@ include $(WS_MAKE_RULES)/encumbered.mk
 include $(WS_MAKE_RULES)/common.mk
 
 # We use python vendor-packages instead of site-packages
-COMPONENT_POST_INSTALL_ACTION += \
+COMPONENT_POST_INSTALL_ACTION += ( \
     cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
     $(RM) -r vendor-packages ; \
-    $(MV) site-packages vendor-packages ;
+    $(MV) site-packages vendor-packages ) ; \
+	$(GSED) -i -e '1 s:\#!/usr/bin/env python[0-9.]*:\#!/usr/bin/python$(PYTHON_VERSION):' \
+	$(PROTOUSRLIBDIR64)/gst-validate-launcher/python/launcher/apps/geslaunch.py ;
 
 # Dynamic library version number
 SOVER := 0.$(shell printf '%02s%02s' $(wordlist 2,3,$(subst ., ,$(COMPONENT_VERSION)))).0
