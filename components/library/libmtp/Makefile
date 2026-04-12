@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmtp
-COMPONENT_VERSION=	1.1.22
+COMPONENT_VERSION=	1.1.23
 COMPONENT_SUMMARY=	libmtp is an Initiator implementation of the Media Transfer Protocol
 COMPONENT_PROJECT_URL=	https://libmtp.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:c3fcf411aea9cb9643590cbc9df99fa5fe30adcac695024442973d76fa5f87bc
+COMPONENT_ARCHIVE_HASH= sha256:74a2b6e8cb4a0304e95b995496ea3ac644c29371649b892b856e22f12a0bdeed
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmtp/files/libmtp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download/
 COMPONENT_FMRI=		library/libmtp
 COMPONENT_CLASSIFICATION=System/Libraries
