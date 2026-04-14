@@ -1,6 +1,6 @@
---- webkitgtk-2.52.0/Source/WTF/wtf/glib/FileSystemGlib.cpp.~1~	2026-01-23 03:35:24.965636000 -0500
-+++ webkitgtk-2.52.0/Source/WTF/wtf/glib/FileSystemGlib.cpp	2026-03-24 15:08:53.129922650 -0400
-@@ -93,10 +93,18 @@
+--- webkitgtk-2.52.2/Source/WTF/wtf/glib/FileSystemGlib.cpp.old
++++ webkitgtk-2.52.2/Source/WTF/wtf/glib/FileSystemGlib.cpp
+@@ -93,7 +93,13 @@
  CString currentExecutablePath()
  {
      static char readLinkBuffer[PATH_MAX];
@@ -13,10 +13,4 @@
 +#endif
      if (result == -1)
          return { };
--    return CString(readLinkBuffer, result);
-+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-+    return CString(std::span { readLinkBuffer, static_cast<size_t>(result) });
-+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
- }
- #elif OS(WINDOWS)
- CString currentExecutablePath()
+     return CString(unsafeMakeSpan(readLinkBuffer, static_cast<size_t>(result)));
