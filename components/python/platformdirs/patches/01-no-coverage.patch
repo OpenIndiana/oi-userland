@@ -1,24 +1,24 @@
 We do not need to check coverage for this project.
 
---- platformdirs-4.9.2/pyproject.toml.orig
-+++ platformdirs-4.9.2/pyproject.toml
+--- platformdirs-4.9.6/pyproject.toml.orig
++++ platformdirs-4.9.6/pyproject.toml
 @@ -61,10 +61,7 @@
  ]
  test = [
    "appdirs==1.4.4",
 -  "covdefaults>=2.3",
 -  "diff-cover>=10.2",
-   "pytest>=8.4.2",
+   "pytest>=9.0.2",
 -  "pytest-cov>=7",
    "pytest-mock>=3.15.1",
  ]
  type = [
---- platformdirs-4.9.2/tox.toml.orig
-+++ platformdirs-4.9.2/tox.toml
+--- platformdirs-4.9.6/tox.toml.orig
++++ platformdirs-4.9.6/tox.toml
 @@ -17,32 +17,9 @@
      "--junitxml",
      "{env_tmp_dir}{/}junit.xml",
-     { replace = "posargs", extend = true, default = [
+     { replace = "posargs", default = [
 -      "--no-cov-on-fail",
 -      "--cov",
 -      "{env_site_packages_dir}{/}platformdirs",
@@ -34,17 +34,17 @@ We do not need to check coverage for this project.
 -      "html:{env_tmp_dir}{/}htmlcov",
 -      "--cov-report",
 -      "xml:{env_tmp_dir}{/}coverage.xml",
-     ] },
+     ], extend = true },
      "tests",
    ],
--  { replace = "posargs", extend = true, default = [
+-  { replace = "posargs", default = [
 -    [
 -      "diff-cover",
 -      "--compare-branch",
 -      { replace = "env", name = "DIFF_AGAINST", default = "origin/main" },
 -      "{env_tmp_dir}{/}coverage.xml",
 -    ],
--  ] },
+-  ], extend = true },
  ]
  
- [env.fix]
+ [env.coverage]

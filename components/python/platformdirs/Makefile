@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		platformdirs
-HUMAN_VERSION =			4.9.2
+HUMAN_VERSION =			4.9.6
 COMPONENT_SUMMARY =		A small Python package for determining appropriate platform-specific dirs, e.g. a \`user data dir\`.
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/platformdirs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a33809944b9db043ad67ca0db94b14bf452cc6aeaac46a88ea55b26e2e9d291
+	sha256:3bfa75b0ad0db84096ae777218481852c0ebc6c727b3168c1b9e0118e458cf0a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
+# - python-discovery (test bootstrap)
 # - tox (test bootstrap)
 # - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
