@@ -40,13 +40,16 @@ include ../../../../make-rules/shared-macros.mk
 
 # there is no official triplet version for opensmalltalk-vm
 # we use 5.0.<n> for VMMaker.oscog-eem.<n> or VMMaker.oscog-mt.<n>
+# we could use 7.0.<n> for the same VMMaker.oscog-eem.<n> because lately the VM version is 7.0
+# but the mvm scripts still use --with-vmversion=5.0 so the numbering scheme makes little sense
+# as said, there is no official triplet version number
 # sometimes the Stack VM is generated from a different VMMaker as the Cog VM
 
 COMPONENT_NAME=		cog-spur
 COMPONENT_VERSION=	5.0.3738
-COMPONENT_REVISION=	1
-GIT_TAG=		sun-v5.0.83
-PLUGIN_REV=		7.0-202603081138-cog
+COMPONENT_REVISION=	2
+GIT_TAG=		202603271636
+PLUGIN_REV=		7.0-202603271636-cog
 COMPONENT_SUMMARY=	The OpenSmalltalk Cog Spur Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_FMRI=		runtime/smalltalk/cog-spur
@@ -60,8 +63,8 @@ COMPONENT_LICENSE_FILE=	squeak5.license
 
 COMPONENT_SRC=		opensmalltalk-vm-$(GIT_TAG)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4ce04528fd5fe78c1e72fac9bc329ba559ec1291d3ee98925fc70c66664f5a88
-COMPONENT_ARCHIVE_URL=	https://codeload.github.com/cstes/opensmalltalk-vm/tar.gz/$(GIT_TAG)
+COMPONENT_ARCHIVE_HASH=	sha256:72ab5bfc1c069a24d065849912c3a7513155cf66e098ca2e467a601f20995f23
+COMPONENT_ARCHIVE_URL=	https://codeload.github.com/opensmalltalk/opensmalltalk-vm/tar.gz/$(GIT_TAG)
 
 # run SUnit tests in the build directories on 32bit and 64bit Squeak images
 # AllocationTest and BitmapStreamTests are currently skipped
