@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs_get_deps
-HUMAN_VERSION =			0.2.0
-COMPONENT_SUMMARY =		mkdocs_get_deps - MkDocs extension that lists all dependencies according to a mkdocs.yml file
+HUMAN_VERSION =			0.2.2
+COMPONENT_SUMMARY =		An extra command for MkDocs that infers required PyPI packages from \`plugins\` in mkdocs.yml
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:162b3d129c7fad9b19abfdcb9c1458a651628e4b1dea628ac68790fb3061c60c
+	sha256:8ee8d5f316cdbbb2834bc1df6e69c08fe769a83e040060de26d3c19fad3599a1
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -31,9 +31,8 @@ TEST_STYLE = pytest
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/mergedeep
-PYTHON_REQUIRED_PACKAGES += library/python/platformdirs
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/platformdirs
+REQUIRED_PACKAGES.python += library/python/pyyaml
+REQUIRED_PACKAGES.python += runtime/python
