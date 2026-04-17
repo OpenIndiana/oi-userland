@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mkdocs
 HUMAN_VERSION =			1.6.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Project documentation with Markdown.
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:7b432f01d928c084353ab39c57282f29f92136665bdd6abf7c1ec8d822ef86f2
@@ -31,19 +32,18 @@ TEST_STYLE = none
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/babel
-PYTHON_REQUIRED_PACKAGES += library/python/click
-PYTHON_REQUIRED_PACKAGES += library/python/ghp-import
-PYTHON_REQUIRED_PACKAGES += library/python/hatchling
-PYTHON_REQUIRED_PACKAGES += library/python/importlib-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/jinja2
-PYTHON_REQUIRED_PACKAGES += library/python/markdown
-PYTHON_REQUIRED_PACKAGES += library/python/markupsafe
-PYTHON_REQUIRED_PACKAGES += library/python/mergedeep
-PYTHON_REQUIRED_PACKAGES += library/python/mkdocs-get-deps
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pathspec
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml
-PYTHON_REQUIRED_PACKAGES += library/python/pyyaml-env-tag
-PYTHON_REQUIRED_PACKAGES += library/python/watchdog
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/babel
+REQUIRED_PACKAGES.python += library/python/click
+REQUIRED_PACKAGES.python += library/python/ghp-import
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/importlib-metadata
+REQUIRED_PACKAGES.python += library/python/jinja2
+REQUIRED_PACKAGES.python += library/python/markdown
+REQUIRED_PACKAGES.python += library/python/markupsafe
+REQUIRED_PACKAGES.python += library/python/mkdocs-get-deps
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pathspec
+REQUIRED_PACKAGES.python += library/python/pyyaml
+REQUIRED_PACKAGES.python += library/python/pyyaml-env-tag
+REQUIRED_PACKAGES.python += library/python/watchdog
+REQUIRED_PACKAGES.python += runtime/python
