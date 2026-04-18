@@ -21,7 +21,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 # Copyright (c) 2020, Michal Nowak
 # Copyright (c) 2022, Niklas Poslovski
-# Copyright (c) 2023, Friedrich Kink
+# Copyright (c) 2023,2026 Friedrich Kink
 #
 
 USE_PARALLEL_BUILD= yes
@@ -29,7 +29,7 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.18.48
+COMPONENT_VERSION=	9.20.22
 COMPONENT_SUMMARY=	BIND DNS name server and configuration tools.
 COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain Name System \
                         (DNS) protocols for the Internet.  This package contains the DNS \
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION=	BIND is open source software that implements the Domain N
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_PROJECT_URL=	https://www.isc.org/software/bind/
-COMPONENT_ARCHIVE_HASH=	sha256:c742a69bff2561c23099d7c70c6984c145bcca1c1e3c67fac1f68a8132e8e7c5
+COMPONENT_ARCHIVE_HASH=	sha256:cba92ff631b949655f475fe4b54290f6860fd0070d399f2279f6437c0d383ec6
 COMPONENT_ARCHIVE_URL=	https://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/dns/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -70,20 +70,21 @@ CONFIGURE_LIBDIR.64= $(CONFIGURE_PREFIX)/lib/dns/$(MACH64)
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --disable-static
+CONFIGURE_OPTIONS += --disable-developer
 CONFIGURE_OPTIONS += --with-openssl=$(USRDIR)
 CONFIGURE_OPTIONS += --enable-warn-error
-CONFIGURE_OPTIONS += --enable-fixed-rrset
 CONFIGURE_OPTIONS += --enable-full-report
+CONFIGURE_OPTIONS += --enable-year2038
 CONFIGURE_OPTIONS += --with-cmocka
 CONFIGURE_OPTIONS += --with-gssapi
 CONFIGURE_OPTIONS += --with-libidn2
 CONFIGURE_OPTIONS += --with-libxml2
 CONFIGURE_OPTIONS += --with-json-c
+CONFIGURE_OPTIONS += --enable-singletrace
+CONFIGURE_OPTIONS += --enable-querytrace
 CONFIGURE_OPTIONS += --with-libnghttp2=yes
-CONFIGURE_OPTIONS += --enable-pthread-rwlock
 CONFIGURE_OPTIONS += --with-readline=readline
-CONFIGURE_OPTIONS += --with-tuning=default
-CONFIGURE_OPTIONS += --disable-linux-caps
+CONFIGURE_OPTIONS += --with-liburcu=membarrier
 CONFIGURE_OPTIONS += READLINE_CFLAGS=-I/usr/include/readline
 CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 
@@ -98,8 +99,6 @@ CONFIGURE_OPTIONS += READLINE_LIBS="-lreadline -ltermcap"
 # prototype directory, they are simply referenced in relevant manifest
 # (p5m) file.
 
-COMPONENT_TEST_DIR = $(@D)/tests
-COMPONENT_TEST_ENV_CMD =
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 # The user running the test needs an profiles=Network Management entry in /etc/user_attr in order to successfully run the following ifconfig.sh up script:
@@ -120,6 +119,7 @@ REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += database/lmdb
 REQUIRED_PACKAGES += library/json-c
 REQUIRED_PACKAGES += library/libidn2
+REQUIRED_PACKAGES += library/liburcu
 REQUIRED_PACKAGES += library/libuv
 REQUIRED_PACKAGES += library/libxml2
 REQUIRED_PACKAGES += library/nghttp2
@@ -127,4 +127,5 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += service/security/kerberos-5
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += system/library/security/gss
