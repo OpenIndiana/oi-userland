@@ -71,7 +71,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		squeak
 COMPONENT_VERSION=	4.21.3
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=	The Squeak Virtual Machine
 COMPONENT_PROJECT_URL=	http://www.squeak.org
 COMPONENT_ARCHIVE_URL=  http://squeakvm.org
@@ -189,6 +189,7 @@ CLEAN_PATHS+= .patched-08-JPEGReadWriter2Plugin.patch
 # do not build vm-sound-Sun as we only package vm-sound-pulse (bug #17109)
 # do not build Mpeg3Plugin and RePlugin as it uses old copies of those libraries
 # do not build GStreamerPlugin, it uses the GStreamer 0.10 and not GStreamer 1.0 (bug #17111)
+# do not build KedamaPlugin2
  
 CONFIGURE_SCRIPT= $(SOURCE_DIR_2)/cmake/configure
 CONFIGURE_OPTIONS +=	--src=$(SOURCE_DIR_0)
@@ -198,6 +199,7 @@ CONFIGURE_OPTIONS +=    --without-RePlugin
 CONFIGURE_OPTIONS +=    --without-Mpeg3Plugin
 CONFIGURE_OPTIONS +=    --without-GStreamerPlugin
 CONFIGURE_OPTIONS +=    --without-ScratchPlugin
+CONFIGURE_OPTIONS +=    --without-KedamaPlugin2
 # cmake 4.x requires this -D because the CMakeLists.txt indicates cmake 2.x MINVERSION
 CONFIGURE_OPTIONS +=    -DCMAKE_POLICY_VERSION_MINIMUM=3.5
 
