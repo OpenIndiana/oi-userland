@@ -40,6 +40,7 @@
 ## URI base composition tests
 ## Path URI conversion tests
 ## Schemas regression tests
+## Schemas XSI assembly tests
 ## Relax-NG regression tests
 ## Relax-NG include limit tests
 ## Relax-NG streaming regression tests
@@ -53,7 +54,8 @@
 ## SVG parsing regression tests
 ## Regexp regression tests
 ## Automata regression tests
-Total 3945 tests, no errors
+## xmlCopyEntity children test
+Total 3946 tests, no errors
 ./testrecurse
 ## Parsing recursive test cases
 ## Parsing recursive test cases (no substitution)
@@ -75,10 +77,19 @@ testing 1 byte char in document: 1 2 3 4 done
 testing 2 byte char in document: 1 2 3 4 done
 ./testdict
 ./testparser
+I/O warning : failed to load "http://example.invalid/imported.xsd": No such file or directory
+test/schemas/v012-reader-schema-main.xsd:4: element import: Schemas parser warning : Element '{http://www.w3.org/2001/XMLSchema}import': Failed to locate a schema at location 'http://example.invalid/imported.xsd'. Skipping the import.
+test/schemas/v012-reader-schema-main.xsd:5: element element: Schemas parser error : element decl. 'doc', attribute 'type': The QName value '{urn:remote}RemoteType' does not resolve to a(n) type definition.
+doc.xml:2: Schemas validity error : Element 'e': 'not-an-intnot-an-int' is not a valid value of the atomic type 'xs:integer'.
+I/O warning : failed to load "http://example.invalid/imported.rng": No such file or directory
+test/relaxng/v012-reader-main.rng:2: element include: Relax-NG parser error : xmlRelaxNG: could not load http://example.invalid/imported.rng
+test/relaxng/v012-reader-main.rng:2: element include: Relax-NG parser error : Failed to load include http://example.invalid/imported.rng
+test/relaxng/v012-reader-main.rng:3: element ref: Relax-NG parser error : Reference docdef has no matching definition
+test/relaxng/v012-reader-main.rng:3: element ref: Relax-NG parser error : Internal found no define for ref docdef
 ./testModule
 Success!
-./runxmlconf -d /usr/src/oi-userland/components/library/libxml2/libxml2-2.15.2/xmlconf
-/usr/src/oi-userland/components/library/libxml2/libxml2-2.15.2/xmlconf/xmlconf.xml is missing 
+./runxmlconf -d /usr/src/oi-userland/components/library/libxml2/libxml2-2.15.3/xmlconf
+/usr/src/oi-userland/components/library/libxml2/libxml2-2.15.3/xmlconf/xmlconf.xml is missing 
   you need to fetch and extract the
   latest XML Conformance Test Suites
   http://www.w3.org/XML/Test/xmlts20080827.tar.gz
