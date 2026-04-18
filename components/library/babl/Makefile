@@ -20,11 +20,11 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		babl
-COMPONENT_VERSION=	0.1.124
+COMPONENT_VERSION=	0.1.126
 COMPONENT_SUMMARY=	Babl is a dynamic, any to any, pixel format conversion library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:1b0d544ab6f409f2b1b5f677226272d1e8c6d373f2f453ee870bfc7e5dd4f1b1
+COMPONENT_ARCHIVE_HASH= sha256:3f090f4b2a61fecf7c8dc60a5804bbc77cefd8d778af2ded059f0e367a52930e
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/pub/babl/0.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://gegl.org/babl/
 COMPONENT_FMRI=	image/library/babl
