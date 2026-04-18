@@ -17,12 +17,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         luanti
-COMPONENT_VERSION=      5.15.1
+COMPONENT_VERSION=      5.15.2
 COMPONENT_SUMMARY=      Multiplayer infinite-world block sandbox game
 COMPONENT_PROJECT_URL=  https://www.luanti.org
 COMPONENT_SRC=          luanti-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:fe0b10df866f57c0047d84a4c6f6cd848650f52d9b0cab563fbbedc81632d616
+COMPONENT_ARCHIVE_HASH= sha256:1fdfa8b973968f8fcf5a264ce3fb3a170c3882105f953498a64d6415eff83471
 COMPONENT_ARCHIVE_URL=	https://github.com/luanti-org/luanti/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         games/luanti
 COMPONENT_CLASSIFICATION=	Applications/Games
