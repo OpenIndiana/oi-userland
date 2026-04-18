@@ -27,11 +27,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
-COMPONENT_VERSION=	2.4.16
+COMPONENT_VERSION=	2.4.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_PROJECT_URL=	https://openprinting.github.io/cups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:051f4bbfa10924ea399e2a8bef2d94fa3cd8dc8876c5fb4e0a57d23396203395
+COMPONENT_ARCHIVE_HASH=	sha256:382d70da64557362c288ee356525dfb1e674a64a0fb7c0fc028926da58913b73
 COMPONENT_ARCHIVE_URL=  https://github.com/OpenPrinting/cups/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_LICENSE=	Apache 2.0 with an exception to allow linking against GNU GPL2-only software
 
