@@ -16,13 +16,13 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= garage
-COMPONENT_VERSION= 2.2.0
+COMPONENT_VERSION= 2.3.0
 COMPONENT_SUMMARY= An open-source distributed object storage service tailored for self-hosting
 COMPONENT_PROJECT_URL= https://garagehq.deuxfleurs.fr
 COMPONENT_SRC= $(COMPONENT_NAME)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://git.deuxfleurs.fr/Deuxfleurs/garage/archive/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:e68b05d4358008e8b29a0ac235f73e3a12d97d9c6388c330b87282db774c04dc
+COMPONENT_ARCHIVE_HASH= sha256:b83a981677676b35400bbbaf20974c396f32da31c7c7630ce55fc3e62c0e2e01
 COMPONENT_FMRI= network/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Web Services/Application and Web Servers
 
