@@ -1,6 +1,9 @@
 #!/bin/sh
 
-for f in squeak.p5m squeak-display-X11.p5m squeak-nodisplay.p5m squeak-ssl.p5m squeak-vep.p5m
+# name can be changed to cog-spur or stack-spur for opensmalltalk packages
+name=squeak
+
+for f in ${name}.p5m ${name}-display-X11.p5m ${name}-nodisplay.p5m ${name}-ssl.p5m ${name}-vep.p5m
 do
   tools/amd64.pl < $f > $f.out
   mv $f.out $f

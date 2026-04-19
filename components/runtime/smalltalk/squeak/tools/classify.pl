@@ -20,15 +20,21 @@
 # or run ./amd64-p5m.sh
 #
 
-open(NODISPLAY,">>","squeak-nodisplay.p5m") || die "Can't open squeak-nodisplay.p5m";
+# name can be changed to cog-spur or stack-spur for squeak opensmalltalk packages
+$name="squeak";
 
-open(X11,">>","squeak-display-X11.p5m") || die "Can't open squeak-display-X11.p5m";
+open(NODISPLAY,">>","${name}-nodisplay.p5m") || die "Can't open ${name}-nodisplay.p5m";
 
-open(VEP,">>","squeak-vep.p5m") || die "Can't open squeak-vep.p5m";
+open(X11,">>","${name}-display-X11.p5m") || die "Can't open ${name}-display-X11.p5m";
 
-open(SSL,">>","squeak-ssl.p5m") || die "Can't open squeak-ssl.p5m";
+open(VEP,">>","${name}-vep.p5m") || die "Can't open ${name}-vep.p5m";
 
-open(REST,">>","squeak.p5m") || die "Can't open squeak.p5m";
+open(SSL,">>","${name}-ssl.p5m") || die "Can't open ${name}-ssl.p5m";
+
+open(REST,">>","${name}.p5m") || die "Can't open ${name}.p5m";
+
+# TODO: PTY support in squeak 4.21.5
+# open(PTY,">>","${name}-pty.p5m") || die "Can't open ${name}-pty.p5m";
 
 while (<>) {
 	if (/^#/) {
@@ -41,16 +47,24 @@ while (<>) {
 		# ignore those lines
 	} elsif (/dir  path=/) {
 		# ignore those lines
+	} elsif (/file path=usr\/squeak/) {
+		# ignore those lines
 	} elsif (/file path=/) {
 		if (/Sun/) {
 			# ignore the Sun sound plugin - we use pulseaudio
+		} elsif (/vm-sound-OSS/) {
+			# ignore the OSS sound plugin - we use pulseaudio
 		} elsif (/usr\/bin/) {
 			# don't deal with driver scripts here
+		} elsif (/usr\/doc/) {
+			# don't deal with docs here
 		} elsif (/man1/) {
 			# don't deal with the manpages here
+		} elsif (/squeak$/) {
+			# don't deal with the actual binary here
 		} elsif (/squeakvm/) {
 			# don't deal with the actual binary here
-		} elsif (/ckformat/) {
+		} elsif (/ckformat$/) {
 			# don't deal with the ckformat binary here
 		} elsif (/AioPlugin/) {
 			print NODISPLAY $_;
@@ -70,10 +84,19 @@ while (<>) {
 			print X11 $_;
 		} elsif (/UnixOSProcessPlugin/) {
 			print NODISPLAY $_;
-		} elsif (/VectorEnginePlugin/) {
-			print VEP $_;
+		} elsif (/PseudoTTYPlugin/) {
+# TODO: PTY support in squeak 4.21.5
+#			print PTY $_;
+		} elsif (/MD5Plugin/) {
+			print NODISPLAY $_;
+		} elsif (/SHA2Plugin/) {
+			print NODISPLAY $_;
+		} elsif (/DESPlugin/) {
+			print NODISPLAY $_;
 		} elsif (/XDisplayControlPlugin/) {
 			print X11 $_;
+		} elsif (/VectorEnginePlugin/) {
+			print VEP $_;
 		} elsif (/vm-sound-null/) {
 			print NODISPLAY $_;
 		} elsif (/vm-display-null/) {
@@ -84,10 +107,14 @@ while (<>) {
 			print X11 $_;
 		} elsif (/usr\/lib\/squeak/) {
 			print REST $_;
+		} elsif (/usr\/lib\/\$\(MACH64\)\/squeak/) {
+			print REST $_;
 		} else {
 			# unclassified files
 			print $_;
 		}
+	} elsif (/inisqueak.1/) {
+		# ignore manpage hardlink
 	} elsif (/hardlink path=/) {
 		# unclassified files
 		print $_;
