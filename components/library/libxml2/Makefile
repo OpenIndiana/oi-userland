@@ -30,10 +30,9 @@ USE_COMMON_TEST_MASTER=	no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxml2
-HUMAN_VERSION=		2.15.2
-COMPONENT_REVISION=	1
+HUMAN_VERSION=		2.15.3
 COMPONENT_SUMMARY=	Libxml2 is the XML C parser and toolkit developed for the Gnome project
-COMPONENT_ARCHIVE_HASH=	sha256:c8b9bc81f8b590c33af8cc6c336dbff2f53409973588a351c95f1c621b13d09d
+COMPONENT_ARCHIVE_HASH=	sha256:78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07
 COMPONENT_FMRI=		library/libxml2
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=	MIT
@@ -82,8 +81,7 @@ COMPONENT_POST_INSTALL_ACTION.64 = ( \
 );
 
 # It's nice to test also python modules (LC_ALL is set to avoid test failure).
-# Currently python test fails with memory leak error
-#COMPONENT_POST_TEST_ACTION.64 = \
+COMPONENT_POST_TEST_ACTION.64 = \
     cd $(@D)/python; \
     LC_ALL=en_US.UTF-8 $(GMAKE) $(COMPONENT_TEST_ARGS) check
 
