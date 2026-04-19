@@ -23,16 +23,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gst-plugins-good
 COMPONENT_VERSION=	1.28.2
-COMPONENT_SUMMARY=      GNOME streaming media framework plugins
+COMPONENT_REVISION=	1
+COMPONENT_SUMMARY=i	GNOME streaming media framework plugins
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	sha256:1ace2d8ec74f632d82eab5006753a27fe0c2402db4ca94d63271e494b62f50bf
-COMPONENT_PROJECT_URL=  https://gstreamer.freedesktop.org
+COMPONENT_PROJECT_URL=	https://gstreamer.freedesktop.org
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_FMRI=         library/audio/gstreamer/plugin/good
+COMPONENT_FMRI=		library/audio/gstreamer/plugin/good
 COMPONENT_CLASSIFICATION=	System/Multimedia Libraries
 COMPONENT_LICENSE=	LGPL-2.1-only
-COMPONENT_LICENSE_FILE= COPYING
+COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
