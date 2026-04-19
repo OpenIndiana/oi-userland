@@ -18,17 +18,17 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= opal
 COMPONENT_VERSION= 3.16.2
-COMPONENT_REVISION= 4
+COMPONENT_REVISION= 5
 COMPONENT_SUMMARY= OPAL - Open Phone Abstraction Library
-COMPONENT_PROJECT_URL = http://www.gnome.org
-COMPONENT_FMRI= library/libopal
-COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
+COMPONENT_PROJECT_URL = https://www.gnome.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:9225e881e7a450d39f739be7db97d0b1f845c754afdc2f26d8ebdbd5799dd3ed
 COMPONENT_ARCHIVE_URL= \
   https://sourceforge.net/projects/opalvoip/files/V3.16%20Procyon/Stable%202/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI= library/libopal
+COMPONENT_CLASSIFICATION=Desktop (GNOME)/Libraries
 COMPONENT_LICENSE= MPLv1.0 
 
 TEST_TARGET= $(NO_TESTS)
@@ -38,20 +38,20 @@ PATH= $(PATH.gnu)
 
 COMPONENT_BUILD_ARGS += VERBOSE=1
 
-COMPONENT_PREP_ACTION=( cd $(@D)/plugins && aclocal && autoconf && \
+COMPONENT_PREP_ACTION= ( \
+	cd $(@D)/plugins && aclocal && autoconf && \
 	cd $(@D) && aclocal && autoconf )
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =  ( CLONEY_MODE=copy $(CLONEY) $(SOURCE_DIR) $(@D) )
 
 COMPONENT_POST_CONFIGURE_ACTION = ( \
-        $(CP) $(@D)/src/rtp/libsrtp/Makefile $(SOURCE_DIR)/src/rtp/libsrtp; \
+	$(CP) $(@D)/src/rtp/libsrtp/Makefile $(SOURCE_DIR)/src/rtp/libsrtp; \
 	echo "install: ;  @\$$(MAKE) --file=$(SOURCE_DIR)/Makefile \$$(MAKECMDGOALS)" >> $(@D)/Makefile )
 
 CXXFLAGS += -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
 CFLAGS += -I$(@D)/src/rtp/libsrtp/include -I$(@D)/src/rtp/libsrtp/crypto/include -fpic
 
-CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --enable-localsrtp
 CONFIGURE_OPTIONS += --enable-localopenh264
 CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
