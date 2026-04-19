@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ffmpeg
 COMPONENT_VERSION=	8.0.1
+COMPONENT_REVISION=	1
 FFMPEG_VERSION=		$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY=      A very fast video and audio converter
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
