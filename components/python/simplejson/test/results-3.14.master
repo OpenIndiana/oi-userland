@@ -2,12 +2,15 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 144 items
+configfile: pyproject.toml
+collecting ... collected 219 items
 
 simplejson/tests/test_bigint_as_string.py::TestBigintAsString::test_dict_keys PASSED
 simplejson/tests/test_bigint_as_string.py::TestBigintAsString::test_dicts PASSED
 simplejson/tests/test_bigint_as_string.py::TestBigintAsString::test_ints PASSED
 simplejson/tests/test_bigint_as_string.py::TestBigintAsString::test_lists PASSED
+simplejson/tests/test_bitsize_int_as_string.py::TestBitSizeIntAsString::test_boundary_at_max_bitcount PASSED
+simplejson/tests/test_bitsize_int_as_string.py::TestBitSizeIntAsString::test_comparison_error_propagated PASSED
 simplejson/tests/test_bitsize_int_as_string.py::TestBitSizeIntAsString::test_dict_keys PASSED
 simplejson/tests/test_bitsize_int_as_string.py::TestBitSizeIntAsString::test_dicts PASSED
 simplejson/tests/test_bitsize_int_as_string.py::TestBitSizeIntAsString::test_ints PASSED
@@ -19,12 +22,18 @@ simplejson/tests/test_check_circular.py::TestCheckCircular::test_circular_defaul
 simplejson/tests/test_check_circular.py::TestCheckCircular::test_circular_dict PASSED
 simplejson/tests/test_check_circular.py::TestCheckCircular::test_circular_list PASSED
 simplejson/tests/test_check_circular.py::TestCheckCircular::test_circular_off_default PASSED
+simplejson/tests/test_check_circular.py::TestCheckCircular::test_default_callback_clears_markers PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_decimal_decode PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_decimal_defaults PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_decimal_encode PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_decimal_reload PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_decimal_roundtrip PASSED
 simplejson/tests/test_decimal.py::TestDecimal::test_stringify_key PASSED
+simplejson/tests/test_decode.py::TestDecode::test_array_hook PASSED
+simplejson/tests/test_decode.py::TestDecode::test_array_hook_empty PASSED
+simplejson/tests/test_decode.py::TestDecode::test_array_hook_nested_in_object PASSED
+simplejson/tests/test_decode.py::TestDecode::test_array_hook_none PASSED
+simplejson/tests/test_decode.py::TestDecode::test_array_hook_with_object_hook PASSED
 simplejson/tests/test_decode.py::TestDecode::test_bounded_int PASSED
 simplejson/tests/test_decode.py::TestDecode::test_bounds_checking PASSED
 simplejson/tests/test_decode.py::TestDecode::test_bytes_decode PASSED
@@ -35,8 +44,10 @@ simplejson/tests/test_decode.py::TestDecode::test_empty_strings PASSED
 simplejson/tests/test_decode.py::TestDecode::test_float PASSED
 simplejson/tests/test_decode.py::TestDecode::test_keys_reuse_str PASSED
 simplejson/tests/test_decode.py::TestDecode::test_keys_reuse_unicode PASSED
+simplejson/tests/test_decode.py::TestDecode::test_nonascii_digits_rejected PASSED
 simplejson/tests/test_decode.py::TestDecode::test_object_pairs_hook PASSED
 simplejson/tests/test_decode.py::TestDecode::test_raw_decode PASSED
+simplejson/tests/test_decode.py::TestDecode::test_trailing_comma_unexpected_data PASSED
 simplejson/tests/test_default.py::TestDefault::test_default PASSED
 simplejson/tests/test_dump.py::TestDump::test_accumulator PASSED
 simplejson/tests/test_dump.py::TestDump::test_bytes_key PASSED
@@ -52,6 +63,32 @@ simplejson/tests/test_dump.py::TestDump::test_misbehaving_text_subtype PASSED
 simplejson/tests/test_dump.py::TestDump::test_ordered_dict PASSED
 simplejson/tests/test_dump.py::TestDump::test_sort_keys PASSED
 simplejson/tests/test_dump.py::TestDump::test_stringify_key PASSED
+simplejson/tests/test_dump.py::TestFrozenDict::test_frozendict_in_list SKIPPED
+simplejson/tests/test_dump.py::TestFrozenDict::test_frozendict_nested SKIPPED
+simplejson/tests/test_dump.py::TestFrozenDict::test_frozendict_toplevel SKIPPED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_dict_subclass_sorted PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_dict_subclass_unsorted PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_empty_dict PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_exact_dict_sorted PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_exact_dict_unsorted PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_key_memo_cache_hit PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_large_dict PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_mixed_value_types PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_nested_dicts PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_non_string_keys_fast_path PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_non_string_keys_sorted PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_single_key PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_skipkeys_fast_path PASSED
+simplejson/tests/test_dump.py::TestDictEncodingPaths::test_skipkeys_slow_path PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_empty_list PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_empty_tuple PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_exact_list PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_exact_tuple PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_large_list PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_list_subclass PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_nested_lists PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_single_element PASSED
+simplejson/tests/test_dump.py::TestListEncodingPaths::test_tuple_subclass PASSED
 simplejson/tests/test_encode_basestring_ascii.py::TestEncodeBaseStringAscii::test_c_encode_basestring_ascii PASSED
 simplejson/tests/test_encode_basestring_ascii.py::TestEncodeBaseStringAscii::test_py_encode_basestring_ascii PASSED
 simplejson/tests/test_encode_basestring_ascii.py::TestEncodeBaseStringAscii::test_sorted_dict PASSED
@@ -59,6 +96,9 @@ simplejson/tests/test_encode_for_html.py::TestEncodeForHTML::test_basic_encode P
 simplejson/tests/test_encode_for_html.py::TestEncodeForHTML::test_basic_roundtrip PASSED
 simplejson/tests/test_encode_for_html.py::TestEncodeForHTML::test_non_ascii_basic_encode PASSED
 simplejson/tests/test_encode_for_html.py::TestEncodeForHTML::test_prevent_script_breakout PASSED
+simplejson/tests/test_errors.py::TestErrors::test_add_note_dict_recursion PASSED
+simplejson/tests/test_errors.py::TestErrors::test_add_note_list_recursion PASSED
+simplejson/tests/test_errors.py::TestErrors::test_add_note_nested_error PASSED
 simplejson/tests/test_errors.py::TestErrors::test_decode_error PASSED
 simplejson/tests/test_errors.py::TestErrors::test_error_is_pickable PASSED
 simplejson/tests/test_errors.py::TestErrors::test_not_serializable PASSED
@@ -83,7 +123,12 @@ simplejson/tests/test_for_json.py::TestForJson::test_for_json_encodes_object_nes
 simplejson/tests/test_for_json.py::TestForJson::test_for_json_encodes_stand_alone_object PASSED
 simplejson/tests/test_for_json.py::TestForJson::test_for_json_ignored_if_not_true_with_dict_subclass PASSED
 simplejson/tests/test_for_json.py::TestForJson::test_for_json_ignored_if_not_true_with_list_subclass PASSED
+simplejson/tests/test_for_json.py::TestForJson::test_getattr_exception_propagates PASSED
 simplejson/tests/test_for_json.py::TestForJson::test_raises_typeerror_if_for_json_not_true_with_object PASSED
+simplejson/tests/test_free_threading.py::TestFreeThreading::test_concurrent_decode SKIPPED
+simplejson/tests/test_free_threading.py::TestFreeThreading::test_concurrent_encode SKIPPED
+simplejson/tests/test_free_threading.py::TestFreeThreading::test_concurrent_encode_decode SKIPPED
+simplejson/tests/test_free_threading.py::TestFreeThreading::test_shared_encoder_instance SKIPPED
 simplejson/tests/test_indent.py::TestIndent::test_indent PASSED
 simplejson/tests/test_indent.py::TestIndent::test_indent0 PASSED
 simplejson/tests/test_indent.py::TestIndent::test_separators PASSED
@@ -91,6 +136,8 @@ simplejson/tests/test_item_sort_key.py::TestItemSortKey::test_case PASSED
 simplejson/tests/test_item_sort_key.py::TestItemSortKey::test_item_sort_key_value PASSED
 simplejson/tests/test_item_sort_key.py::TestItemSortKey::test_simple_first PASSED
 simplejson/tests/test_iterable.py::TestIterable::test_iterable PASSED
+simplejson/tests/test_iterable.py::TestIterable::test_iterable_as_array_propagates_non_typeerror PASSED
+simplejson/tests/test_namedtuple.py::TestNamedTuple::test_asdict_dispatch_order PASSED
 simplejson/tests/test_namedtuple.py::TestNamedTuple::test_asdict_does_not_return_dict PASSED
 simplejson/tests/test_namedtuple.py::TestNamedTuple::test_asdict_not_callable_dump PASSED
 simplejson/tests/test_namedtuple.py::TestNamedTuple::test_asdict_not_callable_dumps PASSED
@@ -110,6 +157,8 @@ simplejson/tests/test_recursion.py::TestRecursion::test_defaultrecursion PASSED
 simplejson/tests/test_recursion.py::TestRecursion::test_dictrecursion PASSED
 simplejson/tests/test_recursion.py::TestRecursion::test_listrecursion PASSED
 simplejson/tests/test_scanstring.py::TestScanString::test_c_scanstring PASSED
+simplejson/tests/test_scanstring.py::TestScanString::test_end_out_of_bounds_is_jsondecodeerror PASSED
+simplejson/tests/test_scanstring.py::TestScanString::test_escape_error_parity PASSED
 simplejson/tests/test_scanstring.py::TestScanString::test_issue3623 PASSED
 simplejson/tests/test_scanstring.py::TestScanString::test_overflow PASSED
 simplejson/tests/test_scanstring.py::TestScanString::test_py_scanstring PASSED
@@ -122,9 +171,36 @@ simplejson/tests/test_speedups.py::TestEncode::test_bad_encoding SKIPPED
 simplejson/tests/test_speedups.py::TestEncode::test_bad_str_encoder SKIPPED
 simplejson/tests/test_speedups.py::TestEncode::test_int_as_string_bitcount_overflow SKIPPED
 simplejson/tests/test_speedups.py::TestEncode::test_make_encoder SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_encoder_instances_work SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_encoder_is_heap_type SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_encoder_type_is_gc_tracked SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_scanner_instances_work SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_scanner_is_heap_type SKIPPED
+simplejson/tests/test_speedups.py::TestHeapTypes::test_scanner_type_is_gc_tracked SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_asdict_returning_non_dict_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_bigint_as_string_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_circular_reference_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_dict_fast_path_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_dict_slow_path_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_dumps_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_encoder_construction_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_failed_construction_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_for_json_raising_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_list_fast_path_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_loads_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_non_string_dict_keys_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_scanner_construction_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_skipkeys_fast_path_no_leak SKIPPED
+simplejson/tests/test_speedups.py::TestRefcountLeaks::test_tuple_fast_path_no_leak SKIPPED
 simplejson/tests/test_str_subclass.py::TestStrSubclass::test_dump_load PASSED
 simplejson/tests/test_subclass.py::TestSubclass::test_float PASSED
 simplejson/tests/test_subclass.py::TestSubclass::test_int PASSED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_decode_in_subinterpreter SKIPPED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_encode_in_subinterpreter SKIPPED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_import_in_subinterpreter SKIPPED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_multiple_subinterpreters SKIPPED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_subinterpreter_heap_types SKIPPED
+simplejson/tests/test_subinterpreters.py::TestSubinterpreters::test_subinterpreter_state_independent SKIPPED
 simplejson/tests/test_tool.py::TestTool::test_infile_outfile PASSED
 simplejson/tests/test_tool.py::TestTool::test_infile_stdout PASSED
 simplejson/tests/test_tool.py::TestTool::test_stdin_stdout PASSED
@@ -149,4 +225,4 @@ simplejson/tests/test_unicode.py::TestUnicode::test_strip_bom PASSED
 simplejson/tests/test_unicode.py::TestUnicode::test_unicode_decode PASSED
 simplejson/tests/test_unicode.py::TestUnicode::test_unicode_preservation PASSED
 
-======== 137 passed, 7 skipped ========
+======== 178 passed, 41 skipped ========
