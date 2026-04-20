@@ -3,22 +3,20 @@ See the comments in CR# 15595871 for more details.
 
 This patch has not been passed upstream yet. It needs to be reworked into
 a format that would be acceptable.
-
---- coreutils-9.10/lib/mountlist.c.orig
-+++ coreutils-9.10/lib/mountlist.c
-@@ -229,13 +229,13 @@
+--- coreutils-9.11/lib/mountlist.c.orig	2026-03-01 19:44:23.000000000 +0100
++++ coreutils-9.11/lib/mountlist.c	2026-05-16 08:43:38.949358176 +0200
+@@ -230,12 +230,12 @@
  #endif
  
  #ifndef ME_REMOTE
 -/* A file system is "remote" if its Fs_name contains a ':'
 +/* A file system is "remote" if its Fs_name contains a ':' (and isn't of type pcfs)
-    or if (it is of type (smbfs or cifs) and its Fs_name starts with '//')
-    or if it is of any other of the listed types
-    or Fs_name is equal to "-hosts" (used by autofs to mount remote fs).
+    or Fs_name is equal to "-hosts" (used by autofs to mount remote fs)
+    or if it is of any other of the listed types.
     "VM" file systems like prl_fs or vboxsf are not considered remote here. */
  # define ME_REMOTE(Fs_name, Fs_type)            \
 -    (strchr (Fs_name, ':') != NULL              \
 +    ((strchr (Fs_name, ':') != NULL && strcmp (Fs_type, "pcfs") != 0) \
-      || ((Fs_name)[0] == '/'                    \
-          && (Fs_name)[1] == '/'                 \
-          && (streq (Fs_type, "smbfs")     \
+      || streq ("-hosts", Fs_name))              \
+      || is_remote_fs_type_name (Fs_type)
+ #endif

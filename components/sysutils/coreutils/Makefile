@@ -34,12 +34,12 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         coreutils
-COMPONENT_VERSION=      9.10
+COMPONENT_VERSION=      9.11
 COMPONENT_SUMMARY=		GNU Core Utilities are the basic file, shell and text manipulation utilities
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/coreutils/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:16535a9adf0b10037364e2d612aad3d9f4eca3a344949ced74d12faf4bd51d25
+COMPONENT_ARCHIVE_HASH= sha256:394024eda0a5955217ceda9cd1201e65dc8fa3aa29c2951135a49521d57c3cc3
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         file/gnu-coreutils
 COMPONENT_CLASSIFICATION=Applications/System Utilities
