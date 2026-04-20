@@ -9,6 +9,9 @@ TEST    checkasm-audiodsp
 TEST    checkasm-av_tx
 TEST    checkasm-blockdsp
 TEST    checkasm-bswapdsp
+TEST    checkasm-cavsdsp
+TEST    checkasm-crc
+TEST    checkasm-dcadsp
 TEST    checkasm-diracdsp
 TEST    checkasm-exrdsp
 TEST    checkasm-fdctdsp
@@ -24,21 +27,27 @@ TEST    checkasm-h264pred
 TEST    checkasm-h264qpel
 TEST    checkasm-hevc_add_res
 TEST    checkasm-hevc_deblock
+TEST    checkasm-hevc_dequant
 TEST    checkasm-hevc_idct
 TEST    checkasm-hevc_pel
 TEST    checkasm-hevc_sao
+TEST    checkasm-hpeldsp
 TEST    checkasm-huffyuvdsp
+TEST    checkasm-huffyuvencdsp
 TEST    checkasm-idctdsp
 TEST    checkasm-jpeg2000dsp
 TEST    checkasm-llauddsp
 TEST    checkasm-lls
 TEST    checkasm-llviddsp
-TEST    checkasm-llviddspenc
+TEST    checkasm-llvidencdsp
 TEST    checkasm-lpc
 TEST    checkasm-motion
+TEST    checkasm-mpegvideo_unquantize
 TEST    checkasm-mpegvideoencdsp
 TEST    checkasm-opusdsp
 TEST    checkasm-pixblockdsp
+TEST    checkasm-png
+TEST    checkasm-qpeldsp
 TEST    checkasm-sbrdsp
 TEST    checkasm-rv34dsp
 TEST    checkasm-rv40dsp
@@ -46,9 +55,11 @@ TEST    checkasm-scene_sad
 TEST    checkasm-svq1enc
 TEST    checkasm-synth_filter
 TEST    checkasm-sw_gbrp
+TEST    checkasm-sw_ops
 TEST    checkasm-sw_range_convert
 TEST    checkasm-sw_rgb
 TEST    checkasm-sw_scale
+TEST    checkasm-sw_xyz2rgb
 TEST    checkasm-sw_yuv2rgb
 TEST    checkasm-sw_yuv2yuv
 TEST    checkasm-takdsp
@@ -62,17 +73,22 @@ TEST    checkasm-vf_bwdif
 TEST    checkasm-vf_colordetect
 TEST    checkasm-vf_colorspace
 TEST    checkasm-vf_eq
+TEST    checkasm-vf_fspp
 TEST    checkasm-vf_gblur
 TEST    checkasm-vf_hflip
+TEST    checkasm-vf_idet
 TEST    checkasm-vf_nlmeans
 TEST    checkasm-vf_threshold
 TEST    checkasm-vf_sobel
 TEST    checkasm-videodsp
 TEST    checkasm-vorbisdsp
+TEST    checkasm-vp3dsp
+TEST    checkasm-vp6dsp
 TEST    checkasm-vp8dsp
 TEST    checkasm-vp9dsp
 TEST    checkasm-vvc_alf
 TEST    checkasm-vvc_mc
+TEST    checkasm-vvc_sao
 TEST    source
 IGNORE	source
 TEST    api-threadmessage
@@ -151,6 +167,8 @@ TEST    cpu_init
 TEST    pixelutils
 TEST    sws-pixdesc-query
 TEST    sws-floatimg-cmp
+TEST    sws-unscaled
+TEST    sws-ops-list
 TEST    fifo-muxer-tst
 TEST    filter-adelay
 TEST    filter-aecho
@@ -165,6 +183,7 @@ TEST    filter-afade-log
 TEST    filter-agate
 TEST    filter-alimiter
 TEST    filter-amerge
+TEST    filter-amerge-mode
 TEST    filter-apad
 TEST    filter-anequalizer
 TEST    filter-asetnsamples-pad
@@ -190,6 +209,7 @@ TEST    filter-silenceremove
 TEST    filter-compand
 TEST    filter-hls
 TEST    filter-hls-append
+TEST    filter-aselect
 TEST    filter-atrim-duration
 TEST    filter-atrim-mixed
 TEST    filter-atrim-samples
@@ -616,6 +636,7 @@ TEST    filter-yuvtestsrc-xv30le
 TEST    filter-yuvtestsrc-xv36
 TEST    filter-yuvtestsrc-xv48
 TEST    filter-lavd-scalenorm
+TEST    filter-feedback-hflip
 TEST    filter-framerate-up
 TEST    filter-framerate-down
 TEST    filter-framerate-12bit-up
@@ -652,6 +673,7 @@ TEST    filter-refcmp-ssim-rgb
 TEST    filter-refcmp-ssim-yuv
 TEST    filter-refcmp-xpsnr-rgb
 TEST    filter-refcmp-xpsnr-yuv
+TEST    filter-scale-premultiply
 TEST    swr-resample_async-s16p-8000-44100
 TEST    swr-resample_async-s16p-44100-8000
 TEST    swr-resample_async-fltp-8000-44100
@@ -976,6 +998,8 @@ TEST    mov-channel-description
 TEST    mov-mp4-pcm
 TEST    mov-mp4-pcm-float
 TEST    mov-vfr
+TEST    mov-mp4-iamf-7_1_4-video-first-2
+TEST    mov-mp4-iamf-7_1_4-video-first-3
 TEST    dcinema-encode
 TEST    pcm_dvd-16-1-96000
 TEST    utvideoenc_rgba_left
@@ -1687,6 +1711,8 @@ TEST    pixfmt-yuv444p-yuv440p10le
 TEST    pixfmt-yuv444p-yuv440p10be
 TEST    pixfmt-yuv444p-yuv444p10le
 TEST    pixfmt-yuv444p-yuv444p10be
+TEST    pixfmt-yuv444p-yuv444p10msble
+TEST    pixfmt-yuv444p-yuv444p10msbbe
 TEST    pixfmt-yuv444p-y210le
 TEST    pixfmt-yuv444p-p010le
 TEST    pixfmt-yuv444p-p010be
@@ -1710,6 +1736,8 @@ TEST    pixfmt-yuv444p-yuv440p12le
 TEST    pixfmt-yuv444p-yuv440p12be
 TEST    pixfmt-yuv444p-yuv444p12le
 TEST    pixfmt-yuv444p-yuv444p12be
+TEST    pixfmt-yuv444p-yuv444p12msble
+TEST    pixfmt-yuv444p-yuv444p12msbbe
 TEST    pixfmt-yuv444p-y212le
 TEST    pixfmt-yuv444p-p012le
 TEST    pixfmt-yuv444p-p012be
@@ -1778,6 +1806,8 @@ TEST    pixfmt-nv24-yuv440p10le
 TEST    pixfmt-nv24-yuv440p10be
 TEST    pixfmt-nv24-yuv444p10le
 TEST    pixfmt-nv24-yuv444p10be
+TEST    pixfmt-nv24-yuv444p10msble
+TEST    pixfmt-nv24-yuv444p10msbbe
 TEST    pixfmt-nv24-y210le
 TEST    pixfmt-nv24-p010le
 TEST    pixfmt-nv24-p010be
@@ -1801,6 +1831,8 @@ TEST    pixfmt-nv24-yuv440p12le
 TEST    pixfmt-nv24-yuv440p12be
 TEST    pixfmt-nv24-yuv444p12le
 TEST    pixfmt-nv24-yuv444p12be
+TEST    pixfmt-nv24-yuv444p12msble
+TEST    pixfmt-nv24-yuv444p12msbbe
 TEST    pixfmt-nv24-y212le
 TEST    pixfmt-nv24-p012le
 TEST    pixfmt-nv24-p012be
@@ -1869,6 +1901,8 @@ TEST    pixfmt-gbrp-yuv440p10le
 TEST    pixfmt-gbrp-yuv440p10be
 TEST    pixfmt-gbrp-yuv444p10le
 TEST    pixfmt-gbrp-yuv444p10be
+TEST    pixfmt-gbrp-yuv444p10msble
+TEST    pixfmt-gbrp-yuv444p10msbbe
 TEST    pixfmt-gbrp-y210le
 TEST    pixfmt-gbrp-p010le
 TEST    pixfmt-gbrp-p010be
@@ -1892,6 +1926,8 @@ TEST    pixfmt-gbrp-yuv440p12le
 TEST    pixfmt-gbrp-yuv440p12be
 TEST    pixfmt-gbrp-yuv444p12le
 TEST    pixfmt-gbrp-yuv444p12be
+TEST    pixfmt-gbrp-yuv444p12msble
+TEST    pixfmt-gbrp-yuv444p12msbbe
 TEST    pixfmt-gbrp-y212le
 TEST    pixfmt-gbrp-p012le
 TEST    pixfmt-gbrp-p012be
@@ -1960,6 +1996,8 @@ TEST    pixfmt-rgb24-yuv440p10le
 TEST    pixfmt-rgb24-yuv440p10be
 TEST    pixfmt-rgb24-yuv444p10le
 TEST    pixfmt-rgb24-yuv444p10be
+TEST    pixfmt-rgb24-yuv444p10msble
+TEST    pixfmt-rgb24-yuv444p10msbbe
 TEST    pixfmt-rgb24-y210le
 TEST    pixfmt-rgb24-p010le
 TEST    pixfmt-rgb24-p010be
@@ -1983,6 +2021,8 @@ TEST    pixfmt-rgb24-yuv440p12le
 TEST    pixfmt-rgb24-yuv440p12be
 TEST    pixfmt-rgb24-yuv444p12le
 TEST    pixfmt-rgb24-yuv444p12be
+TEST    pixfmt-rgb24-yuv444p12msble
+TEST    pixfmt-rgb24-yuv444p12msbbe
 TEST    pixfmt-rgb24-y212le
 TEST    pixfmt-rgb24-p012le
 TEST    pixfmt-rgb24-p012be
@@ -2051,6 +2091,8 @@ TEST    pixfmt-yuv444p10-yuv440p10le
 TEST    pixfmt-yuv444p10-yuv440p10be
 TEST    pixfmt-yuv444p10-yuv444p10le
 TEST    pixfmt-yuv444p10-yuv444p10be
+TEST    pixfmt-yuv444p10-yuv444p10msble
+TEST    pixfmt-yuv444p10-yuv444p10msbbe
 TEST    pixfmt-yuv444p10-y210le
 TEST    pixfmt-yuv444p10-p010le
 TEST    pixfmt-yuv444p10-p010be
@@ -2074,6 +2116,8 @@ TEST    pixfmt-yuv444p10-yuv440p12le
 TEST    pixfmt-yuv444p10-yuv440p12be
 TEST    pixfmt-yuv444p10-yuv444p12le
 TEST    pixfmt-yuv444p10-yuv444p12be
+TEST    pixfmt-yuv444p10-yuv444p12msble
+TEST    pixfmt-yuv444p10-yuv444p12msbbe
 TEST    pixfmt-yuv444p10-y212le
 TEST    pixfmt-yuv444p10-p012le
 TEST    pixfmt-yuv444p10-p012be
@@ -2142,6 +2186,8 @@ TEST    pixfmt-yuv444p12-yuv440p10le
 TEST    pixfmt-yuv444p12-yuv440p10be
 TEST    pixfmt-yuv444p12-yuv444p10le
 TEST    pixfmt-yuv444p12-yuv444p10be
+TEST    pixfmt-yuv444p12-yuv444p10msble
+TEST    pixfmt-yuv444p12-yuv444p10msbbe
 TEST    pixfmt-yuv444p12-y210le
 TEST    pixfmt-yuv444p12-p010le
 TEST    pixfmt-yuv444p12-p010be
@@ -2165,6 +2211,8 @@ TEST    pixfmt-yuv444p12-yuv440p12le
 TEST    pixfmt-yuv444p12-yuv440p12be
 TEST    pixfmt-yuv444p12-yuv444p12le
 TEST    pixfmt-yuv444p12-yuv444p12be
+TEST    pixfmt-yuv444p12-yuv444p12msble
+TEST    pixfmt-yuv444p12-yuv444p12msbbe
 TEST    pixfmt-yuv444p12-y212le
 TEST    pixfmt-yuv444p12-p012le
 TEST    pixfmt-yuv444p12-p012be
@@ -2233,6 +2281,8 @@ TEST    pixfmt-p410-yuv440p10le
 TEST    pixfmt-p410-yuv440p10be
 TEST    pixfmt-p410-yuv444p10le
 TEST    pixfmt-p410-yuv444p10be
+TEST    pixfmt-p410-yuv444p10msble
+TEST    pixfmt-p410-yuv444p10msbbe
 TEST    pixfmt-p410-y210le
 TEST    pixfmt-p410-p010le
 TEST    pixfmt-p410-p010be
@@ -2256,6 +2306,8 @@ TEST    pixfmt-p410-yuv440p12le
 TEST    pixfmt-p410-yuv440p12be
 TEST    pixfmt-p410-yuv444p12le
 TEST    pixfmt-p410-yuv444p12be
+TEST    pixfmt-p410-yuv444p12msble
+TEST    pixfmt-p410-yuv444p12msbbe
 TEST    pixfmt-p410-y212le
 TEST    pixfmt-p410-p012le
 TEST    pixfmt-p410-p012be
@@ -2324,6 +2376,8 @@ TEST    pixfmt-p412-yuv440p10le
 TEST    pixfmt-p412-yuv440p10be
 TEST    pixfmt-p412-yuv444p10le
 TEST    pixfmt-p412-yuv444p10be
+TEST    pixfmt-p412-yuv444p10msble
+TEST    pixfmt-p412-yuv444p10msbbe
 TEST    pixfmt-p412-y210le
 TEST    pixfmt-p412-p010le
 TEST    pixfmt-p412-p010be
@@ -2347,6 +2401,8 @@ TEST    pixfmt-p412-yuv440p12le
 TEST    pixfmt-p412-yuv440p12be
 TEST    pixfmt-p412-yuv444p12le
 TEST    pixfmt-p412-yuv444p12be
+TEST    pixfmt-p412-yuv444p12msble
+TEST    pixfmt-p412-yuv444p12msbbe
 TEST    pixfmt-p412-y212le
 TEST    pixfmt-p412-p012le
 TEST    pixfmt-p412-p012be
@@ -2415,6 +2471,8 @@ TEST    pixfmt-gbrp10-yuv440p10le
 TEST    pixfmt-gbrp10-yuv440p10be
 TEST    pixfmt-gbrp10-yuv444p10le
 TEST    pixfmt-gbrp10-yuv444p10be
+TEST    pixfmt-gbrp10-yuv444p10msble
+TEST    pixfmt-gbrp10-yuv444p10msbbe
 TEST    pixfmt-gbrp10-y210le
 TEST    pixfmt-gbrp10-p010le
 TEST    pixfmt-gbrp10-p010be
@@ -2438,6 +2496,8 @@ TEST    pixfmt-gbrp10-yuv440p12le
 TEST    pixfmt-gbrp10-yuv440p12be
 TEST    pixfmt-gbrp10-yuv444p12le
 TEST    pixfmt-gbrp10-yuv444p12be
+TEST    pixfmt-gbrp10-yuv444p12msble
+TEST    pixfmt-gbrp10-yuv444p12msbbe
 TEST    pixfmt-gbrp10-y212le
 TEST    pixfmt-gbrp10-p012le
 TEST    pixfmt-gbrp10-p012be
@@ -2506,6 +2566,8 @@ TEST    pixfmt-gbrp12-yuv440p10le
 TEST    pixfmt-gbrp12-yuv440p10be
 TEST    pixfmt-gbrp12-yuv444p10le
 TEST    pixfmt-gbrp12-yuv444p10be
+TEST    pixfmt-gbrp12-yuv444p10msble
+TEST    pixfmt-gbrp12-yuv444p10msbbe
 TEST    pixfmt-gbrp12-y210le
 TEST    pixfmt-gbrp12-p010le
 TEST    pixfmt-gbrp12-p010be
@@ -2529,6 +2591,8 @@ TEST    pixfmt-gbrp12-yuv440p12le
 TEST    pixfmt-gbrp12-yuv440p12be
 TEST    pixfmt-gbrp12-yuv444p12le
 TEST    pixfmt-gbrp12-yuv444p12be
+TEST    pixfmt-gbrp12-yuv444p12msble
+TEST    pixfmt-gbrp12-yuv444p12msbbe
 TEST    pixfmt-gbrp12-y212le
 TEST    pixfmt-gbrp12-p012le
 TEST    pixfmt-gbrp12-p012be
@@ -2597,6 +2661,8 @@ TEST    pixfmt-rgb48-yuv440p10le
 TEST    pixfmt-rgb48-yuv440p10be
 TEST    pixfmt-rgb48-yuv444p10le
 TEST    pixfmt-rgb48-yuv444p10be
+TEST    pixfmt-rgb48-yuv444p10msble
+TEST    pixfmt-rgb48-yuv444p10msbbe
 TEST    pixfmt-rgb48-y210le
 TEST    pixfmt-rgb48-p010le
 TEST    pixfmt-rgb48-p010be
@@ -2620,6 +2686,8 @@ TEST    pixfmt-rgb48-yuv440p12le
 TEST    pixfmt-rgb48-yuv440p12be
 TEST    pixfmt-rgb48-yuv444p12le
 TEST    pixfmt-rgb48-yuv444p12be
+TEST    pixfmt-rgb48-yuv444p12msble
+TEST    pixfmt-rgb48-yuv444p12msbbe
 TEST    pixfmt-rgb48-y212le
 TEST    pixfmt-rgb48-p012le
 TEST    pixfmt-rgb48-p012be
@@ -2731,6 +2799,7 @@ TEST    iamf-5_1_4
 TEST    iamf-7_1_4
 TEST    iamf-9_1_6
 TEST    iamf-ambisonic_1
+TEST    iamf-ambisonic_1-projection
 TEST    mov-mp4-iamf-stereo
 TEST    mov-mp4-iamf-5_1_4
 TEST    mov-mp4-iamf-7_1_4-video-first
