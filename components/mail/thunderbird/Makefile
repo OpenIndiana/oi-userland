@@ -42,10 +42,10 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
 # CANDIDATE_BUILD= 1
-# CANDIDATE_BETA= 4
+# CANDIDATE_BETA= 5
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	149.0.2
+COMPONENT_VERSION =	150.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:b16192338ba16f89f933dcfaa55eccfe812f4bc6a7bc8b630b7b5d6ead28171e
+	 sha256:bacee6c25a4b7bd4de112a0f78055f96e93d2a12683fd3b0490a4ef9b632cf12
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -160,6 +160,9 @@ COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 # set custom mozbuild path
 CONFIGURE_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 COMPONENT_BUILD_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
+ifndef MACH_BUILD
+ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
+endif
 
 ifdef MACH_BUILD
 # use pip to get python modules
