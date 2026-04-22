@@ -32,14 +32,14 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gmp
 COMPONENT_VERSION=      6.3.0
-COMPONENT_REVISION=	3
+COMPONENT_REVISION=	4
 COMPONENT_SUMMARY=      GNU Multiple Precision Bignum Library
 COMPONENT_PROJECT_URL=  https://gmplib.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= sha256:ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb
-COMPONENT_FMRI=         library/gmp    
+COMPONENT_FMRI=         library/gmp
 COMPONENT_CLASSIFICATION=Development/High Performance Computing
 COMPONENT_LICENSE=      LGPLv3,GPLv3,FDLv1.3
 
