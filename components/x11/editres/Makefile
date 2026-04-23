@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         editres
-COMPONENT_VERSION=      1.0.9
+COMPONENT_VERSION=      1.1.0
 COMPONENT_SUMMARY=      editres - dynamic resource editor for Xt applications
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cdfc3f7a6f0ecea417af785b1f46469d9c21a3543a765480a3090fd65e3db3c6
+COMPONENT_ARCHIVE_HASH= sha256:0acefd3061aa0f1271e65c0d584378f760be004fdb8bcfb17ab345cd408e9faa
 COMPONENT_FMRI=         x11/editres
 COMPONENT_LICENSE_FILE= COPYING
 
