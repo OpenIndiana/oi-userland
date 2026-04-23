@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xconsole
-COMPONENT_VERSION=        1.1.0
+COMPONENT_VERSION=        1.1.1
 COMPONENT_SUMMARY=        xconsole - monitor system console messages with X 
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_FMRI=           x11/xconsole
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:0c775978cacdda76dfc8b5a97142f145a177d26220dd307866d9dd62e7391189
+COMPONENT_ARCHIVE_HASH=   sha256:d412abbea2423f2930443c43db1c83d7d0cf2b677419b86ed54aa5d47f072322
 
 include $(WS_MAKE_RULES)/common.mk
 
