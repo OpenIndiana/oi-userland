@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		simplejson
-HUMAN_VERSION =			4.0.1
+HUMAN_VERSION =			4.1.0
 COMPONENT_SUMMARY =		Simple, fast, extensible JSON encoder/decoder for Python
 COMPONENT_PROJECT_URL =		https://github.com/simplejson/simplejson
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:bc13170567a5c856a0e6c16620c0b0388722f7d6382acd8007857624c3dedf3e
+	sha256:7b3ce1e8f13ec3cd41e31c45c2172caa4c66299c7002d3e0871b49a85683157e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
