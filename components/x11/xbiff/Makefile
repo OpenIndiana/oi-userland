@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xbiff
-COMPONENT_VERSION=      1.0.5
+COMPONENT_VERSION=      1.0.6
 COMPONENT_SUMMARY=      xbiff − mailbox flag for X
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:cffb10e2488b09695da8377f395a4fed6d33f5eb9691322ebaa969e8ead7b0c2
+COMPONENT_ARCHIVE_HASH= sha256:a85f34361c317ca216f42da9ee069a68b4beffd8dc0c973c9c339c8dd1d7d62a
 COMPONENT_FMRI=         x11/xbiff
 COMPONENT_CLASSIFICATION=Applications/Accessories
 COMPONENT_LICENSE_FILE= COPYING
