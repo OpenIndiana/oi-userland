@@ -20,8 +20,8 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.2.6
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=      7.2.8
+COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
 COMPONENT_DOWNLOAD_URL= https://download.virtualbox.org/virtualbox/$(COMPONENT_VERSION)
@@ -137,6 +137,9 @@ LOCAL_CONFIG+= '\nTOOL_GCC3PLAIN_LD  = $(CXX)'
 
 # Enable VBoxSDL
 LOCAL_CONFIG += '\nVBOX_WITH_VBOXSDL = 1'
+
+#disable soapC split
+LOCAL_CONFIG += '\nVBOX_WITHOUT_SPLIT_SOAPC = 1'
 
 # Set OpenIndiana project as publisher of VirtualBox binaries
 VBOX_BUILD_PUBLISHER=OpenIndiana
