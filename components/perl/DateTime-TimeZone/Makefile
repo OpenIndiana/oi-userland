@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime-TimeZone
-HUMAN_VERSION =			2.67
+HUMAN_VERSION =			2.68
 COMPONENT_SUMMARY =		Time zone object base class and factory
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:15df7c1decf2779fded1dda8ad9c3541fe858a7b276b362afb269579fc3d6b84
+	sha256:1c1285d911027d276f235b32a888ee7425c9ab356ee62cd126c4b3ee3ea659b3
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
