@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		XML-Parser
-HUMAN_VERSION =			2.57
+HUMAN_VERSION =			2.58
 COMPONENT_SUMMARY =		A perl module for parsing XML documents
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a846bf77032e953e8344989780fa6a885e2a5226ebcaa93dae1d3df9b184e9cf
+	sha256:8e0bd510a6095374aff14e4f0cea62c40df5c434ac703850f20ae8edb2c9b100
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -35,5 +35,6 @@ REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir-install
+REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
