@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-OpenSSL-RSA
-HUMAN_VERSION =			0.37
+HUMAN_VERSION =			0.39
 COMPONENT_SUMMARY =		RSA encoding and decoding, using the openSSL libraries
-COMPONENT_CPAN_AUTHOR =		TODDR
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:917f7312532f8f4af4f3acbf6ba10e0151f8577d2ef1f38e1035229be86eb6f4
+	sha256:2589eb4a46f9d30c2a4757969702b22d53cb7f7190d73603fb10eba7870b62f3
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -39,5 +39,5 @@ REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-bignum
 REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-guess
 REQUIRED_PACKAGES.perl += library/perl-5/crypt-openssl-random
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
-REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
