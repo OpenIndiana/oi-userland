@@ -1,8 +1,21 @@
---- trousers-0.3.11.2/src/tspi/tspi_context.c.orig
-+++ trousers-0.3.11.2/src/tspi/tspi_context.c
-@@ -57,6 +57,8 @@
- 
- 	Tspi_Context_FreeMemory(tspContext, NULL);
+# Fix memory leak.
+# Suitable for upstream use.
+# This change was implemented in-house.
+#
+--- src/tspi/tspi_context.c
++++ src/tspi/tspi_context.c
+@@ -16,7 +16,7 @@ #include <string.h>
+ #include "trousers/tss.h"
+ #include "trousers/trousers.h"
+ #include "trousers_types.h"
+-#include "trousers_types.h"
++#include "tsp_delegate.h"
+ #include "spi_utils.h"
+ #include "capabilities.h"
+ #include "tsplog.h"
+@@ -55,6 +55,8 @@ * free is left for it to free itself. */
+ 	/* Destroy all objects */
+ 	obj_close_context(tspContext);
  
 +	__tspi_freeTable(tspContext);
 +
