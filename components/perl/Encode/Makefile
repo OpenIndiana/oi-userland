@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Encode
-HUMAN_VERSION =			3.21
-COMPONENT_REVISION =		5
+HUMAN_VERSION =			3.22
 COMPONENT_SUMMARY =		character encodings in Perl
 COMPONENT_CPAN_AUTHOR =		DANKOGAI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eacf71c5eb49e0e590de797f1982d7fb95d8481e4d13c3ce79eb32ef9373b3db
+	sha256:542507dad2fff2ceb3b5e7f22b0be99124ffcd0d42a873948d3e27f12d6b4932
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,8 +32,8 @@ include $(WS_MAKE_RULES)/common.mk
 CLONEY_MODE = hardlink
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
