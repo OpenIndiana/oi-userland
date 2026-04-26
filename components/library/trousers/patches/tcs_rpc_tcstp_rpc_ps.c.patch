@@ -1,5 +1,9 @@
---- trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc_ps.c.orig
-+++ trousers-0.3.11.2/src/tcs/rpc/tcstp/rpc_ps.c
+# Add Solaris-specific code to verify the socket peer credential when
+# a key is registered.
+# This change was developed in-house and is not suitable for upstream use.
+#
+--- src/tcs/rpc/tcstp/rpc_ps.c	2014-04-24 11:05:44.000000000 -0700
++++ src/tcs/rpc/tcstp/rpc_ps.c	2016-04-18 13:55:57.830151412 -0700
 @@ -26,6 +26,29 @@
  #include "tcs_utils.h"
  #include "rpc_tcstp_tcs.h"
@@ -18,7 +22,7 @@
 +		return TCSERR(TSS_E_TSP_AUTHFAIL);
 +	}
 +	if (ucred_geteuid(uc) != 0) {
-+		LogError("Unauthorized attempt to modify a system key (%s)",
++		LogError("Unauthorized attempt to modify a system key",
 +		    strerror(errno));
 +		ucred_free(uc);
 +		return TCSERR(TSS_E_TSP_AUTHFAIL);

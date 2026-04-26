@@ -1,0 +1,96 @@
+# Fix problem with strict check in ASN1 parser in OpenSSL 3. It is replaced
+# with hardcoded parser exactly designed for TSS "ASN1" format.
+# This change was implemented in-house.
+#
+--- src/tspi/tspi_asn1.c
++++ src/tspi/tspi_asn1.c
+@@ -193,9 +193,6 @@ Tspi_DecodeBER_TssBlob(UINT32 berBlobSiz
+ 			UINT32 *rawBlobSize,		/* in/out */
+ 			BYTE *rawBlob)			/* out */
+ {
+-	TSS_BLOB *tssBlob = NULL;
+-	OPENSSL_COMPAT_CONST BYTE *encBlob = berBlob;
+-
+ 	UINT32 encBlobLen = berBlobSize;
+ 	UINT32 decStructVersion, decBlobType, decBlobSize;
+ 
+@@ -205,42 +202,52 @@ Tspi_DecodeBER_TssBlob(UINT32 berBlobSiz
+ 	if ((*rawBlobSize != 0) && (rawBlob == NULL))
+ 		return TSPERR(TSS_E_BAD_PARAMETER);
+ 
+-	tssBlob = d2i_TSS_BLOB(NULL, &encBlob, encBlobLen);
+-	if (!tssBlob)
++	if (berBlobSize < 20)
++		return TSPERR(TSS_E_BAD_PARAMETER);
++
++	/* Blob Structure */
++	if (berBlob[0] != 0x30 || berBlob[1] != 0x82)
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+ 
+-	decStructVersion = ASN1_INTEGER_get(tssBlob->structVersion);
+-	if (decStructVersion == TSS_OPENSSL_ASN1_ERROR) {
+-		TSS_BLOB_free(tssBlob);
++	/* Struct version */
++	if (berBlob[4] != 0x02 || berBlob[5] != 0x01)
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+-	}
++
++	decStructVersion = berBlob[6];
+ 	if (decStructVersion > TSS_BLOB_STRUCT_VERSION) {
+-		TSS_BLOB_free(tssBlob);
+ 		return TSPERR(TSS_E_BAD_PARAMETER);
+ 	}
+ 
+-	decBlobType = ASN1_INTEGER_get(tssBlob->blobType);
+-	if (decBlobType == TSS_OPENSSL_ASN1_ERROR) {
+-		TSS_BLOB_free(tssBlob);
++	/* Blob type */
++	if (berBlob[7] != 0x02 || berBlob[8] != 0x01)
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+-	}
++
++	decBlobType = berBlob[9];
+ 	if ((decBlobType < TSS_BLOB_TYPE_KEY) || (decBlobType > TSS_BLOB_TYPE_CMK_BYTE_STREAM)) {
+-		TSS_BLOB_free(tssBlob);
+ 		return TSPERR(TSS_E_BAD_PARAMETER);
+ 	}
+ 
+-	decBlobSize = ASN1_INTEGER_get(tssBlob->blobLength);
+-	if (decBlobSize == TSS_OPENSSL_ASN1_ERROR) {
+-		TSS_BLOB_free(tssBlob);
++	/* Blob length */
++	if (berBlob[10] != 0x02 || berBlob[11] != 0x04)
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+-	}
++
++	decBlobSize = ntohl(*((UINT32 *)(berBlob + 12)));
++	if (decBlobSize != berBlobSize - 20)
++		return TSPERR(TSS_E_BAD_PARAMETER);
++
++	/* Blob */
++
++	if (berBlob[16] != 0x04 || berBlob[17] != 0x82)
++		return TSPERR(TSS_E_INTERNAL_ERROR);
++
++	if (decBlobSize != ntohs(*((UINT16 *)(berBlob + 18))))
++		return TSPERR(TSS_E_BAD_PARAMETER);
+ 
+ 	if (*rawBlobSize != 0) {
+ 		if (decBlobSize <= *rawBlobSize) {
+-			memcpy(rawBlob, tssBlob->blob->data, decBlobSize);
++			memcpy(rawBlob, berBlob + 20, decBlobSize);
+ 		}
+ 		else {
+-			TSS_BLOB_free(tssBlob);
+ 			return TSPERR(TSS_E_BAD_PARAMETER);
+ 		}
+ 	}
+@@ -248,8 +255,5 @@ Tspi_DecodeBER_TssBlob(UINT32 berBlobSiz
+ 	*rawBlobSize = decBlobSize;
+ 	*blobType = decBlobType;
+ 
+-	TSS_BLOB_free(tssBlob);
+-
+ 	return TSS_SUCCESS;
+ }
+-

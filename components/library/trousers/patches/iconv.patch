@@ -1,5 +1,10 @@
---- trousers-0.3.11.2/src/include/trousers_types.h.orig
-+++ trousers-0.3.11.2/src/include/trousers_types.h
+# Include Solaris as defining const keyword to remove compiler warnings.
+# Solaris-specific, but suitable for use upstream.
+# This change was implemented in-house.
+#
+diff -r 752da1afac1a src/include/trousers_types.h
+--- src/include/trousers_types.h	Mon Oct 04 17:02:05 2021 +0200
++++ src/include/trousers_types.h	Mon Oct 04 17:04:48 2021 +0200
 @@ -118,9 +118,9 @@
  	BYTE *encData;
  } TSS_KEY;
@@ -7,8 +12,8 @@
 -#if (defined (__linux) || defined (linux) || defined (SOLARIS) || defined (__GLIBC__))
 +#if (defined (__linux) || defined (linux) || defined (__GLIBC__))
  #define BSD_CONST
--#elif (defined (__OpenBSD__) || defined (__FreeBSD__))
-+#elif (defined (__OpenBSD__) || defined (__FreeBSD__) || defined (__sun))
+-#elif (defined (__OpenBSD__) || defined (__FreeBSD__)) || defined (__APPLE__)
++#elif (defined (__OpenBSD__) || defined (__FreeBSD__)) || defined (__APPLE__) || defined (SOLARIS)
  #define BSD_CONST const
  #endif
  
