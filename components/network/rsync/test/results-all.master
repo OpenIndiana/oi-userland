@@ -1,6 +1,6 @@
 PASS    00-hello
-SKIP    acls-default (I don't know how to use your setfacl command)
-SKIP    acls (I don't know how to use setfacl or chmod for ACLs)
+SKIP    acls-default (Your filesystem has ACLs disabled)
+SKIP    acls (Your filesystem has ACLs disabled)
 PASS    alt-dest
 PASS    atimes
 PASS    backup
@@ -11,6 +11,7 @@ PASS    chmod-temp-dir
 PASS    chmod
 SKIP    chown-fake (Can't chown (probably need root))
 PASS    chown
+PASS    clean-fname-underflow
 SKIP    crtimes (Rsync is configured without crtimes support)
 PASS    daemon-gzip-download
 PASS    daemon-gzip-upload
@@ -33,14 +34,16 @@ PASS    longdir
 PASS    merge
 PASS    missing
 PASS    mkpath
+SKIP    open-noatime (O_NOATIME is only supported on Linux)
 SKIP    protected-regular (Can't find protected_regular setting (only available on Linux))
 PASS    relative
 PASS    safe-links
+SKIP    simd-checksum (simdtest not built (SIMD not available))
 PASS    ssh-basic
 PASS    symlink-ignore
 PASS    trimslash
 PASS    unsafe-byname
 PASS    unsafe-links
 PASS    wildmatch
-SKIP    xattrs-hlink (Unable to set an xattr)
-SKIP    xattrs (Unable to set an xattr)
+PASS    xattrs-hlink
+PASS    xattrs
