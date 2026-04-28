@@ -1,0 +1,96 @@
+Make sure no 32 bit binaries will be found as our fakeroot only supports 64 bit.
+If a 32 bit binary is run under fakeroot it will error out with wrong ELF class.
+--- rsync-3.4.2/testsuite/devices.test.orig	2022-10-20 18:09:26.000000000 +0200
++++ rsync-3.4.2/testsuite/devices.test	2026-04-28 22:41:46.861803810 +0200
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/bin/bash
+ 
+ # Copyright (C) 2002 by Martin Pool <mbp@samba.org>
+ 
+@@ -32,7 +32,7 @@
+ 	}
+ 	;;
+     solaris*)
+-	mknod() {
++	gmknod() {
+ 	    fn="$1"
+ 	    case "$2" in
+ 	    p) mode=10644 ;;
+@@ -41,8 +41,8 @@
+ 	    esac
+ 	    maj="${3:-0}"
+ 	    min="${4:-0}"
+-	    touch "$fn"
+-	    runat "$fn" "$SHELL_PATH" <<EOF
++	    gtouch "$fn"
++	    grunat "$fn" "$SHELL_PATH" <<EOF
+ echo "$mode $maj,$min 0:0" > rsync.%stat
+ EOF
+ 	}
+@@ -94,24 +94,24 @@
+ 
+ # TODO: Need to test whether hardlinks are possible on this OS/filesystem
+ 
+-$RSYNC -VV | grep '"hardlink_specials": true' >/dev/null && CAN_HLINK_SPECIAL=yes || CAN_HLINK_SPECIAL=no
++$RSYNC -VV | ggrep '"hardlink_specials": true' >/dev/null && CAN_HLINK_SPECIAL=yes || CAN_HLINK_SPECIAL=no
+ 
+-mkdir "$fromdir"
+-mkdir "$todir"
+-mknod "$fromdir/char" c 41 67  || test_skipped "Can't create char device node"
+-mknod "$fromdir/char2" c 42 68  || test_skipped "Can't create char device node"
+-mknod "$fromdir/char3" c 42 69  || test_skipped "Can't create char device node"
+-mknod "$fromdir/block" b 42 69 || test_skipped "Can't create block device node"
+-mknod "$fromdir/block2" b 42 73 || test_skipped "Can't create block device node"
+-mknod "$fromdir/block3" b 105 73 || test_skipped "Can't create block device node"
++gmkdir "$fromdir"
++gmkdir "$todir"
++gmknod "$fromdir/char" c 41 67  || test_skipped "Can't create char device node"
++gmknod "$fromdir/char2" c 42 68  || test_skipped "Can't create char device node"
++gmknod "$fromdir/char3" c 42 69  || test_skipped "Can't create char device node"
++gmknod "$fromdir/block" b 42 69 || test_skipped "Can't create block device node"
++gmknod "$fromdir/block2" b 42 73 || test_skipped "Can't create block device node"
++gmknod "$fromdir/block3" b 105 73 || test_skipped "Can't create block device node"
+ if test "$CAN_HLINK_SPECIAL" = yes; then
+-    ln "$fromdir/block3" "$fromdir/block3.5"
++    gln "$fromdir/block3" "$fromdir/block3.5"
+ else
+     echo "Skipping hard-linked device test..."
+ fi
+-mkfifo "$fromdir/fifo" || mknod "$fromdir/fifo" p || test_skipped "Can't run mkfifo"
++gmkfifo "$fromdir/fifo" || gmknod "$fromdir/fifo" p || test_skipped "Can't run mkfifo"
+ # Work around time rounding/truncating issue by touching both files.
+-touch -r "$fromdir/block" "$fromdir/block" "$fromdir/block2"
++gtouch -r "$fromdir/block" "$fromdir/block" "$fromdir/block2"
+ 
+ checkdiff "$RSYNC -ai '$fromdir/block' '$todir/block2'" <<EOT
+ cD$all_plus block
+@@ -127,7 +127,7 @@
+ cDc.T.$dots block3
+ EOT
+ 
+-cat >"$chkfile" <<EOT
++gcat >"$chkfile" <<EOT
+ .d..t.$dots ./
+ cDc.t.$dots block
+ cDc...$dots block2
+@@ -139,8 +139,8 @@
+ cS$all_plus fifo
+ EOT
+ if test "$CAN_HLINK_SPECIAL" = no; then
+-    grep -v block3.5 <"$chkfile" >"$chkfile.new"
+-    mv "$chkfile.new" "$chkfile"
++    ggrep -v block3.5 <"$chkfile" >"$chkfile.new"
++    gmv "$chkfile.new" "$chkfile"
+ fi
+ 
+ checkdiff2 "$RSYNC -aiHvv '$fromdir/' '$todir/'" v_filt
+@@ -149,7 +149,7 @@
+ echo ""
+ ( cd "$fromdir" && rsync_ls_lR . ) > "$tmpdir/ls-from"
+ ( cd "$todir" && rsync_ls_lR . ) > "$tmpdir/ls-to"
+-diff $diffopt "$tmpdir/ls-from" "$tmpdir/ls-to"
++gdiff $diffopt "$tmpdir/ls-from" "$tmpdir/ls-to"
+ 
+ if test "$CAN_HLINK_SPECIAL" = yes; then
+     set -x

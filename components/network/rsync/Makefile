@@ -28,13 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.4.1
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	3.4.2
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52
+COMPONENT_ARCHIVE_HASH=	sha256:ff10aa2c151cd4b2dbbe6135126dbc854046113d2dfb49572a348233267eb315
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -45,8 +44,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 CONFIGURE_OPTIONS  +=	--with-included-popt
 CONFIGURE_OPTIONS  +=	--enable-xattr-support
-# disable xxHash until we provide a package for it (https://github.com/Cyan4973/xxHash)
-CONFIGURE_OPTIONS  +=	--disable-xxhash
 CONFIGURE_OPTIONS  +=	CPPFLAGS=-I$(OPENSSL_INCDIR)
 CONFIGURE_OPTIONS  +=	LDFLAGS=-L$(OPENSSL_LIBDIR)
 
@@ -60,5 +57,6 @@ TEST_REQUIRED_PACKAGES += developer/fakeroot
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += SUNWcs
 REQUIRED_PACKAGES += compress/zstd
+REQUIRED_PACKAGES += library/libxxhash
 REQUIRED_PACKAGES += library/lz4
 REQUIRED_PACKAGES += system/library
