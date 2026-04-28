@@ -17,11 +17,10 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-commander
-HUMAN_VERSION=		1.18.5
-COMPONENT_REVISION=	1
+HUMAN_VERSION=		1.18.6
 COMPONENT_SUMMARY=	gnome commander file manager
 COMPONENT_PROJECT_URL=	https://gcmd.github.io/
-COMPONENT_ARCHIVE_HASH=	sha256:4a7a38a9ea0f456f8451d21b307bdf59d38a100b9d70a3a8dec492c5adbcff8b
+COMPONENT_ARCHIVE_HASH=	sha256:ca11736869c3e08aa0a12d8caf1e1ce79679365b177c07eb4ab810cd4da4c8cb
 COMPONENT_FMRI=		desktop/file-manager/gnome-commander
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/File Managers
 COMPONENT_LICENSE=	GPL-2.0-only
@@ -38,6 +37,15 @@ TEST_REQUIRED_PACKAGES += x11/server/xvfb
 COMPONENT_PRE_TEST_ACTION += /usr/bin/Xvfb :0 >/dev/null 2>&1 &
 COMPONENT_TEST_ENV += DISPLAY=:0
 COMPONENT_POST_TEST_ACTION += /usr/bin/pkill -x Xvfb ;
+
+# Testing needs the XDG_CACHE_HOME environment variable pointing to a writable
+# directory (the directory does not need to exist) because otherwise Fontconfig
+# complains it is unable to find writable cache directories.
+COMPONENT_PRE_TEST_ACTION += $(RM) -r $(@D)/.xdg_cache_home
+COMPONENT_TEST_ENV += XDG_CACHE_HOME="$(@D)/.xdg_cache_home"
+
+# Manually added test dependencies
+TEST_REQUIRED_PACKAGES += system/library/fontconfig
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
