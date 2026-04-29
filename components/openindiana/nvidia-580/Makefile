@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 # https://docs.nvidia.com/datacenter/tesla/drivers/supported-drivers-and-cuda-toolkit-versions.html
 
 COMPONENT_NAME =		nvidia
-HUMAN_VERSION =			580.142
+HUMAN_VERSION =			580.159.03
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_FMRI =		driver/graphics/nvidia-$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:e52db2a8ca2975e5b7dd9f766dda7c265cae6774b368b4065d5b71ec5648f5e9
+COMPONENT_ARCHIVE_HASH =	sha256:503a18a90842fc855aa72c7f4b760e6dd2e8b0566ba7655848172d0fee30620f
 COMPONENT_ARCHIVE_URL =		https://download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 
@@ -58,11 +58,9 @@ $(BUILD_$(MK_BITS)):	$(SOURCE_DIR)/.prep
 	$(TOUCH) $@
 
 $(INSTALL_$(MK_BITS)):	$(BUILD_$(MK_BITS))
-	$(MKDIR) $(PROTO_DIR)/kernel/drv/amd64
-	for i in kernel/drv/amd64/nvidia kernel/drv/nvidia.conf kernel/drv/nvidia_modeset.conf kernel/drv/amd64/nvidia_modeset; do \
-	    $(CP) $(SOURCE_DIR)/NVDAgraphicsr/reloc/$$i $(PROTO_DIR)/$$i; done
-	$(RM) -r $(PROTO_DIR)/usr
-	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
+	$(MKDIR) $(PROTO_DIR)/$(KERNELDRVDIR)
+	$(CP) -a $(SOURCE_DIR)/NVDAgraphicsr/reloc/$(KERNELDRVDIR)/* $(PROTO_DIR)/$(KERNELDRVDIR)
+	$(CP) -a $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTOUSRDIR)
 	$(TOUCH) $@
 
 GENERATE_EXTRA_CMD += | \
