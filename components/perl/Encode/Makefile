@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Encode
-HUMAN_VERSION =			3.23
+HUMAN_VERSION =			3.24
 COMPONENT_SUMMARY =		character encodings in Perl
 COMPONENT_CPAN_AUTHOR =		DANKOGAI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0e8fe2e58c209b417c0bf5549f6ee18b274ff2f99134b5da92503c80fa07ef05
+	sha256:e4ff0be00ef14c42754c9db2fee41a053e9d4613db6405e98cd0e0e5be740362
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
