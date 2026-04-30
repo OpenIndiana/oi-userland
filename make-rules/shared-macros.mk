@@ -127,7 +127,7 @@ ROOT =			/
 # to determine the distribution version
 # (it should look like OpenIndiana Hipster YYYY.MM).
 DISTRIBUTION_NAME = OpenIndiana Hipster
-DISTRIBUTION_VERSION = 2025.10
+DISTRIBUTION_VERSION = 2026.04
 # Native OS version
 OS_VERSION :=		$(shell $(UNAME) -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
