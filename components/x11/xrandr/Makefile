@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xrandr
-COMPONENT_VERSION=  1.5.3
+COMPONENT_VERSION=  1.5.4
 COMPONENT_SUMMARY=  xrandr - utility to configure screen sizes and layout
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f8dd7566adb74147fab9964680b6bbadee87cf406a7fcff51718a5e6949b841c
+COMPONENT_ARCHIVE_HASH= sha256:2cafccb2aaf2491a4068676117a0d4f90ab307724b96fffc54cd1da953779400
 COMPONENT_FMRI=     x11/xrandr
 COMPONENT_LICENSE_FILE=	COPYING
 
