@@ -21,9 +21,9 @@ include ../../../../make-rules/shared-macros.mk
 # Odd minor versions are unstable.
 
 COMPONENT_NAME=			at-spi2-core
-HUMAN_VERSION=			2.60.2
+HUMAN_VERSION=			2.60.3
 COMPONENT_SUMMARY=		DBus interface definitions for AT-SPI (Assistive Technology Service Provider Interface)
-COMPONENT_ARCHIVE_HASH=		sha256:901f8acac5f5c28b9ff2aed98de5851f4c7af6123dda73d30c4d925796e88861
+COMPONENT_ARCHIVE_HASH=		sha256:21056bc04e43e8ed34fdafd916a0ddcc29ec03a4ce6cf5aacac1ddf6ef185ef7
 COMPONENT_FMRI=			gnome/accessibility/at-spi2-core
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_LICENSE=		LGPL-2.1-only
@@ -59,7 +59,7 @@ COMPONENT_PRE_TEST_ACTION += $(ENV) $$($(CAT) $(BUILD_DIR_$(BITS))/.dbus-env) $(
 COMPONENT_POST_TEST_ACTION += kill $$($(CAT) $(BUILD_DIR_$(BITS))/.registry) ; $(RM) $(BUILD_DIR_$(BITS))/.registry ;
 
 # Dynamic library version number
-SOVER = 26011.1
+SOVER = 26012.1
 SOVER_RE = $(subst .,\.,$(SOVER))
 
 # Replace library version number by SOVER
