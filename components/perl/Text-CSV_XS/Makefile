@@ -19,20 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Text-CSV_XS
-HUMAN_VERSION =			1.61
+HUMAN_VERSION =			1.62
 COMPONENT_SUMMARY =		Comma-Separated Values manipulation routines
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.61.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/Text-CSV_XS-1.62.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2cb9151e8c093921ff68ab9e5c376f7be014a0cb139342f0c3229ac5cdd9fc3a
+	sha256:1710693eddaefdd56e74da42baa9ed676e7eaed28ebd303ad23c982fef2b1415
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
