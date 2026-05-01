@@ -22,10 +22,12 @@
 # Copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.42.0
+COMPONENT_VERSION =		5.42.2
 # Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
 # sure bundled CPAN modules gets distinct version.
 COMPONENT_REVISION =		0
@@ -36,7 +38,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:73cf6cc1ea2b2b1c110a18c14bbbc73a362073003893ffcedc26d22ebdbdd0c3
+	sha256:0a585eeb9e363c0f80482ddb3571625250c2c86aeb408853e8ea50805cfb14bb
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -86,8 +88,8 @@ COMPONENT_SUMMARY.Compress-Raw-Bzip2 = Low-Level Interface to bzip2 compression 
 
 # Compress-Raw-Zlib
 COMPONENT_FMRI.Compress-Raw-Zlib = library/perl-5/compress-raw-zlib-$(PLV)
-IPS_COMPONENT_VERSION.Compress-Raw-Zlib = 2.213
-HUMAN_VERSION.Compress-Raw-Zlib = 2.213
+IPS_COMPONENT_VERSION.Compress-Raw-Zlib = 2.222
+HUMAN_VERSION.Compress-Raw-Zlib = 2.222
 COMPONENT_SUMMARY.Compress-Raw-Zlib = Perl interface to zlib/zlib-ng compression libraries
 
 # Config-Perl-V
@@ -534,8 +536,10 @@ PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perl
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/bin/perlbug
 PKG_HARDLINKS += usr/perl5/$(PERL_VERSION)/man/man1/perlbug.1
 
-# Auto-generated dependencies
+# Manually added build dependencies
 REQUIRED_PACKAGES += database/berkeleydb-5
+
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/database/gdbm
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
