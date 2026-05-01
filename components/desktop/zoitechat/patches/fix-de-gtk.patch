@@ -1,0 +1,20 @@
+--- zoitechat-zoitechat-2.18.0/src/fe-gtk/meson.build.~1~
++++ zoitechat-zoitechat-2.18.0/src/fe-gtk/meson.build
+@@ -86,7 +86,7 @@
+   endif
+ endif
+ 
+-zoitechat_gtk_ldflags = []
++zoitechat_gtk_ldflags = ['-lkstat', '-lsocket', '-lnsl', '-lssp', '-lssp_nonshared']
+ 
+ if host_machine.system() == 'windows'
+   zoitechat_gtk_sources += 'notifications/notification-windows.c'
+@@ -134,7 +134,7 @@
+   link_with: zoitechat_theme_lib,
+   c_args: zoitechat_gtk_cflags,
+   link_args: zoitechat_gtk_ldflags,
+-  pie: true,
++  pie: false,
+   install: true,
+   gui_app: true,
+ )
