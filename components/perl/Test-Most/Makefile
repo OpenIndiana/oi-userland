@@ -19,23 +19,22 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Most
-HUMAN_VERSION =			0.38
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			0.41
 COMPONENT_SUMMARY =		Most commonly needed test functions and features.
-COMPONENT_CPAN_AUTHOR =		OVID
+COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:089eb894f7bace4c37c6334e0e290eb20338ee10223af0c82cbe7281c78382df
+	sha256:1399d99e88e5faf4e282cb6be92c42dfd2871f1dc4f4d96e8620666abf130261
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/exception-class
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-deep
-PERL_REQUIRED_PACKAGES += library/perl-5/test-differences
-PERL_REQUIRED_PACKAGES += library/perl-5/test-exception
-PERL_REQUIRED_PACKAGES += library/perl-5/test-harness
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += library/perl-5/test-warn
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/exception-class
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-deep
+REQUIRED_PACKAGES.perl += library/perl-5/test-differences
+REQUIRED_PACKAGES.perl += library/perl-5/test-exception
+REQUIRED_PACKAGES.perl += library/perl-5/test-harness
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += library/perl-5/test-warn
+REQUIRED_PACKAGES.perl += runtime/perl
