@@ -27,13 +27,13 @@ BUILD_BITS= 64_and_32
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= fftw
-COMPONENT_VERSION= 3.3.10
+COMPONENT_VERSION= 3.3.11
 COMPONENT_SUMMARY= FFTW - library for calculating discrete Fourier transforms
 COMPONENT_DESCRIPTION= FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data
 COMPONENT_PROJECT_URL= https://fftw.org
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467
+COMPONENT_ARCHIVE_HASH= sha256:5630c24cdeb33b131612f7eb4b1a9934234754f9f388ff8617458d0be6f239a1
 COMPONENT_ARCHIVE_URL= $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/fftw-3
 COMPONENT_CLASSIFICATION= Development/High Performance Computing
