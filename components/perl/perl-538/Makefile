@@ -22,13 +22,15 @@
 # Copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.38.4
+COMPONENT_VERSION =		5.38.5
 # Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
 # sure bundled CPAN modules gets distinct version.
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		0
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
@@ -36,7 +38,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6777e856b22460e8091f9524593e93299f421cc23dbd408d3f5ed3328d357a7
+	sha256:293efd3c7d100c470624a56a18f85fd656207bf124460e76709d94b8bae14422
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
