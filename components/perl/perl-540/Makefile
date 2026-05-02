@@ -22,13 +22,15 @@
 # Copyright (c) 2021, Tim Mooney.  All rights reserved.
 #
 
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.40.2
+COMPONENT_VERSION =		5.40.4
 # Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
 # sure bundled CPAN modules gets distinct version.
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		0
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
@@ -36,7 +38,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0551c717458e703ef7972307ab19385edfa231198d88998df74e12226abf563b
+	sha256:eb0b1116b84ded552f686c9ee40c83000d8388c454f54197ca1d3a3b17246bd3
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -86,8 +88,8 @@ COMPONENT_SUMMARY.Compress-Raw-Bzip2 = Low-Level Interface to bzip2 compression 
 
 # Compress-Raw-Zlib
 COMPONENT_FMRI.Compress-Raw-Zlib = library/perl-5/compress-raw-zlib-$(PLV)
-IPS_COMPONENT_VERSION.Compress-Raw-Zlib = 2.212
-HUMAN_VERSION.Compress-Raw-Zlib = 2.212
+IPS_COMPONENT_VERSION.Compress-Raw-Zlib = 2.222
+HUMAN_VERSION.Compress-Raw-Zlib = 2.222
 COMPONENT_SUMMARY.Compress-Raw-Zlib = Perl interface to zlib/zlib-ng compression libraries
 
 # Config-Perl-V
