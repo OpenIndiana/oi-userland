@@ -1,0 +1,78 @@
+--- hexchat-2.14.3/src/common/util.c	2019-12-21 07:43:47.702403000 +0000
++++ hexchat-2.14.3/src/common/util.c	2020-01-02 12:03:02.367758918 +0000
+@@ -61,6 +61,10 @@
+ #endif
+ #endif
+ 
++#if defined (__SVR4) && defined (__sun)
++#include <kstat.h>
++#endif
++
+ char *
+ file_part (char *file)
+ {
+@@ -360,7 +364,7 @@ strip_hidden_attribute (char *src, char
+ 	return len;
+ }
+ 
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 
+ static void
+ get_cpu_info (double *mhz, int *cpus)
+@@ -450,6 +454,37 @@ get_cpu_info (double *mhz, int *cpus)
+ 	*mhz = (freq / 1000000);
+ 
+ #endif
++#if defined (__SVR4) && defined (__sun)
++
++	kstat_t       *ksp;
++	kstat_ctl_t   *kc;
++	kstat_named_t *knp = NULL;
++	int	      numcpu = 0;
++	kc = kstat_open();
++	if (kc == NULL) {
++		fprintf (stderr, "get speed: kstat error %d\n", errno);
++		return;
++	}
++
++	ksp = kstat_lookup(kc, "cpu_info", -1, NULL);
++	for (; ksp != NULL; ksp = ksp->ks_next) {
++                if (strcmp(ksp->ks_module, "cpu_info"))
++                        continue;
++	        numcpu++;
++
++	        kstat_read(kc, ksp, NULL);
++
++		if (knp == NULL) {
++		        knp = kstat_data_lookup(ksp, "clock_MHz");
++		}
++	}
++
++	*cpus = numcpu;
++	if (knp) {
++		*mhz = knp->value.i32;
++	}
++
++#endif
+ 
+ }
+ #endif
+@@ -495,7 +530,7 @@ get_sys_str (int with_cpu)
+ char *
+ get_sys_str (int with_cpu)
+ {
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 	double mhz;
+ #endif
+ 	int cpus = 1;
+@@ -507,7 +542,7 @@ get_sys_str (int with_cpu)
+ 
+ 	uname (&un);
+ 
+-#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__)
++#if defined (__linux__) || defined (__FreeBSD__) || defined (__APPLE__) || defined (__CYGWIN__) || (defined (__SVR4) && defined (__sun))
+ 	get_cpu_info (&mhz, &cpus);
+ 	if (mhz && with_cpu)
+ 	{
