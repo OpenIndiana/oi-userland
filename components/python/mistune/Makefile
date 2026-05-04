@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mistune
-HUMAN_VERSION =			3.2.0
+HUMAN_VERSION =			3.2.1
 COMPONENT_SUMMARY =		A sane and fast Markdown parser with useful plugins and renderers
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:708487c8a8cdd99c9d90eb3ed4c3ed961246ff78ac82f03418f5183ab70e398a
+	sha256:7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
