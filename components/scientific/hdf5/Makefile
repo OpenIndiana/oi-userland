@@ -15,12 +15,13 @@
 
 BUILD_STYLE= cmake
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD = yes
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hdf5
-COMPONENT_MJR_VERSION=    2.1
-COMPONENT_BLD_VERSION=    $(COMPONENT_MJR_VERSION).1
-COMPONENT_VERSION=        $(COMPONENT_BLD_VERSION)
+COMPONENT_VERSION=		2.1.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=        HDF5 - Data model, library, and file format for storing and managing data
 COMPONENT_PROJECT_URL=    https://www.hdfgroup.org
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -40,17 +41,8 @@ CMAKE_OPTIONS += -DHDF5_BUILD_HL_LIB=ON
 CMAKE_OPTIONS += -DHDF5_BUILD_FORTRAN=ON
 CMAKE_OPTIONS += -DHDF5_ENABLE_ZLIB_SUPPORT=ON
 CMAKE_OPTIONS += -DHDF5_INSTALL_CMAKE_DIR=lib/cmake/hdf5
-CMAKE_OPTIONS += -DHDF5_INSTALL_LIB_DIR=/usr/lib/$(MACH64)
-CMAKE_OPTIONS += -DHDF5_INSTALL_INCLUDE_DIR=/usr/include/hdf5
-
-COMPONENT_TEST_TRANSFORMS += \
-	' -e "/Testing/p" ' \
-	' -e "/passed/p" ' \
-	' -e "/skipped/p" ' \
-	' -e "/=====/p" ' \
-	' -e "/finished/p" ' \
-	' -e "/Test log/p" ' \
-	' -e "/Test sizes/p" '
+CMAKE_OPTIONS += -DHDF5_INSTALL_LIB_DIR=lib/$(MACH64)
+CMAKE_OPTIONS += -DHDF5_INSTALL_INCLUDE_DIR=include/hdf5
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
