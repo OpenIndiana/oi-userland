@@ -19,13 +19,19 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Stream-Zstd
-HUMAN_VERSION =			0.217
+HUMAN_VERSION =			0.207
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Perl interface to the Zstd (Zstandard) (de)compressor
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5c33e0a9ea34c19fd5f2b97216f81ce08b95193706d915dbd04398039d05af1f
+	sha256:85e6a598294ded927b5178ee307e53224373461b9fdceddff7163abca50da3e0
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
+
+# The 0.217 version was briefly available at CPAN and so we packaged it.
+# It later disappeared because it was created mistakenly but since IPS cannot
+# downgrade we need to keep it.
+COMPONENT_VERSION =		0.217
 
 include $(WS_MAKE_RULES)/common.mk
 
