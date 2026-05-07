@@ -30,13 +30,13 @@ ESR =
 # CANDIDATE_NIGHTLY is the nightly release hosted on github
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
-# CANDIDATE_BUILD=1
+# CANDIDATE_BUILD=2
 # CANDIDATE_BETA=10
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      150.0.1
+COMPONENT_VERSION=      150.0.2
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,7 +73,7 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:2acffa708d924f5c81ecf08ce99dd9e0cfca2f3797f1a7791f154ed0365f6eec
+COMPONENT_ARCHIVE_HASH=	sha256:e3830b20cdf660a9cdec6e4d2326d7ced07333d9746df028cfc00c8216acbec9
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
