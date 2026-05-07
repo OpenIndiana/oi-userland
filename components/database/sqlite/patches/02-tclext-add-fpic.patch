@@ -1,13 +1,13 @@
 CFLAGS aren't getting set in buildtclext.tcl. Force -fPIC usage.
 
---- sqlite-src-3500000/tool/buildtclext.tcl.orig	2025-05-29 16:34:54.000000000 +0200
-+++ sqlite-src-3500000/tool/buildtclext.tcl	2025-06-03 11:53:37.737536104 +0200
-@@ -300,7 +300,7 @@
+--- sqlite-src-3530100/tool/buildtclext.tcl.orig	2026-05-05 12:49:11.000000000 +0200
++++ sqlite-src-3530100/tool/buildtclext.tcl	2026-05-06 19:26:07.644565951 +0200
+@@ -317,7 +317,7 @@
  
    # Generate and execute the command with which to do the compilation.
    #
--  set cmd "$CMD -DUSE_TCL_STUBS tclsqlite3.c -o $OUT $LIBS"
-+  set cmd "$CMD -DUSE_TCL_STUBS tclsqlite3.c -fPIC -o $OUT $LIBS"
+-  set cmd "$CMD -DUSE_TCL_STUBS tclsqlite3.c -o $OUT [join $LIBS { }]"
++  set cmd "$CMD -DUSE_TCL_STUBS tclsqlite3.c -fPIC -o $OUT [join $LIBS { }]"
    puts $cmd
    file delete -force $OUT
    catch {exec {*}$cmd} errmsg
