@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Most
-HUMAN_VERSION =			0.41
+HUMAN_VERSION =			0.42
 COMPONENT_SUMMARY =		Most commonly needed test functions and features.
 COMPONENT_CPAN_AUTHOR =		DCANTRELL
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1399d99e88e5faf4e282cb6be92c42dfd2871f1dc4f4d96e8620666abf130261
+	sha256:a418935483def0a46259a50bff6320842792a5a02777192667de222475253075
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
