@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     mkcomposecache
-COMPONENT_VERSION=  1.2.2
+COMPONENT_VERSION=  1.2.3
 COMPONENT_FMRI=     x11/mkcomposecache
 COMPONENT_SUMMARY=  mkcomposecache - utility for creating global (system-wide) Compose cache files
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:1a58d8504ae52964d83904c49f5bcd47c160572b4e65bc445083ddc750a70055
+COMPONENT_ARCHIVE_HASH= sha256:2860d7317ec9a9365705cb25410c308ddc34422394d9b91d499b1ddd453c7d39
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
