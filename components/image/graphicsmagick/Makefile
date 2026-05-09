@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME= GraphicsMagick
 COMPONENT_MAJOR_VERSION= 1.3
 COMPONENT_MINOR_VERSION= 46
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= A collection of utilities to support file format conversion,image processing, and 2D vector rendering.
 COMPONENT_VERSION= $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 COMPONENT_PROJECT_URL= http://www.graphicsmagick.org/
