@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		matplotlib_inline
-HUMAN_VERSION =			0.2.1
+HUMAN_VERSION =			0.2.2
 COMPONENT_SUMMARY =		Inline Matplotlib backend for Jupyter
 COMPONENT_PROJECT_URL =		https://github.com/ipython/matplotlib-inline
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e1ee949c340d771fc39e241ea75683deb94762c8fa5f2927ec57c83c4dffa9fe
+	sha256:72f3fe8fce36b70d4a5b612f899090cd0401deddc4ea90e1572b9f4bfb058c79
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
