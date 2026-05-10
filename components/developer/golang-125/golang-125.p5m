@@ -35,7 +35,7 @@ license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 #
 # All files with a Hash as name must be removed from the manifest, as they are named different between building machines.
 # Additionally they are not needed.
-#<transform file path=usr/lib/golang//$(COMPONENT_MJR_VERSION)gocache/.+ -> drop >
+#<transform file path=usr/lib/golang/$(COMPONENT_MJR_VERSION)/gocache/.+ -> drop >
 
 link path=usr/bin/go target=../lib/golang/$(COMPONENT_MJR_VERSION)/bin/go mediator=golang mediator-version=$(COMPONENT_MJR_VERSION)
 link path=usr/bin/gofmt target=../lib/golang/$(COMPONENT_MJR_VERSION)/bin/gofmt mediator=golang mediator-version=$(COMPONENT_MJR_VERSION)
@@ -96,6 +96,7 @@ file path=usr/lib/golang/1.25/gocache/README
 file path=usr/lib/golang/1.25/gocache/trim.txt
 file path=usr/lib/golang/1.25/lib/fips140/Makefile
 file path=usr/lib/golang/1.25/lib/fips140/README.md
+file path=usr/lib/golang/1.25/lib/fips140/certified.txt
 file path=usr/lib/golang/1.25/lib/fips140/fips140.sum
 file path=usr/lib/golang/1.25/lib/fips140/inprocess.txt
 file path=usr/lib/golang/1.25/lib/fips140/v1.0.0-c2097c7c.zip
@@ -875,6 +876,7 @@ file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/opt-122.
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/opt.go
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/range_esc_address.go
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/range_esc_closure.go
+file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/range_esc_closure_linedir.go
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/range_esc_method.go
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/loopvar/testdata/range_esc_minimal_closure.go
 file path=usr/lib/golang/1.25/src/cmd/compile/internal/mips/galign.go
@@ -2192,6 +2194,7 @@ file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_runs.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_single_vs_multiple.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_statements.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_swig.txt
+file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_switch_toolchain.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_sync_atomic_import.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_test_localpkg_filepath.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/cover_test_pkgselect.txt
@@ -2621,6 +2624,7 @@ file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_skip_write.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_stale.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_std_vendor.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_string_alias.txt
+file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_sum_absent.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_sum_ambiguous.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_sum_issue56222.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/mod_sum_lookup.txt
@@ -2733,6 +2737,8 @@ file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_build_failure.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_buildinfo.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_buildinfo_godebug_issue68053.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_buildvcs.txt
+file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_cache_coverpkg_bug.txt
+file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_cache_coverpkg_no_profile.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_cache_inputs.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_chatty_fail.txt
 file path=usr/lib/golang/1.25/src/cmd/go/testdata/script/test_chatty_parallel_fail.txt
@@ -7515,6 +7521,7 @@ file path=usr/lib/golang/1.25/src/internal/types/testdata/fixedbugs/issue71131.g
 file path=usr/lib/golang/1.25/src/internal/types/testdata/fixedbugs/issue71198.go
 file path=usr/lib/golang/1.25/src/internal/types/testdata/fixedbugs/issue71284.go
 file path=usr/lib/golang/1.25/src/internal/types/testdata/fixedbugs/issue72936.go
+file path=usr/lib/golang/1.25/src/internal/types/testdata/fixedbugs/issue78163.go
 file path=usr/lib/golang/1.25/src/internal/types/testdata/spec/assignability.go
 file path=usr/lib/golang/1.25/src/internal/types/testdata/spec/comparable.go
 file path=usr/lib/golang/1.25/src/internal/types/testdata/spec/comparable1.19.go
@@ -13003,6 +13010,7 @@ file path=usr/lib/golang/1.25/test/fixedbugs/issue7760.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue77919.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue7794.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue7863.go
+file path=usr/lib/golang/1.25/test/fixedbugs/issue78641.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue7867.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue7884.go
 file path=usr/lib/golang/1.25/test/fixedbugs/issue7921.go
