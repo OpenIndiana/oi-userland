@@ -18,12 +18,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stellarium
-COMPONENT_VERSION=		25.4
+COMPONENT_VERSION=		26.1
 COMPONENT_SUMMARY=	Planetarium with realistic 3D sky just like seeing with naked eye, binoculars or telescope.
 COMPONENT_PROJECT_URL=	https://stellarium.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5b7042e626afe4ed49a996c5aa737ede3079e3409039560e7d5909f2ab16204c
+COMPONENT_ARCHIVE_HASH=	sha256:3585e49043a02321ab5547d25b0e5cb97123b22b727f6b42d26f4d60777ba410
 COMPONENT_ARCHIVE_URL=  https://github.com/Stellarium/stellarium/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		image/stellarium
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -32,6 +32,12 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+# Two file names contain apostrophe's which irritate our tools
+COMPONENT_POST_UNPACK_ACTION += ( \
+	$(MV) $(SOURCE_DIR)/skycultures/norse_edda/illustrations/thiazi\'s_eyes.png $(SOURCE_DIR)/skycultures/norse_edda/illustrations/thiazis_eyes.png; \
+	$(MV) $(SOURCE_DIR)/skycultures/norse_edda/illustrations/freyr\'s_sickle.png $(SOURCE_DIR)/skycultures/norse_edda/illustrations/freyrs_sickle.png; \
+	$(GSED) -i -e "s/thiazi's_eyes.png/thiazis_eyes.png/" -e "s/freyr's_sickle.png/freyrs_pickle.png/" $(SOURCE_DIR)/skycultures/norse_edda/index.json );
 
 CFLAGS += $(XPG8MODE)
 
