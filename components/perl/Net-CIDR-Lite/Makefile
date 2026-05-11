@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-CIDR-Lite
-HUMAN_VERSION =			0.23
+HUMAN_VERSION =			0.24
 COMPONENT_SUMMARY =		Perl extension for merging IPv4 or IPv6 CIDR addresses
 COMPONENT_CPAN_AUTHOR =		STIGTSP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9a58278e49a08cdeb9bec01cecdd3a95be736d0e7d4d05d13f908e3a3fe10d32
+	sha256:fab06ac4ee60a98161c66c1050fa1f24f6b99709ad0f4b0eddc84ec71ca7ad17
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
