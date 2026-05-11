@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		CryptX
-HUMAN_VERSION =			0.088
+HUMAN_VERSION =			0.089
 COMPONENT_SUMMARY =		Cryptographic toolkit
 COMPONENT_CPAN_AUTHOR =		MIK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9149f8b742634566e981b9949fb7d9b3f41aef36ef04ece21b51cf35153c4940
+	sha256:f0e77c7dec39671a859f38df25d2bff30011bcf55f2d9d0f20c26b7a447c9fb4
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
