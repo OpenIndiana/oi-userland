@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Archive-Tar
-HUMAN_VERSION =			3.04
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.06
 COMPONENT_SUMMARY =		Manipulates TAR archives
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ba6b8addbedc43a463edcddf7b93accb7676c7b79c40f425b619d99545c4cb8c
+	sha256:107d18917695d9d96834308e004ec463c24f459a0ed72bee7722749c1c625ad7
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
@@ -33,10 +32,10 @@ include $(WS_MAKE_RULES)/common.mk
 CLONEY_MODE = copy
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress-lzma
-PERL_REQUIRED_PACKAGES += library/perl-5/io-zlib
-PERL_REQUIRED_PACKAGES += library/perl-5/test-harness
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress-lzma
+REQUIRED_PACKAGES.perl += library/perl-5/io-zlib
+REQUIRED_PACKAGES.perl += library/perl-5/test-harness
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
