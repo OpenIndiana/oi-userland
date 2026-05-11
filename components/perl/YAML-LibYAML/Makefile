@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		YAML-LibYAML
-HUMAN_VERSION =			v0.906.0
+HUMAN_VERSION =			v0.907.0
 COMPONENT_SUMMARY =		Perl YAML Serialization using XS and libyaml
 COMPONENT_CPAN_AUTHOR =		TINITA
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6bef4b8e7cea72730e23a7f800da6a6f5818b13c04a0658b9d56466ec28d10b1
+	sha256:6ba087224911389e76fa198b149cec83f065b0ac75ddc52618f3490942cd9506
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,3 +38,4 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/json-pp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
