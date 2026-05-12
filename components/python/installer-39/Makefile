@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project installer
+#   $WS_TOOLS/python-integrate-project -d python/installer-39 installer
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		installer
-HUMAN_VERSION =			1.0.1
+HUMAN_VERSION =			0.7.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		A library for installing Python wheels.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:052c7fc3721d54c696e2dea019be67539d7b144e924f559f54beb3121831c364
+	sha256:a26d3e3116289bb08216e0d0f7d925fcef0b0194eedfa0c944bcaaa106c4b631
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - Userland build framework (see pyproject.mk)
-PYTHON_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by installer >= 1.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# installer >= 1.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 

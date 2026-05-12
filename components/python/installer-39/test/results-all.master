@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 150 items
+collecting ... collected 120 items
 
 tests/test_core.py::TestInstall::test_calls_destination_correctly PASSED
 tests/test_core.py::TestInstall::test_no_entrypoints_is_ok PASSED
@@ -13,7 +13,6 @@ tests/test_core.py::TestInstall::test_rejects_newer_major_wheel_versions PASSED
 tests/test_core.py::TestInstall::test_handles_data_properly PASSED
 tests/test_core.py::TestInstall::test_errors_out_when_given_invalid_scheme_in_data PASSED
 tests/test_core.py::TestInstall::test_ensure_non_executable_for_additional_metadata PASSED
-tests/test_core.py::TestInstall::test_skips_pycache_and_warns PASSED
 tests/test_destinations.py::TestWheelDestination::test_takes_no_arguments PASSED
 tests/test_destinations.py::TestWheelDestination::test_raises_not_implemented_error PASSED
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_file[normal file] PASSED
@@ -21,19 +20,13 @@ tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_file[nor
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_file[script file] PASSED
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_file[script file in subfolder] PASSED
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_record_duplicate PASSED
-tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_record_duplicate_with_overwrite_existing PASSED
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_write_script PASSED
 tests/test_destinations.py::TestSchemeDictionaryDestination::test_finalize_write_record PASSED
-tests/test_destinations.py::TestSchemeDictionaryDestination::test_blocking_path_traversal PASSED
 tests/test_main.py::test_get_scheme_dict PASSED
 tests/test_main.py::test_get_scheme_dict_prefix PASSED
 tests/test_main.py::test_main PASSED
-tests/test_main.py::test_main_multiple_wheels PASSED
 tests/test_main.py::test_main_prefix PASSED
 tests/test_main.py::test_main_no_pyc PASSED
-tests/test_main.py::test_main_validate_record_all_pass[all] PASSED
-tests/test_main.py::test_main_validate_record_all_pass[entries] PASSED
-tests/test_main.py::test_main_validate_record_all_pass[none] PASSED
 tests/test_records.py::TestRecordEntry::test_invalid_elements[---caused_by0] PASSED
 tests/test_records.py::TestRecordEntry::test_invalid_elements[--non-int-caused_by1] PASSED
 tests/test_records.py::TestRecordEntry::test_invalid_elements[a.py--non-int-caused_by2] PASSED
@@ -45,48 +38,27 @@ tests/test_records.py::TestRecordEntry::test_valid_elements[a.py-sha256=AVTFPZpE
 tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements0-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements1-test2\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements2-test3\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements3-test1\n-True] PASSED
+tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements3-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements4-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements5-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements6-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements7-not-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_populates_attributes_correctly[purelib-elements8-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_validation[purelib-elements0-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_validation[purelib-elements1-test2\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_validation[purelib-elements2-test3\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validation[purelib-elements3-test1\n-True] PASSED
+tests/test_records.py::TestRecordEntry::test_validation[purelib-elements3-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_validation[purelib-elements4-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_validation[purelib-elements5-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validation[purelib-elements6-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_validation[purelib-elements7-not-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_validation[purelib-elements8-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements0-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements1-test2\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements2-test3\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements3-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements4-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements5-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements6-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements7-not-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_validate_stream[purelib-elements8-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements0-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements1-test2\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements2-test3\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements3-test1\n-True] PASSED
+tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements3-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements4-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements5-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements6-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements7-not-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation[purelib-elements8-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements0-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements1-test2\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements2-test3\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements3-test1\n-True] PASSED
+tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements3-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements4-test1\n-True] PASSED
 tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements5-test1\n-True] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements6-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements7-not-test1\n-False] PASSED
-tests/test_records.py::TestRecordEntry::test_string_representation_with_prefix[purelib-elements8-test1\n-False] PASSED
 tests/test_records.py::TestRecordEntry::test_equality PASSED
 tests/test_records.py::TestParseRecordFile::test_accepts_empty_iterable PASSED
 tests/test_records.py::TestParseRecordFile::test_accepts_all_kinds_of_iterables[record_simple_list] PASSED
@@ -126,7 +98,6 @@ tests/test_sources.py::TestWheelFile::test_accept_wheel_with_signature_file PASS
 tests/test_sources.py::TestWheelFile::test_reject_signature_file_in_record PASSED
 tests/test_sources.py::TestWheelFile::test_rejects_record_contain_self_hash PASSED
 tests/test_sources.py::TestWheelFile::test_rejects_record_validation_failed PASSED
-tests/test_sources.py::TestWheelFile::test_rejects_record_containing_unknown_hash PASSED
 tests/test_utils.py::TestParseMetadata::test_basics PASSED
 tests/test_utils.py::TestCanonicalizeDistributionName::test_valid_cases[package-1-package-1] PASSED
 tests/test_utils.py::TestCanonicalizeDistributionName::test_valid_cases[ABC..12-abc-12] PASSED
@@ -139,7 +110,6 @@ tests/test_utils.py::TestParseWheelFilename::test_invalid_cases[pip-20.0.0-py2.p
 tests/test_utils.py::TestParseWheelFilename::test_invalid_cases[pip-20.0.0.whl] PASSED
 tests/test_utils.py::TestParseWheelFilename::test_invalid_cases[pip-20.0.0---.whl] PASSED
 tests/test_utils.py::TestCopyFileObjWithHashing::test_basic_functionality PASSED
-tests/test_utils.py::TestGetStreamLength::test_basic_functionality PASSED
 tests/test_utils.py::TestScript::test_replace_shebang[python] PASSED
 tests/test_utils.py::TestScript::test_replace_shebang[pythonw] PASSED
 tests/test_utils.py::TestScript::test_replace_shebang[python-with-args] PASSED
@@ -156,48 +126,57 @@ tests/test_utils.py::TestParseEntryPoints::test_valid[cli] PASSED
 tests/test_utils.py::TestParseEntryPoints::test_valid[gui] PASSED
 tests/test_utils.py::TestParseEntryPoints::test_valid[cli-and-gui] PASSED
 
-======== 150 passed ========
+======== 120 passed ========
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0'
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3'
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
+<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
+  warnings.warn(
+$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
 <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw4/test_discovery_via_path_in_non0'
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw4
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw4'
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw4'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
 <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0'
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3'
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
 <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0'
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3'
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
 <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0'
+<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/popen-gw3'
+<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
   warnings.warn(
 $(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
 <class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
