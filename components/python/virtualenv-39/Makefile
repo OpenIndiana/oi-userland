@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project virtualenv
+#   $WS_TOOLS/python-integrate-project -d python/virtualenv-39 virtualenv
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		virtualenv
-HUMAN_VERSION =			21.3.2
+HUMAN_VERSION =			20.39.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Virtual Python Environment builder
 COMPONENT_PROJECT_URL =		https://github.com/pypa/virtualenv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3ecda97894a6fc1c53106356f488690e5c86278c1f693f3fc0805ac85a513686
+	sha256:a15f0cebd00d50074fd336a169d53422436a12dfe15149efec7072cfe817df8b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - tox (test bootstrap)
-PYTHON_TEST_BOOTSTRAP = yes
-
 # tox >= 4.34.1 is needed to test virtualenv >= 20.39.1, but
 # Python 3.9 is not supported by tox >= 4.31.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,7 +46,7 @@ REQUIRED_PACKAGES.python += library/python/filelock
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
 REQUIRED_PACKAGES.python += library/python/platformdirs
-REQUIRED_PACKAGES.python += library/python/python-discovery
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/covdefaults
 TEST_REQUIRED_PACKAGES.python += library/python/coverage
