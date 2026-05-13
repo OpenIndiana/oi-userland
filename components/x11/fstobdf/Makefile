@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     fstobdf
-COMPONENT_VERSION=  1.0.7
+COMPONENT_VERSION=  1.0.8
 COMPONENT_SUMMARY=  the fstobdf utility to retrieve bdf fonts from an xfs font server
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2624cbf071ccca89c2a6dadd65004784f478b2ba1c62b8209e03909954f36b50
+COMPONENT_ARCHIVE_HASH= sha256:69be41c4d5093bbc3f04c9af6fa9497ad8e931e8d3f687412a66885fe81aa46d
 COMPONENT_FMRI=     x11/xfs/fstobdf
 
 include $(WS_MAKE_RULES)/common.mk
