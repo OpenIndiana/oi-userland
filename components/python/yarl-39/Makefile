@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project yarl
+#   $WS_TOOLS/python-integrate-project -d python/yarl-39 yarl
 #
 
 BUILD_STYLE = pyproject
@@ -19,24 +19,46 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		yarl
-HUMAN_VERSION =			1.23.0
+HUMAN_VERSION =			1.22.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Yet another URL library
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/yarl
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:53b1ea6ca88ebd4420379c330aea57e258408dd0df9af0992e5de2078dc9f5d5
+	sha256:bebf8557577d4401ba8bd9ff33906f1376c877aa78d1fe216ad01b4d6745af71
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by yarl >= 1.23.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# yarl >= 1.23.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS += requirements/test.txt
+
+#
+# Tests are run from build directory that contains cloned copy of sdist.  We
+# try to ask Python to find tested modules in the proto area (the PYTHONPATH is
+# set accordingly), but Python (< 3.11) always adds the current directory to
+# sys.path and there is no known (simple) way how to avoid that.  Except -I,
+# but that would cause Python to ignore PYTHONPATH too so we would not have
+# access to the proto area either.  The -P option together with PYTHONSAFEPATH
+# environment variable were added to Python 3.11 only so we cannot use them yet
+# for all Python versions we support.
+#
+# Since sdist for this project contains the main module in the top-level
+# directory we cannot force Python to skip it.  But, unfortunately, this module
+# does not contain built dynamic libraries, so Python cannot find them while
+# testing.
+#
+# To workaround this we rename the main module in the build directory during
+# testing so Python will need to defer to PYTHONPATH.
+#
+COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/yarl $(@D)/yarl-RENAMED ;
+COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/yarl-RENAMED $(@D)/yarl ;
 
 # Random directory name
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
@@ -49,6 +71,7 @@ REQUIRED_PACKAGES.python += library/python/idna
 REQUIRED_PACKAGES.python += library/python/multidict
 REQUIRED_PACKAGES.python += library/python/propcache
 REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
