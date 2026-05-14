@@ -1,7 +1,7 @@
 We have no httptools packaged yet.
 
---- uvicorn-0.41.0/pyproject.toml.orig
-+++ uvicorn-0.41.0/pyproject.toml
+--- uvicorn-0.47.0/pyproject.toml.orig
++++ uvicorn-0.47.0/pyproject.toml
 @@ -40,7 +40,6 @@
  [project.optional-dependencies]
  standard = [
@@ -10,16 +10,16 @@ We have no httptools packaged yet.
      "python-dotenv>=0.13",
      "PyYAML>=5.1",
      "watchfiles>=0.20",
---- uvicorn-0.41.0/tests/test_server.py.orig
-+++ uvicorn-0.41.0/tests/test_server.py
-@@ -20,7 +20,6 @@
+--- uvicorn-0.47.0/tests/test_server.py.orig
++++ uvicorn-0.47.0/tests/test_server.py
+@@ -19,7 +19,6 @@
  from uvicorn.config import Config
  from uvicorn.protocols.http.flow_control import HIGH_WATER_LIMIT
  from uvicorn.protocols.http.h11_impl import H11Protocol
 -from uvicorn.protocols.http.httptools_impl import HttpToolsProtocol
+ from uvicorn.server import Server
  
  pytestmark = pytest.mark.anyio
- 
 @@ -123,7 +122,7 @@
  
  
@@ -29,21 +29,39 @@ We have no httptools packaged yet.
  ):
      caplog.set_level(logging.INFO, logger="uvicorn.error")
      config = Config(app=app, limit_max_requests=1, port=unused_tcp_port, http=http_protocol_cls)
+@@ -136,7 +135,7 @@
+ 
+ 
+ async def test_limit_max_requests_jitter(
+-    unused_tcp_port: int, http_protocol_cls: type[H11Protocol | HttpToolsProtocol], caplog: pytest.LogCaptureFixture
++    unused_tcp_port: int, http_protocol_cls: H11Protocol, caplog: pytest.LogCaptureFixture
+ ):
+     caplog.set_level(logging.INFO, logger="uvicorn.error")
+     config = Config(
 @@ -157,7 +156,7 @@
+     *,
+     app: ASGIApplication,
+     port: int,
+-    http_protocol_cls: type[H11Protocol | HttpToolsProtocol],
++    http_protocol_cls: H11Protocol,
+     reset_contextvars: bool = False,
+ ):
+     config = Config(app=app, port=port, loop="asyncio", http=http_protocol_cls, reset_contextvars=reset_contextvars)
+@@ -189,7 +188,7 @@
  
  
- @contextlib.asynccontextmanager
--async def server(*, app: ASGIApplication, port: int, http_protocol_cls: type[H11Protocol | HttpToolsProtocol]):
-+async def server(*, app: ASGIApplication, port: int, http_protocol_cls: H11Protocol):
-     config = Config(app=app, port=port, loop="asyncio", http=http_protocol_cls)
-     server = Server(config=config)
-     task = asyncio.create_task(server.serve())
-@@ -187,7 +186,7 @@
- 
- 
- async def test_no_contextvars_pollution_asyncio(
+ async def test_contextvars_preserved_by_default(
 -    http_protocol_cls: type[H11Protocol | HttpToolsProtocol], unused_tcp_port: int
 +    http_protocol_cls: H11Protocol, unused_tcp_port: int
  ):
-     """Non-regression test for https://github.com/encode/uvicorn/issues/2167."""
-     default_contextvars = {c.name for c in contextvars.copy_context().keys()}
+     """By default, context set outside the ASGI task is visible inside it."""
+     ctx: contextvars.ContextVar[str] = contextvars.ContextVar("ctx")
+@@ -212,7 +211,7 @@
+ 
+ 
+ async def test_reset_contextvars_asyncio(
+-    http_protocol_cls: type[H11Protocol | HttpToolsProtocol], unused_tcp_port: int
++    http_protocol_cls: H11Protocol, unused_tcp_port: int
+ ):
+     """With reset_contextvars=True, each ASGI run starts with a fresh context.
+ 

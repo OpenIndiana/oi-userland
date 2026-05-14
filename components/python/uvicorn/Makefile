@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uvicorn
-HUMAN_VERSION =			0.41.0
+HUMAN_VERSION =			0.47.0
 COMPONENT_SUMMARY =		The lightning-fast ASGI server.
 COMPONENT_PROJECT_URL =		https://uvicorn.dev/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:09d11cf7008da33113824ee5a1c6422d89fbc2ff476540d69a34c87fab8b571a
+	sha256:7c9a0ea1a9414106bbab7324609c162d8fa0cdcdcb703060987269d77c7bb533
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
@@ -65,6 +65,7 @@ TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 TEST_REQUIRED_PACKAGES.python += library/python/httpx
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-codspeed
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-xdist
 TEST_REQUIRED_PACKAGES.python += library/python/python-dotenv
