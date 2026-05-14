@@ -11,24 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/linkify-it-py linkify_it_py
+#   $WS_TOOLS/python-integrate-project -d python/linkify-it-py-39 linkify-it-py
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		linkify_it_py
-HUMAN_VERSION =			2.1.0
+COMPONENT_NAME =		linkify-it-py
+HUMAN_VERSION =			2.0.3
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Links recognition library with FULL unicode support.
 COMPONENT_PROJECT_URL =		https://github.com/tsutsu3/linkify-it-py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:43360231720999c10e9328dc3691160e27a718e280673d444c38d7d3aaa3b98b
+	sha256:68cda27e162e9215c17d786649d1da0021a451bdc436ef9e0fa0ba5234b9b048
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by linkify-it-py >= 2.1.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# linkify-it-py >= 2.1.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -40,4 +41,3 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/uc-micro-py
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/uc-micro-py
