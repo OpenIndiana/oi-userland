@@ -10,19 +10,19 @@
 
 #
 # Copyright 2015 Adam Stevko
-# Copyright 2021, 2024 Andreas Wacknitz
+# Copyright 2021, 2026 Andreas Wacknitz
 #
 
 USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= botan
-COMPONENT_VERSION= 3.11.1
+COMPONENT_VERSION= 3.12.0
 COMPONENT_SUMMARY= Crypto and TLS for Modern C++
 COMPONENT_PROJECT_URL= https://botan.randombit.net/
 COMPONENT_SRC= Botan-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:c1cd7152519f4188591fa4f6ddeb116bc1004491f5f3c58aa99b00582eb8a137
+COMPONENT_ARCHIVE_HASH= sha256:5370f98dc15f8c222ee1ce52cd61c8756a53be0dc57cc4c1b0714d5a09ad74fb
 COMPONENT_ARCHIVE_URL= https://botan.randombit.net/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= library/security/botan
 COMPONENT_CLASSIFICATION= System/Security
