@@ -11,24 +11,25 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/uc-micro-py uc_micro_py
+#   $WS_TOOLS/python-integrate-project -d python/uc-micro-py-39 uc-micro-py
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		uc_micro_py
-HUMAN_VERSION =			2.0.0
+COMPONENT_NAME =		uc-micro-py
+HUMAN_VERSION =			1.0.3
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Micro subset of unicode data files for linkify-it-py projects.
 COMPONENT_PROJECT_URL =		https://github.com/tsutsu3/uc.micro-py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c53691e495c8db60e16ffc4861a35469b0ba0821fe409a8a7a0a71864d33a811
+	sha256:d321b92cff673ec58027c04015fcaa8bb1e005478643ff4a500882eaab88c48a
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by uc-micro-py >= 2.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# uc-micro-py >= 2.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
