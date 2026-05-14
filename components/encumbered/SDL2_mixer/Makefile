@@ -30,12 +30,12 @@ USE_ENCUMBERED?= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         SDL2_mixer
-COMPONENT_VERSION=      2.8.1
-COMPONENT_PROJECT_URL=  https://github.com/libsdl-org/SDL_mixer
+COMPONENT_VERSION=      2.8.2
 COMPONENT_SUMMARY=      SDL_mixer is a sample multi-channel audio mixer library
+COMPONENT_PROJECT_URL=  https://github.com/libsdl-org/SDL_mixer
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:cb760211b056bfe44f4a1e180cc7cb201137e4d1572f2002cc1be728efd22660
+COMPONENT_ARCHIVE_HASH= sha256:938dff531d00ace2296557a6599abe6f34599e2f34f0a4a08a397e2ccac8b8f7
 COMPONENT_ARCHIVE_URL=  https://github.com/libsdl-org/SDL_mixer/releases/download/release-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/audio/sdl2-mixer
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
