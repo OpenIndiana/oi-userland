@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xbitmaps
-COMPONENT_VERSION=        1.1.3
+COMPONENT_VERSION=        1.1.4
 COMPONENT_SUMMARY=        bitmap images from X.Org
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:ad6cad54887832a17d86c2ccfc5e52a1dfab090f8307b152c78b0e1529cd0f7a
+COMPONENT_ARCHIVE_HASH=   sha256:895722f136e21e728c52f2d99fd2dae95018b9ddad1bac1f29d61bcd6593721d
 COMPONENT_FMRI=           x11/data/xbitmaps
 COMPONENT_CLASSIFICATION= System/X11
 COMPONENT_LICENSE=        MIT License
