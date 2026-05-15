@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyjwt
-HUMAN_VERSION =			2.11.0
+HUMAN_VERSION =			2.12.1
 COMPONENT_SUMMARY =		JSON Web Token implementation in Python
 COMPONENT_PROJECT_URL =		https://github.com/jpadilla/pyjwt
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623
+	sha256:c74a7a2adf861c04d002db713dd85f84beb242228e671280bf709d765b03672b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,5 +34,6 @@ TEST_REQUIRED_PACKAGES.python += library/python/cryptography
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
