@@ -1,3 +1,67 @@
+package_gnu=""; \
+test -n "$package_gnu" || { \
+  if { if (LC_ALL=C find --version) 2>/dev/null | grep GNU >/dev/null; then \
+         LC_ALL=C find -L $(SOURCE_DIR)/extension -maxdepth 1 -type f -size -10000000c -exec grep -i 'GNU gawk-extensions' /dev/null '{}' ';' 2>/dev/null; \
+       else \
+         LC_ALL=C grep -i 'GNU gawk-extensions' $(SOURCE_DIR)/extension/* 2>/dev/null; \
+       fi; \
+     } | grep -v 'libtool:' >/dev/null; then \
+     package_gnu=yes; \
+   else \
+     package_gnu=no; \
+   fi; \
+}; \
+if test "$package_gnu" = "yes"; then \
+  package_prefix='GNU '; \
+else \
+  package_prefix=''; \
+fi; \
+if test -n 'bug-gawk@gnu.org' || test 'bug-gawk@gnu.org' = '@'PACKAGE_BUGREPORT'@'; then \
+  msgid_bugs_address='bug-gawk@gnu.org'; \
+else \
+  msgid_bugs_address='bug-gawk@gnu.org'; \
+fi; \
+case `/usr/gnu/bin/xgettext --version | sed 1q | sed -e 's,^[^0-9]*,,'` in \
+  '' | 0.[0-9] | 0.[0-9].* | 0.1[0-5] | 0.1[0-5].* | 0.16 | 0.16.[0-1]*) \
+    /usr/gnu/bin/xgettext --default-domain=gawk-extensions --directory=$(SOURCE_DIR)/extension \
+      --add-comments=TRANSLATORS: \
+      --files-from=$(SOURCE_DIR)/extension/po/POTFILES.in \
+      --copyright-holder='Free Software Foundation, Inc.' \
+      --msgid-bugs-address="$msgid_bugs_address" \
+      --keyword=_ --keyword=N_  \
+    ;; \
+  *) \
+    /usr/gnu/bin/xgettext --default-domain=gawk-extensions --directory=$(SOURCE_DIR)/extension \
+      --add-comments=TRANSLATORS: \
+      --files-from=$(SOURCE_DIR)/extension/po/POTFILES.in \
+      --copyright-holder='Free Software Foundation, Inc.' \
+      --package-name="${package_prefix}gawk-extensions" \
+      --package-version='5.4.0' \
+      --msgid-bugs-address="$msgid_bugs_address" \
+      --keyword=_ --keyword=N_  \
+    ;; \
+esac
+test ! -f gawk-extensions.po || { \
+  if test -f $(SOURCE_DIR)/extension/po/gawk-extensions.pot-header; then \
+    sed -e '1,/^#$/d' < gawk-extensions.po > gawk-extensions.1po && \
+    cat $(SOURCE_DIR)/extension/po/gawk-extensions.pot-header gawk-extensions.1po > gawk-extensions.po && \
+    rm -f gawk-extensions.1po \
+    || exit 1; \
+  fi; \
+  if test -f $(SOURCE_DIR)/extension/po/gawk-extensions.pot; then \
+    sed -f remove-potcdate.sed < $(SOURCE_DIR)/extension/po/gawk-extensions.pot > gawk-extensions.1po && \
+    sed -f remove-potcdate.sed < gawk-extensions.po > gawk-extensions.2po && \
+    if cmp gawk-extensions.1po gawk-extensions.2po >/dev/null 2>&1; then \
+      rm -f gawk-extensions.1po gawk-extensions.2po gawk-extensions.po; \
+    else \
+      rm -f gawk-extensions.1po gawk-extensions.2po $(SOURCE_DIR)/extension/po/gawk-extensions.pot && \
+      mv gawk-extensions.po $(SOURCE_DIR)/extension/po/gawk-extensions.pot; \
+    fi; \
+  else \
+    mv gawk-extensions.po $(SOURCE_DIR)/extension/po/gawk-extensions.pot; \
+  fi; \
+}
+test ! -f $(SOURCE_DIR)/extension/po/gawk-extensions.pot || \
 
 Any output from "cmp" is bad news, although some differences
 in floating point values are probably benign -- in particular,
@@ -74,6 +138,8 @@ dfastress
 divzero
 divzero2
 dynlj
+elemnew5
+elemnew6
 eofsplit
 eofsrc1
 escapebrace
@@ -126,6 +192,7 @@ gsubtst7
 gsubtst8
 hex
 hex2
+hex3
 hsprint
 inpref
 inputred
@@ -139,6 +206,9 @@ longsub
 longwrds
 manglprm
 match4
+match5
+matchbadarg1
+matchbadarg2
 matchuninitialized
 math
 membug1
@@ -220,6 +290,7 @@ regexpbad
 regexpbrack
 regexpbrack2
 regexprange
+regexpuparrow
 regrange
 reindops
 reparse
@@ -243,6 +314,7 @@ sclforin
 sclifin
 setrec0
 setrec1
+shortest-match
 sigpipe1
 sortempty
 sortglos
@@ -336,7 +408,6 @@ clos1way4
 clos1way5
 clos1way6
 colonwarn
-commas
 crlf
 csv1
 csv2
@@ -362,6 +433,8 @@ dumpvars
 elemnew1
 elemnew2
 elemnew3
+elemnew4
+equiv
 errno
 exit
 fieldwdth
@@ -400,6 +473,7 @@ gnuops2
 gnuops3
 gnureops
 gsubind
+hexfloat
 icasefs
 icasers
 id
@@ -438,13 +512,13 @@ lintplus
 lintplus2
 lintplus3
 lintset
+lintsubarray
+linttypeof
 lintwarn
 manyfiles
 match1
 match2
 match3
-mbstr1
-mbstr2
 mdim1
 mdim2
 mdim3
@@ -592,6 +666,7 @@ asorti
 backbigs1
 backsmalls1
 backsmalls2
+commas
 fmttest
 fnarydel
 fnparydl
@@ -603,6 +678,8 @@ mbprintf2
 mbprintf3
 mbprintf4
 mbprintf5
+mbstr1
+mbstr2
 mtchi18n
 mtchi18n2
 nlstringtest
@@ -611,7 +688,7 @@ rtlenmb
 sort1
 sprintfc
 ======== Done with tests that can vary based on character set or locale support ========
-======== Starting shared library tests ========
+======== Starting dynamic extension tests ========
 apiterm
 filefuncs
 fnmatch
@@ -640,7 +717,7 @@ revtwoway
 rwarray
 testext
 time
-======== Done with shared library tests ========
+======== Done with dynamic extension tests ========
 ======== Starting MPFR tests ========
 mpfranswer42
 mpfrbigint
