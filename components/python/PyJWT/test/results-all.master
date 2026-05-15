@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 337 items
+collecting ... collected 348 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
 tests/test_algorithms.py::TestAlgorithms::test_check_crypto_key_type_should_fail_when_not_using_crypto PASSED
@@ -170,6 +170,7 @@ tests/test_api_jws.py::TestJWS::test_encode_with_headers_alg_none PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_headers_alg_es256 PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_alg_hs256_and_headers_alg_es256 PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_jwk PASSED
+tests/test_api_jws.py::TestJWS::test_encode_with_jwk_uses_key_algorithm PASSED
 tests/test_api_jws.py::TestJWS::test_decode_algorithm_param_should_be_case_sensitive PASSED
 tests/test_api_jws.py::TestJWS::test_bad_secret PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_valid_jws PASSED
@@ -225,7 +226,15 @@ tests/test_api_jws.py::TestJWS::test_encode_detached_content_with_b64_header PAS
 tests/test_api_jws.py::TestJWS::test_decode_detached_content_without_proper_argument PASSED
 tests/test_api_jws.py::TestJWS::test_decode_warns_on_unsupported_kwarg PASSED
 tests/test_api_jws.py::TestJWS::test_decode_complete_warns_on_unuspported_kwarg PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_unknown_crit_extension PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_empty_crit PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_non_list_crit PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_crit_with_non_string_values PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_crit_extension_missing_from_header PASSED
+tests/test_api_jws.py::TestJWS::test_decode_accepts_supported_crit_extension PASSED
+tests/test_api_jws.py::TestJWS::test_get_unverified_header_rejects_unknown_crit PASSED
 tests/test_api_jwt.py::TestJWT::test_jwt_with_options PASSED
+tests/test_api_jwt.py::TestJWT::test_encode_with_jwk_uses_key_algorithm PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_complete_valid_jwt PASSED
 tests/test_api_jwt.py::TestJWT::test_load_verify_valid_jwt PASSED
@@ -303,6 +312,7 @@ tests/test_api_jwt.py::TestJWT::test_jti_claim_with_invalid_int_value PASSED
 tests/test_api_jwt.py::TestJWT::test_validate_iss_with_container_of_str PASSED
 tests/test_api_jwt.py::TestJWT::test_validate_iss_with_non_str PASSED
 tests/test_api_jwt.py::TestJWT::test_validate_iss_with_non_str_issuer PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_rejects_token_with_unknown_crit_extension PASSED
 tests/test_compressed_jwt.py::test_decodes_complete_valid_jwt_with_compressed_payload PASSED
 tests/test_exceptions.py::test_missing_required_claim_error_has_proper_str PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_forwards_headers_to_correct_url PASSED
@@ -325,6 +335,7 @@ tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_invalid_lifespan PA
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_timeout PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_default PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_no_ca PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_http_error_is_closed_on_connection_failure PASSED
 tests/test_jwt.py::test_encode_decode PASSED
 tests/test_utils.py::test_to_base64url_uint[0-expected0] PASSED
 tests/test_utils.py::test_to_base64url_uint[1-expected1] PASSED
@@ -346,6 +357,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 333 passed, 4 skipped ========
+======== 344 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
