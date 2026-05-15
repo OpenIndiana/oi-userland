@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tzdata
-HUMAN_VERSION =			2025.3
+HUMAN_VERSION =			2026.2
 COMPONENT_SUMMARY =		Provider of IANA time zone data
 COMPONENT_PROJECT_URL =		https://github.com/python/tzdata
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:de39c2ca5dc7b0344f2eba86f49d614019d29f060fc4ebc8a417896a620b56a7
+	sha256:9173fde7d80d9018e02a662e168e5a2d04f87c41ea174b139fbef642eda62d10
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
