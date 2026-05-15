@@ -19,13 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		identify
-HUMAN_VERSION =			2.6.16
+HUMAN_VERSION =			2.6.19
 COMPONENT_SUMMARY =		File identification library for Python
 COMPONENT_PROJECT_URL =		https://github.com/pre-commit/identify
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/pre-commit/identify/archive/refs/tags/v$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a22c206a996684b2a29870aa4fd829b08ba1a61f3a2b68e1a3861b558a7f0517
+	sha256:b939a2e57f1085886aab677c7b78d07ca02bf1186c8aeaa12021b596229e5195
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,6 +33,9 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Random directory name
+COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
