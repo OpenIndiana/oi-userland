@@ -4,8 +4,11 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 253 items
+collecting ... collected 281 items
 
+tests/test_cache.py::CacheTest::test_clear PASSED
+tests/test_cache.py::CacheTest::test_clear_empty PASSED
+tests/test_cache.py::CacheTest::test_clear_getsizeof PASSED
 tests/test_cache.py::CacheTest::test_defaults PASSED
 tests/test_cache.py::CacheTest::test_delete PASSED
 tests/test_cache.py::CacheTest::test_getsizeof_param PASSED
@@ -102,6 +105,7 @@ tests/test_cachedmethod.py::DictMethodTest::test_decorator_unhashable PASSED
 tests/test_cachedmethod.py::DictMethodTest::test_decorator_wrapped PASSED
 tests/test_cachedmethod.py::WeakRefMethodTest::test_weakref PASSED
 tests/test_cachedmethod.py::NoneMethodTest::test_none_info PASSED
+tests/test_cachedmethod.py::AutospecTest::test_autospec_no_warnings PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test_clear PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test_clear_condition PASSED
@@ -109,6 +113,9 @@ tests/test_classmethod.py::CachedClassMethodTest::test_clear_locked PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test_condition PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test_locked PASSED
 tests/test_classmethod.py::CachedClassMethodTest::test_typed PASSED
+tests/test_fifo.py::FIFOCacheTest::test_clear PASSED
+tests/test_fifo.py::FIFOCacheTest::test_clear_empty PASSED
+tests/test_fifo.py::FIFOCacheTest::test_clear_getsizeof PASSED
 tests/test_fifo.py::FIFOCacheTest::test_defaults PASSED
 tests/test_fifo.py::FIFOCacheTest::test_delete PASSED
 tests/test_fifo.py::FIFOCacheTest::test_fifo PASSED
@@ -160,18 +167,23 @@ tests/test_func.py::TTLDecoratorTest::test_decorator_nocache PASSED
 tests/test_func.py::TTLDecoratorTest::test_decorator_typed PASSED
 tests/test_func.py::TTLDecoratorTest::test_decorator_unbound PASSED
 tests/test_func.py::TTLDecoratorTest::test_decorator_user_function PASSED
+tests/test_func.py::TTLDecoratorTest::test_ttl_datetime PASSED
 tests/test_keys.py::CacheKeysTest::test_addkeys PASSED
 tests/test_keys.py::CacheKeysTest::test_hashkey PASSED
 tests/test_keys.py::CacheKeysTest::test_methodkey PASSED
 tests/test_keys.py::CacheKeysTest::test_pickle PASSED
 tests/test_keys.py::CacheKeysTest::test_typedkey PASSED
 tests/test_keys.py::CacheKeysTest::test_typedmethodkey PASSED
+tests/test_lfu.py::LFUCacheTest::test_clear PASSED
+tests/test_lfu.py::LFUCacheTest::test_clear_empty PASSED
+tests/test_lfu.py::LFUCacheTest::test_clear_getsizeof PASSED
 tests/test_lfu.py::LFUCacheTest::test_defaults PASSED
 tests/test_lfu.py::LFUCacheTest::test_delete PASSED
 tests/test_lfu.py::LFUCacheTest::test_getsizeof_param PASSED
 tests/test_lfu.py::LFUCacheTest::test_getsizeof_subclass PASSED
 tests/test_lfu.py::LFUCacheTest::test_insert PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu PASSED
+tests/test_lfu.py::LFUCacheTest::test_lfu_clear PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu_getsizeof PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu_update_existing PASSED
 tests/test_lfu.py::LFUCacheTest::test_missing PASSED
@@ -182,12 +194,16 @@ tests/test_lfu.py::LFUCacheTest::test_pop PASSED
 tests/test_lfu.py::LFUCacheTest::test_popitem PASSED
 tests/test_lfu.py::LFUCacheTest::test_popitem_exception_context PASSED
 tests/test_lfu.py::LFUCacheTest::test_update PASSED
+tests/test_lru.py::LRUCacheTest::test_clear PASSED
+tests/test_lru.py::LRUCacheTest::test_clear_empty PASSED
+tests/test_lru.py::LRUCacheTest::test_clear_getsizeof PASSED
 tests/test_lru.py::LRUCacheTest::test_defaults PASSED
 tests/test_lru.py::LRUCacheTest::test_delete PASSED
 tests/test_lru.py::LRUCacheTest::test_getsizeof_param PASSED
 tests/test_lru.py::LRUCacheTest::test_getsizeof_subclass PASSED
 tests/test_lru.py::LRUCacheTest::test_insert PASSED
 tests/test_lru.py::LRUCacheTest::test_lru PASSED
+tests/test_lru.py::LRUCacheTest::test_lru_clear PASSED
 tests/test_lru.py::LRUCacheTest::test_lru_getsizeof PASSED
 tests/test_lru.py::LRUCacheTest::test_lru_update_existing PASSED
 tests/test_lru.py::LRUCacheTest::test_missing PASSED
@@ -198,6 +214,9 @@ tests/test_lru.py::LRUCacheTest::test_pop PASSED
 tests/test_lru.py::LRUCacheTest::test_popitem PASSED
 tests/test_lru.py::LRUCacheTest::test_popitem_exception_context PASSED
 tests/test_lru.py::LRUCacheTest::test_update PASSED
+tests/test_rr.py::RRCacheTest::test_clear PASSED
+tests/test_rr.py::RRCacheTest::test_clear_empty PASSED
+tests/test_rr.py::RRCacheTest::test_clear_getsizeof PASSED
 tests/test_rr.py::RRCacheTest::test_defaults PASSED
 tests/test_rr.py::RRCacheTest::test_delete PASSED
 tests/test_rr.py::RRCacheTest::test_getsizeof_param PASSED
@@ -218,6 +237,9 @@ tests/test_rr.py::RRCacheTest::test_rr_update_existing PASSED
 tests/test_rr.py::RRCacheTest::test_update PASSED
 tests/test_threading.py::ThreadingTest::test_cached_stampede PASSED
 tests/test_threading.py::ThreadingTest::test_cachedmethod_stampede PASSED
+tests/test_tlru.py::TLRUCacheTest::test_clear PASSED
+tests/test_tlru.py::TLRUCacheTest::test_clear_empty PASSED
+tests/test_tlru.py::TLRUCacheTest::test_clear_getsizeof PASSED
 tests/test_tlru.py::TLRUCacheTest::test_defaults PASSED
 tests/test_tlru.py::TLRUCacheTest::test_delete PASSED
 tests/test_tlru.py::TLRUCacheTest::test_getsizeof_param PASSED
@@ -230,6 +252,8 @@ tests/test_tlru.py::TLRUCacheTest::test_pickle_maxsize PASSED
 tests/test_tlru.py::TLRUCacheTest::test_pop PASSED
 tests/test_tlru.py::TLRUCacheTest::test_popitem PASSED
 tests/test_tlru.py::TLRUCacheTest::test_popitem_exception_context PASSED
+tests/test_tlru.py::TLRUCacheTest::test_tlru_clear PASSED
+tests/test_tlru.py::TLRUCacheTest::test_tlru_datetime PASSED
 tests/test_tlru.py::TLRUCacheTest::test_ttu PASSED
 tests/test_tlru.py::TLRUCacheTest::test_ttu_atomic PASSED
 tests/test_tlru.py::TLRUCacheTest::test_ttu_expire PASSED
@@ -239,6 +263,9 @@ tests/test_tlru.py::TLRUCacheTest::test_ttu_lru PASSED
 tests/test_tlru.py::TLRUCacheTest::test_ttu_reverse_insert PASSED
 tests/test_tlru.py::TLRUCacheTest::test_ttu_tuple_key PASSED
 tests/test_tlru.py::TLRUCacheTest::test_update PASSED
+tests/test_ttl.py::TTLCacheTest::test_clear PASSED
+tests/test_ttl.py::TTLCacheTest::test_clear_empty PASSED
+tests/test_ttl.py::TTLCacheTest::test_clear_getsizeof PASSED
 tests/test_ttl.py::TTLCacheTest::test_defaults PASSED
 tests/test_ttl.py::TTLCacheTest::test_delete PASSED
 tests/test_ttl.py::TTLCacheTest::test_getsizeof_param PASSED
@@ -253,6 +280,7 @@ tests/test_ttl.py::TTLCacheTest::test_popitem PASSED
 tests/test_ttl.py::TTLCacheTest::test_popitem_exception_context PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_atomic PASSED
+tests/test_ttl.py::TTLCacheTest::test_ttl_clear PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_datetime PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_expire PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_lru PASSED
@@ -260,6 +288,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_timer PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
-======== 253 passed ========
+======== 281 passed ========
   py$(PYV): OK
   congratulations :)
