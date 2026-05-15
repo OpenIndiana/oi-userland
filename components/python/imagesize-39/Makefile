@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project imagesize
+#   $WS_TOOLS/python-integrate-project -d python/imagesize-39 imagesize
 #
 
 BUILD_STYLE = pyproject
@@ -19,20 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		imagesize
-HUMAN_VERSION =			2.0.0
+HUMAN_VERSION =			1.5.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Get image size from headers (BMP/PNG/JPEG/JPEG2000/GIF/TIFF/SVG/Netpbm/WebP/AVIF/HEIC/HEIF)
 COMPONENT_PROJECT_URL =		https://github.com/shibukawa/imagesize_py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e8358c4a05c304f1fccf7ff96f036e7243a189e9e42e90851993c558cfe9ee3
+	sha256:8bfc5363a7f2133a89f0098451e0bcb1cd71aba4dc02bbcecb39d99d40e1b94f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by imagesize >= 2.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# imagesize >= 2.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
+
+# https://github.com/shibukawa/imagesize_py/issues/62
+PYTEST_ADDOPTS += --deselect test/test_get_filelike.py::test_get_filelike
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
