@@ -9,14 +9,15 @@ test_context_propagated_by_context_run (greenlet.tests.test_contextvars.ContextV
 test_context_propagated_by_setting_attribute (greenlet.tests.test_contextvars.ContextVarsTests.test_context_propagated_by_setting_attribute) ... ok
 test_context_shared (greenlet.tests.test_contextvars.ContextVarsTests.test_context_shared) ... ok
 test_not_broken_if_using_attribute_instead_of_context_run (greenlet.tests.test_contextvars.ContextVarsTests.test_not_broken_if_using_attribute_instead_of_context_run) ... ok
-test_contextvars_errors (greenlet.tests.test_contextvars.NoContextVarsTests.test_contextvars_errors) ... skipped 'ContextVar supported'
 test_exception_switch (greenlet.tests.test_cpp.CPPTests.test_exception_switch) ... ok
+test_leak_test_exception_switch_and_do_in_g2 (greenlet.tests.test_cpp.CPPTests.test_leak_test_exception_switch_and_do_in_g2) ... ok
 test_unhandled_exception_in_greenlet_aborts (greenlet.tests.test_cpp.CPPTests.test_unhandled_exception_in_greenlet_aborts) ... ok
 test_unhandled_nonstd_exception_aborts (greenlet.tests.test_cpp.CPPTests.test_unhandled_nonstd_exception_aborts) ... ok
 test_unhandled_std_exception_aborts (greenlet.tests.test_cpp.CPPTests.test_unhandled_std_exception_aborts) ... ok
 test_unhandled_std_exception_as_greenlet_function_aborts (greenlet.tests.test_cpp.CPPTests.test_unhandled_std_exception_as_greenlet_function_aborts) ... ok
 test_getcurrent (greenlet.tests.test_extension_interface.CAPITests.test_getcurrent) ... ok
 test_instance_of_wrong_type (greenlet.tests.test_extension_interface.CAPITests.test_instance_of_wrong_type) ... ok
+test_leaks (greenlet.tests.test_extension_interface.CAPITests.test_leaks) ... ok
 test_new_greenlet (greenlet.tests.test_extension_interface.CAPITests.test_new_greenlet) ... ok
 test_non_traceback_param (greenlet.tests.test_extension_interface.CAPITests.test_non_traceback_param) ... ok
 test_not_throwable (greenlet.tests.test_extension_interface.CAPITests.test_not_throwable) ... ok
@@ -76,6 +77,7 @@ test_switch_no_run_raises_AttributeError (greenlet.tests.test_greenlet.TestGreen
 test_switch_to_another_thread (greenlet.tests.test_greenlet.TestGreenlet.test_switch_to_another_thread) ... ok
 test_switch_to_dead_greenlet_reparent (greenlet.tests.test_greenlet.TestGreenlet.test_switch_to_dead_greenlet_reparent) ... ok
 test_switch_to_dead_greenlet_with_unstarted_perverse_parent (greenlet.tests.test_greenlet.TestGreenlet.test_switch_to_dead_greenlet_with_unstarted_perverse_parent) ... ok
+test_switching_many_threads (greenlet.tests.test_greenlet.TestGreenlet.test_switching_many_threads) ... ok
 test_thread_bug (greenlet.tests.test_greenlet.TestGreenlet.test_thread_bug) ... ok
 test_threaded_updatecurrent (greenlet.tests.test_greenlet.TestGreenlet.test_threaded_updatecurrent) ... ok
 test_threads (greenlet.tests.test_greenlet.TestGreenlet.test_threads) ... ok
@@ -105,7 +107,30 @@ test_initial (greenlet.tests.test_greenlet.TestRepr.test_initial) ... ok
 test_main_from_other_thread (greenlet.tests.test_greenlet.TestRepr.test_main_from_other_thread) ... ok
 test_main_in_background (greenlet.tests.test_greenlet.TestRepr.test_main_in_background) ... ok
 test_main_while_running (greenlet.tests.test_greenlet.TestRepr.test_main_while_running) ... ok
-test_it (greenlet.tests.test_greenlet_trash.TestTrashCanReEnter.test_it) ... skipped 'get_tstate_trash_delete_nesting is not available.'
+test_it (greenlet.tests.test_greenlet_trash.TestTrashCanReEnter.test_it) ... ok
+test_active_greenlet_at_shutdown_no_crash (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_active_greenlet_at_shutdown_no_crash) ... ok
+test_api_getcurrent_no_system_error_at_module_gc_time (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_api_getcurrent_no_system_error_at_module_gc_time) ... ok
+test_deeply_nested_greenlets_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_deeply_nested_greenlets_at_shutdown) ... ok
+test_finally_block_during_thread_exit (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_finally_block_during_thread_exit) ... ok
+test_getcurrent_during_atexit_no_crash (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_during_atexit_no_crash) ... ok
+test_getcurrent_returns_none_during_atexit_phase (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_returns_none_during_atexit_phase) ... ok
+test_getcurrent_returns_none_during_atexit_phase_with_active_greenlets (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_returns_none_during_atexit_phase_with_active_greenlets) ... ok
+test_getcurrent_returns_none_during_gc_finalization (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_returns_none_during_gc_finalization) ... ok
+test_getcurrent_returns_none_during_gc_finalization_cross_thread (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_returns_none_during_gc_finalization_cross_thread) ... ok
+test_getcurrent_returns_none_during_gc_finalization_with_active_greenlets (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_returns_none_during_gc_finalization_with_active_greenlets) ... ok
+test_getcurrent_with_active_greenlets_during_atexit (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_getcurrent_with_active_greenlets_during_atexit) ... ok
+test_gettrace_during_atexit_no_crash (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_gettrace_during_atexit_no_crash) ... ok
+test_greenlet_cleanup_during_thread_exit (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_greenlet_cleanup_during_thread_exit) ... ok
+test_greenlet_construction_during_atexit_no_crash (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_greenlet_construction_during_atexit_no_crash) ... ok
+test_greenlet_construction_with_active_greenlets_during_atexit (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_greenlet_construction_with_active_greenlets_during_atexit) ... ok
+test_greenlet_construction_with_cross_thread_deleteme_during_atexit (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_greenlet_construction_with_cross_thread_deleteme_during_atexit) ... ok
+test_greenlet_with_traceback_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_greenlet_with_traceback_at_shutdown) ... ok
+test_many_greenlets_with_cleanup_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_many_greenlets_with_cleanup_at_shutdown) ... ok
+test_multiple_active_greenlets_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_multiple_active_greenlets_at_shutdown) ... ok
+test_nested_greenlets_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_nested_greenlets_at_shutdown) ... ok
+test_settrace_during_atexit_no_crash (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_settrace_during_atexit_no_crash) ... ok
+test_switch_no_error_at_module_gc_time (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_switch_no_error_at_module_gc_time) ... ok
+test_threaded_greenlets_at_shutdown (greenlet.tests.test_interpreter_shutdown.TestInterpreterShutdown.test_threaded_greenlets_at_shutdown) ... ok
 test_arg_refs (greenlet.tests.test_leaks.TestLeaks.test_arg_refs) ... ok
 test_issue251_issue252_explicit_reference_not_collectable (greenlet.tests.test_leaks.TestLeaks.test_issue251_issue252_explicit_reference_not_collectable) ... ok
 test_issue251_issue252_need_to_collect_in_background (greenlet.tests.test_leaks.TestLeaks.test_issue251_issue252_need_to_collect_in_background) ... ok
@@ -116,29 +141,7 @@ test_kwarg_refs (greenlet.tests.test_leaks.TestLeaks.test_kwarg_refs) ... ok
 test_threaded_adv_leak (greenlet.tests.test_leaks.TestLeaks.test_threaded_adv_leak) ... ok
 test_threaded_leak (greenlet.tests.test_leaks.TestLeaks.test_threaded_leak) ... ok
 test_untracked_memory_doesnt_increase (greenlet.tests.test_leaks.TestLeaks.test_untracked_memory_doesnt_increase) ... skipped 'uss not supported'
-test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks.test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main) ... Exception in thread Thread-248:
-Traceback (most recent call last):
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 212, in get_process_uss
-    return psutil.Process().memory_full_info().uss
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'pmem' object has no attribute 'uss'. Did you mean: 'rss'?
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "$(PYTHON_DIR)/threading.py", line 1082, in _bootstrap_inner
-    self._context.run(self.run)
-    ~~~~~~~~~~~~~~~~~^^^^^^^^^^
-  File "$(PYTHON_DIR)/threading.py", line 1024, in run
-    self._target(*self._args, **self._kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/test_leaks.py", line 400, in __call__
-    self.uss_before = test.get_process_uss()
-                      ~~~~~~~~~~~~~~~~~~~~^^
-  File "$(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/greenlet/tests/__init__.py", line 214, in get_process_uss
-    raise unittest.SkipTest("uss not supported") from e
-unittest.case.SkipTest: uss not supported
-skipped 'uss not supported'
+test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main (greenlet.tests.test_leaks.TestLeaks.test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_main) ... skipped 'uss not supported'
 test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_thread (greenlet.tests.test_leaks.TestLeaks.test_untracked_memory_doesnt_increase_unfinished_thread_dealloc_in_thread) ... skipped 'Always fails: https://github.com/python-greenlet/greenlet/issues/485'
 test_stack_saved (greenlet.tests.test_stack_saved.Test.test_stack_saved) ... ok
 test_class (greenlet.tests.test_throw.ThrowTests.test_class) ... ok
@@ -163,12 +166,15 @@ test_dead_weakref (greenlet.tests.test_weakref.WeakRefTests.test_dead_weakref) .
 test_dealloc_weakref (greenlet.tests.test_weakref.WeakRefTests.test_dealloc_weakref) ... ok
 test_inactive_weakref (greenlet.tests.test_weakref.WeakRefTests.test_inactive_weakref) ... ok
 
-----------------------------------------------------------------------
-Ran 140 tests
-
-OK (skipped=5)
 Time limit exceeded.
 Threads: Waiting for only 1 --> 1
-MGlets : Waiting for only 5 --> 6
+MGlets : Waiting for only 1 --> 321
+Time limit exceeded.
+Threads: Waiting for only 1 --> 1
+MGlets : Waiting for only 325 --> 326
+----------------------------------------------------------------------
+Ran 165 tests
+
+OK (skipped=3)
   py$(PYV): OK
   congratulations :)
