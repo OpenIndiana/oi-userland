@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project transaction
+#   $WS_TOOLS/python-integrate-project -d python/transaction-39 transaction
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		transaction
-HUMAN_VERSION =			5.1
+HUMAN_VERSION =			5.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Transaction management for Python
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f6ca8639a3e54f6991de0d9c0983a7cd91acb21a825cb544c168269be956bd41
+	sha256:106e7bd782bcc0cb5119fc9225b0c9a71dfc53adb938be905223adaef22b1174
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by transaction >= 5.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# transaction >= 5.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -36,7 +37,6 @@ TOX_POSARGS += -vv
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += library/python/zope-interface
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/setuptools
