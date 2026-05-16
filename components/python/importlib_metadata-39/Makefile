@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project importlib_metadata
+#   $WS_TOOLS/python-integrate-project -d python/importlib_metadata-39 importlib_metadata
 #
 
 BUILD_STYLE = pyproject
@@ -19,20 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_metadata
-HUMAN_VERSION =			9.0.0
+HUMAN_VERSION =			8.7.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Read metadata from Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc
+	sha256:49fef1ae6440c182052f407c8d34a68f72efc36db9ca90dc0113398f2fdde8bb
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# This component is required by following bootstrapped components so it must be
-# bootstrapped too.
-# - build
-PYTHON_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by importlib-metadata >= 8.8.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# importlib-metadata >= 8.8.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -45,6 +41,7 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += library/python/zipp
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pyfakefs
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
