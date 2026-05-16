@@ -6,7 +6,7 @@ hypothesis profile 'default'
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 2379 items / 6 deselected / 2373 selected
+collecting ... collected 2420 items / 6 deselected / 2414 selected
 
 tests/streams/test_buffered.py::test_receive_exactly[asyncio] PASSED
 tests/streams/test_buffered.py::test_receive_exactly[asyncio+uvloop] SKIPPED
@@ -718,6 +718,24 @@ tests/test_functools.py::TestAsyncLRUCache::test_cached_class_method[asyncio+eag
 tests/test_functools.py::TestAsyncLRUCache::test_cached_instance_method[asyncio] PASSED
 tests/test_functools.py::TestAsyncLRUCache::test_cached_instance_method[asyncio+uvloop] SKIPPED
 tests/test_functools.py::TestAsyncLRUCache::test_cached_instance_method[asyncio+eager] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_cache_hit[asyncio] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_cache_hit[asyncio+uvloop] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_cache_hit[asyncio+eager] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_expiration_evicts[asyncio] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_expiration_evicts[asyncio+uvloop] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_expiration_evicts[asyncio+eager] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio-False] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio-True] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio+uvloop-False] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio+uvloop-True] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio+eager-False] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_contested_lock[asyncio+eager-True] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio-False] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio-True] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio+uvloop-False] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio+uvloop-True] SKIPPED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio+eager-False] PASSED
+tests/test_functools.py::TestAsyncLRUCache::test_ttl_sequential[asyncio+eager-True] PASSED
 tests/test_functools.py::TestReduce::test_not_iterable[asyncio] PASSED
 tests/test_functools.py::TestReduce::test_not_iterable[asyncio+uvloop] SKIPPED
 tests/test_functools.py::TestReduce::test_not_iterable[asyncio+eager] PASSED
@@ -808,6 +826,8 @@ tests/test_pytest_plugin.py::TestFreePortFactory::test_free_tcp_port[asyncio+eag
 tests/test_pytest_plugin.py::TestFreePortFactory::test_free_udp_port[asyncio] PASSED
 tests/test_pytest_plugin.py::TestFreePortFactory::test_free_udp_port[asyncio+uvloop] SKIPPED
 tests/test_pytest_plugin.py::TestFreePortFactory::test_free_udp_port[asyncio+eager] PASSED
+tests/test_pytest_plugin.py::test_programmatic_anyio_mark PASSED
+tests/test_pytest_plugin.py::test_func_as_parametrize_param_name PASSED
 tests/test_signals.py::test_receive_signals[asyncio] PASSED
 tests/test_signals.py::test_receive_signals[asyncio+uvloop] SKIPPED
 tests/test_signals.py::test_receive_signals[asyncio+eager] PASSED
@@ -919,6 +939,18 @@ tests/test_sockets.py::TestTCPStream::test_send_after_peer_closed[asyncio+uvloop
 tests/test_sockets.py::TestTCPStream::test_send_after_peer_closed[asyncio+uvloop-ipv6] SKIPPED
 tests/test_sockets.py::TestTCPStream::test_send_after_peer_closed[asyncio+eager-ipv4] PASSED
 tests/test_sockets.py::TestTCPStream::test_send_after_peer_closed[asyncio+eager-ipv6] PASSED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio-ipv4] PASSED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio-ipv6] PASSED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio+uvloop-ipv4] SKIPPED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio+uvloop-ipv6] SKIPPED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio+eager-ipv4] PASSED
+tests/test_sockets.py::TestTCPStream::test_receive_exception_cause_preserved[asyncio+eager-ipv6] PASSED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio-ipv4] PASSED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio-ipv6] PASSED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio+uvloop-ipv4] SKIPPED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio+uvloop-ipv6] SKIPPED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio+eager-ipv4] PASSED
+tests/test_sockets.py::TestTCPStream::test_send_exception_cause_preserved[asyncio+eager-ipv6] PASSED
 tests/test_sockets.py::TestTCPStream::test_connect_tcp_with_tls[asyncio-ipv4] PASSED
 tests/test_sockets.py::TestTCPStream::test_connect_tcp_with_tls[asyncio-ipv6] PASSED
 tests/test_sockets.py::TestTCPStream::test_connect_tcp_with_tls[asyncio+uvloop-ipv4] SKIPPED
@@ -1830,6 +1862,9 @@ tests/test_synchronization.py::TestCondition::test_acquire_nowait_wouldblock[asy
 tests/test_synchronization.py::TestCondition::test_wait_cancel[asyncio] PASSED
 tests/test_synchronization.py::TestCondition::test_wait_cancel[asyncio+uvloop] SKIPPED
 tests/test_synchronization.py::TestCondition::test_wait_cancel[asyncio+eager] PASSED
+tests/test_synchronization.py::TestCondition::test_notification_handover_on_cancel[asyncio] PASSED
+tests/test_synchronization.py::TestCondition::test_notification_handover_on_cancel[asyncio+uvloop] SKIPPED
+tests/test_synchronization.py::TestCondition::test_notification_handover_on_cancel[asyncio+eager] PASSED
 tests/test_synchronization.py::TestCondition::test_wait_no_lock[asyncio] PASSED
 tests/test_synchronization.py::TestCondition::test_wait_no_lock[asyncio+uvloop] SKIPPED
 tests/test_synchronization.py::TestCondition::test_wait_no_lock[asyncio+eager] PASSED
@@ -2131,9 +2166,15 @@ tests/test_taskgroups.py::test_triple_nested_shield_checkpoint_in_outer[asyncio+
 tests/test_taskgroups.py::test_triple_nested_shield_checkpoint_in_middle[asyncio] PASSED
 tests/test_taskgroups.py::test_triple_nested_shield_checkpoint_in_middle[asyncio+uvloop] SKIPPED
 tests/test_taskgroups.py::test_triple_nested_shield_checkpoint_in_middle[asyncio+eager] PASSED
+tests/test_taskgroups.py::test_nested_task_group_filtering[asyncio] PASSED
+tests/test_taskgroups.py::test_nested_task_group_filtering[asyncio+uvloop] SKIPPED
+tests/test_taskgroups.py::test_nested_task_group_filtering[asyncio+eager] PASSED
 tests/test_taskgroups.py::test_exception_group_filtering[asyncio] PASSED
 tests/test_taskgroups.py::test_exception_group_filtering[asyncio+uvloop] SKIPPED
 tests/test_taskgroups.py::test_exception_group_filtering[asyncio+eager] PASSED
+tests/test_taskgroups.py::test_nested_exception_group_filtering[asyncio] PASSED
+tests/test_taskgroups.py::test_nested_exception_group_filtering[asyncio+uvloop] SKIPPED
+tests/test_taskgroups.py::test_nested_exception_group_filtering[asyncio+eager] PASSED
 tests/test_taskgroups.py::test_cancel_propagation_with_inner_spawn[asyncio] PASSED
 tests/test_taskgroups.py::test_cancel_propagation_with_inner_spawn[asyncio+uvloop] SKIPPED
 tests/test_taskgroups.py::test_cancel_propagation_with_inner_spawn[asyncio+eager] PASSED
@@ -2383,6 +2424,6 @@ tests/test_to_thread.py::test_run_sync_worker_cyclic_references[asyncio+eager] P
 tests/test_typedattr.py::test_typedattr_keyerror PASSED
 
 =========================== short test summary info ============================
-======== 1457 passed, 914 skipped, 6 deselected, 2 xfailed ========
+======== 1485 passed, 927 skipped, 6 deselected, 2 xfailed ========
   py$(PYV): OK
   congratulations :)
