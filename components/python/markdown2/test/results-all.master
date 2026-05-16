@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> make testone
 cd test && python test.py -- -knownfailure
 markdown2/tm/cve-2018-5773 ... ok
@@ -9,6 +8,7 @@ markdown2/tm/ampersands [htmlentities] ... ok
 markdown2/tm/auto_link ... ok
 markdown2/tm/auto_link_email_with_underscore [issue26] ... ok
 markdown2/tm/auto_link_safe_mode [issue7, safe_mode] ... ok
+markdown2/tm/backslash_escape_empty_links ... ok
 markdown2/tm/backslash_escape_html_tags ... ok
 markdown2/tm/backslash_removed_by_adjacent_backtick ... ok
 markdown2/tm/basic_safe_mode [safe_mode] ... ok
@@ -26,12 +26,16 @@ markdown2/tm/break_on_newline_excessive_br_tags_in_ul ... ok
 markdown2/tm/code_block_with_tabs [fromphpmarkdown] ... ok
 markdown2/tm/code_blocks_leading_line ... ok
 markdown2/tm/code_friendly_bold ... ok
+markdown2/tm/code_friendly_issue638 ... ok
+markdown2/tm/code_friendly_issue646 ... ok
+markdown2/tm/code_friendly_issue671 ... ok
 markdown2/tm/code_safe_emphasis [code_friendly] ... ok
 markdown2/tm/codeblock ... ok
 markdown2/tm/codespans ... ok
 markdown2/tm/codespans_inside_link_text ... ok
 markdown2/tm/codespans_safe_mode [issue9, safe_mode] ... ok
 markdown2/tm/consecutive_image_links_issue498 ... ok
+markdown2/tm/consecutive_strong_and_em ... ok
 markdown2/tm/consecutive_strong_em ... ok
 markdown2/tm/cuddled_list_indented [smedberg, issue36, extra, cuddle-lists] ... ok
 markdown2/tm/cuddled_para_and_list [smedberg, issue33, extra, cuddle-lists] ... ok
@@ -44,8 +48,11 @@ markdown2/tm/emacs_head_vars [emacs] ... ok
 markdown2/tm/emacs_tail_vars [emacs] ... ok
 markdown2/tm/emphasis ... ok
 markdown2/tm/empty_fenced_code_blocks [extra, fenced-code-blocks, pygments] ... ok
+markdown2/tm/ems_across_spans ... ok
 markdown2/tm/encode_incomplete_tags_xss_issue625 ... ok
 markdown2/tm/escape_html_comments_safe_mode ... ok
+markdown2/tm/escaped_ampersands ... ok
+markdown2/tm/escaped_html_in_safe_mode ... ok
 markdown2/tm/escapes [issue15] ... ok
 markdown2/tm/fenced_code_blocks_issue113 [extra, fenced-code-blocks, issue113] ... ok
 markdown2/tm/fenced_code_blocks_issue127 [extra, fenced-code-blocks, issue127] ... ok
@@ -72,6 +79,9 @@ markdown2/tm/footnotes_order_of_appearance ... ok
 markdown2/tm/footnotes_safe_mode_escape [safe_mode, footnotes] ... ok
 markdown2/tm/footnotes_smarty-pants ... ok
 markdown2/tm/footnotes_underscores [issue27] ... ok
+markdown2/tm/gfm_emphasis ... ok
+markdown2/tm/gfm_emphasis_issue666 ... ok
+markdown2/tm/gfm_emphasis_issue671 ... ok
 markdown2/tm/hash_html_blocks ... ok
 markdown2/tm/hash_html_blocks_issue_508 ... ok
 markdown2/tm/hash_nested_html_blocks [extra, fenced-code-blocks, pygments] ... ok
@@ -93,6 +103,7 @@ markdown2/tm/html_classes [extras, html-classes, code.as.com] ... ok
 markdown2/tm/html_classes_is_none [extras, html-classes] ... ok
 markdown2/tm/img_alt_text ... ok
 markdown2/tm/img_in_link ... ok
+markdown2/tm/incomplete_tags_in_code_spans ... ok
 markdown2/tm/incorrect_list_parse [issue165] ... ok
 markdown2/tm/inline_code_pipe_within_table [extra, tables] ... ok
 markdown2/tm/inline_links ... ok
@@ -134,12 +145,16 @@ markdown2/tm/metadata [extra, metadata, issue78] ... ok
 markdown2/tm/metadata2 [extra, metadata, issue78] ... ok
 markdown2/tm/metadata3 ... ok
 markdown2/tm/middle_word_em ... ok
+markdown2/tm/middle_word_em_escaped_char ... ok
 markdown2/tm/middle_word_em_issue627 ... ok
+markdown2/tm/middle_word_em_issue637 ... ok
+markdown2/tm/middle_word_em_issue641 ... ok
 markdown2/tm/middle_word_em_with_extra_ems ... ok
 markdown2/tm/mismatched_footnotes ... ok
 markdown2/tm/missing_link_defn ... ok
 markdown2/tm/mix-ordered-and-unordered-lists ... ok
 markdown2/tm/mixed_header_ids ... ok
+markdown2/tm/nested_footnotes_issue664 ... ok
 markdown2/tm/nested_incomplete_tags_xss ... ok
 markdown2/tm/nested_list ... ok
 markdown2/tm/nested_list_safe_mode [issue9, safe_mode] ... ok
@@ -155,7 +170,11 @@ markdown2/tm/pyshell_and_fenced_code_blocks [extra, fenced-code-blocks, pygments
 markdown2/tm/quoted_fenced_code_blocks_whitespace_around_indented_lines [extra, fenced-code-blocks, pygments] ... ok
 markdown2/tm/raw_html ... ok
 markdown2/tm/ref_links ... ok
+markdown2/tm/reference_link_lookalike_issue680 ... ok
 markdown2/tm/relative_links_safe_mode ... ok
+markdown2/tm/safe_mode_code_spans_in_links ... ok
+markdown2/tm/safe_mode_fenced_code_joined_to_lists ... ok
+markdown2/tm/safe_mode_fenced_code_with_lexer_joined_to_lists [fenced-code-blocks, pygments] ... ok
 markdown2/tm/safe_mode_issue621 ... ok
 markdown2/tm/script-and-style-blocks ... ok
 markdown2/tm/seperated_list_items ... ok
@@ -179,6 +198,7 @@ markdown2/tm/toc_5 [toc, extra] ... ok
 markdown2/tm/toc_depth [toc, extra] ... ok
 markdown2/tm/toc_duplicate_entries ... ok
 markdown2/tm/toc_prepend [toc, extra] ... ok
+markdown2/tm/toc_with_inline_code [toc, extra, issue675] ... ok
 markdown2/tm/trailing_table_whitespace ... ok
 markdown2/tm/tricky_anchors ... ok
 markdown2/tm/two_comments ... ok
@@ -188,35 +208,6 @@ markdown2/tm/underline_in_autolink ... ok
 markdown2/tm/wiki_tables [extra, wiki-tables] ... ok
 markdown2/tm/xss_issue_362 ... ok
 markdown2/tm/xss_quotes [issue30] ... ok
-markdown2/markdowntest/auto_links ... ok
-markdown2/markdowntest/backslash_escapes ... ok
-markdown2/markdowntest/blockquotes_with_code_blocks ... ok
-markdown2/markdowntest/hard-wrapped_paragraphs_with_list-like_lines ... ok
-markdown2/markdowntest/horizontal_rules ... ok
-markdown2/markdowntest/inline_html_simple ... ok
-markdown2/markdowntest/inline_html_comments ... ok
-markdown2/markdowntest/links_inline_style ... ok
-markdown2/markdowntest/links_reference_style ... ok
-markdown2/markdowntest/literal_quotes_in_titles ... ok
-markdown2/markdowntest/markdown_documentation_basics ... ok
-markdown2/markdowntest/markdown_documentation_syntax ... ok
-markdown2/markdowntest/nested_blockquotes ... ok
-markdown2/markdowntest/ordered_and_unordered_lists ... ok
-markdown2/markdowntest/parens_around_urls ... ok
-markdown2/markdowntest/parens_in_urls ... ok
-markdown2/markdowntest/spaces_in_urls ... ok
-markdown2/markdowntest/strong_and_em_together ... ok
-markdown2/markdowntest/tabs ... ok
-markdown2/phpmarkdown/code_spans ... ok
-markdown2/phpmarkdown/email_auto_links ... ok
-markdown2/phpmarkdown/headers ... ok
-markdown2/phpmarkdown/images_untitled ... ok
-markdown2/phpmarkdown/inline_html_comments ... ok
-markdown2/phpmarkdown/ins_&_del ... ok
-markdown2/phpmarkdown/links_inline_style ... ok
-markdown2/phpmarkdown/md5_hashes ... ok
-markdown2/phpmarkdown/php-specific_bugs ... ok
-markdown2/phpmarkdownextra/tables ... ok
 markdown2/direct/code_in_strong [code, strong] ... ok
 markdown2/direct/pre ... ok
 markdown2/direct/russian [unicode, issue3] ... ok
@@ -226,7 +217,7 @@ markdown2/direct/toc_with_persistent_object [toc, issue208] ... ok
 markdown2/doctests/api ... ok
 
 ----------------------------------------------------------------------
-Ran 223 tests
+Ran 215 tests
 
 OK
   py$(PYV): OK
