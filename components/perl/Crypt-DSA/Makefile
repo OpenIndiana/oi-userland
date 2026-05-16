@@ -19,27 +19,27 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-DSA
-HUMAN_VERSION =			1.19
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.20
 COMPONENT_SUMMARY =		DSA Signatures and Key Generation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1d192241b587f0a41b9f1a38bb90c2e10dcf31104eaaaf35d4803b68ff6cda9c
+	sha256:e5e98ec85737339a2881b9a33744639b1bcc135db135bc9a96b52ea44d218e4d
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/convert-asn1
-PERL_REQUIRED_PACKAGES += library/perl-5/convert-pem
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-urandom
-PERL_REQUIRED_PACKAGES += library/perl-5/data-buffer
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-which
-PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/convert-asn1
+REQUIRED_PACKAGES.perl += library/perl-5/convert-pem
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-sysrandom
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-urandom
+REQUIRED_PACKAGES.perl += library/perl-5/data-buffer
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-which
+REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-des_ede3
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
