@@ -19,20 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown2
-HUMAN_VERSION =			2.5.4
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.5.5
 COMPONENT_SUMMARY =		A fast and complete Python implementation of Markdown
 COMPONENT_PROJECT_URL =		https://github.com/trentm/python-markdown2
-COMPONENT_ARCHIVE_URL =		\
-	https://github.com/trentm/python-markdown2/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:304526a6cc7377ab13b566eb70c5b6929604256603ff5e398694f82057da57e6
+	sha256:001547e68f6e7fcf0f1cb83f7e82f48aa7d48b2c6a321f0cd20a853a8a2d1664
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-COMPONENT_SRC =			python-markdown2-$(HUMAN_VERSION)
-
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing needs to find the testlib module in the build directory
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR):$(COMPONENT_TEST_DIR)/test
 
 # these lines could appear anywhere in the test output
 COMPONENT_TEST_TRANSFORMS += "-e '/^WARNING:test:skipping/d'"
