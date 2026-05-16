@@ -10,26 +10,28 @@
 #
 
 #
-# Copyright 2022 Andreas Wacknitz
+# Copyright 2022, 2026 Andreas Wacknitz
 #
 
 BUILD_STYLE= archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        mona-sans
-COMPONENT_VERSION=      2.0.23
+COMPONENT_VERSION=      2.0.25
 COMPONENT_SUMMARY=      Mona Sans is a variable font inspired by industrial-era grotesques
 COMPONENT_PROJECT_URL=  https://github.com/github/mona-sans
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3bf9604c4b98862a8c1eb1b819afde557679ed459e4e6d7f09a3d284c47ec9ab
+COMPONENT_SRC=          $(COMPONENT_NAME)-static-v$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:5b88effa7aefde70ad9689d2620a97d2a5d2d5802c7fda042ec47679e6ee81c1
 COMPONENT_LICENSE=      SIL Open Font License Version 1.1
-COMPONENT_LICENSE_FILE=	LICENSE
+COMPONENT_LICENSE_FILE=	OFL.txt
 
 FONT_TYPE= TTF
 
 include $(WS_MAKE_RULES)/font.mk
+
+UNPACK_ARGS= --relocate-to=$(COMPONENT_SRC)
 
 COMPONENT_FONT_SRC_DIR= fonts/static/ttf
 COMPONENT_FONT_FILES += *.ttf
