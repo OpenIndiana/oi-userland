@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/jaraco.functools jaraco_functools
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.functools-39 jaraco_functools
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_functools
-HUMAN_VERSION =			4.5.0
+HUMAN_VERSION =			4.4.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Functools like those found in stdlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3bb5665ea4a020cf78a7040e89154c77edadb3ca74f366479669c5999aa70b03
+	sha256:da21933b0417b89515562656547a77b4931f98176eb173644c0d35032a33d6bb
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by jaraco.functools >= 4.5.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# jaraco.functools >= 4.5.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
