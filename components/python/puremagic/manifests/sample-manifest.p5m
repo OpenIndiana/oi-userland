@@ -10,7 +10,7 @@
 #
 
 #
-# Copyright 2025 <contributor>
+# Copyright 2026 <contributor>
 #
 
 set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -23,8 +23,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
+file path=usr/bin/puremagic-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic-$(HUMAN_VERSION).dist-info/METADATA
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic-$(HUMAN_VERSION).dist-info/entry_points.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic-$(HUMAN_VERSION).dist-info/licenses/LICENSE
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic-$(HUMAN_VERSION).dist-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/__init__.py
@@ -32,6 +34,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/__main__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/magic_data.json
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/main.py
 file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/asf_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/cfbf_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/ebml_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/hdf5_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/helpers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/json_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/mpeg_audio_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/ogg_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/pdf_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/python_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/sndhdr_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/text_scanner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/puremagic/scanners/zip_scanner.py
 
 # python modules are unusable without python runtime binary
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
