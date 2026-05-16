@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -n auto
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
@@ -7,7 +6,7 @@ hypothesis profile 'patience' -> deadline=timedelta(milliseconds=400), suppress_
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-X workers [1366 items]
+X workers [1381 items]
 
 scheduling tests via LoadScheduling
 
@@ -785,11 +784,17 @@ tests/test_hooks.py::TestAsDictHook::test_asdict PASSED
 tests/test_hooks.py::TestAsDictHook::test_asdict_calls PASSED
 tests/test_hooks.py::TestTransformHook::test_attrs_attrclass PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_add_field PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_alias_available PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied_auto_attrib PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_applied_modify_attrib PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_conflicting_defaults_after_reorder PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_evolve_alias_sets_not_default PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_evolve_name_keeps_explicit_alias PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_evolve_name_updates_auto_alias PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_explicit_alias_matching_default PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_generator PASSED
+tests/test_hooks.py::TestTransformHook::test_hook_new_field_without_alias PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_override_alias PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_remove_field PASSED
 tests/test_hooks.py::TestTransformHook::test_hook_reorder_fields PASSED
@@ -974,7 +979,7 @@ tests/test_make.py::TestCountingAttr::test_default_decorator_sets PASSED
 tests/test_make.py::TestCountingAttr::test_returns_Attr PASSED
 tests/test_make.py::TestCountingAttr::test_validator_decorator[<lambda>0] PASSED
 tests/test_make.py::TestCountingAttr::test_validator_decorator[<lambda>1] PASSED
-tests/test_make.py::TestCountingAttr::test_validator_decorator[<lambda>2] PASSED
+tests/test_make.py::TestCountingAttr::test_validator_decorator[and_] PASSED
 tests/test_make.py::TestCountingAttr::test_validator_decorator_single PASSED
 tests/test_make.py::TestCountingAttr::test_validators_lists_to_wrapped_tuples PASSED
 tests/test_make.py::TestDetermineAttribEqOrder::test_default PASSED
@@ -1002,10 +1007,16 @@ tests/test_make.py::TestFields::test_fields_properties PASSED
 tests/test_make.py::TestFields::test_generics PASSED
 tests/test_make.py::TestFields::test_handler_non_attrs_class PASSED
 tests/test_make.py::TestFields::test_handler_non_attrs_generic_class PASSED
+tests/test_make.py::TestFields::test_handler_non_attrs_instance PASSED
 tests/test_make.py::TestFields::test_instance PASSED
 tests/test_make.py::TestFieldsDict::test_fields_dict PASSED
 tests/test_make.py::TestFieldsDict::test_handler_non_attrs_class PASSED
 tests/test_make.py::TestFieldsDict::test_instance PASSED
+tests/test_make.py::TestInitAlias::test_alias_is_default PASSED
+tests/test_make.py::TestInitAlias::test_alias_is_default_pickle_roundtrip PASSED
+tests/test_make.py::TestInitAlias::test_can_unpickle_25_3_attributes[\x80\x05\x95_\x00\x00\x00\x00\x00\x00\x00\x8c\nattr._make\x94\x8c\tAttribute\x94\x93\x94)\x81\x94(\x8c\x01x\x94h\x00\x8c\x08_Nothing\x94\x93\x94K\x01\x85\x94R\x94N\x88\x88N\x88NN\x88}\x94\x8c\x08builtins\x94\x8c\x03int\x94\x93\x94N\x89\x89Nh\x04t\x94b.-x-x-True] PASSED
+tests/test_make.py::TestInitAlias::test_can_unpickle_25_3_attributes[\x80\x05\x95b\x00\x00\x00\x00\x00\x00\x00\x8c\nattr._make\x94\x8c\tAttribute\x94\x93\x94)\x81\x94(\x8c\x02_y\x94h\x00\x8c\x08_Nothing\x94\x93\x94K\x01\x85\x94R\x94N\x88\x88N\x88NN\x88}\x94\x8c\x08builtins\x94\x8c\x03int\x94\x93\x94N\x89\x89N\x8c\x01y\x94t\x94b.-_y-y-True] PASSED
+tests/test_make.py::TestInitAlias::test_can_unpickle_25_3_attributes[\x80\x05\x95c\x00\x00\x00\x00\x00\x00\x00\x8c\nattr._make\x94\x8c\tAttribute\x94\x93\x94)\x81\x94(\x8c\x01z\x94h\x00\x8c\x08_Nothing\x94\x93\x94K\x01\x85\x94R\x94N\x88\x88N\x88NN\x88}\x94\x8c\x08builtins\x94\x8c\x03int\x94\x93\x94N\x89\x89N\x8c\x03_z_\x94t\x94b.-z-_z_-False] PASSED
 tests/test_make.py::TestInitAlias::test_default_and_specify PASSED
 tests/test_make.py::TestInitAlias::test_evolve PASSED
 tests/test_make.py::TestKeywordOnlyAttributes::test_adds_keyword_only_arguments PASSED
@@ -1120,6 +1131,8 @@ tests/test_setattr.py::TestSetAttr::test_docstring PASSED
 tests/test_setattr.py::TestSetAttr::test_frozen_attribute PASSED
 tests/test_setattr.py::TestSetAttr::test_frozen_on_setattr_attribute_is_caught PASSED
 tests/test_setattr.py::TestSetAttr::test_frozen_on_setattr_class_is_caught PASSED
+tests/test_setattr.py::TestSetAttr::test_frozen_on_setattr_nops[None] PASSED
+tests/test_setattr.py::TestSetAttr::test_frozen_on_setattr_nops[nop1] PASSED
 tests/test_setattr.py::TestSetAttr::test_make_class PASSED
 tests/test_setattr.py::TestSetAttr::test_no_validator_no_converter PASSED
 tests/test_setattr.py::TestSetAttr::test_pickling_retains_attrs_own[False] PASSED
@@ -1262,6 +1275,7 @@ tests/test_validators.py::TestDisableValidators::test_default PASSED
 tests/test_validators.py::TestDisableValidators::test_disabled[False-True] PASSED
 tests/test_validators.py::TestDisableValidators::test_disabled[True-False] PASSED
 tests/test_validators.py::TestDisableValidators::test_disabled_ctx PASSED
+tests/test_validators.py::TestDisableValidators::test_disabled_ctx_nested PASSED
 tests/test_validators.py::TestDisableValidators::test_disabled_ctx_with_errors PASSED
 tests/test_validators.py::TestDisableValidators::test_set_validators_disabled[False-True] PASSED
 tests/test_validators.py::TestDisableValidators::test_set_validators_disabled[True-False] PASSED
@@ -1379,6 +1393,6 @@ tests/test_version_info.py::TestVersionInfo::test_wrong_len[other1] PASSED
 tests/test_version_info.py::TestVersionInfo::test_wrong_type[other0] PASSED
 
 =========================== short test summary info ============================
-======== 1343 passed, 22 skipped, 1 xfailed ========
+======== 1358 passed, 22 skipped, 1 xfailed ========
   py$(PYV): OK
   congratulations :)
