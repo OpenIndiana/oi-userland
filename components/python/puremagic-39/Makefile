@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project puremagic
+#   $WS_TOOLS/python-integrate-project -d python/puremagic-39 puremagic
 #
 
 BUILD_STYLE = pyproject
@@ -19,22 +19,22 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		puremagic
-HUMAN_VERSION =			2.2.0
+HUMAN_VERSION =			1.30
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Pure python implementation of magic file detection
 COMPONENT_PROJECT_URL =		https://github.com/cdgriffith/puremagic
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb4bddf07c177c4b434554b92165b67449f5a51e152b976202d6254498810eef
+	sha256:f9ff7ac157d54e9cf3bff1addfd97233548e75e685282d84ae11e7ffee1614c9
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by puremagic >= 2.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# puremagic >= 2.0.0 requires Python >= 3.12
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
