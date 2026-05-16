@@ -180,7 +180,13 @@ test_expand_root (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_ex
 test_expand_user (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user) ... ok
 test_expand_user_no_home_environment (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_no_home_environment)
 Make sure this also works without HOME / USERPROFILE set ... ok
+test_expand_user_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_path) ... ok
+test_expand_user_posix_windowsfs (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_posix_windowsfs) ... ok
+test_expand_user_posix_windowsfs_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_posix_windowsfs_path) ... ok
 test_expand_user_windows (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_windows) ... skipped 'Windows specific test'
+test_expand_user_windows_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_windows_path) ... skipped 'Windows specific test'
+test_expand_user_windows_posixfs (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_windows_posixfs) ... skipped 'Windows specific test'
+test_expand_user_windows_posixfs_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_expand_user_windows_posixfs_path) ... skipped 'Windows specific test'
 test_get_mtime (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_get_mtime) ... ok
 test_get_mtime_raises_os_error (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_get_mtime_raises_os_error) ... ok
 test_getattr_forward_to_real_os_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_getattr_forward_to_real_os_path)
@@ -206,6 +212,10 @@ test_join_bytes (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_joi
 test_join_strings (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_join_strings) ... ok
 test_lexists (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_lexists) ... ok
 test_realpath_allow_missing (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_allow_missing) ... ok
+test_realpath_from_abs_path (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_from_abs_path) ... ok
+test_realpath_from_bytes_path_starting_with_sep_in_windows (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_from_bytes_path_starting_with_sep_in_windows) ... ok
+test_realpath_from_path_starting_with_sep_in_windows (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_from_path_starting_with_sep_in_windows) ... ok
+test_realpath_from_path_with_drive (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_from_path_with_drive) ... ok
 test_realpath_strict (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_strict) ... ok
 test_realpath_vs_abspath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_realpath_vs_abspath) ... ok
 test_relpath (pyfakefs.tests.fake_filesystem_test.FakePathModuleTest.test_relpath) ... ok
@@ -1756,6 +1766,7 @@ test_delete_on_close (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_delete
 test_exclusive_create_binary_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_exclusive_create_binary_file) ... ok
 test_exclusive_create_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_exclusive_create_file) ... ok
 test_exclusive_create_file_failure (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_exclusive_create_file_failure) ... ok
+test_file_class (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_file_class) ... ok
 test_file_descriptors_for_different_files (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_file_descriptors_for_different_files) ... ok
 test_file_descriptors_for_the_same_file_are_different (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_file_descriptors_for_the_same_file_are_different) ... ok
 test_follow_intra_path_link_write (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_follow_intra_path_link_write) ... ok
@@ -1790,6 +1801,7 @@ test_open_with_wplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_open_w
 test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_open_with_wplus_binary) ... ok
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_open_with_wplus_truncation) ... ok
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_overwrite_existing_file) ... ok
+test_pseudo_devices (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_pseudo_devices) ... ok
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_read_empty_file_with_aplus) ... ok
 test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_read_empty_file_with_aplus_binary) ... ok
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_read_flushes_under_posix) ... ok
@@ -1801,6 +1813,7 @@ test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test
 test_seek_flushes (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_seek_flushes) ... ok
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_seek_outside_and_truncate_sets_size_in_append_mode) ... ok
 test_seek_outside_and_truncate_sets_size_in_write_mode (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_seek_outside_and_truncate_sets_size_in_write_mode) ... ok
+test_seek_returns_location (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_seek_returns_location) ... ok
 test_st_size_after_truncate (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_st_size_after_truncate) ... ok
 test_tell_flushes_in_python3 (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_tell_flushes_in_python3) ... ok
 test_tell_flushes_under_mac_os (pyfakefs.tests.fake_open_test.FakeFileOpenTest.test_tell_flushes_under_mac_os) ... ok
@@ -1912,6 +1925,7 @@ test_delete_on_close (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_delete
 test_exclusive_create_binary_file (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_exclusive_create_binary_file) ... skipped 'Only tests fake FS'
 test_exclusive_create_file (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_exclusive_create_file) ... skipped 'Only tests fake FS'
 test_exclusive_create_file_failure (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_exclusive_create_file_failure) ... skipped 'Only tests fake FS'
+test_file_class (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_file_class) ... skipped 'Only tests fake FS'
 test_file_descriptors_for_different_files (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_file_descriptors_for_different_files) ... skipped 'Only tests fake FS'
 test_file_descriptors_for_the_same_file_are_different (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_file_descriptors_for_the_same_file_are_different) ... skipped 'Only tests fake FS'
 test_follow_intra_path_link_write (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_follow_intra_path_link_write) ... skipped 'Only tests fake FS'
@@ -1946,6 +1960,7 @@ test_open_with_wplus (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_open_w
 test_open_with_wplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_open_with_wplus_binary) ... skipped 'Only tests fake FS'
 test_open_with_wplus_truncation (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_open_with_wplus_truncation) ... skipped 'Only tests fake FS'
 test_overwrite_existing_file (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_overwrite_existing_file) ... skipped 'Only tests fake FS'
+test_pseudo_devices (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_pseudo_devices) ... skipped 'Only tests fake FS'
 test_read_empty_file_with_aplus (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_read_empty_file_with_aplus) ... skipped 'Only tests fake FS'
 test_read_empty_file_with_aplus_binary (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_read_empty_file_with_aplus_binary) ... skipped 'Only tests fake FS'
 test_read_flushes_under_posix (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_read_flushes_under_posix) ... skipped 'Only tests fake FS'
@@ -1957,6 +1972,7 @@ test_reused_file_descriptors_do_not_affect_others (pyfakefs.tests.fake_open_test
 test_seek_flushes (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_seek_flushes) ... skipped 'Only tests fake FS'
 test_seek_outside_and_truncate_sets_size_in_append_mode (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_seek_outside_and_truncate_sets_size_in_append_mode) ... skipped 'Only tests fake FS'
 test_seek_outside_and_truncate_sets_size_in_write_mode (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_seek_outside_and_truncate_sets_size_in_write_mode) ... skipped 'Only tests fake FS'
+test_seek_returns_location (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_seek_returns_location) ... skipped 'Only tests fake FS'
 test_st_size_after_truncate (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_st_size_after_truncate) ... skipped 'Only tests fake FS'
 test_tell_flushes_in_python3 (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_tell_flushes_in_python3) ... skipped 'Only tests fake FS'
 test_tell_flushes_under_mac_os (pyfakefs.tests.fake_open_test.RealFileOpenTest.test_tell_flushes_under_mac_os) ... skipped 'Only tests fake FS'
@@ -2235,9 +2251,17 @@ test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.FakePathlibFileOb
 test_cwd (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_cwd) ... ok
 test_exists (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_exists) ... ok
 test_expanduser_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_posix) ... ok
+test_expanduser_posix_path (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_posix_path) ... ok
+test_expanduser_posix_windowsfs (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_posix_windowsfs) ... ok
+test_expanduser_posix_windowsfs_path (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_posix_windowsfs_path) ... ok
 test_expanduser_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_windows) ... skipped 'Windows specific test'
+test_expanduser_windows_path (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_windows_path) ... skipped 'Windows specific test'
+test_expanduser_windows_posixfs (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_windows_posixfs) ... skipped 'Windows specific test'
+test_expanduser_windows_posixfs_path (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_expanduser_windows_posixfs_path) ... skipped 'Windows specific test'
 test_home_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_home_posix) ... ok
+test_home_posix_windowsfs (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_home_posix_windowsfs) ... ok
 test_home_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_home_windows) ... skipped 'Windows specific test'
+test_home_windows_posixfs (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_home_windows_posixfs) ... skipped 'Windows specific test'
 test_is_dir (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_is_dir) ... ok
 test_is_file (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_is_file) ... ok
 test_is_symlink (pyfakefs.tests.fake_pathlib_test.FakePathlibFileObjectPropertyTest.test_is_symlink) ... ok
@@ -2348,12 +2372,19 @@ test_write_bytes (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationT
 test_write_text (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest.test_write_text) ... ok
 test_write_text_with_encoding (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest.test_write_text_with_encoding) ... ok
 test_write_with_newline_arg (pyfakefs.tests.fake_pathlib_test.FakePathlibPathFileOperationTest.test_write_with_newline_arg) ... ok
+test_full_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_full_match) ... ok
+test_full_match_with_differing_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_full_match_with_differing_case_posix) ... ok
+test_full_match_with_differing_case_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_full_match_with_differing_case_windows) ... ok
 test_is_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_is_relative_to) ... ok
 test_is_reserved_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_is_reserved_posix) ... ok
 test_is_reserved_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_is_reserved_windows) ... skipped 'Windows specific behavior'
 test_joinpath (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_joinpath) ... ok
 test_joinpath_drive (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_joinpath_drive) ... ok
 test_match (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_match) ... ok
+test_match_with_differing_case_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_match_with_differing_case_posix) ... ok
+test_match_with_differing_case_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_match_with_differing_case_windows) ... ok
+test_path_comparison_posix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_path_comparison_posix) ... ok
+test_path_comparison_windows (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_path_comparison_windows) ... ok
 test_relative_to (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_relative_to) ... ok
 test_with_name (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_with_name) ... ok
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.FakePathlibPurePathTest.test_with_suffix) ... ok
@@ -2432,9 +2463,17 @@ test_chmod_no_followsymlinks (pyfakefs.tests.fake_pathlib_test.RealPathlibFileOb
 test_cwd (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_cwd) ... skipped 'Only tests fake FS'
 test_exists (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_exists) ... skipped 'Only tests fake FS'
 test_expanduser_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_posix) ... skipped 'Only tests fake FS'
+test_expanduser_posix_path (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_posix_path) ... skipped 'Only tests fake FS'
+test_expanduser_posix_windowsfs (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_posix_windowsfs) ... skipped 'Only tests fake FS'
+test_expanduser_posix_windowsfs_path (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_posix_windowsfs_path) ... skipped 'Only tests fake FS'
 test_expanduser_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_windows) ... skipped 'Windows specific test'
+test_expanduser_windows_path (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_windows_path) ... skipped 'Windows specific test'
+test_expanduser_windows_posixfs (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_windows_posixfs) ... skipped 'Windows specific test'
+test_expanduser_windows_posixfs_path (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_expanduser_windows_posixfs_path) ... skipped 'Windows specific test'
 test_home_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_home_posix) ... skipped 'Only tests fake FS'
+test_home_posix_windowsfs (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_home_posix_windowsfs) ... skipped 'Only tests fake FS'
 test_home_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_home_windows) ... skipped 'Windows specific test'
+test_home_windows_posixfs (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_home_windows_posixfs) ... skipped 'Windows specific test'
 test_is_dir (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_is_dir) ... skipped 'Only tests fake FS'
 test_is_file (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_is_file) ... skipped 'Only tests fake FS'
 test_is_symlink (pyfakefs.tests.fake_pathlib_test.RealPathlibFileObjectPropertyTest.test_is_symlink) ... skipped 'Only tests fake FS'
@@ -2493,12 +2532,19 @@ test_write_bytes (pyfakefs.tests.fake_pathlib_test.RealPathlibPathFileOperationT
 test_write_text (pyfakefs.tests.fake_pathlib_test.RealPathlibPathFileOperationTest.test_write_text) ... skipped 'Only tests fake FS'
 test_write_text_with_encoding (pyfakefs.tests.fake_pathlib_test.RealPathlibPathFileOperationTest.test_write_text_with_encoding) ... skipped 'Only tests fake FS'
 test_write_with_newline_arg (pyfakefs.tests.fake_pathlib_test.RealPathlibPathFileOperationTest.test_write_with_newline_arg) ... skipped 'Only tests fake FS'
+test_full_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_full_match) ... skipped 'Only tests fake FS'
+test_full_match_with_differing_case_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_full_match_with_differing_case_posix) ... skipped 'Only tests fake FS'
+test_full_match_with_differing_case_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_full_match_with_differing_case_windows) ... skipped 'Only tests fake FS'
 test_is_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_is_relative_to) ... skipped 'Only tests fake FS'
 test_is_reserved_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_is_reserved_posix) ... skipped 'Only tests fake FS'
 test_is_reserved_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_is_reserved_windows) ... skipped 'Windows specific behavior'
 test_joinpath (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_joinpath) ... skipped 'Only tests fake FS'
 test_joinpath_drive (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_joinpath_drive) ... skipped 'Only tests fake FS'
 test_match (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_match) ... skipped 'Only tests fake FS'
+test_match_with_differing_case_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_match_with_differing_case_posix) ... skipped 'Only tests fake FS'
+test_match_with_differing_case_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_match_with_differing_case_windows) ... skipped 'Only tests fake FS'
+test_path_comparison_posix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_path_comparison_posix) ... skipped 'Only tests fake FS'
+test_path_comparison_windows (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_path_comparison_windows) ... skipped 'Only tests fake FS'
 test_relative_to (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_relative_to) ... skipped 'Only tests fake FS'
 test_with_name (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_with_name) ... skipped 'Only tests fake FS'
 test_with_suffix (pyfakefs.tests.fake_pathlib_test.RealPathlibPurePathTest.test_with_suffix) ... skipped 'Only tests fake FS'
@@ -2577,9 +2623,9 @@ test_read_bytes_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibT
 test_read_text_in_skipped_module (pyfakefs.tests.fake_pathlib_test.SkipPathlibTest.test_read_text_in_skipped_module) ... ok
 
 ----------------------------------------------------------------------
-Ran 2363 tests
+Ran 2409 tests
 
-OK (skipped=941, expected failures=2)
+OK (skipped=966, expected failures=2)
 py$(PYV): commands[1]> python -m pytest pyfakefs/pytest_tests/pytest_plugin_test.py
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
