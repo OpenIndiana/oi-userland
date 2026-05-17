@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		traitlets
-HUMAN_VERSION =			5.14.3
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			5.15.0
 COMPONENT_SUMMARY =		Traitlets Python configuration system
 COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9ed0579d3502c94b4b3732ac120375cda96f923114522847de4b3bb98b96b6b7
+	sha256:4fead733f81cf1c4c938e06f8ca4633896833c9d89eff878159457f4d4392971
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,6 +39,9 @@ TEST_REQUIREMENTS_EXTRAS += test
 PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_simple_app
 PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_custom_completers
 PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::test_complete_subcommands_subapp1
+
+# Testing needs to find the tests module in the build directory
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR):$(COMPONENT_TEST_DIR)
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
