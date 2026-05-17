@@ -1,0 +1,72 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2026 <contributor>
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3-$(HUMAN_VERSION).dist-info/METADATA
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3-$(HUMAN_VERSION).dist-info/WHEEL
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3-$(HUMAN_VERSION).dist-info/licenses/LICENSE.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/_base_connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/_collections.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/_request_methods.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/connectionpool.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/emscripten_fetch_worker.js
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/fetch.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/request.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/emscripten/response.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/pyopenssl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/contrib/socks.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/fields.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/filepost.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/http2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/http2/connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/http2/probe.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/poolmanager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/py.typed
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/response.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/connection.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/proxy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/request.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/response.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/retry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/ssl_.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/ssl_match_hostname.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/ssltransport.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/timeout.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/url.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/urllib3/util/wait.py
+
+# python modules are unusable without python runtime binary
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# Automatically generated dependencies based on distribution metadata
