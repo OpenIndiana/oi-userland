@@ -11,19 +11,19 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project PyNUTClient
+#   $WS_TOOLS/python-integrate-project -d python/PyNUTClient pynutclient
 #
 
-BUILD_STYLE = setup.py
+BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		PyNUTClient
-HUMAN_VERSION =			2.8.2
-COMPONENT_SUMMARY =		PyNUTClient - Python client bindings for NUT
+COMPONENT_NAME =		pynutclient
+HUMAN_VERSION =			2.8.5
+COMPONENT_SUMMARY =		Python client bindings for NUT
 COMPONENT_PROJECT_URL =		https://github.com/networkupstools/nut/tree/master/scripts/python/module
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b32af28ac141bb1d05a97814ab22b1dc90f2e55a73657f99c5126384ca2df85a
+	sha256:53dff5840ea1aab5a40757f5b5d16eceee13ee17820bfd74bdcb7e316ce613e7
 COMPONENT_LICENSE =		GPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE-GPL3
 
@@ -47,6 +47,9 @@ include $(WS_MAKE_RULES)/common.mk
 #
 # 	/usr/lib/nut/bin/dummy-ups -a dummy
 
+# Testing needs to find the PyNUT module
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR)/PyNUTClient
+
 # Remove colors from test output
 COMPONENT_TEST_TRANSFORMS += "-e 's/\x1b\[[0-9;]*m//g'"
 
@@ -61,4 +64,5 @@ TEST_REQUIRED_PACKAGES += system/management/nut/server
 TEST_REQUIRED_PACKAGES += system/management/nut/drivers/software
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += runtime/python
