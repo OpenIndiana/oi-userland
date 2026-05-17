@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.configuration zope_configuration
+#   $WS_TOOLS/python-integrate-project -d python/zope.configuration-39 zope_configuration
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_configuration
-HUMAN_VERSION =			7.1
+HUMAN_VERSION =			7.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Zope Configuration Markup Language (ZCML)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5af51cefb4dcc66053e54cfece38483fb593a81be1010c38587dba91c9d154ac
+	sha256:f64db12d834ae0afc47b1221b89cb1147f925b8081b1735ceed4ce9070812d6d
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.configuration >= 7.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# zope.configuration >= 7.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
