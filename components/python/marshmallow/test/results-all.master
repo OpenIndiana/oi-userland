@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1132 items
+collecting ... collected 1178 items
 
 tests/test_context.py::TestContext::test_context_load_dump PASSED
 tests/test_context.py::TestContext::test_context_method PASSED
@@ -181,6 +181,10 @@ tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_de
 tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp-1-expected4] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1384043025000-expected5] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_timestamp_field_deserialization[timestamp_ms-1000-expected6] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[True-timestamp] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[True-timestamp_ms] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[False-timestamp] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_boolean_timestamp_field_deserialization[False-timestamp_ms] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-timestamp] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[-timestamp_ms] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_timestamp_field_deserialization[!@#-timestamp] PASSED
@@ -292,6 +296,9 @@ tests/test_deserialization.py::TestFieldDeserialization::test_invalid_ipv6interf
 tests/test_deserialization.py::TestFieldDeserialization::test_invalid_ipv6interface_deserialization[2a00:1450:4001:824::200e/129] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_deserialization PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_invalid_value PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_rejects_non_member_attributes[mro] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_rejects_non_member_attributes[__class__] PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_rejects_non_member_attributes[__members__] PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_symbol_not_string PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_true_deserialization PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_enum_field_by_value_field_deserialization PASSED
@@ -320,6 +327,7 @@ tests/test_deserialization.py::TestFieldDeserialization::test_tuple_field_deseri
 tests/test_deserialization.py::TestFieldDeserialization::test_constant_field_deserialization PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_constant_is_always_included_in_deserialized_data PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_constant_none_allows_none_value PASSED
+tests/test_deserialization.py::TestFieldDeserialization::test_constant_with_required PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_function PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_user_validator_that_raises_error_with_list PASSED
 tests/test_deserialization.py::TestFieldDeserialization::test_field_deserialization_with_validator_with_nonascii_input PASSED
@@ -402,6 +410,7 @@ tests/test_deserialization.py::TestValidation::test_nested_partial_load PASSED
 tests/test_deserialization.py::TestValidation::test_deeply_nested_partial_load PASSED
 tests/test_deserialization.py::TestValidation::test_nested_partial_tuple PASSED
 tests/test_deserialization.py::TestValidation::test_nested_partial_default PASSED
+tests/test_deserialization.py::TestValidation::test_nested_partial_tuple_with_data_key PASSED
 tests/test_deserialization.py::test_required_field_failure[String] PASSED
 tests/test_deserialization.py::test_required_field_failure[Integer] PASSED
 tests/test_deserialization.py::test_required_field_failure[Boolean] PASSED
@@ -484,6 +493,10 @@ tests/test_fields.py::test_field_aliases[Integer-Integer] PASSED
 tests/test_fields.py::test_field_aliases[String-String] PASSED
 tests/test_fields.py::test_field_aliases[Boolean-Boolean] PASSED
 tests/test_fields.py::test_field_aliases[Url-Url] PASSED
+tests/test_fields.py::TestAbstractBaseFields::test_number_cannot_be_instantiated PASSED
+tests/test_fields.py::TestAbstractBaseFields::test_mapping_cannot_be_instantiated PASSED
+tests/test_fields.py::TestAbstractBaseFields::test_custom_number_subclass PASSED
+tests/test_fields.py::TestAbstractBaseFields::test_custom_mapping_subclass PASSED
 tests/test_fields.py::TestField::test_repr PASSED
 tests/test_fields.py::TestField::test_error_raised_if_uncallable_validator_passed PASSED
 tests/test_fields.py::TestField::test_error_raised_if_missing_is_set_on_required_field PASSED
@@ -572,6 +585,17 @@ tests/test_fields.py::TestDictNested::test_dict_nested_only_exclude_dump_only_lo
 tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[only-expected0] PASSED
 tests/test_fields.py::TestDictNested::test_dict_nested_only_and_exclude_merged_with_nested[exclude-expected1] PASSED
 tests/test_fields.py::TestDictNested::test_dict_nested_partial_propagated_to_nested PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_multiple PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_post_load PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_post_load_multiple PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_and_post_load PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_validation_error PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_post_load_validation_error PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_pre_load_none PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_field_post_load_not_called_with_none_input_when_not_allowed PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_invalid_type_passed_to_pre_load PASSED
+tests/test_fields.py::TestFieldPreAndPostLoad::test_invalid_type_passed_to_post_load PASSED
 tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_dump PASSED
 tests/test_options.py::TestFieldOrdering::test_declared_field_order_is_maintained_on_load PASSED
 tests/test_options.py::TestFieldOrdering::test_nested_field_order_with_only_arg_is_maintained_on_dump PASSED
@@ -938,6 +962,10 @@ tests/test_utils.py::test_from_timestamp[1676386740-expected0] PASSED
 tests/test_utils.py::test_from_timestamp[1676386740.58-expected1] PASSED
 tests/test_utils.py::test_from_timestamp_with_negative_value PASSED
 tests/test_utils.py::test_from_timestamp_with_overflow_value PASSED
+tests/test_utils.py::test_from_timestamp_ms[1676386740000-expected0] PASSED
+tests/test_utils.py::test_from_timestamp_ms[1000-expected1] PASSED
+tests/test_utils.py::test_from_timestamp_ms_rejects_booleans[True] PASSED
+tests/test_utils.py::test_from_timestamp_ms_rejects_booleans[False] PASSED
 tests/test_utils.py::test_function_field_using_type_annotation PASSED
 tests/test_validate.py::test_url_absolute_valid[http://example.org] PASSED
 tests/test_validate.py::test_url_absolute_valid[https://example.org] PASSED
@@ -1069,6 +1097,14 @@ tests/test_validate.py::test_url_relative_and_custom_schemes PASSED
 tests/test_validate.py::test_url_custom_message PASSED
 tests/test_validate.py::test_url_repr PASSED
 tests/test_validate.py::test_url_rejects_invalid_relative_usage PASSED
+tests/test_validate.py::test_url_idn_valid[https://\u09a4\u09cc\u09b9\u09bf\u09a6\u09c1\u09b0.\u09ac\u09be\u0982\u09b2\u09be] PASSED
+tests/test_validate.py::test_url_idn_valid[https://m\xfcnchen.de] PASSED
+tests/test_validate.py::test_url_idn_valid[https://\u4f8b\u3048.jp/path] PASSED
+tests/test_validate.py::test_url_idn_valid[http://\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631] PASSED
+tests/test_validate.py::test_url_idn_valid[https://\xfc\xf1\xee\xe7\xf6d\xe9.com/path?q=1#frag] PASSED
+tests/test_validate.py::test_url_idn_valid[http://www.\u0627\u062e\u062a\u0628\u0627\u0631.com:8080/path] PASSED
+tests/test_validate.py::test_url_idn_invalid[m\xfcnchen.de] PASSED
+tests/test_validate.py::test_url_idn_invalid[\u09a4\u09cc\u09b9\u09bf\u09a6\u09c1\u09b0.\u09ac\u09be\u0982\u09b2\u09be] PASSED
 tests/test_validate.py::test_email_valid[niceandsimple@example.com] PASSED
 tests/test_validate.py::test_email_valid[NiCeAnDsImPlE@eXaMpLe.CoM] PASSED
 tests/test_validate.py::test_email_valid[very.common@example.com] PASSED
@@ -1095,6 +1131,16 @@ tests/test_validate.py::test_email_invalid[example.com] PASSED
 tests/test_validate.py::test_email_invalid[user] PASSED
 tests/test_validate.py::test_email_invalid[] PASSED
 tests/test_validate.py::test_email_invalid[None] PASSED
+tests/test_validate.py::test_email_idn_valid[user@m\xfcnchen.de] PASSED
+tests/test_validate.py::test_email_idn_valid[user@\u4f8b\u3048.jp] PASSED
+tests/test_validate.py::test_email_idn_valid[user@\u0645\u062b\u0627\u0644.\u0625\u062e\u062a\u0628\u0627\u0631] PASSED
+tests/test_validate.py::test_email_idn_valid[user@\u043f\u0440\u0438\u043c\u0435\u0440.\u0438\u0441\u043f\u044b\u0442\u0430\u043d\u0438\u0435] PASSED
+tests/test_validate.py::test_email_idn_valid[user@\xfc\xf1\xee\xe7\xf6d\xe9.com] PASSED
+tests/test_validate.py::test_email_idn_valid[\u03b4\u03bf\u03ba.\u03b9\u03bc\u03ae@\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae] PASSED
+tests/test_validate.py::test_email_idn_valid[user@sub.m\xfcnchen.de] PASSED
+tests/test_validate.py::test_email_idn_invalid[user@-m\xfcnchen.de] PASSED
+tests/test_validate.py::test_email_idn_invalid[user@m\xfcnchen-.de] PASSED
+tests/test_validate.py::test_email_idn_invalid[user@m\xfcnchen] PASSED
 tests/test_validate.py::test_email_custom_message PASSED
 tests/test_validate.py::test_email_repr PASSED
 tests/test_validate.py::test_range_min PASSED
@@ -1139,6 +1185,6 @@ tests/test_validate.py::test_containsnoneof_custom_message PASSED
 tests/test_validate.py::test_containsnoneof_mixing_types PASSED
 tests/test_validate.py::test_and PASSED
 
-======== 1132 passed ========
+======== 1178 passed ========
   py$(PYV): OK
   congratulations :)
