@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pathspec
-HUMAN_VERSION =			1.0.4
+HUMAN_VERSION =			1.1.1
 COMPONENT_SUMMARY =		Utility library for gitignore style pattern matching of file paths.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0210e2ae8a21a9137c0d470578cb0e595af87edaa6ebf12ff176f14a02e0e645
+	sha256:17db5ecd524104a120e173814c90367a96a98d07c45b2e10c2f3919fff91bf5a
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,9 +33,6 @@ COMPONENT_LICENSE_FILE =	LICENSE
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
-
-# force verbose test output via tox posargs
-TOX_POSARGS += --verbose
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
