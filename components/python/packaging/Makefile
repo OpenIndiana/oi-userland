@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			26.0
+HUMAN_VERSION =			26.2
 COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4
+	sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
@@ -36,6 +36,7 @@ TEST_STYLE = pytest
 # - pytest (test bootstrap)
 # - setuptools-scm
 # - tox (test bootstrap)
+# - wheel (test bootstrap)
 # - Userland build framework (see setup.py.mk)
 PYTHON_BOOTSTRAP = yes
 
@@ -51,6 +52,7 @@ PYTEST_SORT_TESTS = yes
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pretend
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/tomli
