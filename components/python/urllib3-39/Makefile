@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project urllib3
+#   $WS_TOOLS/python-integrate-project -d python/urllib3-39 urllib3
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		urllib3
-HUMAN_VERSION =			2.7.0
+HUMAN_VERSION =			2.6.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		HTTP library with thread-safe connection pooling, file post, and more.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c
+	sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by urllib3 >= 2.7.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# urllib3 >= 2.7.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 # Testing needs modified version of hypercorn.  We do not have that packaged.
 # https://github.com/urllib3/urllib3/issues/3334
