@@ -1,14 +1,14 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pytest.ini
-collecting ... collected 67 items / 1 skipped
+collecting ... collected 70 items / 1 skipped
 
 .::project PASSED
 .::project PASSED
+tests/test_path.py::TestPath::test_at PASSED
 tests/test_path.py::TestPath::test_backslash_not_separator PASSED
 tests/test_path.py::TestPath::test_dir_parent PASSED
 tests/test_path.py::TestPath::test_encoding_warnings SKIPPED (Requir...)
@@ -55,6 +55,7 @@ tests/test_path.py::TestPath::test_root_on_disk PASSED
 tests/test_path.py::TestPath::test_root_parent PASSED
 tests/test_path.py::TestPath::test_root_unnamed PASSED
 tests/test_path.py::TestPath::test_stem PASSED
+tests/test_path.py::TestPath::test_str PASSED
 tests/test_path.py::TestPath::test_subclass PASSED
 tests/test_path.py::TestPath::test_subdir_is_dir PASSED
 tests/test_path.py::TestPath::test_suffix PASSED
@@ -68,6 +69,7 @@ zipp/__init__.py::zipp.Path PASSED
 zipp/__init__.py::zipp.Path.__eq__ PASSED
 zipp/__init__.py::zipp._ancestry PASSED
 zipp/__init__.py::zipp._parents PASSED
+zipp/_functools.py::zipp._functools.none_as PASSED
 zipp/compat/overlay.py::zipp.compat.overlay PASSED
 zipp/compat/py313.py::zipp.compat.py313.replace PASSED
 zipp/glob.py::zipp.glob.Translator PASSED
@@ -83,7 +85,7 @@ zipp/glob.py::zipp.glob.separate PASSED
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 ================================ tests coverage ================================
-_______________ coverage: platform sunos5, python 3.9.24-final-0 _______________
+_______________ coverage: platform sunos5, python 3.9.25-final-0 _______________
 
 Name                       Stmts   Miss  Cover   Missing
 --------------------------------------------------------
@@ -98,15 +100,15 @@ tests/compat/py$(PYV).py           4      0   100%
 tests/compat/py310.py          4      1    75%   4
 tests/compat/py313.py         12      0   100%
 tests/test_complexity.py      52     41    21%   16-107
-tests/test_path.py           433      8    98%   189-196
+tests/test_path.py           441      8    98%   189-196
 tests/write-alpharep.py        2      0   100%
-zipp/__init__.py             182     77    58%   10-27, 46, 73-77, 85-91, 94, 97, 102-114, 119, 123, 126, 136, 147-148, 166-167, 177-183, 186-187, 190, 193-194, 198, 208-313, 326, 335, 338, 358, 361-362, 365-366, 369-370, 373-374, 377-378, 381, 386, 390, 393, 396, 399, 402, 405, 411, 414, 422, 431, 434, 437, 440, 443, 447-450
-zipp/_functools.py            11      7    36%   1-14, 20
+zipp/__init__.py             183     77    58%   10-27, 46, 73-77, 85-91, 94, 97, 102-114, 119, 123, 126, 136, 147-148, 166-167, 177-183, 186-187, 190, 193-194, 198, 208-313, 326, 335, 338, 358, 361-362, 365-366, 369-370, 373-374, 377-378, 381, 386, 390, 393, 396, 399, 402, 405, 411, 414, 422, 431, 434, 437, 441, 444, 448-451
+zipp/_functools.py            13      8    38%   1-14, 20-24
 zipp/compat/overlay.py        11     10     9%   21-29, 33-37
 zipp/compat/py310.py           3      3     0%   1-9
 zipp/glob.py                  34     16    53%   1-24, 28, 34-35, 46, 54, 69, 80, 94, 107
 --------------------------------------------------------
-TOTAL                        795    163    79%
-======== 66 passed, 2 skipped, 2 warnings ========
+TOTAL                        806    164    80%
+======== 69 passed, 2 skipped, 2 warnings ========
   py$(PYV): OK
   congratulations :)
