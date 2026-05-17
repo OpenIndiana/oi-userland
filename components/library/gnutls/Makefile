@@ -32,13 +32,13 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnutls
 COMPONENT_MJR_VERSION=	3.8
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).12
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).13
 COMPONENT_SUMMARY=	GNU transport layer security library
 COMPONENT_PROJECT_URL=  https://gnutls.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=  https://www.gnupg.org/ftp/gcrypt/gnutls/v$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:a7b341421bfd459acf7a374ca4af3b9e06608dcd7bd792b2bf470bea012b8e51
+COMPONENT_ARCHIVE_HASH= sha256:ffed8ec1bf09c2426d4f14aae377de4753b53e537d685e604e99a8b16ca9c97e
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI=		library/gnutls-3
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -49,9 +49,14 @@ include $(WS_MAKE_RULES)/common.mk
 CFLAGS += -I$(USRINCDIR)/idn2
 # gcc 14 complains about incompatible pointer types
 CFLAGS += -Wno-error=incompatible-pointer-types
+CFLAGS += -Wno-error=int-conversion
 
 # GNU grep needs to be used
 PATH= $(PATH.gnu)
+
+CFLAGS += $(XPG6MODE)
+# Prevent rpl_malloc link error in tests
+CFLAGS += -D_GL_USE_STDLIB_ALLOC=1
 
 CONFIGURE_OPTIONS += --disable-dependency-tracking
 CONFIGURE_OPTIONS += --with-default-trust-store-file=/etc/certs/ca-certificates.crt
