@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/more-itertools more_itertools
+#   $WS_TOOLS/python-integrate-project -d python/more-itertools-39 more_itertools
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		more_itertools
-HUMAN_VERSION =			11.0.2
+HUMAN_VERSION =			10.8.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		More routines for operating on iterables, beyond itertools
 COMPONENT_PROJECT_URL =		https://github.com/more-itertools/more-itertools
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:392a9e1e362cbc106a2457d37cabf9b36e5e12efd4ebff1654630e76597df804
+	sha256:f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by more-itertools >= 11.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# more-itertools >= 11.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 

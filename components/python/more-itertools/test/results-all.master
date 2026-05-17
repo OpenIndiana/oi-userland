@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> $(PYTHON) -m unittest -v
 test_call_once (tests.test_more.AdjacentTests.test_call_once)
 Test that the predicate is only called once per item. ... ok
@@ -164,6 +163,7 @@ test_all_orderings (tests.test_more.ExtractTests.test_all_orderings) ... ok
 test_basics (tests.test_more.ExtractTests.test_basics) ... ok
 test_early_free (tests.test_more.ExtractTests.test_early_free) ... ok
 test_lazy_consumption (tests.test_more.ExtractTests.test_lazy_consumption) ... ok
+test_monotonic (tests.test_more.ExtractTests.test_monotonic) ... ok
 test_negative_one_bug (tests.test_more.ExtractTests.test_negative_one_bug) ... ok
 test_none_value_bug (tests.test_more.ExtractTests.test_none_value_bug) ... ok
 test_false (tests.test_more.FilterExceptTests.test_false) ... ok
@@ -181,6 +181,8 @@ test_many (tests.test_more.FirstTests.test_many) ... ok
 test_one (tests.test_more.FirstTests.test_one) ... ok
 test_basic (tests.test_more.GrayProductTests.test_basic) ... ok
 test_errors (tests.test_more.GrayProductTests.test_errors) ... ok
+test_repeat (tests.test_more.GrayProductTests.test_repeat) ... ok
+test_repeat_with_iterators (tests.test_more.GrayProductTests.test_repeat_with_iterators) ... ok
 test_vs_product (tests.test_more.GrayProductTests.test_vs_product) ... ok
 test_default_funcs (tests.test_more.GroupByTransformTests.test_default_funcs) ... ok
 test_no_valuefunc (tests.test_more.GroupByTransformTests.test_no_valuefunc) ... ok
@@ -195,6 +197,7 @@ test_out_of_order (tests.test_more.IchunkedTests.test_out_of_order) ... ok
 test_zero (tests.test_more.IchunkedTests.test_zero) ... ok
 test_basic (tests.test_more.IequalsTests.test_basic) ... ok
 test_empty_iterables (tests.test_more.IequalsTests.test_empty_iterables) ... ok
+test_fillvalue_not_fakeable (tests.test_more.IequalsTests.test_fillvalue_not_fakeable) ... ok
 test_more_than_two_iterable (tests.test_more.IequalsTests.test_more_than_two_iterable) ... ok
 test_no_iterables (tests.test_more.IequalsTests.test_no_iterables) ... ok
 test_none_is_not_a_sentinel (tests.test_more.IequalsTests.test_none_is_not_a_sentinel) ... ok
@@ -296,6 +299,7 @@ test_basic (tests.test_more.NthProductTests.test_basic) ... ok
 test_invalid_index (tests.test_more.NthProductTests.test_invalid_index) ... ok
 test_long (tests.test_more.NthProductTests.test_long) ... ok
 test_negative (tests.test_more.NthProductTests.test_negative) ... ok
+test_repeat (tests.test_more.NthProductTests.test_repeat) ... ok
 test_arg_count (tests.test_more.NumericRangeTests.test_arg_count) ... ok
 test_bad_key (tests.test_more.NumericRangeTests.test_bad_key) ... ok
 test_basic (tests.test_more.NumericRangeTests.test_basic) ... ok
@@ -331,6 +335,8 @@ test_basic (tests.test_more.PartialProductTests.test_basic) ... ok
 test_empty_iterable (tests.test_more.PartialProductTests.test_empty_iterable) ... ok
 test_no_iterables (tests.test_more.PartialProductTests.test_no_iterables) ... ok
 test_one_iterable (tests.test_more.PartialProductTests.test_one_iterable) ... ok
+test_repeat (tests.test_more.PartialProductTests.test_repeat) ... ok
+test_repeat_with_iterators (tests.test_more.PartialProductTests.test_repeat_with_iterators) ... ok
 test_two_iterables (tests.test_more.PartialProductTests.test_two_iterables) ... ok
 test_uneven_length_iterables (tests.test_more.PartialProductTests.test_uneven_length_iterables) ... ok
 test_duplicates (tests.test_more.PartitionsTest.test_duplicates) ... ok
@@ -381,6 +387,7 @@ test_multiplicity (tests.test_more.PermutationIndexTests.test_multiplicity) ... 
 test_null (tests.test_more.PermutationIndexTests.test_null) ... ok
 test_r_equal_to_n (tests.test_more.PermutationIndexTests.test_r_equal_to_n) ... ok
 test_r_less_than_n (tests.test_more.PermutationIndexTests.test_r_less_than_n) ... ok
+test_baseset (tests.test_more.PowersetOfSetsTests.test_baseset) ... ok
 test_hash_count (tests.test_more.PowersetOfSetsTests.test_hash_count) ... ok
 test_simple (tests.test_more.PowersetOfSetsTests.test_simple) ... ok
 test_basic (tests.test_more.ProductIndexTests.test_basic) ... ok
@@ -388,8 +395,10 @@ test_invalid_empty (tests.test_more.ProductIndexTests.test_invalid_empty) ... ok
 test_invalid_large (tests.test_more.ProductIndexTests.test_invalid_large) ... ok
 test_invalid_match (tests.test_more.ProductIndexTests.test_invalid_match) ... ok
 test_invalid_small (tests.test_more.ProductIndexTests.test_invalid_small) ... ok
+test_iterator_input (tests.test_more.ProductIndexTests.test_iterator_input) ... ok
 test_long (tests.test_more.ProductIndexTests.test_long) ... ok
 test_multiplicity (tests.test_more.ProductIndexTests.test_multiplicity) ... ok
+test_repeat (tests.test_more.ProductIndexTests.test_repeat) ... ok
 test_basic (tests.test_more.RepeatEachTests.test_basic) ... ok
 test_default (tests.test_more.RepeatEachTests.test_default) ... ok
 test_empty (tests.test_more.RepeatEachTests.test_empty) ... ok
@@ -472,6 +481,7 @@ test_before_after (tests.test_more.SideEffectTests.test_before_after) ... ok
 test_before_fails (tests.test_more.SideEffectTests.test_before_fails) ... ok
 test_chunked (tests.test_more.SideEffectTests.test_chunked) ... ok
 test_individual (tests.test_more.SideEffectTests.test_individual) ... ok
+test_sized_iterator (tests.test_more.SizedIteratorTests.test_sized_iterator) ... ok
 test_even (tests.test_more.SlicedTests.test_even)
 Test when the length of the sequence is divisible by *n* ... ok
 test_not_sliceable (tests.test_more.SlicedTests.test_not_sliceable) ... ok
@@ -487,9 +497,7 @@ test_key_list (tests.test_more.SortTogetherTest.test_key_list)
 tests `key_list` including default, iterables include duplicates ... ok
 test_reverse (tests.test_more.SortTogetherTest.test_reverse)
 tests `reverse` to ensure a reverse sort for `key_list` iterables ... ok
-test_strict (tests.test_more.SortTogetherTest.test_strict) ... $(@D)/more_itertools/more.py:1875: DeprecationWarning: zip_equal will be removed in a future version of more-itertools. Use the builtin zip function with strict=True instead.
-  warnings.warn(
-ok
+test_strict (tests.test_more.SortTogetherTest.test_strict) ... ok
 test_uneven_iterables (tests.test_more.SortTogetherTest.test_uneven_iterables)
 tests trimming of iterables to the shortest length before sorting ... ok
 test_ends_with_sep (tests.test_more.SplitAfterTest.test_ends_with_sep) ... ok
@@ -588,6 +596,17 @@ test_collapse_to_bytes (tests.test_more.TestCollapse.test_collapse_to_bytes) ...
 test_collapse_to_level (tests.test_more.TestCollapse.test_collapse_to_level) ... ok
 test_collapse_to_list (tests.test_more.TestCollapse.test_collapse_to_list) ... ok
 test_collapse_to_string (tests.test_more.TestCollapse.test_collapse_to_string) ... ok
+test_concurrent_consumers (tests.test_more.TestConcurrentTee.test_concurrent_consumers) ... ok
+test_basic (tests.test_more.TestRunningMax.test_basic) ... ok
+test_maxlen (tests.test_more.TestRunningMax.test_maxlen) ... ok
+test_basic (tests.test_more.TestRunningMin.test_basic) ... ok
+test_maxlen (tests.test_more.TestRunningMin.test_maxlen) ... ok
+test_datatypes (tests.test_more.TestRunningStats.test_datatypes) ... ok
+test_early_error_detection (tests.test_more.TestRunningStats.test_early_error_detection) ... ok
+test_single_example (tests.test_more.TestRunningStats.test_single_example) ... ok
+test_stat_properties (tests.test_more.TestRunningStats.test_stat_properties) ... ok
+test_concurrent_calls (tests.test_more.TestSerialize.test_concurrent_calls) ... ok
+test_concurrent_calls (tests.test_more.TestSynchronized.test_concurrent_calls) ... ok
 test_basic (tests.test_more.TimeLimitedTests.test_basic) ... ok
 test_complete (tests.test_more.TimeLimitedTests.test_complete) ... ok
 test_invalid_limit (tests.test_more.TimeLimitedTests.test_invalid_limit) ... ok
@@ -619,17 +638,12 @@ test_basic (tests.test_more.WindowedTests.test_basic) ... ok
 test_empty_seq (tests.test_more.WindowedTests.test_empty_seq) ... ok
 test_fillvalue (tests.test_more.WindowedTests.test_fillvalue) ... ok
 test_fillvalue_step (tests.test_more.WindowedTests.test_fillvalue_step) ... ok
+test_invalid_n (tests.test_more.WindowedTests.test_invalid_n) ... ok
 test_invalid_step (tests.test_more.WindowedTests.test_invalid_step) ... ok
-test_negative (tests.test_more.WindowedTests.test_negative) ... ok
 test_step (tests.test_more.WindowedTests.test_step) ... ok
 test_with_iter (tests.test_more.WithIterTests.test_with_iter) ... ok
 test_scalar_types (tests.test_more.ZipBroadcastTests.test_scalar_types) ... ok
 test_zip (tests.test_more.ZipBroadcastTests.test_zip) ... ok
-test_deprecation (tests.test_more.ZipEqualTest.test_deprecation) ... ok
-test_equal (tests.test_more.ZipEqualTest.test_equal) ... $(@D)/more_itertools/more.py:1875: DeprecationWarning: zip_equal will be removed in a future version of more-itertools. Use the builtin zip function with strict=True instead.
-  warnings.warn(
-ok
-test_unequal_lists (tests.test_more.ZipEqualTest.test_unequal_lists) ... ok
 test_longest (tests.test_more.ZipOffsetTest.test_longest) ... ok
 test_mismatch (tests.test_more.ZipOffsetTest.test_mismatch) ... ok
 test_shortest (tests.test_more.ZipOffsetTest.test_shortest) ... ok
@@ -811,6 +825,8 @@ set_partitions (more_itertools.more)
 Doctest: more_itertools.more.set_partitions ... ok
 side_effect (more_itertools.more)
 Doctest: more_itertools.more.side_effect ... ok
+sized_iterator (more_itertools.more)
+Doctest: more_itertools.more.sized_iterator ... ok
 sliced (more_itertools.more)
 Doctest: more_itertools.more.sliced ... ok
 sort_together (more_itertools.more)
@@ -855,8 +871,6 @@ windowed_complete (more_itertools.more)
 Doctest: more_itertools.more.windowed_complete ... ok
 zip_broadcast (more_itertools.more)
 Doctest: more_itertools.more.zip_broadcast ... ok
-zip_equal (more_itertools.more)
-Doctest: more_itertools.more.zip_equal ... ok
 zip_offset (more_itertools.more)
 Doctest: more_itertools.more.zip_offset ... ok
 test_empty (tests.test_recipes.AllEqualTests.test_empty) ... ok
@@ -947,11 +961,6 @@ Ensure a default value is returned when nth item not found ... ok
 test_negative_item_raises (tests.test_recipes.NthTests.test_negative_item_raises)
 Ensure asking for a negative item raises an exception ... ok
 test_basic (tests.test_recipes.PadnoneTests.test_basic) ... ok
-test_base_case (tests.test_recipes.PairwiseTests.test_base_case)
-ensure an iterable will return pairwise ... ok
-test_coverage (tests.test_recipes.PairwiseTests.test_coverage) ... ok
-test_short_case (tests.test_recipes.PairwiseTests.test_short_case)
-ensure an empty iterator if there's not enough values to pair ... ok
 test_arbitrary (tests.test_recipes.PartitionTests.test_arbitrary) ... ok
 test_bool (tests.test_recipes.PartitionTests.test_bool) ... ok
 test_pred_is_none (tests.test_recipes.PartitionTests.test_pred_is_none) ... ok
@@ -1002,6 +1011,8 @@ test_even_groups (tests.test_recipes.RoundrobinTests.test_even_groups)
 Ensure ordered output from evenly populated iterables ... ok
 test_uneven_groups (tests.test_recipes.RoundrobinTests.test_uneven_groups)
 Ensure ordered output from unevenly populated iterables ... ok
+test_basic (tests.test_recipes.RunningMeanTests.test_basic) ... ok
+test_maxlen (tests.test_recipes.RunningMeanTests.test_maxlen) ... ok
 test_error_cases (tests.test_recipes.RunningMedianTests.test_error_cases) ... ok
 test_vs_statistics_median (tests.test_recipes.RunningMedianTests.test_vs_statistics_median) ... ok
 test_vs_statistics_median_windowed (tests.test_recipes.RunningMedianTests.test_vs_statistics_median_windowed) ... ok
@@ -1037,16 +1048,17 @@ test_simple_take (tests.test_recipes.TakeTests.test_simple_take)
 Test basic usage ... ok
 test_take_too_much (tests.test_recipes.TakeTests.test_take_too_much)
 Taking more than an iterator has remaining should return what the ... ok
+test_basics (tests.test_recipes.TestRandomDerangement.test_basics) ... ok
 test_basic (tests.test_recipes.TotientTests.test_basic) ... ok
 test_basic (tests.test_recipes.TransposeTests.test_basic) ... ok
 test_empty (tests.test_recipes.TransposeTests.test_empty) ... ok
-test_incompatible_allow (tests.test_recipes.TransposeTests.test_incompatible_allow) ... skipped 'strict=True missing on 3.9'
 test_incompatible_error (tests.test_recipes.TransposeTests.test_incompatible_error) ... ok
 test_basic (tests.test_recipes.TriplewiseTests.test_basic) ... ok
 test_custom_key (tests.test_recipes.UniqueEverseenTests.test_custom_key) ... ok
 test_everseen (tests.test_recipes.UniqueEverseenTests.test_everseen) ... ok
-test_unhashable (tests.test_recipes.UniqueEverseenTests.test_unhashable) ... ok
-test_unhashable_key (tests.test_recipes.UniqueEverseenTests.test_unhashable_key) ... ok
+test_unhashable_dicts (tests.test_recipes.UniqueEverseenTests.test_unhashable_dicts) ... ok
+test_unhashable_lists (tests.test_recipes.UniqueEverseenTests.test_unhashable_lists) ... ok
+test_unhashable_sets (tests.test_recipes.UniqueEverseenTests.test_unhashable_sets) ... ok
 test_custom_key (tests.test_recipes.UniqueJustseenTests.test_custom_key) ... ok
 test_justseen (tests.test_recipes.UniqueJustseenTests.test_justseen) ... ok
 test_basic (tests.test_recipes.UniqueTests.test_basic) ... ok
@@ -1054,8 +1066,6 @@ test_key (tests.test_recipes.UniqueTests.test_key) ... ok
 test_reverse (tests.test_recipes.UniqueTests.test_reverse) ... ok
 _batched (more_itertools.recipes)
 Doctest: more_itertools.recipes._batched ... ok
-_pairwise (more_itertools.recipes)
-Doctest: more_itertools.recipes._pairwise ... ok
 all_equal (more_itertools.recipes)
 Doctest: more_itertools.recipes.all_equal ... ok
 batched (more_itertools.recipes)
@@ -1096,8 +1106,6 @@ nth_combination (more_itertools.recipes)
 Doctest: more_itertools.recipes.nth_combination ... ok
 pad_none (more_itertools.recipes)
 Doctest: more_itertools.recipes.pad_none ... ok
-pairwise (more_itertools.recipes)
-Doctest: more_itertools.recipes.pairwise ... ok
 partition (more_itertools.recipes)
 Doctest: more_itertools.recipes.partition ... ok
 polynomial_derivative (more_itertools.recipes)
@@ -1126,8 +1134,14 @@ reshape (more_itertools.recipes)
 Doctest: more_itertools.recipes.reshape ... ok
 roundrobin (more_itertools.recipes)
 Doctest: more_itertools.recipes.roundrobin ... ok
+running_max (more_itertools.recipes)
+Doctest: more_itertools.recipes.running_max ... ok
+running_mean (more_itertools.recipes)
+Doctest: more_itertools.recipes.running_mean ... ok
 running_median (more_itertools.recipes)
 Doctest: more_itertools.recipes.running_median ... ok
+running_min (more_itertools.recipes)
+Doctest: more_itertools.recipes.running_min ... ok
 sieve (more_itertools.recipes)
 Doctest: more_itertools.recipes.sieve ... ok
 sliding_window (more_itertools.recipes)
@@ -1156,8 +1170,8 @@ unique_justseen (more_itertools.recipes)
 Doctest: more_itertools.recipes.unique_justseen ... ok
 
 ----------------------------------------------------------------------
-Ran 860 tests
+Ran 880 tests
 
-OK (skipped=6)
+OK (skipped=5)
   py$(PYV): OK
   congratulations :)
