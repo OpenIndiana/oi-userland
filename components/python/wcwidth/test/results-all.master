@@ -1,215 +1,413 @@
-py$(PYV): commands[0]> $(PYTHON) -m pytest -n auto --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=3 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
+py$(PYV): commands[0]> $(PYTHON) -m pytest --verbose --junit-xml=.tox/results.py$(PYV).xml --durations=10 '--log-format=%(levelname)s %(relativeCreated)2.2f %(filename)s:%(lineno)d %(message)s' tests
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-X workers [764 items]
+collecting ... collected 1144 items
 
-scheduling tests via LoadScheduling
-
-tests/test_ambiguous.py::test_center_ambiguous PASSED
-tests/test_ambiguous.py::test_ljust_ambiguous PASSED
-tests/test_ambiguous.py::test_rjust_ambiguous PASSED
-tests/test_ambiguous.py::test_wcswidth_mixed_ambiguous_and_wide PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2460-CIRCLED_ONE] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2500-BOX_HORIZONTAL] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u25a0-BLACK_SQUARE] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2605-BLACK_STAR] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa7-SECTION_SIGN] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xb0-DEGREE_SIGN] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xb1-PLUS_MINUS] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xd7-MULTIPLICATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xf7-DIVISION] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2460-CIRCLED_ONE] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2500-BOX_HORIZONTAL] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u25a0-BLACK_SQUARE] PASSED
-tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2605-BLACK_STAR] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2460-CIRCLED_ONE] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2500-BOX_HORIZONTAL] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u25a0-BLACK_SQUARE] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\u2605-BLACK_STAR] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xa7-SECTION_SIGN] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xb0-DEGREE_SIGN] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xb1-PLUS_MINUS] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xd7-MULTIPLICATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\xf7-DIVISION] PASSED
-tests/test_ambiguous.py::test_wide_not_affected_by_ambiguous PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2460-CIRCLED_ONE] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2500-BOX_HORIZONTAL] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u25a0-BLACK_SQUARE] PASSED
+tests/test_ambiguous.py::test_wcwidth_ambiguous_wide[\u2605-BLACK_STAR] PASSED
+tests/test_ambiguous.py::test_wcswidth_mixed_ambiguous_and_wide PASSED
 tests/test_ambiguous.py::test_width_ambiguous PASSED
+tests/test_ambiguous.py::test_ljust_ambiguous PASSED
+tests/test_ambiguous.py::test_rjust_ambiguous PASSED
+tests/test_ambiguous.py::test_center_ambiguous PASSED
 tests/test_ambiguous.py::test_wrap_ambiguous PASSED
+tests/test_ambiguous.py::test_wide_not_affected_by_ambiguous PASSED
+tests/test_benchmarks.py::test_wcwidth_ascii PASSED
+tests/test_benchmarks.py::test_wcwidth_wide PASSED
+tests/test_benchmarks.py::test_wcwidth_emoji PASSED
+tests/test_benchmarks.py::test_wcwidth_combining PASSED
+tests/test_benchmarks.py::test_wcswidth_short_ascii PASSED
+tests/test_benchmarks.py::test_wcswidth_short_mixed PASSED
+tests/test_benchmarks.py::test_wcswidth_long_ascii PASSED
+tests/test_benchmarks.py::test_wcswidth_long_japanese PASSED
+tests/test_benchmarks.py::test_wcswidth_emoji_sequence PASSED
+tests/test_benchmarks.py::test_wcswidth_ri_flags_paired PASSED
+tests/test_benchmarks.py::test_wcswidth_ri_flags_unpaired PASSED
+tests/test_benchmarks.py::test_width_ri_flags_paired PASSED
+tests/test_benchmarks.py::test_width_ri_flags_unpaired PASSED
+tests/test_benchmarks.py::test_wcswidth_composed PASSED
+tests/test_benchmarks.py::test_wcswidth_decomposed PASSED
+tests/test_benchmarks.py::test_width_composed PASSED
+tests/test_benchmarks.py::test_width_decomposed PASSED
+tests/test_benchmarks.py::test_width_ascii PASSED
+tests/test_benchmarks.py::test_width_with_ansi_codes PASSED
+tests/test_benchmarks.py::test_width_complex_ansi PASSED
+tests/test_benchmarks.py::test_iter_graphemes_ascii PASSED
+tests/test_benchmarks.py::test_iter_graphemes_emoji PASSED
+tests/test_benchmarks.py::test_iter_graphemes_combining PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_short PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_long_end PASSED
+tests/test_benchmarks.py::test_grapheme_boundary_before_long_mid PASSED
+tests/test_benchmarks.py::test_iter_graphemes_reverse_short PASSED
+tests/test_benchmarks.py::test_iter_graphemes_reverse_long PASSED
+tests/test_benchmarks.py::test_ljust_ascii PASSED
+tests/test_benchmarks.py::test_ljust_japanese PASSED
+tests/test_benchmarks.py::test_rjust_ascii PASSED
+tests/test_benchmarks.py::test_rjust_japanese PASSED
 tests/test_benchmarks.py::test_center_ascii PASSED
 tests/test_benchmarks.py::test_center_mixed PASSED
+tests/test_benchmarks.py::test_wrap_short_ascii PASSED
+tests/test_benchmarks.py::test_wrap_long_text PASSED
+tests/test_benchmarks.py::test_wrap_japanese PASSED
+tests/test_benchmarks.py::test_wrap_with_ansi PASSED
+tests/test_benchmarks.py::test_wrap_with_ansi_no_propagate PASSED
+tests/test_benchmarks.py::test_wrap_complex_sgr PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_no_id PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_with_id PASSED
+tests/test_benchmarks.py::test_wrap_hyperlink_mixed PASSED
 tests/test_benchmarks.py::test_clip_ascii PASSED
-tests/test_benchmarks.py::test_clip_complex_sgr PASSED
 tests/test_benchmarks.py::test_clip_japanese PASSED
 tests/test_benchmarks.py::test_clip_with_ansi PASSED
 tests/test_benchmarks.py::test_clip_with_ansi_no_propagate PASSED
-tests/test_benchmarks.py::test_grapheme_boundary_before_long_end PASSED
-tests/test_benchmarks.py::test_grapheme_boundary_before_long_mid PASSED
-tests/test_benchmarks.py::test_grapheme_boundary_before_short PASSED
-tests/test_benchmarks.py::test_iter_graphemes_ascii PASSED
-tests/test_benchmarks.py::test_iter_graphemes_combining PASSED
-tests/test_benchmarks.py::test_iter_graphemes_emoji PASSED
-tests/test_benchmarks.py::test_iter_graphemes_reverse_long PASSED
-tests/test_benchmarks.py::test_iter_graphemes_reverse_short PASSED
-tests/test_benchmarks.py::test_iter_sequences_mixed PASSED
-tests/test_benchmarks.py::test_iter_sequences_plain PASSED
-tests/test_benchmarks.py::test_ljust_ascii PASSED
-tests/test_benchmarks.py::test_ljust_japanese PASSED
-tests/test_benchmarks.py::test_ljust_udhr_lines SKIPPED
+tests/test_benchmarks.py::test_clip_complex_sgr PASSED
+tests/test_benchmarks.py::test_clip_long_cjk_past_window PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_past_window PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_no_propagate PASSED
+tests/test_benchmarks.py::test_clip_osc8_hyperlinks PASSED
+tests/test_benchmarks.py::test_width_osc66 PASSED
+tests/test_benchmarks.py::test_clip_osc66 PASSED
+tests/test_benchmarks.py::test_clip_cursor_cr_overwrite PASSED
+tests/test_benchmarks.py::test_clip_cursor_csi_backward PASSED
+tests/test_benchmarks.py::test_clip_long_ascii_fastpath PASSED
+tests/test_benchmarks.py::test_clip_with_ansi_no_overtype PASSED
+tests/test_benchmarks.py::test_clip_complex_sgr_no_overtype PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_no_overtype PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_no_propagate_no_overtype PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_overtype PASSED
+tests/test_benchmarks.py::test_clip_long_cjk_overtype PASSED
+tests/test_benchmarks.py::test_width_dense_ansi_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_width_complex_ansi_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_clip_long_cjk_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_clip_cursor_cr_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_clip_dense_ansi_no_propagate_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_clip_long_ascii_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_wrap_with_ansi_control_codes_ignore PASSED
+tests/test_benchmarks.py::test_ljust_ascii_control_codes_ignore PASSED
 tests/test_benchmarks.py::test_propagate_sgr_multiline PASSED
 tests/test_benchmarks.py::test_propagate_sgr_no_sequences PASSED
-tests/test_benchmarks.py::test_rjust_ascii PASSED
-tests/test_benchmarks.py::test_rjust_japanese PASSED
-tests/test_benchmarks.py::test_strip_sequences_complex PASSED
 tests/test_benchmarks.py::test_strip_sequences_simple PASSED
-tests/test_benchmarks.py::test_wcswidth_brahmic_bengali PASSED
+tests/test_benchmarks.py::test_strip_sequences_complex PASSED
+tests/test_benchmarks.py::test_iter_sequences_plain PASSED
+tests/test_benchmarks.py::test_iter_sequences_mixed PASSED
 tests/test_benchmarks.py::test_wcswidth_brahmic_devanagari PASSED
-tests/test_benchmarks.py::test_wcswidth_composed PASSED
-tests/test_benchmarks.py::test_wcswidth_decomposed PASSED
-tests/test_benchmarks.py::test_wcswidth_emoji_sequence PASSED
-tests/test_benchmarks.py::test_wcswidth_long_ascii PASSED
-tests/test_benchmarks.py::test_wcswidth_long_japanese PASSED
-tests/test_benchmarks.py::test_wcswidth_ri_flags_paired PASSED
-tests/test_benchmarks.py::test_wcswidth_ri_flags_unpaired PASSED
-tests/test_benchmarks.py::test_wcswidth_short_ascii PASSED
-tests/test_benchmarks.py::test_wcswidth_short_mixed PASSED
-tests/test_benchmarks.py::test_wcwidth_ascii PASSED
-tests/test_benchmarks.py::test_wcwidth_combining PASSED
-tests/test_benchmarks.py::test_wcwidth_emoji PASSED
-tests/test_benchmarks.py::test_wcwidth_wide PASSED
-tests/test_benchmarks.py::test_width_ascii PASSED
-tests/test_benchmarks.py::test_width_brahmic_bengali PASSED
+tests/test_benchmarks.py::test_wcswidth_brahmic_bengali PASSED
 tests/test_benchmarks.py::test_width_brahmic_devanagari PASSED
-tests/test_benchmarks.py::test_width_complex_ansi PASSED
-tests/test_benchmarks.py::test_width_composed PASSED
-tests/test_benchmarks.py::test_width_decomposed PASSED
-tests/test_benchmarks.py::test_width_fastpath_integrity_udhr SKIPPED
-tests/test_benchmarks.py::test_width_ri_flags_paired PASSED
-tests/test_benchmarks.py::test_width_ri_flags_unpaired PASSED
-tests/test_benchmarks.py::test_width_udhr SKIPPED
-tests/test_benchmarks.py::test_width_udhr_lines SKIPPED
+tests/test_benchmarks.py::test_width_brahmic_bengali PASSED
+tests/test_benchmarks.py::test_wrap_udhr SKIPPED (udhr_combined.txt is
+missing; run bin/update-tables.py)
+tests/test_benchmarks.py::test_width_udhr SKIPPED (udhr_combined.txt is
+missing; run bin/update-tables.py)
+tests/test_benchmarks.py::test_width_udhr_lines SKIPPED)
 tests/test_benchmarks.py::test_width_wcswidth_consistency_udhr SKIPPED
-tests/test_benchmarks.py::test_width_with_ansi_codes PASSED
-tests/test_benchmarks.py::test_wrap_complex_sgr PASSED
-tests/test_benchmarks.py::test_wrap_hyperlink_mixed PASSED
-tests/test_benchmarks.py::test_wrap_hyperlink_no_id PASSED
-tests/test_benchmarks.py::test_wrap_hyperlink_with_id PASSED
-tests/test_benchmarks.py::test_wrap_japanese PASSED
-tests/test_benchmarks.py::test_wrap_long_text PASSED
-tests/test_benchmarks.py::test_wrap_short_ascii PASSED
-tests/test_benchmarks.py::test_wrap_udhr SKIPPED
-tests/test_benchmarks.py::test_wrap_with_ansi PASSED
-tests/test_benchmarks.py::test_wrap_with_ansi_no_propagate PASSED
-tests/test_clip.py::test_clip_ambiguous_width_1 PASSED
-tests/test_clip.py::test_clip_ambiguous_width_2 PASSED
-tests/test_clip.py::test_clip_basic[-0-0-] PASSED
-tests/test_clip.py::test_clip_basic[-0-5-] PASSED
-tests/test_clip.py::test_clip_basic[hello world-0-11-hello world] PASSED
-tests/test_clip.py::test_clip_basic[hello world-0-5-hello] PASSED
-tests/test_clip.py::test_clip_basic[hello world-6-11-world] PASSED
-tests/test_clip.py::test_clip_basic[hello--5-3-hel] PASSED
-tests/test_clip.py::test_clip_basic[hello-0-0-] PASSED
-tests/test_clip.py::test_clip_basic[hello-0-3-hel] PASSED
-tests/test_clip.py::test_clip_basic[hello-0-5-hello] PASSED
-tests/test_clip.py::test_clip_basic[hello-1-4-ell] PASSED
-tests/test_clip.py::test_clip_basic[hello-2-5-llo] PASSED
-tests/test_clip.py::test_clip_basic[hello-5-3-] PASSED
-tests/test_clip.py::test_clip_basic[hello-5-5-] PASSED
-tests/test_clip.py::test_clip_basic[hi-0-100-hi] PASSED
-tests/test_clip.py::test_clip_basic[hi-100-200-] PASSED
-tests/test_clip.py::test_clip_cjk[A\u4e2dB-0-3-A\u4e2d] PASSED
-tests/test_clip.py::test_clip_cjk[A\u4e2dB-0-4-A\u4e2dB] PASSED
-tests/test_clip.py::test_clip_cjk[A\u4e2dB-1-3-\u4e2d] PASSED
-tests/test_clip.py::test_clip_cjk[A\u4e2dB-1-4-\u4e2dB] PASSED
-tests/test_clip.py::test_clip_cjk[A\u4e2dB-2-4- B] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d-0-1- ] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d-0-2-\u4e2d] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d-1-2- ] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-2-\u4e2d] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-3-\u4e2d ] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-4-\u4e2d\u6587] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-6-\u4e2d\u6587\u5b57] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-1-5- \u6587 ] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-1-6- \u6587\u5b57] PASSED
-tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-2-4-\u6587] PASSED
-tests/test_clip.py::test_clip_cjk_custom_fillchar PASSED
-tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-0-3-3] PASSED
-tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-0-6-6] PASSED
-tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-1-5-4] PASSED
-tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-1-6-5] PASSED
-tests/test_clip.py::test_clip_combining_accent PASSED
-tests/test_clip.py::test_clip_combining_multiple PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[\x07\x08\rHello-0-5-\x07\x08\rHello] PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[ab\x00cd-0-4-ab\x00cd] PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[ab\x01\x02cd-0-4-ab\x01\x02cd] PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[ab\x07cd-0-4-ab\x07cd] PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[abc\rde-0-5-abc\rde] PASSED
-tests/test_clip.py::test_clip_control_chars_zero_width[abc\x08de-0-5-abc\x08de] PASSED
-tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[10Ccd-0-4-ab\x1b[10Ccd] PASSED
-tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[5Ccd-0-4-ab\x1b[5Ccd] PASSED
-tests/test_clip.py::test_clip_cursor_sequences_zero_width[ab\x1b[Ccd-0-4-ab\x1b[Ccd] PASSED
-tests/test_clip.py::test_clip_cursor_sequences_zero_width[abcde\x1b[2Df-0-6-abcde\x1b[2Df] PASSED
-tests/test_clip.py::test_clip_emoji[\U0001f1fa\U0001f1f8-2] PASSED
-tests/test_clip.py::test_clip_emoji[\U0001f468\u200d\U0001f469\u200d\U0001f467-2] PASSED
-tests/test_clip.py::test_clip_emoji[\U0001f600-2] PASSED
-tests/test_clip.py::test_clip_emoji[\u2764\ufe0f-2] PASSED
-tests/test_clip.py::test_clip_emoji_with_sequences PASSED
-tests/test_clip.py::test_clip_prepend_grapheme PASSED
-tests/test_clip.py::test_clip_sequences_after_end PASSED
-tests/test_clip.py::test_clip_sequences_before_start PASSED
-tests/test_clip.py::test_clip_sequences_between_chars PASSED
-tests/test_clip.py::test_clip_sequences_cjk_with_sequences PASSED
-tests/test_clip.py::test_clip_sequences_lone_esc PASSED
-tests/test_clip.py::test_clip_sequences_multiple PASSED
-tests/test_clip.py::test_clip_sequences_only PASSED
-tests/test_clip.py::test_clip_sequences_osc_hyperlink PASSED
-tests/test_clip.py::test_clip_sequences_partial_wide_at_start PASSED
-tests/test_clip.py::test_clip_sequences_preserve_sgr PASSED
-tests/test_clip.py::test_clip_tab_expansion[\u4e2d\tb-0-10-4-\u4e2d  b] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb-0-10-4-a   b] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb-0-10-8-a       b] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb-0-4-8-a   ] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb-0-5-0-a\tb] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb-4-10-8-    b] PASSED
-tests/test_clip.py::test_clip_tab_expansion[a\tb\tc-0-20-4-a   b   c] PASSED
-tests/test_clip.py::test_clip_tab_first_visible_with_sgr PASSED
-tests/test_clip.py::test_clip_tab_with_sequences PASSED
-tests/test_clip.py::test_clip_zero_width_position_bounds PASSED
+tests/test_benchmarks.py::test_width_fastpath_integrity_udhr SKIPPED
+tests/test_benchmarks.py::test_ljust_udhr_lines SKIPPED)
 tests/test_clip.py::test_strip_sequences[-] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b-\x1b] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[-] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[0m-] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[1m\U0001f468\u200d\U0001f469\u200d\U0001f467\x1b[0m-\U0001f468\u200d\U0001f469\u200d\U0001f467] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[1m\x1b[31m\x1b[4m-] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[1m\x1b[31mbold red\x1b[0m-bold red] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[1mbold\x1b[0m \x1b[3mitalic\x1b[0m-bold italic] PASSED
+tests/test_clip.py::test_strip_sequences[hello-hello] PASSED
+tests/test_clip.py::test_strip_sequences[hello world-hello world] PASSED
 tests/test_clip.py::test_strip_sequences[\x1b[31m-] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[31m\u4e2d\u6587\x1b[0m-\u4e2d\u6587] PASSED
-tests/test_clip.py::test_strip_sequences[\x1b[31mred\x1b[0m-red] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[0m-] PASSED
 tests/test_clip.py::test_strip_sequences[\x1b[m-] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[31mred\x1b[0m-red] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[1m\x1b[31mbold red\x1b[0m-bold red] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[1m\x1b[31m\x1b[4m-] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[1mbold\x1b[0m \x1b[3mitalic\x1b[0m-bold italic] PASSED
 tests/test_clip.py::test_strip_sequences[\x1b]0;title\x07-] PASSED
 tests/test_clip.py::test_strip_sequences[\x1b]0;title\x07text-text] PASSED
 tests/test_clip.py::test_strip_sequences[\x1b]8;;https://example.com\x07link\x1b]8;;\x07-link] PASSED
-tests/test_clip.py::test_strip_sequences[a\x1bb-a\x1bb] PASSED
-tests/test_clip.py::test_strip_sequences[hello world-hello world] PASSED
-tests/test_clip.py::test_strip_sequences[hello-hello] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[31m\u4e2d\u6587\x1b[0m-\u4e2d\u6587] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[1m\U0001f468\u200d\U0001f469\u200d\U0001f467\x1b[0m-\U0001f468\u200d\U0001f469\u200d\U0001f467] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b-\x1b] PASSED
+tests/test_clip.py::test_strip_sequences[a\x1bb-a] PASSED
+tests/test_clip.py::test_strip_sequences[\x1b[-] PASSED
 tests/test_clip.py::test_strip_sequences[text\x1b[mmore-textmore] PASSED
-tests/test_core.py::test_balinese_script PASSED
-tests/test_core.py::test_bengali_nukta_mc PASSED
-tests/test_core.py::test_combining_cafe PASSED
-tests/test_core.py::test_combining_enclosing PASSED
-tests/test_core.py::test_combining_width PASSED
-tests/test_core.py::test_control_c0_width_negative_1 PASSED
-tests/test_core.py::test_devanagari_script PASSED
+tests/test_clip.py::test_clip_basic[-0-5-] PASSED
+tests/test_clip.py::test_clip_basic[-0-0-] PASSED
+tests/test_clip.py::test_clip_basic[hello-0-0-] PASSED
+tests/test_clip.py::test_clip_basic[hello-5-5-] PASSED
+tests/test_clip.py::test_clip_basic[hello-5-3-] PASSED
+tests/test_clip.py::test_clip_basic[hello--5-3-hel] PASSED
+tests/test_clip.py::test_clip_basic[hello-0-5-hello] PASSED
+tests/test_clip.py::test_clip_basic[hello-0-3-hel] PASSED
+tests/test_clip.py::test_clip_basic[hello-2-5-llo] PASSED
+tests/test_clip.py::test_clip_basic[hello-1-4-ell] PASSED
+tests/test_clip.py::test_clip_basic[hello world-0-5-hello] PASSED
+tests/test_clip.py::test_clip_basic[hello world-6-11-world] PASSED
+tests/test_clip.py::test_clip_basic[hello world-0-11-hello world] PASSED
+tests/test_clip.py::test_clip_basic[hi-0-100-hi] PASSED
+tests/test_clip.py::test_clip_basic[hi-100-200-] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-6-\u4e2d\u6587\u5b57] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-4-\u4e2d\u6587] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-2-\u4e2d] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-2-4-\u6587] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-0-3-\u4e2d ] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-1-6- \u6587\u5b57] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d\u6587\u5b57-1-5- \u6587 ] PASSED
+tests/test_clip.py::test_clip_cjk[A\u4e2dB-0-4-A\u4e2dB] PASSED
+tests/test_clip.py::test_clip_cjk[A\u4e2dB-0-3-A\u4e2d] PASSED
+tests/test_clip.py::test_clip_cjk[A\u4e2dB-1-4-\u4e2dB] PASSED
+tests/test_clip.py::test_clip_cjk[A\u4e2dB-1-3-\u4e2d] PASSED
+tests/test_clip.py::test_clip_cjk[A\u4e2dB-2-4- B] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d-0-2-\u4e2d] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d-0-1- ] PASSED
+tests/test_clip.py::test_clip_cjk[\u4e2d-1-2- ] PASSED
+tests/test_clip.py::test_clip_cjk_custom_fillchar PASSED
+tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-0-6-6] PASSED
+tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-0-3-3] PASSED
+tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-1-6-5] PASSED
+tests/test_clip.py::test_clip_cjk_width_consistency[\u4e2d\u6587\u5b57-1-5-4] PASSED
+tests/test_clip.py::test_clip_sequences_preserve_sgr PASSED
+tests/test_clip.py::test_clip_sequences_before_start PASSED
+tests/test_clip.py::test_clip_sequences_after_end PASSED
+tests/test_clip.py::test_clip_sequences_multiple PASSED
+tests/test_clip.py::test_clip_sequences_only PASSED
+tests/test_clip.py::test_clip_sequences_osc_hyperlink PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07link\x1b]8;;\x07-0-4-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07Click This link\x1b]8;;\x07-6-10-\x1b]8;;http://example.com\x07This\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07Click This\x1b]8;;\x07-0-5-\x1b]8;;http://example.com\x07Click\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07Click This\x1b]8;;\x07-6-10-\x1b]8;;http://example.com\x07This\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07link\x1b]8;;\x07world-0-4-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[hello\x1b]8;;http://example.com\x07link\x1b]8;;\x07-0-5-hello] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07link\x1b]8;;\x07-5-10-] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[before\x1b]8;;http://example.com\x07\x1b]8;;\x07after-0-11-beforeafter] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07\u4e2d\u6587\u6587\u5b57\x1b]8;;\x07-0-4-\x1b]8;;http://example.com\x07\u4e2d\u6587\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07\u4e2d\u6587\u6587\u5b57\x1b]8;;\x07-0-3-\x1b]8;;http://example.com\x07\u4e2d \x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x1b\\Click This\x1b]8;;\x1b\\-0-5-\x1b]8;;http://example.com\x1b\\Click\x1b]8;;\x1b\\] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07ab\x1b]8;;\x07 \x1b]8;;http://example.com\x1b\\cd\x1b]8;;\x1b\\-0-5-\x1b]8;;http://example.com\x07ab\x1b]8;;\x07 \x1b]8;;http://example.com\x1b\\cd\x1b]8;;\x1b\\] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;id=myid;http://example.com\x07link\x1b]8;;\x07-1-3-\x1b]8;id=myid;http://example.com\x07in\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[before\x1b]8;;http://example.com\x07link\x1b]8;;\x07-6-10-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07\x1b[31mred link\x1b[0m\x1b]8;;\x07-4-8-\x1b]8;;http://example.com\x07\x1b[31mlink\x1b[0m\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;http://example.com\x07link-0-4-\x1b]8;;http://example.com\x07link] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;url\x07ab\x1bxcd\x1b]8;;\x07-0-6-\x1b]8;;url\x07ab\x1bxcd\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;a\x07AB\x1b]8;;b\x07CD\x1b]8;;\x07EF-0-6-\x1b]8;;a\x07AB\x1b]8;;b\x07CD\x1b]8;;\x07EF] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;a\x07AB\x1b]8;;b\x07CD-0-4-\x1b]8;;a\x07AB\x1b]8;;b\x07CD] PASSED
+tests/test_clip.py::test_clip_osc_hyperlink_text_clipping[\x1b]8;;a\x07ABCD \x1b]8;;b\x07XY\x1b]8;;\x07 EF\x1b]8;;\x07-0-10-\x1b]8;;a\x07ABCD \x1b]8;;b\x07XY\x1b]8;;\x07 EF\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-0-4-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-0-3-\x1b]8;;http://example.com\x07lin\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-0-2-\x1b]8;;http://example.com\x07li\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-0-1-\x1b]8;;http://example.com\x07l\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-1-4-\x1b]8;;http://example.com\x07ink\x1b]8;;\x07y] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-1-3-\x1b]8;;http://example.com\x07in\x1b]8;;\x07x] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-1-2-\x1b]8;;http://example.com\x07i\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[ignore-0-20-\x1b]8;;http://example.com\x07link\x1b]8;;\x07\x1b[2Dxy] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[parse-0-20-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_control_codes_overwrite[strict-0-20-\x1b]8;;http://example.com\x07link\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b[2D\x1b]8;;http://example.com\x07\x1b]8;;\x07xy-parse-0-4-xy] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b[2Dab\x1b]8;;http://example.com\x07cde\x1b]8;;\x07-parse-0-2-ab] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b]8;;http://example.com\x07ab\x1b]8;;\x07\x1b[2Dcdef-parse-2-4-ef] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b[2D\x1b]8;;http://example.com\x07abcdef\x1b]8;;\x07-parse-0-3-\x1b]8;;http://example.com\x07abc\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b[2D\x1b]8;;http://example.com\x07a\x1bb\x1b]8;;\x07-parse-0-4-\x1b]8;;http://example.com\x07a\x1bb\x1b]8;;\x07] PASSED
+tests/test_clip.py::test_clip_hyperlink_painter_cases[\x1b]8;;http://example.com\x07link\x1b]8;;\x07\x1b[5Chi-strict-0-11-\x1b]8;;http://example.com\x07link\x1b]8;;\x07     hi] PASSED
+tests/test_clip.py::test_clip_sequences_cjk_with_sequences PASSED
+tests/test_clip.py::test_clip_sequences_partial_wide_at_start PASSED
+tests/test_clip.py::test_clip_sequences_between_chars PASSED
+tests/test_clip.py::test_clip_sequences_fs_escape PASSED
+tests/test_clip.py::test_clip_emoji[\U0001f600-2] PASSED
+tests/test_clip.py::test_clip_emoji[\U0001f468\u200d\U0001f469\u200d\U0001f467-2] PASSED
+tests/test_clip.py::test_clip_emoji[\u2764\ufe0f-2] PASSED
+tests/test_clip.py::test_clip_emoji[\U0001f1fa\U0001f1f8-2] PASSED
+tests/test_clip.py::test_clip_emoji_with_sequences PASSED
+tests/test_clip.py::test_clip_combining_accent PASSED
+tests/test_clip.py::test_clip_combining_multiple PASSED
+tests/test_clip.py::test_clip_zero_width_position_bounds PASSED
+tests/test_clip.py::test_clip_prepend_grapheme PASSED
+tests/test_clip.py::test_clip_ambiguous_width_1 PASSED
+tests/test_clip.py::test_clip_ambiguous_width_2 PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb-0-10-8-a       b] PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb-0-4-8-a   ] PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb-0-10-4-a   b] PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb-4-10-8-    b] PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb\tc-0-20-4-a   b   c] PASSED
+tests/test_clip.py::test_clip_tab_expansion[\u4e2d\tb-0-10-4-\u4e2d  b] PASSED
+tests/test_clip.py::test_clip_tab_expansion[a\tb-0-5-0-a\tb] PASSED
+tests/test_clip.py::test_clip_tab_with_sequences PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[abc\x08de-0-5-abde] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[ab\x07cd-0-4-ab\x07cd] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[ab\x00cd-0-4-ab\x00cd] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[abc\rde-0-5-dec] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[\x07\x08\rHello-0-5-\x07Hello] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[ab\x01\x02cd-0-4-ab\x01\x02cd] PASSED
+tests/test_clip.py::test_clip_control_chars_zero_width[ab\x1b\x00cd-0-4-ab\x1b\x00cd] PASSED
+tests/test_clip.py::test_clip_tab_first_visible_with_sgr PASSED
+tests/test_clip.py::test_clip_overtyping_override_by_control_codes_ignore PASSED
+tests/test_clip.py::test_clip_overtyping_without_ignore PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[K-erase_in_line] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[2K-erase_in_line_params] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[J-erase_in_display] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[2J-erase_in_display_params] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[H-cursor_home] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[1;1H-cursor_address] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[A-cursor_up] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[2A-cursor_up_params] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[B-cursor_down] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[5B-cursor_down_params] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[P-delete_character] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[1P-parm_dch] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[M-delete_line] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[1M-parm_delete_line] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[L-insert_line] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[1L-parm_insert_line] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[@-insert_character] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[1X-erase_chars] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[S-scroll_up] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[T-scroll_down] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[?1049h-enter_fullscreen] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b[?1049l-exit_fullscreen] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1bD-scroll_forward] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1bM-scroll_reverse] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1b8-restore_cursor] PASSED
+tests/test_clip.py::test_clip_strict_indeterminate_raises[\x1bc-full_reset] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[K-erase_in_line] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[2K-erase_in_line_params] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[J-erase_in_display] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[2J-erase_in_display_params] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[H-cursor_home] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[1;1H-cursor_address] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[A-cursor_up] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[2A-cursor_up_params] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[B-cursor_down] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[5B-cursor_down_params] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[P-delete_character] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[1P-parm_dch] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[M-delete_line] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[1M-parm_delete_line] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[L-insert_line] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[1L-parm_insert_line] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[@-insert_character] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[1X-erase_chars] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[S-scroll_up] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[T-scroll_down] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[?1049h-enter_fullscreen] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b[?1049l-exit_fullscreen] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1bD-scroll_forward] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1bM-scroll_reverse] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1b8-restore_cursor] PASSED
+tests/test_clip.py::test_clip_parse_indeterminate_preserved[\x1bc-full_reset] PASSED
+tests/test_clip_cjk_emoji.py::test_partial_and_full_wide_grapheme[\u4e2d] PASSED
+tests/test_clip_cjk_emoji.py::test_partial_and_full_wide_grapheme[\U0001f642] PASSED
+tests/test_clip_cjk_emoji.py::test_partial_and_full_wide_grapheme[\U0001f468\u200d\U0001f469\u200d\U0001f467] PASSED
+tests/test_clip_cjk_emoji.py::test_partial_and_full_wide_grapheme[\U0001f469\u200d\U0001f469\u200d\U0001f467] PASSED
+tests/test_clip_cjk_emoji.py::test_mixed_cjk_emoji_sequence PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\x1b[10Cworld-0-10-kwargs0-hello     ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\x1b[10Cworld-0-5-kwargs1-hello] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\x1b[2DXY-0-5-kwargs2-helXY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[3DXY-0-5-kwargs3-XYc] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[2Dhi-0-2-kwargs4-hi] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[5C\x1b[2Dhi-5-7-kwargs5-] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b]8;;http://example.com\x07\x1b[2Dcd-0-4-kwargs6-cd\x1b]8;;http://example.com\x07] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\u4e2d\x1b[D\x1b[Da-0-4-kwargs7-a ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[5Ccd-0-4-kwargs8-ab  ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abcde\x1b[2Df-0-6-kwargs9-abcfe] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\x1b[5Dw-0-5-kwargs10-wello] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[10Ccd-0-4-kwargs11-ab  ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[XY\x1b[Czy-0-4-kwargs12-XY z] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[XY\x1b[Czy-0-5-kwargs13-XY zy] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[XY\x1b[Czy-1-3-kwargs14-Y ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[XY\x1b[Czy-1-4-kwargs15-Y z] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-0-12-kwargs16-LOL     lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-1-11-kwargs17-OL     lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-2-11-kwargs18-L     lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-3-11-kwargs19-     lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-4-11-kwargs20-    lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-5-11-kwargs21-   lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-6-11-kwargs22-  lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-7-11-kwargs23- lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-8-11-kwargs24-lol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[LOL\x1b[5Clol-9-11-kwargs25-ol] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[31mab\x1b[2Dcd-0-4-kwargs26-\x1b[31mcd\x1b[0m] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[2D\tcd-0-4-kwargs27-\tcd] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[2D\u0301hello-1-4-kwargs28-ell] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[2D\u4e2dd-1-4-kwargs29- d] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\x1b[2Dxy-0-3-kwargs30-hel] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[5Chi-0-7-kwargs31-     hi] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[2D-0-2-kwargs32-ab] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[a\x1bb\x1b[2Dc-0-3-kwargs33-c\x1bb] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[2Da\tb-0-5-kwargs34-a   b] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[2Dcd-0-4-kwargs35-cd] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b]8;;http://example.com\x07ab\x1b[2Dcd-0-4-kwargs36-\x1b]8;;http://example.com\x07cd] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x1b[2D\x1b-0-2-kwargs37-\x1bab] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[a\u4e2d\x1b[Db-0-4-kwargs38-a b] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[2Ca\tb-2-4-kwargs39-a ] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[aaa\r\r\rxxx-0-4-kwargs40-xxx] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\rXY-0-5-kwargs41-XYc] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[hello\rworld-0-5-kwargs42-world] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\rde-1-3-kwargs43-ec] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x08de-0-5-kwargs44-abde] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x08\x08XY-0-5-kwargs45-aXY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[ab\x08\x08\x08XY-0-4-kwargs46-XY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[GXY-0-5-kwargs47-XYc] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[2GXY-0-5-kwargs48-aXY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[5GXY-0-7-kwargs49-abc XY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[5GXY-0-5-kwargs50-abc X] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[5GXY-3-7-kwargs51- XY] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[abc\x1b[GXY-1-4-kwargs52-Yc] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[5C\x1b]8;;http://example.com\x07-0-5-kwargs53-     \x1b]8;;http://example.com\x07] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[5C\x1b]8;;http://example.com\x07-0-3-kwargs54-   \x1b]8;;http://example.com\x07] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[D\x1b\x1bXy-0-3-kwargs55-\x1b\x1bXy] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[a\x1b[C\x1b]8;;http://x\x07hi\x1b]8;;\x07-0-5-kwargs56-a \x1b]8;;http://x\x07hi\x1b]8;;\x07] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[D\tab-0-2-kwargs57-\tab] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[D\u0301x-0-3-kwargs58-\u0301x] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_sequences_expected_behaviour[\x1b[D\x1b[Hxy-0-3-kwargs59-\x1b[Hxy] PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_left_strict_out_of_bounds PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_left_strict_out_of_bounds_painter PASSED
+tests/test_clip_overtyping.py::test_clip_cursor_left_out_of_bounds_parse_no_raise PASSED
+tests/test_clip_overtyping.py::test_clip_strict_cr_allowed PASSED
+tests/test_clip_overtyping.py::test_clip_strict_hpa_allowed PASSED
+tests/test_clip_overtyping.py::test_clip_strict_cursor_left_allowed PASSED
+tests/test_clip_overtyping.py::test_clip_strict_indeterminate_sequence_painter PASSED
+tests/test_core.py::test_package_version PASSED
 tests/test_core.py::test_empty_string PASSED
 tests/test_core.py::test_hello_jp PASSED
-tests/test_core.py::test_kannada_script PASSED
-tests/test_core.py::test_kannada_script_2 PASSED
+tests/test_core.py::test_wcswidth_substr PASSED
+tests/test_core.py::test_null_width_0 PASSED
+tests/test_core.py::test_control_c0_width_negative_1 PASSED
+tests/test_core.py::test_combining_width PASSED
+tests/test_core.py::test_combining_cafe PASSED
+tests/test_core.py::test_combining_enclosing PASSED
+tests/test_core.py::test_balinese_script PASSED
 tests/test_core.py::test_kr_jamo PASSED
 tests/test_core.py::test_kr_jamo_filler PASSED
+tests/test_core.py::test_devanagari_script PASSED
+tests/test_core.py::test_tamil_script PASSED
+tests/test_core.py::test_kannada_script PASSED
+tests/test_core.py::test_kannada_script_2 PASSED
+tests/test_core.py::test_bengali_nukta_mc PASSED
 tests/test_core.py::test_mc_width_consistency[1] PASSED
 tests/test_core.py::test_mc_width_consistency[20] PASSED
-tests/test_core.py::test_null_width_0 PASSED
-tests/test_core.py::test_package_version PASSED
+tests/test_core.py::test_virama_conjunct[\u0999\u09cd\u0997\u09c7-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0924\u093f-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0930\u093f-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0a95\u0acd\u0a95\u0acb-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0938\u094d\u0924\u094d\u0930-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0938\u094d\u0924-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0915\u094d -2] PASSED
+tests/test_core.py::test_virama_conjunct[\u09a4\u09cd\u200d\u09aa-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0915\u094d\u200d\u0924-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0d15\u0d4d\u0d15\u0d41\u0d02-2] PASSED
+tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0924\u0941\u0902-2] PASSED
+tests/test_core.py::test_zwj_at_end_of_string PASSED
+tests/test_core.py::test_soft_hyphen PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1536-ARABIC NUMBER SIGN] PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1537-ARABIC SIGN SANAH] PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1538-ARABIC FOOTNOTE MARKER] PASSED
@@ -223,176 +421,278 @@ tests/test_core.py::test_prepended_concatenation_mark_width[2193-ARABIC PIASTRE 
 tests/test_core.py::test_prepended_concatenation_mark_width[2274-ARABIC DISPUTED END OF AYAH] PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[69821-KAITHI NUMBER SIGN] PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[69837-KAITHI NUMBER SIGN ABOVE] PASSED
-tests/test_core.py::test_soft_hyphen PASSED
-tests/test_core.py::test_tamil_script PASSED
-tests/test_core.py::test_virama_conjunct[\u0915\u094d -2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0924\u093f-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0924\u0941\u0902-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0930\u093f-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0915\u094d\u200d\u0924-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0938\u094d\u0924-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0938\u094d\u0924\u094d\u0930-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0999\u09cd\u0997\u09c7-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u09a4\u09cd\u200d\u09aa-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0a95\u0acd\u0a95\u0acb-2] PASSED
-tests/test_core.py::test_virama_conjunct[\u0d15\u0d4d\u0d15\u0d41\u0d02-2] PASSED
-tests/test_core.py::test_wcswidth_substr PASSED
-tests/test_emojis.py::test_another_emoji_zwj_sequence PASSED
-tests/test_emojis.py::test_fitzpatrick_after_emoji PASSED
-tests/test_emojis.py::test_fitzpatrick_standalone PASSED
-tests/test_emojis.py::test_longer_emoji_zwj_sequence PASSED
+tests/test_core.py::test_legacy_module PASSED
+tests/test_emojis.py::test_unfinished_zwj_sequence PASSED
 tests/test_emojis.py::test_non_recommended_zwj_sequence PASSED
+tests/test_emojis.py::test_another_emoji_zwj_sequence PASSED
+tests/test_emojis.py::test_longer_emoji_zwj_sequence PASSED
 tests/test_emojis.py::test_recommended_emoji_zwj_sequences SKIPPED
 tests/test_emojis.py::test_recommended_variation_16_sequences SKIPPED
-tests/test_emojis.py::test_regional_indicator_four PASSED
-tests/test_emojis.py::test_regional_indicator_pair PASSED
 tests/test_emojis.py::test_regional_indicator_single PASSED
+tests/test_emojis.py::test_regional_indicator_pair PASSED
 tests/test_emojis.py::test_regional_indicator_three PASSED
-tests/test_emojis.py::test_unfinished_zwj_sequence PASSED
-tests/test_emojis.py::test_vs16_effect PASSED
+tests/test_emojis.py::test_regional_indicator_four PASSED
 tests/test_emojis.py::test_zwj_after_non_emoji PASSED
+tests/test_emojis.py::test_fitzpatrick_standalone PASSED
+tests/test_emojis.py::test_fitzpatrick_after_emoji PASSED
+tests/test_emojis.py::test_vs16_effect PASSED
 tests/test_grapheme.py::test_core_grapheme[-expected0] PASSED
-tests/test_grapheme.py::test_core_grapheme[\n-expected8] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r-expected6] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r\n-expected4] PASSED
-tests/test_grapheme.py::test_core_grapheme[\r\r-expected10] PASSED
 tests/test_grapheme.py::test_core_grapheme[a-expected1] PASSED
 tests/test_grapheme.py::test_core_grapheme[abc-expected2] PASSED
 tests/test_grapheme.py::test_core_grapheme[cafe\u0301-expected3] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\nok-expected9] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r\n-expected4] PASSED
 tests/test_grapheme.py::test_core_grapheme[ok\r\nok-expected5] PASSED
-tests/test_grapheme.py::test_core_grapheme[ok\r\rok-expected11] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r-expected6] PASSED
 tests/test_grapheme.py::test_core_grapheme[ok\rok-expected7] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[X\x85\u0301-3-2] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600\n-2-1] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600a-2-0] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[a\r\nb-3-1] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[abc-1-0] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[abc-2-1] PASSED
+tests/test_grapheme.py::test_core_grapheme[\n-expected8] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\nok-expected9] PASSED
+tests/test_grapheme.py::test_core_grapheme[\r\r-expected10] PASSED
+tests/test_grapheme.py::test_core_grapheme[ok\r\rok-expected11] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-2-None-expected0] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-0-4-expected1] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-1-4-expected2] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abc-10-None-expected3] PASSED
+tests/test_grapheme.py::test_iter_graphemes_slice[abc-0-10-expected4] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\u1100\u1161-expected0] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u1100\u1161ok-expected1] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\uac00\u11a8-expected2] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\uac00\u11a8ok-expected3] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8-expected4] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8ok-expected5] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1e6-expected6] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6ok-expected7] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1fa-expected8] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1faok-expected9] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f468\u200d\U0001f469\u200d\U0001f467-expected10] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f468\u200d\U0001f469\u200d\U0001f467ok-expected11] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f44b\U0001f3fb-expected12] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f44b\U0001f3fbok-expected13] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[\u2764\ufe0f-expected14] PASSED
+tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u2764\ufe0fok-expected15] PASSED
+tests/test_grapheme.py::test_unicode_grapheme_break_test[NOTSET] SKIPPED
 tests/test_grapheme.py::test_grapheme_boundary_before_basic[abc-3-2] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[ae\u0301\u0300b-4-1] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_basic[cafe\u0301-4-3] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[abc-2-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[abc-1-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[a\r\nb-3-1] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_basic[cafe\u0301-5-3] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-3-2] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-5-3] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[cafe\u0301-4-3] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[ae\u0301\u0300b-4-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600a-2-0] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[\u0600\n-2-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_basic[X\x85\u0301-3-2] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-6-5] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[\U0001f1fa\U0001f1f8\U0001f1e6-2-0] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[\U0001f1fa\U0001f1f8\U0001f1e6-3-2] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f1fa\U0001f1f8b-3-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-5-3] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[Hi \U0001f44b\U0001f3fb!-3-2] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f1fa\U0001f1f8b-4-3] PASSED
-tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f468\u200d\U0001f469\u200d\U0001f467b-6-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f1fa\U0001f1f8b-3-1] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[\U0001f1fa\U0001f1f8\U0001f1e6-3-2] PASSED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[\U0001f1fa\U0001f1f8\U0001f1e6-2-0] PASSED
 tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f468\u200d\U0001f469\u200d\U0001f467b-7-6] PASSED
-tests/test_grapheme.py::test_grapheme_roundtrip_consistency[NOTSET] SKIPPED
+tests/test_grapheme.py::test_grapheme_boundary_before_unicode[a\U0001f468\u200d\U0001f469\u200d\U0001f467b-6-1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[-expected0] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[abc-expected1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_basic[cafe\u0301\r\nok-expected2] PASSED
-tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases PASSED
-tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[Hi\U0001f1fa\U0001f1f8\U0001f1e6!-expected2] PASSED
-tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[\U0001f468\u200d\U0001f469\u200d\U0001f467\U0001f468\u200d\U0001f469\u200d\U0001f467-expected1] PASSED
 tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[cafe\u0301 \U0001f44b\U0001f3fb \U0001f1fa\U0001f1f8!-expected0] PASSED
-tests/test_grapheme.py::test_iter_graphemes_slice[abc-0-10-expected4] PASSED
-tests/test_grapheme.py::test_iter_graphemes_slice[abc-10-None-expected3] PASSED
-tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-0-4-expected1] PASSED
-tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-1-4-expected2] PASSED
-tests/test_grapheme.py::test_iter_graphemes_slice[abcdef-2-None-expected0] PASSED
-tests/test_grapheme.py::test_unicode_grapheme_break_test[NOTSET] SKIPPED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8-expected4] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1e6-expected6] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1fa-expected8] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f44b\U0001f3fb-expected12] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\U0001f468\u200d\U0001f469\u200d\U0001f467-expected10] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\u1100\u1161-expected0] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\u2764\ufe0f-expected14] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[\uac00\u11a8-expected2] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6\U0001f1faok-expected9] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8\U0001f1e6ok-expected7] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f1fa\U0001f1f8ok-expected5] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f44b\U0001f3fbok-expected13] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\U0001f468\u200d\U0001f469\u200d\U0001f467ok-expected11] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u1100\u1161ok-expected1] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\u2764\ufe0fok-expected15] PASSED
-tests/test_grapheme.py::test_wide_unicode_graphemes[ok\uac00\u11a8ok-expected3] PASSED
-tests/test_justify.py::test_center PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[\U0001f468\u200d\U0001f469\u200d\U0001f467\U0001f468\u200d\U0001f469\u200d\U0001f467-expected1] PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_unicode[Hi\U0001f1fa\U0001f1f8\U0001f1e6!-expected2] PASSED
+tests/test_grapheme.py::test_grapheme_roundtrip_consistency[NOTSET] SKIPPED
+tests/test_grapheme.py::test_grapheme_boundary_before_edge_cases PASSED
+tests/test_grapheme.py::test_iter_graphemes_reverse_edge_cases PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_valid[\x1b]8;;http://example.com\x07-http://example.com--\x07] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_valid[\x1b]8;id=a;http://example.com\x1b\\-http://example.com-id=a-\x1b\\] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[not an escape] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[\x1b[31m] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_parse_invalid[] PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_make_open PASSED
+tests/test_hyperlink.py::test_hyperlinkparams_make_close PASSED
+tests/test_hyperlink.py::test_hyperlink_parse_valid PASSED
+tests/test_hyperlink.py::test_hyperlink_parse_returns_none[Hello world-0] PASSED
+tests/test_hyperlink.py::test_hyperlink_parse_returns_none[\x1b[31mHello\x1b[0m-0] PASSED
+tests/test_hyperlink.py::test_hyperlink_parse_returns_none[\x1b]8;;http://example.com\x07Hello-0] PASSED
+tests/test_hyperlink.py::test_hyperlink_find_close_not_found PASSED
+tests/test_hyperlink.py::test_hyperlink_make_sequence PASSED
+tests/test_hyperlink.py::test_hyperlink_display_width PASSED
 tests/test_justify.py::test_ljust PASSED
 tests/test_justify.py::test_rjust PASSED
-tests/test_sgr_state.py::test_clip_no_active_style_and_plain PASSED
-tests/test_sgr_state.py::test_clip_preserves_non_sgr_sequences PASSED
-tests/test_sgr_state.py::test_clip_propagate_sgr_disabled PASSED
+tests/test_justify.py::test_center PASSED
+tests/test_sgr_state.py::test_wrap_propagates_sgr PASSED
+tests/test_sgr_state.py::test_wrap_reset_and_no_sgr PASSED
+tests/test_sgr_state.py::test_wrap_propagate_sgr_disabled PASSED
+tests/test_sgr_state.py::test_wrap_preserves_non_sgr_sequences PASSED
 tests/test_sgr_state.py::test_clip_propagates_sgr PASSED
+tests/test_sgr_state.py::test_clip_no_active_style_and_plain PASSED
+tests/test_sgr_state.py::test_clip_propagate_sgr_disabled PASSED
+tests/test_sgr_state.py::test_clip_preserves_non_sgr_sequences PASSED
 tests/test_sgr_state.py::test_clip_sgr_only_no_visible_content PASSED
-tests/test_sgr_state.py::test_extended_color_mixed_format_edge_cases PASSED
-tests/test_sgr_state.py::test_parse_sgr_params_invalid PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_on PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_off PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_colors PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_colors_colon_format PASSED
+tests/test_sgr_state.py::test_sgr_state_color_override PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_default_colors PASSED
+tests/test_sgr_state.py::test_sgr_state_parse_compound_and_reset PASSED
+tests/test_sgr_state.py::test_sgr_state_to_sequence PASSED
+tests/test_sgr_state.py::test_sgr_state_to_sequence_all_attributes PASSED
+tests/test_sgr_state.py::test_sgr_state_is_active PASSED
 tests/test_sgr_state.py::test_propagate_sgr PASSED
 tests/test_sgr_state.py::test_propagate_sgr_empty_lines PASSED
 tests/test_sgr_state.py::test_sgr_malformed_sequences PASSED
-tests/test_sgr_state.py::test_sgr_state_color_override PASSED
-tests/test_sgr_state.py::test_sgr_state_is_active PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_off PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_boolean_attributes_on PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_colors PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_colors_colon_format PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_compound_and_reset PASSED
-tests/test_sgr_state.py::test_sgr_state_parse_default_colors PASSED
-tests/test_sgr_state.py::test_sgr_state_to_sequence PASSED
-tests/test_sgr_state.py::test_sgr_state_to_sequence_all_attributes PASSED
-tests/test_sgr_state.py::test_wrap_preserves_non_sgr_sequences PASSED
-tests/test_sgr_state.py::test_wrap_propagate_sgr_disabled PASSED
-tests/test_sgr_state.py::test_wrap_propagates_sgr PASSED
-tests/test_sgr_state.py::test_wrap_reset_and_no_sgr PASSED
-tests/test_textwrap.py::test_wrap_edge_cases[   -10-expected1] PASSED
+tests/test_sgr_state.py::test_parse_sgr_params_invalid PASSED
+tests/test_sgr_state.py::test_extended_color_mixed_format_edge_cases PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[x=2--Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=3:x=3-s=3-Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=2:x=3:w=9-s=2:w=7-Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[xyz=2--Unknown text sizing field 'xyz' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[xxx--Expected '=' in text sizing parameter] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=xxx--Illegal text sizing value 'xxx' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=-99--Out of bounds text sizing value '-99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=99-s=7-Out of bounds text sizing value '99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[w=-1--Out of bounds text sizing value '-1' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[w=8-w=7-Out of bounds text sizing value '8' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[n=20-n=15-Out of bounds text sizing value '20' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[d=99-d=15-Out of bounds text sizing value '99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[v=5-v=2-Out of bounds text sizing value '5' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_control_codes[h=3-h=2-Out of bounds text sizing value '3' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[x=2--Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[s=3:x=3-s=3-Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[s=2:x=3:w=9-s=2:w=7-Unknown text sizing field 'x' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[xyz=2--Unknown text sizing field 'xyz' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[xxx--Expected '=' in text sizing parameter] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[s=xxx--Illegal text sizing value 'xxx' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[s=-99--Out of bounds text sizing value '-99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[s=99-s=7-Out of bounds text sizing value '99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[w=-1--Out of bounds text sizing value '-1' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[w=8-w=7-Out of bounds text sizing value '8' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[n=20-n=15-Out of bounds text sizing value '20' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[d=99-d=15-Out of bounds text sizing value '99' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[v=5-v=2-Out of bounds text sizing value '5' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_width_control_codes[h=3-h=2-Out of bounds text sizing value '3' in ] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_repr[params0-TextSizingParams()] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_repr[params1-TextSizingParams(scale=2, width=1)] PASSED
+tests/test_text_sizing.py::test_text_sizing_params_repr[params2-TextSizingParams(scale=2, width=3, numerator=1, denominator=2, vertical_align=1, horizontal_align=2)] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params0-climclam-2] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params1-anything-6] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params2--5] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params3-x-3] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params4--0] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params5-AB-2] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params6-\u4e2d-2] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params7-AB-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params8-\u4e2d-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params9--0] PASSED
+tests/test_text_sizing.py::test_text_sizing_width[params10-x!yzzy-49] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2:w=2;AB\x07-AB-s=2:w=2-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2:w=2;\u4e2d\x07-\u4e2d-s=2:w=2-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=3:w=1;x\x07-x-s=3:w=1-3] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;w=5;hello\x07-hello-w=5-5] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2:w=3;anything\x07-anything-s=2:w=3-6] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;w=3;x\x07-x-w=3-3] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=1;AB\x07-AB--2] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2;AB\x07-AB-s=2-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2;\u4e2d\x07-\u4e2d-s=2-4] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2;\x07--s=2-0] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=1:w=1;\x07--w=1-1] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;w=2;A\x07-A-w=2-2] PASSED
+tests/test_text_sizing.py::test_text_sizing_sequence[\x1b]66;s=2:w=3;text\x1b\\-text-s=2:w=3-6] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=3:n=1:d=2:v=1:h=2;x!yzzy\x1b\\-6] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=3;anything\x07-6] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;w=3;x\x07-3] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=1:w=0;AB\x07-2] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=0;AB\x07-4] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=0;\u4e2d\x07-4] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=1:w=0;\x07-0] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[abc\x1b]66;w=3;x\x07def-9] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;w=2;A\x07\x1b]66;w=3;B\x07-5] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=3;text\x1b\\-6] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b[31m\x1b]66;w=2;AB\x07\x1b[0m-2] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;s=2;hello\x07-hello] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;s=2;hello\x1b\\-hello] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;;text\x07-text] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;s=3:w=2;\x07-] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[abc\x1b]66;w=2;XY\x07def-abcXYdef] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b[31m\x1b]66;s=2;red\x07\x1b[0m-red] PASSED
+tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;w=1;A\x07\x1b]66;w=1;B\x07-AB] PASSED
+tests/test_text_sizing.py::test_iter_sequences_text_sizing[abc\x1b]66;s=2;hello\x07def-expected_segs0] PASSED
+tests/test_text_sizing.py::test_iter_sequences_text_sizing[abc\x1b]66;s=2;n=1,d=2,w=3;hello\x1b\\def-expected_segs1] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[\x1b]66;w=3;ABC\x07-0-3-\x1b]66;w=3;ABC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[\x1b]66;w=3;ABC\x07-0-2-\x1b]66;w=2;AB\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[\x1b]66;w=3;ABC\x07-1-3-\x1b]66;w=2;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[ab\x1b]66;w=2;XY\x07cd-0-6-ab\x1b]66;w=2;XY\x07cd] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[ab\x1b]66;w=2;XY\x07cd-0-3-ab\x1b]66;w=1;X\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[ab\x1b]66;w=2;XY\x07cd-3-6-\x1b]66;w=1;Y\x07cd] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_basic[ab\x1b]66;w=2;XY\x07cd-4-6-cd] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-0-0-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-6-6-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-0-2-\x1b]66;s=2;A\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-0-4-\x1b]66;s=2;AB\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-0-6-\x1b]66;s=2;ABC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-2-6-\x1b]66;s=2;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled[\x1b]66;s=2;ABC\x07-4-6-\x1b]66;s=2;C\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-0-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-1-.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-2-..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-3-\x1b]66;s=3;A\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-4-\x1b]66;s=3;A\x07.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-5-\x1b]66;s=3;A\x07..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-6-\x1b]66;s=3;AB\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-7-\x1b]66;s=3;AB\x07.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-8-\x1b]66;s=3;AB\x07..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-9-\x1b]66;s=3;ABC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-0-10-\x1b]66;s=3;ABC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-1-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-2-.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-3-..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-4-...] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-5-....] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-6-..\x1b]66;s=3;B\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-7-..\x1b]66;s=3;B\x07.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-8-..\x1b]66;s=3;B\x07..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-9-..\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-1-10-..\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-2-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-3-.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-4-..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-5-...] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-6-.\x1b]66;s=3;B\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-7-.\x1b]66;s=3;B\x07.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-8-.\x1b]66;s=3;B\x07..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-9-.\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-2-10-.\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-3-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-4-.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-5-..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-6-\x1b]66;s=3;B\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-7-\x1b]66;s=3;B\x07.] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-8-\x1b]66;s=3;B\x07..] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-9-\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_scaled_with_fillchar[\x1b]66;s=3;ABC\x07-3-10-\x1b]66;s=3;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_simple_path_padding PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;w=2;XY\x07-0-3-\x1b]66;w=2;XY\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;w=2;XY\x07-0-1-\x1b]66;w=1;X\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[ab\x08\x08\x1b]66;w=2;XY\x07-0-4-\x1b]66;w=2;XY\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\ra\x1b]66;s=2;BC\x07-0-3-a\x1b]66;s=2;B\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;s=3;ABC\x07-1-6-  \x1b]66;s=3;B\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[ab\x1b[2D\x1b]66;w=2;XY\x07-0-4-\x1b]66;w=2;XY\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;w=2;XY\x07-2-4-] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\ra\x1b]66;s=2;BC\x07-0-5-a\x1b]66;s=2;BC\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;w=3;A\x07-0-2-\x1b]66;w=2;A\x07] PASSED
+tests/test_text_sizing.py::test_clip_text_sizing_painter[\r\x1b]66;s=2;ABCD\x07-4-8-\x1b]66;s=2;CD\x07] PASSED
 tests/test_textwrap.py::test_wrap_edge_cases[-10-expected0] PASSED
-tests/test_textwrap.py::test_wrap_edge_cases[\U0001f469\u200d\U0001f469\u200d\U0001f467\u200d\U0001f466-1-expected4] PASSED
-tests/test_textwrap.py::test_wrap_edge_cases[\u1100\u1161-1-expected5] PASSED
+tests/test_textwrap.py::test_wrap_edge_cases[   -10-expected1] PASSED
 tests/test_textwrap.py::test_wrap_edge_cases[\u5973-0-expected2] PASSED
 tests/test_textwrap.py::test_wrap_edge_cases[\u5973-1-expected3] PASSED
-tests/test_textwrap.py::test_wrap_expand_tabs_false_with_sequences PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x07Click here\x1b]8;;\x07 now-5-expected11] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x1b\\Click here\x1b]8;;\x1b\\ now-5-expected10] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x07link\x1b]8;;\x07more-5-expected1] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\ab cd\x1b]8;;\x1b\\ \x1b]8;;http://example.com\x07ef gh\x1b]8;;\x07-4-expected14] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\abcdefgh\x1b]8;;\x1b\\-3-expected15] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\more-5-expected0] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\one two three\x1b]8;;\x1b\\-5-expected13] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar:id=mylink;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected17] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected16] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;id=my-link;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected12] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;http://example.com\x07link\x1b]8;;\x07\x1b[0m bar-6-expected7] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\\x1b[0m bar-6-expected6] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x07\x1b[31mlink\x1b[0m\x1b]8;;\x07 bar-6-expected9] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x1b\\\x1b[31mlink\x1b[0m\x1b]8;;\x1b\\ bar-6-expected8] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x07link\x1b]8;;\x07-6-expected3] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x07link\x1b]8;;\x07suffix-6-expected5] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\-6-expected2] PASSED
-tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\suffix-6-expected4] PASSED
+tests/test_textwrap.py::test_wrap_edge_cases[\U0001f469\u200d\U0001f469\u200d\U0001f467\u200d\U0001f466-1-expected4] PASSED
+tests/test_textwrap.py::test_wrap_edge_cases[\u1100\u1161-1-expected5] PASSED
+tests/test_textwrap.py::test_wrap_initial_indent PASSED
+tests/test_textwrap.py::test_wrap_long_words[abcdefghij-3-True-expected0] PASSED
+tests/test_textwrap.py::test_wrap_long_words[abcdefghij-3-False-expected1] PASSED
+tests/test_textwrap.py::test_wrap_hyphen_long_words[a-b-c-d-3-True-True-expected0] PASSED
+tests/test_textwrap.py::test_wrap_hyphen_long_words[a-b-c-d-3-False-True-expected1] PASSED
 tests/test_textwrap.py::test_wrap_hyphen_long_words[----2-True-True-expected2] PASSED
 tests/test_textwrap.py::test_wrap_hyphen_long_words[a---b-2-True-True-expected3] PASSED
-tests/test_textwrap.py::test_wrap_hyphen_long_words[a-\x1b[31mb-2-True-False-expected5] PASSED
 tests/test_textwrap.py::test_wrap_hyphen_long_words[a-\x1b[31mb-2-True-True-expected4] PASSED
-tests/test_textwrap.py::test_wrap_hyphen_long_words[a-b-c-d-3-False-True-expected1] PASSED
-tests/test_textwrap.py::test_wrap_hyphen_long_words[a-b-c-d-3-True-True-expected0] PASSED
-tests/test_textwrap.py::test_wrap_initial_indent PASSED
-tests/test_textwrap.py::test_wrap_long_words[abcdefghij-3-False-expected1] PASSED
-tests/test_textwrap.py::test_wrap_long_words[abcdefghij-3-True-expected0] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_hyphen_long_words[a-\x1b[31mb-2-True-False-expected5] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs2] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs3] PASSED
@@ -402,25 +702,11 @@ tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs6] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs7] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs8] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[3-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs2] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs3] PASSED
@@ -430,84 +716,39 @@ tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs6] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs7] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs8] PASSED
 tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_hyperlink_close_on_prev_line PASSED
-tests/test_textwrap.py::test_wrap_max_lines_hyperlink_closed PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[ a -kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890 extra-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[The quick brown fox jumps over the lazy dog-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[a bb ccc dddd-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[a bb ccc-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[aaa bbb ccc-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[ab cd-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar baz-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[short 1234567890 extra-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587 \u5b57\u7b26 hello world-5-2-~-expected4] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587 \u5b57\u7b26 hello-5-1-~-expected3] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587\u5b57\u7b26 hello-12-1-...-expected5] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello world foo bar\x1b[0m-8-2-...-expected0] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello\x1b[0m world foo-8-2-...-expected1] PASSED
-tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello\x1b[0m world-6-1-.-expected2] PASSED
-tests/test_textwrap.py::test_wrap_mixed[\x1b[1m\u4e2d\x1b[0my z-4-expected2] PASSED
-tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\U0001f469\u200d\U0001f469\u200d\U0001f467\x1b[0m ab-4-expected1] PASSED
-tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\u4e2d\u6587\x1b[0m ab-5-expected0] PASSED
-tests/test_textwrap.py::test_wrap_multiline_matches_stdlib PASSED
-tests/test_textwrap.py::test_wrap_placeholder_too_large PASSED
-tests/test_textwrap.py::test_wrap_replace_whitespace_false_newlines_zero_width PASSED
-tests/test_textwrap.py::test_wrap_sequences[\x07alert text-6-expected6] PASSED
-tests/test_textwrap.py::test_wrap_sequences[\x1b[31m\x1b[0m-10-expected2] PASSED
-tests/test_textwrap.py::test_wrap_sequences[\x1b[31mred\x1b[0m blue-4-expected0] PASSED
-tests/test_textwrap.py::test_wrap_sequences[\x1b[5Ctext here-10-expected5] PASSED
-tests/test_textwrap.py::test_wrap_sequences[\x1b]8;;https://example.com\x07link\x1b]8;;\x07 text-5-expected4] PASSED
-tests/test_textwrap.py::test_wrap_sequences[abc\x1bdefghij-3-expected8] PASSED
-tests/test_textwrap.py::test_wrap_sequences[hello \x1b[31m\x1b[0mworld-6-expected3] PASSED
-tests/test_textwrap.py::test_wrap_sequences[hello\x1b[31m world-6-expected1] PASSED
-tests/test_textwrap.py::test_wrap_sequences[x\x1b[31mabcdefghij\x1b[0m-3-expected7] PASSED
-tests/test_textwrap.py::test_wrap_sequences_no_propagate[hello\x1b[31m world-6-expected0] PASSED
-tests/test_textwrap.py::test_wrap_sequences_no_propagate[x\x1b[31mabcdefghij\x1b[0m-3-expected1] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[Dr. Smith went to Washington. He left.-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[Hello world. This is a test.  More text.-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[a\t b\n c-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[hello\nworld-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[hello\tworld foo\tbar baz-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_stdlib_params[hello\tworld-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[8-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[20-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_matches_stdlib[33-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs2] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs3] PASSED
@@ -517,39 +758,39 @@ tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs6] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs7] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs8] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-8-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-20-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[4-37-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs2] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs3] PASSED
@@ -559,39 +800,39 @@ tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs6] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs7] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs8] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs13] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs4] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs5] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs6] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs7] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs8] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-8-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-20-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[5-37-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs10] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs11] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs12] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs13] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs1] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs2] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs3] PASSED
@@ -601,34 +842,273 @@ tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs6] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs7] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs8] PASSED
 tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs9] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u263a\ufe0f\ta b-6-4-expected2] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\ta b-10-8-expected1] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\ta b-6-4-expected0] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\u6587\ta-8-4-expected3] PASSED
-tests/test_textwrap.py::test_wrap_tabsize_wide_chars[a\t\u4e2d b-8-4-expected4] PASSED
-tests/test_textwrap.py::test_wrap_unicode[\U0001f469\U0001f467\U0001f466-4-expected5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-8-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-20-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_matches_stdlib[8-37-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_multiline_matches_stdlib PASSED
+tests/test_textwrap.py::test_wrap_unicode[\u4e2d\u6587\u5b57\u7b26-4-expected0] PASSED
+tests/test_textwrap.py::test_wrap_unicode[\u4e2d\u6587\u5b57-5-expected1] PASSED
+tests/test_textwrap.py::test_wrap_unicode[cafe\u0301-latte-4-expected2] PASSED
 tests/test_textwrap.py::test_wrap_unicode[\U0001f469\u200d\U0001f469\u200d\U0001f467 ab-4-expected3] PASSED
 tests/test_textwrap.py::test_wrap_unicode[\u263a\ufe0f ab-3-expected4] PASSED
-tests/test_textwrap.py::test_wrap_unicode[\u4e2d\u6587\u5b57-5-expected1] PASSED
-tests/test_textwrap.py::test_wrap_unicode[\u4e2d\u6587\u5b57\u7b26-4-expected0] PASSED
-tests/test_textwrap.py::test_wrap_unicode[cafe\u0301-latte-4-expected2] PASSED
-tests/test_ucslevel.py::test_auto PASSED
-tests/test_ucslevel.py::test_env_var_ignored PASSED
-tests/test_ucslevel.py::test_latest PASSED
+tests/test_textwrap.py::test_wrap_unicode[\U0001f469\U0001f467\U0001f466-4-expected5] PASSED
+tests/test_textwrap.py::test_wrap_sequences[\x1b[31mred\x1b[0m blue-4-expected0] PASSED
+tests/test_textwrap.py::test_wrap_sequences[hello\x1b[31m world-6-expected1] PASSED
+tests/test_textwrap.py::test_wrap_sequences[\x1b[31m\x1b[0m-10-expected2] PASSED
+tests/test_textwrap.py::test_wrap_sequences[hello \x1b[31m\x1b[0mworld-6-expected3] PASSED
+tests/test_textwrap.py::test_wrap_sequences[\x1b]8;;https://example.com\x07link\x1b]8;;\x07 text-5-expected4] PASSED
+tests/test_textwrap.py::test_wrap_sequences[\x1b[5Ctext here-10-expected5] PASSED
+tests/test_textwrap.py::test_wrap_sequences[\x07alert text-6-expected6] PASSED
+tests/test_textwrap.py::test_wrap_sequences[x\x1b[31mabcdefghij\x1b[0m-3-expected7] PASSED
+tests/test_textwrap.py::test_wrap_sequences[abc\x1bdefghij-3-expected8] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[hello\x1b[31m world-6-expected0] PASSED
+tests/test_textwrap.py::test_wrap_sequences_no_propagate[x\x1b[31mabcdefghij\x1b[0m-3-expected1] PASSED
+tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\u4e2d\u6587\x1b[0m ab-5-expected0] PASSED
+tests/test_textwrap.py::test_wrap_mixed[\x1b[31m\U0001f469\u200d\U0001f469\u200d\U0001f467\x1b[0m ab-4-expected1] PASSED
+tests/test_textwrap.py::test_wrap_mixed[\x1b[1m\u4e2d\x1b[0my z-4-expected2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\ta b-6-4-expected0] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\ta b-10-8-expected1] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u263a\ufe0f\ta b-6-4-expected2] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_wide_chars[\u4e2d\u6587\ta-8-4-expected3] PASSED
+tests/test_textwrap.py::test_wrap_tabsize_wide_chars[a\t\u4e2d b-8-4-expected4] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\more-5-expected0] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x07link\x1b]8;;\x07more-5-expected1] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\-6-expected2] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x07link\x1b]8;;\x07-6-expected3] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\suffix-6-expected4] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[prefix\x1b]8;;http://example.com\x07link\x1b]8;;\x07suffix-6-expected5] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;http://example.com\x1b\\link\x1b]8;;\x1b\\\x1b[0m bar-6-expected6] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b[31m\x1b]8;;http://example.com\x07link\x1b]8;;\x07\x1b[0m bar-6-expected7] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x1b\\\x1b[31mlink\x1b[0m\x1b]8;;\x1b\\ bar-6-expected8] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[foo \x1b]8;;http://example.com\x07\x1b[31mlink\x1b[0m\x1b]8;;\x07 bar-6-expected9] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x1b\\Click here\x1b]8;;\x1b\\ now-5-expected10] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[Go \x1b]8;;http://example.com\x07Click here\x1b]8;;\x07 now-5-expected11] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;id=my-link;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected12] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\one two three\x1b]8;;\x1b\\-5-expected13] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\ab cd\x1b]8;;\x1b\\ \x1b]8;;http://example.com\x07ef gh\x1b]8;;\x07-4-expected14] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;;http://example.com\x1b\\abcdefgh\x1b]8;;\x1b\\-3-expected15] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected16] PASSED
+tests/test_textwrap.py::test_wrap_hyperlink_word_boundary[\x1b]8;foo=bar:id=mylink;http://example.com\x1b\\Click here\x1b]8;;\x1b\\-6-expected17] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[The quick brown fox jumps over the lazy dog-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890 extra-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[1234567890 1234567890-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[short 1234567890 extra-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar baz-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[a bb ccc-kwargs6] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[a bb ccc dddd-kwargs7] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[ a -kwargs8] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world-kwargs9] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[ab cd-kwargs10] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[aaa bbb ccc-kwargs11] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar-kwargs12] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_matches_stdlib[hello world foo bar-kwargs13] PASSED
+tests/test_textwrap.py::test_wrap_placeholder_too_large PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello world foo bar\x1b[0m-8-2-...-expected0] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello\x1b[0m world foo-8-2-...-expected1] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\x1b[31mhello\x1b[0m world-6-1-.-expected2] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587 \u5b57\u7b26 hello-5-1-~-expected3] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587 \u5b57\u7b26 hello world-5-2-~-expected4] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_sequences[\u4e2d\u6587\u5b57\u7b26 hello-12-1-...-expected5] PASSED
+tests/test_textwrap.py::test_wrap_max_lines_hyperlink_closed PASSED
+tests/test_textwrap.py::test_wrap_max_lines_hyperlink_close_on_prev_line PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[hello\tworld-kwargs0] PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[hello\tworld foo\tbar baz-kwargs1] PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[hello\nworld-kwargs2] PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[a\t b\n c-kwargs3] PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[Hello world. This is a test.  More text.-kwargs4] PASSED
+tests/test_textwrap.py::test_wrap_stdlib_params[Dr. Smith went to Washington. He left.-kwargs5] PASSED
+tests/test_textwrap.py::test_wrap_expand_tabs_false_with_sequences PASSED
+tests/test_textwrap.py::test_wrap_replace_whitespace_false_newlines_zero_width PASSED
+tests/test_textwrap.py::test_wrap_bare_esc PASSED
 tests/test_ucslevel.py::test_list_versions_single PASSED
-tests/test_ucslevel.py::test_unicode_version_param_ignored PASSED
+tests/test_ucslevel.py::test_latest PASSED
+tests/test_ucslevel.py::test_auto PASSED
 tests/test_ucslevel.py::test_wcmatch_version_always_latest PASSED
+tests/test_ucslevel.py::test_env_var_ignored PASSED
+tests/test_ucslevel.py::test_unicode_version_param_ignored PASSED
+tests/test_width.py::test_width_basic[-0-empty] PASSED
+tests/test_width.py::test_width_basic[hello-5-ASCII] PASSED
+tests/test_width.py::test_width_basic[\u30b3\u30f3\u30cb\u30c1\u30cf-10-CJK] PASSED
+tests/test_width.py::test_width_basic[cafe\u0301-4-combining] PASSED
+tests/test_width.py::test_width_basic[\U0001f468\u200d\U0001f469\u200d\U0001f467-2-ZWJ] PASSED
+tests/test_width.py::test_width_control_codes_ignore[hello\x01world-10-C0_control] PASSED
+tests/test_width.py::test_width_control_codes_ignore[hello\x00world-10-NUL] PASSED
+tests/test_width.py::test_width_control_codes_ignore[abc\x08d-4-backspace] PASSED
+tests/test_width.py::test_width_control_codes_ignore[abc\nxy-5-LF] PASSED
+tests/test_width.py::test_width_control_codes_ignore[\x1b[31mred\x1b[0m-3-SGR_sequence] PASSED
+tests/test_width.py::test_width_control_codes_ignore[hello\x80world-10-C1_control] PASSED
+tests/test_width.py::test_width_control_codes_ignore[\x1b-0-lone_ESC] PASSED
+tests/test_width.py::test_width_control_codes_ignore[a\x1bb-1-fs_sequence_between] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x01world-C0_control] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x1aworld-ctrl_z] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x7fworld-DEL] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x80world-C1_control] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\nworld-LF] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\rworld-CR] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x1b[Hworld-cursor_home] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x1b[Aworld-cursor_up] PASSED
+tests/test_width.py::test_width_control_codes_strict_raises[hello\x1b[5Gworld-hpa] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[hello\x07world-10-BEL] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[hello\x00world-10-NUL] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[abc\x08d-3-backspace] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[\x1b[31mred\x1b[0m-3-SGR_sequence] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[a\x1b[2Cb-4-cursor_right] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[ab\x1b[Db-2-cursor_left] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[\x1b-0-lone_ESC] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[a\x1bb-1-fs_sequence_between] PASSED
+tests/test_width.py::test_width_control_codes_strict_allowed[\x1b!-1-ESC_unrecognized] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[?1049h-enter_fullscreen] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[?1049l-exit_fullscreen] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1bD-scroll_forward] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1bM-scroll_reverse] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b8-restore_cursor] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1P-parm_dch] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1M-parm_delete_line] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1L-parm_insert_line] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1X-erase_chars] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1S-parm_index] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1T-parm_rindex] PASSED
+tests/test_width.py::test_width_strict_indeterminate_raises[\x1bc-full_reset] PASSED
+tests/test_width.py::test_width_control_codes_parse[hello\x01world-10-C0_control] PASSED
+tests/test_width.py::test_width_control_codes_parse[abc\x08d-3-backspace] PASSED
+tests/test_width.py::test_width_control_codes_parse[abc\rxy-3-CR] PASSED
+tests/test_width.py::test_width_control_codes_parse[abc\nxy-5-LF_vertical] PASSED
+tests/test_width.py::test_width_control_codes_parse[a\x1b[2Cb-4-cursor_right] PASSED
+tests/test_width.py::test_width_control_codes_parse[abcd\x1b[2De-4-cursor_left] PASSED
+tests/test_width.py::test_width_control_codes_parse[\x1b[31mred\x1b[0m-3-SGR] PASSED
+tests/test_width.py::test_width_control_codes_parse[ab\x1b[Hcd-4-indeterminate] PASSED
+tests/test_width.py::test_width_control_codes_parse[def\x1b[3Dabc-3-cursor_left_overwrite] PASSED
+tests/test_width.py::test_width_control_codes_parse[def\x1b[10Dabc-3-cursor_left_past_start] PASSED
+tests/test_width.py::test_width_control_codes_parse[abc\x1b[5Gde-6-hpa_parse] PASSED
+tests/test_width.py::test_width_control_codes_parse[abc\x1b[Gde-3-hpa_no_param] PASSED
+tests/test_width.py::test_width_control_codes_parse[\x1b[5Gabc-7-hpa_before_text] PASSED
+tests/test_width.py::test_width_tabsize[\t-8-8-default] PASSED
+tests/test_width.py::test_width_tabsize[abc\t-8-8-after_text] PASSED
+tests/test_width.py::test_width_tabsize[ab\t-4-4-tabsize_4] PASSED
+tests/test_width.py::test_width_tabsize_zero PASSED
+tests/test_width.py::test_width_tabsize_zero_parse PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b[m-0-basic_SGR] PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b[38;2;255;0;0m-0-RGB_SGR] PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b]8;;https://example.com\x07link\x1b]8;;\x07-4-OSC_hyperlink] PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b]0;title\x07text-4-OSC_title] PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b(B-0-charset] PASSED
+tests/test_width.py::test_width_escape_sequences[\x1b[-0-Fe_CSI] PASSED
+tests/test_width.py::test_width_edge_cases[\x1b[31m\x1b[0m-0-only_escapes] PASSED
+tests/test_width.py::test_width_edge_cases[\x1b[31mhello\x1b[0m world-11-mixed_content] PASSED
+tests/test_width.py::test_width_edge_cases[\x1b[31m\u30b3\x1b[0m-2-wide_with_escape] PASSED
+tests/test_width.py::test_width_edge_cases[\x1b-0-lone_ESC] PASSED
+tests/test_width.py::test_width_edge_cases[\x1b!-1-ESC_unrecognized] PASSED
+tests/test_width.py::test_width_edge_cases[*\x1b*-2-lone_ESC_between_text] PASSED
+tests/test_width.py::test_width_unknown_control_codes PASSED
+tests/test_width.py::test_vs16_selector PASSED
+tests/test_width.py::test_zwj_with_non_emoji_chars PASSED
+tests/test_width.py::test_vs16_after_control_chars PASSED
+tests/test_width.py::test_width_long_horizontal_fastpath PASSED
 tests/test_width.py::test_backspace_at_column_zero PASSED
 tests/test_width.py::test_carriage_return_resets_column PASSED
+tests/test_width.py::test_carriage_return_strict_raises PASSED
+tests/test_width.py::test_hpa_parse_best_effort PASSED
+tests/test_width.py::test_hpa_strict_raises PASSED
+tests/test_width.py::test_cursor_left_strict_out_of_bounds PASSED
+tests/test_width.py::test_cursor_left_out_of_bounds_parse_no_raise PASSED
+tests/test_width.py::test_cursor_left_out_of_bounds_ignore_mode PASSED
+tests/test_width.py::test_iter_sequences_lone_esc PASSED
+tests/test_width.py::test_tab_ignore_with_tabsize PASSED
 tests/test_width.py::test_cursor_right_unparameterized PASSED
-tests/test_width.py::test_default_ignorable_exceptions[173-1] PASSED
-tests/test_width.py::test_default_ignorable_exceptions[4447-2] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1;1r-change_scroll_region] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[H\x1b[2J-clear_screen] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[K-clr_eol] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1;1H-cursor_address] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[A-cursor_up] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[M-delete_line] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[?1049h-enter_fullscreen] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1X-erase_chars] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[L-insert_line] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1S-parm_index] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1A-parm_up_cursor] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b8-restore_cursor] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1d-row_address] PASSED
+tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1bD-scroll_forward] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3g-clear_all_tabs] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?25l-cursor_invisible] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?25h-cursor_normal] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?12;25h-cursor_visible] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b(0-enter_alt_charset_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[5m-enter_blink_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[1m-enter_bold_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[2m-enter_dim_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3m-enter_italics_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[7m-enter_reverse_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3m-enter_standout_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[4m-enter_underline_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b(B-exit_alt_charset_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[m-exit_attribute_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[4l-exit_insert_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[23m-exit_italics_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[27m-exit_standout_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[24m-exit_underline_mode] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?5h\x1b[?5l-flash_screen_csi] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1bg-flash_screen_visual_bell] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b>-keypad_local] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b=-keypad_xmit] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[39;49m-orig_pair] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b7-save_cursor] PASSED
+tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1bH-set_tab] PASSED
+tests/test_width.py::test_modern_sequences[\x1b_Gf=100,i=1;base64data\x1b\\hello-5-kitty_graphics_with_text] PASSED
+tests/test_width.py::test_modern_sequences[\x1b_Ga=d\x07-0-kitty_graphics_delete] PASSED
+tests/test_width.py::test_modern_sequences[\x1bP0;1;0q#0~-\x1b\\test-4-sixel_graphics_with_text] PASSED
+tests/test_width.py::test_modern_sequences[\x1bP$q"p\x1b\\-0-decrqss_query] PASSED
+tests/test_width.py::test_modern_sequences[\x1b^private\x1b\\text-4-pm_with_text] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]1337;SetMark\x07test-4-iterm2_setmark] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]1337;File=inline=1:base64\x07img-3-iterm2_inline_image] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]1337;CursorShape=1\x07-0-iterm2_cursor_shape] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]1337;CurrentDir=/home\x07-0-iterm2_currentdir] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]133;A\x07$ -2-shell_prompt_start] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]133;B\x07ls-2-shell_command_start] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]133;C\x07-0-shell_command_executed] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]133;D;0\x07-0-shell_command_finished] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]99;i=1:d=0;Hello\x1b\\-0-kitty_notification] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]5522;type=read\x07-0-kitty_clipboard_read] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]22;pointer\x07-0-kitty_pointer_shape] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]21;fg=?\x07-0-kitty_color_query] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]30001\x1b\\-0-kitty_color_push] PASSED
+tests/test_width.py::test_modern_sequences[\x1b]30101\x1b\\-0-kitty_color_pop] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[12644-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[65440-0] PASSED
+tests/test_width.py::test_default_ignorable_zero_width[8293-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[65520-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[65521-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[65528-0] PASSED
-tests/test_width.py::test_default_ignorable_zero_width[8293-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[917504-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[917506-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[917535-0] PASSED
@@ -636,145 +1116,45 @@ tests/test_width.py::test_default_ignorable_zero_width[917632-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[917759-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[918000-0] PASSED
 tests/test_width.py::test_default_ignorable_zero_width[921599-0] PASSED
-tests/test_width.py::test_fitzpatrick_modifier_after_emoji PASSED
-tests/test_width.py::test_fitzpatrick_modifier_standalone_width PASSED
+tests/test_width.py::test_default_ignorable_exceptions[173-1] PASSED
+tests/test_width.py::test_default_ignorable_exceptions[4447-2] PASSED
+tests/test_width.py::test_hangul_filler_zero_width PASSED
 tests/test_width.py::test_halfwidth_hangul_filler_zero_width PASSED
 tests/test_width.py::test_hangul_choseong_filler_exception PASSED
-tests/test_width.py::test_hangul_filler_zero_width PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b8-restore_cursor] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1bD-scroll_forward] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1;1H-cursor_address] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1;1r-change_scroll_region] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1A-parm_up_cursor] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1S-parm_index] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1X-erase_chars] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[1d-row_address] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[?1049h-enter_fullscreen] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[A-cursor_up] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[H\x1b[2J-clear_screen] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[K-clr_eol] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[L-insert_line] PASSED
-tests/test_width.py::test_indeterminate_caps_covered_by_term_seq_pattern[\x1b[M-delete_line] PASSED
-tests/test_width.py::test_iter_sequences_lone_esc PASSED
-tests/test_width.py::test_modern_sequences[\x1bP$q"p\x1b\\-0-decrqss_query] PASSED
-tests/test_width.py::test_modern_sequences[\x1bP0;1;0q#0~-\x1b\\test-4-sixel_graphics_with_text] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]1337;CurrentDir=/home\x07-0-iterm2_currentdir] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]1337;CursorShape=1\x07-0-iterm2_cursor_shape] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]1337;File=inline=1:base64\x07img-3-iterm2_inline_image] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]1337;SetMark\x07test-4-iterm2_setmark] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]133;A\x07$ -2-shell_prompt_start] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]133;B\x07ls-2-shell_command_start] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]133;C\x07-0-shell_command_executed] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]133;D;0\x07-0-shell_command_finished] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]21;fg=?\x07-0-kitty_color_query] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]22;pointer\x07-0-kitty_pointer_shape] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]30001\x1b\\-0-kitty_color_push] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]30101\x1b\\-0-kitty_color_pop] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]5522;type=read\x07-0-kitty_clipboard_read] PASSED
-tests/test_width.py::test_modern_sequences[\x1b]99;i=1:d=0;Hello\x1b\\-0-kitty_notification] PASSED
-tests/test_width.py::test_modern_sequences[\x1b^private\x1b\\text-4-pm_with_text] PASSED
-tests/test_width.py::test_modern_sequences[\x1b_Ga=d\x07-0-kitty_graphics_delete] PASSED
-tests/test_width.py::test_modern_sequences[\x1b_Gf=100,i=1;base64data\x1b\\hello-5-kitty_graphics_with_text] PASSED
 tests/test_width.py::test_soft_hyphen_exception PASSED
-tests/test_width.py::test_tab_ignore_with_tabsize PASSED
-tests/test_width.py::test_vs16_after_control_chars PASSED
-tests/test_width.py::test_vs16_selector PASSED
-tests/test_width.py::test_width_basic[-0-empty] PASSED
-tests/test_width.py::test_width_basic[\U0001f468\u200d\U0001f469\u200d\U0001f467-2-ZWJ] PASSED
-tests/test_width.py::test_width_basic[\u30b3\u30f3\u30cb\u30c1\u30cf-10-CJK] PASSED
-tests/test_width.py::test_width_basic[cafe\u0301-4-combining] PASSED
-tests/test_width.py::test_width_basic[hello-5-ASCII] PASSED
-tests/test_width.py::test_width_control_codes_ignore[\x1b-0-lone_ESC] PASSED
-tests/test_width.py::test_width_control_codes_ignore[\x1b[31mred\x1b[0m-3-SGR_sequence] PASSED
-tests/test_width.py::test_width_control_codes_ignore[a\x1bb-2-lone_ESC_between] PASSED
-tests/test_width.py::test_width_control_codes_ignore[abc\nxy-5-LF] PASSED
-tests/test_width.py::test_width_control_codes_ignore[abc\x08d-4-backspace] PASSED
-tests/test_width.py::test_width_control_codes_ignore[hello\x00world-10-NUL] PASSED
-tests/test_width.py::test_width_control_codes_ignore[hello\x01world-10-C0_control] PASSED
-tests/test_width.py::test_width_control_codes_ignore[hello\x80world-10-C1_control] PASSED
-tests/test_width.py::test_width_control_codes_parse[\x1b[31mred\x1b[0m-3-SGR] PASSED
-tests/test_width.py::test_width_control_codes_parse[a\x1b[2Cb-4-cursor_right] PASSED
-tests/test_width.py::test_width_control_codes_parse[ab\x1b[Hcd-4-indeterminate] PASSED
-tests/test_width.py::test_width_control_codes_parse[abc\nxy-5-LF_vertical] PASSED
-tests/test_width.py::test_width_control_codes_parse[abc\rxy-3-CR] PASSED
-tests/test_width.py::test_width_control_codes_parse[abc\x08d-3-backspace] PASSED
-tests/test_width.py::test_width_control_codes_parse[abcd\x1b[2De-4-cursor_left] PASSED
-tests/test_width.py::test_width_control_codes_parse[hello\x01world-10-C0_control] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[\x1b!-1-ESC_unrecognized] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[\x1b-0-lone_ESC] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[\x1b[31mred\x1b[0m-3-SGR_sequence] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[a\x1b[2Cb-4-cursor_right] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[a\x1bb-2-lone_ESC_between] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[abc\rxy-3-CR] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[abc\x08d-3-backspace] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[hello\x00world-10-NUL] PASSED
-tests/test_width.py::test_width_control_codes_strict_allowed[hello\x07world-10-BEL] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\nworld-LF] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x01world-C0_control] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x1aworld-ctrl_z] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x1b[Aworld-cursor_up] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x1b[Hworld-cursor_home] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x7fworld-DEL] PASSED
-tests/test_width.py::test_width_control_codes_strict_raises[hello\x80world-C1_control] PASSED
-tests/test_width.py::test_width_edge_cases[*\x1b*-2-lone_ESC_between_text] PASSED
-tests/test_width.py::test_width_edge_cases[\x1b!-1-ESC_unrecognized] PASSED
-tests/test_width.py::test_width_edge_cases[\x1b-0-lone_ESC] PASSED
-tests/test_width.py::test_width_edge_cases[\x1b[31m\u30b3\x1b[0m-2-wide_with_escape] PASSED
-tests/test_width.py::test_width_edge_cases[\x1b[31m\x1b[0m-0-only_escapes] PASSED
-tests/test_width.py::test_width_edge_cases[\x1b[31mhello\x1b[0m world-11-mixed_content] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b(B-0-charset] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b[-0-Fe_CSI] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b[38;2;255;0;0m-0-RGB_SGR] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b[m-0-basic_SGR] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b]0;title\x07text-4-OSC_title] PASSED
-tests/test_width.py::test_width_escape_sequences[\x1b]8;;https://example.com\x07link\x1b]8;;\x07-4-OSC_hyperlink] PASSED
-tests/test_width.py::test_width_long_horizontal_fastpath PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b8-restore_cursor] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1bD-scroll_forward] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1bM-scroll_reverse] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1L-parm_insert_line] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1M-parm_delete_line] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1P-parm_dch] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1S-parm_index] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1T-parm_rindex] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[1X-erase_chars] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[?1049h-enter_fullscreen] PASSED
-tests/test_width.py::test_width_strict_indeterminate_raises[\x1b[?1049l-exit_fullscreen] PASSED
-tests/test_width.py::test_width_tabsize[\t-8-8-default] PASSED
-tests/test_width.py::test_width_tabsize[ab\t-4-4-tabsize_4] PASSED
-tests/test_width.py::test_width_tabsize[abc\t-8-8-after_text] PASSED
-tests/test_width.py::test_width_tabsize_zero PASSED
-tests/test_width.py::test_width_tabsize_zero_parse PASSED
-tests/test_width.py::test_width_unknown_control_codes PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b(0-enter_alt_charset_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b(B-exit_alt_charset_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b7-save_cursor] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b=-keypad_xmit] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b>-keypad_local] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1bH-set_tab] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[1m-enter_bold_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[23m-exit_italics_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[24m-exit_underline_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[27m-exit_standout_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[2m-enter_dim_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[39;49m-orig_pair] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3g-clear_all_tabs] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3m-enter_italics_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[3m-enter_standout_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[4l-exit_insert_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[4m-enter_underline_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[5m-enter_blink_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[7m-enter_reverse_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?12;25h-cursor_visible] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?25h-cursor_normal] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?25l-cursor_invisible] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[?5h\x1b[?5l-flash_screen_csi] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1b[m-exit_attribute_mode] PASSED
-tests/test_width.py::test_zero_width_sequences_matched_by_pattern[\x1bg-flash_screen_visual_bell] PASSED
-tests/test_width.py::test_zwj_with_non_emoji_chars PASSED
+tests/test_width.py::test_fitzpatrick_modifier_after_emoji PASSED
+tests/test_width.py::test_fitzpatrick_modifier_standalone_width PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1bc-ris] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1bl-memory_lock] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1bm-memory_unlock] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1bn-ls2] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1bo-ls3] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1b|-ls3r] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1b}-ls2r] PASSED
+tests/test_width.py::test_fs_sequences_matched[\x1b~-ls1r] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b7-decsc] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b8-decrc] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b=-deckpam] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b>-deckpnm] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b0-fp_0] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b1-fp_1] PASSED
+tests/test_width.py::test_fp_sequences_matched[\x1b9-fp_9] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b F-s7c1t] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b G-s8c1t] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b#3-decdhl_top] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b#4-decdhl_bottom] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b#5-decswl] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b#6-decdwl] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b#8-decaln] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b%G-utf8_designate] PASSED
+tests/test_width.py::test_nf_sequences_matched[\x1b%@-iso2022_return] PASSED
+tests/test_width.py::test_fs_sequence_embedded_in_text PASSED
+tests/test_width.py::test_nf_sequence_embedded_in_text PASSED
+tests/test_width.py::test_screen_title_sequences PASSED
+tests/test_width.py::test_ris_indeterminate PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
-============================= slowest 3 durations ==============================
-======== 754 passed, 10 skipped ========
+============================= slowest 10 durations =============================
+======== 1134 passed, 10 skipped ========
   py$(PYV): OK
   congratulations :)
