@@ -1,8 +1,8 @@
 We do not need to check coverage for this project.
 
---- build-1.4.4/pyproject.toml.orig
-+++ build-1.4.4/pyproject.toml
-@@ -80,9 +80,7 @@
+--- build-1.5.0/pyproject.toml.orig
++++ build-1.5.0/pyproject.toml
+@@ -90,9 +90,7 @@
  test = [
    "filelock >= 3",
    "pytest >= 6.2.4",
@@ -12,17 +12,17 @@ We do not need to check coverage for this project.
    "pytest-rerunfailures >= 9.1",
    "pytest-xdist >= 1.34",
    "wheel >= 0.36.0",
---- build-1.4.4/tox.ini.orig
-+++ build-1.4.4/tox.ini
-@@ -25,10 +25,7 @@
-     PYTHONWARNDEFAULTENCODING = 1
-     TEST_STATUS_DIR = {envtmpdir}
- commands =
--    pytest -ra --cov --cov-config pyproject.toml \
--      --cov-report=html:{envdir}/htmlcov --cov-context=test \
--      --cov-report=xml:{toxworkdir}/coverage.{envname}.xml \
--      --cov-report term-missing \
-+    pytest -ra \
-       {posargs:-n auto}
- dependency_groups =
-     test
+--- build-1.5.0/tox.toml.orig
++++ build-1.5.0/tox.toml
+@@ -16,10 +16,7 @@
+ pass_env = ["LC_ALL", "PIP_*", "PYTEST_*", "TERM"]
+ commands = [
+     [
+-        "pytest", "-ra", "--cov", "--cov-config", "pyproject.toml",
+-        "--cov-report=html:{envdir}/htmlcov", "--cov-context=test",
+-        "--cov-report=xml:{toxworkdir}/coverage.{envname}.xml",
+-        "--cov-report", "term-missing",
++        "pytest", "-ra",
+         { replace = "posargs", default = ["-n", "auto"], extend = true },
+     ],
+ ]
