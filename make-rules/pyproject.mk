@@ -98,7 +98,7 @@ $(BUILD_DIR)/%/.depend-test-pyproject: $(BUILD_DIR)/%/.installed
 
 # Add build dependencies from project metadata to REQUIRED_PACKAGES
 REQUIRED_PACKAGES_RESOLVED += $(BUILD_DIR)/META.depend.res
-$(BUILD_DIR)/META.depend.res: PYTHON_VERSION = $(firstword $(PYTHON_VERSIONS))
+$(BUILD_DIR)/META.depend.res: PYTHON_VERSION := $(firstword $(PYTHON_VERSIONS))
 $(BUILD_DIR)/META.depend.res: $(SOURCE_DIR)/.prep
 	$(MKDIR) $(BUILD_DIR)
 	# PYTHON_ENV is needed four times here to have the PYTHONPATH set
