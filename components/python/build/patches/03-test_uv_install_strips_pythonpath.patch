@@ -1,0 +1,12 @@
+https://github.com/pypa/build/issues/1062
+
+--- build-1.4.4/tests/test_env.py.orig
++++ build-1.4.4/tests/test_env.py
+@@ -37,6 +37,7 @@
+         assert env._env_backend.scripts_dir in extra['PATH']
+ 
+ 
++@pytest.mark.skipif(MISSING_UV, reason='uv executable not found')
+ def test_uv_install_strips_pythonpath(
+     mocker: pytest_mock.MockerFixture,
+     monkeypatch: pytest.MonkeyPatch,
