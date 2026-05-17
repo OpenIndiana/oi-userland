@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project anyio
+#   $WS_TOOLS/python-integrate-project -d python/anyio-39 anyio
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		anyio
-HUMAN_VERSION =			4.13.0
+HUMAN_VERSION =			4.12.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		High-level concurrency and networking framework on top of asyncio or Trio
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:334b70e641fd2221c1505b3890c69882fe4a2df910cba14d97019b90b24439dc
+	sha256:41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by anyio >= 4.13.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# anyio >= 4.13.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -42,10 +43,13 @@ PYTEST_ADDOPTS += --deselect tests/test_sockets.py::TestTCPStream::test_unretrie
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/exceptiongroup
 REQUIRED_PACKAGES.python += library/python/idna
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/exceptiongroup
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
