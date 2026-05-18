@@ -11,37 +11,36 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project jaraco.packaging
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.packaging jaraco_packaging
 #
 
 BUILD_STYLE = pyproject
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =		jaraco.packaging
-HUMAN_VERSION =			10.2.3
+COMPONENT_NAME =		jaraco_packaging
+HUMAN_VERSION =			10.4.0
 COMPONENT_SUMMARY =		tools to supplement packaging Python releases
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d726cc42faa62b2f70585cbe1176b4b469fe6d75f21b19034b688b4340917933
+	sha256:7537e3a2be1c90f8442442cec6e31a9a2fd0a022223b0986286f08492483fc88
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-COMPONENT_SRC =			jaraco_packaging-$(HUMAN_VERSION)
+# We temporarily build for Python 3.9 only because we do not have some
+# dependecies built for Python 3.14 yet.
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/build
-PYTHON_REQUIRED_PACKAGES += library/python/domdf-python-tools
-PYTHON_REQUIRED_PACKAGES += library/python/jaraco-context
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools
-PYTHON_REQUIRED_PACKAGES += library/python/setuptools-scm
-PYTHON_REQUIRED_PACKAGES += library/python/sphinx
-PYTHON_REQUIRED_PACKAGES += library/python/virtualenv
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/build
+REQUIRED_PACKAGES.python += library/python/coherent-licensed
+REQUIRED_PACKAGES.python += library/python/domdf-python-tools
+REQUIRED_PACKAGES.python += library/python/jaraco-context
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/sphinx
+REQUIRED_PACKAGES.python += library/python/virtualenv
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-checkdocs
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-enabler
-TEST_REQUIRED_PACKAGES.python += library/python/pytest-mypy
 TEST_REQUIRED_PACKAGES.python += library/python/types-docutils
