@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTTP-Tiny
-HUMAN_VERSION =			0.092
+HUMAN_VERSION =			0.094
 COMPONENT_SUMMARY =		A small, simple, correct HTTP/1.1 client
 COMPONENT_CPAN_AUTHOR =		HAARG
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:aeb59ac39d2f7bcbc6d09dd94ff5621e03d8a95abb12b49b392ccd35088c8ac1
+	sha256:a6841e99fc1b55d15de95947ccbd7b767becc51c7102197fa8f044df7ddc0743
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
