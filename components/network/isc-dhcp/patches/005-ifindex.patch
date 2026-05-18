@@ -1,0 +1,43 @@
+isc-dhcp: initialize ifr_index in discover path
+    
+I caught the dhcp server on my router sending occasional ACK packets
+out its external WAN interface (which should not be happening -- the
+router is a dhcp client of my ISP and it has no business acting as a
+DHCP server on that link).
+    
+After some investigation I discovered that, within dhcpd's interface
+data structures, all ifp_index values were zero, which meant that the
+IP_PKTINFO socket option used to route packets to the correct outbound
+interface was ignored and the packet was routed based on the
+destination IP address.
+    
+Most traffic from the DHCP server is unicast; the lack of a correct
+IP_PKTINFO option didn't cause trouble for these.
+    
+However, a few devices on one of my networks set the rarely-used BOOTP
+broadcast flag in their requests, which asks the server to send
+responses via IP & ethernet broadcast.  For more context on this, see
+https://www.rfc-editor.org/rfc/rfc2131.html#section-4.1 and
+https://www.rfc-editor.org/rfc/rfc1542#section-3.1.1
+    
+Without a nonzero interface index in the IP_PKTINFO to select an
+output interface, server responses were broadcast to all interfaces.
+They got to where they needed to go but they also went a few places
+they shouldn't have..
+    
+Fix:
+    
+Initialize ifr_index in the interface discovery path
+we use so that broadcast server responses go out using the correct
+interface.
+
+--- dhcp-4.4.3-P1/common/discover.c.~1~	Wed Sep 28 07:39:15 2022
++++ dhcp-4.4.3-P1/common/discover.c	Sun May 17 12:40:39 2026
+@@ -735,6 +735,7 @@
+ 			if (tif == NULL)
+ 				log_fatal("no space for ifp mockup.");
+ 			strcpy(tif->ifr_name, tmp->name);
++			tif->ifr_index = if_nametoindex(tmp->name);
+ 			tmp->ifp = tif;
+ 		}
+ 	}
