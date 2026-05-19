@@ -1,0 +1,20 @@
+firefox-16fdd6ac6d0c014c877eca1adcffc1b457b04f20/js/src/jit/MIR-wasm.cpp:529:27: error: cannot bind non-const lvalue reference of type 'signed char&' to a value of type 'char'
+  529 |     for (signed char& i : shuffleMask) {
+
+--- firefox-16fdd6ac6d0c014c877eca1adcffc1b457b04f20/js/src/jit/MIR-wasm.cpp.old
++++ firefox-16fdd6ac6d0c014c877eca1adcffc1b457b04f20/js/src/jit/MIR-wasm.cpp
+@@ -526,11 +526,11 @@
+     // will be overwritten by the subsequent shuffle analysis.
+     int8_t shuffleMask[16];
+     memcpy(shuffleMask, rhs()->toWasmFloatConstant()->toSimd128().bytes(), 16);
+-    for (signed char& i : shuffleMask) {
++    for (int i = 0; i < 16; i++) {
+       // Out-of-bounds lanes reference the zero vector; in many cases, the zero
+       // vector is removed by subsequent optimizations.
+-      if (i < 0 || i > 15) {
+-        i = 16;
++      if (shuffleMask[i] < 0 || shuffleMask[i] > 15) {
++        shuffleMask[i] = 16;
+       }
+     }
+     MWasmFloatConstant* zero =
