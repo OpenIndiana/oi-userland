@@ -20,11 +20,11 @@ CARGO_VENDOR = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		uv_build
-HUMAN_VERSION =			0.11.14
+HUMAN_VERSION =			0.11.15
 COMPONENT_SUMMARY =		The uv build backend
 COMPONENT_PROJECT_URL =		https://pypi.org/project/uv/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:89755665ec50d7f14dc4886cb88528990f00a6cd6b793b48c7bf17d86f29341e
+	sha256:21aa244bced4e9cbf0dfe01a43758299b8bad76033254e48701295cd13466e28
 COMPONENT_LICENSE =		Apache-2.0 OR MIT
 
 # https://github.com/astral-sh/uv/issues/16849
@@ -60,7 +60,7 @@ COMPONENT_TEST_TRANSFORMS += "| ( while true ; do \
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
+REQUIRED_PACKAGES += compress/xz
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES.python += library/python/maturin
 REQUIRED_PACKAGES.python += runtime/python
