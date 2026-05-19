@@ -20,11 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		decorator
-HUMAN_VERSION =			5.2.1
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			5.3.1
 COMPONENT_SUMMARY =		Decorators for Humans
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360
+	sha256:4cbcdd55a6efadb9dbea26b858f4fb3264567b52d69ca0d25b721b553f60ea82
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -32,6 +31,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 TEST_STYLE = custom
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing needs to find the documentation module in the build directory
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR):$(COMPONENT_TEST_DIR)/tests
 
 # Custom testing
 COMPONENT_TEST_CMD = $(PYTHON) tests/test.py
