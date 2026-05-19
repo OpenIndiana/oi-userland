@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project importlib_resources
+#   $WS_TOOLS/python-integrate-project -d python/importlib_resources-39 importlib_resources
 #
 
 BUILD_STYLE = pyproject
@@ -19,27 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		importlib_resources
-HUMAN_VERSION =			7.1.0
+HUMAN_VERSION =			6.5.2
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Read resources from Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0722d4c6212489c530f2a145a34c0a7a3b4721bc96a15fada5930e2a0b760708
+	sha256:185f87adef5bcc288449d98fb4fba07cea78bc036455dd44c5fc4a2fe78fed2c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# importlib_resources --> jaraco.test ==> jaraco.collections ==> jaraco.text --> pytest-enabler ==> importlib_resources
-# importlib_resources --> pytest-enabler ==> importlib_resources
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by importlib-resources >= 7.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# importlib-resources >= 7.0.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -47,9 +36,9 @@ include $(WS_MAKE_RULES)/common.mk
 COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/coherent-licensed
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
+REQUIRED_PACKAGES.python += library/python/zipp
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/jaraco-test
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
