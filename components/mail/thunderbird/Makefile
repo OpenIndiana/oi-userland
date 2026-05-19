@@ -42,10 +42,10 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
 # CANDIDATE_BUILD= 1
-# CANDIDATE_BETA= 5
+# CANDIDATE_BETA= 4
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	150.0.2
+COMPONENT_VERSION =	151.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:87d03a64de92de565328c0ea7ab921101217da4188fbee3f444f91b76cac1e5c
+	 sha256:c8a8ca3ca31dffa75eca3f330e03c390bff6fa24333f180d9e9a994dfb4306ae
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -71,6 +71,9 @@ endif
 COMPONENT_ARCHIVE_URL =	$(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI = mail/thunderbird
 COMPONENT_CLASSIFICATION = Applications/Internet
+
+# Use rust version specified at https://firefox-source-docs.mozilla.org/writing-rust-code/update-policy.html
+RUST_VERSION = 1.94.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -99,9 +102,6 @@ LANG_FILES_LOCATION= \
 endif
 
 CONFIGURE_DEFAULT_DIRS=no
-
-# Use rust version specified at https://firefox-source-docs.mozilla.org/writing-rust-code/update-policy.html
-RUST_VERSION = 1.93.0
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -132,7 +132,7 @@ MOZCONFIG_DEBUG =	/dev/null
 MOZCONFIG_NON_DEBUG =	$(MOZCONFIG)
 endif
 
-ifndef MACH__BUILD
+ifndef MACH_BUILD
 CONFIGURE_ENV=
 CONFIGURE_OPTIONS=
 
@@ -158,8 +158,6 @@ CONFIGURE_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 COMPONENT_BUILD_ENV += LD_LIBRARY_PATH=$(GCC_LIBDIR)
 
 # set custom mozbuild path
-CONFIGURE_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
-COMPONENT_BUILD_ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 ifndef MACH_BUILD
 ENV += MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 endif
@@ -296,10 +294,12 @@ ifdef MACH_BUILD
 $(SOURCE_DIR)/.built: $(SOURCE_DIR)/.prep
 	$(RM) -r $(BUILD_DIR); $(MKDIR) $(BUILD_DIR)
 	$(COMPONENT_PRE_BUILD_ACTION)
+	export MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 	$(ENV) $(COMPONENT_BUILD_ENV) $(SOURCE_DIR)/mach build --verbose
 
 # gmake install does this:
 $(SOURCE_DIR)/.installed: $(SOURCE_DIR)/.built
+	export MOZBUILD_STATE_PATH=$(BUILD_DIR)/mozbuild
 	DESTDIR=$(PROTO_DIR) $(SOURCE_DIR)/mach install
 	$(COMPONENT_POST_INSTALL_ACTION)
 
