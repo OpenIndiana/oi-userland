@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project persistent
+#   $WS_TOOLS/python-integrate-project -d python/persistent-39 persistent
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		persistent
-HUMAN_VERSION =			6.6
+HUMAN_VERSION =			6.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Translucent persistent objects
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e3b69f4dfdcc21713032fd690d32d4648d8581d510884415f04a3e849c6e1ccb
+	sha256:01d94668b54d3d5fbab9eb41d81f41e3d8407a7233fd2a928a6417e4dc11d429
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by persistent >= 6.4
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+COMPONENT_VERSION =		6.5
+
+# persistent >= 6.4 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
