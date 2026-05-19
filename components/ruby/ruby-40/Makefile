@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	4.0.4
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Ruby, RubyGems, and Rake
 COMPONENT_PROJECT_URL=	https://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,6 +46,9 @@ include $(WS_MAKE_RULES)/common.mk
 PATH= $(PATH.gnu)
 
 CFLAGS += $(XPG7MODE)
+
+# avoid problem: fatal: $HOME not set
+ENV += HOME=$(HOME)
 
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
