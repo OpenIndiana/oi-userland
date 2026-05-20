@@ -19,24 +19,23 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTML-Parser
-HUMAN_VERSION =			3.83
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			3.85
 COMPONENT_SUMMARY =		HTML parser class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7278ce9791256132b26a71a5719451844704bb9674b58302c3486df43584f8c0
+	sha256:fd42ba6abe07241cf0ad57be246c3980065f683e4465e59b46af9efebc8e0c71
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/html-tagset
-PERL_REQUIRED_PACKAGES += library/perl-5/http-message
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/html-tagset
+REQUIRED_PACKAGES.perl += library/perl-5/http-message
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
