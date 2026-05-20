@@ -19,13 +19,12 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		HTTP-Daemon
-HUMAN_VERSION =			6.16
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			6.17
 COMPONENT_SUMMARY =		A simple http server class
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b38d092725e6fa4e0c4dc2a47e157070491bafa0dbe16c78a358e806aa7e173d
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:16281580c40e23108d028434698b5d7d53637bf904c9df822481e253cbec920c
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -42,14 +41,13 @@ include $(WS_MAKE_RULES)/common.mk
 PERL_TEST_BOOTSTRAP = yes
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/http-date
-PERL_REQUIRED_PACKAGES += library/perl-5/http-message
-PERL_REQUIRED_PACKAGES += library/perl-5/io-socket-ip
-PERL_REQUIRED_PACKAGES += library/perl-5/lwp-mediatypes
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/http-date
+REQUIRED_PACKAGES.perl += library/perl-5/http-message
+REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ip
+REQUIRED_PACKAGES.perl += library/perl-5/lwp-mediatypes
+REQUIRED_PACKAGES.perl += library/perl-5/module-build-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
