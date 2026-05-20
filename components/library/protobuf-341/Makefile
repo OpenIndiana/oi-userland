@@ -31,13 +31,13 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         protobuf
-COMPONENT_VERSION=	34.0
+COMPONENT_VERSION=	34.1
 COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=      Protocol Buffers - Google data interchange format
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/google/protobuf/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:61c47fabb1190e0acb2d47e67f31baac05d9b4ce69d7d1b43f6c83744f83898e
+COMPONENT_ARCHIVE_HASH=	sha256:a83103b7ed3afaeedee9a212c8f65825444f58144f5e075b73c83f2b4ff27b62
 COMPONENT_ARCHIVE_URL=  https://github.com/google/protobuf/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=         library/c++/protobuf
 COMPONENT_CLASSIFICATION=System/Libraries
