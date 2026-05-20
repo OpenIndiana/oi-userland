@@ -1,20 +1,27 @@
 PASS    00-hello
 SKIP    acls-default (Your filesystem has ACLs disabled)
 SKIP    acls (Your filesystem has ACLs disabled)
+PASS    alt-dest-symlink-race
 PASS    alt-dest
 PASS    atimes
 PASS    backup
+SKIP    bare-do-open-symlink-race (secure_relative_open relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
 PASS    batch-mode
+SKIP    chdir-symlink-race (secure chdir relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
 PASS    chgrp
 PASS    chmod-option
+SKIP    chmod-symlink-race (do_chmod_at relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
 PASS    chmod-temp-dir
 PASS    chmod
 SKIP    chown-fake (Can't chown (probably need root))
 PASS    chown
 PASS    clean-fname-underflow
+PASS    copy-dest-source-symlink
 SKIP    crtimes (Rsync is configured without crtimes support)
+SKIP    daemon-chroot-acl (test is Linux-specific (uses chroot+unshare))
 PASS    daemon-gzip-download
 PASS    daemon-gzip-upload
+PASS    daemon-refuse-compress
 PASS    daemon
 PASS    delay-updates
 PASS    delete
@@ -36,10 +43,14 @@ PASS    missing
 PASS    mkpath
 SKIP    open-noatime (O_NOATIME is only supported on Linux)
 SKIP    protected-regular (Can't find protected_regular setting (only available on Linux))
+PASS    proxy-response-line-too-long
 PASS    relative
 PASS    safe-links
+PASS    secure-relpath-validation
+SKIP    sender-flist-symlink-leak (secure change_dir relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
 SKIP    simd-checksum (simdtest not built (SIMD not available))
 PASS    ssh-basic
+SKIP    symlink-dirlink-basis (secure_relative_open lacks RESOLVE_BENEATH equivalent on SunOS; issue #715 still affects this platform)
 PASS    symlink-ignore
 PASS    trimslash
 PASS    unsafe-byname
