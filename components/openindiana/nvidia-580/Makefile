@@ -23,7 +23,7 @@ include ../../../make-rules/shared-macros.mk
 # https://docs.nvidia.com/datacenter/tesla/drivers/supported-drivers-and-cuda-toolkit-versions.html
 
 COMPONENT_NAME =		nvidia
-HUMAN_VERSION =			580.159.03
+HUMAN_VERSION =			580.159.04
 COMPONENT_VERSION =		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/\.0*/./g')
 COMPONENT_FMRI =		driver/graphics/nvidia-$(firstword $(subst ., ,$(HUMAN_VERSION)))
 COMPONENT_SUMMARY =		NVIDIA Graphics System Software
@@ -31,7 +31,7 @@ COMPONENT_CLASSIFICATION =	Drivers/Display
 COMPONENT_PROJECT_URL =		https://www.nvidia.com/en-us/drivers/unix/
 COMPONENT_SRC =			NVIDIA-Solaris-x86-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).run
-COMPONENT_ARCHIVE_HASH =	sha256:503a18a90842fc855aa72c7f4b760e6dd2e8b0566ba7655848172d0fee30620f
+COMPONENT_ARCHIVE_HASH =	sha256:ecd79410d92a6cbdde65642fe01b3d0d5201ebc87d6f360f8d908071bfe5ff97
 COMPONENT_ARCHIVE_URL =		https://download.nvidia.com/solaris/$(HUMAN_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE =		NVIDIA
 
