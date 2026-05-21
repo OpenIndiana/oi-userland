@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Sereal-Decoder
-HUMAN_VERSION =			5.005
+HUMAN_VERSION =			5.006
 COMPONENT_SUMMARY =		Fast, compact, powerful binary deserialization
 COMPONENT_CPAN_AUTHOR =		YVES
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c5a6e58ab9819b562064ca51dd61e30c0cb7bff593fc44ae1410f27336b304c6
+	sha256:7991855e9181a379c9b0122fe8fc2f68e3449c91616a8c357926f1161f684768
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
