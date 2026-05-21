@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project testscenarios
+#   $WS_TOOLS/python-integrate-project -d python/testscenarios-39 testscenarios
 #
 
 BUILD_STYLE = pyproject
@@ -19,11 +19,12 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		testscenarios
-HUMAN_VERSION =			0.6.1
+HUMAN_VERSION =			0.5.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Testscenarios, a unittest extension for dependency injection
 COMPONENT_PROJECT_URL =		https://github.com/testing-cabal/testscenarios
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3168bc41426b8d39c23dc50e56cfdd3714eeed296ad4734c78eb26642f60a006
+	sha256:c257cb6b90ea7e6f8fef3158121d430543412c9a87df30b5dde6ec8b9b57a2b6
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 # Force unittest test style because the automatically detected pytest does not
@@ -32,24 +33,16 @@ COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 # and https://github.com/testing-cabal/testscenarios/issues/5
 TEST_STYLE = unittest
 
-# Python 3.9 is not supported by testscenarios >= 0.6
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# testscenarios >= 0.6 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
-
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_EXTRAS += test
 
 # https://bugs.launchpad.net/testscenarios/+bug/1930149/comments/3
 COMPONENT_TEST_ARGS += testscenarios.tests.test_suite
 
-# We need to test modules from build directory because README.rst is not
-# installed.  See also https://github.com/testing-cabal/testscenarios/issues/28
-COMPONENT_TEST_ENV += PYTHONPATH=$(COMPONENT_TEST_DIR)
-
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatch-vcs
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/pbr
+REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/testtools
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/testtools
