@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project aiohappyeyeballs
+#   $WS_TOOLS/python-integrate-project -d python/aiohappyeyeballs-39 aiohappyeyeballs
 #
 
 BUILD_STYLE = pyproject
@@ -19,17 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		aiohappyeyeballs
-HUMAN_VERSION =			2.6.2
+HUMAN_VERSION =			2.6.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Happy Eyeballs for asyncio
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e202810ee718bd01fc6ef49e8ea53d023d5cb6b581076d7925aa499fa55dbe64
+	sha256:c3f9d0113123803ccadfdf3f0faa505bc78e6a72d1cc4806cbd719826e943558
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by aiohappyeyeballs >= 2.6.2
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# aiohappyeyeballs >= 2.6.2 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
