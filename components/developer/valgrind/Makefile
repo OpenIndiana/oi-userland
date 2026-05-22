@@ -30,12 +30,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		valgrind
-COMPONENT_VERSION=	3.27.0
+COMPONENT_VERSION=	3.27.1
 COMPONENT_FMRI=		developer/debug/valgrind
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:5b5937de8257ee8f51698ea71b9711adce98061aa07daa4a685efc3af9215bef
+COMPONENT_ARCHIVE_HASH=	sha256:5d589152eb8071c02feab8ce6ab719e431a1fbc3e2b1700f5432632a8b9264dc
 COMPONENT_ARCHIVE_URL=	https://sourceware.org/pub/valgrind/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL =	https://valgrind.org
 COMPONENT_SUMMARY=	Valgrind: instrumentation framework and tools to detect memory and threading problems
@@ -72,7 +72,7 @@ COMPONENT_POST_BUILD_ACTION += ( cd $(@D)/docs && $(ENV) $(GMAKE) man-pages )
 
 #
 # currently 3.27.0
-# == 918 tests, 5 stderr failures, 0 stdout failures, 8 stderrB failures, 3 stdoutB failures, 1 post failure ==
+# == 919 tests, 5 stderr failures, 0 stdout failures, 8 stderrB failures, 3 stdoutB failures, 1 post failure ==
 #
 COMPONENT_TEST_TARGETS = regtest
 # check just overal test results
