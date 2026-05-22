@@ -21,25 +21,22 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS = 64_and_32
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gpgme
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	2.1.0
 COMPONENT_SUMMARY=	GnuPG Made Easy
 COMPONENT_DESCRIPTION=	A library designed to make access to GnuPG easier for applications
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://www.gnupg.org/related_software/gpgme/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:821ab0695c842eab51752a81980c92b0410c7eadd04103f791d5d2a526784966
+COMPONENT_ARCHIVE_HASH=	sha256:841c5ea53fc26259f4fbf0e8bde982dea1b8a1ca0cb77e681c82b050566bf92b
 COMPONENT_ARCHIVE_URL=	https://www.gnupg.org/ftp/gcrypt/gpgme/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	library/security/gpgme
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_LICENSE=	GPLv2,LGPLv2
 
-# Only test the 64 bit variant
-TEST_TARGET= $(TEST_64)
 include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && PATH=$(PATH.gnu) autoreconf -fi )
@@ -55,7 +52,6 @@ CFLAGS += $(gcc_C99_ENABLE)
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 
-#CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-gpg-error-prefix=$(CONFIGURE_PREFIX)
