@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 348 items
+collecting ... collected 369 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
 tests/test_algorithms.py::TestAlgorithms::test_check_crypto_key_type_should_fail_when_not_using_crypto PASSED
@@ -24,6 +24,13 @@ tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_value
 tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_values[True] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_not_hmac_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_empty_json PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_empty_key[0] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_empty_key[1] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_rsa_pub.json] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_ec_pub_P-256.json] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_okp_pub_Ed25519.json] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_hmac.json] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_accepts_json_without_kty PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_parse_pem_public_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_pem_private_key_bytes PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_unicode_key PASSED
@@ -109,7 +116,7 @@ tests/test_algorithms.py::TestECCurveValidation::test_jwt_encode_decode_rejects_
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs256 PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs384 PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_short_key_warns_by_default_hs512 PASSED
-tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_empty_key_returns_warning_message PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_empty_key_rejected_outright PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_exact_minimum_no_warning PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_above_minimum_no_warning PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_hmac_exact_minimum_hs384 PASSED
@@ -125,6 +132,7 @@ tests/test_algorithms.py::TestKeyLengthValidation::test_pyjws_encode_no_warning_
 tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_warns_short_hmac_key PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_enforces_short_hmac_key PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_decode_enforces_short_hmac_key PASSED
+tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_decode_honors_per_call_enforce_minimum_key_length PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_pyjwt_encode_no_warning_adequate_key PASSED
 tests/test_algorithms.py::TestKeyLengthValidation::test_global_register_algorithm_works_with_encode PASSED
 tests/test_api_jwk.py::TestPyJWK::test_should_load_key_from_jwk_data_dict PASSED
@@ -178,6 +186,7 @@ tests/test_api_jws.py::TestJWS::test_decodes_complete_valid_jws PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_with_jwk PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_with_jwk_and_no_algorithm PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_with_jwk_and_mismatched_algorithm PASSED
+tests/test_api_jws.py::TestJWS::test_decodes_with_jwk_rejects_header_alg_outside_jwk_alg PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_valid_es384_jws PASSED
 tests/test_api_jws.py::TestJWS::test_decodes_valid_rs384_jws PASSED
 tests/test_api_jws.py::TestJWS::test_load_verify_valid_jws PASSED
@@ -223,6 +232,10 @@ tests/test_api_jws.py::TestJWS::test_encode_with_typ_without_keywords PASSED
 tests/test_api_jws.py::TestJWS::test_encode_fails_on_invalid_kid_types PASSED
 tests/test_api_jws.py::TestJWS::test_encode_decode_with_detached_content PASSED
 tests/test_api_jws.py::TestJWS::test_encode_detached_content_with_b64_header PASSED
+tests/test_api_jws.py::TestJWS::test_encode_b64_false_auto_adds_b64_to_crit PASSED
+tests/test_api_jws.py::TestJWS::test_encode_b64_false_preserves_existing_crit_entries PASSED
+tests/test_api_jws.py::TestJWS::test_decode_b64_false_rejects_non_empty_payload_segment PASSED
+tests/test_api_jws.py::TestJWS::test_decode_b64_false_without_crit_b64_is_rejected PASSED
 tests/test_api_jws.py::TestJWS::test_decode_detached_content_without_proper_argument PASSED
 tests/test_api_jws.py::TestJWS::test_decode_warns_on_unsupported_kwarg PASSED
 tests/test_api_jws.py::TestJWS::test_decode_complete_warns_on_unuspported_kwarg PASSED
@@ -327,11 +340,19 @@ tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_key_from_jwt PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set_caches_result PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_cache_expired_result PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_cache_disabled PASSED
-tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_failed_request_should_clear_cache PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_failed_refresh_preserves_cached_jwks PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_failed_request_should_raise_connection_error PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_refresh_cache PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_no_matching_kid_after_second_attempt PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_invalid_lifespan PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[file:///etc/passwd] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[ftp://example.org/keys.json] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[data:application/json,{"keys":[]}] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[/etc/passwd] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[ldap://internal.test/jwks] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_accepts_http_https_schemes[http://localhost/jwks.json] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_accepts_http_https_schemes[https://example.test/jwks.json] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_accepts_http_https_schemes[HTTPS://Example.Test/jwks.json] PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_timeout PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_default PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_sslcontext_no_ca PASSED
@@ -357,6 +378,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 344 passed, 4 skipped ========
+======== 365 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
