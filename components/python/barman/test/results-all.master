@@ -3,7 +3,7 @@ py$(PYV): commands[0]> python -m pytest tests
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 1516 items / 2 deselected / 1514 selected
+collecting ... collected 1997 items / 10 deselected / 1987 selected
 
 tests/storage/test_file_stats.py::TestFileStats::test_file_exists_false PASSED
 tests/storage/test_local_file_manager.py::TestLocalFileManager::test_file_exists_false PASSED
@@ -47,13 +47,23 @@ tests/test_annotations.py::TestKeepManagerMixin::test_release_when_no_keep PASSE
 tests/test_annotations.py::TestKeepManagerMixinCloud::test_should_keep_backup_passes_use_cache_option PASSED
 tests/test_annotations.py::TestKeepManagerMixinCloud::test_get_keep_target_passes_use_cache_option PASSED
 tests/test_backup.py::TestBackup::test_backup_maximum_age PASSED
+tests/test_backup.py::TestBackup::test_validate_last_backup_min_size PASSED
 tests/test_backup.py::TestBackup::test_keyboard_interrupt PASSED
 tests/test_backup.py::TestBackup::test_dateutil_parser PASSED
 tests/test_backup.py::TestBackup::test_delete_backup PASSED
+tests/test_backup.py::TestBackup::test_delete_cloud_backup_data PASSED
+tests/test_backup.py::TestBackup::test_delete_cloud_backup_data_check_object_lock[False] PASSED
+tests/test_backup.py::TestBackup::test_delete_cloud_backup_data_deleting_manifest_fails PASSED
+tests/test_backup.py::TestBackup::test_keep_backup[True] PASSED
+tests/test_backup.py::TestBackup::test_keep_backup[False] PASSED
+tests/test_backup.py::TestBackup::test_release_keep[True] PASSED
+tests/test_backup.py::TestBackup::test_release_keep[False] PASSED
 tests/test_backup.py::TestBackup::test_set_backup_sizes[True] PASSED
 tests/test_backup.py::TestBackup::test_set_backup_sizes[False] PASSED
 tests/test_backup.py::TestBackup::test_available_backups PASSED
 tests/test_backup.py::TestBackup::test_load_backup_cache PASSED
+tests/test_backup.py::TestBackup::test_load_backup_cache_loads_from_cloud_when_server_is_disabled PASSED
+tests/test_backup.py::TestBackup::test_load_backups_from_cloud PASSED
 tests/test_backup.py::TestBackup::test_backup_cache_add PASSED
 tests/test_backup.py::TestBackup::test_backup_cache_remove PASSED
 tests/test_backup.py::TestBackup::test_get_backup PASSED
@@ -104,8 +114,116 @@ tests/test_backup.py::TestWalCleanup::test_delete_wal_directory_when_feasible PA
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_nominal PASSED
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_exec_not_found PASSED
 tests/test_backup.py::TestVerifyBackup::test_verify_backup_failed_cmd PASSED
+tests/test_backup.py::TestVerifyBackup::test_verify_backup_not_supported_with_cloud PASSED
+tests/test_backup.py::TestCloudBackup::test_cloud_backup_method PASSED
+tests/test_backup.py::TestCloudBackup::test_cloud_wal_archive_success PASSED
+tests/test_backup.py::TestCloudBackup::test_cloud_wal_archive_with_parallel PASSED
+tests/test_backup.py::TestCloudBackup::test_cloud_wal_archive_invalid_wal_storage_strategy PASSED
+tests/test_backup.py::TestCloudBackup::test_cloud_wal_restore PASSED
 tests/test_backup.py::TestSnapshotBackup::test_snapshot_backup_method PASSED
 tests/test_backup.py::TestSnapshotBackup::test_snapshot_delete PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_success PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression[None-r] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression[gzip-r:gz] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression[bzip2-r:bz2] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression[xz-r:xz] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_round_trip[gzip-r:gz] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_round_trip[bzip2-r:bz2] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_round_trip[xz-r:xz] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level[gzip-compresslevel] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level[bzip2-compresslevel] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level[xz-preset] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_ignored_on_old_python[gzip-compresslevel-running_version0-required_version0] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_ignored_on_old_python[bzip2-compresslevel-running_version1-required_version1] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_compression_level_ignored_on_old_python[xz-preset-running_version2-required_version2] PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_integration PASSED
+tests/test_backup.py::TestExportBackup::test_export_backup_metadata_first_ordering PASSED
+tests/test_backup.py::TestExportBackup::test_add_wal_data_to_tar PASSED
+tests/test_backup.py::TestExportBackup::test_add_wal_data_to_tar_only_includes_required_wals PASSED
+tests/test_backup.py::TestExportBackup::test_add_wal_data_to_tar_preserves_compression_metadata PASSED
+tests/test_backup.py::TestExportBackup::test_add_wal_data_to_tar_missing_wal_file_raises PASSED
+tests/test_backup.py::TestExportBackup::test_add_wal_data_to_tar_wal_not_in_xlogdb_raises PASSED
+tests/test_backup.py::TestExportBackup::test_add_json_to_tar PASSED
+tests/test_backup.py::TestExportBackup::test_add_metadata_to_tar PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_success PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_identity_mismatch PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_version_mismatch_warns PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_missing_identity_json PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_missing_backup_info PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_missing_backup_directory PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_duplicate_backup_id PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_incremental_refused PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_cleanup_on_failure PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_path_traversal_rejected PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_rejects_sibling_prefix_collision PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_supports_compressed_formats[export.tar-w] PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_supports_compressed_formats[export.tar.gz-w:gz] PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_supports_compressed_formats[export.tar.bz2-w:bz2] PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_supports_compressed_formats[export.tar.xz-w:xz] PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_unsafe_member_type_rejected PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_skips_pg_tblspc_symlinks PASSED
+tests/test_backup.py::TestImportBackup::test_extract_tarball_rejects_nested_pg_tblspc_symlink PASSED
+tests/test_backup.py::TestImportBackup::test_reconstruct_tablespace_symlinks_creates_links PASSED
+tests/test_backup.py::TestImportBackup::test_reconstruct_tablespace_symlinks_noop_when_no_tablespaces PASSED
+tests/test_backup.py::TestImportBackup::test_reconstruct_tablespace_symlinks_raises_on_existing_directory PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_with_tablespaces PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_invalid_tarball PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_metadata_failure_rolls_back_data PASSED
+tests/test_backup.py::TestImportBackup::test_read_identity_from_tarball_invalid_json PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_identity_missing_systemid PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_success PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_missing_required_wal PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_listed_wal_missing_from_disk PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_malformed_xlogdb PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_conflict_in_server_xlogdb PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_conflict_on_disk PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_many_conflicts_truncates PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_idempotent_reimport PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_conflict_when_content_differs PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staged_wals_conflict_when_xlogdb_line_differs PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_complete PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_missing_entry[backup-'backup/' directory] PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_missing_entry[backup.info-'backup.info' file] PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_missing_entry[wals-'wals/' directory] PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_missing_entry[xlog.db-'xlog.db' file] PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_file_in_place_of_directory PASSED
+tests/test_backup.py::TestImportBackup::test_verify_staging_layout_directory_in_place_of_file PASSED
+tests/test_backup.py::TestImportBackup::test_iter_tarball_xlogdb_normal PASSED
+tests/test_backup.py::TestImportBackup::test_iter_tarball_xlogdb_missing_file PASSED
+tests/test_backup.py::TestImportBackup::test_iter_tarball_xlogdb_malformed_line PASSED
+tests/test_backup.py::TestImportBackup::test_iter_tarball_xlogdb_skips_blank_lines PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_identical_lines PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_compression_only_diff PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_non_compression_field_diff[000000010000000000000001\t16\t1712994000.0\tgzip\tNone-000000010000000000000002\t16\t1712994000.0\tgzip\tNone-name] PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_non_compression_field_diff[000000010000000000000001\t16\t1712994000.0\tgzip\tNone-000000010000000000000001\t32\t1712994000.0\tgzip\tNone-size] PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_non_compression_field_diff[000000010000000000000001\t16\t1712994000.0\tgzip\tNone-000000010000000000000001\t16\t9999999999.0\tgzip\tNone-time] PASSED
+tests/test_backup.py::TestImportBackup::test_xlogdb_metadata_match_non_compression_field_diff[000000010000000000000001\t16\t1712994000.0\tgzip\tNone-000000010000000000000001\t16\t1712994000.0\tgzip\taes256-encryption] PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_clean_import PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_idempotent PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_entry_only PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_file_only PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_xlogdb_line_differs PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_file_content_differs PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_compression_differs_is_idempotent PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_encryption_differs_is_conflict PASSED
+tests/test_backup.py::TestImportBackup::test_wal_conflicts_with_server_different_name_in_server_line PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_moves_files_and_merges_xlogdb PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_merge_interleaves_correctly PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_skips_idempotent_entries PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_into_empty_xlogdb PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_creates_hash_dirs PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_rollback_on_failure PASSED
+tests/test_backup.py::TestImportBackup::test_rollback_wal_import_removes_files_and_dirs PASSED
+tests/test_backup.py::TestImportBackup::test_rollback_wal_import_preserves_non_empty_dirs PASSED
+tests/test_backup.py::TestImportBackup::test_rollback_wal_import_tolerates_already_removed_files PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wals_rollback_closure PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_full_success_with_wals PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_metadata_failure_rolls_back_wals PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wal_import_failure_rolls_back_data PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_missing_wals_directory_in_tarball PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_wal_conflict_blocks_import PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_applies_keep_standalone_annotation PASSED
+tests/test_backup.py::TestImportBackup::test_import_backup_keep_failure_warns_but_succeeds PASSED
 tests/test_backup_manifest.py::TestFileIdentity::test_get_relative_path[test_case0] PASSED
 tests/test_backup_manifest.py::TestFileIdentity::test_get_relative_path[test_case1] PASSED
 tests/test_backup_manifest.py::TestFileIdentity::test_get_relative_path[test_case2] PASSED
@@ -164,6 +282,7 @@ tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_runn
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_running_as_unsupported_hook PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_status_is_not_DONE PASSED
 tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_backup_name_set_when_hook_script PASSED
+tests/test_barman_cloud_backup.py::TestCloudBackupHookScript::test_error_if_compression_set_when_hook_script PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_fails_if_no_backup_id_provided PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_add_keep_fails_if_no_target_release_or_status_is_provided PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeepArguments::test_exits_on_connectivity_test PASSED
@@ -176,6 +295,9 @@ tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_re
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_status PASSED
 tests/test_barman_cloud_backup_keep.py::TestCloudBackupKeep::test_barman_keep_status_nokeep PASSED
 tests/test_barman_cloud_backup_list.py::TestCloudBackupList::test_cloud_backup_list PASSED
+tests/test_barman_cloud_backup_list.py::TestCloudBackupList::test_started_backup_visible_in_listing PASSED
+tests/test_barman_cloud_backup_list.py::TestCloudBackupList::test_done_backup_not_affected_by_started_backup PASSED
+tests/test_barman_cloud_backup_list.py::TestCloudBackupList::test_started_backup_appears_in_json_output PASSED
 tests/test_barman_cloud_check_wal_archive.py::TestCloudCheckWalArchive::test_exits_on_connectivity_test PASSED
 tests/test_barman_cloud_check_wal_archive.py::TestCloudCheckWalArchive::test_check_wal_archive_no_args PASSED
 tests/test_barman_cloud_check_wal_archive.py::TestCloudCheckWalArchive::test_check_wal_archive_missing_bucket PASSED
@@ -207,6 +329,7 @@ tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_with_backup_i
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_with_backup_id_auto_with_target_tli[20250108T120000-2-2] PASSED
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_with_backup_id_auto_and_no_backup_id_found_from_targets PASSED
 tests/test_barman_cloud_restore.py::TestCloudRestore::test_restore_mutually_exclusive_targets PASSED
+tests/test_barman_cloud_restore.py::TestAutoRestoreExcludesStartedBackups::test_started_backup_excluded_from_available_backups PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderObjectStore::test_download_backup PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderObjectStore::test_download_backup_recovery_dir_exists PASSED
 tests/test_barman_cloud_restore.py::TestCloudBackupDownloaderSnapshot::test_download_backup PASSED
@@ -321,6 +444,9 @@ tests/test_cli.py::TestCli::test_restore_get_wal[-True-False-True] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-False-True] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-False-True-False] PASSED
 tests/test_cli.py::TestCli::test_restore_get_wal[get-wal-True-False-True] PASSED
+tests/test_cli.py::TestCli::test_restore_no_get_wal_cloud_storage_fallback PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal_enabled_when_no_get_wal_flag_with_cloud_storage PASSED
+tests/test_cli.py::TestCli::test_restore_get_wal_enabled_when_not_in_recovery_options_with_cloud_storage PASSED
 tests/test_cli.py::TestCli::test_restore_delta_restore[-False-False-False] PASSED
 tests/test_cli.py::TestCli::test_restore_delta_restore[-False-True-False] PASSED
 tests/test_cli.py::TestCli::test_restore_delta_restore[-True-False-True] PASSED
@@ -374,6 +500,7 @@ tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-False-False] P
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[False-True-True] PASSED
 tests/test_cli.py::TestCli::test_backup_immediate_checkpoint[True-True-True] PASSED
 tests/test_cli.py::TestCli::test_generate_manifest PASSED
+tests/test_cli.py::TestCli::test_generate_manifest_not_supported_in_cloud PASSED
 tests/test_cli.py::TestCli::test_receive_wal_inactive_server[None-receive_wal] PASSED
 tests/test_cli.py::TestCli::test_receive_wal_inactive_server[create_slot-create_physical_repslot] PASSED
 tests/test_cli.py::TestCli::test_receive_wal_inactive_server[drop_slot-drop_repslot] PASSED
@@ -437,6 +564,63 @@ tests/test_cli.py::TestConfigSwitchCli::test_config_switch_no_server PASSED
 tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_apply_model_no_model PASSED
 tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_apply_model_ok PASSED
 tests/test_cli.py::TestConfigSwitchCli::test_config_switch_model_reset_model PASSED
+tests/test_cli.py::TestCloudWalArchiveCli::test_cloud_wal_archive_wal_path_is_dir PASSED
+tests/test_cli.py::TestCloudWalArchiveCli::test_cloud_wal_archive_wal_path_does_not_exist PASSED
+tests/test_cli.py::TestCloudWalArchiveCli::test_cloud_wal_archive_wal_path_not_valid_wal_file PASSED
+tests/test_cli.py::TestCloudWalArchiveCli::test_cloud_wal_archive_success PASSED
+tests/test_cli.py::TestCloudWalArchiveCli::test_cloud_wal_archive_cli_overrides_config PASSED
+tests/test_cli.py::TestCloudWalRestoreCli::test_cloud_wal_restore_success PASSED
+tests/test_cli.py::TestCloudWalRestoreCli::test_cloud_wal_restore_wal_path_not_valid_wal_file PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_backup_status PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_incremental_refused PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_output_directory_not_exists PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_output_directory_not_directory PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_output_directory_not_writable PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_success PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_compression_forwarded PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_compression_level_without_compression_errors PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[gzip--1-1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[gzip-0-1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[gzip-10-1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[bzip2-0-1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[bzip2-10-1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[xz--1-0, 1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestExportBackup::test_export_backup_invalid_compression_level_errors[xz-10-0, 1, 2, 3, 4, 5, 6, 7, 8, 9] PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_tarball_unexisting PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_tarball_not_a_file PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_tarball_not_readable PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_invalid_tarfile PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_success[backup.tar-w] PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_success[backup.tar.gz-w:gz] PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_success[backup.tar.bz2-w:bz2] PASSED
+tests/test_cli.py::TestImportBackup::test_import_backup_success[backup.tar.xz-w:xz] PASSED
+tests/test_cloud_compression.py::TestGetCompressor::test_returns_lz4_compressor_for_lz4 PASSED
+tests/test_cloud_compression.py::TestGetCompressor::test_returns_none_for_gzip PASSED
+tests/test_cloud_compression.py::TestGetCompressor::test_returns_none_for_bzip2 PASSED
+tests/test_cloud_compression.py::TestGetCompressor::test_returns_none_for_none PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[w-None-w|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[r-None-r|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[w-snappy-w|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[r-snappy-r|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[w-lz4-w|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[r-lz4-r|] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[w-gz-w|gz] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[r-gz-r|gz] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[w-bz2-w|bz2] PASSED
+tests/test_cloud_compression.py::TestGetStreamingTarMode::test_returns_correct_mode[r-bz2-r|bz2] PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_inherits_from_chunked_compressor PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_compress_and_decompress_single_chunk PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_compress_and_decompress_multiple_chunks PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_flush_returns_bytes PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_flush_without_compression_returns_empty_bytes PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_streaming_decompression PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_compression_ratio PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_large_data_compression PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_empty_chunk_handling PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_flush_called_multiple_times PASSED
+tests/test_cloud_compression.py::TestLz4Compressor::test_decompressor_reuse PASSED
+tests/test_cloud_compression.py::TestChunkedCompressorInterface::test_compressor_has_required_methods[lz4] PASSED
+tests/test_cloud_compression.py::TestChunkedCompressorInterface::test_compressor_roundtrip[lz4] PASSED
 tests/test_command_wrappers.py::TestCommand::test_simple_invocation PASSED
 tests/test_command_wrappers.py::TestCommand::test_simple_encoding PASSED
 tests/test_command_wrappers.py::TestCommand::test_multiline_output PASSED
@@ -457,6 +641,15 @@ tests/test_command_wrappers.py::TestCommand::test_execute_check_failed_invocatio
 tests/test_command_wrappers.py::TestCommand::test_handlers_multiline PASSED
 tests/test_command_wrappers.py::TestCommand::test_execute_handlers PASSED
 tests/test_command_wrappers.py::TestCommand::test_retry PASSED
+tests/test_command_wrappers.py::TestCommand::test_pid PASSED
+tests/test_command_wrappers.py::TestCommand::test_pause PASSED
+tests/test_command_wrappers.py::TestCommand::test_resume PASSED
+tests/test_command_wrappers.py::TestCommand::test_is_running PASSED
+tests/test_command_wrappers.py::TestCommand::test_wait_exit PASSED
+tests/test_command_wrappers.py::TestCommand::test_get_returncode PASSED
+tests/test_command_wrappers.py::TestCommand::test_get_stderr PASSED
+tests/test_command_wrappers.py::TestCommand::test_get_stderr_running_process PASSED
+tests/test_command_wrappers.py::TestCommand::test_terminate PASSED
 tests/test_command_wrappers.py::TestCommandPipeProcessorLoop::test_ppl PASSED
 tests/test_command_wrappers.py::TestCommandPipeProcessorLoop::test_ppl_select_failure PASSED
 tests/test_command_wrappers.py::TestRsync::test_simple_invocation PASSED
@@ -493,6 +686,9 @@ tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_algo_version_
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_algo_version_gte_15[compression_config10-expected_args10-unexpected_args10] PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_algo_version_gte_15[compression_config11-expected_args11-unexpected_args11] PASSED
 tests/test_command_wrappers.py::TestPgBaseBackup::test_compression_algo_version_gte_15[compression_config12-expected_args12-unexpected_args12] PASSED
+tests/test_command_wrappers.py::TestPgBaseBackup::test_warehousepg_dbid_parameter_not_set PASSED
+tests/test_command_wrappers.py::TestPgBaseBackup::test_warehousepg_dbid_parameter_set PASSED
+tests/test_command_wrappers.py::TestPgBaseBackup::test_warehousepg_dbid_parameter_with_different_values PASSED
 tests/test_command_wrappers.py::TestReceiveXlog::test_init_simple PASSED
 tests/test_command_wrappers.py::TestReceiveXlog::test_init_args PASSED
 tests/test_command_wrappers.py::TestReceiveXlog::test_simple_invocation PASSED
@@ -554,6 +750,12 @@ tests/test_config.py::TestConfig::test_parse_backup_compression_format[tar-True]
 tests/test_config.py::TestConfig::test_parse_backup_compression_format[plain-True] PASSED
 tests/test_config.py::TestConfig::test_parse_backup_compression_format[lizard-False] PASSED
 tests/test_config.py::TestConfig::test_parse_backup_compression_format[1-False] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[AES256-True] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[aws:kms-True] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[None-True] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[invalid-False] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[aes256-False] PASSED
+tests/test_config.py::TestConfig::test_parse_aws_encryption[AWS:KMS-False] PASSED
 tests/test_config.py::TestConfig::test_global_config_to_json PASSED
 tests/test_config.py::TestConfig::test_get_config_source PASSED
 tests/test_config.py::TestConfig::test__is_model_missing_model PASSED
@@ -564,6 +766,10 @@ tests/test_config.py::TestConfig::test__apply_models_file_not_found PASSED
 tests/test_config.py::TestConfig::test__apply_models_file_with_bogus_content PASSED
 tests/test_config.py::TestConfig::test__apply_models_model_does_not_exist PASSED
 tests/test_config.py::TestConfig::test__apply_models_model_ok PASSED
+tests/test_config.py::TestConfig::test_check_conflicting_paths[/local/path-/local/path-True] PASSED
+tests/test_config.py::TestConfig::test_check_conflicting_paths[/local/path-/another/local/path-False] PASSED
+tests/test_config.py::TestConfig::test_check_conflicting_paths[s3://cloud-path-/local/path-False] PASSED
+tests/test_config.py::TestConfig::test_check_conflicting_paths[s3://cloud-path-s3://cloud-path-False] PASSED
 tests/test_config.py::TestServerConfig::test_update_msg_list_and_disable_server PASSED
 tests/test_config.py::TestServerConfig::test_to_json PASSED
 tests/test_config.py::TestServerConfig::test_apply_model_cluster_mismatch PASSED
@@ -683,6 +889,8 @@ tests/test_diagnose.py::TestDiagnose::test_diagnose_json PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_json_with_password PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_rerun PASSED
 tests/test_diagnose.py::TestDiagnose::test_diagnose_json_with_models PASSED
+tests/test_diagnose.py::TestGetBarmanSystemInfo::test_get_barman_system_info_success PASSED
+tests/test_diagnose.py::TestGetBarmanSystemInfo::test_get_barman_system_info_command_failure PASSED
 tests/test_encryption.py::TestEncryptionHelperFuncs::test_get_passphrase_from_command_valid_command PASSED
 tests/test_encryption.py::TestEncryptionHelperFuncs::test_get_passphrase_from_command_raises_value_error PASSED
 tests/test_encryption.py::TestEncryptionHelperFuncs::test_get_passphrase_from_command_raises_encryption_command_exception PASSED
@@ -717,6 +925,8 @@ tests/test_executor.py::TestPostgresBackupExecutor::test_backup PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_check PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_backup_copy PASSED
+tests/test_executor.py::TestPostgresBackupExecutor::test_backup_copy_with_warehousepg_dbid PASSED
+tests/test_executor.py::TestPostgresBackupExecutor::test_backup_copy_without_warehousepg_dbid PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_postgres_start_backup PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_backup_compression_gzip PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_no_backup_compression PASSED
@@ -727,6 +937,46 @@ tests/test_executor.py::TestPostgresBackupExecutor::test_err_handler[None-regula
 tests/test_executor.py::TestPostgresBackupExecutor::test_err_handler[None-waiting for required WAL segments to be archived-False] PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_err_handler[db=primary-regular stderr log-False] PASSED
 tests/test_executor.py::TestPostgresBackupExecutor::test_err_handler[db=primary-waiting for required WAL segments to be archived-True] PASSED
+tests/test_executor.py::TestPostgresBackupExecutor::test_get_bandwidth_limit[True] PASSED
+tests/test_executor.py::TestPostgresBackupExecutor::test_get_bandwidth_limit[False] PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test__init__ PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_thread_wrapper PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_backup_copy PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_backup_copy_exception_is_present PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_init_upload_controller PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_init_upload_controller_with_bandwidth_limit PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_read_backup_label PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_save_backup_manifest PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_upload_backup_info PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_run_pg_basebackup PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_run_pg_basebackup_fails PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_tablespace_mapping PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_parent_backup_manifest_path_with_parent PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_parent_backup_manifest_path_without_parent PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_wait_copy_start_raises_exception PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_wait_copy_start_no_exception_raised PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_monitor_staging_area PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_monitor_staging_area_not_created_yet PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_monitor_staging_area_exception_is_present PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_fetch_ready_files PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_fetch_ready_files_exception_is_present PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_files_from_dir PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_open_files PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_open_files_process_exited_midway PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_open_files_process_not_running PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_ignore_file PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_is_last_file PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_upload_ready_files PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_upload_ready_files_exception_is_present PASSED
+tests/test_executor.py::TestCloudPostgresBackupExecutor::test_get_tarball_name PASSED
+tests/test_executor.py::TestGetBandwidthLimitInBytes::test_bandwidth_limit_conversion[None-None] PASSED
+tests/test_executor.py::TestGetBandwidthLimitInBytes::test_bandwidth_limit_conversion[100-100000] PASSED
+tests/test_executor.py::TestGetBandwidthLimitInBytes::test_bandwidth_limit_conversion[1024-1024000] PASSED
+tests/test_executor.py::TestGetBandwidthLimitInBytes::test_bandwidth_limit_conversion[1000000000-1000000000000] PASSED
+tests/test_executor.py::TestCloudBackupExecutor::test__init__ PASSED
+tests/test_executor.py::TestCloudBackupExecutor::test_backup PASSED
+tests/test_executor.py::TestCloudBackupExecutor::test_backup_handles_exception PASSED
+tests/test_executor.py::TestCloudBackupExecutor::test_backup_with_bandwidth_limit PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_snapshot_backup_executor_init[additional_options0] PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_snapshot_backup_executor_init[additional_options1] PASSED
 tests/test_executor.py::TestSnapshotBackupExecutor::test_snapshot_backup_executor_init_bad_snapshot_interface PASSED
@@ -950,10 +1200,21 @@ tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_wit
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_set_pitr_targets_with_target_tli[latest-True-10] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_generate_recovery_conf_pre12 PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_generate_recovery_conf PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_generate_recovery_conf_wals_stored_in_cloud PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_backup_copy PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_compressed_encrypted PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_encrypted_wals_with_no_passphrase_raises_exception PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_with_partial_file PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_with_partial_file_remote PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_with_partial_file_from_wal_archive PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_with_compressed_partial_file_from_wal_archive PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_xlog_with_encrypted_partial_file_from_wal_archive PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_rsync_move_files_success PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_rsync_move_files_transfer_failure PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_rsync_move_files_cleanup_failure PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_warns_when_partial_and_get_wal PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_warns_when_partial_and_target_immediate PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recovery PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_standby_mode PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_rename_manifest[False] PASSED
@@ -961,6 +1222,9 @@ tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_rename_manif
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_recover_waiting_for_wals PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_copy_temporary_config_files[conf_files0-temp_conf_files0-expected_file_list0] PASSED
 tests/test_recovery_executor.py::TestRecoveryExecutor::test_copy_temporary_config_files[conf_files1-temp_conf_files1-expected_file_list1] PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_custom_restore_command_with_get_wal_enabled PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_custom_restore_command_with_get_wal_disabled_ignored PASSED
+tests/test_recovery_executor.py::TestRecoveryExecutor::test_no_custom_restore_command_uses_default PASSED
 tests/test_recovery_executor.py::TestRemoteConfigRecoveryExecutor::test_conf_files_exist PASSED
 tests/test_recovery_executor.py::TestRemoteConfigRecoveryExecutor::test_copy_conf_files_to_tempdir PASSED
 tests/test_recovery_executor.py::TestSnapshotRecoveryExecutor::test_recover_success PASSED
@@ -1004,6 +1268,15 @@ tests/test_recovery_executor.py::TestRecoveryOperation::test_link_tablespaces_re
 tests/test_recovery_executor.py::TestRecoveryOperation::test_staging_path_property PASSED
 tests/test_recovery_executor.py::TestRecoveryOperation::test_cleanup_staging_dir_success PASSED
 tests/test_recovery_executor.py::TestRecoveryOperation::test_cleanup_staging_dir_failure PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_should_execute[True] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_should_execute[False] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_execute PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_download_backup[True] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_download_backup[False] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_get_tablespace_mapping[True-None-expected_result0] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_get_tablespace_mapping[False-None-expected_result1] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_get_tablespace_mapping[True-tablespaces_relocation2-expected_result2] PASSED
+tests/test_recovery_executor.py::TestDownloadOperation::test_get_tablespace_mapping[False-tablespaces_relocation3-expected_result3] PASSED
 tests/test_recovery_executor.py::TestRsyncCopyOperation::test_execute PASSED
 tests/test_recovery_executor.py::TestRsyncCopyOperation::test_rsync_backup_copy[ssh postgres@pg-True] PASSED
 tests/test_recovery_executor.py::TestRsyncCopyOperation::test_rsync_backup_copy[ssh postgres@pg-False] PASSED
@@ -1027,6 +1300,8 @@ tests/test_recovery_executor.py::TestCombineOperation::test_combine_backups[Fals
 tests/test_recovery_executor.py::TestCombineOperation::test_combine_backups[False-tablespaces1-False] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup[local] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup[remote] PASSED
+tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_from_cloud_automatically_sets_link_mode_when_possible[18.0.0-link] PASSED
+tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_from_cloud_automatically_sets_link_mode_when_possible[17.0.0-copy] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_failed[local] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_failed[remote] PASSED
 tests/test_recovery_executor.py::TestCombineOperation::test_run_pg_combinebackup_error_out_when_client_differs_backup_pg_version PASSED
@@ -1048,30 +1323,36 @@ tests/test_recovery_executor.py::TestDecryptOperation::test_should_execute_retur
 tests/test_recovery_executor.py::TestDecryptOperation::test_should_execute_returns_when_encryption_present[None-False] PASSED
 tests/test_recovery_executor.py::TestDecryptOperation::test__get_command_interface[remote-True] PASSED
 tests/test_recovery_executor.py::TestDecryptOperation::test__get_command_interface[local-False] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-False-False-expected_operations0] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-False-False-expected_operations1] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-False-True-expected_operations2] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-False-True-expected_operations3] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-False-False-expected_operations4] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-False-False-expected_operations5] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-False-True-expected_operations6] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-False-True-expected_operations7] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-True-False-expected_operations8] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-True-False-expected_operations9] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-True-True-expected_operations10] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-True-True-expected_operations11] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-True-False-expected_operations12] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-True-False-expected_operations13] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-True-True-expected_operations14] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-True-True-expected_operations15] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-False-False-expected_operations16] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-False-True-expected_operations17] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-False-False-expected_operations18] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-False-True-expected_operations19] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-True-False-expected_operations20] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-True-True-expected_operations21] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-True-False-expected_operations22] PASSED
-tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-True-True-expected_operations23] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-False-False-False-expected_operations0] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-False-False-False-expected_operations1] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-False-True-False-expected_operations2] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-False-True-False-expected_operations3] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-False-False-False-expected_operations4] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-False-False-False-expected_operations5] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-False-True-False-expected_operations6] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-False-True-False-expected_operations7] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-True-False-False-expected_operations8] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-True-False-False-expected_operations9] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-True-True-False-expected_operations10] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-True-True-False-expected_operations11] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-True-False-False-expected_operations12] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-True-False-False-expected_operations13] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-True-True-False-expected_operations14] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-True-True-False-expected_operations15] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-False-False-False-expected_operations16] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-False-True-False-expected_operations17] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-False-False-False-expected_operations18] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-False-True-False-expected_operations19] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-True-False-False-expected_operations20] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-True-True-False-expected_operations21] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-True-False-False-expected_operations22] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-True-True-False-expected_operations23] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-False-False-False-True-expected_operations24] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-False-False-False-True-expected_operations25] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[False-local-True-False-False-True-expected_operations26] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-local-True-False-False-True-expected_operations27] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-False-False-False-True-expected_operations28] PASSED
+tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_build_operations_pipeline[True-remote-True-False-False-True-expected_operations29] PASSED
 tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_handle_deprecated_staging_options[/some/staging/path-remote-None-None-CombineOperation-ssh postgres@pg-/some/staging/path-remote] PASSED
 tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_handle_deprecated_staging_options[None-None-/some/recovery/staging/path-None-DecompressOperation-None-/some/recovery/staging/path-local] PASSED
 tests/test_recovery_executor.py::TestMainRecoveryExecutor::test_handle_deprecated_staging_options[None-None-/some/recovery/staging/path-None-DecompressOperation-ssh postgres@pg-/some/recovery/staging/path-local] PASSED
@@ -1119,14 +1400,20 @@ tests/test_server.py::TestServer::test_rerun_init PASSED
 tests/test_server.py::TestServer::test_bad_init PASSED
 tests/test_server.py::TestServer::test_primary_init PASSED
 tests/test_server.py::TestServer::test_standby_init PASSED
+tests/test_server.py::TestServer::test_init_wal_storages[True] PASSED
+tests/test_server.py::TestServer::test_init_wal_storages[False] PASSED
 tests/test_server.py::TestServer::test_check_config_missing PASSED
+tests/test_server.py::TestServer::test_make_directories PASSED
 tests/test_server.py::TestServer::test_xlogdb_with_exception PASSED
 tests/test_server.py::TestServer::test_xlogdb PASSED
 tests/test_server.py::TestServer::test_xlogdb_is_rebuilt_if_not_present PASSED
 tests/test_server.py::TestServer::test_rebuild_xlogdb PASSED
 tests/test_server.py::TestServer::test_rebuild_xlogdb_unkown_files_present PASSED
 tests/test_server.py::TestServer::test_rebuild_xlogdb_with_compression PASSED
-tests/test_server.py::TestServer::test_get_wal_full_path PASSED
+tests/test_server.py::TestServer::test_rebuild_xlogdb_not_supported_using_cloud PASSED
+tests/test_server.py::TestServer::test_rebuild_xlogdb_cloud_silent_no_error PASSED
+tests/test_server.py::TestServer::test_xlogdb_cloud_no_error_when_xlogdb_missing PASSED
+tests/test_server.py::TestServer::test_get_latest_timeline PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files0-target_tlis0-None-None-None-False-expected_indices0] PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files1-target_tlis1-None-None-None-False-expected_indices1] PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files2-target_tlis2-44-None-None-False-expected_indices2] PASSED
@@ -1134,6 +1421,20 @@ tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files3-t
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files4-target_tlis4-None-100-None-False-expected_indices4] PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files5-target_tlis5-None-None-0/07000000-False-expected_indices5] PASSED
 tests/test_server.py::TestServer::test_get_required_xlog_files[wal_info_files6-target_tlis6-None-None-None-True-expected_indices6] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial[partial_files0-000000020000000000000005.partial] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial[partial_files1-None] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial[partial_files2-000000020000000000000005.partial] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial[partial_files3-None] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_included_for_target_time PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_target_lsn_boundary[000000020000000000000006-000000020000000000000007.partial-0/6000000-None] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_target_lsn_boundary[000000020000000000000005-000000020000000000000006.partial-0/6000000-000000020000000000000006.partial] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_target_lsn_boundary[None-000000020000000000000005.partial-0/6000000-000000020000000000000005.partial] PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_not_included_for_target_immediate PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_partial_not_included_for_wrong_timeline PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_skips_archive_partial_by_default PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_includes_archive_partial_when_requested PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_timeline_is_latest_if_doing_pitr_and_postgres_at_least_12 PASSED
+tests/test_server.py::TestServer::test_get_required_xlog_files_timeline_is_current_if_postgres_less_than_12 PASSED
 tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files0-expected_indices0] PASSED
 tests/test_server.py::TestServer::test_get_wal_until_next_backup[wal_info_files1-expected_indices1] PASSED
 tests/test_server.py::TestServer::test_pg_stat_archiver_show PASSED
@@ -1176,7 +1477,9 @@ tests/test_server.py::TestServer::test_incoming_thresholds[incoming-archiver] PA
 tests/test_server.py::TestServer::test_incoming_thresholds[streaming-streaming_archiver] PASSED
 tests/test_server.py::TestServer::test_replication_status PASSED
 tests/test_server.py::TestServer::test_timeline_has_children PASSED
-tests/test_server.py::TestServer::test_xlogdb_directory PASSED
+tests/test_server.py::TestServer::test_xlogdb_directory_no_cloud_storage PASSED
+tests/test_server.py::TestServer::test_xlogdb_directory_cloud_storage_custom_path PASSED
+tests/test_server.py::TestServer::test_xlogdb_directory_cloud_storage_default_path PASSED
 tests/test_server.py::TestServer::test_xlogdb_file_name PASSED
 tests/test_server.py::TestServer::test_xlogdb_file_path PASSED
 tests/test_server.py::TestServer::test_create_physical_repslot PASSED
@@ -1218,6 +1521,11 @@ tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[SHA256SUMS-sh
 tests/test_server.py::TestServer::test_put_wal_with_duplicate_file[SHA256SUMS-sha256-Duplicate Files with Identical Checksums.-True] PASSED
 tests/test_server.py::TestServer::test_put_wal_fsync[obj0-MD5SUMS-md5-34743e1e454e967eb76a16c66372b0ef] PASSED
 tests/test_server.py::TestServer::test_put_wal_fsync[obj1-SHA256SUMS-sha256-2432a5281590f6c17323a8dc9c5442757e79fdc4d2028ae36bcb0010410dfc64] PASSED
+tests/test_server.py::TestServer::test_cloud_wal_archive_wrong_backup_method PASSED
+tests/test_server.py::TestServer::test_cloud_wal_archive_no_cloud_storage PASSED
+tests/test_server.py::TestServer::test_cloud_wal_archive_success PASSED
+tests/test_server.py::TestServer::test_cloud_wal_restore_success PASSED
+tests/test_server.py::TestServer::test_cloud_wal_restore_no_cloud_storage_configured PASSED
 tests/test_server.py::TestServer::test_get_systemid_file_path PASSED
 tests/test_server.py::TestServer::test_write_systemid_file PASSED
 tests/test_server.py::TestServer::test_check_systemid PASSED
@@ -1230,15 +1538,65 @@ tests/test_server.py::TestServer::test_check_backup_validity_no_minimum_age_or_s
 tests/test_server.py::TestServer::test_check_backup_validity_within_minimum_age PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_age PASSED
 tests/test_server.py::TestServer::test_check_encryption PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[gzip-None-None-postgres-off-compression is not supported when the backup destination is a cloud storage] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-gzip-None-postgres-off-None] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-pigz-None-postgres-off-cloud WAL storage only supports in-memory compression algorithms (gzip, bzip2, xz, zstd, lz4, snappy). 'pigz' is not supported] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-custom-None-postgres-off-cloud WAL storage only supports in-memory compression algorithms (gzip, bzip2, xz, zstd, lz4, snappy). 'custom' is not supported] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-None-gpg-postgres-off-encryption is not supported when the backup destination is a cloud storage] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-None-None-rsync-off-cloud backup destination is only supported with 'backup_method = postgres' or 'backup_method = local-to-cloud'] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-None-None-postgres-True-WORM mode is not supported when the backup or WAL destination is a cloud storage] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-None-None-postgres-off-None] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration[None-None-None-local-to-cloud-off-None] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration_cloud_connectivity[False-False] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration_cloud_connectivity[False-True] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration_cloud_connectivity[True-False] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration_cloud_connectivity[True-True] PASSED
+tests/test_server.py::TestServer::test_check_cloud_storage_configuration_no_url_configured PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_exceeds_minimum_size PASSED
 tests/test_server.py::TestServer::test_check_backup_validity_under_minimum_size PASSED
 tests/test_server.py::TestServer::test_get_backup_ext_info PASSED
+tests/test_server.py::TestServer::test_get_errors_dst[duplicate] PASSED
+tests/test_server.py::TestServer::test_get_errors_dst[unknown] PASSED
 tests/test_server.py::TestServer::test_move_wal_file_to_errors_directory[duplicate] PASSED
 tests/test_server.py::TestServer::test_move_wal_file_to_errors_directory[unknown] PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy PASSED
 tests/test_server.py::TestCheckStrategy::test_check_output_strategy_log PASSED
 tests/test_server.py::TestCheckStrategy::test_check_strategy PASSED
 tests/test_server.py::TestCheckStrategy::test_check_strategy_log PASSED
+tests/test_server.py::TestCheckStrategy::test_get_wal_cloud_interface PASSED
+tests/test_server.py::TestCheckStrategy::test_get_backup_cloud_interface PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_success PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_compression_extension[None-.tar] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_compression_extension[gzip-.tar.gz] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_compression_extension[bzip2-.tar.bz2] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_compression_extension[xz-.tar.xz] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_no_identity_returns_error PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_cloud_storage_returns_error PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_cleanup_on_failure PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_lock_acquisition_failure[lock_exception0-Another backup operation is already running] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_lock_acquisition_failure[lock_exception1-Permission denied while acquiring] PASSED
+tests/test_server.py::TestExportBackup::test_export_backup_lock_acquisition_failure[lock_exception2-Unable to acquire backup export lock] PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_success PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_no_identity_returns_error PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_cloud_storage_returns_error PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_make_directories_failure PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_invalid_tarball_name_returns_error PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_valid[.tar] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_valid[.tar.gz] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_valid[.tar.bz2] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_valid[.tar.xz] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_invalid_pattern PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_checksum_mismatch PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_rejects_bad_patterns[backup-export-.tar] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_rejects_bad_patterns[backup-export-main-20240101T120000-abcd1234.tar] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_rejects_bad_patterns[backup-export-main-20240101T120000-20240101T130000-abcd1234.zip] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_rejects_bad_patterns[backup-export-main-20240101T120000-20240101T130000-abcd1234.tar.zst] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_rejects_bad_patterns[not-an-export.tar] PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_server_with_hyphens PASSED
+tests/test_server.py::TestImportBackup::test_validate_import_tarball_name_wrong_server PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_lock_acquisition_failure[lock_exception0-Another backup operation is already running] PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_lock_acquisition_failure[lock_exception1-Permission denied while acquiring] PASSED
+tests/test_server.py::TestImportBackup::test_import_backup_lock_acquisition_failure[lock_exception2-Unable to acquire backup import lock] PASSED
 tests/test_sync.py::TestSync::test_set_starting_point PASSED
 tests/test_sync.py::TestSync::test_status PASSED
 tests/test_sync.py::TestSync::test_check_sync_required PASSED
@@ -1248,6 +1606,39 @@ tests/test_sync.py::TestSync::test_sync_backup_no_tablespaces PASSED
 tests/test_sync.py::TestSync::test_sync_wals PASSED
 tests/test_sync.py::TestSync::test_passive_node_cron PASSED
 tests/test_sync.py::TestSync::test_passive_node_forward_config_path PASSED
+tests/test_utils.py::TestLooseVersion::test_equality[9.5.3-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_equality[10-10] PASSED
+tests/test_utils.py::TestLooseVersion::test_equality[1.2.3.4.5-1.2.3.4.5] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than[9.5.2-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than[9.6-10.0] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than[1.0-1.0.1] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than[9-10] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than[1.0a-1.0b] PASSED
+tests/test_utils.py::TestLooseVersion::test_greater_than[9.5.2-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_greater_than[9.6-10.0] PASSED
+tests/test_utils.py::TestLooseVersion::test_greater_equal[9.5.3-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_greater_equal[10.0-9.6] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_equal[9.5.3-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_equal[9.6-10.0] PASSED
+tests/test_utils.py::TestLooseVersion::test_not_equal[9.5.2-9.5.3] PASSED
+tests/test_utils.py::TestLooseVersion::test_not_equal[9.6-10.0] PASSED
+tests/test_utils.py::TestLooseVersion::test_not_equal[1.0-1.0.1] PASSED
+tests/test_utils.py::TestLooseVersion::test_mixed_int_str_comparison_raises_type_error PASSED
+tests/test_utils.py::TestLooseVersion::test_str PASSED
+tests/test_utils.py::TestLooseVersion::test_str_preserves_original PASSED
+tests/test_utils.py::TestLooseVersion::test_repr PASSED
+tests/test_utils.py::TestLooseVersion::test_hash_equal_versions PASSED
+tests/test_utils.py::TestLooseVersion::test_hash_usable_in_set PASSED
+tests/test_utils.py::TestLooseVersion::test_non_numeric_input PASSED
+tests/test_utils.py::TestLooseVersion::test_comparison_with_unsupported_type_returns_not_implemented PASSED
+tests/test_utils.py::TestLooseVersion::test_equality_with_string[9.5.3-9.5.3-True] PASSED
+tests/test_utils.py::TestLooseVersion::test_equality_with_string[9.5.3-10.0-False] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than_with_string[9.5.3-10.0-True] PASSED
+tests/test_utils.py::TestLooseVersion::test_less_than_with_string[10.0-9.5.3-False] PASSED
+tests/test_utils.py::TestLooseVersion::test_greater_than_with_string PASSED
+tests/test_utils.py::TestLooseVersion::test_init_with_non_string_input PASSED
+tests/test_utils.py::TestLooseVersion::test_case_insensitive_alpha PASSED
+tests/test_utils.py::TestLooseVersion::test_sorting[versions0-expected_order0] PASSED
 tests/test_utils.py::TestDropPrivileges::test_change_user PASSED
 tests/test_utils.py::TestDropPrivileges::test_same_user PASSED
 tests/test_utils.py::TestParseLogLevel::test_int_to_int PASSED
@@ -1419,6 +1810,9 @@ tests/test_utils.py::TestIsSubdirectory::test_not_a_subdirectory PASSED
 tests/test_utils.py::TestIsSubdirectory::test_relative_paths PASSED
 tests/test_utils.py::TestIsSubdirectory::test_root_and_subdirectory PASSED
 tests/test_utils.py::TestIsSubdirectory::test_empty_paths PASSED
+tests/test_utils.py::TestGetDirectorySize::test_empty_directory PASSED
+tests/test_utils.py::TestGetDirectorySize::test_directory_with_files PASSED
+tests/test_utils.py::TestGetDirectorySize::test_nested_directories PASSED
 tests/test_utils.py::TestGetMajorVersion::test_none_input PASSED
 tests/test_utils.py::TestGetMajorVersion::test_no_version_in_string PASSED
 tests/test_utils.py::TestGetMajorVersion::test_integer_version PASSED
@@ -1434,7 +1828,6 @@ tests/test_wal_archiver.py::TestFileWalArchiver::test_check PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_archive PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_archive_batch PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_base_archive_wal PASSED
-tests/test_wal_archiver.py::TestFileWalArchiver::test_archive_wal PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_archive_wal_no_backup PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_archive_wal_older_than_backup PASSED
 tests/test_wal_archiver.py::TestFileWalArchiver::test_archive_wal_timeline_lower_than_backup PASSED
@@ -1447,6 +1840,80 @@ tests/test_wal_archiver.py::TestStreamingWalArchiver::test_when_streaming_connec
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check PASSED
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_get_next_batch PASSED
 tests/test_wal_archiver.py::TestStreamingWalArchiver::test_is_synchronous PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_pre_archive_scripts PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_post_archive_scripts PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_post_archive_scripts_with_error PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_pre_delete_wal_scripts PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_post_delete_wal_scripts PASSED
+tests/test_wal_archiver.py::TestWalStorageStrategy::test_run_post_delete_wal_scripts_with_error PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_not_exists PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_exists_with_different_content PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_exists_with_same_content PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_exists_with_encryption PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_exists_with_compression[True] PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_check_duplicate_file_exists_with_compression[False] PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_compress_file PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_encrypt_file PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_copy_stats PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_fsync_contents PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_rename_or_copy_file PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_rename_or_copy_file_different_fs PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_remove_intermediary_files PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_save PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_save_with_compression PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_save_with_encryption PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_save_with_compression_and_encryption PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_delete_wal_files_individually PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_delete_whole_directory PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_delete_wal_directory PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_delete_wal_file PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_exists PASSED
+tests/test_wal_archiver.py::TestLocalWalStorageStrategy::test_get_full_path PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_check_duplicate[False-DuplicateWalFile] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_check_duplicate[True-MatchingDuplicateWalFile] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save[None] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save[False] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save[True] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_duplicate PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_delete PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_exists PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_get_full_path PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[gzip-.gz] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[bzip2-.bz2] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[xz-.xz] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[snappy-.snappy] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[zstd-.zst] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_with_compression[lz4-.lz4] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_duplicate_with_compression[gzip-.gz] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_save_duplicate_with_compression[snappy-.snappy] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_get_full_path_with_compression[None-] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_get_full_path_with_compression[gzip-.gz] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_get_full_path_with_compression[lz4-.lz4] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_delete_with_compression PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_delete_without_compression PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_check_duplicate_with_compression[False-DuplicateWalFile] PASSED
+tests/test_wal_archiver.py::TestCloudWalStorageStrategy::test_check_duplicate_with_compression[True-MatchingDuplicateWalFile] PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_is_already_archived_returns_true_when_wal_le_cached PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_is_already_archived_returns_false_when_wal_gt_cached PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_is_already_archived_returns_false_when_cache_missing PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_is_already_archived_returns_false_for_non_wal_file PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_get_wals_to_prefetch_returns_next_in_sequence PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_get_wals_to_prefetch_stops_at_first_gap PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_get_wals_to_prefetch_skips_recycled_wal_file PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_get_wals_to_prefetch_returns_empty_for_non_wal_requested_path PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_get_wals_to_prefetch_returns_empty_when_archive_status_missing PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_no_prefetch_archives_only_requested_wal PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_spawns_workers_for_all_prefetch_wals PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_prefetch_capped_by_available_wals PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_skips_already_archived_wal PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_spawns_no_workers_on_main_wal_failure PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_prefetch_build_wal_info_failure_is_non_fatal PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_single_wal_handles_matching_duplicate PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_archive_single_wal_copies_conflicting_duplicate_to_errors PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_update_metadata_stops_writing_at_first_worker_failure PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_update_metadata_does_not_cache_history_file PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_write_cloud_wal_last_archived_writes_atomically PASSED
+tests/test_wal_archiver.py::TestCloudWalArchiver::test_write_cloud_wal_last_archived_logs_warning_on_io_error PASSED
 tests/test_xlog.py::Test::test_encode_segment_name PASSED
 tests/test_xlog.py::Test::test_decode_segment_name PASSED
 tests/test_xlog.py::Test::test_decode_hash_dir PASSED
@@ -1491,6 +1958,12 @@ tests/test_xlog.py::Test::test_previous_segment_name[000000010000000200000000-16
 tests/test_xlog.py::Test::test_previous_segment_name[000000010000000200000000-4194304-0000000100000001000003FF] PASSED
 tests/test_xlog.py::Test::test_previous_segment_name[000000010000000200000005-4194304-000000010000000200000004] PASSED
 tests/test_xlog.py::Test::test_previous_segment_name_invalid_segment PASSED
+tests/test_xlog.py::Test::test_next_segment_name[000000010000000200000001-16777216-000000010000000200000002] PASSED
+tests/test_xlog.py::Test::test_next_segment_name[000000010000000200000000-16777216-000000010000000200000001] PASSED
+tests/test_xlog.py::Test::test_next_segment_name[0000000100000001000000FF-16777216-000000010000000200000000] PASSED
+tests/test_xlog.py::Test::test_next_segment_name[0000000100000001000003FF-4194304-000000010000000200000000] PASSED
+tests/test_xlog.py::Test::test_next_segment_name[000000010000000200000004-4194304-000000010000000200000005] PASSED
+tests/test_xlog.py::Test::test_next_segment_name_invalid_segment PASSED
 tests/test_xlog.py::TestCheckArchiveUsable::test_passes_if_no_wals PASSED
 tests/test_xlog.py::TestCheckArchiveUsable::test_fails_if_wal_exists PASSED
 tests/test_xlog.py::TestCheckArchiveUsable::test_fails_if_history_exists PASSED
@@ -1525,97 +1998,7 @@ tests/test_lockfile.py:240
   $(@D)/tests/test_lockfile.py:240: PytestUnknownMarkWarning: Unknown pytest.mark.timeout - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
     @pytest.mark.timeout(1)
 
-tests/test_backup.py::TestBackup::test_keyboard_interrupt
-  $(PYTHON_DIR)/vendor-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread barman_keepalive_thread
-  
-  Traceback (most recent call last):
-    File "$(PYTHON_DIR)/threading.py", line 980, in _bootstrap_inner
-      self.run()
-    File "$(PYTHON_DIR)/threading.py", line 917, in run
-      self._target(*self._args, **self._kwargs)
-    File "$(@D)/barman/postgres.py", line 1963, in _run_keep_alive
-      success, ex = self.postgres.send_heartbeat_query()
-  ValueError: not enough values to unpack (expected 2, got 0)
-  
-  Enable tracemalloc to get traceback where the object was allocated.
-  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
-    warnings.warn(pytest.PytestUnhandledThreadExceptionWarning(msg))
-
-tests/test_command_wrappers.py: 41 warnings
-  $(@D)/barman/command_wrappers.py:776: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if version and version >= Version("9.3"):
-
-tests/test_command_wrappers.py: 88 warnings
-tests/test_executor.py: 15 warnings
-tests/test_wal_archiver.py: 14 warnings
-  $(PYTHON_DIR)/vendor-packages/setuptools/_distutils/version.py:336: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    other = LooseVersion(other)
-
-tests/test_command_wrappers.py: 26 warnings
-  $(@D)/barman/command_wrappers.py:968: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if version and version >= Version("10"):
-
-tests/test_command_wrappers.py: 17 warnings
-  $(@D)/barman/command_wrappers.py:1023: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    if version and version >= Version("15"):
-
-tests/test_command_wrappers.py: 2 warnings
-tests/test_executor.py: 3 warnings
-tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:903: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    version_info["full_version"] = Version(full_version)
-
-tests/test_command_wrappers.py: 2 warnings
-tests/test_executor.py: 3 warnings
-tests/test_wal_archiver.py: 6 warnings
-  $(@D)/barman/command_wrappers.py:904: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    version_info["major_version"] = Version(
-
-tests/test_executor.py::TestPostgresBackupExecutor::test_check
-tests/test_executor.py::TestPostgresBackupExecutor::test_check
-tests/test_executor.py::TestPostgresBackupExecutor::test_check
-tests/test_executor.py::TestPostgresBackupExecutor::test_check
-  $(@D)/barman/backup_executor.py:463: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    pg_version = Version(postgres.server_txt_version)
-
-tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
-tests/test_executor.py::TestPostgresBackupExecutor::test_fetch_remote_status
-  $(@D)/barman/backup_executor.py:559: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    pg_version = Version(pg_version)
-
-tests/test_recovery_executor.py: 10 warnings
-  $(@D)/barman/recovery_executor.py:3178: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    elif Version(pg_combinebackup_major_version) < Version("18"):
-
-tests/test_utils.py::TestBarmanEncoder::test_version_objects
-  $(@D)/tests/test_utils.py:557: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoder)
-
-tests/test_utils.py::TestBarmanEncoderV2::test_version_objects
-  $(@D)/tests/test_utils.py:648: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    json_dump = json.dumps(LooseVersion("9.5.3"), cls=barman.utils.BarmanEncoderV2)
-
-tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-tests/test_wal_archiver.py::TestStreamingWalArchiver::test_check_receivexlog_is_compatible
-  $(@D)/barman/wal_archiver.py:716: DeprecationWarning: distutils Version classes are deprecated. Use packaging.version instead.
-    pg_version = Version(pg_version)
-
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 1492 passed, 22 skipped, 2 deselected, 248 warnings ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 1965 passed, 22 skipped, 10 deselected, 1 warning ========
   py$(PYV): OK
   congratulations :)
