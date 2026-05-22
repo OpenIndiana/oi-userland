@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6368 items
+collecting ... collected 6404 items
 
 tests/test_idna.py::IDNATests::testIDNTLDALabels PASSED
 tests/test_idna.py::IDNATests::testIDNTLDULabels PASSED
@@ -20,6 +20,42 @@ tests/test_idna.py::IDNATests::test_oversized_label_rejected_promptly PASSED
 tests/test_idna.py::IDNATests::test_valid_contextj PASSED
 tests/test_idna.py::IDNATests::test_valid_contexto PASSED
 tests/test_idna.py::IDNATests::test_valid_label_length PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_decodes_alabel PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_decodes_when_any_label_is_alabel PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_encodes_plain_ascii_input PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_encodes_unicode_input PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_looks_like_alabel_handles_unicode_dots PASSED
+tests/test_idna_cli.py::CLIAutoDetectTests::test_looks_like_alabel_is_case_insensitive PASSED
+tests/test_idna_cli.py::CLIExplicitModeTests::test_decode_flag_forces_decode PASSED
+tests/test_idna_cli.py::CLIExplicitModeTests::test_encode_and_decode_are_mutually_exclusive PASSED
+tests/test_idna_cli.py::CLIExplicitModeTests::test_encode_flag_forces_encode PASSED
+tests/test_idna_cli.py::CLIExplicitModeTests::test_long_decode_flag_forces_decode PASSED
+tests/test_idna_cli.py::CLIExplicitModeTests::test_long_encode_flag_forces_encode PASSED
+tests/test_idna_cli.py::CLIUTS46Tests::test_strict_disables_uts46 PASSED
+tests/test_idna_cli.py::CLIUTS46Tests::test_strict_does_not_affect_valid_inputs PASSED
+tests/test_idna_cli.py::CLIUTS46Tests::test_uts46_applies_to_explicit_decode PASSED
+tests/test_idna_cli.py::CLIUTS46Tests::test_uts46_is_applied_by_default PASSED
+tests/test_idna_cli.py::CLIErrorHandlingTests::test_invalid_alabel_decode_returns_nonzero PASSED
+tests/test_idna_cli.py::CLIErrorHandlingTests::test_invalid_input_returns_nonzero_and_writes_to_stderr PASSED
+tests/test_idna_cli.py::CLIErrorHandlingTests::test_missing_argument_with_tty_stdin_is_an_argparse_error PASSED
+tests/test_idna_cli.py::CLIVersionTests::test_version_flag PASSED
+tests/test_idna_cli.py::CLIMultipleDomainsTests::test_failures_are_reported_per_domain_and_processing_continues PASSED
+tests/test_idna_cli.py::CLIMultipleDomainsTests::test_mode_flag_applies_to_every_positional_domain PASSED
+tests/test_idna_cli.py::CLIMultipleDomainsTests::test_multiple_alabel_positional_domains_are_all_decoded PASSED
+tests/test_idna_cli.py::CLIMultipleDomainsTests::test_multiple_unicode_positional_domains_are_all_encoded PASSED
+tests/test_idna_cli.py::CLIModeLockTests::test_explicit_mode_flag_overrides_first_input_heuristic PASSED
+tests/test_idna_cli.py::CLIModeLockTests::test_first_alabel_input_locks_subsequent_inputs_to_decode PASSED
+tests/test_idna_cli.py::CLIModeLockTests::test_first_unicode_input_locks_subsequent_inputs_to_encode PASSED
+tests/test_idna_cli.py::CLIModeLockTests::test_stdin_first_line_locks_mode_for_the_stream PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_blank_lines_in_stdin_are_skipped PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_decode_flag_applies_to_every_stdin_line PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_empty_stdin_exits_cleanly_with_no_output PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_positional_domains_take_precedence_over_piped_stdin PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_reads_one_domain_per_line_from_piped_stdin PASSED
+tests/test_idna_cli.py::CLIStdinTests::test_stdin_errors_continue_processing_and_set_exit_code PASSED
+tests/test_idna_cli.py::CLIModuleEntryTests::test_python_dash_m_idna_reads_piped_stdin PASSED
+tests/test_idna_cli.py::CLIModuleEntryTests::test_python_dash_m_idna_reports_errors PASSED
+tests/test_idna_cli.py::CLIModuleEntryTests::test_python_dash_m_idna_runs_cli PASSED
 tests/test_idna_codec.py::IDNACodecTests::testCodec PASSED
 tests/test_idna_codec.py::IDNACodecTests::testDirectDecode PASSED
 tests/test_idna_codec.py::IDNACodecTests::testDirectEncode PASSED
@@ -6374,4 +6410,4 @@ tests/test_intranges.py::IntrangeContainsTests::test_simple PASSED
 tests/test_intranges.py::IntrangeContainsTests::test_singleton PASSED
 tests/test_intranges.py::IntrangeContainsTests::test_skips PASSED
 
-======== 6368 passed ========
+======== 6404 passed ========
