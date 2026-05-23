@@ -31,17 +31,18 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= mpc
-COMPONENT_VERSION= 1.3.1
+COMPONENT_VERSION= 1.4.1
 COMPONENT_SUMMARY= Multiprecision complex data type evaluation library
 COMPONENT_PROJECT_URL= https://www.multiprecision.org/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL= https://ftp.gnu.org/gnu/mpc/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8
+COMPONENT_ARCHIVE_HASH= sha256:91204cd32f164bd3b7c992d4a6a8ce6519511aadab30f78b6982d0bf8d73e931
 COMPONENT_SIG_URL= $(COMPONENT_ARCHIVE_URL).sig
 COMPONENT_FMRI= library/mpc
 COMPONENT_CLASSIFICATION= Development/High Performance Computing
 COMPONENT_LICENSE= LGPLv2.1
+COMPONENT_LICENSE_FILE= COPYING.LESSER
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -50,10 +51,11 @@ CFLAGS += `pkg-config --cflags mpfr`
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS += --disable-static
 
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
+
 COMPONENT_TEST_DIR= $(BUILD_DIR)/$(MACH$(BITS))/tests
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/gmp
 REQUIRED_PACKAGES += library/mpfr
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
