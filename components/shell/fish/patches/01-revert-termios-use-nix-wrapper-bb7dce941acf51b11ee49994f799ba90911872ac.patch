@@ -1,10 +1,10 @@
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fg.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/builtins/fg.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fg.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/builtins/fg.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -6,9 +6,7 @@
- use crate::tokenizer::tok_command;
- use crate::wutil::perror;
+diff -wpruN --no-dereference a~/src/builtins/fg.rs a/src/builtins/fg.rs
+--- a~/src/builtins/fg.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/builtins/fg.rs	2026-05-20 13:38:23.291989325 +0000
+@@ -8,9 +8,7 @@ use crate::tokenizer::tok_command;
  use crate::{env::EnvMode, tty_handoff::TtyHandoff};
+ use crate::{err_fmt, err_str};
+ use fish_util::perror;
 -use libc::STDIN_FILENO;
 -use nix::sys::termios::{self, tcsetattr};
 -use std::os::fd::BorrowedFd;
@@ -12,7 +12,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fg.r
  
  use super::prelude::*;
  
-@@ -144,14 +142,9 @@
+@@ -140,14 +138,9 @@ pub fn fg(parser: &Parser, streams: &mut
          }
          let tmodes = job_group.tmodes.borrow();
          if job_group.wants_terminal() && tmodes.is_some() {
@@ -30,10 +30,10 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fg.r
                  perror("tcsetattr");
              }
          }
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fish_key_reader.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/builtins/fish_key_reader.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fish_key_reader.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/builtins/fish_key_reader.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -47,7 +47,7 @@
+diff -wpruN --no-dereference a~/src/builtins/fish_key_reader.rs a/src/builtins/fish_key_reader.rs
+--- a~/src/builtins/fish_key_reader.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/builtins/fish_key_reader.rs	2026-05-20 13:38:23.292319209 +0000
+@@ -49,7 +49,7 @@ fn should_exit(
  
      for evt in [VINTR, VEOF] {
          let modes = shell_modes();
@@ -42,7 +42,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fish
  
          if match_key_event_to_key(&key_evt, &cc).is_some() {
              if recent_keys
-@@ -61,7 +61,7 @@
+@@ -63,7 +63,7 @@ fn should_exit(
              }
              streams.err.appendln(&wgettext_fmt!(
                  "Press ctrl-%c again to exit",
@@ -51,7 +51,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fish
              ));
              return false;
          }
-@@ -162,8 +162,8 @@
+@@ -164,8 +164,8 @@ fn setup_and_process_keys(
          let modes = shell_modes();
          streams.err.appendln(&wgettext_fmt!(
              "or press ctrl-%c or ctrl-%c twice in a row.",
@@ -62,30 +62,30 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/builtins/fish
          ));
          streams.err.appendln(L!("\n"));
      }
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/common.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/common.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/common.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/common.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -19,7 +19,6 @@
- use fish_widestring::{
-     ENCODE_DIRECT_END, decode_byte_from_char, encode_byte_to_char, subslice_position,
+diff -wpruN --no-dereference a~/src/common.rs a/src/common.rs
+--- a~/src/common.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/common.rs	2026-05-20 13:38:23.292733249 +0000
+@@ -9,7 +9,6 @@ use crate::{
  };
+ use fish_fallback::fish_wcwidth;
+ use fish_widestring::subslice_position;
 -use nix::sys::termios::Termios;
- use std::env;
- use std::ffi::{CStr, CString, OsStr, OsString};
- use std::os::unix::prelude::*;
-@@ -885,7 +884,7 @@
-     Some(in_pos)
- }
+ use std::{
+     env,
+     sync::{MutexGuard, OnceLock, atomic::Ordering},
+@@ -21,7 +20,7 @@ pub const BUILD_DIR: &str = env!("FISH_R
+ 
+ pub const PACKAGE_NAME: &str = env!("CARGO_PKG_NAME");
  
 -pub fn shell_modes() -> MutexGuard<'static, Termios> {
 +pub fn shell_modes() -> MutexGuard<'static, libc::termios> {
      crate::reader::SHELL_MODES.lock().unwrap()
  }
  
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/input_common.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/input_common.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/input_common.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/input_common.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -878,7 +878,7 @@
+diff -wpruN --no-dereference a~/src/input_common.rs a/src/input_common.rs
+--- a~/src/input_common.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/input_common.rs	2026-05-20 13:38:23.293562243 +0000
+@@ -877,7 +877,7 @@ pub trait InputEventQueuer {
                                  self.push_back(evt);
                              }
                          });
@@ -94,7 +94,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/input_common.
                          if vintr != 0
                              && key.is_some_and(|key| {
                                  match_key_event_to_key(&key, &Key::from_single_byte(vintr))
-@@ -1619,7 +1619,7 @@
+@@ -1618,7 +1618,7 @@ pub trait InputEventQueuer {
      fn select_interrupted(&mut self) {}
  
      fn enqueue_interrupt_key(&mut self) {
@@ -103,10 +103,10 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/input_common.
          if vintr != 0 {
              let interrupt_evt = CharEvent::from_key(KeyEvent::from_single_byte(vintr));
              if stop_query(self.blocking_query()) {
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/job_group.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/job_group.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/job_group.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/job_group.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -2,7 +2,6 @@
+diff -wpruN --no-dereference a~/src/job_group.rs a/src/job_group.rs
+--- a~/src/job_group.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/job_group.rs	2026-05-20 13:38:23.293920516 +0000
+@@ -2,7 +2,6 @@ use crate::global_safety::RelaxedAtomicB
  use crate::prelude::*;
  use crate::proc::{JobGroupRef, Pid};
  use crate::signal::Signal;
@@ -114,7 +114,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/job_group.rs 
  use std::cell::RefCell;
  use std::num::NonZeroU32;
  use std::sync::atomic::{AtomicI32, Ordering};
-@@ -61,7 +60,7 @@
+@@ -61,7 +60,7 @@ impl<'a> fish_printf::ToArg<'a> for Mayb
  pub struct JobGroup {
      /// If set, the saved terminal modes of this job. This needs to be saved so that we can restore
      /// the terminal to the same state when resuming a stopped job.
@@ -123,32 +123,37 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/job_group.rs 
      /// Whether job control is enabled in this `JobGroup` or not.
      ///
      /// If this is set, then the first process in the root job must be external, as it will become
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/reader/reader.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/reader/reader.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -127,10 +127,10 @@
+diff -wpruN --no-dereference a~/src/reader/reader.rs a/src/reader/reader.rs
+--- a~/src/reader/reader.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/reader/reader.rs	2026-05-20 13:38:35.221217180 +0000
+@@ -125,15 +125,15 @@ use fish_wcstringutil::{
  };
- use fish_wcstringutil::{IsPrefix, is_prefix};
+ use fish_widestring::{ELLIPSIS_CHAR, UTF8_BOM_WCHAR, bytes2wcstring};
  use libc::{
--    _POSIX_VDISABLE, EIO, EISDIR, ENOTTY, EPERM, ESRCH, O_NONBLOCK, O_RDONLY, SIGINT,
--    STDERR_FILENO, STDIN_FILENO, STDOUT_FILENO, VMIN, VQUIT, VSUSP, VTIME, c_char,
-+    _POSIX_VDISABLE, ECHO, EINTR, EIO, EISDIR, ENOTTY, EPERM, ESRCH, FLUSHO, ICANON, ICRNL, IEXTEN,
+-    _POSIX_VDISABLE, EIO, EISDIR, ENOTTY, ESRCH, O_NONBLOCK, O_RDONLY, SIGINT, STDERR_FILENO,
+-    STDIN_FILENO, STDOUT_FILENO, VMIN, VQUIT, VSUSP, VTIME, c_char,
++    _POSIX_VDISABLE, ECHO, EINTR, EIO, EISDIR, ENOTTY, ESRCH, FLUSHO, ICANON, ICRNL, IEXTEN,
 +    INLCR, IXOFF, IXON, O_NONBLOCK, O_RDONLY, ONLCR, OPOST, SIGINT, STDERR_FILENO, STDIN_FILENO,
 +    STDOUT_FILENO, TCSANOW, VMIN, VQUIT, VSUSP, VTIME, c_char,
  };
--use nix::sys::termios::{self, SetArg, Termios, tcgetattr, tcsetattr};
  use nix::{
      fcntl::OFlag,
      sys::{
-@@ -144,6 +144,7 @@
+         signal::{Signal, killpg},
+         stat::Mode,
+-        termios::{self, SetArg, Termios, tcgetattr, tcsetattr},
+     },
+     unistd::{getpgrp, getpid, setpgid},
+ };
+@@ -142,6 +142,7 @@ use std::{
      cell::UnsafeCell,
      cmp,
      io::BufReader,
 +    mem::MaybeUninit,
      num::NonZeroUsize,
      ops::{ControlFlow, Range},
-     os::fd::{AsRawFd, BorrowedFd, FromRawFd, OwnedFd, RawFd},
-@@ -168,20 +169,16 @@
+     os::fd::{AsRawFd as _, BorrowedFd, FromRawFd as _, OwnedFd, RawFd},
+@@ -166,19 +167,15 @@ enum ExitState {
  
  static EXIT_STATE: AtomicU8 = AtomicU8::new(ExitState::None as u8);
  
@@ -162,7 +167,6 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
 +    LazyLock::new(|| Mutex::new(unsafe { std::mem::zeroed() }));
  
  /// The valid terminal modes on startup.
- /// Warning: this is read from the SIGTERM handler! Hence the raw global.
  static TERMINAL_MODE_ON_STARTUP: OnceLock<libc::termios> = OnceLock::new();
  
  /// Mode we use to execute programs.
@@ -173,7 +177,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
  
  static RUN_COUNT: AtomicU64 = AtomicU64::new(0);
  
-@@ -226,11 +223,13 @@
+@@ -222,11 +219,13 @@ fn redirect_tty_after_sighup() {
      };
      let fd = devnull.as_raw_fd();
      for stdfd in [STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO] {
@@ -192,7 +196,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
          }
      }
  }
-@@ -987,24 +986,18 @@
+@@ -985,24 +984,19 @@ fn read_ni(parser: &Parser, fd: RawFd, i
      }
  }
  
@@ -204,29 +208,26 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
  
  /// Initialize the reader.
  pub fn reader_init(will_restore_foreground_pgroup: bool) {
+     assert_is_main_thread();
 -    let terminal_mode_on_startup = match tcgetattr(unsafe { BorrowedFd::borrow_raw(STDIN_FILENO) })
 -    {
 -        Ok(modes) => {
--            // Save the initial terminal mode.
--            // Note this field is read by a signal handler, so do it atomically, with a leaked mode.
--            // TODO: rationalize behavior if initial tcgetattr() fails.
--            TERMINAL_MODE_ON_STARTUP.get_or_init(|| libc::termios::from(modes.clone()));
--            modes
--        }
--        Err(_) => zeroed_termios(),
--    };
-+    // Save the initial terminal mode.
+             // Save the initial terminal mode.
 +    // Note this field is read by a signal handler, so do it atomically, with a leaked mode.
 +    let mut terminal_mode_on_startup = unsafe { std::mem::zeroed::<libc::termios>() };
 +    let ret = unsafe { libc::tcgetattr(libc::STDIN_FILENO, &mut terminal_mode_on_startup) };
-+    // TODO: rationalize behavior if initial tcgetattr() fails.
+             // TODO: rationalize behavior if initial tcgetattr() fails.
+-            TERMINAL_MODE_ON_STARTUP.get_or_init(|| libc::termios::from(modes.clone()));
+-            modes
 +    if ret == 0 {
 +        TERMINAL_MODE_ON_STARTUP.get_or_init(|| terminal_mode_on_startup);
-+    }
+         }
+-        Err(_) => zeroed_termios(),
+-    };
  
-     if !cfg!(test) {
-         assert!(AT_EXIT.get().is_none());
-@@ -1016,12 +1009,12 @@
+     AT_EXIT
+         .set(Box::new(move || {
+@@ -1016,12 +1010,12 @@ pub fn reader_init(will_restore_foregrou
      term_fix_external_modes(&mut external_modes);
  
      // Disable flow control by default.
@@ -241,16 +242,16 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
          term_fix_shell_modes(&mut shell_modes);
      }
  
-@@ -1051,7 +1044,7 @@
+@@ -1050,7 +1044,7 @@ pub fn restore_term_mode() {
          return;
      }
-     if let Some(modes) = safe_get_terminal_mode_on_startup() {
+     if let Some(modes) = get_terminal_mode_on_startup() {
 -        unsafe { libc::tcsetattr(STDIN_FILENO, libc::TCSANOW, modes) };
 +        unsafe { libc::tcsetattr(STDIN_FILENO, TCSANOW, modes) };
      }
  }
  
-@@ -1213,7 +1206,7 @@
+@@ -1221,7 +1215,7 @@ pub fn reader_reading_interrupted(data:
  /// commandline.
  pub fn reader_readline(
      parser: &Parser,
@@ -259,7 +260,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
      nchars: Option<NonZeroUsize>,
  ) -> Option<WString> {
      let data = current_data().unwrap();
-@@ -2542,7 +2535,7 @@
+@@ -2558,7 +2552,7 @@ impl<'a> Reader<'a> {
      /// Return the command, or none if we were asked to cancel (e.g. SIGHUP).
      fn readline(
          &mut self,
@@ -268,21 +269,26 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
          nchars: Option<NonZeroUsize>,
      ) -> Option<WString> {
          let mut tty = TtyHandoff::new(reader_save_screen_state);
-@@ -2640,12 +2633,7 @@
+@@ -2656,14 +2650,10 @@ impl<'a> Reader<'a> {
              // The order of the two conditions below is important. Try to restore the mode
              // in all cases, but only complain if interactive.
              if let Some(old_modes) = old_modes {
--                if tcsetattr(
+-                if let Err(err) = tcsetattr(
 -                    unsafe { BorrowedFd::borrow_raw(self.conf.inputfd) },
 -                    SetArg::TCSANOW,
 -                    &old_modes,
--                )
--                .is_err()
+-                ) {
+-                    if is_interactive_session() {
+-                        perror_nix("tcsetattr", err);
+-                    }
 +                if unsafe { libc::tcsetattr(self.conf.inputfd, TCSANOW, &old_modes) } == -1
-                     && is_interactive_session()
-                 {
-                     perror("tcsetattr");
-@@ -4714,39 +4702,32 @@
++                    && is_interactive_session()
++                {
++                    perror("tcsetattr");
+                 }
+             }
+             Outputter::stdoutput().borrow_mut().reset_text_face();
+@@ -4729,39 +4719,32 @@ impl ReaderData {
  
  // Turning off OPOST or ONLCR breaks output (staircase effect), we don't allow it.
  // See #7133.
@@ -336,7 +342,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
      c_cc[VMIN] = 1;
      c_cc[VTIME] = 0;
  
-@@ -4760,76 +4741,57 @@
+@@ -4775,95 +4758,81 @@ fn term_fix_shell_modes(modes: &mut Term
      c_cc[VQUIT] = disabling_char;
  }
  
@@ -372,15 +378,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
 -        ) {
 -            Ok(_) => (),
 -            Err(nix::Error::EINTR) => continue,
--            Err(_) => {
--                if !quiet {
--                    flog!(
--                        warning,
--                        wgettext!("Could not set terminal mode for new job")
--                    );
--                    perror("tcsetattr");
--                }
--                break;
+-            Err(err) => {
 +    while unsafe {
 +        libc::tcsetattr(
 +            STDIN_FILENO,
@@ -390,17 +388,19 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
 +    } == -1
 +    {
 +        if errno().0 != EINTR {
-+            if !quiet {
-+                flog!(
-+                    warning,
-+                    wgettext!("Could not set terminal mode for new job")
-+                );
+                 if !quiet {
+                     flog!(
+                         warning,
+                         wgettext!("Could not set terminal mode for new job")
+                     );
+-                    perror_nix("tcsetattr", err);
 +                perror("tcsetattr");
+                 }
+                 break;
              }
-+            break;
          }
 -        break;
-     }
+-    }
  }
  
  /// Copy the (potentially changed) terminal modes and use them from now on.
@@ -425,23 +425,33 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
  }
  
  pub fn set_shell_modes(fd: RawFd, whence: &str) -> bool {
-     let ok = loop {
+-    loop {
 -        match tcsetattr(
 -            unsafe { BorrowedFd::borrow_raw(fd) },
 -            SetArg::TCSANOW,
 -            &shell_modes(),
 -        ) {
--            Ok(_) => break true,
+-            Ok(_) => return true,
 -            Err(nix::Error::EINTR) => continue,
--            Err(_) => break false,
+-            Err(err) => {
+-                perror_nix("tcsetattr", err);
++    let ok = loop {
 +        let ok = unsafe { libc::tcsetattr(fd, TCSANOW, &*shell_modes()) } != -1;
 +        if ok || errno().0 != EINTR {
 +            break ok;
-         }
-     };
-     if !ok {
-@@ -4842,14 +4804,18 @@
-     ok
++        }
++    };
++    if !ok {
++        perror("tcsetattr");
+                 flog!(
+                     warning,
+                     wgettext_fmt!("Failed to set terminal mode (%s)", whence)
+                 );
+-                return false;
+-            }
+-        }
+     }
++    ok
  }
  
 -pub fn set_shell_modes_temporarily(inputfd: RawFd) -> Option<Termios> {
@@ -461,36 +471,42 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/reader/reader
  
      // Set the new modes.
      set_shell_modes(inputfd, "readline");
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/screen.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/screen.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/screen.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/screen.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -19,8 +19,7 @@
- use std::sync::atomic::AtomicU32;
- use std::time::SystemTime;
- 
+diff -wpruN --no-dereference a~/src/screen.rs a/src/screen.rs
+--- a~/src/screen.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/screen.rs	2026-05-20 13:38:23.298645182 +0000
+@@ -28,8 +28,7 @@ use fish_common::write_loop;
+ use fish_fallback::{fish_wcswidth_canonicalizing, fish_wcwidth};
+ use fish_wcstringutil::{fish_wcwidth_visible, string_prefixes_string};
+ use fish_widestring::{ELLIPSIS_CHAR, wcs2bytes};
 -use libc::{STDERR_FILENO, STDOUT_FILENO};
 -use nix::sys::termios;
 +use libc::{ONLCR, STDERR_FILENO, STDOUT_FILENO};
- 
- use crate::common::{
-     get_ellipsis_char, get_omitted_newline_str, has_working_tty_timestamps, shell_modes, wcs2bytes,
-@@ -891,9 +891,7 @@
+ use std::cell::RefCell;
+ use std::collections::LinkedList;
+ use std::io::Write as _;
+@@ -889,10 +888,7 @@ impl Screen {
          let s = if y_steps < 0 {
              Some(CursorUp)
          } else if y_steps > 0 {
 -            if shell_modes()
 -                .output_flags
 -                .contains(termios::OutputFlags::ONLCR)
-+            if (shell_modes().c_oflag & ONLCR) != 0
-             {
+-            {
++            if (shell_modes().c_oflag & ONLCR) != 0 {
                  // See GitHub issue #4505.
                  // Most consoles use a simple newline as the cursor down escape.
-diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/tty_handoff.rs fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/tty_handoff.rs
---- fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/tty_handoff.rs	2026-02-01 04:13:13.000000000 -0500
-+++ fish-shell-55e925526480e9e22d659724660ae9e484bc77fd/src/tty_handoff.rs	2026-02-01 03:58:51.000000000 -0500
-@@ -20,9 +20,8 @@
- use crate::wutil::{perror, wcstoi};
- use fish_widestring::ToWString;
+                 // If ONLCR is enabled (which it normally is) this will of course
+diff -wpruN --no-dereference a~/src/tty_handoff.rs a/src/tty_handoff.rs
+--- a~/src/tty_handoff.rs	2026-05-07 16:02:14.000000000 +0000
++++ a/src/tty_handoff.rs	2026-05-20 13:38:23.299025193 +0000
+@@ -16,13 +16,12 @@ use crate::terminal::TerminalCommand::{
+     KittyKeyboardProgressiveEnhancementsEnable, ModifyOtherKeysDisable, ModifyOtherKeysEnable,
+ };
+ use crate::threads::assert_is_main_thread;
+-use crate::wutil::{perror_nix, wcstoi};
++use crate::wutil::wcstoi;
+ use fish_common::write_loop;
+ use fish_util::perror;
  use libc::{EINVAL, ENOTTY, EPERM, STDIN_FILENO, WNOHANG};
 -use nix::sys::termios::tcgetattr;
  use nix::unistd::getpgrp;
@@ -498,8 +514,8 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/tty_handoff.r
 +use std::mem::MaybeUninit;
  use std::sync::{
      OnceLock,
-     atomic::{AtomicBool, AtomicPtr, Ordering},
-@@ -409,17 +408,12 @@
+     atomic::{AtomicPtr, Ordering},
+@@ -402,17 +401,12 @@ impl TtyHandoff {
  
      /// Save the current tty modes into the owning job group, if we are transferred.
      pub fn save_tty_modes(&mut self) {
@@ -512,7 +528,7 @@ diff -Naur fish-shell-bb7dce941acf51b11ee49994f799ba90911872ac/src/tty_handoff.r
 -            }
 -            Err(err) => {
 -                if err != nix::Error::ENOTTY {
--                    perror("tcgetattr");
+-                    perror_nix("tcgetattr", err);
 -                }
 +        if let Some(ref mut owner) = self.owner {
 +            let mut tmodes = MaybeUninit::uninit();
