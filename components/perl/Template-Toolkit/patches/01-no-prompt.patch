@@ -1,0 +1,20 @@
+Avoid prompts during build.
+
+--- Template-Toolkit-3.103/Makefile.PL.orig
++++ Template-Toolkit-3.103/Makefile.PL
+@@ -312,13 +312,10 @@
+ 
+ EOF
+ 
+-    $TT_XS_ENABLE = (ttprompt('Do you want to build the XS Stash module?',
+-                              $TT_XS_ENABLE) =~ /^y/i);
++    $TT_XS_ENABLE = 1;
+ 
+     if ($TT_XS_ENABLE) {
+-        $TT_XS_DEFAULT =
+-            (ttprompt('Do you want to use the XS Stash by default?',
+-                      $TT_XS_DEFAULT) =~ /^y/i);
++        $TT_XS_DEFAULT = 1;
+     }
+     else {
+         # If the XS stash is disabled, we cannot use it as the default stash.
