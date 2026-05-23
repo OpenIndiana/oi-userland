@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 122 items
+collecting ... collected 129 items
 
 tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_pass PASSED
@@ -29,6 +29,9 @@ tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_without_
 tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_with_positional_argument PASSED
 tests/test_pytest_rerunfailures.py::test_no_extra_test_summary_for_reruns_by_default PASSED
 tests/test_pytest_rerunfailures.py::test_extra_test_summary_for_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_show_tracebacks_for_eventual_pass PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_show_tracebacks_off_by_default PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_show_tracebacks_with_reportchars PASSED
 tests/test_pytest_rerunfailures.py::test_verbose PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_class_setup_error_without_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_on_class_setup_error_with_reruns PASSED
@@ -128,13 +131,17 @@ tests/test_pytest_rerunfailures.py::test_exception_match_rerun_except_in_dual_qu
 tests/test_pytest_rerunfailures.py::test_exception_match_only_rerun_in_dual_query PASSED
 tests/test_pytest_rerunfailures.py::test_force_reruns[] PASSED
 tests/test_pytest_rerunfailures.py::test_force_reruns[reruns=1] PASSED
+tests/test_pytest_rerunfailures.py::test_reruns_mode_append_sums_marker_and_cli PASSED
+tests/test_pytest_rerunfailures.py::test_reruns_mode_default_is_strict PASSED
+tests/test_pytest_rerunfailures.py::test_reruns_mode_append_without_marker_uses_global PASSED
+tests/test_pytest_rerunfailures.py::test_reruns_mode_invalid_choice_errors PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:852
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:852: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; xdist
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:858
+  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:858: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; xdist
     self.import_plugin(import_spec, consider_entry_points=True)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 122 passed, 1 warning ========
+======== 129 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)
