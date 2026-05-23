@@ -14,16 +14,15 @@
 # Copyright 2017 Aurelien Larcher.  All rights reserved.
 #
 
-BUILD_BITS= 32_and_64
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= djvulibre
-COMPONENT_VERSION= 3.5.29
+COMPONENT_VERSION= 3.5.30
 COMPONENT_SUMMARY= DjVu base libraries and utilities
 COMPONENT_PROJECT_URL= https://djvu.sourceforge.net/
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:d3b4b03ae2bdca8516a36ef6eb27b777f0528c9eda26745d9962824a3fdfeccf
+COMPONENT_ARCHIVE_HASH= sha256:ee5e457d4cfebe566f94b99e5e3d3cc7f5c79ddb741c2ac2ba2e456f00329644
 COMPONENT_ARCHIVE_URL= http://downloads.sourceforge.net/djvu/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= image/djvulibre
 COMPONENT_CLASSIFICATION= Applications/Graphics and Imaging
@@ -34,8 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PREP_ACTION= ( cd $(@D) && autoreconf -fi )
 
-CONFIGURE_BINDIR.64= $(CONFIGURE_BINDIR.32)
-
 # Dynamically create the license file from its sources:
 djvulibre.license: $(SOURCE_DIR)/COPYING $(SOURCE_DIR)/COPYRIGHT
 	cat $? > $@
@@ -44,7 +41,6 @@ djvulibre.license: $(SOURCE_DIR)/COPYING $(SOURCE_DIR)/COPYRIGHT
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)
-REQUIRED_PACKAGES += $(JPEG_IMPLEM_PKG)/32
 REQUIRED_PACKAGES += image/library/libtiff
 REQUIRED_PACKAGES += shell/bash
 REQUIRED_PACKAGES += shell/ksh93
