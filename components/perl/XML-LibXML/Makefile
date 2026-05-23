@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		XML-LibXML
-HUMAN_VERSION =			2.0212
+HUMAN_VERSION =			2.0213
 COMPONENT_SUMMARY =		Interface to Gnome libxml2 xml parsing and DOM library
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c54617078b72e764534beb37e4c452c99cc77aef5c87d2495cb5573a33415bb2
+	sha256:2af21c5d61ac34ea26a5fabf15ba5a5841e648f7189db3e33b6f28b5489802ab
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
