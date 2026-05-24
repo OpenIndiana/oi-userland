@@ -19,17 +19,21 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		WWW-RobotRules
-HUMAN_VERSION =			6.02
-COMPONENT_REVISION =		6
+HUMAN_VERSION =			6.03
 COMPONENT_SUMMARY =		database of robots.txt-derived permissions
-COMPONENT_CPAN_AUTHOR =		GAAS
+COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:46b502e7a288d559429891eeb5d979461dd3ecc6a5c491ead85d165b6e03a51e
+	sha256:8522b532935a11bfa688c2e113bac66729df4851be50c2c26d4b06f45fade472
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
+COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/db_file
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
