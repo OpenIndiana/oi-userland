@@ -18,22 +18,20 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		sysding
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	0.5.11
+COMPONENT_REVISION=	$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
+COMPONENT_SUMMARY=	Simple tool for initial system configuration
 COMPONENT_LICENSE=	CDDL
 COMPONENT_LICENSE_FILE=	$(COMPONENT_NAME).license
 COMPONENT_PROJECT_URL=	http://openindiana.org
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
 COMPONENT_FMRI=	service/management/sysding
 
-COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
-
-COMPONENT_SUMMARY=	Simple tool for initial system configuration
-
 GIT=git
 GIT_REPO=https://github.com/OpenIndiana/sysding
 GIT_BRANCH=oi
 GIT_CHANGESET=HEAD
 
-PATH=/usr/gnu/bin:/usr/bin
+PATH= $(PATH.gnu)
 
 CLEAN_PATHS += $(BUILD_DIR)
 CLOBBER_PATHS += $(SOURCE_DIR)
