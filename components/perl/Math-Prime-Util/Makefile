@@ -19,26 +19,26 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Prime-Util
-HUMAN_VERSION =			0.73
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			0.74
 COMPONENT_SUMMARY =		Utilities related to prime numbers, including fast sieves and factoring
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4afa6dd8cdb97499bd4eca6925861812c29d9f5a0f1ac27ad9d2d9c9b5602894
+	sha256:58a966ac5deecef92407e31d2c19411ee462f48e8443211d865ff2e6c83cc140
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
-PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint-gmp
-PERL_REQUIRED_PACKAGES += library/perl-5/math-prime-util-gmp
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
+REQUIRED_PACKAGES.perl += library/perl-5/math-bigint-gmp
+REQUIRED_PACKAGES.perl += library/perl-5/math-gmpz
+REQUIRED_PACKAGES.perl += library/perl-5/math-prime-util-gmp
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/bignum
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
