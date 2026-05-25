@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Template-Toolkit
-HUMAN_VERSION =			3.103
+HUMAN_VERSION =			3.106
 COMPONENT_SUMMARY =		comprehensive template processing system
 COMPONENT_CPAN_AUTHOR =		TODDR
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:40571fd1b3ea0d735cee76ea33f807364fb560205ecdb5caaccf0339175dd984
+	sha256:c7474050be80201f1fb55f0a569b9c0ab6c1c3f0cebbd7e601bda9b4046eec85
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
