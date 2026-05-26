@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Archive-Tar
-HUMAN_VERSION =			3.08
+HUMAN_VERSION =			3.10
 COMPONENT_SUMMARY =		Manipulates TAR archives
 COMPONENT_CPAN_AUTHOR =		BINGOS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a955261bb974d60ace02b054e65aa4949daa52749c4135b2a3d71d9146d42a2d
+	sha256:8abbc368cc472308e2a960c4a4e8b6e7ca4924579fc463c7fa87a6a656c84e56
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
