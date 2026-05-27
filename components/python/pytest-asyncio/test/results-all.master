@@ -8,7 +8,7 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: docs, tests
 asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 240 items
+collecting ... collected 299 items
 
 docs/concepts_concurrent_execution_example.py::test_first PASSED
 docs/concepts_concurrent_execution_example.py::test_second PASSED
@@ -18,6 +18,8 @@ docs/concepts_module_scope_example.py::test_runs_in_a_loop PASSED
 docs/how-to-guides/change_fixture_loop_example.py::test_runs_in_module_loop PASSED
 docs/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_remember_loop PASSED
 docs/how-to-guides/class_scoped_loop_example.py::TestInOneEventLoopPerClass::test_assert_same_loop PASSED
+docs/how-to-guides/configure_loop_factories_per_test/test_extra_loop_factories.py::test_runs_with_default_factory_only PASSED
+docs/how-to-guides/configure_loop_factories_per_test/test_extra_loop_factories.py::test_runs_with_custom_factory_only PASSED
 docs/how-to-guides/module_scoped_loop_example.py::test_remember_loop PASSED
 docs/how-to-guides/module_scoped_loop_example.py::test_assert_same_loop PASSED
 docs/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
@@ -25,11 +27,12 @@ docs/how-to-guides/multiple_loops_example.py::test_uses_custom_event_loop_policy
 docs/how-to-guides/parametrize_with_asyncio_example.py::test_parametrized_async_function[1] PASSED
 docs/how-to-guides/parametrize_with_asyncio_example.py::test_parametrized_async_function[2] PASSED
 docs/how-to-guides/parametrize_with_asyncio_example.py::test_parametrized_async_function[3] PASSED
+docs/how-to-guides/run_test_with_specific_loop_factories/test_loop_factories_subset.py::test_runs_with_every_configured_factory[default] PASSED
+docs/how-to-guides/run_test_with_specific_loop_factories/test_loop_factories_subset.py::test_runs_with_every_configured_factory[custom] PASSED
+docs/how-to-guides/run_test_with_specific_loop_factories/test_loop_factories_subset.py::test_runs_with_only_custom_factory PASSED
 docs/reference/fixtures/event_loop_policy_example.py::test_uses_custom_event_loop_policy PASSED
 docs/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy0] PASSED
 docs/reference/fixtures/event_loop_policy_parametrized_example.py::test_uses_custom_event_loop_policy[event_loop_policy1] PASSED
-docs/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy0] PASSED
-docs/reference/markers/class_scoped_loop_custom_policies_strict_mode_example.py::TestWithDifferentLoopPolicies::test_parametrized_loop[event_loop_policy1] PASSED
 docs/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_remember_loop PASSED
 docs/reference/markers/class_scoped_loop_strict_mode_example.py::TestClassScopedLoop::test_this_runs_in_same_loop PASSED
 docs/reference/markers/class_scoped_loop_with_fixture_strict_mode_example.py::TestClassScopedLoop::test_runs_is_same_loop_as_fixture PASSED
@@ -74,6 +77,8 @@ tests/markers/test_function_scope.py::test_raises_when_scope_and_loop_scope_argu
 tests/markers/test_function_scope.py::test_warns_when_scope_argument_is_present PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_the_loop_policy PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_respects_parametrized_loop_policies PASSED
+tests/markers/test_function_scope.py::test_event_loop_policy_fixture_override_emits_deprecation_warning PASSED
+tests/markers/test_function_scope.py::test_default_event_loop_policy_fixture_does_not_warn PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_provides_function_scoped_loop_to_fixtures PASSED
 tests/markers/test_function_scope.py::test_asyncio_mark_handles_missing_event_loop_triggered_by_fixture PASSED
 tests/markers/test_function_scope.py::test_standalone_test_does_not_trigger_warning_about_no_current_event_loop_being_set PASSED
@@ -82,6 +87,10 @@ tests/markers/test_invalid_arguments.py::test_no_error_when_scope_passed_as_sole
 tests/markers/test_invalid_arguments.py::test_error_when_scope_passed_as_positional_argument PASSED
 tests/markers/test_invalid_arguments.py::test_error_when_wrong_keyword_argument_is_passed PASSED
 tests/markers/test_invalid_arguments.py::test_error_when_additional_keyword_arguments_are_passed PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_loop_factories_marker_value_is_invalid["custom"] PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_loop_factories_marker_value_is_invalid[[]] PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_loop_factories_marker_value_is_invalid[[""]] PASSED
+tests/markers/test_invalid_arguments.py::test_error_when_loop_factories_marker_value_is_invalid[[1]] PASSED
 tests/markers/test_mixed_scope.py::test_function_scoped_loop_restores_previous_loop_scope PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_provides_module_scoped_loop_strict_mode PASSED
 tests/markers/test_module_scope.py::test_asyncio_mark_respects_the_loop_policy PASSED
@@ -174,6 +183,46 @@ tests/test_is_async_test.py::test_returns_false_for_sync_item PASSED
 tests/test_is_async_test.py::test_returns_true_for_marked_coroutine_item_in_strict_mode PASSED
 tests/test_is_async_test.py::test_returns_false_for_unmarked_coroutine_item_in_strict_mode PASSED
 tests/test_is_async_test.py::test_returns_true_for_unmarked_coroutine_item_in_auto_mode PASSED
+tests/test_loop_factory_parametrization.py::test_single_factory_does_not_add_suffix_to_test_name PASSED
+tests/test_loop_factory_parametrization.py::test_named_hook_factories_apply_to_async_tests PASSED
+tests/test_loop_factory_parametrization.py::test_named_hook_factories_parametrize_async_tests PASSED
+tests/test_loop_factory_parametrization.py::test_named_hook_factories_use_mapping_keys_as_test_ids PASSED
+tests/test_loop_factory_parametrization.py::test_named_hook_factories_apply_to_async_fixtures PASSED
+tests/test_loop_factory_parametrization.py::test_sync_tests_are_not_parametrized_by_hook_factories PASSED
+tests/test_loop_factory_parametrization.py::test_hook_requires_non_empty_mapping_of_named_callables[return None] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_requires_non_empty_mapping_of_named_callables[return {}] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_requires_non_empty_mapping_of_named_callables[return [CustomEventLoop]] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_requires_non_empty_mapping_of_named_callables[return {'': CustomEventLoop}] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_requires_non_empty_mapping_of_named_callables[return {'default': 1}] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_use_first_non_none_result PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_error_when_all_implementations_return_none PASSED
+tests/test_loop_factory_parametrization.py::test_nested_conftest_hook_respects_conftest_locality PASSED
+tests/test_loop_factory_parametrization.py::test_asyncio_marker_loop_factories_select_subset PASSED
+tests/test_loop_factory_parametrization.py::test_unavailable_factory_skips_with_reason PASSED
+tests/test_loop_factory_parametrization.py::test_partial_intersection_runs_available_and_skips_missing PASSED
+tests/test_loop_factory_parametrization.py::test_platform_conditional_factories PASSED
+tests/test_loop_factory_parametrization.py::test_asyncio_marker_loop_factories_without_hook_errors PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_can_vary_per_test_with_default_loop_scope[function] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_can_vary_per_test_with_default_loop_scope[module] PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_can_vary_per_test_with_session_scope_across_modules PASSED
+tests/test_loop_factory_parametrization.py::test_hook_factories_work_in_auto_mode PASSED
+tests/test_loop_factory_parametrization.py::test_no_event_loop_leak_with_custom_factory PASSED
+tests/test_loop_factory_parametrization.py::test_function_loop_scope_allows_per_test_factories_with_session_default PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_same_loop_as_async_test_under_custom_factory PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_its_own_loop_when_wider_scoped_loop_active[function-module] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_its_own_loop_when_wider_scoped_loop_active[function-package] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_its_own_loop_when_wider_scoped_loop_active[function-session] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_its_own_loop_when_wider_scoped_loop_active[module-session] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_fixture_sees_its_own_loop_when_wider_scoped_loop_active[package-session] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_generator_fixture_teardown_sees_own_loop[function-module] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_generator_fixture_teardown_sees_own_loop[function-session] PASSED
+tests/test_loop_factory_parametrization.py::test_sync_generator_fixture_teardown_sees_own_loop[module-session] PASSED
+tests/test_loop_factory_parametrization.py::test_async_generator_fixture_teardown_runs_under_custom_factory[module] PASSED
+tests/test_loop_factory_parametrization.py::test_async_generator_fixture_teardown_runs_under_custom_factory[package] PASSED
+tests/test_loop_factory_parametrization.py::test_async_generator_fixture_teardown_runs_under_custom_factory[session] PASSED
+tests/test_loop_factory_parametrization.py::test_async_fixture_recreated_per_loop_factory_variant[module] PASSED
+tests/test_loop_factory_parametrization.py::test_async_fixture_recreated_per_loop_factory_variant[package] PASSED
+tests/test_loop_factory_parametrization.py::test_async_fixture_recreated_per_loop_factory_variant[session] PASSED
 tests/test_package.py::test_package_exposes_version PASSED
 tests/test_port_factories.py::test_unused_tcp_port_selects_unused_port PASSED
 tests/test_port_factories.py::test_unused_udp_port_selects_unused_port PASSED
@@ -196,6 +245,7 @@ tests/test_set_event_loop.py::test_set_event_loop_none[with asyncio.Runner(): pa
 tests/test_set_event_loop.py::test_set_event_loop_none_class[asyncio.set_event_loop(None)] PASSED
 tests/test_set_event_loop.py::test_set_event_loop_none_class[asyncio.run(asyncio.sleep(0))] PASSED
 tests/test_set_event_loop.py::test_set_event_loop_none_class[with asyncio.Runner(): pass] PASSED
+tests/test_set_event_loop.py::test_asyncio_run_after_async_fixture_does_not_leak_loop PASSED
 tests/test_set_event_loop.py::test_original_shared_loop_is_reinstated_not_fresh_loop[asyncio.set_event_loop(None)-module] PASSED
 tests/test_set_event_loop.py::test_original_shared_loop_is_reinstated_not_fresh_loop[asyncio.set_event_loop(None)-package] PASSED
 tests/test_set_event_loop.py::test_original_shared_loop_is_reinstated_not_fresh_loop[asyncio.set_event_loop(None)-session] PASSED
@@ -232,6 +282,15 @@ tests/test_set_event_loop.py::test_shared_loop_with_multiple_fixtures_preservati
 tests/test_set_event_loop.py::test_shared_loop_with_multiple_fixtures_preservation[with asyncio.Runner(): pass-session-package] PASSED
 tests/test_set_event_loop.py::test_shared_loop_with_multiple_fixtures_preservation[with asyncio.Runner(): pass-package-module] PASSED
 tests/test_set_event_loop.py::test_shared_loop_with_multiple_fixtures_preservation[with asyncio.Runner(): pass-module-package] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.set_event_loop(None)-module] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.set_event_loop(None)-package] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.set_event_loop(None)-session] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.run(asyncio.sleep(0))-module] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.run(asyncio.sleep(0))-package] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[asyncio.run(asyncio.sleep(0))-session] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[with asyncio.Runner(): pass-module] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[with asyncio.Runner(): pass-package] PASSED
+tests/test_set_event_loop.py::test_sync_fixture_sees_correct_loop_after_loop_broken_with_factory[with asyncio.Runner(): pass-session] PASSED
 tests/test_simple.py::test_asyncio_marker PASSED
 tests/test_simple.py::test_asyncio_marker_compatibility_with_xfail PASSED
 tests/test_simple.py::test_asyncio_auto_mode_compatibility_with_xfail PASSED
@@ -251,6 +310,6 @@ tests/test_skips.py::test_skip_in_module_does_not_skip_package PASSED
 tests/test_subprocess.py::test_subprocess PASSED
 tests/test_task_cleanup.py::test_task_is_cancelled_when_abandoned_by_test PASSED
 
-======== 240 passed ========
+======== 299 passed ========
   py$(PYV): OK
   congratulations :)
