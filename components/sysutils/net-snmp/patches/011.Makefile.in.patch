@@ -7,14 +7,8 @@
 #
 --- net-snmp-5.9.4/agent/Makefile.in.orig
 +++ net-snmp-5.9.4/agent/Makefile.in
-@@ -280,9 +280,13 @@
- FTOBJS		= $(LLIBAGENTFTS)  $(FTMIBOBJS) $(FTAGENTOBJS) \
- 		  mib_modules.ft auto_nlist.ft
+@@ -282,7 +282,7 @@
  
-+LIB_LD_ADD_AGENT   =-lnetsnmp -lnetsnmphelpers
-+
-+LIB_LD_ADD_PATH_MIBS   =-Lhelpers -L../snmplib
-+
  FEATUREFILE     = $(top_builddir)/include/net-snmp/agent/features.h
  
 -all: agentlib subdirs miblib $(INSTALLBINPROGS) $(INSTALLSBINPROGS)
@@ -22,13 +16,13 @@
  
  #
  # build stuff targets
-@@ -312,6 +316,10 @@
+@@ -312,6 +312,10 @@
  
  agentlib: $(AGENTLIB)
  
 +relinklib:	${LLIBAGENTOBJS} $(USELIBS)
-+	$(LIB_LD_CMD) $(AGENTLIB) $(LIB_LD_ADD_PATH_MIBS) ${LLIBAGENTOBJS} $(USELIBS) ${LAGENTLIBS} $(LDFLAGS) $(PERLLDOPTS_FOR_LIBS) $(LIB_LD_LIBS) $(LIB_LD_ADD_AGENT)
-+	$(RANLIB) $(AGENTLIB) $(LIB_LD_ADD_AGENT)
++	$(LIB_LD_CMD) $(AGENTLIB) -L../snmplib  ${LLIBAGENTOBJS} $(USELIBS) ${LAGENTLIBS} $(LDFLAGS) $(PERLLDOPTS_FOR_LIBS) $(LIB_LD_LIBS) $(LIB_LD_ADD_AGENT)
++	$(RANLIB) $(AGENTLIB) -lnetsnmp -lnetsnmphelpers
 +
  miblib: $(MIBLIB)
  

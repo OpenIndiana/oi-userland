@@ -24,7 +24,7 @@
 # Copyright 2019 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
 # Copyright 2022 Friedrich Kink
 # Copyright 2023 Niklas Poslovski
-# Copyright 2023-2025 Klaus Ziegler
+# Copyright 2023-2026 Klaus Ziegler
 #
 
 BUILD_BITS=64_and_32
@@ -34,7 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
-COMPONENT_REVISION=	4
+COMPONENT_REVISION=	5
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -177,7 +177,6 @@ REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 REQUIRED_PACKAGES += system/header/header-picl
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)/32
 REQUIRED_PACKAGES += SUNWcs
@@ -187,3 +186,4 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.perl += runtime/perl
