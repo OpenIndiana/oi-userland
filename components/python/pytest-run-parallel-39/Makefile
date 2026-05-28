@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/pytest-run-parallel pytest_run_parallel
+#   $WS_TOOLS/python-integrate-project -d python/pytest-run-parallel-39 pytest_run_parallel
 #
 
 BUILD_STYLE = pyproject
@@ -19,17 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_run_parallel
-HUMAN_VERSION =			0.9.0
+HUMAN_VERSION =			0.8.2
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A simple pytest plugin to run tests concurrently
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:653b1f946d4c525588c3bde1a9ba56ec3176bf96c5df5649e57bfa3173534247
+	sha256:ccc625bb79b3759a8c280a635a2332371af183020289c9215d04631b55ecfe3e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by pytest-run-parallel >= 0.9.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pytest-run-parallel >= 0.9.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
