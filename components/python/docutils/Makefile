@@ -20,13 +20,18 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		docutils
-HUMAN_VERSION =			0.22.4
+HUMAN_VERSION =			0.23
 COMPONENT_SUMMARY =		Docutils -- Python Documentation Utilities
 COMPONENT_PROJECT_URL =		https://docutils.sourceforge.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968
+	sha256:746f5060322511280a1e50eb76846ed6bf2342984b2ac04dc42caa1a8d78799e
 COMPONENT_LICENSE =		CC-PDDC AND BSD-3-Clause AND BSD-2-Clause
 COMPONENT_LICENSE_FILE =	COPYING.rst
+
+# This component is required by following bootstrapped components so it must be
+# bootstrapped too.
+# - tox (test bootstrap)
+PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
 
