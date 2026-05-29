@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		idna
-HUMAN_VERSION =			3.16
+HUMAN_VERSION =			3.17
 COMPONENT_SUMMARY =		Internationalized Domain Names in Applications (IDNA)
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:d7a6da03db833450fca25d2358ac9ff06cd624577a4aea3a596d5c0f77b8e03d
+	sha256:5eb0cb53bc467c12eadcf6de83163ad8527cec9416f44b9b61b19caedad2b87f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
