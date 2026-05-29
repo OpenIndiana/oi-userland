@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project rpds_py
+#   $WS_TOOLS/python-integrate-project -d python/rpds_py-39 rpds_py
 #
 
 BUILD_STYLE = pyproject
@@ -20,18 +20,21 @@ CARGO_VENDOR = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		rpds_py
-HUMAN_VERSION =			2026.5.1
+HUMAN_VERSION =			0.27.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Python bindings to Rust's persistent data structures (rpds)
 COMPONENT_PROJECT_URL =		https://github.com/crate-py/rpds
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:07b24fea40541e28570e5b795a4a38fbdcd12550c06bd0748005ecc8116ca256
+	sha256:26a1c73171d10b7acccbded82bf6a586ab8203601e565badc74bbbf8bc5a10f8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by rpds-py >= 0.28.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+COMPONENT_VERSION =		0.30.0
+
+# rpds-py >= 0.28.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
