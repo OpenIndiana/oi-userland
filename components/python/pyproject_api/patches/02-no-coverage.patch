@@ -1,28 +1,37 @@
 We do not need to check coverage for this project.
 
---- pyproject_api-1.10.0/pyproject.toml.orig
-+++ pyproject_api-1.10.0/pyproject.toml
-@@ -54,9 +54,7 @@
-   "sphinx-autodoc-typehints>=3.5.1",
+--- pyproject_api-1.10.1/pyproject.toml.orig
++++ pyproject_api-1.10.1/pyproject.toml
+@@ -63,9 +63,7 @@
+   { include-group = "type" },
  ]
- optional-dependencies.testing = [
+ test = [
 -  "covdefaults>=2.3",
    "pytest>=8.4.2",
 -  "pytest-cov>=7",
    "pytest-mock>=3.15.1",
    "setuptools>=80.9",
  ]
---- pyproject_api-1.10.0/tox.ini.orig
-+++ pyproject_api-1.10.0/tox.ini
-@@ -27,10 +27,7 @@
-     COVERAGE_PROCESS_START = {tox_root}/pyproject.toml
- commands =
-     pytest {tty:--color=yes} {posargs: \
--      --junitxml {work_dir}{/}junit.{env_name}.xml --cov {env_site_packages_dir}{/}pyproject_api \
--      --cov {tox_root}{/}tests --cov-fail-under=100 \
--      --cov-config=pyproject.toml --no-cov-on-fail --cov-report term-missing:skip-covered --cov-context=test \
--      --cov-report html:{env_tmp_dir}{/}htmlcov --cov-report xml:{work_dir}{/}coverage.{env_name}.xml \
-+      --junitxml {work_dir}{/}junit.{env_name}.xml \
-       tests}
- 
- [testenv:fix]
+--- pyproject_api-1.10.1/tox.toml.orig
++++ pyproject_api-1.10.1/tox.toml
+@@ -16,20 +16,6 @@
+     { replace = "posargs", default = [
+       "--junitxml",
+       "{work_dir}{/}junit.{env_name}.xml",
+-      "--cov",
+-      "{env_site_packages_dir}{/}pyproject_api",
+-      "--cov",
+-      "{tox_root}{/}tests",
+-      "--cov-fail-under=100",
+-      "--cov-config=pyproject.toml",
+-      "--no-cov-on-fail",
+-      "--cov-report",
+-      "term-missing:skip-covered",
+-      "--cov-context=test",
+-      "--cov-report",
+-      "html:{env_tmp_dir}{/}htmlcov",
+-      "--cov-report",
+-      "xml:{work_dir}{/}coverage.{env_name}.xml",
+       "tests",
+     ], extend = true },
+   ],
