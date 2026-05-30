@@ -20,8 +20,8 @@
 #
 
 #
-# Copyright (c) 2025 David Stes
-# IPS Makefile for Berkeley Yacc
+# Copyright (c) 2025, 2026 David Stes
+# IPS Makefile for Berkeley Yacc (sometimes called Better Yacc)
 # Berkeley Yacc was written by Robert Corbett according to the README 
 # Also see ACKNOWLEDGEMENTS and AUTHORS in the sources
 # See sources yysccsid[] = \"@(#)yaccpar	1.9 (Berkeley) 02/21/93\" */"
@@ -34,14 +34,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		byacc
-COMPONENT_VERSION=	20241231
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	20260126
 COMPONENT_SUMMARY=	byacc - Berkeley Yacc is an LALR(1) parser generator
 COMPONENT_PROJECT_URL=	https://invisible-island.net/archives/byacc
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:192c2fae048d4e7f514ba451627f9c4e612765099f819c19191f9fde3e609673
+    sha256:b618c5fb44c2f5f048843db90f7d1b24f78f47b07913c8c7ba8c942d3eb24b00
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/parser/byacc
 COMPONENT_CLASSIFICATION=	Development/Other Languages
