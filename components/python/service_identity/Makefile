@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		service_identity
-HUMAN_VERSION =			24.2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			26.1.0
 COMPONENT_SUMMARY =		Service identity verification for pyOpenSSL & cryptography.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8683ba13f0d39c6cd5d625d2c5f65421d6d707b013b375c355751557cbe8e09
+	sha256:6358c52882c96e66ac4a55eb3a72c7dd4a70763f8cc6fa4e70abde2656f4bf3b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,7 +37,5 @@ REQUIRED_PACKAGES.python += library/python/cryptography
 REQUIRED_PACKAGES.python += library/python/hatch-fancy-pypi-readme
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
-REQUIRED_PACKAGES.python += library/python/pyasn1
-REQUIRED_PACKAGES.python += library/python/pyasn1-modules
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
