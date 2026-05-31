@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		serpent
-HUMAN_VERSION =			1.42
+HUMAN_VERSION =			1.43
 COMPONENT_SUMMARY =		Serialization based on ast.literal_eval
 COMPONENT_PROJECT_URL =		https://github.com/irmen/Serpent
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8ea082b01f8ba07ecd74e34a9118ac4521bc4594938d912b808c89f1da425506
+	sha256:62dc242fd4ea2a50339f4f5aaaf6ecc55605ee74770d7eb2031e760d90a0d114
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
