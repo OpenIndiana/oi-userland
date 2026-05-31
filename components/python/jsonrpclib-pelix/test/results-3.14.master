@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 69 items / 1 skipped
+collecting ... collected 73 items / 1 skipped
 
 tests/test_cgi.py::CGIHandlerTests::test_server PASSED
 tests/test_compatibility.py::TestCompatibility::test_batch PASSED
@@ -20,6 +20,7 @@ tests/test_compatibility.py::TestCompatibility::test_positional PASSED
 tests/test_compatibility.py::TestCompatibility::test_special_method PASSED
 tests/test_compatibility.py::TestCompatibility::test_url_query_string PASSED
 tests/test_config.py::ConfigTests::test_copy PASSED
+tests/test_headers.py::HeadersTests::test_content_length_too_large PASSED
 tests/test_headers.py::HeadersTests::test_should_add_additional_headers PASSED
 tests/test_headers.py::HeadersTests::test_should_add_additional_headers_to_notifications PASSED
 tests/test_headers.py::HeadersTests::test_should_add_custom_headers_to_methods PASSED
@@ -43,11 +44,14 @@ tests/test_internal.py::InternalTests::test_single_kwargs_and_args PASSED
 tests/test_internal.py::InternalTests::test_single_namespace PASSED
 tests/test_internal.py::InternalTests::test_single_notify PASSED
 tests/test_internal.py::InternalTests::test_tranport_error PASSED
+tests/test_internal.py::CheckForErrorsTests::test_single_key_error PASSED
+tests/test_internal.py::PayloadTests::test_request_rpcid_zero PASSED
 tests/test_jsonclass.py::SerializationTests::test_config_custom PASSED
 tests/test_jsonclass.py::SerializationTests::test_decimal PASSED
 tests/test_jsonclass.py::SerializationTests::test_dictionary PASSED
 tests/test_jsonclass.py::SerializationTests::test_enum PASSED
 tests/test_jsonclass.py::SerializationTests::test_iterable PASSED
+tests/test_jsonclass.py::SerializationTests::test_load_unknown_module PASSED
 tests/test_jsonclass.py::SerializationTests::test_object PASSED
 tests/test_jsonclass.py::SerializationTests::test_primitive PASSED
 tests/test_jsonlib.py::TestJsonLibLoading::test_best SKIPPED (No exp...)
@@ -83,8 +87,8 @@ tests/test_cgi.py::CGIHandlerTests::test_server
 
 tests/test_cgi.py::CGIHandlerTests::test_server
 tests/test_cgi.py::CGIHandlerTests::test_server
-  $(PYTHON_DIR)/http/server.py:1231: DeprecationWarning: This process (pid=$(PID)) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  $(PYTHON_DIR)/http/server.py:1242: DeprecationWarning: This process (pid=$(PID)) is multi-threaded, use of fork() may lead to deadlocks in the child.
     pid = os.fork()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 63 passed, 7 skipped, 4 warnings ========
+======== 67 passed, 7 skipped, 4 warnings ========

@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jsonrpclib_pelix
-HUMAN_VERSION =			1.0.0
+HUMAN_VERSION =			1.1.0
 COMPONENT_SUMMARY =		JSON-RPC v2.0 client and server for Python 2.7 and Python 3.6+ usable with Pelix/iPOPO remote services.
 COMPONENT_PROJECT_URL =		https://github.com/tcalmant/jsonrpclib/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:5b1ea14da6e371dbabedb1abed0a8ba1cf596428350cd9d0188f3c6c6c8ef784
+	sha256:379a3c9b3dd478727419587aa7cf14bb6ff0e64301decc0ffa98f710f6bfec1e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
