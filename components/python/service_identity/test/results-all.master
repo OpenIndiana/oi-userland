@@ -2,13 +2,13 @@ py$(PYV): commands[0]> python -m pytest
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
-OpenSSL: OpenSSL 3.5.4 30 Sep 2025
-pyOpenSSL: 25.3.0
-cryptography: 46.0.3
+OpenSSL: OpenSSL 3.5.6 7 Apr 2026
+pyOpenSSL: 26.2.0
+cryptography: 48.0.0
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 132 items
+collecting ... collected 135 items
 
 tests/test_cryptography.py::TestPublicAPI::test_no_cert_patterns_hostname PASSED
 tests/test_cryptography.py::TestPublicAPI::test_no_cert_patterns_ip_address[203.0.113.0] PASSED
@@ -22,11 +22,14 @@ tests/test_cryptography.py::TestPublicAPI::test_verify_ip_address_fail[::2] PASS
 tests/test_cryptography.py::TestExtractPatterns::test_dns PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_cn_ids_are_ignored PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_uri PASSED
+tests/test_cryptography.py::TestExtractPatterns::test_srv PASSED
+tests/test_cryptography.py::TestExtractPatterns::test_malformed_srv_other_name PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_ip PASSED
 tests/test_cryptography.py::TestExtractPatterns::test_extract_ids_deprecated PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_no_cert_patterns PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_dns_id_success PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_integration_dns_id_fail PASSED
+tests/test_hazmat.py::TestVerifyServiceIdentity::test_single_label_hostname_mismatch PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_ip_address_success PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_obligatory_missing PASSED
 tests/test_hazmat.py::TestVerifyServiceIdentity::test_obligatory_mismatch PASSED
@@ -143,6 +146,6 @@ tests/test_pyopenssl.py::TestExtractPatterns::test_uri PASSED
 tests/test_pyopenssl.py::TestExtractPatterns::test_ip PASSED
 tests/test_pyopenssl.py::TestExtractPatterns::test_extract_ids_deprecated PASSED
 
-======== 132 passed ========
+======== 135 passed ========
   py$(PYV): OK
   congratulations :)
