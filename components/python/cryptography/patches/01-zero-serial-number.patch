@@ -4,7 +4,7 @@ annoyingly (e.g. pkg update -n).
 
 See also https://github.com/pyca/cryptography/issues/12948
 
-As of 2025-12-28 we do have following certificates with zero serial number:
+As of 2026-06-01 we do have following certificates with zero serial number:
 
 $ for c in $(ls /etc/certs/CA) ; do openssl x509 -serial -noout < /etc/certs/CA/$c | grep -q '^serial=00$' && echo $c ; done
 Go_Daddy_Root_Certificate_Authority_-_G2.pem
@@ -15,17 +15,17 @@ Starfield_Root_Certificate_Authority_-_G2.pem
 Starfield_Services_Root_Certificate_Authority_-_G2.pem
 $
 
---- cryptography-46.0.6/src/rust/src/x509/certificate.rs.orig
-+++ cryptography-46.0.6/src/rust/src/x509/certificate.rs
-@@ -440,9 +440,9 @@
+--- cryptography-48.0.0/src/rust/src/x509/certificate.rs.orig
++++ cryptography-48.0.0/src/rust/src/x509/certificate.rs
+@@ -472,9 +472,9 @@
  }
  
  fn warn_if_not_positive(py: pyo3::Python<'_>, bytes: &[u8]) -> pyo3::PyResult<()> {
 -    if bytes[0] & 0x80 != 0 || bytes == [0] {
 +    if bytes[0] & 0x80 != 0 {
          let warning_cls = types::DEPRECATED_IN_36.get(py)?;
--        let message = cstr_from_literal!("Parsed a serial number which wasn't positive (i.e., it was negative or zero), which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.");
-+        let message = cstr_from_literal!("Parsed a negative serial number, which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.");
+-        let message = c"Parsed a serial number which wasn't positive (i.e., it was negative or zero), which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.";
++        let message = c"Parsed a negative serial number, which is disallowed by RFC 5280. Loading this certificate will cause an exception in a future release of cryptography.";
          pyo3::PyErr::warn(py, &warning_cls, message, 1)?;
      }
      Ok(())
