@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project sybil
+#   $WS_TOOLS/python-integrate-project -d python/sybil-39 sybil
 #
 
 BUILD_STYLE = pyproject
@@ -19,44 +19,37 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		sybil
-HUMAN_VERSION =			10.0.1
+HUMAN_VERSION =			9.3.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Automated testing for the examples in your code and documentation.
 COMPONENT_PROJECT_URL =		https://github.com/simplistix/sybil
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/simplistix/sybil/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b05bc2f756805b56cc506add6a4c75010415854c8377b2e22ca485200b314e2
+	sha256:000bb402d06894f03ac7102d3952f3550b6b7adedb06ee79338c4c7fd1becc25
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
 TEST_STYLE = pytest
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# sybil --> testfixtures --> sybil
-#
-# To break loops we need to allow this project to integrate without testing in
-# a case the required projects are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by sybil >= 10.0.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# sybil >= 10.0.0 requires Python >= 3.11
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
-TEST_REQUIREMENTS_PEP735 += dev
+TEST_REQUIREMENTS_EXTRAS += test
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/mypy
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-cov
 TEST_REQUIRED_PACKAGES.python += library/python/seedir
 TEST_REQUIRED_PACKAGES.python += library/python/testfixtures
+TEST_REQUIRED_PACKAGES.python += library/python/types-pyyaml
