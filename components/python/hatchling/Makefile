@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.29.0
+HUMAN_VERSION =			1.30.1
 COMPONENT_SUMMARY =		Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:793c31816d952cee405b83488ce001c719f325d9cda69f1fc4cd750527640ea6
+	sha256:eee4fd45357f72ebb3d7a42e5d72cfb5e29ed426d79e8836288926c4258d5f2e
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -40,6 +40,7 @@ TEST_STYLE = none
 # - platformdirs (test bootstrap)
 # - pygments (test bootstrap)
 # - pyproject_api (test bootstrap)
+# - python-discovery (test bootstrap)
 # - tox (test bootstrap)
 # - virtualenv (test bootstrap)
 PYTHON_TEST_BOOTSTRAP = yes
