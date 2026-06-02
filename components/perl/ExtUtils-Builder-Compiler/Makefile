@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-Builder-Compiler
-HUMAN_VERSION =			0.036
+HUMAN_VERSION =			0.037
 COMPONENT_SUMMARY =		An interface around different compilers.
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1582f7d6ae787852afe8f0dd063bc6f68a819df00f1f478e35629c9549cdf112
+	sha256:b3954d688e398039285279167c6ebeee7557f10e95601ce3fdb68193263687b8
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
