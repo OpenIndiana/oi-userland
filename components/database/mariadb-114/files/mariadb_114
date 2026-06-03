@@ -55,13 +55,13 @@ if [ ! -d ${MYSQLDATA} ]; then
 fi
 
 if [ ! -d ${MYSQLDATA}/mysql ]; then
-	${MYSQLBIN}/mysql_install_db --user=mysql --datadir=${MYSQLDATA}
+	${MYSQLBIN}/mariadb-install-db --user=mysql --datadir=${MYSQLDATA}
 fi
 
 
 mysql_start() 	{
 	echo ${MYSQLBIN}/mysqld_safe --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE}
-	${MYSQLBIN}/mysqld_safe --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
+	${MYSQLBIN}/mariadbd-safe --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
 }
 
 case "$1" in
