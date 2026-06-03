@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		distlib
-HUMAN_VERSION =			0.4.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.4.1
 COMPONENT_SUMMARY =		Distribution utilities
 COMPONENT_PROJECT_URL =		https://github.com/pypa/distlib
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d
+	sha256:c3804d0d2d4b5fcd44036eb860cb6660485fcdf5c2aba53dc324d805837ea65b
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -35,6 +34,9 @@ COMPONENT_LICENSE_FILE =	LICENSE.txt
 PYTHON_TEST_BOOTSTRAP = yes
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Testing needs to find the compat module in the build directory
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR):$(COMPONENT_TEST_DIR)/tests
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
