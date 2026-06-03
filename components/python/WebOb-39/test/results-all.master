@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 2390 items
+collecting ... collected 2404 items
 
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=] PASSED
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=1] PASSED
@@ -2315,6 +2315,20 @@ tests/test_response.py::test_body_get_body_is_None_len_app_iter_is_zero PASSED
 tests/test_response.py::test_cache_control_get PASSED
 tests/test_response.py::test_location PASSED
 tests/test_response.py::test_location_no_open_redirect PASSED
+tests/test_response.py::test_location_no_open_redirect_tab_bypass[/\t/www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_tab_bypass[\t//www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_tab_bypass[//\twww.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_tab_bypass[/\t\t/www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[/\t/www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[/\n/www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[/\r/www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[\t//www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[\n//www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[\r//www.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\twww.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\nwww.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\rwww.example.com/test] PASSED
+tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\tw\nww.example.com/test] PASSED
 tests/test_response.py::test_location_unicode PASSED
 tests/test_response.py::test_request_uri_http PASSED
 tests/test_response.py::test_request_uri_no_script_name2 PASSED
@@ -2414,6 +2428,6 @@ tests/test_response.py::test_set_cookie_expires_is_datetime_tz_and_max_age_is_No
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/pytest-py$(PYV).xml -
-======== 2379 passed, 10 skipped, 1 xfailed, 5 warnings ========
+======== 2393 passed, 10 skipped, 1 xfailed, 5 warnings ========
   py$(PYV): OK
   congratulations :)
