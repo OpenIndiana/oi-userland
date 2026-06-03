@@ -3,7 +3,6 @@ version = attr: ... is forcing setuptools to override the version setuptools-scm
 When using setuptools-scm it's invalid to use setuptools dynamic version as well, please remove it.
 Setuptools-scm is responsible for setting the version, forcing setuptools to override creates errors.
   warnings.warn(
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python tests/test_all.py -v
 test_base (test_resources.CacheTestCase) ... ok
 test_filepath (test_resources.CacheTestCase) ... ok
@@ -150,6 +149,8 @@ test_launcher_run_with_interpreter_args (test_scripts.ScriptTestCase) ... skippe
 test_launchers (test_scripts.ScriptTestCase) ... skipped 'Test is Windows-specific'
 test_mode (test_scripts.ScriptTestCase) ... ok
 test_multiple (test_scripts.ScriptTestCase) ... ok
+test_path_doesnt_escape_script_dir (test_scripts.ScriptTestCase)
+Check that a crafted entry point name doesn't escape the scripts directory. ... ok
 test_script_run (test_scripts.ScriptTestCase) ... ok
 test_shebangs (test_scripts.ScriptTestCase) ... ok
 test_shebangs_custom_executable (test_scripts.ScriptTestCase) ... ok
@@ -250,7 +251,7 @@ test_nonexistent_resource (test_resources.ZipResourceTestCase) ... ok
 test_root_resources (test_resources.ZipResourceTestCase) ... ok
 
 ----------------------------------------------------------------------
-Ran 238 tests
+Ran 239 tests
 
 OK (skipped=23)
   py$(PYV): OK
