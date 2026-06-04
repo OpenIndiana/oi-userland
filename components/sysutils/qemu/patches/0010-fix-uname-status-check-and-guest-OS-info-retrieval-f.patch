@@ -1,0 +1,28 @@
+From f3579e7664c42df38d62683c3d2c38daf759938e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Borja=20Fern=C3=A1ndez?=
+ <23237379+ferorborja@users.noreply.github.com>
+Date: Wed, 22 Apr 2026 16:08:55 +0200
+Subject: fix uname status check and guest OS info retrieval for
+ illumos
+
+---
+ qga/commands-posix.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/qga/commands-posix.c b/qga/commands-posix.c
+index 19cd12e854..64cdf5d06d 100644
+--- a/qga/commands-posix.c
++++ b/qga/commands-posix.c
+@@ -1322,8 +1322,11 @@ GuestOSInfo *qmp_guest_get_osinfo(Error **errp)
+     const char *qga_os_release = g_getenv("QGA_OS_RELEASE");
+ 
+     info = g_new0(GuestOSInfo, 1);
+-
++    #ifdef __illumos__
++    if (uname(&kinfo) == -1) {
++    #else
+     if (uname(&kinfo) != 0) {
++    #endif
+         error_setg_errno(errp, errno, "uname failed");
+     } else {
+         info->kernel_version = g_strdup(kinfo.version);

@@ -1,23 +1,23 @@
-From e6a513f0f2408570114ea13e956db75cbb6078c6 Mon Sep 17 00:00:00 2001
+From 791a04edfbf8f494b755ac102e72c7fb3c5352c8 Mon Sep 17 00:00:00 2001
 From: Andy Fiddaman <illumos@fiddaman.net>
 Date: Mon, 22 May 2023 20:31:38 +0000
 Subject: Add support for a zconsole character device
 
 ---
- chardev/char-zconsole.c | 74 +++++++++++++++++++++++++++++++++++++++++
+ chardev/char-zconsole.c | 75 +++++++++++++++++++++++++++++++++++++++++
  chardev/meson.build     |  6 ++++
  include/chardev/char.h  |  1 +
  include/qemu/osdep.h    |  4 +++
  qapi/char.json          |  4 +++
- 5 files changed, 89 insertions(+)
+ 5 files changed, 90 insertions(+)
  create mode 100644 chardev/char-zconsole.c
 
 diff --git a/chardev/char-zconsole.c b/chardev/char-zconsole.c
 new file mode 100644
-index 0000000000..9648fbf1d5
+index 0000000000..57a11e5244
 --- /dev/null
 +++ b/chardev/char-zconsole.c
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,75 @@
 +#include "qemu/osdep.h"
 +#include "qemu/module.h"
 +#include "qemu/option.h"
@@ -46,9 +46,8 @@ index 0000000000..9648fbf1d5
 +	termios_p->c_cc[VTIME] = 0;
 +}
 +
-+static void
-+char_zconsole_open(Chardev *chr, ChardevBackend *backend, bool *be_opened,
-+    Error **errp)
++static bool
++char_zconsole_open(Chardev *chr, ChardevBackend *backend, Error **errp)
 +{
 +	struct termios tty;
 +	int fd;
@@ -56,7 +55,7 @@ index 0000000000..9648fbf1d5
 +	fd = qmp_chardev_open_file_source((char *)"/dev/zconsole",
 +	    O_RDWR | O_NONBLOCK, errp);
 +	if (fd < 0)
-+		return;
++		return false;
 +
 +	tcgetattr(fd, &tty);
 +	cfmakeraw(&tty);
@@ -64,12 +63,12 @@ index 0000000000..9648fbf1d5
 +
 +	if (!g_unix_set_fd_nonblocking(fd, true, NULL)) {
 +		error_setg_errno(errp, errno, "Failed to set FD nonblocking");
-+		return;
++		return false;
 +	}
 +
-+	if (!qemu_chr_open_fd(chr, fd, fd, errp)) {
-+		return;
-+	}
++	qemu_chr_open_fd(chr, fd, fd, errp);
++
++	return true;
 +}
 +
 +static void
@@ -112,10 +111,10 @@ index 56ee39ac0b..5a346576b0 100644
  
  system_ss.add(files(
 diff --git a/include/chardev/char.h b/include/chardev/char.h
-index 429852f8d9..eb55c9e862 100644
+index c2c42e4b7a..ab6d4c5328 100644
 --- a/include/chardev/char.h
 +++ b/include/chardev/char.h
-@@ -242,6 +242,7 @@ OBJECT_DECLARE_TYPE(Chardev, ChardevClass, CHARDEV)
+@@ -243,6 +243,7 @@ OBJECT_DECLARE_TYPE(Chardev, ChardevClass, CHARDEV)
  #define TYPE_CHARDEV_PARALLEL "chardev-parallel"
  #define TYPE_CHARDEV_FILE "chardev-file"
  #define TYPE_CHARDEV_SERIAL "chardev-serial"
@@ -124,10 +123,10 @@ index 429852f8d9..eb55c9e862 100644
  #define TYPE_CHARDEV_UDP "chardev-udp"
  
 diff --git a/include/qemu/osdep.h b/include/qemu/osdep.h
-index 96fe51bc39..4c01c862e3 100644
+index f151578b5c..1940338faf 100644
 --- a/include/qemu/osdep.h
 +++ b/include/qemu/osdep.h
-@@ -530,6 +530,10 @@ int qemu_shm_alloc(size_t size, Error **errp);
+@@ -544,6 +544,10 @@ int qemu_shm_alloc(size_t size, Error **errp);
  #endif
  #endif
  
@@ -139,10 +138,10 @@ index 96fe51bc39..4c01c862e3 100644
  #define SIGIO SIGPOLL
  #endif
 diff --git a/qapi/char.json b/qapi/char.json
-index f0a53f742c..514a9ffc4c 100644
+index a4abafa680..730e619fe1 100644
 --- a/qapi/char.json
 +++ b/qapi/char.json
-@@ -478,6 +478,8 @@
+@@ -470,6 +470,8 @@
  #
  # @parallel: parallel host device
  #
@@ -151,7 +150,7 @@ index f0a53f742c..514a9ffc4c 100644
  # @pipe: pipes (since 1.5)
  #
  # @socket: stream socket
-@@ -528,6 +530,7 @@
+@@ -520,6 +522,7 @@
    'data': [ 'file',
              { 'name': 'serial', 'if': 'HAVE_CHARDEV_SERIAL' },
              { 'name': 'parallel', 'if': 'HAVE_CHARDEV_PARALLEL' },
@@ -159,7 +158,7 @@ index f0a53f742c..514a9ffc4c 100644
              'pipe',
              'socket',
              'udp',
-@@ -721,6 +724,7 @@
+@@ -712,6 +715,7 @@
                          'if': 'HAVE_CHARDEV_SERIAL' },
              'parallel': { 'type': 'ChardevHostdevWrapper',
                            'if': 'HAVE_CHARDEV_PARALLEL' },
