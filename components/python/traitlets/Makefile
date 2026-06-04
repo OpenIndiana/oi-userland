@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		traitlets
-HUMAN_VERSION =			5.15.0
+HUMAN_VERSION =			5.15.1
 COMPONENT_SUMMARY =		Traitlets Python configuration system
 COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4fead733f81cf1c4c938e06f8ca4633896833c9d89eff878159457f4d4392971
+	sha256:7b1c07854fe25acb39e009bae49f11b79ff6cbb2f27999104e9110e7a6b53722
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
