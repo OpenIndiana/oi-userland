@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		TOML-Tiny
-HUMAN_VERSION =			0.21
+HUMAN_VERSION =			0.22
 COMPONENT_SUMMARY =		a minimal, pure perl TOML parser and serializer
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:be79c165c8b5c416faa267a64032945114b51e80727738451ec1586ad4b0d29c
+	sha256:d48064476740f2e9232afba2e0f61a82641b8c3b66a71c398ba1632fa4614b65
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,5 +42,6 @@ REQUIRED_PACKAGES.perl += library/perl-5/types-serialiser
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/unicode-linebreak
