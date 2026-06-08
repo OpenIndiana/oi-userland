@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		beautifulsoup4
-HUMAN_VERSION =			4.14.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			4.15.0
 COMPONENT_SUMMARY =		Screen-scraping library
 COMPONENT_PROJECT_URL =		https://www.crummy.com/software/BeautifulSoup/bs4/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2a98ab9f944a11acee9cc848508ec28d9228abfd522ef0fad6a02a72e0ded69e
+	sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -32,9 +31,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Test results order varies between runs
 PYTEST_SORT_TESTS = yes
-
-# https://bugs.launchpad.net/beautifulsoup/+bug/2132345
-PYTEST_ADDOPTS += --deselect bs4/tests/test_htmlparser.py::TestHTMLParserTreeBuilder::test_rejected_input
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/hatchling
