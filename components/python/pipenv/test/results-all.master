@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 481 items / 11 deselected / 470 selected
+collecting ... collected 500 items / 11 deselected / 489 selected
 
 tests/unit/test_cmdparse.py::test_parse_string PASSED
 tests/unit/test_cmdparse.py::test_parse_error PASSED
@@ -92,6 +92,8 @@ tests/unit/test_credential_safety.py::test_write_credentials_netrc_emits_machine
 tests/unit/test_credential_safety.py::test_write_credentials_netrc_is_owner_readable_only PASSED
 tests/unit/test_credential_safety.py::test_write_credentials_netrc_dedupes_hosts PASSED
 tests/unit/test_credential_safety.py::test_write_credentials_netrc_decodes_url_encoded_password PASSED
+tests/unit/test_credential_safety.py::test_write_credentials_netrc_pipfile_wins_over_existing_system_netrc PASSED
+tests/unit/test_credential_safety.py::test_write_credentials_netrc_from_env_var_expanded_url PASSED
 tests/unit/test_credential_safety.py::test_pip_install_deps_strips_credentials_from_argv PASSED
 tests/unit/test_credential_safety.py::test_pip_install_deps_no_netrc_when_no_credentials PASSED
 tests/unit/test_dependencies.py::test_entry_get_cleaned_dict_preserves_file_url PASSED
@@ -198,6 +200,7 @@ tests/unit/test_pylock.py::test_pylock_file_invalid_version PASSED
 tests/unit/test_pylock.py::test_pylock_file_missing_version PASSED
 tests/unit/test_pylock.py::test_find_pylock_file PASSED
 tests/unit/test_pylock.py::test_convert_to_pipenv_lockfile PASSED
+tests/unit/test_pylock.py::test_convert_to_pipenv_lockfile_expands_env_vars_in_source_urls PASSED
 tests/unit/test_pylock.py::test_from_lockfile PASSED
 tests/unit/test_pylock.py::test_wildcard_version_handling PASSED
 tests/unit/test_pylock.py::test_write_method PASSED
@@ -223,6 +226,17 @@ tests/unit/test_resolver_regressions.py::test_resolve_hashes_runs_in_parallel PA
 tests/unit/test_resolver_regressions.py::test_resolve_constraints_runs_candidate_lookup_in_parallel PASSED
 tests/unit/test_resolver_regressions.py::test_prepare_index_lookup_is_cached PASSED
 tests/unit/test_resolver_regressions.py::test_process_resolver_results_does_not_scan_reverse_dependencies PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_valid[30d-30] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_valid[1d-1] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_valid[365d-365] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[None] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[30days] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[30h] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[P30D] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[1 d] PASSED
+tests/unit/test_resolver_regressions.py::test_get_cool_down_timedelta_invalid_or_absent[d] PASSED
+tests/unit/test_resolver_regressions.py::test_pip_options_sets_uploaded_prior_to_from_cool_down_period PASSED
 tests/unit/test_tar_link_safety.py::test_link_target_is_within_accepts_in_bounds_hardlink PASSED
 tests/unit/test_tar_link_safety.py::test_link_target_is_within_rejects_parent_traversal PASSED
 tests/unit/test_tar_link_safety.py::test_link_target_is_within_rejects_deep_parent_traversal PASSED
@@ -245,6 +259,11 @@ tests/unit/test_update.py::test_clean_unused_deps_without_reverse_deps_behaves_a
 tests/unit/test_update.py::test_clean_unused_deps_verbose_prints_removed_package PASSED
 tests/unit/test_update.py::test_process_package_args_does_not_cross_contaminate_categories PASSED
 tests/unit/test_update.py::test_process_package_args_writes_to_pipfile_when_package_in_correct_category PASSED
+tests/unit/test_update.py::test_do_update_no_args_goes_through_do_lock PASSED
+tests/unit/test_update.py::test_do_update_with_packages_uses_upgrade_path PASSED
+tests/unit/test_update.py::test_do_update_no_args_with_dev_locks_default_and_develop PASSED
+tests/unit/test_update.py::test_do_update_no_args_default_locks_default_only PASSED
+tests/unit/test_update.py::test_do_update_outdated_skips_both_lock_and_upgrade PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps0-expected0] PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps1-expected1] PASSED
 tests/unit/test_utils.py::test_convert_deps_to_pip_one_way[deps2-expected2] PASSED
@@ -477,11 +496,11 @@ tests/unit/test_vendor.py::test_token_date[dt6-1992-08-19T15:10:00+08:00] PASSED
 tests/unit/test_vendor.py::test_locations_falls_back_to_sysconfig_when_distutils_unavailable PASSED
 
 =============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1428
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1428: PytestConfigWarning: Unknown config option: plugins
+../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1434
+  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:1434: PytestConfigWarning: Unknown config option: plugins
   
     self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 461 passed, 9 skipped, 11 deselected, 1 warning ========
+======== 480 passed, 9 skipped, 11 deselected, 1 warning ========
