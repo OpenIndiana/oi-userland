@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
-collecting ... collected 1144 items
+collecting ... collected 1325 items
 
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa1-INVERTED_EXCLAMATION] PASSED
 tests/test_ambiguous.py::test_wcwidth_ambiguous_default[\xa7-SECTION_SIGN] PASSED
@@ -123,6 +123,26 @@ tests/test_benchmarks.py::test_width_udhr_lines SKIPPED)
 tests/test_benchmarks.py::test_width_wcswidth_consistency_udhr SKIPPED
 tests/test_benchmarks.py::test_width_fastpath_integrity_udhr SKIPPED
 tests/test_benchmarks.py::test_ljust_udhr_lines SKIPPED)
+tests/test_benchmarks.py::test_wcstwidth_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_wcstwidth_ri_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_ri_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_wcstwidth_emoji_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_emoji_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_wcstwidth_wide_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_wide_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_width_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_width_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_width_ri_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_width_ri_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_wcstwidth_vs16_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_vs16_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_wcstwidth_vs15_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_wcstwidth_vs15_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_width_vs16_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_width_vs16_term_program[xterm.js] PASSED
+tests/test_benchmarks.py::test_width_vs15_term_program[ghostty] PASSED
+tests/test_benchmarks.py::test_width_vs15_term_program[xterm.js] PASSED
 tests/test_clip.py::test_strip_sequences[-] PASSED
 tests/test_clip.py::test_strip_sequences[hello-hello] PASSED
 tests/test_clip.py::test_strip_sequences[hello world-hello world] PASSED
@@ -406,6 +426,19 @@ tests/test_core.py::test_virama_conjunct[\u09a4\u09cd\u200d\u09aa-2] PASSED
 tests/test_core.py::test_virama_conjunct[\u0915\u094d\u200d\u0924-2] PASSED
 tests/test_core.py::test_virama_conjunct[\u0d15\u0d4d\u0d15\u0d41\u0d02-2] PASSED
 tests/test_core.py::test_virama_conjunct[\u0915\u094d\u0924\u0941\u0902-2] PASSED
+tests/test_core.py::test_virama_conjunct_mc_vowel[\u0995\u09cd\u09a4\u09bf-2] PASSED
+tests/test_core.py::test_virama_conjunct_mc_vowel[\u0915\u094d\u0924\u093f-2] PASSED
+tests/test_core.py::test_virama_conjunct_mc_vowel[\u0995\u09cd\u09a4-2] PASSED
+tests/test_core.py::test_virama_conjunct_mc_vowel[\u0995\u09bf-2] PASSED
+tests/test_core.py::test_virama_mc_category_overlap[\ua9a0\ua9c0\ua9b1\ua9c0\ua9ae-2] PASSED
+tests/test_core.py::test_virama_mc_category_overlap[\ua9a0\ua9c0\ua9b1-2] PASSED
+tests/test_core.py::test_virama_mc_category_overlap[\u1b04\u1b44\u1b05-2] PASSED
+tests/test_core.py::test_virama_mc_category_overlap[\U000111c0\U000111c0-0] PASSED
+tests/test_core.py::test_virama_conjunct_invisible_stacker[\u1000\u1039\u1000-2] PASSED
+tests/test_core.py::test_virama_conjunct_invisible_stacker[\u1000\u1039\u1000\u1039\u1002-2] PASSED
+tests/test_core.py::test_virama_conjunct_invisible_stacker[\u1000\u1039\u200d\u1000-2] PASSED
+tests/test_core.py::test_virama_conjunct_invisible_stacker[\u1782\u17d2\u1782\u17c1-2] PASSED
+tests/test_core.py::test_virama_conjunct_invisible_stacker[\u1780\u17d2\u1780-2] PASSED
 tests/test_core.py::test_zwj_at_end_of_string PASSED
 tests/test_core.py::test_soft_hyphen PASSED
 tests/test_core.py::test_prepended_concatenation_mark_width[1536-ARABIC NUMBER SIGN] PASSED
@@ -539,6 +572,147 @@ tests/test_sgr_state.py::test_propagate_sgr_empty_lines PASSED
 tests/test_sgr_state.py::test_sgr_malformed_sequences PASSED
 tests/test_sgr_state.py::test_parse_sgr_params_invalid PASSED
 tests/test_sgr_state.py::test_extended_color_mixed_format_edge_cases PASSED
+tests/test_term_overrides.py::test_resolve_terminal_aliases PASSED
+tests/test_term_overrides.py::test_resolve_terminal_unknown PASSED
+tests/test_term_overrides.py::test_resolve_terminal_auto_detect PASSED
+tests/test_term_overrides.py::test_wcswidth_no_override PASSED
+tests/test_term_overrides.py::test_wcswidth_vte_override[\u2630-2-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_vte_override[\U0001f1e6-2-1] PASSED
+tests/test_term_overrides.py::test_width_vte_override[\u2630-kwargs0-1] PASSED
+tests/test_term_overrides.py::test_width_vte_override[\u2630-kwargs1-2] PASSED
+tests/test_term_overrides.py::test_width_vte_override[\x1b[31m\u2630\u2631\x1b[0m-kwargs2-2] PASSED
+tests/test_term_overrides.py::test_width_vte_override[\u2630\u2631-kwargs3-2] PASSED
+tests/test_term_overrides.py::test_vs16_override_basic PASSED
+tests/test_term_overrides.py::test_vs16_libvterm_no_override PASSED
+tests/test_term_overrides.py::test_wcwidth_unchanged PASSED
+tests/test_term_overrides.py::test_wcstwidth_term_program PASSED
+tests/test_term_overrides.py::test_wcswidth_ascii_unchanged PASSED
+tests/test_term_overrides.py::test_vs15_standalone PASSED
+tests/test_term_overrides.py::test_vs15_no_override PASSED
+tests/test_term_overrides.py::test_vs15_wider_override_unchanged PASSED
+tests/test_term_overrides.py::test_grapheme_override_zwj_not_in_table PASSED
+tests/test_term_overrides.py::test_width_vs16_zwj_transition PASSED
+tests/test_term_overrides.py::test_width_vs15_override PASSED
+tests/test_term_overrides.py::test_grapheme_override_wcswidth_family[False-2] PASSED
+tests/test_term_overrides.py::test_grapheme_override_wcswidth_family[-2] PASSED
+tests/test_term_overrides.py::test_grapheme_override_wcswidth_family[nonexistent-2] PASSED
+tests/test_term_overrides.py::test_grapheme_override_wcswidth_family[alacritty-4] PASSED
+tests/test_term_overrides.py::test_grapheme_override_multi_zwj_alacritty PASSED
+tests/test_term_overrides.py::test_grapheme_override_width_alacritty[width-kwargs0] PASSED
+tests/test_term_overrides.py::test_grapheme_override_width_alacritty[width-kwargs1] PASSED
+tests/test_term_overrides.py::test_grapheme_override_ascii_unchanged PASSED
+tests/test_term_overrides.py::test_grapheme_override_zwj_at_end PASSED
+tests/test_term_overrides.py::test_grapheme_override_fitzpatrick PASSED
+tests/test_term_overrides.py::test_list_term_programs PASSED
+tests/test_term_overrides.py::test_grapheme_override_invalid_term_names PASSED
+tests/test_term_overrides.py::test_grapheme_override_zwj_no_extpict_base PASSED
+tests/test_term_overrides.py::test_grapheme_override_scanner_edges[\U0001f468\u200d\U0001f466x-alacritty-5] PASSED
+tests/test_term_overrides.py::test_grapheme_override_scanner_edges[\U0001f468\u200da-alacritty-2] PASSED
+tests/test_term_overrides.py::test_grapheme_override_scanner_edges[\U0001f468\u200da-False-2] PASSED
+tests/test_term_overrides.py::test_grapheme_override_missing_module PASSED
+tests/test_term_overrides.py::test_no_terminal_has_vs15_narrower_overrides PASSED
+tests/test_term_overrides.py::test_list_term_programs_includes_xterm PASSED
+tests/test_term_overrides.py::test_resolve_terminal_xterm_explicit PASSED
+tests/test_term_overrides.py::test_resolve_terminal_xterm_auto_detected[TERM] PASSED
+tests/test_term_overrides.py::test_resolve_terminal_xterm_auto_detected[TERM_PROGRAM] PASSED
+tests/test_term_overrides.py::test_xterm_overrides_applied[wcstwidth-\U0001f1e6-2-1] PASSED
+tests/test_term_overrides.py::test_xterm_overrides_applied[width-\U0001f1e6-2-1] PASSED
+tests/test_term_overrides.py::test_xterm_overrides_applied[wcstwidth-\u231a\ufe0e-1-2] PASSED
+tests/test_term_overrides.py::test_xterm_overrides_applied[width-\u231a\ufe0e-1-2] PASSED
+tests/test_term_overrides.py::test_zwj_fallthrough_resets_base_for_vs16[wcswidth] PASSED
+tests/test_term_overrides.py::test_zwj_fallthrough_resets_base_for_vs16[width] PASSED
+tests/test_term_overrides.py::test_zwj_fallthrough_resets_base_for_vs15[wcswidth] PASSED
+tests/test_term_overrides.py::test_zwj_fallthrough_resets_base_for_vs15[width] PASSED
+tests/test_term_overrides.py::test_align_term_program_vte[ljust-\u2630-4-\u2630   ] PASSED
+tests/test_term_overrides.py::test_align_term_program_vte[rjust-\u2630-4-   \u2630] PASSED
+tests/test_term_overrides.py::test_align_term_program_vte[center-\u2630-5-  \u2630  ] PASSED
+tests/test_term_overrides.py::test_clip_term_program_vte PASSED
+tests/test_term_overrides.py::test_wrap_term_program_vte PASSED
+tests/test_term_overrides.py::test_resolve_terminal_from_env[termenv0-kitty] PASSED
+tests/test_term_overrides.py::test_resolve_terminal_from_env[termenv1-kitty] PASSED
+tests/test_term_overrides.py::test_merge_ranges[args0-expected0] PASSED
+tests/test_term_overrides.py::test_merge_ranges[args1-expected1] PASSED
+tests/test_term_overrides.py::test_merge_ranges[args2-expected2] PASSED
+tests/test_term_overrides.py::test_merge_ranges[args3-expected3] PASSED
+tests/test_term_overrides.py::test_sfz_override_foot PASSED
+tests/test_term_overrides.py::test_sfz_zeroer[kitty-0] PASSED
+tests/test_term_overrides.py::test_sfz_zeroer[bobcat-0] PASSED
+tests/test_term_overrides.py::test_sfz_zeroer[False-2] PASSED
+tests/test_term_overrides.py::test_width_zeroer[kwargs0-0] PASSED
+tests/test_term_overrides.py::test_width_zeroer[kwargs1-0] PASSED
+tests/test_term_overrides.py::test_empty_overrides_includes_zeroer PASSED
+tests/test_term_overrides.py::test_get_term_overrides_returns_empty_when_no_overrides PASSED
+tests/test_term_overrides.py::test_get_term_overrides_reads_narrow_zeroer_key PASSED
+tests/test_term_overrides.py::test_get_term_overrides_narrow_wider_still_empty PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\xad] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u0600] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u0605] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u06dd] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u070f] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u0890] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u0891] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\u08e2] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\U000110bd] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_cf_codepoints[\U000110cd] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_not_applied_for_other_terminals[wcstwidth] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_not_applied_for_other_terminals[width] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[wcstwidth-kitty-0] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[width-kitty-0] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[wcstwidth-konsole-0] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[width-konsole-0] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[wcstwidth-wezterm-0] PASSED
+tests/test_term_overrides.py::test_narrow_zeroer_width[width-wezterm-0] PASSED
+tests/test_term_overrides.py::test_resolve_terminal_strips_whitespace[  KITTY  -kitty] PASSED
+tests/test_term_overrides.py::test_resolve_terminal_strips_whitespace[   -None] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u1000\u1031-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u1000\u1031--2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u1000\u1031-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u1000\u1031-foot-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u1000\u1031-alacritty-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0c05\u0c02-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0c05\u0c02-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0e01\u0e33-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0e01\u0e33-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0985\u0982-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0985\u0982-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0915\u093e-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0915\u093e-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0915\u093e-foot-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_grapheme[\u0915\u093e-alacritty-2] PASSED
+tests/test_term_overrides.py::test_width_language_grapheme[\u1000\u1031-kitty-1] PASSED
+tests/test_term_overrides.py::test_width_language_grapheme[\u1000\u1031-foot-1] PASSED
+tests/test_term_overrides.py::test_width_language_grapheme[\u0915\u093e-kitty-1] PASSED
+tests/test_term_overrides.py::test_width_language_grapheme[\u0915\u093e-foot-1] PASSED
+tests/test_term_overrides.py::test_width_language_grapheme[\u0c05\u0c02-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[hello-kitty-5] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[hello-foot-5] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[hello\u1000\u1031-kitty-6] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[\u1000\u1031hello-kitty-6] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[\u1000\u1031\u1000\u1031-kitty-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_mixed_language_ascii[\u1000\u1031x\u0915\u093e-kitty-3] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u1039\u1001-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u1039\u1001-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u1039\u1001-foot-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u103b\u102d\u102f-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u103b\u102d\u102f-kitty-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_conjunct[\u1000\u103b\u102d\u102f-foot-1] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_zwj_conjunct[\u0915\u094d\u200d\u0937-False-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_virama_zwj_conjunct[\u0915\u094d\u200d\u0937-xterm-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_no_override[\u1000\u1031-xterm-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_no_override[\u0915\u093e-xterm-2] PASSED
+tests/test_term_overrides.py::test_wcswidth_language_no_override[\u0c05\u0c02-xterm-2] PASSED
+tests/test_term_overrides.py::test_width_cluster_text_override_mid_string[\u1000\u1031X-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_cluster_text_override_mid_string[X\u1000\u1031-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_cluster_text_override_mid_string[\u1000\u1031\u1000\u1031-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_cluster_text_override_mid_string[\u0915\u093eX-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_candidate_override_mid_string[\u0e01\u0e33X-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_candidate_override_mid_string[X\u0e01\u0e33-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_candidate_override_mid_string[\u0e01\u0e33\u0e01\u0e33-kitty-2] PASSED
+tests/test_term_overrides.py::test_width_epilogue_max_extent_update[\r\u1000\u1031-xterm-2] PASSED
+tests/test_term_overrides.py::test_width_epilogue_max_extent_update[\r\u0915\u093e-xterm-2] PASSED
+tests/test_term_overrides.py::test_width_epilogue_max_extent_update[XX\x08\x08\u1000\u1031-xterm-2] PASSED
+tests/test_term_overrides.py::test_wcstwidth_ambiguous_width_2 PASSED
+tests/test_term_overrides.py::test_wcstwidth_control_character PASSED
 tests/test_text_sizing.py::test_text_sizing_params_control_codes[x=2--Unknown text sizing field 'x' in ] PASSED
 tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=3:x=3-s=3-Unknown text sizing field 'x' in ] PASSED
 tests/test_text_sizing.py::test_text_sizing_params_control_codes[s=2:x=3:w=9-s=2:w=7-Unknown text sizing field 'x' in ] PASSED
@@ -605,6 +779,7 @@ tests/test_text_sizing.py::test_strings_with_text_sizing[abc\x1b]66;w=3;x\x07def
 tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;w=2;A\x07\x1b]66;w=3;B\x07-5] PASSED
 tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;s=2:w=3;text\x1b\\-6] PASSED
 tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b[31m\x1b]66;w=2;AB\x07\x1b[0m-2] PASSED
+tests/test_text_sizing.py::test_strings_with_text_sizing[\x1b]66;;\x01\x07-0] PASSED
 tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;s=2;hello\x07-hello] PASSED
 tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;s=2;hello\x1b\\-hello] PASSED
 tests/test_text_sizing.py::test_strip_strings_with_text_sizing[\x1b]66;;text\x07-text] PASSED
@@ -1029,6 +1204,12 @@ tests/test_width.py::test_width_edge_cases[\x1b[31m\u30b3\x1b[0m-2-wide_with_esc
 tests/test_width.py::test_width_edge_cases[\x1b-0-lone_ESC] PASSED
 tests/test_width.py::test_width_edge_cases[\x1b!-1-ESC_unrecognized] PASSED
 tests/test_width.py::test_width_edge_cases[*\x1b*-2-lone_ESC_between_text] PASSED
+tests/test_width.py::test_width_edge_cases[\tA\u0cbe\rB\u0cbe\x08-10-backspace_flush_below_max_extent] PASSED
+tests/test_width.py::test_width_edge_cases[\tA\u0cbe\rB\u0cbe\x1b-10-esc_flush_below_max_extent] PASSED
+tests/test_width.py::test_width_edge_cases[\tA\u0cbe\rB\u0cbe\x00-10-zero_width_flush_below_max_extent] PASSED
+tests/test_width.py::test_width_edge_cases[\tA\u0cbe\rB\u0cbe\x01-10-illegal_ctrl_flush_below_max_extent] PASSED
+tests/test_width.py::test_width_edge_cases[\tA\u0cbe\rB\u0cbe\n-10-vertical_ctrl_flush_below_max_extent] PASSED
+tests/test_width.py::test_width_edge_cases[\u4e2d\u0bcd\u4e2d\u0bcd\u4e2d\u0bcd\u4e2d-2-glitch_virama_chain_capped] PASSED
 tests/test_width.py::test_width_unknown_control_codes PASSED
 tests/test_width.py::test_vs16_selector PASSED
 tests/test_width.py::test_zwj_with_non_emoji_chars PASSED
@@ -1155,6 +1336,6 @@ tests/test_width.py::test_ris_indeterminate PASSED
 
 - generated xml file: $(@D)/.tox/results.py$(PYV).xml -
 ============================= slowest 10 durations =============================
-======== 1134 passed, 10 skipped ========
+======== 1315 passed, 10 skipped ========
   py$(PYV): OK
   congratulations :)
