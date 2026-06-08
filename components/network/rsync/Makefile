@@ -28,12 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.4.3
+COMPONENT_VERSION=	3.4.4
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c72e63ca3021cbc80ba86ec30102773f4c5631fbc492b52e773b3958f82a53d3
+COMPONENT_ARCHIVE_HASH=	sha256:bd88cf82fa653da32314fb229136407c5c90f80d1758d8f4b091767877d8fa96
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -41,6 +41,9 @@ COMPONENT_LICENSE=	GPL-3.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
+
+# tests fail to build without this because bool is defined.
+CFLAGS += -std=gnu17
 
 CONFIGURE_OPTIONS  +=	--with-included-popt
 CONFIGURE_OPTIONS  +=	--enable-xattr-support
