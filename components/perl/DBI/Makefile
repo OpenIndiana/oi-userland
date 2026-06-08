@@ -15,25 +15,21 @@
 #
 
 BUILD_STYLE = makemaker
-USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBI
-HUMAN_VERSION =			1.647
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.648
 COMPONENT_SUMMARY =		Database independent interface for Perl
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.647.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.648.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0df16af8e5b3225a68b7b592ab531004ddb35a9682b50300ce50174ad867d9aa
+	sha256:ef266aad6010ce2eabb7e465ebd73ca3020bc58150f6989bd89c2b8f9bac6a86
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
-# remove lines that changes with every test run
-COMPONENT_TEST_TRANSFORMS += '-e "/^SV =/,/^[^ ]/d"'
 # The hash varies with every run
 COMPONENT_TEST_TRANSFORMS += "-e 's/\(HASH(0x\)[0-9a-f]\{6\})/\1XXXXXX)/g'"
 
@@ -42,7 +38,7 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
