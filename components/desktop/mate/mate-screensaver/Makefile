@@ -19,9 +19,9 @@ include $(WS_MAKE_RULES)/mate.mk
 
 COMPONENT_NAME=		mate-screensaver
 COMPONENT_MJR_VERSION=	1.28
-COMPONENT_MNR_VERSION=	0
+COMPONENT_MNR_VERSION=	1
 COMPONENT_SUMMARY= mate-screensaver is a screen saver and locker that aims to have simple, sane, secure defaults and be well integrated with the desktop
-COMPONENT_ARCHIVE_HASH=	sha256:6a0f24a8f84a2f95e10114ab53e63fd4aca688a55fdc503ed650e0a410e3ea70
+COMPONENT_ARCHIVE_HASH=	sha256:a20d49bcf4e577287c0cd78596158923c729d6370b6da19a98ac655b029cce36
 COMPONENT_CLASSIFICATION=	Applications/System Utilities
 COMPONENT_LICENSE= GPLv3
 COMPONENT_LICENSE_FILE= COPYING
@@ -39,6 +39,9 @@ CONFIGURE_OPTIONS += --enable-pam
 CONFIGURE_OPTIONS += --enable-authentication-scheme=helper
 CONFIGURE_OPTIONS_DBG += --enable-debug
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS_$(FLAVOUR))
+
+# Replace "#!/usr/bin/env ..." shebang line with properly versioned one
+COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's:env python3:python$(PYTHON_VERSION):' $(PROTOUSRBINDIR)/mate-screensaver-configure ;
 
 # Manually added build dependencies
 REQUIRED_PACKAGES += developer/build/autoconf-archive
@@ -65,3 +68,5 @@ REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxext
 REQUIRED_PACKAGES += x11/library/libxscrnsaver
 REQUIRED_PACKAGES += x11/library/libxxf86vm
+REQUIRED_PACKAGES.python += library/python/pygobject
+REQUIRED_PACKAGES.python += runtime/python
