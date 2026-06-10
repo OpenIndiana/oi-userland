@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project readme_renderer
+#   $WS_TOOLS/python-integrate-project -d python/readme_renderer-39 readme_renderer
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		readme_renderer
-HUMAN_VERSION =			45.0
+HUMAN_VERSION =			44.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		readme_renderer is a library for rendering readme descriptions for Warehouse
 COMPONENT_PROJECT_URL =		https://github.com/pypa/readme_renderer
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:030a8fac74904f8fba11ad1bb6964e3f76e896dc7e5e71f16af190c9056696d1
+	sha256:8712034eabbfa6805cacf1402b4eeb2a73028f72d1166d6f5cb7f9c047c5d1e1
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by readme-renderer >= 45.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# readme-renderer >= 45.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -41,4 +42,5 @@ REQUIRED_PACKAGES.python += library/python/nh3
 REQUIRED_PACKAGES.python += library/python/pygments
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/cmarkgfm
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
