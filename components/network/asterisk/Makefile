@@ -19,11 +19,11 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		asterisk
-COMPONENT_VERSION=	22.9.0
+COMPONENT_VERSION=	22.10.0
 COMPONENT_SUMMARY=	Asterisk is an all-purpose telephony server
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5fd0e623d7415faa5999c1d5797721a3ab8992cbe33d49faac7d948635df94cc
+COMPONENT_ARCHIVE_HASH=	sha256:27e49d483efb0739faf7d0a17a9e55f88439347ed9668f24eea909440473c32e
 COMPONENT_PROJECT_URL=	https://www.asterisk.org
 COMPONENT_ARCHIVE_URL=	https://downloads.asterisk.org/pub/telephony/asterisk/old-releases/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		network/asterisk
@@ -35,8 +35,8 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 CFLAGS += -m64 -I/usr/include/odbc -I$(OPENSSL_PREFIX)/include -DHAVE_OPENSSL_BIO_METHOD -DHAVE_GETHOSTBYNAME_R_5
-CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap
-LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR) -lstdc++
+CPPFLAGS += -I/usr/include/jansson -I/usr/include/odbc -I/usr/include/openldap -I$(OPENSSL_INCDIR)
+LDFLAGS += -m64 -lldap-2.6 -L$(JPEG_LIBDIR) -lstdc++ -L$(OPENSSL_LIBDIR)
 
 PATH= $(PATH.gnu)
 
