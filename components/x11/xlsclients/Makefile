@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xlsclients
-COMPONENT_VERSION=  1.1.5
+COMPONENT_VERSION=  1.1.6
 COMPONENT_SUMMARY=  xlsclients - list client applications running on a display
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:68baee57e70250ac4a7759fb78221831f97d88bc8e51dcc2e64eb3f8ca56bae3
+COMPONENT_ARCHIVE_HASH= sha256:909810a3fdbd01d84747907f2c0cc32ee732e77afc88cb310abb9d155b2a0807
 COMPONENT_FMRI=     x11/diagnostic/xlsclients
 
 include $(WS_MAKE_RULES)/common.mk
