@@ -14,37 +14,37 @@
 #   $WS_TOOLS/perl-integrate-module Crypt-PBKDF2
 #
 
-BUILD_STYLE = makemaker
+BUILD_STYLE = modulebuild
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-PBKDF2
-HUMAN_VERSION =			0.161520
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			0.261630
 COMPONENT_SUMMARY =		The PBKDF2 password hash algorithm
 COMPONENT_CPAN_AUTHOR =		ARODLAND
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:97dfa79a309a086e184a4e61047f8a10ffb3db051025e7d222a25f19130ba417
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:18757189638932b309b34c45bb810aa3e4856e3ed580100017dade65793f46c0
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/digest
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-hmac
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha3
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/module-runtime
-PERL_REQUIRED_PACKAGES += library/perl-5/moo
-PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/strictures
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += library/perl-5/type-tiny
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-urandom
+REQUIRED_PACKAGES.perl += library/perl-5/digest
+REQUIRED_PACKAGES.perl += library/perl-5/digest-hmac
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha3
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/module-build-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/module-runtime
+REQUIRED_PACKAGES.perl += library/perl-5/moo
+REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/strictures
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += library/perl-5/type-tiny
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/encode
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
