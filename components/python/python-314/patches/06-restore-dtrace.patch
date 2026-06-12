@@ -1,8 +1,8 @@
 https://github.com/python/cpython/pull/125019
 
---- Python-3.14.3/Python/bytecodes.c.orig
-+++ Python-3.14.3/Python/bytecodes.c
-@@ -1202,6 +1202,7 @@
+--- Python-3.14.6/Python/bytecodes.c.orig
++++ Python-3.14.6/Python/bytecodes.c
+@@ -1205,6 +1205,7 @@
              DEAD(retval);
              SAVE_STACK();
              assert(STACK_LEVEL() == 0);
@@ -10,7 +10,7 @@ https://github.com/python/cpython/pull/125019
              _Py_LeaveRecursiveCallPy(tstate);
              // GH-99729: We need to unlink the frame *before* clearing it:
              _PyInterpreterFrame *dying = frame;
-@@ -1377,6 +1378,7 @@
+@@ -1380,6 +1381,7 @@
              _PyStackRef temp = retval;
              DEAD(retval);
              SAVE_STACK();
@@ -18,9 +18,9 @@ https://github.com/python/cpython/pull/125019
              tstate->exc_info = gen->gi_exc_state.previous_item;
              gen->gi_exc_state.previous_item = NULL;
              _Py_LeaveRecursiveCallPy(tstate);
---- Python-3.14.3/Python/ceval.c.orig
-+++ Python-3.14.3/Python/ceval.c
-@@ -1197,6 +1197,7 @@
+--- Python-3.14.6/Python/ceval.c.orig
++++ Python-3.14.6/Python/ceval.c
+@@ -1224,6 +1224,7 @@
  #endif
          /* Because this avoids the RESUME, we need to update instrumentation */
          _Py_Instrument(_PyFrame_GetCode(frame), tstate->interp);
@@ -28,7 +28,7 @@ https://github.com/python/cpython/pull/125019
          next_instr = frame->instr_ptr;
          monitor_throw(tstate, frame, next_instr);
          stack_pointer = _PyFrame_GetStackPointer(frame);
-@@ -1216,6 +1217,8 @@
+@@ -1243,6 +1244,8 @@
      _PyExecutorObject *current_executor = NULL;
      const _PyUOpInstruction *next_uop = NULL;
  #endif
@@ -37,7 +37,7 @@ https://github.com/python/cpython/pull/125019
  #if Py_TAIL_CALL_INTERP
  #   if Py_STATS
          return _TAIL_CALL_start_frame(frame, NULL, tstate, NULL, 0, lastopcode);
-@@ -3494,6 +3497,37 @@
+@@ -3545,6 +3548,37 @@
      return new_index;
  }
  
@@ -75,8 +75,8 @@ https://github.com/python/cpython/pull/125019
  /* Implement Py_EnterRecursiveCall() and Py_LeaveRecursiveCall() as functions
     for the limited API. */
  
---- Python-3.14.3/Python/ceval_macros.h.orig
-+++ Python-3.14.3/Python/ceval_macros.h
+--- Python-3.14.6/Python/ceval_macros.h.orig
++++ Python-3.14.6/Python/ceval_macros.h
 @@ -41,6 +41,8 @@
   * the CFG.
   */
@@ -102,9 +102,9 @@ https://github.com/python/cpython/pull/125019
  #define DTRACE_FUNCTION_ENTRY()  \
      if (PyDTrace_FUNCTION_ENTRY_ENABLED()) { \
          dtrace_function_entry(frame); \
---- Python-3.14.3/Python/executor_cases.c.h.orig
-+++ Python-3.14.3/Python/executor_cases.c.h
-@@ -1815,6 +1815,7 @@
+--- Python-3.14.6/Python/executor_cases.c.h.orig
++++ Python-3.14.6/Python/executor_cases.c.h
+@@ -1814,6 +1814,7 @@
              assert(WITHIN_STACK_BOUNDS());
              _PyFrame_SetStackPointer(frame, stack_pointer);
              assert(STACK_LEVEL() == 0);
@@ -112,7 +112,7 @@ https://github.com/python/cpython/pull/125019
              _Py_LeaveRecursiveCallPy(tstate);
              _PyInterpreterFrame *dying = frame;
              frame = tstate->current_frame = dying->previous;
-@@ -1969,6 +1970,7 @@
+@@ -1968,6 +1969,7 @@
              stack_pointer += -1;
              assert(WITHIN_STACK_BOUNDS());
              _PyFrame_SetStackPointer(frame, stack_pointer);
@@ -120,9 +120,9 @@ https://github.com/python/cpython/pull/125019
              tstate->exc_info = gen->gi_exc_state.previous_item;
              gen->gi_exc_state.previous_item = NULL;
              _Py_LeaveRecursiveCallPy(tstate);
---- Python-3.14.3/Python/generated_cases.c.h.orig
-+++ Python-3.14.3/Python/generated_cases.c.h
-@@ -7593,6 +7593,7 @@
+--- Python-3.14.6/Python/generated_cases.c.h.orig
++++ Python-3.14.6/Python/generated_cases.c.h
+@@ -7592,6 +7592,7 @@
                  assert(WITHIN_STACK_BOUNDS());
                  _PyFrame_SetStackPointer(frame, stack_pointer);
                  assert(STACK_LEVEL() == 0);
@@ -138,7 +138,7 @@ https://github.com/python/cpython/pull/125019
                  tstate->exc_info = gen->gi_exc_state.previous_item;
                  gen->gi_exc_state.previous_item = NULL;
                  _Py_LeaveRecursiveCallPy(tstate);
-@@ -10630,6 +10632,7 @@
+@@ -10614,6 +10616,7 @@
              assert(WITHIN_STACK_BOUNDS());
              _PyFrame_SetStackPointer(frame, stack_pointer);
              assert(STACK_LEVEL() == 0);
@@ -146,7 +146,7 @@ https://github.com/python/cpython/pull/125019
              _Py_LeaveRecursiveCallPy(tstate);
              _PyInterpreterFrame *dying = frame;
              frame = tstate->current_frame = dying->previous;
-@@ -12333,6 +12336,7 @@
+@@ -12334,6 +12337,7 @@
              stack_pointer += -1;
              assert(WITHIN_STACK_BOUNDS());
              _PyFrame_SetStackPointer(frame, stack_pointer);
@@ -154,8 +154,8 @@ https://github.com/python/cpython/pull/125019
              tstate->exc_info = gen->gi_exc_state.previous_item;
              gen->gi_exc_state.previous_item = NULL;
              _Py_LeaveRecursiveCallPy(tstate);
---- Python-3.14.3/Tools/jit/template.c.orig
-+++ Python-3.14.3/Tools/jit/template.c
+--- Python-3.14.6/Tools/jit/template.c.orig
++++ Python-3.14.6/Tools/jit/template.c
 @@ -26,6 +26,7 @@
  #include "pycore_setobject.h"
  #include "pycore_sliceobject.h"
