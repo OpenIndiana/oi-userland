@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project msgpack
+#   $WS_TOOLS/python-integrate-project -d python/msgpack-39 msgpack
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		msgpack
-HUMAN_VERSION =			1.2.0
+HUMAN_VERSION =			1.1.2
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		MessagePack serializer
 COMPONENT_PROJECT_URL =		https://msgpack.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e17af38197bf58e7e819041678f6178f4491493f5b8c8580414f40f7c2c3c41
+	sha256:3b60763c1373dd60f398488069bcdc703cd08a711477b5d480eecc9f9626f47e
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by msgpack >= 1.2.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# msgpack >= 1.2.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
