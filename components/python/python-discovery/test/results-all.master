@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 497 items
+collecting ... collected 507 items
 
 tests/py_info/test_py_info.py::test_current_as_json PASSED
 tests/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
@@ -225,6 +225,16 @@ tests/test_py_info_extra.py::test_fast_get_system_executable_not_venv PASSED
 tests/test_py_info_extra.py::test_fast_get_system_executable_real_prefix PASSED
 tests/test_py_info_extra.py::test_fast_get_system_executable_no_base_executable PASSED
 tests/test_py_info_extra.py::test_fast_get_system_executable_same_as_current PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink_not_posix PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[regular-file] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[broken-symlink] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[absolute-symlink] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[relative-chain] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[tree-preserved] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink[normpath-mismatch] PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink_framework_kept PASSED
+tests/test_py_info_extra.py::test_resolve_executable_symlink_stdlib_landmark_kept PASSED
+tests/test_py_info_extra.py::test_from_exe_resolves_executable_only_symlink PASSED
 tests/test_py_info_extra.py::test_try_posix_fallback_not_posix PASSED
 tests/test_py_info_extra.py::test_try_posix_fallback_old_python PASSED
 tests/test_py_info_extra.py::test_try_posix_fallback_finds_versioned PASSED
@@ -505,18 +515,6 @@ tests/windows/test_windows_pep514.py::test_pep514 SKIPPED (path join...)
 tests/windows/test_windows_pep514.py::test_pep514_run SKIPPED (path ...)
 
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 482 passed, 15 skipped ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)/test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 492 passed, 15 skipped ========
   py$(PYV): OK
   congratulations :)
