@@ -14,8 +14,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		c_icap
-COMPONENT_VERSION=	0.6.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.6.5
 COMPONENT_SUMMARY=	Implementation of an ICAP server
 COMPONENT_DESCRIPTION=	c-icap is an implementation of an ICAP server. It can be \
 			used with HTTP proxies that support the ICAP protocol to \
@@ -24,7 +23,7 @@ COMPONENT_DESCRIPTION=	c-icap is an implementation of an ICAP server. It can be 
 			protocol. The open source Squid 3.x proxy server supports it. 
 COMPONENT_SRC=		c-icap-server-C_ICAP_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	C_ICAP_$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ecc7789787fe4eceae807f0717f6da18c5b1fbf7d2d26028711222eb154c82fe
+COMPONENT_ARCHIVE_HASH=	sha256:6ac51b6dd39690a6ccc62e807f065e92131498687d4201a69ae9570b68bab1e5
 COMPONENT_PROJECT_URL=	https://c-icap.sourceforge.net/
 COMPONENT_ARCHIVE_URL=	https://github.com/c-icap/c-icap-server/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	antivirus/$(COMPONENT_NAME)
