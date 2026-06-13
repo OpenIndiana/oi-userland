@@ -19,12 +19,12 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-DMARC
-HUMAN_VERSION =			1.20260306
+HUMAN_VERSION =			1.20260612
 COMPONENT_SUMMARY =		Perl implementation of DMARC
 COMPONENT_CPAN_AUTHOR =		MSIMERSON
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:01153de4535343bd150129bf90d7de3408249a1aedb0922e6441727fc20aab7a
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:2dc54e8c5ab1a549faac100e936a565efdaccd16e806b9013e91382ba976cf42
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
@@ -47,6 +47,7 @@ REQUIRED_PACKAGES.perl += library/perl-5/email-mime
 REQUIRED_PACKAGES.perl += library/perl-5/email-sender
 REQUIRED_PACKAGES.perl += library/perl-5/email-simple
 REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir-install
 REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
@@ -57,7 +58,6 @@ REQUIRED_PACKAGES.perl += library/perl-5/mail-dkim
 REQUIRED_PACKAGES.perl += library/perl-5/module-build
 REQUIRED_PACKAGES.perl += library/perl-5/module-load
 REQUIRED_PACKAGES.perl += library/perl-5/net-dns
-REQUIRED_PACKAGES.perl += library/perl-5/net-idn-encode
 REQUIRED_PACKAGES.perl += library/perl-5/net-imap-simple
 REQUIRED_PACKAGES.perl += library/perl-5/net-ip
 REQUIRED_PACKAGES.perl += library/perl-5/net-smtps
