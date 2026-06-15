@@ -19,11 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPIx-Regexp
-HUMAN_VERSION =			0.091
+HUMAN_VERSION =			0.092
 COMPONENT_SUMMARY =		Parse regular expressions
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e72ec79eff640297b087227d6a7708fca871c6de09997149585a98fe65ed942f
+	sha256:e9c669c01d7c951f9bfee899c147fc8c8ddd98d3f32329f94000c7b02f53366b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
