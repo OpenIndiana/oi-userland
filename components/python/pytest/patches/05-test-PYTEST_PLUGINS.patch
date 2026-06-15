@@ -1,8 +1,8 @@
 See also https://github.com/pytest-dev/pytest/pull/12616
 
---- pytest-9.0.3/testing/test_assertion.py.orig
-+++ pytest-9.0.3/testing/test_assertion.py
-@@ -233,20 +233,24 @@
+--- pytest-9.1.0/testing/test_assertion.py.orig
++++ pytest-9.1.0/testing/test_assertion.py
+@@ -259,20 +259,24 @@
              monkeypatch.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
          elif disable_plugin_autoload == "cli":
              monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -27,9 +27,9 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
          # Make sure the hook is installed early enough so that plugins
          # installed via distribution package are rewritten.
---- pytest-9.0.3/testing/test_config.py.orig
-+++ pytest-9.0.3/testing/test_config.py
-@@ -625,6 +625,7 @@
+--- pytest-9.1.0/testing/test_config.py.orig
++++ pytest-9.1.0/testing/test_config.py
+@@ -647,6 +647,7 @@
  
          monkeypatch.setattr(importlib.metadata, "distributions", my_dists)
          monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -37,7 +37,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
          pytester.makeini(ini_file_text)
  
-@@ -1472,6 +1473,7 @@
+@@ -1499,6 +1500,7 @@
      pytester: Pytester, monkeypatch: MonkeyPatch
  ) -> None:
      monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -45,7 +45,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
      class EntryPoint:
          name = "mytestplugin"
-@@ -1507,6 +1509,7 @@
+@@ -1534,6 +1536,7 @@
      pytester: Pytester, monkeypatch: MonkeyPatch
  ) -> None:
      monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -53,7 +53,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
      class DummyEntryPoint:
          name = "mytestplugin"
-@@ -1534,6 +1537,7 @@
+@@ -1561,6 +1564,7 @@
  ) -> None:
      """Integration test for broken distributions with 'files' metadata being None (#5389)"""
      monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -61,7 +61,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
      class DummyEntryPoint:
          name = "mytestplugin"
-@@ -1560,6 +1564,7 @@
+@@ -1587,6 +1591,7 @@
      pytester: Pytester, monkeypatch: MonkeyPatch, block_it: bool
  ) -> None:
      monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", raising=False)
@@ -69,7 +69,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
      plugin_module_placeholder = object()
  
-@@ -1632,17 +1637,21 @@
+@@ -1659,17 +1664,21 @@
          monkeypatch.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
      elif disable_plugin_method == "flag":
          monkeypatch.delenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD")
@@ -91,7 +91,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
  
      monkeypatch.setattr(importlib.metadata, "distributions", distributions)
      monkeypatch.setitem(sys.modules, "mytestplugin", PseudoPlugin())
-@@ -1668,7 +1677,7 @@
+@@ -1695,7 +1704,7 @@
      # Except when autoloads aren't disabled, in which case PytestPluginManager.import_plugin
      # bails out before importing it.. because it knows it'll be loaded later?
      # The above seems a bit weird, but I *think* it's true.
@@ -100,9 +100,9 @@ See also https://github.com/pytest-dev/pytest/pull/12616
          assert ("__spec__" in PseudoPlugin.attrs_used) == bool(
              enable_plugin_method == "env_var" and disable_plugin_method
          )
---- pytest-9.0.3/testing/test_helpconfig.py.orig
-+++ pytest-9.0.3/testing/test_helpconfig.py
-@@ -66,7 +66,7 @@
+--- pytest-9.1.0/testing/test_helpconfig.py.orig
++++ pytest-9.1.0/testing/test_helpconfig.py
+@@ -67,7 +67,7 @@
      )
  
  
@@ -111,7 +111,7 @@ See also https://github.com/pytest-dev/pytest/pull/12616
      """Test that an empty help param is displayed correctly."""
      pytester.makeconftest(
          """
-@@ -74,6 +74,7 @@
+@@ -75,6 +75,7 @@
              parser.addini("test_ini", "", default=True, type="bool")
      """
      )
@@ -119,8 +119,8 @@ See also https://github.com/pytest-dev/pytest/pull/12616
      result = pytester.runpytest("--help")
      assert result.ret == ExitCode.OK
      lines = [
---- pytest-9.0.3/testing/test_terminal.py.orig
-+++ pytest-9.0.3/testing/test_terminal.py
+--- pytest-9.1.0/testing/test_terminal.py.orig
++++ pytest-9.1.0/testing/test_terminal.py
 @@ -2385,7 +2385,6 @@
          self, many_tests_files, pytester: Pytester, monkeypatch
      ) -> None:
