@@ -19,20 +19,19 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		PPIx-QuoteLike
-HUMAN_VERSION =			0.023
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.024
 COMPONENT_SUMMARY =		Parse Perl string literals and string-literal-like things.
 COMPONENT_CPAN_AUTHOR =		WYANT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3576a3149d2c53e07e9737b7892be5cfb84a499a6ef1df090b713b0544234d21
+	sha256:b71da7748be3a0ab7c19fe8a3ddf7fec480180342c8e76654d28582281152e07
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/encode
-PERL_REQUIRED_PACKAGES += library/perl-5/ppi
-PERL_REQUIRED_PACKAGES += library/perl-5/readonly
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/ppi
+REQUIRED_PACKAGES.perl += library/perl-5/readonly
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
