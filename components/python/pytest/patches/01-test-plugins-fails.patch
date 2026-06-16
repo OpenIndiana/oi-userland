@@ -1,5 +1,5 @@
---- pytest-9.0.3/testing/test_helpconfig.py.orig
-+++ pytest-9.0.3/testing/test_helpconfig.py
+--- pytest-9.1.0/testing/test_helpconfig.py.orig
++++ pytest-9.1.0/testing/test_helpconfig.py
 @@ -6,6 +6,7 @@
  import pytest
  
@@ -13,12 +13,12 @@
  
  
 +@pytest.mark.skip(reason="always fails: https://github.com/pytest-dev/pytest/issues/12073")
- def test_version_less_verbose(pytester: Pytester) -> None:
-     """Single ``--version`` parameter should display only the pytest version, without loading plugins (#13574)."""
-     pytester.makeconftest("print('This should not be printed')")
---- pytest-9.0.3/testing/test_junitxml.py.orig
-+++ pytest-9.0.3/testing/test_junitxml.py
-@@ -1415,6 +1415,7 @@
+ @pytest.mark.parametrize("flag", ["--version", "-V"])
+ def test_version_less_verbose(pytester: Pytester, flag: str) -> None:
+     """Single ``--version`` or ``-V`` should display only the pytest version, without loading plugins (#13574)."""
+--- pytest-9.1.0/testing/test_junitxml.py.orig
++++ pytest-9.1.0/testing/test_junitxml.py
+@@ -1421,6 +1421,7 @@
      result.stdout.fnmatch_lines(expected_lines)
  
  
@@ -26,7 +26,7 @@
  def test_random_report_log_xdist(
      pytester: Pytester, monkeypatch: MonkeyPatch, run_and_parse: RunAndParse
  ) -> None:
-@@ -1473,6 +1474,7 @@
+@@ -1479,6 +1480,7 @@
      assert first == second
  
  
@@ -34,8 +34,8 @@
  def test_runs_twice_xdist(
      pytester: Pytester, monkeypatch: MonkeyPatch, run_and_parse: RunAndParse
  ) -> None:
---- pytest-9.0.3/testing/test_terminal.py.orig
-+++ pytest-9.0.3/testing/test_terminal.py
+--- pytest-9.1.0/testing/test_terminal.py.orig
++++ pytest-9.1.0/testing/test_terminal.py
 @@ -893,6 +893,7 @@
          result.stdout.fnmatch_lines(["test_passes.py ..*", "* 2 pass*"])
          assert result.ret == 0
