@@ -36,7 +36,7 @@ ESR =
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      151.0.4
+COMPONENT_VERSION=      152.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     9911a26f5083f4a3b13c628f056b882a7b24db7f9d8b8a42f2fdb4f60d22ea91
+COMPONENT_GIT_HASH=     8b3456fa29ad35f58da4cc0a1d182e039124ba5d
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -73,7 +73,7 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:ffda1991cc3b9b35d3c034314d253a51d6a20f603b693db2f55a00fa840e83a7
+COMPONENT_ARCHIVE_HASH=	sha256:5e5f9acb550d065a43934e0fcd11ed3ec22f7266fc9ad63df757406b432a5127
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
@@ -254,7 +254,8 @@ COMPONENT_POST_INSTALL_ACTION  = \
     mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
-    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
+            | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist \
+            | /usr/gnu/bin/sed '/Return to top\.$$/{d;}' > $(COMPONENT_NAME).license
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
