@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_order
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		pytest plugin to run tests in a specific order
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-order
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:327fb6eee1ae771051da13d2a0d9306d947e87f9ab8f4d6302e5d122c7472691
+	sha256:96acd7587b5a2855dcaa4a898288103d202894a61afd813adbc9b77aab04d90d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
