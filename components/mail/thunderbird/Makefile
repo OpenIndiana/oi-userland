@@ -45,7 +45,7 @@ include ../../../make-rules/shared-macros.mk
 # CANDIDATE_BETA= 4
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	151.0.1
+COMPONENT_VERSION =	152.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:cf3ced40f9b136163cde35d963f8348c3d095b15bb6016e96436a5cb6913d47d
+	 sha256:fe1e79221bfb911b4dceb3ecb8cd47ffc1025704d9170e691694dcf991507924
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -281,7 +281,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 # generate license file for package by using the contents from license.html   
 COMPONENT_POST_INSTALL_ACTION  += \
      unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/messenger/content/messenger/license.html \
-     | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist > $(COMPONENT_NAME).license ;
+	    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist \
+	    | /usr/gnu/bin/sed '/Return to top\.$$/{d;}' > $(COMPONENT_NAME).license ;
 
 CLEAN_PATHS += $(COMPONENT_NAME).license
  
