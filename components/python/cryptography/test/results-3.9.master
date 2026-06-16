@@ -2,11 +2,11 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-OpenSSL: OpenSSL 3.5.6 7 Apr 2026
+OpenSSL: OpenSSL 3.5.7 9 Jun 2026
 FIPS Enabled: False
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 4361 items
+collecting ... collected 4472 items
 
 tests/bench/test_aead.py::test_chacha20poly1305_encrypt PASSED
 tests/bench/test_aead.py::test_chacha20poly1305_decrypt PASSED
@@ -42,17 +42,22 @@ tests/bench/test_x509.py::test_verify_docs_python_org SKIPPED (no 'x...)
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_printable_string PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_printable_string_as_str PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_invalid_printable_string PASSED
+tests/hazmat/asn1/test_api.py::TestTypesAPI::test_hash_printable_string PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_ia5_string PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_ia5_string_as_str PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_invalid_ia5_string PASSED
+tests/hazmat/asn1/test_api.py::TestTypesAPI::test_hash_ia5_string PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_utc_time_as_datetime PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_utc_time PASSED
+tests/hazmat/asn1/test_api.py::TestTypesAPI::test_hash_utc_time PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_invalid_utc_time PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_generalized_time_as_datetime PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_generalized_time PASSED
+tests/hazmat/asn1/test_api.py::TestTypesAPI::test_hash_generalized_time PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_invalid_generalized_time PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_bitstring_getters PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_bitstring PASSED
+tests/hazmat/asn1/test_api.py::TestTypesAPI::test_hash_bitstring PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_invalid_bitstring PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_setof_as_list PASSED
 tests/hazmat/asn1/test_api.py::TestTypesAPI::test_repr_setof PASSED
@@ -84,6 +89,10 @@ tests/hazmat/asn1/test_api.py::TestSetAPI::test_fail_init_incorrect_field_name P
 tests/hazmat/asn1/test_api.py::TestSetAPI::test_fail_init_missing_field_name PASSED
 tests/hazmat/asn1/test_api.py::TestSetAPI::test_fail_positional_field_initialization PASSED
 tests/hazmat/asn1/test_api.py::TestSetAPI::test_fail_malformed_root_type PASSED
+tests/hazmat/asn1/test_api.py::TestValueSetAPI::test_fail_non_enum PASSED
+tests/hazmat/asn1/test_api.py::TestValueSetAPI::test_fail_empty_enum PASSED
+tests/hazmat/asn1/test_api.py::TestValueSetAPI::test_fail_member_value_of_wrong_type PASSED
+tests/hazmat/asn1/test_api.py::TestValueSetAPI::test_fail_unsupported_value_type PASSED
 tests/hazmat/asn1/test_serialization.py::TestBool::test_bool PASSED
 tests/hazmat/asn1/test_serialization.py::TestInteger::test_int PASSED
 tests/hazmat/asn1/test_serialization.py::TestBytes::test_bytes PASSED
@@ -155,6 +164,8 @@ tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bytes_size_too_big 
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bytes_size_too_small PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bytes_size_not_exact PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_string_size_restriction PASSED
+tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_string_size_counts_characters PASSED
+tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_string_size_counts_characters PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_string_size_restriction_no_max PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_string_size_restriction_exact PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_string_size_too_big PASSED
@@ -178,6 +189,41 @@ tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_bitstring_size_restri
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bitstring_size_too_big PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bitstring_size_too_small PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_fail_bitstring_size_not_exact PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_certificate PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_csr PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_crl PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_fields PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_certificate_explicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_fail_certificate_implicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_fail_optional_certificate_implicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_optional_certificate PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_certificate_choice PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_decode_invalid PASSED
+tests/hazmat/asn1/test_serialization.py::TestX509Types::test_encode_wrong_type PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_oid_value_set PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_int_value_set PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_top_level_value_set PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_value_set_implicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_value_set_explicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_optional_value_set PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_value_set_default PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_value_set_in_choice PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_fail_decode_non_member_value PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_fail_decode_wrong_type PASSED
+tests/hazmat/asn1/test_serialization.py::TestValueSet::test_fail_encode_non_member PASSED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_of_simple_type SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_of_alias SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_of_choice SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_inside_annotated SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_of_annotated SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_optional_alias SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_optional_alias_of_choice SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_as_choice_member SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_of_union_as_choice_member SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_in_sequence_of SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_in_set_of SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_alias_in_variant SKIPPED
+tests/hazmat/asn1/test_serialization.py::TestTypeAliases::test_fail_optional_alias_of_tlv SKIPPED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_backend_exists PASSED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_is_default_backend PASSED
 tests/hazmat/backends/test_openssl.py::TestOpenSSL::test_openssl_version_text PASSED
@@ -636,16 +682,11 @@ tests/hazmat/primitives/test_camellia.py::TestCamelliaModeCFB::test_cfb PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector0] PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector1] PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector2] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector3] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector4] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector5] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector6] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector7] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector8] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector9] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector10] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector11] PASSED
-tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_vectors[vector12] PASSED
+tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_counter_overflow_single_update PASSED
+tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_counter_overflow_across_updates PASSED
+tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_counter_overflow_decrypt PASSED
+tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_counter_overflow_update_into PASSED
+tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_counter_overflow_after_reset_nonce PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_buffer_protocol PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_key_size PASSED
 tests/hazmat/primitives/test_chacha20.py::TestChaCha20::test_invalid_key_size PASSED
@@ -670,6 +711,10 @@ tests/hazmat/primitives/test_ciphers.py::TestAESXTS::test_xts_tweak_too_small PA
 tests/hazmat/primitives/test_ciphers.py::TestAESXTS::test_xts_wrong_key_size PASSED
 tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_min_max[7] PASSED
 tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_min_max[129] PASSED
+tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_rejects_delayed_tag_min_tag_length_too_short[0] PASSED
+tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_rejects_delayed_tag_min_tag_length_too_short[1] PASSED
+tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_rejects_delayed_tag_min_tag_length_too_short[2] PASSED
+tests/hazmat/primitives/test_ciphers.py::TestGCM::test_gcm_rejects_delayed_tag_min_tag_length_too_short[3] PASSED
 tests/hazmat/primitives/test_ciphers.py::TestCamellia::test_key_size[00000000000000000000000000000000-128] PASSED
 tests/hazmat/primitives/test_ciphers.py::TestCamellia::test_key_size[000000000000000000000000000000000000000000000000-192] PASSED
 tests/hazmat/primitives/test_ciphers.py::TestCamellia::test_key_size[0000000000000000000000000000000000000000000000000000000000000000-256] PASSED
@@ -1358,6 +1403,14 @@ tests/hazmat/primitives/test_hmac_vectors.py::TestHMACBLAKE2::test_blake2s PASSE
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_invalid_kem_type PASSED
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_invalid_kdf_type PASSED
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_invalid_aead_type PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem0-32] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem1-65] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem2-97] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem3-133] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem4-1088] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem5-1568] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem6-1120] PASSED
+tests/hazmat/primitives/test_hpke.py::TestHPKE::test_enc_length[kem7-1665] PASSED
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_roundtrip[kem0-kdf0-aead0] PASSED
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_roundtrip[kem1-kdf1-aead1] PASSED
 tests/hazmat/primitives/test_hpke.py::TestHPKE::test_roundtrip[kem2-kdf2-aead2] PASSED
@@ -1718,9 +1771,24 @@ tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_with_context[
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_empty_context_equivalence[ML-DSA-44] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_empty_context_equivalence[ML-DSA-65] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_empty_context_equivalence[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu_with_context[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu_with_context[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_sign_verify_mu_with_context[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_wrong_length[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_wrong_length[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_wrong_length[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_verify_mu_invalid[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_verify_mu_invalid[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_verify_mu_invalid[ML-DSA-87] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_44 PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_65 PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_87 PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-87] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-44] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-65] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-87] PASSED
@@ -3199,6 +3267,9 @@ tests/wycheproof/test_mldsa.py::test_mldsa44_verify[mldsa_44_verify_test.json] S
 tests/wycheproof/test_mldsa.py::test_mldsa44_sign_seed[mldsa_44_sign_seed_test.json] SKIPPED
 tests/wycheproof/test_mldsa.py::test_mldsa65_verify[mldsa_65_verify_test.json] SKIPPED
 tests/wycheproof/test_mldsa.py::test_mldsa65_sign_seed[mldsa_65_sign_seed_test.json] SKIPPED
+tests/wycheproof/test_mldsa.py::test_mldsa_external_mu[mldsa_44_sign_seed_test.json] SKIPPED
+tests/wycheproof/test_mldsa.py::test_mldsa_external_mu[mldsa_65_sign_seed_test.json] SKIPPED
+tests/wycheproof/test_mldsa.py::test_mldsa_external_mu[mldsa_87_sign_seed_test.json] SKIPPED
 tests/wycheproof/test_mldsa.py::test_mldsa87_verify[mldsa_87_verify_test.json] SKIPPED
 tests/wycheproof/test_mldsa.py::test_mldsa87_sign_seed[mldsa_87_sign_seed_test.json] SKIPPED
 tests/wycheproof/test_mlkem.py::test_mlkem768_decaps[mlkem_768_test.json] SKIPPED
@@ -3531,6 +3602,9 @@ tests/x509/test_x509.py::TestCertificateBuilder::test_not_valid_before_after_not
 tests/x509/test_x509.py::TestCertificateBuilder::test_not_valid_after_before_not_valid_before PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_public_key_must_be_public_key PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_public_key_may_only_be_set_once PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_public_key_rsa_pss_spki PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_public_key_rsa_padding_must_be_pss_class PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_public_key_rsa_padding_requires_rsa_key PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_serial_number_must_be_an_integer_type PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_serial_number_must_be_non_negative PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_serial_number_must_be_positive PASSED
@@ -3551,6 +3625,9 @@ tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash[None] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash_ed25519 PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash_ed448 PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash_mldsa[MLDSA44PrivateKey] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash_mldsa[MLDSA65PrivateKey] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_sign_with_unsupported_hash_mldsa[MLDSA87PrivateKey] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_dsa_with_unsupported_hash[hash_algorithm0] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_dsa_with_unsupported_hash[hash_algorithm1] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_sign_dsa_with_unsupported_hash[hash_algorithm2] PASSED
@@ -3576,6 +3653,10 @@ tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_ed25519 PA
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_ed25519_rsa_sig PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_ed448 PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_ed448_rsa_sig PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA44PrivateKey-MLDSA44PublicKey-sig_oid0-pub_oid0] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA65PrivateKey-MLDSA65PublicKey-sig_oid1-pub_oid1] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA87PrivateKey-MLDSA87PublicKey-sig_oid2-pub_oid2] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mldsa_rsa_sig PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_x25519_x448_rsa_sig[X25519PrivateKey-X25519PublicKey-pub_key_oid0] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_x25519_x448_rsa_sig[X448PrivateKey-X448PublicKey-pub_key_oid1] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_rsa_key_too_small PASSED
@@ -3633,6 +3714,9 @@ tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_req
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_csr_deterministic_wrong_key_type PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_ed25519 PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_ed448 PASSED
+tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_mldsa[MLDSA44PrivateKey-MLDSA44PublicKey-sig_oid0] PASSED
+tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_mldsa[MLDSA65PrivateKey-MLDSA65PublicKey-sig_oid1] PASSED
+tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_mldsa[MLDSA87PrivateKey-MLDSA87PublicKey-sig_oid2] PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_build_ca_request_with_dsa PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_add_duplicate_extension PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_set_invalid_subject PASSED
@@ -3735,6 +3819,12 @@ tests/x509/test_x509.py::TestName::test_rfc4514_string PASSED
 tests/x509/test_x509.py::TestName::test_rfc4514_string_empty_values PASSED
 tests/x509/test_x509.py::TestName::test_not_nameattribute PASSED
 tests/x509/test_x509.py::TestName::test_bytes PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes_invalid[] PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes_invalid[\x00\x01\x02] PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes_invalid[1\x00] PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes_invalid[0\x00\x00] PASSED
+tests/x509/test_x509.py::TestName::test_from_bytes_invalid[0\x0c1\n0\x08\x06\x03U\x04\x03\x0c\x01\xff] PASSED
 tests/x509/test_x509.py::TestName::test_bitstring_encoding PASSED
 tests/x509/test_x509.py::TestName::test_bmpstring_bytes PASSED
 tests/x509/test_x509.py::TestName::test_universalstring_bytes PASSED
@@ -3745,6 +3835,12 @@ tests/x509/test_x509.py::TestEd25519Certificate::test_verify_directly_issued_by_
 tests/x509/test_x509.py::TestEd448Certificate::test_load_pem_cert PASSED
 tests/x509/test_x509.py::TestEd448Certificate::test_verify_directly_issued_by_ed448 PASSED
 tests/x509/test_x509.py::TestEd448Certificate::test_verify_directly_issued_by_ed448_bad_sig PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_sign_and_verify_directly_issued_by_mldsa[MLDSA44PrivateKey-MLDSA44PublicKey-sig_oid0] PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_sign_and_verify_directly_issued_by_mldsa[MLDSA65PrivateKey-MLDSA65PublicKey-sig_oid1] PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_sign_and_verify_directly_issued_by_mldsa[MLDSA87PrivateKey-MLDSA87PublicKey-sig_oid2] PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_verify_directly_issued_by_mldsa_bad_sig[MLDSA44PrivateKey-MLDSA44PublicKey-sig_oid0] PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_verify_directly_issued_by_mldsa_bad_sig[MLDSA65PrivateKey-MLDSA65PublicKey-sig_oid1] PASSED
+tests/x509/test_x509.py::TestMLDSACertificate::test_verify_directly_issued_by_mldsa_bad_sig[MLDSA87PrivateKey-MLDSA87PublicKey-sig_oid2] PASSED
 tests/x509/test_x509.py::TestSignatureRejection::test_crt_signing_check PASSED
 tests/x509/test_x509.py::TestSignatureRejection::test_csr_signing_check PASSED
 tests/x509/test_x509.py::TestSignatureRejection::test_crl_signing_check PASSED
@@ -3805,6 +3901,9 @@ tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_s
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_ec_key PASSED
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_ed25519_key PASSED
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_ed448_key PASSED
+tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_mldsa_key[MLDSA44PrivateKey-sig_oid0] PASSED
+tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_mldsa_key[MLDSA65PrivateKey-sig_oid1] PASSED
+tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_mldsa_key[MLDSA87PrivateKey-sig_oid2] PASSED
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_dsa_key_sign_md5 PASSED
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_ec_key_sign_md5 PASSED
 tests/x509/test_x509_crlbuilder.py::TestCertificateRevocationListBuilder::test_sign_with_revoked_certificates PASSED
@@ -4327,7 +4426,10 @@ tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_
 tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_add_extensions[extension1] PASSED
 tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_add_extensions[extension2] PASSED
 tests/x509/test_x509_revokedcertbuilder.py::TestRevokedCertificateBuilder::test_add_multiple_extensions PASSED
-tests/x509/verification/test_limbo.py::test_limbo SKIPPED (no 'x509_...)
+tests/x509/verification/test_limbo.py::test_limbo[0] SKIPPED (no 'x5...)
+tests/x509/verification/test_limbo.py::test_limbo[1] SKIPPED (no 'x5...)
+tests/x509/verification/test_limbo.py::test_limbo[2] SKIPPED (no 'x5...)
+tests/x509/verification/test_limbo.py::test_limbo[3] SKIPPED (no 'x5...)
 tests/x509/verification/test_verification.py::TestPolicyBuilder::test_time_already_set PASSED
 tests/x509/verification/test_verification.py::TestPolicyBuilder::test_store_already_set PASSED
 tests/x509/verification/test_verification.py::TestPolicyBuilder::test_max_chain_depth_already_set PASSED
@@ -4345,7 +4447,11 @@ tests/x509/verification/test_verification.py::TestServerVerifier::test_verify_tz
 tests/x509/verification/test_verification.py::TestServerVerifier::test_verify_tz_aware[2018-11-16T00:15:04-01:00-False] PASSED
 tests/x509/verification/test_verification.py::TestServerVerifier::test_error_message PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_builder_methods PASSED
-tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_unsupported_extension PASSED
+tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_arbitrary_extension_supported PASSED
+tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_critical_unaccounted_extension_fails PASSED
+tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_critical_extension_accounted_for PASSED
+tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_unparseable_extension_passed_as_unrecognized PASSED
+tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_additional_extension_absent PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_require_not_present PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_require_present PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_criticality_constraints PASSED
@@ -4369,6 +4475,11 @@ tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_no_subject_alt_name PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_ca_ext_policy_must_require_basic_constraints PASSED
 tests/x509/verification/test_verification.py::TestCustomExtensionPolicies::test_wrong_subject_alt_name PASSED
+tests/x509/verification/test_verification.py::TestNameConstraints::test_critical_dirname_constraint_rejected[permitted] PASSED
+tests/x509/verification/test_verification.py::TestNameConstraints::test_critical_dirname_constraint_rejected[excluded] PASSED
+tests/x509/verification/test_verification.py::TestNameConstraints::test_critical_supported_constraint_ok PASSED
+tests/x509/verification/test_verification.py::TestNameConstraints::test_noncritical_dirname_constraint_with_dirname_san PASSED
+tests/x509/verification/test_verification.py::TestNameConstraints::test_noncritical_dirname_constraint_ignored PASSED
 
 =============================== warnings summary ===============================
 tests/hazmat/primitives/decrepit/test_algorithms.py::TestTripleDES::test_invalid_key_type
@@ -4377,4 +4488,4 @@ tests/hazmat/primitives/decrepit/test_algorithms.py::TestTripleDES::test_invalid
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 4181 passed, 180 skipped, 1 warning ========
+======== 4273 passed, 199 skipped, 1 warning ========

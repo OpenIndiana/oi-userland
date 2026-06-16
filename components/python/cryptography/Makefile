@@ -16,15 +16,16 @@
 
 BUILD_STYLE = pyproject
 CARGO_VENDOR = yes
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cryptography
-HUMAN_VERSION =			48.0.1
+HUMAN_VERSION =			49.0.0
 COMPONENT_SUMMARY =		cryptography is a package which provides cryptographic recipes and primitives to Python developers.
 COMPONENT_PROJECT_URL =		https://github.com/pyca/cryptography
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:266f4ee051abb2f725b74ef8072b521ce1feacf685a3364fa6a6b45548db791a
+	sha256:f89660a348f4f78a92366240a61404e337586ef7f5909a2fef59ca88ef505493
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-3-Clause
 
 TEST_STYLE = pytest
