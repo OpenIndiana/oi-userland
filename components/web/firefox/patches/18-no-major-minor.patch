@@ -1,0 +1,31 @@
+Bug 2039309 attempted to fix Solaris, but gets this type of message:
+(I tried to include sys/types.h as per the major man page, but that did not help.)
+__major and __minor symbols not found by linker.
+
+Vulkan features not supported by OI so no need to fix code segments or figure
+out which headers to include. Hack: Comment out code segments as a work around.
+
+
+
+--- firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp.~1~	2026-05-13 16:29:35.000000000 -0400
++++ firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp	2026-05-14 12:06:59.477229519 -0400
+@@ -474,7 +474,7 @@
+     SelectVulkanDecoderPhysicalDevice(const StaticMutexAutoLock& aProofOfLock,
+                                       const nsCString& aRendererNode) {
+   uint32_t rendererDrmMajor = 0, rendererDrmMinor = 0;
+-#    if defined(MOZ_WIDGET_GTK)
++#    if 0
+   if (!aRendererNode.IsEmpty()) {
+     struct stat st = {};
+     if (stat(aRendererNode.get(), &st) == 0) {
+--- firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/widget/gtk/vulkantest/vulkantest.cpp.~1~	2026-05-13 16:29:35.000000000 -0400
++++ firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/widget/gtk/vulkantest/vulkantest.cpp	2026-05-14 12:09:33.246418094 -0400
+@@ -220,7 +220,7 @@
+ 
+   log("vulkantest start\n");
+ 
+-#ifdef __linux__
++#if 0
+   if (aDrmRenderPath && *aDrmRenderPath) {
+     struct stat st = {};
+     if (stat(aDrmRenderPath, &st) == 0) {
