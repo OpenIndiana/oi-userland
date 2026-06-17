@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress
-HUMAN_VERSION =			2.220
+HUMAN_VERSION =			2.221
 COMPONENT_SUMMARY =		IO Interface to compressed data files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9d96ea291f2c54ef367c7396b857d93ba1ac1c4b2f1bce13ed8a3e5f3eebb627
+	sha256:af42c9c9104adf7d772d255c0d9a404a3462ea45e7bc42d06da0a0b51de3d0ae
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
