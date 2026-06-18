@@ -1,0 +1,47 @@
+CMake Error at Source/cmake/WebKitMacros.cmake:156 (add_dependencies):
+  The dependency target "bmalloc_CopyHeaders" of target
+  "LLIntSettingsExtractor" does not exist.
+Call Stack (most recent call first):
+  Source/cmake/WebKitMacros.cmake:185 (_WEBKIT_TARGET_SETUP)
+  Source/cmake/WebKitMacros.cmake:406 (_WEBKIT_TARGET)
+  Source/JavaScriptCore/CMakeLists.txt:417 (WEBKIT_EXECUTABLE)
+
+Commit causing problem:
+https://github.com/WebKit/WebKit/commit/6cfb79671c10ad2299b3c40692674135596b1a43
+
+--- webkitgtk-2.52.4/Source/JavaScriptCore/CMakeLists.txt.old	2026-06-17 11:06:21.563331143 -0400
++++ webkitgtk-2.52.4/Source/JavaScriptCore/CMakeLists.txt	2026-06-17 11:11:31.502335189 -0400
+@@ -407,13 +407,8 @@
+     "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
+ )
+ 
+-set(LLIntSettingsExtractor_FRAMEWORKS)
+-set(LLIntSettingsExtractor_DEPENDENCIES
+-    JavaScriptCore_CopyHeaders
+-    JavaScriptCore_CopyPrivateHeaders
+-    WTF_CopyHeaders
+-    bmalloc_CopyHeaders
+-)
++set(LLIntSettingsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
++set(LLIntSettingsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JavaScriptCore_CopyPrivateHeaders)
+ WEBKIT_EXECUTABLE(LLIntSettingsExtractor)
+ 
+ # LLIntSettingsExtractor target needs to have a direct or indirect
+@@ -433,14 +428,9 @@
+     "${JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/JavaScriptCore"
+ )
+ 
+-set(LLIntOffsetsExtractor_FRAMEWORKS)
+-set(LLIntOffsetsExtractor_DEPENDENCIES
+-    JSCBuiltins
+-    JavaScriptCore_CopyHeaders
+-    JavaScriptCore_CopyPrivateHeaders
+-    WTF_CopyHeaders
+-    bmalloc_CopyHeaders
+-)
++set(LLIntOffsetsExtractor_FRAMEWORKS ${JavaScriptCore_FRAMEWORKS})
++set(LLIntOffsetsExtractor_DEPENDENCIES JavaScriptCore_CopyHeaders JavaScriptCore_CopyPrivateHeaders JSCBuiltins)
++
+ WEBKIT_EXECUTABLE(LLIntOffsetsExtractor)
+ 
+ # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than

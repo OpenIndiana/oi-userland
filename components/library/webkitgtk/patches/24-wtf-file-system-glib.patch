@@ -9,8 +9,8 @@
 +    sprintf(path, "/proc/%ld/path/a.out", static_cast<long>(getpid()));
 +    ssize_t result = readlink(path, readLinkBuffer, PATH_MAX);
 +#else
-     ssize_t result = readlink("/proc/curproc/file", readLinkBuffer, PATH_MAX);
+     ssize_t result = readlink(_PROC_CURPROC_PATH, readLinkBuffer, PATH_MAX);
 +#endif
-     if (result == -1)
+     if (result <= 0)
          return { };
      return CString(unsafeMakeSpan(readLinkBuffer, static_cast<size_t>(result)));
