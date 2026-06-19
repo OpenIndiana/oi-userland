@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		YAML-PP
-HUMAN_VERSION =			v0.40.0
+HUMAN_VERSION =			v0.41.0
 COMPONENT_SUMMARY =		YAML 1.2 Processor
 COMPONENT_CPAN_AUTHOR =		TINITA
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:76c4d28d5c78f0a5cfec631f0032aff1baa68a705f21f6f4bfe70ad83dce2e33
+	sha256:3ddfb2bdd2e7ef2d949dbd8ffb51439164c84d22bff615e47dbd8ea48ba75cae
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,4 +42,4 @@ REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-deep
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warn
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
