@@ -17,13 +17,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         jq
-COMPONENT_VERSION=      1.8.0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.8.2
 COMPONENT_SUMMARY=      jq - lightweight and flexible command-line JSON processor
 COMPONENT_PROJECT_URL=	https://stedolan.github.io/jq/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:91811577f91d9a6195ff50c2bffec9b72c8429dc05ec3ea022fd95c06d2b319c
+COMPONENT_ARCHIVE_HASH= sha256:71b8d6e8f5fe81f6c6d0d110e3892251f6ce76ed095abd315e26e6e1193af3af
 COMPONENT_ARCHIVE_URL=	https://github.com/stedolan/jq/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         text/jq
 COMPONENT_CLASSIFICATION=Applications/System Utilities
