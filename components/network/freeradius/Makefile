@@ -24,7 +24,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeradius
-COMPONENT_VERSION=	3.2.8
+COMPONENT_VERSION=	3.2.10
 COMPONENT_VERSION_=	$(subst .,_,$(COMPONENT_VERSION))
 COMPONENT_SUMMARY=	The FreeRADIUS server
 COMPONENT_DESCRIPTION=	The FreeRADIUS Server Project is a high performance and highly \
@@ -36,7 +36,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-server-release_$(COMPONENT_VERSION_)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	https://freeradius.org/
 COMPONENT_ARCHIVE_URL=	https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_$(COMPONENT_VERSION_).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7a42562d4c1b0dfd67783b995b33df6ea0983573b2a3b2b99c368dda647e562c
+COMPONENT_ARCHIVE_HASH=	sha256:3e9f24439ce976c04e4c56441722a3bd18677a61dd17f67bc8863eb4ed36cd4b
 COMPONENT_FMRI=		network/radius
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=	GPLv2
@@ -85,8 +85,6 @@ COMPONENT_POST_INSTALL_ACTION =  \
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(MYSQL_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
@@ -108,3 +106,5 @@ REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/libpcap
 REQUIRED_PACKAGES += web/curl
+REQUIRED_PACKAGES.perl += runtime/perl
+REQUIRED_PACKAGES.python += runtime/python
