@@ -72,453 +72,490 @@ Test #71: '[foreach .[] as {a:$a} (0; . + $a; -.)]' at line number 345
 Test #72: '[-foreach -.[] as $x (0; . + $x)]' at line number 349
 Test #73: '[foreach .[] / .[] as $i (0; . + $i)]' at line number 353
 Test #74: '[foreach .[] as $x (0; . + $x) as $x | $x]' at line number 357
-Test #75: '[foreach range(5) as $x (0; .+$x | select($x!=2); [$x,.])]' at line number 361
-Test #76: '[limit(3; .[])]' at line number 365
-Test #77: '[limit(0; error)]' at line number 369
-Test #78: '[limit(1; 1, error)]' at line number 373
-Test #79: 'try limit(-1; error) catch .' at line number 377
-Test #80: '[skip(3; .[])]' at line number 381
-Test #81: '[skip(0,2,3,4; .[])]' at line number 385
-Test #82: '[skip(3; .[])]' at line number 389
-Test #83: 'try skip(-1; error) catch .' at line number 393
-Test #84: 'nth(1; 0,1,error("foo"))' at line number 397
+Test #75: '[limit(3; .[])]' at line number 361
+Test #76: '[limit(0; error)]' at line number 365
+Test #77: '[limit(1; 1, error)]' at line number 369
+Test #78: 'try limit(-1; error) catch .' at line number 373
+Test #79: '[skip(3; .[])]' at line number 377
+Test #80: '[skip(0,2,3,4; .[])]' at line number 381
+Test #81: '[skip(3; .[])]' at line number 385
+Test #82: 'try skip(-1; error) catch .' at line number 389
+Test #83: 'nth(1; 0,1,error("foo"))' at line number 393
+Test #84: '[first(range(.)), last(range(.))]' at line number 397
 Test #85: '[first(range(.)), last(range(.))]' at line number 401
-Test #86: '[first(range(.)), last(range(.))]' at line number 405
-Test #87: '[nth(0,5,9,10,15; range(.)), try nth(-1; range(.)) catch .]' at line number 409
-Test #88: 'first(1,error("foo"))' at line number 414
-Test #89: '[limit(5,7; range(9))]' at line number 424
-Test #90: '[nth(5,7; range(9;0;-1))]' at line number 429
-Test #91: '[range(0,1,2;4,3,2;2,3)]' at line number 434
-Test #92: '[range(3,5)]' at line number 439
-Test #93: '[(index(",","|"), rindex(",","|")), indices(",","|")]' at line number 444
-Test #94: 'join(",","/")' at line number 449
-Test #95: '[.[]|join("a")]' at line number 454
-Test #96: 'flatten(3,2,1)' at line number 459
+Test #86: '[nth(0,5,9,10,15; range(.)), try nth(-1; range(.)) catch .]' at line number 405
+Test #87: 'first(1,error("foo"))' at line number 410
+Test #88: '[limit(5,7; range(9))]' at line number 420
+Test #89: '[nth(5,7; range(9;0;-1))]' at line number 425
+Test #90: '[range(0,1,2;4,3,2;2,3)]' at line number 430
+Test #91: '[range(3,5)]' at line number 435
+Test #92: '[(index(",","|"), rindex(",","|")), indices(",","|")]' at line number 440
+Test #93: 'join(",","/")' at line number 445
+Test #94: '[.[]|join("a")]' at line number 450
+Test #95: 'flatten(3,2,1)' at line number 455
+Test #96: '[.[3:2], .[-5:4], .[:-2], .[-2:], .[3:3][1:], .[10:]]' at line number 466
 Test #97: '[.[3:2], .[-5:4], .[:-2], .[-2:], .[3:3][1:], .[10:]]' at line number 470
-Test #98: '[.[3:2], .[-5:4], .[:-2], .[-2:], .[3:3][1:], .[10:]]' at line number 474
-Test #99: 'del(.[2:4],.[0],.[-2:])' at line number 478
-Test #100: '.[2:4] = ([], ["a","b"], ["a","b","c"])' at line number 482
-Test #101: 'reduce range(65540;65536;-1) as $i ([]; .[$i] = $i)|.[65536:]' at line number 494
-Test #102: '1 as $x | 2 as $y | [$x,$y,$x]' at line number 502
-Test #103: '[1,2,3][] as $x | [[4,5,6,7][$x]]' at line number 506
-Test #104: '42 as $x | . | . | . + 432 | $x + 1' at line number 512
-Test #105: '1 + 2 as $x | -$x' at line number 516
-Test #106: '"x" as $x | "a"+"y" as $y | $x+","+$y' at line number 520
-Test #107: '1 as $x | [$x,$x,$x as $x | $x]' at line number 524
-Test #108: '[1, {c:3, d:4}] as [$a, {c:$b, b:$c}] | $a, $b, $c' at line number 528
-Test #109: '. as {as: $kw, "str": $str, ("e"+"x"+"p"): $exp} | [$kw, $str, $exp]' at line number 534
-Test #110: '.[] as [$a, $b] | [$b, $a]' at line number 538
-Test #111: '. as $i | . as [$i] | $i' at line number 543
-Test #112: '. as [$i] | . as $i | $i' at line number 547
-Test #113: '. as [] | null' at line number 552
-Test #114: '. as {} | null' at line number 558
-Test #115: '. as $foo | [$foo, $bar]' at line number 564
-Test #116: '. as {(true):$foo} | $foo' at line number 570
+Test #98: 'del(.[2:4],.[0],.[-2:])' at line number 474
+Test #99: '.[2:4] = ([], ["a","b"], ["a","b","c"])' at line number 478
+Test #100: 'reduce range(65540;65536;-1) as $i ([]; .[$i] = $i)|.[65536:]' at line number 490
+Test #101: '1 as $x | 2 as $y | [$x,$y,$x]' at line number 498
+Test #102: '[1,2,3][] as $x | [[4,5,6,7][$x]]' at line number 502
+Test #103: '42 as $x | . | . | . + 432 | $x + 1' at line number 508
+Test #104: '1 + 2 as $x | -$x' at line number 512
+Test #105: '"x" as $x | "a"+"y" as $y | $x+","+$y' at line number 516
+Test #106: '1 as $x | [$x,$x,$x as $x | $x]' at line number 520
+Test #107: '[1, {c:3, d:4}] as [$a, {c:$b, b:$c}] | $a, $b, $c' at line number 524
+Test #108: '. as {as: $kw, "str": $str, ("e"+"x"+"p"): $exp} | [$kw, $str, $exp]' at line number 530
+Test #109: '.[] as [$a, $b] | [$b, $a]' at line number 534
+Test #110: '. as $i | . as [$i] | $i' at line number 539
+Test #111: '. as [$i] | . as $i | $i' at line number 543
+Test #112: '. as [] | null' at line number 548
+Test #113: '. as {} | null' at line number 554
+Test #114: '. as $foo | [$foo, $bar]' at line number 560
+Test #115: '. as {(true):$foo} | $foo' at line number 566
+Test #116: '1+1' at line number 577
 Test #117: '1+1' at line number 581
-Test #118: '1+1' at line number 585
-Test #119: '2-1' at line number 589
-Test #120: '2-(-1)' at line number 593
-Test #121: '1e+0+0.001e3' at line number 597
-Test #122: '.+4' at line number 601
-Test #123: '.+null' at line number 605
-Test #124: 'null+.' at line number 609
-Test #125: '.a+.b' at line number 613
-Test #126: '[1,2,3] + [.]' at line number 617
-Test #127: '{"a":1} + {"b":2} + {"c":3}' at line number 621
-Test #128: '"asdf" + "jkl;" + . + . + .' at line number 625
-Test #129: '"\u0000\u0020\u0000" + .' at line number 629
-Test #130: '42 - .' at line number 633
-Test #131: '[1,2,3,4,1] - [.,3]' at line number 637
-Test #132: '[-1 as $x | 1,$x]' at line number 641
-Test #133: '[10 * 20, 20 / .]' at line number 645
-Test #134: '1 + 2 * 2 + 10 / 2' at line number 649
-Test #135: '[16 / 4 / 2, 16 / 4 * 2, 16 - 4 - 2, 16 - 4 + 2]' at line number 653
-Test #136: '1e-19 + 1e-20 - 5e-21' at line number 657
-Test #137: '1 / 1e-17' at line number 661
-Test #138: '9E999999999, 9999999999E999999990, 1E-999999999, 0.000000001E-999999990' at line number 665
-Test #139: '5E500000000 > 5E-5000000000, 10000E500000000 > 10000E-5000000000' at line number 672
-Test #140: '(1e999999999, 10e999999999) > (1e-1147483646, 0.1e-1147483646)' at line number 678
-Test #141: '25 % 7' at line number 685
-Test #142: '49732 % 472' at line number 689
-Test #143: '[(infinite, -infinite) % (1, -1, infinite)]' at line number 693
-Test #144: '[nan % 1, 1 % nan | isnan]' at line number 697
-Test #145: '1 + tonumber + ("10" | tonumber)' at line number 701
+Test #118: '2-1' at line number 585
+Test #119: '2-(-1)' at line number 589
+Test #120: '1e+0+0.001e3' at line number 593
+Test #121: '.+4' at line number 597
+Test #122: '.+null' at line number 601
+Test #123: 'null+.' at line number 605
+Test #124: '.a+.b' at line number 609
+Test #125: '[1,2,3] + [.]' at line number 613
+Test #126: '{"a":1} + {"b":2} + {"c":3}' at line number 617
+Test #127: '"asdf" + "jkl;" + . + . + .' at line number 621
+Test #128: '"\u0000\u0020\u0000" + .' at line number 625
+Test #129: '42 - .' at line number 629
+Test #130: '[1,2,3,4,1] - [.,3]' at line number 633
+Test #131: '[-1 as $x | 1,$x]' at line number 637
+Test #132: '[10 * 20, 20 / .]' at line number 641
+Test #133: '1 + 2 * 2 + 10 / 2' at line number 645
+Test #134: '[16 / 4 / 2, 16 / 4 * 2, 16 - 4 - 2, 16 - 4 + 2]' at line number 649
+Test #135: '1e-19 + 1e-20 - 5e-21' at line number 653
+Test #136: '1 / 1e-17' at line number 657
+Test #137: '9E999999999, 9999999999E999999990, 1E-999999999, 0.000000001E-999999990' at line number 661
+Test #138: '5E500000000 > 5E-5000000000, 10000E500000000 > 10000E-5000000000' at line number 668
+Test #139: '(1e999999999, 10e999999999) > (1e-1147483646, 0.1e-1147483646)' at line number 674
+Test #140: '25 % 7' at line number 681
+Test #141: '49732 % 472' at line number 685
+Test #142: '[(infinite, -infinite) % (1, -1, infinite)]' at line number 689
+Test #143: '[nan % 1, 1 % nan | isnan]' at line number 693
+Test #144: '1 + tonumber + ("10" | tonumber)' at line number 697
+Test #145: '"123\u0000456" | try tonumber catch .' at line number 701
 Test #146: 'map(toboolean)' at line number 705
 Test #147: '.[] | try toboolean catch .' at line number 709
-Test #148: '[{"a":42},.object,10,.num,false,true,null,"b",[1,4]] | .[] as $x | [$x == .[]]' at line number 720
-Test #149: '[.[] | length]' at line number 732
-Test #150: 'utf8bytelength' at line number 736
-Test #151: '[.[] | try utf8bytelength catch .]' at line number 740
-Test #152: 'map(keys)' at line number 745
-Test #153: '[1,2,empty,3,empty,4]' at line number 749
-Test #154: 'map(add)' at line number 753
-Test #155: 'map_values(.+1)' at line number 757
-Test #156: '[add(null), add(range(range(10))), add(empty), add(10,range(10))]' at line number 761
-Test #157: '.sum = add(.arr[])' at line number 766
-Test #158: 'add({(.[]):1}) | keys' at line number 770
-Test #159: 'def f: . + 1; def g: def g: . + 100; f | g | f; (f | g), g' at line number 779
-Test #160: 'def f: (1000,2000); f' at line number 784
-Test #161: 'def f(a;b;c;d;e;f): [a+1,b,c,d,e,f]; f(.[0];.[1];.[0];.[0];.[0];.[0])' at line number 789
-Test #162: 'def f: 1; def g: f, def f: 2; def g: 3; f, def f: g; f, g; def f: 4; [f, def f: g; def g: 5; f, g]+[f,g]' at line number 793
-Test #163: 'def a: 0; . | a' at line number 798
-Test #164: 'def f(a;b;c;d;e;f;g;h;i;j): [j,i,h,g,f,e,d,c,b,a]; f(.[0];.[1];.[2];.[3];.[4];.[5];.[6];.[7];.[8];.[9])' at line number 803
-Test #165: '([1,2] + [4,5])' at line number 807
-Test #166: 'true' at line number 811
-Test #167: 'null,1,null' at line number 815
-Test #168: '[1,2,3]' at line number 821
-Test #169: '[.[]|floor]' at line number 825
-Test #170: '[.[]|sqrt]' at line number 829
-Test #171: '(add / length) as $m | map((. - $m) as $d | $d * $d) | add / length | sqrt' at line number 833
-Test #172: 'atan * 4 * 1000000|floor / 1000000' at line number 842
-Test #173: '[(3.141592 / 2) * (range(0;20) / 20)|cos * 1000000|floor / 1000000]' at line number 846
-Test #174: '[(3.141592 / 2) * (range(0;20) / 20)|sin * 1000000|floor / 1000000]' at line number 850
-Test #175: 'def f(x): x | x; f([.], . + [42])' at line number 855
-Test #176: 'def f: .+1; def g: f; def f: .+100; def f(a):a+.+11; [(g|f(20)), f]' at line number 863
-Test #177: 'def id(x):x; 2000 as $x | def f(x):1 as $x | id([$x, x, x]); def g(x): 100 as $x | f($x,$x+x); g($x)' at line number 868
-Test #178: 'def x(a;b): a as $a | b as $b | $a + $b; def y($a;$b): $a + $b; def check(a;b): [x(a;b)] == [y(a;b)]; check(.[];.[]*2)' at line number 873
-Test #179: '[[20,10][1,0] as $x | def f: (100,200) as $y | def g: [$x + $y, .]; . + $x | g; f[0] | [f][0][1] | f]' at line number 879
-Test #180: 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[] | fac]' at line number 884
-Test #181: 'reduce .[] as $x (0; . + $x)' at line number 894
-Test #182: 'reduce .[] as [$i, {j:$j}] (0; . + $i - $j)' at line number 898
-Test #183: 'reduce [[1,2,10], [3,4,10]][] as [$i,$j] (0; . + $i * $j)' at line number 902
-Test #184: '[-reduce -.[] as $x (0; . + $x)]' at line number 906
-Test #185: '[reduce .[] / .[] as $i (0; . + $i)]' at line number 910
-Test #186: 'reduce .[] as $x (0; . + $x) as $x | $x' at line number 914
-Test #187: 'reduce . as $n (.; .)' at line number 919
-Test #188: 'reduce range(5) as $x (0; .+$x | select($x!=2))' at line number 923
-Test #189: '. as {$a, b: [$c, {$d}]} | [$a, $c, $d]' at line number 928
-Test #190: '. as {$a, $b:[$c, $d]}| [$a, $b, $c, $d]' at line number 932
-Test #191: '.[] | . as {$a, b: [$c, {$d}]} ?// [$a, {$b}, $e] ?// $f | [$a, $b, $c, $d, $e, $f]' at line number 937
-Test #192: '.[] | . as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 944
-Test #193: '.[] as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 948
-Test #194: '[[3],[4],[5],6][] | . as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 952
-Test #195: '[[3],[4],[5],6] | .[] as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 956
-Test #196: '.[] | . as {a:$a} ?// {a:$a} ?// $a | $a' at line number 960
-Test #197: '.[] as {a:$a} ?// {a:$a} ?// $a | $a' at line number 967
-Test #198: '[[3],[4],[5],6][] | . as {a:$a} ?// {a:$a} ?// $a | $a' at line number 974
-Test #199: '[[3],[4],[5],6] | .[] as {a:$a} ?// {a:$a} ?// $a | $a' at line number 981
-Test #200: '.[] | . as {a:$a} ?// $a ?// {a:$a} | $a' at line number 988
-Test #201: '.[] as {a:$a} ?// $a ?// {a:$a} | $a' at line number 995
-Test #202: '[[3],[4],[5],6][] | . as {a:$a} ?// $a ?// {a:$a} | $a' at line number 1002
-Test #203: '[[3],[4],[5],6] | .[] as {a:$a} ?// $a ?// {a:$a} | $a' at line number 1009
-Test #204: '.[] | . as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1016
-Test #205: '.[] as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1023
-Test #206: '[[3],[4],[5],6][] | . as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1030
-Test #207: '[[3],[4],[5],6] | .[] as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1037
-Test #208: '. as $dot|any($dot[];not)' at line number 1044
-Test #209: '. as $dot|any($dot[];not)' at line number 1048
-Test #210: '. as $dot|all($dot[];.)' at line number 1052
-Test #211: '. as $dot|all($dot[];.)' at line number 1056
-Test #212: 'any(true, error; .)' at line number 1061
-Test #213: 'all(false, error; .)' at line number 1065
-Test #214: 'any(not)' at line number 1069
-Test #215: 'all(not)' at line number 1073
-Test #216: 'any(not)' at line number 1077
-Test #217: 'all(not)' at line number 1081
-Test #218: '[any,all]' at line number 1085
-Test #219: '[any,all]' at line number 1089
-Test #220: '[any,all]' at line number 1093
-Test #221: '[any,all]' at line number 1097
-Test #222: '[any,all]' at line number 1101
-Test #223: 'path(.foo[0,1])' at line number 1109
-Test #224: 'path(.[] | select(.>3))' at line number 1114
-Test #225: 'path(.)' at line number 1118
-Test #226: 'try path(.a | map(select(.b == 0))) catch .' at line number 1122
-Test #227: 'try path(.a | map(select(.b == 0)) | .[0]) catch .' at line number 1126
-Test #228: 'try path(.a | map(select(.b == 0)) | .c) catch .' at line number 1130
-Test #229: 'try path(.a | map(select(.b == 0)) | .[]) catch .' at line number 1134
-Test #230: 'path(.a[path(.b)[0]])' at line number 1138
-Test #231: '[paths]' at line number 1142
-Test #232: '["foo",1] as $p | getpath($p), setpath($p; 20), delpaths([$p])' at line number 1146
-Test #233: 'map(getpath([2])), map(setpath([2]; 42)), map(delpaths([[2]]))' at line number 1152
-Test #234: 'map(delpaths([[0,"foo"]]))' at line number 1158
-Test #235: '["foo",1] as $p | getpath($p), setpath($p; 20), delpaths([$p])' at line number 1162
-Test #236: 'delpaths([[-200]])' at line number 1168
-Test #237: 'try delpaths(0) catch .' at line number 1172
-Test #238: 'del(.), del(empty), del((.foo,.bar,.baz) | .[2,3,0]), del(.foo[0], .bar[0], .foo, .baz.bar[0].x)' at line number 1176
-Test #239: 'del(.[1], .[-6], .[2], .[-3:9])' at line number 1183
-Test #240: 'setpath([-1]; 1)' at line number 1188
-Test #241: 'pick(.a.b.c)' at line number 1192
-Test #242: 'pick(first)' at line number 1196
-Test #243: 'pick(first|first)' at line number 1200
-Test #244: 'try pick(last) catch .' at line number 1205
-Test #245: '.message = "goodbye"' at line number 1212
-Test #246: '.foo = .bar' at line number 1216
-Test #247: '.foo |= .+1' at line number 1220
-Test #248: '.[] += 2, .[] *= 2, .[] -= 2, .[] /= 2, .[] %=2' at line number 1224
-Test #249: '[.[] % 7]' at line number 1232
-Test #250: '.foo += .foo' at line number 1236
-Test #251: '.[0].a |= {"old":., "new":(.+1)}' at line number 1240
-Test #252: 'def inc(x): x |= .+1; inc(.[].a)' at line number 1244
-Test #253: '.[] | try (getpath(["a",0,"b"]) |= 5) catch .' at line number 1249
-Test #254: '(.[] | select(. >= 2)) |= empty' at line number 1261
-Test #255: '.[] |= select(. % 2 == 0)' at line number 1265
-Test #256: '.foo[1,4,2,3] |= empty' at line number 1269
-Test #257: '.[2][3] = 1' at line number 1273
-Test #258: '.foo[2].bar = 1' at line number 1277
-Test #259: 'try ((map(select(.a == 1))[].b) = 10) catch .' at line number 1281
-Test #260: 'try ((map(select(.a == 1))[].a) |= .+1) catch .' at line number 1285
-Test #261: 'def x: .[1,2]; x=10' at line number 1289
-Test #262: 'try (def x: reverse; x=10) catch .' at line number 1293
-Test #263: '.[] = 1' at line number 1297
-Test #264: '[.[] | if .foo then "yep" else "nope" end]' at line number 1305
-Test #265: '[.[] | if .baz then "strange" elif .foo then "yep" else "nope" end]' at line number 1309
-Test #266: '[if 1,null,2 then 3 else 4 end]' at line number 1313
-Test #267: '[if empty then 3 else 4 end]' at line number 1317
-Test #268: '[if 1 then 3,4 else 5 end]' at line number 1321
-Test #269: '[if null then 3 else 5,6 end]' at line number 1325
-Test #270: '[if true then 3 end]' at line number 1329
-Test #271: '[if false then 3 end]' at line number 1333
-Test #272: '[if false then 3 else . end]' at line number 1337
-Test #273: '[if false then 3 elif false then 4 end]' at line number 1341
-Test #274: '[if false then 3 elif false then 4 else . end]' at line number 1345
-Test #275: '[-if true then 1 else 2 end]' at line number 1349
-Test #276: '{x: if true then 1 else 2 end}' at line number 1353
-Test #277: 'if true then [.] else . end []' at line number 1357
-Test #278: '[.[] | [.foo[] // .bar]]' at line number 1361
-Test #279: '.[] //= .[0]' at line number 1365
-Test #280: '.[] | [.[0] and .[1], .[0] or .[1]]' at line number 1369
-Test #281: '[.[] | not]' at line number 1376
-Test #282: '[10 > 0, 10 > 10, 10 > 20, 10 < 0, 10 < 10, 10 < 20]' at line number 1381
-Test #283: '[10 >= 0, 10 >= 10, 10 >= 20, 10 <= 0, 10 <= 10, 10 <= 20]' at line number 1385
-Test #284: '[ 10 == 10, 10 != 10, 10 != 11, 10 == 11]' at line number 1390
-Test #285: '["hello" == "hello", "hello" != "hello", "hello" == "world", "hello" != "world" ]' at line number 1394
-Test #286: '[[1,2,3] == [1,2,3], [1,2,3] != [1,2,3], [1,2,3] == [4,5,6], [1,2,3] != [4,5,6]]' at line number 1398
-Test #287: '[{"foo":42} == {"foo":42},{"foo":42} != {"foo":42}, {"foo":42} != {"bar":42}, {"foo":42} == {"bar":42}]' at line number 1402
-Test #288: '[{"foo":[1,2,{"bar":18},"world"]} == {"foo":[1,2,{"bar":18},"world"]},{"foo":[1,2,{"bar":18},"world"]} == {"foo":[1,2,{"bar":19},"world"]}]' at line number 1407
-Test #289: '[("foo" | contains("foo")), ("foobar" | contains("foo")), ("foo" | contains("foobar"))]' at line number 1412
-Test #290: '[contains(""), contains("\u0000")]' at line number 1417
-Test #291: '[contains(""), contains("a"), contains("ab"), contains("c"), contains("d")]' at line number 1421
-Test #292: '[contains("cd"), contains("b\u0000"), contains("ab\u0000")]' at line number 1425
-Test #293: '[contains("b\u0000c"), contains("b\u0000cd"), contains("b\u0000cd")]' at line number 1429
-Test #294: '[contains("@"), contains("\u0000@"), contains("\u0000what")]' at line number 1433
-Test #295: '[.[]|try if . == 0 then error("foo") elif . == 1 then .a elif . == 2 then empty else . end catch .]' at line number 1439
-Test #296: '[.[]|(.a, .a)?]' at line number 1443
-Test #297: '[[.[]|[.a,.a]]?]' at line number 1447
-Test #298: '[if error then 1 else 2 end?]' at line number 1451
-Test #299: 'try error(0) // 1' at line number 1455
-Test #300: '1, try error(2), 3' at line number 1459
-Test #301: '1 + try 2 catch 3 + 4' at line number 1464
-Test #302: '[-try .]' at line number 1468
-Test #303: 'try -.? catch .' at line number 1472
-Test #304: '{x: try 1, y: try error catch 2, z: if true then 3 end}' at line number 1476
-Test #305: '{x: 1 + 2, y: false or true, z: null // 3}' at line number 1480
-Test #306: '.[] | try error catch .' at line number 1484
-Test #307: 'try error("\($__loc__)") catch .' at line number 1490
-Test #308: '[.[]|startswith("foo")]' at line number 1495
-Test #309: '[.[]|endswith("foo")]' at line number 1499
-Test #310: '[.[] | split(", ")]' at line number 1503
-Test #311: 'split("")' at line number 1507
-Test #312: '[.[]|ltrimstr("foo")]' at line number 1511
-Test #313: '[.[]|rtrimstr("foo")]' at line number 1515
-Test #314: '[.[]|trimstr("foo")]' at line number 1519
-Test #315: '[(index(","), rindex(",")), indices(",")]' at line number 1523
-Test #316: '[ index("aba"), rindex("aba"), indices("aba") ]' at line number 1527
-Test #317: 'map(trim), map(ltrim), map(rtrim)' at line number 1533
-Test #318: 'trim, ltrim, rtrim' at line number 1539
-Test #319: 'try trim catch ., try ltrim catch ., try rtrim catch .' at line number 1545
-Test #320: 'indices(1)' at line number 1551
-Test #321: 'indices([1,2])' at line number 1555
-Test #322: 'indices([1,2])' at line number 1559
-Test #323: 'indices(", ")' at line number 1563
-Test #324: 'index("!")' at line number 1567
-Test #325: '.[:rindex("x")]' at line number 1571
-Test #326: 'indices("o")' at line number 1575
-Test #327: 'indices("o")' at line number 1579
-Test #328: '[.[]|split(",")]' at line number 1583
-Test #329: '[.[]|split(", ")]' at line number 1587
-Test #330: '[.[] * 3]' at line number 1591
-Test #331: '[.[] * "abc"]' at line number 1595
-Test #332: '[. * (nan,-nan)]' at line number 1599
-Test #333: '. * 100000 | [.[:10],.[-10:]]' at line number 1603
-Test #334: '. * 1000000000' at line number 1607
-Test #335: 'try (. * 1000000000) catch .' at line number 1611
-Test #336: '[.[] / ","]' at line number 1615
-Test #337: '[.[] / ", "]' at line number 1619
-Test #338: 'map(.[1] as $needle | .[0] | contains($needle))' at line number 1623
-Test #339: 'map(.[1] as $needle | .[0] | contains($needle))' at line number 1627
-Test #340: '[({foo: 12, bar:13} | contains({foo: 12})), ({foo: 12} | contains({})), ({foo: 12, bar:13} | contains({baz:14}))]' at line number 1631
-Test #341: '{foo: {baz: 12, blap: {bar: 13}}, bar: 14} | contains({bar: 14, foo: {blap: {}}})' at line number 1635
-Test #342: '{foo: {baz: 12, blap: {bar: 13}}, bar: 14} | contains({bar: 14, foo: {blap: {bar: 14}}})' at line number 1639
-Test #343: 'sort' at line number 1643
-Test #344: '(sort_by(.b) | sort_by(.a)), sort_by(.a, .b), sort_by(.b, .c), group_by(.b), group_by(.a + .b - .c == 2)' at line number 1647
-Test #345: 'unique' at line number 1655
-Test #346: 'unique' at line number 1659
-Test #347: '[min, max, min_by(.[1]), max_by(.[1]), min_by(.[2]), max_by(.[2])]' at line number 1663
-Test #348: '[min,max,min_by(.),max_by(.)]' at line number 1667
-Test #349: '.foo[.baz]' at line number 1671
-Test #350: '.[] | .error = "no, it's OK"' at line number 1675
-Test #351: '[{a:1}] | .[] | .a=999' at line number 1679
-Test #352: 'to_entries' at line number 1683
-Test #353: 'from_entries' at line number 1687
-Test #354: 'with_entries(.key |= "KEY_" + .)' at line number 1691
-Test #355: 'map(has("foo"))' at line number 1695
-Test #356: 'map(has(2))' at line number 1699
-Test #357: 'has(nan)' at line number 1703
-Test #358: 'keys' at line number 1707
-Test #359: '[][.]' at line number 1711
-Test #360: 'map([1,2][0:.])' at line number 1715
-Test #361: '{"k": {"a": 1, "b": 2}} * .' at line number 1721
-Test #362: '{"k": {"a": 1, "b": 2}, "hello": {"x": 1}} * .' at line number 1725
-Test #363: '{"k": {"a": 1, "b": 2}, "hello": 1} * .' at line number 1729
-Test #364: '{"a": {"b": 1}, "c": {"d": 2}, "e": 5} * .' at line number 1733
-Test #365: '[.[]|arrays]' at line number 1737
-Test #366: '[.[]|objects]' at line number 1741
-Test #367: '[.[]|iterables]' at line number 1745
-Test #368: '[.[]|scalars]' at line number 1749
-Test #369: '[.[]|values]' at line number 1753
-Test #370: '[.[]|booleans]' at line number 1757
-Test #371: '[.[]|nulls]' at line number 1761
-Test #372: 'flatten' at line number 1765
-Test #373: 'flatten(0)' at line number 1769
-Test #374: 'flatten(2)' at line number 1773
-Test #375: 'flatten(2)' at line number 1777
-Test #376: 'try flatten(-1) catch .' at line number 1781
-Test #377: 'transpose' at line number 1785
-Test #378: 'transpose' at line number 1789
-Test #379: 'ascii_upcase' at line number 1793
-Test #380: 'bsearch(0,1,2,3,4)' at line number 1797
-Test #381: 'bsearch({x:1})' at line number 1805
-Test #382: 'try ["OK", bsearch(0)] catch ["KO",.]' at line number 1809
-Test #383: 'strftime("%Y-%m-%dT%H:%M:%SZ")' at line number 1815
-Test #384: 'strftime("%A, %B %d, %Y")' at line number 1819
-Test #385: 'strftime("%Y-%m-%dT%H:%M:%SZ")' at line number 1823
-Test #386: 'mktime' at line number 1827
-Test #387: 'gmtime' at line number 1831
-Test #388: 'try strftime("%Y-%m-%dT%H:%M:%SZ") catch .' at line number 1836
-Test #389: 'try strflocaltime("%Y-%m-%dT%H:%M:%SZ") catch .' at line number 1840
-Test #390: 'try mktime catch .' at line number 1844
-Test #391: 'try ["OK", strftime([])] catch ["KO", .]' at line number 1849
-Test #392: 'try ["OK", strflocaltime({})] catch ["KO", .]' at line number 1853
-Test #393: 'import "a" as foo; import "b" as bar; def fooa: foo::a; [fooa, bar::a, bar::b, foo::a]' at line number 1858
-Test #394: 'import "c" as foo; [foo::a, foo::c]' at line number 1862
-Test #395: 'include "c"; [a, c]' at line number 1866
-Test #396: 'import "data" as $e; import "data" as $d; [$d[].this,$e[].that,$d::d[].this,$e::e[].that]|join(";")' at line number 1870
-Test #397: 'import "data" as $a; import "data" as $b; def f: {$a, $b}; f' at line number 1875
-Test #398: 'include "shadow1"; e' at line number 1879
-Test #399: 'include "shadow1"; include "shadow2"; e' at line number 1883
-Test #400: 'import "shadow1" as f; import "shadow2" as f; import "shadow1" as e; [e::e, f::e]' at line number 1887
-Test #401: 'module (.+1); 0' at line number 1892
-Test #402: 'module []; 0' at line number 1898
-Test #403: 'include "a" (.+1); 0' at line number 1904
-Test #404: 'include "a" []; 0' at line number 1910
-Test #405: 'include "\ "; 0' at line number 1916
-Test #406: 'include "\(a)"; 0' at line number 1922
-Test #407: 'modulemeta' at line number 1927
-Test #408: 'modulemeta | .deps | length' at line number 1931
-Test #409: 'modulemeta | .defs | length' at line number 1935
-Test #410: 'import "syntaxerror" as e; .' at line number 1940
-Test #411: '%::wat' at line number 1946
-Test #412: 'import "test_bind_order" as check; check::check' at line number 1951
-Test #413: 'try -. catch .' at line number 1955
-Test #414: 'try (.-.) catch .' at line number 1959
-Test #415: '"x" * range(0; 12; 2) + "☆" * 5 | try -. catch .' at line number 1963
-Test #416: 'join(",")' at line number 1972
-Test #417: '.[] | join(",")' at line number 1976
-Test #418: '.[] | join(",")' at line number 1983
-Test #419: 'try join(",") catch .' at line number 1988
-Test #420: 'try join(",") catch .' at line number 1992
-Test #421: '{if:0,and:1,or:2,then:3,else:4,elif:5,end:6,as:7,def:8,reduce:9,foreach:10,try:11,catch:12,label:13,import:14,include:15,module:16}' at line number 1996
-Test #422: 'try (1/.) catch .' at line number 2000
-Test #423: 'try (1/0) catch .' at line number 2004
-Test #424: 'try (0/0) catch .' at line number 2008
-Test #425: 'try (1%.) catch .' at line number 2012
-Test #426: 'try (1%0) catch .' at line number 2016
-Test #427: '[range(-52;52;1)] as $powers | [$powers[]|pow(2;.)|log2|round] == $powers' at line number 2021
-Test #428: '[range(-99/2;99/2;1)] as $orig | [$orig[]|pow(2;.)|log2] as $back | ($orig|keys)[]|. as $k | (($orig|.[$k])-($back|.[$k]))|if . < 0 then . * -1 else . end|select(.>.00005)' at line number 2025
-Test #429: '{' at line number 2029
-Test #430: '}' at line number 2035
-Test #431: '(.[{}] = 0)?' at line number 2040
-Test #432: 'INDEX(range(5)|[., "foo\(.)"]; .[0])' at line number 2043
-Test #433: 'JOIN({"0":[0,"abc"],"1":[1,"bcd"],"2":[2,"def"],"3":[3,"efg"],"4":[4,"fgh"]}; .[0]|tostring)' at line number 2047
-Test #434: 'range(5;10)|IN(range(10))' at line number 2051
-Test #435: 'range(5;13)|IN(range(0;10;3))' at line number 2059
-Test #436: 'range(10;12)|IN(range(10))' at line number 2070
-Test #437: 'IN(range(10;20); range(10))' at line number 2075
-Test #438: 'IN(range(5;20); range(10))' at line number 2079
-Test #439: '(.a as $x | .b) = "b"' at line number 2084
-Test #440: '(.. | select(type == "object" and has("b") and (.b | type) == "array")|.b) |= .[0]' at line number 2089
-Test #441: 'isempty(empty)' at line number 2093
-Test #442: 'isempty(range(3))' at line number 2097
-Test #443: 'isempty(1,error("foo"))' at line number 2101
-Test #444: 'index("")' at line number 2106
-Test #445: 'builtins|length > 10' at line number 2111
-Test #446: '"-1"|IN(builtins[] / "/"|.[1])' at line number 2115
-Test #447: 'all(builtins[] / "/"; .[1]|tonumber >= 0)' at line number 2119
-Test #448: 'builtins|any(.[:1] == "_")' at line number 2123
-Test #449: 'map(. == 1)' at line number 2144
-Test #450: '.[0] | tostring | . == if have_decnum then "13911860366432393" else "13911860366432392" end' at line number 2150
-Test #451: '.x | tojson | . == if have_decnum then "13911860366432393" else "13911860366432392" end' at line number 2154
-Test #452: '(13911860366432393 == 13911860366432392) | . == if have_decnum then false else true end' at line number 2158
-Test #453: '. - 10' at line number 2165
-Test #454: '.[0] - 10' at line number 2169
-Test #455: '.x - 10' at line number 2173
-Test #456: '-. | tojson == if have_decnum then "-13911860366432393" else "-13911860366432392" end' at line number 2178
-Test #457: '-. | tojson == if have_decnum then "0.12345678901234567890123456789" else "0.12345678901234568" end' at line number 2182
-Test #458: '[1E+1000,-1E+1000 | tojson] == if have_decnum then ["1E+1000","-1E+1000"] else ["1.7976931348623157e+308","-1.7976931348623157e+308"] end' at line number 2186
-Test #459: '. |= try . catch .' at line number 2190
-Test #460: '.[] as $n | $n+0 | [., tostring, . == $n]' at line number 2195
-Test #461: 'abs' at line number 2204
-Test #462: 'map(abs)' at line number 2208
-Test #463: 'map(fabs)' at line number 2212
-Test #464: 'map(abs == length) | unique' at line number 2216
-Test #465: 'map(abs)' at line number 2221
-Test #466: '[1E+1000,-1E+1000 | abs | tojson] | unique == if have_decnum then ["1E+1000"] else ["1.7976931348623157e+308"] end' at line number 2225
-Test #467: '[1E+1000,-1E+1000 | length | tojson] | unique == if have_decnum then ["1E+1000"] else ["1.7976931348623157e+308"] end' at line number 2229
-Test #468: '123 as $label | $label' at line number 2235
-Test #469: '[ label $if | range(10) | ., (select(. == 5) | break $if) ]' at line number 2239
-Test #470: 'reduce .[] as $then (4 as $else | $else; . as $elif | . + $then * $elif)' at line number 2243
-Test #471: '1 as $foreach | 2 as $and | 3 as $or | { $foreach, $and, $or, a }' at line number 2247
-Test #472: '[ foreach .[] as $try (1 as $catch | $catch - 1; . + $try; .) ]' at line number 2251
-Test #473: '{ a, $__loc__, c }' at line number 2258
-Test #474: '1 as $x | "2" as $y | "3" as $z | { $x, as, $y: 4, ($z): 5, if: 6, foo: 7 }' at line number 2262
-Test #475: 'fromjson | isnan' at line number 2269
-Test #476: 'tojson | fromjson' at line number 2273
-Test #477: '.[] | try (fromjson | isnan) catch .' at line number 2278
-Test #478: 'try input catch .' at line number 2291
-Test #479: 'debug' at line number 2295
-Test #480: '"foo" | try ((try . catch "caught too much") | error) catch "caught just right"' at line number 2300
-Test #481: '.[]|(try (if .=="hi" then . else error end) catch empty) | "\(.) there!"' at line number 2304
-Test #482: 'try (["hi","ho"]|.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end) catch "caught outside \(.)"' at line number 2308
-Test #483: '.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end' at line number 2313
-Test #484: 'try (try error catch "inner catch \(.)") catch "outer catch \(.)"' at line number 2317
-Test #485: 'try ((try error catch "inner catch \(.)")|error) catch "outer catch \(.)"' at line number 2321
-Test #486: 'first(.?,.?)' at line number 2326
-Test #487: '{foo: "bar"} | .foo |= .?' at line number 2331
-Test #488: '. |= try 2' at line number 2336
-Test #489: '. |= try 2 catch 3' at line number 2340
-Test #490: '.[] |= try tonumber' at line number 2344
-Test #491: 'any(keys[]|tostring?;true)' at line number 2349
-Test #492: 'implode|explode' at line number 2357
-Test #493: 'map(try implode catch .)' at line number 2361
-Test #494: 'try 0[implode] catch .' at line number 2365
-Test #495: 'walk(.)' at line number 2370
-Test #496: 'walk(1)' at line number 2374
-Test #497: '[walk(.,1)]' at line number 2379
-Test #498: 'walk(select(IN({}, []) | not))' at line number 2384
-Test #499: '[range(10)] | .[1.2:3.5]' at line number 2389
-Test #500: '[range(10)] | .[1.5:3.5]' at line number 2393
-Test #501: '[range(10)] | .[1.7:3.5]' at line number 2397
-Test #502: '[range(10)] | .[1.7:4294967295]' at line number 2401
-Test #503: '[range(10)] | .[1.7:-4294967296]' at line number 2405
-Test #504: '[[range(10)] | .[1.1,1.5,1.7]]' at line number 2409
-Test #505: '[range(5)] | .[1.1] = 5' at line number 2413
-Test #506: '[range(3)] | .[nan:1]' at line number 2417
-Test #507: '[range(3)] | .[1:nan]' at line number 2421
-Test #508: '[range(3)] | .[nan]' at line number 2425
-Test #509: 'try ([range(3)] | .[nan] = 9) catch .' at line number 2429
-Test #510: 'try ("foobar" | .[1.5:3.5] = "xyz") catch .' at line number 2433
-Test #511: 'try ([range(10)] | .[1.5:3.5] = ["xyz"]) catch .' at line number 2437
-Test #512: 'try ("foobar" | .[1.5]) catch .' at line number 2441
-Test #513: 'try ["ok", setpath([1]; 1)] catch ["ko", .]' at line number 2448
-Test #514: 'try fromjson catch .' at line number 2452
-Test #515: 'try ltrimstr(1) catch "x", try rtrimstr(1) catch "x" | "ok"' at line number 2458
-Test #516: 'try ltrimstr("x") catch "x", try rtrimstr("x") catch "x" | "ok"' at line number 2463
-Test #517: '.[] as [$x, $y] | try ["ok", ($x | ltrimstr($y))] catch ["ko", .]' at line number 2470
-Test #518: '.[] as [$x, $y] | try ["ok", ($x | rtrimstr($y))] catch ["ko", .]' at line number 2477
-Test #519: 'try ["OK", setpath([[1]]; 1)] catch ["KO", .]' at line number 2487
-Test #520: 'foreach .[] as $x (0, 1; . + $x)' at line number 2492
-Test #521: 'strflocaltime("" | ., @uri)' at line number 2502
-521 of 521 tests passed (0 malformed, 0 skipped)
+Test #148: '"true\u0000x", "false\u0000" | try toboolean catch .' at line number 720
+Test #149: '[{"a":42},.object,10,.num,false,true,null,"b",[1,4]] | .[] as $x | [$x == .[]]' at line number 725
+Test #150: '[.[] | length]' at line number 737
+Test #151: 'utf8bytelength' at line number 741
+Test #152: '[.[] | try utf8bytelength catch .]' at line number 745
+Test #153: 'map(keys)' at line number 750
+Test #154: '[1,2,empty,3,empty,4]' at line number 754
+Test #155: 'map(add)' at line number 758
+Test #156: 'map_values(.+1)' at line number 762
+Test #157: '[add(null), add(range(range(10))), add(empty), add(10,range(10))]' at line number 766
+Test #158: '.sum = add(.arr[])' at line number 771
+Test #159: 'add({(.[]):1}) | keys' at line number 775
+Test #160: 'def f: . + 1; def g: def g: . + 100; f | g | f; (f | g), g' at line number 784
+Test #161: 'def f: (1000,2000); f' at line number 789
+Test #162: 'def f(a;b;c;d;e;f): [a+1,b,c,d,e,f]; f(.[0];.[1];.[0];.[0];.[0];.[0])' at line number 794
+Test #163: 'def f: 1; def g: f, def f: 2; def g: 3; f, def f: g; f, g; def f: 4; [f, def f: g; def g: 5; f, g]+[f,g]' at line number 798
+Test #164: 'def a: 0; . | a' at line number 803
+Test #165: 'def f(a;b;c;d;e;f;g;h;i;j): [j,i,h,g,f,e,d,c,b,a]; f(.[0];.[1];.[2];.[3];.[4];.[5];.[6];.[7];.[8];.[9])' at line number 808
+Test #166: '([1,2] + [4,5])' at line number 812
+Test #167: 'true' at line number 816
+Test #168: 'null,1,null' at line number 820
+Test #169: '[1,2,3]' at line number 826
+Test #170: '[.[]|floor]' at line number 830
+Test #171: '[.[]|sqrt]' at line number 834
+Test #172: '(add / length) as $m | map((. - $m) as $d | $d * $d) | add / length | sqrt' at line number 838
+Test #173: 'atan * 4 * 1000000|floor / 1000000' at line number 847
+Test #174: '[(3.141592 / 2) * (range(0;20) / 20)|cos * 1000000|floor / 1000000]' at line number 851
+Test #175: '[(3.141592 / 2) * (range(0;20) / 20)|sin * 1000000|floor / 1000000]' at line number 855
+Test #176: 'def f(x): x | x; f([.], . + [42])' at line number 860
+Test #177: 'def f: .+1; def g: f; def f: .+100; def f(a):a+.+11; [(g|f(20)), f]' at line number 868
+Test #178: 'def id(x):x; 2000 as $x | def f(x):1 as $x | id([$x, x, x]); def g(x): 100 as $x | f($x,$x+x); g($x)' at line number 873
+Test #179: 'def x(a;b): a as $a | b as $b | $a + $b; def y($a;$b): $a + $b; def check(a;b): [x(a;b)] == [y(a;b)]; check(.[];.[]*2)' at line number 878
+Test #180: '[[20,10][1,0] as $x | def f: (100,200) as $y | def g: [$x + $y, .]; . + $x | g; f[0] | [f][0][1] | f]' at line number 884
+Test #181: 'def fac: if . == 1 then 1 else . * (. - 1 | fac) end; [.[] | fac]' at line number 889
+Test #182: 'reduce .[] as $x (0; . + $x)' at line number 899
+Test #183: 'reduce .[] as [$i, {j:$j}] (0; . + $i - $j)' at line number 903
+Test #184: 'reduce [[1,2,10], [3,4,10]][] as [$i,$j] (0; . + $i * $j)' at line number 907
+Test #185: '[-reduce -.[] as $x (0; . + $x)]' at line number 911
+Test #186: '[reduce .[] / .[] as $i (0; . + $i)]' at line number 915
+Test #187: 'reduce .[] as $x (0; . + $x) as $x | $x' at line number 919
+Test #188: 'reduce . as $n (.; .)' at line number 924
+Test #189: '. as {$a, b: [$c, {$d}]} | [$a, $c, $d]' at line number 929
+Test #190: '. as {$a, $b:[$c, $d]}| [$a, $b, $c, $d]' at line number 933
+Test #191: '.[] | . as {$a, b: [$c, {$d}]} ?// [$a, {$b}, $e] ?// $f | [$a, $b, $c, $d, $e, $f]' at line number 938
+Test #192: '.[] | . as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 945
+Test #193: '.[] as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 949
+Test #194: '[[3],[4],[5],6][] | . as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 953
+Test #195: '[[3],[4],[5],6] | .[] as {a:$a} ?// {a:$a} ?// {a:$a} | $a' at line number 957
+Test #196: '.[] | . as {a:$a} ?// {a:$a} ?// $a | $a' at line number 961
+Test #197: '.[] as {a:$a} ?// {a:$a} ?// $a | $a' at line number 968
+Test #198: '[[3],[4],[5],6][] | . as {a:$a} ?// {a:$a} ?// $a | $a' at line number 975
+Test #199: '[[3],[4],[5],6] | .[] as {a:$a} ?// {a:$a} ?// $a | $a' at line number 982
+Test #200: '.[] | . as {a:$a} ?// $a ?// {a:$a} | $a' at line number 989
+Test #201: '.[] as {a:$a} ?// $a ?// {a:$a} | $a' at line number 996
+Test #202: '[[3],[4],[5],6][] | . as {a:$a} ?// $a ?// {a:$a} | $a' at line number 1003
+Test #203: '[[3],[4],[5],6] | .[] as {a:$a} ?// $a ?// {a:$a} | $a' at line number 1010
+Test #204: '.[] | . as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1017
+Test #205: '.[] as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1024
+Test #206: '[[3],[4],[5],6][] | . as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1031
+Test #207: '[[3],[4],[5],6] | .[] as $a ?// {a:$a} ?// {a:$a} | $a' at line number 1038
+Test #208: '. as $dot|any($dot[];not)' at line number 1045
+Test #209: '. as $dot|any($dot[];not)' at line number 1049
+Test #210: '. as $dot|all($dot[];.)' at line number 1053
+Test #211: '. as $dot|all($dot[];.)' at line number 1057
+Test #212: 'any(true, error; .)' at line number 1062
+Test #213: 'all(false, error; .)' at line number 1066
+Test #214: 'any(not)' at line number 1070
+Test #215: 'all(not)' at line number 1074
+Test #216: 'any(not)' at line number 1078
+Test #217: 'all(not)' at line number 1082
+Test #218: '[any,all]' at line number 1086
+Test #219: '[any,all]' at line number 1090
+Test #220: '[any,all]' at line number 1094
+Test #221: '[any,all]' at line number 1098
+Test #222: '[any,all]' at line number 1102
+Test #223: 'path(.foo[0,1])' at line number 1110
+Test #224: 'path(.[] | select(.>3))' at line number 1115
+Test #225: 'path(.)' at line number 1119
+Test #226: 'try path(.a | map(select(.b == 0))) catch .' at line number 1123
+Test #227: 'try path(.a | map(select(.b == 0)) | .[0]) catch .' at line number 1127
+Test #228: 'try path(.a | map(select(.b == 0)) | .c) catch .' at line number 1131
+Test #229: 'try path(.a | map(select(.b == 0)) | .[]) catch .' at line number 1135
+Test #230: 'path(.a[path(.b)[0]])' at line number 1139
+Test #231: '[paths]' at line number 1143
+Test #232: '["foo",1] as $p | getpath($p), setpath($p; 20), delpaths([$p])' at line number 1147
+Test #233: 'map(getpath([2])), map(setpath([2]; 42)), map(delpaths([[2]]))' at line number 1153
+Test #234: 'map(delpaths([[0,"foo"]]))' at line number 1159
+Test #235: '["foo",1] as $p | getpath($p), setpath($p; 20), delpaths([$p])' at line number 1163
+Test #236: 'delpaths([[-200]])' at line number 1169
+Test #237: 'try delpaths(0) catch .' at line number 1173
+Test #238: 'del(.), del(empty), del((.foo,.bar,.baz) | .[2,3,0]), del(.foo[0], .bar[0], .foo, .baz.bar[0].x)' at line number 1177
+Test #239: 'del(.[1], .[-6], .[2], .[-3:9])' at line number 1184
+Test #240: 'del(.[nan])' at line number 1188
+Test #241: 'del(.[nan,nan])' at line number 1192
+Test #242: 'setpath([-1]; 1)' at line number 1197
+Test #243: 'pick(.a.b.c)' at line number 1201
+Test #244: 'pick(first)' at line number 1205
+Test #245: 'pick(first|first)' at line number 1209
+Test #246: 'try pick(last) catch .' at line number 1214
+Test #247: '.message = "goodbye"' at line number 1221
+Test #248: '.foo = .bar' at line number 1225
+Test #249: '.foo |= .+1' at line number 1229
+Test #250: '.[] += 2, .[] *= 2, .[] -= 2, .[] /= 2, .[] %=2' at line number 1233
+Test #251: '[.[] % 7]' at line number 1241
+Test #252: '.foo += .foo' at line number 1245
+Test #253: '.[0].a |= {"old":., "new":(.+1)}' at line number 1249
+Test #254: 'def inc(x): x |= .+1; inc(.[].a)' at line number 1253
+Test #255: '.[] | try (getpath(["a",0,"b"]) |= 5) catch .' at line number 1258
+Test #256: '(.[] | select(. >= 2)) |= empty' at line number 1270
+Test #257: '.[] |= select(. % 2 == 0)' at line number 1274
+Test #258: '.foo[1,4,2,3] |= empty' at line number 1278
+Test #259: '.[2][3] = 1' at line number 1282
+Test #260: '.foo[2].bar = 1' at line number 1286
+Test #261: 'try ((map(select(.a == 1))[].b) = 10) catch .' at line number 1290
+Test #262: 'try ((map(select(.a == 1))[].a) |= .+1) catch .' at line number 1294
+Test #263: 'def x: .[1,2]; x=10' at line number 1298
+Test #264: 'try (def x: reverse; x=10) catch .' at line number 1302
+Test #265: '.[] = 1' at line number 1306
+Test #266: '[.[] | if .foo then "yep" else "nope" end]' at line number 1314
+Test #267: '[.[] | if .baz then "strange" elif .foo then "yep" else "nope" end]' at line number 1318
+Test #268: '[if 1,null,2 then 3 else 4 end]' at line number 1322
+Test #269: '[if empty then 3 else 4 end]' at line number 1326
+Test #270: '[if 1 then 3,4 else 5 end]' at line number 1330
+Test #271: '[if null then 3 else 5,6 end]' at line number 1334
+Test #272: '[if true then 3 end]' at line number 1338
+Test #273: '[if false then 3 end]' at line number 1342
+Test #274: '[if false then 3 else . end]' at line number 1346
+Test #275: '[if false then 3 elif false then 4 end]' at line number 1350
+Test #276: '[if false then 3 elif false then 4 else . end]' at line number 1354
+Test #277: '[-if true then 1 else 2 end]' at line number 1358
+Test #278: '{x: if true then 1 else 2 end}' at line number 1362
+Test #279: 'if true then [.] else . end []' at line number 1366
+Test #280: '[.[] | [.foo[] // .bar]]' at line number 1370
+Test #281: '.[] //= .[0]' at line number 1374
+Test #282: '.[] | [.[0] and .[1], .[0] or .[1]]' at line number 1378
+Test #283: '[.[] | not]' at line number 1385
+Test #284: '[10 > 0, 10 > 10, 10 > 20, 10 < 0, 10 < 10, 10 < 20]' at line number 1390
+Test #285: '[10 >= 0, 10 >= 10, 10 >= 20, 10 <= 0, 10 <= 10, 10 <= 20]' at line number 1394
+Test #286: '[ 10 == 10, 10 != 10, 10 != 11, 10 == 11]' at line number 1399
+Test #287: '["hello" == "hello", "hello" != "hello", "hello" == "world", "hello" != "world" ]' at line number 1403
+Test #288: '[[1,2,3] == [1,2,3], [1,2,3] != [1,2,3], [1,2,3] == [4,5,6], [1,2,3] != [4,5,6]]' at line number 1407
+Test #289: '[{"foo":42} == {"foo":42},{"foo":42} != {"foo":42}, {"foo":42} != {"bar":42}, {"foo":42} == {"bar":42}]' at line number 1411
+Test #290: '[{"foo":[1,2,{"bar":18},"world"]} == {"foo":[1,2,{"bar":18},"world"]},{"foo":[1,2,{"bar":18},"world"]} == {"foo":[1,2,{"bar":19},"world"]}]' at line number 1416
+Test #291: '[("foo" | contains("foo")), ("foobar" | contains("foo")), ("foo" | contains("foobar"))]' at line number 1421
+Test #292: '[contains(""), contains("\u0000")]' at line number 1426
+Test #293: '[contains(""), contains("a"), contains("ab"), contains("c"), contains("d")]' at line number 1430
+Test #294: '[contains("cd"), contains("b\u0000"), contains("ab\u0000")]' at line number 1434
+Test #295: '[contains("b\u0000c"), contains("b\u0000cd"), contains("b\u0000cd")]' at line number 1438
+Test #296: '[contains("@"), contains("\u0000@"), contains("\u0000what")]' at line number 1442
+Test #297: '[.[]|try if . == 0 then error("foo") elif . == 1 then .a elif . == 2 then empty else . end catch .]' at line number 1448
+Test #298: '[.[]|(.a, .a)?]' at line number 1452
+Test #299: '[[.[]|[.a,.a]]?]' at line number 1456
+Test #300: '[if error then 1 else 2 end?]' at line number 1460
+Test #301: 'try error(0) // 1' at line number 1464
+Test #302: '1, try error(2), 3' at line number 1468
+Test #303: '1 + try 2 catch 3 + 4' at line number 1473
+Test #304: '[-try .]' at line number 1477
+Test #305: 'try -.? catch .' at line number 1481
+Test #306: '{x: try 1, y: try error catch 2, z: if true then 3 end}' at line number 1485
+Test #307: '{x: 1 + 2, y: false or true, z: null // 3}' at line number 1489
+Test #308: '.[] | try error catch .' at line number 1493
+Test #309: 'try error("\($__loc__)") catch .' at line number 1499
+Test #310: '[.[]|startswith("foo")]' at line number 1504
+Test #311: '[.[]|endswith("foo")]' at line number 1508
+Test #312: '[.[] | split(", ")]' at line number 1512
+Test #313: 'split("")' at line number 1516
+Test #314: '[.[]|ltrimstr("foo")]' at line number 1520
+Test #315: '[.[]|rtrimstr("foo")]' at line number 1524
+Test #316: '[.[]|trimstr("foo")]' at line number 1528
+Test #317: '[.[]|ltrimstr("")]' at line number 1532
+Test #318: '[.[]|rtrimstr("")]' at line number 1536
+Test #319: '[.[]|trimstr("")]' at line number 1540
+Test #320: '[(index(","), rindex(",")), indices(",")]' at line number 1544
+Test #321: '[ index("aba"), rindex("aba"), indices("aba") ]' at line number 1548
+Test #322: 'try _strindices("abc") catch .' at line number 1553
+Test #323: 'try _strindices(123) catch .' at line number 1557
+Test #324: 'map(trim), map(ltrim), map(rtrim)' at line number 1563
+Test #325: 'trim, ltrim, rtrim' at line number 1569
+Test #326: 'try trim catch ., try ltrim catch ., try rtrim catch .' at line number 1575
+Test #327: 'indices(1)' at line number 1581
+Test #328: 'indices([1,2])' at line number 1585
+Test #329: 'indices([1,2])' at line number 1589
+Test #330: 'indices(", ")' at line number 1593
+Test #331: 'index("!")' at line number 1597
+Test #332: '.[:rindex("x")]' at line number 1601
+Test #333: 'indices("o")' at line number 1605
+Test #334: 'indices("o")' at line number 1609
+Test #335: '[.[]|split(",")]' at line number 1613
+Test #336: '[.[]|split(", ")]' at line number 1617
+Test #337: '[.[] * 3]' at line number 1621
+Test #338: '[.[] * "abc"]' at line number 1625
+Test #339: '[. * (nan,-nan)]' at line number 1629
+Test #340: '. * 100000 | [.[:10],.[-10:]]' at line number 1633
+Test #341: '. * 1000000000' at line number 1637
+Test #342: 'try (. * 1000000000) catch .' at line number 1641
+Test #343: '[.[] / ","]' at line number 1645
+Test #344: '[.[] / ", "]' at line number 1649
+Test #345: 'map(.[1] as $needle | .[0] | contains($needle))' at line number 1653
+Test #346: 'map(.[1] as $needle | .[0] | contains($needle))' at line number 1657
+Test #347: '[({foo: 12, bar:13} | contains({foo: 12})), ({foo: 12} | contains({})), ({foo: 12, bar:13} | contains({baz:14}))]' at line number 1661
+Test #348: '{foo: {baz: 12, blap: {bar: 13}}, bar: 14} | contains({bar: 14, foo: {blap: {}}})' at line number 1665
+Test #349: '{foo: {baz: 12, blap: {bar: 13}}, bar: 14} | contains({bar: 14, foo: {blap: {bar: 14}}})' at line number 1669
+Test #350: 'sort' at line number 1673
+Test #351: '(sort_by(.b) | sort_by(.a)), sort_by(.a, .b), sort_by(.b, .c), group_by(.b), group_by(.a + .b - .c == 2)' at line number 1677
+Test #352: 'unique' at line number 1685
+Test #353: 'unique' at line number 1689
+Test #354: '[min, max, min_by(.[1]), max_by(.[1]), min_by(.[2]), max_by(.[2])]' at line number 1693
+Test #355: '[min,max,min_by(.),max_by(.)]' at line number 1697
+Test #356: '.foo[.baz]' at line number 1701
+Test #357: '.[] | .error = "no, it's OK"' at line number 1705
+Test #358: '[{a:1}] | .[] | .a=999' at line number 1709
+Test #359: 'to_entries' at line number 1713
+Test #360: 'from_entries' at line number 1717
+Test #361: 'with_entries(.key |= "KEY_" + .)' at line number 1721
+Test #362: 'map(has("foo"))' at line number 1725
+Test #363: 'map(has(2))' at line number 1729
+Test #364: 'has(nan)' at line number 1733
+Test #365: 'keys' at line number 1737
+Test #366: '[][.]' at line number 1741
+Test #367: 'map([1,2][0:.])' at line number 1745
+Test #368: '{"k": {"a": 1, "b": 2}} * .' at line number 1751
+Test #369: '{"k": {"a": 1, "b": 2}, "hello": {"x": 1}} * .' at line number 1755
+Test #370: '{"k": {"a": 1, "b": 2}, "hello": 1} * .' at line number 1759
+Test #371: '{"a": {"b": 1}, "c": {"d": 2}, "e": 5} * .' at line number 1763
+Test #372: '[.[]|arrays]' at line number 1767
+Test #373: '[.[]|objects]' at line number 1771
+Test #374: '[.[]|iterables]' at line number 1775
+Test #375: '[.[]|scalars]' at line number 1779
+Test #376: '[.[]|values]' at line number 1783
+Test #377: '[.[]|booleans]' at line number 1787
+Test #378: '[.[]|nulls]' at line number 1791
+Test #379: 'flatten' at line number 1795
+Test #380: 'flatten(0)' at line number 1799
+Test #381: 'flatten(2)' at line number 1803
+Test #382: 'flatten(2)' at line number 1807
+Test #383: 'try flatten(-1) catch .' at line number 1811
+Test #384: 'transpose' at line number 1815
+Test #385: 'transpose' at line number 1819
+Test #386: 'ascii_upcase' at line number 1823
+Test #387: 'bsearch(0,1,2,3,4)' at line number 1827
+Test #388: 'bsearch({x:1})' at line number 1835
+Test #389: 'try ["OK", bsearch(0)] catch ["KO",.]' at line number 1839
+Test #390: 'strftime("%Y-%m-%dT%H:%M:%SZ")' at line number 1843
+Test #391: 'strftime("%A, %B %d, %Y")' at line number 1847
+Test #392: 'strftime("%Y-%m-%dT%H:%M:%SZ")' at line number 1851
+Test #393: 'mktime' at line number 1855
+Test #394: 'gmtime' at line number 1859
+Test #395: 'gmtime[5]' at line number 1863
+Test #396: 'try strftime("%Y-%m-%dT%H:%M:%SZ") catch .' at line number 1868
+Test #397: 'try strflocaltime("%Y-%m-%dT%H:%M:%SZ") catch .' at line number 1872
+Test #398: 'try mktime catch .' at line number 1876
+Test #399: 'try ["OK", strftime([])] catch ["KO", .]' at line number 1881
+Test #400: 'try ["OK", strflocaltime({})] catch ["KO", .]' at line number 1885
+Test #401: '[strptime("%Y-%m-%dT%H:%M:%SZ")|(.,mktime)]' at line number 1889
+Test #402: 'last(range(365 * 67)|("1970-03-01T01:02:03Z"|strptime("%Y-%m-%dT%H:%M:%SZ")|mktime) + (86400 * .)|strftime("%Y-%m-%dT%H:%M:%SZ")|strptime("%Y-%m-%dT%H:%M:%SZ"))' at line number 1895
+Test #403: 'import "a" as foo; import "b" as bar; def fooa: foo::a; [fooa, bar::a, bar::b, foo::a]' at line number 1900
+Test #404: 'import "c" as foo; [foo::a, foo::c]' at line number 1904
+Test #405: 'include "c"; [a, c]' at line number 1908
+Test #406: 'import "data" as $e; import "data" as $d; [$d[].this,$e[].that,$d::d[].this,$e::e[].that]|join(";")' at line number 1912
+Test #407: 'import "data" as $a; import "data" as $b; def f: {$a, $b}; f' at line number 1917
+Test #408: 'include "shadow1"; e' at line number 1921
+Test #409: 'include "shadow1"; include "shadow2"; e' at line number 1925
+Test #410: 'import "shadow1" as f; import "shadow2" as f; import "shadow1" as e; [e::e, f::e]' at line number 1929
+Test #411: 'module (.+1); 0' at line number 1934
+Test #412: 'module []; 0' at line number 1940
+Test #413: 'include "a" (.+1); 0' at line number 1946
+Test #414: 'include "a" []; 0' at line number 1952
+Test #415: 'include "\ "; 0' at line number 1958
+Test #416: 'include "\(a)"; 0' at line number 1964
+Test #417: 'modulemeta' at line number 1969
+Test #418: 'modulemeta | .deps | length' at line number 1973
+Test #419: 'modulemeta | .defs | length' at line number 1977
+Test #420: 'import "syntaxerror" as e; .' at line number 1982
+Test #421: '%::wat' at line number 1988
+Test #422: 'import "test_bind_order" as check; check::check' at line number 1993
+Test #423: 'try -. catch .' at line number 1997
+Test #424: 'try (.-.) catch .' at line number 2001
+Test #425: '"x" * range(0; 12; 2) + "☆" * 8 | try -. catch .' at line number 2005
+Test #426: 'try (. + "x") catch . == if have_decnum then "number (12345678901234567890123456...) and string (\"x\") cannot be added" else "number (12345678901234568000000000...) and string (\"x\") cannot be added" end' at line number 2014
+Test #427: 'join(",")' at line number 2018
+Test #428: '.[] | join(",")' at line number 2022
+Test #429: '.[] | join(",")' at line number 2029
+Test #430: 'try join(",") catch .' at line number 2034
+Test #431: 'try join(",") catch .' at line number 2038
+Test #432: '{if:0,and:1,or:2,then:3,else:4,elif:5,end:6,as:7,def:8,reduce:9,foreach:10,try:11,catch:12,label:13,import:14,include:15,module:16}' at line number 2042
+Test #433: 'try (1/.) catch .' at line number 2046
+Test #434: 'try (1/0) catch .' at line number 2050
+Test #435: 'try (0/0) catch .' at line number 2054
+Test #436: 'try (1%.) catch .' at line number 2058
+Test #437: 'try (1%0) catch .' at line number 2062
+Test #438: '[range(-52;52;1)] as $powers | [$powers[]|pow(2;.)|log2|round] == $powers' at line number 2067
+Test #439: '[range(-99/2;99/2;1)] as $orig | [$orig[]|pow(2;.)|log2] as $back | ($orig|keys)[]|. as $k | (($orig|.[$k])-($back|.[$k]))|if . < 0 then . * -1 else . end|select(.>.00005)' at line number 2071
+Test #440: '{' at line number 2075
+Test #441: '}' at line number 2081
+Test #442: '(.[{}] = 0)?' at line number 2086
+Test #443: 'INDEX(range(5)|[., "foo\(.)"]; .[0])' at line number 2089
+Test #444: 'JOIN({"0":[0,"abc"],"1":[1,"bcd"],"2":[2,"def"],"3":[3,"efg"],"4":[4,"fgh"]}; .[0]|tostring)' at line number 2093
+Test #445: 'range(5;10)|IN(range(10))' at line number 2097
+Test #446: 'range(5;13)|IN(range(0;10;3))' at line number 2105
+Test #447: 'range(10;12)|IN(range(10))' at line number 2116
+Test #448: 'IN(range(10;20); range(10))' at line number 2121
+Test #449: 'IN(range(5;20); range(10))' at line number 2125
+Test #450: '(.a as $x | .b) = "b"' at line number 2130
+Test #451: '(.. | select(type == "object" and has("b") and (.b | type) == "array")|.b) |= .[0]' at line number 2135
+Test #452: 'isempty(empty)' at line number 2139
+Test #453: 'isempty(range(3))' at line number 2143
+Test #454: 'isempty(1,error("foo"))' at line number 2147
+Test #455: 'index("")' at line number 2152
+Test #456: 'builtins|length > 10' at line number 2157
+Test #457: '"-1"|IN(builtins[] / "/"|.[1])' at line number 2161
+Test #458: 'all(builtins[] / "/"; .[1]|tonumber >= 0)' at line number 2165
+Test #459: 'builtins|any(.[:1] == "_")' at line number 2169
+Test #460: 'map(. == 1)' at line number 2190
+Test #461: '.[0] | tostring | . == if have_decnum then "13911860366432393" else "13911860366432392" end' at line number 2196
+Test #462: '.x | tojson | . == if have_decnum then "13911860366432393" else "13911860366432392" end' at line number 2200
+Test #463: '(13911860366432393 == 13911860366432392) | . == if have_decnum then false else true end' at line number 2204
+Test #464: '. - 10' at line number 2211
+Test #465: '.[0] - 10' at line number 2215
+Test #466: '.x - 10' at line number 2219
+Test #467: '-. | tojson == if have_decnum then "-13911860366432393" else "-13911860366432392" end' at line number 2224
+Test #468: '-. | tojson == if have_decnum then "0.12345678901234567890123456789" else "0.12345678901234568" end' at line number 2228
+Test #469: '[1E+1000,-1E+1000 | tojson] == if have_decnum then ["1E+1000","-1E+1000"] else ["1.7976931348623157e+308","-1.7976931348623157e+308"] end' at line number 2232
+Test #470: '. |= try . catch .' at line number 2236
+Test #471: '.[] as $n | $n+0 | [., tostring, . == $n]' at line number 2241
+Test #472: 'abs' at line number 2250
+Test #473: 'map(abs)' at line number 2254
+Test #474: 'map(fabs)' at line number 2258
+Test #475: 'map(abs == length) | unique' at line number 2262
+Test #476: 'map(abs)' at line number 2267
+Test #477: '[1E+1000,-1E+1000 | abs | tojson] | unique == if have_decnum then ["1E+1000"] else ["1.7976931348623157e+308"] end' at line number 2271
+Test #478: '[1E+1000,-1E+1000 | length | tojson] | unique == if have_decnum then ["1E+1000"] else ["1.7976931348623157e+308"] end' at line number 2275
+Test #479: '123 as $label | $label' at line number 2281
+Test #480: '[ label $if | range(10) | ., (select(. == 5) | break $if) ]' at line number 2285
+Test #481: 'reduce .[] as $then (4 as $else | $else; . as $elif | . + $then * $elif)' at line number 2289
+Test #482: '1 as $foreach | 2 as $and | 3 as $or | { $foreach, $and, $or, a }' at line number 2293
+Test #483: '[ foreach .[] as $try (1 as $catch | $catch - 1; . + $try; .) ]' at line number 2297
+Test #484: '{ a, $__loc__, c }' at line number 2304
+Test #485: '1 as $x | "2" as $y | "3" as $z | { $x, as, $y: 4, ($z): 5, if: 6, foo: 7 }' at line number 2308
+Test #486: 'fromjson | isnan' at line number 2315
+Test #487: 'tojson | fromjson' at line number 2319
+Test #488: '.[] | try (fromjson | isnan) catch .' at line number 2324
+Test #489: 'try input catch .' at line number 2337
+Test #490: 'debug' at line number 2341
+Test #491: '"foo" | try ((try . catch "caught too much") | error) catch "caught just right"' at line number 2346
+Test #492: '.[]|(try (if .=="hi" then . else error end) catch empty) | "\(.) there!"' at line number 2350
+Test #493: 'try (["hi","ho"]|.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end) catch "caught outside \(.)"' at line number 2354
+Test #494: '.[]|(try . catch (if .=="ho" then "BROKEN"|error else empty end)) | if .=="ho" then error else "\(.) there!" end' at line number 2359
+Test #495: 'try (try error catch "inner catch \(.)") catch "outer catch \(.)"' at line number 2363
+Test #496: 'try ((try error catch "inner catch \(.)")|error) catch "outer catch \(.)"' at line number 2367
+Test #497: 'first(.?,.?)' at line number 2372
+Test #498: '{foo: "bar"} | .foo |= .?' at line number 2377
+Test #499: '. |= try 2' at line number 2382
+Test #500: '. |= try 2 catch 3' at line number 2386
+Test #501: '.[] |= try tonumber' at line number 2390
+Test #502: 'any(keys[]|tostring?;true)' at line number 2395
+Test #503: 'implode|explode' at line number 2403
+Test #504: 'map(try implode catch .)' at line number 2407
+Test #505: 'try 0[implode] catch .' at line number 2411
+Test #506: 'walk(.)' at line number 2416
+Test #507: 'walk(1)' at line number 2420
+Test #508: '[walk(.,1)]' at line number 2425
+Test #509: 'walk(select(IN({}, []) | not))' at line number 2430
+Test #510: '[range(10)] | .[1.2:3.5]' at line number 2435
+Test #511: '[range(10)] | .[1.5:3.5]' at line number 2439
+Test #512: '[range(10)] | .[1.7:3.5]' at line number 2443
+Test #513: '[range(10)] | .[1.7:4294967295]' at line number 2447
+Test #514: '[range(10)] | .[1.7:-4294967296]' at line number 2451
+Test #515: '[[range(10)] | .[1.1,1.5,1.7]]' at line number 2455
+Test #516: '[range(5)] | .[1.1] = 5' at line number 2459
+Test #517: '[range(3)] | .[nan:1]' at line number 2463
+Test #518: '[range(3)] | .[1:nan]' at line number 2467
+Test #519: '[range(3)] | .[nan]' at line number 2471
+Test #520: 'try ([range(3)] | .[nan] = 9) catch .' at line number 2475
+Test #521: 'try ("foobar" | .[1.5:3.5] = "xyz") catch .' at line number 2479
+Test #522: 'try ([range(10)] | .[1.5:3.5] = ["xyz"]) catch .' at line number 2483
+Test #523: 'try ("foobar" | .[1.5]) catch .' at line number 2487
+Test #524: 'try ["ok", setpath([1]; 1)] catch ["ko", .]' at line number 2494
+Test #525: 'try fromjson catch .' at line number 2498
+Test #526: 'try ltrimstr(1) catch "x", try rtrimstr(1) catch "x" | "ok"' at line number 2504
+Test #527: 'try ltrimstr("x") catch "x", try rtrimstr("x") catch "x" | "ok"' at line number 2509
+Test #528: '.[] as [$x, $y] | try ["ok", ($x | ltrimstr($y))] catch ["ko", .]' at line number 2516
+Test #529: '.[] as [$x, $y] | try ["ok", ($x | rtrimstr($y))] catch ["ko", .]' at line number 2523
+Test #530: 'try ["OK", setpath([[1]]; 1)] catch ["KO", .]' at line number 2533
+Test #531: 'foreach .[] as $x (0, 1; . + $x)' at line number 2538
+Test #532: 'strflocaltime("" | ., @uri)' at line number 2548
+Test #533: 'reduce range(9999) as $_ ([];[.]) | tojson | fromjson | flatten' at line number 2558
+Test #534: 'reduce range(10000) as $_ ([];[.]) | tojson | try (fromjson) catch . | (contains("<skipped: too deep>") | not) and contains("Exceeds depth limit for parsing")' at line number 2563
+Test #535: 'reduce range(10001) as $_ ([];[.]) | tojson | contains("<skipped: too deep>")' at line number 2568
+Test #536: 'setpath([range(10000) | 0]; 0) | flatten' at line number 2573
+Test #537: 'try setpath([range(10001) | 0]; 0) catch .' at line number 2577
+Test #538: 'getpath([range(10000) | 0])' at line number 2581
+Test #539: 'try getpath([range(10001) | 0]) catch .' at line number 2585
+Test #540: 'delpaths([[range(10000) | 0]])' at line number 2589
+Test #541: 'try delpaths([[range(10001) | 0]]) catch .' at line number 2593
+Test #542: 'reduce range(10000) as $_ ([]; [.]) | contains([[]])' at line number 2598
+Test #543: 'try (reduce range(10001) as $_ ([]; [.]) as $x | $x | contains($x)) catch .' at line number 2602
+Test #544: 'reduce range(10000) as $_ ({}; {a: .}) as $x | $x * $x | length' at line number 2607
+Test #545: 'try (reduce range(10001) as $_ ({}; {a: .}) as $x | $x * $x) catch .' at line number 2611
+Test #546: 'try ((reduce range(10001) as $_ ([]; [.])) as $x | (reduce range(10001) as $_ ([]; [.])) as $y | $x == $y) catch .' at line number 2616
+Test #547: 'try ((reduce range(10001) as $_ ([]; [.])) as $x | [$x, $x] | sort) catch .' at line number 2621
+Test #548: 'try ((reduce range(10001) as $_ ([]; [.])) as $x | [$x, $x] | unique) catch .' at line number 2625
+Test #549: 'try ((reduce range(10001) as $_ ({}; {a: .})) as $x | [$x, $x] | sort) catch .' at line number 2629
+Test #550: 'try ((reduce range(10001) as $_ ({}; {a: .})) as $x | [$x, $x] | unique) catch .' at line number 2633
+550 of 550 tests passed (0 malformed, 0 skipped)
 Test jq_state: .[]
 Test jq_state: .[] | if .%2 == 0 then halt_error else . end
+Test jq_compile_args with array args
+  subtest: 42
+  subtest: $val
+  subtest: $x + $y
+  subtest: $a + $b + $c
+  subtest: $x * $y
+Test jq recompile on same state
+Test jq exhaust and reuse
