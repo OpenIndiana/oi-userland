@@ -17,12 +17,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zoitechat
-COMPONENT_VERSION=	2.18.0
+COMPONENT_VERSION=	2.18.1
 COMPONENT_SUMMARY=	ZoiteChat IRC client
 COMPONENT_PROJECT_URL=	hhttps://zoitechat.org/ttps://hexchat.github.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH= sha256:e186d2d591320ad0a7f7ffecc794d652ecf1aaf545cff899e5556bdb9b01fbd5
+COMPONENT_ARCHIVE_HASH= sha256:9fbbed464d24b4463a4fcf37c23a5d708c8aea831325ad7cdcf1d944cff2d3e6
 COMPONENT_ARCHIVE_URL=	https://github.com/ZoiteChat/zoitechat/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/irc/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -59,4 +59,3 @@ REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libarchive
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/libdbus-glib
