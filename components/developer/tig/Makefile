@@ -17,13 +17,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tig
-COMPONENT_VERSION=	2.6.0
+COMPONENT_VERSION=	2.6.1
 COMPONENT_SUMMARY=	Text-mode interface for git
 COMPONENT_DESCRIPTION=	Tig is an ncurses-based text-mode interface for git. It functions mainly as a Git repository browser, but can also assist in staging changes for commit at chunk level and act as a pager for output from various Git commands.
 COMPONENT_PROJECT_URL=	https://jonas.github.io/$(COMPONENT_NAME)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:99d4a0fdd3d93547ebacfe511195cb92e4f75b91644c06293c067f401addeb3e
+COMPONENT_ARCHIVE_HASH= sha256:5adeabdcd93aa0423d618da8b878b53482bef6e0e9e1fe224acc0f18031fe91e
 COMPONENT_ARCHIVE_URL=	https://github.com/jonas/$(COMPONENT_NAME)/releases/download/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/versioning/tig
 COMPONENT_CLASSIFICATION= Development/Source Code Management
@@ -36,8 +36,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Instead a Makefile comes with tig.
 # Use cloney to copy a set of files to build.
 # Same behaviour as the 'git' package
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION = ( $(CLONEY) $(SOURCE_DIR) $(@D) )
+
+CONFIGURE_OPTIONS += --docdir=$(USRSHAREDOCDIR)/tig
 
 CFLAGS += -I/usr/include/ncurses
 
