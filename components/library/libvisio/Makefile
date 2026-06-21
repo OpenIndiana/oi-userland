@@ -25,12 +25,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         libvisio
-COMPONENT_VERSION=      0.1.10
+COMPONENT_VERSION=      0.1.11
 COMPONENT_SUMMARY=      libvisio - library for reading Microsoft Visio documents
 COMPONENT_PROJECT_URL=  https://wiki.documentfoundation.org/DLP/Libraries/libvisio
 COMPONENT_SRC=    $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=  $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:9e9eff75112d4d92d92262ad7fc2599c21e26f8fc5ba54900efdc83c0501e472
+COMPONENT_ARCHIVE_HASH= sha256:2a6efd40b6d9dbcb70fba3be53112366882ba97b57151df3698dfa478c8d8dd3
 COMPONENT_ARCHIVE_URL=  https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/c++/libvisio
 COMPONENT_CLASSIFICATION=System/Libraries
