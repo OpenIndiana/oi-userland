@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=              xev
-COMPONENT_VERSION=           1.2.6
+COMPONENT_VERSION=           1.2.7
 COMPONENT_SUMMARY=           xev - print contents of X events
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=      sha256:61e1c5e008ac9973aca7cdddf36e9df7410e77083b030eb04f4dc737c51807d7
+COMPONENT_ARCHIVE_HASH=      sha256:95167895924de58e34b1013b2b0c8476e90d0888c6c39e7ae9bc35e3a19dba04
 COMPONENT_FMRI=              x11/diagnostic/xev
 COMPONENT_LICENSE_FILE=      COPYING
 
