@@ -14,17 +14,18 @@
 #
 
 BUILD_STYLE= cmake
+DROP_STATIC_LIBRARIES= yes
 USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fmt
-COMPONENT_VERSION=      12.1.0
+COMPONENT_VERSION=      12.2.0
 COMPONENT_SUMMARY=      fmt is an open-source formatting library providing a fast and safe alternative to C stdio and C++ iostreams.
 COMPONENT_PROJECT_URL=  https://github.com/fmtlib/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/$(COMPONENT_NAME)lib/$(COMPONENT_NAME)/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:ea7de4299689e12b6dddd392f9896f08fb0777ac7168897a244a6d6085043fea
+COMPONENT_ARCHIVE_HASH= sha256:8b852bb5aa6e7d8564f9e81394055395dd1d1936d38dfd3a17792a02bebd7af0
 COMPONENT_FMRI=         developer/fmt
 COMPONENT_CLASSIFICATION=Development/Other Languages
 COMPONENT_LICENSE=      MIT
