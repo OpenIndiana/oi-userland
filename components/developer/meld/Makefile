@@ -29,8 +29,8 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		meld
-COMPONENT_MJR_VERSION=	3.22
-COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).3
+COMPONENT_MJR_VERSION=	3.24
+COMPONENT_VERSION=	$(COMPONENT_MJR_VERSION).0
 COMPONENT_SUMMARY=	meld - graphical diff and merge tool
 COMPONENT_DESCRIPTION=\
 Meld is a visual diff and merge tool. You can compare two or three files \
@@ -41,7 +41,7 @@ Bazaar-ng and Mercurial.
 COMPONENT_PROJECT_URL=	https://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:37f7f29eb1ff0fec4d8b088d5483c556de1089f6d018fe6d481993caf2499d84
+COMPONENT_ARCHIVE_HASH= sha256:19f036297e7c89514516bcd2e56182db2bb2ba13b4850893c1ce597445018b94
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/meld/$(COMPONENT_MJR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Development/Editors
@@ -70,6 +70,7 @@ REQUIRED_PACKAGES += library/desktop/gtksourceview4
 REQUIRED_PACKAGES += text/itstool
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/pygobject
-PYTHON_REQUIRED_PACKAGES += library/python/tkinter
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += library/python/pycairo
+REQUIRED_PACKAGES.python += library/python/pygobject
+REQUIRED_PACKAGES.python += library/python/tkinter
+REQUIRED_PACKAGES.python += runtime/python
