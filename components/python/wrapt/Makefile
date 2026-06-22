@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wrapt
-HUMAN_VERSION =			2.2.1
+HUMAN_VERSION =			2.2.2
 COMPONENT_SUMMARY =		Module for decorators, wrappers and monkey patching.
 COMPONENT_PROJECT_URL =		https://github.com/GrahamDumpleton/wrapt
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6744f504375775d7609c82c8d3d94af1c9a6f05586984536905908ba905277b9
+	sha256:0788e321027c999bf221b667bd4a54aaefd1a36283749a860ac3eb77daed0302
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
