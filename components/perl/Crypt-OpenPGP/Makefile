@@ -19,38 +19,38 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-OpenPGP
-HUMAN_VERSION =			1.19
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.21
 COMPONENT_SUMMARY =		Pure-Perl OpenPGP implementation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f4592864d219d74cd01aa6ab9449b5cadab449b5a410ebb7ae4d832ffbf6ac2a
+	sha256:9dc497f41fcb4b27f6be54bf682a76b58ae0ff58090ff4dca73a82e3584636b9
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/alt-crypt-rsa-bigint
-PERL_REQUIRED_PACKAGES += library/perl-5/bytes-random-secure
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-blowfish
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-cast5_pp
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-des_ede3
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-dsa
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-idea
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-rijndael
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-ripemd160
-PERL_REQUIRED_PACKAGES += library/perl-5/crypt-twofish
-PERL_REQUIRED_PACKAGES += library/perl-5/data-buffer
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-md5
-PERL_REQUIRED_PACKAGES += library/perl-5/digest-sha
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-homedir
-PERL_REQUIRED_PACKAGES += library/perl-5/io-compress
-PERL_REQUIRED_PACKAGES += library/perl-5/libwww-perl
-PERL_REQUIRED_PACKAGES += library/perl-5/math-bigint
-PERL_REQUIRED_PACKAGES += library/perl-5/mime-base64
-PERL_REQUIRED_PACKAGES += library/perl-5/uri
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/alt-crypt-rsa-bigint
+REQUIRED_PACKAGES.perl += library/perl-5/bytes-random-secure
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-blowfish
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-cast5_pp
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-des_ede3
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-dsa-gmp
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-idea
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-rijndael
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-ripemd160
+REQUIRED_PACKAGES.perl += library/perl-5/crypt-twofish
+REQUIRED_PACKAGES.perl += library/perl-5/data-buffer
+REQUIRED_PACKAGES.perl += library/perl-5/digest-md5
+REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-homedir
+REQUIRED_PACKAGES.perl += library/perl-5/io-compress
+REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
+REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
+REQUIRED_PACKAGES.perl += library/perl-5/mime-base64
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/uri
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-exception
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
