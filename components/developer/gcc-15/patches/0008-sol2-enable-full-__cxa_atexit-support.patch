@@ -1,0 +1,48 @@
+From 4445af36b97aa800eff4497f8a3cc9f81b4d9dd1 Mon Sep 17 00:00:00 2001
+From: Richard Lowe <richlowe@richlowe.net>
+Date: Tue, 4 Mar 2014 22:11:03 +0000
+Subject: [PATCH 08/39] sol2: enable full __cxa_atexit support
+
+---
+ gcc/config/sol2.h  | 4 ++--
+ libgcc/config.host | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/gcc/config/sol2.h b/gcc/config/sol2.h
+index 2405c101aee..c70f3c8c3e2 100644
+--- a/gcc/config/sol2.h
++++ b/gcc/config/sol2.h
+@@ -204,7 +204,7 @@ along with GCC; see the file COPYING3.  If not see
+ 				   shared|" PIE_SPEC ":crtbeginS.o%s; \
+ 				   :crtbegin.o%s}"
+ #else
+-#define STARTFILE_CRTBEGIN_SPEC	"crtbegin.o%s"
++#define STARTFILE_CRTBEGIN_SPEC	"%{shared:crtbeginS.o%s;:crtbegin.o%s}"
+ #endif
+ 
+ #if ENABLE_VTABLE_VERIFY
+@@ -275,7 +275,7 @@ along with GCC; see the file COPYING3.  If not see
+ 			       shared|" PIE_SPEC ":crtendS.o%s; \
+ 			       :crtend.o%s}"
+ #else
+-#define ENDFILE_CRTEND_SPEC "crtend.o%s"
++#define ENDFILE_CRTEND_SPEC "%{shared:crtendS.o%s;:crtend.o%s}"
+ #endif
+ 
+ #undef  ENDFILE_SPEC
+diff --git a/libgcc/config.host b/libgcc/config.host
+index 6a88ee5a2dd..618cd9f53a7 100644
+--- a/libgcc/config.host
++++ b/libgcc/config.host
+@@ -342,7 +342,7 @@ case ${host} in
+ *-*-solaris2*)
+   # Unless linker support and dl_iterate_phdr are present,
+   # unwind-dw2-fde-dip.c automatically falls back to unwind-dw2-fde.c.
+-  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver"
++  tmake_file="$tmake_file sol2/t-sol2 t-eh-dw2-dip t-crtstuff-pic t-libgcc-pic t-slibgcc t-slibgcc-elf-ver t-crtstuff-pic"
+   if test $with_gnu_ld = yes; then
+     tmake_file="$tmake_file t-slibgcc-gld"
+   else
+-- 
+2.53.0
+

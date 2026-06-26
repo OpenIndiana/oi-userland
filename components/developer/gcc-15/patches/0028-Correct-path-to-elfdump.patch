@@ -1,0 +1,26 @@
+From 0c45390d644bda30eb30266482983f3d2c2a39dd Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <omnios@citrus-it.co.uk>
+Date: Fri, 10 Apr 2020 16:00:43 +0000
+Subject: [PATCH 28/39] Correct path to elfdump
+
+Not all illumos distributions have elfdump available as /usr/ccs/bin/elfdump
+---
+ contrib/make_sunver.pl | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/make_sunver.pl b/contrib/make_sunver.pl
+index 4dd184d64ea..1d6980b61a9 100644
+--- a/contrib/make_sunver.pl
++++ b/contrib/make_sunver.pl
+@@ -66,7 +66,7 @@ foreach $file (@ARGV) {
+ # columns.
+ 
+ # The path to elfdump.
+-my $elfdump = "/usr/ccs/bin/elfdump";
++my $elfdump = "/usr/bin/elfdump";
+ 
+ if (-f $elfdump) {
+     open ELFDUMP,$elfdump.' -s '.(join ' ',@OBJECTS).'|' or die $!;
+-- 
+2.53.0
+

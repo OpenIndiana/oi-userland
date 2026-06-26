@@ -1,0 +1,577 @@
+From dd248853c37f210050ec0d2e925d7253bcb36259 Mon Sep 17 00:00:00 2001
+From: Andy Fiddaman <illumos@fiddaman.net>
+Date: Mon, 2 Mar 2026 20:08:52 +0000
+Subject: [PATCH 02/39] Restore linking against -lsocket -lnsl
+
+This partially reverts commit f68e90a0fe88c50ad6f4b15ba9e9503c710d3444.
+---
+ c++tools/Makefile.in                      |   3 +-
+ c++tools/configure                        | 211 ++++++++++++++++++++++
+ c++tools/configure.ac                     |  10 +
+ gcc/Makefile.in                           |   1 +
+ gcc/aclocal.m4                            |   1 +
+ gcc/configure                             | 165 +++++++++++++++++
+ gcc/configure.ac                          |   9 +
+ gcc/cp/Make-lang.in                       |   2 +-
+ gcc/objcp/Make-lang.in                    |   2 +-
+ libstdc++-v3/testsuite/lib/dg-options.exp |   6 +-
+ 10 files changed, 406 insertions(+), 4 deletions(-)
+
+diff --git a/c++tools/Makefile.in b/c++tools/Makefile.in
+index 5acc6d68195..ed0d3271062 100644
+--- a/c++tools/Makefile.in
++++ b/c++tools/Makefile.in
+@@ -35,6 +35,7 @@ CXXOPTS := $(CXXFLAGS) $(PICFLAG) -fno-exceptions -fno-rtti
+ LDFLAGS := @LDFLAGS@
+ exeext := @EXEEXT@
+ LIBIBERTY := ../libiberty/libiberty.a
++NETLIBS := @NETLIBS@
+ VERSION.O := ../gcc/version.o
+ 
+ all::
+@@ -98,7 +99,7 @@ MAPPER.O := server.o resolver.o
+ CODYLIB = ../libcody/libcody.a
+ CXXINC += -I$(srcdir)/../libcody -I$(srcdir)/../include -I$(srcdir)/../gcc -I. -I../gcc
+ g++-mapper-server$(exeext): $(MAPPER.O) $(CODYLIB)
+-	+$(CXX) $(LDFLAGS) $(PICFLAG) $(LD_PICFLAG) -o $@ $^ $(LIBIBERTY)
++	+$(CXX) $(LDFLAGS) $(PICFLAG) $(LD_PICFLAG) -o $@ $^ $(LIBIBERTY) $(NETLIBS)
+ 
+ # copy to gcc dir so tests there can run
+ all::../gcc/g++-mapper-server$(exeext)
+diff --git a/c++tools/configure b/c++tools/configure
+index 1353479beca..006efe07b35 100755
+--- a/c++tools/configure
++++ b/c++tools/configure
+@@ -622,6 +622,7 @@ ac_includes_default="\
+ 
+ ac_subst_vars='LTLIBOBJS
+ LIBOBJS
++NETLIBS
+ get_gcc_base_ver
+ EGREP
+ GREP
+@@ -1669,6 +1670,52 @@ $as_echo "$ac_res" >&6; }
+   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+ 
+ } # ac_fn_cxx_check_header_compile
++
++# ac_fn_cxx_try_link LINENO
++# -------------------------
++# Try to link conftest.$ac_ext, and return whether this succeeded.
++ac_fn_cxx_try_link ()
++{
++  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
++  rm -f conftest.$ac_objext conftest$ac_exeext
++  if { { ac_try="$ac_link"
++case "(($ac_try" in
++  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++  *) ac_try_echo=$ac_try;;
++esac
++eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
++$as_echo "$ac_try_echo"; } >&5
++  (eval "$ac_link") 2>conftest.err
++  ac_status=$?
++  if test -s conftest.err; then
++    grep -v '^ *+' conftest.err >conftest.er1
++    cat conftest.er1 >&5
++    mv -f conftest.er1 conftest.err
++  fi
++  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
++  test $ac_status = 0; } && {
++	 test -z "$ac_cxx_werror_flag" ||
++	 test ! -s conftest.err
++       } && test -s conftest$ac_exeext && {
++	 test "$cross_compiling" = yes ||
++	 test -x conftest$ac_exeext
++       }; then :
++  ac_retval=0
++else
++  $as_echo "$as_me: failed program was:" >&5
++sed 's/^/| /' conftest.$ac_ext >&5
++
++	ac_retval=1
++fi
++  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
++  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
++  # interfere with the next link command; also delete a directory that is
++  # left behind by Apple's compiler.  We do this before executing the actions.
++  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
++  as_fn_set_status $ac_retval
++
++} # ac_fn_cxx_try_link
+ cat >config.log <<_ACEOF
+ This file contains any messages produced by compilers while
+ running configure, to aid debugging if configure makes a mistake.
+@@ -3719,6 +3766,170 @@ fi
+ 
+ 
+ 
++# Solaris needs libsocket and libnsl for socket functions before 11.4.
++# libcody uses those.
++save_LIBS="$LIBS"
++LIBS=
++
++	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing gethostbyname" >&5
++$as_echo_n "checking for library containing gethostbyname... " >&6; }
++if ${ac_cv_search_gethostbyname+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char gethostbyname ();
++int
++main ()
++{
++return gethostbyname ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' nsl; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_search_gethostbyname=$ac_res
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext
++  if ${ac_cv_search_gethostbyname+:} false; then :
++  break
++fi
++done
++if ${ac_cv_search_gethostbyname+:} false; then :
++
++else
++  ac_cv_search_gethostbyname=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_gethostbyname" >&5
++$as_echo "$ac_cv_search_gethostbyname" >&6; }
++ac_res=$ac_cv_search_gethostbyname
++if test "$ac_res" != no; then :
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++fi
++
++	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing socket" >&5
++$as_echo_n "checking for library containing socket... " >&6; }
++if ${ac_cv_search_socket+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char socket ();
++int
++main ()
++{
++return socket ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' socket; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_search_socket=$ac_res
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext
++  if ${ac_cv_search_socket+:} false; then :
++  break
++fi
++done
++if ${ac_cv_search_socket+:} false; then :
++
++else
++  ac_cv_search_socket=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_socket" >&5
++$as_echo "$ac_cv_search_socket" >&6; }
++ac_res=$ac_cv_search_socket
++if test "$ac_res" != no; then :
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++else
++
++		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for socket in -lsocket" >&5
++$as_echo_n "checking for socket in -lsocket... " >&6; }
++if ${ac_cv_lib_socket_socket+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lsocket -lnsl $LIBS"
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char socket ();
++int
++main ()
++{
++return socket ();
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_lib_socket_socket=yes
++else
++  ac_cv_lib_socket_socket=no
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_socket_socket" >&5
++$as_echo "$ac_cv_lib_socket_socket" >&6; }
++if test "x$ac_cv_lib_socket_socket" = xyes; then :
++  LIBS="-lsocket -lnsl $LIBS"
++fi
++
++fi
++
++
++NETLIBS="$LIBS"
++LIBS="$save_LIBS"
++
++
+ ac_config_headers="$ac_config_headers config.h"
+ 
+ ac_config_files="$ac_config_files Makefile"
+diff --git a/c++tools/configure.ac b/c++tools/configure.ac
+index db34ee678e0..31694bba48e 100644
+--- a/c++tools/configure.ac
++++ b/c++tools/configure.ac
+@@ -22,6 +22,7 @@
+ # By default g++ uses an in-process mapper.
+ 
+ sinclude(../config/acx.m4)
++sinclude(../config/ax_lib_socket_nsl.m4)
+ 
+ AC_INIT(c++tools)
+ 
+@@ -263,6 +264,15 @@ fi
+ # Determine what GCC version number to use in filesystem paths.
+ GCC_BASE_VER
+ 
++# Solaris needs libsocket and libnsl for socket functions before 11.4.
++# libcody uses those.
++save_LIBS="$LIBS"
++LIBS=
++AX_LIB_SOCKET_NSL
++NETLIBS="$LIBS"
++LIBS="$save_LIBS"
++AC_SUBST(NETLIBS)
++
+ AC_CONFIG_HEADERS([config.h])
+ AC_CONFIG_FILES([Makefile])
+ 
+diff --git a/gcc/Makefile.in b/gcc/Makefile.in
+index 55b4cd7dbed..c62ee1bb1a7 100644
+--- a/gcc/Makefile.in
++++ b/gcc/Makefile.in
+@@ -451,6 +451,7 @@ CPPINC = -I$(srcdir)/../libcpp/include
+ 
+ CODYLIB = ../libcody/libcody.a
+ CODYINC = -I$(srcdir)/../libcody
++NETLIBS = @NETLIBS@
+ 
+ # Where to find decNumber
+ enable_decimal_float = @enable_decimal_float@
+diff --git a/gcc/aclocal.m4 b/gcc/aclocal.m4
+index 762e9490b6a..c0fcbeb5f99 100644
+--- a/gcc/aclocal.m4
++++ b/gcc/aclocal.m4
+@@ -68,6 +68,7 @@ m4_include([../ltsugar.m4])
+ m4_include([../ltversion.m4])
+ m4_include([../lt~obsolete.m4])
+ m4_include([../config/acx.m4])
++m4_include([../config/ax_lib_socket_nsl.m4])
+ m4_include([../config/cet.m4])
+ m4_include([../config/codeset.m4])
+ m4_include([../config/depstand.m4])
+diff --git a/gcc/configure b/gcc/configure
+index 16965953f05..df566823f43 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -812,6 +812,7 @@ ZSTD_LIB
+ ZSTD_INCLUDE
+ DL_LIB
+ LDEXP_LIB
++NETLIBS
+ EXTRA_GCC_LIBS
+ GNAT_LIBEXC
+ COLLECT2_LIBS
+@@ -10305,6 +10306,170 @@ EXTRA_GCC_LIBS="$LIBS"
+ LIBS="$save_LIBS"
+ 
+ 
++# Solaris needs libsocket and libnsl for socket functions before 11.4.
++# C++ needs those for libcody.
++save_LIBS="$LIBS"
++LIBS=
++
++	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing gethostbyname" >&5
++$as_echo_n "checking for library containing gethostbyname... " >&6; }
++if ${ac_cv_search_gethostbyname+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char gethostbyname ();
++int
++main ()
++{
++return gethostbyname ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' nsl; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_search_gethostbyname=$ac_res
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext
++  if ${ac_cv_search_gethostbyname+:} false; then :
++  break
++fi
++done
++if ${ac_cv_search_gethostbyname+:} false; then :
++
++else
++  ac_cv_search_gethostbyname=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_gethostbyname" >&5
++$as_echo "$ac_cv_search_gethostbyname" >&6; }
++ac_res=$ac_cv_search_gethostbyname
++if test "$ac_res" != no; then :
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++fi
++
++	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing socket" >&5
++$as_echo_n "checking for library containing socket... " >&6; }
++if ${ac_cv_search_socket+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_func_search_save_LIBS=$LIBS
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char socket ();
++int
++main ()
++{
++return socket ();
++  ;
++  return 0;
++}
++_ACEOF
++for ac_lib in '' socket; do
++  if test -z "$ac_lib"; then
++    ac_res="none required"
++  else
++    ac_res=-l$ac_lib
++    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++  fi
++  if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_search_socket=$ac_res
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext
++  if ${ac_cv_search_socket+:} false; then :
++  break
++fi
++done
++if ${ac_cv_search_socket+:} false; then :
++
++else
++  ac_cv_search_socket=no
++fi
++rm conftest.$ac_ext
++LIBS=$ac_func_search_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_socket" >&5
++$as_echo "$ac_cv_search_socket" >&6; }
++ac_res=$ac_cv_search_socket
++if test "$ac_res" != no; then :
++  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
++
++else
++
++		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for socket in -lsocket" >&5
++$as_echo_n "checking for socket in -lsocket... " >&6; }
++if ${ac_cv_lib_socket_socket+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lsocket -lnsl $LIBS"
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char socket ();
++int
++main ()
++{
++return socket ();
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_cxx_try_link "$LINENO"; then :
++  ac_cv_lib_socket_socket=yes
++else
++  ac_cv_lib_socket_socket=no
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_socket_socket" >&5
++$as_echo "$ac_cv_lib_socket_socket" >&6; }
++if test "x$ac_cv_lib_socket_socket" = xyes; then :
++  LIBS="-lsocket -lnsl $LIBS"
++fi
++
++fi
++
++
++NETLIBS="$LIBS"
++LIBS="$save_LIBS"
++
++
+ # Some systems put ldexp and frexp in libm instead of libc; assume
+ # they're both in the same place.  jcf-dump needs them.
+ save_LIBS="$LIBS"
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index 9f67e62950a..6d2f37086fb 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -1446,6 +1446,15 @@ EXTRA_GCC_LIBS="$LIBS"
+ LIBS="$save_LIBS"
+ AC_SUBST(EXTRA_GCC_LIBS)
+ 
++# Solaris needs libsocket and libnsl for socket functions before 11.4.
++# C++ needs those for libcody.
++save_LIBS="$LIBS"
++LIBS=
++AX_LIB_SOCKET_NSL
++NETLIBS="$LIBS"
++LIBS="$save_LIBS"
++AC_SUBST(NETLIBS)
++
+ # Some systems put ldexp and frexp in libm instead of libc; assume
+ # they're both in the same place.  jcf-dump needs them.
+ save_LIBS="$LIBS"
+diff --git a/gcc/cp/Make-lang.in b/gcc/cp/Make-lang.in
+index 25143c820b0..ab1b1c7bad8 100644
+--- a/gcc/cp/Make-lang.in
++++ b/gcc/cp/Make-lang.in
+@@ -143,7 +143,7 @@ cc1plus-checksum.cc : build/genchecksum$(build_exeext) checksum-options \
+ cc1plus$(exeext): $(CXX_OBJS) cc1plus-checksum.o $(BACKEND) $(CODYLIB) $(LIBDEPS) $(c++.prev)
+ 	@$(call LINK_PROGRESS,$(INDEX.c++),start)
+ 	+$(LLINKER) $(ALL_LINKERFLAGS) $(LDFLAGS) -o $@ \
+-	      $(CXX_OBJS) cc1plus-checksum.o $(BACKEND) $(CODYLIB) \
++	      $(CXX_OBJS) cc1plus-checksum.o $(BACKEND) $(CODYLIB) $(NETLIBS) \
+ 		$(LIBS) $(BACKENDLIBS)
+ 	@$(call LINK_PROGRESS,$(INDEX.c++),end)
+ 
+diff --git a/gcc/objcp/Make-lang.in b/gcc/objcp/Make-lang.in
+index 94bb512074e..02f48c2da7d 100644
+--- a/gcc/objcp/Make-lang.in
++++ b/gcc/objcp/Make-lang.in
+@@ -80,7 +80,7 @@ cc1objplus$(exeext): $(OBJCXX_OBJS) cc1objplus-checksum.o $(BACKEND) \
+ 	@$(call LINK_PROGRESS,$(INDEX.obj-c++),start)
+ 	+$(LLINKER) $(ALL_LINKERFLAGS) $(LDFLAGS) -o $@ \
+ 		$(OBJCXX_OBJS) cc1objplus-checksum.o $(BACKEND) \
+-		  $(CODYLIB) $(LIBS) $(BACKENDLIBS)
++		  $(CODYLIB) $(NETLIBS) $(LIBS) $(BACKENDLIBS)
+ 	@$(call LINK_PROGRESS,$(INDEX.obj-c++),end)
+ 
+ # Objective C++ language specific files.
+diff --git a/libstdc++-v3/testsuite/lib/dg-options.exp b/libstdc++-v3/testsuite/lib/dg-options.exp
+index 937a8224756..0b6c26b89a6 100644
+--- a/libstdc++-v3/testsuite/lib/dg-options.exp
++++ b/libstdc++-v3/testsuite/lib/dg-options.exp
+@@ -296,7 +296,11 @@ proc add_options_for_no_pch { flags } {
+ # Add to FLAGS all the target-specific flags needed for networking.
+ 
+ proc add_options_for_net_ts { flags } {
+-    if { [istarget *-*-rtems*] } {
++    # Before they were integrated into libc in Solaris 11.4, Solaris needs
++    # libsocket and libnsl for networking applications.
++    if { [istarget *-*-solaris2*] } {
++	return "$flags -lsocket -lnsl"
++    } elseif { [istarget *-*-rtems*] } {
+ 	return "$flags -lbsd -Wl,--gc-sections"
+     }
+     return $flags
+-- 
+2.53.0
+
