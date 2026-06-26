@@ -18,7 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cmatrix
 COMPONENT_VERSION=      2.0
-COMPONENT_SUMMARY=      Terminal based "The Matrix" like implementation
+COMPONENT_SUMMARY=      Terminal based The Matrix like implementation
 COMPONENT_PROJECT_URL=  https://github.com/abishekvashok/cmatrix
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
