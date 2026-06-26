@@ -4,24 +4,25 @@
 # You may only use this file in accordance with the terms of version
 # 1.0 of the CDDL.
 #
-# A full copy of the text of the CDDL should have been accompanied
-# with this source.  A copy of the CDDL is also available via the
-# Internet at http://www.illumos.org/license/CDDL.
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
 #
 
 #
 # Copyright 2026 Akad Arpad Padak <akadarpadpadak@hotmail.com>
 #
 
-set name=pkg.fmri value=pkg:/sysutils/cmatrix@2.0,5.11-1
-set name=pkg.summary value="Terminal based Matrix screensaver"
-set name=pkg.description value="A stylish terminal based Matrix screensaver clone using ncurses."
-set name=pkg.human-version value=2.0
-set name=info.classification value=org.opensolaris.category.2008:Applications/Accessories
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-file path=usr/bin/cmatrix owner=root group=bin mode=0755 preserve=true
-dir  path=usr/share/doc/cmatrix owner=root group=bin mode=0755
-file path=usr/share/doc/cmatrix/COPYING owner=root group=bin mode=0644 preserve=true
-file path=usr/share/man/man1/cmatrix.1 owner=root group=bin mode=0644 preserve=true
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-license COPYING license=GPLv3
+file path=usr/bin/cmatrix
+file path=usr/share/doc/cmatrix/COPYING
+file path=usr/share/man/man1/cmatrix.1
