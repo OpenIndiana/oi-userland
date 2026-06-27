@@ -10,7 +10,10 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2026 Till Wegmüller
 #
+
+# Rebuild: 1
 
 include ../../../make-rules/shared-macros.mk
 
