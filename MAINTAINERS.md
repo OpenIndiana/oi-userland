@@ -81,9 +81,7 @@ have fewer volunteers.
 - **Load**: High / mixed. 380+ libs; glib/gtk churn drives desktop rebuilds.
 
 ### 5. Crypto & security libraries  ⚠️ owns the OpenSSL cleanup
-- **Scope**: TLS/crypto libraries and the trust store. Highest CVE cadence in
-  the tree. Owns the legacy-OpenSSL teardown — see
-  [openssl-modernization.md](doc/openssl-modernization.md).
+- **Scope**: TLS/crypto libraries and the trust store.
 - **Paths**: `components/library/openssl*`, `components/library/gnutls`,
   `components/library/libsodium`, `components/library/botan`,
   `components/library/cryptopp`, `components/library/nettle`,
