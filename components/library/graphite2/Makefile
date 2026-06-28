@@ -20,13 +20,12 @@ USE_COMMON_TEST_MASTER= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphite2
-COMPONENT_VERSION=	1.3.14
-COMPONENT_REVISION=	3
+COMPONENT_VERSION=	1.3.15
 COMPONENT_SUMMARY=	Graphite2 - Library for rendering non-roman scripts
-COMPONENT_PROJECT_URL=	http://graphite.sil.org
+COMPONENT_PROJECT_URL=	https://graphite.sil.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:f99d1c13aa5fa296898a181dff9b82fb25f6cc0933dbaa7a475d8109bd54209d
+COMPONENT_ARCHIVE_HASH=	sha256:c6bc8b4252724665297f7cad0c55897285c673f9b8e6db3522ace833593fe0b1
 COMPONENT_ARCHIVE_URL=	https://github.com/silnrsi/graphite/releases/download/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/c++/graphite2
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -64,4 +63,3 @@ endif
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
