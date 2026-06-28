@@ -1,0 +1,73 @@
+From 8cb46b2681a538bbb5bef6e338eea3c7b02737ca Mon Sep 17 00:00:00 2001
+From: Shawn Ferry <sferry@gmail.com>
+Date: Fri, 18 Aug 2017 12:06:01 -0400
+Subject: [PATCH] solaris support in extconf
+
+Patch Submitted Upstream
+https://github.com/hercules-team/ruby-augeas/pull/10
+---
+ ext/augeas/extconf.rb | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
+
+diff --git a/ext/augeas/extconf.rb b/ext/augeas/extconf.rb
+index 00675c6..d5b66b2 100644
+--- a/ext/augeas/extconf.rb
++++ b/ext/augeas/extconf.rb
+@@ -1,18 +1,18 @@
+-## 
++##
+ #  extconf.rb: Ruby extension configuration
+-#  
++#
+ #  Copyright (C) 200 Red Hat Inc.
+-#  
++#
+ #  This library is free software; you can redistribute it and/or
+ #  modify it under the terms of the GNU Lesser General Public
+ #  License as published by the Free Software Foundation; either
+ #  version 2.1 of the License, or (at your option) any later version.
+-#  
++#
+ #  This library is distributed in the hope that it will be useful,
+ #  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ #  Lesser General Public License for more details.
+-#  
++#
+ #  You should have received a copy of the GNU Lesser General Public
+ #  License along with this library; if not, write to the Free Software
+ #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+@@ -23,12 +23,27 @@ require 'mkmf'
+ 
+ extension_name = '_augeas'
+ 
+-unless pkg_config("augeas")
+-    raise "augeas-devel not installed"
++def solaris?
++  RbConfig::CONFIG['target_os'] =~ /solaris/
+ end
+ 
+-unless pkg_config("libxml-2.0")
++
++if solaris?
++  $CFLAGS += " -I/usr/include/libxml2"
++  unless have_library("augeas")
++    raise "libaugeas not installed"
++  end
++  unless have_library("xml2")
++      raise "libxml2 not installed"
++  end
++else
++  unless pkg_config("augeas")
++    raise "augeas-devel not installed"
++  end
++
++  unless pkg_config("libxml-2.0")
+     raise "libxml2-devel not installed"
++  end
+ end
+ 
+ create_makefile(extension_name)
+-- 
+2.14.1
+

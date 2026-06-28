@@ -21,18 +21,18 @@
 #
 # Copyright (c) 2015, 2017, Oracle and/or its affiliates. All rights reserved.
 # Copyright 2017 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+# Copyright 2026 Klaus Ziegler
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby-augeas
-COMPONENT_VERSION=	0.5.0
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.6.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).gem
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:42b0973c8ff88c5a903a1b126f1418a69eb3c8f4d45999055bfdce9b70e57101
-COMPONENT_ARCHIVE_URL=	http://rubygems.org/gems/$(COMPONENT_SRC).gem
+    sha256:002bd237d8dce4b918384cc3043254bf5264efe81f663d1c9ac7b41cbe4df8d2
+COMPONENT_ARCHIVE_URL=	https://rubygems.org/gems/$(COMPONENT_SRC).gem
 COMPONENT_PROJECT_URL=  https://github.com/hercules-team/ruby-augeas
 COMPONENT_BUGDB=	utility/augeas
 COMPONENT_ANITYA_ID=	7017
@@ -43,35 +43,38 @@ COMPONENT_DESCRIPTION= The class Augeas provides bindings to augeas [http://auge
 COMPONENT_LICENSE= LGPL-2.1	
 COMPONENT_LICENSE_FILE=	augeas.license
 
-TPNO=                   21871
-
 # No gemspec is shipped with the gem. Create one
 COMPONENT_POST_UNPACK_ACTION= \
     $(GEM) spec $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) --ruby > $(SOURCE_DIR)/$(GEMSPEC)
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 include $(WS_MAKE_RULES)/gem.mk
 include $(WS_MAKE_RULES)/ruby.mk
 
-COMPONENT_TEST_CMD=	/usr/bin/rake
+# to get GNU make instead of make
+PATH= $(PATH.gnu)
+
+ifeq ($(MACH), i386)
+RUBY_CPU=x86_64
+else
+RUBY_CPU=sparc
+endif
+
+# these macros are used in the package manifest
+PKG_MACROS += RUBY_VER=$(RUBY_VER)
+PKG_MACROS += RUBY_LIB_VER=$(RUBY_LIB_VER)
+PKG_MACROS += RUBY_CPU=$(RUBY_CPU)
+
+COMPONENT_TEST_CMD=	/usr/bin/rake32
 COMPONENT_TEST_DIR=	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS+=	test
 COMPONENT_TEST_TRANSFORMS += \
         '-n ' \
 	'-e "/failures/p" '
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-test:		$(TEST_32)
-
+# Auto-generated dependencies
 REQUIRED_PACKAGES += library/augeas-libs
 REQUIRED_PACKAGES += library/libxml2
-REQUIRED_PACKAGES += runtime/ruby-23
+REQUIRED_PACKAGES += runtime/ruby-32
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += system/library/math
-# Bogus dependency due to libssp
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
