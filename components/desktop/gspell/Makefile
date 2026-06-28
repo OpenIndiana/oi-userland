@@ -19,11 +19,11 @@ USE_DEFAULT_TEST_TRANSFORMS = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gspell
-HUMAN_VERSION=			1.14.3
+HUMAN_VERSION=			1.14.4
 COMPONENT_SUMMARY=		Flexible API to add spell-checking to a GTK application
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	https://gitlab.gnome.org/GNOME/gspell/-/archive/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:bead03ddc7aca6e253ab1862148637fe558caec735364c41a2027c0b18fa18fb
+COMPONENT_ARCHIVE_HASH=		sha256:184c23194c65150fcc3abb2a9523fd13427d8f225dcbd3ec034ca94ab6c4d619
 COMPONENT_FMRI=			library/desktop/gspell-3
 COMPONENT_CLASSIFICATION=	Applications/Accessories
 COMPONENT_LICENSE=		LGPL-2.1-or-later
