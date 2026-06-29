@@ -1,0 +1,61 @@
+Use GNU strip for compare-debug on Solaris.
+
+Solaris strip intentionally preserves symbol tables in relocatable objects.
+That keeps the objects linkable, but it means GCC's compare-debug helper can
+report differences after debug stripping even when GNU strip produces matching
+objects.  Prefer gstrip on SunOS for this diagnostic comparison.
+
+--- gcc-16.1.0/contrib/compare-debug
++++ gcc-16.1.0/contrib/compare-debug
+@@ -57,6 +57,21 @@
+ 
+ trap 'rm -f "$1.$suf1" "$2.$suf2"' 0 1 2 15
+ 
++strip_cmd=${STRIP:-strip}
++case `uname -s` in
++SunOS)
++  # Solaris strip preserves symbol tables in relocatable objects; use GNU strip
++  # for this comparison so object-code identity is not hidden by debug data.
++  if test "${STRIP+set}" != set; then
++    if command -v gstrip > /dev/null 2>&1; then
++      strip_cmd=gstrip
++    elif test -x /usr/gnu/bin/gstrip; then
++      strip_cmd=/usr/gnu/bin/gstrip
++    fi
++  fi
++  ;;
++esac
++
+ case `uname -s` in
+ Darwin)
+   # The strip command on darwin does not remove all debug info.
+@@ -66,10 +81,10 @@
+   ;;
+ *)
+   cp "$1" "$1.$suf1"
+-  strip "$1.$suf1"
++  $strip_cmd "$1.$suf1"
+ 
+   cp "$2" "$2.$suf2"
+-  strip "$2.$suf2"
++  $strip_cmd "$2.$suf2"
+   ;;
+ esac
+ 
+@@ -157,13 +172,13 @@
+ 
+       objcopy $rsopts "$2.$suf2" "$2.$suf4"
+       mv "$2.$suf4" "$2.$suf2"
+-    elif (strip --help) 2>&1 | grep ' --remove-section' > /dev/null; then
++    elif ($strip_cmd --help) 2>&1 | grep ' --remove-section' > /dev/null; then
+       cp "$1.$suf1" "$1.$suf3"
+-      strip $rsopts "$1.$suf3"
++      $strip_cmd $rsopts "$1.$suf3"
+       mv "$1.$suf3" "$1.$suf1"
+ 
+       cp "$2.$suf2" "$2.$suf4"
+-      strip $rsopts "$2.$suf4"
++      $strip_cmd $rsopts "$2.$suf4"
+       mv "$2.$suf4" "$2.$suf2"
+     else
+       echo failed to strip off .eh_frame >&2

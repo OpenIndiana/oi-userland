@@ -16,15 +16,16 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 13.4.0
+COMPONENT_REVISION= 1
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
   sha256:c1be0251330f238724c564e0ba90972eaf24d356784b7465786f8dd3291151d8
 
-MPFR_VERSION=4.2.1
+MPFR_VERSION=4.2.2
 MPFR_ARCHIVE_HASH= \
-  sha256:b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0
+  sha256:9ad62c7dc910303cd384ff8f1f4767a655124980bb6d8650fe62c815a231bb7b
 
 MPC_VERSION=1.3.1
 MPC_ARCHIVE_HASH= \
@@ -39,13 +40,13 @@ include $(WS_MAKE_RULES)/gcc-component.mk
 CPPFLAGS+=" -D_TS_ERRNO"
 LDFLAGS="-R$OPT/lib"
 
-# SPARC support.
+# add SPARC support.
 ifeq ($(MACH), sparc)
-COMPONENT_PRE_CONFIGURE_ACTION += \
-	cd $(SOURCE_DIR) && autogen Makefile.def && \
-	$(GPATCH) -p1 < $(COMPONENT_DIR)/sparc/gmp_asm_sparcv9_cpuflags.patch
 CONFIGURE_OPTIONS+= --with-mulhigh-size=2048
 CONFIGURE_OPTIONS+= --with-cpu=ultrasparc
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cd $(SOURCE_DIR) && autogen Makefile.def && \
+	$(GPATCH) -b -p1 < $(COMPONENT_DIR)/sparc/gmp_asm_sparcv9_cpuflags.patch
 else
 COMPONENT_PRE_CONFIGURE_ACTION += \
 	cd $(SOURCE_DIR) && autogen Makefile.def
