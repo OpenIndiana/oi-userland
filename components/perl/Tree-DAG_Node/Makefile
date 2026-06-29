@@ -19,21 +19,20 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Tree-DAG_Node
-HUMAN_VERSION =			1.35
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.37
 COMPONENT_SUMMARY =		An N-ary tree
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Tree-DAG_Node-1.35.tgz
+	https://cpan.metacpan.org/authors/id/R/RS/RSAVAGE/Tree-DAG_Node-1.37.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:27467e3644c8dfbb08e26e6d698a75ef7c1b1a810bda9fca50f922eea5429eb1
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
-COMPONENT_LICENSE_FILE =	LICENSE
+	sha256:711f39f0afd91b75ca5161d46dbafaf186023030061be8735f0b22b95efdd5e1
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-slurper
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-slurper
+REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
