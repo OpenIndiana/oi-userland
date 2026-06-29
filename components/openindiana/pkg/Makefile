@@ -13,7 +13,7 @@
 # Copyright 2026 Till Wegmüller
 #
 
-# Rebuild: 1
+# Rebuild: 2
 
 include ../../../make-rules/shared-macros.mk
 
