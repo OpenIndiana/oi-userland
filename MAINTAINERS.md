@@ -104,7 +104,7 @@ have fewer volunteers.
 - **Paths**: `components/runtime/*`, `components/python/*`, `components/perl/*`,
   `components/ruby/*`, `components/ocaml/*`, `components/common-lisp/*`,
   `components/prolog/*`, `components/tcl/*`
-- **Owner**: _unassigned_
+- **Owner**: gemelen
 - **Load**: Wide / shallow. ~1,200 dirs but dominated by mechanical bumps —
   ideal for someone who invests in automation. Runtimes (node/openjdk/erlang)
   are the deep part.
@@ -112,7 +112,7 @@ have fewer volunteers.
 ### 8. Databases
 - **Scope**: RDBMS, KV stores, and their extensions/connectors.
 - **Paths**: `components/database/*`
-- **Owner**: _unassigned_
+- **Owner**: DrLou
 - **Load**: Medium / deep. postgres 14–16 + extensions, mariadb/mysql, redis,
   mongodb, sqlite.
 
@@ -165,6 +165,10 @@ have fewer volunteers.
 - iigs: Firefox, Thunderbird, Libreoffice
 - fkink: php, Samba
 - grzemba: SAMQFS
+
+## Architecture Maintainers
+
+SPARC: klausz65
 
 ## Category coverage
 
