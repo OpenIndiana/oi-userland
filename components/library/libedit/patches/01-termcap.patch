@@ -1,52 +1,102 @@
---- libedit-20170329-3.1/src/sys.h.1	2018-05-22 13:12:08.989433801 +0000
-+++ libedit-20170329-3.1/src/sys.h	2018-05-22 13:12:19.018232253 +0000
-@@ -115,13 +115,4 @@
- #define	REGEX		/* Use POSIX.2 regular expression functions */
+
+sent upstream to: jess@thrysoee.dk
+at:  1. Juli 2026 um 16:28:13 CEST
+
+--- libedit-20260512-3.1/src/sys.h.orig	2026-05-08 22:38:20.000000000 +0300
++++ libedit-20260512-3.1/src/sys.h	2026-07-01 17:04:02.249686033 +0300
+@@ -124,11 +124,11 @@
  #undef	REGEXP		/* Use UNIX V8 regular expression functions */
  
--#if defined(__sun)
+ #if defined(__sun)
 -extern int tgetent(char *, const char *);
--extern int tgetflag(char *);
--extern int tgetnum(char *);
++extern int tgetent(char *, char *);
+ extern int tgetflag(char *);
+ extern int tgetnum(char *);
 -extern int tputs(const char *, int, int (*)(int));
 -extern char* tgoto(const char*, int, int);
--extern char* tgetstr(char*, char**);
--#endif
--
- #endif /* _h_sys */
---- libedit-20170329-3.1/src/terminal.h.1	2018-05-22 13:13:48.712387856 +0000
-+++ libedit-20170329-3.1/src/terminal.h	2018-05-22 13:13:58.467400172 +0000
-@@ -80,15 +80,6 @@
- #define	A_K_DE		6
++extern int tputs(char *, int, int (*)(char));
++extern char* tgoto(char*, int, int);
+ extern char* tgetstr(char*, char**);
+ #endif
+ 
+--- libedit-20260512-3.1/src/terminal.c.~1~	2026-05-08 22:40:44.000000000 +0300
++++ libedit-20260512-3.1/src/terminal.c	2026-07-01 17:12:17.108337171 +0300
+@@ -69,11 +69,11 @@
+ #endif
+ 
+ #if defined(__sun)
+-extern int tgetent(char *, const char *);
++extern int tgetent(char *, char *);
+ extern int tgetflag(char *);
+ extern int tgetnum(char *);
+-extern int tputs(const char *, int, int (*)(int));
+-extern char* tgoto(const char*, int, int);
++extern int tputs(char *, int, int (*)(char));
++extern char* tgoto(char*, int, int);
+ extern char* tgetstr(char*, char**);
+ #endif
+ 
+@@ -217,8 +217,8 @@
+     const char *);
+ static void	terminal_init_arrow(EditLine *);
+ static void	terminal_reset_arrow(EditLine *);
+-static int	terminal_putc(int);
+-static void	terminal_tputs(EditLine *, const char *, int);
++static int	terminal_putc(char);
++static void	terminal_tputs(EditLine *, char *, int);
+ 
+ #ifdef _REENTRANT
+ static pthread_mutex_t terminal_mutex = PTHREAD_MUTEX_INITIALIZER;
+@@ -834,7 +834,7 @@
+  *	Read in the terminal capabilities from the requested terminal
+  */
+ libedit_private int
+-terminal_set(EditLine *el, const char *term)
++terminal_set(EditLine *el, char *term)
+ {
+ 	int i;
+ 	char buf[TC_BUFSIZE];
+@@ -1196,7 +1196,7 @@
+  *	Add a character
+  */
+ static int
+-terminal_putc(int c)
++terminal_putc(char c)
+ {
+ 	if (terminal_outfile == NULL)
+ 		return -1;
+@@ -1204,7 +1204,7 @@
+ }
+ 
+ static void
+-terminal_tputs(EditLine *el, const char *cap, int affcnt)
++terminal_tputs(EditLine *el, char *cap, int affcnt)
+ {
+ #ifdef _REENTRANT
+ 	pthread_mutex_lock(&terminal_mutex);
+--- libedit-20260512-3.1/src/terminal.h.~1~	2026-05-08 22:38:20.000000000 +0300
++++ libedit-20260512-3.1/src/terminal.h	2026-07-01 17:16:02.624645377 +0300
+@@ -81,11 +81,11 @@
  #define	A_K_NKEYS	7
  
--#ifdef __sun
+ #ifdef __sun
 -extern int tgetent(char *, const char *);
--extern int tgetflag(char *);
--extern int tgetnum(char *);
++extern int tgetent(char *, char *);
+ extern int tgetflag(char *);
+ extern int tgetnum(char *);
 -extern int tputs(const char *, int, int (*)(int));
 -extern char* tgoto(const char*, int, int);
--extern char* tgetstr(char*, char**);
--#endif
--
- libedit_private void	terminal_move_to_line(EditLine *, int);
- libedit_private void	terminal_move_to_char(EditLine *, int);
- libedit_private void	terminal_clear_EOL(EditLine *, int);
---- libedit-20230828-3.1/src/terminal.c.orig	2023-08-27 09:25:53.000000000 +0200
-+++ libedit-20230828-3.1/src/terminal.c	2023-12-26 13:55:12.635521590 +0100
-@@ -68,15 +68,6 @@
- #include <term.h>
++extern int tputs(char *, int, int (*)(char));
++extern char* tgoto(char*, int, int);
+ extern char* tgetstr(char*, char**);
  #endif
  
--#if defined(__sun)
--extern int tgetent(char *, const char *);
--extern int tgetflag(char *);
--extern int tgetnum(char *);
--extern int tputs(const char *, int, int (*)(int));
--extern char* tgoto(const char*, int, int);
--extern char* tgetstr(char*, char**);
--#endif
--
- #ifdef _REENTRANT
- #include <pthread.h>
- #endif
+@@ -107,7 +107,7 @@
+     keymacro_value_t *, int);
+ libedit_private void	terminal_end(EditLine *);
+ libedit_private void	terminal_get(EditLine *, const char **);
+-libedit_private int	terminal_set(EditLine *, const char *);
++libedit_private int	terminal_set(EditLine *, char *);
+ libedit_private int	terminal_settc(EditLine *, int, const wchar_t **);
+ libedit_private int	terminal_gettc(EditLine *, int, char **);
+ libedit_private int	terminal_telltc(EditLine *, int, const wchar_t **);
