@@ -15,14 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libetpan
-COMPONENT_VERSION=	1.9.4
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.10.1
 COMPONENT_SUMMARY=	A portable, efficient framework for different kinds of mail access: IMAP, SMTP, POP and NNTP
 COMPONENT_PROJECT_URL=	https://www.etpan.org/libetpan.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:82ec8ea11d239c9967dbd1717cac09c8330a558e025b3e4dc6a7594e80d13bb1
+    sha256:87bacdc62661a2a7aa5fe9f1f28d2f7c7a53256633ac5129903916c59f80c4c2
 COMPONENT_ARCHIVE_URL=	https://github.com/dinhviethoa/libetpan/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/libetpan
 COMPONENT_CLASSIFICATION=       System/Libraries
