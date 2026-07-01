@@ -1,0 +1,11 @@
+--- webkit/Source/cmake/FindGI.cmake~	2023-01-13 16:06:38.000000000 +0000
++++ webkit/Source/cmake/FindGI.cmake	2023-11-22 11:28:28.300196521 +0000
+@@ -341,7 +341,7 @@
+         DEPENDS ${gir_deps} ${gir_srcs}
+         VERBATIM
+         COMMAND_EXPAND_LISTS
+-        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}"
++        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}" "LDFLAGS=${CMAKE_EXE_LINKER_FLAGS}"
+             "${GI_SCANNER_EXE}" --quiet --warn-all --warn-error --no-libtool
+             "--output=${gir_path}"
+             "--library=$<TARGET_FILE_BASE_NAME:${opt_TARGET}>"
