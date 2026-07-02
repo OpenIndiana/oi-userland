@@ -16,11 +16,12 @@
 
 SINGLE_PYTHON_VERSION= yes
 USE_PARALLEL_BUILD= Yes
+PARALLEL_JOBS= 120
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		claws-mail
 COMPONENT_VERSION=	4.4.0
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SUMMARY=	The user-friendly, lightweight, and fast email client
 COMPONENT_PROJECT_URL=	https://www.claws-mail.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -63,6 +64,8 @@ CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 # Manually added build dependencies
 # gnu-coreutils is needed for gecho (which is needed for providing the -n option):
 REQUIRED_PACKAGES += file/gnu-coreutils
+# SPARC additionally needs thr math library.
+REQUIRED_PACKAGES += system/library/math
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
