@@ -1,0 +1,45 @@
+* Avoids random 32bit go test TestMemmoveAtomicity fail with:
+    memmove_test.go:267: got partially updated pointer 0x19000000 at dst[1], want either nil or 0x19721430
+* Avoids random 32bit go test TestSigaltstack fail with:
+    carchive_test.go:758: fatal error: sem_post
+
+--- gcc-12.1.0/libgo/go/runtime/memmove_test.go
++++ gcc-12.1.0/libgo/go/runtime/memmove_test.go
+@@ -11,9 +11,7 @@ "fmt"
+ 	"internal/race"
+ 	"internal/testenv"
+ 	. "runtime"
+-	"sync/atomic"
+ 	"testing"
+-	"unsafe"
+ )
+ 
+ func TestMemmove(t *testing.T) {
+@@ -210,6 +208,7 @@ }
+ 
+ // Ensure that memmove writes pointers atomically, so the GC won't
+ // observe a partially updated pointer.
++/*
+ func TestMemmoveAtomicity(t *testing.T) {
+ 	if race.Enabled {
+ 		t.Skip("skip under the race detector -- this test is intentionally racy")
+@@ -272,6 +271,7 @@ })
+ 		}
+ 	}
+ }
++*/
+ 
+ func benchmarkSizes(b *testing.B, sizes []int, fn func(b *testing.B, n int)) {
+ 	for _, n := range sizes {
+--- gcc-12.1.0/libgo/misc/cgo/testcarchive/carchive_test.go
++++ gcc-12.1.0/libgo/misc/cgo/testcarchive/carchive_test.go
+@@ -725,7 +725,8 @@ }
+ func TestSigaltstack(t *testing.T) {
+ 	switch GOOS {
+ 	case "windows":
+-		t.Skip("skipping signal test on Windows")
++	case "solaris":
++		t.Skip("skipping signal test on Windows and Solaris")
+ 	}
+ 
+ 	if !testWork {

@@ -1,0 +1,75 @@
+Gccgo on non Linux platforms (where -fsplit-stack isn't supported) cannot resize
+stack during the runtime resulting in segfaults when running deeper recursion.
+
+This patch allows setting higher min stack size, which can in some cases resolve
+these issues (although it might also cause memory exhaustion in highly multi
+threaded programs).
+
+This was reported upstream:
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=107491
+
+--- gcc-12.2.0/libgo/runtime/proc.c
++++ gcc-12.2.0/libgo/runtime/proc.c
+@@ -57,6 +57,16 @@
+ # define StackMin ((sizeof(char *) < 8) ? 2 * 1024 * 1024 : 4 * 1024 * 1024)
+ #endif
+ 
++static uintptr minstacksize;
++
++void runtime_setminstacksize(int32)
++  __asm__(GOSYM_PREFIX "runtime.setminstacksize");
++
++void runtime_setminstacksize(int32 size)
++{
++	minstacksize = (uintptr)size * 1024 * 1024;
++}
++
+ uintptr runtime_stacks_sys;
+ 
+ void gtraceback(G*)
+@@ -803,6 +813,9 @@
+ 	newg = allocg();
+ 	if(allocatestack) {
+ 		stacksize = StackMin;
++		if (stacksize < minstacksize) {
++			stacksize = minstacksize;
++		}
+ 		if(signalstack) {
+ 			stacksize = 32 * 1024; // OS X wants >= 8K, GNU/Linux >= 2K
+ #ifdef SIGSTKSZ
+--- gcc-12.2.0/libgo/go/runtime/runtime1.go
++++ gcc-12.2.0/libgo/go/runtime/runtime1.go
+@@ -22,6 +22,8 @@ import (
+ //go:linkname parsedebugvars
+ //go:linkname timediv
+ 
++func setminstacksize(size int32)
++
+ // Keep a cached value to make gotraceback fast,
+ // since we call it on every call to gentraceback.
+ // The cached value is a uint32 in which the low bits
+@@ -335,6 +337,7 @@ var debug struct {
+ 	allocfreetrace int32
+ 	inittrace      int32
+ 	sbrk           int32
++	minstacksize   int32
+ }
+ 
+ var dbgvars = []dbgVar{
+@@ -357,6 +360,7 @@ var dbgvars = []dbgVar{
+ 	{"asyncpreemptoff", &debug.asyncpreemptoff},
+ 	{"inittrace", &debug.inittrace},
+ 	{"harddecommit", &debug.harddecommit},
++	{"minstacksize", &debug.minstacksize},
+ }
+ 
+ func parsedebugvars() {
+@@ -417,6 +421,8 @@ func parsedebugvars() {
+ 
+ 	setTraceback(gogetenv("GOTRACEBACK"))
+ 	traceback_env = traceback_cache
++
++	setminstacksize(debug.minstacksize)
+ }
+ 
+ //go:linkname setTraceback runtime_1debug.SetTraceback

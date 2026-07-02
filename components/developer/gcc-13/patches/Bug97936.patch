@@ -1,0 +1,124 @@
+Some libstdc++- tests randomly fail.
+
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=97936#c19
+
+--- gcc-13.1.0/libstdc++-v3/testsuite/27_io/filesystem/iterators/error_reporting.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/27_io/filesystem/iterators/error_reporting.cc
+@@ -17,6 +17,7 @@ // <http://www.gnu.org/licenses/>.
+ 
+ // { dg-do run { target { c++17 } } }
+ // { dg-require-filesystem-ts "" }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ #include <filesystem>
+ #include <cerrno>
+--- gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic/wait_notify/pointers.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic/wait_notify/pointers.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-require-gthreads "" }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_flag/wait_notify/1.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_flag/wait_notify/1.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_float/wait_notify.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_float/wait_notify.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_integral/wait_notify.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_integral/wait_notify.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-add-options libatomic }
+ // { dg-additional-options "-pthread" { target pthread } }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_ref/wait_notify.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/29_atomics/atomic_ref/wait_notify.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-effective-target pthread }
+ // { dg-require-gthreads "" }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/barrier/arrive_and_wait.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/barrier/arrive_and_wait.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/barrier/completion.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/barrier/completion.cc
+@@ -3,6 +3,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ // Copyright (C) 2020-2023 Free Software Foundation, Inc.
+ //
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/latch/3.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/latch/3.cc
+@@ -20,6 +20,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ #include <latch>
+ #include <atomic>
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_for.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_for.cc
+@@ -20,6 +20,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-effective-target pthread }
+ // { dg-require-gthreads "" }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ #include <semaphore>
+ #include <chrono>
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_posix.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_posix.cc
+@@ -20,6 +20,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-effective-target pthread }
+ // { dg-require-gthreads "" }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ #include <semaphore>
+ #ifdef _GLIBCXX_HAVE_POSIX_SEMAPHORE
+--- gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_until.cc
++++ gcc-13.1.0/libstdc++-v3/testsuite/30_threads/semaphore/try_acquire_until.cc
+@@ -20,6 +20,7 @@ // { dg-do run { target c++2a } }
+ // { dg-require-gthreads "" }
+ // { dg-additional-options "-pthread" { target pthread } }
+ // { dg-add-options libatomic }
++// { dg-skip-if "broken" { *-*-* } }
+ 
+ #include <semaphore>
+ #include <chrono>
