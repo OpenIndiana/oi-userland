@@ -1,5 +1,5 @@
---- trealla-2.90.2/src/network.c.orig
-+++ trealla-2.90.2/src/network.c
+--- trealla-2.103.0/src/network.c.orig	2026-07-02 03:14:41.000000000 +0200
++++ trealla-2.103.0/src/network.c	2026-07-02 07:24:10.887000825 +0200
 @@ -43,10 +43,13 @@
  #endif
  #include <netinet/in.h>
@@ -14,32 +14,17 @@
  #endif
  
  
-@@ -156,7 +159,7 @@
- 		int flag = 1;
- 		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
- 		int flag2 = 1;
--		setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&flag2, sizeof(flag2));
-+//		setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&flag2, sizeof(flag2));
- 
- 		if (connect(fd, rp->ai_addr, rp->ai_addrlen) != -1)
- 			break;
-@@ -211,7 +214,7 @@
- 		int flag = 1;
- 		setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&flag, sizeof(flag));
- 		int flag2 = 1;
--		setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&flag2, sizeof(flag2));
-+//		setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, (char *)&flag2, sizeof(flag2));
- 
- 		if (bind(fd, rp->ai_addr, rp->ai_addrlen) == 0)
- 			break;
-@@ -291,8 +294,8 @@
- void net_set_nonblocking(stream *str)
+@@ -311,9 +314,10 @@
+ void tpl_set_nonblocking(stream *str)
  {
  #if !defined(_WIN32) && !defined(__wasi__)
 -	unsigned long flag = 1;
--	ioctl(fileno(str->fp), FIONBIO, &flag);
-+	int flags = fcntl(fileno(str->fp), F_GETFL, 0);
-+    fcntl(fileno(str->fp), F_SETFL, flags | O_NONBLOCK);
+-	ioctl(fileno(str->fp_in), FIONBIO, &flag);
+-	ioctl(fileno(str->fp_out), FIONBIO, &flag);
++    int flags = fcntl(fileno(str->fp_in), F_GETFL, 0);
++    fcntl(fileno(str->fp_in), F_SETFL, flags | O_NONBLOCK);
++    flags = fcntl(fileno(str->fp_out), F_GETFL, 0);
++    fcntl(fileno(str->fp_out), F_SETFL, flags | O_NONBLOCK);
  #endif
  }
  
