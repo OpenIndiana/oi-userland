@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		stevedore
-HUMAN_VERSION =			5.8.0
+HUMAN_VERSION =			5.9.0
 COMPONENT_SUMMARY =		Manage dynamic plugins for Python applications
 COMPONENT_PROJECT_URL =		https://docs.openstack.org/stevedore
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b49867b32ca3016e94100e68dbf26e72aa7b8708d0a3f73c08aeb220370ac715
+	sha256:abbd0af7a38a8bbb1d6adea2e35b17609cf004eaac323e88a8d8963640dd2b3c
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
