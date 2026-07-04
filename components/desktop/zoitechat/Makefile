@@ -17,12 +17,12 @@ BUILD_STYLE= meson
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zoitechat
-COMPONENT_VERSION=	2.18.1
+COMPONENT_VERSION=	2.18.3
 COMPONENT_SUMMARY=	ZoiteChat IRC client
 COMPONENT_PROJECT_URL=	hhttps://zoitechat.org/ttps://hexchat.github.io/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH= sha256:9fbbed464d24b4463a4fcf37c23a5d708c8aea831325ad7cdcf1d944cff2d3e6
+COMPONENT_ARCHIVE_HASH= sha256:773fce8dc815d67c3c763231d1018b79204cdccef1ff13f286261e6f4f5b40ed
 COMPONENT_ARCHIVE_URL=	https://github.com/ZoiteChat/zoitechat/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		desktop/irc/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/Internet
@@ -50,6 +50,7 @@ CONFIGURE_ENV += AR="/usr/gnu/bin/ar"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
+REQUIRED_PACKAGES += data/iso-codes
 REQUIRED_PACKAGES += desktop/library/libayatana-appindicator
 REQUIRED_PACKAGES += library/desktop/cairo
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
@@ -58,4 +59,5 @@ REQUIRED_PACKAGES += library/desktop/pango
 REQUIRED_PACKAGES += library/desktop/xdg/libcanberra
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/libarchive
+REQUIRED_PACKAGES += library/libsecret
 REQUIRED_PACKAGES += system/library
