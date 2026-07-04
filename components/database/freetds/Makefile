@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freetds
 COMPONENT_VERSION=	1.5.18
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	FreeTDS command-line utilities
 COMPONENT_PROJECT_URL=	https://www.freetds.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +39,8 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-krb5
 CONFIGURE_OPTIONS += --enable-msdblib
 CONFIGURE_OPTIONS += --with-gnutls
+# See https://www.illumos.org/issues/18210
+CONFIGURE_OPTIONS += --disable-libiconv
 
 COMPONENT_TEST_ARGS += -k
 
