@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project mutagen
+#   $WS_TOOLS/python-integrate-project -d python/mutagen-39 mutagen
 #
 
 BUILD_STYLE = pyproject
@@ -19,24 +19,24 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		mutagen
-HUMAN_VERSION =			1.48.1
+HUMAN_VERSION =			1.47.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		read and write audio tags for many formats
 COMPONENT_PROJECT_URL =		https://mutagen.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8f95637ab9f6f305cec6bd1294e197debe207998e3e068596563c74f86b0a173
+	sha256:719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by mutagen >= 1.48.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# mutagen >= 1.48.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
-# This project does not support tox so we need to provide test requirements
-# manually.
-TEST_REQUIREMENTS_PEP735 += dev
+# This project uses poetry to manage test dependencies.
+TEST_REQUIREMENTS_POETRY += dev
 
 # Rename section 1 man page(s) to contain version number
 COMPONENT_POST_INSTALL_ACTION += \
@@ -56,4 +56,3 @@ REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/hypothesis
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
-TEST_REQUIRED_PACKAGES.python += library/python/setuptools
