@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-DSA
-HUMAN_VERSION =			1.21
+HUMAN_VERSION =			1.24
 COMPONENT_SUMMARY =		DSA Signatures and Key Generation
 COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a46201e8390e8ba3bbe51111d76489f31dafda0f6a60b0ab9319dd52bd2b32b0
+	sha256:0a1638b6f2b4efe92d6ee2f4901cca02d7a70567f6bb0f486a9bb5f69be76766
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -33,7 +33,6 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES.perl += library/perl-5/convert-asn1
 REQUIRED_PACKAGES.perl += library/perl-5/convert-pem
 REQUIRED_PACKAGES.perl += library/perl-5/crypt-sysrandom
-REQUIRED_PACKAGES.perl += library/perl-5/crypt-urandom
 REQUIRED_PACKAGES.perl += library/perl-5/data-buffer
 REQUIRED_PACKAGES.perl += library/perl-5/digest-sha
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
