@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_testing
-HUMAN_VERSION =			6.1
+HUMAN_VERSION =			6.2
 COMPONENT_SUMMARY =		Zope testing helpers
-COMPONENT_PROJECT_URL =		https://github.com/zopefoundation/zope.testing
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:69d2efef597a3e817de4ce9163270a27e6ed9f82f440dbbffdd5743450e78f60
+	sha256:0de47f3c1a96cbec15ae7a1607d5a142ec39e501728055434358c2f4cf0f21a9
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
