@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= freeway
 COMPONENT_VERSION= 1.23.0
+COMPONENT_REVISION= 1
 COMPONENT_COMMIT= 93158892cf02ebf8b95498a46c5ec9d3a9cf9991
 COMPONENT_SUMMARY= Freeway is a small and portable implementation of the Wayland protocol for POSIX-compliant operating systems
 COMPONENT_PROJECT_URL= https://git.sr.ht/~shrub900/freeway
@@ -31,6 +32,9 @@ COMPONENT_LICENSE_FILE= COPYING
 
 TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	($(GSED) -i -e 's|MACH64|$(MACH64)|g' $(SOURCE_DIR)/src/Makefile)
 
 CFLAGS += -Wno-error=implicit-function-declaration
 
