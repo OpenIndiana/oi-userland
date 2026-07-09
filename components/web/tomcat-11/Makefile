@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			apache-tomcat
 COMPONENT_VERSION=		11.0.24
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Tomcat 11 Servlet/JSP Container
 COMPONENT_PROJECT_URL=	https://tomcat.apache.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
@@ -87,7 +88,13 @@ COMPONENT_POST_INSTALL_ACTION += \
 # Override the default test target
 COMPONENT_TEST_TARGETS = test
 
+# set Java_Runtime arch dependent.
+ifeq ($(MACH), i386)
+REQUIRED_PACKAGES += runtime/java/openjdk21
+else
+REQUIRED_PACKAGES += runtime/java/openjdk17
+endif
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk21
 REQUIRED_PACKAGES += shell/ksh93
