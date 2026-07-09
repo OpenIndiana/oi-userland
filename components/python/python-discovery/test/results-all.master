@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 507 items
+collecting ... collected 520 items
 
 tests/py_info/test_py_info.py::test_current_as_json PASSED
 tests/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
@@ -47,8 +47,11 @@ tests/py_info/test_py_info.py::test_py_info_cache_clear PASSED
 tests/py_info/test_py_info.py::test_system_executable_no_exact_match[target0-0-discovered0] PASSED
 tests/py_info/test_py_info.py::test_system_executable_no_exact_match[target1-0-discovered1] PASSED
 tests/py_info/test_py_info.py::test_system_executable_no_exact_match[target2-0-discovered2] PASSED
+tests/py_info/test_py_info.py::test_discover_exe_validates_abi_flag[free_threaded] PASSED
+tests/py_info/test_py_info.py::test_discover_exe_validates_abi_flag[debug_build] PASSED
 tests/py_info/test_py_info.py::test_py_info_ignores_distutils_config PASSED
 tests/py_info/test_py_info.py::test_discover_exe_on_path_non_spec_name_match PASSED
+tests/py_info/test_py_info.py::test_satisfies_debug_spec_requires_debug_build PASSED
 tests/py_info/test_py_info.py::test_discover_exe_on_path_non_spec_name_not_match PASSED
 tests/py_info/test_py_info.py::test_py_info_setuptools PASSED
 tests/py_info/test_py_info.py::test_py_info_to_system_raises SKIPPED
@@ -371,6 +374,13 @@ tests/test_py_spec.py::test_spec_parse_machine[dotted-machine] PASSED
 tests/test_py_spec.py::test_spec_parse_arch_and_machine_together[64bit-arm64] PASSED
 tests/test_py_spec.py::test_spec_parse_arch_and_machine_together[32bit-x86] PASSED
 tests/test_py_spec.py::test_spec_parse_arch_and_machine_together[64bit-no-machine] PASSED
+tests/test_py_spec.py::test_spec_parse_debug[debian-dbg] PASSED
+tests/test_py_spec.py::test_spec_parse_debug[debian-debug] PASSED
+tests/test_py_spec.py::test_spec_parse_debug[abi-flag] PASSED
+tests/test_py_spec.py::test_spec_parse_debug[impl-abi-flag] PASSED
+tests/test_py_spec.py::test_spec_parse_debug[free-threaded-debug] PASSED
+tests/test_py_spec.py::test_spec_parse_debug_unconstrained_without_marker[python3.13] PASSED
+tests/test_py_spec.py::test_spec_parse_debug_unconstrained_without_marker[python] PASSED
 tests/test_py_spec.py::test_spec_satisfies_machine[same-machine] PASSED
 tests/test_py_spec.py::test_spec_satisfies_machine[different-machine] PASSED
 tests/test_py_spec.py::test_spec_satisfies_machine[none-matches-any] PASSED
@@ -410,6 +420,9 @@ tests/test_py_spec_extra.py::test_get_required_precision_none PASSED
 tests/test_py_spec_extra.py::test_get_required_precision_normal PASSED
 tests/test_py_spec_extra.py::test_generate_re_no_threaded PASSED
 tests/test_py_spec_extra.py::test_generate_re_with_threaded PASSED
+tests/test_py_spec_extra.py::test_generate_re_with_debug[python3.12-dbg] PASSED
+tests/test_py_spec_extra.py::test_generate_re_with_debug[python3.12d] PASSED
+tests/test_py_spec_extra.py::test_generate_re_with_debug[python3.12] PASSED
 tests/test_py_spec_extra.py::test_single_digit_version PASSED
 tests/test_py_spec_extra.py::test_specifier_with_invalid_inner PASSED
 tests/test_py_spec_extra.py::test_two_digit_version PASSED
@@ -524,6 +537,6 @@ tests/windows/test_windows_pep514.py::test_pep514_run SKIPPED (path ...)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 492 passed, 15 skipped, 1 warning ========
+======== 505 passed, 15 skipped, 1 warning ========
   py$(PYV): OK
   congratulations :)
