@@ -4,8 +4,22 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 49 items
+collecting ... collected 66 items
 
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[small_mixed-1] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[small_mixed-2] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[mixed-1] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[mixed-2] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[large_mixed-1] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[large_mixed-2] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[single_family-1] SKIPPED
+tests/benchmarks/test_interleave.py::test_interleave_addrinfos[single_family-2] SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_pop_addr_infos_interleave[small_mixed] SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_pop_addr_infos_interleave[mixed] SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_pop_addr_infos_interleave[large_mixed] SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_pop_addr_infos_interleave[single_family] SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_remove_addr_infos_fast_path SKIPPED
+tests/benchmarks/test_reorder_utils.py::test_remove_addr_infos_slow_path SKIPPED
 tests/test_impl.py::test_empty_addr_infos PASSED
 tests/test_impl.py::test_single_addr_info_errors PASSED
 tests/test_impl.py::test_single_addr_success PASSED
@@ -38,6 +52,8 @@ tests/test_impl.py::test_handling_system_exit PASSED
 tests/test_impl.py::test_cancellation_is_not_swallowed PASSED
 tests/test_impl.py::test_single_addr_info_close_errors[connect_side_effect0] PASSED
 tests/test_impl.py::test_single_addr_info_close_errors[connect_side_effect1] PASSED
+tests/test_impl.py::test_interleave_addrinfos PASSED
+tests/test_impl.py::test_interleave_addrinfos_first_address_family_count PASSED
 tests/test_init.py::test_init PASSED
 tests/test_staggered.py::test_one_winners PASSED
 tests/test_staggered.py::test_multiple_winners PASSED
@@ -53,6 +69,7 @@ tests/test_staggered_cpython.py::StaggeredTests::test_one_successful PASSED
 tests/test_staggered_cpython_eager_task_factory.py::EagerTaskFactoryLoopTests::test_staggered_race_with_eager_tasks PASSED
 tests/test_staggered_cpython_eager_task_factory.py::EagerTaskFactoryLoopTests::test_staggered_race_with_eager_tasks_no_delay PASSED
 tests/test_utils.py::test_pop_addr_infos_interleave PASSED
+tests/test_utils.py::test_pop_addr_infos_interleave_with_duplicates PASSED
 tests/test_utils.py::test_remove_addr_infos PASSED
 tests/test_utils.py::test_remove_addr_infos_slow_path PASSED
 tests/test_utils.py::test_addr_to_addr_infos PASSED
@@ -67,4 +84,4 @@ tests/test_staggered_cpython_eager_task_factory.py::EagerTaskFactoryLoopTests::t
     asyncio.set_event_loop_policy(None)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 49 passed, 2 warnings, 4 subtests passed ========
+======== 52 passed, 14 skipped, 2 warnings, 4 subtests passed ========
