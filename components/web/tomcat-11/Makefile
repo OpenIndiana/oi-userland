@@ -28,6 +28,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			apache-tomcat
 COMPONENT_VERSION=		11.0.23
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=		Tomcat 11 Servlet/JSP Container
 COMPONENT_PROJECT_URL=	https://tomcat.apache.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
@@ -89,5 +90,5 @@ COMPONENT_TEST_TARGETS = test
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += SUNWcs
-REQUIRED_PACKAGES += runtime/java/openjdk21
+REQUIRED_PACKAGES += runtime/java/openjdk$(JAVA_VERSION)
 REQUIRED_PACKAGES += shell/ksh93
