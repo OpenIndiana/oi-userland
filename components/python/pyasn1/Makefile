@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyasn1
-HUMAN_VERSION =			0.6.2
+HUMAN_VERSION =			0.6.4
 COMPONENT_SUMMARY =		Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)
 COMPONENT_PROJECT_URL =		https://github.com/pyasn1/pyasn1
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9b59a2b25ba7e4f8197db7686c09fb33e658b98339fadb826e9512629017833b
+	sha256:9c447d8431c947fe4c8febc4ed9e760bc29011a5b01e5c74b67025bd9fb8ce81
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
