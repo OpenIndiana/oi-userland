@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project bracex
+#   $WS_TOOLS/python-integrate-project -d python/bracex-39 bracex
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		bracex
-HUMAN_VERSION =			3.0
+HUMAN_VERSION =			2.6
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Bash style brace expander.
 COMPONENT_PROJECT_URL =		https://github.com/facelessuser/bracex
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b73f718d6bd98d8419e45df02426c86e9967c179949f779340d6c3a8c83b9111
+	sha256:98f1347cd77e22ee8d967a30ad4e310b233f7754dbf31ff3fceb76145ba47dc7
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
-# Python 3.9 is not supported by bracex >= 2.7
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# bracex >= 2.7 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
