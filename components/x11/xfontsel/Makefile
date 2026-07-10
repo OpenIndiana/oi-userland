@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=              xfontsel
-COMPONENT_VERSION=           1.1.1
+COMPONENT_VERSION=           1.1.2
 COMPONENT_SUMMARY=           xfontsel - point and click selection of X11 font names
 COMPONENT_FMRI=              x11/xfontsel
 COMPONENT_ARCHIVE_EXTENSION= .tar.gz
-COMPONENT_ARCHIVE_HASH=      sha256:5a3c037ef28e8d22ccf7ca05894e0fcd86256a48dd56fb6e2838308cef623b7e
+COMPONENT_ARCHIVE_HASH=      sha256:6f0545b5d123d2b2f5447fb08f2aed98805b6f9ca00b42054c1ec8f83ee08398
 COMPONENT_LICENSE_FILE=      COPYING
 
 include $(WS_MAKE_RULES)/common.mk
