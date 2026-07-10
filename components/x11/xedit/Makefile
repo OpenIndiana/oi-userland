@@ -18,12 +18,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=				xedit
-COMPONENT_VERSION=			1.2.4
+COMPONENT_VERSION=			1.2.5
 COMPONENT_SUMMARY=			xedit - simple Xaw toolkit text editor for X
 COMPONENT_ARCHIVE=			$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=		sha256:b00d488b29cd007fadf9a4e44193cbdd72b48c94080be5ebc02565f21f9a2a71
+COMPONENT_ARCHIVE_HASH=		sha256:733460cbf20a9d88e2a482ff1b288f51a97150cff807c7ffb98d2430546c8867
 COMPONENT_FMRI=				editor/xedit
 COMPONENT_CLASSIFICATION=	Development/Editors
+COMPONENT_LICENSE_FILE=		COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
