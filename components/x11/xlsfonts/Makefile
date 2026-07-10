@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=         xlsfonts
-COMPONENT_VERSION=      1.0.8
+COMPONENT_VERSION=      1.0.9
 COMPONENT_SUMMARY=      xlsfonts - server font list displayer for X
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:807f909eace684b866fc63b3e962729c120822a6c96e051ff51cf350b3ffb6cd
+COMPONENT_ARCHIVE_HASH= sha256:a6a2e291801458d92510263b175d16f98024dc3816ebddbde79b5009f6c3b065
 COMPONENT_FMRI=         x11/diagnostic/xlsfonts
 COMPONENT_LICENSE_FILE= COPYING
 
