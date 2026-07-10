@@ -17,15 +17,12 @@ X11_CATEGORY=LIB
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
-# We don't have 32 bit freetype (freetype-2) anymore.
-BUILD_BITS= 64
-
 COMPONENT_NAME= libXfont2
-COMPONENT_VERSION= 2.0.7
+COMPONENT_VERSION= 2.0.8
 COMPONENT_FMRI= x11/library/libxfont2
 COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb
+COMPONENT_ARCHIVE_HASH= sha256:f556c0e1093a4e6911cc90bc4b106d201902ee187fd74af206ff162f7e6a24d5
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
@@ -50,5 +47,6 @@ REQUIRED_PACKAGES += compress/bzip2
 REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/freetype-2
+REQUIRED_PACKAGES += system/library/freetype-2/32
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libfontenc
