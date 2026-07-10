@@ -16,12 +16,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freeciv
-COMPONENT_VERSION=	3.2.4
+COMPONENT_VERSION=	3.2.5
 COMPONENT_SUMMARY=	Free and Open Source empire-building strategy game inspired by the history of human civilization.
 COMPONENT_PROJECT_URL=	https://www.freeciv.org
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:e0a19508bf69dc4fb7c251d391253794d772bfcce2dbd30fa453521244edd32c
+COMPONENT_ARCHIVE_HASH=	sha256:d32808f02a9b9f49ef159bcbf266b16ce2a3ce6ea8f71115d80f952c3cc609e8
 COMPONENT_ARCHIVE_URL=  https://prdownloads.sourceforge.net/freeciv/$(COMPONENT_SRC).tar.xz?download
 COMPONENT_FMRI=		games/freeciv
 COMPONENT_CLASSIFICATION=	Applications/Games
