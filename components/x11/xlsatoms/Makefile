@@ -18,11 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xlsatoms
-COMPONENT_VERSION=  1.1.4
+COMPONENT_VERSION=  1.1.5
 COMPONENT_SUMMARY=  xlsatoms - utility for listing atoms defined on a given X server
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f4bfa15f56c066d326a5d5b292646708f25b9247506840b9047cd2687dcc71b7
+COMPONENT_ARCHIVE_HASH= sha256:9ac9400328fbeffe15c9d94a90dedb90d09dcaa9d51482efabc55b33a736e317
 COMPONENT_FMRI=     x11/diagnostic/xlsatoms
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
