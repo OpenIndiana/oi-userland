@@ -17,13 +17,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           fastfetch
-COMPONENT_VERSION=        2.65.2
+COMPONENT_VERSION=        2.66.0
 COMPONENT_SUMMARY=        An actively maintained, feature-rich and performance oriented, neofetch like system information tool
 COMPONENT_PROJECT_URL=    https://github.com/fastfetch-cli/fastfetch
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=    https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:d0b318c33cf6c8bbae1162325f91624762a040a60f748941cbf1b4b99a75fa30
+COMPONENT_ARCHIVE_HASH=   sha256:547883c2f0dbc85a4545d4533f5b812fbc4c8ffe1271056de18b51994acbf474
 COMPONENT_FMRI=           application/fastfetch
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=        MIT
