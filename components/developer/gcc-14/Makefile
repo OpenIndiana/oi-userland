@@ -17,7 +17,7 @@ BOOTSTRAP_COMPONENT= no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 14.3.0
-COMPONENT_REVISION= 1
+COMPONENT_REVISION= 2
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -84,7 +84,7 @@ CONFIGURE_OPTIONS += enable_frame_pointer=yes
 
 COMPONENT_TEST_ENV += LC_ALL=C.UTF-8
 
-COMPONEMT_TEST_TRANSFORMS= -n \
+COMPONENT_TEST_TRANSFORMS= -n \
 	"-e '/Running/p' " \
 	"-e '/Summary/p' " \
 	"-e '/\# of/p' "
