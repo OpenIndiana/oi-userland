@@ -1,26 +1,26 @@
 We have no httptools packaged yet.
 
---- uvicorn-0.49.0/pyproject.toml.orig
-+++ uvicorn-0.49.0/pyproject.toml
-@@ -40,7 +40,6 @@
+--- uvicorn-0.51.0/pyproject.toml.orig
++++ uvicorn-0.51.0/pyproject.toml
+@@ -39,7 +39,6 @@
+ 
  [project.optional-dependencies]
  standard = [
-     "colorama>=0.4; sys_platform == 'win32'",
 -    "httptools>=0.8.0",
      "python-dotenv>=0.13",
      "PyYAML>=5.1",
      "watchfiles>=0.20",
---- uvicorn-0.49.0/tests/test_server.py.orig
-+++ uvicorn-0.49.0/tests/test_server.py
+--- uvicorn-0.51.0/tests/test_server.py.orig
++++ uvicorn-0.51.0/tests/test_server.py
 @@ -19,7 +19,6 @@
- from uvicorn.config import Config
+ from uvicorn.config import STARTUP_FAILURE, Config
  from uvicorn.protocols.http.flow_control import HIGH_WATER_LIMIT
  from uvicorn.protocols.http.h11_impl import H11Protocol
 -from uvicorn.protocols.http.httptools_impl import HttpToolsProtocol
  from uvicorn.server import Server
  
  pytestmark = pytest.mark.anyio
-@@ -123,7 +122,7 @@
+@@ -138,7 +137,7 @@
  
  
  async def test_request_than_limit_max_requests_warn_log(
@@ -29,7 +29,7 @@ We have no httptools packaged yet.
  ):
      caplog.set_level(logging.INFO, logger="uvicorn.error")
      config = Config(app=app, limit_max_requests=1, port=unused_tcp_port, http=http_protocol_cls)
-@@ -136,7 +135,7 @@
+@@ -151,7 +150,7 @@
  
  
  async def test_limit_max_requests_jitter(
@@ -38,7 +38,7 @@ We have no httptools packaged yet.
  ):
      caplog.set_level(logging.INFO, logger="uvicorn.error")
      config = Config(
-@@ -157,7 +156,7 @@
+@@ -172,7 +171,7 @@
      *,
      app: ASGIApplication,
      port: int,
@@ -47,7 +47,7 @@ We have no httptools packaged yet.
      reset_contextvars: bool = False,
  ):
      config = Config(app=app, port=port, loop="asyncio", http=http_protocol_cls, reset_contextvars=reset_contextvars)
-@@ -189,7 +188,7 @@
+@@ -204,7 +203,7 @@
  
  
  async def test_contextvars_preserved_by_default(
@@ -56,7 +56,7 @@ We have no httptools packaged yet.
  ):
      """By default, context set outside the ASGI task is visible inside it."""
      ctx: contextvars.ContextVar[str] = contextvars.ContextVar("ctx")
-@@ -212,7 +211,7 @@
+@@ -227,7 +226,7 @@
  
  
  async def test_reset_contextvars_asyncio(
