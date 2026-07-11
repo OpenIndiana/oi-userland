@@ -1,4 +1,3 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0] $(@D)/src> python -m unittest discover --verbose
 test_alias_names_still_exist (test_typing_extensions.AllTests.test_alias_names_still_exist) ... ok
 test_all_names_in___all__ (test_typing_extensions.AllTests.test_all_names_in___all__) ... ok
@@ -62,6 +61,7 @@ test_basics (test_typing_extensions.ConcatenateTests.test_basics) ... ok
 test_eq (test_typing_extensions.ConcatenateTests.test_eq) ... ok
 test_invalid_uses (test_typing_extensions.ConcatenateTests.test_invalid_uses) ... ok
 test_is_param_expr (test_typing_extensions.ConcatenateTests.test_is_param_expr) ... ok
+test_isinstance_results_unaffected_by_presence_of_tracing_function (test_typing_extensions.ConcatenateTests.test_isinstance_results_unaffected_by_presence_of_tracing_function) ... ok
 test_substitution (test_typing_extensions.ConcatenateTests.test_substitution) ... ok
 test_typing_compatibility (test_typing_extensions.ConcatenateTests.test_typing_compatibility) ... ok
 test_valid_uses (test_typing_extensions.ConcatenateTests.test_valid_uses) ... ok
@@ -80,6 +80,7 @@ test_do_not_shadow_user_arguments (test_typing_extensions.DeprecatedTests.test_d
 test_dunder_deprecated (test_typing_extensions.DeprecatedTests.test_dunder_deprecated) ... ok
 test_existing_init_subclass (test_typing_extensions.DeprecatedTests.test_existing_init_subclass) ... ok
 test_existing_init_subclass_in_base (test_typing_extensions.DeprecatedTests.test_existing_init_subclass_in_base) ... ok
+test_existing_init_subclass_in_sibling_base (test_typing_extensions.DeprecatedTests.test_existing_init_subclass_in_sibling_base) ... ok
 test_function (test_typing_extensions.DeprecatedTests.test_function) ... ok
 test_init_subclass_has_correct_cls (test_typing_extensions.DeprecatedTests.test_init_subclass_has_correct_cls) ... ok
 test_init_subclass_with_explicit_classmethod (test_typing_extensions.DeprecatedTests.test_init_subclass_with_explicit_classmethod) ... ok
@@ -130,6 +131,7 @@ test_generator_default (test_typing_extensions.GeneratorTests.test_generator_def
 test_no_async_generator_instantiation (test_typing_extensions.GeneratorTests.test_no_async_generator_instantiation) ... ok
 test_no_generator_instantiation (test_typing_extensions.GeneratorTests.test_no_generator_instantiation) ... ok
 test_or_and_ror (test_typing_extensions.GeneratorTests.test_or_and_ror) ... ok
+test_setattr (test_typing_extensions.GeneratorTests.test_setattr) ... ok
 test_subclassing_async_generator (test_typing_extensions.GeneratorTests.test_subclassing_async_generator) ... ok
 test_subclassing_generator (test_typing_extensions.GeneratorTests.test_subclassing_generator) ... ok
 test_subclassing_register (test_typing_extensions.GeneratorTests.test_subclassing_register) ... ok
@@ -146,6 +148,7 @@ test_get_type_hints_classes (test_typing_extensions.GetTypeHintTests.test_get_ty
 test_get_type_hints_modules (test_typing_extensions.GetTypeHintTests.test_get_type_hints_modules) ... ok
 test_respect_no_type_check (test_typing_extensions.GetTypeHintTests.test_respect_no_type_check) ... ok
 test_get_type_hints (test_typing_extensions.GetTypeHintsTests.test_get_type_hints) ... ok
+test_get_type_hints_genericalias (test_typing_extensions.GetTypeHintsTests.test_get_type_hints_genericalias) ... ok
 test_get_type_hints_refs (test_typing_extensions.GetTypeHintsTests.test_get_type_hints_refs) ... ok
 test_get_type_hints_typeddict (test_typing_extensions.GetTypeHintsTests.test_get_type_hints_typeddict) ... ok
 test_orig_bases (test_typing_extensions.GetTypeHintsTests.test_orig_bases) ... ok
@@ -160,6 +163,7 @@ test_cannot_subclass (test_typing_extensions.LiteralStringTests.test_cannot_subc
 test_cannot_subscript (test_typing_extensions.LiteralStringTests.test_cannot_subscript) ... ok
 test_get_origin (test_typing_extensions.LiteralStringTests.test_get_origin) ... ok
 test_no_isinstance (test_typing_extensions.LiteralStringTests.test_no_isinstance) ... ok
+test_or (test_typing_extensions.LiteralStringTests.test_or) ... ok
 test_pickle (test_typing_extensions.LiteralStringTests.test_pickle) ... ok
 test_repr (test_typing_extensions.LiteralStringTests.test_repr) ... ok
 test_typevar (test_typing_extensions.LiteralStringTests.test_typevar) ... ok
@@ -207,6 +211,7 @@ test_get_origin (test_typing_extensions.NeverTests.test_get_origin) ... ok
 test_get_type_hints (test_typing_extensions.NeverTests.test_get_type_hints) ... ok
 test_instance_type_error (test_typing_extensions.NeverTests.test_instance_type_error) ... ok
 test_not_generic (test_typing_extensions.NeverTests.test_not_generic) ... ok
+test_or (test_typing_extensions.NeverTests.test_or) ... ok
 test_pickle (test_typing_extensions.NeverTests.test_pickle) ... ok
 test_repr (test_typing_extensions.NeverTests.test_repr) ... ok
 test_subclass_type_error (test_typing_extensions.NeverTests.test_subclass_type_error) ... ok
@@ -214,6 +219,7 @@ test_basic (test_typing_extensions.NewTypeTests.test_basic) ... ok
 test_error_message_when_subclassing (test_typing_extensions.NewTypeTests.test_error_message_when_subclassing) ... ok
 test_errors (test_typing_extensions.NewTypeTests.test_errors) ... ok
 test_missing__name__ (test_typing_extensions.NewTypeTests.test_missing__name__) ... ok
+test_module_with_incomplete_sys (test_typing_extensions.NewTypeTests.test_module_with_incomplete_sys) ... ok
 test_or (test_typing_extensions.NewTypeTests.test_or) ... ok
 test_pickle (test_typing_extensions.NewTypeTests.test_pickle) ... ok
 test_repr (test_typing_extensions.NewTypeTests.test_repr) ... ok
@@ -224,6 +230,13 @@ test_immutable (test_typing_extensions.NoDefaultTests.test_immutable) ... ok
 test_no_call (test_typing_extensions.NoDefaultTests.test_no_call) ... ok
 test_pickling (test_typing_extensions.NoDefaultTests.test_pickling) ... ok
 test_repr (test_typing_extensions.NoDefaultTests.test_repr) ... ok
+test_constructor (test_typing_extensions.NoExtraItemsTests.test_constructor) ... ok
+test_doc (test_typing_extensions.NoExtraItemsTests.test_doc) ... ok
+test_immutable (test_typing_extensions.NoExtraItemsTests.test_immutable) ... ok
+test_no_call (test_typing_extensions.NoExtraItemsTests.test_no_call) ... ok
+test_pickling (test_typing_extensions.NoExtraItemsTests.test_pickling) ... ok
+test_repr (test_typing_extensions.NoExtraItemsTests.test_repr) ... ok
+test_repr_py315 (test_typing_extensions.NoExtraItemsTests.test_repr_py315) ... skipped 'repr changed in 3.15'
 test_cannot_instantiate (test_typing_extensions.NoReturnTests.test_cannot_instantiate) ... ok
 test_cannot_subclass (test_typing_extensions.NoReturnTests.test_cannot_subclass) ... ok
 test_equality (test_typing_extensions.NoReturnTests.test_equality) ... ok
@@ -232,6 +245,7 @@ test_get_type_hints (test_typing_extensions.NoReturnTests.test_get_type_hints) .
 test_instance_type_error (test_typing_extensions.NoReturnTests.test_instance_type_error) ... ok
 test_not_equality (test_typing_extensions.NoReturnTests.test_not_equality) ... ok
 test_not_generic (test_typing_extensions.NoReturnTests.test_not_generic) ... ok
+test_or (test_typing_extensions.NoReturnTests.test_or) ... ok
 test_pickle (test_typing_extensions.NoReturnTests.test_pickle) ... ok
 test_repr (test_typing_extensions.NoReturnTests.test_repr) ... ok
 test_subclass_type_error (test_typing_extensions.NoReturnTests.test_subclass_type_error) ... ok
@@ -259,6 +273,7 @@ test_pickle (test_typing_extensions.ParamSpecTests.test_pickle) ... ok
 test_repr (test_typing_extensions.ParamSpecTests.test_repr) ... ok
 test_single_argument_generic (test_typing_extensions.ParamSpecTests.test_single_argument_generic) ... ok
 test_single_argument_generic_with_parameter_expressions (test_typing_extensions.ParamSpecTests.test_single_argument_generic_with_parameter_expressions) ... ok
+test_subclass (test_typing_extensions.ParamSpecTests.test_subclass) ... ok
 test_substitution_with_typing_variants (test_typing_extensions.ParamSpecTests.test_substitution_with_typing_variants) ... ok
 test_user_generics (test_typing_extensions.ParamSpecTests.test_user_generics) ... ok
 test_valid_uses (test_typing_extensions.ParamSpecTests.test_valid_uses) ... ok
@@ -353,6 +368,7 @@ test_cannot_init (test_typing_extensions.SelfTests.test_cannot_init) ... ok
 test_cannot_subclass (test_typing_extensions.SelfTests.test_cannot_subclass) ... ok
 test_cannot_subscript (test_typing_extensions.SelfTests.test_cannot_subscript) ... ok
 test_no_isinstance (test_typing_extensions.SelfTests.test_no_isinstance) ... ok
+test_or (test_typing_extensions.SelfTests.test_or) ... ok
 test_pickle (test_typing_extensions.SelfTests.test_pickle) ... ok
 test_repr (test_typing_extensions.SelfTests.test_repr) ... ok
 test_reader_runtime_checkable (test_typing_extensions.SpecificProtocolTests.test_reader_runtime_checkable) ... ok
@@ -381,10 +397,15 @@ test_pep_695_generic_method_with_future_annotations (test_typing_extensions.Test
 test_pep_695_generic_method_with_future_annotations_name_clash_with_global_and_local_vars (test_typing_extensions.TestGetAnnotationsWithPEP695.test_pep_695_generic_method_with_future_annotations_name_clash_with_global_and_local_vars) ... ok
 test_pep_695_generic_method_with_future_annotations_name_clash_with_global_vars (test_typing_extensions.TestGetAnnotationsWithPEP695.test_pep_695_generic_method_with_future_annotations_name_clash_with_global_vars) ... ok
 test_pep_695_generics_with_future_annotations_nested_in_function (test_typing_extensions.TestGetAnnotationsWithPEP695.test_pep_695_generics_with_future_annotations_nested_in_function) ... ok
-test_sentinel_explicit_repr (test_typing_extensions.TestSentinels.test_sentinel_explicit_repr) ... ok
+test_sentinel_copy_identity (test_typing_extensions.TestSentinels.test_sentinel_copy_identity) ... ok
+test_sentinel_deprecated (test_typing_extensions.TestSentinels.test_sentinel_deprecated) ... ok
+test_sentinel_deprecated_argument_repr (test_typing_extensions.TestSentinels.test_sentinel_deprecated_argument_repr) ... ok
+test_sentinel_keyword_repr (test_typing_extensions.TestSentinels.test_sentinel_keyword_repr) ... ok
 test_sentinel_no_repr (test_typing_extensions.TestSentinels.test_sentinel_no_repr) ... ok
 test_sentinel_not_callable (test_typing_extensions.TestSentinels.test_sentinel_not_callable) ... ok
-test_sentinel_not_picklable (test_typing_extensions.TestSentinels.test_sentinel_not_picklable) ... ok
+test_sentinel_picklable_anonymous (test_typing_extensions.TestSentinels.test_sentinel_picklable_anonymous) ... ok
+test_sentinel_picklable_qualified (test_typing_extensions.TestSentinels.test_sentinel_picklable_qualified) ... ok
+test_sentinel_removed_deprecated_apis (test_typing_extensions.TestSentinels.test_sentinel_removed_deprecated_apis) ... skipped 'Deprecated sentinel APIs are available before 3.15'
 test_sentinel_type_expression_union (test_typing_extensions.TestSentinels.test_sentinel_type_expression_union) ... ok
 test_builtin_types (test_typing_extensions.TestTypeRepr.test_builtin_types) ... ok
 test_custom_types (test_typing_extensions.TestTypeRepr.test_custom_types) ... ok
@@ -479,7 +500,9 @@ test_cannot_subclass_vars (test_typing_extensions.TypeVarTupleTests.test_cannot_
 test_no_redefinition (test_typing_extensions.TypeVarTupleTests.test_no_redefinition) ... ok
 test_pickle (test_typing_extensions.TypeVarTupleTests.test_pickle) ... ok
 test_repr (test_typing_extensions.TypeVarTupleTests.test_repr) ... ok
+test_repr_py315 (test_typing_extensions.TypeVarTupleTests.test_repr_py315) ... skipped 'TypeVarTuples have a bad repr on this version'
 test_tuple (test_typing_extensions.TypeVarTupleTests.test_tuple) ... ok
+test_variance (test_typing_extensions.TypeVarTupleTests.test_variance) ... ok
 test_allowed_as_type_argument (test_typing_extensions.TypedDictTests.test_allowed_as_type_argument) ... ok
 test_annotations (test_typing_extensions.TypedDictTests.test_annotations) ... ok
 test_backwards_compatibility (test_typing_extensions.TypedDictTests.test_backwards_compatibility) ... skipped 'The keyword argument alternative to define a TypedDict type using the functional syntax is no longer supported'
@@ -514,12 +537,15 @@ test_inline_too_many_arguments (test_typing_extensions.TypedDictTests.test_inlin
 test_is_typeddict (test_typing_extensions.TypedDictTests.test_is_typeddict) ... ok
 test_is_typeddict_against_typeddict_from_typing (test_typing_extensions.TypedDictTests.test_is_typeddict_against_typeddict_from_typing) ... ok
 test_keys_inheritance (test_typing_extensions.TypedDictTests.test_keys_inheritance) ... ok
+test_keys_inheritance_with_same_name (test_typing_extensions.TypedDictTests.test_keys_inheritance_with_same_name) ... ok
 test_keywords_syntax_raises_on_3_13 (test_typing_extensions.TypedDictTests.test_keywords_syntax_raises_on_3_13) ... ok
 test_make_mutable_key_readonly (test_typing_extensions.TypedDictTests.test_make_mutable_key_readonly) ... ok
 test_multiple_inheritance (test_typing_extensions.TypedDictTests.test_multiple_inheritance) ... ok
+test_multiple_inheritance_with_same_key (test_typing_extensions.TypedDictTests.test_multiple_inheritance_with_same_key) ... ok
 test_non_generic_subscript (test_typing_extensions.TypedDictTests.test_non_generic_subscript) ... ok
 test_optional (test_typing_extensions.TypedDictTests.test_optional) ... ok
 test_optional_keys (test_typing_extensions.TypedDictTests.test_optional_keys) ... ok
+test_or (test_typing_extensions.TypedDictTests.test_or) ... ok
 test_orig_bases (test_typing_extensions.TypedDictTests.test_orig_bases) ... ok
 test_pep695_generic_typeddict (test_typing_extensions.TypedDictTests.test_pep695_generic_typeddict) ... ok
 test_pickle (test_typing_extensions.TypedDictTests.test_pickle) ... ok
@@ -541,16 +567,20 @@ test_cannot_subclass_vars (test_typing_extensions.UnpackTests.test_cannot_subcla
 test_class (test_typing_extensions.UnpackTests.test_class) ... ok
 test_concatenation (test_typing_extensions.UnpackTests.test_concatenation) ... ok
 test_equivalent_nested_variadics (test_typing_extensions.UnpackTests.test_equivalent_nested_variadics) ... ok
+test_isinstance_results_unaffected_by_presence_of_tracing_function (test_typing_extensions.UnpackTests.test_isinstance_results_unaffected_by_presence_of_tracing_function) ... ok
 test_nested_unpack (test_typing_extensions.UnpackTests.test_nested_unpack) ... ok
 test_repr (test_typing_extensions.UnpackTests.test_repr) ... ok
+test_repr_py315 (test_typing_extensions.UnpackTests.test_repr_py315) ... skipped 'TypeVarTuples have a bad repr on this version'
 test_substitution (test_typing_extensions.UnpackTests.test_substitution) ... ok
 test_tuple (test_typing_extensions.UnpackTests.test_tuple) ... ok
 test_type_var_inheritance (test_typing_extensions.UnpackTests.test_type_var_inheritance) ... ok
 test_union (test_typing_extensions.UnpackTests.test_union) ... ok
+Doc (typing_extensions)
+Doctest: typing_extensions.Doc ... ok
 
 ----------------------------------------------------------------------
-Ran 547 tests
+Ran 577 tests
 
-OK (skipped=13)
+OK (skipped=17)
   py$(PYV): OK
   congratulations :)
