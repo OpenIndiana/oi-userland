@@ -20,17 +20,15 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		typing_extensions
-HUMAN_VERSION =			4.15.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			4.16.0
 COMPONENT_SUMMARY =		Backported and Experimental Type Hints for Python 3.9+
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466
+	sha256:dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5
 COMPONENT_LICENSE =		PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 # This component is required by following bootstrapped components so it must be
 # bootstrapped too.
-# - exceptiongroup (test bootstrap)
 # - setuptools-scm
 # - virtualenv (test bootstrap)
 PYTHON_BOOTSTRAP = yes
