@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Inter
-HUMAN_VERSION =			1.12
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.13
 COMPONENT_SUMMARY =		framework for more readable interactive test scripts
 COMPONENT_CPAN_AUTHOR =		SBECK
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f2b1987ecef9f6c9223e8fba2e8e48854333896650aabea81bdc30e0c9656b63
+	sha256:f51f0a8ba140d8722851416206677f2f3e87c207abc8c1193e691e2eeb2eb0ea
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
