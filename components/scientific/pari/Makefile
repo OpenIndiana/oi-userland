@@ -24,15 +24,16 @@
 # The manifest files hold no license and copyright info per explicit request from Bill Allombert from the PARI team.
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari
-COMPONENT_VERSION=	2.17.3
+COMPONENT_VERSION=	2.17.4
 COMPONENT_SUMMARY=	PARI/GP is a computer algebra system with the main aim of facilitating number theory computations
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:8d9c4fcd584c468d27e0f23c36836587284452094c4b1c404c20c4b810462dcb
+COMPONENT_ARCHIVE_HASH=	sha256:02651d99c391007d384b3fadbc20abc6916b77036f9e496c99e9ce8688ca4b53
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/math/pari
 COMPONENT_CLASSIFICATION=	Development/Other Languages
