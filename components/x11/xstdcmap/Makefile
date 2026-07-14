@@ -18,10 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xstdcmap
-COMPONENT_VERSION=        1.0.5
+COMPONENT_VERSION=        1.0.6
 COMPONENT_SUMMARY=        xstdcmap - X11 standard colormap utility
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:365847e379398499ec9ad9a299cc47a0d6e7feba9546dfd4e5b422204b5ac180
+COMPONENT_ARCHIVE_HASH=   sha256:062a15722769799524eee542fc82ae778f5ac180b618295d913f34962b134ffe
+COMPONENT_LICENSE_FILE=   COPYING
 COMPONENT_FMRI=           x11/xstdcmap
 
 include $(WS_MAKE_RULES)/common.mk
