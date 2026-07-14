@@ -18,10 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xvinfo
-COMPONENT_VERSION=        1.1.5
+COMPONENT_VERSION=        1.1.6
 COMPONENT_SUMMARY=        xvinfo - print out X-Video extension adaptor information
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:3ede71ecb26d9614ccbc6916720285e95a2c7e0c5e19b8570eaaf72ad7c5c404
+COMPONENT_ARCHIVE_HASH=   sha256:a436945e6a4ab70590358eec2b85d26970f7de480d27e8a25af8fe8421e88ae2
+COMPONENT_LICENSE_FILE=   COPYING
 COMPONENT_FMRI=           x11/diagnostic/xvinfo
 
 include $(WS_MAKE_RULES)/common.mk
