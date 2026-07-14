@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xrdb
-COMPONENT_VERSION=        1.2.2
+COMPONENT_VERSION=        1.2.3
 COMPONENT_SUMMARY=        xrdb - X server resource database utility
 COMPONENT_ARCHIVE=        $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:31f5fcab231b38f255b00b066cf7ea3b496df712c9eb2d0d50c670b63e5033f4
+COMPONENT_ARCHIVE_HASH=   sha256:c88f560243278c896ce4fc92ae5a45a2b505a316ffa427fe55b02e5d5914c4e4
 COMPONENT_FMRI=           x11/xrdb
 COMPONENT_LICENSE_FILE=   COPYING
 
