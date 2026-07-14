@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwd
-COMPONENT_VERSION=        1.0.9
+COMPONENT_VERSION=        1.0.10
 COMPONENT_SUMMARY=        xwd - utility for dumping an image of an X window
 COMPONENT_FMRI=           x11/xwd
 COMPONENT_ARCHIVE=        $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:dc121b84947eb4a3d1131bff1e9844cfa2124d95b47b35f9932340fa931fbd3f
+COMPONENT_ARCHIVE_HASH=   sha256:4909eacc26c4cd5a9afcd1468aec26e7c646544639031bdad4f71173aa82f3c3
 COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
