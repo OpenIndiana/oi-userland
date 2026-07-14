@@ -3,18 +3,20 @@ From: Alex Wilson <alex.wilson@joyent.com>
 Date: Mon, 24 Aug 2015 18:57:27 -0700
 Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
 
---- openssh-10.3p1/pathnames.h.orig
-+++ openssh-10.3p1/pathnames.h
-@@ -40,6 +40,7 @@
- #define _PATH_HOST_RSA_KEY_FILE		SSHDIR "/ssh_host_rsa_key"
+diff -wpruN --no-dereference '--exclude=*.orig' a~/pathnames.h a/pathnames.h
+--- a~/pathnames.h	1970-01-01 00:00:00
++++ a/pathnames.h	1970-01-01 00:00:00
+@@ -41,6 +41,7 @@
  #define _PATH_HOST_ED25519_KEY_FILE	SSHDIR "/ssh_host_ed25519_key"
+ #define _PATH_HOST_MLDSA44_ED25519_KEY_FILE SSHDIR "/ssh_host_mldsa44_ed25519_key"
  #define _PATH_DH_MODULI			SSHDIR "/moduli"
 +#define _PATH_DEFAULT_LOGIN		ETCDIR "/default/login"
  
  #ifndef _PATH_SSH_PROGRAM
  #define _PATH_SSH_PROGRAM		"/usr/bin/ssh"
---- openssh-10.3p1/servconf.c.orig
-+++ openssh-10.3p1/servconf.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
 @@ -37,6 +37,7 @@
  #include <unistd.h>
  #include <limits.h>
@@ -23,7 +25,7 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  #include <errno.h>
  #include <util.h>
  
-@@ -234,6 +235,64 @@
+@@ -211,6 +212,64 @@ option_clear_or_none(const char *o)
  	return o == NULL || strcasecmp(o, "none") == 0;
  }
  
@@ -88,18 +90,19 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  static void
  assemble_algorithms(ServerOptions *o)
  {
-@@ -321,6 +380,8 @@
- 		options->pam_service_name = xstrdup(SSHD_PAM_SERVICE);
+@@ -1238,6 +1297,8 @@ process_server_config_line_depth(ServerO
+ 		break;
  #endif
  
 +	deflt_fill_default_server_options(options);
 +
  	/* Standard Options */
- 	if (options->num_host_key_files == 0) {
- 		/* fill default hostkeys for protocols */
---- openssh-10.3p1/sshd_config.5.orig
-+++ openssh-10.3p1/sshd_config.5
-@@ -1369,7 +1369,14 @@
+ 	case sBadOption:
+ 		goto out;
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd_config.5 a/sshd_config.5
+--- a~/sshd_config.5	1970-01-01 00:00:00
++++ a/sshd_config.5	1970-01-01 00:00:00
+@@ -1377,7 +1377,14 @@ Specifies the maximum number of authenti
  connection.
  Once the number of failures reaches half this value,
  additional failures are logged.
@@ -115,7 +118,7 @@ Subject: [PATCH 27/34] Set default sshd options based on /etc/default/login
  .It Cm MaxSessions
  Specifies the maximum number of open shell, login or subsystem (e.g. sftp)
  sessions permitted per network connection.
-@@ -1444,7 +1451,14 @@
+@@ -1452,7 +1459,14 @@ The default is
  When password authentication is allowed, it specifies whether the
  server allows login to accounts with empty password strings.
  The default is

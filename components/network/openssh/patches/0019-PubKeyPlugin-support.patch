@@ -7,8 +7,9 @@ This adds the PubKeyPlugin directive and associated code from
 SunSSH, allowing an in-process shared library to be called
 into to check public keys for authentication.
 
---- openssh-10.3p1/auth2-pubkey.c.orig
-+++ openssh-10.3p1/auth2-pubkey.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey.c
+--- a~/auth2-pubkey.c	1970-01-01 00:00:00
++++ a/auth2-pubkey.c	1970-01-01 00:00:00
 @@ -23,6 +23,11 @@
   * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
@@ -35,7 +36,7 @@ into to check public keys for authentication.
  #include "kex.h"
  #include "sshbuf.h"
  #include "log.h"
-@@ -84,6 +91,15 @@
+@@ -84,6 +91,15 @@ format_key(const struct sshkey *key)
  	return ret;
  }
  
@@ -51,7 +52,7 @@ into to check public keys for authentication.
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -783,6 +799,135 @@
+@@ -783,6 +799,135 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -187,7 +188,7 @@ into to check public keys for authentication.
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -857,6 +1002,10 @@
+@@ -857,6 +1002,10 @@ user_key_allowed(struct ssh *ssh, struct
  	sshauthopt_free(opts);
  	opts = NULL;
  
@@ -198,33 +199,10 @@ into to check public keys for authentication.
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
  	    remote_host, conn_id, rdomain, &opts)) != 0)
  		goto out;
---- openssh-10.3p1/servconf.c.orig
-+++ openssh-10.3p1/servconf.c
-@@ -224,6 +224,7 @@
- 	options->sshd_session_path = NULL;
- 	options->sshd_auth_path = NULL;
- 	options->refuse_connection = -1;
-+	options->pubkey_plugin = NULL;
- }
- 
- /* Returns 1 if a string option is unset or set to "none" or 0 otherwise. */
-@@ -596,6 +597,7 @@
- 	sRevokedKeys, sTrustedUserCAKeys, sAuthorizedPrincipalsFile,
- 	sAuthorizedPrincipalsCommand, sAuthorizedPrincipalsCommandUser,
- 	sKexAlgorithms, sCASignatureAlgorithms, sIPQoS, sVersionAddendum,
-+	sPubKeyPlugin,
- 	sAuthorizedKeysCommand, sAuthorizedKeysCommandUser,
- 	sAuthenticationMethods, sHostKeyAgent, sPermitUserRC,
- 	sStreamLocalBindMask, sStreamLocalBindUnlink,
-@@ -781,6 +783,7 @@
- 	{ "exposeauthinfo", sExposeAuthInfo, SSHCFG_ALL },
- 	{ "rdomain", sRDomain, SSHCFG_ALL },
- 	{ "casignaturealgorithms", sCASignatureAlgorithms, SSHCFG_ALL },
-+	{ "pubkeyplugin", sPubKeyPlugin, SSHCFG_ALL },
- 	{ "securitykeyprovider", sSecurityKeyProvider, SSHCFG_GLOBAL },
- 	{ "requiredrsasize", sRequiredRSASize, SSHCFG_ALL },
- 	{ "channeltimeout", sChannelTimeout, SSHCFG_ALL },
-@@ -2838,6 +2841,18 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -2608,6 +2608,20 @@ process_server_config_line_depth(ServerO
  		multistate_ptr = multistate_flag;
  		goto parse_multistate;
  
@@ -233,23 +211,36 @@ into to check public keys for authentication.
 +		 * Can't use parse_filename, as we need to support plain
 +		 * names which dlopen will find on our lib path.
 +		 */
-+		arg = strdelim(&str);
++		charptr = &options->pubkey_plugin;
++		arg = argv_next(&ac, &av);
 +		if (!arg || *arg == '\0')
 +			fatal("%s line %d: missing file name.",
 +			    filename, linenum);
-+		options->pubkey_plugin = xstrdup(arg);
++		if (*activep && *charptr == NULL)
++			*charptr = xstrdup(arg);
 +		break;
 +
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
---- openssh-10.3p1/servconf.h.orig
-+++ openssh-10.3p1/servconf.h
-@@ -246,6 +246,7 @@
+@@ -4365,6 +4379,7 @@ dump_config(ServerOptions *o)
+ 	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
+ 	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
+ 	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);
++	dump_cfg_string(sPubKeyPlugin, o->pubkey_plugin);
+ 	dump_cfg_string(sHostbasedAcceptedAlgorithms, o->hostbased_accepted_algos);
+ 	dump_cfg_string(sHostKeyAlgorithms, o->hostkeyalgorithms);
+ 	dump_cfg_string(sPubkeyAcceptedAlgorithms, o->pubkey_accepted_algos);
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
+--- a~/servconf.h	1970-01-01 00:00:00
++++ a/servconf.h	1970-01-01 00:00:00
+@@ -235,7 +235,8 @@ SSHCONF_STRARRAY(channel_timeouts, num_c
+ SSHCONF_INT(unused_connection_timeout, UnusedConnectionTimeout, SSHCFG_ALL, NULL, 0, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRING(sshd_session_path, SshdSessionPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+ SSHCONF_STRING(sshd_auth_path, SshdAuthPath, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+-SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH)
++SSHCONF_INTFLAG(refuse_connection, RefuseConnection, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_STRING(pubkey_plugin, PubKeyPlugin, SSHCFG_ALL, SSHCFG_COPY_MATCH)
  
- 	int	fingerprint_hash;
- 	int	expose_userauth_info;
-+	char	*pubkey_plugin;
- 	uint64_t timing_secret;
- 	char   *sk_provider;
- 	int	required_rsa_size;	/* minimum size of RSA keys */
+ #define SSHD_CONFIG_ENTRIES_LEGACY \
+ SSHCONF_DEPRECATE(ServerKeyBits, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \

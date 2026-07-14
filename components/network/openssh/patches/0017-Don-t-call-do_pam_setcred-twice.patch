@@ -23,11 +23,12 @@ Subject: [PATCH 17/34] Don't call do_pam_setcred twice
 # performs access control based on group membership.
 #
 # In short, this additional call to do_pam_setcred() is Linux-specific and
-# shouldn't be called on Solaris.
+# shouldn't be called on illumos.
 #
---- openssh-10.3p1/platform.c.orig
-+++ openssh-10.3p1/platform.c
-@@ -101,7 +101,7 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/platform.c a/platform.c
+--- a~/platform.c	1970-01-01 00:00:00
++++ a/platform.c	1970-01-01 00:00:00
+@@ -101,7 +101,7 @@ platform_setusercontext(struct passwd *p
  void
  platform_setusercontext_post_groups(struct passwd *pw)
  {
