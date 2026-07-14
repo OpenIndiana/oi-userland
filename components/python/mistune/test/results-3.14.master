@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1111 items
+collecting ... collected 1137 items
 
 tests/test_cli.py::TestCliMessage::test_command_line_001 PASSED
 tests/test_cli.py::TestCliMessage::test_command_line_002 PASSED
@@ -758,6 +758,8 @@ tests/test_misc.py::TestMiscCases::test_inline_plugin_with_untracked_trigger_use
 tests/test_misc.py::TestMiscCases::test_link_bracket_cache_cases PASSED
 tests/test_misc.py::TestMiscCases::test_list_tab_continuation_columns PASSED
 tests/test_misc.py::TestMiscCases::test_markdown_func PASSED
+tests/test_misc.py::TestMiscCases::test_max_emphasis_depth_setting PASSED
+tests/test_misc.py::TestMiscCases::test_max_image_depth_setting PASSED
 tests/test_misc.py::TestMiscCases::test_max_nested_level_setting PASSED
 tests/test_misc.py::TestMiscCases::test_none PASSED
 tests/test_misc.py::TestMiscCases::test_project_script_entrypoint PASSED
@@ -1053,6 +1055,7 @@ tests/test_renderers.py::TestRendererRst::test_list_003 PASSED
 tests/test_renderers.py::TestRendererRst::test_list_004 PASSED
 tests/test_renderers.py::TestRendererRst::test_list_005 PASSED
 tests/test_renderers.py::TestRendererRst::test_list_006 PASSED
+tests/test_renderers.py::TestRendererRst::test_list_007 PASSED
 tests/test_renderers.py::TestRendererRst::test_quote_001 PASSED
 tests/test_renderers.py::TestRendererRst::test_quote_002 PASSED
 tests/test_renderers.py::TestRendererRst::test_quote_003 PASSED
@@ -1079,11 +1082,16 @@ tests/test_renderers.py::TestRendererMarkdown::test_list_006 PASSED
 tests/test_renderers.py::TestRendererMarkdown::test_quote_001 PASSED
 tests/test_renderers.py::TestRendererMarkdown::test_quote_002 PASSED
 tests/test_renderers.py::TestRendererMarkdown::test_thematic_break_001 PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_block_quote_content_ending_in_gt PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_codespan_containing_backticks PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_backtick PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_block_markers PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_emphasis_markers PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_marker_inside_list_item PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_marker_on_continuation_line PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_link_title_containing_quote PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_prose_not_over_escaped PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_real_emphasis_not_over_escaped PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_real_markers_preserved PASSED
 tests/test_renderers.py::TestRendererMethodRegistration::test_registered_renderer_method PASSED
 tests/test_renderers.py::TestMarkdownRendererPlugins::test_standalone_list_item PASSED
@@ -1093,30 +1101,49 @@ tests/test_renderers.py::TestMarkdownRendererPlugins::test_task_list_item_defaul
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_formatting_pairs_render_as_adjacent_spans PASSED
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_formatting_pairs_return_quickly 
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_formatting_pairs_return_quickly PASSED
+tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_unclosed_formatting_markers_are_near_linear 
+tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_unclosed_formatting_markers_are_near_linear PASSED
 tests/test_security_image.py::TestImageDirectiveSecurity::test_figure_directive_escapes_class_and_rejects_figwidth_css_injection PASSED
 tests/test_security_image.py::TestImageDirectiveSecurity::test_image_directive_rejects_css_dimension_injection PASSED
 tests/test_security_include.py::TestIncludeSecurity::test_include_html_escapes_with_html_escape_enabled PASSED
 tests/test_security_include.py::TestIncludeSecurity::test_include_rejects_circular_references PASSED
 tests/test_security_include.py::TestIncludeSecurity::test_include_rejects_traversal_and_absolute_paths PASSED
 tests/test_security_include.py::TestIncludeSecurity::test_include_text_escapes_with_html_escape_enabled PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_adjacent_ruby_tokens_do_not_recurse_forever PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_deep_emphasis_input_does_not_recurse_forever PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_deep_image_input_does_not_recurse_forever PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_deep_link_input_does_not_recurse_forever PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_failed_outer_bracket_preserves_nested_link PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_failed_reference_after_nested_brackets_returns_quickly PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_failed_reference_does_not_hide_following_inline_link PASSED
 tests/test_security_inline.py::TestInlineParserSecurity::test_link_title_redos_payload_returns_quickly PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_link_with_deep_image_input_does_not_recurse_forever PASSED
 tests/test_security_inline.py::TestInlineParserSecurity::test_nested_bracket_link_input_does_not_recurse_forever PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_repeated_link_suffixes_are_near_linear PASSED
+tests/test_security_inline.py::TestInlineParserSecurity::test_repeated_unclosed_inline_spoilers_are_near_linear PASSED
 tests/test_security_inline.py::TestInlineParserSecurity::test_unmatched_bracket_input_returns_quickly PASSED
 tests/test_security_math.py::TestMathSecurity::test_math_plugin_escapes_math_content PASSED
+tests/test_security_math.py::TestMathSecurity::test_repeated_inline_math_openers_are_near_linear PASSED
 tests/test_security_ref_links.py::TestRefLinkSecurity::test_many_reference_links_return_quickly PASSED
 tests/test_security_toc.py::TestTocSecurity::test_custom_heading_id_is_escaped PASSED
 tests/test_security_toc.py::TestTocSecurity::test_default_toc_id_avoids_existing_html_id_collision PASSED
 tests/test_security_toc.py::TestTocSecurity::test_toc_href_is_escaped PASSED
+tests/test_security_urls.py::TestSafeUrlSecurity::test_known_harmful_url_schemes_are_blocked PASSED
 tests/test_security_urls.py::TestSafeUrlSecurity::test_percent_encoded_harmful_url_scheme_is_blocked PASSED
+tests/test_security_urls.py::TestSafeUrlSecurity::test_reference_and_autolink_harmful_url_schemes_are_blocked PASSED
 tests/test_security_urls.py::TestSafeUrlSecurity::test_safe_percent_encoded_data_image_is_allowed PASSED
+tests/test_security_urls.py::TestSafeUrlSecurity::test_safe_url_schemes_are_allowed PASSED
+tests/test_security_urls.py::TestSafeUrlSecurity::test_unknown_url_scheme_is_blocked PASSED
 tests/test_syntax.py::TestSyntax::test_emphasis_001 PASSED
 tests/test_syntax.py::TestSyntax::test_emphasis_002 PASSED
 tests/test_syntax.py::TestSyntax::test_emphasis_003 PASSED
 tests/test_syntax.py::TestSyntax::test_emphasis_004 PASSED
+tests/test_syntax.py::TestSyntax::test_emphasis_005 PASSED
+tests/test_syntax.py::TestSyntax::test_emphasis_006 PASSED
 tests/test_syntax.py::TestSyntax::test_links_001 PASSED
 tests/test_syntax.py::TestSyntax::test_links_002 PASSED
 tests/test_syntax.py::TestSyntax::test_links_003 PASSED
 tests/test_syntax.py::TestSyntax::test_max_depth_001 PASSED
 tests/test_syntax.py::TestSyntax::test_max_depth_002 PASSED
 
-======== 1111 passed, 3 subtests passed ========
+======== 1137 passed, 6 subtests passed ========
