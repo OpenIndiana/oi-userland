@@ -20,12 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lazy
-HUMAN_VERSION =			1.6
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.0
 COMPONENT_SUMMARY =		Lazy attributes for Python objects
 COMPONENT_PROJECT_URL =		https://github.com/stefanholek/lazy
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7127324ec709e8324f08cb4611c1abe01776bda53bb9ce68dc5dfa46ca0ed3e9
+	sha256:f92ec0d32dd6bd115ddec4e3323473ebc0b682ad58c6aca78ebfd9e6d1aa5777
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,4 +37,3 @@ TOX_POSARGS += -v
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/wheel
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/virtualenv
