@@ -1,7 +1,9 @@
+py$(PYV): commands[0]> python -m pytest tests
 ============================= test session starts ==============================
-platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
-cachedir: .pytest_cache
+platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
+cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
+configfile: pyproject.toml
 collecting ... collected 6 items
 
 tests/test_string.py::test_string_with_ascii_bytes PASSED
@@ -11,10 +13,6 @@ tests/test_string.py::test_string_with_utf8_str PASSED
 tests/test_testscript.py::test_testscript PASSED
 tests/test_testscript.py::test_bad_symlink PASSED
 
-=============================== warnings summary ===============================
-scripttest.py:58
-  $(@D)/scripttest.py:58: PytestCollectionWarning: cannot collect test class 'TestFileEnvironment' because it has a __init__ constructor (from: tests/test_testscript.py)
-    class TestFileEnvironment:
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 6 passed, 1 warning ========
+======== 6 passed ========
+  py$(PYV): OK
+  congratulations :)

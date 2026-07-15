@@ -19,19 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		scripttest
-HUMAN_VERSION =			2.0.post1
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			3.0
 COMPONENT_SUMMARY =		Helper to test command-line scripts
-COMPONENT_PROJECT_URL =		https://scripttest.readthedocs.io/en/stable/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a6067f1feadf4b2ed3e594b0b32e41589640e7fa3974765aa63d508520c0bfdc
+	sha256:d40e8859d71b1d4918e1d918c667bce05928286f2cbd09cfb7a6cc1f3f308ad0
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	docs/license.rst
-
-TEST_STYLE = pytest
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
