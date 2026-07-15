@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBI
-HUMAN_VERSION =			1.650
+HUMAN_VERSION =			1.651
 COMPONENT_SUMMARY =		Database independent interface for Perl
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.650.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.651.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a807b817c1cfb0fe6ecccff1d9ddeb293c317d518f5ab2007dfb9d3bccdbcf83
+	sha256:da621a23fa68e1e04fac824cfd3d41e8ffbab2ab3eba642a12499242e8be5253
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
