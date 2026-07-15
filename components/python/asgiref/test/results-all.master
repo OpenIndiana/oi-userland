@@ -6,7 +6,7 @@ rootdir: $(@D)
 configfile: setup.cfg
 testpaths: tests
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
-collecting ... collected 93 items
+collecting ... collected 99 items
 
 tests/test_compatibility.py::test_is_double_callable PASSED
 tests/test_compatibility.py::test_double_to_single_signature PASSED
@@ -25,11 +25,14 @@ tests/test_local.py::test_local_critical_no_thread_to_task PASSED
 tests/test_local.py::test_local_threads_and_tasks PASSED
 tests/test_local.py::test_thread_critical_local_not_context_dependent_in_sync_thread PASSED
 tests/test_local.py::test_visibility_thread_asgiref PASSED
+tests/test_local.py::test_local_not_inherited_by_new_thread PASSED
 tests/test_local.py::test_visibility_task PASSED
 tests/test_local.py::test_deletion PASSED
 tests/test_server.py::test_stateless_server PASSED
+tests/test_server.py::test_stateless_server_run PASSED
 tests/test_server.py::test_server_delete_instance PASSED
 tests/test_sync.py::test_sync_to_async PASSED
+tests/test_sync.py::test_sync_to_async_thread_handler_child_is_partial PASSED
 tests/test_sync.py::test_sync_to_async_fail_non_function PASSED
 tests/test_sync.py::test_sync_to_async_fail_async PASSED
 tests/test_sync.py::test_async_to_sync_fail_partial PASSED
@@ -62,6 +65,8 @@ tests/test_sync.py::test_async_single_thread_context_matches_from_async_thread P
 tests/test_sync.py::test_thread_sensitive_with_context_matches PASSED
 tests/test_sync.py::test_thread_sensitive_nested_context PASSED
 tests/test_sync.py::test_thread_sensitive_context_without_sync_work PASSED
+tests/test_sync.py::test_thread_sensitive_context_exit_does_not_block_event_loop PASSED
+tests/test_sync.py::test_thread_sensitive_context_exit_does_not_starve_default_executor PASSED
 tests/test_sync.py::test_thread_sensitive_double_nested_sync PASSED
 tests/test_sync.py::test_thread_sensitive_double_nested_async PASSED
 tests/test_sync.py::test_thread_sensitive_disabled PASSED
@@ -83,6 +88,7 @@ tests/test_sync.py::test_nested_task PASSED
 tests/test_sync.py::test_nested_task_later PASSED
 tests/test_sync.py::test_double_nested_task PASSED
 tests/test_sync.py::test_two_nested_tasks_with_asyncio_run PASSED
+tests/test_sync.py::test_async_to_sync_with_stopped_main_loop PASSED
 tests/test_sync_contextvars.py::test_thread_sensitive_with_context_different PASSED
 tests/test_sync_contextvars.py::test_sync_to_async_contextvars PASSED
 tests/test_sync_contextvars.py::test_sync_to_async_contextvars_with_custom_context PASSED
@@ -102,6 +108,6 @@ tests/test_wsgi.py::test_wsgi_multi_body PASSED
 tests/test_wsgi.py::test_duplicate_header_limit PASSED
 tests/test_wsgi.py::test_duplicate_header_limit_disabled PASSED
 
-======== 92 passed, 1 xfailed ========
+======== 98 passed, 1 xfailed ========
   py$(PYV): OK
   congratulations :)

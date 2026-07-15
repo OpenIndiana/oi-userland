@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project asgiref
+#   $WS_TOOLS/python-integrate-project -d python/asgiref-39 asgiref
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		asgiref
-HUMAN_VERSION =			3.12.1
+HUMAN_VERSION =			3.11.1
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		ASGI specs, helper code, and adapters
 COMPONENT_PROJECT_URL =		https://github.com/django/asgiref/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:59dcb51c272ad209d59bed5708a64a333083e86017d7fcdd67498eeab7784340
+	sha256:5f184dc43b7e763efe848065441eac62229c9f7b0475f41f80e207a114eda4ce
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by asgiref >= 3.12.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# asgiref >= 3.12.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -37,6 +38,7 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^task: /d'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/setuptools
+REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-asyncio
