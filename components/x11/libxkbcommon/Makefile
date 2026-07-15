@@ -20,18 +20,21 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=			libxkbcommon
-COMPONENT_VERSION=		1.13.1
+COMPONENT_VERSION=		1.13.2
 COMPONENT_SUMMARY=		library to handle keyboard descriptions
 COMPONENT_PROJECT_URL=	https://xkbcommon.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-xkbcommon-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		xkbcommon-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:aeb951964c2f7ecc08174cb5517962d157595e9e3f38fc4a130b91dc2f9fec18
+COMPONENT_ARCHIVE_HASH=	sha256:acc4d5f7c3cbba5f9f8d08d8bdbeede84ecede46792f47929aa9321873385528
 COMPONENT_ARCHIVE_URL=	https://github.com/xkbcommon/libxkbcommon/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			x11/library/libxkbcommon
 COMPONENT_LICENSE_FILE=	LICENSE
 
 TEST_TARGET= $(TEST_32_and_64)
 include $(WS_MAKE_RULES)/common.mk
+
+PYTHON_VERSION= 3.14
+COMPONENT_PRE_TEST_ACTION += $(GSED) -i -e 's?env python3?python$(PYTHON_VERSION)?' $(SOURCE_DIR)/test/*.py ;
 
 CONFIGURE_OPTIONS += -Denable-wayland=false
 CONFIGURE_OPTIONS += -Denable-docs=true
