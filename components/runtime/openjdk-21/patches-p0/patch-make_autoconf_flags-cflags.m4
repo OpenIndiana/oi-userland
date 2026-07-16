@@ -2,8 +2,8 @@ $NetBSD$
 
 Support for SunOS/gcc.
 
---- a/make/autoconf/flags-cflags.m4.orig	2019-01-08 09:40:27.000000000 +0000
-+++ b/make/autoconf/flags-cflags.m4
+--- make/autoconf/flags-cflags.m4.orig	2019-01-08 09:40:27.000000000 +0000
++++ make/autoconf/flags-cflags.m4
 @@ -42,8 +42,15 @@ AC_DEFUN([FLAGS_SETUP_SHARED_LIBS],
      # overridden using LD_LIBRARY_PATH. See JDK-8326891 for more information.
      SET_EXECUTABLE_ORIGIN='-Wl,-rpath,\$$ORIGIN[$]1 -Wl,--disable-new-dtags'
