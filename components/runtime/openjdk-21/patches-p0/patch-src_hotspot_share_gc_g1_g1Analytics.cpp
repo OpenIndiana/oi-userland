@@ -2,8 +2,8 @@ $NetBSD$
 
 Similar issue to https://bugs.openjdk.org/browse/JDK-8193056
 
---- a/src/hotspot/share/gc/g1/g1Analytics.cpp.orig	2019-01-08 12:44:56.000000000 +0000
-+++ b/src/hotspot/share/gc/g1/g1Analytics.cpp
+--- src/hotspot/share/gc/g1/g1Analytics.cpp.orig	2019-01-08 12:44:56.000000000 +0000
++++ src/hotspot/share/gc/g1/g1Analytics.cpp
 @@ -23,6 +23,7 @@
   */
  

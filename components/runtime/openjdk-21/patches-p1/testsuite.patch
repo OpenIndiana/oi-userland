@@ -111,14 +111,14 @@ suite. It would be nice to be complete, but that isn't true yet.
   * @library /testlibrary
   * @summary Basic test of Thread and ThreadMXBean queries on a natively
   *          attached thread that has failed to detach before terminating.
-- * @comment The native code only supports POSIX so no windows testing
+- * @comment The native code only supports POSIX so no windows testing.
 + * @comment The native code only supports POSIX so no windows testing; also
 + *          we have to skip solaris as a terminating thread that fails to
 + *          detach will hit an infinite loop due to TLS destructor issues - see
 + *          comments in JDK-8156708
-  * @run main/othervm/native TestTerminatedThread
-  */
- 
+  * @comment Disable -Xcheck:jni else NMT can report a fatal error because
+  *          we did not detach before exiting.
+  * @run main/othervm/native -XX:-CheckJNICalls TestTerminatedThread
 --- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
 +++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
 @@ -109,7 +109,7 @@
@@ -140,17 +140,6 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
-@@ -52,7 +52,7 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
--  Linux | Darwin )
-+  SunOS | Linux | Darwin )
-     PATHSEP=":"
-     FILESEP="/"
-     NATIVE=true
 --- a/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/sun/security/provider/PolicyFile/getinstance/getinstance.sh	Thu Apr  4 11:06:23 2024
 @@ -51,6 +51,10 @@

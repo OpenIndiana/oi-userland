@@ -1,8 +1,8 @@
 --- a/src/java.desktop/unix/native/libawt_xawt/awt/screencast_pipewire.c	Thu Jun  8 15:06:27 2023
 +++ b/src/java.desktop/unix/native/libawt_xawt/awt/screencast_pipewire.c	Mon Jun 12 09:15:47 2023
-@@ -37,6 +37,10 @@
- #include "gtk_interface.h"
+@@ -42,6 +42,10 @@
  #include "gtk3_interface.h"
+ #include "canvas.h"
  
 +#ifndef MAX
 +#define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -13,10 +13,10 @@
  #define EXCEPTION_CHECK_DESCRIBE() if ((*env)->ExceptionCheck(env)) { \
 --- a/src/java.desktop/unix/native/libpipewire/include/spa/utils/endian.h	Thu Feb 20 02:13:41 2025
 +++ b/src/java.desktop/unix/native/libpipewire/include/spa/utils/endian.h	Fri Feb 21 11:45:01 2025
-@@ -22,6 +22,8 @@
- #include <sys/machine.h>
- #define __BIG_ENDIAN      BIG_ENDIAN
- #define __BYTE_ORDER      BIG_ENDIAN
+@@ -18,6 +18,8 @@
+ #define bswap_16 _byteswap_ushort
+ #define bswap_32 _byteswap_ulong
+ #define bswap_64 _byteswap_uint64
 +#elif defined(SOLARIS)
 +#include <endian.h>
  #else
