@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 119 items
+collecting ... collected 142 items
 
 codespell_lib/tests/test_basic.py::test_constants PASSED
 codespell_lib/tests/test_basic.py::test_command PASSED
@@ -43,6 +43,27 @@ codespell_lib/tests/test_basic.py::test_inline_ignores[You could also use line b
 codespell_lib/tests/test_basic.py::test_inline_ignores[You could also use line based igore (codespell:ignore) to igore -0] PASSED
 codespell_lib/tests/test_basic.py::test_inline_ignores[You could also use line based igore (codespell:ignore igore) to igore -0] PASSED
 codespell_lib/tests/test_basic.py::test_inline_ignores[You could also use line based igore (codespell:ignore igare) to igore -2] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod [sic] it\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod[sic] it\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod  [sic] it\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod [SIC] it\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[correct "wrod" [sic] typo\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[correct "wrod"[sic] typo\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[wrod wrod [sic]\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[wrod it [sic] anyway abilty\n-2] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[wrod" abilty [sic]\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod it\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod (sic) it\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_sic[they wrod [sick] it\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-line\nabandonned abondon abilty\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[// codespell:ignore-next-line\nabandonned abondon abilty\n-0] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-line abondon\nabandonned abondon abilty\n-2] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-line abondon,abilty\nabandonned abondon abilty\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[abandonned  # codespell:ignore-next-line\nabondon\nabilty\n-2] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-line nomenklatur\nabandonned abondon abilty\n-3] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-lin\nabandonned\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[codespell:ignore-next-line\nabandonned\n-1] PASSED
+codespell_lib/tests/test_basic.py::test_ignore_next_line[# codespell:ignore-next-line\n\nabandonned\n-1] PASSED
 codespell_lib/tests/test_basic.py::test_custom_regex PASSED
 codespell_lib/tests/test_basic.py::test_exclude_file PASSED
 codespell_lib/tests/test_basic.py::test_encoding PASSED
@@ -66,6 +87,8 @@ codespell_lib/tests/test_basic.py::test_config_toml[cfg] PASSED
 codespell_lib/tests/test_basic.py::test_config_toml[cfg_multiline] PASSED
 codespell_lib/tests/test_basic.py::test_config_toml[toml] PASSED
 codespell_lib/tests/test_basic.py::test_config_toml[toml_list] PASSED
+codespell_lib/tests/test_basic.py::test_config_toml[toml_sibling_array] PASSED
+codespell_lib/tests/test_basic.py::test_config_toml_codespell_array PASSED
 codespell_lib/tests/test_basic.py::test_stdin PASSED
 codespell_lib/tests/test_basic.py::test_args_from_file PASSED
 codespell_lib/tests/test_dictionary.py::test_dictionaries_exist PASSED
@@ -128,6 +151,6 @@ codespell_lib/tests/test_dictionary.py::test_ran_all PASSED
 
 - generated xml file: $(@D)/junit-results.xml -
 =========================== short test summary info ============================
-======== 102 passed, 17 skipped ========
+======== 125 passed, 17 skipped ========
   py$(PYV): OK
   congratulations :)

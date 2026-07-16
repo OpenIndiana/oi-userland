@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		codespell
-HUMAN_VERSION =			2.4.2
+HUMAN_VERSION =			2.4.3
 COMPONENT_SUMMARY =		Fix common misspellings in text files
 COMPONENT_PROJECT_URL =		https://github.com/codespell-project/codespell
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3c33be9ae34543807f088aeb4832dfad8cb2dae38da61cac0a7045dd376cfdf3
+	sha256:cbe085e331227b37bb86ef8bddd08dc768c704ee9a07ca869852c093fa2793e2
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
