@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fmt
 COMPONENT_VERSION=      12.2.0
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      fmt is an open-source formatting library providing a fast and safe alternative to C stdio and C++ iostreams.
 COMPONENT_PROJECT_URL=  https://github.com/fmtlib/$(COMPONENT_NAME)
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,7 +46,13 @@ endif
 CMAKE_OPTIONS += -DFMT_MASTER_PROJECT=ON
 CMAKE_OPTIONS += -DCMAKE_BUILD_TYPE=Release
 CMAKE_OPTIONS += -DBUILD_SHARED_LIBS=ON
-CMAKE_OPTIONS += -DBUILD_STATIC_LIBS=OFF
+# We need to provide statis libs, eg. for nheko:
+# ...
+# CMake Error at /usr/lib/amd64/cmake/fmt/fmt-targets.cmake:112 (message):
+#  The imported target "fmt::fmt-c" references the file
+#     "/usr/lib/amd64/libfmt-c.a"
+# ...
+CMAKE_OPTIONS += -DBUILD_STATIC_LIBS=ON
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
