@@ -4,6 +4,25 @@ IMPORTANT: note that the build target has changed, from 'all' to
 'product-images', as 'all' tries to build a static image which doesn't
 work.
 
+25.0.3
+
+Minor patch noise.
+
+Cleanup: use jdk25 to build itself from now on
+
+25.0.2
+
+Minor patch noise.
+
+Cleanup: finish up UnixOperatingSystem.c in jdk.management, and align
+with changes in other platforms.
+
+Fix: restore support for extended attributes - see xattrs.patch
+
+25.0.1
+
+Trivial patch noise.
+
 25+36
 
 Cleanup: remove custom redefinition of NULL (as NULL has been replaced
@@ -297,7 +316,7 @@ Start with no changes from 24+27.
 Build:
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
---enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk24 \
+--enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk25 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
 --disable-warnings-as-errors \

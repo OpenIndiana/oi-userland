@@ -19,18 +19,18 @@
 include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	25
-OPENJDK_PATCH=	36
+OPENJDK_UPDATE=        0
+OPENJDK_BUILD= 3
 COMPONENT_NAME=		openjdk
-COMPONENT_VERSION=	$(OPENJDK_VERSION)
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
-COMPONENT_SRC=	jdk25u-jdk-$(OPENJDK_VERSION)-$(OPENJDK_PATCH)
-COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION)+$(OPENJDK_PATCH).tar.gz
+COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
+COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:8722bf578a77261ffbb26011c339e91571ec0474f1bcfea40188dd5451aa1d69
+	sha256:24080b39d5bb28c34d1fa738e8704db411c6fc7dac0962cc33305536b0391b9e
 COMPONENT_ARCHIVE_URL= \
-	https://github.com/openjdk/jdk25u/archive/$(COMPONENT_ARCHIVE)
+	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
 COMPONENT_CLASSIFICATION=	Development/Java
 COMPONENT_LICENSE=	GPLv2 with Classpath Exception
@@ -49,8 +49,6 @@ CLEAN_PATHS += $(COMPONENT_SRC_1)
 
 # read the number of jobs from the arguments for make
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
-
-CFLAGS += -c99
 
 CONFIGURE_OPTIONS+=        --with-jobs=$(JOBS)
 CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
@@ -95,6 +93,27 @@ COMPONENT_BUILD_TARGETS = images
 
 # reset arguments from Jenkins
 COMPONENT_BUILD_ARGS=
+
+# patches are provided in four directories: patches-reverse (from tribblix), patches-p0 (from tribblix), patches-p1 (from tribblix), and patches-oi (local).  The userland patch does not support reverse and assume only p0 or p1.  There is no support for series.  Put each patch format in a seperate directory and process each one.  Pretend to be a make dependency and check for .patched file and add .patched file at end.
+COMPONENT_PREP_ACTION= \
+	if [ ! -f $(SOURCE_DIR)/.patched ]; then \
+		for patchfile in patches-reverse/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1 -R  < $$patchfile; \
+		done; \
+		for patchfile in patches-p0/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=0   < $$patchfile; \
+		done; \
+		for patchfile in patches-p0/patch-*; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=0   < $$patchfile; \
+		done; \
+		for patchfile in patches-p1/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1   < $$patchfile; \
+		done; \
+		for patchfile in patches-oi/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1   < $$patchfile; \
+		done; \
+		touch $(SOURCE_DIR)/.patched; \
+	fi
 
 CACERTS_DIR=$(WS_TOP)/components/openindiana/ca-certificates
 CACERTS_INSTALLED=$(CACERTS_DIR)/build/$(MACH32)/.installed
