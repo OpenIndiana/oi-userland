@@ -1,0 +1,151 @@
+This patch reintroduces support for extended attributes in Solaris.
+It is subtly different from the support in JDK17 and earlier, in that
+attributes are implicitly namespaced, like Linux, as the code is now
+shared. This means that the 2 native attribute files you normally see
+are missing, and all the attribute filenames get a "user." prefix.
+
+--- a/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c	Sat Oct 25 15:35:56 2025
++++ b/src/java.base/unix/native/libnio/fs/UnixNativeDispatcher.c	Wed Nov 12 14:16:06 2025
+@@ -262,6 +262,106 @@
+ #endif
+ 
+ /**
++ * Solaris and illumos do not have the f*xattr set of functions, so
++ * provide a reasonable facsimile here.
++ */
++#ifdef __solaris__
++ssize_t sunos_flistxattr(int fd, char* list, size_t size) {
++  int xfd = openat(fd, ".", O_RDONLY|O_XATTR);
++  DIR *dirp = fdopendir(xfd);
++  int ilist = 0;
++  int ilen = 0;
++  struct dirent *dp;
++  while (dp = readdir(dirp)) {
++    if (strcmp(dp->d_name, ".") && strcmp(dp->d_name, "..")) {
++      ilen = strlen(dp->d_name);
++      if (size == 0) {
++	/*
++	 * size==0 means just return the total size.
++	 */
++	ilist += ilen;
++	ilist += 1;
++      } else {
++	/*
++	 * If the name won't fit, break out and exit
++	 */
++	if (ilist + ilen + 1 > size) {
++	  ilist = -1;
++	  break;
++	}
++	memcpy(list + ilist, dp->d_name, ilen);
++	ilist += ilen;
++	list[ilist] = 0;
++	ilist += 1;
++      }
++    }
++  }
++  closedir(dirp);
++  close(xfd);
++  /*
++   * If the result won't fit, return -1 and set errno to ERANGE
++   */
++  if (ilist == -1)
++    errno = ERANGE;
++  return ilist;
++}
++ssize_t sunos_fgetxattr(int fd, const char* name, void* value, size_t size) {
++  int ifd = dup(fd);
++  int gfd = openat(ifd, ".", O_RDONLY|O_XATTR);
++  int rfd = openat(gfd, name, O_RDONLY);
++  ssize_t nread;
++  int xerr = 0;
++  int nbuf[2];
++  /*
++   * return size of entry and don't do the read if size passed as 0
++   */
++  if (size == 0) {
++    struct stat lbuf;
++    fstat(rfd, &lbuf);
++    nread = (ssize_t) lbuf.st_size;
++  } else {
++    nread = read(rfd, value, size);
++    if (nread > size) {
++      nread = -1;
++      xerr = -1;
++    }
++    /*
++     * now we need to check if there's any more to read, and error
++     * out if there is as the buffer we were given is too small.
++     * if the buffer was exactly the right size this read will return zero
++     */
++    if (nread == size) {
++      if (read(rfd, &nbuf, 2) > 0) {
++	nread = -1;
++	xerr = -1;
++      }
++    }
++  }
++  close(rfd);
++  close(gfd);
++  close(ifd);
++  if (xerr == -1) {
++    errno = ERANGE;
++  }
++  return nread;
++}
++int sunos_fsetxattr(int fd, const char* name, void* value, size_t size) {
++  int xfd = openat(fd, ".", O_RDONLY|O_XATTR);
++  int wfd = openat(xfd, name, O_CREAT|O_RDWR, 0644);
++  int uerr = write(wfd, value, size);
++  close(wfd);
++  close(xfd);
++  return uerr;
++}
++int sunos_fremovexattr(int fd, const char* name) {
++  int xfd = openat(fd, ".", O_RDONLY|O_XATTR);
++  int uerr = unlinkat(xfd, name, 0);
++  close(xfd);
++  return uerr;
++}
++#endif
++
++/**
+  * Call this to throw an internal UnixException when a system/library
+  * call fails
+  */
+@@ -1456,6 +1556,8 @@
+     res = fgetxattr(fd, name, value, valueLen, 0, 0);
+ #elif defined(_AIX)
+     res = fgetea(fd, name, value, valueLen);
++#elif defined(__solaris__)
++    res = sunos_fgetxattr(fd, name, value, valueLen);
+ #else
+     throwUnixException(env, ENOTSUP);
+ #endif
+@@ -1479,6 +1581,8 @@
+     res = fsetxattr(fd, name, value, valueLen, 0, 0);
+ #elif defined(_AIX)
+     res = fsetea(fd, name, value, valueLen, 0);
++#elif defined(__solaris__)
++    res = sunos_fsetxattr(fd, name, value, valueLen);
+ #else
+     throwUnixException(env, ENOTSUP);
+ #endif
+@@ -1500,6 +1604,8 @@
+     res = fremovexattr(fd, name, 0);
+ #elif defined(_AIX)
+     res = fremoveea(fd, name);
++#elif defined(__solaris__)
++    res = sunos_fremovexattr(fd, name);
+ #else
+     throwUnixException(env, ENOTSUP);
+ #endif
+@@ -1521,6 +1627,8 @@
+     res = flistxattr(fd, list, (size_t)size, 0);
+ #elif defined(_AIX)
+     res = flistea(fd, list, (size_t)size);
++#elif defined(__solaris__)
++    res = sunos_flistxattr(fd, list, (size_t)size);
+ #else
+     throwUnixException(env, ENOTSUP);
+ #endif

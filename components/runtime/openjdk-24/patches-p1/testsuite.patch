@@ -111,14 +111,14 @@ suite. It would be nice to be complete, but that isn't true yet.
   * @library /testlibrary
   * @summary Basic test of Thread and ThreadMXBean queries on a natively
   *          attached thread that has failed to detach before terminating.
-- * @comment The native code only supports POSIX so no windows testing
+- * @comment The native code only supports POSIX so no windows testing.
 + * @comment The native code only supports POSIX so no windows testing; also
 + *          we have to skip solaris as a terminating thread that fails to
 + *          detach will hit an infinite loop due to TLS destructor issues - see
 + *          comments in JDK-8156708
-  * @run main/othervm/native TestTerminatedThread
-  */
- 
+  * @comment Disable -Xcheck:jni else NMT can report a fatal error because
+  *          we did not detach before exiting.
+  * @run main/othervm/native -XX:-CheckJNICalls TestTerminatedThread
 --- a/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Jan  9 21:18:15 2024
 +++ b/test/hotspot/jtreg/runtime/NMT/CheckForProperDetailStackTrace.java	Tue Apr  2 13:33:53 2024
 @@ -111,7 +111,7 @@
@@ -140,32 +140,6 @@ suite. It would be nice to be complete, but that isn't true yet.
              Platform.isOSX();
      }
  
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/Deadlock.sh	Thu Apr  4 11:02:00 2024
-@@ -34,6 +34,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
---- a/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Tue Jan  9 21:18:15 2024
-+++ b/test/jdk/java/security/Security/ClassLoaderDeadlock/ClassLoaderDeadlock.sh	Thu Apr  4 11:02:20 2024
-@@ -50,6 +50,10 @@
- # set platform-dependent variables
- OS=`uname -s`
- case "$OS" in
-+  SunOS )
-+    PATHSEP=":"
-+    FILESEP="/"
-+    ;;
-   Linux )
-     PATHSEP=":"
-     FILESEP="/"
 --- a/test/jdk/sun/security/krb5/runNameEquals.sh	Tue Jan  9 21:18:15 2024
 +++ b/test/jdk/sun/security/krb5/runNameEquals.sh	Thu Apr  4 11:04:28 2024
 @@ -52,7 +52,7 @@
@@ -218,3 +192,14 @@ suite. It would be nice to be complete, but that isn't true yet.
                  Arguments.of(AIX, OperatingSystem.isAix())
          );
      }
+--- a/test/hotspot/gtest/runtime/test_committed_virtualmemory.cpp	Wed Jan  8 20:46:57 2025
++++ b/test/hotspot/gtest/runtime/test_committed_virtualmemory.cpp	Tue Jan 21 10:47:29 2025
+@@ -251,7 +251,7 @@
+ 
+ }
+ 
+-#if !defined(_WINDOWS) && !defined(_AIX)
++#if !defined(_WINDOWS) && !defined(_AIX) && !defined(__sun__)
+ TEST_VM(CommittedVirtualMemory, test_committed_in_range){
+   CommittedVirtualMemoryTest::test_committed_in_range(1024, 1024);
+   CommittedVirtualMemoryTest::test_committed_in_range(2, 1);
