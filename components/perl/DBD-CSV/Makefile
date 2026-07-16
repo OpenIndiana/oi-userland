@@ -19,12 +19,12 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-CSV
-HUMAN_VERSION =			0.63
+HUMAN_VERSION =			0.64
 COMPONENT_SUMMARY =		DBI driver for CSV files
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBD-CSV-0.63.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBD-CSV-0.64.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d9000e26c300fa23b056e3b65743ca16ceaae90997535d23b80fdea30ca568e
+	sha256:7d4d8e54957c75fb374ab27d4e8729affe62e2e13da0c347e9a9088f39c735ae
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
