@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 967 items
+collecting ... collected 1051 items
 
 tests/test_api.py::test_a_raw_dict_can_be_dumped PASSED
 tests/test_api.py::test_add_dotted_key PASSED
@@ -11,12 +11,19 @@ tests/test_api.py::test_aot PASSED
 tests/test_api.py::test_array PASSED
 tests/test_api.py::test_boolean PASSED
 tests/test_api.py::test_build_super_table PASSED
+tests/test_api.py::test_comment_multiline_is_valid_toml PASSED
+tests/test_api.py::test_comment_single_line PASSED
+tests/test_api.py::test_create_multiline_string_with_leading_newline_round_trips[kwargs0-\n] PASSED
+tests/test_api.py::test_create_multiline_string_with_leading_newline_round_trips[kwargs1-\nMy\nString\n] PASSED
+tests/test_api.py::test_create_multiline_string_with_leading_newline_round_trips[kwargs2-\r\nMy\nString] PASSED
+tests/test_api.py::test_create_multiline_string_with_leading_newline_round_trips[kwargs3-\nMy\nString] PASSED
+tests/test_api.py::test_create_multiline_string_with_leading_newline_round_trips[kwargs4-\r\nMy\nString] PASSED
 tests/test_api.py::test_create_string[kwargs0-My\nString-"My\\nString"] PASSED
 tests/test_api.py::test_create_string[kwargs1-My String\t-"My String\t"] PASSED
 tests/test_api.py::test_create_string[kwargs10-My String\x12-"My String\\u0012"] PASSED
 tests/test_api.py::test_create_string[kwargs11-My String\x7f-"My String\\u007f"] PASSED
 tests/test_api.py::test_create_string[kwargs12-My String\x01-"My String\x01"] PASSED
-tests/test_api.py::test_create_string[kwargs13-\nMy\nString\n-"""\nMy\nString\n"""] PASSED
+tests/test_api.py::test_create_string[kwargs13-\nMy\nString\n-"""\n\nMy\nString\n"""] PASSED
 tests/test_api.py::test_create_string[kwargs14-My"String-"""My"String"""] PASSED
 tests/test_api.py::test_create_string[kwargs15-My""String-"""My""String"""] PASSED
 tests/test_api.py::test_create_string[kwargs16-My"""String-"""My""\\"String"""] PASSED
@@ -52,6 +59,7 @@ tests/test_api.py::test_dump_nested_dotted_table PASSED
 tests/test_api.py::test_dump_to_file_object PASSED
 tests/test_api.py::test_dump_tuple_value_as_array PASSED
 tests/test_api.py::test_dumps_weird_object PASSED
+tests/test_api.py::test_dumps_wrapper_delegating_as_string_preserves_layout PASSED
 tests/test_api.py::test_float PASSED
 tests/test_api.py::test_inline_table PASSED
 tests/test_api.py::test_integer PASSED
@@ -59,6 +67,7 @@ tests/test_api.py::test_item_dict_to_table PASSED
 tests/test_api.py::test_item_mixed_aray PASSED
 tests/test_api.py::test_key PASSED
 tests/test_api.py::test_key_value PASSED
+tests/test_api.py::test_key_with_single_element_list_is_a_single_key PASSED
 tests/test_api.py::test_load_from_file_object[0.5.0] PASSED
 tests/test_api.py::test_load_from_file_object[example] PASSED
 tests/test_api.py::test_load_from_file_object[fruit] PASSED
@@ -79,6 +88,7 @@ tests/test_api.py::test_original_string_and_dumped_string_are_equal[pyproject] P
 tests/test_api.py::test_original_string_and_dumped_string_are_equal[sections_with_same_start] PASSED
 tests/test_api.py::test_original_string_and_dumped_string_are_equal[table_names] PASSED
 tests/test_api.py::test_original_string_and_dumped_string_are_equal[test] PASSED
+tests/test_api.py::test_parse_accepts_nesting_at_the_depth_limit PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[0.5.0] PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[example] PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[fruit] PASSED
@@ -91,6 +101,7 @@ tests/test_api.py::test_parse_can_parse_valid_toml_files[string_slash_whitespace
 tests/test_api.py::test_parse_can_parse_valid_toml_files[table_names] PASSED
 tests/test_api.py::test_parse_can_parse_valid_toml_files[test] PASSED
 tests/test_api.py::test_parse_empty_quoted_table_name PASSED
+tests/test_api.py::test_parse_many_dotted_keys_with_shared_prefix PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_duplicate_comma-UnexpectedCharError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_leading_comma-UnexpectedCharError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[array_no_comma-UnexpectedCharError] PASSED
@@ -107,6 +118,14 @@ tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[newline_in_si
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[section_with_trailing_characters-UnexpectedCharError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[string_slash_whitespace_char-InvalidCharInStringError] PASSED
 tests/test_api.py::test_parse_raises_errors_for_invalid_toml_files[trailing_comma-UnexpectedCharError] PASSED
+tests/test_api.py::test_parse_rejects_collisions_across_out_of_order_fragments[[a]\nb.c = 1\n[q]\nx = 1\n[a]\nb.c = 2] PASSED
+tests/test_api.py::test_parse_rejects_collisions_across_out_of_order_fragments[[t.a]\nk = 1\n[u]\nz = 1\n[t.a]\nk = 2] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[[[a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a]]\nx = 1] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[[a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a]\nx = 1] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a.a = 1] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[x = [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[1]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[x = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = [{a = 1}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]}]] PASSED
+tests/test_api.py::test_parse_rejects_deeply_nested_documents[x = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = {a = 1}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}] PASSED
 tests/test_api.py::test_parsed_document_are_properly_json_representable[0.5.0] PASSED
 tests/test_api.py::test_parsed_document_are_properly_json_representable[pyproject] PASSED
 tests/test_api.py::test_parsed_document_are_properly_json_representable[table_names] PASSED
@@ -150,13 +169,20 @@ tests/test_build.py::test_top_level_keys_are_put_at_the_root_of_the_document PAS
 tests/test_items.py::test_abstract_table_unwrap PASSED
 tests/test_items.py::test_add_float_to_int PASSED
 tests/test_items.py::test_add_sum_int_with_float PASSED
+tests/test_items.py::test_adding_to_dotted_key_inside_inline_table PASSED
+tests/test_items.py::test_adding_to_nested_dotted_key_inside_inline_table PASSED
 tests/test_items.py::test_aot_set_item PASSED
 tests/test_items.py::test_aot_unwrap PASSED
 tests/test_items.py::test_append_dict_to_array PASSED
+tests/test_items.py::test_append_key_after_inline_table_trailing_comment PASSED
+tests/test_items.py::test_append_table_to_inline_table_raises PASSED
 tests/test_items.py::test_append_to_empty_array PASSED
 tests/test_items.py::test_append_to_multiline_array_with_comment PASSED
+tests/test_items.py::test_appending_to_comma_first_array_does_not_double_separator PASSED
+tests/test_items.py::test_appending_to_parsed_inline_table_preserves_separator PASSED
 tests/test_items.py::test_array_add_line PASSED
 tests/test_items.py::test_array_add_line_invalid_value PASSED
+tests/test_items.py::test_array_add_line_multiline_comment_is_rejected PASSED
 tests/test_items.py::test_array_behaves_like_a_list PASSED
 tests/test_items.py::test_array_item_removal_newline_restore_next PASSED
 tests/test_items.py::test_array_multiline PASSED
@@ -164,6 +190,8 @@ tests/test_items.py::test_array_multiline_modify PASSED
 tests/test_items.py::test_array_unwrap PASSED
 tests/test_items.py::test_badly_formatted_array_and_item_removal PASSED
 tests/test_items.py::test_booleans_comparison PASSED
+tests/test_items.py::test_comment_method_keeps_existing_hash_prefix PASSED
+tests/test_items.py::test_comment_method_multiline_comment_is_rejected PASSED
 tests/test_items.py::test_copy_copy PASSED
 tests/test_items.py::test_custom_encoders PASSED
 tests/test_items.py::test_custom_encoders_backward_compatibility PASSED
@@ -176,6 +204,7 @@ tests/test_items.py::test_datetime_unwrap PASSED
 tests/test_items.py::test_datetimes_behave_like_datetimes PASSED
 tests/test_items.py::test_deleting_inline_table_element_does_not_leave_trailing_separator PASSED
 tests/test_items.py::test_deleting_inline_table_element_does_not_leave_trailing_separator2 PASSED
+tests/test_items.py::test_deleting_inline_table_middle_element_does_not_leave_double_separator PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables_and_are_sorted_if_requested PASSED
 tests/test_items.py::test_dicts_are_converted_to_tables_and_keep_order PASSED
@@ -185,10 +214,14 @@ tests/test_items.py::test_escape_key[\\-"\\\\"] PASSED
 tests/test_items.py::test_escape_key[\t-"\\t"] PASSED
 tests/test_items.py::test_escape_key[\x10-"\\u0010"] PASSED
 tests/test_items.py::test_false_unwrap PASSED
+tests/test_items.py::test_float_is_not_a_sequence PASSED
 tests/test_items.py::test_float_unwrap PASSED
 tests/test_items.py::test_floats_behave_like_floats PASSED
 tests/test_items.py::test_hex_octal_and_bin_integers_are_supported PASSED
 tests/test_items.py::test_inf_and_nan_are_supported PASSED
+tests/test_items.py::test_inline_table_membership PASSED
+tests/test_items.py::test_inline_table_render_after_edits PASSED
+tests/test_items.py::test_inserting_into_comma_first_array_does_not_double_separator PASSED
 tests/test_items.py::test_integer_unwrap PASSED
 tests/test_items.py::test_integers_behave_like_ints PASSED
 tests/test_items.py::test_item_array_of_dicts_converted_to_aot PASSED
@@ -202,6 +235,8 @@ tests/test_items.py::test_modify_array_with_comment PASSED
 tests/test_items.py::test_no_extra_minus_sign PASSED
 tests/test_items.py::test_not_showing_parent_header_for_super_table PASSED
 tests/test_items.py::test_null_unwrap PASSED
+tests/test_items.py::test_out_of_order_table_membership PASSED
+tests/test_items.py::test_out_of_order_table_proxy_membership PASSED
 tests/test_items.py::test_parse_datetime_followed_by_space PASSED
 tests/test_items.py::test_removal_of_arrayitem_with_extra_whitespace PASSED
 tests/test_items.py::test_serialize_table_with_dotted_key PASSED
@@ -211,17 +246,47 @@ tests/test_items.py::test_strings_behave_like_strs PASSED
 tests/test_items.py::test_sub_float_from_int PASSED
 tests/test_items.py::test_sub_int_from_float PASSED
 tests/test_items.py::test_table_copy PASSED
+tests/test_items.py::test_table_membership_matches_inner_container PASSED
 tests/test_items.py::test_tables_behave_like_dicts PASSED
 tests/test_items.py::test_time_unwrap PASSED
 tests/test_items.py::test_times_behave_like_times PASSED
 tests/test_items.py::test_trim_comments_when_building_inline_table PASSED
 tests/test_items.py::test_true_unwrap PASSED
+tests/test_parser.py::test_array_close_after_value_round_trips PASSED
+tests/test_parser.py::test_array_with_malformed_element_raises PASSED
+tests/test_parser.py::test_malformed_array_still_raises PASSED
+tests/test_parser.py::test_multiline_string_body_round_trips PASSED
+tests/test_parser.py::test_multiline_string_still_rejects_control_chars PASSED
 tests/test_parser.py::test_parse_multiline_basic_string_with_crlf PASSED
 tests/test_parser.py::test_parse_multiline_literal_string_with_crlf PASSED
 tests/test_parser.py::test_parse_multiline_string_ignore_the_first_newline PASSED
+tests/test_parser.py::test_parser_rejects_aot_header_missing_second_bracket[[[a.b]x] PASSED
+tests/test_parser.py::test_parser_rejects_aot_header_missing_second_bracket[[[a]] PASSED
+tests/test_parser.py::test_parser_rejects_aot_header_missing_second_bracket[[[a]b] PASSED
+tests/test_parser.py::test_parser_rejects_aot_header_missing_second_bracket[[[a]x\ny = 1] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\U0000_0041"] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\U0010_FFFF"] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\u 123"] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\u+123"] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\u12_3"] PASSED
+tests/test_parser.py::test_parser_rejects_non_hex_unicode_escapes[a = "\\u1_23"] PASSED
+tests/test_parser.py::test_parser_rejects_overlong_decimal_integer PASSED
+tests/test_parser.py::test_parser_rejects_surrogate_unicode_escapes[a = "\\U0000D800"] PASSED
+tests/test_parser.py::test_parser_rejects_surrogate_unicode_escapes[a = "\\U0000DC00"] PASSED
+tests/test_parser.py::test_parser_rejects_surrogate_unicode_escapes[a = "\\U0000DFFF"] PASSED
+tests/test_parser.py::test_parser_rejects_surrogate_unicode_escapes[a = "\\uD800"] PASSED
+tests/test_parser.py::test_parser_rejects_surrogate_unicode_escapes[a = "\\uDFFF"] PASSED
+tests/test_parser.py::test_parser_rejects_tab_in_bare_key[[a\tb]] PASSED
+tests/test_parser.py::test_parser_rejects_tab_in_bare_key[a\tb = 1] PASSED
+tests/test_parser.py::test_parser_rejects_tab_in_bare_key[x.y\tz = 1] PASSED
+tests/test_parser.py::test_parser_rejects_table_redefined_after_parent[[a.b.c]\n[a]\n[a.b.c]] PASSED
+tests/test_parser.py::test_parser_rejects_table_redefined_after_parent[[a.b]\n[a.c]\n[a]\n[a.b]] PASSED
+tests/test_parser.py::test_parser_rejects_table_redefined_after_parent[[a.b]\n[a]\n[a.b]] PASSED
+tests/test_parser.py::test_parser_rejects_table_redefined_after_parent[[a.b]\nx = 1\n[a]\n[a.b]\ny = 2] PASSED
 tests/test_parser.py::test_parser_should_raise_an_error_for_empty_tables PASSED
 tests/test_parser.py::test_parser_should_raise_an_error_if_equal_not_found PASSED
 tests/test_parser.py::test_parser_should_raise_an_internal_error_if_parsing_wrong_type_of_string PASSED
+tests/test_toml_document.py::test_add_key_after_dotted_inline_table_without_ending_newline PASSED
 tests/test_toml_document.py::test_add_newline_before_super_table PASSED
 tests/test_toml_document.py::test_adding_an_element_to_existing_table_with_ws_remove_ws PASSED
 tests/test_toml_document.py::test_appending_to_super_table PASSED
@@ -243,23 +308,39 @@ tests/test_toml_document.py::test_move_table PASSED
 tests/test_toml_document.py::test_nested_table_update_display_name PASSED
 tests/test_toml_document.py::test_no_spurious_whitespaces PASSED
 tests/test_toml_document.py::test_out_of_order_table_can_add_multiple_tables PASSED
+tests/test_toml_document.py::test_out_of_order_table_merges_aot_fragments PASSED
+tests/test_toml_document.py::test_out_of_order_table_merges_three_aot_fragments PASSED
 tests/test_toml_document.py::test_out_of_order_tables_are_still_dicts PASSED
 tests/test_toml_document.py::test_overwrite_out_of_order_table_key PASSED
 tests/test_toml_document.py::test_overwriting_out_of_order_table PASSED
 tests/test_toml_document.py::test_parse_aot_without_ending_newline PASSED
 tests/test_toml_document.py::test_parse_subtables_no_extra_indent PASSED
 tests/test_toml_document.py::test_pop_add_whitespace_and_insert_table_work_togheter PASSED
+tests/test_toml_document.py::test_reject_out_of_order_dotted_key_redefinition_at_parse PASSED
+tests/test_toml_document.py::test_reject_out_of_order_dotted_prefix_at_parse PASSED
 tests/test_toml_document.py::test_remove_from_out_of_order_table PASSED
 tests/test_toml_document.py::test_remove_item_from_super_table PASSED
+tests/test_toml_document.py::test_replace_dotted_key_with_aot_keeps_following_sibling PASSED
+tests/test_toml_document.py::test_replace_dotted_key_with_empty_table_keeps_following_sibling PASSED
+tests/test_toml_document.py::test_replace_dotted_key_with_table PASSED
+tests/test_toml_document.py::test_replace_dotted_key_with_table_keeps_following_sibling PASSED
+tests/test_toml_document.py::test_replace_middle_table_with_value PASSED
 tests/test_toml_document.py::test_replace_preserve_sep PASSED
+tests/test_toml_document.py::test_replace_super_table_preserves_whitespace PASSED
+tests/test_toml_document.py::test_replace_table_with_itself_preserves_display_name PASSED
 tests/test_toml_document.py::test_replace_table_with_value PASSED
+tests/test_toml_document.py::test_replace_value_with_table_keeps_following_dotted_sibling PASSED
 tests/test_toml_document.py::test_replace_with_aot_of_nested PASSED
 tests/test_toml_document.py::test_replace_with_comment PASSED
 tests/test_toml_document.py::test_replace_with_table PASSED
 tests/test_toml_document.py::test_replace_with_table_of_nested PASSED
 tests/test_toml_document.py::test_repr PASSED
+tests/test_toml_document.py::test_repr_out_of_order_table_proxy PASSED
+tests/test_toml_document.py::test_scalar_is_not_captured_by_table_rendered_from_dotted_key PASSED
 tests/test_toml_document.py::test_set_default_int PASSED
+tests/test_toml_document.py::test_set_value_on_out_of_order_table_with_empty_concrete_part PASSED
 tests/test_toml_document.py::test_string_output_order_is_preserved_for_out_of_order_tables PASSED
+tests/test_toml_document.py::test_subtable_of_aot_element_after_other_table PASSED
 tests/test_toml_document.py::test_toml_document_can_be_copied PASSED
 tests/test_toml_document.py::test_toml_document_has_always_a_new_line_after_table_header PASSED
 tests/test_toml_document.py::test_toml_document_is_pickable PASSED
@@ -270,8 +351,11 @@ tests/test_toml_document.py::test_toml_document_with_dotted_keys PASSED
 tests/test_toml_document.py::test_toml_document_with_dotted_keys_inside_table PASSED
 tests/test_toml_document.py::test_toml_document_with_super_aot_after_super_table PASSED
 tests/test_toml_document.py::test_toml_document_without_super_tables PASSED
+tests/test_toml_document.py::test_unwrap_out_of_order_tables PASSED
+tests/test_toml_document.py::test_unwrap_preserves_raise_on_invalid_out_of_order_fragment PASSED
 tests/test_toml_document.py::test_update_nested_out_of_order_table PASSED
 tests/test_toml_document.py::test_updating_nested_value_keeps_correct_indent PASSED
+tests/test_toml_document.py::test_valid_out_of_order_independent_tables PASSED
 tests/test_toml_document.py::test_values_can_still_be_set_for_out_of_order_tables PASSED
 tests/test_toml_file.py::test_consistent_eol PASSED
 tests/test_toml_file.py::test_consistent_eol_2 PASSED
@@ -973,4 +1057,4 @@ tests/test_write.py::test_serialize_aot_with_nested_tables PASSED
 tests/test_write.py::test_write_backslash PASSED
 tests/test_write.py::test_write_inline_table_in_nested_arrays PASSED
 
-======== 967 passed ========
+======== 1051 passed ========
