@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fields
 COMPONENT_VERSION =		5.0.0
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY =		fields - Container class boilerplate killer.
 COMPONENT_PROJECT_URL =		https://github.com/ionelmc/python-fields
 COMPONENT_ARCHIVE_URL =		\
@@ -43,7 +44,7 @@ PYTHON_TEST_BOOTSTRAP = yes
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/attrs
 TEST_REQUIRED_PACKAGES.python += library/python/characteristic
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
