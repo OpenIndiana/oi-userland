@@ -19,12 +19,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libgit2
-COMPONENT_VERSION=	1.9.2
+COMPONENT_VERSION=	1.9.6
 COMPONENT_SUMMARY=	Portable implementation of the Git core methods provided as a library
 COMPONENT_PROJECT_URL=	https://libgit2.github.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:6f097c82fc06ece4f40539fb17e9d41baf1a5a2fc26b1b8562d21b89bc355fe6
+COMPONENT_ARCHIVE_HASH=	sha256:a88a42a4ea9bdab7aa8686eead3bf7d9c6dd74529caca16ab22eaa92433d31d9
 COMPONENT_ARCHIVE_URL=	https://github.com/$(COMPONENT_NAME)/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_FMRI=		library/libgit2
 COMPONENT_CLASSIFICATION=	Development/Source Code Management
