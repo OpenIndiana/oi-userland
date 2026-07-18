@@ -17,11 +17,13 @@
 BUILD_STYLE = pyproject
 # Force setup.py build style - see https://github.com/pygobject/pycairo/issues/312
 BUILD_STYLE = setup.py
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pycairo
 HUMAN_VERSION =			1.26.1
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY =		Python interface for cairo
 COMPONENT_PROJECT_URL =		https://pycairo.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
