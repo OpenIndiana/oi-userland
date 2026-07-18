@@ -20,6 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		meson_python
 HUMAN_VERSION =			0.18.0
+COMPONENT_REVISION =	1
 COMPONENT_SUMMARY =		Meson Python build backend (PEP 517)
 COMPONENT_ARCHIVE_HASH =	\
 	sha256:c56a99ec9df669a40662fe46960321af6e4b14106c14db228709c1628e23848d
@@ -35,12 +36,12 @@ include $(WS_MAKE_RULES)/common.mk
 TEST_REQUIREMENTS_EXTRAS += test
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += library/python/meson
-PYTHON_REQUIRED_PACKAGES += library/python/packaging
-PYTHON_REQUIRED_PACKAGES += library/python/pyproject-metadata
-PYTHON_REQUIRED_PACKAGES += library/python/tomli
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += developer/object-file
+REQUIRED_PACKAGES.python += library/python/meson
+REQUIRED_PACKAGES.python += library/python/packaging
+REQUIRED_PACKAGES.python += library/python/pyproject-metadata
+REQUIRED_PACKAGES.python += library/python/tomli
+REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/build
 TEST_REQUIRED_PACKAGES.python += library/python/cython
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
