@@ -15,12 +15,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bluefish
-COMPONENT_VERSION=	2.4.1
+COMPONENT_VERSION=	2.4.2
 COMPONENT_SUMMARY=	Bluefish, a powerful editor for experienced web designers
 COMPONENT_PROJECT_URL=	https://bluefish.openoffice.nl/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:540b0e4f5a595fc418c41125a6a282b69f10cf01513bedde80906d25a56d0cc9
+COMPONENT_ARCHIVE_HASH= sha256:b2641f9ff8033719e02c519c5ddb4bdadbd7ff73ef252e9287d512c4770377c5
 COMPONENT_ARCHIVE_URL=	https://www.bennewitz.com/bluefish/stable/source/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		web/editor/bluefish
 COMPONENT_CLASSIFICATION=	Development/Editors
