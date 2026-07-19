@@ -21,8 +21,7 @@ include ../../../make-rules/shared-macros.mk
 # This is cairomm-1.16 ABI series
 
 COMPONENT_NAME=			cairomm
-COMPONENT_VERSION=		1.18.0
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=		1.18.1
 COMPONENT_SUMMARY=		C++ wrapper for the cairo graphics library
 COMPONENT_PROJECT_URL=		https://cairographics.org/cairomm/
 COMPONENT_FMRI=			library/desktop/c++/cairomm-116
@@ -30,7 +29,7 @@ COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Libraries
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=		https://cairographics.org/releases/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=		sha256:b81255394e3ea8e8aa887276d22afa8985fc8daef60692eb2407d23049f03cfb
+COMPONENT_ARCHIVE_HASH=		sha256:e0e996a979ee52c840dca3ee74f5d005e3259b94ddce58f255d3b6f47c8cb41d
 COMPONENT_LICENSE=		LGPL-2.0-only
 COMPONENT_LICENSE_FILE=		COPYING
 
