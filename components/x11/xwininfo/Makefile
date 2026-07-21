@@ -18,10 +18,10 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xwininfo
-COMPONENT_VERSION=        1.1.6
+COMPONENT_VERSION=        1.1.7
 COMPONENT_SUMMARY=        xwininfo - window information utility for X
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:3518897c17448df9ba99ad6d9bb1ca0f17bc0ed7c0fd61281b34ceed29a9253f
+COMPONENT_ARCHIVE_HASH=   sha256:bee14d594cc86cc59aae1015c1b452a71bf60c304131e2716ca1cf0df733b4ac
 COMPONENT_FMRI=           x11/diagnostic/xwininfo
 COMPONENT_LICENSE_FILE=   COPYING
 
