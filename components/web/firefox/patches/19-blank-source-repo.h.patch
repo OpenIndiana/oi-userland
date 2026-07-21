@@ -1,0 +1,31 @@
+    return _run_code(code, main_globals, None,
+  File "/usr/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/export/home/gweiss/git/oi-userland/components/web/firefox-nightly/firefox-e28b34ab33dbf49364999070168cbb7e11e8e5bd/python/mozbuild/mozbuild/action/make_sourcestamp_file.py", line 40, in <module>
+    sys.exit(main(sys.argv[1:]))
+  File "/export/home/gweiss/git/oi-userland/components/web/firefox-nightly/firefox-e28b34ab33dbf49364999070168cbb7e11e8e5bd/python/mozbuild/mozbuild/action/make_sourcestamp_file.py", line 33, in main
+    lines.append(_extract(args.source_repo_header, "MOZ_SOURCE_URL"))
+  File "/export/home/gweiss/git/oi-userland/components/web/firefox-nightly/firefox-e28b34ab33dbf49364999070168cbb7e11e8e5bd/python/mozbuild/mozbuild/action/make_sourcestamp_file.py", line 18, in _extract
+    pp.processFile(fh, io.StringIO())
+  File "/export/home/gweiss/git/oi-userland/components/web/firefox-nightly/firefox-e28b34ab33dbf49364999070168cbb7e11e8e5bd/python/mozbuild/mozbuild/preprocessor.py", line 436, in processFile
+    self.failUnused(input.name)
+  File "/export/home/gweiss/git/oi-userland/components/web/firefox-nightly/firefox-e28b34ab33dbf49364999070168cbb7e11e8e5bd/python/mozbuild/mozbuild/preprocessor.py", line 374, in failUnused
+    raise Preprocessor.Error(fake, msg, None)
+mozbuild.preprocessor.Preprocessor.Error: ('../../source-repo.h', None, 'no preprocessor directives found', None)
+
+Something changed after May 22, 2026.  So just blindly make sure source-repo.h has the data that the Mozilla scipts are looking for.
+
+--- firefox-0e1add40350764cc84e5d7e2e2ee94906c7d2734/build/variables.py.old
++++ firefox-0e1add40350764cc84e5d7e2e2ee94906c7d2734/build/variables.py
+@@ -111,6 +111,11 @@
+         source = f"{repo}{rev_path}{changeset}"
+         output.write("#define MOZ_SOURCE_REPO %s\n" % repo)
+         output.write("#define MOZ_SOURCE_URL %s\n" % source)
++
++    output.write("#define MOZ_SOURCE_STAMP 57cea197cdb443d17c9fa345edddefb192e37226")
++    output.write("#define MOZ_SOURCE_REPO https://hg.mozilla.org/releases/mozilla-release")
++    output.write("#define MOZ_SOURCE_URL https://hg.mozilla.org/releases/mozilla-release/rev/57cea197cdb443d17c9fa345edddefb192e37226")
++
+ 
+ 
+ def main(args):

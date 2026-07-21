@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=10
+# CANDIDATE_BETA=13
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      152.0.6
+COMPONENT_VERSION=      153.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -73,7 +73,7 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:ea220c4f8d19d4edaa20e6dadfd3c4aeb07dbed017ade2828fd814d660660f0e
+COMPONENT_ARCHIVE_HASH=	sha256:bc510f74c8c4c692d31e559aeb5850849d13bc98214ac81e004f66f819a55522
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
@@ -207,7 +207,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.29.4 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -302,4 +302,5 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxrandr
