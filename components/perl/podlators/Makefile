@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		podlators
-HUMAN_VERSION =			v6.0.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			v6.1.0
 COMPONENT_SUMMARY =		Convert POD data to various other formats
 COMPONENT_CPAN_AUTHOR =		RRA
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2992125eab7d2b1c5a2b15a26ad7955f7d989eba6c831abdcaf2000e86a91337
+	sha256:29839c3b13fe4d9ecba2e66ed1b9d3432df084787da6917ed5f3ffd3bc284f25
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/pod-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/pod-simple
+REQUIRED_PACKAGES.perl += runtime/perl
