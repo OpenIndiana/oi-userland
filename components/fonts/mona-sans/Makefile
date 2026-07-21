@@ -17,13 +17,13 @@ BUILD_STYLE= archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	        mona-sans
-COMPONENT_VERSION=      2.0.25
+COMPONENT_VERSION=      2.0.27
 COMPONENT_SUMMARY=      Mona Sans is a variable font inspired by industrial-era grotesques
 COMPONENT_PROJECT_URL=  https://github.com/github/mona-sans
 COMPONENT_SRC=          $(COMPONENT_NAME)-static-v$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:5b88effa7aefde70ad9689d2620a97d2a5d2d5802c7fda042ec47679e6ee81c1
+COMPONENT_ARCHIVE_HASH= sha256:aa44edb86d4848f071ff0b36bbb79041eacf23f5b6ea9b2ff65463e35281b4c3
 COMPONENT_LICENSE=      SIL Open Font License Version 1.1
 COMPONENT_LICENSE_FILE=	OFL.txt
 
