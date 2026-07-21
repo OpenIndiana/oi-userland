@@ -18,12 +18,12 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=     xmodmap
-COMPONENT_VERSION=  1.0.11
+COMPONENT_VERSION=  1.0.12
 COMPONENT_FMRI=     x11/xmodmap
 COMPONENT_SUMMARY=  xmodmap - X11 keyboard/mouse mapping configuration utility
 COMPONENT_ARCHIVE_EXTENSION= .tar.gz
-COMPONENT_ARCHIVE_HASH= \
-  sha256:c4fac9df448b98ac5a1620f364e74ed5f7084baae0d09123700f34d4b63cb5d8
+COMPONENT_ARCHIVE_HASH= sha256:dcf3eb1d5098ebd38f8ebb7014b33306a29f3c6bbac0b5d14986842b7632d872
+COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
