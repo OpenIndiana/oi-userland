@@ -17,7 +17,7 @@ BUILD_STYLE = pkg
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		xorg-video
-COMPONENT_VERSION=	1
+COMPONENT_VERSION=	2
 COMPONENT_SUMMARY=	Xorg server video drivers group
 COMPONENT_CLASSIFICATION=	System/X11
 COMPONENT_FMRI=			x11/server/xorg/driver/xorg-video
