@@ -11,14 +11,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unbound
-COMPONENT_VERSION=		1.25.1
+COMPONENT_VERSION=		1.25.2
 COMPONENT_SUMMARY=		Unbound is a validating, recursive, caching DNS resolver
 COMPONENT_PROJECT_URL=	https://nlnetlabs.nl/projects/unbound/about/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/NLnetLabs/unbound/archive/refs/tags/release-$(COMPONENT_VERSION).tar.gz
 COMPONENT_SIG_URL=		$(COMPONENT_ARCHIVE_URL).asc
-COMPONENT_ARCHIVE_HASH=	sha256:ff0bfd926600117f46539640b1b45cad5e26080e38a1a6fb64048723ee9e333c
+COMPONENT_ARCHIVE_HASH=	sha256:e132aa8b46cd3bc79bc97c2c42abf2b62aaa4c8aaef786c91d549e335ae8a5cf
 COMPONENT_FMRI=			service/network/unbound
 COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE=		BSD
