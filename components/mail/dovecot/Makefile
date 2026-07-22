@@ -17,8 +17,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.4.3
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      2.4.4
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -29,7 +28,7 @@ COMPONENT_PROJECT_URL=  https://dovecot.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.4/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:e0b30330fe51e47ecfcf641bc16041184d91bdd0ac3db789b7cef54e3a75ac9b
+COMPONENT_ARCHIVE_HASH= sha256:670f98d55a29b02ae6a97281e51374e553b94496480ab0a07439571ab30ca8c3
 COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
