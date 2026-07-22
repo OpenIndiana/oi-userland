@@ -41,11 +41,11 @@ include ../../../make-rules/shared-macros.mk
 
 # CANDIDATE_BUILD is the build number found in the candidates directory.
 # Do not define for final release build.
-# CANDIDATE_BUILD= 3
-# CANDIDATE_BETA= 4
+# CANDIDATE_BUILD= 2
+# CANDIDATE_BETA= 10
 
 COMPONENT_NAME =	thunderbird
-COMPONENT_VERSION =	152.0.1
+COMPONENT_VERSION =	153.0
 COMPONENT_SUMMARY = Mozilla Thunderbird Email Application
 COMPONENT_PROJECT_URL =	https://www.thunderbird.net/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -57,7 +57,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).source.tar.xz
 endif
 
 COMPONENT_ARCHIVE_HASH= \
-	 sha256:823b3f02c74aa09f8ce3b706c9c9c87557e3b2b54a69ce03dca916ffabcb80b3
+	 sha256:69a80b6719ad9c623638f6df0a4861bae7cd7c9920edab8c32a7104cd8f8a326
 ifndef CANDIDATE_BUILD
 MOZILLA_FTP =		https://ftp.mozilla.org/pub/$(COMPONENT_NAME)/releases/$(COMPONENT_VERSION)
 else
@@ -247,7 +247,7 @@ COMPONENT_PRE_BUILD_ACTION += ( \
         rustup install $(RUST_VERSION); \
         rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
         rustup show; \
-	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
+	PATH=$(GCC_BINDIR):$(PATH) cargo install --root=$(CARGO_HOME) --vers 0.29.4 cbindgen; \
 	);
 else
 COMPONENT_PRE_CONFIGURE_ACTION += ( \
@@ -364,4 +364,5 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxrandr
