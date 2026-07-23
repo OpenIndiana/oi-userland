@@ -4,13 +4,14 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 283 items
+collecting ... collected 291 items
 
 tests/test_cache.py::CacheTest::test_clear PASSED
 tests/test_cache.py::CacheTest::test_clear_empty PASSED
 tests/test_cache.py::CacheTest::test_clear_getsizeof PASSED
 tests/test_cache.py::CacheTest::test_defaults PASSED
 tests/test_cache.py::CacheTest::test_delete PASSED
+tests/test_cache.py::CacheTest::test_getsizeof_negative PASSED
 tests/test_cache.py::CacheTest::test_getsizeof_param PASSED
 tests/test_cache.py::CacheTest::test_getsizeof_subclass PASSED
 tests/test_cache.py::CacheTest::test_insert PASSED
@@ -121,6 +122,7 @@ tests/test_fifo.py::FIFOCacheTest::test_delete PASSED
 tests/test_fifo.py::FIFOCacheTest::test_fifo PASSED
 tests/test_fifo.py::FIFOCacheTest::test_fifo_getsizeof PASSED
 tests/test_fifo.py::FIFOCacheTest::test_fifo_update_existing PASSED
+tests/test_fifo.py::FIFOCacheTest::test_getsizeof_negative PASSED
 tests/test_fifo.py::FIFOCacheTest::test_getsizeof_param PASSED
 tests/test_fifo.py::FIFOCacheTest::test_getsizeof_subclass PASSED
 tests/test_fifo.py::FIFOCacheTest::test_insert PASSED
@@ -179,6 +181,7 @@ tests/test_lfu.py::LFUCacheTest::test_clear_empty PASSED
 tests/test_lfu.py::LFUCacheTest::test_clear_getsizeof PASSED
 tests/test_lfu.py::LFUCacheTest::test_defaults PASSED
 tests/test_lfu.py::LFUCacheTest::test_delete PASSED
+tests/test_lfu.py::LFUCacheTest::test_getsizeof_negative PASSED
 tests/test_lfu.py::LFUCacheTest::test_getsizeof_param PASSED
 tests/test_lfu.py::LFUCacheTest::test_getsizeof_subclass PASSED
 tests/test_lfu.py::LFUCacheTest::test_insert PASSED
@@ -199,6 +202,7 @@ tests/test_lru.py::LRUCacheTest::test_clear_empty PASSED
 tests/test_lru.py::LRUCacheTest::test_clear_getsizeof PASSED
 tests/test_lru.py::LRUCacheTest::test_defaults PASSED
 tests/test_lru.py::LRUCacheTest::test_delete PASSED
+tests/test_lru.py::LRUCacheTest::test_getsizeof_negative PASSED
 tests/test_lru.py::LRUCacheTest::test_getsizeof_param PASSED
 tests/test_lru.py::LRUCacheTest::test_getsizeof_subclass PASSED
 tests/test_lru.py::LRUCacheTest::test_insert PASSED
@@ -219,6 +223,7 @@ tests/test_rr.py::RRCacheTest::test_clear_empty PASSED
 tests/test_rr.py::RRCacheTest::test_clear_getsizeof PASSED
 tests/test_rr.py::RRCacheTest::test_defaults PASSED
 tests/test_rr.py::RRCacheTest::test_delete PASSED
+tests/test_rr.py::RRCacheTest::test_getsizeof_negative PASSED
 tests/test_rr.py::RRCacheTest::test_getsizeof_param PASSED
 tests/test_rr.py::RRCacheTest::test_getsizeof_subclass PASSED
 tests/test_rr.py::RRCacheTest::test_insert PASSED
@@ -244,11 +249,13 @@ tests/test_tlru.py::TLRUCacheTest::test_clear_empty PASSED
 tests/test_tlru.py::TLRUCacheTest::test_clear_getsizeof PASSED
 tests/test_tlru.py::TLRUCacheTest::test_defaults PASSED
 tests/test_tlru.py::TLRUCacheTest::test_delete PASSED
+tests/test_tlru.py::TLRUCacheTest::test_getsizeof_negative PASSED
 tests/test_tlru.py::TLRUCacheTest::test_getsizeof_param PASSED
 tests/test_tlru.py::TLRUCacheTest::test_getsizeof_subclass PASSED
 tests/test_tlru.py::TLRUCacheTest::test_insert PASSED
 tests/test_tlru.py::TLRUCacheTest::test_missing PASSED
 tests/test_tlru.py::TLRUCacheTest::test_missing_getsizeof PASSED
+tests/test_tlru.py::TLRUCacheTest::test_overwrite_existing_with_expired PASSED
 tests/test_tlru.py::TLRUCacheTest::test_pickle PASSED
 tests/test_tlru.py::TLRUCacheTest::test_pickle_maxsize PASSED
 tests/test_tlru.py::TLRUCacheTest::test_pop PASSED
@@ -270,6 +277,7 @@ tests/test_ttl.py::TTLCacheTest::test_clear_empty PASSED
 tests/test_ttl.py::TTLCacheTest::test_clear_getsizeof PASSED
 tests/test_ttl.py::TTLCacheTest::test_defaults PASSED
 tests/test_ttl.py::TTLCacheTest::test_delete PASSED
+tests/test_ttl.py::TTLCacheTest::test_getsizeof_negative PASSED
 tests/test_ttl.py::TTLCacheTest::test_getsizeof_param PASSED
 tests/test_ttl.py::TTLCacheTest::test_getsizeof_subclass PASSED
 tests/test_ttl.py::TTLCacheTest::test_insert PASSED
@@ -290,6 +298,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_timer PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
-======== 283 passed ========
+======== 291 passed ========
   py$(PYV): OK
   congratulations :)
