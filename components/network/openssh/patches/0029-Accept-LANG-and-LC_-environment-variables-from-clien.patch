@@ -7,20 +7,30 @@ Subject: [PATCH 29/34] Accept LANG and LC_* environment variables from clients
 This preserves most of the old SunSSH locale negotiation
 behaviour (at least the parts that are most commonly used).
 
---- openssh-10.3p1/servconf.c.orig
-+++ openssh-10.3p1/servconf.c
-@@ -197,6 +197,7 @@
- 	options->client_alive_count_max = -1;
- 	options->num_authkeys_files = 0;
- 	options->num_accept_env = 0;
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -162,6 +162,8 @@ initialize_server_options(ServerOptions
+ 	options->subsystem_args = NULL;
+ #define init_timingsecret(options) \
+ 	options->timing_secret = 0;
++#define init_defaultacceptenv(options) \
 +	options->default_accept_env = 1;
- 	options->num_setenv = 0;
- 	options->permit_tun = -1;
- 	options->permitted_opens = NULL;
-@@ -534,6 +535,32 @@
- 		options->max_sessions = DEFAULT_SESSIONS_MAX;
- 	if (options->use_dns == -1)
- 		options->use_dns = 0;
+ #ifdef PAM_ENHANCEMENT
+ /*
+  * Each userauth method will have its own PAM service by default. However,
+@@ -190,6 +192,7 @@ initialize_server_options(ServerOptions
+ #undef init_rekeylimit
+ #undef init_subsystem
+ #undef init_timingsecret
++#undef init_defaultacceptenv
+ #ifdef PAM_ENHANCEMENT
+ #undef init_pamserviceperauthmethod
+ #endif
+@@ -469,6 +472,32 @@ fill_default_server_options(ServerOption
+ 		    &options->num_authkeys_files,
+ 		    _PATH_SSH_USER_PERMITTED_KEYS2);
+ 	}
 +	if (options->default_accept_env == 1) {
 +		opt_array_append("[default]", 0, "AcceptEnv",
 +		    &options->accept_env, &options->num_accept_env,
@@ -47,10 +57,10 @@ behaviour (at least the parts that are most commonly used).
 +		    &options->accept_env, &options->num_accept_env,
 +		    "LC_MESSAGES");
 +	}
- 	if (options->client_alive_interval == -1)
- 		options->client_alive_interval = 0;
- 	if (options->client_alive_count_max == -1)
-@@ -2395,9 +2422,12 @@
+ 	if (options->ip_qos_interactive == -1)
+ 		options->ip_qos_interactive = IPTOS_DSCP_EF;
+ 	if (options->ip_qos_bulk == -1)
+@@ -2162,9 +2191,12 @@ process_server_config_line_depth(ServerO
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -63,19 +73,84 @@ behaviour (at least the parts that are most commonly used).
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
---- openssh-10.3p1/servconf.h.orig
-+++ openssh-10.3p1/servconf.h
-@@ -181,6 +181,7 @@
- 	char   **subsystem_args;
+@@ -3193,6 +3225,18 @@ serialise_timingsecret(const ServerOptio
+ 	return 0;
+ }
  
- 	u_int num_accept_env;
-+	int    default_accept_env;
- 	char   **accept_env;
- 	u_int num_setenv;
- 	char   **setenv;
---- openssh-10.3p1/session.c.orig
-+++ openssh-10.3p1/session.c
-@@ -794,6 +794,18 @@
++static int
++serialise_defaultacceptenv(const ServerOptions *options, struct sshbuf *buf)
++{
++	int r;
++
++	if ((r = serialise_s32(buf, options->default_accept_env)) != 0) {
++		error_fr(r, "serialise");
++		return r;
++	}
++	return 0;
++}
++
+ #ifdef PAM_ENHANCEMENT
+ static int
+ serialise_pamserviceperauthmethod(const ServerOptions *options,
+@@ -3743,6 +3787,18 @@ deserialise_timingsecret(ServerOptions *
+ 	return 0;
+ }
+ 
++static int
++deserialise_defaultacceptenv(ServerOptions *options, struct sshbuf *buf)
++{
++	int r;
++
++	if ((r = deserialise_s32(buf, &options->default_accept_env)) != 0) {
++		error_fr(r, "deserialise");
++		return r;
++	}
++	return 0;
++}
++
+ #ifdef PAM_ENHANCEMENT
+ static int
+ deserialise_pamserviceperauthmethod(ServerOptions *options,
+@@ -3922,6 +3978,7 @@ free_server_options(ServerOptions *optio
+ #define free_persourcepenalties(options)
+ #define free_rekeylimit(options)
+ #define free_timingsecret(options)
++#define free_defaultacceptenv(options)
+ #ifdef PAM_ENHANCEMENT
+ #define free_pamserviceperauthmethod(options)
+ #endif
+@@ -3940,6 +3997,7 @@ free_server_options(ServerOptions *optio
+ #undef free_persourcepenalties
+ #undef free_rekeylimit
+ #undef free_timingsecret
++#undef free_defaultacceptenv
+ #ifdef PAM_ENHANCEMENT
+ #undef free_pamserviceperauthmethod
+ #endif
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
+--- a~/servconf.h	1970-01-01 00:00:00
++++ a/servconf.h	1970-01-01 00:00:00
+@@ -203,6 +203,7 @@ SSHCONF_STRARRAY(deny_users, num_deny_us
+ SSHCONF_STRARRAY(allow_groups, num_allow_groups, AllowGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRARRAY(deny_groups, num_deny_groups, DenyGroups, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_STRARRAY(accept_env, num_accept_env, AcceptEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
++SSHCONF_NONCONF(defaultacceptenv) \
+ SSHCONF_STRARRAY(setenv, num_setenv, SetEnv, SSHCFG_ALL, SSHCFG_COPY_MATCH) \
+ SSHCONF_INT(per_source_max_startups, PerSourceMaxStartups, SSHCFG_GLOBAL, NULL, INT_MAX, SSHCFG_COPY_NONE) \
+ SSHCONF_STRING(per_source_penalty_exempt, PerSourcePenaltyExemptList, SSHCFG_GLOBAL, SSHCFG_COPY_NONE) \
+@@ -410,6 +411,8 @@ typedef struct ServerOptions {
+ 	int	rekey_interval;
+ 	/* Passed by config but not keyword for this */
+ 	uint64_t timing_secret;
++	/* Cleared as a side-effect of AcceptEnv */
++	int	default_accept_env;
+ #ifdef PAM_ENHANCEMENT
+ 	/* Set as a side-effect of PAMServiceName */
+ 	int	pam_service_per_authmethod;
+diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
+--- a~/session.c	1970-01-01 00:00:00
++++ a/session.c	1970-01-01 00:00:00
+@@ -794,6 +794,18 @@ check_quietlogin(Session *s, const char
  }
  
  /*
@@ -94,7 +169,7 @@ behaviour (at least the parts that are most commonly used).
   * Reads environment variables from the given file and adds/overrides them
   * into the environment.  If the file does not exist, this does nothing.
   * Otherwise, it must consist of empty lines, comments (line starts with '#')
-@@ -977,6 +989,16 @@
+@@ -977,6 +989,16 @@ do_setup_env(struct ssh *ssh, Session *s
  	ssh_gssapi_do_child(&env, &envsize);
  #endif
  
@@ -111,7 +186,7 @@ behaviour (at least the parts that are most commonly used).
  	/* Set basic environment. */
  	for (i = 0; i < s->num_env; i++)
  		child_set_env(&env, &envsize, s->env[i].name, s->env[i].val);
-@@ -1020,8 +1042,7 @@
+@@ -1020,8 +1042,7 @@ do_setup_env(struct ssh *ssh, Session *s
  	/* Normal systems set SHELL by default. */
  	child_set_env(&env, &envsize, "SHELL", shell);
  
@@ -121,8 +196,9 @@ behaviour (at least the parts that are most commonly used).
  #ifdef HAVE_LOGIN_CAP
  	if (getenv("XDG_RUNTIME_DIR")) {
  		child_set_env(&env, &envsize, "XDG_RUNTIME_DIR",
---- openssh-10.3p1/sshd_config.orig
-+++ openssh-10.3p1/sshd_config
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd_config a/sshd_config
+--- a~/sshd_config	1970-01-01 00:00:00
++++ a/sshd_config	1970-01-01 00:00:00
 @@ -26,6 +26,10 @@
  #SyslogFacility AUTH
  #LogLevel INFO
@@ -134,9 +210,10 @@ behaviour (at least the parts that are most commonly used).
  # Authentication:
  
  #LoginGraceTime 2m
---- openssh-10.3p1/sshd_config.5.orig
-+++ openssh-10.3p1/sshd_config.5
-@@ -86,7 +86,20 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd_config.5 a/sshd_config.5
+--- a~/sshd_config.5	1970-01-01 00:00:00
++++ a/sshd_config.5	1970-01-01 00:00:00
+@@ -86,7 +86,20 @@ directives.
  Be warned that some environment variables could be used to bypass restricted
  user environments.
  For this reason, care should be taken in the use of this directive.

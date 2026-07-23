@@ -1,6 +1,7 @@
---- openssh-10.3p1/readconf.c.orig
-+++ openssh-10.3p1/readconf.c
-@@ -154,6 +154,9 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.c a/readconf.c
+--- a~/readconf.c	1970-01-01 00:00:00
++++ a/readconf.c	1970-01-01 00:00:00
+@@ -154,6 +154,9 @@ typedef enum {
  	oServerAliveInterval, oServerAliveCountMax, oIdentitiesOnly,
  	oSendEnv, oSetEnv, oControlPath, oControlMaster, oControlPersist,
  	oHashKnownHosts,
@@ -10,7 +11,7 @@
  	oTunnel, oTunnelDevice,
  	oLocalCommand, oPermitLocalCommand, oRemoteCommand,
  	oVisualHostKey,
-@@ -282,6 +285,9 @@
+@@ -282,6 +285,9 @@ static struct {
  	{ "controlpersist", oControlPersist },
  	{ "hashknownhosts", oHashKnownHosts },
  	{ "include", oInclude },
@@ -20,7 +21,7 @@
  	{ "tunnel", oTunnel },
  	{ "tunneldevice", oTunnelDevice },
  	{ "localcommand", oLocalCommand },
-@@ -1116,6 +1122,17 @@
+@@ -1116,6 +1122,17 @@ parse_multistate_value(const char *arg,
  	return -1;
  }
  
@@ -38,7 +39,7 @@
  /*
   * Processes a single option line as used in the configuration files. This
   * only sets those values that have not already been set.
-@@ -2564,6 +2581,13 @@
+@@ -2564,6 +2581,13 @@ parse_pubkey_algos:
  		}
  		break;
  
@@ -52,7 +53,7 @@
  	case oDeprecated:
  		debug("%s line %d: Deprecated option \"%s\"",
  		    filename, linenum, keyword);
-@@ -2802,6 +2826,9 @@
+@@ -2802,6 +2826,9 @@ initialize_options(Options * options)
  	options->stdin_null = -1;
  	options->fork_after_authentication = -1;
  	options->proxy_use_fdpass = -1;
@@ -62,7 +63,7 @@
  	options->ignored_unknown = NULL;
  	options->num_canonical_domains = 0;
  	options->num_permitted_cnames = 0;
-@@ -3008,6 +3035,10 @@
+@@ -3008,6 +3035,10 @@ fill_default_options(Options * options)
  		options->canonicalize_fallback_local = 1;
  	if (options->canonicalize_hostname == -1)
  		options->canonicalize_hostname = SSH_CANONICALISE_NO;
@@ -73,9 +74,10 @@
  	if (options->fingerprint_hash == -1)
  		options->fingerprint_hash = SSH_FP_HASH_DEFAULT;
  #ifdef ENABLE_SK_INTERNAL
---- openssh-10.3p1/readconf.h.orig
-+++ openssh-10.3p1/readconf.h
-@@ -190,6 +190,9 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/readconf.h a/readconf.h
+--- a~/readconf.h	1970-01-01 00:00:00
++++ a/readconf.h	1970-01-01 00:00:00
+@@ -190,6 +190,9 @@ typedef struct {
  	char	*version_addendum;
  
  	char	*ignored_unknown; /* Pattern list of unknown tokens to ignore */
@@ -85,7 +87,7 @@
  }       Options;
  
  #define SSH_PUBKEY_AUTH_NO	0x00
-@@ -235,6 +238,12 @@
+@@ -235,6 +238,12 @@ typedef struct {
  #define SSH_KEYSTROKE_CHAFF_MIN_MS		1024
  #define SSH_KEYSTROKE_CHAFF_RNG_MS		2048
  
@@ -98,9 +100,10 @@
  const char *kex_default_pk_alg(void);
  char	*ssh_connection_hash(const char *thishost, const char *host,
      const char *portstr, const char *user, const char *jump_host);
---- openssh-10.3p1/ssh_config.5.orig
-+++ openssh-10.3p1/ssh_config.5
-@@ -748,6 +748,14 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/ssh_config.5 a/ssh_config.5
+--- a~/ssh_config.5	1970-01-01 00:00:00
++++ a/ssh_config.5	1970-01-01 00:00:00
+@@ -785,6 +785,14 @@ If set to a time in seconds, or a time i
  then the backgrounded master connection will automatically terminate
  after it has remained idle (with no client connections) for the
  specified time.
@@ -115,8 +118,9 @@
  .It Cm DynamicForward
  Specifies that a TCP port on the local machine be forwarded
  over the secure channel, and the application
---- openssh-10.3p1/sshconnect2.c.orig
-+++ openssh-10.3p1/sshconnect2.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshconnect2.c a/sshconnect2.c
+--- a~/sshconnect2.c	1970-01-01 00:00:00
++++ a/sshconnect2.c	1970-01-01 00:00:00
 @@ -78,6 +78,10 @@
  /* import */
  extern Options options;
@@ -128,7 +132,7 @@
  /*
   * SSH2 key exchange
   */
-@@ -577,8 +581,28 @@
+@@ -579,8 +583,28 @@ input_userauth_banner(int type, uint32_t
  	if ((r = sshpkt_get_cstring(ssh, &msg, &len)) != 0 ||
  	    (r = sshpkt_get_cstring(ssh, NULL, NULL)) != 0)
  		goto out;

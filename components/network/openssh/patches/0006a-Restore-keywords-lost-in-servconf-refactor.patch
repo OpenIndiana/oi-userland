@@ -1,0 +1,106 @@
+Restore configuration keywords lost in the 10.4 servconf refactor
+
+The upstream servconf refactor in 10.4 generates the sshd option keyword
+table from the SSHD_CONFIG_ENTRIES macros, and in the process the GSSAPI
+options were accidentally renamed (GSSAPIAuthentication became
+GssAuthentication, etc.), breaking existing configuration files.
+
+The GSSAPI portion of this is a backport of upstream
+commit c147093565634eae9f91e4df99e04a6b3513f9c6 (bz3974) and can be
+dropped when updating to a release that contains it.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
+--- a~/servconf.c	1970-01-01 00:00:00
++++ a/servconf.c	1970-01-01 00:00:00
+@@ -1441,21 +1441,21 @@ process_server_config_line_depth(ServerO
+ #endif /* KRB5 */
+ 
+ #ifdef GSSAPI
+-	case sGssAuthentication:
++	case sGSSAPIAuthentication:
+ 		intptr = &options->gss_authentication;
+ 		goto parse_flag;
+ 
+ #ifndef USE_GSS_STORE_CRED
+-	case sGssCleanupCreds:
++	case sGSSAPICleanupCredentials:
+ 		intptr = &options->gss_cleanup_creds;
+ 		goto parse_flag;
+ #endif /* USE_GSS_STORE_CRED */
+ 
+-	case sGssDelegateCreds:
++	case sGSSAPIDelegateCredentials:
+ 		intptr = &options->gss_deleg_creds;
+ 		goto parse_flag;
+ 
+-	case sGssStrictAcceptor:
++	case sGSSAPIStrictAcceptorCheck:
+ 		intptr = &options->gss_strict_acceptor;
+ 		goto parse_flag;
+ #endif /* GSSAPI */
+@@ -4225,12 +4225,12 @@ dump_config(ServerOptions *o)
+ # endif
+ #endif
+ #ifdef GSSAPI
+-	dump_cfg_fmtint(sGssAuthentication, o->gss_authentication);
++	dump_cfg_fmtint(sGSSAPIAuthentication, o->gss_authentication);
+ #ifndef USE_GSS_STORE_CRED
+-	dump_cfg_fmtint(sGssCleanupCreds, o->gss_cleanup_creds);
++	dump_cfg_fmtint(sGSSAPICleanupCredentials, o->gss_cleanup_creds);
+ #endif /* USE_GSS_STORE_CRED */
+-	dump_cfg_fmtint(sGssDelegateCreds, o->gss_deleg_creds);
+-	dump_cfg_fmtint(sGssStrictAcceptor, o->gss_strict_acceptor);
++	dump_cfg_fmtint(sGSSAPIDelegateCredentials, o->gss_deleg_creds);
++	dump_cfg_fmtint(sGSSAPIStrictAcceptorCheck, o->gss_strict_acceptor);
+ #endif
+ 	dump_cfg_fmtint(sPasswordAuthentication, o->password_authentication);
+ 	dump_cfg_fmtint(sKbdInteractiveAuthentication,
+diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.h a/servconf.h
+--- a~/servconf.h	1970-01-01 00:00:00
++++ a/servconf.h	1970-01-01 00:00:00
+@@ -251,7 +251,8 @@ SSHCONF_DEPRECATE(AuthorizedKeysFile2, S
+ SSHCONF_DEPRECATE(UsePrivilegeSeparation, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+ SSHCONF_DEPRECATE(KerberosTgtPassing, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+ SSHCONF_DEPRECATE(AFSTokenPassing, SSHCFG_GLOBAL, SSHCONF_DEPRECATED) \
+-SSHCONF_DEPRECATE(Protocol, SSHCFG_GLOBAL, SSHCONF_IGNORE)
++SSHCONF_DEPRECATE(Protocol, SSHCFG_GLOBAL, SSHCONF_IGNORE) \
++SSHCONF_DEPRECATE(PAMAuthenticationViaKbdInt, SSHCFG_GLOBAL, SSHCONF_DEPRECATED)
+ 
+ #define SSHD_CONFIG_ENTRIES_ALIASES \
+ SSHCONF_ALIAS(HostDSAKey, HostKey, SSHCFG_GLOBAL) \
+@@ -315,23 +316,23 @@ SSHCONF_UNSUPPORTED_INT(kerberos_get_afs
+ #ifdef GSSAPI
+ #ifdef USE_GSS_STORE_CRED
+ #define SSHD_CONFIG_ENTRIES_GSS \
+-SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+-SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL) \
+-SSHCONF_INTFLAG(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+-SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
++SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
+ #else	/* USE_GSS_STORE_CRED */
+ #define SSHD_CONFIG_ENTRIES_GSS \
+-SSHCONF_INTFLAG(gss_authentication, GssAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
+-SSHCONF_INTFLAG(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+-SSHCONF_INTFLAG(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
+-SSHCONF_INTFLAG(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
++SSHCONF_INTFLAG(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL, 0, SSHCFG_COPY_MATCH) \
++SSHCONF_INTFLAG(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE) \
++SSHCONF_INTFLAG(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL, 1, SSHCFG_COPY_NONE)
+ #endif	/* USE_GSS_STORE_CRED */
+ #else /* GSSAPI */
+ #define SSHD_CONFIG_ENTRIES_GSS \
+-SSHCONF_UNSUPPORTED_INT(gss_authentication, GssAuthentication, SSHCFG_ALL) \
+-SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GssCleanupCreds, SSHCFG_GLOBAL) \
+-SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GssDelegateCreds, SSHCFG_GLOBAL) \
+-SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GssStrictAcceptor, SSHCFG_GLOBAL)
++SSHCONF_UNSUPPORTED_INT(gss_authentication, GSSAPIAuthentication, SSHCFG_ALL) \
++SSHCONF_UNSUPPORTED_INT(gss_cleanup_creds, GSSAPICleanupCredentials, SSHCFG_GLOBAL) \
++SSHCONF_UNSUPPORTED_INT(gss_deleg_creds, GSSAPIDelegateCredentials, SSHCFG_GLOBAL) \
++SSHCONF_UNSUPPORTED_INT(gss_strict_acceptor, GSSAPIStrictAcceptorCheck, SSHCFG_GLOBAL)
+ #endif /* GSSAPI */
+ 
+ #define SSHD_CONFIG_ENTRIES \

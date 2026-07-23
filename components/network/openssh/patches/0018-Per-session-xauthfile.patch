@@ -11,8 +11,9 @@ more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2440
 In the future, if this fix is accepted by the upsteam in a later release, we
 will remove this patch when we upgrade to that release.
 
---- openssh-10.3p1/session.c.orig
-+++ openssh-10.3p1/session.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
+--- a~/session.c	1970-01-01 00:00:00
++++ a/session.c	1970-01-01 00:00:00
 @@ -59,6 +59,10 @@
  #include <unistd.h>
  #include <limits.h>
@@ -24,7 +25,7 @@ will remove this patch when we upgrade to that release.
  #include "xmalloc.h"
  #include "ssh.h"
  #include "ssh2.h"
-@@ -135,6 +139,11 @@
+@@ -135,6 +139,11 @@ static void do_authenticated2(struct ssh
  
  static int session_pty_req(struct ssh *, Session *);
  
@@ -36,7 +37,7 @@ will remove this patch when we upgrade to that release.
  /* import */
  extern ServerOptions options;
  extern char *__progname;
-@@ -1056,6 +1065,11 @@
+@@ -1056,6 +1065,11 @@ do_setup_env(struct ssh *ssh, Session *s
  		    auth_sock_name);
  
  
@@ -48,7 +49,7 @@ will remove this patch when we upgrade to that release.
  	/* Set custom environment options from pubkey authentication. */
  	if (options.permit_user_env) {
  		for (n = 0 ; n < auth_opts->nenv; n++) {
-@@ -1953,6 +1967,11 @@
+@@ -1957,6 +1971,11 @@ session_x11_req(struct ssh *ssh, Session
  	int r, success;
  	u_char single_connection = 0;
  
@@ -60,7 +61,7 @@ will remove this patch when we upgrade to that release.
  	if (s->auth_proto != NULL || s->auth_data != NULL) {
  		error("session_x11_req: session %d: "
  		    "x11 forwarding already active", s->self);
-@@ -1967,19 +1986,78 @@
+@@ -1971,19 +1990,78 @@ session_x11_req(struct ssh *ssh, Session
  
  	s->single_connection = single_connection;
  
@@ -73,7 +74,7 @@ will remove this patch when we upgrade to that release.
  		success = 0;
  		error("Invalid X11 forwarding data");
 +		goto out;
- 	}
++	}
 +
 +#ifdef PER_SESSION_XAUTHFILE
 +	/*
@@ -91,7 +92,7 @@ will remove this patch when we upgrade to that release.
 +			    "for the buffer allocated");
 +			success = 0;
 +			goto out;
-+	}
+ 	}
 +		/*
 +		 * we don't want that "creating new authority file" message to
 +		 * be printed by xauth(1) so we must create that file
@@ -143,7 +144,7 @@ will remove this patch when we upgrade to that release.
  	return success;
  }
  
-@@ -2257,6 +2335,51 @@
+@@ -2261,6 +2339,51 @@ session_pty_cleanup(Session *s)
  	mm_session_pty_cleanup2(s);
  }
  
@@ -195,7 +196,7 @@ will remove this patch when we upgrade to that release.
  static char *
  sig2name(int sig)
  {
-@@ -2404,6 +2527,9 @@
+@@ -2408,6 +2531,9 @@ session_close(struct ssh *ssh, Session *
  	free(s->auth_display);
  	free(s->auth_data);
  	free(s->auth_proto);
@@ -205,7 +206,7 @@ will remove this patch when we upgrade to that release.
  	free(s->subsys);
  	if (s->env != NULL) {
  		for (i = 0; i < s->num_env; i++) {
-@@ -2659,6 +2785,10 @@
+@@ -2663,6 +2789,10 @@ do_cleanup(struct ssh *ssh, Authctxt *au
  		auth_info_file = NULL;
  	}
  
@@ -216,9 +217,10 @@ will remove this patch when we upgrade to that release.
  	/*
  	 * Cleanup ptys/utmp only if privsep is disabled,
  	 * or if running in monitor.
---- openssh-10.3p1/session.h.orig
-+++ openssh-10.3p1/session.h
-@@ -50,6 +50,9 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/session.h a/session.h
+--- a~/session.h	1970-01-01 00:00:00
++++ a/session.h	1970-01-01 00:00:00
+@@ -50,6 +50,9 @@ struct Session {
  	char	*auth_display;
  	char	*auth_proto;
  	char	*auth_data;
