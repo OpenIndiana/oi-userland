@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gpep517
-HUMAN_VERSION =			19
+HUMAN_VERSION =			20
 COMPONENT_SUMMARY =		Python package builder and installer for non-pip-centric world
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fb83fe62ccb1bbedc6bccf7a1f8c62f4e63e8911caaef2aba88b16cca8bab60e
+	sha256:0bbedae28b26482b2e5e186cdb3c5657ded7b76558ae297c57a93724dcb8f359
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
