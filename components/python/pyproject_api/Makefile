@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyproject_api
-HUMAN_VERSION =			1.10.1
+HUMAN_VERSION =			1.11.0
 COMPONENT_SUMMARY =		API to interact with the python pyproject.toml based projects
 COMPONENT_PROJECT_URL =		https://pyproject-api.readthedocs.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c2b2726bd7aa9217b6c50b621fef5b2ae5def4d55b779c9e0694c15e0a8517ba
+	sha256:b8807d85a293e6c9f133e6575946fed45f1d42b22d58c780b33aa2421a799549
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
