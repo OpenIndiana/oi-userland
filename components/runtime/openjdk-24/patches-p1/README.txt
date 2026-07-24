@@ -2,7 +2,88 @@ See also README-zero.txt for note on a project zero variant.
 
 JDK 24 now that jdk23 has been branched off.
 
-24+28, 24+29
+Fix: restore support for extended attributes - see xattrs.patch
+
+24.0.2
+
+Minor patch noise.
+
+Cleanup: remove unused check_addr0_done.
+
+Cleanup: remove the Studio type linkage block from the gcc header.
+
+Cleanup: remove the unshuffle_list.txt hunk.
+
+Cleanup: Enable dtrace probes and libjvm_dtrace by default.
+
+Cleanup: unnecessary use of thread instead of pthread.
+
+Cleanup: SolarisFileSystem is always for 5.11 and up.
+
+Cleanup: no need for -lposix4 and -lrt.
+
+Cleanup: more dtrace fixes.
+
+Cleanup: Correct DTRACE_INSTRUMENTED_OBJS.
+
+Fix: Correct type argument to sema_init.
+
+Cleanup: Duplicate check for SC_CLK_TCK.
+
+24.0.1
+
+Minor patch noise.
+
+Cleanup: Remove more Studio-specific flags, still present in
+DTrace. This doesn't make DTrace build, but is one problem less.
+
+Cleanup: Remove the use of lp rather than lpr; all supported systems
+can or even should be using CUPS rather than legacy lp.
+
+Cleanup: Remove /usr/bin/sh override in PrintServiceLookupProvider.java.
+
+Cleanup: Define -D_REENTRANT for non-gcc (ie clang) builds
+
+Cleanup: remove unused register stack functions. See the bug
+8253457: Remove unimplemented register stack functions
+The change for that not only removed the itanium only register
+stack functions, but also the base_of_stack_pointer routines
+which I keep for now as they were implemented and used on sparc.
+
+Cleanup: Remove unused global UseOSErrorReporting.
+
+Cleanup: Remove the mapfile fragments in make/hotspots/symbols;
+they're in the wrong place and no longer used as of 23+12.
+
+Cleanup: Remove long unused sysThreadAvailableStackWithSlack()
+
+Cleanup: Remove Execution protection violation code, which was only
+for 32-bit, guarded on other platforms, and disabled by default.
+
+Cleanup: configure by forcing LOCALE to /bin/true, rather than setting
+SORT. This falls back to the C locale, which works on both illumos and
+Solaris 11, unlike the SORT fix which only works on illumos.
+
+Cleanup: Remove 32-bit x86 paths.
+
+24+35, 24+36
+
+Now in rampdown. No changes.
+
+Cleanup: drop 2 unnecessary patches
+patch-src_hotspot_share_gc_g1_g1Analytics.cpp
+patch-make_autoconf_jdk-options.m4
+
+Fix: align default_stack_size() with other platforms
+
+Cleanup: remove Solaris 2.6 libthread check
+
+Cleanup: remove print_libversion_info(), it's really a no-op as
+everything now uses the "new" libthread
+
+Cleanup: fix an assert in fastdebug builds
+
+24+28, 24+29, 24+30, 24+31, 24+32, 24+33, 24+34
 
 Now in rampdown. No changes.
 
@@ -202,12 +283,11 @@ env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
 --enable-unlimited-crypto --with-boot-jdk=/usr/jdk/instances/jdk23 \
 --with-native-debug-symbols=none \
 --with-toolchain-type=gcc \
---disable-dtrace \
 --disable-warnings-as-errors \
 --with-source-date=current \
 --with-jobs=4 \
 DATE=/usr/gnu/bin/date \
-SORT=/usr/gnu/bin/sort \
+LOCALE=/bin/true \
 STRIP=/usr/gnu/bin/strip
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin gmake product-images

@@ -361,7 +361,7 @@ diff -ur -N /tmp/g/orderAccess_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zer
 diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp
 --- /tmp/g/os_solaris_zero.cpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.cpp	2020-09-02 13:28:22.493092922 +0000
-@@ -0,0 +1,294 @@
+@@ -0,0 +1,279 @@
 +/*
 + * Copyright (c) 2003, 2020, Oracle and/or its affiliates. All rights reserved.
 + * Copyright 2007, 2008, 2009, 2010 Red Hat, Inc.
@@ -630,21 +630,6 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  }
 +};
 +
-+/////////////////////////////////////////////////////////////////////////////
-+// Implementations of atomic operations not supported by processors.
-+//  -- http://gcc.gnu.org/onlinedocs/gcc-4.2.1/gcc/Atomic-Builtins.html
-+
-+#ifndef _LP64
-+extern "C" {
-+  long long unsigned int __sync_val_compare_and_swap_8(
-+    volatile void *ptr,
-+    long long unsigned int oldval,
-+    long long unsigned int newval) {
-+    ShouldNotCallThis();
-+  }
-+};
-+#endif // !_LP64
-+
 +void os::setup_fpu() {}
 +
 +#ifndef PRODUCT
@@ -659,7 +644,7 @@ diff -ur -N /tmp/g/os_solaris_zero.cpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 diff -ur -N /tmp/g/os_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp
 --- /tmp/g/os_solaris_zero.hpp	1970-01-01 01:00:00.000000000 +0000
 +++ b/src/hotspot/os_cpu/solaris_zero/os_solaris_zero.hpp	2020-09-01 22:01:25.502220121 +0000
-@@ -0,0 +1,62 @@
+@@ -0,0 +1,48 @@
 +/*
 + * Copyright (c) 1999, 2019, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -690,21 +675,7 @@ diff -ur -N /tmp/g/os_solaris_zero.hpp b/src/hotspot/os_cpu/solaris_zero/os_sola
 +  //
 +  // NOTE: we are back in class os here, not Solaris
 +  //
-+#ifdef AMD64
 +  static void setup_fpu() {}
-+#else
-+  static int32_t  (*atomic_xchg_func)        (int32_t,  volatile int32_t*);
-+  static int32_t  (*atomic_cmpxchg_func)     (int32_t,  volatile int32_t*, int32_t);
-+  static int64_t  (*atomic_cmpxchg_long_func)(int64_t,  volatile int64_t*, int64_t);
-+  static int32_t  (*atomic_add_func)         (int32_t,  volatile int32_t*);
-+
-+  static int32_t  atomic_xchg_bootstrap        (int32_t,  volatile int32_t*);
-+  static int32_t  atomic_cmpxchg_bootstrap     (int32_t,  volatile int32_t*, int32_t);
-+  static int64_t  atomic_cmpxchg_long_bootstrap(int64_t,  volatile int64_t*, int64_t);
-+  static int32_t  atomic_add_bootstrap         (int32_t,  volatile int32_t*);
-+
-+  static void setup_fpu() {}
-+#endif // AMD64
 +
 +  static juint cpu_microcode_revision();
 +
