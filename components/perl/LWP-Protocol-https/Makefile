@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		LWP-Protocol-https
-HUMAN_VERSION =			6.15
+HUMAN_VERSION =			6.17
 COMPONENT_SUMMARY =		Provide https support for LWP::UserAgent
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:44eec2da147ba0511090871b0ca82f69794376bc31e8c76d1040961ba57f59b8
+	sha256:361c7c1eee8cf66812958f975f26ef2e2272a0c6221d2043477cb9c22b8d1c23
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,5 +45,4 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/io-socket-ssl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/libwww-perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/socket
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-requiresinternet
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
