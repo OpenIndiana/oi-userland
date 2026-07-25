@@ -19,11 +19,11 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mail-DMARC
-HUMAN_VERSION =			2.20260621
+HUMAN_VERSION =			2.20260724
 COMPONENT_SUMMARY =		Perl implementation of DMARC
 COMPONENT_CPAN_AUTHOR =		MSIMERSON
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8ab2acc91c508cc1842b69cb417acbadfa26b7f5e10df1b1dfe9af9ca44900ee
+	sha256:1e90900a655430318ea1e721869f406d0d05ce46ac84d48835aeb1b85a1221d0
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -47,6 +47,7 @@ REQUIRED_PACKAGES.perl += library/perl-5/email-mime
 REQUIRED_PACKAGES.perl += library/perl-5/email-sender
 REQUIRED_PACKAGES.perl += library/perl-5/email-simple
 REQUIRED_PACKAGES.perl += library/perl-5/encode
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir
 REQUIRED_PACKAGES.perl += library/perl-5/file-sharedir-install
 REQUIRED_PACKAGES.perl += library/perl-5/getopt-long
