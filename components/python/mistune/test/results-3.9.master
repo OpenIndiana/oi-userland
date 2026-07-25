@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 1137 items
+collecting ... collected 1155 items
 
 tests/test_cli.py::TestCliMessage::test_command_line_001 PASSED
 tests/test_cli.py::TestCliMessage::test_command_line_002 PASSED
@@ -721,6 +721,8 @@ tests/test_directives.py::TestDirective_fenced_figure::test_width_and_height_003
 tests/test_directives.py::TestCustomizeToc::test_colon_fenced_toc PASSED
 tests/test_directives.py::TestCustomizeToc::test_fenced_toc PASSED
 tests/test_directives.py::TestCustomizeToc::test_rst_toc PASSED
+tests/test_directives.py::TestFencedDirectiveInList::test_directive_still_breaks_a_list PASSED
+tests/test_directives.py::TestFencedDirectiveInList::test_marker_run_below_fence_length_is_not_a_directive PASSED
 tests/test_directives.py::TestDirectiveInclude::test_html_include PASSED
 tests/test_directives.py::TestDirectiveInclude::test_include_missing_source PASSED
 tests/test_directives.py::TestImageDirectiveSrc::test_harmful_src_blocked PASSED
@@ -738,6 +740,7 @@ tests/test_misc.py::TestMiscCases::test_allow_data_protocols PASSED
 tests/test_misc.py::TestMiscCases::test_allow_harmful_protocols PASSED
 tests/test_misc.py::TestMiscCases::test_ast_output PASSED
 tests/test_misc.py::TestMiscCases::test_ast_url PASSED
+tests/test_misc.py::TestMiscCases::test_backslash_space_in_link_destination_is_not_an_escape PASSED
 tests/test_misc.py::TestMiscCases::test_before_parse_hooks PASSED
 tests/test_misc.py::TestMiscCases::test_block_plain_paragraph_fast_path_interrupts PASSED
 tests/test_misc.py::TestMiscCases::test_block_quote_line_based_boundaries PASSED
@@ -870,6 +873,8 @@ tests/test_plugins.py::TestPlugin1_table::test_mismatch_length_001 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_mismatch_length_002 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_mismatch_length_003 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_mismatch_length_004 PASSED
+tests/test_plugins.py::TestPlugin1_table::test_not_a_delimiter_row_001 PASSED
+tests/test_plugins.py::TestPlugin1_table::test_not_a_delimiter_row_002 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_nptable_001 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_table_001 PASSED
 tests/test_plugins.py::TestPlugin1_table::test_table_002 PASSED
@@ -889,6 +894,8 @@ tests/test_plugins.py::TestPlugin2_table::test_mismatch_length_001 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_mismatch_length_002 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_mismatch_length_003 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_mismatch_length_004 PASSED
+tests/test_plugins.py::TestPlugin2_table::test_not_a_delimiter_row_001 PASSED
+tests/test_plugins.py::TestPlugin2_table::test_not_a_delimiter_row_002 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_nptable_001 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_table_001 PASSED
 tests/test_plugins.py::TestPlugin2_table::test_table_002 PASSED
@@ -909,6 +916,7 @@ tests/test_plugins.py::TestPlugin1_def_list::test_definition_with_multiple_lines
 tests/test_plugins.py::TestPlugin1_def_list::test_definition_with_multiple_lines_005 PASSED
 tests/test_plugins.py::TestPlugin1_def_list::test_invalid_definition_list_001 PASSED
 tests/test_plugins.py::TestPlugin1_def_list::test_invalid_definition_list_002 PASSED
+tests/test_plugins.py::TestPlugin1_def_list::test_tab-marked_definition_001 PASSED
 tests/test_plugins.py::TestPlugin2_def_list::test_definition_lists_001 PASSED
 tests/test_plugins.py::TestPlugin2_def_list::test_definition_separated_by_blank_lines_001 PASSED
 tests/test_plugins.py::TestPlugin2_def_list::test_definition_separated_by_blank_lines_002 PASSED
@@ -924,6 +932,7 @@ tests/test_plugins.py::TestPlugin2_def_list::test_definition_with_multiple_lines
 tests/test_plugins.py::TestPlugin2_def_list::test_definition_with_multiple_lines_005 PASSED
 tests/test_plugins.py::TestPlugin2_def_list::test_invalid_definition_list_001 PASSED
 tests/test_plugins.py::TestPlugin2_def_list::test_invalid_definition_list_002 PASSED
+tests/test_plugins.py::TestPlugin2_def_list::test_tab-marked_definition_001 PASSED
 tests/test_plugins.py::TestPlugin1_footnotes::test_footnotes_001 PASSED
 tests/test_plugins.py::TestPlugin1_footnotes::test_footnotes_002 PASSED
 tests/test_plugins.py::TestPlugin1_footnotes::test_footnotes_003 PASSED
@@ -1090,6 +1099,7 @@ tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_emphasis_ma
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_marker_inside_list_item PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_escaped_marker_on_continuation_line PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_link_title_containing_quote PASSED
+tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_multiline_setext_heading PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_prose_not_over_escaped PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_real_emphasis_not_over_escaped PASSED
 tests/test_renderers.py::TestMarkdownRendererRoundTrip::test_real_markers_preserved PASSED
@@ -1098,6 +1108,14 @@ tests/test_renderers.py::TestMarkdownRendererPlugins::test_standalone_list_item 
 tests/test_renderers.py::TestMarkdownRendererPlugins::test_table_markdown PASSED
 tests/test_renderers.py::TestMarkdownRendererPlugins::test_task_list_item_can_be_overridden PASSED
 tests/test_renderers.py::TestMarkdownRendererPlugins::test_task_list_item_default_markdown PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_blank_list_continuations_are_near_linear PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_dense_emphasis_is_near_linear PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_dense_emphasis_preserves_adjacent_tokens PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_failed_angle_destination_does_not_hide_later_links PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_failed_parent_destination_does_not_hide_nested_images PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_malformed_images_are_near_linear PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_mixed_emphasis_delimiters_are_near_linear PASSED
+tests/test_security_edge_cases.py::TestEdgeCaseSecurity::test_unclosed_link_destinations_are_near_linear PASSED
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_formatting_pairs_render_as_adjacent_spans PASSED
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_formatting_pairs_return_quickly PASSED
 tests/test_security_formatting.py::TestFormattingSecurity::test_repeated_unclosed_formatting_markers_are_near_linear PASSED
@@ -1144,4 +1162,4 @@ tests/test_syntax.py::TestSyntax::test_links_003 PASSED
 tests/test_syntax.py::TestSyntax::test_max_depth_001 PASSED
 tests/test_syntax.py::TestSyntax::test_max_depth_002 PASSED
 
-======== 1137 passed ========
+======== 1155 passed ========
