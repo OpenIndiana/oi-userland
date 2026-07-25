@@ -1,8 +1,8 @@
 We do not have devpi_process available (yet)
 
---- tox-4.56.4/pyproject.toml.orig
-+++ tox-4.56.4/pyproject.toml
-@@ -88,7 +88,6 @@
+--- tox-4.58.0/pyproject.toml.orig
++++ tox-4.58.0/pyproject.toml
+@@ -89,7 +89,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
    "detect-test-pollution>=1.2",
@@ -10,17 +10,17 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "docutils>=0.21",
---- tox-4.56.4/src/tox/pytest.py.orig
-+++ tox-4.56.4/src/tox/pytest.py
+--- tox-4.58.0/src/tox/pytest.py.orig
++++ tox-4.58.0/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
- from _pytest.fixtures import SubRequest  # noqa: PLC2701
+ from _pytest.fixtures import SubRequest  # ruff:ignore[import-private-name]
 -from devpi_process import IndexServer
  from virtualenv.info import fs_supports_symlink
  
  import tox.run
-@@ -484,15 +483,6 @@
+@@ -486,15 +485,6 @@
  
  
  @pytest.fixture(scope="session")
@@ -36,8 +36,8 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.56.4/tests/test_provision.py.orig
-+++ tox-4.56.4/tests/test_provision.py
+--- tox-4.58.0/tests/test_provision.py.orig
++++ tox-4.58.0/tests/test_provision.py
 @@ -19,7 +19,6 @@
      from collections.abc import Callable, Iterator, Sequence
  
