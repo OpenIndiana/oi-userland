@@ -140,7 +140,7 @@
      CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE -D_DARWIN_UNLIMITED_SELECT"
 --- old/make/autoconf/jdk-options.m4	2020-05-20 17:58:35.812457321 -0700
 +++ new/make/autoconf/jdk-options.m4	2020-05-20 17:58:35.432450025 -0700
-@@ -280,7 +280,7 @@
+@@ -291,7 +291,7 @@
      ZIP_EXTERNAL_DEBUG_SYMBOLS=false
    elif test "x$with_native_debug_symbols" = xexternal; then
  
@@ -149,7 +149,7 @@
        if test "x$OBJCOPY" = x; then
          # enabling of enable-debug-symbols and can't find objcopy
          # this is an error
-@@ -293,7 +293,7 @@
+@@ -304,7 +304,7 @@
      ZIP_EXTERNAL_DEBUG_SYMBOLS=false
    elif test "x$with_native_debug_symbols" = xzipped; then
  
@@ -536,7 +536,7 @@
    LIBAWT_EXCLUDE_FILES += awt_Font.c CUPSfuncs.c fontpath.c X11Color.c
  endif
  
-@@ -137,7 +137,6 @@
+@@ -141,7 +141,6 @@
      JDK_LIBS := java.base:libjava java.base:libjvm, \
      LIBS_unix := $(LIBM), \
      LIBS_linux := $(LIBDL), \
@@ -544,7 +544,7 @@
      LIBS_aix := $(LIBDL), \
      LIBS_macosx := \
          -framework ApplicationServices \
-@@ -204,9 +203,8 @@
+@@ -216,9 +215,8 @@
        DISABLED_WARNINGS_gcc_X11SurfaceData.c := unused-function, \
        DISABLED_WARNINGS_clang_X11Renderer.c := unused-function, \
        DISABLED_WARNINGS_clang_X11SurfaceData.c := unused-function, \
@@ -555,7 +555,7 @@
        STATIC_LIB_EXCLUDE_OBJS := $(LIBAWT_HEADLESS_STATIC_EXCLUDE_OBJS), \
    ))
  
-@@ -298,7 +296,7 @@
+@@ -310,7 +308,7 @@
        DISABLED_WARNINGS_clang_aix_sun_awt_X11_GtkFileDialogPeer.c := \
            parentheses, \
        DISABLED_WARNINGS_clang_aix_awt_InputMethod.c := unused-function sign-compare, \
@@ -564,7 +564,7 @@
        LIBS_unix := $(LIBDL) $(LIBM) $(X_LIBS) -lX11 -lXext -lXi -lXrender \
            -lXtst, \
        LIBS_linux := $(LIBPTHREAD), \
-@@ -419,7 +417,7 @@
+@@ -434,7 +432,7 @@
  endif
  
  ifeq ($(call isTargetOsType, unix)+$(call isTargetOs, macosx), true+false)
@@ -573,7 +573,7 @@
    ifeq ($(ENABLE_HEADLESS_ONLY), false)
      LIBJAWT_JDK_LIBS_unix += libawt_xawt
    else
-@@ -439,7 +437,6 @@
+@@ -454,7 +452,6 @@
      LDFLAGS_windows := $(LDFLAGS_CXX_JDK), \
      LDFLAGS_macosx := -Wl$(COMMA)-rpath$(COMMA)@loader_path, \
      JDK_LIBS_unix := $(LIBJAWT_JDK_LIBS_unix), \
@@ -673,7 +673,7 @@
      LIBS_windows := iphlpapi.lib ws2_32.lib, \
  ))
  
-@@ -78,7 +77,6 @@
+@@ -63,7 +62,6 @@
      JDK_LIBS := java.base:libjvm, \
      LIBS := $(ICONV_LIBS), \
      LIBS_linux := $(LIBDL), \
@@ -837,7 +837,7 @@
  
  # Platform specific setup
  ifeq ($(call isTargetOs, windows), true)
-@@ -83,9 +83,6 @@
+@@ -86,9 +86,6 @@
    BUILD_JDK_JTREG_EXCLUDE += exerevokeall.c
    ifeq ($(call isTargetOs, linux), true)
      BUILD_JDK_JTREG_EXECUTABLES_LIBS_exelauncher := -ldl
@@ -1039,7 +1039,7 @@
  #include <netinet/in.h>
 --- old/src/hotspot/share/utilities/vmError.cpp	2020-05-20 18:00:48.214999546 -0700
 +++ new/src/hotspot/share/utilities/vmError.cpp	2020-05-20 18:00:47.822992019 -0700
-@@ -1921,8 +1921,6 @@
+@@ -1922,8 +1922,6 @@
        out.print_raw   ("#   Executing ");
  #if defined(LINUX) || defined(_ALLBSD_SOURCE)
        out.print_raw   ("/bin/sh -c ");
@@ -1048,7 +1048,7 @@
  #elif defined(_WINDOWS)
        out.print_raw   ("cmd /C ");
  #endif
-@@ -1987,8 +1985,6 @@
+@@ -1988,8 +1986,6 @@
      tty->print("#   Executing ");
  #if defined(LINUX)
      tty->print  ("/bin/sh -c ");
@@ -1327,7 +1327,7 @@
  
 --- old/src/java.base/unix/native/libjava/ProcessImpl_md.c	2020-05-20 18:01:09.319404766 -0700
 +++ new/src/java.base/unix/native/libjava/ProcessImpl_md.c	2020-05-20 18:01:08.935397393 -0700
-@@ -229,14 +229,7 @@
+@@ -231,14 +231,7 @@
  static const char*
  defaultPath(void)
  {
@@ -1343,7 +1343,7 @@
  }
  
  static const char*
-@@ -494,7 +487,7 @@
+@@ -496,7 +489,7 @@
  #endif
  
  /* vfork(2) is deprecated on Darwin */
@@ -1352,7 +1352,7 @@
  static pid_t
  vforkChild(ChildStuff *c) {
      volatile pid_t resultPid;
-@@ -660,7 +653,7 @@
+@@ -662,7 +655,7 @@
  startChild(JNIEnv *env, jobject process, ChildStuff *c, const char *helperpath) {
      switch (c->mode) {
  /* vfork(2) is deprecated on Darwin*/
