@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytz
-HUMAN_VERSION =			2026.2
+HUMAN_VERSION =			2026.3.post1
 COMPONENT_SUMMARY =		World timezone definitions, modern and historical
 COMPONENT_PROJECT_URL =		http://pythonhosted.org/pytz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0e60b47b29f21574376f218fe21abc009894a2321ea16c6754f3cad6eb7cdd6a
+	sha256:2211d3fcf9a797d3405cac96ac7f61d80e6a644f72a3309607282fe8a2010c5d
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
