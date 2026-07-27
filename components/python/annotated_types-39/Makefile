@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project annotated_types
+#   $WS_TOOLS/python-integrate-project -d python/annotated_types-39 annotated_types
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		annotated_types
-HUMAN_VERSION =			0.8.0
+HUMAN_VERSION =			0.7.0
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Reusable constraint types to use with typing.Annotated
 COMPONENT_PROJECT_URL =		https://github.com/annotated-types/annotated-types
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:13b2beaad985e05e2d6407ee4c4f35590b11f8d693a258a561055cac8f64cab7
+	sha256:aff07c09a53a08bc8cfccb9c85b05f1aa9a2a6f23728d790723543408344ce89
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by annotated-types >= 0.8.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# annotated-types >= 0.8.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
