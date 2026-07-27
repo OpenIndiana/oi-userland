@@ -1,0 +1,13 @@
+The guard here is hopelessly incorrect and inconsistent, and obviously so.
+
+--- a/src/hotspot/os/posix/os_posix.cpp	Fri Jun 28 13:01:37 2024
++++ b/src/hotspot/os/posix/os_posix.cpp	Fri Jun 28 13:41:06 2024
+@@ -168,7 +168,7 @@
+ 
+ bool os::committed_in_range(address start, size_t size, address& committed_start, size_t& committed_size) {
+ 
+-#ifdef _AIX
++#ifndef LINUX
+   committed_start = start;
+   committed_size = size;
+   return true;

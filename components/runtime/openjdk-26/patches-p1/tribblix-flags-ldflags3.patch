@@ -1,0 +1,41 @@
+--- a/make/autoconf/flags-ldflags.m4	Wed Apr 15 14:26:49 2020
++++ b/make/autoconf/flags-ldflags.m4	Wed Apr 15 14:28:01 2020
+@@ -67,7 +67,9 @@
+     fi
+ 
+     BASIC_LDFLAGS_JVM_ONLY=""
+-    LDFLAGS_LTO="-flto=auto -fuse-linker-plugin -fno-strict-aliasing"
++    if test "x$OPENJDK_TARGET_OS" != xsolaris; then
++      LDFLAGS_LTO="-flto=auto -fuse-linker-plugin -fno-strict-aliasing"
++    fi
+ 
+     LDFLAGS_CXX_PARTIAL_LINKING="$MACHINE_FLAG -r"
+ 
+@@ -75,7 +77,9 @@
+     BASIC_LDFLAGS_JVM_ONLY="-mno-omit-leaf-frame-pointer -mstack-alignment=16 \
+         -fPIC"
+ 
+-    LDFLAGS_LTO="-flto=auto -fuse-linker-plugin -fno-strict-aliasing"
++    if test "x$OPENJDK_TARGET_OS" != xsolaris; then
++      LDFLAGS_LTO="-flto=auto -fuse-linker-plugin -fno-strict-aliasing"
++    fi
+     LDFLAGS_CXX_PARTIAL_LINKING="$MACHINE_FLAG -r"
+ 
+     if test "x$OPENJDK_TARGET_OS" = xlinux; then
+@@ -138,10 +142,12 @@
+ 
+   # Setup LDFLAGS for linking executables
+   if test "x$TOOLCHAIN_TYPE" = xgcc; then
+-    # Enabling pie on 32 bit builds prevents the JVM from allocating a continuous
+-    # java heap.
+-    if test "x$OPENJDK_TARGET_CPU_BITS" != "x32"; then
+-      EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -pie"
++    if test "x$OPENJDK_TARGET_OS" != xsolaris; then
++      # Enabling pie on 32 bit builds prevents the JVM from allocating a continuous
++      # java heap.
++      if test "x$OPENJDK_TARGET_CPU_BITS" != "x32"; then
++        EXECUTABLE_LDFLAGS="$EXECUTABLE_LDFLAGS -pie"
++      fi
+     fi
+   fi
+ 

@@ -1,0 +1,5334 @@
+diff -urN /tmp/a/src/hotspot/os/solaris/attachListener_solaris.cpp b/src/hotspot/os/solaris/attachListener_solaris.cpp
+--- /tmp/a/src/hotspot/os/solaris/attachListener_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/attachListener_solaris.cpp	2025-04-19 12:11:00.533694492 +0100
+@@ -0,0 +1,692 @@
++/*
++ * Copyright (c) 2005, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "logging/log.hpp"
++#include "runtime/interfaceSupport.inline.hpp"
++#include "runtime/os.inline.hpp"
++#include "services/attachListener.hpp"
++#include "utilities/vmError.hpp"
++
++#include <door.h>
++#include <limits.h>
++#include <string.h>
++#include <signal.h>
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <sys/stat.h>
++
++// stropts.h uses STR in stream ioctl defines
++#undef STR
++#include <stropts.h>
++#undef STR
++#define STR(a) #a
++
++// The attach mechanism on Solaris is implemented using the Doors IPC
++// mechanism. The first tool to attempt to attach causes the attach
++// listener thread to startup. This thread creates a door that is
++// associated with a function that enqueues an operation to the attach
++// listener. The door is attached to a file in the file system so that
++// client (tools) can locate it. To enqueue an operation to the VM the
++// client calls through the door which invokes the enqueue function in
++// this process. The credentials of the client are checked and if the
++// effective uid matches this process then the operation is enqueued.
++// When an operation completes the attach listener is required to send the
++// operation result and any result data to the client. In this implementation
++// the result is returned via a UNIX domain socket. A pair of connected
++// sockets (socketpair) is created in the enqueue function and the file
++// descriptor for one of the sockets is returned to the client as the
++// return from the door call. The other end is retained in this process.
++// When the operation completes the result is sent to the client and
++// the socket is closed.
++
++// forward reference
++class SolarisAttachOperation;
++
++class SolarisAttachListener: AllStatic {
++ private:
++
++  // the path to which we attach the door file descriptor
++  static char _door_path[PATH_MAX+1];
++  static volatile bool _has_door_path;
++
++  // door descriptor returned by door_create
++  static int _door_descriptor;
++
++  static bool _atexit_registered;
++
++  // mutex to protect operation list
++  static pthread_mutex_t _mutex;
++
++  // semaphore to wakeup listener thread
++  static sema_t _wakeup;
++
++  static pthread_mutex_t* mutex()                               { return &_mutex; }
++  static sema_t* wakeup()                               { return &_wakeup; }
++
++  // enqueued operation list
++  static SolarisAttachOperation* _head;
++  static SolarisAttachOperation* _tail;
++
++  static SolarisAttachOperation* head()                 { return _head; }
++  static void set_head(SolarisAttachOperation* head)    { _head = head; }
++
++  static SolarisAttachOperation* tail()                 { return _tail; }
++  static void set_tail(SolarisAttachOperation* tail)    { _tail = tail; }
++
++  // create the door
++  static int create_door();
++
++ public:
++  enum {
++    ATTACH_PROTOCOL_VER = 1                     // protocol version
++  };
++  enum {
++    ATTACH_ERROR_BADREQUEST     = 100,          // error codes
++    ATTACH_ERROR_BADVERSION     = 101,
++    ATTACH_ERROR_RESOURCE       = 102,
++    ATTACH_ERROR_INTERNAL       = 103,
++    ATTACH_ERROR_DENIED         = 104
++  };
++
++  static void set_door_path(char* path) {
++    if (path == nullptr) {
++      _door_path[0] = '\0';
++      _has_door_path = false;
++    } else {
++      strncpy(_door_path, path, PATH_MAX);
++      _door_path[PATH_MAX] = '\0';
++      _has_door_path = true;
++    }
++  }
++
++  static void set_door_descriptor(int dd)               { _door_descriptor = dd; }
++
++  // initialize the listener, returns 0 if okay
++  static int init();
++
++  static char* door_path()                              { return _door_path; }
++  static bool has_door_path()                           { return _has_door_path; }
++  static int door_descriptor()                          { return _door_descriptor; }
++
++  // enqueue an operation
++  static void enqueue(SolarisAttachOperation* op);
++
++  // dequeue an operation
++  static SolarisAttachOperation* dequeue();
++};
++
++
++// SolarisAttachOperation is an AttachOperation that additionally encapsulates
++// a socket connection to the requesting client/tool. SolarisAttachOperation
++// can additionally be held in a linked list.
++
++class SolarisAttachOperation: public AttachOperation {
++ private:
++  friend class SolarisAttachListener;
++
++  // connection to client
++  int _socket;
++
++  // linked list support
++  SolarisAttachOperation* _next;
++
++  SolarisAttachOperation* next()                         { return _next; }
++  void set_next(SolarisAttachOperation* next)            { _next = next; }
++
++ public:
++  void complete(jint res, bufferedStream* st);
++
++  void set_socket(int s)                                { _socket = s; }
++  int socket() const                                    { return _socket; }
++
++  SolarisAttachOperation(char* name) : AttachOperation(name) {
++    set_socket(-1);
++    set_next(nullptr);
++  }
++};
++
++// statics
++char SolarisAttachListener::_door_path[PATH_MAX+1];
++volatile bool SolarisAttachListener::_has_door_path;
++int SolarisAttachListener::_door_descriptor = -1;
++bool SolarisAttachListener::_atexit_registered = false;
++pthread_mutex_t SolarisAttachListener::_mutex;
++sema_t SolarisAttachListener::_wakeup;
++SolarisAttachOperation* SolarisAttachListener::_head = nullptr;
++SolarisAttachOperation* SolarisAttachListener::_tail = nullptr;
++
++// Supporting class to help split a buffer into individual components
++class ArgumentIterator : public StackObj {
++ private:
++  char* _pos;
++  char* _end;
++ public:
++  ArgumentIterator(char* arg_buffer, size_t arg_size) {
++    _pos = arg_buffer;
++    _end = _pos + arg_size - 1;
++  }
++  char* next() {
++    if (*_pos == '\0') {
++      // advance the iterator if possible (null arguments)
++      if (_pos < _end) {
++        _pos += 1;
++      }
++      return nullptr;
++    }
++    char* res = _pos;
++    char* next_pos = strchr(_pos, '\0');
++    if (next_pos < _end)  {
++      next_pos++;
++    }
++    _pos = next_pos;
++    return res;
++  }
++};
++
++// Calls from the door function to check that the client credentials
++// match this process. Returns 0 if credentials okay, otherwise -1.
++static int check_credentials() {
++  ucred_t *cred_info = nullptr;
++  int ret = -1; // deny by default
++
++  // get client credentials
++  if (door_ucred(&cred_info) == -1) {
++    return -1; // unable to get them, deny
++  }
++
++  // get euid/egid from ucred_free
++  uid_t ucred_euid = ucred_geteuid(cred_info);
++  gid_t ucred_egid = ucred_getegid(cred_info);
++
++  // check that the effective uid/gid matches
++  if (os::Posix::matches_effective_uid_and_gid_or_root(ucred_euid, ucred_egid)) {
++    ret =  0;  // allow
++  }
++
++  ucred_free(cred_info);
++  return ret;
++}
++
++
++// Parses the argument buffer to create an AttachOperation that we should
++// enqueue to the attach listener.
++// The buffer is expected to be formatted as follows:
++// <ver>0<cmd>0<arg>0<arg>0<arg>0
++// where <ver> is the version number (must be "1"), <cmd> is the command
++// name ("load, "datadump", ...) and <arg> is an argument.
++//
++static SolarisAttachOperation* create_operation(char* argp, size_t arg_size, int* err) {
++  // assume bad request until parsed
++  *err = SolarisAttachListener::ATTACH_ERROR_BADREQUEST;
++
++  if (arg_size < 2 || argp[arg_size-1] != '\0') {
++    return nullptr;   // no ver or not null terminated
++  }
++
++  // Use supporting class to iterate over the buffer
++  ArgumentIterator args(argp, arg_size);
++
++  // First check the protocol version
++  char* ver = args.next();
++  if (ver == nullptr) {
++    return nullptr;
++  }
++  if (atoi(ver) != SolarisAttachListener::ATTACH_PROTOCOL_VER) {
++    *err = SolarisAttachListener::ATTACH_ERROR_BADVERSION;
++    return nullptr;
++  }
++
++  // Get command name and create the operation
++  char* name = args.next();
++  if (name == nullptr || strlen(name) > AttachOperation::name_length_max) {
++    return nullptr;
++  }
++  SolarisAttachOperation* op = new SolarisAttachOperation(name);
++
++  // Iterate over the arguments
++  for (int i=0; i<AttachOperation::arg_count_max; i++) {
++    char* arg = args.next();
++    if (arg == nullptr) {
++      op->set_arg(i, nullptr);
++    } else {
++      if (strlen(arg) > AttachOperation::arg_length_max) {
++        delete op;
++        return nullptr;
++      }
++      op->set_arg(i, arg);
++    }
++  }
++
++  // return operation
++  *err = 0;
++  return op;
++}
++
++// This is door function which the client executes via a door_call.
++extern "C" {
++  static void enqueue_proc(void* cookie, char* argp, size_t arg_size,
++                           door_desc_t* dt, uint_t n_desc)
++  {
++    int return_fd = -1;
++    SolarisAttachOperation* op = nullptr;
++
++    // wait up to 10 seconds for listener to be up and running
++    jint res = 0;
++    int sleep_count = 0;
++    while (!AttachListener::is_initialized()) {
++      sleep(1); // 1 second
++      sleep_count++;
++      if (sleep_count > 10) { // try for 10 seconds
++        DEBUG_ONLY(warning("door_call when not enabled"));
++        res = (jint)SolarisAttachListener::ATTACH_ERROR_INTERNAL;
++        break;
++      }
++    }
++
++    // check client credentials
++    if (res == 0) {
++      if (check_credentials() != 0) {
++        res = (jint)SolarisAttachListener::ATTACH_ERROR_DENIED;
++      }
++    }
++
++    // if we are stopped at ShowMessageBoxOnError then maybe we can
++    // load a diagnostic library
++    if (res == 0 && VMError::is_error_reported()) {
++      if (ShowMessageBoxOnError) {
++        // TBD - support loading of diagnostic library here
++      }
++
++      // can't enqueue operation after fatal error
++      res = (jint)SolarisAttachListener::ATTACH_ERROR_RESOURCE;
++    }
++
++    // create the operation
++    if (res == 0) {
++      int err;
++      op = create_operation(argp, arg_size, &err);
++      res = (op == nullptr) ? (jint)err : 0;
++    }
++
++    // create a pair of connected sockets. Store the file descriptor
++    // for one end in the operation and enqueue the operation. The
++    // file descriptor for the other end will be returned to the client.
++    if (res == 0) {
++      int s[2];
++      if (socketpair(PF_UNIX, SOCK_STREAM, 0, s) < 0) {
++        delete op;
++        res = (jint)SolarisAttachListener::ATTACH_ERROR_RESOURCE;
++      } else {
++        op->set_socket(s[0]);
++        return_fd = s[1];
++        SolarisAttachListener::enqueue(op);
++      }
++    }
++
++    // Return 0 (success) + file descriptor, or non-0 (error)
++    if (res == 0) {
++      door_desc_t desc;
++      // DOOR_RELEASE flag makes sure fd is closed after passing it to
++      // the client.  See door_return(3C) man page.
++      desc.d_attributes = DOOR_DESCRIPTOR | DOOR_RELEASE;
++      desc.d_data.d_desc.d_descriptor = return_fd;
++      door_return((char*)&res, sizeof(res), &desc, 1);
++    } else {
++      door_return((char*)&res, sizeof(res), nullptr, 0);
++    }
++  }
++}
++
++// atexit hook to detach the door and remove the file
++extern "C" {
++  static void listener_cleanup() {
++    int dd = SolarisAttachListener::door_descriptor();
++    if (dd >= 0) {
++      SolarisAttachListener::set_door_descriptor(-1);
++      ::close(dd);
++    }
++    if (SolarisAttachListener::has_door_path()) {
++      char* path = SolarisAttachListener::door_path();
++      ::fdetach(path);
++      ::unlink(path);
++      SolarisAttachListener::set_door_path(nullptr);
++    }
++  }
++}
++
++// Create the door
++int SolarisAttachListener::create_door() {
++  char door_path[PATH_MAX];
++  char initial_path[PATH_MAX];
++  int fd, res;
++
++  // register function to cleanup
++  if (!_atexit_registered) {
++    _atexit_registered = true;
++    ::atexit(listener_cleanup);
++  }
++
++  // create the door descriptor
++  int dd = ::door_create(enqueue_proc, nullptr, 0);
++  if (dd < 0) {
++    return -1;
++  }
++
++  int n = os::snprintf(door_path, PATH_MAX, "%s/.java_pid%d",
++                   os::get_temp_directory(), os::current_process_id());
++  if (n < (int)PATH_MAX) {
++    (void) os::snprintf(initial_path, PATH_MAX, "%s.tmp", door_path);
++  }
++  if (n >= (int)PATH_MAX) {
++    return -1;
++  }
++  RESTARTABLE(::creat(initial_path, S_IRUSR | S_IWUSR), fd);
++  if (fd == -1) {
++    log_debug(attach)("attempt to create door file %s failed (%d)", initial_path, errno);
++    ::door_revoke(dd);
++    return -1;
++  }
++  assert(fd >= 0, "bad file descriptor");
++  ::close(fd);
++
++  // attach the door descriptor to the file
++  if ((res = ::fattach(dd, initial_path)) == -1) {
++    // if busy then detach and try again
++    if (errno == EBUSY) {
++      ::fdetach(initial_path);
++      res = ::fattach(dd, initial_path);
++    }
++    if (res == -1) {
++      log_debug(attach)("unable to create door - fattach failed (%d)", errno);
++      ::door_revoke(dd);
++      dd = -1;
++    }
++  }
++
++  // rename file so that clients can attach
++  if (dd >= 0) {
++    if (::rename(initial_path, door_path) == -1) {
++        ::close(dd);
++        ::fdetach(initial_path);
++        log_debug(attach)("unable to create door - rename %s to %s failed (%d)", initial_path, door_path, errno);
++        dd = -1;
++    }
++  }
++  if (dd >= 0) {
++    set_door_descriptor(dd);
++    set_door_path(door_path);
++    log_trace(attach)("door file %s created successfully", door_path);
++  } else {
++    // unable to create door, attach it to file, or rename file into place
++    ::unlink(initial_path);
++    return -1;
++  }
++
++  return 0;
++}
++
++// Initialization - create the door, locks, and other initialization
++int SolarisAttachListener::init() {
++  if (create_door()) {
++    return -1;
++  }
++
++  int status = pthread_mutex_init(&_mutex, nullptr);
++  assert_status(status==0, status, "mutex_init");
++
++  status = ::sema_init(&_wakeup, 0, 0, nullptr);
++  assert_status(status==0, status, "sema_init");
++
++  set_head(nullptr);
++  set_tail(nullptr);
++
++  return 0;
++}
++
++// Dequeue an operation
++SolarisAttachOperation* SolarisAttachListener::dequeue() {
++  for (;;) {
++    int res;
++
++    // wait for somebody to enqueue something
++    while ((res = ::sema_wait(wakeup())) == EINTR)
++      ;
++    if (res) {
++      warning("sema_wait failed: %s", os::strerror(res));
++      return nullptr;
++    }
++
++    // lock the list
++    res = pthread_mutex_lock(mutex());
++    assert(res == 0, "mutex_lock failed");
++
++    // remove the head of the list
++    SolarisAttachOperation* op = head();
++    if (op != nullptr) {
++      set_head(op->next());
++      if (head() == nullptr) {
++        set_tail(nullptr);
++      }
++    }
++
++    // unlock
++    pthread_mutex_unlock(mutex());
++
++    // if we got an operation when return it.
++    if (op != nullptr) {
++      return op;
++    }
++  }
++}
++
++// Enqueue an operation
++void SolarisAttachListener::enqueue(SolarisAttachOperation* op) {
++  // lock list
++  int res = pthread_mutex_lock(mutex());
++  assert(res == 0, "mutex_lock failed");
++
++  // enqueue at tail
++  op->set_next(nullptr);
++  if (head() == nullptr) {
++    set_head(op);
++  } else {
++    tail()->set_next(op);
++  }
++  set_tail(op);
++
++  // wakeup the attach listener
++  RESTARTABLE(::sema_post(wakeup()), res);
++  assert(res == 0, "sema_post failed");
++
++  // unlock
++  pthread_mutex_unlock(mutex());
++}
++
++
++// support function - writes the (entire) buffer to a socket
++static int write_fully(int s, char* buf, int len) {
++  do {
++    int n = ::write(s, buf, len);
++    if (n == -1) {
++      if (errno != EINTR) return -1;
++    } else {
++      buf += n;
++      len -= n;
++    }
++  }
++  while (len > 0);
++  return 0;
++}
++
++// Complete an operation by sending the operation result and any result
++// output to the client. At this time the socket is in blocking mode so
++// potentially we can block if there is a lot of data and the client is
++// non-responsive. For most operations this is a non-issue because the
++// default send buffer is sufficient to buffer everything. In the future
++// if there are operations that involves a very big reply then it the
++// socket could be made non-blocking and a timeout could be used.
++
++void SolarisAttachOperation::complete(jint res, bufferedStream* st) {
++  if (this->socket() >= 0) {
++    JavaThread* thread = JavaThread::current();
++    ThreadBlockInVM tbivm(thread);
++
++    // write operation result
++    char msg[32];
++    (void) os::snprintf(msg, sizeof(msg), "%d\n", res);
++    int rc = write_fully(this->socket(), msg, strlen(msg));
++
++    // write any result data
++    if (rc == 0) {
++      write_fully(this->socket(), (char*) st->base(), st->size());
++      ::shutdown(this->socket(), 2);
++    }
++
++    // done
++    ::close(this->socket());
++  }
++  delete this;
++}
++
++
++// AttachListener functions
++
++AttachOperation* AttachListener::dequeue() {
++  JavaThread* thread = JavaThread::current();
++  ThreadBlockInVM tbivm(thread);
++
++  AttachOperation* op = SolarisAttachListener::dequeue();
++
++  return op;
++}
++
++
++// Performs initialization at vm startup
++// For Solaris we remove any stale .java_pid file which could cause
++// an attaching process to think we are ready to receive a door_call
++// before we are properly initialized
++
++void AttachListener::vm_start() {
++  char fn[PATH_MAX+1];
++  struct stat64 st;
++  int ret;
++
++  int n = os::snprintf(fn, sizeof(fn), "%s/.java_pid%d",
++           os::get_temp_directory(), os::current_process_id());
++  assert(n < sizeof(fn), "java_pid file name buffer overflow");
++
++  RESTARTABLE(::stat64(fn, &st), ret);
++  if (ret == 0) {
++    ret = ::unlink(fn);
++    if (ret == -1) {
++      log_debug(attach)("Failed to remove stale attach pid file at %s", fn);
++    }
++  }
++}
++
++int AttachListener::pd_init() {
++  JavaThread* thread = JavaThread::current();
++  ThreadBlockInVM tbivm(thread);
++
++  int ret_code = SolarisAttachListener::init();
++
++  return ret_code;
++}
++
++bool AttachListener::check_socket_file() {
++  int ret;
++  struct stat64 st;
++  ret = stat64(SolarisAttachListener::door_path(), &st);
++  if (ret == -1) { // need to restart attach listener.
++    log_debug(attach)("Door file %s does not exist - Restart Attach Listener",
++                      SolarisAttachListener::door_path());
++
++    listener_cleanup();
++
++    // wait to terminate current attach listener instance...
++    while (AttachListener::transit_state(AL_INITIALIZING,
++                                         AL_NOT_INITIALIZED) != AL_NOT_INITIALIZED) {
++      os::naked_yield();
++    }
++    return is_init_trigger();
++  }
++  return false;
++}
++
++// Attach Listener is started lazily except in the case when
++// +ReduseSignalUsage is used
++bool AttachListener::init_at_startup() {
++  if (ReduceSignalUsage) {
++    return true;
++  } else {
++    return false;
++  }
++}
++
++// If the file .attach_pid<pid> exists in the working directory
++// or /tmp then this is the trigger to start the attach mechanism
++bool AttachListener::is_init_trigger() {
++  if (init_at_startup() || is_initialized()) {
++    return false;               // initialized at startup or already initialized
++  }
++  char fn[PATH_MAX + 1];
++  int ret;
++  struct stat64 st;
++  (void) os::snprintf(fn, sizeof(fn), ".attach_pid%d", os::current_process_id());
++  RESTARTABLE(::stat64(fn, &st), ret);
++  if (ret == -1) {
++    log_trace(attach)("Failed to find attach file: %s, trying alternate", fn);
++    (void) os::snprintf(fn, sizeof(fn), "%s/.attach_pid%d",
++             os::get_temp_directory(), os::current_process_id());
++    RESTARTABLE(::stat64(fn, &st), ret);
++    if (ret == -1) {
++      log_debug(attach)("Failed to find attach file: %s", fn);
++    }
++  }
++  if (ret == 0) {
++    // simple check to avoid starting the attach mechanism when
++    // a bogus non-root user creates the file
++    if (os::Posix::matches_effective_uid_or_root(st.st_uid)) {
++      init();
++      log_trace(attach)("Attach triggered by %s", fn);
++      return true;
++    } else {
++      log_debug(attach)("File %s has wrong user id %d (vs %d). Attach is not triggered", fn, st.st_uid, geteuid());
++    }
++  }
++  return false;
++}
++
++// if VM aborts then remove listener
++void AttachListener::abort() {
++  listener_cleanup();
++}
++
++void AttachListener::pd_data_dump() {
++  os::signal_notify(SIGQUIT);
++}
++
++void AttachListener::pd_detachall() {
++  listener_cleanup();
++}
+diff -urN /tmp/a/src/hotspot/os/solaris/decoder_solaris.cpp b/src/hotspot/os/solaris/decoder_solaris.cpp
+--- /tmp/a/src/hotspot/os/solaris/decoder_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/decoder_solaris.cpp	2025-04-19 12:08:38.474078787 +0100
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "jvm.h"
++#include "utilities/decoder_elf.hpp"
++#include "utilities/permitForbiddenFunctions.hpp"
++
++#include <cxxabi.h>
++
++bool ElfDecoder::demangle(const char* symbol, char *buf, int buflen) {
++  int   status;
++  char* result;
++  size_t size = (size_t)buflen;
++  // Don't pass buf to __cxa_demangle. In case of the 'buf' is too small,
++  // __cxa_demangle will call system "realloc" for additional memory, which
++  // may use different malloc/realloc mechanism that allocates 'buf'.
++  if ((result = abi::__cxa_demangle(symbol, nullptr, nullptr, &status)) != nullptr) {
++    jio_snprintf(buf, buflen, "%s", result);
++    // call c library's free
++    permit_forbidden_function::free(result);
++    return true;
++  }
++  return false;
++}
++
+diff -urN /tmp/a/src/hotspot/os/solaris/dtrace/jhelper.d b/src/hotspot/os/solaris/dtrace/jhelper.d
+--- /tmp/a/src/hotspot/os/solaris/dtrace/jhelper.d	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/dtrace/jhelper.d	2025-04-19 10:36:47.382874053 +0100
+@@ -0,0 +1,534 @@
++/*
++ * Copyright (c) 2003, 2018, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++/* This file is auto-generated */
++#include "JvmOffsetsIndex.h"
++
++#define DEBUG
++
++#ifdef DEBUG
++#define MARK_LINE this->line = __LINE__
++#else
++#define MARK_LINE
++#endif
++
++#define pointer uint64_t
++
++extern pointer __JvmOffsets;
++
++/* GrowableArray<CodeHeaps*>* */
++extern pointer __1cJCodeCacheG_heaps_;
++
++extern pointer __1cIUniverseO_collectedHeap_;
++
++extern pointer __1cHnmethodG__vtbl_;
++extern pointer __1cGMethodG__vtbl_;
++extern pointer __1cKBufferBlobG__vtbl_;
++
++#define copyin_ptr(ADDR)    *(pointer*)  copyin((pointer) (ADDR), sizeof(pointer))
++#define copyin_uchar(ADDR)  *(uchar_t*)  copyin((pointer) (ADDR), sizeof(uchar_t))
++#define copyin_uint16(ADDR) *(uint16_t*) copyin((pointer) (ADDR), sizeof(uint16_t))
++#define copyin_uint32(ADDR) *(uint32_t*) copyin((pointer) (ADDR), sizeof(uint32_t))
++#define copyin_int32(ADDR)  *(int32_t*)  copyin((pointer) (ADDR), sizeof(int32_t))
++#define copyin_uint8(ADDR)  *(uint8_t*)  copyin((pointer) (ADDR), sizeof(uint8_t))
++
++#define copyin_offset(JVM_CONST)  JVM_CONST = \
++	copyin_int32(JvmOffsetsPtr + IDX_##JVM_CONST * sizeof(int32_t))
++
++int init_done;
++
++dtrace:helper:ustack:
++{
++  MARK_LINE;
++  this->done = 0;
++  /*
++   * TBD:
++   * Here we initialize init_done, otherwise jhelper does not work.
++   * Therefore, copyin_offset() statements work multiple times now.
++   * There is a hope we could avoid it in the future, and so,
++   * this initialization can be removed.
++   */
++  init_done  = 0;
++  this->error = (char *) NULL;
++  this->result = (char *) NULL;
++  this->isMethod = 0;
++  this->codecache = 0;
++  this->klass = (pointer) NULL;
++  this->vtbl  = (pointer) NULL;
++  this->suffix = '\0';
++}
++
++dtrace:helper:ustack:
++{
++  MARK_LINE;
++  /* Initialization of JvmOffsets constants */
++  JvmOffsetsPtr = (pointer) &``__JvmOffsets;
++}
++
++dtrace:helper:ustack:
++/!init_done && !this->done/
++{
++  MARK_LINE;
++
++  copyin_offset(POINTER_SIZE);
++  copyin_offset(COMPILER);
++  copyin_offset(OFFSET_CollectedHeap_reserved);
++  copyin_offset(OFFSET_MemRegion_start);
++  copyin_offset(OFFSET_MemRegion_word_size);
++  copyin_offset(SIZE_HeapWord);
++
++  copyin_offset(OFFSET_interpreter_frame_method);
++  copyin_offset(OFFSET_Klass_name);
++  copyin_offset(OFFSET_ConstantPool_pool_holder);
++
++  copyin_offset(OFFSET_HeapBlockHeader_used);
++  copyin_offset(OFFSET_oopDesc_metadata);
++
++  copyin_offset(OFFSET_Symbol_length);
++  copyin_offset(OFFSET_Symbol_body);
++
++  copyin_offset(OFFSET_Method_constMethod);
++  copyin_offset(OFFSET_ConstMethod_constants);
++  copyin_offset(OFFSET_ConstMethod_name_index);
++  copyin_offset(OFFSET_ConstMethod_signature_index);
++
++  copyin_offset(OFFSET_CodeHeap_memory);
++  copyin_offset(OFFSET_CodeHeap_segmap);
++  copyin_offset(OFFSET_CodeHeap_log2_segment_size);
++
++  copyin_offset(OFFSET_GrowableArray_CodeHeap_data);
++  copyin_offset(OFFSET_GrowableArray_CodeHeap_len);
++
++  copyin_offset(OFFSET_VirtualSpace_low);
++  copyin_offset(OFFSET_VirtualSpace_high);
++
++  copyin_offset(OFFSET_CodeBlob_name);
++
++  copyin_offset(OFFSET_nmethod_method);
++  copyin_offset(SIZE_HeapBlockHeader);
++  copyin_offset(SIZE_oopDesc);
++  copyin_offset(SIZE_ConstantPool);
++
++  copyin_offset(OFFSET_NarrowPtrStruct_base);
++  copyin_offset(OFFSET_NarrowPtrStruct_shift);
++
++  /*
++   * The PC to translate is in arg0.
++   */
++  this->pc = arg0;
++
++#if defined(__i386) || defined(__amd64)
++  this->methodPtr = copyin_ptr(arg1 + OFFSET_interpreter_frame_method);
++#else
++#error "Don't know architecture"
++#endif
++
++  /* Read address of GrowableArray<CodeHeaps*> */
++  // this->code_heaps_address = copyin_ptr(&``__1cJCodeCacheG_heaps_);
++  this->code_heaps_address =  * ( uint64_t * ) copyin ( ( uint64_t ) ( &``__1cJCodeCacheG_heaps_ ) , sizeof ( uint64_t ) );
++
++  /* Read address of _data array field in GrowableArray */
++  this->code_heaps_array_address = copyin_ptr(this->code_heaps_address + OFFSET_GrowableArray_CodeHeap_data);
++  this->number_of_heaps = copyin_uint32(this->code_heaps_address + OFFSET_GrowableArray_CodeHeap_len);
++
++  this->Method_vtbl = (pointer) &``__1cGMethodG__vtbl_;
++
++  /*
++   * Get Java heap bounds
++   */
++  // this->Universe_collectedHeap = copyin_ptr(&``__1cIUniverseO_collectedHeap_);
++  this->Universe_collectedHeap =  * ( uint64_t * ) copyin ( ( uint64_t ) ( &``__1cIUniverseO_collectedHeap_ ) , sizeof ( uint64_t ) );
++
++  this->heap_start = copyin_ptr(this->Universe_collectedHeap +
++      OFFSET_CollectedHeap_reserved +
++      OFFSET_MemRegion_start);
++  this->heap_size = SIZE_HeapWord *
++    copyin_ptr(this->Universe_collectedHeap +
++        OFFSET_CollectedHeap_reserved +
++        OFFSET_MemRegion_word_size
++        );
++  this->heap_end = this->heap_start + this->heap_size;
++}
++
++/*
++ * IMPORTANT: At the moment the ustack helper supports up to 5 code heaps in
++ * the code cache. If more code heaps are added the following probes have to
++ * be extended. This is done by simply adding a probe to get the heap bounds
++ * and another probe to set the code heap address of the newly created heap.
++ */
++
++/*
++ * ----- BEGIN: Get bounds of code heaps -----
++ */
++dtrace:helper:ustack:
++/init_done < 1 && this->number_of_heaps >= 1 && !this->done/
++{
++  MARK_LINE;
++  /* CodeHeap 1 */
++  init_done = 1;
++  this->code_heap1_address = copyin_ptr(this->code_heaps_array_address);
++  this->code_heap1_low = copyin_ptr(this->code_heap1_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap1_high = copyin_ptr(this->code_heap1_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_high);
++}
++
++dtrace:helper:ustack:
++/init_done < 2 && this->number_of_heaps >= 2 && !this->done/
++{
++  MARK_LINE;
++  /* CodeHeap 2 */
++  init_done = 2;
++  this->code_heaps_array_address = this->code_heaps_array_address + POINTER_SIZE;
++  this->code_heap2_address = copyin_ptr(this->code_heaps_array_address);
++  this->code_heap2_low = copyin_ptr(this->code_heap2_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap2_high = copyin_ptr(this->code_heap2_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_high);
++}
++
++dtrace:helper:ustack:
++/init_done < 3 && this->number_of_heaps >= 3 && !this->done/
++{
++  /* CodeHeap 3 */
++  init_done = 3;
++  this->code_heaps_array_address = this->code_heaps_array_address + POINTER_SIZE;
++  this->code_heap3_address = copyin_ptr(this->code_heaps_array_address);
++  this->code_heap3_low = copyin_ptr(this->code_heap3_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap3_high = copyin_ptr(this->code_heap3_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_high);
++}
++
++dtrace:helper:ustack:
++/init_done < 4 && this->number_of_heaps >= 4 && !this->done/
++{
++  /* CodeHeap 4 */
++  init_done = 4;
++  this->code_heaps_array_address = this->code_heaps_array_address + POINTER_SIZE;
++  this->code_heap4_address = copyin_ptr(this->code_heaps_array_address);
++  this->code_heap4_low = copyin_ptr(this->code_heap4_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap4_high = copyin_ptr(this->code_heap4_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_high);
++}
++
++dtrace:helper:ustack:
++/init_done < 5 && this->number_of_heaps >= 5 && !this->done/
++{
++  /* CodeHeap 5 */
++  init_done = 5;
++  this->code_heaps_array_address = this->code_heaps_array_address + POINTER_SIZE;
++  this->code_heap5_address = copyin_ptr(this->code_heaps_array_address);
++  this->code_heap5_low = copyin_ptr(this->code_heap5_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap5_high = copyin_ptr(this->code_heap5_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_high);
++}
++/*
++ * ----- END: Get bounds of code heaps -----
++ */
++
++/*
++ * ----- BEGIN: Get address of the code heap pc points to -----
++ */
++dtrace:helper:ustack:
++/!this->done && this->number_of_heaps >= 1 && this->code_heap1_low <= this->pc && this->pc < this->code_heap1_high/
++{
++  MARK_LINE;
++  this->codecache = 1;
++  this->code_heap_address = this->code_heap1_address;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->number_of_heaps >= 2 && this->code_heap2_low <= this->pc && this->pc < this->code_heap2_high/
++{
++  MARK_LINE;
++  this->codecache = 1;
++  this->code_heap_address = this->code_heap2_address;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->number_of_heaps >= 3 && this->code_heap3_low <= this->pc && this->pc < this->code_heap3_high/
++{
++  MARK_LINE;
++  this->codecache = 1;
++  this->code_heap_address = this->code_heap3_address;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->number_of_heaps >= 4 && this->code_heap4_low <= this->pc && this->pc < this->code_heap4_high/
++{
++  MARK_LINE;
++  this->codecache = 1;
++  this->code_heap_address = this->code_heap4_address;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->number_of_heaps >= 5 && this->code_heap5_low <= this->pc && this->pc < this->code_heap5_high/
++{
++  MARK_LINE;
++  this->codecache = 1;
++  this->code_heap_address = this->code_heap5_address;
++}
++/*
++ * ----- END: Get address of the code heap pc points to -----
++ */
++
++dtrace:helper:ustack:
++/!this->done && this->codecache/
++{
++  MARK_LINE;
++  /*
++   * Get code heap configuration
++   */
++  this->code_heap_low = copyin_ptr(this->code_heap_address +
++      OFFSET_CodeHeap_memory + OFFSET_VirtualSpace_low);
++  this->code_heap_segmap_low = copyin_ptr(this->code_heap_address +
++      OFFSET_CodeHeap_segmap + OFFSET_VirtualSpace_low);
++  this->code_heap_log2_segment_size = copyin_uint32(
++      this->code_heap_address + OFFSET_CodeHeap_log2_segment_size);
++
++  /*
++   * Find start
++   */
++  this->segment = (this->pc - this->code_heap_low) >>
++    this->code_heap_log2_segment_size;
++  this->block = this->code_heap_segmap_low;
++  this->tag = copyin_uchar(this->block + this->segment);
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->tag = copyin_uchar(this->block + this->segment);
++  this->segment = this->segment - this->tag;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->tag = copyin_uchar(this->block + this->segment);
++  this->segment = this->segment - this->tag;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->tag = copyin_uchar(this->block + this->segment);
++  this->segment = this->segment - this->tag;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->tag = copyin_uchar(this->block + this->segment);
++  this->segment = this->segment - this->tag;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->tag = copyin_uchar(this->block + this->segment);
++  this->segment = this->segment - this->tag;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && this->tag > 0/
++{
++  MARK_LINE;
++  this->error = "<couldn't find start>";
++  this->done = 1;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache/
++{
++  MARK_LINE;
++  this->block = this->code_heap_low +
++    (this->segment << this->code_heap_log2_segment_size);
++  this->used = copyin_uint32(this->block + OFFSET_HeapBlockHeader_used);
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache && !this->used/
++{
++  MARK_LINE;
++  this->error = "<block not in use>";
++  this->done = 1;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache/
++{
++  MARK_LINE;
++  this->start = this->block + SIZE_HeapBlockHeader;
++  this->vtbl = copyin_ptr(this->start);
++
++  this->nmethod_vtbl            = (pointer) &``__1cHnmethodG__vtbl_;
++  this->BufferBlob_vtbl         = (pointer) &``__1cKBufferBlobG__vtbl_;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->vtbl == this->nmethod_vtbl/
++{
++  MARK_LINE;
++  this->methodPtr = copyin_ptr(this->start + OFFSET_nmethod_method);
++  this->suffix = '*';
++  this->isMethod = 1;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->vtbl == this->BufferBlob_vtbl/
++{
++  MARK_LINE;
++  this->name = copyin_ptr(this->start + OFFSET_CodeBlob_name);
++}
++
++
++dtrace:helper:ustack:
++/!this->done && this->vtbl == this->BufferBlob_vtbl && this->methodPtr != 0/
++{
++  MARK_LINE;
++  this->klass = copyin_ptr(this->methodPtr);
++  this->isMethod = this->klass == this->Method_vtbl;
++  this->done = !this->isMethod;
++}
++
++dtrace:helper:ustack:
++/!this->done && !this->isMethod/
++{
++  MARK_LINE;
++  this->name = copyin_ptr(this->start + OFFSET_CodeBlob_name);
++  this->result = this->name != 0 ? copyinstr(this->name) : "<CodeBlob>";
++  this->done = 1;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->isMethod/
++{
++  MARK_LINE;
++  this->constMethod = copyin_ptr(this->methodPtr +
++      OFFSET_Method_constMethod);
++
++  this->nameIndex = copyin_uint16(this->constMethod +
++      OFFSET_ConstMethod_name_index);
++
++  this->signatureIndex = copyin_uint16(this->constMethod +
++      OFFSET_ConstMethod_signature_index);
++
++  this->constantPool = copyin_ptr(this->constMethod +
++      OFFSET_ConstMethod_constants);
++
++  this->nameSymbol = copyin_ptr(this->constantPool +
++      this->nameIndex * sizeof (pointer) + SIZE_ConstantPool);
++  /* The symbol is a CPSlot and has lower bit set to indicate metadata */
++  this->nameSymbol &= (~1); /* remove metadata lsb */
++
++  this->nameSymbolLength = copyin_uint16(this->nameSymbol +
++      OFFSET_Symbol_length);
++
++  this->signatureSymbol = copyin_ptr(this->constantPool +
++      this->signatureIndex * sizeof (pointer) + SIZE_ConstantPool);
++  this->signatureSymbol &= (~1); /* remove metadata lsb */
++
++  this->signatureSymbolLength = copyin_uint16(this->signatureSymbol +
++      OFFSET_Symbol_length);
++
++  this->klassPtr = copyin_ptr(this->constantPool +
++      OFFSET_ConstantPool_pool_holder);
++
++  this->klassSymbol = copyin_ptr(this->klassPtr +
++      OFFSET_Klass_name);
++
++  this->klassSymbolLength = copyin_uint16(this->klassSymbol +
++      OFFSET_Symbol_length);
++
++  /*
++   * Enough for three strings, plus the '.', plus the trailing '\0'.
++   */
++  this->result = (char *) alloca(this->klassSymbolLength +
++      this->nameSymbolLength +
++      this->signatureSymbolLength + 2 + 1);
++
++  copyinto(this->klassSymbol + OFFSET_Symbol_body,
++      this->klassSymbolLength, this->result);
++
++  /*
++   * Add the '.' between the class and the name.
++   */
++  this->result[this->klassSymbolLength] = '.';
++
++  copyinto(this->nameSymbol + OFFSET_Symbol_body,
++      this->nameSymbolLength,
++      this->result + this->klassSymbolLength + 1);
++
++  copyinto(this->signatureSymbol + OFFSET_Symbol_body,
++      this->signatureSymbolLength,
++      this->result + this->klassSymbolLength +
++      this->nameSymbolLength + 1);
++
++  /*
++   * Now we need to add a trailing '\0' and possibly a tag character.
++   */
++  this->result[this->klassSymbolLength + 1 +
++      this->nameSymbolLength +
++      this->signatureSymbolLength] = this->suffix;
++  this->result[this->klassSymbolLength + 2 +
++      this->nameSymbolLength +
++      this->signatureSymbolLength] = '\0';
++
++  this->done = 1;
++}
++
++dtrace:helper:ustack:
++/this->done && this->error == (char *) NULL/
++{
++  this->result;
++}
++
++dtrace:helper:ustack:
++/this->done && this->error != (char *) NULL/
++{
++  this->error;
++}
++
++dtrace:helper:ustack:
++/!this->done && this->codecache/
++{
++  this->done = 1;
++  "error";
++}
++
++
++dtrace:helper:ustack:
++/!this->done/
++{
++  NULL;
++}
+diff -urN /tmp/a/src/hotspot/os/solaris/globals_solaris.hpp b/src/hotspot/os/solaris/globals_solaris.hpp
+--- /tmp/a/src/hotspot/os/solaris/globals_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/globals_solaris.hpp	2025-04-19 12:08:38.474213266 +0100
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (c) 2005, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_SOLARIS_GLOBALS_SOLARIS_HPP
++#define OS_SOLARIS_GLOBALS_SOLARIS_HPP
++
++//
++// Declare Solaris specific flags. They are not available on other platforms.
++//
++#define RUNTIME_OS_FLAGS(develop, \
++                         develop_pd, \
++                         product, \
++                         product_pd, \
++                         range, \
++                         constraint)
++
++//
++// Defines Solaris-specific default values. The flags are available on all
++// platforms, but they may have different default values on other platforms.
++//
++define_pd_global(size_t, PreTouchParallelChunkSize, 1 * G);
++define_pd_global(bool, UseLargePages, true);
++define_pd_global(bool, UseLargePagesIndividualAllocation, false);
++define_pd_global(bool, UseThreadPriorities, false);
++
++#endif // OS_SOLARIS_GLOBALS_SOLARIS_HPP
+diff -urN /tmp/a/src/hotspot/os/solaris/osThread_solaris.cpp b/src/hotspot/os/solaris/osThread_solaris.cpp
+--- /tmp/a/src/hotspot/os/solaris/osThread_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/osThread_solaris.cpp	2025-04-19 12:08:38.474344343 +0100
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 1998, 2014, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "memory/allocation.hpp"
++#include "runtime/mutex.hpp"
++#include "runtime/osThread.hpp"
++
++#include <signal.h>
++
++OSThread::OSThread()
++  : _thread_id(0),
++    _caller_sigmask(),
++    _vm_created_thread(false),
++    _startThread_lock(new Monitor(Mutex::event, "startThread_lock")) {
++  sigemptyset(&_caller_sigmask);
++}
++
++OSThread::~OSThread() {
++  delete _startThread_lock;
++}
+diff -urN /tmp/a/src/hotspot/os/solaris/osThread_solaris.hpp b/src/hotspot/os/solaris/osThread_solaris.hpp
+--- /tmp/a/src/hotspot/os/solaris/osThread_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/osThread_solaris.hpp	2025-04-19 12:08:38.474502387 +0100
+@@ -0,0 +1,101 @@
++/*
++ * Copyright (c) 1997, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_SOLARIS_OSTHREAD_SOLARIS_HPP
++#define OS_SOLARIS_OSTHREAD_SOLARIS_HPP
++
++#include "runtime/osThreadBase.hpp"
++#include "suspendResume_posix.hpp"
++#include "utilities/globalDefinitions.hpp"
++
++#include <thread.h>
++
++class OSThread : public OSThreadBase {
++  friend class VMStructs;
++
++  typedef thread_t thread_id_t;
++  thread_id_t _thread_id;
++
++  uint     _lwp_id;            // lwp ID, only used with bound threads
++  int      _native_priority;   // Saved native priority when starting
++                               // a bound thread
++  sigset_t _caller_sigmask;    // Caller's signal mask
++  bool     _vm_created_thread; // true if the VM created this thread,
++                               // false if primary thread or attached thread
++ public:
++  OSThread();
++  ~OSThread();
++
++  uint     lwp_id() const          { return _lwp_id; }
++  int      native_priority() const { return _native_priority; }
++
++  // Set and get state of _vm_created_thread flag
++  void set_vm_created()           { _vm_created_thread = true; }
++  bool is_vm_created()            { return _vm_created_thread; }
++
++  // Methods to save/restore caller's signal mask
++  sigset_t  caller_sigmask() const       { return _caller_sigmask; }
++  void    set_caller_sigmask(sigset_t sigmask)  { _caller_sigmask = sigmask; }
++
++  void set_lwp_id(uint id)           { _lwp_id = id; }
++  void set_native_priority(int prio) { _native_priority = prio; }
++
++  thread_id_t thread_id() const {
++    return _thread_id;
++  }
++  void set_thread_id(thread_id_t id) {
++    _thread_id = id;
++  }
++
++  pthread_t pthread_id() const {
++    // Here: same as OSThread::thread_id()
++    return _thread_id;
++  }
++  SuspendResume sr;
++
++private:
++  void* _siginfo;
++  ucontext_t* _ucontext;
++
++public:
++  void set_siginfo(void* ptr)             { _siginfo = ptr;   }
++  ucontext_t* ucontext() const            { return _ucontext; }
++  void set_ucontext(ucontext_t* ptr)      { _ucontext = ptr;  }
++
++private:
++  Monitor* _startThread_lock;     // sync parent and child in thread creation
++
++public:
++
++  Monitor* startThread_lock() const {
++    return _startThread_lock;
++  }
++
++  // Printing
++  uintx thread_id_for_printing() const override {
++    return (uintx)_thread_id;
++  }
++};
++
++#endif // OS_SOLARIS_OSTHREAD_SOLARIS_HPP
+diff -urN /tmp/a/src/hotspot/os/solaris/os_perf_solaris.cpp b/src/hotspot/os/solaris/os_perf_solaris.cpp
+--- /tmp/a/src/hotspot/os/solaris/os_perf_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/os_perf_solaris.cpp	2025-04-19 12:08:38.474976285 +0100
+@@ -0,0 +1,806 @@
++/*
++ * Copyright (c) 2012, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "jvm.h"
++#include "memory/allocation.inline.hpp"
++#include "runtime/os.hpp"
++#include "runtime/os_perf.hpp"
++#include "runtime/vm_version.hpp"
++#include "os_solaris.inline.hpp"
++#include "utilities/globalDefinitions.hpp"
++#include "utilities/macros.hpp"
++
++#include <sys/types.h>
++#include <procfs.h>
++#include <dirent.h>
++#include <errno.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <strings.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <kstat.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/sysinfo.h>
++#include <sys/lwp.h>
++#include <pthread.h>
++#include <time.h>
++#include <utmpx.h>
++#include <dlfcn.h>
++#include <sys/loadavg.h>
++#include <limits.h>
++
++static const double NANOS_PER_SEC = 1000000000.0;
++
++struct CPUPerfTicks {
++  kstat_t* kstat;
++  uint64_t last_idle;
++  uint64_t last_total;
++  double   last_ratio;
++};
++
++struct CPUPerfCounters {
++  int           nProcs;
++  CPUPerfTicks* jvmTicks;
++  kstat_ctl_t*  kstat_ctrl;
++};
++
++static int get_info(const char* path, void* info, size_t s, off_t o) {
++  assert(path != nullptr, "path is null!");
++  assert(info != nullptr, "info is null!");
++
++  int fd = -1;
++
++  if ((fd = os::open(path, O_RDONLY, 0)) < 0) {
++    return OS_ERR;
++  }
++  if (pread(fd, info, s, o) != s) {
++    close(fd);
++    return OS_ERR;
++  }
++  close(fd);
++  return OS_OK;
++}
++
++static int get_psinfo2(void* info, size_t s, off_t o) {
++  return get_info("/proc/self/psinfo", info, s, o);
++}
++
++static int get_psinfo(psinfo_t* info) {
++  return get_psinfo2(info, sizeof(*info), 0);
++}
++
++static int read_cpustat(kstat_ctl_t* kstat_ctrl, CPUPerfTicks* load, cpu_stat_t* cpu_stat) {
++  assert(kstat_ctrl != nullptr, "kstat_ctrl pointer is null!");
++  assert(load != nullptr, "load pointer is null!");
++  assert(cpu_stat != nullptr, "cpu_stat pointer is null!");
++
++  if (load->kstat == nullptr) {
++    // no handle.
++    return OS_ERR;
++  }
++  if (kstat_read(kstat_ctrl, load->kstat, cpu_stat) == OS_ERR) {
++    // disable handle for this CPU
++     load->kstat = nullptr;
++     return OS_ERR;
++  }
++  return OS_OK;
++}
++
++static double get_cpu_load(int which_logical_cpu, CPUPerfCounters* counters) {
++  assert(counters != nullptr, "counters pointer is null!");
++
++  cpu_stat_t  cpu_stat = {0};
++
++  if (which_logical_cpu >= counters->nProcs) {
++    return .0;
++  }
++
++  CPUPerfTicks load = counters->jvmTicks[which_logical_cpu];
++  if (read_cpustat(counters->kstat_ctrl, &load, &cpu_stat) != OS_OK) {
++    return .0;
++  }
++
++  uint_t* usage = cpu_stat.cpu_sysinfo.cpu;
++  if (usage == nullptr) {
++    return .0;
++  }
++
++  uint64_t c_idle  = usage[CPU_IDLE];
++  uint64_t c_total = 0;
++
++  for (int i = 0; i < CPU_STATES; i++) {
++    c_total += usage[i];
++  }
++
++  // Calculate diff against previous snapshot
++  uint64_t d_idle  = c_idle - load.last_idle;
++  uint64_t d_total = c_total - load.last_total;
++
++  /** update if weve moved */
++  if (d_total > 0) {
++    // Save current values for next time around
++    load.last_idle  = c_idle;
++    load.last_total = c_total;
++    load.last_ratio = (double) (d_total - d_idle) / d_total;
++  }
++
++  return load.last_ratio;
++}
++
++static int get_boot_time(uint64_t* time) {
++  assert(time != nullptr, "time pointer is null!");
++  setutxent();
++  for(;;) {
++    struct utmpx* u;
++    if ((u = getutxent()) == nullptr) {
++      break;
++    }
++    if (u->ut_type == BOOT_TIME) {
++      *time = u->ut_xtime;
++      endutxent();
++      return OS_OK;
++    }
++  }
++  endutxent();
++  return OS_ERR;
++}
++
++static int get_noof_context_switches(CPUPerfCounters* counters, uint64_t* switches) {
++  assert(switches != nullptr, "switches pointer is null!");
++  assert(counters != nullptr, "counter pointer is null!");
++  *switches = 0;
++  uint64_t s = 0;
++
++  // Collect data from all CPUs
++  for (int i = 0; i < counters->nProcs; i++) {
++    cpu_stat_t cpu_stat = {0};
++    CPUPerfTicks load = counters->jvmTicks[i];
++
++    if (read_cpustat(counters->kstat_ctrl, &load, &cpu_stat) == OS_OK) {
++      s += cpu_stat.cpu_sysinfo.pswitch;
++    } else {
++      //fail fast...
++      return OS_ERR;
++    }
++  }
++  *switches = s;
++  return OS_OK;
++}
++
++static int perf_context_switch_rate(CPUPerfCounters* counters, double* rate) {
++  assert(counters != nullptr, "counters is null!");
++  assert(rate != nullptr, "rate pointer is null!");
++  static pthread_mutex_t contextSwitchLock = PTHREAD_MUTEX_INITIALIZER;
++  static uint64_t lastTime = 0;
++  static uint64_t lastSwitches = 0;
++  static double   lastRate = 0.0;
++
++  uint64_t lt = 0;
++  int res = 0;
++
++  if (lastTime == 0) {
++    uint64_t tmp;
++    if (get_boot_time(&tmp) < 0) {
++      return OS_ERR;
++    }
++    lt = tmp * 1000;
++  }
++
++  res = OS_OK;
++
++  pthread_mutex_lock(&contextSwitchLock);
++  {
++
++    uint64_t sw = 0;
++    clock_t t, d;
++
++    if (lastTime == 0) {
++      lastTime = lt;
++    }
++
++    t = clock();
++    d = t - lastTime;
++
++    if (d == 0) {
++      *rate = lastRate;
++    } else if (get_noof_context_switches(counters, &sw)== OS_OK) {
++      *rate      = ((double)(sw - lastSwitches) / d) * 1000;
++      lastRate     = *rate;
++      lastSwitches = sw;
++      lastTime     = t;
++    } else {
++      *rate = 0.0;
++      res   = OS_ERR;
++    }
++    if (*rate < 0.0) {
++      *rate = 0.0;
++      lastRate = 0.0;
++    }
++  }
++  pthread_mutex_unlock(&contextSwitchLock);
++  return res;
++ }
++
++
++
++class CPUPerformanceInterface::CPUPerformance : public CHeapObj<mtInternal> {
++   friend class CPUPerformanceInterface;
++ private:
++  CPUPerfCounters _counters;
++  int cpu_load(int which_logical_cpu, double* cpu_load);
++  int context_switch_rate(double* rate);
++  int cpu_load_total_process(double* cpu_load);
++  int cpu_loads_process(double* pjvmUserLoad, double* pjvmKernelLoad, double* psystemTotalLoad);
++
++  CPUPerformance();
++  ~CPUPerformance();
++  bool initialize();
++};
++
++CPUPerformanceInterface::CPUPerformance::CPUPerformance() {
++  _counters.nProcs = 0;
++  _counters.jvmTicks = nullptr;
++  _counters.kstat_ctrl = nullptr;
++}
++
++bool CPUPerformanceInterface::CPUPerformance::initialize() {
++  // initialize kstat control structure,
++  _counters.kstat_ctrl = kstat_open();
++  assert(_counters.kstat_ctrl != nullptr, "error initializing kstat control structure!");
++
++  if (nullptr == _counters.kstat_ctrl) {
++    return false;
++  }
++
++  // Get number of CPU(s)
++  if ((_counters.nProcs = sysconf(_SC_NPROCESSORS_ONLN)) == OS_ERR) {
++    // ignore error?
++    _counters.nProcs = 1;
++  }
++
++  assert(_counters.nProcs > 0, "no CPUs detected in sysconf call!");
++  if (_counters.nProcs == 0) {
++    return false;
++  }
++
++  // Data structure(s) for saving CPU load (one per CPU)
++  size_t array_entry_count = _counters.nProcs;
++  _counters.jvmTicks = NEW_C_HEAP_ARRAY(CPUPerfTicks, array_entry_count, mtInternal);
++  memset(_counters.jvmTicks, 0, array_entry_count * sizeof(*_counters.jvmTicks));
++
++  // Get kstat cpu_stat counters for every CPU
++  // loop over kstat to find our cpu_stat(s)
++  int i = 0;
++  for (kstat_t* kstat = _counters.kstat_ctrl->kc_chain; kstat != nullptr; kstat = kstat->ks_next) {
++    if (strncmp(kstat->ks_module, "cpu_stat", 8) == 0) {
++      if (kstat_read(_counters.kstat_ctrl, kstat, nullptr) == OS_ERR) {
++        continue;
++      }
++      if (i == _counters.nProcs) {
++        // more cpu_stats than reported CPUs
++        break;
++      }
++      _counters.jvmTicks[i++].kstat = kstat;
++    }
++  }
++  return true;
++}
++
++CPUPerformanceInterface::CPUPerformance::~CPUPerformance() {
++  FREE_C_HEAP_ARRAY(char, _counters.jvmTicks);
++  if (_counters.kstat_ctrl != nullptr) {
++    kstat_close(_counters.kstat_ctrl);
++  }
++}
++
++int CPUPerformanceInterface::CPUPerformance::cpu_load(int which_logical_cpu, double* cpu_load) {
++  assert(cpu_load != nullptr, "cpu_load pointer is null!");
++  double t = .0;
++  if (-1 == which_logical_cpu) {
++    for (int i = 0; i < _counters.nProcs; i++) {
++      t += get_cpu_load(i, &_counters);
++    }
++    // Cap total systemload to 1.0
++    t = MIN2<double>((t / _counters.nProcs), 1.0);
++  } else {
++    t = MIN2<double>(get_cpu_load(which_logical_cpu, &_counters), 1.0);
++  }
++
++  *cpu_load = t;
++  return OS_OK;
++}
++
++int CPUPerformanceInterface::CPUPerformance::cpu_load_total_process(double* cpu_load) {
++  assert(cpu_load != nullptr, "cpu_load pointer is null!");
++
++  psinfo_t info;
++
++  // Get the percentage of "recent cpu usage" from all the lwp:s in the JVM:s
++  // process. This is returned as a value between 0.0 and 1.0 multiplied by 0x8000.
++  if (get_psinfo2(&info.pr_pctcpu, sizeof(info.pr_pctcpu), offsetof(psinfo_t, pr_pctcpu)) != 0) {
++    *cpu_load = 0.0;
++    return OS_ERR;
++  }
++  *cpu_load = (double) info.pr_pctcpu / 0x8000;
++  return OS_OK;
++}
++
++int CPUPerformanceInterface::CPUPerformance::cpu_loads_process(double* pjvmUserLoad, double* pjvmKernelLoad, double* psystemTotalLoad) {
++  assert(pjvmUserLoad != nullptr, "pjvmUserLoad not inited");
++  assert(pjvmKernelLoad != nullptr, "pjvmKernelLoad not inited");
++  assert(psystemTotalLoad != nullptr, "psystemTotalLoad not inited");
++
++  static uint64_t lastTime;
++  static uint64_t lastUser, lastKernel;
++  static double lastUserRes, lastKernelRes;
++
++  pstatus_t pss;
++  psinfo_t  info;
++
++  *pjvmKernelLoad = *pjvmUserLoad = *psystemTotalLoad = 0;
++  if (get_info("/proc/self/status", &pss.pr_utime, sizeof(timestruc_t)*2, offsetof(pstatus_t, pr_utime)) != 0) {
++    return OS_ERR;
++  }
++
++  if (get_psinfo(&info) != 0) {
++    return OS_ERR;
++  }
++
++  // get the total time in user, kernel and total time
++  // check ratios for 'lately' and multiply the 'recent load'.
++  uint64_t time   = (info.pr_time.tv_sec * NANOS_PER_SEC) + info.pr_time.tv_nsec;
++  uint64_t user   = (pss.pr_utime.tv_sec * NANOS_PER_SEC) + pss.pr_utime.tv_nsec;
++  uint64_t kernel = (pss.pr_stime.tv_sec * NANOS_PER_SEC) + pss.pr_stime.tv_nsec;
++  uint64_t diff   = time - lastTime;
++  double load     = (double) info.pr_pctcpu / 0x8000;
++
++  if (diff > 0) {
++    lastUserRes = (load * (user - lastUser)) / diff;
++    lastKernelRes = (load * (kernel - lastKernel)) / diff;
++
++    // BUG9182835 - patch for clamping these values to sane ones.
++    lastUserRes   = MIN2<double>(1, lastUserRes);
++    lastUserRes   = MAX2<double>(0, lastUserRes);
++    lastKernelRes = MIN2<double>(1, lastKernelRes);
++    lastKernelRes = MAX2<double>(0, lastKernelRes);
++  }
++
++  double t = .0;
++  cpu_load(-1, &t);
++  // clamp at user+system and 1.0
++  if (lastUserRes + lastKernelRes > t) {
++    t = MIN2<double>(lastUserRes + lastKernelRes, 1.0);
++  }
++
++  *pjvmUserLoad   = lastUserRes;
++  *pjvmKernelLoad = lastKernelRes;
++  *psystemTotalLoad = t;
++
++  lastTime   = time;
++  lastUser   = user;
++  lastKernel = kernel;
++
++  return OS_OK;
++}
++
++int CPUPerformanceInterface::CPUPerformance::context_switch_rate(double* rate) {
++  return perf_context_switch_rate(&_counters, rate);
++}
++
++CPUPerformanceInterface::CPUPerformanceInterface() {
++  _impl = nullptr;
++}
++
++bool CPUPerformanceInterface::initialize() {
++  _impl = new CPUPerformanceInterface::CPUPerformance();
++  return _impl->initialize();
++}
++
++CPUPerformanceInterface::~CPUPerformanceInterface(void) {
++  if (_impl != nullptr) {
++    delete _impl;
++  }
++}
++
++int CPUPerformanceInterface::cpu_load(int which_logical_cpu, double* cpu_load) const {
++  return _impl->cpu_load(which_logical_cpu, cpu_load);
++}
++
++int CPUPerformanceInterface::cpu_load_total_process(double* cpu_load) const {
++  return _impl->cpu_load_total_process(cpu_load);
++}
++
++int CPUPerformanceInterface::cpu_loads_process(double* pjvmUserLoad, double* pjvmKernelLoad, double* psystemTotalLoad) const {
++  return _impl->cpu_loads_process(pjvmUserLoad, pjvmKernelLoad, psystemTotalLoad);
++}
++
++int CPUPerformanceInterface::context_switch_rate(double* rate) const {
++  return _impl->context_switch_rate(rate);
++}
++
++class SystemProcessInterface::SystemProcesses : public CHeapObj<mtInternal> {
++  friend class SystemProcessInterface;
++ private:
++  class ProcessIterator : public CHeapObj<mtInternal> {
++    friend class SystemProcessInterface::SystemProcesses;
++   private:
++    DIR*           _dir;
++    struct dirent* _entry;
++    bool           _valid;
++
++    ProcessIterator();
++    ~ProcessIterator();
++    bool initialize();
++
++    bool is_valid() const { return _valid; }
++    bool is_valid_entry(struct dirent* const entry) const;
++    bool is_dir(const char* const name) const;
++    char* allocate_string(const char* const str) const;
++    int current(SystemProcess* const process_info);
++    int next_process();
++  };
++
++  ProcessIterator* _iterator;
++  SystemProcesses();
++  bool initialize();
++  ~SystemProcesses();
++
++  //information about system processes
++  int system_processes(SystemProcess** system_processes, int* no_of_sys_processes) const;
++};
++
++bool SystemProcessInterface::SystemProcesses::ProcessIterator::is_dir(const char* name) const {
++  struct stat64 mystat;
++  int ret_val = 0;
++
++  ret_val = ::stat64(name, &mystat);
++
++  if (ret_val < 0) {
++    return false;
++  }
++  ret_val = S_ISDIR(mystat.st_mode);
++  return ret_val > 0;
++}
++
++// if it has a numeric name, is a directory and has a 'psinfo' file in it
++bool SystemProcessInterface::SystemProcesses::ProcessIterator::is_valid_entry(struct dirent* entry) const {
++  // ignore the "." and ".." directories
++  if ((strcmp(entry->d_name, ".") == 0) ||
++      (strcmp(entry->d_name, "..") == 0)) {
++    return false;
++  }
++
++  char buffer[PATH_MAX] = {0};
++  uint64_t size = 0;
++  bool result = false;
++  FILE *fp = nullptr;
++
++  if (atoi(entry->d_name) != 0) {
++    jio_snprintf(buffer, PATH_MAX, "/proc/%s", entry->d_name);
++
++    if (is_dir(buffer)) {
++      memset(buffer, 0, PATH_MAX);
++      jio_snprintf(buffer, PATH_MAX, "/proc/%s/psinfo", entry->d_name);
++      if ((fp = fopen(buffer, "r")) != nullptr) {
++        int nread = 0;
++        psinfo_t psinfo_data;
++        if ((nread = fread(&psinfo_data, 1, sizeof(psinfo_t), fp)) != -1) {
++          // only considering system process owned by root
++          if (psinfo_data.pr_uid == 0) {
++            result = true;
++          }
++        }
++      }
++    }
++  }
++
++  if (fp != nullptr) {
++    fclose(fp);
++  }
++
++  return result;
++}
++
++char* SystemProcessInterface::SystemProcesses::ProcessIterator::allocate_string(const char* str) const {
++  if (str != nullptr) {
++    return os::strdup_check_oom(str, mtInternal);
++  }
++  return nullptr;
++}
++
++int SystemProcessInterface::SystemProcesses::ProcessIterator::current(SystemProcess* process_info) {
++  if (!is_valid()) {
++    return OS_ERR;
++  }
++
++  char psinfo_path[PATH_MAX] = {0};
++  jio_snprintf(psinfo_path, PATH_MAX, "/proc/%s/psinfo", _entry->d_name);
++
++  FILE *fp = nullptr;
++  if ((fp = fopen(psinfo_path, "r")) == nullptr) {
++    return OS_ERR;
++  }
++
++  int nread = 0;
++  psinfo_t psinfo_data;
++  if ((nread = fread(&psinfo_data, 1, sizeof(psinfo_t), fp)) == -1) {
++    fclose(fp);
++    return OS_ERR;
++  }
++
++  char *exe_path = nullptr;
++  if ((psinfo_data.pr_fname != nullptr) &&
++      (psinfo_data.pr_psargs != nullptr)) {
++    char *path_substring = strstr(psinfo_data.pr_psargs, psinfo_data.pr_fname);
++    if (path_substring != nullptr) {
++      int len = path_substring - psinfo_data.pr_psargs;
++      exe_path = NEW_C_HEAP_ARRAY(char, len+1, mtInternal);
++      jio_snprintf(exe_path, len, "%s", psinfo_data.pr_psargs);
++      exe_path[len] = '\0';
++    }
++  }
++
++  process_info->set_pid(atoi(_entry->d_name));
++  process_info->set_name(allocate_string(psinfo_data.pr_fname));
++  process_info->set_path(allocate_string(exe_path));
++  process_info->set_command_line(allocate_string(psinfo_data.pr_psargs));
++
++  if (exe_path != nullptr) {
++    FREE_C_HEAP_ARRAY(char, exe_path);
++  }
++
++  if (fp != nullptr) {
++    fclose(fp);
++  }
++
++  return OS_OK;
++}
++
++int SystemProcessInterface::SystemProcesses::ProcessIterator::next_process() {
++  if (!is_valid()) {
++    return OS_ERR;
++  }
++
++  do {
++    _entry = os::readdir(_dir);
++    if (_entry == nullptr) {
++      // Error or reached end.  Could use errno to distinguish those cases.
++      _valid = false;
++      return OS_ERR;
++    }
++  } while(!is_valid_entry(_entry));
++
++  _valid = true;
++  return OS_OK;
++}
++
++SystemProcessInterface::SystemProcesses::ProcessIterator::ProcessIterator() {
++  _dir = nullptr;
++  _entry = nullptr;
++  _valid = false;
++}
++
++bool SystemProcessInterface::SystemProcesses::ProcessIterator::initialize() {
++  _dir = os::opendir("/proc");
++  _entry = nullptr;
++  _valid = true;
++  next_process();
++
++  return true;
++}
++
++SystemProcessInterface::SystemProcesses::ProcessIterator::~ProcessIterator() {
++  if (_dir != nullptr) {
++    os::closedir(_dir);
++  }
++}
++
++SystemProcessInterface::SystemProcesses::SystemProcesses() {
++  _iterator = nullptr;
++}
++
++bool SystemProcessInterface::SystemProcesses::initialize() {
++  _iterator = new SystemProcessInterface::SystemProcesses::ProcessIterator();
++  return _iterator->initialize();
++}
++
++SystemProcessInterface::SystemProcesses::~SystemProcesses() {
++  if (_iterator != nullptr) {
++    delete _iterator;
++  }
++}
++
++int SystemProcessInterface::SystemProcesses::system_processes(SystemProcess** system_processes, int* no_of_sys_processes) const {
++  assert(system_processes != nullptr, "system_processes pointer is null!");
++  assert(no_of_sys_processes != nullptr, "system_processes counter pointer is null!");
++  assert(_iterator != nullptr, "iterator is null!");
++
++  // initialize pointers
++  *no_of_sys_processes = 0;
++  *system_processes = nullptr;
++
++  while (_iterator->is_valid()) {
++    SystemProcess* tmp = new SystemProcess();
++    _iterator->current(tmp);
++
++    //if already existing head
++    if (*system_processes != nullptr) {
++      //move "first to second"
++      tmp->set_next(*system_processes);
++    }
++    // new head
++    *system_processes = tmp;
++    // increment
++    (*no_of_sys_processes)++;
++    // step forward
++    _iterator->next_process();
++  }
++  return OS_OK;
++}
++
++int SystemProcessInterface::system_processes(SystemProcess** system_procs, int* no_of_sys_processes) const {
++  return _impl->system_processes(system_procs, no_of_sys_processes);
++}
++
++SystemProcessInterface::SystemProcessInterface() {
++  _impl = nullptr;
++}
++
++bool SystemProcessInterface::initialize() {
++  _impl = new SystemProcessInterface::SystemProcesses();
++  return _impl->initialize();
++}
++
++SystemProcessInterface::~SystemProcessInterface() {
++  if (_impl != nullptr) {
++    delete _impl;
++  }
++}
++
++CPUInformationInterface::CPUInformationInterface() {
++  _cpu_info = nullptr;
++}
++
++bool CPUInformationInterface::initialize() {
++  _cpu_info = new CPUInformation();
++  VM_Version::initialize_cpu_information();
++  _cpu_info->set_number_of_hardware_threads(VM_Version::number_of_threads());
++  _cpu_info->set_number_of_cores(VM_Version::number_of_cores());
++  _cpu_info->set_number_of_sockets(VM_Version::number_of_sockets());
++  _cpu_info->set_cpu_name(VM_Version::cpu_name());
++  _cpu_info->set_cpu_description(VM_Version::cpu_description());
++  return true;
++}
++
++CPUInformationInterface::~CPUInformationInterface() {
++  if (_cpu_info != nullptr) {
++    if (_cpu_info->cpu_name() != nullptr) {
++      const char* cpu_name = _cpu_info->cpu_name();
++      FREE_C_HEAP_ARRAY(char, cpu_name);
++      _cpu_info->set_cpu_name(nullptr);
++    }
++    if (_cpu_info->cpu_description() != nullptr) {
++      const char* cpu_desc = _cpu_info->cpu_description();
++      FREE_C_HEAP_ARRAY(char, cpu_desc);
++      _cpu_info->set_cpu_description(nullptr);
++    }
++    delete _cpu_info;
++  }
++}
++
++int CPUInformationInterface::cpu_information(CPUInformation& cpu_info) {
++  if (_cpu_info == nullptr) {
++    return OS_ERR;
++  }
++
++  cpu_info = *_cpu_info; // shallow copy assignment
++  return OS_OK;
++}
++
++class NetworkPerformanceInterface::NetworkPerformance : public CHeapObj<mtInternal> {
++  friend class NetworkPerformanceInterface;
++ private:
++  NetworkPerformance();
++  NONCOPYABLE(NetworkPerformance);
++  bool initialize();
++  ~NetworkPerformance();
++  int network_utilization(NetworkInterface** network_interfaces) const;
++};
++
++NetworkPerformanceInterface::NetworkPerformance::NetworkPerformance() {
++
++}
++
++bool NetworkPerformanceInterface::NetworkPerformance::initialize() {
++  return true;
++}
++
++NetworkPerformanceInterface::NetworkPerformance::~NetworkPerformance() {
++
++}
++
++int NetworkPerformanceInterface::NetworkPerformance::network_utilization(NetworkInterface** network_interfaces) const
++{
++  kstat_ctl_t* ctl = kstat_open();
++  if (ctl == nullptr) {
++    return OS_ERR;
++  }
++
++  NetworkInterface* ret = nullptr;
++  for (kstat_t* k = ctl->kc_chain; k != nullptr; k = k->ks_next) {
++    if (strcmp(k->ks_class, "net") != 0) {
++      continue;
++    }
++    if (strcmp(k->ks_module, "link") != 0) {
++      continue;
++    }
++
++    if (kstat_read(ctl, k, nullptr) == -1) {
++      return OS_ERR;
++    }
++
++    uint64_t bytes_in = UINT64_MAX;
++    uint64_t bytes_out = UINT64_MAX;
++    for (unsigned int i = 0; i < k->ks_ndata; ++i) {
++      kstat_named_t* data = &reinterpret_cast<kstat_named_t*>(k->ks_data)[i];
++      if (strcmp(data->name, "rbytes64") == 0) {
++        bytes_in = data->value.ui64;
++      }
++      else if (strcmp(data->name, "obytes64") == 0) {
++        bytes_out = data->value.ui64;
++      }
++    }
++
++    if ((bytes_in != UINT64_MAX) && (bytes_out != UINT64_MAX)) {
++      NetworkInterface* cur = new NetworkInterface(k->ks_name, bytes_in, bytes_out, ret);
++      ret = cur;
++    }
++  }
++
++  kstat_close(ctl);
++  *network_interfaces = ret;
++
++  return OS_OK;
++}
++
++NetworkPerformanceInterface::NetworkPerformanceInterface() {
++  _impl = nullptr;
++}
++
++NetworkPerformanceInterface::~NetworkPerformanceInterface() {
++  if (_impl != nullptr) {
++    delete _impl;
++  }
++}
++
++bool NetworkPerformanceInterface::initialize() {
++  _impl = new NetworkPerformanceInterface::NetworkPerformance();
++  return _impl->initialize();
++}
++
++int NetworkPerformanceInterface::network_utilization(NetworkInterface** network_interfaces) const {
++  return _impl->network_utilization(network_interfaces);
++}
+diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
+--- /tmp/a/src/hotspot/os/solaris/os_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/os_solaris.cpp	2025-04-19 12:08:38.483600745 +0100
+@@ -0,0 +1,2727 @@
++/*
++ * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#include "jvm.h"
++#include "classfile/classLoader.hpp"
++#include "classfile/systemDictionary.hpp"
++#include "classfile/vmSymbols.hpp"
++#include "code/vtableStubs.hpp"
++#include "compiler/compileBroker.hpp"
++#include "compiler/disassembler.hpp"
++#include "interpreter/interpreter.hpp"
++#include "jvmtifiles/jvmti.h"
++#include "logging/log.hpp"
++#include "logging/logStream.hpp"
++#include "memory/allocation.inline.hpp"
++#include "memory/universe.hpp"
++#include "oops/oop.inline.hpp"
++#include "os_solaris.inline.hpp"
++#include "prims/jniFastGetField.hpp"
++#include "prims/jvm_misc.hpp"
++#include "runtime/arguments.hpp"
++#include "runtime/atomicAccess.hpp"
++#include "runtime/globals.hpp"
++#include "runtime/globals_extension.hpp"
++#include "runtime/interfaceSupport.inline.hpp"
++#include "runtime/java.hpp"
++#include "runtime/javaCalls.hpp"
++#include "runtime/javaThread.hpp"
++#include "runtime/mutexLocker.hpp"
++#include "runtime/objectMonitor.hpp"
++#include "runtime/osInfo.hpp"
++#include "runtime/orderAccess.hpp"
++#include "runtime/osThread.hpp"
++#include "runtime/park.hpp"
++#include "runtime/perfMemory.hpp"
++#include "runtime/sharedRuntime.hpp"
++#include "runtime/stubRoutines.hpp"
++#include "runtime/threads.hpp"
++#include "runtime/timer.hpp"
++#include "runtime/vm_version.hpp"
++#include "semaphore_posix.hpp"
++#include "services/attachListener.hpp"
++#include "nmt/memTracker.hpp"
++#include "services/runtimeService.hpp"
++#include "signals_posix.hpp"
++#include "utilities/align.hpp"
++#include "utilities/checkedCast.hpp"
++#include "utilities/decoder.hpp"
++#include "utilities/defaultStream.hpp"
++#include "utilities/events.hpp"
++#include "utilities/growableArray.hpp"
++#include "utilities/macros.hpp"
++#include "utilities/vmError.hpp"
++
++// put OS-includes here
++# include <dlfcn.h>
++# include <errno.h>
++# include <exception>
++# include <link.h>
++# include <poll.h>
++# include <pthread.h>
++# include <setjmp.h>
++# include <signal.h>
++# include <stdio.h>
++# include <alloca.h>
++# include <sys/filio.h>
++# include <sys/ipc.h>
++# include <sys/lwp.h>
++# include <sys/machelf.h>     // for elf Sym structure used by dladdr1
++# include <sys/mman.h>
++# include <sys/processor.h>
++# include <sys/procset.h>
++# include <sys/pset.h>
++# include <sys/resource.h>
++# include <sys/shm.h>
++# include <sys/socket.h>
++# include <sys/stat.h>
++# include <sys/swap.h>  // for swapctl
++# include <sys/systeminfo.h>
++# include <sys/time.h>
++# include <sys/times.h>
++# include <sys/types.h>
++# include <sys/wait.h>
++# include <sys/utsname.h>
++# include <thread.h>
++# include <unistd.h>
++# include <sys/priocntl.h>
++# include <sys/rtpriocntl.h>
++# include <sys/tspriocntl.h>
++# include <sys/iapriocntl.h>
++# include <sys/fxpriocntl.h>
++# include <sys/loadavg.h>
++# include <string.h>
++# include <stdio.h>
++# include <vm/anon.h>  // for swap anoninfo
++
++# include <procfs.h>
++
++#define MAX_PATH (2 * K)
++
++// Here are some liblgrp types from sys/lgrp_user.h to be able to
++// compile on older systems without this header file.
++
++#ifndef MADV_ACCESS_LWP
++  #define  MADV_ACCESS_LWP   7       /* next LWP to access heavily */
++#endif
++#ifndef MADV_ACCESS_MANY
++  #define  MADV_ACCESS_MANY  8       /* many processes to access heavily */
++#endif
++
++#ifndef LGRP_RSRC_CPU
++  #define LGRP_RSRC_CPU      0       /* CPU resources */
++#endif
++#ifndef LGRP_RSRC_MEM
++  #define LGRP_RSRC_MEM      1       /* memory resources */
++#endif
++
++// guarded in sys/mman.h
++extern "C" {
++extern int getpagesizes(size_t[], int);
++}
++
++// Values for ThreadPriorityPolicy == 1
++int prio_policy1[CriticalPriority+1] = {
++  -99999,  0, 16,  32,  48,  64,
++          80, 96, 112, 124, 127, 127 };
++
++address os::Solaris::handler_start;  // start pc of thr_sighndlrinfo
++address os::Solaris::handler_end;    // end pc of thr_sighndlrinfo
++
++address os::Solaris::_main_stack_base = nullptr;  // 4352906 workaround
++
++os::Solaris::pthread_setname_np_func_t os::Solaris::_pthread_setname_np = nullptr;
++
++// "default" initializers for missing libc APIs
++extern "C" {
++  int memcntl(void *, size_t, int, void *, int, int);
++  int meminfo(const uint64_t *, int, const uint_t *, int, uint64_t *, uint_t *);
++}
++
++static inline size_t adjust_stack_size(address base, size_t size) {
++  if ((ssize_t)size < 0) {
++    // 4759953: Compensate for ridiculous stack size.
++    size = max_intx;
++  }
++  if (size > (size_t)base) {
++    // 4812466: Make sure size doesn't allow the stack to wrap the address space.
++    size = (size_t)base;
++  }
++  return size;
++}
++
++static inline stack_t get_stack_info() {
++  stack_t st;
++  int retval = thr_stksegment(&st);
++  st.ss_size = adjust_stack_size((address)st.ss_sp, st.ss_size);
++  assert(retval == 0, "incorrect return value from thr_stksegment");
++  assert((address)&st < (address)st.ss_sp, "Invalid stack base returned");
++  assert((address)&st > (address)st.ss_sp-st.ss_size, "Invalid stack size returned");
++  return st;
++}
++
++bool os::is_primordial_thread(void) {
++  int r = thr_main();
++  guarantee(r == 0 || r == 1, "CR6501650 or CR6493689");
++  return r == 1;
++}
++
++address os::Solaris::current_stack_base() {
++  bool _is_primordial_thread = os::is_primordial_thread();
++
++  // Workaround 4352906, avoid calls to thr_stksegment by
++  // thr_main after the first one (it looks like we trash
++  // some data, causing the value for ss_sp to be incorrect).
++  if (!_is_primordial_thread || os::Solaris::_main_stack_base == nullptr) {
++    stack_t st = get_stack_info();
++    if (_is_primordial_thread) {
++      // cache initial value of stack base
++      os::Solaris::_main_stack_base = (address)st.ss_sp;
++    }
++    return (address)st.ss_sp;
++  } else {
++    guarantee(os::Solaris::_main_stack_base != nullptr, "Attempt to use null cached stack base");
++    return os::Solaris::_main_stack_base;
++  }
++}
++
++size_t os::Solaris::current_stack_size() {
++  size_t size;
++
++  if (!os::is_primordial_thread()) {
++    size = get_stack_info().ss_size;
++  } else {
++    struct rlimit limits;
++    getrlimit(RLIMIT_STACK, &limits);
++    size = adjust_stack_size(os::Solaris::_main_stack_base, (size_t)limits.rlim_cur);
++  }
++  // base may not be page aligned
++  address base = current_stack_base();
++  address bottom = align_up(base - size, os::vm_page_size());;
++  return (size_t)(base - bottom);
++}
++
++void os::current_stack_base_and_size(address* stack_base, size_t* stack_size) {
++  *stack_base = os::Solaris::current_stack_base();
++  *stack_size = os::Solaris::current_stack_size();
++}
++
++jint os::Solaris::_os_thread_limit = 0;
++volatile jint os::Solaris::_os_thread_count = 0;
++
++bool os::available_memory(size_t& value) {
++  return Solaris::available_memory(value);
++}
++
++bool os::free_memory(physical_memory_size_type& value) {
++  return Solaris::available_memory(value);
++}
++
++bool os::Solaris::available_memory(physical_memory_size_type& value) {
++  julong available = (julong)sysconf(_SC_AVPHYS_PAGES) * os::vm_page_size();
++  value = static_cast<physical_memory_size_type>(available);
++  return true;
++}
++
++physical_memory_size_type os::Solaris::_physical_memory = 0;
++
++bool os::total_swap_space(physical_memory_size_type& value) {
++  struct anoninfo ai;
++  int ret = swapctl(SC_AINFO, &ai);
++  if (ret == -1) {
++    return false;
++  }
++  value = static_cast<physical_memory_size_type>(ai.ani_max * sysconf(_SC_PAGESIZE));
++  return true;
++}
++
++bool os::free_swap_space(physical_memory_size_type& value) {
++  struct anoninfo ai;
++  int ret = swapctl(SC_AINFO, &ai);
++  if (ret == -1) {
++    return false;
++  }
++  value = static_cast<physical_memory_size_type>(ai.ani_free * sysconf(_SC_PAGESIZE));
++  return true;
++}
++
++physical_memory_size_type os::physical_memory() {
++  return Solaris::physical_memory();
++}
++
++size_t os::rss() { return (size_t)0; }
++
++static hrtime_t first_hrtime = 0;
++static volatile hrtime_t max_hrtime = 0;
++
++
++void os::Solaris::initialize_system_info() {
++  set_processor_count(sysconf(_SC_NPROCESSORS_CONF));
++  _physical_memory = static_cast<physical_memory_size_type>(sysconf(_SC_PHYS_PAGES)) * static_cast<size_t>(sysconf(_SC_PAGESIZE));
++}
++
++uint os::processor_id() {
++  const processorid_t id = ::getcpuid();
++  assert(id >= 0 && id < _processor_count, "Invalid processor id");
++  return (uint)id;
++}
++
++int os::active_processor_count() {
++  // User has overridden the number of active processors
++  if (ActiveProcessorCount > 0) {
++    log_trace(os)("active_processor_count: "
++                  "active processor count set by user : %d",
++                  ActiveProcessorCount);
++    return ActiveProcessorCount;
++  }
++
++  int online_cpus = sysconf(_SC_NPROCESSORS_ONLN);
++  pid_t pid = getpid();
++  psetid_t pset = PS_NONE;
++  // Are we running in a processor set or is there any processor set around?
++  if (pset_bind(PS_QUERY, P_PID, pid, &pset) == 0) {
++    uint_t pset_cpus;
++    // Query the number of cpus available to us.
++    if (pset_info(pset, nullptr, &pset_cpus, nullptr) == 0) {
++      assert(pset_cpus > 0 && pset_cpus <= online_cpus, "sanity check");
++      return pset_cpus;
++    }
++  }
++  // Otherwise return number of online cpus
++  return online_cpus;
++}
++
++void os::set_native_thread_name(const char *name) {
++  if (Solaris::_pthread_setname_np != nullptr) {
++    // Only the first 31 bytes of 'name' are processed by pthread_setname_np
++    // but we explicitly copy into a size-limited buffer to avoid any
++    // possible overflow.
++    char buf[32];
++    (void) os::snprintf(buf, sizeof(buf), "%s", name);
++    buf[sizeof(buf) - 1] = '\0';
++    Solaris::_pthread_setname_np(pthread_self(), buf);
++  }
++}
++
++void os::init_system_properties_values() {
++  // The next steps are taken in the product version:
++  //
++  // Obtain the JAVA_HOME value from the location of libjvm.so.
++  // This library should be located at:
++  // <JAVA_HOME>/lib/{client|server}/libjvm.so.
++  //
++  // If "/jre/lib/" appears at the right place in the path, then we
++  // assume libjvm.so is installed in a JDK and we use this path.
++  //
++  // Otherwise exit with message: "Could not create the Java virtual machine."
++  //
++  // The following extra steps are taken in the debugging version:
++  //
++  // If "/jre/lib/" does NOT appear at the right place in the path
++  // instead of exit check for $JAVA_HOME environment variable.
++  //
++  // If it is defined and we are able to locate $JAVA_HOME/jre/lib/<arch>,
++  // then we append a fake suffix "hotspot/libjvm.so" to this path so
++  // it looks like libjvm.so is installed there
++  // <JAVA_HOME>/jre/lib/<arch>/hotspot/libjvm.so.
++  //
++  // Otherwise exit.
++  //
++  // Important note: if the location of libjvm.so changes this
++  // code needs to be changed accordingly.
++
++// Base path of extensions installed on the system.
++#define SYS_EXT_DIR     "/usr/jdk/packages"
++#define EXTENSIONS_DIR  "/lib/ext"
++
++  // Buffer that fits several snprintfs.
++  // Note that the space for the colon and the trailing null are provided
++  // by the nulls included by the sizeof operator.
++  const size_t bufsize =
++    MAX3((size_t)MAXPATHLEN,  // For dll_dir & friends.
++         sizeof(SYS_EXT_DIR) + sizeof("/lib/"), // invariant ld_library_path
++         (size_t)MAXPATHLEN + sizeof(EXTENSIONS_DIR) + sizeof(SYS_EXT_DIR) + sizeof(EXTENSIONS_DIR)); // extensions dir
++  char *buf = NEW_C_HEAP_ARRAY(char, bufsize, mtInternal);
++
++  // sysclasspath, java_home, dll_dir
++  {
++    char *pslash;
++    os::jvm_path(buf, bufsize);
++
++    // Found the full path to libjvm.so.
++    // Now cut the path to <java_home>/jre if we can.
++    *(strrchr(buf, '/')) = '\0'; // Get rid of /libjvm.so.
++    pslash = strrchr(buf, '/');
++    if (pslash != nullptr) {
++      *pslash = '\0';            // Get rid of /{client|server|hotspot}.
++    }
++    Arguments::set_dll_dir(buf);
++
++    if (pslash != nullptr) {
++      pslash = strrchr(buf, '/');
++      if (pslash != nullptr) {
++        *pslash = '\0';        // Get rid of /lib.
++      }
++    }
++    Arguments::set_java_home(buf);
++    if (!set_boot_path('/', ':')) {
++      vm_exit_during_initialization("Failed setting boot class path.", nullptr);
++    }
++  }
++
++  // Where to look for native libraries.
++  {
++    // Use dlinfo() to determine the correct java.library.path.
++    //
++    // If we're launched by the Java launcher, and the user
++    // does not set java.library.path explicitly on the commandline,
++    // the Java launcher sets LD_LIBRARY_PATH for us and unsets
++    // LD_LIBRARY_PATH_32 and LD_LIBRARY_PATH_64.  In this case
++    // dlinfo returns LD_LIBRARY_PATH + crle settings (including
++    // /usr/lib), which is exactly what we want.
++    //
++    // If the user does set java.library.path, it completely
++    // overwrites this setting, and always has.
++    //
++    // If we're not launched by the Java launcher, we may
++    // get here with any/all of the LD_LIBRARY_PATH[_32|64]
++    // settings.  Again, dlinfo does exactly what we want.
++
++    Dl_serinfo     info_sz, *info = &info_sz;
++    Dl_serpath     *path;
++    char           *library_path;
++    char           *common_path = buf;
++
++    // Determine search path count and required buffer size.
++    if (dlinfo(RTLD_SELF, RTLD_DI_SERINFOSIZE, (void *)info) == -1) {
++      FREE_C_HEAP_ARRAY(char, buf);
++      vm_exit_during_initialization("dlinfo SERINFOSIZE request", dlerror());
++    }
++
++    // Allocate new buffer and initialize.
++    info = (Dl_serinfo*)NEW_C_HEAP_ARRAY(char, info_sz.dls_size, mtInternal);
++    info->dls_size = info_sz.dls_size;
++    info->dls_cnt = info_sz.dls_cnt;
++
++    // Obtain search path information.
++    if (dlinfo(RTLD_SELF, RTLD_DI_SERINFO, (void *)info) == -1) {
++      FREE_C_HEAP_ARRAY(char, buf);
++      FREE_C_HEAP_ARRAY(char, info);
++      vm_exit_during_initialization("dlinfo SERINFO request", dlerror());
++    }
++
++    path = &info->dls_serpath[0];
++
++    // Note: Due to a legacy implementation, most of the library path
++    // is set in the launcher. This was to accommodate linking restrictions
++    // on legacy Solaris implementations (which are no longer supported).
++    // Eventually, all the library path setting will be done here.
++    //
++    // However, to prevent the proliferation of improperly built native
++    // libraries, the new path component /usr/jdk/packages is added here.
++
++    // Construct the invariant part of ld_library_path.
++    (void) os::snprintf(common_path, bufsize, SYS_EXT_DIR "/lib");
++
++    // Struct size is more than sufficient for the path components obtained
++    // through the dlinfo() call, so only add additional space for the path
++    // components explicitly added here.
++    size_t library_path_size = info->dls_size + strlen(common_path);
++    library_path = NEW_C_HEAP_ARRAY(char, library_path_size, mtInternal);
++    library_path[0] = '\0';
++
++    // Construct the desired Java library path from the linker's library
++    // search path.
++    //
++    // For compatibility, it is optimal that we insert the additional path
++    // components specific to the Java VM after those components specified
++    // in LD_LIBRARY_PATH (if any) but before those added by the ld.so
++    // infrastructure.
++    if (info->dls_cnt == 0) { // Not sure this can happen, but allow for it.
++      strcpy(library_path, common_path);
++    } else {
++      int inserted = 0;
++      uint_t i;
++      for (i = 0; i < info->dls_cnt; i++, path++) {
++        uint_t flags = path->dls_flags & LA_SER_MASK;
++        if (((flags & LA_SER_LIBPATH) == 0) && !inserted) {
++          strcat(library_path, common_path);
++          strcat(library_path, os::path_separator());
++          inserted = 1;
++        }
++        strcat(library_path, path->dls_name);
++        strcat(library_path, os::path_separator());
++      }
++      // Eliminate trailing path separator.
++      library_path[strlen(library_path)-1] = '\0';
++    }
++
++    // happens before argument parsing - can't use a trace flag
++    // tty->print_raw("init_system_properties_values: native lib path: ");
++    // tty->print_raw_cr(library_path);
++
++    // Callee copies into its own buffer.
++    Arguments::set_library_path(library_path);
++
++    FREE_C_HEAP_ARRAY(char, library_path);
++    FREE_C_HEAP_ARRAY(char, info);
++  }
++
++  // Extensions directories.
++  os::snprintf_checked(buf, bufsize, "%s" EXTENSIONS_DIR ":" SYS_EXT_DIR EXTENSIONS_DIR, Arguments::get_java_home());
++  Arguments::set_ext_dirs(buf);
++
++  FREE_C_HEAP_ARRAY(char, buf);
++
++#undef SYS_EXT_DIR
++#undef EXTENSIONS_DIR
++}
++
++static thread_t main_thread;
++
++// Thread start routine for all newly created threads
++extern "C" void* thread_native_entry(void* thread_addr) {
++
++  Thread* thread = (Thread*)thread_addr;
++
++  thread->record_stack_base_and_size();
++
++  // Try to randomize the cache line index of hot stack frames.
++  // This helps when threads of the same stack traces evict each other's
++  // cache lines. The threads can be either from the same JVM instance, or
++  // from different JVM instances. The benefit is especially true for
++  // processors with hyperthreading technology.
++  static int counter = 0;
++  int pid = os::current_process_id();
++  alloca(((pid ^ counter++) & 7) * 128);
++
++  int prio;
++
++  thread->initialize_thread_current();
++
++  OSThread* osthr = thread->osthread();
++
++  osthr->set_lwp_id(_lwp_self());  // Store lwp in case we are bound
++
++  log_info(os, thread)("Thread is alive (tid: %zu).",
++    os::current_thread_id());
++
++  // Our priority was set when we were created, and stored in the
++  // osthread, but couldn't be passed through to our LWP until now.
++  // So read back the priority and set it again.
++
++  if (osthr->thread_id() != -1) {
++    if (UseThreadPriorities) {
++      int prio = osthr->native_priority();
++      os::set_native_priority(thread, prio);
++    }
++  }
++
++  assert(osthr->get_state() == RUNNABLE, "invalid os thread state");
++
++  // initialize signal mask for this thread
++  PosixSignals::hotspot_sigmask(thread);
++
++  os::Solaris::init_thread_fpu_state();
++
++  thread->call_run();
++
++  // Note: at this point the thread object may already have deleted itself.
++  // Do not dereference it from here on out.
++
++  // One less thread is executing
++  // When the VMThread gets here, the main thread may have already exited
++  // which frees the CodeHeap containing the AtomicAccess::dec code
++  if (thread != VMThread::vm_thread() && VMThread::vm_thread() != nullptr) {
++    AtomicAccess::dec(&os::Solaris::_os_thread_count);
++  }
++
++  log_info(os, thread)("Thread finished (tid: %zu).", os::current_thread_id());
++
++  thr_exit(nullptr);
++  ShouldNotReachHere();
++
++  return nullptr;
++}
++
++static OSThread* create_os_thread(Thread* thread, thread_t thread_id) {
++  // Allocate the OSThread object
++  OSThread* osthread = new OSThread();
++  if (osthread == nullptr) return nullptr;
++
++  // Store info on the Solaris thread into the OSThread
++  osthread->set_thread_id(thread_id);
++  osthread->set_lwp_id(_lwp_self());
++
++  // Initial thread state is INITIALIZED, not SUSPENDED
++  osthread->set_state(INITIALIZED);
++
++  return osthread;
++}
++
++bool os::create_attached_thread(JavaThread* thread) {
++#ifdef ASSERT
++  thread->verify_not_published();
++#endif
++  OSThread* osthread = create_os_thread(thread, thr_self());
++  if (osthread == nullptr) {
++    return false;
++  }
++
++  // Initial thread state is RUNNABLE
++  osthread->set_state(RUNNABLE);
++  thread->set_osthread(osthread);
++
++  if (os::is_primordial_thread()) {
++    os::Solaris::correct_stack_boundaries_for_primordial_thread(thread);
++  }
++
++  // initialize signal mask for this thread
++  // and save the caller's signal mask
++  PosixSignals::hotspot_sigmask(thread);
++
++  log_info(os, thread)("Thread attached (tid: %zu).",
++    os::current_thread_id());
++
++  return true;
++}
++
++bool os::create_main_thread(JavaThread* thread) {
++#ifdef ASSERT
++  thread->verify_not_published();
++#endif
++  if (_starting_thread == nullptr) {
++    _starting_thread = create_os_thread(thread, main_thread);
++    if (_starting_thread == nullptr) {
++      return false;
++    }
++  }
++
++  // The primodial thread is runnable from the start
++  _starting_thread->set_state(RUNNABLE);
++
++  thread->set_osthread(_starting_thread);
++
++  // initialize signal mask for this thread
++  // and save the caller's signal mask
++  PosixSignals::hotspot_sigmask(thread);
++
++  return true;
++}
++
++// Helper function to trace thread attributes, similar to os::Posix::describe_pthread_attr()
++static char* describe_thr_create_attributes(char* buf, size_t buflen,
++                                            size_t stacksize, long flags) {
++  stringStream ss(buf, buflen);
++  ss.print("stacksize: %zuk, ", stacksize / 1024);
++  ss.print("flags: ");
++  #define PRINT_FLAG(f) if (flags & f) ss.print( #f " ");
++  #define ALL(X) \
++    X(THR_SUSPENDED) \
++    X(THR_DETACHED) \
++    X(THR_BOUND) \
++    X(THR_NEW_LWP) \
++    X(THR_DAEMON)
++  ALL(PRINT_FLAG)
++  #undef ALL
++  #undef PRINT_FLAG
++  return buf;
++}
++
++// return default stack size for thr_type
++size_t os::Posix::default_stack_size(os::ThreadType thr_type) {
++  // default stack size (compiler thread needs larger stack)
++  size_t s = (thr_type == os::compiler_thread ? 4 * M : 1 * M);
++  return s;
++}
++
++bool os::create_thread(Thread* thread, ThreadType thr_type,
++                       size_t req_stack_size) {
++  // Allocate the OSThread object
++  OSThread* osthread = new OSThread();
++  if (osthread == nullptr) {
++    return false;
++  }
++
++  // calculate stack size if it's not specified by caller
++  size_t stack_size = os::Posix::get_initial_stack_size(thr_type, req_stack_size);
++
++  // Initial state is ALLOCATED but not INITIALIZED
++  osthread->set_state(ALLOCATED);
++
++  if (os::Solaris::_os_thread_count > os::Solaris::_os_thread_limit) {
++    // We got lots of threads. Check if we still have some address space left.
++    // Need to be at least 5Mb of unreserved address space. We do check by
++    // trying to reserve some.
++    const size_t VirtualMemoryBangSize = 20*K*K;
++    char* mem = os::reserve_memory(VirtualMemoryBangSize, mtInternal);
++    if (mem == nullptr) {
++      delete osthread;
++      return false;
++    } else {
++      // Release the memory again
++      os::release_memory(mem, VirtualMemoryBangSize);
++    }
++  }
++
++  // Setup osthread because the child thread may need it.
++  thread->set_osthread(osthread);
++
++  // Create the Solaris thread
++  thread_t tid = 0;
++  long     flags = THR_DETACHED | THR_SUSPENDED;
++  int      status;
++
++  // Mark that we don't have an lwp or thread id yet.
++  // In case we attempt to set the priority before the thread starts.
++  osthread->set_lwp_id(-1);
++  osthread->set_thread_id(-1);
++
++  status = thr_create(nullptr, stack_size, thread_native_entry, thread, flags, &tid);
++
++  char buf[64];
++  if (status == 0) {
++    log_info(os, thread)("Thread \"%s\" started (tid: %zu, attributes: %s). ",
++      thread->name(), (uintx) tid, describe_thr_create_attributes(buf, sizeof(buf), stack_size, flags));
++  } else {
++    log_warning(os, thread)("Failed to start thread \"%s\" - thr_create failed (%s) for attributes: %s.",
++      thread->name(), os::errno_name(status), describe_thr_create_attributes(buf, sizeof(buf), stack_size, flags));
++    // Log some OS information which might explain why creating the thread failed.
++    log_info(os, thread)("Number of threads approx. running in the VM: %d", Threads::number_of_threads());
++    LogStream st(Log(os, thread)::info());
++    os::Posix::print_rlimit_info(&st);
++    os::print_memory_info(&st);
++  }
++
++  if (status != 0) {
++    thread->set_osthread(nullptr);
++    // Need to clean up stuff we've allocated so far
++    delete osthread;
++    return false;
++  }
++
++  AtomicAccess::inc(&os::Solaris::_os_thread_count);
++
++  // Store info on the Solaris thread into the OSThread
++  osthread->set_thread_id(tid);
++
++  // Remember that we created this thread so we can set priority on it
++  osthread->set_vm_created();
++
++  // Most thread types will set an explicit priority before starting the thread,
++  // but for those that don't we need a valid value to read back in thread_native_entry.
++  osthread->set_native_priority(NormPriority);
++
++  // Initial thread state is INITIALIZED, not SUSPENDED
++  osthread->set_state(INITIALIZED);
++
++  // The thread is returned suspended (in state INITIALIZED), and is started higher up in the call chain
++  return true;
++}
++
++// CR 7190089: on Solaris, primordial thread's stack needs adjusting.
++// Without the adjustment, stack size is incorrect if stack is set to unlimited (ulimit -s unlimited).
++void os::Solaris::correct_stack_boundaries_for_primordial_thread(Thread* thr) {
++  assert(is_primordial_thread(), "Call only for primordial thread");
++
++  JavaThread* jt = (JavaThread *)thr;
++  assert(jt != nullptr, "Sanity check");
++  size_t stack_size;
++  address base = jt->stack_base();
++  if (Arguments::created_by_java_launcher()) {
++    // Use 2MB to allow for Solaris 7 64 bit mode.
++    stack_size = JavaThread::stack_size_at_create() == 0
++      ? 2048*K : JavaThread::stack_size_at_create();
++
++    // There are rare cases when we may have already used more than
++    // the basic stack size allotment before this method is invoked.
++    // Attempt to allow for a normally sized java_stack.
++    size_t current_stack_offset = (size_t)(base - (address)&stack_size);
++    stack_size += os::align_down_vm_page_size(current_stack_offset);
++  } else {
++    // 6269555: If we were not created by a Java launcher, i.e. if we are
++    // running embedded in a native application, treat the primordial thread
++    // as much like a native attached thread as possible.  This means using
++    // the current stack size from thr_stksegment(), unless it is too large
++    // to reliably setup guard pages.  A reasonable max size is 8MB.
++    size_t current_size = current_stack_size();
++    // This should never happen, but just in case....
++    if (current_size == 0) current_size = 2 * K * K;
++    stack_size = current_size > (8 * K * K) ? (8 * K * K) : current_size;
++  }
++  address bottom = align_up(base - stack_size, os::vm_page_size());;
++  stack_size = (size_t)(base - bottom);
++
++  assert(stack_size > 0, "Stack size calculation problem");
++
++  if (stack_size > jt->stack_size()) {
++#ifndef PRODUCT
++    struct rlimit limits;
++    getrlimit(RLIMIT_STACK, &limits);
++    size_t size = adjust_stack_size(base, (size_t)limits.rlim_cur);
++    assert(size >= jt->stack_size(), "Stack size problem in main thread");
++#endif
++    tty->print_cr("Stack size of %zu Kb exceeds current limit of %zu Kb.\n"
++                  "(Stack sizes are rounded up to a multiple of the system page size.)\n"
++                  "See limit(1) to increase the stack size limit.",
++                  stack_size / K, jt->stack_size() / K);
++    vm_exit(1);
++  }
++  assert(jt->stack_size() >= stack_size,
++         "Attempt to map more stack than was allocated");
++  jt->set_stack_size(stack_size);
++
++}
++
++
++
++// Free Solaris resources related to the OSThread
++void os::free_thread(OSThread* osthread) {
++  assert(osthread != nullptr, "os::free_thread but osthread not set");
++
++  // We are told to free resources of the argument thread,
++  // but we can only really operate on the current thread.
++  assert(Thread::current_or_null() == nullptr || Thread::current()->osthread() == osthread,
++         "os::free_thread but not current thread");
++
++  // Restore caller's signal mask
++  sigset_t sigmask = osthread->caller_sigmask();
++  pthread_sigmask(SIG_SETMASK, &sigmask, nullptr);
++
++  delete osthread;
++}
++
++void os::pd_start_thread(Thread* thread) {
++  int status = thr_continue(thread->osthread()->thread_id());
++  assert_status(status == 0, status, "thr_continue failed");
++}
++
++
++intx os::current_thread_id() {
++  return (intx)thr_self();
++}
++
++static pid_t _initial_pid = 0;
++
++int os::current_process_id() {
++  return (int)(_initial_pid ? _initial_pid : getpid());
++}
++
++// gethrtime() should be monotonic according to the documentation,
++// but some virtualized platforms are known to break this guarantee.
++// getTimeNanos() must be guaranteed not to move backwards, so we
++// are forced to add a check here.
++inline hrtime_t getTimeNanos() {
++  const hrtime_t now = gethrtime();
++  const hrtime_t prev = max_hrtime;
++  if (now <= prev) {
++    return prev;   // same or retrograde time;
++  }
++  const hrtime_t obsv = AtomicAccess::cmpxchg(&max_hrtime, prev, now);
++  assert(obsv >= prev, "invariant");   // Monotonicity
++  // If the CAS succeeded then we're done and return "now".
++  // If the CAS failed and the observed value "obsv" is >= now then
++  // we should return "obsv".  If the CAS failed and now > obsv > prv then
++  // some other thread raced this thread and installed a new value, in which case
++  // we could either (a) retry the entire operation, (b) retry trying to install now
++  // or (c) just return obsv.  We use (c).   No loop is required although in some cases
++  // we might discard a higher "now" value in deference to a slightly lower but freshly
++  // installed obsv value.   That's entirely benign -- it admits no new orderings compared
++  // to (a) or (b) -- and greatly reduces coherence traffic.
++  // We might also condition (c) on the magnitude of the delta between obsv and now.
++  // Avoiding excessive CAS operations to hot RW locations is critical.
++  // See https://blogs.oracle.com/dave/entry/cas_and_cache_trivia_invalidate
++  return (prev == obsv) ? now : obsv;
++}
++
++// DLL functions
++
++// This must be hard coded because it's the system's temporary
++// directory not the java application's temp directory, ala java.io.tmpdir.
++const char* os::get_temp_directory() { return "/tmp"; }
++
++// check if addr is inside libjvm.so
++bool os::address_is_in_vm(address addr) {
++  static address libjvm_base_addr;
++  Dl_info dlinfo;
++
++  if (libjvm_base_addr == nullptr) {
++    if (dladdr(CAST_FROM_FN_PTR(void *, os::address_is_in_vm), &dlinfo) != 0) {
++      libjvm_base_addr = (address)dlinfo.dli_fbase;
++    }
++    assert(libjvm_base_addr != nullptr, "Cannot obtain base address for libjvm");
++  }
++
++  if (dladdr((void *)addr, &dlinfo) != 0) {
++    if (libjvm_base_addr == (address)dlinfo.dli_fbase) return true;
++  }
++
++  return false;
++}
++
++void os::prepare_native_symbols() {
++}
++
++bool os::dll_address_to_function_name(address addr, char *buf,
++                                      int buflen, int *offset,
++                                      bool demangle) {
++  // buf is not optional, but offset is optional
++  assert(buf != nullptr, "sanity check");
++
++  Dl_info dlinfo;
++
++  Elf64_Sym * info;
++  if (dladdr1((void *)addr, &dlinfo, (void **)&info,
++                     RTLD_DL_SYMENT) != 0) {
++    // see if we have a matching symbol that covers our address
++    if (dlinfo.dli_saddr != nullptr &&
++          (char *)dlinfo.dli_saddr + info->st_size > (char *)addr) {
++      if (dlinfo.dli_sname != nullptr) {
++        if (!(demangle && Decoder::demangle(dlinfo.dli_sname, buf, buflen))) {
++          jio_snprintf(buf, buflen, "%s", dlinfo.dli_sname);
++        }
++        if (offset != nullptr) *offset = addr - (address)dlinfo.dli_saddr;
++        return true;
++      }
++    }
++    // no matching symbol so try for just file info
++    if (dlinfo.dli_fname != nullptr && dlinfo.dli_fbase != nullptr) {
++      if (Decoder::decode((address)(addr - (address)dlinfo.dli_fbase),
++                          buf, buflen, offset, dlinfo.dli_fname, demangle)) {
++        return true;
++      }
++    }
++  }
++
++  buf[0] = '\0';
++  if (offset != nullptr) *offset = -1;
++  return false;
++}
++
++bool os::dll_address_to_library_name(address addr, char* buf,
++                                     int buflen, int* offset) {
++  // buf is not optional, but offset is optional
++  assert(buf != nullptr, "sanity check");
++
++  Dl_info dlinfo;
++  if (dladdr((void*)addr, &dlinfo) != 0) {
++    if (dlinfo.dli_fname != nullptr) {
++      jio_snprintf(buf, buflen, "%s", dlinfo.dli_fname);
++    }
++    if (dlinfo.dli_fbase != nullptr && offset != nullptr) {
++      *offset = addr - (address)dlinfo.dli_fbase;
++    }
++    return true;
++  }
++  buf[0] = '\0';
++  if (offset) *offset = -1;
++  return false;
++}
++
++int os::get_loaded_modules_info(os::LoadedModulesCallbackFunc callback, void *param) {
++  Dl_info dli;
++  // Sanity check?
++  if (dladdr(CAST_FROM_FN_PTR(void *, os::get_loaded_modules_info), &dli) == 0 ||
++      dli.dli_fname == nullptr) {
++    return 1;
++  }
++
++  void * handle = dlopen(dli.dli_fname, RTLD_LAZY);
++  if (handle == nullptr) {
++    return 1;
++  }
++
++  Link_map *map;
++  dlinfo(handle, RTLD_DI_LINKMAP, &map);
++  if (map == nullptr) {
++    dlclose(handle);
++    return 1;
++  }
++
++  while (map->l_prev != nullptr) {
++    map = map->l_prev;
++  }
++
++  while (map != nullptr) {
++    // Iterate through all map entries and call callback with fields of interest
++    if(callback(map->l_name, (address)map->l_addr, (address)0, param)) {
++      dlclose(handle);
++      return 1;
++    }
++    map = map->l_next;
++  }
++
++  dlclose(handle);
++  return 0;
++}
++
++int _print_dll_info_cb(const char * name, address base_address, address top_address, void * param) {
++  outputStream * out = (outputStream *) param;
++  out->print_cr(INTPTR_FORMAT " \t%s", (intptr_t)base_address, name);
++  return 0;
++}
++
++void os::print_dll_info(outputStream * st) {
++  st->print_cr("Dynamic libraries:"); st->flush();
++  if (get_loaded_modules_info(_print_dll_info_cb, (void *)st)) {
++    st->print_cr("Error: Cannot print dynamic libraries.");
++  }
++}
++
++static void change_endianness(Elf32_Half& val) {
++  unsigned char *ptr = (unsigned char *)&val;
++  unsigned char swp = ptr[0];
++  ptr[0] = ptr[1];
++  ptr[1] = swp;
++}
++
++// Loads .dll/.so and
++// in case of error it checks if .dll/.so was built for the
++// same architecture as Hotspot is running on
++
++void * os::dll_load(const char *filename, char *ebuf, int ebuflen) {
++  log_info(os)("attempting shared library load of %s", filename);
++
++  void * result= ::dlopen(filename, RTLD_LAZY);
++  if (result != nullptr) {
++    // Successful loading
++    Events::log(nullptr, "Loaded shared library %s", filename);
++    log_info(os)("shared library load of %s was successful", filename);
++    return result;
++  }
++
++  if (ebuf == nullptr || ebuflen < 1) {
++    // no error reporting requested
++    return nullptr;
++  }
++
++  Elf32_Ehdr elf_head;
++  const char* error_report = ::dlerror();
++  if (error_report == nullptr) {
++    error_report = "dlerror returned no error description";
++  }
++  if (ebuf != nullptr && ebuflen > 0) {
++    ::strncpy(ebuf, error_report, ebuflen-1);
++    ebuf[ebuflen-1]='\0';
++  }
++
++  Events::log(nullptr, "Loading shared library %s failed, %s", filename, error_report);
++  log_info(os)("shared library load of %s failed, %s", filename, error_report);
++
++  int diag_msg_max_length=ebuflen-strlen(ebuf);
++  char* diag_msg_buf=ebuf+strlen(ebuf);
++
++  if (diag_msg_max_length==0) {
++    // No more space in ebuf for additional diagnostics message
++    return nullptr;
++  }
++
++
++  int file_descriptor= ::open(filename, O_RDONLY | O_NONBLOCK);
++
++  if (file_descriptor < 0) {
++    // Can't open library, report dlerror() message
++    return nullptr;
++  }
++
++  bool failed_to_read_elf_head=
++    (sizeof(elf_head)!=
++     (::read(file_descriptor, &elf_head,sizeof(elf_head))));
++
++  ::close(file_descriptor);
++  if (failed_to_read_elf_head) {
++    // file i/o error - report dlerror() msg
++    return nullptr;
++  }
++
++  if (elf_head.e_ident[EI_DATA] != LITTLE_ENDIAN_ONLY(ELFDATA2LSB) BIG_ENDIAN_ONLY(ELFDATA2MSB)) {
++    // handle invalid/out of range endianness values
++    if (elf_head.e_ident[EI_DATA] == 0 || elf_head.e_ident[EI_DATA] > 2) {
++      return nullptr;
++    }
++    change_endianness(elf_head.e_machine);
++  }
++
++  typedef struct {
++    Elf32_Half    code;         // Actual value as defined in elf.h
++    Elf32_Half    compat_class; // Compatibility of archs at VM's sense
++    unsigned char elf_class;    // 32 or 64 bit
++    unsigned char endianess;    // MSB or LSB
++    char*         name;         // String representation
++  } arch_t;
++
++  static const arch_t arch_array[]={
++    {EM_386,         EM_386,     ELFCLASS32, ELFDATA2LSB, (char*)"IA 32"},
++    {EM_486,         EM_386,     ELFCLASS32, ELFDATA2LSB, (char*)"IA 32"},
++    {EM_IA_64,       EM_IA_64,   ELFCLASS64, ELFDATA2LSB, (char*)"IA 64"},
++    {EM_X86_64,      EM_X86_64,  ELFCLASS64, ELFDATA2LSB, (char*)"AMD 64"},
++    {EM_SPARC,       EM_SPARC,   ELFCLASS32, ELFDATA2MSB, (char*)"Sparc 32"},
++    {EM_SPARC32PLUS, EM_SPARC,   ELFCLASS32, ELFDATA2MSB, (char*)"Sparc 32"},
++    {EM_SPARCV9,     EM_SPARCV9, ELFCLASS64, ELFDATA2MSB, (char*)"Sparc v9 64"},
++    {EM_PPC,         EM_PPC,     ELFCLASS32, ELFDATA2MSB, (char*)"Power PC 32"},
++    {EM_PPC64,       EM_PPC64,   ELFCLASS64, ELFDATA2MSB, (char*)"Power PC 64"},
++    {EM_ARM,         EM_ARM,     ELFCLASS32, ELFDATA2LSB, (char*)"ARM"},
++    // we only support 64 bit z architecture
++    {EM_S390,        EM_S390,    ELFCLASS64, ELFDATA2MSB, (char*)"IBM System/390"},
++    {EM_AARCH64,     EM_AARCH64, ELFCLASS64, ELFDATA2LSB, (char*)"AARCH64"}
++  };
++
++#if  (defined IA32)
++  static  Elf32_Half running_arch_code=EM_386;
++#elif   (defined AMD64)
++  static  Elf32_Half running_arch_code=EM_X86_64;
++#elif  (defined IA64)
++  static  Elf32_Half running_arch_code=EM_IA_64;
++#elif  (defined __sparc) && (defined _LP64)
++  static  Elf32_Half running_arch_code=EM_SPARCV9;
++#elif  (defined __sparc) && (!defined _LP64)
++  static  Elf32_Half running_arch_code=EM_SPARC;
++#elif  (defined __powerpc64__)
++  static  Elf32_Half running_arch_code=EM_PPC64;
++#elif  (defined __powerpc__)
++  static  Elf32_Half running_arch_code=EM_PPC;
++#elif (defined ARM)
++  static  Elf32_Half running_arch_code=EM_ARM;
++#else
++  #error Method os::dll_load requires that one of following is defined:\
++       IA32, AMD64, IA64, __sparc, __powerpc__, ARM, ARM
++#endif
++
++  // Identify compatibility class for VM's architecture and library's architecture
++  // Obtain string descriptions for architectures
++
++  arch_t lib_arch={elf_head.e_machine,0,elf_head.e_ident[EI_CLASS], elf_head.e_ident[EI_DATA], nullptr};
++  int running_arch_index=-1;
++
++  for (unsigned int i=0; i < ARRAY_SIZE(arch_array); i++) {
++    if (running_arch_code == arch_array[i].code) {
++      running_arch_index    = i;
++    }
++    if (lib_arch.code == arch_array[i].code) {
++      lib_arch.compat_class = arch_array[i].compat_class;
++      lib_arch.name         = arch_array[i].name;
++    }
++  }
++
++  assert(running_arch_index != -1,
++         "Didn't find running architecture code (running_arch_code) in arch_array");
++  if (running_arch_index == -1) {
++    // Even though running architecture detection failed
++    // we may still continue with reporting dlerror() message
++    return nullptr;
++  }
++
++  if (lib_arch.compat_class != arch_array[running_arch_index].compat_class) {
++    if (lib_arch.name != nullptr) {
++      os::snprintf_checked(diag_msg_buf, diag_msg_max_length-1,
++                 " (Possible cause: can't load %s .so on a %s platform)",
++                 lib_arch.name, arch_array[running_arch_index].name);
++    } else {
++      os::snprintf_checked(diag_msg_buf, diag_msg_max_length-1,
++                 " (Possible cause: can't load this .so (machine code=0x%x) on a %s platform)",
++                 lib_arch.code, arch_array[running_arch_index].name);
++    }
++    return nullptr;
++  }
++
++  if (lib_arch.endianess != arch_array[running_arch_index].endianess) {
++    os::snprintf_checked(diag_msg_buf, diag_msg_max_length-1, " (Possible cause: endianness mismatch)");
++    return nullptr;
++  }
++
++  // ELF file class/capacity : 0 - invalid, 1 - 32bit, 2 - 64bit
++  if (lib_arch.elf_class > 2 || lib_arch.elf_class < 1) {
++    os::snprintf_checked(diag_msg_buf, diag_msg_max_length-1, " (Possible cause: invalid ELF file class)");
++    return nullptr;
++  }
++
++  if (lib_arch.elf_class != arch_array[running_arch_index].elf_class) {
++    os::snprintf_checked(diag_msg_buf, diag_msg_max_length-1,
++               " (Possible cause: architecture word width mismatch, can't load %d-bit .so on a %d-bit platform)",
++               (int) lib_arch.elf_class * 32, arch_array[running_arch_index].elf_class * 32);
++    return nullptr;
++  }
++
++  return nullptr;
++}
++
++static inline time_t get_mtime(const char* filename) {
++  struct stat st;
++  int ret = os::stat(filename, &st);
++  assert(ret == 0, "failed to stat() file '%s': %s", filename, os::strerror(errno));
++  return st.st_mtime;
++}
++
++int os::compare_file_modified_times(const char* file1, const char* file2) {
++  time_t t1 = get_mtime(file1);
++  time_t t2 = get_mtime(file2);
++  return t1 - t2;
++}
++
++static bool _print_ascii_file(const char* filename, outputStream* st) {
++  int fd = ::open(filename, O_RDONLY);
++  if (fd == -1) {
++    return false;
++  }
++
++  char buf[32];
++  int bytes;
++  while ((bytes = ::read(fd, buf, sizeof(buf))) > 0) {
++    st->print_raw(buf, bytes);
++  }
++
++  ::close(fd);
++
++  return true;
++}
++
++void os::print_os_info_brief(outputStream* st) {
++  os::Solaris::print_distro_info(st);
++
++  os::Posix::print_uname_info(st);
++}
++
++void os::print_os_info(outputStream* st) {
++  st->print_cr("OS:");
++
++  os::Solaris::print_distro_info(st);
++
++  os::Posix::print_uname_info(st);
++
++  os::Posix::print_uptime_info(st);
++
++  os::Posix::print_rlimit_info(st);
++
++  os::Posix::print_load_average(st);
++}
++
++void os::Solaris::print_distro_info(outputStream* st) {
++  if (!_print_ascii_file("/etc/release", st)) {
++    st->print("Solaris");
++  }
++  st->cr();
++}
++
++void os::get_summary_os_info(char* buf, size_t buflen) {
++  strncpy(buf, "Solaris", buflen);  // default to plain solaris
++  FILE* fp = fopen("/etc/release", "r");
++  if (fp != nullptr) {
++    char tmp[256];
++    // Only get the first line and chop out everything but the os name.
++    if (fgets(tmp, sizeof(tmp), fp)) {
++      char* ptr = tmp;
++      // skip past whitespace characters
++      while (*ptr != '\0' && (*ptr == ' ' || *ptr == '\t' || *ptr == '\n')) ptr++;
++      if (*ptr != '\0') {
++        char* nl = strchr(ptr, '\n');
++        if (nl != nullptr) *nl = '\0';
++        strncpy(buf, ptr, buflen);
++      }
++    }
++    fclose(fp);
++  }
++}
++
++void os::get_summary_cpu_info(char* buf, size_t buflen) {
++  // Get MHz with system call. We don't seem to already have this.
++  processor_info_t stats;
++  processorid_t id = getcpuid();
++  int clock = 0;
++  if (processor_info(id, &stats) != -1) {
++    clock = stats.pi_clock;  // pi_processor_type isn't more informative than below
++  }
++  os::snprintf_checked(buf, buflen, "64 bit %d MHz", clock);
++}
++
++void os::pd_print_cpu_info(outputStream* st, char* buf, size_t buflen) {
++  // Nothing to do for now.
++}
++
++void os::print_memory_info(outputStream* st) {
++  st->print("Memory:");
++  st->print(" %zuk page", os::vm_page_size()>>10);
++  size_t phys_mem = physical_memory();
++  st->print(", physical %zuk", phys_mem >> 10);
++  size_t avail_mem = 0;
++  (void)os::available_memory(avail_mem);
++  st->print("%zuk free)", avail_mem >> 10);
++  st->cr();
++}
++
++static int Maxsignum = 0;
++
++////////////////////////////////////////////////////////////////////////////////
++// Virtual Memory
++
++static bool recoverable_mmap_error(int err) {
++  // See if the error is one we can let the caller handle. This
++  // list of errno values comes from the Solaris mmap(2) man page.
++  switch (err) {
++  case EBADF:
++  case EINVAL:
++  case ENOTSUP:
++    // let the caller deal with these errors
++    return true;
++
++  default:
++    // Any remaining errors on this OS can cause our reserved mapping
++    // to be lost. That can cause confusion where different data
++    // structures think they have the same memory mapped. The worst
++    // scenario is if both the VM and a library think they have the
++    // same memory mapped.
++    return false;
++  }
++}
++
++static void warn_fail_commit_memory(char* addr, size_t bytes, bool exec,
++                                    int err) {
++  warning("INFO: os::commit_memory(" PTR_FORMAT ", %zu, %d) failed; error='%s' (errno=%d)",
++          p2i(addr), bytes, exec, os::strerror(err), err);
++}
++
++static void warn_fail_commit_memory(char* addr, size_t bytes,
++                                    size_t alignment_hint, bool exec,
++                                    int err) {
++  warning("INFO: os::commit_memory(" PTR_FORMAT ", %zu, %zu, %d) failed; error='%s' (errno=%d)",
++          p2i(addr), bytes, alignment_hint, exec, os::strerror(err), err);
++}
++
++int os::Solaris::commit_memory_impl(char* addr, size_t bytes, bool exec) {
++  int prot = exec ? PROT_READ|PROT_WRITE|PROT_EXEC : PROT_READ|PROT_WRITE;
++  size_t size = bytes;
++  char *res = Solaris::mmap_chunk(addr, size, MAP_PRIVATE|MAP_FIXED, prot);
++  if (res != nullptr) {
++    if (UseNUMAInterleaving) {
++        numa_make_global(addr, bytes);
++    }
++    return 0;
++  } else {
++    ErrnoPreserver ep;
++    log_trace(os, map)("mmap failed: " RANGEFMT " errno=(%s)",
++                       RANGEFMTARGS(addr, size),
++                       os::strerror(ep.saved_errno()));
++  }
++
++  int err = errno;  // save errno from mmap() call in mmap_chunk()
++
++  if (!recoverable_mmap_error(err)) {
++    ErrnoPreserver ep;
++    log_trace(os, map)("mmap failed: " RANGEFMT " errno=(%s)",
++                       RANGEFMTARGS(addr, size),
++                       os::strerror(ep.saved_errno()));
++    warn_fail_commit_memory(addr, bytes, exec, err);
++    vm_exit_out_of_memory(bytes, OOM_MMAP_ERROR, "committing reserved memory.");
++  }
++
++  return err;
++}
++
++bool os::pd_commit_memory(char* addr, size_t bytes, bool exec) {
++  return Solaris::commit_memory_impl(addr, bytes, exec) == 0;
++}
++
++void os::pd_commit_memory_or_exit(char* addr, size_t bytes, bool exec,
++                                  const char* mesg) {
++  assert(mesg != nullptr, "mesg must be specified");
++  int err = os::Solaris::commit_memory_impl(addr, bytes, exec);
++  if (err != 0) {
++    // the caller wants all commit errors to exit with the specified mesg:
++    warn_fail_commit_memory(addr, bytes, exec, err);
++    vm_exit_out_of_memory(bytes, OOM_MMAP_ERROR, "%s", mesg);
++  }
++}
++
++size_t os::Solaris::page_size_for_alignment(size_t alignment) {
++  assert(is_aligned(alignment, os::vm_page_size()),
++         "%zu is not aligned to %zu",
++         alignment, os::vm_page_size());
++
++  const int page_sizes_max = 9;
++  size_t _illumos_page_sizes[page_sizes_max];
++  int n = getpagesizes(_illumos_page_sizes, page_sizes_max);
++  for (int i = 0; _illumos_page_sizes[i] != 0; i++) {
++    if (is_aligned(alignment, _illumos_page_sizes[i])) {
++      return _illumos_page_sizes[i];
++    }
++  }
++
++  return os::vm_page_size();
++}
++
++int os::Solaris::commit_memory_impl(char* addr, size_t bytes,
++                                    size_t alignment_hint, bool exec) {
++  int err = Solaris::commit_memory_impl(addr, bytes, exec);
++  if (err == 0 && UseLargePages && alignment_hint > 0) {
++    assert(is_aligned(bytes, alignment_hint),
++           "%zu is not aligned to %zu", bytes, alignment_hint);
++
++    // The syscall memcntl requires an exact page size (see man memcntl for details).
++    size_t page_size = page_size_for_alignment(alignment_hint);
++    if (page_size > os::vm_page_size()) {
++      (void)Solaris::setup_large_pages(addr, bytes, page_size);
++    }
++  }
++  return err;
++}
++
++bool os::pd_commit_memory(char* addr, size_t bytes, size_t alignment_hint,
++                          bool exec) {
++  return Solaris::commit_memory_impl(addr, bytes, alignment_hint, exec) == 0;
++}
++
++void os::pd_commit_memory_or_exit(char* addr, size_t bytes,
++                                  size_t alignment_hint, bool exec,
++                                  const char* mesg) {
++  assert(mesg != nullptr, "mesg must be specified");
++  int err = os::Solaris::commit_memory_impl(addr, bytes, alignment_hint, exec);
++  if (err != 0) {
++    // the caller wants all commit errors to exit with the specified mesg:
++    warn_fail_commit_memory(addr, bytes, alignment_hint, exec, err);
++    vm_exit_out_of_memory(bytes, OOM_MMAP_ERROR, "%s", mesg);
++  }
++}
++
++// Uncommit the pages in a specified region.
++void os::pd_disclaim_memory(char* addr, size_t bytes) {
++  if (posix_madvise(addr, bytes, MADV_FREE) < 0) {
++    DEBUG_ONLY(warning("MADV_FREE failed."));
++    return;
++  }
++}
++
++size_t os::pd_pretouch_memory(void* first, void* last, size_t page_size) {
++  return page_size;
++}
++
++bool os::pd_create_stack_guard_pages(char* addr, size_t size) {
++  return os::commit_memory(addr, size, !ExecMem);
++}
++
++bool os::remove_stack_guard_pages(char* addr, size_t size) {
++  return os::uncommit_memory(addr, size);
++}
++
++// Change the page size in a given range.
++void os::pd_realign_memory(char *addr, size_t bytes, size_t alignment_hint) {
++  assert((intptr_t)addr % alignment_hint == 0, "Address should be aligned.");
++  assert((intptr_t)(addr + bytes) % alignment_hint == 0, "End should be aligned.");
++  if (UseLargePages) {
++    size_t page_size = Solaris::page_size_for_alignment(alignment_hint);
++    if (page_size > os::vm_page_size()) {
++      Solaris::setup_large_pages(addr, bytes, page_size);
++    }
++  }
++}
++
++void os::numa_set_thread_affinity(Thread *thread, int node) {
++}
++
++// Tell the OS to make the range local to the first-touching LWP
++void os::numa_make_local(char *addr, size_t bytes, int lgrp_hint) {
++  assert((intptr_t)addr % os::vm_page_size() == 0, "Address should be page-aligned.");
++  if (posix_madvise(addr, bytes, MADV_ACCESS_LWP) < 0) {
++    DEBUG_ONLY(warning("MADV_ACCESS_LWP failed."));
++  }
++}
++
++// Tell the OS that this range would be accessed from different LWPs.
++void os::numa_make_global(char *addr, size_t bytes) {
++  assert((intptr_t)addr % os::vm_page_size() == 0, "Address should be page-aligned.");
++  if (posix_madvise(addr, bytes, MADV_ACCESS_MANY) < 0) {
++    DEBUG_ONLY(warning("MADV_ACCESS_MANY failed."));
++  }
++}
++
++// Get the number of the locality groups.
++size_t os::numa_get_groups_num() {
++  size_t n = Solaris::lgrp_nlgrps(Solaris::lgrp_cookie());
++  return n != -1 ? n : 1;
++}
++
++// Get a list of leaf locality groups. A leaf lgroup is group that
++// doesn't have any children. Typical leaf group is a CPU or a CPU/memory
++// board. An LWP is assigned to one of these groups upon creation.
++size_t os::numa_get_leaf_groups(uint *ids, size_t size) {
++  if ((ids[0] = Solaris::lgrp_root(Solaris::lgrp_cookie())) == -1) {
++    ids[0] = 0;
++    return 1;
++  }
++  int result_size = 0, top = 1, bottom = 0, cur = 0;
++  for (unsigned int k = 0; k < size; k++) {
++    int r = Solaris::lgrp_children(Solaris::lgrp_cookie(), ids[cur],
++                                   (Solaris::lgrp_id_t*)&ids[top], size - top);
++    if (r == -1) {
++      ids[0] = 0;
++      return 1;
++    }
++    if (!r) {
++      // That's a leaf node.
++      assert(bottom <= cur, "Sanity check");
++      // Check if the node has memory
++      if (Solaris::lgrp_resources(Solaris::lgrp_cookie(), ids[cur],
++                                  nullptr, 0, LGRP_RSRC_MEM) > 0) {
++        ids[bottom++] = ids[cur];
++      }
++    }
++    top += r;
++    cur++;
++  }
++  if (bottom == 0) {
++    // Handle a situation, when the OS reports no memory available.
++    // Assume UMA architecture.
++    ids[0] = 0;
++    return 1;
++  }
++  return bottom;
++}
++
++// Get the group id of the current LWP.
++int os::numa_get_group_id() {
++  int lgrp_id = Solaris::lgrp_home(P_LWPID, P_MYID);
++  if (lgrp_id == -1) {
++    return 0;
++  }
++  const int size = os::numa_get_groups_num();
++  int *ids = (int*)alloca(size * sizeof(int));
++
++  // Get the ids of all lgroups with memory; r is the count.
++  int r = Solaris::lgrp_resources(Solaris::lgrp_cookie(), lgrp_id,
++                                  (Solaris::lgrp_id_t*)ids, size, LGRP_RSRC_MEM);
++  if (r <= 0) {
++    return 0;
++  }
++  return ids[os::random() % r];
++}
++
++int os::numa_get_group_id_for_address(const void* address) {
++  return 0;
++}
++
++bool os::numa_get_group_ids_for_range(const void** addresses, int* lgrp_ids, size_t count) {
++  return false;
++}
++
++bool os::pd_uncommit_memory(char* addr, size_t bytes, bool exec) {
++  size_t size = bytes;
++  // Map uncommitted pages PROT_NONE so we fail early if we touch an
++  // uncommitted page. Otherwise, the read/write might succeed if we
++  // have enough swap space to back the physical page.
++  char *res = Solaris::mmap_chunk(addr, size,
++                                MAP_PRIVATE|MAP_FIXED|MAP_NORESERVE,
++                                PROT_NONE);
++  if (res == nullptr) {
++    ErrnoPreserver ep;
++    log_trace(os, map)("mmap failed: " RANGEFMT " errno=(%s)",
++                       RANGEFMTARGS(addr, size),
++                       os::strerror(ep.saved_errno()));
++    return false;
++  }
++  return true;
++}
++
++char* os::Solaris::mmap_chunk(char *addr, size_t size, int flags, int prot) {
++  char *b = (char *)mmap(addr, size, prot, flags, os::Solaris::_dev_zero_fd, 0);
++
++  if (b == MAP_FAILED) {
++    return nullptr;
++  }
++  return b;
++}
++
++char* os::Solaris::anon_mmap(char* requested_addr, size_t bytes) {
++  char* addr = requested_addr;
++  int flags = MAP_PRIVATE | MAP_NORESERVE;
++
++  // Map uncommitted pages PROT_NONE so we fail early if we touch an
++  // uncommitted page. Otherwise, the read/write might succeed if we
++  // have enough swap space to back the physical page.
++  return mmap_chunk(addr, bytes, flags, PROT_NONE);
++}
++
++char* os::pd_reserve_memory(size_t bytes, bool exec) {
++  char* addr = Solaris::anon_mmap(nullptr, bytes);
++
++  return addr;
++}
++
++char* os::pd_attempt_map_memory_to_file_at(char* requested_addr, size_t bytes, int file_desc) {
++  assert(file_desc >= 0, "file_desc is not valid");
++  char* result = pd_attempt_reserve_memory_at(requested_addr, bytes, !ExecMem);
++  if (result != nullptr) {
++    if (replace_existing_mapping_with_file_mapping(result, bytes, file_desc) == nullptr) {
++      vm_exit_during_initialization(err_msg("Error in mapping Java heap at the given filesystem directory"));
++    }
++  }
++  return result;
++}
++
++// Reserve memory at an arbitrary address, only if that area is
++// available (and not reserved for something else).
++
++char* os::pd_attempt_reserve_memory_at(char* requested_addr, size_t bytes, bool exec) {
++  // Assert only that the size is a multiple of the page size, since
++  // that's all that mmap requires, and since that's all we really know
++  // about at this low abstraction level.  If we need higher alignment,
++  // we can either pass an alignment to this method or verify alignment
++  // in one of the methods further up the call chain.  See bug 5044738.
++  assert(bytes % os::vm_page_size() == 0, "reserving unexpected size block");
++
++  // Since snv_84, Solaris attempts to honor the address hint - see 5003415.
++  char* addr = Solaris::anon_mmap(requested_addr, bytes);
++
++  volatile int err = errno;
++  if (addr == requested_addr) {
++    return addr;
++  }
++
++  if (addr != nullptr) {
++    pd_unmap_memory(addr, bytes);
++  }
++
++  return nullptr;
++}
++
++static int anon_munmap(char * addr, size_t size) {
++  if (::munmap(addr, size) != 0) {
++    ErrnoPreserver ep;
++    log_trace(os, map)("munmap failed: " RANGEFMT " errno=(%s)",
++                       RANGEFMTARGS(addr, size),
++                       os::strerror(ep.saved_errno()));
++    return 0;
++  }
++  return 1;
++}
++
++bool os::pd_release_memory(char* addr, size_t bytes) {
++  size_t size = bytes;
++  return anon_munmap(addr, size);
++}
++
++static bool solaris_mprotect(char* addr, size_t bytes, int prot) {
++  assert(addr == (char*)align_down((uintptr_t)addr, os::vm_page_size()),
++         "addr must be page aligned");
++  Events::log(nullptr, "Protecting memory [" INTPTR_FORMAT "," INTPTR_FORMAT "] with protection modes %x", p2i(addr), p2i(addr+bytes), prot);
++  int retVal = mprotect(addr, bytes, prot);
++  return retVal == 0;
++}
++
++// Protect memory (Used to pass readonly pages through
++// JNI GetArray<type>Elements with empty arrays.)
++// Also, used for serialization page and for compressed oops null pointer
++// checking.
++bool os::protect_memory(char* addr, size_t bytes, ProtType prot,
++                        bool is_committed) {
++  unsigned int p = 0;
++  switch (prot) {
++  case MEM_PROT_NONE: p = PROT_NONE; break;
++  case MEM_PROT_READ: p = PROT_READ; break;
++  case MEM_PROT_RW:   p = PROT_READ|PROT_WRITE; break;
++  case MEM_PROT_RWX:  p = PROT_READ|PROT_WRITE|PROT_EXEC; break;
++  default:
++    ShouldNotReachHere();
++  }
++  // is_committed is unused.
++  return solaris_mprotect(addr, bytes, p);
++}
++
++// guard_memory and unguard_memory only happens within stack guard pages.
++// Since ISM pertains only to the heap, guard and unguard memory should not
++/// happen with an ISM region.
++bool os::guard_memory(char* addr, size_t bytes) {
++  return solaris_mprotect(addr, bytes, PROT_NONE);
++}
++
++bool os::unguard_memory(char* addr, size_t bytes) {
++  return solaris_mprotect(addr, bytes, PROT_READ|PROT_WRITE);
++}
++
++// Large page support
++static size_t _large_page_size = 0;
++
++bool os::Solaris::mpss_sanity_check(size_t* page_size) {
++  // Find the page sizes supported by the system
++  const int page_sizes_max = 9;
++  size_t _illumos_page_sizes[page_sizes_max];
++  int n = getpagesizes(_illumos_page_sizes, page_sizes_max);
++  assert(n > 0, "illumos bug?");
++
++  if (n == 1) return false;     // Only one page size available.
++
++  // Skip sizes larger than 4M (or LargePageSizeInBytes if it was set)
++  const size_t size_limit =
++    FLAG_IS_DEFAULT(LargePageSizeInBytes) ? 4 * M : LargePageSizeInBytes;
++  int beg;
++  for (beg = 0; beg < n; ++beg) {
++    if (_illumos_page_sizes[beg] <= size_limit) {
++      _page_sizes.add(_illumos_page_sizes[beg]);
++      if (_illumos_page_sizes[beg] > *page_size) {
++        *page_size = _illumos_page_sizes[beg];
++      }
++    }
++  }
++  // make sure we add the default
++  _page_sizes.add(os::vm_page_size());
++  return true;
++}
++
++void os::large_page_init() {
++  if (UseLargePages) {
++    UseLargePages = Solaris::mpss_sanity_check(&_large_page_size);
++  }
++}
++
++bool os::Solaris::is_valid_page_size(size_t bytes) {
++  return _page_sizes.contains(bytes);
++}
++
++bool os::Solaris::setup_large_pages(caddr_t start, size_t bytes, size_t align) {
++  assert(is_valid_page_size(align), "%zu is not a valid page size", align);
++  assert(is_aligned((void*) start, align),
++         PTR_FORMAT " is not aligned to %zu", p2i((void*) start), align);
++  assert(is_aligned(bytes, align),
++         "%zu is not aligned to %zu", bytes, align);
++
++  // Signal to OS that we want large pages for addresses
++  // from addr, addr + bytes
++  struct memcntl_mha mpss_struct;
++  mpss_struct.mha_cmd = MHA_MAPSIZE_VA;
++  mpss_struct.mha_pagesize = align;
++  mpss_struct.mha_flags = 0;
++  // Upon successful completion, memcntl() returns 0
++  if (memcntl(start, bytes, MC_HAT_ADVISE, (caddr_t) &mpss_struct, 0, 0)) {
++    DEBUG_ONLY(warning("Attempt to use MPSS failed."));
++    return false;
++  }
++  return true;
++}
++
++char* os::pd_reserve_memory_special(size_t size, size_t alignment, size_t page_size, char* addr, bool exec) {
++  fatal("os::reserve_memory_special should not be called on Solaris.");
++  return nullptr;
++}
++
++bool os::pd_release_memory_special(char* base, size_t bytes) {
++  fatal("os::release_memory_special should not be called on Solaris.");
++  return false;
++}
++
++size_t os::large_page_size() {
++  return _large_page_size;
++}
++
++// MPSS allows application to commit large page memory on demand; with ISM
++// the entire memory region must be allocated as shared memory.
++bool os::can_commit_large_page_memory() {
++  return true;
++}
++
++size_t os::vm_min_address() {
++  return _vm_min_address_default;
++}
++  
++// Interface for setting lwp priorities.  We are using T2 libthread,
++// which forces the use of bound threads, so all of our threads will
++// be assigned to real lwp's.  Using the thr_setprio function is
++// meaningless in this mode so we must adjust the real lwp's priority.
++// The routines below implement the getting and setting of lwp priorities.
++//
++// Note: There are three priority scales used on Solaris.  Java priorities
++//       which range from 1 to 10, libthread "thr_setprio" scale which range
++//       from 0 to 127, and the current scheduling class of the process we
++//       are running in.  This is typically from -60 to +60.
++//       The setting of the lwp priorities is done after a call to thr_setprio
++//       so Java priorities are mapped to libthread priorities and we map from
++//       the latter to lwp priorities.  We don't keep priorities stored in
++//       Java priorities since some of our worker threads want to set priorities
++//       higher than all Java threads.
++//
++// For related information:
++// (1)  man -s 2 priocntl
++// (2)  man -s 4 priocntl
++// (3)  man dispadmin
++// =    librt.so
++// =    libthread/common/rtsched.c - thrp_setlwpprio().
++// =    ps -cL <pid> ... to validate priority.
++// =    sched_get_priority_min and _max
++//              pthread_create
++//              sched_setparam
++//              pthread_setschedparam
++//
++// Assumptions:
++// +    We assume that all threads in the process belong to the same
++//              scheduling class.   IE. a homogeneous process.
++// +    Must be root or in IA group to change change "interactive" attribute.
++//              Priocntl() will fail silently.  The only indication of failure is when
++//              we read-back the value and notice that it hasn't changed.
++// +    Interactive threads enter the runq at the head, non-interactive at the tail.
++// +    For RT, change timeslice as well.  Invariant:
++//              constant "priority integral"
++//              Konst == TimeSlice * (60-Priority)
++//              Given a priority, compute appropriate timeslice.
++// +    Higher numerical values have higher priority.
++
++// sched class attributes
++typedef struct {
++  int   schedPolicy;              // classID
++  int   maxPrio;
++  int   minPrio;
++} SchedInfo;
++
++
++static SchedInfo tsLimits, iaLimits, rtLimits, fxLimits;
++
++#ifdef ASSERT
++static int  ReadBackValidate = 1;
++#endif
++static int  myClass     = 0;
++static int  myMin       = 0;
++static int  myMax       = 0;
++static int  myCur       = 0;
++static bool priocntl_enable = false;
++
++static const int criticalPrio = FXCriticalPriority;
++static int java_MaxPriority_to_os_priority = 0; // Saved mapping
++
++
++// lwp_priocntl_init
++//
++// Try to determine the priority scale for our process.
++//
++// Return errno or 0 if OK.
++//
++static int lwp_priocntl_init() {
++  int rslt;
++  pcinfo_t ClassInfo;
++  pcparms_t ParmInfo;
++  int i;
++
++  if (!UseThreadPriorities) return 0;
++
++  // If ThreadPriorityPolicy is 1, switch tables
++  if (ThreadPriorityPolicy == 1) {
++    for (i = 0; i < CriticalPriority+1; i++)
++      os::java_to_os_priority[i] = prio_policy1[i];
++  }
++  if (UseCriticalJavaThreadPriority) {
++    // MaxPriority always maps to the FX scheduling class and criticalPrio.
++    // See set_native_priority() and set_lwp_class_and_priority().
++    // Save original MaxPriority mapping in case attempt to
++    // use critical priority fails.
++    java_MaxPriority_to_os_priority = os::java_to_os_priority[MaxPriority];
++    // Set negative to distinguish from other priorities
++    os::java_to_os_priority[MaxPriority] = -criticalPrio;
++  }
++
++  // Get IDs for a set of well-known scheduling classes.
++  // TODO-FIXME: GETCLINFO returns the current # of classes in the
++  // the system.  We should have a loop that iterates over the
++  // classID values, which are known to be "small" integers.
++
++  strcpy(ClassInfo.pc_clname, "TS");
++  ClassInfo.pc_cid = -1;
++  rslt = priocntl(P_ALL, 0, PC_GETCID, (caddr_t)&ClassInfo);
++  if (rslt < 0) return errno;
++  assert(ClassInfo.pc_cid != -1, "cid for TS class is -1");
++  tsLimits.schedPolicy = ClassInfo.pc_cid;
++  tsLimits.maxPrio = ((tsinfo_t*)ClassInfo.pc_clinfo)->ts_maxupri;
++  tsLimits.minPrio = -tsLimits.maxPrio;
++
++  strcpy(ClassInfo.pc_clname, "IA");
++  ClassInfo.pc_cid = -1;
++  rslt = priocntl(P_ALL, 0, PC_GETCID, (caddr_t)&ClassInfo);
++  if (rslt < 0) return errno;
++  assert(ClassInfo.pc_cid != -1, "cid for IA class is -1");
++  iaLimits.schedPolicy = ClassInfo.pc_cid;
++  iaLimits.maxPrio = ((iainfo_t*)ClassInfo.pc_clinfo)->ia_maxupri;
++  iaLimits.minPrio = -iaLimits.maxPrio;
++
++  strcpy(ClassInfo.pc_clname, "RT");
++  ClassInfo.pc_cid = -1;
++  rslt = priocntl(P_ALL, 0, PC_GETCID, (caddr_t)&ClassInfo);
++  if (rslt < 0) return errno;
++  assert(ClassInfo.pc_cid != -1, "cid for RT class is -1");
++  rtLimits.schedPolicy = ClassInfo.pc_cid;
++  rtLimits.maxPrio = ((rtinfo_t*)ClassInfo.pc_clinfo)->rt_maxpri;
++  rtLimits.minPrio = 0;
++
++  strcpy(ClassInfo.pc_clname, "FX");
++  ClassInfo.pc_cid = -1;
++  rslt = priocntl(P_ALL, 0, PC_GETCID, (caddr_t)&ClassInfo);
++  if (rslt < 0) return errno;
++  assert(ClassInfo.pc_cid != -1, "cid for FX class is -1");
++  fxLimits.schedPolicy = ClassInfo.pc_cid;
++  fxLimits.maxPrio = ((fxinfo_t*)ClassInfo.pc_clinfo)->fx_maxupri;
++  fxLimits.minPrio = 0;
++
++  // Query our "current" scheduling class.
++  // This will normally be IA, TS or, rarely, FX or RT.
++  memset(&ParmInfo, 0, sizeof(ParmInfo));
++  ParmInfo.pc_cid = PC_CLNULL;
++  rslt = priocntl(P_PID, P_MYID, PC_GETPARMS, (caddr_t)&ParmInfo);
++  if (rslt < 0) return errno;
++  myClass = ParmInfo.pc_cid;
++
++  // We now know our scheduling classId, get specific information
++  // about the class.
++  ClassInfo.pc_cid = myClass;
++  ClassInfo.pc_clname[0] = 0;
++  rslt = priocntl((idtype)0, 0, PC_GETCLINFO, (caddr_t)&ClassInfo);
++  if (rslt < 0) return errno;
++
++  memset(&ParmInfo, 0, sizeof(pcparms_t));
++  ParmInfo.pc_cid = PC_CLNULL;
++  rslt = priocntl(P_PID, P_MYID, PC_GETPARMS, (caddr_t)&ParmInfo);
++  if (rslt < 0) return errno;
++
++  if (ParmInfo.pc_cid == rtLimits.schedPolicy) {
++    myMin = rtLimits.minPrio;
++    myMax = rtLimits.maxPrio;
++  } else if (ParmInfo.pc_cid == iaLimits.schedPolicy) {
++    iaparms_t *iaInfo  = (iaparms_t*)ParmInfo.pc_clparms;
++    myMin = iaLimits.minPrio;
++    myMax = iaLimits.maxPrio;
++    myMax = MIN2(myMax, (int)iaInfo->ia_uprilim);       // clamp - restrict
++  } else if (ParmInfo.pc_cid == tsLimits.schedPolicy) {
++    tsparms_t *tsInfo  = (tsparms_t*)ParmInfo.pc_clparms;
++    myMin = tsLimits.minPrio;
++    myMax = tsLimits.maxPrio;
++    myMax = MIN2(myMax, (int)tsInfo->ts_uprilim);       // clamp - restrict
++  } else if (ParmInfo.pc_cid == fxLimits.schedPolicy) {
++    fxparms_t *fxInfo = (fxparms_t*)ParmInfo.pc_clparms;
++    myMin = fxLimits.minPrio;
++    myMax = fxLimits.maxPrio;
++    myMax = MIN2(myMax, (int)fxInfo->fx_uprilim);       // clamp - restrict
++  } else {
++    return EINVAL;      // no clue, punt
++  }
++
++  priocntl_enable = true;  // Enable changing priorities
++  return 0;
++}
++
++#define IAPRI(x)        ((iaparms_t *)((x).pc_clparms))
++#define RTPRI(x)        ((rtparms_t *)((x).pc_clparms))
++#define TSPRI(x)        ((tsparms_t *)((x).pc_clparms))
++#define FXPRI(x)        ((fxparms_t *)((x).pc_clparms))
++
++
++// scale_to_lwp_priority
++//
++// Convert from the libthread "thr_setprio" scale to our current
++// lwp scheduling class scale.
++//
++static int scale_to_lwp_priority(int rMin, int rMax, int x) {
++  int v;
++
++  if (x == 127) return rMax;            // avoid round-down
++  v = (((x*(rMax-rMin)))/128)+rMin;
++  return v;
++}
++
++
++// set_lwp_class_and_priority
++int set_lwp_class_and_priority(int ThreadID, int lwpid,
++                               int newPrio, int new_class, bool scale) {
++  int rslt;
++  int Actual, Expected, prv;
++  pcparms_t ParmInfo;                   // for GET-SET
++#ifdef ASSERT
++  pcparms_t ReadBack;                   // for readback
++#endif
++
++  // Set priority via PC_GETPARMS, update, PC_SETPARMS
++  // Query current values.
++  // TODO: accelerate this by eliminating the PC_GETPARMS call.
++  // Cache "pcparms_t" in global ParmCache.
++  // TODO: elide set-to-same-value
++
++  // If something went wrong on init, don't change priorities.
++  if (!priocntl_enable) {
++    return EINVAL;
++  }
++
++  // If lwp hasn't started yet, just return
++  // the _start routine will call us again.
++  if (lwpid <= 0) {
++    return 0;
++  }
++
++  memset(&ParmInfo, 0, sizeof(pcparms_t));
++  ParmInfo.pc_cid = PC_CLNULL;
++  rslt = priocntl(P_LWPID, lwpid, PC_GETPARMS, (caddr_t)&ParmInfo);
++  if (rslt < 0) return errno;
++
++  int cur_class = ParmInfo.pc_cid;
++  ParmInfo.pc_cid = (id_t)new_class;
++
++  if (new_class == rtLimits.schedPolicy) {
++    rtparms_t *rtInfo  = (rtparms_t*)ParmInfo.pc_clparms;
++    rtInfo->rt_pri     = scale ? scale_to_lwp_priority(rtLimits.minPrio,
++                                                       rtLimits.maxPrio, newPrio)
++                               : newPrio;
++    rtInfo->rt_tqsecs  = RT_NOCHANGE;
++    rtInfo->rt_tqnsecs = RT_NOCHANGE;
++  } else if (new_class == iaLimits.schedPolicy) {
++    iaparms_t* iaInfo  = (iaparms_t*)ParmInfo.pc_clparms;
++    int maxClamped     = MIN2(iaLimits.maxPrio,
++                              cur_class == new_class
++                              ? (int)iaInfo->ia_uprilim : iaLimits.maxPrio);
++    iaInfo->ia_upri    = scale ? scale_to_lwp_priority(iaLimits.minPrio,
++                                                       maxClamped, newPrio)
++                               : newPrio;
++    iaInfo->ia_uprilim = cur_class == new_class
++                           ? IA_NOCHANGE : (pri_t)iaLimits.maxPrio;
++    iaInfo->ia_mode    = IA_NOCHANGE;
++  } else if (new_class == tsLimits.schedPolicy) {
++    tsparms_t* tsInfo  = (tsparms_t*)ParmInfo.pc_clparms;
++    int maxClamped     = MIN2(tsLimits.maxPrio,
++                              cur_class == new_class
++                              ? (int)tsInfo->ts_uprilim : tsLimits.maxPrio);
++    tsInfo->ts_upri    = scale ? scale_to_lwp_priority(tsLimits.minPrio,
++                                                       maxClamped, newPrio)
++                               : newPrio;
++    tsInfo->ts_uprilim = cur_class == new_class
++                           ? TS_NOCHANGE : (pri_t)tsLimits.maxPrio;
++  } else if (new_class == fxLimits.schedPolicy) {
++    fxparms_t* fxInfo  = (fxparms_t*)ParmInfo.pc_clparms;
++    int maxClamped     = MIN2(fxLimits.maxPrio,
++                              cur_class == new_class
++                              ? (int)fxInfo->fx_uprilim : fxLimits.maxPrio);
++    fxInfo->fx_upri    = scale ? scale_to_lwp_priority(fxLimits.minPrio,
++                                                       maxClamped, newPrio)
++                               : newPrio;
++    fxInfo->fx_uprilim = cur_class == new_class
++                           ? FX_NOCHANGE : (pri_t)fxLimits.maxPrio;
++    fxInfo->fx_tqsecs  = FX_NOCHANGE;
++    fxInfo->fx_tqnsecs = FX_NOCHANGE;
++  } else {
++    return EINVAL;    // no clue, punt
++  }
++
++  rslt = priocntl(P_LWPID, lwpid, PC_SETPARMS, (caddr_t)&ParmInfo);
++  if (rslt < 0) return errno;
++
++#ifdef ASSERT
++  // Sanity check: read back what we just attempted to set.
++  // In theory it could have changed in the interim ...
++  //
++  // The priocntl system call is tricky.
++  // Sometimes it'll validate the priority value argument and
++  // return EINVAL if unhappy.  At other times it fails silently.
++  // Readbacks are prudent.
++
++  if (!ReadBackValidate) return 0;
++
++  memset(&ReadBack, 0, sizeof(pcparms_t));
++  ReadBack.pc_cid = PC_CLNULL;
++  rslt = priocntl(P_LWPID, lwpid, PC_GETPARMS, (caddr_t)&ReadBack);
++  assert(rslt >= 0, "priocntl failed");
++  Actual = Expected = 0xBAD;
++  assert(ParmInfo.pc_cid == ReadBack.pc_cid, "cid's don't match");
++  if (ParmInfo.pc_cid == rtLimits.schedPolicy) {
++    Actual   = RTPRI(ReadBack)->rt_pri;
++    Expected = RTPRI(ParmInfo)->rt_pri;
++  } else if (ParmInfo.pc_cid == iaLimits.schedPolicy) {
++    Actual   = IAPRI(ReadBack)->ia_upri;
++    Expected = IAPRI(ParmInfo)->ia_upri;
++  } else if (ParmInfo.pc_cid == tsLimits.schedPolicy) {
++    Actual   = TSPRI(ReadBack)->ts_upri;
++    Expected = TSPRI(ParmInfo)->ts_upri;
++  } else if (ParmInfo.pc_cid == fxLimits.schedPolicy) {
++    Actual   = FXPRI(ReadBack)->fx_upri;
++    Expected = FXPRI(ParmInfo)->fx_upri;
++  }
++#endif
++
++  return 0;
++}
++
++// Solaris only gives access to 128 real priorities at a time,
++// so we expand Java's ten to fill this range.  This would be better
++// if we dynamically adjusted relative priorities.
++//
++// The ThreadPriorityPolicy option allows us to select 2 different
++// priority scales.
++//
++// ThreadPriorityPolicy=0
++// Since the Solaris' default priority is MaximumPriority, we do not
++// set a priority lower than Max unless a priority lower than
++// NormPriority is requested.
++//
++// ThreadPriorityPolicy=1
++// This mode causes the priority table to get filled with
++// linear values.  NormPriority gets mapped to 50% of the
++// Maximum priority and so on.  This will cause VM threads
++// to get unfair treatment against other Solaris processes
++// which do not explicitly alter their thread priorities.
++
++int os::java_to_os_priority[CriticalPriority + 1] = {
++  -99999,         // 0 Entry should never be used
++
++  0,              // 1 MinPriority
++  32,             // 2
++  64,             // 3
++
++  96,             // 4
++  127,            // 5 NormPriority
++  127,            // 6
++
++  127,            // 7
++  127,            // 8
++  127,            // 9 NearMaxPriority
++
++  127,            // 10 MaxPriority
++
++  -criticalPrio   // 11 CriticalPriority
++};
++
++OSReturn os::set_native_priority(Thread* thread, int newpri) {
++  OSThread* osthread = thread->osthread();
++
++  // Save requested priority in case the thread hasn't been started
++  osthread->set_native_priority(newpri);
++
++  // Check for critical priority request
++  bool fxcritical = false;
++  if (newpri == -criticalPrio) {
++    fxcritical = true;
++    newpri = criticalPrio;
++  }
++
++  assert(newpri >= MinimumPriority && newpri <= MaximumPriority, "bad priority mapping");
++  if (!UseThreadPriorities) return OS_OK;
++
++  int status = 0;
++
++  if (!fxcritical) {
++    // Use thr_setprio only if we have a priority that thr_setprio understands
++    status = thr_setprio(thread->osthread()->thread_id(), newpri);
++  }
++
++  int lwp_status =
++          set_lwp_class_and_priority(osthread->thread_id(),
++                                     osthread->lwp_id(),
++                                     newpri,
++                                     fxcritical ? fxLimits.schedPolicy : myClass,
++                                     !fxcritical);
++  if (lwp_status != 0 && fxcritical) {
++    // Try again, this time without changing the scheduling class
++    newpri = java_MaxPriority_to_os_priority;
++    lwp_status = set_lwp_class_and_priority(osthread->thread_id(),
++                                            osthread->lwp_id(),
++                                            newpri, myClass, false);
++  }
++  status |= lwp_status;
++  return (status == 0) ? OS_OK : OS_ERR;
++}
++
++
++OSReturn os::get_native_priority(const Thread* const thread,
++                                 int *priority_ptr) {
++  int p;
++  if (!UseThreadPriorities) {
++    *priority_ptr = NormalPriority;
++    return OS_OK;
++  }
++  int status = thr_getprio(thread->osthread()->thread_id(), &p);
++  if (status != 0) {
++    return OS_ERR;
++  }
++  *priority_ptr = p;
++  return OS_OK;
++}
++
++////////////////////////////////////////////////////////////////////////////////
++
++// This does not do anything on Solaris. This is basically a hook for being
++// able to use structured exception handling (thread-local exception filters) on, e.g., Win32.
++void os::os_exception_wrapper(java_call_t f, JavaValue* value,
++                              const methodHandle& method, JavaCallArguments* args,
++                              JavaThread* thread) {
++  f(value, method, args, thread);
++}
++
++void report_error(const char* file_name, int line_no, const char* title,
++                  const char* format, ...);
++
++// (Static) wrappers for the liblgrp API
++os::Solaris::lgrp_home_func_t os::Solaris::_lgrp_home;
++os::Solaris::lgrp_init_func_t os::Solaris::_lgrp_init;
++os::Solaris::lgrp_fini_func_t os::Solaris::_lgrp_fini;
++os::Solaris::lgrp_root_func_t os::Solaris::_lgrp_root;
++os::Solaris::lgrp_children_func_t os::Solaris::_lgrp_children;
++os::Solaris::lgrp_resources_func_t os::Solaris::_lgrp_resources;
++os::Solaris::lgrp_nlgrps_func_t os::Solaris::_lgrp_nlgrps;
++os::Solaris::lgrp_cookie_stale_func_t os::Solaris::_lgrp_cookie_stale;
++os::Solaris::lgrp_cookie_t os::Solaris::_lgrp_cookie = 0;
++
++static address resolve_symbol_lazy(const char* name) {
++  address addr = (address) dlsym(RTLD_DEFAULT, name);
++  if (addr == nullptr) {
++    // RTLD_DEFAULT was not defined on some early versions of 2.5.1
++    addr = (address) dlsym(RTLD_NEXT, name);
++  }
++  return addr;
++}
++
++static address resolve_symbol(const char* name) {
++  address addr = resolve_symbol_lazy(name);
++  if (addr == nullptr) {
++    fatal("resolve_symbol failed (%s)", dlerror());
++  }
++  return addr;
++}
++
++// there's more context to this handler in the gate, look at
++// thr_sighndlrinfo() in usr/src/lib/libc/port/threads/thr.c
++// and the notes in usr/src/lib/libc/port/gen/walkstack.c
++void os::Solaris::libthread_init() {
++  lwp_priocntl_init();
++
++  int size;
++  void (*handler_info_func)(address *, int *);
++  handler_info_func = CAST_TO_FN_PTR(void (*)(address *, int *), resolve_symbol("thr_sighndlrinfo"));
++  handler_info_func(&handler_start, &size);
++  handler_end = handler_start + size;
++}
++
++
++bool os::Solaris::_synchronization_initialized;
++
++void os::Solaris::synchronization_init() {
++  _synchronization_initialized = true;
++}
++
++bool os::Solaris::liblgrp_init() {
++  void *handle = dlopen("liblgrp.so.1", RTLD_LAZY);
++  if (handle != nullptr) {
++    os::Solaris::set_lgrp_home(CAST_TO_FN_PTR(lgrp_home_func_t, dlsym(handle, "lgrp_home")));
++    os::Solaris::set_lgrp_init(CAST_TO_FN_PTR(lgrp_init_func_t, dlsym(handle, "lgrp_init")));
++    os::Solaris::set_lgrp_fini(CAST_TO_FN_PTR(lgrp_fini_func_t, dlsym(handle, "lgrp_fini")));
++    os::Solaris::set_lgrp_root(CAST_TO_FN_PTR(lgrp_root_func_t, dlsym(handle, "lgrp_root")));
++    os::Solaris::set_lgrp_children(CAST_TO_FN_PTR(lgrp_children_func_t, dlsym(handle, "lgrp_children")));
++    os::Solaris::set_lgrp_resources(CAST_TO_FN_PTR(lgrp_resources_func_t, dlsym(handle, "lgrp_resources")));
++    os::Solaris::set_lgrp_nlgrps(CAST_TO_FN_PTR(lgrp_nlgrps_func_t, dlsym(handle, "lgrp_nlgrps")));
++    os::Solaris::set_lgrp_cookie_stale(CAST_TO_FN_PTR(lgrp_cookie_stale_func_t,
++                                                      dlsym(handle, "lgrp_cookie_stale")));
++
++    lgrp_cookie_t c = lgrp_init(LGRP_VIEW_CALLER);
++    set_lgrp_cookie(c);
++    return true;
++  }
++  return false;
++}
++
++int os::Solaris::_dev_zero_fd = -1;
++
++// this is called _before_ most of the global arguments have been parsed
++void os::init(void) {
++  _initial_pid = getpid();
++
++  max_hrtime = first_hrtime = gethrtime();
++
++  init_random(1234567);
++
++  int page_size = sysconf(_SC_PAGESIZE);
++  OSInfo::set_vm_page_size(page_size);
++  OSInfo::set_vm_allocation_granularity(page_size);
++  if (os::vm_page_size() <= 0) {
++    fatal("os_solaris.cpp: os::init: sysconf failed (%s)", os::strerror(errno));
++  }
++  _page_sizes.add(os::vm_page_size());
++
++  Solaris::initialize_system_info();
++
++  int fd = ::open("/dev/zero", O_RDWR);
++  if (fd < 0) {
++    fatal("os::init: cannot open /dev/zero (%s)", os::strerror(errno));
++  } else {
++    Solaris::set_dev_zero_fd(fd);
++
++    // Close on exec, child won't inherit.
++    fcntl(fd, F_SETFD, FD_CLOEXEC);
++  }
++
++  // main_thread points to the thread that created/loaded the JVM.
++  main_thread = thr_self();
++
++  // dynamic lookup of functions that may not be available in our lowest
++  // supported Solaris release
++  void * handle = dlopen("libc.so.1", RTLD_LAZY);
++  if (handle != nullptr) {
++    Solaris::_pthread_setname_np =  // from 11.3
++        (Solaris::pthread_setname_np_func_t)dlsym(handle, "pthread_setname_np");
++  }
++
++  // Shared Posix initialization
++  os::Posix::init();
++}
++
++// To install functions for atexit system call
++extern "C" {
++  static void perfMemory_exit_helper() {
++    perfMemory_exit();
++  }
++}
++
++// this is called _after_ the global arguments have been parsed
++jint os::init_2(void) {
++  Solaris::libthread_init();
++
++  if (UseNUMA) {
++    if (!Solaris::liblgrp_init()) {
++      FLAG_SET_ERGO(UseNUMA, false);
++    } else {
++      size_t lgrp_limit = os::numa_get_groups_num();
++      uint *lgrp_ids = NEW_C_HEAP_ARRAY(uint, lgrp_limit, mtInternal);
++      size_t lgrp_num = os::numa_get_leaf_groups(lgrp_ids, lgrp_limit);
++      FREE_C_HEAP_ARRAY(uint, lgrp_ids);
++      if (lgrp_num < 2) {
++        // There's only one locality group, disable NUMA
++        UseNUMA = false;
++      }
++    }
++  }
++
++  // When NUMA requested, not-NUMA-aware allocations default to interleaving.
++  if (UseNUMA && !UseNUMAInterleaving) {
++    FLAG_SET_ERGO_IF_DEFAULT(UseNUMAInterleaving, true);
++  }
++
++  if (PosixSignals::init() == JNI_ERR) {
++    return JNI_ERR;
++  }
++
++  // initialize synchronization primitives
++  Solaris::synchronization_init();
++  DEBUG_ONLY(os::set_mutex_init_done();)
++
++  if (MaxFDLimit) {
++    // set the number of file descriptors to max. print out error
++    // if getrlimit/setrlimit fails but continue regardless.
++    struct rlimit nbr_files;
++    int status = getrlimit(RLIMIT_NOFILE, &nbr_files);
++    if (status != 0) {
++      log_info(os)("os::init_2 getrlimit failed: %s", os::strerror(errno));
++    } else {
++      nbr_files.rlim_cur = nbr_files.rlim_max;
++      status = setrlimit(RLIMIT_NOFILE, &nbr_files);
++      if (status != 0) {
++        log_info(os)("os::init_2 setrlimit failed: %s", os::strerror(errno));
++      }
++    }
++  }
++
++  // Calculate theoretical max. size of Threads to guard gainst
++  // artificial out-of-memory situations, where all available address-
++  // space has been reserved by thread stacks. Default stack size is 1Mb.
++  size_t pre_thread_stack_size = (JavaThread::stack_size_at_create()) ?
++    JavaThread::stack_size_at_create() : (1*K*K);
++  assert(pre_thread_stack_size != 0, "Must have a stack");
++  // Solaris has a maximum of 4Gb of user programs. Calculate the thread limit when
++  // we should start doing Virtual Memory banging. Currently when the threads will
++  // have used all but 200Mb of space.
++  size_t max_address_space = ((unsigned int)4 * K * K * K) - (200 * K * K);
++  Solaris::_os_thread_limit = max_address_space / pre_thread_stack_size;
++
++  // at-exit methods are called in the reverse order of their registration.
++  // In Solaris 7 and earlier, atexit functions are called on return from
++  // main or as a result of a call to exit(3C). There can be only 32 of
++  // these functions registered and atexit() does not set errno. In Solaris
++  // 8 and later, there is no limit to the number of functions registered
++  // and atexit() sets errno. In addition, in Solaris 8 and later, atexit
++  // functions are called upon dlclose(3C) in addition to return from main
++  // and exit(3C).
++
++  if (PerfAllowAtExitRegistration) {
++    // only register atexit functions if PerfAllowAtExitRegistration is set.
++    // atexit functions can be delayed until process exit time, which
++    // can be problematic for embedded VM situations. Embedded VMs should
++    // call DestroyJavaVM() to assure that VM resources are released.
++
++    // note: perfMemory_exit_helper atexit function may be removed in
++    // the future if the appropriate cleanup code can be added to the
++    // VM_Exit VMOperation's doit method.
++    if (atexit(perfMemory_exit_helper) != 0) {
++      warning("os::init2 atexit(perfMemory_exit_helper) failed");
++    }
++  }
++
++  // Shared Posix initialization
++  os::Posix::init_2();
++
++  return JNI_OK;
++}
++
++// This code originates from JDK's sysOpen and open64_w
++// from src/solaris/hpi/src/system_md.c
++
++int os::open(const char *path, int oflag, int mode) {
++  if (strlen(path) > MAX_PATH - 1) {
++    errno = ENAMETOOLONG;
++    return -1;
++  }
++  int fd;
++
++  fd = ::open64(path, oflag, mode);
++  if (fd == -1) return -1;
++
++  //If the open succeeded, the file might still be a directory
++  {
++    struct stat64 buf64;
++    int ret = ::fstat64(fd, &buf64);
++    int st_mode = buf64.st_mode;
++
++    if (ret != -1) {
++      if ((st_mode & S_IFMT) == S_IFDIR) {
++        errno = EISDIR;
++        ::close(fd);
++        return -1;
++      }
++    } else {
++      ::close(fd);
++      return -1;
++    }
++  }
++
++  // All file descriptors that are opened in the JVM and not
++  // specifically destined for a subprocess should have the
++  // close-on-exec flag set.  If we don't set it, then careless 3rd
++  // party native code might fork and exec without closing all
++  // appropriate file descriptors and this in turn might:
++  //
++  // - cause end-of-file to fail to be detected on some file
++  //   descriptors, resulting in mysterious hangs, or
++  //
++  // - might cause an fopen in the subprocess to fail on a system
++  //   suffering from bug 1085341.
++  //
++  // (Yes, the default setting of the close-on-exec flag is a Unix
++  // design flaw)
++  //
++  // See:
++  // 1085341: 32-bit stdio routines should support file descriptors >255
++  // 4843136: (process) pipe file descriptor from Runtime.exec not being closed
++  // 6339493: (process) Runtime.exec does not close all file descriptors on Solaris 9
++  //
++#ifdef FD_CLOEXEC
++  {
++    int flags = ::fcntl(fd, F_GETFD);
++    if (flags != -1) {
++      ::fcntl(fd, F_SETFD, flags | FD_CLOEXEC);
++    }
++  }
++#endif
++
++  return fd;
++}
++
++const intptr_t thr_time_off  = (intptr_t)(&((prusage_t *)(nullptr))->pr_utime);
++const intptr_t thr_time_size = (intptr_t)(&((prusage_t *)(nullptr))->pr_ttime) -
++                               (intptr_t)(&((prusage_t *)(nullptr))->pr_utime);
++
++
++// JVMTI & JVM monitoring and management support
++// The thread_cpu_time() and current_thread_cpu_time() are only
++// supported if is_thread_cpu_time_supported() returns true.
++// They are not supported on Solaris T1.
++
++// current_thread_cpu_time(bool) and thread_cpu_time(Thread*, bool)
++// are used by JVM M&M and JVMTI to get user+sys or user CPU time
++// of a thread.
++//
++// current_thread_cpu_time() and thread_cpu_time(Thread*) returns
++// the fast estimate available on the platform.
++
++// hrtime_t gethrvtime() return value includes
++// user time but does not include system time
++jlong os::current_thread_cpu_time() {
++  return (jlong) gethrvtime();
++}
++
++jlong os::thread_cpu_time(Thread *thread) {
++  // return user level CPU time only to be consistent with
++  // what current_thread_cpu_time returns.
++  // thread_cpu_time_info() must be changed if this changes
++  return os::thread_cpu_time(thread, false /* user time only */);
++}
++
++jlong os::current_thread_cpu_time(bool user_sys_cpu_time) {
++  if (user_sys_cpu_time) {
++    return os::thread_cpu_time(Thread::current(), user_sys_cpu_time);
++  } else {
++    return os::current_thread_cpu_time();
++  }
++}
++
++jlong os::thread_cpu_time(Thread *thread, bool user_sys_cpu_time) {
++  char proc_name[64];
++  int count;
++  prusage_t prusage;
++  jlong lwp_time;
++  int fd;
++
++  os::snprintf_checked(proc_name, sizeof(proc_name), "/proc/%d/lwp/%d/lwpusage",
++          getpid(),
++          thread->osthread()->lwp_id());
++  fd = ::open(proc_name, O_RDONLY);
++  if (fd == -1) return -1;
++
++  do {
++    count = ::pread(fd,
++                    (void *)&prusage.pr_utime,
++                    thr_time_size,
++                    thr_time_off);
++  } while (count < 0 && errno == EINTR);
++  ::close(fd);
++  if (count < 0) return -1;
++
++  if (user_sys_cpu_time) {
++    // user + system CPU time
++    lwp_time = (((jlong)prusage.pr_stime.tv_sec +
++                 (jlong)prusage.pr_utime.tv_sec) * (jlong)1000000000) +
++                 (jlong)prusage.pr_stime.tv_nsec +
++                 (jlong)prusage.pr_utime.tv_nsec;
++  } else {
++    // user level CPU time only
++    lwp_time = ((jlong)prusage.pr_utime.tv_sec * (jlong)1000000000) +
++                (jlong)prusage.pr_utime.tv_nsec;
++  }
++
++  return (lwp_time);
++}
++
++void os::current_thread_cpu_time_info(jvmtiTimerInfo *info_ptr) {
++  info_ptr->max_value = all_bits_jlong;   // will not wrap in less than 64 bits
++  info_ptr->may_skip_backward = false;    // elapsed time not wall time
++  info_ptr->may_skip_forward = false;     // elapsed time not wall time
++  info_ptr->kind = JVMTI_TIMER_USER_CPU;  // only user time is returned
++}
++
++void os::thread_cpu_time_info(jvmtiTimerInfo *info_ptr) {
++  info_ptr->max_value = all_bits_jlong;   // will not wrap in less than 64 bits
++  info_ptr->may_skip_backward = false;    // elapsed time not wall time
++  info_ptr->may_skip_forward = false;     // elapsed time not wall time
++  info_ptr->kind = JVMTI_TIMER_USER_CPU;  // only user time is returned
++}
++
++bool os::is_thread_cpu_time_supported() {
++  return true;
++}
++
++// System loadavg support.  Returns -1 if load average cannot be obtained.
++// Return the load average for our processor set.
++int os::loadavg(double loadavg[], int nelem) {
++  return pset_getloadavg(PS_MYID, loadavg, nelem);
++}
++
++//---------------------------------------------------------------------------------
++
++bool os::find(address addr, outputStream* st) {
++  Dl_info dlinfo;
++  memset(&dlinfo, 0, sizeof(dlinfo));
++  if (dladdr(addr, &dlinfo) != 0) {
++    st->print(PTR_FORMAT ": ", p2i(addr));
++    if (dlinfo.dli_sname != nullptr && dlinfo.dli_saddr != nullptr) {
++      st->print("%s+" PTR_FORMAT, dlinfo.dli_sname,
++                p2i(addr) - p2i(dlinfo.dli_saddr));
++    } else if (dlinfo.dli_fbase != nullptr) {
++      st->print("<offset " PTR_FORMAT ">", p2i(addr) - p2i(dlinfo.dli_fbase));
++    } else {
++      st->print("<absolute address>");
++    }
++    if (dlinfo.dli_fname != nullptr) {
++      st->print(" in %s", dlinfo.dli_fname);
++    }
++    if (dlinfo.dli_fbase != nullptr) {
++      st->print(" at " PTR_FORMAT, p2i(dlinfo.dli_fbase));
++    }
++    st->cr();
++
++    if (Verbose) {
++      // decode some bytes around the PC
++      address begin = clamp_address_in_page(addr-40, addr, os::vm_page_size());
++      address end   = clamp_address_in_page(addr+40, addr, os::vm_page_size());
++      address       lowest = (address) dlinfo.dli_sname;
++      if (!lowest)  lowest = (address) dlinfo.dli_fbase;
++      if (begin < lowest)  begin = lowest;
++      Dl_info dlinfo2;
++      if (dladdr(end, &dlinfo2) != 0 && dlinfo2.dli_saddr != dlinfo.dli_saddr
++          && end > dlinfo2.dli_saddr && dlinfo2.dli_saddr > begin) {
++        end = (address) dlinfo2.dli_saddr;
++      }
++      Disassembler::decode(begin, end, st);
++    }
++    return true;
++  }
++  return false;
++}
++
++// ObjectMonitor park-unpark infrastructure ...
++//
++// We implement Solaris and Linux PlatformEvents with the
++// obvious condvar-mutex-flag triple.
++// Another alternative that works quite well is pipes:
++// Each PlatformEvent consists of a pipe-pair.
++// The thread associated with the PlatformEvent
++// calls park(), which reads from the input end of the pipe.
++// Unpark() writes into the other end of the pipe.
++// The write-side of the pipe must be set NDELAY.
++// Unfortunately pipes consume a large # of handles.
++// Native solaris lwp_park() and lwp_unpark() work nicely, too.
++// Using pipes for the 1st few threads might be workable, however.
++//
++// park() is permitted to return spuriously.
++// Callers of park() should wrap the call to park() in
++// an appropriate loop.  A litmus test for the correct
++// usage of park is the following: if park() were modified
++// to immediately return 0 your code should still work,
++// albeit degenerating to a spin loop.
++//
++// In a sense, park()-unpark() just provides more polite spinning
++// and polling with the key difference over naive spinning being
++// that a parked thread needs to be explicitly unparked() in order
++// to wake up and to poll the underlying condition.
++//
++// Assumption:
++//    Only one parker can exist on an event, which is why we allocate
++//    them per-thread. Multiple unparkers can coexist.
++//
++// _event transitions in park()
++//   -1 => -1 : illegal
++//    1 =>  0 : pass - return immediately
++//    0 => -1 : block; then set _event to 0 before returning
++//
++// _event transitions in unpark()
++//    0 => 1 : just return
++//    1 => 1 : just return
++//   -1 => either 0 or 1; must signal target thread
++//         That is, we can safely transition _event from -1 to either
++//         0 or 1.
++//
++// _event serves as a restricted-range semaphore.
++//   -1 : thread is blocked, i.e. there is a waiter
++//    0 : neutral: thread is running or ready,
++//        could have been signaled after a wait started
++//    1 : signaled - thread is running or ready
++//
++// Another possible encoding of _event would be with
++// explicit "PARKED" == 01b and "SIGNALED" == 10b bits.
++//
++// TODO-FIXME: add DTRACE probes for:
++// 1.   Tx parks
++// 2.   Ty unparks Tx
++// 3.   Tx resumes from park
++
++// JSR166
++// -------------------------------------------------------
++
++// The solaris and linux implementations of park/unpark are fairly
++// conservative for now, but can be improved. They currently use a
++// mutex/condvar pair, plus _counter.
++// Park decrements _counter if > 0, else does a condvar wait.  Unpark
++// sets count to 1 and signals condvar.  Only one thread ever waits
++// on the condvar. Contention seen when trying to park implies that someone
++// is unparking you, so don't wait. And spurious returns are fine, so there
++// is no need to track notifications.
++
++// Get the default path to the core file
++// Returns the length of the string
++int os::get_core_path(char* buffer, size_t bufferSize) {
++  const char* p = get_current_directory(buffer, bufferSize);
++
++  if (p == nullptr) {
++    assert(p != nullptr, "failed to get current directory");
++    return 0;
++  }
++
++  jio_snprintf(buffer, bufferSize, "%s/core or core.%d",
++                                              p, current_process_id());
++
++  return strlen(buffer);
++}
++
++bool os::supports_map_sync() {
++  return false;
++}
++
++#ifndef PRODUCT
++void TestReserveMemorySpecial_test() {
++  // No tests available for this platform
++}
++#endif
++
++bool os::start_debugging(char *buf, int buflen) {
++  int len = (int)strlen(buf);
++  char *p = &buf[len];
++
++  jio_snprintf(p, buflen-len,
++               "\n\n"
++               "Do you want to debug the problem?\n\n"
++               "To debug, run 'dbx - %d'; then switch to thread %zd\n"
++               "Enter 'yes' to launch dbx automatically (PATH must include dbx)\n"
++               "Otherwise, press RETURN to abort...",
++               os::current_process_id(), os::current_thread_id());
++
++  bool yes = os::message_box("Unexpected Error", buf);
++
++  if (yes) {
++    // yes, user asked VM to launch debugger
++    jio_snprintf(buf, sizeof(buf), "dbx - %d", os::current_process_id());
++
++    os::fork_and_exec(buf);
++    yes = false;
++  }
++  return yes;
++}
++
++void os::print_memory_mappings(char* addr, size_t bytes, outputStream* st) {}
++
++#if INCLUDE_JFR
++
++void os::jfr_report_memory_info() {}
++
++#endif // INCLUDE_JFR
++
++bool os::pd_dll_unload(void* libhandle, char* ebuf, int ebuflen) {
++
++  if (ebuf && ebuflen > 0) {
++    ebuf[0] = '\0';
++    ebuf[ebuflen - 1] = '\0';
++  }
++
++  bool res = (0 == ::dlclose(libhandle));
++  if (!res) {
++    // error analysis when dlopen fails
++    const char* error_report = ::dlerror();
++    if (error_report == nullptr) {
++      error_report = "dlerror returned no error description";
++    }
++    if (ebuf != nullptr && ebuflen > 0) {
++      os::snprintf_checked(ebuf, ebuflen - 1, "%s", error_report);
++    }
++  }
++
++  return res;
++} // end: os::pd_dll_unload()
+diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.hpp b/src/hotspot/os/solaris/os_solaris.hpp
+--- /tmp/a/src/hotspot/os/solaris/os_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/os_solaris.hpp	2025-04-19 12:08:38.476634208 +0100
+@@ -0,0 +1,183 @@
++/*
++ * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_SOLARIS_OS_SOLARIS_HPP
++#define OS_SOLARIS_OS_SOLARIS_HPP
++
++#include "runtime/os.hpp"
++
++// Solaris_OS defines the interface to Solaris operating systems
++
++// see thr_setprio(3C) for the basis of these numbers
++#define MinimumPriority 0
++#define NormalPriority  64
++#define MaximumPriority 127
++
++// FX/60 is critical thread class/priority on T4
++#define FXCriticalPriority 60
++
++class os::Solaris {
++  friend class os;
++
++ private:
++
++  static bool _synchronization_initialized;
++
++  typedef uintptr_t       lgrp_cookie_t;
++  typedef id_t            lgrp_id_t;
++  typedef int             lgrp_rsrc_t;
++  typedef enum lgrp_view {
++    LGRP_VIEW_CALLER,       // what's available to the caller
++    LGRP_VIEW_OS            // what's available to operating system
++  } lgrp_view_t;
++
++  typedef lgrp_id_t (*lgrp_home_func_t)(idtype_t idtype, id_t id);
++  typedef lgrp_cookie_t (*lgrp_init_func_t)(lgrp_view_t view);
++  typedef int (*lgrp_fini_func_t)(lgrp_cookie_t cookie);
++  typedef lgrp_id_t (*lgrp_root_func_t)(lgrp_cookie_t cookie);
++  typedef int (*lgrp_children_func_t)(lgrp_cookie_t  cookie,  lgrp_id_t  parent,
++                                      lgrp_id_t *lgrp_array, uint_t lgrp_array_size);
++  typedef int (*lgrp_resources_func_t)(lgrp_cookie_t  cookie,  lgrp_id_t  lgrp,
++                                       lgrp_id_t *lgrp_array, uint_t lgrp_array_size,
++                                       lgrp_rsrc_t type);
++  typedef int (*lgrp_nlgrps_func_t)(lgrp_cookie_t cookie);
++  typedef int (*lgrp_cookie_stale_func_t)(lgrp_cookie_t cookie);
++
++  static lgrp_home_func_t _lgrp_home;
++  static lgrp_init_func_t _lgrp_init;
++  static lgrp_fini_func_t _lgrp_fini;
++  static lgrp_root_func_t _lgrp_root;
++  static lgrp_children_func_t _lgrp_children;
++  static lgrp_resources_func_t _lgrp_resources;
++  static lgrp_nlgrps_func_t _lgrp_nlgrps;
++  static lgrp_cookie_stale_func_t _lgrp_cookie_stale;
++  static lgrp_cookie_t _lgrp_cookie;
++
++  // Large Page Support
++  static bool is_valid_page_size(size_t bytes);
++  static size_t page_size_for_alignment(size_t alignment);
++  static bool setup_large_pages(caddr_t start, size_t bytes, size_t align);
++
++  typedef int (*pthread_setname_np_func_t)(pthread_t, const char*);
++  static pthread_setname_np_func_t _pthread_setname_np;
++
++ public:
++  static address handler_start, handler_end; // start and end pc of thr_sighndlrinfo
++
++  static bool valid_ucontext(Thread* thread, const ucontext_t* valid, const ucontext_t* suspect);
++  static const ucontext_t* get_valid_uc_in_signal_handler(Thread* thread,
++                                                    const ucontext_t* uc);
++
++  static intptr_t*   ucontext_get_sp(const ucontext_t* uc);
++  // ucontext_get_fp() is only used by Solaris X86 (see note below)
++  static intptr_t*   ucontext_get_fp(const ucontext_t* uc);
++
++  static bool get_frame_at_stack_banging_point(JavaThread* thread, ucontext_t* uc, frame* fr);
++
++  static void init_thread_fpu_state(void);
++
++ protected:
++  // Solaris-specific interface goes here
++  static bool available_memory(physical_memory_size_type& value);
++  static bool free_memory(physical_memory_size_type& value);
++  static physical_memory_size_type physical_memory() { return _physical_memory; }
++  static physical_memory_size_type _physical_memory;
++  static void initialize_system_info();
++  static int _dev_zero_fd;
++  static int get_dev_zero_fd() { return _dev_zero_fd; }
++  static void set_dev_zero_fd(int fd) { _dev_zero_fd = fd; }
++  static int commit_memory_impl(char* addr, size_t bytes, bool exec);
++  static int commit_memory_impl(char* addr, size_t bytes,
++                                size_t alignment_hint, bool exec);
++  static char* mmap_chunk(char *addr, size_t size, int flags, int prot);
++  static char* anon_mmap(char* requested_addr, size_t bytes);
++  static bool mpss_sanity_check(size_t * page_size);
++
++  static address current_stack_base();
++  static size_t current_stack_size();
++
++  // Workaround for 4352906. thr_stksegment sometimes returns
++  // a bad value for the primordial thread's stack base when
++  // it is called more than one time.
++  // Workaround is to cache the initial value to avoid further
++  // calls to thr_stksegment.
++  // It appears that someone (Hotspot?) is trashing the user's
++  // proc_t structure (note that this is a system struct).
++  static address _main_stack_base;
++
++  static void print_distro_info(outputStream* st);
++
++ public:
++  static void libthread_init();
++  static void synchronization_init();
++  static bool liblgrp_init();
++
++  static bool synchronization_initialized()                { return _synchronization_initialized; }
++
++  static void set_lgrp_home(lgrp_home_func_t func) { _lgrp_home = func; }
++  static void set_lgrp_init(lgrp_init_func_t func) { _lgrp_init = func; }
++  static void set_lgrp_fini(lgrp_fini_func_t func) { _lgrp_fini = func; }
++  static void set_lgrp_root(lgrp_root_func_t func) { _lgrp_root = func; }
++  static void set_lgrp_children(lgrp_children_func_t func)   { _lgrp_children = func; }
++  static void set_lgrp_resources(lgrp_resources_func_t func) { _lgrp_resources = func; }
++  static void set_lgrp_nlgrps(lgrp_nlgrps_func_t func)       { _lgrp_nlgrps = func; }
++  static void set_lgrp_cookie_stale(lgrp_cookie_stale_func_t func) { _lgrp_cookie_stale = func; }
++  static void set_lgrp_cookie(lgrp_cookie_t cookie)  { _lgrp_cookie = cookie; }
++
++  static id_t lgrp_home(idtype_t type, id_t id)      { return _lgrp_home != nullptr ? _lgrp_home(type, id) : -1; }
++  static lgrp_cookie_t lgrp_init(lgrp_view_t view)   { return _lgrp_init != nullptr ? _lgrp_init(view) : 0; }
++  static int lgrp_fini(lgrp_cookie_t cookie)         { return _lgrp_fini != nullptr ? _lgrp_fini(cookie) : -1; }
++  static lgrp_id_t lgrp_root(lgrp_cookie_t cookie)   { return _lgrp_root != nullptr ? _lgrp_root(cookie) : -1; }
++  static int lgrp_children(lgrp_cookie_t  cookie,  lgrp_id_t  parent,
++                           lgrp_id_t *lgrp_array, uint_t lgrp_array_size) {
++    return _lgrp_children != nullptr ? _lgrp_children(cookie, parent, lgrp_array, lgrp_array_size) : -1;
++  }
++  static int lgrp_resources(lgrp_cookie_t  cookie,  lgrp_id_t  lgrp,
++                            lgrp_id_t *lgrp_array, uint_t lgrp_array_size,
++                            lgrp_rsrc_t type) {
++    return _lgrp_resources != nullptr ? _lgrp_resources(cookie, lgrp, lgrp_array, lgrp_array_size, type) : -1;
++  }
++
++  static int lgrp_nlgrps(lgrp_cookie_t cookie)       { return _lgrp_nlgrps != nullptr ? _lgrp_nlgrps(cookie) : -1; }
++  static int lgrp_cookie_stale(lgrp_cookie_t cookie) {
++    return _lgrp_cookie_stale != nullptr ? _lgrp_cookie_stale(cookie) : -1;
++  }
++  static lgrp_cookie_t lgrp_cookie()                 { return _lgrp_cookie; }
++
++  static sigset_t* unblocked_signals();
++  static sigset_t* vm_signals();
++
++  // %%% Following should be promoted to os.hpp:
++  // Trace number of created threads
++  static          jint  _os_thread_limit;
++  static volatile jint  _os_thread_count;
++
++  static void correct_stack_boundaries_for_primordial_thread(Thread* thr);
++
++  // Stack repair handling
++
++  // none present
++
++};
++#endif // OS_SOLARIS_OS_SOLARIS_HPP
+diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.inline.hpp b/src/hotspot/os/solaris/os_solaris.inline.hpp
+--- /tmp/a/src/hotspot/os/solaris/os_solaris.inline.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/os_solaris.inline.hpp	2025-04-19 12:08:38.476774425 +0100
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (c) 1997, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_SOLARIS_OS_SOLARIS_INLINE_HPP
++#define OS_SOLARIS_OS_SOLARIS_INLINE_HPP
++
++#include "os_solaris.hpp"
++
++#include "runtime/os.hpp"
++#include "os_posix.inline.hpp"
++
++// System includes
++#include <thread.h>
++#include <sys/param.h>
++#include <dlfcn.h>
++#include <sys/socket.h>
++#include <poll.h>
++#include <sys/filio.h>
++#include <unistd.h>
++#include <netdb.h>
++#include <setjmp.h>
++
++inline bool os::zero_page_read_protected() {
++  return true;
++}
++
++inline bool os::uses_stack_guard_pages() {
++  return true;
++}
++
++inline bool os::must_commit_stack_guard_pages() {
++  assert(uses_stack_guard_pages(), "sanity check");
++  int r = thr_main() ;
++  guarantee (r == 0 || r == 1, "CR6501650 or CR6493689") ;
++  return r;
++}
++
++// Bang the shadow pages if they need to be touched to be mapped.
++inline void os::map_stack_shadow_pages(address sp) {
++}
++
++// Trim-native support
++inline bool os::can_trim_native_heap() {
++  return false;
++}
++inline bool os::trim_native_heap(os::size_change_t* rss_change) { return false; }
++
++#endif // OS_SOLARIS_OS_SOLARIS_INLINE_HPP
+diff -urN /tmp/a/src/hotspot/os/solaris/vmStructs_solaris.hpp b/src/hotspot/os/solaris/vmStructs_solaris.hpp
+--- /tmp/a/src/hotspot/os/solaris/vmStructs_solaris.hpp	1970-01-01 01:00:00.000000000 +0100
++++ b/src/hotspot/os/solaris/vmStructs_solaris.hpp	2025-04-19 12:08:38.476907592 +0100
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ *
++ */
++
++#ifndef OS_SOLARIS_VMSTRUCTS_SOLARIS_HPP
++#define OS_SOLARIS_VMSTRUCTS_SOLARIS_HPP
++
++// These are the OS-specific fields, types and integer
++// constants required by the Serviceability Agent. This file is
++// referenced by vmStructs.cpp.
++
++#define VM_STRUCTS_OS(nonstatic_field, static_field, unchecked_nonstatic_field, volatile_nonstatic_field, nonproduct_nonstatic_field) \
++  nonstatic_field(OSThread, _thread_id, OSThread::thread_id_t)
++
++#define VM_TYPES_OS(declare_type, declare_toplevel_type, declare_oop_type, declare_integer_type, declare_unsigned_integer_type) \
++  declare_unsigned_integer_type(OSThread::thread_id_t)
++
++#define VM_INT_CONSTANTS_OS(declare_constant, declare_preprocessor_constant)
++
++#define VM_LONG_CONSTANTS_OS(declare_constant, declare_preprocessor_constant)
++
++#define VM_ADDRESSES_OS(declare_address, declare_preprocessor_address, declare_function)
++
++#endif // OS_SOLARIS_VMSTRUCTS_SOLARIS_HPP

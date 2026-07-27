@@ -1,0 +1,17 @@
+Undefined                       first referenced
+ symbol                             in file
+_ZN5ZNUMA15numa_id_to_nodeEj        build/amd64/hotspot/variant-server/libjvm/objs/zPhysicalMemoryManager.o
+ld: fatal: symbol referencing errors. No output written to build/amd64/support/modules_libs/java.base/server/libjvm.so
+collect2: error: ld returned 1 exit status
+
+
+--- jdk26u-jdk-26.0.1-ga/src/hotspot/os/solaris/gc/z/zNUMA_solaris.cpp.old
++++ jdk26u-jdk-26.0.1-ga/src/hotspot/os/solaris/gc/z/zNUMA_solaris.cpp
+@@ -40,3 +40,7 @@
+   // NUMA support not enabled, assume everything belongs to node zero
+   return 0;
+ }
++
++int ZNUMA::numa_id_to_node(uint32_t numa_id) {
++  ShouldNotCallThis();
++}

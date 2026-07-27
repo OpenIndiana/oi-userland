@@ -1,0 +1,11 @@
+--- a/src/hotspot/os/posix/attachListener_posix.cpp	Thu Apr 18 06:50:24 2024
++++ b/src/hotspot/os/posix/attachListener_posix.cpp	Fri Apr 19 14:27:04 2024
+@@ -39,7 +39,7 @@
+ #include <unistd.h>
+ 
+ #if INCLUDE_SERVICES
+-#ifndef AIX
++#if defined LINUX || defined BSD
+ 
+ #ifndef UNIX_PATH_MAX
+ #define UNIX_PATH_MAX   sizeof(sockaddr_un::sun_path)

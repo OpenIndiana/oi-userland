@@ -1,0 +1,155 @@
+--- /dev/null	Sun May 15 10:42:57 2022
++++ a/src/java.base/solaris/classes/sun/nio/ch/DefaultPollerProvider.java	Sun May 15 10:17:39 2022
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (c) 2022, Oracle and/or its affiliates. All rights reserved.
++ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++ *
++ * This code is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 only, as
++ * published by the Free Software Foundation.  Oracle designates this
++ * particular file as subject to the "Classpath" exception as provided
++ * by Oracle in the LICENSE file that accompanied this code.
++ *
++ * This code is distributed in the hope that it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++ * version 2 for more details (a copy is included in the LICENSE file that
++ * accompanied this code).
++ *
++ * You should have received a copy of the GNU General Public License version
++ * 2 along with this work; if not, write to the Free Software Foundation,
++ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++ *
++ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++ * or visit www.oracle.com if you need additional information or have any
++ * questions.
++ */
++package sun.nio.ch;
++
++import java.io.IOException;
++
++/**
++ * Default PollerProvider for illumos/Solaris.
++ */
++class DefaultPollerProvider extends PollerProvider {
++    DefaultPollerProvider() { }
++
++    @Override
++    Poller readPoller(boolean subPoller) throws IOException {
++        return new SolarisEventPortPoller(subPoller, true);
++    }
++
++    @Override
++    Poller writePoller(boolean subPoller) throws IOException {
++        return new SolarisEventPortPoller(subPoller, false);
++    }
++}
+--- /dev/null
++++ a/src/java.base/solaris/classes/sun/nio/ch/SolarisEventPortPoller.java
+@@ -0,0 +1,105 @@
++/*
++* Copyright (c) 2008, 2020, Oracle and/or its affiliates. All rights reserved.
++* DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
++*
++* This code is free software; you can redistribute it and/or modify it
++* under the terms of the GNU General Public License version 2 only, as
++* published by the Free Software Foundation.  Oracle designates this
++* particular file as subject to the "Classpath" exception as provided
++* by Oracle in the LICENSE file that accompanied this code.
++*
++* This code is distributed in the hope that it will be useful, but WITHOUT
++* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++* FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++* version 2 for more details (a copy is included in the LICENSE file that
++* accompanied this code).
++*
++* You should have received a copy of the GNU General Public License version
++* 2 along with this work; if not, write to the Free Software Foundation,
++* Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
++*
++* Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
++* or visit www.oracle.com if you need additional information or have any
++* questions.
++*/
++
++package sun.nio.ch;
++
++import java.io.IOException;
++import jdk.internal.misc.Unsafe;
++
++import static sun.nio.ch.SolarisEventPort.OFFSETOF_OBJECT;
++import static sun.nio.ch.SolarisEventPort.POLLIN;
++import static sun.nio.ch.SolarisEventPort.POLLOUT;
++import static sun.nio.ch.SolarisEventPort.PORT_SOURCE_FD;
++import static sun.nio.ch.SolarisEventPort.SIZEOF_PORT_EVENT;
++
++class SolarisEventPortPoller extends Poller {
++    
++    private static final Unsafe unsafe = Unsafe.getUnsafe();
++
++    private static final int MAX_EVENTS = 512;
++
++    // File descriptor to event port.
++    private final int epid;
++    private final int event;
++    
++    // the poll array (populated by port_getn)
++    private final long pollArrayAddress;
++    private final AllocatedNativeObject pollArray;
++
++    SolarisEventPortPoller(boolean subPoller, boolean read) throws IOException {
++        this.epid = SolarisEventPort.port_create();
++        this.event = (read) ? POLLIN : POLLOUT;
++
++        int allocationSize = MAX_EVENTS * SIZEOF_PORT_EVENT;
++        this.pollArray = new AllocatedNativeObject(allocationSize, false);
++        this.pollArrayAddress = pollArray.address();
++    }
++    
++    @Override
++    int fdVal() {
++        return epid;
++    }
++
++    @Override
++    void implRegister(int fdVal) throws IOException {
++        boolean result = SolarisEventPort.port_associate(epid, PORT_SOURCE_FD, fdVal, event);
++        // 'SolarisEventPort.c' will already throw an IOException if the native 'port_associate' method returns
++        // an error code which is not 'EBADFD'.
++        if (!result) {
++            throw new IOException("Event ports 'port_associate' call failed. Error code: " + result);
++        }
++    }
++
++    @Override
++    void implDeregister(int fdVal, boolean polled) {
++        // event is disabled if already polled
++        if (!polled) {
++            try{
++                SolarisEventPort.port_dissociate(epid, PORT_SOURCE_FD, fdVal);
++            } catch (IOException e) {
++                // Ignore.
++            }
++        }
++    }
++
++    @Override
++    int poll(int timeout) throws IOException {
++        int numEvents = SolarisEventPort.port_getn(epid, pollArrayAddress, MAX_EVENTS, timeout);
++        if (numEvents < 0) {
++            throw new IOException("Event ports 'port_getn' call failed. Error code: " + numEvents);
++        }
++
++        int i = 0;
++        while (i < numEvents) {
++            long eventAddress = pollArrayAddress + (SIZEOF_PORT_EVENT * i);
++            // pe->portev_object is file descriptor
++            int fdVal = (int)unsafe.getAddress(eventAddress + OFFSETOF_OBJECT);
++            polled(fdVal);
++            i++;
++        }
++
++        return numEvents;
++    }
++}
