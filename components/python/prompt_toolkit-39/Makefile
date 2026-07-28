@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project prompt_toolkit
+#   $WS_TOOLS/python-integrate-project -d python/prompt_toolkit-39 prompt_toolkit
 #
 
 BUILD_STYLE = pyproject
@@ -19,20 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		prompt_toolkit
-HUMAN_VERSION =			3.0.53
+HUMAN_VERSION =			3.0.52
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Library for building powerful interactive command lines in Python
 COMPONENT_PROJECT_URL =		https://github.com/prompt-toolkit/python-prompt-toolkit
 COMPONENT_ARCHIVE_URL =		\
 	https://github.com/prompt-toolkit/python-prompt-toolkit/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6c9f9f7b6854814a06241405c73f0722a1983bfb62882c5d2170075c435e7a2c
+	sha256:50f74f474df47f2f8eaa0ef7b62ef5fc6f35bdccf0c4635ec7d4c42b719bf149
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 COMPONENT_SRC =				python-prompt-toolkit-$(HUMAN_VERSION)
 
-# Python 3.9 is not supported by prompt_toolkit >= 3.0.53
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# prompt_toolkit >= 3.0.53 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
