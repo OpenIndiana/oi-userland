@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project fastjsonschema
+#   $WS_TOOLS/python-integrate-project -d python/fastjsonschema-39 fastjsonschema
 #
 
 BUILD_STYLE = pyproject
@@ -19,18 +19,19 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		fastjsonschema
-HUMAN_VERSION =			2.22.1
+HUMAN_VERSION =			2.21.2
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Fastest Python implementation of JSON schema
 COMPONENT_PROJECT_URL =		https://github.com/horejsek/python-fastjsonschema
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0b83d1ce8d7845b959dcb20e1a5c3c8883b6541d9c52ab02cce5166b75ec805f
+	sha256:b1eb43748041c880796cd077f1a07c3d94e93ae84bba5ed36800a33554ae05de
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-# Python 3.9 is not supported by fastjsonschema >= 2.22.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# fastjsonschema >= 2.22.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
