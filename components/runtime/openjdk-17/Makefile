@@ -22,7 +22,7 @@ include ../../../make-rules/shared-macros.mk
 
 OPENJDK_VERSION=	17
 OPENJDK_UPDATE=	0
-OPENJDK_BUILD=	17
+OPENJDK_BUILD=	20
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
@@ -30,7 +30,7 @@ COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edi
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
 COMPONENT_ARCHIVE=	jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga.tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:e2d1d92a4a593d9a87054ea54f76fcb6119f782c57945506a2ec4adff6ddc123
+	sha256:ba3ac4b9d7f2c050f46ddcec39b4258660a3f09836f5a71617fd3f7311d06c0b
 COMPONENT_ARCHIVE_URL= \
 	https://github.com/openjdk/jdk$(OPENJDK_VERSION)u/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://openjdk.java.net/
@@ -42,11 +42,11 @@ CACERTS_STORE=	cacerts.out
 
 include $(WS_MAKE_RULES)/common.mk
 
-COMPONENT_POST_UNPACK_ACTION= ( cd $(@D) ; \
-	$(GPATCH) -p1 -R < ../patches/readd-jdk-17.0.17-ga.illumos )
+# COMPONENT_POST_UNPACK_ACTION= ( cd $(@D) ; \
+# 	$(GPATCH) -p1 -R < ../patches/readd-jdk-17.0.17-ga.illumos )
 
 # some of them break x86_64 builds, that's why they are here.
-ifeq ($(MACH), sparc)
+ifeq ($(strip $(MACH)),sparc)
 COMPONENT_PRE_CONFIGURE_ACTION += cd $(COMPONENT_SRC) ; \
 	$(GPATCH) -p1 -R < ../sparc/0011-8256238-Remove-Matcher-pass_original_key_for_aes.patch ; \
 	$(GPATCH) -p1 -R < ../sparc/0048-8256205-Simplify-compiler-calling-convention-handlin.patch ; \
@@ -85,6 +85,27 @@ CLEAN_PATHS += $(CACERTS_STORE) install
 JOBS=$(patsubst -j%,%,$(filter -j%,$(MAKEFLAGS)))
 
 CFLAGS += -c99
+
+# patches are provided in four directories: patches-reverse (from tribblix - do not modify), patches-p0 (from tribblix - do not modify), patches-p1 (from tribblix - do not modify), and patches-oi (all local openindiana patches go here).  The userland patch does not support reverse and assume only p0 or p1.  There is no support for series.  Put each patch format in a seperate directory and process each one.  Pretend to be a make dependency and check for .patched file and add .patched file at end.
+COMPONENT_PREP_ACTION= \
+	if [ ! -f $(SOURCE_DIR)/.patched ]; then \
+		for patchfile in patches-reverse/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1 -R  < $$patchfile; \
+		done; \
+		for patchfile in patches-p0/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=0   < $$patchfile; \
+		done; \
+		for patchfile in patches-p0/patch-*; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=0   < $$patchfile; \
+		done; \
+		for patchfile in patches-p1/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1   < $$patchfile; \
+		done; \
+		for patchfile in patches-oi/*.patch; do \
+			/usr/gnu/bin/patch -d $(SOURCE_DIR) --backup --version-control=numbered --strip=1   < $$patchfile; \
+		done; \
+		touch $(SOURCE_DIR)/.patched; \
+	fi
 
 CONFIGURE_OPTIONS+=        --with-jobs=$(JOBS)
 CONFIGURE_OPTIONS+=        --x-includes=$(USRDIR)
