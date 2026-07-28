@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 156 items
+collecting ... collected 154 items
 
 tests/test_async_generator.py::test_generator_to_async_generator PASSED
 tests/test_buffer.py::test_initial PASSED
@@ -79,7 +79,6 @@ tests/test_document.py::test_current_line PASSED
 tests/test_document.py::test_cursor_position PASSED
 tests/test_document.py::test_translate_index_to_position PASSED
 tests/test_document.py::test_is_cursor_at_the_end PASSED
-tests/test_document.py::test_get_word_before_cursor_with_whitespace_and_pattern PASSED
 tests/test_filter.py::test_never PASSED
 tests/test_filter.py::test_always PASSED
 tests/test_filter.py::test_invert PASSED
@@ -129,7 +128,7 @@ tests/test_key_binding.py::test_common_prefix PASSED
 tests/test_key_binding.py::test_previous_key_sequence PASSED
 tests/test_layout.py::test_layout_class PASSED
 tests/test_layout.py::test_create_invalid_layout PASSED
-tests/test_memory_leaks.py::test_prompt_session_memory_leak PASSED
+tests/test_memory_leaks.py::test_prompt_session_memory_leak XPASS (M...)
 tests/test_print_formatted_text.py::test_print_formatted_text PASSED
 tests/test_print_formatted_text.py::test_print_formatted_text_backslash_r PASSED
 tests/test_print_formatted_text.py::test_formatted_text_with_style PASSED
@@ -149,7 +148,6 @@ tests/test_style.py::test_swap_light_and_dark_style_transformation PASSED
 tests/test_style_transformation.py::test_adjust_brightness_style_transformation PASSED
 tests/test_utils.py::test_using_weights PASSED
 tests/test_vt100_output.py::test_get_closest_ansi_color PASSED
-tests/test_vt100_output.py::test_256_colors PASSED
 tests/test_widgets.py::test_default_button PASSED
 tests/test_widgets.py::test_custom_button PASSED
 tests/test_yank_nth_arg.py::test_empty_history PASSED
@@ -163,6 +161,18 @@ tests/test_yank_nth_arg.py::test_yank_nth_arg PASSED
 tests/test_yank_nth_arg.py::test_repeated_yank_nth_arg PASSED
 tests/test_yank_nth_arg.py::test_yank_nth_arg_with_arg PASSED
 
-======== 156 passed ========
+=============================== warnings summary ===============================
+tests/test_key_binding.py::test_feed_simple
+tests/test_key_binding.py::test_feed_several
+tests/test_key_binding.py::test_control_square_closed_any
+tests/test_key_binding.py::test_common_prefix
+tests/test_key_binding.py::test_previous_key_sequence
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/prompt_toolkit/key_binding/key_processor.py:414: RuntimeWarning: coroutine 'KeyProcessor._start_timeout.<locals>.wait' was never awaited
+    self._flush_wait_task = app.create_background_task(wait())
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 153 passed, 1 xpassed, 5 warnings ========
   py$(PYV): OK
   congratulations :)
