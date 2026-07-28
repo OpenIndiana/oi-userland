@@ -2374,7 +2374,7 @@ diff -urN /tmp/a/src/hotspot/os/solaris/os_perf_solaris.cpp b/src/hotspot/os/sol
 diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.cpp b/src/hotspot/os/solaris/os_solaris.cpp
 --- /tmp/a/src/hotspot/os/solaris/os_solaris.cpp	1970-01-01 01:00:00.000000000 +0100
 +++ b/src/hotspot/os/solaris/os_solaris.cpp	2025-04-19 12:08:38.483600745 +0100
-@@ -0,0 +1,2810 @@
+@@ -0,0 +1,2815 @@
 +/*
 + * Copyright (c) 1997, 2020, Oracle and/or its affiliates. All rights reserved.
 + * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -2607,40 +2607,43 @@ diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.cpp b/src/hotspot/os/solaris/
 +jint os::Solaris::_os_thread_limit = 0;
 +volatile jint os::Solaris::_os_thread_count = 0;
 +
-+julong os::available_memory() {
-+  return Solaris::available_memory();
++bool os::available_memory(size_t& value) {
++  return Solaris::available_memory(value);
 +}
 +
-+julong os::free_memory() {
-+  return Solaris::available_memory();
++bool os::free_memory(physical_memory_size_type& value) {
++  return Solaris::available_memory(value);
 +}
 +
-+julong os::Solaris::available_memory() {
-+  return (julong)sysconf(_SC_AVPHYS_PAGES) * os::vm_page_size();
++bool os::Solaris::available_memory(physical_memory_size_type& value) {
++  julong available = (julong)sysconf(_SC_AVPHYS_PAGES) * os::vm_page_size();
++  value = static_cast<physical_memory_size_type>(available);
++  return true;
 +}
 +
-+julong os::Solaris::_physical_memory = 0;
++physical_memory_size_type os::Solaris::_physical_memory = 0;
 +
-+jlong os::total_swap_space() {
-+  struct anoninfo ai;
-+  pgcnt_t allocated, reserved, available;
-+  int ret = swapctl(SC_AINFO, &ai);
-+  if (ret == -1) {
-+    return -1;
-+  }
-+  return  (jlong)(ai.ani_max * sysconf(_SC_PAGESIZE));
-+}
-+
-+jlong os::free_swap_space() {
++bool os::total_swap_space(physical_memory_size_type& value) {
 +  struct anoninfo ai;
 +  int ret = swapctl(SC_AINFO, &ai);
 +  if (ret == -1) {
-+    return -1;
++    return false;
 +  }
-+  return (jlong)(ai.ani_free * sysconf(_SC_PAGESIZE));
++  value = static_cast<physical_memory_size_type>(ai.ani_max * sysconf(_SC_PAGESIZE));
++  return true;
 +}
 +
-+julong os::physical_memory() {
++bool os::free_swap_space(physical_memory_size_type& value) {
++  struct anoninfo ai;
++  int ret = swapctl(SC_AINFO, &ai);
++  if (ret == -1) {
++    return false;
++  }
++  value = static_cast<physical_memory_size_type>(ai.ani_free * sysconf(_SC_PAGESIZE));
++  return true;
++}
++
++physical_memory_size_type os::physical_memory() {
 +  return Solaris::physical_memory();
 +}
 +
@@ -2653,8 +2656,7 @@ diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.cpp b/src/hotspot/os/solaris/
 +
 +void os::Solaris::initialize_system_info() {
 +  set_processor_count(sysconf(_SC_NPROCESSORS_CONF));
-+  _physical_memory = (julong)sysconf(_SC_PHYS_PAGES) *
-+                                     (julong)sysconf(_SC_PAGESIZE);
++  _physical_memory = static_cast<physical_memory_size_type>(sysconf(_SC_PHYS_PAGES)) * static_cast<size_t>(sysconf(_SC_PAGESIZE));
 +}
 +
 +uint os::processor_id() {
@@ -3650,8 +3652,11 @@ diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.cpp b/src/hotspot/os/solaris/
 +void os::print_memory_info(outputStream* st) {
 +  st->print("Memory:");
 +  st->print(" %zuk page", os::vm_page_size()>>10);
-+  st->print(", physical " UINT64_FORMAT "k", os::physical_memory()>>10);
-+  st->print("(" UINT64_FORMAT "k free)", os::available_memory() >> 10);
++  size_t phys_mem = physical_memory();
++  st->print(", physical %zuk", phys_mem >> 10);
++  size_t avail_mem = 0;
++  (void)os::available_memory(avail_mem);
++  st->print("%zuk free)", avail_mem >> 10);
 +  st->cr();
 +}
 +
@@ -5290,10 +5295,10 @@ diff -urN /tmp/a/src/hotspot/os/solaris/os_solaris.hpp b/src/hotspot/os/solaris/
 +
 + protected:
 +  // Solaris-specific interface goes here
-+  static julong available_memory();
-+  static julong free_memory();
-+  static julong physical_memory() { return _physical_memory; }
-+  static julong _physical_memory;
++  static bool available_memory(physical_memory_size_type& value);
++  static bool free_memory(physical_memory_size_type& value);
++  static physical_memory_size_type physical_memory() { return _physical_memory; }
++  static physical_memory_size_type _physical_memory;
 +  static void initialize_system_info();
 +  static int _dev_zero_fd;
 +  static int get_dev_zero_fd() { return _dev_zero_fd; }

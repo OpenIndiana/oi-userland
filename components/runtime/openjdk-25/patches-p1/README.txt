@@ -4,6 +4,14 @@ IMPORTANT: note that the build target has changed, from 'all' to
 'product-images', as 'all' tries to build a static image which doesn't
 work.
 
+25.0.4
+
+Types of physical_memory, free_memory, available_memory have changed.
+physical_memory() and _physical_memory are now size_t rather than
+julong.
+free_memory() is now a bool free_memory(&value), likewise
+available_memory, total_swap_space, free_swap_space
+
 25.0.3
 
 Minor patch noise.
