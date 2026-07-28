@@ -1,0 +1,14 @@
+$NetBSD$
+
+Ensure java libraries can be found during build.
+
+--- make/GenerateLinkOptData.gmk.orig	2019-01-08 09:40:28.000000000 +0000
++++ make/GenerateLinkOptData.gmk
+@@ -61,6 +61,7 @@ $(CLASSLIST_FILE): $(INTERIM_IMAGE_DIR)/
+ 	$(call MakeDir, $(LINK_OPT_DIR))
+ 	$(call LogInfo, Generating $(patsubst $(OUTPUTDIR)/%, %, $@))
+ 	$(call LogInfo, Generating $(patsubst $(OUTPUTDIR)/%, %, $(JLI_TRACE_FILE)))
++	LD_LIBRARY_PATH=$(INTERIM_IMAGE_DIR)/lib:$(INTERIM_IMAGE_DIR)/lib/jli \
+ 	$(FIXPATH) $(INTERIM_IMAGE_DIR)/bin/java -XX:DumpLoadedClassList=$@.raw \
+ 	    -Djava.lang.invoke.MethodHandle.TRACE_RESOLVE=true \
+ 	    -cp $(SUPPORT_OUTPUTDIR)/classlist.jar \

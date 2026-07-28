@@ -1,0 +1,16 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+--- make/hotspot/lib/JvmOverrideFiles.gmk.orig	2019-01-08 09:40:29.000000000 +0000
++++ make/hotspot/lib/JvmOverrideFiles.gmk
+@@ -86,7 +86,8 @@ ifeq ($(OPENJDK_TARGET_OS), linux)
+     $(foreach s, $(NONPIC_SRC), $(eval BUILD_LIBJVM_$(notdir $s)_CXXFLAGS := -fno-PIC))
+   endif
+ 
+-else ifeq ($(call isTargetOs, solaris), true)
++# All of the following are SunStudio flags.  XXX: verify none are needed for GCC
++else ifeq ($(TOOLCHAIN_TYPE), solstudio)
+   ifneq ($(DEBUG_LEVEL), slowdebug)
+     # dev studio 12.6 workaround
+     BUILD_LIBJVM_arguments.cpp_OPTIMIZATION := LOW

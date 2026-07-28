@@ -1,0 +1,26 @@
+--- src/jdk.hotspot.agent/solaris/native/libsaproc/saproc.cpp~	Thu Jan 30 10:08:30 2020
++++ src/jdk.hotspot.agent/solaris/native/libsaproc/saproc.cpp	Wed Apr 15 15:14:53 2020
+@@ -27,7 +27,7 @@
+ #include <thread_db.h>
+ #include <strings.h>
+ #include <limits.h>
+-#include <demangle.h>
++#include <cxxabi.h>
+ #include <stdarg.h>
+ #include <stdlib.h>
+ #include <errno.h>
+@@ -1221,8 +1221,13 @@
+   CHECK_EXCEPTION_(NULL);
+   char  buf[2*SYMBOL_BUF_SIZE + 1];
+   jstring res = 0;
+-  if (cplus_demangle((char*) ptr, buf, sizeof(buf)) != DEMANGLE_ESPACE) {
++  int   status;
++  char* result;
++  if ((result = abi::__cxa_demangle(ptr, NULL, NULL, &status)) != NULL) {
++    snprintf(buf, 2*SYMBOL_BUF_SIZE+1, "%s", result);
+     res = env->NewStringUTF(buf);
++    // call c library's free
++    ::free(result);
+   } else {
+     res = name;
+   }

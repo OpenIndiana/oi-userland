@@ -1,0 +1,89 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+--- src/hotspot/os_cpu/solaris_x86/atomic_solaris_x86.hpp.orig	2019-01-08 09:40:30.000000000 +0000
++++ src/hotspot/os_cpu/solaris_x86/atomic_solaris_x86.hpp
+@@ -27,11 +27,65 @@
+ 
+ // For Sun Studio - implementation is in solaris_x86_64.il.
+ 
++#ifdef __GNUC__
++inline int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest) {
++  int32_t rv = add_value;
++  __asm__ volatile ("lock xaddl %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest) {
++  int64_t rv = add_value;
++  __asm__ volatile ("lock xaddq %0,(%2)"
++                    : "=r" (rv)
++                    : "0" (rv), "r" (dest)
++                    : "cc", "memory");
++  return rv + add_value;
++}
++inline int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest) {
++  __asm__ __volatile__ ("xchgl (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest) {
++  __asm__ __volatile__ ("xchgq (%2),%0"
++                        : "=r" (exchange_value)
++                        : "0" (exchange_value), "r" (dest)
++                        : "memory");
++  return exchange_value;
++}
++inline int8_t _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest, int8_t compare_value) {
++  __asm__ volatile ("lock cmpxchgb %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest, int32_t compare_value) {
++  __asm__ volatile ("lock cmpxchgl %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++inline int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest, int64_t compare_value) {
++  __asm__ volatile ("lock cmpxchgq %1,(%3)"
++                    : "=a" (exchange_value)
++                    : "q" (exchange_value), "a" (compare_value), "r" (dest)
++                    : "cc", "memory");
++  return exchange_value;
++}
++#else
+ extern "C" {
+   int32_t _Atomic_add(int32_t add_value, volatile int32_t* dest);
+   int64_t _Atomic_add_long(int64_t add_value, volatile int64_t* dest);
+ 
+   int32_t _Atomic_xchg(int32_t exchange_value, volatile int32_t* dest);
++  int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest);
+   int8_t  _Atomic_cmpxchg_byte(int8_t exchange_value, volatile int8_t* dest,
+                                int8_t compare_value);
+   int32_t _Atomic_cmpxchg(int32_t exchange_value, volatile int32_t* dest,
+@@ -39,6 +93,7 @@ extern "C" {
+   int64_t _Atomic_cmpxchg_long(int64_t exchange_value, volatile int64_t* dest,
+                                int64_t compare_value);
+ }
++#endif
+ 
+ template<size_t byte_size>
+ struct Atomic::PlatformAdd
+@@ -83,8 +138,6 @@ inline T Atomic::PlatformXchg<4>::operat
+                  reinterpret_cast<int32_t volatile*>(dest)));
+ }
+ 
+-extern "C" int64_t _Atomic_xchg_long(int64_t exchange_value, volatile int64_t* dest);
+-
+ template<>
+ template<typename T>
+ inline T Atomic::PlatformXchg<8>::operator()(T exchange_value,

@@ -1,0 +1,16 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+--- make/hotspot/gensrc/GensrcDtrace.gmk.orig	2019-01-08 12:44:55.000000000 +0000
++++ make/hotspot/gensrc/GensrcDtrace.gmk
+@@ -31,6 +31,9 @@ ifeq ($(call check-jvm-feature, dtrace),
+   ifeq ($(call isTargetOs, solaris), true)
+     DTRACE_FLAGS := -64
+     DTRACE_CPP_FLAGS := -D_LP64
++    ifeq ($(TOOLCHAIN_TYPE), gcc)
++      DTRACE_CPP_FLAGS += -x c
++    endif
+   else ifeq ($(call isTargetOs, macosx), true)
+     DTRACE_CPP_FLAGS := -D_LP64 -x c
+   else ifeq ($(call isTargetOs, linux), true)
