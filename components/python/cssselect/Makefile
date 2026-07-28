@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cssselect
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.5.0
 COMPONENT_SUMMARY =		cssselect parses CSS3 Selectors and translates them to XPath 1.0
 COMPONENT_PROJECT_URL =		https://github.com/scrapy/cssselect
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fdaf0a1425e17dfe8c5cf66191d211b357cf7872ae8afc4c6762ddd8ac47fc92
+	sha256:3cbe82dd7acbee9ba9e5723b5f9e4749826912f1fb31cd7f92aabed5fde15b15
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
