@@ -3,6 +3,25 @@ considerably modified. Cut from the jdk15 patches as of jdk15+32.
 
 See also README-zero.txt for patches to build a project zero variant.
 
+17.0.19
+
+Trivial patch noise.
+
+Remove the deprecation check.
+
+17.0.18
+
+Minor patch noise.
+
+Cleanup: finish up UnixOperatingSystem.c in jdk.management, and align
+with changes in other platforms.
+
+17.0.17
+
+Minor patch noise.
+
+Don't use a fixed 32-bit path to dlopen libXrender
+
 17.0.16
 
 Minor patch noise.
@@ -385,7 +404,6 @@ env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin bash ./configure \
 --with-toolchain-type=gcc \
 --disable-dtrace \
 --disable-warnings-as-errors \
---enable-deprecated-ports=yes \
 --with-jobs=4
 
 env PATH=/usr/bin:/usr/sbin:/usr/sfw/bin:/usr/gnu/bin gmake all

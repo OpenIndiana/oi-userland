@@ -282,7 +282,7 @@
      *darwin*)
        VAR_OS=macosx
        VAR_OS_TYPE=unix
-@@ -470,19 +466,6 @@
+@@ -476,19 +472,6 @@
    fi
    AC_SUBST(OPENJDK_$1_CPU_LEGACY_LIB)
  
@@ -302,7 +302,7 @@
    # Setup OPENJDK_$1_CPU_OSARCH, which is used to set the os.arch Java system property
    OPENJDK_$1_CPU_OSARCH="$OPENJDK_$1_CPU"
    if test "x$OPENJDK_$1_OS" = xlinux && test "x$OPENJDK_$1_CPU" = xx86; then
-@@ -610,9 +595,6 @@
+@@ -618,9 +601,6 @@
  
  AC_DEFUN([PLATFORM_SET_RELEASE_FILE_OS_VALUES],
  [
@@ -312,34 +312,6 @@
    if test "x$OPENJDK_TARGET_OS" = "xlinux"; then
      RELEASE_FILE_OS_NAME=Linux
    fi
-@@ -669,25 +651,9 @@
-   PLATFORM_SET_MODULE_TARGET_OS_VALUES
-   PLATFORM_SET_RELEASE_FILE_OS_VALUES
-   PLATFORM_SETUP_LEGACY_VARS
--  PLATFORM_CHECK_DEPRECATION
--])
- 
--AC_DEFUN([PLATFORM_CHECK_DEPRECATION],
--[
--  UTIL_ARG_ENABLE(NAME: deprecated-ports, DEFAULT: false,
--      RESULT: ENABLE_DEPRECATED_PORTS,
--      DESC: [suppress the error when configuring for a deprecated port])
--
--  if test "x$OPENJDK_TARGET_OS" = xsolaris || \
--      (test "x$OPENJDK_TARGET_CPU_ARCH" = xsparc && \
--      test "x$with_jvm_variants" != xzero); then
--    if test "x$ENABLE_DEPRECATED_PORTS" = "xtrue"; then
--      AC_MSG_WARN([The Solaris and SPARC ports are deprecated and may be removed in a future release.])
--    else
--      AC_MSG_ERROR(m4_normalize([The Solaris and SPARC ports are deprecated and may be removed in a
--        future release. Use --enable-deprecated-ports=yes to suppress this error.]))
--    fi
--  fi
-+  # Deprecated in JDK 15
-+  UTIL_DEPRECATED_ARG_ENABLE(deprecated-ports)
- ])
- 
- AC_DEFUN_ONCE([PLATFORM_SETUP_OPENJDK_BUILD_OS_VERSION],
 --- old/make/autoconf/spec.gmk.in	2020-05-20 17:58:43.488604709 -0700
 +++ new/make/autoconf/spec.gmk.in	2020-05-20 17:58:43.064596567 -0700
 @@ -85,7 +85,6 @@
@@ -415,7 +387,7 @@
    # set. Some files get their write permissions removed after being copied to the
 --- old/make/common/NativeCompilation.gmk	2020-05-20 17:58:47.780687120 -0700
 +++ new/make/common/NativeCompilation.gmk	2020-05-20 17:58:47.440680591 -0700
-@@ -1014,7 +1014,7 @@
+@@ -1017,7 +1017,7 @@
            $1_DEBUGINFO_FILES := $$($1_SYMBOLS_DIR)/$$($1_NOSUFFIX).pdb \
                $$($1_SYMBOLS_DIR)/$$($1_NOSUFFIX).map
  
@@ -424,7 +396,7 @@
            $1_DEBUGINFO_FILES := $$($1_SYMBOLS_DIR)/$$($1_NOSUFFIX).debuginfo
            # Setup the command line creating debuginfo files, to be run after linking.
            # It cannot be run separately since it updates the original target file
-@@ -1148,7 +1148,7 @@
+@@ -1151,7 +1151,7 @@
      endif
  
      $1_VARDEPS := $$($1_LD) $$($1_SYSROOT_LDFLAGS) $$($1_LDFLAGS) $$($1_EXTRA_LDFLAGS) \
@@ -433,7 +405,7 @@
          $$($1_CREATE_DEBUGINFO_CMDS) $$($1_MANIFEST_VERSION) \
          $$($1_STRIP_CMD)
      $1_VARDEPS_FILE := $$(call DependOnVariable, $1_VARDEPS, \
-@@ -1207,7 +1207,7 @@
+@@ -1210,7 +1210,7 @@
  
  		  $$(call ExecuteWithLog, $$($1_OBJECT_DIR)/$$($1_SAFE_NAME)_link, \
  		      $$($1_LD) $$($1_LDFLAGS) $$($1_EXTRA_LDFLAGS) $$($1_SYSROOT_LDFLAGS) \
@@ -442,7 +414,7 @@
  		          $$($1_LIBS) $$($1_EXTRA_LIBS)) \
  		      | $(GREP) -v "^   Creating library .*\.lib and object .*\.exp" || \
  		          test "$$$$?" = "1" ; \
-@@ -1220,7 +1220,7 @@
+@@ -1223,7 +1223,7 @@
  		  $$(call ExecuteWithLog, $$($1_OBJECT_DIR)/$$($1_SAFE_NAME)_link, \
  		      $$(if $$($1_LINK_OBJS_RELATIVE), $$(CD) $$(OUTPUTDIR) ; ) \
  		      $$($1_LD) $$($1_LDFLAGS) $$($1_EXTRA_LDFLAGS) $$($1_SYSROOT_LDFLAGS) \
@@ -583,7 +555,7 @@
  ################################################################################
  # Setup compilation of the main Hotspot native library (libjvm).
  
-@@ -156,7 +153,6 @@
+@@ -152,7 +149,6 @@
      EXCLUDES := $(JVM_EXCLUDES), \
      EXCLUDE_FILES := $(JVM_EXCLUDE_FILES), \
      EXCLUDE_PATTERNS := $(JVM_EXCLUDE_PATTERNS), \
@@ -1169,7 +1141,7 @@
  #define SHUTDOWN3_SIGNAL SIGTERM
 --- old/src/hotspot/os/posix/os_posix.cpp	2020-05-20 17:59:42.965746713 -0700
 +++ new/src/hotspot/os/posix/os_posix.cpp	2020-05-20 17:59:42.629740261 -0700
-@@ -491,7 +491,7 @@
+@@ -505,7 +505,7 @@
    st->print("%d", sysconf(_SC_CHILD_MAX));
  
    print_rlimit(st, ", THREADS", RLIMIT_THREADS);
@@ -1178,7 +1150,7 @@
    print_rlimit(st, ", NPROC", RLIMIT_NPROC);
  #endif
  
-@@ -509,12 +509,6 @@
+@@ -523,12 +523,6 @@
    print_rlimit(st, ", MEMLOCK", RLIMIT_MEMLOCK, true);
  #endif
  
@@ -1191,7 +1163,7 @@
    // MacOS; The maximum size (in bytes) to which a process's resident set size may grow.
  #if defined(__APPLE__)
    print_rlimit(st, ", RSS", RLIMIT_RSS, true);
-@@ -997,7 +991,7 @@
+@@ -1011,7 +1005,7 @@
  // page size which again depends on the concrete system the VM is running
  // on. Space for libc guard pages is not included in this size.
  jint os::Posix::set_minimum_stack_sizes() {
@@ -1200,7 +1172,7 @@
  
    _java_thread_min_stack_allowed = _java_thread_min_stack_allowed +
                                     StackOverflow::stack_guard_zone_size() +
-@@ -1318,8 +1312,7 @@
+@@ -1332,8 +1326,7 @@
    if ((status = pthread_mutexattr_settype(_mutexAttr, PTHREAD_MUTEX_NORMAL)) != 0) {
      fatal("pthread_mutexattr_settype: %s", os::strerror(status));
    }
@@ -1210,7 +1182,7 @@
  }
  
  static int (*_pthread_condattr_setclock)(pthread_condattr_t *, clockid_t) = NULL;
-@@ -1534,7 +1527,6 @@
+@@ -1548,7 +1541,6 @@
  // Shared pthread_mutex/cond based PlatformEvent implementation.
  // Not currently usable by Solaris.
  
@@ -1218,7 +1190,7 @@
  
  // PlatformEvent
  //
-@@ -1964,8 +1956,6 @@
+@@ -1978,8 +1970,6 @@
      return OS_OK;
    }
  }
@@ -1338,7 +1310,7 @@
  
 --- old/src/hotspot/share/runtime/globals.hpp	2020-05-20 18:00:31.194672744 -0700
 +++ new/src/hotspot/share/runtime/globals.hpp	2020-05-20 18:00:30.854666216 -0700
-@@ -696,10 +696,6 @@
+@@ -698,10 +698,6 @@
    product_pd(bool, DontYieldALot,                                           \
            "Throw away obvious excess yield calls")                          \
                                                                              \
@@ -1349,7 +1321,7 @@
    product(bool, DisablePrimordialThreadGuardPages, false, EXPERIMENTAL,     \
                 "Disable the use of stack guard pages if the JVM is loaded " \
                 "on the primordial process thread")                          \
-@@ -753,10 +749,6 @@
+@@ -755,10 +751,6 @@
            "When true prevents OS-level spurious, or premature, wakeups "    \
            "from Object.wait (Ignored for Windows)")                         \
                                                                              \
@@ -1360,7 +1332,7 @@
    product(bool, ReduceSignalUsage, false,                                   \
            "Reduce the use of OS signals in Java and/or the VM")             \
                                                                              \
-@@ -1680,10 +1672,8 @@
+@@ -1682,10 +1674,8 @@
    product(intx, ThreadPriorityPolicy, 0,                                    \
            "0 : Normal.                                                     "\
            "    VM chooses priorities that are appropriate for normal       "\
@@ -1373,7 +1345,7 @@
            "    priorities. However, with ThreadPriorityPolicy=0, VM will   "\
            "    not use the highest possible native priority,               "\
            "    THREAD_PRIORITY_TIME_CRITICAL, as it may interfere with     "\
-@@ -2032,8 +2022,7 @@
+@@ -2034,8 +2024,7 @@
             "do not map the archive")                                        \
             range(0, 2)                                                      \
                                                                              \
@@ -1433,7 +1405,7 @@
  # include "semaphore_bsd.hpp"
 --- old/src/hotspot/share/runtime/thread.cpp	2020-05-20 18:00:37.538794556 -0700
 +++ new/src/hotspot/share/runtime/thread.cpp	2020-05-20 18:00:37.202788104 -0700
-@@ -348,12 +348,6 @@
+@@ -350,12 +350,6 @@
    set_stack_base(os::current_stack_base());
    set_stack_size(os::current_stack_size());
  
@@ -1678,7 +1650,7 @@
  
 --- old/src/java.base/share/classes/sun/nio/ch/Net.java	2020-05-20 18:00:50.351040561 -0700
 +++ new/src/java.base/share/classes/sun/nio/ch/Net.java	2020-05-20 18:00:49.963033111 -0700
-@@ -502,7 +502,7 @@
+@@ -512,7 +512,7 @@
      private static native boolean isReusePortAvailable0();
  
      /*
@@ -2120,7 +2092,7 @@
  
  #if defined(_ALLBSD_SOURCE)
  #define stat64 stat
-@@ -80,7 +75,7 @@
+@@ -79,7 +74,7 @@
  static const char *ETC_ENVIRONMENT_FILE = "/etc/environment";
  #endif
  
@@ -2129,7 +2101,7 @@
  
  /*
   * Returns a pointer to the zone ID portion of the given zoneinfo file
-@@ -164,13 +159,6 @@
+@@ -163,13 +158,6 @@
           */
          if ((strcmp(dp->d_name, "ROC") == 0)
              || (strcmp(dp->d_name, "posixrules") == 0)
@@ -2143,7 +2115,7 @@
              || (strcmp(dp->d_name, "localtime") == 0)) {
              continue;
          }
-@@ -242,8 +230,6 @@
+@@ -241,8 +229,6 @@
      return possibleMatch;
  }
  
@@ -2152,7 +2124,7 @@
  /*
   * Performs Linux specific mapping and returns a zone ID
   * if found. Otherwise, NULL is returned.
-@@ -353,311 +339,6 @@
+@@ -325,311 +311,6 @@
      return tz;
  }
  
@@ -2464,7 +2436,7 @@
  #elif defined(_AIX)
  
  static char *
-@@ -823,15 +504,6 @@
+@@ -795,15 +476,6 @@
              free((void *) freetz);
          }
  #else
@@ -3880,7 +3852,7 @@
  #else
 --- old/src/java.base/unix/native/libnio/ch/Net.c	2020-05-20 18:01:34.943896775 -0700
 +++ new/src/java.base/unix/native/libnio/ch/Net.c	2020-05-20 18:01:34.515888557 -0700
-@@ -215,7 +215,7 @@
+@@ -220,7 +220,7 @@
  JNIEXPORT jboolean JNICALL
  Java_sun_nio_ch_Net_canIPv6SocketJoinIPv4Group0(JNIEnv* env, jclass cl)
  {
@@ -3889,7 +3861,7 @@
      /* IPv6 sockets can join IPv4 multicast groups */
      return JNI_TRUE;
  #else
-@@ -227,7 +227,7 @@
+@@ -232,7 +232,7 @@
  JNIEXPORT jboolean JNICALL
  Java_sun_nio_ch_Net_canJoin6WithIPv4Group0(JNIEnv* env, jclass cl)
  {
@@ -4873,7 +4845,7 @@
  #endif
 --- old/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c	2020-05-20 18:02:46.009261282 -0700
 +++ new/src/java.desktop/unix/native/libawt_xawt/awt/awt_GraphicsEnv.c	2020-05-20 18:02:45.625253909 -0700
-@@ -404,12 +404,7 @@
+@@ -405,12 +405,7 @@
              xrenderLibHandle = dlopen("libXrender.so", RTLD_LAZY | RTLD_GLOBAL);
          }
  
