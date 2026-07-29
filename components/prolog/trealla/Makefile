@@ -17,13 +17,13 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= trealla
-COMPONENT_VERSION= 2.109.3
+COMPONENT_VERSION= 3.0.12
 COMPONENT_SUMMARY= Trealla prolog is a compact, efficient Prolog interpreter with ISO Prolog aspirations
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= https://trealla-prolog.github.io/trealla
 COMPONENT_ARCHIVE_URL= https://github.com/trealla-prolog/trealla/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3b49b2a7dbdb5a24950b1ff894e7be46bb71608d813ba4fb97c19b0da3e1b04b
+COMPONENT_ARCHIVE_HASH= sha256:a24dc5320724612a31801db652d2083e8ae905050e1d390996f8b785632e6839
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_FMRI= runtime/$(COMPONENT_NAME)-prolog
 COMPONENT_LICENSE= MIT
@@ -37,7 +37,7 @@ PATH= $(PATH.gnu)
 COMPONENT_POST_UNPACK_ACTION += $(GSED) -i -e 's|0\.0\.0|$(COMPONENT_VERSION)|' $(COMPONENT_SRC)/src/version.c ;
 
 # Make sure both x86 and SPARC will work
-COMPONENT_PRE_BUILD_ACTION += ( $(GSED) -i -e 's|MACH64|$(MACH64)|' $(COMPONENT_SRC)/Makefile ) ;
+COMPONENT_PRE_BUILD_ACTION += ( $(GSED) -i -e 's|MACH64|$(MACH64)|' $(COMPONENT_SRC)/GNUmakefile ) ;
 # Without cloning the sources we will get links into the source folder
 COMPONENT_PRE_BUILD_ACTION += ( CLONEY_MODE=hardlink $(CLONEY) $(SOURCE_DIR) $(@D) ) ;
 
@@ -49,6 +49,7 @@ COMPONENT_POST_INSTALL_ACTION += ( \
 	$(CP) $(SOURCE_DIR)/README.md $(PROTOUSRSHAREDIR)/trealla/docs/ ; ) ;
 
 COMPONENT_TEST_TARGETS = test
+COMPONENT_TEST_ENV += CC=gcc
 
 # Manually added dependencies
 # xxd is being used

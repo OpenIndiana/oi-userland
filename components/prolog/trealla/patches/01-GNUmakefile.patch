@@ -1,0 +1,69 @@
+--- trealla-3.0.12/GNUmakefile.orig
++++ trealla-3.0.12/GNUmakefile
+@@ -1,19 +1,17 @@
+ # Installation paths
+-PREFIX ?= /usr/local
++PREFIX ?= /usr
+ BINDIR ?= $(PREFIX)/bin
+ LIBDIR ?= $(PREFIX)/share/trealla
+ MANDIR ?= $(PREFIX)/share/man
+ 
+ EMBED ?= 1
+ 
+-PYTHON ?= python3
+-HOST_CC ?= cc
++PYTHON ?= python3.9
++HOST_CC ?= gcc
+ 
+-GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+-GIT_VERSION := "$(shell git describe --abbrev=4 --dirty --always --tags)"
+ COMPILER_IS_GCC := $(shell $(CC) --version | grep -E -o 'g?cc')
+ 
+-CFLAGS = -MMD -MP -Isrc -I/usr/local/include -DVERSION='$(GIT_VERSION)' \
++CFLAGS = -MMD -MP -Isrc \
+ 	-DDEFAULT_LIBRARY_PATH='"$(LIBDIR)/library"' \
+ 	-O3 $(OPT) -D_GNU_SOURCE \
+ 	-Wall -Wextra \
+@@ -26,7 +24,7 @@
+ CFLAGS += -DEMBED=1
+ endif
+ 
+-LDFLAGS = -L/usr/local/lib -lm
++LDFLAGS = -lm
+ 
+ UNAME_S := $(shell uname -s)
+ 
+@@ -34,6 +32,13 @@
+ LDFLAGS += -lrt
+ endif
+ 
++ifeq ($(UNAME_S), SunOS)
++CFLAGS += -I/usr/lib/amd64/libffi-3.2.1/include -I/usr/openssl/3/include
++CFLAGS += $(XPG8MODE)
++CFLAGS += -Wno-error=int-conversion -Wno-error=implicit-function-declaration
++LDFLAGS += -L/usr/openssl/3/lib/amd64 -L/usr/openssl/3/lib/MACH64 -lsocket -lnsl
++endif
++
+ ifdef HOMEBREW_PREFIX
+ LDFLAGS += -L$(HOMEBREW_PREFIX)/opt/libffi/lib -L$(HOMEBREW_PREFIX)/opt/openssl@3/lib
+ CFLAGS += -I$(HOMEBREW_PREFIX)/opt/libffi/include -I$(HOMEBREW_PREFIX)/opt/openssl@3/include
+@@ -67,8 +72,8 @@
+ endif
+ 
+ ifdef READLINE
+-CFLAGS += -DUSE_READLINE=1 -I$(HOMEBREW_PREFIX)/opt/readline/include
+-LDFLAGS += -lreadline -L$(HOMEBREW_PREFIX)/opt/readline/lib
++CFLAGS += -DUSE_READLINE=1 -I$(HOMEBREW_PREFIX)/readline/include
++LDFLAGS += -lreadline -L$(HOMEBREW_PREFIX)/readline/lib
+ endif
+ 
+ ifdef EDITLINE
+@@ -94,7 +99,7 @@
+ endif
+ 
+ ifndef NOFFI
+-CFLAGS += -DUSE_FFI=1 -I/usr/local/opt/libffi/include
++CFLAGS += -DUSE_FFI=1
+ LDFLAGS += -lffi -ldl
+ endif
+ 
