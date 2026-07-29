@@ -1,0 +1,29 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+--- src/hotspot/os_cpu/solaris_x86/prefetch_solaris_x86.inline.hpp.orig	2019-01-08 12:44:56.000000000 +0000
++++ src/hotspot/os_cpu/solaris_x86/prefetch_solaris_x86.inline.hpp
+@@ -34,14 +34,22 @@ extern "C" {
+ 
+ inline void Prefetch::read (void *loc, intx interval) {
+ #ifdef AMD64
++#  ifdef SPARC_WORKS
+   _Prefetch_read(loc, interval);
++#  else
++  __asm__ ("prefetcht0 (%0,%1,1)" : : "r" (loc), "r" (interval));
++#  endif
+ #endif // AMD64
+ }
+ 
+ // Use of this method should be gated by VM_Version::has_prefetchw.
+ inline void Prefetch::write(void *loc, intx interval) {
+ #ifdef AMD64
++#  ifdef SPARC_WORKS
+   _Prefetch_write(loc, interval);
++#  else
++  __asm__ ("prefetcht0 (%0,%1,1)" : : "r" (loc), "r" (interval));
++#  endif
+ #endif // AMD64
+ }
+ 

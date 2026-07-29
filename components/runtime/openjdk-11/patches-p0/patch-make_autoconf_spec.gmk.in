@@ -1,0 +1,30 @@
+$NetBSD$
+
+Ensure support libraries can be found during build.
+
+--- make/autoconf/spec.gmk.in.orig	2019-01-08 09:40:27.000000000 +0000
++++ make/autoconf/spec.gmk.in
+@@ -640,9 +640,9 @@ JAVA_SMALL=@FIXPATH@ $(JAVA_CMD) $(JAVA_
+ JAVA_JAVAC = $(JAVA_CMD) $(JAVA_FLAGS_JAVAC) $(JAVA_FLAGS)
+ JAVAC = $(JAVAC_CMD)
+ JAVADOC = $(JAVADOC_CMD)
+-JAR = $(JAR_CMD)
+-JLINK = $(JLINK_CMD)
+-JMOD = $(JMOD_CMD) $(JAVA_TOOL_FLAGS_SMALL)
++JAR = LD_LIBRARY_PATH=$(BUILD_JDK)/lib:$(BUILD_JDK)/lib/jli:$(BUILD_JDK)/lib/server $(JAR_CMD)
++JLINK = LD_LIBRARY_PATH=$(BUILD_JDK)/lib:$(BUILD_JDK)/lib/jli:$(BUILD_JDK)/lib/server $(JLINK_CMD)
++JMOD = LD_LIBRARY_PATH=$(BUILD_JDK)/lib:$(BUILD_JDK)/lib/jli:$(BUILD_JDK)/lib/server $(JMOD_CMD) $(JAVA_TOOL_FLAGS_SMALL)
+ # A specific java binary with specific options can be used to run
+ # the long running background sjavac servers and other long running tasks.
+ SJAVAC_SERVER_JAVA = $(SJAVAC_SERVER_JAVA_CMD) \
+@@ -656,8 +656,8 @@ JAVAC_FLAGS?=@JAVAC_FLAGS@
+ JTREG_JAVA = @FIXPATH@ $(JTREG_JDK)/bin/java $(JAVA_FLAGS_BIG) $(JAVA_FLAGS)
+ 
+ BUILD_JAVA_FLAGS := @BOOTCYCLE_JVM_ARGS_BIG@
+-BUILD_JAVA=@FIXPATH@ $(BUILD_JDK)/bin/java $(BUILD_JAVA_FLAGS)
+-BUILD_JAR=@FIXPATH@ $(BUILD_JDK)/bin/jar
++BUILD_JAVA=LD_LIBRARY_PATH=$(BUILD_JDK)/lib:$(BUILD_JDK)/lib/jli:$(BUILD_JDK)/lib/server @FIXPATH@ $(BUILD_JDK)/bin/java $(BUILD_JAVA_FLAGS)
++BUILD_JAR=LD_LIBRARY_PATH=$(BUILD_JDK)/lib:$(BUILD_JDK)/lib/jli:$(BUILD_JDK)/lib/server @FIXPATH@ $(BUILD_JDK)/bin/jar
+ 
+ # Interim langtools and rmic modules and arguments
+ INTERIM_LANGTOOLS_BASE_MODULES := java.compiler jdk.compiler jdk.javadoc

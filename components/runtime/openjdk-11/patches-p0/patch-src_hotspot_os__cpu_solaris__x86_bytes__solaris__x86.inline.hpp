@@ -1,0 +1,40 @@
+$NetBSD$
+
+Support SunOS/gcc.
+
+--- src/hotspot/os_cpu/solaris_x86/bytes_solaris_x86.inline.hpp.orig	2019-01-08 12:44:55.000000000 +0000
++++ src/hotspot/os_cpu/solaris_x86/bytes_solaris_x86.inline.hpp
+@@ -27,6 +27,25 @@
+ 
+ // For Sun Studio - implementation is in solaris_i486.il.
+ // For gcc - implementation is just below.
++#ifdef _GNU_SOURCE
++extern "C" {
++  inline u2 _raw_swap_u2(u2 x) {
++    register unsigned short int __dest;
++    __asm__ ("rorw $8, %w0": "=r" (__dest): "0" (x): "cc");
++    return __dest;
++  }
++  inline u4 _raw_swap_u4(u4 x) {
++    register unsigned int __dest;
++    __asm__ ("bswap %0" : "=r" (__dest) : "0" (x));
++    return __dest;
++  }
++  inline u8 _raw_swap_u8(u8 x) {
++    register unsigned long  __dest;
++    __asm__ ("bswap %q0" : "=r" (__dest) : "0" (x));
++    return __dest;
++  }
++}
++#else
+ extern "C" u2 _raw_swap_u2(u2 x);
+ extern "C" u4 _raw_swap_u4(u4 x);
+ #ifdef AMD64
+@@ -34,6 +53,7 @@ extern "C" u8 _raw_swap_u8(u8 x);
+ #else
+ extern "C" u8 _raw_swap_u8(u4 x, u4 y);
+ #endif // AMD64
++#endif // _GNU_SOURCE
+ 
+ // Efficient swapping of data bytes from Java byte
+ // ordering to native byte ordering and vice versa.

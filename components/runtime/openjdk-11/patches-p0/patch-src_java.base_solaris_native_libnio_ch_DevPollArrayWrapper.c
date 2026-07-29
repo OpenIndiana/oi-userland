@@ -1,0 +1,17 @@
+$NetBSD$
+
+XXX?
+
+--- src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c.orig	2019-01-08 09:40:30.000000000 +0000
++++ src/java.base/solaris/native/libnio/ch/DevPollArrayWrapper.c
+@@ -23,9 +23,9 @@
+  * questions.
+  */
+ 
+-#include <sys/devpoll.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include <devpoll.h>
+ #include <fcntl.h>
+ #include <poll.h>
+ 
