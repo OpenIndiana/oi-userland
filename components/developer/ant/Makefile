@@ -29,6 +29,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
 COMPONENT_VERSION=	1.10.17
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
