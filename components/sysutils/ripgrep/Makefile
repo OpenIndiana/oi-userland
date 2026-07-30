@@ -17,9 +17,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ripgrep
-COMPONENT_VERSION =     15.1.0
+COMPONENT_VERSION =     15.2.0
 COMPONENT_SUMMARY =		ripgrep is a line-oriented search tool that recursively searches the current directory for a regex pattern while respecting gitignore rules.
-COMPONENT_ARCHIVE_HASH = sha256:f388c4955f85477c28a8667355819844a06614b083c23517f0e86bd1d6d82b73
+COMPONENT_ARCHIVE_URL =	https://github.com/BurntSushi/ripgrep/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH = sha256:7605249d3eb0d5f170e3414498e3344e26b1e7a147aec518b57090b80036a562
 COMPONENT_FMRI =		text/ripgrep
 COMPONENT_CLASSIFICATION =	Applications/System Utilities
 COMPONENT_LICENSE =		MIT
