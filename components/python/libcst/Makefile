@@ -21,10 +21,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		libcst
-HUMAN_VERSION =			1.8.6
-COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.14 programs.
+HUMAN_VERSION =			1.9.0
+COMPONENT_SUMMARY =		A concrete syntax tree with AST-like properties for Python 3.0 through 3.15 programs.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f729c37c9317126da9475bdd06a7208eb52fcbd180a6341648b45a56b4ba708b
+	sha256:087b58a9afe076bb08e2d726478e1f16cb928d67ffa9092817e033c335de522a
 COMPONENT_LICENSE =		MIT OR PSF-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
