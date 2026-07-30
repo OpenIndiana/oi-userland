@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ripgrep
 COMPONENT_VERSION =     15.2.0
+COMPONENT_REVISION =    1
 COMPONENT_SUMMARY =		ripgrep is a line-oriented search tool that recursively searches the current directory for a regex pattern while respecting gitignore rules.
 COMPONENT_ARCHIVE_URL =	https://github.com/BurntSushi/ripgrep/archive/refs/tags/$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH = sha256:7605249d3eb0d5f170e3414498e3344e26b1e7a147aec518b57090b80036a562
@@ -27,6 +28,9 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE-MIT
 
 include $(WS_MAKE_RULES)/common.mk
+
+# Manual dependency added for SPARC
+REQUIRED_PACKAGES += system/library/math
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
