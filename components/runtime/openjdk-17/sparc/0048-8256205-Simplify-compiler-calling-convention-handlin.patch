@@ -52,7 +52,7 @@ diff --git a/src/hotspot/cpu/aarch64/aarch64.ad b/src/hotspot/cpu/aarch64/aarch6
 index a9df812c634..2ec3d26ac81 100644
 --- a/src/hotspot/cpu/aarch64/aarch64.ad
 +++ b/src/hotspot/cpu/aarch64/aarch64.ad
-@@ -4035,13 +4035,6 @@ frame %{
+@@ -4045,13 +4045,6 @@
    // Stack alignment requirement
    stack_alignment(StackAlignmentInBytes); // Alignment size in bytes (128-bit -> 16 bytes)
  
@@ -66,7 +66,7 @@ index a9df812c634..2ec3d26ac81 100644
    // Number of outgoing stack slots killed above the out_preserve_stack_slots
    // for calls to C.  Supports the var-args backing area for register parms.
    varargs_C_out_slots_killed(frame::arg_reg_save_area_bytes/BytesPerInt);
-@@ -4060,25 +4053,6 @@ frame %{
+@@ -4070,25 +4063,6 @@
                          Compile::current()->fixed_slots()),
                         stack_alignment_in_slots()));
  
@@ -298,7 +298,7 @@ diff --git a/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp b/src/hotspot/cpu/ppc/sha
 index e8498ba0ed3..59c249151be 100644
 --- a/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp
 +++ b/src/hotspot/cpu/ppc/sharedRuntime_ppc.cpp
-@@ -626,8 +626,7 @@ const int num_java_farg_registers = sizeof(java_farg_reg) / sizeof(java_farg_reg
+@@ -631,8 +631,7 @@
  
  int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
                                             VMRegPair *regs,
@@ -308,7 +308,7 @@ index e8498ba0ed3..59c249151be 100644
    // C2c calling conventions for compiled-compiled calls.
    // Put 8 ints/longs into registers _AND_ 13 float/doubles into
    // registers _AND_ put the rest on the stack.
-@@ -2522,6 +2521,10 @@ int Deoptimization::last_frame_adjust(int callee_parameters, int callee_locals)
+@@ -2527,6 +2526,10 @@
    return align_up((callee_locals - callee_parameters) * Interpreter::stackElementWords, frame::alignment_in_bytes);
  }
  
@@ -455,7 +455,7 @@ diff --git a/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp b/src/hotspot/cpu/x86/
 index b238b0e0d35..635ea4288c9 100644
 --- a/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp
 +++ b/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp
-@@ -483,8 +483,7 @@ static int reg2offset_out(VMReg r) {
+@@ -488,8 +488,7 @@
  
  int SharedRuntime::java_calling_convention(const BasicType *sig_bt,
                                             VMRegPair *regs,
@@ -465,7 +465,7 @@ index b238b0e0d35..635ea4288c9 100644
  
    // Create the mapping between argument positions and
    // registers.
-@@ -2438,6 +2437,15 @@ uint SharedRuntime::out_preserve_stack_slots() {
+@@ -2443,6 +2442,15 @@
    return 0;
  }
  
@@ -796,7 +796,7 @@ diff --git a/src/hotspot/share/opto/callnode.cpp b/src/hotspot/share/opto/callno
 index 78a632bf8ac..1e1692dc6f1 100644
 --- a/src/hotspot/share/opto/callnode.cpp
 +++ b/src/hotspot/share/opto/callnode.cpp
-@@ -67,8 +67,8 @@ Node *StartNode::Ideal(PhaseGVN *phase, bool can_reshape){
+@@ -67,8 +67,8 @@
  }
  
  //------------------------------calling_convention-----------------------------
@@ -807,7 +807,7 @@ index 78a632bf8ac..1e1692dc6f1 100644
  }
  
  //------------------------------Registers--------------------------------------
-@@ -713,9 +713,9 @@ const Type* CallNode::Value(PhaseGVN* phase) const {
+@@ -730,9 +730,9 @@
  }
  
  //------------------------------calling_convention-----------------------------
@@ -819,7 +819,7 @@ index 78a632bf8ac..1e1692dc6f1 100644
  }
  
  
-@@ -739,8 +739,8 @@ Node *CallNode::match( const ProjNode *proj, const Matcher *match ) {
+@@ -756,8 +756,8 @@
      OptoRegPair regs = Opcode() == Op_CallLeafVector
        ? match->vector_return_value(ideal_reg)      // Calls into assembly vector routine
        : is_CallRuntime()
@@ -830,7 +830,7 @@ index 78a632bf8ac..1e1692dc6f1 100644
      RegMask rm = RegMask(regs.first());
  
      if (Opcode() == Op_CallLeafVector) {
-@@ -1287,8 +1287,8 @@ void CallRuntimeNode::dump_spec(outputStream *st) const {
+@@ -1304,8 +1304,8 @@
  #endif
  
  //------------------------------calling_convention-----------------------------
