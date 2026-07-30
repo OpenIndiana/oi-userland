@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1011 items
+collecting ... collected 1042 items
 
 tests/core/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/core/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -17,16 +17,16 @@ tests/core/test_adapter.py::TestDynamicAdapter::test_adapter_factory PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_classmethod PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_function PASSED
 tests/core/test_adapter.py::TestDynamicAdapter::test_dynamic_adapter_instancemethod PASSED
-tests/core/test_adapter_py3.py::TestAdapterAttributesWithAnnotations::test_annotations PASSED
-tests/core/test_adapter_py3.py::TestArgumentSpecificationWithAnnotations::test_argspec PASSED
-tests/core/test_adapter_py3.py::TestArgumentSpecificationWithAnnotations::test_isinstance PASSED
-tests/core/test_adapter_py3.py::TestArgumentSpecificationWithAnnotations::test_signature PASSED
-tests/core/test_adapter_py3.py::TestDynamicAdapterWithAnnotations::test_adapter_factory PASSED
-tests/core/test_adapter_py3.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_classmethod PASSED
-tests/core/test_adapter_py3.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_function PASSED
-tests/core/test_adapter_py3.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_instancemethod PASSED
-tests/core/test_adapter_py33.py::TestArgumentSpecification::test_getfullargspec PASSED
-tests/core/test_adapter_py33.py::TestArgumentSpecification::test_signature PASSED
+tests/core/test_adapter_annotations.py::TestAdapterAttributesWithAnnotations::test_annotations PASSED
+tests/core/test_adapter_annotations.py::TestArgumentSpecificationWithAnnotations::test_argspec PASSED
+tests/core/test_adapter_annotations.py::TestArgumentSpecificationWithAnnotations::test_isinstance PASSED
+tests/core/test_adapter_annotations.py::TestArgumentSpecificationWithAnnotations::test_signature PASSED
+tests/core/test_adapter_annotations.py::TestDynamicAdapterWithAnnotations::test_adapter_factory PASSED
+tests/core/test_adapter_annotations.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_classmethod PASSED
+tests/core/test_adapter_annotations.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_function PASSED
+tests/core/test_adapter_annotations.py::TestDynamicAdapterWithAnnotations::test_dynamic_adapter_instancemethod PASSED
+tests/core/test_adapter_kwonly.py::TestArgumentSpecification::test_getfullargspec PASSED
+tests/core/test_adapter_kwonly.py::TestArgumentSpecification::test_signature PASSED
 tests/core/test_annotations.py::TestAnnotationPreservationFunctionWrapper::test_args_kwargs_annotations PASSED
 tests/core/test_annotations.py::TestAnnotationPreservationFunctionWrapper::test_both_annotations PASSED
 tests/core/test_annotations.py::TestAnnotationPreservationFunctionWrapper::test_complex_annotations PASSED
@@ -64,6 +64,9 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_aiter PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_await PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_call PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_descriptor PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_not_pathlike PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_fspath_pathlib PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_iter PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_length_hint PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxy::test_next PASSED
@@ -77,6 +80,8 @@ tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_call
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_call_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_delete_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_delete_removed_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_fspath_added_on_reassignment PASSED
+tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_fspath_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_get_added_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_get_removed_on_reassignment PASSED
 tests/core/test_auto_object_proxy.py::TestAutoObjectProxyReassignment::test_iter_added_on_reassignment PASSED
@@ -101,9 +106,9 @@ tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_m
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_no_arguments PASSED
 tests/core/test_class.py::TestIntrospection::test_getmembers PASSED
 tests/core/test_class.py::TestInheritance::test_single_inheritance PASSED
-tests/core/test_class_py37.py::TestInheritance::test_multiple_inheritance PASSED
-tests/core/test_class_py37.py::TestInheritance::test_multiple_inheritance_common PASSED
-tests/core/test_class_py37.py::TestInheritance::test_single_inheritance PASSED
+tests/core/test_class_mro_entries.py::TestInheritance::test_multiple_inheritance PASSED
+tests/core/test_class_mro_entries.py::TestInheritance::test_multiple_inheritance_common PASSED
+tests/core/test_class_mro_entries.py::TestInheritance::test_single_inheritance PASSED
 tests/core/test_copy.py::TestObjectCopy::test_copy PASSED
 tests/core/test_copy.py::TestObjectCopy::test_copy_proxy PASSED
 tests/core/test_copy.py::TestObjectCopy::test_deepcopy PASSED
@@ -239,7 +244,7 @@ tests/core/test_descriptor_get_class_access.py::TestCustomDescriptor::test_class
 tests/core/test_descriptor_get_class_access.py::TestSubclassAttributeAccess::test_wrapped_dict_slot_via_subclass PASSED
 tests/core/test_descriptor_get_class_access.py::TestSubclassAttributeAccess::test_wrapped_python_method_via_subclass PASSED
 tests/core/test_descriptor_get_class_access.py::TestSubclassAttributeAccess::test_wrapped_slot_wrapper_via_subclass PASSED
-tests/core/test_descriptors_py36.py::TestObjectDescriptors::test_set_name PASSED
+tests/core/test_descriptors.py::TestObjectDescriptors::test_set_name PASSED
 tests/core/test_enabled_bool_error.py::TestEnabledBoolErrorFunctionWrapper::test_callable_enabled_returning_object_whose_bool_raises PASSED
 tests/core/test_enabled_bool_error.py::TestEnabledBoolErrorFunctionWrapper::test_noncallable_enabled_whose_bool_raises PASSED
 tests/core/test_enabled_bool_error.py::TestEnabledBoolErrorBoundFunctionWrapper::test_callable_enabled_returning_object_whose_bool_raises PASSED
@@ -254,8 +259,8 @@ tests/core/test_entry_points.py::TestEntryPoints::test_entry_point_with_differen
 tests/core/test_entry_points.py::TestEntryPoints::test_empty_entry_points_group PASSED
 tests/core/test_entry_points.py::TestEntryPoints::test_entry_point_load_failure PASSED
 tests/core/test_entry_points.py::TestEntryPoints::test_threading_safety_with_entry_points PASSED
-tests/core/test_formatargspec_py35.py::TestFormatargspec35::test_formatargspec PASSED
-tests/core/test_formatargspec_py38.py::TestFormatargspec38::test_formatargspec PASSED
+tests/core/test_formatargspec.py::TestFormatargspec::test_formatargspec PASSED
+tests/core/test_formatargspec.py::TestFormatargspecPositionalOnly::test_formatargspec PASSED
 tests/core/test_function.py::TestNamingFunction::test_argspec PASSED
 tests/core/test_function.py::TestNamingFunction::test_doc_string PASSED
 tests/core/test_function.py::TestNamingFunction::test_getmembers PASSED
@@ -294,9 +299,9 @@ tests/core/test_function_wrapper.py::TestFunctionBinding::test_double_binding PA
 tests/core/test_function_wrapper.py::TestFunctionBinding::test_re_bind_after_none PASSED
 tests/core/test_function_wrapper.py::TestInvalidWrapper::test_none_for_wrapped PASSED
 tests/core/test_function_wrapper.py::TestInvalidCalling::test_missing_self_via_class PASSED
-tests/core/test_inheritance_py37.py::TestClassInheritance::test_abc_inheritance PASSED
-tests/core/test_inheritance_py37.py::TestClassInheritance::test_basic_inheritance PASSED
-tests/core/test_inheritance_py37.py::TestClassInheritance::test_py_abc_inheritance PASSED
+tests/core/test_inheritance.py::TestClassInheritance::test_abc_inheritance PASSED
+tests/core/test_inheritance.py::TestClassInheritance::test_basic_inheritance PASSED
+tests/core/test_inheritance.py::TestClassInheritance::test_py_abc_inheritance PASSED
 tests/core/test_inner_classmethod.py::TestNamingInnerClassMethod::test_class_argspec PASSED
 tests/core/test_inner_classmethod.py::TestNamingInnerClassMethod::test_class_doc_string PASSED
 tests/core/test_inner_classmethod.py::TestNamingInnerClassMethod::test_class_isinstance PASSED
@@ -661,11 +666,28 @@ tests/core/test_object_proxy.py::CallableFunction::test_callable_proxy_is_callab
 tests/core/test_object_proxy.py::CallableFunction::test_proxy_getattr_call PASSED
 tests/core/test_object_proxy.py::CallableFunction::test_proxy_hasattr_call PASSED
 tests/core/test_object_proxy.py::CallableFunction::test_proxy_is_callable PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_buffer_bytes PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_class_bytes PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_complex PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_decimal_complex PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_float_ceil PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_float_floor PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_float_trunc PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_fractions_ceil PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_fractions_floor PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_fractions_round PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_fractions_trunc PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_index_bytes PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_int_bytes PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_iterable_bytes PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_list_reversed PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_math_float_fallback PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_math_integral_protocol_methods PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_math_integral_protocol_methods_override_float PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_negative_float_ceil PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_negative_float_floor PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_negative_float_trunc PASSED
+tests/core/test_object_proxy.py::SpecialMethods::test_str_bytes PASSED
 tests/core/test_object_proxy.py::SpecialMethods::test_str_format PASSED
 tests/core/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_1 PASSED
 tests/core/test_object_proxy.py::TestArgumentUnpacking::test_self_keyword_argument_on_class_init_2 PASSED
@@ -747,6 +769,15 @@ tests/core/test_object_proxy_type_checks.py::TestIsinstanceProxyOnRight::test_su
 tests/core/test_object_proxy_type_checks.py::TestIssubclassBothProxied::test_child_of_base PASSED
 tests/core/test_object_proxy_type_checks.py::TestIssubclassBothProxied::test_not_subclass PASSED
 tests/core/test_object_proxy_type_checks.py::TestIssubclassBothProxied::test_same_class PASSED
+tests/core/test_object_proxy_type_checks.py::TestPathLikeProtocol::test_fspath_fails_for_wrapped_path PASSED
+tests/core/test_object_proxy_type_checks.py::TestPathLikeProtocol::test_fspath_via_instance_access PASSED
+tests/core/test_object_proxy_type_checks.py::TestPathLikeProtocol::test_isinstance_pathlike_false_for_wrapped_non_path PASSED
+tests/core/test_object_proxy_type_checks.py::TestPathLikeProtocol::test_isinstance_pathlike_true_for_wrapped_path PASSED
+tests/core/test_object_proxy_type_checks.py::TestBufferProtocol::test_buffer_proxy_subclass SKIPPED
+tests/core/test_object_proxy_type_checks.py::TestBufferProtocol::test_buffer_proxy_subclass_immutable SKIPPED
+tests/core/test_object_proxy_type_checks.py::TestBufferProtocol::test_isinstance_buffer_false_for_wrapped_non_buffer SKIPPED
+tests/core/test_object_proxy_type_checks.py::TestBufferProtocol::test_isinstance_buffer_true_for_wrapped_bytes_like SKIPPED
+tests/core/test_object_proxy_type_checks.py::TestBufferProtocol::test_memoryview_fails_for_wrapped_bytes_like PASSED
 tests/core/test_outer_classmethod.py::TestNamingOuterClassMethod::test_class_argspec PASSED
 tests/core/test_outer_classmethod.py::TestNamingOuterClassMethod::test_class_doc_string PASSED
 tests/core/test_outer_classmethod.py::TestNamingOuterClassMethod::test_class_isinstance PASSED
@@ -1018,6 +1049,6 @@ tests/core/test_with_signature.py::TestMarkerStacking::test_stacking_on_instance
 tests/core/test_with_signature.py::TestMarkerStacking::test_varargs_flag_preserved_through_marker PASSED
 tests/core/test_with_signature.py::TestMarkerStacking::test_with_signature_over_mark_as_sync PASSED
 
-======== 1005 passed, 6 skipped ========
+======== 1032 passed, 10 skipped ========
   py$(PYV): OK
   congratulations :)
