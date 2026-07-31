@@ -25,6 +25,7 @@ OPENJDK_UPDATE=	0
 OPENJDK_BUILD=	20
 COMPONENT_NAME=		openjdk
 COMPONENT_VERSION=	$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=	runtime/java/$(COMPONENT_NAME)$(OPENJDK_VERSION)
 COMPONENT_SUMMARY=	Open-source implementation of the Java Platform, Standard Edition
 COMPONENT_SRC=	jdk$(OPENJDK_VERSION)u-jdk-$(OPENJDK_VERSION).$(OPENJDK_UPDATE).$(OPENJDK_BUILD)-ga
@@ -56,9 +57,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += cd $(COMPONENT_SRC) ; \
 	$(GPATCH) -p1 < ../sparc/c1-sparc.patch ; \
 	$(GPATCH) -p1 < ../sparc/jfr-sparc.patch ; \
 	$(GPATCH) -p1 < ../sparc/memset-sparc.patch ; \
-	$(GPATCH) -p1 < ../sparc/stack_bias.25.patch ; \
 	$(GPATCH) -p1 < ../sparc/sparc-misc.patch ; \
-	$(GPATCH) -p1 < ../sparc/assembler-hpp.patch ; \
 	$(GPATCH) -p1 < ../sparc/8254231-for-sparc.patch ; \
 	$(GPATCH) -p1 -R < ../sparc/0001-8264868-Reduce-inclusion-of-registerMap.hpp-and-regi.patch ; \
 	$(GPATCH) -p1 < ../sparc/sparc-linker.patch ; \
@@ -68,7 +67,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += cd $(COMPONENT_SRC) ; \
 	$(GPATCH) -p1 -R < ../sparc/0001-8270491-SEGV-at-read_string_field-oopDesc-char-const.patch ; \
 	$(GPATCH) -p1 -R < ../sparc/0001-8268702-JFR-diagnostic-commands-lack-argument-descri.patch ; \
 	$(GPATCH) -p1 < ../sparc/sparc-noflatten.patch ; \
-	$(GPATCH) -p1 < ../sparc/fix-allocate_new_tlab-crash.patch ; \
 	$(GPATCH) -p1 < ../sparc/c1_CodeStubs_sparc.cpp.patch ; \
 	$(GPATCH) -p1 < ../sparc/c1_Runtime1_sparc.cpp.patch ; \
 	$(GPATCH) -p1 < ../sparc/templateInterpreterGenerator_sparc.cpp.patch ; \
