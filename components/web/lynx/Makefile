@@ -14,23 +14,19 @@
 # Copyright (c) 2019, Michal Nowak
 #
 
-# disable CONFIGURE_DEFAULT_DIRS, because lynx does not support --localdir
-CONFIGURE_DEFAULT_DIRS=no
-
-BUILD_BITS=			64
+CONFIGURE_DEFAULT_DIRS= pre-2.60
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lynx
-COMPONENT_VERSION=	2.9.2
-COMPONENT_REVISION=	2
-COMPONENT_FMRI=		web/browser/lynx
+COMPONENT_VERSION=	2.9.3
 COMPONENT_SUMMARY=	Text-mode web browser
-COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_PROJECT_URL=	https://lynx.invisible-island.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:7374b89936d991669e101f4e97f2c9592036e1e8cdaa7bafc259a77ab6fb07ce
+COMPONENT_ARCHIVE_HASH= sha256:174b7f2866a60f3247ba75f5c7dbb10b124aede4a1359312de15f3bfebd2050f
 COMPONENT_ARCHIVE_URL=	http://invisible-mirror.net/archives/$(COMPONENT_NAME)/tarballs/$(COMPONENT_ARCHIVE)
+COMPONENT_FMRI=		web/browser/lynx
+COMPONENT_CLASSIFICATION=	Applications/Internet
 COMPONENT_LICENSE_FILE=	COPYING
 COMPONENT_LICENSE=	GPLv2
 
@@ -39,9 +35,9 @@ include $(WS_MAKE_RULES)/common.mk
 # Needed to successfully find lynx.pot.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600
+CFLAGS +=	-std=c99 $(XPG6)
 CFLAGS +=	-I/usr/include/ncurses
-CFLAGS +=	-I/usr/include/openssl
+CFLAGS +=	-I$(OPENSSL_INCDIR)
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-nls
@@ -68,6 +64,7 @@ ASLR_MODE = $(ASLR_ENABLE)
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/bzip2
+REQUIRED_PACKAGES += compress/zstd
 REQUIRED_PACKAGES += library/brotli
 REQUIRED_PACKAGES += library/libidn2
 REQUIRED_PACKAGES += library/ncurses
