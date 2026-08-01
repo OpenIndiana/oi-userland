@@ -23,8 +23,8 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	librewolf
-COMPONENT_MAJOR_VERSION =	149.0.2
-COMPONENT_MINOR_VERSION =	2
+COMPONENT_MAJOR_VERSION =	153.0.1
+COMPONENT_MINOR_VERSION =	1
 COMPONENT_VERSION = $(COMPONENT_MAJOR_VERSION).$(COMPONENT_MINOR_VERSION)
 HUMAN_VERSION = $(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)
 COMPONENT_SUMMARY=      LibreWolf Web browser
@@ -32,13 +32,13 @@ COMPONENT_PROJECT_URL =	https://librewolf.net
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_SRC = 	$(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME).source.tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:4f182ca27f11fd35aa2fb62ca099ff0533bfce2190a719d3b601eab86f7d3317
+COMPONENT_ARCHIVE_HASH= sha256:4c0c110b08b71375db967ebab583ad03d9d659fe1f4a42e14f9f4dbbf8e04c9d
 # Go to https://codeberg.org/librewolf/-/packages . Click on librewolf-source.  Get URL for source.tar.gz file.
-COMPONENT_ARCHIVE_URL =	https://codeberg.org/$(COMPONENT_NAME)/-/packages/generic/$(COMPONENT_NAME)-source/$(HUMAN_VERSION)/files/8996337
+COMPONENT_ARCHIVE_URL =	https://codeberg.org/api/packages/librewolf/generic/librewolf-source/$(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION)/librewolf-$(COMPONENT_MAJOR_VERSION)-$(COMPONENT_MINOR_VERSION).source.tar.gz
 COMPONENT_FMRI=		web/browser/librewolf
 COMPONENT_CLASSIFICATION =	Applications/Internet
 
-RUST_VERSION= 1.93.0
+RUST_VERSION= 1.94.0
 
 CONFIGURE_DEFAULT_DIRS= no
 
@@ -124,7 +124,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += ( \
 	rustup install $(RUST_VERSION); \
 	rustup default $(RUST_VERSION)-x86_64-unknown-illumos; \
 	rustup show; \
-	cargo install --root=$(CARGO_HOME) --vers 0.29.2 cbindgen; \
+	cargo install --root=$(CARGO_HOME) --vers 0.29.4 cbindgen; \
 	);
 
 ENV +=	CFLAGS="$(CFLAGS)"
@@ -204,4 +204,5 @@ REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
 REQUIRED_PACKAGES += x11/library/libxcb
 REQUIRED_PACKAGES += x11/library/libxext
+REQUIRED_PACKAGES += x11/library/libxfixes
 REQUIRED_PACKAGES += x11/library/libxrandr
