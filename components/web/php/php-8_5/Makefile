@@ -12,18 +12,19 @@
 # Copyright 2025-2026 Friedrich Kink. All rights reserved.
 #
 
+USE_PARALLEL_BUILD = yes
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         php
 COMPONENT_MJR_VERSION=	8.5
-COMPONENT_MNR_VERSION=	7
+COMPONENT_MNR_VERSION=	9
 COMPONENT_SUMMARY=      PHP 8.5
 COMPONENT_DESCRIPTION=	PHP is a popular general-purpose scripting language that is especially suited to web development.
 COMPONENT_VERSION=      $(COMPONENT_MJR_VERSION).$(COMPONENT_MNR_VERSION)
 COMPONENT_PROJECT_URL=  https://www.php.net/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:4ef9355f784d4b320151eb3f31c5941c0da297025eedb97f2838b2ce73dd59bf
+COMPONENT_ARCHIVE_HASH= sha256:703c082ad9d2946ac647f3596812300d2c62b360d2f31a999021692a9b39476c
 COMPONENT_ARCHIVE_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE)
 # COMPONENT_SIG_URL=  https://www.php.net/distributions/$(COMPONENT_ARCHIVE).ASC
 COMPONENT_FMRI=         web/$(COMPONENT_NAME)-85
@@ -59,7 +60,7 @@ CONFIGURE_OPTIONS += --datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS += --mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS += --localstatedir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS += OPENSSL_CFLAGS=-I$(OPENSSL_INCDIR)
-CONFIGURE_OPTIONS += OPENSSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
+CONFIGURE_OPTIONS += OPENSSL_LIBS=-L$(OPENSSL_LIBDIR)
 CONFIGURE_OPTIONS += KERBEROS_CFLAGS=-I/usr/include/kerberosv5
 CONFIGURE_OPTIONS += KERBEROS_LIBS="-L/usr/lib/$(MACH64) -lgss -lkrb5"
 CONFIGURE_OPTIONS += PCRE2_CFLAGS="-I/usr/include/pcre"
@@ -198,32 +199,18 @@ COMPONENT_TEST_TRANSFORMS += \
     '-e "/^TEST RESULT SUMMARY$$/,\$$p" ' \
     '-e "/.*/d" '
 
+# Some dynamic libraries used by PHP extensions (such as those part of openssl) are not found with gmake REQUIRED_PACKAGES.  Packages that contain these libraries should be added to this manual dependency list.
 # Manually added build dependencies
-REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 REQUIRED_PACKAGES += $(PG_SERVICE_PKG)
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
-REQUIRED_PACKAGES += shell/ksh93
-REQUIRED_PACKAGES += web/server/apache-24
-REQUIRED_PACKAGES += library/libzip
-REQUIRED_PACKAGES += compress/bzip2
-REQUIRED_PACKAGES += web/curl
-REQUIRED_PACKAGES += library/libxslt
 REQUIRED_PACKAGES += library/icu-78
-REQUIRED_PACKAGES += library/openldap
-REQUIRED_PACKAGES += library/security/libsodium
-REQUIRED_PACKAGES += system/management/snmp/net-snmp
-REQUIRED_PACKAGES += text/oniguruma
-REQUIRED_PACKAGES += database/sqlite-3
-REQUIRED_PACKAGES += library/gd
-REQUIRED_PACKAGES += library/gmp
-REQUIRED_PACKAGES += text/tidy
+REQUIRED_PACKAGES += web/server/apache-24
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(ICU_LIBRARY_PKG)
-REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += $(READLINE_PKG)
 REQUIRED_PACKAGES += SUNWcs
