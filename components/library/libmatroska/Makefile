@@ -16,13 +16,12 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           libmatroska
-COMPONENT_VERSION=        1.7.1
-COMPONENT_REVISION=       2
+COMPONENT_VERSION=        1.7.2
 COMPONENT_SUMMARY=        Matroska Video Container
 COMPONENT_PROJECT_URL=    https://matroska.org/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=   sha256:572a3033b8d93d48a6a858e514abce4b2f7a946fe1f02cbfeca39bfd703018b3
+COMPONENT_ARCHIVE_HASH=   sha256:f3e4d406daf7f1399962c43940e4a87de089474d5bcfbf2e6ca516e98bb87cfc
 COMPONENT_ARCHIVE_URL=    https://dl.matroska.org/downloads/libmatroska/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		      library/video/libmatroska
 COMPONENT_CLASSIFICATION= System/Multimedia Libraries
