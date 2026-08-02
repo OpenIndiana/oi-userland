@@ -26,13 +26,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libcdr
-COMPONENT_VERSION=	0.1.8
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	0.1.9
 COMPONENT_SUMMARY=	libcdr - library for reading CorelDRAW documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libcdr
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:ced677c8300b29c91d3004bb1dddf0b99761bf5544991c26c2ee8f427e87193c
+COMPONENT_ARCHIVE_HASH=	sha256:f7bb6abdd7f226820f288a93dd8d07759833c0250d9e202af90f9b312c4665a3
 COMPONENT_ARCHIVE_URL=	https://dev-www.libreoffice.org/src/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/libcdr
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -44,8 +43,9 @@ CXXFLAGS+= -std=c++17 -pthread
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --without-docs
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 COMPONENT_TEST_TRANSFORMS += '-e "s/^\# //" '
 
