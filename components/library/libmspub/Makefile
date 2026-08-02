@@ -24,13 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmspub
-COMPONENT_VERSION=	0.1.4
-COMPONENT_REVISION=	6
+COMPONENT_VERSION=	0.1.5
 COMPONENT_SUMMARY=      libmspub - library for reading Microsoft Publisher documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmspub
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:ef36c1a1aabb2ba3b0bedaaafe717bf4480be2ba8de6f3894be5fd3702b013ba
+COMPONENT_ARCHIVE_HASH= sha256:3671095f5a10bee8a755052a30576952c5b16d8b0f2ba9f2fb998338c18cb119
 COMPONENT_ARCHIVE_URL=	http://dev-www.libreoffice.org/src/libmspub/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=     	library/c++/libmspub
 COMPONENT_CLASSIFICATION= System/Libraries
@@ -42,6 +41,7 @@ include $(WS_MAKE_RULES)/common.mk
 # Fix threading detection issue with boost 1.64
 CXXFLAGS += -pthread
 
+CONFIGURE_OPTIONS += --without-docs
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
