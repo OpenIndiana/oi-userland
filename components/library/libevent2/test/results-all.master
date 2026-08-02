@@ -1,0 +1,28 @@
+$(SOURCE_DIR)/test/test.sh -b EPOLL
+EPOLL 
+ test-eof: OKAY
+ test-closed: OKAY
+ test-weof: OKAY
+ test-time: OKAY
+ test-changelist: OKAY
+ test-fdleak: OKAY
+ test-dumpevents: OKAY
+ regress: 
+  FAIL $(SOURCE_DIR)/test/regress.c:515: assert(event_base_loop(base, EVLOOP_NONBLOCK) == !persist): 0 vs 1main/simpleclose_shutdown: 
+  [simpleclose_shutdown FAILED]
+  FAIL $(SOURCE_DIR)/test/regress.c:515: assert(event_base_loop(base, EVLOOP_NONBLOCK) == !persist): 0 vs 1main/simpleclose_shutdown_et: 
+  [simpleclose_shutdown_et FAILED]
+  FAIL $(SOURCE_DIR)/test/regress.c:516: assert(got_event == (events & ~EV_PERSIST)): 0 vs 160main/simpleclose_shutdown_persist_et: 
+  [simpleclose_shutdown_persist_et FAILED]
+  FAIL $(SOURCE_DIR)/test/regress_et.c:121: assert(called == 1): 2 vs 1et/et: 
+  [et FAILED]
+4/356 TESTS FAILED. (37 skipped)
+FAILED
+  FAIL $(SOURCE_DIR)/test/regress.c:515: assert(event_base_loop(base, EVLOOP_NONBLOCK) == !persist): 0 vs 1main/simpleclose_shutdown: 
+  [simpleclose_shutdown FAILED]
+  FAIL $(SOURCE_DIR)/test/regress.c:515: assert(event_base_loop(base, EVLOOP_NONBLOCK) == !persist): 0 vs 1main/simpleclose_shutdown_et: 
+  [simpleclose_shutdown_et FAILED]
+  FAIL $(SOURCE_DIR)/test/regress_et.c:121: assert(called == 1): 2 vs 1et/et: 
+  [et FAILED]
+3/356 TESTS FAILED. (37 skipped)
+FAILED
