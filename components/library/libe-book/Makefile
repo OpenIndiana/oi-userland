@@ -25,13 +25,12 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libe-book
-COMPONENT_VERSION=	0.1.3
-COMPONENT_REVISION=	5
+COMPONENT_VERSION=	0.1.4
 COMPONENT_SUMMARY=      libe-book - library for import of reflowable e-book formats
 COMPONENT_PROJECT_URL=	https://sourceforge.net/projects/libebook
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:7e8d8ff34f27831aca3bc6f9cc532c2f90d2057c778963b884ff3d1e34dfe1f9
+COMPONENT_ARCHIVE_HASH=	sha256:104b7e791b6632745898e9b6a0037b7540235771a4d8c3bde2c764466ad912f1
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libebook/files/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=     	library/c++/libe-book
 COMPONENT_CLASSIFICATION=System/Libraries
@@ -43,8 +42,9 @@ CXXFLAGS += -std=c++17 -pthread
 
 include $(WS_MAKE_RULES)/common.mk
 
-CONFIGURE_OPTIONS+=	--enable-shared
-CONFIGURE_OPTIONS+=	--disable-static
+CONFIGURE_OPTIONS += --without-docs
+CONFIGURE_OPTIONS += --enable-shared
+CONFIGURE_OPTIONS += --disable-static
 
 # Build dependencies
 TEST_REQUIRED_PACKAGES += developer/cppunit
