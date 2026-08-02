@@ -24,13 +24,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmwaw
-COMPONENT_VERSION=	0.3.22
-COMPONENT_REVISION=	2
+COMPONENT_VERSION=	0.3.23
 COMPONENT_SUMMARY=	A library for reading various old mac text documents
 COMPONENT_PROJECT_URL=	https://wiki.documentfoundation.org/DLP/Libraries/libmwaw
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH=	sha256:a1a39ffcea3ff2a7a7aae0c23877ddf4918b554bf82b0de5d7ce8e7f61ea8e32
+COMPONENT_ARCHIVE_HASH=	sha256:ac3590f691a2904eb8c7dc8b757b8a29f125f592449e421459ae8fa928b399eb
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/libmwaw/files/libmwaw/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=     library/c++/libmwaw
 COMPONENT_CLASSIFICATION=	System/Libraries
@@ -40,8 +39,9 @@ TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # Fix threading detection issue introduced with boost 1.64
-CXXFLAGS += -std=c++11 -pthread
+#CXXFLAGS += -std=c++11 -pthread
 
+CONFIGURE_OPTIONS += --without-docs
 CONFIGURE_OPTIONS += --enable-shared
 CONFIGURE_OPTIONS += --disable-static
 
