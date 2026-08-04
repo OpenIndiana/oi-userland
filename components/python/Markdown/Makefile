@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		markdown
-HUMAN_VERSION =			3.10.2
+HUMAN_VERSION =			3.10.3
 COMPONENT_SUMMARY =		Python implementation of John Gruber's Markdown.
 COMPONENT_PROJECT_URL =		https://Python-Markdown.github.io/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:994d51325d25ad8aa7ce4ebaec003febcce822c3f8c911e3b17c52f7f589f950
+	sha256:3589362618f743188b4d955b874402bc814f4f83f544dc207719f4baa7d9c45f
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE.md
 
