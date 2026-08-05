@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 211 items
+collecting ... collected 214 items
 
 tests_core/test_build_thyself.py::test_prepare_metadata PASSED
 tests_core/test_build_thyself.py::test_wheel PASSED
@@ -52,7 +52,6 @@ tests_core/test_common.py::test_metadata_license[value3-None-MIT] PASSED
 tests_core/test_common.py::test_metadata_license[value4-None-Apache-2.0] PASSED
 tests_core/test_common.py::test_metadata_license[value5-None-MIT OR Apache-2.0] PASSED
 tests_core/test_common.py::test_metadata_license[value6-None-MIT AND Apache-2.0] PASSED
-tests_core/test_config.py::test_flatten_entrypoints PASSED
 tests_core/test_config.py::test_load_toml PASSED
 tests_core/test_config.py::test_load_toml_ns PASSED
 tests_core/test_config.py::test_load_normalization PASSED
@@ -64,12 +63,10 @@ tests_core/test_config.py::test_missing_description_file PASSED
 tests_core/test_config.py::test_bad_description_extension PASSED
 tests_core/test_config.py::test_extras PASSED
 tests_core/test_config.py::test_extras_newstyle PASSED
-tests_core/test_config.py::test_extras_dev_conflict PASSED
-tests_core/test_config.py::test_extras_dev_warning PASSED
 tests_core/test_config.py::test_requires_extra_env_marker PASSED
-tests_core/test_config.py::test_faulty_requires_extra[erroneous0-Expected a dict for requires-extra field] PASSED
-tests_core/test_config.py::test_faulty_requires_extra[erroneous1-Expected a dict of lists for requires-extra field] PASSED
-tests_core/test_config.py::test_faulty_requires_extra[erroneous2-Expected a string list for requires-extra] PASSED
+tests_core/test_config.py::test_faulty_requires_extra[erroneous0-optional-dependencies.*dict] PASSED
+tests_core/test_config.py::test_faulty_requires_extra[erroneous1-Expected a dict of lists in optional-dependencies] PASSED
+tests_core/test_config.py::test_faulty_requires_extra[erroneous2-Expected a string list for optional-dependencies] PASSED
 tests_core/test_config.py::test_bad_include_paths[../bar-out of the directory] PASSED
 tests_core/test_config.py::test_bad_include_paths[foo/../../bar-out of the directory] PASSED
 tests_core/test_config.py::test_bad_include_paths[/home-absolute path] PASSED
@@ -192,7 +189,6 @@ tests_core/test_config.py::test_license_expr_error_unsupported_with[MIT WITH MIT
 tests_core/test_config.py::test_license_expr_error_unsupported_with[(MIT WITH MIT-Exception)] PASSED
 tests_core/test_config.py::test_license_expr_error_unsupported_with[MIT OR MIT WITH MIT-Exception] PASSED
 tests_core/test_config.py::test_license_expr_error_unsupported_with[MIT WITH MIT-Exception OR (MIT AND MIT)] PASSED
-tests_core/test_config.py::test_license_file_defaults_with_old_metadata PASSED
 tests_core/test_config.py::test_pep621_license_files[proj_license_files0-files0] PASSED
 tests_core/test_config.py::test_pep621_license_files[proj_license_files1-files1] PASSED
 tests_core/test_config.py::test_pep621_license_files[proj_license_files2-files2] PASSED
@@ -202,6 +198,12 @@ tests_core/test_config.py::test_pep621_license_files[proj_license_files5-files5]
 tests_core/test_config.py::test_pep621_license_files[proj_license_files6-files6] PASSED
 tests_core/test_config.py::test_pep621_license_files[proj_license_files7-files7] PASSED
 tests_core/test_config.py::test_pep621_license_files[proj_license_files8-files8] PASSED
+tests_core/test_config.py::test_pep621_license_files[proj_license_files9-files9] PASSED
+tests_core/test_config.py::test_import_names_errors[proj_extra0-not a valid] PASSED
+tests_core/test_config.py::test_import_names_errors[proj_extra1-private] PASSED
+tests_core/test_config.py::test_import_names_errors[proj_extra2-not match] PASSED
+tests_core/test_config.py::test_import_names_errors[proj_extra3-not match] PASSED
+tests_core/test_config.py::test_old_style_metadata PASSED
 tests_core/test_sdist.py::test_make_sdist PASSED
 tests_core/test_sdist.py::test_make_sdist_pep621 PASSED
 tests_core/test_sdist.py::test_make_sdist_pep621_nodynamic PASSED
@@ -209,6 +211,7 @@ tests_core/test_sdist.py::test_clean_tarinfo PASSED
 tests_core/test_sdist.py::test_include_exclude PASSED
 tests_core/test_sdist.py::test_data_dir PASSED
 tests_core/test_sdist.py::test_pep625 PASSED
+tests_core/test_sdist.py::test_license_inside_src PASSED
 tests_core/test_versionno.py::test_normalise_version PASSED
 tests_core/test_wheel.py::test_licenses_dir PASSED
 tests_core/test_wheel.py::test_source_date_epoch PASSED
@@ -217,4 +220,4 @@ tests_core/test_wheel.py::test_main PASSED
 tests_core/test_wheel.py::test_data_dir PASSED
 tests_core/test_wheel.py::test_license_files PASSED
 
-======== 210 passed, 1 skipped ========
+======== 213 passed, 1 skipped ========
