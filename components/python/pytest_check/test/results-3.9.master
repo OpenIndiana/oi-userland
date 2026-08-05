@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: tox.ini
 testpaths: tests
-collecting ... collected 94 items
+collecting ... collected 106 items
 
 tests/test_alt_names.py::test_alt_names PASSED
 tests/test_any_failures.py::test_any_failures_returns_true_when_checks_fail PASSED
@@ -46,6 +46,15 @@ tests/test_non_assert_exceptions.py::test_index_error PASSED
 tests/test_non_assert_exceptions.py::test_key_error PASSED
 tests/test_non_assert_exceptions.py::test_attribute_error PASSED
 tests/test_not_in_test.py::test_check_not_in_a_test SKIPPED (require...)
+tests/test_pseudo_tb_corner_cases.py::test_is_user_trace_frame_filters_internal_and_module_frames PASSED
+tests/test_pseudo_tb_corner_cases.py::test_extract_exception_summary_handles_empty_and_type_only_lines PASSED
+tests/test_pseudo_tb_corner_cases.py::test_extract_exception_summary_skips_blank_lines PASSED
+tests/test_pseudo_tb_corner_cases.py::test_build_single_line_trace_respects_tb_style_no PASSED
+tests/test_pseudo_tb_corner_cases.py::test_build_single_line_trace_uses_tb_frame_and_color PASSED
+tests/test_pseudo_tb_corner_cases.py::test_build_single_line_trace_fallback_breaks_for_non_user_stack_frame PASSED
+tests/test_pseudo_tb_corner_cases.py::test_build_single_line_trace_fallback_skips_hidden_then_returns_colored PASSED
+tests/test_pseudo_tb_corner_cases.py::test_build_single_line_trace_hidden_test_frame_falls_through_to_empty PASSED
+tests/test_pseudo_tb_corner_cases.py::test_log_failure_handles_empty_single_line_trace_path PASSED
 tests/test_raises.py::test_raises PASSED
 tests/test_raises.py::test_raises_with_assertion_error PASSED
 tests/test_raises.py::test_raises_with_multiple_errors PASSED
@@ -64,6 +73,7 @@ tests/test_raises.py::test_raises_with_none_exception_value PASSED
 tests/test_raises.py::test_raises_custom_msg PASSED
 tests/test_red.py::test_red PASSED
 tests/test_red.py::test_no_red PASSED
+tests/test_reportlog.py::test_report_log_does_not_crash SKIPPED (req...)
 tests/test_speedup_flags.py::test_baseline PASSED
 tests/test_speedup_flags.py::test_no_tb PASSED
 tests/test_speedup_flags.py::test_max_report PASSED
@@ -80,6 +90,8 @@ tests/test_stop_on_fail.py::test_context_manager_stop_on_fail PASSED
 tests/test_stop_on_fail.py::test_context_manager_stop_on_fail_with_msg PASSED
 tests/test_summary.py::test_baseline PASSED
 tests/test_summary.py::test_message PASSED
+tests/test_tb_line.py::test_max_tb_line_uses_inner_line_for_with_check PASSED
+tests/test_tb_line.py::test_max_tb_line_includes_line_and_exception_summary PASSED
 tests/test_tb_style.py::test_traceback_style_no PASSED
 tests/test_tb_style.py::test_traceback_style_default PASSED
 tests/test_thread.py::test_failing_threaded_testcode PASSED
@@ -103,72 +115,6 @@ tests/test_xfail.py::test_xfail_raises_multiple_marks_one_matches PASSED
 tests/test_xfail.py::test_xfail_mypy PASSED
 
 =========================== short test summary info ============================
-======== 88 passed, 6 skipped ========
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/popen-gw3
-<class 'FileExistsError'>: [Errno 17] File exists: 'popen-gw3'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)/test_discovery_via_path_in_non0
-<class 'FileExistsError'>: [Errno 17] File exists: 'test_discovery_via_path_in_non0'
-  warnings.warn(
-$(PYTHON_DIR)/vendor-packages/_pytest/pathlib.py:96: PytestWarning: (rm_rf) error removing $(TMPDIR)
-<class 'FileExistsError'>: [Errno 17] File exists: '$(TMPDIR)
-  warnings.warn(
+======== 99 passed, 7 skipped ========
   py$(PYV): OK
   congratulations :)
