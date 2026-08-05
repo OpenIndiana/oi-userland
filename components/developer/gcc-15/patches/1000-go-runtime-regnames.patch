@@ -1,0 +1,30 @@
+--- a/libgo/runtime/go-signal.c	Thu Jun 11 23:10:03 2026
++++ b/libgo/runtime/go-signal.c	Thu Jun 25 13:58:01 2026
+@@ -16,6 +16,27 @@
+   #define SA_RESTART 0
+ #endif
+ 
++#if defined(__i386__) && !defined(__amd64) && defined(__sun__) && defined(__svr4__) && !defined(REG_EAX)
++#define REG_EAX EAX
++#define REG_EBX EBX
++#define REG_ECX ECX
++#define REG_EDX EDX
++#define REG_EDI EDI
++#define REG_ESI ESI
++#define REG_EBP EBP
++#define REG_ESP ESP
++#define REG_EIP EIP
++#define REG_EFL EFL
++
++#undef REG_CS
++#define REG_CS CS
++#undef REG_FS
++#define REG_FS FS
++#undef REG_GS
++#define REG_GS GS
++
++#endif
++
+ #ifdef USING_SPLIT_STACK
+ 
+ extern void __splitstack_getcontext(void *context[10]);

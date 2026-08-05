@@ -1,0 +1,126 @@
+From ae7d116852867503afd3c8c70b168f1e296152a8 Mon Sep 17 00:00:00 2001
+From: Bill Sommerfeld <sommerfeld@hamachi.org>
+Date: Sat, 17 May 2025 17:38:44 -0700
+Subject: [PATCH 38/39] Handle a few cases where fields in struct lconv may
+ contain multi-byte encoded characters. C++'s locale interface can only cope
+ with a single char or a single wchar_t.
+
+---
+ .../locale/dragonfly/monetary_members.cc      | 36 +++++++++++++++----
+ .../locale/dragonfly/numeric_members.cc       |  7 ++--
+ 2 files changed, 35 insertions(+), 8 deletions(-)
+
+diff --git a/libstdc++-v3/config/locale/dragonfly/monetary_members.cc b/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
+index 16e995a57dc..ebce539e2d8 100644
+--- a/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
++++ b/libstdc++-v3/config/locale/dragonfly/monetary_members.cc
+@@ -37,10 +37,36 @@ namespace std _GLIBCXX_VISIBILITY(default)
+ {
+ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 
++  extern wchar_t lconv2wchar(char *conv, wchar_t def, locale_t __cloc);
++  extern char lconv2char(char *conv, char def);
++
+ // This file might be compiled twice, but we only want to define the members
+ // of money_base once.
+ #if ! _GLIBCXX_USE_CXX11_ABI
+ 
++  wchar_t lconv2wchar(char *conv, wchar_t def, locale_t __cloc)
++  {
++    wchar_t w = def;
++    const size_t tlen = strlen(conv);
++    if (tlen == 1)
++      w = (wchar_t) conv[0];
++
++    int clen = mbtowc_l(&w, conv, tlen, __cloc);
++    if (clen <= 0) 
++      return def;
++    else 
++      return w;
++  }
++
++  char lconv2char(char *conv, char def)
++  {
++    wchar_t w = def;
++    const size_t tlen = strlen(conv);
++    if (tlen == 1)
++      w = (wchar_t) conv[0];
++    return w;
++  }
++
+   // Construct and return valid pattern consisting of some combination of:
+   // space none symbol sign value
+   money_base::pattern
+@@ -283,7 +309,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 		}
+ 	      else
+ 		{
+-	          _M_data->_M_thousands_sep = lc->mon_thousands_sep[0];
++		  _M_data->_M_thousands_sep = lconv2char(lc->mon_thousands_sep, ',');
+ 
+ 		  __len = strlen(__cgroup);
+ 		  if (__len)
+@@ -437,7 +463,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 		}
+ 	      else
+ 		{
+-	          _M_data->_M_thousands_sep = lc->mon_thousands_sep[0];
++		  _M_data->_M_thousands_sep = lconv2char(lc->mon_thousands_sep, ',');
+ 
+ 		  __len = strlen(__cgroup);
+ 		  if (__len)
+@@ -624,8 +650,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 		}
+ 	      else
+ 		{
+-		  _M_data->_M_thousands_sep =
+-			(wchar_t)lc->mon_thousands_sep[0];
++		  _M_data->_M_thousands_sep = lconv2wchar(lc->mon_thousands_sep, L',', (locale_t)__cloc);
+ 		  __len = strlen(__cgroup);
+ 		  if (__len)
+ 		    {
+@@ -784,8 +809,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 		}
+ 	      else
+ 		{
+-		  _M_data->_M_thousands_sep =
+-			(wchar_t)lc->mon_thousands_sep[0];
++		  _M_data->_M_thousands_sep = lconv2wchar(lc->mon_thousands_sep, L',', (locale_t)__cloc);
+ 		  __len = strlen(__cgroup);
+ 		  if (__len)
+ 		    {
+diff --git a/libstdc++-v3/config/locale/dragonfly/numeric_members.cc b/libstdc++-v3/config/locale/dragonfly/numeric_members.cc
+index c5df5b8c11b..731a349a637 100644
+--- a/libstdc++-v3/config/locale/dragonfly/numeric_members.cc
++++ b/libstdc++-v3/config/locale/dragonfly/numeric_members.cc
+@@ -37,6 +37,9 @@ namespace std _GLIBCXX_VISIBILITY(default)
+ {
+ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 
++  extern wchar_t lconv2wchar(char *conv, wchar_t def, locale_t __cloc);
++  extern char lconv2char(char *conv, char def);
++
+   template<>
+     void
+     numpunct<char>::_M_initialize_numpunct(__c_locale __cloc)
+@@ -86,7 +89,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 	    }
+ 	  else
+ 	    {
+-	      _M_data->_M_thousands_sep = lc->thousands_sep[0];
++	      _M_data->_M_thousands_sep = lconv2char(lc->thousands_sep, ',');
+ 
+ 	      const char* __src = lc->grouping;
+ 	      const size_t __len = strlen(__src);
+@@ -185,7 +188,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
+ 	    }
+ 	  else
+ 	    {
+-	      _M_data->_M_thousands_sep = (wchar_t)lc->thousands_sep[0];
++	      _M_data->_M_thousands_sep = lconv2wchar(lc->thousands_sep, L',', (locale_t)__cloc);
+ 
+   	      const char* __src = lc->grouping;
+ 	      const size_t __len = strlen(__src);
+-- 
+2.53.0
+
