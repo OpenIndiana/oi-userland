@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 gcc_OPT =
 
 COMPONENT_NAME=         VirtualBox
-COMPONENT_VERSION=      7.2.8
+COMPONENT_VERSION=      7.2.14
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      VirtualBox - general-purpose full virtualizer
 COMPONENT_PROJECT_URL=  https://www.virtualbox.org/
@@ -140,6 +140,9 @@ LOCAL_CONFIG += '\nVBOX_WITH_VBOXSDL = 1'
 
 #disable soapC split
 LOCAL_CONFIG += '\nVBOX_WITHOUT_SPLIT_SOAPC = 1'
+
+#force yasm to use
+LOCAL_CONFIG += VBOX_ASTOOL = YASM
 
 # Set OpenIndiana project as publisher of VirtualBox binaries
 VBOX_BUILD_PUBLISHER=OpenIndiana
