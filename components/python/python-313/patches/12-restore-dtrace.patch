@@ -22,10 +22,10 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/Lib/test/test_dtrace.py a/Lib
      def test_line(self):
          self.run_case("line")
  
-@@ -183,6 +184,8 @@ class CheckDtraceProbes(unittest.TestCas
-                 print(f"readelf version: {readelf_major_version}.{readelf_minor_version}")
-         else:
-             raise unittest.SkipTest("CPython must be configured with the --with-dtrace option.")
+@@ -186,6 +186,8 @@
+         readelf_major_version, readelf_minor_version = cls.get_readelf_version()
+         if support.verbose:
+             print(f"readelf version: {readelf_major_version}.{readelf_minor_version}")
 +        # These checks are only relevant with the SystemTap backend
 +        SystemTapBackend().assert_usable()
  
