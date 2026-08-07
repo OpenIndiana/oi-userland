@@ -3,8 +3,8 @@ py$(PYV): commands[0]> python -m pytest
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-configfile: setup.cfg
-collecting ... collected 517 items
+configfile: pyproject.toml
+collecting ... collected 570 items
 
 test/ext/test_babelplugin.py::PluginExtractTest::test_parse_python_expression PASSED
 test/ext/test_babelplugin.py::PluginExtractTest::test_python_gettext_call PASSED
@@ -227,6 +227,59 @@ test/test_exceptions.py::ExceptionsTest::test_tback_trace_from_py_file PASSED
 test/test_exceptions.py::ExceptionsTest::test_code_block_line_number PASSED
 test/test_exceptions.py::ExceptionsTest::test_module_block_line_number PASSED
 test/test_exceptions.py::ExceptionsTest::test_alternating_file_names PASSED
+test/test_exceptions.py::TemplateModuleSpecTest::test_module_spec_has_loader PASSED
+test/test_exceptions.py::TemplateModuleSpecTest::test_loader_returns_module_source PASSED
+test/test_exceptions.py::TemplateModuleSpecTest::test_no_warning_formatting_traceback PASSED
+test/test_exceptions.py::TemplateModuleSpecTest::test_traceback_includes_module_source PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_code_block[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_code_block[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_code_block[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_line_not_affected_by_preceding_lines[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_line_not_affected_by_preceding_lines[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_line_not_affected_by_preceding_lines[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_module_block_and_expression[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_module_block_and_expression[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_in_module_block_and_expression[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[always-string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[always-file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[always-module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[default-string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[default-file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[default-module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[module-string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[module-file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[module-module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[once-string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[once-file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_shown_for_each_filter_action[once-module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_error_filter_raises_from_the_parse[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_error_filter_raises_from_the_parse[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_error_filter_raises_from_the_parse[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_module_level_block[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_module_level_block[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_module_level_block[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_module_source_without_metadata PASSED
+test/test_exceptions.py::CompileWarningsTest::test_no_warnings_for_clean_template[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_no_warnings_for_clean_template[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_no_warnings_for_clean_template[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_imported_module_passes_through[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_imported_module_passes_through[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_warning_from_imported_module_passes_through[module_file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_unknown_filename_warning_from_import_passes_through[string] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_unknown_filename_warning_from_import_passes_through[file] PASSED
+test/test_exceptions.py::CompileWarningsTest::test_unknown_filename_warning_from_import_passes_through[module_file] PASSED
+test/test_exceptions.py::UnterminatedTagLocationTest::test_unterminated_expression PASSED
+test/test_exceptions.py::UnterminatedTagLocationTest::test_unterminated_code_block PASSED
+test/test_exceptions.py::UnterminatedTagLocationTest::test_unterminated_expression_filter PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_code_block PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_code_block_beginning_on_tag_line PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_module_level_block PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_expression PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_def_signature PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_control_line_if PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_control_line_elif PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_control_line_except PASSED
+test/test_exceptions.py::SyntaxExceptionLocationTest::test_control_line_for PASSED
 test/test_filters.py::FilterTest::test_basic PASSED
 test/test_filters.py::FilterTest::test_expr PASSED
 test/test_filters.py::FilterTest::test_convert_str PASSED
@@ -534,6 +587,13 @@ test/testing/test_config.py::SupportedTypesConfigTest::test_values PASSED
 test/testing/test_config.py::TypeMismatchConfigTest::test_error_on_load PASSED
 test/testing/test_config.py::MissingItemConfigTest::test_error_on_load PASSED
 
-======== 494 passed, 23 skipped ========
+======== 547 passed, 23 skipped ========
+py$(PYV): commands[1]> python tools/warn_tox.py
+
+================================================================================
+[1;31m  ⚠️  NOTE: TOX IS DEPRECATED IN THIS PROJECT!  ⚠️[0m
+[1;33m  Please use nox instead for running tests.[0m
+================================================================================
+
   py$(PYV): OK
   congratulations :)
