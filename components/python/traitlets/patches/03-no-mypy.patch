@@ -1,16 +1,16 @@
 We do not need to check typing for this project.
 
---- traitlets-5.15.1/pyproject.toml.orig
-+++ traitlets-5.15.1/pyproject.toml
+--- traitlets-5.16.1/pyproject.toml.orig
++++ traitlets-5.16.1/pyproject.toml
 @@ -33,11 +33,6 @@
- [project.optional-dependencies]
  test = [
-     "argcomplete>=3.0.3",
+     "argcomplete>=3.0.3; python_version < '3.12'",
+     "argcomplete>=3.5.2; python_version >= '3.12'",
 -    # See https://github.com/python/mypy/issues/20329 for PyPy support issue.
--    # Also, test assertions will need to be updated for 1.20+ because
--    # `reveal_type()` representations were simplified in
--    # https://github.com/python/mypy/pull/20929
--    "mypy>=1.17.0,<1.19",
+-    # `reveal_type()` representations were simplified (dropping the `builtins.`
+-    # prefix) in https://github.com/python/mypy/pull/20929; test assertions in
+-    # tests/test_typing.py target that newer output, so require >=1.20.
+-    "mypy>=2.0; implementation_name != 'pypy'",
      "pytest-mock",
-     "pytest>=7.0,<8.2",
+     "pytest>=7.0,<10.0",
  ]
