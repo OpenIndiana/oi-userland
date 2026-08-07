@@ -20,11 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		flit_core
-HUMAN_VERSION =			3.12.0
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			4.0.2
 COMPONENT_SUMMARY =		Distribution-building parts of Flit. See flit package for more information
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2
+	sha256:b6929defd93884b584d7c87829e0e7b5c26ed6be17b0b873979019314aa841c8
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -34,7 +33,8 @@ TEST_STYLE = pytest
 # bootstrapped too.
 # - build
 # - coherent.licensed
-# - flit_scm (test bootstrap)
+# - docutils
+# - tomli_w (test bootstrap)
 # - installer
 # - packaging
 # - pathspec (test bootstrap)
