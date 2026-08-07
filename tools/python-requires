@@ -42,7 +42,7 @@ reqs = requires(sys.argv[1]) if sys.argv[1] != "-" else sys.stdin.readlines()
 try:
     for req in reqs:
         try:
-            r = Requirement(re.sub(r"#.*", "", req))
+            r = Requirement(re.sub(r"#.*", "", req).strip())
         except:
             continue
         m = r.marker
