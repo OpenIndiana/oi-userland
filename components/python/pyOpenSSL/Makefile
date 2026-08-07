@@ -20,11 +20,11 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pyopenssl
-HUMAN_VERSION =			26.2.0
+HUMAN_VERSION =			26.4.0
 COMPONENT_SUMMARY =		Python wrapper module around the OpenSSL library
 COMPONENT_PROJECT_URL =		https://pyopenssl.org/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8c6fcecd1183a7fc897548dfe388b0cdb7f37e018200d8409cf33959dbe35387
+	sha256:28dfcce0162b9211413e26dfbfdf1d24317fbeba18fc93c12400a1856b2a0bc7
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
