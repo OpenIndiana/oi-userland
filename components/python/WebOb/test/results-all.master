@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: setup.cfg
-collecting ... collected 2404 items / 1 deselected / 2403 selected
+collecting ... collected 2498 items / 1 deselected / 2497 selected
 
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=] PASSED
 tests/test_acceptparse.py::Test_ItemNWeightRe::test_invalid[q=1] PASSED
@@ -1659,6 +1659,14 @@ tests/test_exc.py::test_HTTPMove_location_newlines PASSED
 tests/test_exc.py::test_HTTPMove_add_slash_and_location PASSED
 tests/test_exc.py::test_HTTPMove_call_add_slash PASSED
 tests/test_exc.py::test_HTTPMove_call_query_string PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[//www.example.com/test-http://localhost/%2fwww.example.com/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[/\t/www.example.com/test-http://localhost/%2fwww.example.com/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[ //www.example.com/test-http://localhost/ //www.example.com/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[ https://www.example.com/test-http://localhost/ https://www.example.com/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[test-http://localhost/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[/test-http://localhost/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_no_open_redirect[https://www.example.com/test-https://www.example.com/test] PASSED
+tests/test_exc.py::test_HTTPMove_location_none_defaults_to_request_url PASSED
 tests/test_exc.py::test_HTTPFound_unused_environ_variable PASSED
 tests/test_exc.py::test_HTTPExceptionMiddleware_ok PASSED
 tests/test_exc.py::test_HTTPExceptionMiddleware_exception PASSED
@@ -2328,6 +2336,13 @@ tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\tw
 tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\nwww.example.com/test] PASSED
 tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\rwww.example.com/test] PASSED
 tests/test_response.py::test__make_location_absolute_strips_url_whitespace[//\tw\nww.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[ //www.example.com/test-http://localhost/ //www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[\x00//www.example.com/test-http://localhost/\x00//www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[\x1f//www.example.com/test-http://localhost/\x1f//www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[ \t//www.example.com/test-http://localhost/ //www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[ //www.example.com/test -http://localhost/ //www.example.com/test ] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[ https://www.example.com/test-http://localhost/ https://www.example.com/test] PASSED
+tests/test_response.py::test_location_no_open_redirect_c0_control_or_space[\x00https://www.example.com/test-http://localhost/\x00https://www.example.com/test] PASSED
 tests/test_response.py::test_location_unicode PASSED
 tests/test_response.py::test_request_uri_http PASSED
 tests/test_response.py::test_request_uri_no_script_name2 PASSED
@@ -2409,6 +2424,85 @@ tests/test_util.py::Test_warn_deprecation::test_warn_deprecation_future_version 
 tests/test_util.py::Test_strings_differ::test_it PASSED
 tests/test_util.py::Test_strings_differ::test_it_with_external_comparator PASSED
 tests/test_util.py::Test_strings_differ::test_it_with_internal_comparator PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g:h-g:h] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g-http://a/b/c/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[./g-http://a/b/c/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g/-http://a/b/c/g/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[/g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[//g-http://g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[?y-http://a/b/c/d;p?y] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g?y-http://a/b/c/g?y] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[#s-http://a/b/c/d;p?q#s] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g#s-http://a/b/c/g#s] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g?y#s-http://a/b/c/g?y#s] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[;x-http://a/b/c/;x] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g;x-http://a/b/c/g;x] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g;x?y#s-http://a/b/c/g;x?y#s] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[-http://a/b/c/d;p?q] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[.-http://a/b/c/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[./-http://a/b/c/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[..-http://a/b/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../-http://a/b/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../g-http://a/b/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../..-http://a/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../../-http://a/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../../g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../../../g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[../../../../g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[/./g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[/../g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g.-http://a/b/c/g.] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[.g-http://a/b/c/.g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g..-http://a/b/c/g..] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[..g-http://a/b/c/..g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[./../g-http://a/b/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[./g/.-http://a/b/c/g/] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g/./h-http://a/b/c/g/h] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g/../h-http://a/b/c/h] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g;x=1/./y-http://a/b/c/g;x=1/y] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g;x=1/../y-http://a/b/c/y] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g#s/./x-http://a/b/c/g#s/./x] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[g#s/../x-http://a/b/c/g#s/../x] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[http:g-http://a/b/c/g] PASSED
+tests/test_util.py::test_urljoin_rfc3986_reference_resolution[HTTP:g-http://a/b/c/g] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[ //www.example.com/test-http://a/b/c/ //www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\t//www.example.com/test-http://a/b/c/\t//www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\n//www.example.com/test-http://a/b/c/\n//www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\r//www.example.com/test-http://a/b/c/\r//www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\x00//www.example.com/test-http://a/b/c/\x00//www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\x1f//www.example.com/test-http://a/b/c/\x1f//www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[/\t/www.example.com/test-http://a/\t/www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[/\r\n/www.example.com/test-http://a/\r\n/www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[ http://www.example.com/test-http://a/b/c/ http://www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[\thttps://www.example.com/test-http://a/b/c/\thttps://www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_does_not_strip_whitespace[https\t://www.example.com/test-http://a/b/c/https\t://www.example.com/test] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a-g-http://a/g] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b-///g-http:///g] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[mailto:user@example.com-another@example.com-mailto:another@example.com] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[//a/b/c-g-//a/b/g] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-//g/x/../y?q#f-http://g/y?q#f] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-g:x/y-g:x/y] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-./g:x/y-http://a/b/g:x/y] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-0http://evil.example-http://a/b/0http://evil.example] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-g?-http://a/b/g?] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-g#-http://a/b/g#] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c?q#f-g-http://a/b/g] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c#f--http://a/b/c#f] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[http://a/b/c-None-http://a/b/c] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[-g-g] PASSED
+tests/test_util.py::test_urljoin_component_edge_cases[None-g-g] PASSED
+tests/test_util.py::test_remove_dot_segments[-] PASSED
+tests/test_util.py::test_remove_dot_segments[.-] PASSED
+tests/test_util.py::test_remove_dot_segments[..-] PASSED
+tests/test_util.py::test_remove_dot_segments[./g-g] PASSED
+tests/test_util.py::test_remove_dot_segments[../g-g] PASSED
+tests/test_util.py::test_remove_dot_segments[/.-/] PASSED
+tests/test_util.py::test_remove_dot_segments[/..-/] PASSED
+tests/test_util.py::test_remove_dot_segments[/./g-/g] PASSED
+tests/test_util.py::test_remove_dot_segments[/../g-/g] PASSED
+tests/test_util.py::test_remove_dot_segments[/a/b/c/./../../g-/a/g] PASSED
+tests/test_util.py::test_remove_dot_segments[mid/content=5/../6-mid/6] PASSED
+tests/test_util.py::test_merge_paths_relative_base_without_slash PASSED
 
 =============================== warnings summary ===============================
 tests/test_client_functional.py::test_client
@@ -2439,34 +2533,34 @@ tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_timedelta_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_datetime_tz_and_max_age_is_None
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1037: DeprecationWarning: Argument "expires" will be removed in a future version of WebOb, please use "max_age".
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1041: DeprecationWarning: Argument "expires" will be removed in a future version of WebOb, please use "max_age".
     warn_deprecation('Argument "expires" will be removed in a future '
 
 tests/test_response.py::test_set_cookie_expires_is_datetime_and_max_age_is_None
 tests/test_response.py::test_set_cookie_expires_is_datetime_tz_and_max_age_is_None
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1054: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1058: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     max_age = expires - datetime.utcnow()
 
 tests/test_response.py::test_cache_expires_set
 tests/test_response.py::test_cache_expires_set_zero
 tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1199: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1203: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     self.expires = datetime.utcnow()
 
 tests/test_response.py::test_cache_expires_set
 tests/test_response.py::test_cache_expires_set_zero
 tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1201: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1205: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     self.last_modified = datetime.utcnow()
 
 tests/test_response.py::test_cache_expires_set_timedelta
 tests/test_response.py::test_cache_expires_set_int
 tests/test_response.py::test_cache_expires_set_zero_then_nonzero
-  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1206: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  $(PROTO_DIR)$(PYTHON_DIR)/vendor-packages/webob/response.py:1210: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     self.expires = datetime.utcnow() + timedelta(seconds=seconds)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/pytest-py$(PYV).xml -
-======== 2392 passed, 10 skipped, 1 deselected, 1 xfailed, 33 warnings ========
+======== 2486 passed, 10 skipped, 1 deselected, 1 xfailed, 33 warnings ========
   py$(PYV): OK
   congratulations :)
