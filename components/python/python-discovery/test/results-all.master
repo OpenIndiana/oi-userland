@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 520 items
+collecting ... collected 549 items
 
 tests/py_info/test_py_info.py::test_current_as_json PASSED
 tests/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
@@ -151,7 +151,6 @@ tests/test_discovery.py::test_discovery_via_path[none-upper] PASSED
 tests/test_discovery.py::test_discovery_via_path_not_found PASSED
 tests/test_discovery.py::test_discovery_via_path_in_nonbrowseable_directory PASSED
 tests/test_discovery.py::test_relative_path PASSED
-tests/test_discovery.py::test_uv_python PASSED
 tests/test_discovery.py::test_discovery_fallback_fail PASSED
 tests/test_discovery.py::test_discovery_fallback_ok PASSED
 tests/test_discovery.py::test_returns_first_python_specified PASSED
@@ -173,6 +172,19 @@ tests/test_discovery.py::test_predicate_filters_interpreters PASSED
 tests/test_discovery.py::test_predicate_accepts_interpreter PASSED
 tests/test_discovery.py::test_predicate_none_is_noop PASSED
 tests/test_discovery.py::test_predicate_with_fallback_specs PASSED
+tests/test_discovery.py::test_discovery_uv_store_install_dir_overrides_the_platform_default[expands-user] PASSED
+tests/test_discovery.py::test_discovery_uv_store_install_dir_overrides_the_platform_default[absolute] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[windows] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[windows-without-appdata] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[macos] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[macos-with-xdg] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[linux] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[linux-with-xdg] PASSED
+tests/test_discovery.py::test_discovery_uv_store_roots_per_platform[linux-ignores-relative-xdg] PASSED
+tests/test_discovery.py::test_discovery_uv_store_windows_ignores_xdg_data_home PASSED
+tests/test_discovery.py::test_discovery_uv_store_reads_the_env_argument PASSED
+tests/test_discovery.py::test_discovery_uv_store_missing_root_is_not_an_error PASSED
+tests/test_discovery.py::test_discovery_uv_store_is_searched_after_path PASSED
 tests/test_discovery_extra.py::test_propose_interpreters_abs_path_oserror PASSED
 tests/test_discovery_extra.py::test_propose_interpreters_try_first_with_valid PASSED
 tests/test_discovery_extra.py::test_propose_interpreters_try_first_with_missing PASSED
@@ -218,6 +230,23 @@ tests/test_iter_interpreters.py::test_iter_interpreters_uv_yields_when_interroga
 tests/test_iter_interpreters.py::test_iter_interpreters_uv_layout[pypy-unix-with-python-symlink] PASSED
 tests/test_iter_interpreters.py::test_iter_interpreters_uv_layout[graalpy-unix] PASSED
 tests/test_iter_interpreters.py::test_iter_interpreters_uv_layout[windows-all-impls] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[bare-version-skips-alternative-implementations] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[implementation-spec-reaches-pypy] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[newest-version-first] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[final-release-before-prerelease] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[version-rules-out-the-rest] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[specifier-rules-out-the-rest] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[t-suffix-wants-freethreaded] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[d-suffix-wants-debug] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[dbg-suffix-wants-debug] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[unconstrained-debug-ranks-second] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[graalpy-key-version-does-not-filter] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[unrecognized-directory-probed-last] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[bookkeeping-entries-skipped] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[install-subdirectory-layout] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probe_order[enumeration-orders-implementations] PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_minor_version_link_loses_to_its_target PASSED
+tests/test_iter_interpreters.py::test_iter_interpreters_uv_probes_one_executable_per_install PASSED
 tests/test_py_info_extra.py::test_py_info_pypy_version PASSED
 tests/test_py_info_extra.py::test_py_info_canonicalizes_graalvm PASSED
 tests/test_py_info_extra.py::test_has_venv_attribute PASSED
@@ -537,6 +566,6 @@ tests/windows/test_windows_pep514.py::test_pep514_run SKIPPED (path ...)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 505 passed, 15 skipped, 1 warning ========
+======== 534 passed, 15 skipped, 1 warning ========
   py$(PYV): OK
   congratulations :)

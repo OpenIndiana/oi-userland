@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_discovery
-HUMAN_VERSION =			1.5.0
+HUMAN_VERSION =			1.5.1
 COMPONENT_SUMMARY =		Python interpreter discovery
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/python-discovery
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3e014c6327154d3dda27939a9a0dc9c5c000439f1906d3f303b48f984bd2ecef
+	sha256:e2ea8b884cd1701f386eda8cf327b87743f1dc21b7f784470799537d95635384
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -45,7 +45,6 @@ COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 REQUIRED_PACKAGES.python += library/python/filelock
 REQUIRED_PACKAGES.python += library/python/hatch-vcs
 REQUIRED_PACKAGES.python += library/python/hatchling
-REQUIRED_PACKAGES.python += library/python/platformdirs
 REQUIRED_PACKAGES.python += runtime/python
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
 TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
