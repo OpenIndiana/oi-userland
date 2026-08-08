@@ -29,10 +29,10 @@ BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elixir
-COMPONENT_VERSION=	1.20.2
+COMPONENT_VERSION=	1.20.3
 COMPONENT_SUMMARY= Elixir is a functional programming language for building highly scalable and maintainable applications.
 COMPONENT_PROJECT_URL=	https://elixir-lang.org/
-COMPONENT_ARCHIVE_HASH=	sha256:1a25bbf9a9016651fc332eecc02bb9681d0b8e722c2e256e73ddb88fbce6e6b0
+COMPONENT_ARCHIVE_HASH=	sha256:ff22a894b130631443db1a193b4e8cb4762f697128566e43da848fd16c3777bd
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= ${COMPONENT_SRC}.tar.gz
 COMPONENT_ARCHIVE_URL=	https://github.com/elixir-lang/$(COMPONENT_NAME)/archive/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
