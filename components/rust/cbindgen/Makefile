@@ -18,10 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cbindgen
-HUMAN_VERSION =			0.29.2
+HUMAN_VERSION =			0.29.4
 COMPONENT_SUMMARY =		A tool for generating C bindings to Rust code.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:befbfd072a8e81c02f8c507aefce431fe5e7d051f83d48a23ffc9b9fe5a11799
+	sha256:2ecb53484c9c167ba674026b656d8a27d7657a58e6066aa902bfb1a4aa00ae20
 COMPONENT_FMRI =		developer/rust/cbindgen
 COMPONENT_CLASSIFICATION =	Development/Other Languages
 COMPONENT_LICENSE =		MPL-2.0
