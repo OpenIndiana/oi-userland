@@ -4,7 +4,7 @@ platform sunos5 -- Python 3.9.25, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 974 items
+collecting ... collected 1011 items
 
 tests/test_android.py::test_android[user_data_dir-no_args] PASSED
 tests/test_android.py::test_android[user_data_dir-app_name] PASSED
@@ -928,6 +928,7 @@ tests/test_windows.py::test_windows[site_applications_dir-app_name_version] PASS
 tests/test_windows.py::test_windows[site_runtime_dir-no_args] PASSED
 tests/test_windows.py::test_windows[site_runtime_dir-app_name] PASSED
 tests/test_windows.py::test_windows[site_runtime_dir-app_name_version] PASSED
+tests/test_windows.py::test_user_desktop_dir PASSED
 tests/test_windows.py::test_roaming_uses_appdata PASSED
 tests/test_windows.py::test_non_roaming_uses_local_appdata PASSED
 tests/test_windows.py::test_appauthor_false_skips_author PASSED
@@ -940,6 +941,7 @@ tests/test_windows.py::test_get_win_folder_from_env_vars_user_folders[downloads]
 tests/test_windows.py::test_get_win_folder_from_env_vars_user_folders[pictures] PASSED
 tests/test_windows.py::test_get_win_folder_from_env_vars_user_folders[video] PASSED
 tests/test_windows.py::test_get_win_folder_from_env_vars_user_folders[music] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_user_folders[desktop] PASSED
 tests/test_windows.py::test_get_win_folder_from_env_vars_programs PASSED
 tests/test_windows.py::test_get_win_folder_from_env_vars_unknown PASSED
 tests/test_windows.py::test_get_win_folder_from_env_vars_unset PASSED
@@ -949,6 +951,7 @@ tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var[downloads] 
 tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var[pictures] PASSED
 tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var[video] PASSED
 tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var[music] PASSED
+tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var[desktop] PASSED
 tests/test_windows.py::test_get_win_folder_if_csidl_name_not_env_var_programs PASSED
 tests/test_windows.py::test_get_win_folder_via_ctypes_real[CSIDL_APPDATA] SKIPPED
 tests/test_windows.py::test_get_win_folder_via_ctypes_real[CSIDL_COMMON_APPDATA] SKIPPED
@@ -965,6 +968,40 @@ tests/test_windows.py::test_get_win_folder_via_ctypes_passes_dont_verify_flag PA
 tests/test_windows.py::test_get_win_folder_via_ctypes_unknown_csidl PASSED
 tests/test_windows.py::test_get_win_folder_via_ctypes_builds_once PASSED
 tests/test_windows.py::test_get_win_folder_via_ctypes_null_result PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_unknown PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_COMMON_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_COMMON_PROGRAMS] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_DESKTOPDIRECTORY] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_DOWNLOADS] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_LOCAL_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_MYMUSIC] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_MYPICTURES] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_MYVIDEO] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_PERSONAL] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_knows_every_known_folder[CSIDL_PROGRAMS] PASSED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_APPDATA] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_COMMON_APPDATA] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_COMMON_PROGRAMS] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_DESKTOPDIRECTORY] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_DOWNLOADS] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_LOCAL_APPDATA] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_MYMUSIC] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_MYPICTURES] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_MYVIDEO] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_PERSONAL] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_registry_real[CSIDL_PROGRAMS] SKIPPED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_COMMON_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_COMMON_PROGRAMS] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_DESKTOPDIRECTORY] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_DOWNLOADS] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_LOCAL_APPDATA] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_MYMUSIC] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_MYPICTURES] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_MYVIDEO] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_PERSONAL] PASSED
+tests/test_windows.py::test_get_win_folder_from_env_vars_knows_every_known_folder[CSIDL_PROGRAMS] PASSED
 tests/test_windows.py::test_known_folder_guids_has_all_csidl_names PASSED
 tests/test_windows.py::test_pick_get_win_folder_ctypes PASSED
 tests/test_windows.py::test_get_win_folder_override[appdata] PASSED
@@ -983,6 +1020,6 @@ tests/test_windows.py::test_get_win_folder_override_strips_whitespace PASSED
 
 - generated xml file: $(@D)/.tox/py$(PYV)/tmp/junit.xml -
 ============================= slowest 10 durations =============================
-======== 883 passed, 91 skipped ========
+======== 909 passed, 102 skipped ========
   py$(PYV): OK
   congratulations :)
