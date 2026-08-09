@@ -21,7 +21,8 @@ COMPONENT_VERSION ?=		$(shell echo $(HUMAN_VERSION) | $(GSED) -e 's/+.*//')
 COMPONENT_SRC ?=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE ?=		$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL ?=	https://crates.io/crates/$(COMPONENT_NAME)/
-COMPONENT_ARCHIVE_URL ?=	https://crates.io/api/v1/crates/$(COMPONENT_NAME)/$(HUMAN_VERSION)/download
+# see https://github.com/rust-lang/crates.io/issues/13482#issuecomment-4304855751
+COMPONENT_ARCHIVE_URL ?=	https://static.crates.io/crates/$(COMPONENT_NAME)/$(HUMAN_VERSION)/download
 
 # Use the generic cargo vendor support
 CARGO_VENDOR = yes
