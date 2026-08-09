@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         fts-xapian
 COMPONENT_VERSION=      1.9.1
+COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=      FTS Xapian plugin for Dovecot
 COMPONENT_PROJECT_URL=  https://github.com/grosjo/fts-xapian
 COMPONENT_FMRI=         mail/dovecot/fts-xapian
@@ -49,4 +50,3 @@ REQUIRED_PACKAGES += database/sqlite-3
 REQUIRED_PACKAGES += developer/icu
 REQUIRED_PACKAGES += library/xapian
 REQUIRED_PACKAGES += system/library
-REQUIRED_PACKAGES += system/library/math
