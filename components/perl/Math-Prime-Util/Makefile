@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Prime-Util
-HUMAN_VERSION =			0.74
+HUMAN_VERSION =			0.75
 COMPONENT_SUMMARY =		Utilities related to prime numbers, including fast sieves and factoring
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:58a966ac5deecef92407e31d2c19411ee462f48e8443211d865ff2e6c83cc140
+	sha256:85c17cbeb5927d71f024a2e1f197bff61e1ca6da249053e1683b62c894bb8881
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -38,6 +38,7 @@ REQUIRED_PACKAGES.perl += library/perl-5/math-bigint
 REQUIRED_PACKAGES.perl += library/perl-5/math-bigint-gmp
 REQUIRED_PACKAGES.perl += library/perl-5/math-gmpz
 REQUIRED_PACKAGES.perl += library/perl-5/math-prime-util-gmp
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/bignum
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
