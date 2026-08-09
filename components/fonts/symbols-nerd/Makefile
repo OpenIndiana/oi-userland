@@ -17,14 +17,14 @@ BUILD_STYLE= archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	symbols-nerd
-COMPONENT_VERSION= 3.4.0
+COMPONENT_VERSION= 3.5.0
 COMPONENT_SUMMARY= Just the Nerd Font Icons. I.e Symbol font only
 COMPONENT_DESCRIPTION= The emacs package nerd-icons can make use of the mono font
 COMPONENT_PROJECT_URL= https://www.nerdfonts.com
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.xz
 COMPONENT_ARCHIVE_URL=	https://github.com/ryanoasis/nerd-fonts/releases/download/v$(COMPONENT_VERSION)/NerdFontsSymbolsOnly.tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7f8c090da3b0eaa7108646bf34cbbb6ed13d5358a72460522108b06c7ecd716a
+COMPONENT_ARCHIVE_HASH= sha256:b7ef2283462b435f1fe91d729dc412d5dbe34269dd2c7f4e1d803e4105c8d883
 COMPONENT_FMRI=		system/font/truetype/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Fonts
 COMPONENT_LICENSE=	MIT
