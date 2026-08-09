@@ -28,13 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	6.0.3
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	6.0.5
 COMPONENT_SUMMARY=	gnuplot - plotting utility
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:ec52e3af8c4083d4538152b3f13db47f6d29929a3f6ecec5365c834e77f251ab
+COMPONENT_ARCHIVE_HASH=	sha256:73237f37f03306d68bfae133a9a50d5e9341384e198d5ab37eeca9ab534deed8
 COMPONENT_ARCHIVE_URL=	https://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_FMRI=	image/gnuplot
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -55,15 +54,15 @@ CFLAGS += $(XPG6MODE)
 
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 
-PATH= $(PATH.gnu):$(QT5_BINDIR)
-PKG_CONFIG_PATH=$(PKG_CONFIG_PATH.$(BITS)):$(QT5_PKG_CONFIG_PATH)
-LD_OPTIONS += -L$(QT5_LIBDIR) -R$(QT5_LIBDIR)
+PATH= $(PATH.gnu):$(QT6_BINDIR)
+PKG_CONFIG_PATH= $(PKG_CONFIG_PATH.$(BITS)):$(QT6_PKG_CONFIG_PATH)
+LD_OPTIONS += -L$(QT6_LIBDIR) -R$(QT6_LIBDIR)
 
 #CONFIGURE_OPTIONS  += --sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS  += --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  += --x-libraries=$(CONFIGURE_LIBDIR.64)
 CONFIGURE_OPTIONS  += --without-libcerf
-CONFIGURE_OPTIONS  += --with-qt=qt5
+CONFIGURE_OPTIONS  += --with-qt=qt6
 CONFIGURE_OPTIONS  += --enable-year2038
 CONFIGURE_OPTIONS  += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  += CXXFLAGS="$(CXXFLAGS)"
@@ -73,15 +72,25 @@ DEMODEST= $(PROTO_DIR)/usr/demo/gnuplot
 # Copy collected demo files into its destination folder.
 COMPONENT_POST_INSTALL_ACTION += ( \
 	$(MKDIR) $(DEMODEST); \
-	$(CP) -r $(SOURCE_DIR)/demo/* $(DEMODEST); \
-	$(CP) -r $(BUILD_DIR_64)/demo/* $(DEMODEST); \
-	$(CP) $(COMPONENT_DIR)/files/rundemo $(COMPONENT_DIR)/files/runtcldemo $(DEMODEST)/ \
+	$(CP) -rf $(SOURCE_DIR)/demo/* $(DEMODEST); \
+	$(CP) -rf $(BUILD_DIR_64)/demo/* $(DEMODEST); \
+	$(CP) -f $(COMPONENT_DIR)/files/rundemo $(COMPONENT_DIR)/files/runtcldemo $(DEMODEST)/ \
 );
 
 COMPONENT_POST_INSTALL_ACTION += ( \
 	$(MKDIR) $(PROTOUSRSHAREDIR)/info ; \
 	$(CP) -r $(BUILD_DIR_64)/docs/gnuplot.info $(PROTOUSRSHAREDIR)/info/ \
 );
+
+COMPONENT_TEST_ENV += QT_DEBUG_PLUGINS=1
+COMPONENT_TEST_ENV += QT_QPA_PLATFORM=offscreen
+
+COMPONENT_TEST_TRANSFORMS += \
+	'-e "/This plugin does not support raise/d" ' \
+	'-e "/Hit return to continue/d" ' \
+	'-e "/Hit enter to continue/d" ' \
+	'-e "/^<cr> to continue/d" ' \
+	'-e "/^make/d" '
 
 # Manually added dependencies
 REQUIRED_PACKAGES += editor/gnu-emacs
@@ -97,7 +106,7 @@ REQUIRED_PACKAGES += library/gd
 REQUIRED_PACKAGES += library/glib2
 REQUIRED_PACKAGES += library/graphics/wxwidgets-3
 REQUIRED_PACKAGES += library/libwebp
-REQUIRED_PACKAGES += library/qt5
+REQUIRED_PACKAGES += library/qt6
 REQUIRED_PACKAGES += runtime/lua
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
