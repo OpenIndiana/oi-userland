@@ -20,10 +20,10 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		packaging
-HUMAN_VERSION =			26.2
+HUMAN_VERSION =			26.3
 COMPONENT_SUMMARY =		Core utilities for Python packages
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
+	sha256:94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79
 COMPONENT_LICENSE =		Apache-2.0 OR BSD-2-Clause
 
 TEST_STYLE = pytest
