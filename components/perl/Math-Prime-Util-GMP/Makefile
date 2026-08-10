@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Math-Prime-Util-GMP
-HUMAN_VERSION =			0.53
+HUMAN_VERSION =			0.54
 COMPONENT_SUMMARY =		Utilities related to prime numbers, using GMP
 COMPONENT_CPAN_AUTHOR =		DANAJ
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0d763bfc5a2f327ee688ca7b6ade7b013e733b3f0bcfe291b72b31d57607b163
+	sha256:5ad4be0f8d349432fbe10df67bc3a82b4bc4b0bade2a13e2c8a35b7fb9ddfd1f
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
