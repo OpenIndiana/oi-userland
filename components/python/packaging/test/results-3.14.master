@@ -6,11 +6,12 @@ sysconfig platform: solaris-2.11-i86pc.64bit
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 61845 items / 332 deselected / 61513 selected
+collecting ... collected 62850 items / 427 deselected / 62423 selected
 
 tests/test_dependency_groups.py::test_cyclic_include PASSED
 tests/test_dependency_groups.py::test_cyclic_include_accessed_repeatedly_on_resolver_instance PASSED
 tests/test_dependency_groups.py::test_cyclic_include_many_steps PASSED
+tests/test_dependency_groups.py::test_cyclic_include_pickle_roundtrip PASSED
 tests/test_dependency_groups.py::test_cyclic_include_ring_under_root PASSED
 tests/test_dependency_groups.py::test_cyclic_include_self PASSED
 tests/test_dependency_groups.py::test_dependency_group_include_repr PASSED
@@ -20,6 +21,8 @@ tests/test_dependency_groups.py::test_expand_contract_model_only_does_inner_look
 tests/test_dependency_groups.py::test_lookup_does_not_trigger_cyclic_include PASSED
 tests/test_dependency_groups.py::test_lookup_on_trivial_normalization PASSED
 tests/test_dependency_groups.py::test_lookup_with_include_result PASSED
+tests/test_dependency_groups.py::test_malformed_group_entries_are_not_cached_on_resolver_instance[item0-InvalidDependencyGroupObject-Invalid dependency group item:] PASSED
+tests/test_dependency_groups.py::test_malformed_group_entries_are_not_cached_on_resolver_instance[item1-TypeError-include-group value is not a string] PASSED
 tests/test_dependency_groups.py::test_no_double_parse PASSED
 tests/test_dependency_groups.py::test_no_such_group_name PASSED
 tests/test_dependency_groups.py::test_non_list_data PASSED
@@ -36,6 +39,7 @@ tests/test_dependency_groups.py::test_normalized_name_is_used_for_include_group_
 tests/test_dependency_groups.py::test_normalized_name_is_used_for_include_group_lookups[foo_bar-foo..bar] PASSED
 tests/test_dependency_groups.py::test_normalized_name_is_used_for_include_group_lookups[foo_bar-foo_bar] PASSED
 tests/test_dependency_groups.py::test_resolution_can_capture_multiple_errors_at_once PASSED
+tests/test_dependency_groups.py::test_resolution_collects_invalid_requirement_with_sibling_errors PASSED
 tests/test_dependency_groups.py::test_resolver_init_catches_normalization_conflict PASSED
 tests/test_dependency_groups.py::test_sdual_include_group PASSED
 tests/test_dependency_groups.py::test_single_include_group PASSED
@@ -44,6 +48,15 @@ tests/test_dependency_groups.py::test_unknown_object_shape[item0] PASSED
 tests/test_dependency_groups.py::test_unknown_object_shape[item1] PASSED
 tests/test_dependency_groups.py::test_unknown_object_shape[item2] PASSED
 tests/test_direct_url.py::test_commit_id_type PASSED
+tests/test_direct_url.py::test_dir_info_url_file_absolute_case_insensitive[FILE:///home/myproject] PASSED
+tests/test_direct_url.py::test_dir_info_url_file_absolute_case_insensitive[File:///home/myproject] PASSED
+tests/test_direct_url.py::test_dir_info_url_file_absolute_case_insensitive[file://localhost/home/myproject] PASSED
+tests/test_direct_url.py::test_dir_info_url_file_absolute_case_insensitive[file:/home/myproject] PASSED
+tests/test_direct_url.py::test_dir_info_url_requires_absolute_file_url[file:./relative] PASSED
+tests/test_direct_url.py::test_dir_info_url_requires_absolute_file_url[file://localhost] PASSED
+tests/test_direct_url.py::test_dir_info_url_requires_absolute_file_url[file://relative] PASSED
+tests/test_direct_url.py::test_dir_info_url_requires_absolute_file_url[file:] PASSED
+tests/test_direct_url.py::test_dir_info_url_requires_absolute_file_url[file:relative] PASSED
 tests/test_direct_url.py::test_dir_info_url_scheme_file PASSED
 tests/test_direct_url.py::test_direct_url_round_trips[direct_url_dict0] PASSED
 tests/test_direct_url.py::test_direct_url_round_trips[direct_url_dict1] PASSED
@@ -55,22 +68,24 @@ tests/test_direct_url.py::test_missing_url PASSED
 tests/test_direct_url.py::test_one_info_field[direct_url_dict0] PASSED
 tests/test_direct_url.py::test_one_info_field[direct_url_dict1] PASSED
 tests/test_direct_url.py::test_one_info_field[direct_url_dict2] PASSED
-tests/test_direct_url.py::test_strip_url[https://${TOKEN}@g.c/user/repo.git-safe_user_passwords9-https://${TOKEN}@g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[https://${USER}:${PASSWORD}@g.c/user/repo.git-safe_user_passwords6-https://${USER}:${PASSWORD}@g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[https://${TOKEN}@g.c/user/repo.git-safe_user_passwords10-https://${TOKEN}@g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[https://${USER}:${PASSWORD}@g.c/user/repo.git-safe_user_passwords7-https://${USER}:${PASSWORD}@g.c/user/repo.git] PASSED
 tests/test_direct_url.py::test_strip_url[https://g.c/user/repo.git-safe_user_passwords0-https://g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[https://git:${PASSWORD}@g.c/user/repo.git-safe_user_passwords8-https://g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[https://user:${PASSWORD}@g.c/user/repo.git-safe_user_passwords7-https://g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[https://git:${PASSWORD}@g.c/user/repo.git-safe_user_passwords9-https://g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[https://user:${PASSWORD}@g.c/user/repo.git-safe_user_passwords8-https://g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[https://user:pa@ss@g.c/user/repo.git-safe_user_passwords2-https://g.c/user/repo.git] PASSED
 tests/test_direct_url.py::test_strip_url[https://user:pass@g.c/user/repo.git-safe_user_passwords1-https://g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[ssh://cvs@g.c/user/repo.git-safe_user_passwords4-ssh://g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[ssh://cvs@g.c/user/repo.git-safe_user_passwords5-ssh://cvs@g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[ssh://git@g.c/user/repo.git-safe_user_passwords2-ssh://g.c/user/repo.git] PASSED
-tests/test_direct_url.py::test_strip_url[ssh://git@g.c/user/repo.git-safe_user_passwords3-ssh://git@g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[ssh://cvs@g.c/user/repo.git-safe_user_passwords5-ssh://g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[ssh://cvs@g.c/user/repo.git-safe_user_passwords6-ssh://cvs@g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[ssh://git@g.c/user/repo.git-safe_user_passwords3-ssh://g.c/user/repo.git] PASSED
+tests/test_direct_url.py::test_strip_url[ssh://git@g.c/user/repo.git-safe_user_passwords4-ssh://git@g.c/user/repo.git] PASSED
 tests/test_direct_url.py::test_to_dict_generate_legacy_hash PASSED
 tests/test_direct_url.py::test_to_dict_generate_legacy_hash_multiple_hashes PASSED
 tests/test_direct_url.py::test_to_dict_generate_legacy_hash_no_hashes PASSED
 tests/test_direct_url.py::test_to_dict_no_strip_url PASSED
 tests/test_direct_url.py::test_to_dict_strip_url PASSED
 tests/test_direct_url.py::test_to_dict_strip_url_git_safe_default PASSED
+tests/test_direct_url.py::test_to_dict_strip_url_with_at_in_password PASSED
 tests/test_direct_url.py::test_validate PASSED
 tests/test_direct_url.py::test_validate_archive_info_hash_different_in_hashes PASSED
 tests/test_direct_url.py::test_validate_archive_info_hash_invalid_format PASSED
@@ -101,6 +116,11 @@ tests/test_errors.py::test_error_collector_no_errors PASSED
 tests/test_errors.py::test_error_collector_on_exit PASSED
 tests/test_errors.py::test_error_collector_on_exit_no_errors PASSED
 tests/test_licenses.py::test_exceptions PASSED
+tests/test_licenses.py::test_invalid_spdx_with_or_licenseref_forms[(MIT OR Apache-2.0) WITH Classpath-exception-2.0] PASSED
+tests/test_licenses.py::test_invalid_spdx_with_or_licenseref_forms[(MIT) WITH Classpath-exception-2.0] PASSED
+tests/test_licenses.py::test_invalid_spdx_with_or_licenseref_forms[LicenseRef-] PASSED
+tests/test_licenses.py::test_invalid_spdx_with_or_licenseref_forms[MIT WITH Classpath-exception-2.0 WITH GCC-exception-3.1] PASSED
+tests/test_licenses.py::test_licenseref_plus_suffix_is_invalid PASSED
 tests/test_licenses.py::test_licenses PASSED
 tests/test_manylinux.py::test_check_glibc_version_warning[2] PASSED
 tests/test_manylinux.py::test_check_glibc_version_warning[glibc-2.4.5] PASSED
@@ -146,6 +166,7 @@ tests/test_markers.py::TestMarker::test_different_markers_different_hashes[pytho
 tests/test_markers.py::TestMarker::test_environment_assumes_empty_extra PASSED
 tests/test_markers.py::TestMarker::test_environment_with_extra_none PASSED
 tests/test_markers.py::TestMarker::test_environment_with_no_extras PASSED
+tests/test_markers.py::TestMarker::test_evaluate_does_not_mutate_cached_environment PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[os.name == 'posix'-None-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.machine=='x86_64'-environment3-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluate_pep345_markers[platform.python_implementation=='Jython'-environment4-False] PASSED
@@ -168,6 +189,7 @@ tests/test_markers.py::TestMarker::test_evaluates[os_name == 'posix'-None-True] 
 tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment6-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment7-True] PASSED
 tests/test_markers.py::TestMarker::test_evaluates[python_version ~= '2.7.0' and (os_name == 'foo' or os_name == 'bar')-environment8-False] PASSED
+tests/test_markers.py::TestMarker::test_extra_compared_to_variable_not_normalized PASSED
 tests/test_markers.py::TestMarker::test_extra_str_normalization PASSED
 tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[and-in-dependency_groups] PASSED
 tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[and-in-extras] PASSED
@@ -189,12 +211,23 @@ tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-i
 tests/test_markers.py::TestMarker::test_extras_and_dependency_groups[value-not-in-negated-extras] PASSED
 tests/test_markers.py::TestMarker::test_extras_and_dependency_groups_disallowed[dependency_groups] PASSED
 tests/test_markers.py::TestMarker::test_extras_and_dependency_groups_disallowed[extras] PASSED
+tests/test_markers.py::TestMarker::test_membership_value_str_normalization[dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_membership_value_str_normalization[extras] PASSED
+tests/test_markers.py::TestMarker::test_membership_value_str_normalization_negated[dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_membership_value_str_normalization_negated[extras] PASSED
+tests/test_markers.py::TestMarker::test_missing_environment_key_raises_undefined_environment_name PASSED
+tests/test_markers.py::TestMarker::test_nested_extra_str_normalization PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version == "2.7" and os_name == "linux"] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version == "2.7") with random text] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[(python_version)] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[python_version >= 1.0 and (python_version)] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[python_version] PASSED
 tests/test_markers.py::TestMarker::test_parses_invalid[this_isnt_a_real_variable >= '1.0'] PASSED
+tests/test_markers.py::TestMarker::test_parses_invalid_malformed_quoted_string[os_name == "C:\\"-packaging.markers.InvalidMarker: Invalid quoted string\n    os_name == "C:\\"\n               ~~~~~^] PASSED
+tests/test_markers.py::TestMarker::test_parses_invalid_malformed_quoted_string[os_name == "\\x"-packaging.markers.InvalidMarker: Invalid quoted string\n    os_name == "\\x"\n               ~~~~^] PASSED
+tests/test_markers.py::TestMarker::test_parses_invalid_trailing_line_break[\n] PASSED
+tests/test_markers.py::TestMarker::test_parses_invalid_trailing_line_break[\r\n] PASSED
+tests/test_markers.py::TestMarker::test_parses_invalid_trailing_line_break[\r] PASSED
 tests/test_markers.py::TestMarker::test_parses_pep345_valid['1.0' != os.name] PASSED
 tests/test_markers.py::TestMarker::test_parses_pep345_valid['1.0' != platform.machine] PASSED
 tests/test_markers.py::TestMarker::test_parses_pep345_valid['1.0' != platform.python_implementation] PASSED
@@ -915,6 +948,9 @@ tests/test_markers.py::TestMarker::test_parses_setuptools_legacy_valid[python_im
 tests/test_markers.py::TestMarker::test_parses_setuptools_legacy_valid[python_implementation ~= 'freebsd'] PASSED
 tests/test_markers.py::TestMarker::test_parses_setuptools_legacy_valid[python_implementation ~= 'literally any string can go here'] PASSED
 tests/test_markers.py::TestMarker::test_parses_setuptools_legacy_valid[python_implementation ~= 'things @#4 dsfd ((('] PASSED
+tests/test_markers.py::TestMarker::test_parses_trailing_horizontal_whitespace[ \t] PASSED
+tests/test_markers.py::TestMarker::test_parses_trailing_horizontal_whitespace[ ] PASSED
+tests/test_markers.py::TestMarker::test_parses_trailing_horizontal_whitespace[\t] PASSED
 tests/test_markers.py::TestMarker::test_parses_valid['1.0' != extra] PASSED
 tests/test_markers.py::TestMarker::test_parses_valid['1.0' != implementation_name] PASSED
 tests/test_markers.py::TestMarker::test_parses_valid['1.0' != implementation_version] PASSED
@@ -2357,6 +2393,15 @@ tests/test_markers.py::TestMarker::test_parses_valid[sys_platform ~= 'literally 
 tests/test_markers.py::TestMarker::test_parses_valid[sys_platform ~= 'things @#4 dsfd ((('] PASSED
 tests/test_markers.py::TestMarker::test_python_full_version_untagged PASSED
 tests/test_markers.py::TestMarker::test_python_full_version_untagged_user_provided PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[!=-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[!=-extras] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[<=-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[<=-extras] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[==-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[==-extras] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[>=-dependency_groups] PASSED
+tests/test_markers.py::TestMarker::test_set_valued_marker_on_lhs_raises_undefined_comparison[>=-extras] PASSED
+tests/test_markers.py::TestMarker::test_str_repr_eq_hash['a" == os_name or python_version >= "0" or "b' == os_name-'a" == os_name or python_version >= "0" or "b' == os_name] PASSED
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[(python_version == "2.7" and sys_platform == "win32")-python_version == "2.7" and sys_platform == "win32"] PASSED
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[(python_version == "2.7")-python_version == "2.7"] PASSED
 tests/test_markers.py::TestMarker::test_str_repr_eq_hash[python_version == "2.7" and (sys_platform == "win32" or sys_platform == "linux")-python_version == "2.7" and (sys_platform == "win32" or sys_platform == "linux")] PASSED
@@ -2382,7 +2427,12 @@ tests/test_markers.py::TestNode::test_repr[one] PASSED
 tests/test_markers.py::TestNode::test_repr[two] PASSED
 tests/test_markers.py::TestNode::test_str[one] PASSED
 tests/test_markers.py::TestNode::test_str[two] PASSED
+tests/test_markers.py::TestNode::test_value_serialize_chooses_quote_delimiter[a"b-'a"b'] PASSED
+tests/test_markers.py::TestNode::test_value_serialize_chooses_quote_delimiter[a'b-"a'b"] PASSED
+tests/test_markers.py::TestNode::test_value_serialize_chooses_quote_delimiter[plain-"plain"] PASSED
+tests/test_markers.py::TestNode::test_value_serialize_rejects_both_quote_delimiters PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_allows_prerelease PASSED
+tests/test_markers.py::TestOperatorEvaluation::test_arbitrary_equality_on_non_version_key_is_undefined PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_fails_when_undefined PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_new_string_rules PASSED
 tests/test_markers.py::TestOperatorEvaluation::test_prefers_pep440 PASSED
@@ -2409,24 +2459,45 @@ tests/test_markers.py::test_pickle_marker_setstate_rejects_invalid_state PASSED
 tests/test_markers.py::test_pickle_node_roundtrip PASSED
 tests/test_markers.py::test_pickle_node_setstate_rejects_invalid_state PASSED
 tests/test_markers.py::test_right_hand_ops_and_typeerror PASSED
+tests/test_markers.py::test_str_preserves_nested_group_precedence PASSED
 tests/test_metadata.py::TestExceptionGroup::test_attributes PASSED
 tests/test_metadata.py::TestExceptionGroup::test_repr PASSED
+tests/test_metadata.py::TestInvalidMetadata::test_pickle_roundtrip PASSED
 tests/test_metadata.py::TestMetadata::test_caching PASSED
 tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[metadata-version] PASSED
 tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[name] PASSED
 tests/test_metadata.py::TestMetadata::test_disallowed_dynamic[version] PASSED
 tests/test_metadata.py::TestMetadata::test_from_email PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_collects_required_fields_after_unparsed_known_header PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_collects_unknown_and_invalid_fields PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_collects_unparsed_and_invalid_fields PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_collects_unparsed_field_with_valid_raw_metadata PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_deduplicates_unparsed_required_fields[Metadata-Version: 2.6\nMetadata-Version: 2.5\nName: packaging\nVersion: 1.0\n-metadata-version] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_deduplicates_unparsed_required_fields[Metadata-Version: 2.6\nName: packaging\nName: packaging-copy\nVersion: 1.0\n-name] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_deduplicates_unparsed_required_fields[Metadata-Version: 2.6\nName: packaging\nVersion: 1.0\nVersion: 2.0\n-version] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_description_content_type_lowercase_charset PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_empty_import_name PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_empty_metadata_uses_from_email_error_message PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_keeps_non_metadata_validation_errors PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_unparsed PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_unparsed_valid_field_name PASSED
 tests/test_metadata.py::TestMetadata::test_from_email_validate PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_validate_returns_valid_metadata PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_wraps_description_content_type_parse_errors[text/plain; a}b] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_wraps_description_content_type_parse_errors[text/plain; charset="unterminated] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_wraps_description_content_type_parse_errors[text/plain; x*] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_wraps_description_content_type_parse_errors[text/plain; {b}] PASSED
+tests/test_metadata.py::TestMetadata::test_from_email_wraps_description_content_type_parse_errors[text/plain\n folded] PASSED
 tests/test_metadata.py::TestMetadata::test_from_raw_validate PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_charset_error_message PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[application/json] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/markdown; variant=commonmark] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/markdown; variant=gfm] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; a}b] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=ascii] PASSED
-tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; charset=utf-8] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; x*] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_description_content_type[text/plain; {b}] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_description_content_type_without_defects PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_dynamic_value PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[not-valid-import_names] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_import_names_identifier[not-valid-import_namespaces] PASSED
@@ -2442,16 +2513,21 @@ tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) or mit
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) or mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[( ) with ( ) or mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[()] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[(mit OR Apache-2.0) WITH Classpath-exception-2.0] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[(mit) WITH Classpath-exception-2.0] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[(mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[) mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Apache-2.0 OR 2-BSD-Clause] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-Foo+] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License with spaces] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-License_with_underscores] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[LicenseRef-] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[Use-it-after-midnight] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and mit] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[and] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit (] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit WITH Classpath-exception-2.0 WITH GCC-exception-3.1] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit and ( )] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit and] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_license_expression[mit or apache-2.0 (bsd-3-clause and MPL-2.0)] PASSED
@@ -2476,8 +2552,11 @@ tests/test_metadata.py::TestMetadata::test_invalid_name PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_provides_extra PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_requires_dist PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_requires_python PASSED
-tests/test_metadata.py::TestMetadata::test_invalid_summary PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_summary[Hello\n    Again] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_summary[Hello\rAgain] PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_summary[Hello\u2028Again] PASSED
 tests/test_metadata.py::TestMetadata::test_invalid_version PASSED
+tests/test_metadata.py::TestMetadata::test_invalid_version_with_placeholder_text PASSED
 tests/test_metadata.py::TestMetadata::test_keywords PASSED
 tests/test_metadata.py::TestMetadata::test_metadata_version_field_introduction[2.2] PASSED
 tests/test_metadata.py::TestMetadata::test_metadata_version_field_introduction[2.3] PASSED
@@ -2523,6 +2602,7 @@ tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[requires_ex
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[requires_python] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[summary] PASSED
 tests/test_metadata.py::TestMetadata::test_optional_defaults_to_none[supported_platforms] PASSED
+tests/test_metadata.py::TestMetadata::test_pep808_dynamic_with_static_values PASSED
 tests/test_metadata.py::TestMetadata::test_raw_data_not_mutated PASSED
 tests/test_metadata.py::TestMetadata::test_raw_validate_unrecognized_field PASSED
 tests/test_metadata.py::TestMetadata::test_required_fields PASSED
@@ -2545,6 +2625,8 @@ tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/m
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/markdown; variant=GFM] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/markdown] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/plain; charset=UTF-8] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/plain; charset=Utf-8] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/plain; charset=utf-8] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/plain] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst; charset=UTF-8] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_description_content_type[text/x-rst] PASSED
@@ -2589,6 +2671,9 @@ tests/test_metadata.py::TestMetadata::test_valid_metadata_version[1.2] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.1] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.2] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.3] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.4] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.5] PASSED
+tests/test_metadata.py::TestMetadata::test_valid_metadata_version[2.6] PASSED
 tests/test_metadata.py::TestMetadata::test_valid_name PASSED
 tests/test_metadata.py::TestMetadata::test_valid_project_urls PASSED
 tests/test_metadata.py::TestMetadata::test_valid_provides_extra PASSED
@@ -2611,16 +2696,29 @@ tests/test_metadata.py::TestMetadataWriting::test_headers[order 1] PASSED
 tests/test_metadata.py::TestMetadataWriting::test_headers[order 2] PASSED
 tests/test_metadata.py::TestMetadataWriting::test_headers[simple] PASSED
 tests/test_metadata.py::TestMetadataWriting::test_headers[unicode] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\r\n] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\r] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\u2028] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\u2029] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x0b] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x0c] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x1c] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x1d] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x1e] PASSED
+tests/test_metadata.py::TestMetadataWriting::test_headers_fold_every_line_boundary[\x85] PASSED
 tests/test_metadata.py::TestMetadataWriting::test_large PASSED
 tests/test_metadata.py::TestMetadataWriting::test_modern_license PASSED
 tests/test_metadata.py::TestMetadataWriting::test_multiline_license PASSED
 tests/test_metadata.py::TestMetadataWriting::test_write_metadata PASSED
+tests/test_metadata.py::TestMetadataWriting::test_write_metadata_with_carriage_return PASSED
 tests/test_metadata.py::TestMetadataWriting::test_write_metadata_with_description PASSED
 tests/test_metadata.py::TestRawMetadata::test_bytes_input PASSED
 tests/test_metadata.py::TestRawMetadata::test_complete PASSED
 tests/test_metadata.py::TestRawMetadata::test_description[description: hello] PASSED
 tests/test_metadata.py::TestRawMetadata::test_description[hello0] PASSED
 tests/test_metadata.py::TestRawMetadata::test_description[hello1] PASSED
+tests/test_metadata.py::TestRawMetadata::test_description_multipart_payload[False] PASSED
+tests/test_metadata.py::TestRawMetadata::test_description_multipart_payload[True] PASSED
 tests/test_metadata.py::TestRawMetadata::test_description_multiple[description: 1\n\n2-expected1] PASSED
 tests/test_metadata.py::TestRawMetadata::test_description_multiple[description: 1\ndescription: 2-expected0] PASSED
 tests/test_metadata.py::TestRawMetadata::test_description_multiple[description: 1\ndescription: 2\n\n3-expected2] PASSED
@@ -2719,9 +2817,10 @@ tests/test_pylock.py::test_dist_filename[dist1-example-1.0.tar.gz] PASSED
 tests/test_pylock.py::test_dist_filename[dist10-example-1.0-py3-none-any.whl] PASSED
 tests/test_pylock.py::test_dist_filename[dist11-example-1.0-py3-none-any.whl] PASSED
 tests/test_pylock.py::test_dist_filename[dist12-example-1.0-py3-none-any.whl] PASSED
-tests/test_pylock.py::test_dist_filename[dist13-example-2.0-py3-none-any.whl] PASSED
+tests/test_pylock.py::test_dist_filename[dist13-example-2.12.1+cu130-py3-none-any.whl] PASSED
 tests/test_pylock.py::test_dist_filename[dist14-example-2.0-py3-none-any.whl] PASSED
-tests/test_pylock.py::test_dist_filename[dist15-example-1.0-py3-none-any.whl] PASSED
+tests/test_pylock.py::test_dist_filename[dist15-example-2.0-py3-none-any.whl] PASSED
+tests/test_pylock.py::test_dist_filename[dist16-example-1.0-py3-none-any.whl] PASSED
 tests/test_pylock.py::test_dist_filename[dist2-example-1.0.tar.gz] PASSED
 tests/test_pylock.py::test_dist_filename[dist3-example-1.0.tar.gz] PASSED
 tests/test_pylock.py::test_dist_filename[dist4-example-1.0.tar.gz] PASSED
@@ -2739,6 +2838,7 @@ tests/test_pylock.py::test_missing_sdist_filename PASSED
 tests/test_pylock.py::test_missing_wheel_filename PASSED
 tests/test_pylock.py::test_package_name_validation PASSED
 tests/test_pylock.py::test_pylock_basic_package PASSED
+tests/test_pylock.py::test_pylock_bool_rejected_for_int PASSED
 tests/test_pylock.py::test_pylock_extras_and_groups PASSED
 tests/test_pylock.py::test_pylock_file_name[pylock..toml-False] PASSED
 tests/test_pylock.py::test_pylock_file_name[pylock.json-False] PASSED
@@ -2778,6 +2878,8 @@ tests/test_pylock.py::test_validate_attestation_identity_invalid_kind PASSED
 tests/test_pylock.py::test_validate_attestation_identity_missing_kind PASSED
 tests/test_pylock.py::test_validate_sequence_of_str PASSED
 tests/test_pylock_select.py::test_duplicate_packages PASSED
+tests/test_pylock_select.py::test_empty_tags_rejects_wheel_only_lock PASSED
+tests/test_pylock_select.py::test_empty_tags_selects_sdist_instead_of_host_compatible_wheel PASSED
 tests/test_pylock_select.py::test_extras_and_groups[None-None-expected0] PASSED
 tests/test_pylock_select.py::test_extras_and_groups[None-dependency_groups1-expected1] PASSED
 tests/test_pylock_select.py::test_extras_and_groups[None-dependency_groups2-expected2] PASSED
@@ -2793,9 +2895,345 @@ tests/test_pylock_select.py::test_lock_require_python_mismatch PASSED
 tests/test_pylock_select.py::test_missing_sdist_fallback PASSED
 tests/test_pylock_select.py::test_package_require_python_mismatch PASSED
 tests/test_pylock_select.py::test_package_select_by_marker PASSED
+tests/test_pylock_select.py::test_prefer_sdist_predicate[compatible-wheel-no-sdist] PASSED
+tests/test_pylock_select.py::test_prefer_sdist_predicate[compatible-wheel-predicate-false] PASSED
+tests/test_pylock_select.py::test_prefer_sdist_predicate[sdist-only-predicate-false] PASSED
+tests/test_pylock_select.py::test_prefer_sdist_predicate[sdist-predicate-true-incompatible-wheel] PASSED
+tests/test_pylock_select.py::test_prefer_sdist_predicate[sdist-predicate-true] PASSED
+tests/test_pylock_select.py::test_python_prerelease PASSED
 tests/test_pylock_select.py::test_sdist_fallback PASSED
 tests/test_pylock_select.py::test_smoke_test PASSED
 tests/test_pylock_select.py::test_yield_all_types PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_complement_is_negation PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_complement_to_specifier_set_roundtrips PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_double_complement_matches PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_intersection_is_and PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_to_specifier_set_roundtrips PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_union_is_or PASSED
+tests/test_ranges.py::TestAlgebraInvariants::test_union_to_specifier_set_roundtrips PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1!1.0a2.dev0->1!1.0a1] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0.dev6->1.0.dev5] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0.post0.dev1->1.0.post0.dev0] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0a1.dev6->1.0a1.dev5] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0a1.post1.dev0->1.0a1.post0] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0a1.post1.dev6->1.0a1.post1.dev5] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_equal_and_hash[>=1.0a2.dev0->1.0a1] PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_keeps_non_dev_anchor PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_plain_version_is_not_folded PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_prerelease_policy_keeps_them_distinct PASSED
+tests/test_ranges.py::TestBoundaryCanonicalization::test_upper_bound_folds_to_boundary PASSED
+tests/test_ranges.py::TestConstruction::test_cannot_construct_directly PASSED
+tests/test_ranges.py::TestConstruction::test_empty PASSED
+tests/test_ranges.py::TestConstruction::test_empty_with_prereleases PASSED
+tests/test_ranges.py::TestConstruction::test_full PASSED
+tests/test_ranges.py::TestConstruction::test_full_no_arbitrary PASSED
+tests/test_ranges.py::TestConstruction::test_full_with_prereleases PASSED
+tests/test_ranges.py::TestConstruction::test_singleton PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_above_floor_stays_strict PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_accepts_version PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_floor_is_canonical_and_strict PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_invalid PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_is_strict PASSED
+tests/test_ranges.py::TestConstruction::test_singleton_with_prereleases PASSED
+tests/test_ranges.py::TestContains::test_contains_arbitrary_literal PASSED
+tests/test_ranges.py::TestContains::test_contains_installed PASSED
+tests/test_ranges.py::TestContains::test_contains_literal_prerelease_autodetect PASSED
+tests/test_ranges.py::TestContains::test_contains_literal_prerelease_excluded PASSED
+tests/test_ranges.py::TestContains::test_contains_prereleases_false PASSED
+tests/test_ranges.py::TestContains::test_contains_reject PASSED
+tests/test_ranges.py::TestContains::test_contains_typeerror PASSED
+tests/test_ranges.py::TestContains::test_contains_unparsable_full PASSED
+tests/test_ranges.py::TestContains::test_contains_unparsable_non_full PASSED
+tests/test_ranges.py::TestContains::test_contains_version_and_str PASSED
+tests/test_ranges.py::TestCoverageEdges::test_after_posts_boundary_total_order_consistent PASSED
+tests/test_ranges.py::TestCoverageEdges::test_arbitrary_after_locals_dev PASSED
+tests/test_ranges.py::TestCoverageEdges::test_build_admit_and_reject PASSED
+tests/test_ranges.py::TestCoverageEdges::test_combine_literal_reject PASSED
+tests/test_ranges.py::TestCoverageEdges::test_complement_post_boundary PASSED
+tests/test_ranges.py::TestCoverageEdges::test_complement_singleton_floor PASSED
+tests/test_ranges.py::TestCoverageEdges::test_complement_zero_singleton PASSED
+tests/test_ranges.py::TestCoverageEdges::test_configured_false_le_roundtrip PASSED
+tests/test_ranges.py::TestCoverageEdges::test_configured_false_lower_keeps_dev0 PASSED
+tests/test_ranges.py::TestCoverageEdges::test_configured_false_multi_bound_roundtrip PASSED
+tests/test_ranges.py::TestCoverageEdges::test_configured_false_upper_keeps_dev0 PASSED
+tests/test_ranges.py::TestCoverageEdges::test_contains_literal_nonprerelease_false_policy PASSED
+tests/test_ranges.py::TestCoverageEdges::test_double_complement_min_boundary PASSED
+tests/test_ranges.py::TestCoverageEdges::test_encode_interval_undecomposable_dev0 PASSED
+tests/test_ranges.py::TestCoverageEdges::test_eq_full_region_mismatch PASSED
+tests/test_ranges.py::TestCoverageEdges::test_eq_ranges_filter_identically PASSED
+tests/test_ranges.py::TestCoverageEdges::test_equal_wildcard_cross_epoch_interval PASSED
+tests/test_ranges.py::TestCoverageEdges::test_exact_equals_successor_interval_bounds PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_arbitrary_after_final PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_false_mixed PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_prerelease_after_final PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_prerelease_buffer PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_true_skips_rejected PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_admission_two_finals PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_literal_nonmatching_string PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_universal_false_yields_final PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_universal_two_finals PASSED
+tests/test_ranges.py::TestCoverageEdges::test_filter_universal_unparsable_after_final PASSED
+tests/test_ranges.py::TestCoverageEdges::test_floor_exclusive_upper_is_empty PASSED
+tests/test_ranges.py::TestCoverageEdges::test_ge_floor_is_canonical_full PASSED
+tests/test_ranges.py::TestCoverageEdges::test_lte_and_post_dev_upper_same_bounds PASSED
+tests/test_ranges.py::TestCoverageEdges::test_multi_wildcard_adjacent_roundtrips PASSED
+tests/test_ranges.py::TestCoverageEdges::test_multi_wildcard_wildcard_exclusion_roundtrips PASSED
+tests/test_ranges.py::TestCoverageEdges::test_multi_wildcard_with_exclusion_roundtrips PASSED
+tests/test_ranges.py::TestCoverageEdges::test_ne_floor_drops_empty_leading_interval PASSED
+tests/test_ranges.py::TestCoverageEdges::test_not_equal_local_gap PASSED
+tests/test_ranges.py::TestCoverageEdges::test_strict_singleton_complement_no_form PASSED
+tests/test_ranges.py::TestCoverageEdges::test_sub_minimum_union PASSED
+tests/test_ranges.py::TestCoverageEdges::test_two_singletons_complement_no_form PASSED
+tests/test_ranges.py::TestCoverageEdges::test_union_after_locals_successor_merge PASSED
+tests/test_ranges.py::TestCoverageEdges::test_wildcard_chain_cross_epoch_gap PASSED
+tests/test_ranges.py::TestDeliberateNonIdentities::test_absorption_keeps_inner_opt_in PASSED
+tests/test_ranges.py::TestDeliberateNonIdentities::test_double_complement_is_erasure_not_identity PASSED
+tests/test_ranges.py::TestDeliberateNonIdentities::test_double_difference_sheds_opt_in PASSED
+tests/test_ranges.py::TestDeliberateNonIdentities::test_excluded_middle_and_union_with_full_overshoot PASSED
+tests/test_ranges.py::TestDeliberateNonIdentities::test_union_does_not_distribute_over_intersection PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_arbitrary_admission_is_not_empty PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_non_prerelease_bounds_survive[>=1.0.post0.dev0,<=1.0.post0] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_non_prerelease_bounds_survive[>=1.0] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_non_prerelease_bounds_survive[>=1.0a1.post0,<=1.0] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_non_prerelease_literal_survives PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_prerelease_only_empty_when_policy_excludes[<0.dev1] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_prerelease_only_empty_when_policy_excludes[==0.dev0] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_prerelease_only_empty_when_policy_excludes[==1.0a1,==1.0a1] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_prerelease_only_empty_when_policy_excludes[==1.0a1] PASSED
+tests/test_ranges.py::TestEmptyMatchesUnsatisfiable::test_prerelease_only_empty_when_policy_excludes[===1.0a1] PASSED
+tests/test_ranges.py::TestEquality::test_eq_and_hash PASSED
+tests/test_ranges.py::TestEquality::test_eq_wrong_type PASSED
+tests/test_ranges.py::TestEquality::test_neq_bounds PASSED
+tests/test_ranges.py::TestEquality::test_repr[-<VersionRange '(-inf, +inf)' arbitrary>] PASSED
+tests/test_ranges.py::TestEquality::test_repr[>=1.0,<2.0-<VersionRange '[1.0, 2.0.dev0)'>] PASSED
+tests/test_ranges.py::TestEquality::test_repr[>=2.0,<1.0-<VersionRange '(empty)'>] PASSED
+tests/test_ranges.py::TestEquality::test_repr_arbitrary_literal PASSED
+tests/test_ranges.py::TestEquality::test_repr_boundary_kinds PASSED
+tests/test_ranges.py::TestEquality::test_repr_pre PASSED
+tests/test_ranges.py::TestEquality::test_repr_reject PASSED
+tests/test_ranges.py::TestFilter::test_filter_admission_modes PASSED
+tests/test_ranges.py::TestFilter::test_filter_admission_reject PASSED
+tests/test_ranges.py::TestFilter::test_filter_admission_with_final PASSED
+tests/test_ranges.py::TestFilter::test_filter_autodetect_true PASSED
+tests/test_ranges.py::TestFilter::test_filter_bounds PASSED
+tests/test_ranges.py::TestFilter::test_filter_key PASSED
+tests/test_ranges.py::TestFilter::test_filter_prereleases_default_buffers PASSED
+tests/test_ranges.py::TestFilter::test_filter_prereleases_false PASSED
+tests/test_ranges.py::TestFilter::test_filter_prereleases_true PASSED
+tests/test_ranges.py::TestFilter::test_filter_universal PASSED
+tests/test_ranges.py::TestFilter::test_flush_follows_in_place_yields PASSED
+tests/test_ranges.py::TestFilter::test_intersected_requirement_keeps_opt_in[==2.0.0b1->=1.0.0,<=3.0.0-versions0-expected0] PASSED
+tests/test_ranges.py::TestFilter::test_intersected_requirement_keeps_opt_in[>1.0.0,!=2.0.0b1,<2.0.0b5->=1.0.0,<=3.0.0-versions2-expected2] PASSED
+tests/test_ranges.py::TestFilter::test_intersected_requirement_keeps_opt_in[>=2.0.0b1->=1.0.0,<=3.0.0-versions1-expected1] PASSED
+tests/test_ranges.py::TestFilter::test_narrowing_excludes_every_final_flushes_buffer PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_configured_policy_with_prerelease_spec_mirrors_specifier_set PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_construction_region_matches_algebra PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_by_empty_bounds_range PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_by_empty_preserves_empty_self PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_equals_intersect_complement_when_b_complement_derived PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_excludes_other_by_bounds PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_keeps_minuend_region_clipped PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_minuend_with_configured_policy PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_minuend_with_literal_and_region PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_difference_of_two_region_bearing_ranges PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_disjoint_region_does_not_force_admit_gap PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_double_complement_drops_region_keeps_versions PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_empty_bounds_intersection_equals_empty PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_force_admit_does_not_suppress_buffer PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_full_intersection_keeps_operand_opt_in PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_intersection_with_complement_equals_difference PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_multi_interval_region_force_admits PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_named_literal_prerelease_is_force_admitted PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_narrowing_permanently_sheds_out_of_bounds_opt_in PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_region_force_admit_through_key PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_region_upper_bound_clips_force_admit PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_union_filter_buffers_as_one_set PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_union_filter_emits_buffered_prerelease_when_no_final PASSED
+tests/test_ranges.py::TestPrereleaseRegion::test_union_keeps_opt_in_scoped_to_originating_range PASSED
+tests/test_ranges.py::TestSetAlgebra::test_arbitrary_flag_distinguishes_full PASSED
+tests/test_ranges.py::TestSetAlgebra::test_complement PASSED
+tests/test_ranges.py::TestSetAlgebra::test_complement_full_is_empty PASSED
+tests/test_ranges.py::TestSetAlgebra::test_complement_of_arbitrary_range PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_by_empty_keeps_arbitrary_admission PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_excludes_only_named_literal PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_keeps_minuend_prerelease_policy PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_method_matches_operator PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_minuend_with_reject_literal PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_punches_hole PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_requires_matching_policy PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_shrink_forgets_arbitrary_admission PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_empty_is_self PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_empty_preserves_arbitrary PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_empty_preserves_literals PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_full_is_empty PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_literals PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_with_self_is_empty PASSED
+tests/test_ranges.py::TestSetAlgebra::test_difference_wrong_type_raises PASSED
+tests/test_ranges.py::TestSetAlgebra::test_empty_does_not_revive_arbitrary_admission PASSED
+tests/test_ranges.py::TestSetAlgebra::test_floor_singleton_obeys_structural_laws PASSED
+tests/test_ranges.py::TestSetAlgebra::test_full_intersect_arbitrary_keeps_literal PASSED
+tests/test_ranges.py::TestSetAlgebra::test_intersection PASSED
+tests/test_ranges.py::TestSetAlgebra::test_intersection_two_arbitrary PASSED
+tests/test_ranges.py::TestSetAlgebra::test_intersection_with_full_preserves_arbitrary PASSED
+tests/test_ranges.py::TestSetAlgebra::test_intersection_wrong_type_raises PASSED
+tests/test_ranges.py::TestSetAlgebra::test_operator_wrong_type PASSED
+tests/test_ranges.py::TestSetAlgebra::test_policy_mismatch_raises PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_full_collapses PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_full_keeps_explicit_policy PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_full_preserves_autodetected_prerelease_policy PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_of_empty_ranges_keeps_arbitrary_flag PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_two_arbitrary PASSED
+tests/test_ranges.py::TestSetAlgebra::test_union_with_empty_preserves PASSED
+tests/test_ranges.py::TestSetRelations::test_disjoint_false PASSED
+tests/test_ranges.py::TestSetRelations::test_disjoint_higher_range_on_left PASSED
+tests/test_ranges.py::TestSetRelations::test_disjoint_nonempty_excludes_subset PASSED
+tests/test_ranges.py::TestSetRelations::test_disjoint_shared_inclusive_endpoint PASSED
+tests/test_ranges.py::TestSetRelations::test_empty_is_subset_of_everything PASSED
+tests/test_ranges.py::TestSetRelations::test_everything_is_subset_of_full PASSED
+tests/test_ranges.py::TestSetRelations::test_full_arbitrary_matches_algebra PASSED
+tests/test_ranges.py::TestSetRelations::test_literal_range_subset PASSED
+tests/test_ranges.py::TestSetRelations::test_literal_ranges_disjoint PASSED
+tests/test_ranges.py::TestSetRelations::test_multi_interval_subset PASSED
+tests/test_ranges.py::TestSetRelations::test_mutual_subset_despite_unequal_region PASSED
+tests/test_ranges.py::TestSetRelations::test_nonempty_not_subset_of_empty PASSED
+tests/test_ranges.py::TestSetRelations::test_policy_mismatch_raises PASSED
+tests/test_ranges.py::TestSetRelations::test_prerelease_excluding_policy_matches_algebra PASSED
+tests/test_ranges.py::TestSetRelations::test_subset_arbitrary_admission PASSED
+tests/test_ranges.py::TestSetRelations::test_subset_false PASSED
+tests/test_ranges.py::TestSetRelations::test_subset_partial_overlap_false PASSED
+tests/test_ranges.py::TestSetRelations::test_subset_reflexive PASSED
+tests/test_ranges.py::TestSetRelations::test_subset_true PASSED
+tests/test_ranges.py::TestSetRelations::test_superset_mirrors_subset PASSED
+tests/test_ranges.py::TestSetRelations::test_wrong_type_raises PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_complement_of_covering_union_is_empty PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_double_complement_of_empty PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_equal_substitutability PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_intersection_drops_embedded_empty[!=1.0,<1.0.post0.dev0-1.0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_intersection_drops_embedded_empty[!=1.0.dev5,<1.0.dev6-1.0.dev5] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_intersection_drops_embedded_empty[!=1.0.post3,<1.0.post4.dev0-1.0.post3] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1!1.0a1,<1!1.0a2.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1.0,<1.0.post0.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1.0a0,<1.0a1.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1.0a1,<1.0a2.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1.0b0,<1.0b1.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_is_empty[>1.0rc1,<1.0rc2.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_not_empty[>1.0,<1.0.0.1] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_not_empty[>1.0a1,<1.0a2] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_not_empty[>1.0a2,<1.0b0.dev0] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_not_empty[>1.5,<2] PASSED
+tests/test_ranges.py::TestSyntheticEmptyGaps::test_subset_of_anything PASSED
+tests/test_ranges.py::TestToRange::test_any PASSED
+tests/test_ranges.py::TestToRange::test_arbitrary_combined_with_bounds PASSED
+tests/test_ranges.py::TestToRange::test_arbitrary_equality_literal_range PASSED
+tests/test_ranges.py::TestToRange::test_arbitrary_equality_valid_version_literal PASSED
+tests/test_ranges.py::TestToRange::test_explicit_prereleases PASSED
+tests/test_ranges.py::TestToRange::test_gt_excludes_post PASSED
+tests/test_ranges.py::TestToRange::test_lte_includes_local_excludes_post PASSED
+tests/test_ranges.py::TestToRange::test_operators[!=1.5-1.4-1.5] PASSED
+tests/test_ranges.py::TestToRange::test_operators[<1.0-0.9-1.0] PASSED
+tests/test_ranges.py::TestToRange::test_operators[<=1.0-1.0-1.1] PASSED
+tests/test_ranges.py::TestToRange::test_operators[==1.0-1.0-1.1] PASSED
+tests/test_ranges.py::TestToRange::test_operators[==1.2.*-1.2.9-1.3] PASSED
+tests/test_ranges.py::TestToRange::test_operators[>1.0-1.1-1.0] PASSED
+tests/test_ranges.py::TestToRange::test_operators[>=1.0-1.0-0.9] PASSED
+tests/test_ranges.py::TestToRange::test_operators[~=1.4.2-1.4.5-1.5] PASSED
+tests/test_ranges.py::TestToRange::test_prerelease_autodetect PASSED
+tests/test_ranges.py::TestToRange::test_unsatisfiable PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_adjacent_not_equal_chain_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_after_locals_final_lower_recovers PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_after_locals_final_lower_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_after_posts_inclusive_upper_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_arbitrary_admitting_empty_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_arbitrary_literal PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_arbitrary_literal_recovers_bare PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_arbitrary_literal_with_comma_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_bounds_plus_literal_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_complement_closed_interval_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_complement_gt_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_cross_epoch_dev_gap_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_dev0_span_roundtrips_every_policy[False] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_dev0_span_roundtrips_every_policy[None] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_dev0_span_roundtrips_every_policy[True] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_disjoint_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_disjoint_wildcards_roundtrip PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_empty PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_empty_range_recovers_as_canonical_empty PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_base_dev0_lower_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_dev0_with_post_is_not_a_family_floor PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_floor_dev_run_recovers PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_floor_unencodable_upper_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_prerelease_floor_lower_declines_family_form PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_prerelease_singleton_no_opt_in_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_zero_family_floor_roundtrips[!=1!0.dev0,==1!0.*-!=1!0.dev0,==1!0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_zero_family_floor_roundtrips[==1!0.*,<1!0.5-<1!0.5,==1!0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_zero_family_floor_roundtrips[==1!0.*,<=1!0-<=1!0,==1!0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_zero_family_floor_roundtrips[==1!0.0.*,<=1!0.0-<=1!0.0,==1!0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_epoch_zero_family_floor_roundtrips[==2!0.*,<=2!0-<=2!0,==2!0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_equals_singleton_recovers_as_equals PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_explicit_policy_recovers PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_false_policy_disjoint_union_stays_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_false_policy_no_tightening_when_unbounded_above PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_false_policy_recovers_release_equivalent PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_final_after_posts_left_upper_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_floor_dev_run_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_full_arbitrary PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_full_bounds_partial_region_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_full_configured_false PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_full_no_arbitrary_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_leading_interval_post_dev_collapse_recovers PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_literal_sibling_dev_recovers_bare PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_long_not_equal_chain_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_multiple_arbitrary_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_dev_singleton_no_opt_in_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[!=0.*-!=0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[!=0.0.*-!=0.0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[!=0.dev0-!=0.dev0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[!=3.8.dev0,==3.8.*-!=3.7.*,!=3.8.dev0,<3.9,>=3.7] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[!=3.9.dev0,!=3.8.*-!=3.8.*,!=3.9.dev0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[<3.8.post1-<3.8.post1] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[>3.8.post1->3.8.post1] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[>=3,!=3.*-!=3.*,>=3] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_prerelease_free_recovery_spelling[>=3.8,!=3.8.*-!=3.8.*,>=3.8] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_recovery_caps_long_dev_runs PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_reject_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_release_base_dev_floor_recovers PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=0.0.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=0.dev0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=1.5+local] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=1.5] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=3.8.dev0,==3.8.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[!=3.9.dev0,!=3.8.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[<2.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[<3.8.post1] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[<=1.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[==1.0+local] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[==1.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[==1.2.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>1.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>3.8.post1] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=1.0,<2.0,!=1.4,!=1.6] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=1.0,<2.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=1.0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=3,!=3.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=3.8,!=3.8.*] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=3.8,<3.14.dev0] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[>=3.8.dev0,<3.14] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_roundtrip[~=1.4.2] PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_singleton_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_specifier_set_exclusion_cap_returns_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_undecomposable_chain_before_dev0_point_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_whole_region_recovers_with_floor PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_wide_wildcard_gap_none PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_wildcard_then_adjacent_dev_run_roundtrips PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_wildcard_with_exclusion PASSED
+tests/test_ranges.py::TestToSpecifierSet::test_wildcards_then_dev_run_share_cap PASSED
+tests/test_ranges.py::TestUnionOverflowRegression::test_difference_does_not_admit_out_of_bounds_prerelease PASSED
+tests/test_ranges.py::TestUnionOverflowRegression::test_pr1304_union_example PASSED
+tests/test_ranges.py::TestUnionOverflowRegression::test_union_does_not_admit_out_of_bounds_prerelease PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_compare_with_string PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_different_reqs_different_hashes[appdirs>=1.4.4,<2; os_name=="posix" and extra=="testing"-appdirs>=1.4.4,<2; os_name == 'posix' and extra == 'docs'] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_different_reqs_different_hashes[importlib-metadata; python_version<"3.8"-importlib-metadata; python_version<'3.7'] PASSED
@@ -2808,7 +3246,14 @@ tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hash
 tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hashes[importlib-metadata; python_version<"3.8"-importlib-metadata; python_version<'3.8'] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hashes[packaging>20.1-packaging>20.1] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_equal_reqs_equal_hashes[requests[security, tests]>=2.8.1,==2.8.*;python_version<"2.7"-requests [security,tests] >= 2.8.1, == 2.8.* ; python_version < "2.7"] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[fishtank[all-blue]-fishtank[all---blue]] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[fishtank[all-blue]-fishtank[all_blue]] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[fishtank[crazy-bunches]-fishtank[cRazy_BUnches]] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[foo==1.0.0-foo==1.0.0.0] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[foo>=1.0-foo>=1.0.0] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[foo[a]==1.0.0; python_version>="3.8"-foo[a]==1.0.0.0; python_version>="3.8"] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[scikit-learn==1.0.1-scikit_learn==1.0.1] PASSED
+tests/test_requirements.py::TestRequirementBehaviour::test_equivalent_reqs_equal_hashes_unequal_strings[urllib3[secure]-urllib3[SECURE]] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[-- @ https://url ] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--!=2.0] PASSED
 tests/test_requirements.py::TestRequirementBehaviour::test_str_and_repr[--==2.*] PASSED
@@ -2863,6 +3308,8 @@ tests/test_requirements.py::TestRequirementBehaviour::test_types_with_url PASSED
 tests/test_requirements.py::TestRequirementParsing::test_empty_extras PASSED
 tests/test_requirements.py::TestRequirementParsing::test_empty_specifier PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_lvalue PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_malformed_quoted_string[name; os_name == "C:\\"-packaging.requirements.InvalidRequirement: Invalid quoted string\n    name; os_name == "C:\\"\n                     ~~~~~^] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_malformed_quoted_string[name; os_name == "\\x"-packaging.requirements.InvalidRequirement: Invalid quoted string\n    name; os_name == "\\x"\n                     ~~~~^] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_not_without_in PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_notin_without_whitespace PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_invalid_marker_rvalue PASSED
@@ -2888,11 +3335,24 @@ tests/test_requirements.py::TestRequirementParsing::test_error_when_missing_comm
 tests/test_requirements.py::TestRequirementParsing::test_error_when_no_word_boundary PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_when_parens_not_closed_correctly PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_when_prefix_match_is_used_incorrectly PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_prefix_match_uses_post_release[!=] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_prefix_match_uses_post_release[==] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_prefix_match_uses_post_release_without_spaces PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_specifier_set_rejects_parsed_specifier PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name; python_version >= "3"-\n] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name; python_version >= "3"-\r\n] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name; python_version >= "3"-\r] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name>=1-\n] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name>=1-\r\n] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_error_when_suffixed_with_line_break[name>=1-\r] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_error_when_trailing_comma_in_extras PASSED
 tests/test_requirements.py::TestRequirementParsing::test_file_url[file:.] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_file_url[file:/.] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_file_url[file://.] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_file_url[file:///absolute/path] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_trailing_horizontal_whitespace[ \t] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_trailing_horizontal_whitespace[ ] PASSED
+tests/test_requirements.py::TestRequirementParsing::test_trailing_horizontal_whitespace[\t] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_valid_marker['8' in platform.version] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_valid_marker['8' not in platform.version] PASSED
 tests/test_requirements.py::TestRequirementParsing::test_valid_marker[os.name == 'linux'] PASSED
@@ -8087,7 +8547,13 @@ tests/test_requirements.py::test_normalized_requirements[mariadb>=1.0.1; extra =
 tests/test_requirements.py::test_normalized_requirements[mariadb>=1.0.1; python_version >= "3" and extra == "mariadb_connector"-mariadb>=1.0.1; python_version >= "3" and extra == "mariadb-connector"] PASSED
 tests/test_requirements.py::test_pickle_requirement_25_0_format_loads PASSED
 tests/test_requirements.py::test_pickle_requirement_26_0_format_loads PASSED
+tests/test_requirements.py::test_pickle_requirement_26_2_format_loads PASSED
+tests/test_requirements.py::test_pickle_requirement_new_format_preserves_prereleases PASSED
 tests/test_requirements.py::test_pickle_requirement_old_format_loads PASSED
+tests/test_requirements.py::test_pickle_requirement_old_format_preserves_prereleases PASSED
+tests/test_requirements.py::test_pickle_requirement_preserves_prereleases[False] PASSED
+tests/test_requirements.py::test_pickle_requirement_preserves_prereleases[None] PASSED
+tests/test_requirements.py::test_pickle_requirement_preserves_prereleases[True] PASSED
 tests/test_requirements.py::test_pickle_requirement_roundtrip[Django>=1.4.2,!=1.5.0,!=1.5.1; python_version < "3"] PASSED
 tests/test_requirements.py::test_pickle_requirement_roundtrip[my-pkg @ https://example.com] PASSED
 tests/test_requirements.py::test_pickle_requirement_roundtrip[requests>=2.0,<3.0] PASSED
@@ -8096,12 +8562,26 @@ tests/test_requirements.py::test_pickle_requirement_roundtrip[requests>=2.0] PAS
 tests/test_requirements.py::test_pickle_requirement_roundtrip[requests[security,socks]>=2.0] PASSED
 tests/test_requirements.py::test_pickle_requirement_roundtrip[requests] PASSED
 tests/test_requirements.py::test_pickle_requirement_setstate_rejects_invalid_state PASSED
-tests/test_requirements.py::test_pickle_requirement_setstate_rejects_invalid_string PASSED
+tests/test_requirements.py::test_pickle_requirement_setstate_rejects_invalid_string[demo===x,y] PASSED
+tests/test_requirements.py::test_pickle_requirement_setstate_rejects_invalid_string[this is not a valid requirement] PASSED
+tests/test_requirements.py::test_requirement_marker_with_embedded_double_quote_round_trips PASSED
+tests/test_requirements.py::test_requirement_slots PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_and_preserves_unsatisfiable PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_and_reuses_interval_cache PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_and_satisfiable PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_cache_reset_on_prereleases_change PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_canonicalization_keeps_range_cache PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_canonicalization_keeps_unsatisfiable_cache PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_contains_identical_across_canonicalization[!=1.0,>=1.0-versions2] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_contains_identical_across_canonicalization[<2.0,!=1.5,>=1.0-versions1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_contains_identical_across_canonicalization[>1.0,!=1.0.post1-versions3] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_contains_identical_across_canonicalization[>=1.0,>=1.0,<2.0-versions0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_post_release_boundary_unsatisfiable[>1!1.0,<=1!1.0.post1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_post_release_boundary_unsatisfiable[>1.0,<=1.0.post1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_post_release_boundary_unsatisfiable[>1.0,<=1.0.post5] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_post_release_boundary_unsatisfiable[>2.3,<=2.3.post1] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_range_bounds_hashable_and_equal PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_range_bounds_reject_foreign_comparison PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_range_bounds_repr PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_result_is_cached PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[!=1.*,>=2.0] PASSED
@@ -8118,7 +8598,10 @@ tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0+local1,!=1
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0+local1,<=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0+local1,==1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0+local1,>=1.0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0,!=0.5] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0,<=2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0,==1.0.0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0,>=0.5] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0.*,==1.*] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0.*] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[==1.0.dev0,<1.0.post1] PASSED
@@ -8154,6 +8637,7 @@ tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>1.0.post1,<2.0]
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>1.0a1,<1.0a2] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>1.0a1,<1.0b1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>=0,<1.0.post0,!=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>=0.5,!=1.0.*] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>=1!0.0,<1!1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable[>=1!1.0,<1!2.0] PASSED
@@ -8191,16 +8675,21 @@ tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_fals
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[==1.0+local] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[==1.0.post0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[==1.0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[===1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[===foobar] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0,<2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0.dev0,<1.0.post1] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0.dev0,<2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0.dev0,<=1.0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0.post0.dev0,<=1.0.post0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0a1.post0,<=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0rc1,<=1.0.post0,!=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[>=1.0rc1,<=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[~=1.0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_satisfiable_prereleases_false[~=1.0a1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[!=0.dev0,<0.dev1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[!=0.dev0,<=0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[!=1.*,!=2.*,>=1.0,<3.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[<0.0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[<0.0] PASSED
@@ -8236,12 +8725,16 @@ tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[===foobar,>=1.
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[===foobar,>=2.0,<3.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[===not-a-version,~=1.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>0.dev0,<0.dev1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1!1.0a1,<1!1.0a2.dev0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0,<1.0.post0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0,<1.0.post0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0,<1.0.post1] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0.post0,<1.0.post1] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0.post0.dev0,<1.0.post0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0a1,<1.0a1.post1] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0a1,<1.0a1.post2] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0a1,<1.0a2.dev0] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>1.0b0,<1.0b1.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>2.0,<2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>2.0,<=2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[>=1!0.0,<1.0] PASSED
@@ -8272,6 +8765,9 @@ tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[~=1.4.2,~=1.5.
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[~=2.0,<2.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[~=2.0,>=3.0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable[~=2.5,<2.5] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[<0.dev1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[<0a1] PASSED
+tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[<=0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[==0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[==1!1.0.dev0] PASSED
 tests/test_specifiers.py::TestIsUnsatisfiable::test_unsatisfiable_prereleases_false[==1.0.dev0] PASSED
@@ -8875,6 +9371,8 @@ tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.0+5.*] PASS
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.0.*+5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.0.*.5] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.0.dev1.*] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.2+\u0130\u0131\u017fK] PASSED
+tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==1.2+\u0130] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==2.0.dev1.*] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==2.0.post1.*] PASSED
 tests/test_specifiers.py::TestSpecifier::test_specifiers_invalid[==2.0a1.*] PASSED
@@ -9392,6 +9890,12 @@ tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>
 tests/test_specifiers.py::TestSpecifierSet::test_contains_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-1.1a1-False] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_oversized_version_raises_valueerror[>=1.0a11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_oversized_version_raises_valueerror[>=11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>1!1.0,!=1!1.0.post1-1!1.0.post2-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>1.0,!=1.0.post1-1.0.post1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>1.0,!=1.0.post1-1.0.post2-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>1.0,!=1.0.post1-1.0.post2.dev3-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>1.0,!=1.0.post1-1.1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_contains_post_release_boundary_intersection[>2.3,!=2.3.post1-2.3.post2-False] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_rejects_invalid_specifier[>=1.0-not a valid version] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_contains_with_compatible_operator PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_create_from_specifiers PASSED
@@ -9534,7 +10038,45 @@ tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1
 tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-None-input20-expected20] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-input21-expected21] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_filter_exclusionary_bridges[>=1.0a1,!=1.0,<1.1-True-input22-expected22] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_filter_post_release_boundary_intersection PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[->=3.12-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[<3.12->=3.11-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[<3.12->=3.12-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[>=2.0,<1.0->=3.12-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[>=3.12,<3.13-==3.12.1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_disjoint[>=3.12,<3.13->=3.13-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[->=3.12-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>1->2-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>2->1-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>=2.0,<1.0->=3.12-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>=3.12,<3.13->=3.11,<3.13-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>=3.12,<3.13->=3.12,<3.12.5-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>=3.12,<3.13->=3.12,<3.13-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_subset[>=3.12,<3.13->=3.12-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>1->2-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>2->1-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.11,<3.13->=3.12,<3.13-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.12,<3.12.5->=3.12,<3.13-False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.12,<3.13->=3.12,<3.13-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.12--False] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.12->=2.0,<1.0-True] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_is_superset[>=3.12->=3.12,<3.13-True] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_match_args PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_raise_on_prerelease_policy_mismatch[is_disjoint] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_raise_on_prerelease_policy_mismatch[is_subset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_raise_on_prerelease_policy_mismatch[is_superset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[==1.0-===1.0-is_disjoint] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[==1.0-===1.0-is_subset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[==1.0-===1.0-is_superset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===1.0-==1.0-is_disjoint] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===1.0-==1.0-is_subset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===1.0-==1.0-is_superset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===foobar->=1.0-is_disjoint] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===foobar->=1.0-is_subset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_reject_arbitrary_equality[===foobar->=1.0-is_superset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_require_specifierset[is_disjoint] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_require_specifierset[is_subset] PASSED
+tests/test_specifiers.py::TestSpecifierSet::test_set_relations_require_specifierset[is_superset] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[!=2.0-2.0.dev1-None-None-True-True] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[<1.0-0.9.0.dev1-None-None-True-True] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifier_contains_installed_prereleases[<1.0-1.0.0.dev1-None-None-True-False] PASSED
@@ -9704,6 +10246,306 @@ tests/test_specifiers.py::TestSpecifierSet::test_specifiers_str_and_repr[~=2.0-~
 tests/test_specifiers.py::TestSpecifierSet::test_specifierset_filter_with_key[False-expected_indexes2] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifierset_filter_with_key[None-expected_indexes0] PASSED
 tests/test_specifiers.py::TestSpecifierSet::test_specifierset_filter_with_key[True-expected_indexes1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[False-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[None-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent[True-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[>=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_contains_equivalent_with_version_objects[~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[False-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[None-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_filter_equivalent[True-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[False-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[None-~=1.4.2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-!=1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-!=1.4,!=1.6] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<1.0rc1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<=1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<=1.0.post2] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-<=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-==1.0+local] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-==1.0,!=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-==1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-==1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-==2!1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-===1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-===foobar] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->2.0.post1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0,<2.0,!=1.2.*] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0,<2.0,!=1.5] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0,<2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0.dev1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=1.0a1] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=2!1.0,<2!2.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True->=2.0,<1.0] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-] PASSED
+tests/test_specifiers.py::TestSpecifierSetToRangeEquivalence::test_to_specifier_set_roundtrip_matches[True-~=1.4.2] PASSED
+tests/test_specifiers.py::test_boundary_closure_short_release[!=1.2.3-2-True] PASSED
+tests/test_specifiers.py::test_boundary_closure_short_release[<=1.2.3-2-False] PASSED
+tests/test_specifiers.py::test_boundary_closure_short_release[>1.2.3-2-True] PASSED
+tests/test_specifiers.py::test_filter_arbitrary_constructor_prereleases_false_skips_pre PASSED
+tests/test_specifiers.py::test_filter_arbitrary_pep440_pre_only PASSED
+tests/test_specifiers.py::test_filter_arbitrary_pep440_unparsable_buffer_flush PASSED
+tests/test_specifiers.py::test_filter_arbitrary_unparsable_uses_key PASSED
+tests/test_specifiers.py::test_filter_arbitrary_with_prereleases_false_skips_pre PASSED
+tests/test_specifiers.py::test_filter_keyed_none_version_is_skipped PASSED
+tests/test_specifiers.py::test_filter_multirange_pep440_prerelease_after_final PASSED
 tests/test_specifiers.py::test_pickle_setstate_rejects_invalid_state PASSED
 tests/test_specifiers.py::test_pickle_specifier_25_0_format_loads PASSED
 tests/test_specifiers.py::test_pickle_specifier_26_0_slots_format_loads PASSED
@@ -9738,6 +10580,23 @@ tests/test_specifiers.py::test_pickle_specifierset_roundtrip[~=1.0,!=1.1-None] P
 tests/test_specifiers.py::test_pickle_specifierset_setstate_clears_cache PASSED
 tests/test_specifiers.py::test_pickle_specifierset_setstate_on_initialized_instance PASSED
 tests/test_specifiers.py::test_pickle_specifierset_setstate_rejects_malformed_legacy_state PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[!=1.0+local] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[!=1.5] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[<3.0] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[<=2.0] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[==1.*] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[==1.5] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[===wat] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[>0.5] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[>=1.0] PASSED
+tests/test_specifiers.py::test_specifier_construction_is_lazy[~=1.2.3] PASSED
+tests/test_specifiers.py::test_specifier_filter_with_version_iterable_warms_then_reuses_cache PASSED
+tests/test_specifiers.py::test_specifierset_construction_is_lazy[===wat] PASSED
+tests/test_specifiers.py::test_specifierset_construction_is_lazy[>=1.0,<2.0] PASSED
+tests/test_specifiers.py::test_specifierset_construction_is_lazy[>=1.0] PASSED
+tests/test_specifiers.py::test_specifierset_construction_is_lazy[>=3.8,!=3.9.*,!=3.10.0,!=3.10.1,~=3.10.2,<3.14,!=3.11.0] PASSED
+tests/test_specifiers.py::test_specifierset_construction_is_lazy[] PASSED
+tests/test_specifiers.py::test_specifierset_contains_reads_cached_bounds PASSED
 tests/test_tags.py::TestAndroidPlatforms::test_abi PASSED
 tests/test_tags.py::TestAndroidPlatforms::test_api_level PASSED
 tests/test_tags.py::TestAndroidPlatforms::test_detection PASSED
@@ -9787,8 +10646,11 @@ tests/test_tags.py::TestCompatibleTags::test_default_python_version PASSED
 tests/test_tags.py::TestCompatibleTags::test_default_python_version_needs_underscore PASSED
 tests/test_tags.py::TestCompatibleTags::test_major_only_python_version PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_agree PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_cpython_missing_version[.cpython-.so] PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_cpython_missing_version[.cpython.so] PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_disable_gil PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_error[None] PASSED
+tests/test_tags.py::TestGenericTags::test__generic_abi_error[] PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_error[invalid] PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_graal PASSED
 tests/test_tags.py::TestGenericTags::test__generic_abi_jp PASSED
@@ -9854,6 +10716,7 @@ tests/test_tags.py::TestMacOSPlatforms::test_macos_11[11-0] PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_macos_11[11-3] PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_macos_11[12-0] PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_macos_11[12-3] PASSED
+tests/test_tags.py::TestMacOSPlatforms::test_no_mac_ver_when_both_args_given PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_version_detection PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_version_detection_10_15 PASSED
 tests/test_tags.py::TestMacOSPlatforms::test_version_detection_compatibility PASSED
@@ -9884,6 +10747,26 @@ tests/test_tags.py::TestManylinuxPlatform::test_linux_platforms_musllinux[native
 tests/test_tags.py::TestManylinuxPlatform::test_linux_platforms_musllinux[native-x86_64-i686-musl_version3] PASSED
 tests/test_tags.py::TestManylinuxPlatform::test_linux_platforms_not_manylinux_abi[armv7l-armel-armv7l] PASSED
 tests/test_tags.py::TestManylinuxPlatform::test_linux_platforms_not_manylinux_abi[x86_64-x32-i686] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[--] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[py3--any] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[py3-none-] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[py3-none-any.] PASSED
+tests/test_tags.py::TestParseTag::test_empty_component_raises[py3.-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_identifier_interpreter_is_valid[_custom] PASSED
+tests/test_tags.py::TestParseTag::test_identifier_interpreter_is_valid[graalpy311] PASSED
+tests/test_tags.py::TestParseTag::test_identifier_interpreter_is_valid[sillywalk] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_component_count_raises[py3-none-any-extra] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_component_count_raises[py3-none] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_interpreter_raises[2-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_interpreter_raises[2.7.6-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_interpreter_raises[py+3-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_invalid_interpreter_raises[py3.2-none-any] PASSED
+tests/test_tags.py::TestParseTag::test_limit_allows_exact_number_of_tags PASSED
+tests/test_tags.py::TestParseTag::test_limit_can_be_combined_with_validate_order PASSED
+tests/test_tags.py::TestParseTag::test_limit_counts_cartesian_product_entries PASSED
+tests/test_tags.py::TestParseTag::test_limit_raises_when_exceeded PASSED
+tests/test_tags.py::TestParseTag::test_limit_rejects_negative_value PASSED
 tests/test_tags.py::TestParseTag::test_multi_interpreter PASSED
 tests/test_tags.py::TestParseTag::test_multi_platform PASSED
 tests/test_tags.py::TestParseTag::test_simple PASSED
@@ -9892,6 +10775,11 @@ tests/test_tags.py::TestParseTag::test_unsorted_interpreter_parses_by_default PA
 tests/test_tags.py::TestParseTag::test_unsorted_interpreter_raises_with_validate PASSED
 tests/test_tags.py::TestParseTag::test_unsorted_platform_parses_by_default PASSED
 tests/test_tags.py::TestParseTag::test_unsorted_platform_raises_with_validate PASSED
+tests/test_tags.py::TestPurePythonTags::test_default_python_version PASSED
+tests/test_tags.py::TestPurePythonTags::test_does_not_query_platforms PASSED
+tests/test_tags.py::TestPurePythonTags::test_empty_python_version PASSED
+tests/test_tags.py::TestPurePythonTags::test_major_only_python_version PASSED
+tests/test_tags.py::TestPurePythonTags::test_python_version PASSED
 tests/test_tags.py::TestSysTags::test_cpython_first_none_any_tag PASSED
 tests/test_tags.py::TestSysTags::test_emscripten PASSED
 tests/test_tags.py::TestSysTags::test_generic PASSED
@@ -9911,6 +10799,7 @@ tests/test_tags.py::TestSysTags::test_mac_cpython PASSED
 tests/test_tags.py::TestSysTags::test_pyemscripten PASSED
 tests/test_tags.py::TestSysTags::test_pypy_first_none_any_tag PASSED
 tests/test_tags.py::TestSysTags::test_skip_manylinux_2014 PASSED
+tests/test_tags.py::TestSysTags::test_warn_forwarded_to_generic_tags PASSED
 tests/test_tags.py::TestSysTags::test_windows_cpython PASSED
 tests/test_tags.py::TestTag::test_attribute_access PASSED
 tests/test_tags.py::TestTag::test_equality PASSED
@@ -9974,9 +10863,11 @@ tests/test_utils.py::test_canonicalize_version[lolwat-lolwat] PASSED
 tests/test_utils.py::test_canonicalize_version[version0-1.4] PASSED
 tests/test_utils.py::test_canonicalize_version_no_strip_trailing_zero[1.0] PASSED
 tests/test_utils.py::test_canonicalize_version_no_strip_trailing_zero[1.4.0] PASSED
+tests/test_utils.py::test_is_normalized_name[1--1-1-1] PASSED
 tests/test_utils.py::test_is_normalized_name[Foo-foo] PASSED
 tests/test_utils.py::test_is_normalized_name[Foo.....Bar-foo-bar] PASSED
 tests/test_utils.py::test_is_normalized_name[Foo.Bar-foo-bar] PASSED
+tests/test_utils.py::test_is_normalized_name[a--b-a-b] PASSED
 tests/test_utils.py::test_is_normalized_name[fOo-foo] PASSED
 tests/test_utils.py::test_is_normalized_name[foo----bar-foo-bar] PASSED
 tests/test_utils.py::test_is_normalized_name[foo-bar-foo-bar] PASSED
@@ -9986,23 +10877,33 @@ tests/test_utils.py::test_is_normalized_name[foo___bar-foo-bar] PASSED
 tests/test_utils.py::test_is_normalized_name[foo_bar-foo-bar] PASSED
 tests/test_utils.py::test_parse_sdist_filename[foo-1.0.tar.gz-foo-version0] PASSED
 tests/test_utils.py::test_parse_sdist_filename[foo-1.0.zip-foo-version1] PASSED
+tests/test_utils.py::test_parse_sdist_invalid_filename[-1.0.tar.gz] PASSED
+tests/test_utils.py::test_parse_sdist_invalid_filename[-1.0.zip] PASSED
 tests/test_utils.py::test_parse_sdist_invalid_filename[foo-1.0.xz] PASSED
 tests/test_utils.py::test_parse_sdist_invalid_filename[foo-1.x.tar.gz] PASSED
 tests/test_utils.py::test_parse_sdist_invalid_filename[foo1.0.tar.gz] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-1000-py3-none-any.whl-foo-version2-build2-tags2] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-1000abc-py3-none-any.whl-foo-version3-build3-tags3] PASSED
 tests/test_utils.py::test_parse_wheel_filename[foo-1.0-py3-none-any.whl-foo-version0-build0-tags0] PASSED
-tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-1000-py3-none-any.whl-foo-b\xe1r-version6-build6-tags6] PASSED
-tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-py3-none-any.whl-foo-b\xe1r-version5-build5-tags5] PASSED
+tests/test_utils.py::test_parse_wheel_filename[foo-2-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl-foo-version5-build5-tags5] PASSED
+tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-1000-py3-none-any.whl-foo-b\xe1r-version7-build7-tags7] PASSED
+tests/test_utils.py::test_parse_wheel_filename[foo_b\xe1r-1.0-py3-none-any.whl-foo-b\xe1r-version6-build6-tags6] PASSED
 tests/test_utils.py::test_parse_wheel_filename[pyvirtualcam-0.13.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl-pyvirtualcam-version4-build4-tags4] PASSED
 tests/test_utils.py::test_parse_wheel_filename[some_PACKAGE-1.0-py3-none-any.whl-some-package-version1-build1-tags1] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[-1.0-200-py3-none-any.whl] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[-1.0-py3-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo#bar-1.0-py3-none-any.whl] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0--none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-200-py3-none-any-junk.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-abc-py3-none-any.whl] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-py3-none-.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-py3-none-any.wheel] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0-py3.-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo-1.0.whl] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[foo\n-1.0-py3-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foo__bar-1.0-py3-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_invalid_filename[foobar-1.x-py3-none-any.whl] PASSED
+tests/test_utils.py::test_parse_wheel_invalid_filename[playlyfe-0.1.1-2.7.6-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_unsorted_tags_invalid_with_validate[foo-1.0-py3.py2-none-any.whl] PASSED
 tests/test_utils.py::test_parse_wheel_unsorted_tags_invalid_with_validate[pyvirtualcam-0.13.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl] PASSED
 tests/test_utils.py::test_parse_wheel_unsorted_tags_valid_by_default[foo-1.0-py3.py2-none-any.whl] PASSED
@@ -60807,6 +61708,7 @@ tests/test_version.py::TestVersion::test_dunder_op_returns_notimplemented[gt] PA
 tests/test_version.py::TestVersion::test_dunder_op_returns_notimplemented[le] PASSED
 tests/test_version.py::TestVersion::test_dunder_op_returns_notimplemented[lt] PASSED
 tests/test_version.py::TestVersion::test_dunder_op_returns_notimplemented[ne] PASSED
+tests/test_version.py::TestVersion::test_gt_with_cached_other PASSED
 tests/test_version.py::TestVersion::test_invalid_versions[..] PASSED
 tests/test_version.py::TestVersion::test_invalid_versions[.1.0] PASSED
 tests/test_version.py::TestVersion::test_invalid_versions[.] PASSED
@@ -60831,6 +61733,11 @@ tests/test_version.py::TestVersion::test_major_version PASSED
 tests/test_version.py::TestVersion::test_match_args PASSED
 tests/test_version.py::TestVersion::test_micro_version PASSED
 tests/test_version.py::TestVersion::test_minor_version PASSED
+tests/test_version.py::TestVersion::test_non_string_versions_raise_invalid_version[1.0] PASSED
+tests/test_version.py::TestVersion::test_non_string_versions_raise_invalid_version[1] PASSED
+tests/test_version.py::TestVersion::test_non_string_versions_raise_invalid_version[None] PASSED
+tests/test_version.py::TestVersion::test_non_string_versions_raise_invalid_version[version2] PASSED
+tests/test_version.py::TestVersion::test_non_string_versions_raise_invalid_version[version3] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[   v1.0\t\n-1.0] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[00!1.2-1.2] PASSED
 tests/test_version.py::TestVersion::test_normalized_versions[0100!0.0-100!0.0] PASSED
@@ -61504,6 +62411,7 @@ tests/test_version.py::test_from_parts[args6-1.2.3.dev3] PASSED
 tests/test_version.py::test_from_parts[args7-1.2.3+abc] PASSED
 tests/test_version.py::test_from_parts[args8-1.2.3] PASSED
 tests/test_version.py::test_from_parts[args9-1!2.3.4a5.post6.dev7+zzz] PASSED
+tests/test_version.py::test_from_parts_rejects_non_str_pre_letter PASSED
 tests/test_version.py::test_hatchling_usage__version PASSED
 tests/test_version.py::test_parse PASSED
 tests/test_version.py::test_parse_raises PASSED
@@ -61521,6 +62429,8 @@ tests/test_version.py::test_pickle_roundtrip[2.0a1] PASSED
 tests/test_version.py::test_pickle_roundtrip[3.0rc1] PASSED
 tests/test_version.py::test_pickle_setstate_rejects_invalid_state PASSED
 tests/test_version.py::test_structures_shim_repr PASSED
+tests/test_version.py::test_trimmed_release_hash_from_prehashed_version PASSED
+tests/test_version.py::test_trimmed_release_hash_from_unhashed_version PASSED
 
 =========================== short test summary info ============================
-======== 61512 passed, 1 skipped, 332 deselected ========
+======== 62422 passed, 1 skipped, 427 deselected ========
