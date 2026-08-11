@@ -19,12 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Crypt-DES
-HUMAN_VERSION =			2.07
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			2.09
 COMPONENT_SUMMARY =		Perl DES encryption module
-COMPONENT_CPAN_AUTHOR =		DPARIS
+COMPONENT_CPAN_AUTHOR =		TIMLEGGE
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2db1ebb5837b4cb20051c0ee5b733b4453e3137df0a92306034c867621edd7e7
+	sha256:149cdc0a14e944b4cc5eefb7560c78d8cb25254f9f9774547c880355a7e9f40c
 COMPONENT_LICENSE =		BSD-like
 
 include $(WS_MAKE_RULES)/common.mk
@@ -36,6 +35,6 @@ COMPONENT_TEST_TRANSFORMS += '-e "/wallclock/d"'
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/crypt-cbc
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
