@@ -4,7 +4,7 @@ platform sunos5 -- Python 3.9.25, pytest-8.4.2, pluggy-1.6.0 -- /usr/bin/python3
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1011 items
+collecting ... collected 1022 items
 
 tests/test_android.py::test_android[user_data_dir-no_args] PASSED
 tests/test_android.py::test_android[user_data_dir-app_name] PASSED
@@ -683,6 +683,9 @@ tests/test_macos.py::test_iter_data_dirs_xdg PASSED
 tests/test_macos.py::test_iter_config_dirs_xdg PASSED
 tests/test_macos.py::test_iter_data_dirs_homebrew PASSED
 tests/test_macos.py::test_iter_config_dirs_homebrew PASSED
+tests/test_macos.py::test_iter_cache_dirs_homebrew[True] PASSED
+tests/test_macos.py::test_iter_cache_dirs_homebrew[False] PASSED
+tests/test_macos.py::test_iter_cache_paths_homebrew_multipath PASSED
 tests/test_macos.py::test_iter_data_dirs_no_homebrew PASSED
 tests/test_macos.py::test_no_xdg_site_dirs_leak PASSED
 tests/test_macos.py::test_macos_site_runtime_path PASSED
@@ -850,6 +853,14 @@ tests/test_unix.py::test_use_site_for_root_bypasses_xdg_user_vars[XDG_STATE_HOME
 tests/test_unix.py::test_use_site_for_root_bypasses_xdg_user_vars[XDG_STATE_HOME-user_log_dir-/var/log/foo] PASSED
 tests/test_unix.py::test_use_site_iter_dirs_no_duplicates[XDG_DATA_DIRS-iter_data_dirs] PASSED
 tests/test_unix.py::test_use_site_iter_dirs_no_duplicates[XDG_CONFIG_DIRS-iter_config_dirs] PASSED
+tests/test_unix.py::test_use_site_iter_dirs_no_duplicates_single_site_dir[iter_cache_dirs-/var/cache/foo] PASSED
+tests/test_unix.py::test_use_site_iter_dirs_no_duplicates_single_site_dir[iter_state_dirs-/var/lib/foo] PASSED
+tests/test_unix.py::test_use_site_iter_dirs_no_duplicates_single_site_dir[iter_log_dirs-/var/log/foo] PASSED
+tests/test_unix.py::test_use_site_iter_dirs_no_duplicates_single_site_dir[iter_runtime_dirs-/run/foo] PASSED
+tests/test_unix.py::test_iter_dirs_as_non_root_keeps_user_dir[iter_cache_dirs-/var/cache/foo] PASSED
+tests/test_unix.py::test_iter_dirs_as_non_root_keeps_user_dir[iter_state_dirs-/var/lib/foo] PASSED
+tests/test_unix.py::test_iter_dirs_as_non_root_keeps_user_dir[iter_log_dirs-/var/log/foo] PASSED
+tests/test_unix.py::test_iter_dirs_as_non_root_keeps_user_dir[iter_runtime_dirs-/run/foo] PASSED
 tests/test_windows.py::test_windows[user_data_dir-no_args] PASSED
 tests/test_windows.py::test_windows[user_data_dir-app_name] PASSED
 tests/test_windows.py::test_windows[user_data_dir-app_name_version] PASSED
@@ -1020,6 +1031,6 @@ tests/test_windows.py::test_get_win_folder_override_strips_whitespace PASSED
 
 - generated xml file: $(@D)/.tox/py$(PYV)/tmp/junit.xml -
 ============================= slowest 10 durations =============================
-======== 909 passed, 102 skipped ========
+======== 920 passed, 102 skipped ========
   py$(PYV): OK
   congratulations :)
