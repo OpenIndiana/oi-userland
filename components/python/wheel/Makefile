@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		wheel
-HUMAN_VERSION =			0.47.0
+HUMAN_VERSION =			0.48.0
 COMPONENT_SUMMARY =		Command line tool for manipulating wheel files
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:cc72bd1009ba0cf63922e28f94d9d83b920aa2bb28f798a31d0691b02fa3c9b3
+	sha256:94800765601e9171bf5d58d066e640662842bcedcbab982b2c90787a2c987322
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
