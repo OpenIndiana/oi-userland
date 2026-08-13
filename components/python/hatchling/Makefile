@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		hatchling
-HUMAN_VERSION =			1.31.0
+HUMAN_VERSION =			1.32.0
 COMPONENT_SUMMARY =		Modern, extensible Python build backend
 COMPONENT_PROJECT_URL =		https://hatch.pypa.io/latest/
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6b48ad4068a482ed7239b3a8215bc55b47aad3345d58dfc94e553c5d2d46211b
+	sha256:0bdbde4a52b06c37e3eca395f85a762bf0ef06fe374fd8ae429dc6be10230f5f
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
@@ -54,5 +54,6 @@ include $(WS_MAKE_RULES)/common.mk
 REQUIRED_PACKAGES.python += library/python/packaging
 REQUIRED_PACKAGES.python += library/python/pathspec
 REQUIRED_PACKAGES.python += library/python/pluggy
+REQUIRED_PACKAGES.python += library/python/tomlkit
 REQUIRED_PACKAGES.python += library/python/trove-classifiers
 REQUIRED_PACKAGES.python += runtime/python
