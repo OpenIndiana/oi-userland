@@ -1,60 +1,347 @@
-PASS    00-hello
-SKIP    acls-default (Your filesystem has ACLs disabled)
+SKIP    acl-symlink-race (POSIX ACL race test is Linux-only (setfacl/getfacl semantics))
 SKIP    acls (Your filesystem has ACLs disabled)
+SKIP    acls-depth (filesystem does not support setting ACLs)
+SKIP    acls-default (Your filesystem has ACLs disabled)
+SKIP    acls-unpinnable (POSIX ACL test is Linux-only (setfacl/getfacl semantics))
 PASS    alt-dest-symlink-race
-PASS    alt-dest
+SKIP    authenticate-no-ocloexec-build-regression (configured rsync source tree unavailable at /export/home/andreas/oi-userland/components/network/rsync/rsync-3.5.0)
+PASS    append-shortsum
+SKIP    backup-acl-xattr-cache (ACLs not supported on this filesystem)
 PASS    atimes
+PASS    alt-dest-deep
+PASS    append
+SKIP    backup-dir-symlink-race (requires root to plant a backup-dir symlink owned by a non-self uid)
+PASS    backup-dir-repeated-separator-delete
+PASS    backup-dir-relative
+PASS    backup-crossdev-copy
+SKIP    basis-xname-traversal (mal-xname-rsync: needs a configured rsync source tree with a Makefile)
+SKIP    batch-file-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
+PASS    00-hello
+PASS    bare-do-open-symlink-race
+PASS    backup-deep
+PASS    batch-only-remove-source-regression
+PASS    backup-incremental
+PASS    chdir-symlink-race
+SKIP    checksum-zero-blocklen (the pure-Python receiver needs a real TCP socket; run with --use-tcp)
+PASS    chmod-setid
 PASS    backup
-SKIP    bare-do-open-symlink-race (secure_relative_open relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
+PASS    chmod-symlink-race
 PASS    batch-mode
-SKIP    chdir-symlink-race (secure chdir relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
-PASS    chgrp
-PASS    chmod-option
-SKIP    chmod-symlink-race (do_chmod_at relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
 PASS    chmod-temp-dir
 PASS    chmod
-SKIP    chown-fake (Can't chown (probably need root))
+SKIP    chroot-alt-dest-inner-module (chroot /./ module regression requires root)
+PASS    chown-fake
+SKIP    chroot-basis-forge-inner-module (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    chroot-copy-dest-inner-module (chroot /./ module regression requires root)
+SKIP    chroot-link-dest-inner-module (chroot /./ module regression requires root)
+PASS    chmod-option
+SKIP    chroot-special-inner-module (chroot /./ module regression requires root)
 PASS    chown
+SKIP    chroot-receiver-write-inner-module (chroot /./ module regression requires root)
+PASS    clean-fname-collapse
 PASS    clean-fname-underflow
+PASS    connect-prog-host-quoting
+PASS    compress-zlib-insert
 PASS    copy-dest-source-symlink
+PASS    connect-prog-nested-singlequote-host-injection
+PASS    alt-dest
+SKIP    copy-dest-symlink-readleak (requires root to plant a copy-dest symlink owned by a non-self uid)
+SKIP    copy-xattrs-symlink-race (parent-flip xattr race is checked on Linux (os.*xattr))
 SKIP    crtimes (Rsync is configured without crtimes support)
-SKIP    daemon-chroot-acl (test is Linux-specific (uses chroot+unshare))
+SKIP    daemon-access-ip (hosts allow/deny address matching needs a real TCP peer)
+SKIP    daemon-argv-limit (raw malicious daemon client needs a real TCP daemon; run with --use-tcp)
+PASS    cvs-exclude
+SKIP    daemon-auth-group (@group daemon-auth coverage is Linux-specific)
+PASS    compare
+PASS    daemon-auth-digest-floor
+PASS    compress-options
+SKIP    daemon-chroot-acl (needs a real TCP peer address for reverse-DNS hostname ACL; run with --use-tcp)
+PASS    daemon-auth
+SKIP    daemon-chroot (use chroot = yes needs root (CAP_SYS_CHROOT))
+SKIP    daemon-chroot-munge-default (chroot regimes (B/C) need root; verified the no-chroot regime munges by default)
+PASS    daemon-auth-users-comma-only
+PASS    chgrp
+SKIP    daemon-config-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
+PASS    daemon-access
+PASS    daemon-copy-links-symlink
+PASS    daemon-copylinks-intree
+SKIP    daemon-deny-dns-failopen (hosts deny DNS-failure matching needs a real TCP peer)
+PASS    daemon-config
+PASS    daemon-copylinks-parent-escape
+SKIP    daemon-dot-file-force-wipe (the malicious daemon client needs a real TCP socket; run with --use-tcp)
+PASS    daemon-delete-stats
+PASS    daemon-exclude-from-outside-module
+PASS    daemon-early-exec-nameconv
+PASS    daemon-exclude-namebased
+PASS    daemon-exec-rsync-env-shell-escape
+PASS    daemon-exec-second-shell-argument-injection
+PASS    daemon-copylinks-parent-target-regression
+PASS    daemon-exec-singlequote-injection
+PASS    daemon-exec-metachar-documented-limit
+PASS    daemon-filter-merge-bypass
+PASS    daemon-groupmap-wild
+PASS    daemon-filter
+PASS    daemon-exec-metachar-refused
+SKIP    daemon-http-proxy (RSYNC_PROXY uses open_socket_out(), needs a real TCP connect)
+SKIP    daemon-handshake-timeout (raw stalled clients need a real TCP daemon; run with --use-tcp)
+SKIP    daemon-leaf-type-race-fchmod (leaf-type authority proof currently requires Darwin)
+SKIP    daemon-max-alloc-zero (/export/home/andreas/oi-userland/components/network/rsync/rsync-3.5.0/old_versions/rsync_3.2.7 not present)
+PASS    daemon-link-dest-escape
+PASS    daemon-include-maxconn
 PASS    daemon-gzip-download
+SKIP    daemon-module-chdir-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
 PASS    daemon-gzip-upload
+SKIP    daemon-module-options (motd/socket-options need a real socket)
+SKIP    daemon-module-private-parent (requires root (a 0700 parent the served uid cannot traverse, and a daemon that drops to an unprivileged uid))
+SKIP    daemon-namecvt-newline-token (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    daemon-namecvt-empty-response (this Python build lacks os.getxattr to read fake-super metadata)
+PASS    daemon-exec
+PASS    daemon-path-root-read
+SKIP    daemon-proxy-protocol (PROXY-protocol header is read from a real TCP socket; run with --use-tcp)
+PASS    daemon-path-rsync-var
+PASS    daemon-munge
+SKIP    daemon-refuse-compress-threads-alias (the malicious receiver needs a real TCP daemon; run with --use-tcp)
+PASS    daemon-scan-cwd-desync
+SKIP    daemon-secrets-file-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
+PASS    daemon-scan-dir-escape
+SKIP    daemon-standalone-detach (standalone detaching daemon opens a real loopback listener; run with --use-tcp)
+PASS    daemon-subdir-climb-symlink
+SKIP    daemon-symlink-escape-matrix (the daemon symlink-resolution flow needs a real TCP peer)
+SKIP    daemon-unix-socket-atfd (cannot create unix-domain socket fixture: AF_UNIX path too long)
+SKIP    daemon-zstd-thread-exhaustion (the malicious receiver needs a real TCP daemon; run with --use-tcp)
+PASS    daemon-strict-modes-matrix
+PASS    change-shrink
 PASS    daemon-refuse-compress
+PASS    change-vanish
+PASS    daemon-size-arg-overflow
 PASS    daemon
+PASS    delay-updates-deep
+PASS    delete-missing-args-files-from
+PASS    deep-path
 PASS    delay-updates
-PASS    delete
-SKIP    devices-fake (Can't create char device node)
-PASS    devices
+PASS    dest-symlinked-dir
+PASS    dirs
 PASS    dir-sgid
+SKIP    early-input-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
+PASS    delete
 PASS    duplicates
-PASS    exclude-lsh
-PASS    exclude
+SKIP    exclude-implied-trailing-backslash (a real network rsync daemon is needed (am_server==0 per-module); run with --use-tcp)
+SKIP    excludefrom-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
 PASS    executability
+SKIP    fake-super-acl-xattr (fake-super ACL xattrs use the Linux user.rsync.* namespace)
+PASS    daemon-refuse
+PASS    delete-deep
+SKIP    fake-super-backup-fifo-regression (deterministic fast-path failure needs dyld/ELF interposing)
+SKIP    files-from-leak (requires root to plant a backup-dir symlink owned by a non-self uid)
+PASS    files-from-path-clamp
+PASS    file-to-file-mkpath-dry-run
+PASS    daemon-refuse-delete-alias
+PASS    files-from-depth
+SKIP    filter-leak (requires root to plant a backup-dir symlink owned by a non-self uid)
+PASS    devices-fake
+PASS    filter-depth
+SKIP    filter-merge-symlink (requires root to plant a symlink owned by a non-self uid (simulates the 'root runs `rsync -a /home /backup`' case))
+PASS    filter-merge-recursion
+PASS    fuzzy-basis
+PASS    devices
+PASS    git-set-file-times-python-compat-regression
 PASS    files-from
-PASS    fuzzy
+PASS    hardlinks-deep
+PASS    hashsearch-chain
+PASS    hashtable-overflow
+PASS    filter-merge-content-echo
+SKIP    highfd-hang (RLIMIT_NOFILE hard cap 65536 < 65680; cannot place fds above FD_SETSIZE (65536) to exercise issue #231)
+SKIP    inband-modname-leak (the daemon @ERROR handshake needs a real TCP peer)
 PASS    hands
+SKIP    insecure-links-admin-optout (requires root to plant a foreign-owned symlink and serve as root)
+SKIP    io-noop-flood-recursion (the pure-Python client needs a real TCP daemon; run with --use-tcp)
+SKIP    io-nosend-flood-recursion (the pure-Python client needs a real TCP daemon; run with --use-tcp)
+SKIP    io-readargs-argv-nullwrite (the pure-Python client needs a real TCP daemon; run with --use-tcp)
+PASS    iwildmatch-fold
+PASS    exclude-lsh
+PASS    fuzzy
+PASS    inplace
+PASS    keep-dirlinks-symlinked-dest
+SKIP    ki62-io-error-mask (needs --use-tcp to kill the daemon (sender) mid-transfer)
+PASS    keep-dirlinks-rule
+PASS    exclude
+PASS    ki73-cvs-clear-list
+PASS    link-dest-module-escape
+PASS    ki72-safe-links-backup
+PASS    link-dest-pathroot
+SKIP    link-dest-symlink-enotsup (the LD_PRELOAD linkat hook is Linux-only)
+PASS    ki58-log-format-percent
 PASS    hardlinks
-PASS    itemize
+SKIP    log-file-symlink (requires root to plant a symlink owned by a non-root, non-self uid (the attacker simulation))
+SKIP    macos-setgid-ordinary-mode-regression (macOS-specific fchmodat setgid behavior)
+PASS    link-dest-relative-basis
+SKIP    malicious-dot-dir-delete-scope (the malicious sender needs a real TCP socket; run with --use-tcp)
+PASS    log-control-chars
+SKIP    malicious-dot-file-delete-scope (the malicious sender needs a real TCP socket; run with --use-tcp)
+SKIP    malicious-sender-delete-scope (malicious-sender-delete-scope: needs a writable rsync source tree at SRCDIR=/export/home/andreas/oi-userland/components/network/rsync/rsync-3.5.0 with Makefile + flist.c; the patched-sender build relies on it.)
+SKIP    malicious-server-partial-basis-symlink-overwrite (the malicious sender needs a real TCP socket; run with --use-tcp)
+SKIP    match-append-empty-nullmap (the pure-Python generator needs a real TCP daemon; run with --use-tcp)
+PASS    links
+SKIP    match-want-i-nolen (the pure-Python generator needs a real TCP daemon; run with --use-tcp)
 PASS    longdir
-PASS    merge
+PASS    max-alloc-zero-rejected
+SKIP    msg-io-timeout-overflow (io-timeout-fwrapv: needs a configured rsync source tree with a Makefile)
+PASS    metadata-depth
+PASS    misc-coverage
 PASS    missing
-PASS    mkpath
+PASS    nested-socket-specials
+SKIP    nonroot-restrictive-perms (needs chown to set up a non-root-owned dest tree)
+SKIP    nondaemon-symlink-race (requires root to plant a backup-dir symlink owned by a non-self uid)
 SKIP    open-noatime (O_NOATIME is only supported on Linux)
+PASS    no-implied-dirs-symlink
+PASS    mkpath
+PASS    operator-path-backup-dir-exclude-daemon
+PASS    omit-times
+SKIP    operator-path-backup-symlink (requires root to plant a backup-dir symlink owned by a non-self uid)
+SKIP    operator-path-backup-rmdir (requires root to plant a backup-dir symlink owned by a non-self uid)
+PASS    operator-path-backup-dir-daemon
+PASS    operator-path-dir-daemon-inmodule
+PASS    operator-path-dir-daemon-leaf
+PASS    operator-path-backup-dir
+PASS    operator-path-dir-daemon-mkdir
+PASS    operator-path-compare-dest
+PASS    operator-path-copy-dest
+PASS    operator-path-dir-daemon-outside
+SKIP    operator-path-insecure-links-daemon (requires root to plant a symlink owned by a non-self uid)
+PASS    merge
+PASS    itemize
+PASS    operator-path-partial-dir-daemon
+PASS    operator-path-files-from
+PASS    operator-path-partial-dir-exclude-daemon
+PASS    operator-path-link-dest
+PASS    operator-path-log-file
+PASS    operator-path-insecure-links-refused
+PASS    operator-path-inplace-backup-dir
+PASS    operator-path-traversal-dest-dir-daemon
+PASS    operator-path-partial-dir
+PASS    operator-path-traversal-partial-dir-daemon
+PASS    partial-dir-abs-delta
+SKIP    partial-protected-regular-retry-linux (LD_PRELOAD partial EACCES recovery hook is Linux-only)
+SKIP    partial-protected-regular-retry-policy (deterministic partial EACCES recovery uses dyld interposing)
+PASS    operator-path-traversal-backup-dir-daemon
+PASS    ownership-depth
+PASS    operator-path-temp-dir
+PASS    operator-path-write-batch
+SKIP    password-file-symlink (requires root to plant a symlink owned by a non-self uid (the attacker simulation))
+PASS    partial_nowrite
+SKIP    peer-legacy-implied-delete-scope (the malicious protocol-29 server needs TCP; run with --use-tcp)
 SKIP    protected-regular (Can't find protected_regular setting (only available on Linux))
-PASS    proxy-response-line-too-long
+SKIP    proto-cleared-dirflist (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    proto-cleared-ndx (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    preallocate (--preallocate not supported on this platform)
+SKIP    proto-hlink-flag-oob (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+PASS    output-options
+SKIP    proto-hlink-gnum (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+PASS    growing-file
+SKIP    proto-msg-info-assert (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    proto-parent-ndx-empty-dirflist (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    proto-subflist-freed (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+SKIP    proto-sender-selftest (the pure-Python sender needs a real TCP daemon; run with --use-tcp)
+PASS    proxy-host-crlf
+SKIP    proxy-connect-request-too-long (fake-proxy listener needs a real TCP socket; run with --use-tcp)
+SKIP    proxy-protocol-trusted-peer (PROXY protocol peer policy needs a real TCP daemon; run with --use-tcp)
+SKIP    proxy-response-header-too-long (fake-proxy listener needs a real TCP socket; run with --use-tcp)
+SKIP    proxy-response-line-too-long (fake-proxy listener needs a real TCP socket; run with --use-tcp)
+SKIP    recv-discard-nullderef (destination dir is writable despite chmod 0555 (CAP_DAC_OVERRIDE?); cannot force the receiver discard path)
+SKIP    recv-generator-acl-leak (KI-23 real_sx ACL leak is only observable under AddressSanitizer/LSan)
+PASS    relative-content
+PASS    relative-implied-symlink
+PASS    prune-empty-dirs
+PASS    readonly-partial-abort-mode-regression
+PASS    relative-symlinked-parent-dotdot
+PASS    relative-implied
+PASS    relative-symlinked-parent
+PASS    relative-mkpath-symlink
+PASS    relative-mkpath-dir-symlink
+PASS    rename-mixed-parent-escape-poc
+PASS    rename-mixed-parent-symlink-race
+SKIP    rename-mixed-parent-transfer (requires root to plant a backup-dir symlink owned by a non-self uid)
+PASS    remote-shell-newline-escaping
+PASS    rrsync-archive-mode
+PASS    reverse-daemon-delta
+PASS    rrsync-copy-unsafe-links-denied
+PASS    rrsync-alt-dest-inband-pivot
+PASS    rrsync-logfile-symlink
+PASS    rrsync-files-from-stdin
+PASS    rrsync-backup-dir-inband-pivot
+PASS    rrsync-debug-denied
+PASS    rrsync-merge-file-confine
+PASS    rrsync-no-overwrite-backup-collision
+PASS    rrsync-no-overwrite-delay-updates
+PASS    rrsync-no-overwrite-logfile
+SKIP    rrsync-sender-leaf-flip (rrsync's realpath-vs-exec inode-pin needs /proc/self/fd (Linux); unhardened fallback elsewhere by design)
+PASS    rrsync-no-overwrite-partial-dir
+PASS    rrsync-pull-delivers-content
+SKIP    rrsync-sender-parent-pin (rrsync's inode pin needs /proc/self/fd (Linux); the unhardened fallback elsewhere is by design)
 PASS    relative
+SKIP    rrsync-symlink (rrsync's realpath-vs-exec inode-pin needs /proc/self/fd (Linux); unhardened fallback elsewhere by design)
+PASS    msg-io-timeout-zero
+PASS    rsync-ssl-hostname-validation
+PASS    rsync-ssl-stunnel-ca-required
+PASS    rsync-ssl-openssl-hostname-check
+PASS    rsync-ssl-stunnel-hostname-check
+PASS    safe-arg-leak
+PASS    rrsync-write-only-files-from
 PASS    safe-links
+PASS    safe-links-absolute-intree
+PASS    safe-links-unsafe-def
+PASS    scanner-argv-bounds
+PASS    scanner-daemon-log-checksum
 PASS    secure-relpath-validation
-SKIP    sender-flist-symlink-leak (secure change_dir relies on RESOLVE_BENEATH-equivalent kernel support not available on SunOS)
+PASS    rrsync-specials-denied
+PASS    scanner-delete-delay-overread
+SKIP    sender-remove-source-root-anchor (needs root to place a transfer source directly under /)
+PASS    sender-flist-symlink-leak
+PASS    sender-remove-source-relative-anchor
 SKIP    simd-checksum (simdtest not built (SIMD not available))
+PASS    scanner-batch-flag-mismatch
+PASS    partial
+PASS    size-filter
+PASS    skiplist-spec
+SKIP    source-change-size-continues (source-size-change regression uses LD_PRELOAD and /proc/self/fd to synchronise the source read)
+PASS    sparse
+PASS    stop-time
+SKIP    symlink-dest-backupdir (requires root to plant a backup-dir symlink owned by a non-self uid)
 PASS    ssh-basic
-SKIP    symlink-dirlink-basis (secure_relative_open lacks RESOLVE_BENEATH equivalent on SunOS; issue #715 still affects this platform)
+PASS    symlink-exclude-chdir-alias
+PASS    symlink-exclude-component
+PASS    symlink-exclude-deep
+PASS    rrsync-pull-arg-shapes
+PASS    symlink-exclude-meta
+PASS    symlink-exclude-leaf
+SKIP    symlink-exclude-xattr (user xattrs not available)
+PASS    symlink-exclude
 PASS    symlink-ignore
+PASS    symlink-mknod-fakesuper-symlink-race
+SKIP    symlink-race-dest (requires root to plant a symlink owned by a non-self uid (simulates 'root runs rsync' over an unprivileged user's dir))
+SKIP    symlink-race-relative-dest (requires root to plant a symlink owned by a non-self uid (simulates 'root runs rsync -a src/ dest/' over an unprivileged user's directory))
+SKIP    temp-dir-symlink-injection (requires root to plant a temp-dir symlink owned by a non-self uid)
 PASS    trimslash
+PASS    temp-dir
+SKIP    uidlist-id0-name-leak (KI-25 id-0 name leak is only observable under AddressSanitizer/LSan)
 PASS    unsafe-byname
 PASS    unsafe-links
+PASS    update
+SKIP    variety-symlink-traversal (no old peer selected (RSYNC_PEER == RSYNC); nothing to compare for symlink-traversal divergence)
 PASS    wildmatch
+PASS    write-batch-filter-injection
+PASS    write-batch-quoting
+SKIP    xattr-wire-cap (the pure-Python daemon needs a real TCP socket; run with --use-tcp)
+PASS    xattrs-depth
+PASS    sender-readlink-atfd
+PASS    sender-remove-source-secure
+PASS    sender-scan-dir-escape
+SKIP    xrsync (xrsync speaks the daemon protocol over a raw TCP socket; run with --use-tcp)
 PASS    xattrs-hlink
+PASS    symlink-race-source
+PASS    rename-fullpath-symlink-race
 PASS    xattrs
+PASS    symlink-dirlink-basis
+PASS    variety
+      233 passed
+      112 skipped

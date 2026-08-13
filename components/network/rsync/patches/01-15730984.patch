@@ -3,8 +3,8 @@ that builds are reproducible between workspaces.
 The patch is needed to avoid embedding path information from the build area
 in the compiled binares (in particular in error messages).
 
---- rsync-3.2.7/t_stub.c.orig
-+++ rsync-3.2.7/t_stub.c
+--- rsync-3.5.0/t_stub.c.orig	2026-08-02 21:35:03.000000000 +0200
++++ rsync-3.5.0/t_stub.c	2026-08-13 12:09:09.291529764 +0200
 @@ -20,6 +20,7 @@
   */
  
@@ -13,7 +13,7 @@ in the compiled binares (in particular in error messages).
  
  int do_fsync = 0;
  int inplace = 0;
-@@ -60,7 +61,7 @@
+@@ -74,7 +75,7 @@
   void _exit_cleanup(int code, const char *file, int line)
  {
  	fprintf(stderr, "exit(%d): %s(%d)\n",
@@ -22,18 +22,18 @@ in the compiled binares (in particular in error messages).
  	exit(code);
  }
  
---- rsync-3.2.7/log.c.orig
-+++ rsync-3.2.7/log.c
-@@ -22,6 +22,7 @@
- #include "rsync.h"
+--- rsync-3.5.0/log.c.orig	2026-07-20 06:07:05.000000000 +0200
++++ rsync-3.5.0/log.c	2026-08-13 12:13:25.081670218 +0200
+@@ -23,6 +23,7 @@
  #include "itypes.h"
  #include "inums.h"
+ #include "rounding.h"	/* EXTRA_ROUNDING, so log_delete() aligns its file_struct */
 +#include <libgen.h>
  
  extern int dry_run;
  extern int am_daemon;
---- rsync-3.2.7/cleanup.c.orig
-+++ rsync-3.2.7/cleanup.c
+--- rsync-3.5.0/cleanup.c.orig	2026-05-24 04:31:52.000000000 +0200
++++ rsync-3.5.0/cleanup.c	2026-08-13 12:14:01.508140334 +0200
 @@ -21,6 +21,7 @@
   */
  
