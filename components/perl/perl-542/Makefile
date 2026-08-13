@@ -27,10 +27,10 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.42.2
+COMPONENT_VERSION =		5.42.3
 # Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
 # sure bundled CPAN modules gets distinct version.
-COMPONENT_REVISION =		0
+COMPONENT_REVISION =		1
 PERL_VERSION =			$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(COMPONENT_VERSION))))
 PLV =				$(subst .,,$(PERL_VERSION))
 COMPONENT_SUMMARY =		Perl $(PERL_VERSION)
@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0a585eeb9e363c0f80482ddb3571625250c2c86aeb408853e8ea50805cfb14bb
+	sha256:c9387e1473a1866935cb047ece7c2e0a80767a3acdecb79d4a375f8a95970ddc
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -46,8 +46,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 # Archive-Tar
 COMPONENT_FMRI.Archive-Tar = library/perl-5/archive-tar-$(PLV)
-IPS_COMPONENT_VERSION.Archive-Tar = 3.4
-HUMAN_VERSION.Archive-Tar = 3.04
+IPS_COMPONENT_VERSION.Archive-Tar = 3.12
+HUMAN_VERSION.Archive-Tar = 3.12
 COMPONENT_SUMMARY.Archive-Tar = Manipulates TAR archives
 
 # AutoLoader
@@ -82,8 +82,8 @@ COMPONENT_SUMMARY.CPAN-Meta-YAML = Read and write a subset of YAML for CPAN Meta
 
 # Compress-Raw-Bzip2
 COMPONENT_FMRI.Compress-Raw-Bzip2 = library/perl-5/compress-raw-bzip2-$(PLV)
-IPS_COMPONENT_VERSION.Compress-Raw-Bzip2 = 2.213
-HUMAN_VERSION.Compress-Raw-Bzip2 = 2.213
+IPS_COMPONENT_VERSION.Compress-Raw-Bzip2 = 2.218
+HUMAN_VERSION.Compress-Raw-Bzip2 = 2.218
 COMPONENT_SUMMARY.Compress-Raw-Bzip2 = Low-Level Interface to bzip2 compression library
 
 # Compress-Raw-Zlib
@@ -190,14 +190,14 @@ COMPONENT_SUMMARY.Getopt-Long = Module to handle parsing command line options
 
 # HTTP-Tiny
 COMPONENT_FMRI.HTTP-Tiny = library/perl-5/http-tiny-$(PLV)
-IPS_COMPONENT_VERSION.HTTP-Tiny = 0.90
-HUMAN_VERSION.HTTP-Tiny = 0.090
+IPS_COMPONENT_VERSION.HTTP-Tiny = 0.96
+HUMAN_VERSION.HTTP-Tiny = 0.096
 COMPONENT_SUMMARY.HTTP-Tiny = A small, simple, correct HTTP/1.1 client
 
 # IO-Compress
 COMPONENT_FMRI.IO-Compress = library/perl-5/io-compress-$(PLV)
-IPS_COMPONENT_VERSION.IO-Compress = 2.213
-HUMAN_VERSION.IO-Compress = 2.213
+IPS_COMPONENT_VERSION.IO-Compress = 2.223
+HUMAN_VERSION.IO-Compress = 2.223
 COMPONENT_SUMMARY.IO-Compress = IO Interface to compressed data files/buffers
 
 # IO-Socket-IP
@@ -346,8 +346,8 @@ COMPONENT_SUMMARY.Scalar-List-Utils = Common Scalar and List utility subroutines
 
 # Socket
 COMPONENT_FMRI.Socket = library/perl-5/socket-$(PLV)
-IPS_COMPONENT_VERSION.Socket = 2.38
-HUMAN_VERSION.Socket = 2.038
+IPS_COMPONENT_VERSION.Socket = 2.41
+HUMAN_VERSION.Socket = 2.041
 COMPONENT_SUMMARY.Socket = networking constants and support functions
 
 # Sys-Syslog
