@@ -3,10 +3,11 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 163 items
+collecting ... collected 197 items
 
 tests/test_base_detection.py::test_empty PASSED
 tests/test_base_detection.py::test_bool_matches PASSED
+tests/test_base_detection.py::test_matches_sort_lazily PASSED
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\xfe\xff-utf_16] PASSED
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[\x841\x953-gb18030] PASSED
 tests/test_base_detection.py::test_empty_but_with_bom_or_sig[+/v8--utf_7] PASSED
@@ -37,9 +38,14 @@ tests/test_base_detection.py::test_obviously_utf8_content[Qu'est ce que une \xc3
 tests/test_base_detection.py::test_obviously_utf8_content[<?xml ?><c>Financi\xc3\xabn</c>] PASSED
 tests/test_base_detection.py::test_obviously_utf8_content[\xf0\x9f\x98\x80] PASSED
 tests/test_base_detection.py::test_mb_cutting_chk PASSED
+tests/test_base_detection.py::test_stateful_multibyte_sampling[iso2022-jp] PASSED
+tests/test_base_detection.py::test_stateful_multibyte_sampling[iso2022-kr] PASSED
+tests/test_base_detection.py::test_utf8_sig_overrides_misleading_declaration PASSED
+tests/test_base_detection.py::test_ansi_escape_falls_back_to_unicode PASSED
 tests/test_base_detection.py::test_alphabets_property PASSED
 tests/test_base_detection.py::test_doc_example_short_cp1251 PASSED
 tests/test_base_detection.py::test_direct_cmp_charset_match PASSED
+tests/test_base_detection.py::test_match_equality_with_arbitrary_string PASSED
 tests/test_cli.py::TestCommandLineInterface::test_force_replace_without_replace PASSED
 tests/test_cli.py::TestCommandLineInterface::test_multiple_file PASSED
 tests/test_cli.py::TestCommandLineInterface::test_multiple_file_normalize PASSED
@@ -55,6 +61,7 @@ tests/test_cli.py::TestCommandLineInterface::test_version_output_success PASSED
 tests/test_cli.py::TestCommandLineInterface::test_with_alternative PASSED
 tests/test_cli.py::TestCommandLineInterface::test_with_minimal_and_alt PASSED
 tests/test_cli.py::TestCommandLineInterface::test_with_minimal_output PASSED
+tests/test_coherence_detection.py::test_characters_popularity_compare_with_duplicates PASSED
 tests/test_coherence_detection.py::test_infer_language_from_cp[cp864-expected_languages0] PASSED
 tests/test_coherence_detection.py::test_infer_language_from_cp[cp862-expected_languages1] PASSED
 tests/test_coherence_detection.py::test_infer_language_from_cp[cp737-expected_languages2] PASSED
@@ -129,6 +136,32 @@ tests/test_mess_detection.py::test_mess_detection[<i>Parce que \xd3a, c'est la v
 tests/test_mess_detection.py::test_mess_detection[\xd8\u0122\xd8\u0160\xd8\u0123\xd8\xa7\xd8\u0136\u0172\x84 \u0172\x84\u0172\x88 \xd8\u0122\u0172\x86 \xd8\xa7\u0172\x84\u0172\x86\xd8\xa7\xd8\u0123 \u0172\x8a\u0172\x88\u0172\x85 \u0172\x85\xd8\xa7 \xd8\u0123\u0172\x88\u0172\x81\u0172\x8a\xd8\u0160\xd8\u0123\xd8\xa7\xd8\u0136\u0172\x84\u0172\x88\u0172\x86\xd8\x8c \xd8\u014a\xd8\u0111\u0172\x86\xd8\xa7 \u0172\x86\xd8\u0123\u0172\x85\xd8\u0111 \xd8\u0111\u0172\x86 (\u0172\x81\xd8\u0105\u0172\x88\xd8\u014a\u0172\x88) \u0172\x88\xd8\xa7\u0172\x84\xd8\u016a\xd8\xa7\xd8\u0160\u0172\x85-0.8-3.0] PASSED
 tests/test_mess_detection.py::test_mess_detection[\xc7\xe1\xda\u015e\xe1\xed\xc9 , \xc7\xe1\xca\xe4\xe6\xed\xe3 \xc7\xe1\xe3\xdb\xe4\xc7\xd8\xed\xd3\xed \xe6 / \xc3\xe6 \xc7\xe1\xc7\u015e\xca\xd1\xc7\xcd-0.8-2.5] PASSED
 tests/test_mess_detection.py::test_mess_detection[hishamkoc@yahoo.com \u0e38\u0e0a\u0e38\u0e11\u0e38\u0e0c\u0e39\x85\u0e39\x80\u0e39\x80\u0e38\u0e09 \u0e39\x87\u0e39\x80\u0e38\u0e14\u0e39\x80\u0e39\x80\u0e39\x80\u0e38\u0e07\u0e39\x85 \u0e38\u0e07\u0e39\x84\u0e39\x80\u0e39\x82\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x84\u0e38\u0e07\u0e39\x81RadoZ \u0e38\u0e0a\u0e39\x80\u0e39\x80\u0e39\x80\u0e38\u0e19\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x80\u0e38\u0e0f\u0e39\x8a\u0e39\x80\u0e39\x80\u0e39\x84 \u0e38\u0e07\u0e39\x84\u0e39\x80\u0e39\x80\u0e39\x80\u0e38\u0e0a\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x88\u0e39\x82\u0e39\x80\u0e39\x80\u0e39\x8a\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x80\u0e38\u0e0a \u0e39\x85\u0e39\x80\u0e39\x80\u0e39\x80\u0e39\x86 \u0e39\x82\u0e39\x80\u0e39\x80\u0e38\u0e08\u0e39\x80\u0e39\x80\u0e39\x84-0.5-2.0] PASSED
+tests/test_mess_detection.py::test_decisive_mess_patterns[plain\x1bANSI escape] PASSED
+tests/test_mess_detection.py::test_decisive_mess_patterns[niezale\xbfn\xb9] PASSED
+tests/test_mess_detection.py::test_decisive_mess_patterns[niezale\xe6n\xb9] PASSED
+tests/test_mess_detection.py::test_decisive_mess_patterns[\uff85\uff93\uff89\uff94\u7615\u9f74\u9ef5] PASSED
+tests/test_mess_detection.py::test_legitimate_nearby_patterns[\xbfD\xf3nde?] PASSED
+tests/test_mess_detection.py::test_legitimate_nearby_patterns[encyclop\xe6dia] PASSED
+tests/test_mess_detection.py::test_legitimate_nearby_patterns[R\xb2] PASSED
+tests/test_mess_detection.py::test_legitimate_nearby_patterns[\u65e5\u672c\u8a9e\uff85\uff93\uff89\uff94] PASSED
+tests/test_mess_detection.py::test_semantic_character_information[\u30a2-is_katakana] PASSED
+tests/test_mess_detection.py::test_semantic_character_information[\uff85-is_halfwidth_katakana] PASSED
+tests/test_mess_detection.py::test_semantic_character_information[\xe6-is_ligature] PASSED
+tests/test_mess_detection.py::test_semantic_character_information[\xb2-is_superscript] PASSED
+tests/test_mess_detection.py::test_semantic_character_information[\xbf-is_sentence_open_punctuation] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[CJK Unified Ideographs-Bopomofo] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[CJK Unified Ideographs-Kanbun] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Basic Latin-IPA Extensions] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[IPA Extensions-Phonetic Extensions] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Basic Latin-Spacing Modifier Letters] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Alphabetic Presentation Forms-Hebrew] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Halfwidth and Fullwidth Forms-Hangul Syllables] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Basic Latin-Hiragana] PASSED
+tests/test_mess_detection.py::test_compatible_successive_ranges[Basic Latin-Kana Extended-A] PASSED
+tests/test_mess_detection.py::test_transparent_successive_ranges[Combining Diacritical Marks] PASSED
+tests/test_mess_detection.py::test_transparent_successive_ranges[Variation Selectors] PASSED
+tests/test_mess_detection.py::test_transparent_successive_ranges[Emoticons] PASSED
+tests/test_mess_detection.py::test_transparent_successive_ranges[Miscellaneous Symbols and Pictographs] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<?xml version="1.0" encoding="EUC-JP"?>-euc_jp] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset="utf-8"></head></html>-utf_8] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset="utf-57"></head></html>-None] PASSED
@@ -139,6 +172,7 @@ tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<?xml 
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<?xml version="1.0" encoding="ibm037"?>-cp037] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset=WINDOWS-1252></head></html>-cp1252] PASSED
 tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<html><head><meta charset="WINDOWS-1256"></head></html>-cp1256] PASSED
+tests/test_preemptive_detection.py::test_detect_most_common_body_encoding[<meta charset="not-an-encoding"><meta charset="utf-8">-utf_8] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<?xml version="1.0" encoding="EUC-JP"?>-<?xml version="1.0" encoding="utf-8"?>] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="utf-8"></head></html>-<html><head><meta charset="utf-8"></head></html>] PASSED
 tests/test_preemptive_detection.py::test_preemptive_mark_replacement[<html><head><meta charset="utf-57"></head></html>-<html><head><meta charset="utf-57"></head></html>] PASSED
@@ -174,4 +208,4 @@ tests/test_utils.py::test_cp_similarity[latin_1-iso8859_4-True] PASSED
 tests/test_utils.py::test_cp_similarity[latin_1-cp1251-False] PASSED
 tests/test_utils.py::test_cp_similarity[cp1251-mac_turkish-False] PASSED
 
-======== 163 passed, 11 subtests passed ========
+======== 197 passed, 11 subtests passed ========
