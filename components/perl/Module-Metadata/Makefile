@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Module-Metadata
-HUMAN_VERSION =			1.000039
+HUMAN_VERSION =			1.000040
 COMPONENT_SUMMARY =		Gather package and POD information from perl module files
 COMPONENT_CPAN_AUTHOR =		ETHER
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4c2bf998053d232df9e6262ea0ccad62abe87e448e62fdfe719949ea1a856c28
+	sha256:b53620c268537d3741c72252e3d890824a20ed3cbb085d2e2eee62f7efc1cf2e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENCE
 
@@ -38,4 +38,5 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-path
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
