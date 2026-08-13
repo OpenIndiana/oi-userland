@@ -29,7 +29,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 		nmap
-COMPONENT_VERSION=		7.99
+COMPONENT_VERSION=		7.991
 COMPONENT_PROJECT_URL=	https://nmap.org/
 COMPONENT_FMRI=			diagnostic/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	System/Administration and Configuration
@@ -38,7 +38,7 @@ COMPONENT_DESCRIPTION=	Nmap is useful for inventorying the network, managing \
 service upgrade schedules, and monitoring host or service uptime
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:df512492ffd108e53a27a06f26d8635bbe89e0e569455dc8ffef058c035d51b2
+COMPONENT_ARCHIVE_HASH=	sha256:a5d507f29437bef3bedd4771ff9aaa8fc1c2a109ddba1f5b1cf12027456929be
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=		GPLv2,OpenSSL,SSLeay
 # Note: This license file incorporates nmap COPYING and OpenSSL license text
