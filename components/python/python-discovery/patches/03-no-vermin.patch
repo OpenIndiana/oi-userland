@@ -1,0 +1,37 @@
+We have no vermin packaged yet.
+
+--- python_discovery-1.5.2/pyproject.toml.orig
++++ python_discovery-1.5.2/pyproject.toml
+@@ -57,7 +57,6 @@
+   "pytest>=8.3.5",
+   "pytest-mock>=3.14",
+   "setuptools>=75.1",
+-  "vermin>=1.6",
+ ]
+ docs = [
+   "furo>=2025.12.19",
+--- python_discovery-1.5.2/tests/test_py_info_collect.py.orig
++++ python_discovery-1.5.2/tests/test_py_info_collect.py
+@@ -11,7 +11,6 @@
+ from typing import TYPE_CHECKING
+ 
+ import pytest
+-import vermin
+ 
+ import python_discovery
+ from python_discovery import PythonInfo
+@@ -25,14 +24,6 @@
+ SCRIPT = Path(python_discovery.__file__).parent / "_py_info_collect.py"
+ 
+ 
+-def test_script_parses_down_to_python27() -> None:
+-    py2, py3 = vermin.detect(SCRIPT.read_text(encoding="utf-8"))
+-    assert py2 is not None, "script no longer parses on Python 2.7, the version gate cannot run there"
+-    assert py2 <= (2, 7)
+-    assert py3 is not None
+-    assert py3 <= (3, 6), "script grew a requirement newer than the collection floor"
+-
+-
+ def test_script_version_gate_precedes_imports() -> None:
+     body = ast.parse(SCRIPT.read_text(encoding="utf-8")).body
+     before_gate = takewhile(lambda node: not isinstance(node, ast.If), body)
