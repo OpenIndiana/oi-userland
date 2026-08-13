@@ -28,12 +28,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.4.4
+COMPONENT_VERSION=	3.5.0
 COMPONENT_SUMMARY=	Utility that provides fast incremental file transfer and copy
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:bd88cf82fa653da32314fb229136407c5c90f80d1758d8f4b091767877d8fa96
+COMPONENT_ARCHIVE_HASH=	sha256:c7ffd1ef653e99540f661e47cb00b7f9cad1ee6b972399b16f93d672656e0d33
 COMPONENT_ARCHIVE_URL=	https://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=	network/rsync
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -42,16 +42,19 @@ COMPONENT_LICENSE_FILE=	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# tests fail to build without this because bool is defined.
-CFLAGS += -std=gnu17
+# Make gcc-14 happy (configure needs this!)
+CFLAGS += -Wno-error=implicit-function-declaration
 
-CONFIGURE_OPTIONS  +=	--with-included-popt
-CONFIGURE_OPTIONS  +=	--enable-xattr-support
-CONFIGURE_OPTIONS  +=	CPPFLAGS=-I$(OPENSSL_INCDIR)
-CONFIGURE_OPTIONS  +=	LDFLAGS=-L$(OPENSSL_LIBDIR)
+CONFIGURE_OPTIONS += --with-included-popt
+CONFIGURE_OPTIONS += --enable-xattr-support
+CONFIGURE_OPTIONS += CPPFLAGS=-I$(OPENSSL_INCDIR)
+CONFIGURE_OPTIONS += LDFLAGS=-L$(OPENSSL_LIBDIR)
+
+# Make sure to use 64 bit binaries if available. This is needed during tests by fakeroot. 
+COMPONENT_TEST_ENV += PATH="/usr/bin/amd64:$(PATH.gnu)"
 
 COMPONENT_TEST_TRANSFORMER = $(NAWK)
-COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL/'"
+COMPONENT_TEST_TRANSFORMS = "'/^PASS|^SKIP|^FAIL|^XFAIL|passed|skipped|failed/'"
 
 # Manually added; needed during tests
 TEST_REQUIRED_PACKAGES += developer/fakeroot

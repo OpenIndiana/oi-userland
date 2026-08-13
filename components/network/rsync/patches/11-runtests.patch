@@ -1,13 +1,13 @@
 Make sure no 32 bit binaries will be found as our fakeroot only supports 64 bit.
 If a 32 bit binary is run under fakeroot it will error out with wrong ELF class.
---- rsync-3.4.2/runtests.py.orig	Mi. Apr. 22 04:34:39 2026
-+++ rsync-3.4.2/runtests.py	Di. Apr. 28 21:35:06 2026
-@@ -316,8 +316,6 @@
+--- rsync-3.5.0/runtests.py.orig
++++ rsync-3.5.0/runtests.py
+@@ -764,8 +764,6 @@
  
      # Build base environment for test scripts
      path = os.environ.get('PATH', '')
 -    if os.path.isdir('/usr/xpg4/bin'):
 -        path = '/usr/xpg4/bin:' + path
  
-     base_env = os.environ.copy()
-     base_env.update({
+     # Make the testsuite/ directory importable so Python tests can `import rsyncfns`.
+     pythonpath = suitedir
