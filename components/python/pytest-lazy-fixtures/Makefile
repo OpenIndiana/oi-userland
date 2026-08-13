@@ -15,15 +15,16 @@
 #
 
 BUILD_STYLE = pyproject
+USE_COMMON_TEST_MASTER = no
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_lazy_fixtures
-HUMAN_VERSION =			1.4.0
+HUMAN_VERSION =			1.4.1
 COMPONENT_SUMMARY =		Allows you to use fixtures in @pytest.mark.parametrize.
 COMPONENT_PROJECT_URL =		https://github.com/dev-petrov/pytest-lazy-fixtures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f544b60c96b909b307558a62cc1f28f026f11e9f03d7f583a1dc636de3dbcb10
+	sha256:8684abfd4914ea01f1e2f7b24524739344421d8f3f12286fb3100fb5681e1181
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
