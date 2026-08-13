@@ -27,7 +27,7 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		perl
-COMPONENT_VERSION =		5.40.4
+COMPONENT_VERSION =		5.40.5
 # Note: Always update COMPONENT_REVISION on rebuilds and/or updates to make
 # sure bundled CPAN modules gets distinct version.
 COMPONENT_REVISION =		0
@@ -38,7 +38,7 @@ COMPONENT_PROJECT_URL =		https://www.perl.org/
 COMPONENT_SRC =			$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE =		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:eb0b1116b84ded552f686c9ee40c83000d8388c454f54197ca1d3a3b17246bd3
+	sha256:1fe6f825b487d26c35aa51a35f52fe494d4cfc77b8051f8b1ee3391bf0289bc6
 COMPONENT_ARCHIVE_URL =		https://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI =		runtime/perl-$(PLV)
 COMPONENT_CLASSIFICATION =	Development/Perl
@@ -46,8 +46,8 @@ COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 # Archive-Tar
 COMPONENT_FMRI.Archive-Tar = library/perl-5/archive-tar-$(PLV)
-IPS_COMPONENT_VERSION.Archive-Tar = 3.2
-HUMAN_VERSION.Archive-Tar = 3.02_001
+IPS_COMPONENT_VERSION.Archive-Tar = 3.12
+HUMAN_VERSION.Archive-Tar = 3.12
 COMPONENT_SUMMARY.Archive-Tar = Manipulates TAR archives
 
 # AutoLoader
@@ -82,8 +82,8 @@ COMPONENT_SUMMARY.CPAN-Meta-YAML = Read and write a subset of YAML for CPAN Meta
 
 # Compress-Raw-Bzip2
 COMPONENT_FMRI.Compress-Raw-Bzip2 = library/perl-5/compress-raw-bzip2-$(PLV)
-IPS_COMPONENT_VERSION.Compress-Raw-Bzip2 = 2.212
-HUMAN_VERSION.Compress-Raw-Bzip2 = 2.212
+IPS_COMPONENT_VERSION.Compress-Raw-Bzip2 = 2.218
+HUMAN_VERSION.Compress-Raw-Bzip2 = 2.218
 COMPONENT_SUMMARY.Compress-Raw-Bzip2 = Low-Level Interface to bzip2 compression library
 
 # Compress-Raw-Zlib
@@ -190,14 +190,14 @@ COMPONENT_SUMMARY.Getopt-Long = Module to handle parsing command line options
 
 # HTTP-Tiny
 COMPONENT_FMRI.HTTP-Tiny = library/perl-5/http-tiny-$(PLV)
-IPS_COMPONENT_VERSION.HTTP-Tiny = 0.88
-HUMAN_VERSION.HTTP-Tiny = 0.088
+IPS_COMPONENT_VERSION.HTTP-Tiny = 0.96
+HUMAN_VERSION.HTTP-Tiny = 0.096
 COMPONENT_SUMMARY.HTTP-Tiny = A small, simple, correct HTTP/1.1 client
 
 # IO-Compress
 COMPONENT_FMRI.IO-Compress = library/perl-5/io-compress-$(PLV)
-IPS_COMPONENT_VERSION.IO-Compress = 2.212
-HUMAN_VERSION.IO-Compress = 2.212
+IPS_COMPONENT_VERSION.IO-Compress = 2.223
+HUMAN_VERSION.IO-Compress = 2.223
 COMPONENT_SUMMARY.IO-Compress = IO Interface to compressed data files/buffers
 
 # IO-Socket-IP
@@ -346,8 +346,8 @@ COMPONENT_SUMMARY.Scalar-List-Utils = Common Scalar and List utility subroutines
 
 # Socket
 COMPONENT_FMRI.Socket = library/perl-5/socket-$(PLV)
-IPS_COMPONENT_VERSION.Socket = 2.38
-HUMAN_VERSION.Socket = 2.038
+IPS_COMPONENT_VERSION.Socket = 2.41
+HUMAN_VERSION.Socket = 2.041
 COMPONENT_SUMMARY.Socket = networking constants and support functions
 
 # Sys-Syslog
