@@ -15,13 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           pkgconf
-COMPONENT_VERSION=        3.0.3
+COMPONENT_VERSION=        3.0.5
 COMPONENT_SUMMARY=        Package compiler and linker metadata toolkit
 COMPONENT_PROJECT_URL=    http://pkgconf.org/
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=    https://distfiles.dereferenced.org/pkgconf/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=   sha256:aa033abb2b777ba4e66635495a931e53c49d86e4e4e38af68c0f76d666cbd8cf
+COMPONENT_ARCHIVE_HASH=   sha256:3acd3a8a3cce65a8d620321855d92fb602e026cbe8e13ee36bdec58483b59ace
 COMPONENT_FMRI=           developer/build/pkgconf
 COMPONENT_CLASSIFICATION= Development/System
 COMPONENT_LICENSE=        ISC
