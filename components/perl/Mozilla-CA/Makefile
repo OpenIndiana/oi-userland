@@ -19,17 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Mozilla-CA
-HUMAN_VERSION =			20250602
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			20260813
 COMPONENT_SUMMARY =		Mozilla's CA cert bundle in PEM format
 COMPONENT_CPAN_AUTHOR =		LWP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:adeac0752440b2da094e8036bab6c857e22172457658868f5ac364f0c7b35481
+	sha256:81f0bd9665eacbb6feef13b0fa16fbb30162c09292542b1206434e569196dd9b
 COMPONENT_LICENSE =		MPL-2.0
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
