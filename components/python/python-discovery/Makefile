@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		python_discovery
-HUMAN_VERSION =			1.5.1
+HUMAN_VERSION =			1.5.2
 COMPONENT_SUMMARY =		Python interpreter discovery
 COMPONENT_PROJECT_URL =		https://github.com/tox-dev/python-discovery
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e2ea8b884cd1701f386eda8cf327b87743f1dc21b7f784470799537d95635384
+	sha256:45fd4f20a4e3f9b7bf2e0817870bc8e3b320a19658da177af800768c82dbf354
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
