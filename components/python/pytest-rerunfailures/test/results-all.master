@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 135 items
+collecting ... collected 149 items
 
 tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_pass PASSED
@@ -24,6 +24,8 @@ tests/test_pytest_rerunfailures.py::test_run_fails_with_code_1_after_test_failur
 tests/test_pytest_rerunfailures.py::test_run_with_mark_and_fail_on_flaky_succeeds_if_all_tests_pass_without_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_run_with_fail_on_flaky_succeeds_if_all_tests_pass_without_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_crash PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_temporary_test_crash PASSED
+tests/test_pytest_rerunfailures.py::test_xdist_crash_rerun_releases_cap_when_scheduler_rejects PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_failure_with_flaky_mark PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_without_options PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_with_positional_argument PASSED
@@ -53,6 +55,8 @@ tests/test_pytest_rerunfailures.py::test_rerun_on_setup_class_with_error_with_re
 tests/test_pytest_rerunfailures.py::test_rerun_on_class_scope_fixture_with_error_with_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_on_module_fixture_with_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_on_session_fixture_with_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_recreates_test_class_instance PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_recreates_instance_without_re_executing_scoped_fixtures PASSED
 tests/test_pytest_rerunfailures.py::test_execution_count_exposed PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_report PASSED
 tests/test_pytest_rerunfailures.py::test_pytest_runtest_logfinish_is_called PASSED
@@ -84,6 +88,7 @@ tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts5-rerun_except_texts5-False] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts6-rerun_except_texts6-False] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_passes_setup_errors PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_except_teardown_error_prevents_rerun PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[True-2_0] PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[False-0_0] PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[True-2_1] PASSED
@@ -139,8 +144,17 @@ tests/test_pytest_rerunfailures.py::test_reruns_mode_append_sums_marker_and_cli 
 tests/test_pytest_rerunfailures.py::test_reruns_mode_default_is_strict PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_mode_append_without_marker_uses_global PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_mode_invalid_choice_errors PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_total_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_force_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_does_not_limit_when_sufficient PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_zero_disables_all_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_works_with_passing_tests PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_without_reruns_has_no_effect PASSED
 tests/test_pytest_rerunfailures.py::test_failing_subtests_are_rerun PASSED
 tests/test_pytest_rerunfailures.py::test_too_many_failing_subtests_are_failures PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_flaky_marker_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_rejects_negative_without_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_max_suite_reruns_preserves_fixture_teardown_when_exhausted PASSED
 
 =============================== warnings summary ===============================
 ../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:885
@@ -148,6 +162,6 @@ tests/test_pytest_rerunfailures.py::test_too_many_failing_subtests_are_failures 
     self.import_plugin(import_spec, consider_entry_points=True)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 135 passed, 1 warning ========
+======== 149 passed, 1 warning ========
   py$(PYV): OK
   congratulations :)
