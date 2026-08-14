@@ -1,7 +1,7 @@
 We do not have devpi_process available (yet)
 
---- tox-4.59.0/pyproject.toml.orig
-+++ tox-4.59.0/pyproject.toml
+--- tox-4.60.0/pyproject.toml.orig
++++ tox-4.60.0/pyproject.toml
 @@ -89,7 +89,6 @@
    "covdefaults>=2.3",
    "coverage>=7.13.4",
@@ -10,8 +10,8 @@ We do not have devpi_process available (yet)
    "diff-cover>=10.2",
    "distlib>=0.4",
    "docutils>=0.21",
---- tox-4.59.0/src/tox/pytest.py.orig
-+++ tox-4.59.0/src/tox/pytest.py
+--- tox-4.60.0/src/tox/pytest.py.orig
++++ tox-4.60.0/src/tox/pytest.py
 @@ -17,7 +17,6 @@
  
  import pytest
@@ -36,8 +36,8 @@ We do not have devpi_process available (yet)
  def _invalid_index_fake_port() -> int:
      with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as socket_handler:
          socket_handler.bind(("", 0))
---- tox-4.59.0/tests/test_provision.py.orig
-+++ tox-4.59.0/tests/test_provision.py
+--- tox-4.60.0/tests/test_provision.py.orig
++++ tox-4.60.0/tests/test_provision.py
 @@ -19,7 +19,6 @@
      from collections.abc import Callable, Iterator, Sequence
  
@@ -86,7 +86,7 @@ We do not have devpi_process available (yet)
  def test_provision_requires_nok(tox_project: ToxProjectCreator) -> None:
      ini = "[tox]\nrequires = pkg-does-not-exist\n setuptools==1\nskipsdist=true\n"
      outcome = tox_project({"tox.ini": ini}).run("c", "-e", "py")
-@@ -179,97 +145,6 @@
+@@ -228,97 +194,6 @@
  
  
  @pytest.mark.integration
@@ -184,7 +184,7 @@ We do not have devpi_process available (yet)
  def test_provision_plugin_runner_in_provision(tox_project: ToxProjectCreator, tmp_path: Path) -> None:
      """Ensure that provision environment can be explicitly configured."""
      log = tmp_path / "out.log"
-@@ -278,17 +153,6 @@
+@@ -327,17 +202,6 @@
          proj.run("r", "-e", "py", "--result-json", str(log))
  
  
@@ -202,7 +202,7 @@ We do not have devpi_process available (yet)
  def test_provision_acquires_file_lock(tox_project: ToxProjectCreator) -> None:
      lock_held_during_provision: dict[str, bool] = {}
  
-@@ -357,37 +221,6 @@
+@@ -406,37 +270,6 @@
          assert hasattr(outcome.state.conf.options, argument)
  
  
