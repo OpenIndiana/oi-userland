@@ -31,14 +31,14 @@ DROP_STATIC_LIBRARIES= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      10.6.0
-HUMAN_VERSION=		10.06.0
+COMPONENT_VERSION=      10.7.1
+HUMAN_VERSION=		10.07.1
 NUMERICAL_VERSION=	$(subst .,,$(HUMAN_VERSION))
 COMPONENT_SUMMARY=	Ghostscript is an interpreter for the PostScript language and PDF files
 COMPONENT_PROJECT_URL=	https://ghostscript.com
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:64352648c2c081c8a9fb1a12dc1965e01ead7c57f58b72d1b54f6ef1cef3c561
+COMPONENT_ARCHIVE_HASH= sha256:1cdb766de8db8f1e589c817f09c5855ea5f65dfc8540e465a69ac14c18416025
 COMPONENT_DOWNLOAD_URL= https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/gs$(NUMERICAL_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= 	print/filter/ghostscript
@@ -53,8 +53,6 @@ COMPONENT_ARCHIVE_URL_1= https://github.com/tesseract-ocr/$(COMPONENT_NAME_1)/ar
 COMPONENT_ARCHIVE_HASH_1= sha256:bb05b738298ae73e7130e2913ed002b49d94cd1cea508e63be1928fe47770b32
 
 include $(WS_MAKE_RULES)/common.mk
-
-CXXFLAGS += -std=c++17
 
 COMPONENT_POST_UNPACK_ACTION= ( \
 	$(RM) $(COMPONENT_LICENSE_FILE) && \
