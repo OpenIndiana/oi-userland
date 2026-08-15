@@ -100,10 +100,18 @@ have fewer volunteers.
   tor, freeradius, apache/tomcat/squid. Pairs naturally with #5.
 
 ### 7. Language runtimes & module ecosystems
+
+#### 7.1. Chunk 1 Python and Perl
+- **Scope**: Non-C (Python and Perl) language runtimes and their (largely automatable) module sets.
+- **Paths**: `components/python/*`, `components/perl/*`
+- **Owner**: mtelka
+- **Load**: Wide / shallow. ~1,200 dirs but dominated by mechanical bumps —
+  ideal for someone who invests in automation. Runtimes are the deep part.
+  
+### 7.2. Chunk 2 Others
 - **Scope**: Non-C language runtimes and their (largely automatable) module sets.
-- **Paths**: `components/runtime/*`, `components/python/*`, `components/perl/*`,
-  `components/ruby/*`, `components/ocaml/*`, `components/common-lisp/*`,
-  `components/prolog/*`, `components/tcl/*`
+- **Paths**: `components/runtime/*`, `components/ruby/*`, `components/ocaml/*`,
+  `components/common-lisp/*`, `components/prolog/*`, `components/tcl/*`
 - **Owner**: gemelen
 - **Load**: Wide / shallow. ~1,200 dirs but dominated by mechanical bumps —
   ideal for someone who invests in automation. Runtimes (node/openjdk/erlang)
