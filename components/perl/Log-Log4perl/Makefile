@@ -20,25 +20,24 @@ USE_COMMON_TEST_MASTER = no
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Log-Log4perl
-HUMAN_VERSION =			1.57
-COMPONENT_REVISION =		3
+HUMAN_VERSION =			1.58
 COMPONENT_SUMMARY =		Log4j implementation for Perl
-COMPONENT_CPAN_AUTHOR =		ETJ
+COMPONENT_CPAN_AUTHOR =		MSCHILLI
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0f8fcb7638a8f3db4c797df94fdbc56013749142f2f94cbc95b43c9fca096a13
+	sha256:48765ea8efb096fec1418e6b1ef8379845c607506fe7e63561cd1b41dd3efef6
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/dbd-csv
-PERL_REQUIRED_PACKAGES += library/perl-5/dbd-sqlite
-PERL_REQUIRED_PACKAGES += library/perl-5/dbi
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/file-path
-PERL_REQUIRED_PACKAGES += library/perl-5/log-dispatch
-PERL_REQUIRED_PACKAGES += library/perl-5/log-dispatch-filerotate
-PERL_REQUIRED_PACKAGES += library/perl-5/sql-statement
-PERL_REQUIRED_PACKAGES += library/perl-5/xml-dom
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/dbd-csv
+REQUIRED_PACKAGES.perl += library/perl-5/dbd-sqlite
+REQUIRED_PACKAGES.perl += library/perl-5/dbi
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/file-path
+REQUIRED_PACKAGES.perl += library/perl-5/log-dispatch
+REQUIRED_PACKAGES.perl += library/perl-5/log-dispatch-filerotate
+REQUIRED_PACKAGES.perl += library/perl-5/sql-statement
+REQUIRED_PACKAGES.perl += library/perl-5/xml-dom
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
