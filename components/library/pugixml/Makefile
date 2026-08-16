@@ -16,13 +16,13 @@ BUILD_STYLE= cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=        pugixml
-COMPONENT_VERSION=     1.15
+COMPONENT_VERSION=     1.16
 COMPONENT_SUMMARY=     pugixml - light-weight C++ XML processing library
 COMPONENT_PROJECT_URL= https://pugixml.org/
 COMPONENT_SRC=         $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=     $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/zeux/pugixml/releases/download/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:655ade57fa703fb421c2eb9a0113b5064bddb145d415dd1f88c79353d90d511a
+COMPONENT_ARCHIVE_HASH= sha256:4cee1ca4aad395170f4c7a07824f3bdd41f28316c6e1e1090a1425b278ec0b4b
 COMPONENT_FMRI=        library/pugixml
 COMPONENT_CLASSIFICATION=System/Libraries
 COMPONENT_LICENSE=     MIT
