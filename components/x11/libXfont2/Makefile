@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME= libXfont2
-COMPONENT_VERSION= 2.0.8
+COMPONENT_VERSION= 2.0.9
 COMPONENT_FMRI= x11/library/libxfont2
 COMPONENT_SUMMARY= libXfont2 - library for X servers and utilities to access font files
 COMPONENT_ARCHIVE_EXTENSION= .tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:f556c0e1093a4e6911cc90bc4b106d201902ee187fd74af206ff162f7e6a24d5
+COMPONENT_ARCHIVE_HASH= sha256:f042a370666815e7b941e9b7019024755bd1c6c2954afbfa515af378251799e2
 COMPONENT_LICENSE_FILE= COPYING
 
 include $(WS_MAKE_RULES)/common.mk
