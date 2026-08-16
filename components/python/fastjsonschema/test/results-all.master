@@ -2,7 +2,7 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 516 items / 12 deselected / 504 selected
+collecting ... collected 553 items / 12 deselected / 541 selected
 
 tests/json_schema/test_draft04.py::test[NOTSET] SKIPPED (got empty p...)
 tests/json_schema/test_draft06.py::test[NOTSET] SKIPPED (got empty p...)
@@ -74,6 +74,8 @@ tests/test_array.py::test_mixed_arrays[value1-expected1] PASSED
 tests/test_array.py::test_issue_114 PASSED
 tests/test_array.py::test_items_subschema_without_validation_code PASSED
 tests/test_array.py::test_additional_items_subschema_without_validation_code PASSED
+tests/test_array.py::test_min_items_with_min_length PASSED
+tests/test_array.py::test_max_items_with_max_length PASSED
 tests/test_boolean.py::test_boolean[0-expected0] PASSED
 tests/test_boolean.py::test_boolean[None-expected1] PASSED
 tests/test_boolean.py::test_boolean[True-True] PASSED
@@ -194,9 +196,12 @@ tests/test_default.py::test_default_in_array[value1-expected1] PASSED
 tests/test_default.py::test_default_in_array[value2-expected2] PASSED
 tests/test_default.py::test_default_in_array[value3-expected3] PASSED
 tests/test_default.py::test_default_turned_off PASSED
-tests/test_examples.py::test_validate[issue-109] PASSED
-tests/test_examples.py::test_validate[issue-109-regex-only] PASSED
+tests/test_default.py::test_default_non_finite_float PASSED
+tests/test_default.py::test_default_non_finite_float_in_array PASSED
+tests/test_default.py::test_default_nested_non_finite_float PASSED
 tests/test_examples.py::test_validate[conditional] PASSED
+tests/test_examples.py::test_validate[issue-109-regex-only] PASSED
+tests/test_examples.py::test_validate[issue-109] PASSED
 tests/test_examples.py::test_validate[path_with_definition] PASSED
 tests/test_exceptions.py::test_exception_variable_path[data-expected0] PASSED
 tests/test_exceptions.py::test_exception_variable_path[data[0]-expected1] PASSED
@@ -213,6 +218,37 @@ tests/test_exceptions.py::test_exception_rule_definition[definition4-type-string
 tests/test_exceptions.py::test_exception_rule_definition[None-type-None] PASSED
 tests/test_fast_fail.py::test_fast_fail PASSED
 tests/test_fast_fail.py::test_captures_all_errors PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition0-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition1-1.5-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition2-1-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition3-2.5-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition4-3-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition5-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition6-1-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition7-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition8-42-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition9-1-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition10-1.5-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition11-value11-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition12-value12-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition13-value13-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition14-value14-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition15-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition16-1.5-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition17-abc-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition18-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition19-42-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition20-1.5-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition21-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition22-abc-True] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition23-1-False] PASSED
+tests/test_fast_fail.py::test_fast_fail_does_not_change_the_verdict[definition24-value24-True] PASSED
+tests/test_fast_fail.py::test_rejected_attempt_does_not_leak_its_errors PASSED
+tests/test_fast_fail.py::test_failing_composition_reports_its_own_error PASSED
+tests/test_fast_fail.py::test_captures_errors_behind_ref PASSED
+tests/test_fast_fail.py::test_generated_code_verdict[abc-True] PASSED
+tests/test_fast_fail.py::test_generated_code_verdict[42-True] PASSED
+tests/test_fast_fail.py::test_generated_code_verdict[1.5-False] PASSED
 tests/test_format.py::test_datetime[-expected0] PASSED
 tests/test_format.py::test_datetime[bla-expected1] PASSED
 tests/test_format.py::test_datetime[2018-02-05T14:17:10.00-expected2] PASSED
@@ -479,6 +515,7 @@ tests/test_security.py::test_generate_code_with_proper_variable_names[schema2-' 
 tests/test_security.py::test_generate_code_with_proper_variable_names[schema3-'  validate"10"  '] PASSED
 tests/test_security.py::test_generate_code_with_proper_variable_names[schema4-value4] PASSED
 tests/test_security.py::test_generate_code_with_proper_variable_names[schema5-value5] PASSED
+tests/test_security.py::test_dependencies_false_escapes_property_name PASSED
 tests/test_security.py::test_generate_code_without_overriding_variables PASSED
 tests/test_security.py::test_deeply_nested_schema_raises_definition_exception PASSED
 tests/test_string.py::test_string[0-expected0] PASSED
@@ -509,4 +546,4 @@ tests/test_string.py::test_pattern_with_escape_no_warnings PASSED
 tests/test_string.py::test_regex_pattern[[a-z]-[a-z]] PASSED
 tests/test_string.py::test_regex_pattern[[a-z-expected1] PASSED
 
-======== 500 passed, 4 skipped, 12 deselected ========
+======== 537 passed, 4 skipped, 12 deselected ========
