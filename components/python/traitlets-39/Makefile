@@ -10,17 +10,31 @@
 #
 
 #
-# Copyright 2023 Marcel Telka
+# This file was automatically generated using the following command:
+#   $WS_TOOLS/python-integrate-project -d python/traitlets-39 traitlets
 #
 
-%patch% 01-no-pytest-mypy-testing.patch
-%patch% 02-no-pre-commit.patch
-%patch% 03-no-mypy.patch
+BUILD_STYLE = pyproject
 
-%include-2%
-# Python 3.9 is not supported traitlets >= 5.16.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
-%include-3%
+include ../../../make-rules/shared-macros.mk
+
+COMPONENT_NAME =		traitlets
+HUMAN_VERSION =			5.15.1
+COMPONENT_REVISION =		1
+COMPONENT_SUMMARY =		Traitlets Python configuration system
+COMPONENT_PROJECT_URL =		https://github.com/ipython/traitlets
+COMPONENT_ARCHIVE_HASH =	\
+	sha256:7b1c07854fe25acb39e009bae49f11b79ff6cbb2f27999104e9110e7a6b53722
+COMPONENT_LICENSE =		BSD-3-Clause
+COMPONENT_LICENSE_FILE =	LICENSE
+
+TEST_STYLE = pytest
+
+# traitlets >= 5.16.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
+
+include $(WS_MAKE_RULES)/common.mk
+
 # This project does not support tox so we need to provide test requirements
 # manually.
 TEST_REQUIREMENTS_EXTRAS += test
@@ -32,3 +46,10 @@ PYTEST_ADDOPTS += --deselect tests/config/test_argcomplete.py::TestArgcomplete::
 
 # Testing needs to find the tests module in the build directory
 COMPONENT_TEST_ENV += PYTHONPATH=$(PROTOPYTHONVENDORDIR):$(COMPONENT_TEST_DIR)
+
+# Auto-generated dependencies
+REQUIRED_PACKAGES.python += library/python/hatchling
+REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/argcomplete
+TEST_REQUIRED_PACKAGES.python += library/python/pytest
+TEST_REQUIRED_PACKAGES.python += library/python/pytest-mock
