@@ -25,22 +25,23 @@
 #
 
 BUILD_STYLE=configure
-BUILD_BITS=64
 include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/shared-targets.mk
 
 COMPONENT_NAME=         zsh
-COMPONENT_VERSION=      5.9
+COMPONENT_VERSION=      5.9.2
 COMPONENT_PROJECT_URL=  https://www.zsh.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha256:36fa734374b44783582cec09bcd67822e2f992c779ec1624ab5596df078d2f81
 COMPONENT_SIG_URL=	$(COMPONENT_ARCHIVE_URL).asc
 COMPONENT_CLASSIFICATION=	System/Shells
 COMPONENT_FMRI=         shell/zsh
 
 include $(WS_MAKE_RULES)/common.mk
+
+CFLAGS += $(XPG8MODE)
 
 # Force help files regeneration
 COMPONENT_POST_UNPACK_ACTION = ($(RM) $(SOURCE_DIR)/Doc/help.txt)
@@ -61,6 +62,9 @@ CONFIGURE_OPTIONS += --enable-multibyte
 CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
+
+# See illumos #3801. We don't want zsh to set _XOPEN_SOURCE_EXTENDED for us.
+CONFIGURE_ENV += zsh_cv_no_xopen=yes
 
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D); ./config.status)
 
@@ -90,6 +94,8 @@ CLEAN_PATHS += license
 
 COMPONENT_POST_INSTALL_ACTION = find $(PROTO_DIR) -name '*.~1~' -exec rm {} \;
 
+PKG_HARDLINKS += usr/bin/zsh-$(COMPONENT_VERSION)
+
 COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 # common targets
@@ -101,6 +107,6 @@ install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc licens
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += library/ncurses
-REQUIRED_PACKAGES += library/pcre
+REQUIRED_PACKAGES += library/pcre2
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
