@@ -1,0 +1,15 @@
+Use ksh-safe parameter expansion to default moddeps to empty when unset
+while preserving any value set from the .mdd file.
+
+diff -wpruN --no-dereference '--exclude=*.orig' a~/Src/mkmakemod.sh a/Src/mkmakemod.sh
+--- a~/Src/mkmakemod.sh	1970-01-01 00:00:00
++++ a/Src/mkmakemod.sh	1970-01-01 00:00:00
+@@ -189,7 +189,7 @@ if $first_stage; then
+ 	unset objects proto headers hdrdeps otherincs
+ 	. $top_srcdir/$the_subdir/${mddname}.mdd
+ 	q_name=`echo $name | sed 's,Q,Qq,g;s,_,Qu,g;s,/,Qs,g'`
+-	test -n "${moddeps+set}" || moddeps=
++	moddeps=${moddeps-}
+ 	test -n "$nozshdep" || moddeps="$moddeps zsh/main"
+ 	test -n "${proto+set}" ||
+ 	    proto=`echo $objects '' | sed 's,\.o ,.syms ,g'`
