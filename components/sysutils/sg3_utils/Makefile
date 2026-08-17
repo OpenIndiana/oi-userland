@@ -27,7 +27,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sg3_utils
-COMPONENT_VERSION= 1.48
+COMPONENT_VERSION= 1.49
 COMPONENT_SUMMARY= Utilities for devices that use SCSI command sets
 COMPONENT_DESCRIPTION= Collection of utilities for devices that use the SCSI command set. Includes utilities to copy data based \
 					   on "dd" syntax and semantics (called sg_dd, sgp_dd and sgm_dd); check INQUIRY data and VPD pages (sg_inq); \
@@ -37,7 +37,7 @@ COMPONENT_DESCRIPTION= Collection of utilities for devices that use the SCSI com
 COMPONENT_PROJECT_URL= https://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha256:d62b6c3cf20390fa7357044390084166d25f1d932a1135c450b69fe5c283d773
+COMPONENT_ARCHIVE_HASH= sha256:84ba5095108dd97cfb554d7b38721f2aa2b43fc1f93cf82abd6efe4c9da220a7
 COMPONENT_ARCHIVE_URL= https://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI= system/storage/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= Applications/System Utilities
@@ -47,6 +47,8 @@ include $(WS_MAKE_RULES)/common.mk
 
 CPPFLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
 CFLAGS += -std=c99 $(XPG6MODE)
+
+COMPONENT_PREP_ACTION += ( cd $(@D); PATH=$(PATH) $(CONFIG_SHELL) autogen.sh )
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
