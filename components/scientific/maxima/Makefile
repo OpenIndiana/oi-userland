@@ -18,6 +18,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	maxima
 COMPONENT_VERSION= 	5.50.0
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Maxima is a descendant of Macsyma, the legendary computer algebra system
 COMPONENT_PROJECT_URL=	https://maxima.sourceforge.io
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -45,11 +46,11 @@ CONFIGURE_OPTIONS += --enable-sbcl-exec
 CONFIGURE_OPTIONS += --enable-quiet-build
 
 # Remove info/dir
-COMPONENT_POST_INSTALL_ACTION += \
-	$(RM) $(PROTOUSRSHAREDIR)/info/dir ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTOUSRSHAREDIR)/info/dir ;
 
 # Note that the detailed test results are
-# 4 tests failed out of 18,244 total tests.
+# No unexpected errors found out of 20,589 tests.
+COMPONENT_TEST_ENV += maxima_tempdir=/tmp
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += compress/zstd
