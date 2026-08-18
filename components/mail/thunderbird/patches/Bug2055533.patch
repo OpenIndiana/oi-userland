@@ -1,0 +1,35 @@
+--- a/third_party/angle/angle_common_gn/moz.build       Thu Jul 16 17:00:00 2026 -0700
++++ b/third_party/angle/angle_common_gn/moz.build       Thu Jul 16 17:00:00 2026 -0700
+@@ -144,6 +144,13 @@
+     DEFINES["__STDC_CONSTANT_MACROS"] = True
+     DEFINES["__STDC_FORMAT_MACROS"] = True
+
++if CONFIG["OS_TARGET"] == "SunOS":
++
++    UNIFIED_SOURCES += [
++        "/third_party/angle/src/common/system_utils_linux.cpp",
++        "/third_party/angle/src/common/system_utils_posix.cpp"
++    ]
++
+ if CONFIG["OS_TARGET"] == "WINNT":
+
+     DEFINES["ANGLE_IS_WIN"] = True
+diff -r 000000000000 -r 000000000000 third_party/angle/angle_program_version_id_gn/moz.build
+--- a/third_party/angle/angle_program_version_id_gn/moz.build   Thu Jul 16 17:00:00 2026 -0700
++++ b/third_party/angle/angle_program_version_id_gn/moz.build   Thu Jul 16 17:00:00 2026 -0700
+@@ -69,6 +69,15 @@
+         script="/python/mozbuild/mozbuild/action/write_path_list.py",
+     )
+
++if CONFIG["OS_TARGET"] == "SunOS":
++
++    GeneratedFile(
++        "/third_party/angle/gen/ANGLEShaderProgramVersion.h.rsp",
++        entry_point="write_paths",
++        inputs=['ANGLEShaderProgramVersion.h-f55f152d23101920.rsp.in'],
++        script="/python/mozbuild/mozbuild/action/write_path_list.py",
++    )
++
+ if CONFIG["OS_TARGET"] == "WINNT":
+
+     DEFINES["UNICODE"] = True
