@@ -1,22 +1,37 @@
-Add bash completions from openindiana-completions project.
-Remove pkgutil which we don't have.
-
---- bash-completion-2.16.0/completions/Makefile.am.orig
-+++ bash-completion-2.16.0/completions/Makefile.am
-@@ -510,7 +510,15 @@
- 		zopfli \
- 		zopflipng
+diff --git a/completions/Makefile.am b/completions/Makefile.am
+index 726252e..2d8b0cb 100644
+--- a/completions/Makefile.am
++++ b/completions/Makefile.am
+@@ -1,6 +1,20 @@
+ # We include all the files in the tarball
  
--solaris_extra = pkgutil
-+solaris_extra = \
-+		beadm \
-+		bootadm \
-+		dladm \
-+		pfexec \
-+		pkg \
-+		zfs \
-+		zones \
-+		zpool
+ bashcompdir = $(datadir)/$(PACKAGE)/completions
+-bashcomp_DATA = README.md
++bashcomp_DATA = README.md \
++	beadm.bash \
++	bootadm.bash \
++	dladm.bash \
++	flowadm.bash \
++	fmadm.bash \
++	ipadm.bash \
++	pfexec.bash \
++	pkg.bash \
++	svcadm.bash \
++	zfs.bash \
++	zlogin.bash \
++	zoneadm.bash \
++	zonecfg.bash \
++	zpool.bash
  
- bsd_extra = pkg_delete
+ EXTRA_DIST = $(bashcomp_DATA)
+diff --git a/startup/Makefile.am b/startup/Makefile.am
+index 0da318b..114478c 100644
+--- a/startup/Makefile.am
++++ b/startup/Makefile.am
+@@ -1,4 +1,5 @@
+ startupdir = $(datadir)/$(PACKAGE)/startup
+-startup_DATA = README.md
++startup_DATA = README.md \
++	zones.bash
  
+ EXTRA_DIST = $(startup_DATA)
