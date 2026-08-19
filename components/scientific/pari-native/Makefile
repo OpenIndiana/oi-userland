@@ -9,7 +9,7 @@
 #
 
 #
-# Copyright (c) 2025 David Stes
+# Copyright (c) 2025,2026 David Stes
 
 #
 # IPS mediator "pari" mediator-implementation set to "native".
@@ -19,15 +19,16 @@
 # The manifest files hold no license and copyright info per explicit request from Bill Allombert from the PARI team.
 #
 
+USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pari-native
-COMPONENT_VERSION=	2.17.2
-COMPONENT_SUMMARY=	The PARI Computer Algebra System (Native Kernel)
+COMPONENT_VERSION=	2.17.4
+COMPONENT_SUMMARY=	PARI/GP (with Native Kernel) is a computer algebra system with the main aim of facilitating number theory computations
 COMPONENT_PROJECT_URL=	https://pari.math.u-bordeaux.fr
 COMPONENT_SRC=		pari-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:7d30578f5cf97b137a281f4548d131aafc0cde86bcfd10cc1e1bd72a81e65061
+COMPONENT_ARCHIVE_HASH=	sha256:02651d99c391007d384b3fadbc20abc6916b77036f9e496c99e9ce8688ca4b53
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/pub/pari/unix/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		library/math/pari-native
 COMPONENT_CLASSIFICATION=	Development/Other Languages
@@ -76,6 +77,7 @@ TEST_REQUIRED_PACKAGES += library/math/pari-elldata
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(READLINE_PKG)
+REQUIRED_PACKAGES += library/math/pari
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
 REQUIRED_PACKAGES += x11/library/libx11
