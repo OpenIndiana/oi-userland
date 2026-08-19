@@ -1,0 +1,66 @@
+35:28.72 W                  from Unified_cpp_toolkit_xre0.cpp:119:
+35:28.73 E thunderbird-154.0/obj-x86_64-unknown-illumos/dist/include/mozilla/TelemetryHistogramEnums.h:1167:2: error: expected identifier before numeric constant
+35:28.73 E  1167 |
+35:28.73 E       |  ^
+
+35:05.46 W                  from Unified_cpp_toolkit_xre0.cpp:119:
+35:05.46 E thunderbird-154.0/obj-x86_64-unknown-illumos/dist/include/nss/mozpkix/Result.h:88:20: error: expected identifier before numeric constant
+35:05.46 E    88 |   MOZILLA_PKIX_MAP(Success, 0, 0)                                              \                                                             35:05.47 E       |                    ^~~~~~~
+
+Success conflicts with define in header /usr/include/X11/X.h
+
+--- thunderbird-154.0/toolkit/components/telemetry/build_scripts/gen_histogram_enum.py.~1~
++++ thunderbird-154.0/toolkit/components/telemetry/build_scripts/gen_histogram_enum.py
+@@ -25,10 +25,6 @@
+ #include <cstdint>
+ #include <type_traits>
+ 
+-// X11 defines "Success" which collides with a categorical label.
+-#pragma push_macro("Success")
+-#undef Success
+-
+ namespace mozilla {
+ namespace Telemetry {
+ """
+@@ -37,8 +33,6 @@
+ } // namespace mozilla
+ } // namespace Telemetry
+ 
+-#pragma pop_macro("Success")
+-
+ #endif // mozilla_TelemetryHistogramEnums_h"""
+ 
+ 
+--- thunderbird-154.0/toolkit/components/telemetry/Histograms.json.old
++++ thunderbird-154.0/toolkit/components/telemetry/Histograms.json
+@@ -3958,7 +3958,7 @@
+     "expires_in_version": "never",
+     "kind": "categorical",
+     "labels": [
+-      "Success",
++      "PdfUpSuccess",
+       "ErrProgID",
+       "ErrHash",
+       "ErrLaunchExe",
+@@ -3981,7 +3981,7 @@
+     "expires_in_version": "never",
+     "kind": "categorical",
+     "labels": [
+-      "Success",
++      "ChoceUpSuccess",
+       "ErrProgID",
+       "ErrHash",
+       "ErrLaunchExe",
+--- thunderbird-154.0/security/nss/lib/mozpkix/include/pkix/Result.h.old
++++ thunderbird-154.0/security/nss/lib/mozpkix/include/pkix/Result.h
+@@ -27,6 +27,10 @@
+ 
+ #include <cassert>
+ 
++#if defined(Success)    
++#undef Success
++#endif
++
+ namespace mozilla {
+ namespace pkix {
+ 
