@@ -17,14 +17,14 @@
      (bfd *abfd, char *buf, int *bufsiz, int note_type, ...);
 --- gdb-15.1/bfd/elf.c
 +++ gdb-15.1/bfd/elf.c
-@@ -10516,7 +10516,10 @@ data structure apart.  */
+@@ -10463,7 +10463,10 @@ elfcore_make_note_pseudosection (bfd *abfd,
  static bool
  elfcore_grok_prfpreg (bfd *abfd, Elf_Internal_Note *note)
  {
--  return elfcore_make_note_pseudosection (abfd, ".reg2", note);
-+  asection *sect = bfd_get_section_by_name (abfd, ".reg2");
+-  return elfcore_make_note_pseudosection (abfd, NOTE_PSEUDO_SECTION_REG2, note);
++  asection *sect = bfd_get_section_by_name (abfd, NOTE_PSEUDO_SECTION_REG2);
 +  if (sect == NULL)
-+    return elfcore_make_note_pseudosection (abfd, ".reg2", note);
++    return elfcore_make_note_pseudosection (abfd, NOTE_PSEUDO_SECTION_REG2, note);
 +  return true;
  }
  

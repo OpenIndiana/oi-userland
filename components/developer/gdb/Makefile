@@ -31,14 +31,14 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gdb
-COMPONENT_VERSION=      16.3
+COMPONENT_VERSION=      17.2
 COMPONENT_REVISION=	0
 COMPONENT_SUMMARY=      GDB: The GNU Project Debugger
 COMPONENT_CLASSIFICATION=Development/System
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:86015081217dc82c5485db9ce864dcc0b703759d2bdbe4441b095c5f900a6a37
+	sha256:cb891b9a9f554cac972eea5368176b240640ae90b681aae84bf873a9501f0063
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/gdb/
 COMPONENT_FMRI= developer/debug/gdb
@@ -376,7 +376,6 @@ COMPONENT_TEST_ENV += PATH="$(GCC_BINDIR):$(PATH)" LD_LIBRARY_PATH="$(GCC_ROOT)/
 GENERATE_EXTRA_CMD += | $(GNU_GREP) -v -E '/.*\.pyc$$'
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
 REQUIRED_PACKAGES += $(GXX_RUNTIME_PKG)
 REQUIRED_PACKAGES += compress/xz
@@ -391,3 +390,4 @@ REQUIRED_PACKAGES += library/zlib
 REQUIRED_PACKAGES += shell/ksh93
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES += system/library/math
+REQUIRED_PACKAGES.python += runtime/python
