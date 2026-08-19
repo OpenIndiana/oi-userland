@@ -1,364 +1,21 @@
-Result of following commands:
-
-cp -a bash-completion-2.16.0 bash-completion-2.16.0.old
-
-find bash-completion-2.16.0/completions/ -type f -exec sed -i 's/ grep / ggrep /g' {} \;
-find bash-completion-2.16.0/completions/ -type f -exec sed -i 's/ sed / gsed /g' {} \;
-
-find bash-completion-2.16.0/bash_completion -type f -exec sed -i 's/ grep / ggrep /g' {} \;
-find bash-completion-2.16.0/bash_completion -type f -exec sed -i 's/ sed / gsed /g' {} \;
-
-gdiff -pruN bash-completion-2.16.0.old bash-completion-2.16.0 | less
-
-And check the result.
-
---- bash-completion-2.16.0/bash_completion.orig
-+++ bash-completion-2.16.0/bash_completion
-@@ -1709,7 +1709,7 @@
-     _comp_compgen -v addresses split -- "$(
-         {
-             ip -c=never link show || ip link show || LC_ALL=C ifconfig -a
--        } 2>/dev/null | command sed -ne \
-+        } 2>/dev/null | command gsed -ne \
-             "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($_re\)[[:space:]].*/\1/p" -ne \
-             "s/.*[[:space:]]HWaddr[[:space:]]\{1,\}\($_re\)[[:space:]]*$/\1/p" -ne \
-             "s|.*[[:space:]]\(link/\)\{0,1\}ether[[:space:]]\{1,\}\($_re\)[[:space:]].*|\2|p" -ne \
-@@ -1720,13 +1720,13 @@
-     _comp_compgen -av addresses split -- "$(
-         {
-             arp -an || ip -c=never neigh show || ip neigh show
--        } 2>/dev/null | command sed -ne \
-+        } 2>/dev/null | command gsed -ne \
-             "s/.*[[:space:]]\($_re\)[[:space:]].*/\1/p" -ne \
-             "s/.*[[:space:]]\($_re\)[[:space:]]*$/\1/p"
-     )"
- 
-     # /etc/ethers
--    _comp_compgen -av addresses split -- "$(command sed -ne \
-+    _comp_compgen -av addresses split -- "$(command gsed -ne \
-         "s/^[[:space:]]*\($_re\)[[:space:]].*/\1/p" /etc/ethers 2>/dev/null)"
- 
-     _comp_compgen -U addresses ltrim_colon "${addresses[@]}"
-@@ -1741,22 +1741,22 @@
-     if [[ -f /etc/debian_version ]]; then
-         # Debian system
-         _comp_expand_glob files '/etc/network/interfaces /etc/network/interfaces.d/*' || return 0
--        _comp_compgen -U files split -- "$(command sed -ne \
-+        _comp_compgen -U files split -- "$(command gsed -ne \
-             's|^iface \([^ ]\{1,\}\).*$|\1|p' "${files[@]}" 2>/dev/null)"
-     elif [[ -f /etc/SuSE-release ]]; then
-         # SuSE system
-         _comp_expand_glob files '/etc/sysconfig/network/ifcfg-*' || return 0
-         _comp_compgen -U files split -- "$(printf '%s\n' "${files[@]}" |
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-     elif [[ -f /etc/pld-release ]]; then
-         # PLD Linux
-         _comp_compgen -U files split -- "$(command ls -B /etc/sysconfig/interfaces |
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-     else
-         # Assume Red Hat
-         _comp_expand_glob files '/etc/sysconfig/network-scripts/ifcfg-*' || return 0
-         _comp_compgen -U files split -- "$(printf '%s\n' "${files[@]}" |
--            command sed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-+            command gsed -ne 's|.*ifcfg-\([^*].*\)$|\1|p')"
-     fi
- }
- 
-@@ -1781,7 +1781,7 @@
-     _comp_compgen -v addrs split -- "$({
-         ip -c=never addr show || ip addr show || LC_ALL=C ifconfig -a
-     } 2>/dev/null |
--        command sed -e 's/[[:space:]]addr:/ /' -ne \
-+        command gsed -e 's/[[:space:]]addr:/ /' -ne \
-             "s|.*inet${_n}[[:space:]]\{1,\}\([^[:space:]/]*\).*|\1|p")" ||
-         return
- 
-@@ -1925,17 +1925,17 @@
-     # This function completes on process IDs.
-     _comp_compgen_pids()
-     {
--        _comp_compgen_split -- "$(command ps -efo pid | command sed 1d)"
-+        _comp_compgen_split -- "$(command ps -efo pid | command gsed 1d)"
-     }
- 
-     _comp_compgen_pgids()
-     {
--        _comp_compgen_split -- "$(command ps -efo pgid | command sed 1d)"
-+        _comp_compgen_split -- "$(command ps -efo pgid | command gsed 1d)"
-     }
-     _comp_compgen_pnames()
-     {
-         _comp_compgen_split -X '<defunct>' -- "$(command ps -efo comm |
--            command sed -e 1d -e 's:.*/::' -e 's/^-//' | sort -u)"
-+            command gsed -e 1d -e 's:.*/::' -e 's/^-//' | sort -u)"
-     }
- else
-     _comp_compgen_pids()
-@@ -1951,7 +1951,7 @@
-     {
-         local -a procs=()
-         if [[ ${1-} == -s ]]; then
--            _comp_split procs "$(command ps ax -o comm | command sed -e 1d)"
-+            _comp_split procs "$(command ps ax -o comm | command gsed -e 1d)"
-         else
-             # Some versions of ps don't support "command", but do "comm", e.g.
-             # some busybox ones. Fall back
-@@ -2093,7 +2093,7 @@
-     else
-         local sysvdirs
-         _comp_sysvdirs || return 1
--        _comp_compgen_split -l -- "$(command sed -e 'y/|/ /' \
-+        _comp_compgen_split -l -- "$(command gsed -e 'y/|/ /' \
-             -ne 's/^.*\(U\|msg_u\)sage.*{\(.*\)}.*$/\2/p' \
-             "${sysvdirs[0]}/${prev##*/}" 2>/dev/null) start stop"
-     fi
-@@ -2123,7 +2123,7 @@
- {
-     local _modpath=/lib/modules/$1
-     _comp_compgen_split -- "$(command ls -RL "$_modpath" 2>/dev/null |
--        command sed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p' \
-+        command gsed -ne 's/^\(.*\)\.k\{0,1\}o\(\.[gx]z\)\{0,1\}$/\1/p' \
-             -e 's/^\(.*\)\.ko\.zst$/\1/p')"
- }
- 
-@@ -2446,7 +2446,7 @@
- _comp_compgen_terms()
- {
-     _comp_compgen_split -- "$({
--        command sed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap
-+        command gsed -ne 's/^\([^[:space:]#|]\{2,\}\)|.*/\1/p' /etc/termcap
-         {
-             toe -a || toe
-         } | _comp_awk '{ print $1 }'
-@@ -2461,7 +2461,7 @@
- {
-     if type unbuffer &>/dev/null; then
-         unbuffer -p "$@"
--    elif script --version 2>&1 | command grep -qF util-linux; then
-+    elif script --version 2>&1 | command ggrep -qF util-linux; then
-         # BSD and Solaris "script" do not seem to have required features
-         script -qaefc "$*" /dev/null
-     else
-@@ -2542,7 +2542,7 @@
-     # https://github.com/openssh/openssh-portable/blob/5ec5504f1d328d5bfa64280cd617c3efec4f78f3/readconf.c#L2240
-     local max_depth=16
-     while ((${#included[@]} > 0 && depth++ < max_depth)); do
--        _comp_split include_files "$(command sed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\(.*\)$/\1/p' "${included[@]}")" || return
-+        _comp_split include_files "$(command gsed -ne 's/^[[:blank:]]*[Ii][Nn][Cc][Ll][Uu][Dd][Ee][[:blank:]]\(.*\)$/\1/p' "${included[@]}")" || return
-         included=()
-         for i in "${include_files[@]}"; do
-             if [[ $i != [~/]* ]]; then
-@@ -2740,7 +2740,7 @@
-     # append any available aliases from ssh config files
-     if [[ ${#config[@]} -gt 0 && $aliases ]]; then
-         local -a hosts
--        if _comp_split hosts "$(command sed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]=]\{1,\}\(.*\)$/\1/p' "${config[@]}")"; then
-+        if _comp_split hosts "$(command gsed -ne 's/^[[:blank:]]*[Hh][Oo][Ss][Tt][[:blank:]=]\{1,\}\(.*\)$/\1/p' "${config[@]}")"; then
-             _comp_compgen -av known_hosts -- -P "$prefix" \
-                 -S "$suffix" -W '"${hosts[@]%%[*?%]*}"' -X '@(\!*|)'
-         fi
-@@ -3049,7 +3049,7 @@
-             return
-             ;;
-         --+([-a-z0-9_]))
--            local argtype=$(LC_ALL=C $1 --help 2>&1 | command sed -ne \
-+            local argtype=$(LC_ALL=C $1 --help 2>&1 | command gsed -ne \
-                 "s|.*$prev\[\{0,1\}=[<[]\{0,1\}\([-A-Za-z0-9_]\{1,\}\).*|\1|p")
-             case ${argtype,,} in
-                 *dir*)
-@@ -3084,9 +3084,9 @@
- complete -F _comp_complete_longopt \
-     a2ps awk base64 bash bc bison cat chroot colordiff cp \
-     csplit cut date df diff dir du enscript expand fmt fold gperf \
--    grep grub head irb ld ldd less ln ls m4 mkdir mkfifo mknod \
-+    ggrep grub head irb ld ldd less ln ls m4 mkdir mkfifo mknod \
-     mv netstat nl nm objcopy objdump od paste pr ptx readelf rm rmdir \
--    sed seq shar sort split strip sum tac tail tee \
-+    gsed seq shar sort split strip sum tac tail tee \
-     texindex touch tr uname unexpand uniq units vdir wc who
- 
- # @since 2.12
---- bash-completion-2.16.0/completions/_adb.orig
-+++ bash-completion-2.16.0/completions/_adb
-@@ -6,7 +6,7 @@
- _comp_cmd_adb__command_usage()
- {
-     _comp_compgen_help - <<<"$("$1" help 2>&1 |
--        command sed -e "/^ *\(adb \)\{0,1\} *$2 /!d;s/[]|[]/\n/g")"
-+        command gsed -e "/^ *\(adb \)\{0,1\} *$2 /!d;s/[]|[]/\n/g")"
- }
- 
- _comp_cmd_adb()
-@@ -57,7 +57,7 @@
-             ;;
-         forward)
-             _comp_compgen_help - <<<"$("$1" help 2>&1 |
--                command sed -ne "s/^ *adb  *forward  *-/-/p")"
-+                command gsed -ne "s/^ *adb  *forward  *-/-/p")"
-             ;;
-         reboot)
-             _comp_compgen -- -W 'bootloader recovery'
---- bash-completion-2.16.0/completions/_mock.orig
-+++ bash-completion-2.16.0/completions/_mock
-@@ -47,7 +47,7 @@
-             # (e.g. ix86 chroot builds in x86_64 mock host)
-             # This would actually depend on what the target root
-             # can be used to build for...
--            _comp_compgen_split -- "$(command rpm --showrc | command sed -ne \
-+            _comp_compgen_split -- "$(command rpm --showrc | command gsed -ne \
-                 "s/^[[:space:]]*${regex_header}[[:space:]]*:[[:space:]]*\(.*\)/\1/p")"
-             return
-             ;;
---- bash-completion-2.16.0/completions/_modprobe.orig
-+++ bash-completion-2.16.0/completions/_modprobe
-@@ -93,7 +93,7 @@
-                     prev=${cur%%=*}
-                     cur=${cur#*=}
-                     if PATH="$PATH:/sbin" modinfo -p "$module" 2>/dev/null |
--                        command grep -q "^$prev:.*(bool)"; then
-+                        command ggrep -q "^$prev:.*(bool)"; then
-                         local choices="on off"
-                         [[ $cur ]] && choices="1 0 y Y n N on off"
-                         _comp_compgen -- -W "$choices"
---- bash-completion-2.16.0/completions/_modules.orig
-+++ bash-completion-2.16.0/completions/_modules
-@@ -23,13 +23,13 @@
- 
- _comp_cmd_module__compgen_list()
- {
--    local modules="$(command sed 's/:/ /g' <<<"$LOADEDMODULES" | sort)"
-+    local modules="$(command gsed 's/:/ /g' <<<"$LOADEDMODULES" | sort)"
-     _comp_compgen -- -W "$modules"
- }
- 
- _comp_cmd_module__compgen_path()
- {
--    local modules="$(command sed 's/:/ /g' <<<"$MODULEPATH" | sort)"
-+    local modules="$(command gsed 's/:/ /g' <<<"$MODULEPATH" | sort)"
-     _comp_compgen -- -W "$modules"
- }
- 
-@@ -37,8 +37,8 @@
- {
-     local modules="$(
-         module avail 2>&1 |
--            command grep -E -v '^(-|$)' |
--            xargs printf '%s\n' | command sed -e 's/(default)//g' | sort
-+            command ggrep -E -v '^(-|$)' |
-+            xargs printf '%s\n' | command gsed -e 's/(default)//g' | sort
-     )"
-     _comp_compgen -- -W "$modules"
- }
-@@ -53,8 +53,8 @@
-         # First parameter on line -- we expect it to be a mode selection
- 
-         local options
--        options="$(module help 2>&1 | command grep -E '^[[:space:]]*\+' |
--            _comp_awk '{print $2}' | command sed -e 's/|/ /g' | sort)"
-+        options="$(module help 2>&1 | command ggrep -E '^[[:space:]]*\+' |
-+            _comp_awk '{print $2}' | command gsed -e 's/|/ /g' | sort)"
- 
-         _comp_compgen -- -W "$options"
- 
---- bash-completion-2.16.0/completions/_mount.orig
-+++ bash-completion-2.16.0/completions/_mount
-@@ -46,8 +46,8 @@
-         if [[ $host ]]; then
-             _comp_compgen -c "${cur#//"$host"}" split -P "//$host" -- "$(
-                 smbclient -d 0 -NL "$host" 2>/dev/null |
--                    command sed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
--                    command sed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
-+                    command gsed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
-+                    command gsed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
-             )"
-         fi
-     elif [[ -r /etc/vfstab ]]; then
---- bash-completion-2.16.0/completions/_mount.linux.orig
-+++ bash-completion-2.16.0/completions/_mount.linux
-@@ -238,8 +238,8 @@
-         if [[ $host ]]; then
-             _comp_compgen -c "${cur#//"$host"}" split -P "//$host" -- "$(
-                 smbclient -d 0 -NL "$host" 2>/dev/null |
--                    command sed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
--                    command sed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
-+                    command gsed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
-+                    command gsed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
-             )"
-         fi
-     fi
---- bash-completion-2.16.0/completions/_nox.orig
-+++ bash-completion-2.16.0/completions/_nox
-@@ -4,7 +4,7 @@
- # This serves as a fallback in case the completion is not installed otherwise.
- 
- eval -- "$(
--    pathcmd=$(type -P -- "$1" 2>/dev/null | command sed 's,/[^/]*$,,')
-+    pathcmd=$(type -P -- "$1" 2>/dev/null | command gsed 's,/[^/]*$,,')
-     [[ $pathcmd ]] && PATH=$pathcmd${PATH:+:$PATH}
-     register-python-argcomplete --shell bash "$1" 2>/dev/null ||
-         register-python-argcomplete3 --shell bash "$1" 2>/dev/null
---- bash-completion-2.16.0/completions/_yum.orig
-+++ bash-completion-2.16.0/completions/_yum
-@@ -9,12 +9,12 @@
-         # Try to strip in between headings like "Available Packages"
-         # This will obviously only work for English :P
-         _comp_split COMPREPLY "$(yum -d 0 -C list "$1" "$cur*" 2>/dev/null |
--            command sed -ne '/^Available /d' -e '/^Installed /d' \
-+            command gsed -ne '/^Available /d' -e '/^Installed /d' \
-                 -e '/^Updated /d' -e 's/[[:space:]].*//p')"
-     else
-         # Drop first line (e.g. "Updated Packages")
-         _comp_split COMPREPLY "$(yum -d 0 -C list "$1" "$cur*" 2>/dev/null |
--            command sed -ne 1d -e 's/[[:space:]].*//p')"
-+            command gsed -ne 1d -e 's/[[:space:]].*//p')"
-     fi
- }
- 
-@@ -25,7 +25,7 @@
-     # Drop first ("repo id      repo name") and last ("repolist: ...") rows
-     _comp_compgen_split -- "$(
-         yum --noplugins -C repolist "$1" 2>/dev/null |
--            command sed -ne '/^repo[[:space:]]\{1,\}id/d' -e '/^repolist:/d' \
-+            command gsed -ne '/^repo[[:space:]]\{1,\}id/d' -e '/^repolist:/d' \
-                 -e 's/[[:space:]].*//p'
-     )"
- }
-@@ -36,7 +36,7 @@
-     _comp_expand_glob files '/usr/lib/yum-plugins/*.py{,c,o}' || return
-     _comp_compgen -U files split -- "$(
-         printf '%s\n' "${files[@]}" |
--            command sed -ne 's|.*/\([^./]*\)\.py[co]\{0,1\}$|\1|p' | sort -u
-+            command gsed -ne 's|.*/\([^./]*\)\.py[co]\{0,1\}$|\1|p' | sort -u
-     )"
- }
- 
---- bash-completion-2.16.0/completions/2to3.orig
-+++ bash-completion-2.16.0/completions/2to3
-@@ -11,7 +11,7 @@
-             ;;
-         -f | --fix | -x | --nofix)
-             _comp_compgen_split -- "$(
--                "$1" --list-fixes 2>/dev/null | command sed -e 1d
-+                "$1" --list-fixes 2>/dev/null | command gsed -e 1d
-             )"
-             return
-             ;;
---- bash-completion-2.16.0/completions/7z.orig
-+++ bash-completion-2.16.0/completions/7z
-@@ -102,7 +102,7 @@
+diff --git a/completions-core/7z.bash b/completions-core/7z.bash
+index 5317660..8de77ed 100644
+--- a/completions-core/7z.bash
++++ b/completions-core/7z.bash
+@@ -95,7 +95,7 @@ _comp_cmd_7z()
      else
          if [[ ${words[1]} == d ]]; then
              _comp_compgen_split -l -- "$(
 -                "$1" l "${words[2]}" -slt 2>/dev/null | command sed -n \
 +                "$1" l "${words[2]}" -slt 2>/dev/null | command gsed -n \
-                     '/^Path =/s/^Path = \(.*\)$/\1/p' 2>/dev/null | tail -n+2
+                     's/^Path = \(.*\)$/\1/p' 2>/dev/null | _comp_tail -n +2
              )"
              compopt -o filenames
---- bash-completion-2.16.0/completions/abook.orig
-+++ bash-completion-2.16.0/completions/abook
-@@ -23,11 +23,11 @@
+diff --git a/completions-core/abook.bash b/completions-core/abook.bash
+index 22d5661..f983a23 100644
+--- a/completions-core/abook.bash
++++ b/completions-core/abook.bash
+@@ -23,11 +23,11 @@ _comp_cmd_abook()
      case $prev in
          --informat)
              _comp_compgen_split -- "$("$1" --formats |
@@ -372,9 +29,11 @@ And check the result.
              ;;
          --infile)
              _comp_compgen -- -W stdin
---- bash-completion-2.16.0/completions/alias.orig
-+++ bash-completion-2.16.0/completions/alias
-@@ -13,7 +13,7 @@
+diff --git a/completions-core/alias.bash b/completions-core/alias.bash
+index 60a9ecd..cf1c5f6 100644
+--- a/completions-core/alias.bash
++++ b/completions-core/alias.bash
+@@ -13,7 +13,7 @@ _comp_cmd_alias()
              _comp_compgen -- -A alias
              ;;
          *=)
@@ -383,9 +42,24 @@ And check the result.
                  -e 's|^alias '"$cur"'\(.*\)$|\1|')")
              ;;
      esac
---- bash-completion-2.16.0/completions/appdata-validate.orig
-+++ bash-completion-2.16.0/completions/appdata-validate
-@@ -10,7 +10,7 @@
+diff --git a/completions-core/alternatives.bash b/completions-core/alternatives.bash
+index 4fffe64..40f16fa 100644
+--- a/completions-core/alternatives.bash
++++ b/completions-core/alternatives.bash
+@@ -83,7 +83,7 @@ _comp_cmd_alternatives()
+             _comp_cmd_alternatives__installed
+             ;;
+         *)
+-            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command sed '
++            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command gsed '
+                 /usage:/,/^[[:space:]]*$/{
+                   s/^\([[:space:]]*usage:\)\{0,1\}[[:space:]]*[^[:space:]]*alternatives /  /
+                   s/^[[:space:]]*\[\(-.*\)\]/  \1/
+diff --git a/completions-core/appdata-validate.bash b/completions-core/appdata-validate.bash
+index 426870d..d127dc0 100644
+--- a/completions-core/appdata-validate.bash
++++ b/completions-core/appdata-validate.bash
+@@ -10,7 +10,7 @@ _comp_cmd_appdata_validate()
              return
              ;;
          --output-format)
@@ -394,20 +68,24 @@ And check the result.
                  's/--output-format.*\[\(.*\)\]/\1/' -e 's/|/ /gp')"
              return
              ;;
---- bash-completion-2.16.0/completions/apt-get.orig
-+++ bash-completion-2.16.0/completions/apt-get
-@@ -80,7 +80,7 @@
+diff --git a/completions-core/apt-get.bash b/completions-core/apt-get.bash
+index 36e24f0..29baa45 100644
+--- a/completions-core/apt-get.bash
++++ b/completions-core/apt-get.bash
+@@ -80,7 +80,7 @@ _comp_cmd_apt_get()
              # Prefer `apt-cache` in the same dir as command
              local pathcmd
              pathcmd=$(type -P -- "$1") && local PATH=${pathcmd%/*}:$PATH
--            _comp_compgen_split -- "$(apt-cache policy | command sed -ne \
-+            _comp_compgen_split -- "$(apt-cache policy | command gsed -ne \
-                 's/^ *release.*[ ,]o=\(Debian\|Ubuntu\),a=\(\w*\).*/\2/p')"
-             return
-             ;;
---- bash-completion-2.16.0/completions/aptitude.orig
-+++ bash-completion-2.16.0/completions/aptitude
-@@ -53,13 +53,13 @@
+-            _comp_compgen_split -- "$(apt-cache policy | command sed -ne '
++            _comp_compgen_split -- "$(apt-cache policy | command gsed -ne '
+                 s/^ *release.*[ ,]o=Debian,a=\([[:alnum:]]*\).*/\1/p
+                 s/^ *release.*[ ,]o=Ubuntu,a=\([[:alnum:]]*\).*/\1/p
+             ')"
+diff --git a/completions-core/aptitude.bash b/completions-core/aptitude.bash
+index 7b152fd..fc40a39 100644
+--- a/completions-core/aptitude.bash
++++ b/completions-core/aptitude.bash
+@@ -53,13 +53,13 @@ _comp_cmd_aptitude()
              ;;
          --target-release | --default-release | -${noargopts}t)
              _comp_compgen_split -l -- "$(apt-cache policy |
@@ -423,9 +101,11 @@ And check the result.
              's/--with(out)-recommends/--without-recommends\n--with-recommends/')"
          ((${#COMPREPLY[@]})) || return 0
  
---- bash-completion-2.16.0/completions/arp.orig
-+++ bash-completion-2.16.0/completions/arp
-@@ -37,7 +37,7 @@
+diff --git a/completions-core/arp.bash b/completions-core/arp.bash
+index 0df748f..f52f964 100644
+--- a/completions-core/arp.bash
++++ b/completions-core/arp.bash
+@@ -37,7 +37,7 @@ _comp_cmd_arp()
      _comp_count_args -a "@(--device|--protocol|--file|--hw-type|-${noargopts}[iApfHt])"
      case $REPLY in
          1)
@@ -434,37 +114,10 @@ And check the result.
                  's/.*(\([0-9]\{1,3\}\(\.[0-9]\{1,3\}\)\{3\}\)).*/\1/p')
              _comp_compgen -- -W '$ips'
              ;;
---- bash-completion-2.16.0/completions/beadm.orig
-+++ bash-completion-2.16.0/completions/beadm
-@@ -138,7 +138,7 @@
-                           # entered BE name, so find snapshot for the particuler BE
-                           if [[ "${prev}" != "rollback" ]]
-                           then
--                            be_and_snapshots=( $(for K in echo "${!be_and_snapshots[@]}"; do echo ${be_and_snapshots[$K]} | grep "^${prev}@" | sed -e 's,.*@,,'; done) )
-+                            be_and_snapshots=( $(for K in echo "${!be_and_snapshots[@]}"; do echo ${be_and_snapshots[$K]} | ggrep "^${prev}@" | gsed -e 's,.*@,,'; done) )
-                           fi
-                           ;;
-                       esac
-@@ -188,7 +188,7 @@
-               local pprev="${COMP_WORDS[COMP_CWORD-2]}"
-               local realcur="${cur##*=}"
-               local zfsprop="${pprev%%@*}"; zfsprop="${zfsprop##*,}"
--              local zfsvals=( $(zfs get 2>&1 | nawk '$1 == "'${zfsprop}'" && $2 == "YES" { $1=""; $2=""; $3=""; print }' | sed -e 's,|,,g') )
-+              local zfsvals=( $(zfs get 2>&1 | nawk '$1 == "'${zfsprop}'" && $2 == "YES" { $1=""; $2=""; $3=""; print }' | gsed -e 's,|,,g') )
-               compopt -o nospace
-               compopt -o nosort
-               COMPREPLY=( $(compgen -W "${zfsvals[*]}" -- "${realcur}") )
-@@ -206,7 +206,7 @@
-                   # ZFS property values
-                   local realcur=${cur##*=}
-                   local zfsprop=${prev%%@*}; zfsprop=${zfsprop##*,}
--                  local zfsvals=( $(zfs get 2>&1 | nawk '$1 == "'${zfsprop}'" && $2 == "YES" { $1=""; $2=""; $3=""; print }' | sed -e 's,|,,g') )
-+                  local zfsvals=( $(zfs get 2>&1 | nawk '$1 == "'${zfsprop}'" && $2 == "YES" { $1=""; $2=""; $3=""; print }' | gsed -e 's,|,,g') )
-                   compopt -o nospace
-                   compopt -o nosort
-                   COMPREPLY=( $(compgen -W "${zfsvals[*]}" -- "${realcur}") )
---- bash-completion-2.16.0/completions/carton.orig
-+++ bash-completion-2.16.0/completions/carton
+diff --git a/completions-core/carton.bash b/completions-core/carton.bash
+index 0617e74..711a239 100644
+--- a/completions-core/carton.bash
++++ b/completions-core/carton.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_carton__commands()
  {
@@ -474,31 +127,37 @@ And check the result.
      _comp_compgen -aF $' \t\n,' -- -W "$cmds"
  }
  
---- bash-completion-2.16.0/completions/ccze.orig
-+++ bash-completion-2.16.0/completions/ccze
-@@ -30,7 +30,7 @@
+diff --git a/completions-core/ccze.bash b/completions-core/ccze.bash
+index 337d7f3..327bf0c 100644
+--- a/completions-core/ccze.bash
++++ b/completions-core/ccze.bash
+@@ -30,7 +30,7 @@ _comp_cmd_ccze()
              ;;
          --plugin | -${noargopts}p)
-             _comp_compgen_split -- "$("$1" --list-plugins | command \
--                sed -ne 's/^\([a-z0-9]\{1,\}\)[[:space:]]\{1,\}|.*/\1/p')"
-+                gsed -ne 's/^\([a-z0-9]\{1,\}\)[[:space:]]\{1,\}|.*/\1/p')"
+             _comp_compgen_split -- "$("$1" --list-plugins |
+-                command sed -ne 's/^\([a-z0-9]\{1,\}\)[[:space:]]\{1,\}|.*/\1/p')"
++                command gsed -ne 's/^\([a-z0-9]\{1,\}\)[[:space:]]\{1,\}|.*/\1/p')"
              return
              ;;
      esac
---- bash-completion-2.16.0/completions/cfrun.orig
-+++ bash-completion-2.16.0/completions/cfrun
-@@ -33,7 +33,7 @@
+diff --git a/completions-core/cfrun.bash b/completions-core/cfrun.bash
+index f29fab2..54a1188 100644
+--- a/completions-core/cfrun.bash
++++ b/completions-core/cfrun.bash
+@@ -33,7 +33,7 @@ _comp_cmd_cfrun()
                  done
                  [[ ! -f $hostfile ]] && return
  
--                _comp_compgen_split -- "$(command grep -v -E '(=|^$|^#)' \
-+                _comp_compgen_split -- "$(command ggrep -v -E '(=|^$|^#)' \
+-                _comp_compgen_split -- "$(command grep -v -E '=|^$|^#' \
++                _comp_compgen_split -- "$(command ggrep -v -E '=|^$|^#' \
                      "$hostfile")"
              fi
              ;;
---- bash-completion-2.16.0/completions/checksec.orig
-+++ bash-completion-2.16.0/completions/checksec
-@@ -27,11 +27,11 @@
+diff --git a/completions-core/checksec.bash b/completions-core/checksec.bash
+index 0ba00ab..4ccc937 100644
+--- a/completions-core/checksec.bash
++++ b/completions-core/checksec.bash
+@@ -27,11 +27,11 @@ _comp_cmd_checksec()
              ;;
          --format)
              _comp_compgen_split -- "$("$1" --help 2>/dev/null |
@@ -512,9 +171,11 @@ And check the result.
              ;;
      esac
  
---- bash-completion-2.16.0/completions/complete.orig
-+++ bash-completion-2.16.0/completions/complete
-@@ -29,7 +29,7 @@
+diff --git a/completions-core/complete.bash b/completions-core/complete.bash
+index 451d660..0f7f496 100644
+--- a/completions-core/complete.bash
++++ b/completions-core/complete.bash
+@@ -29,7 +29,7 @@ _comp_cmd_complete()
              return
              ;;
          -*p | -*r)
@@ -523,9 +184,11 @@ And check the result.
              return
              ;;
      esac
---- bash-completion-2.16.0/completions/configure.orig
-+++ bash-completion-2.16.0/completions/configure
-@@ -33,7 +33,7 @@
+diff --git a/completions-core/configure.bash b/completions-core/configure.bash
+index 677058e..1271f10 100644
+--- a/completions-core/configure.bash
++++ b/completions-core/configure.bash
+@@ -33,7 +33,7 @@ _comp_cmd_configure()
      if [[ ${BASH_COMPLETION_CMD_CONFIGURE_HINTS-} ]]; then
          _comp_compgen_split -- "$("$1" --help 2>&1 |
              _comp_awk '/^  --[A-Za-z]/ { print $1; \
@@ -534,9 +197,11 @@ And check the result.
          [[ ${COMPREPLY-} == *=* ]] && compopt -o nospace
      else
          _comp_compgen_help
---- bash-completion-2.16.0/completions/cpan2dist.orig
-+++ bash-completion-2.16.0/completions/cpan2dist
-@@ -29,7 +29,7 @@
+diff --git a/completions-core/cpan2dist.bash b/completions-core/cpan2dist.bash
+index 08d9766..8001798 100644
+--- a/completions-core/cpan2dist.bash
++++ b/completions-core/cpan2dist.bash
+@@ -29,7 +29,7 @@ _comp_cmd_cpan2dist()
          done
          [[ $packagelist ]] && _comp_split COMPREPLY "$(zgrep "^${cur//-/::}" \
              "$packagelist" 2>/dev/null | _comp_awk '{print $1}' |
@@ -545,9 +210,11 @@ And check the result.
      fi
  } &&
      complete -F _comp_cmd_cpan2dist -o default cpan2dist
---- bash-completion-2.16.0/completions/curl.orig
-+++ bash-completion-2.16.0/completions/curl
-@@ -80,7 +80,7 @@
+diff --git a/completions-core/curl.bash b/completions-core/curl.bash
+index 1d0ea5e..25168e0 100644
+--- a/completions-core/curl.bash
++++ b/completions-core/curl.bash
+@@ -94,7 +94,7 @@ _comp_cmd_curl()
          --engine)
              local engines=$(
                  "$1" --engine list 2>/dev/null |
@@ -556,18 +223,20 @@ And check the result.
              )
              _comp_compgen -- -W '$engines list'
              return
-@@ -129,7 +129,7 @@
+@@ -144,7 +144,7 @@ _comp_cmd_curl()
              return
              ;;
          --proto-default)
--            _comp_compgen_split "$("$1" --version 2>/dev/null | command sed -e '/Protocols/!d' -e 's/Protocols://')"
-+            _comp_compgen_split "$("$1" --version 2>/dev/null | command gsed -e '/Protocols/!d' -e 's/Protocols://')"
+-            _comp_compgen_split "$("$1" --version 2>/dev/null | command sed -n 's/Protocols://p')"
++            _comp_compgen_split "$("$1" --version 2>/dev/null | command gsed -n 's/Protocols://p')"
              ;;
          --pubkey)
              _comp_compgen -x ssh identityfile pub
---- bash-completion-2.16.0/completions/cvs.orig
-+++ bash-completion-2.16.0/completions/cvs
-@@ -262,7 +262,7 @@
+diff --git a/completions-core/cvs.bash b/completions-core/cvs.bash
+index e9aec36..a208ed5 100644
+--- a/completions-core/cvs.bash
++++ b/completions-core/cvs.bash
+@@ -262,7 +262,7 @@ _comp_cmd_cvs()
                      # far, but other changes (something other than
                      # changed/removed/new) may be missing.
                      _comp_compgen -a split -- "$(cvs -q diff --brief 2>&1 |
@@ -576,9 +245,11 @@ And check the result.
                              # changed
                              s/^Files [^ ]* and \([^ ]*\) differ$/\1/p
                              # new/removed
---- bash-completion-2.16.0/completions/dict.orig
-+++ bash-completion-2.16.0/completions/dict
-@@ -4,7 +4,7 @@
+diff --git a/completions-core/dict.bash b/completions-core/dict.bash
+index 4f2b505..171add9 100644
+--- a/completions-core/dict.bash
++++ b/completions-core/dict.bash
+@@ -4,7 +4,7 @@ _comp_cmd_dict__compgen_dictdata()
  {
      # shellcheck disable=SC2086
      _comp_compgen_split -- "$(
@@ -587,12 +258,7 @@ And check the result.
              's/^[[:blank:]]\{1,\}\([^[:blank:]]*\).*$/\1/p'
      )"
  }
-@@ -56,11 +56,11 @@
-     local dictfile=/usr/share/dict/words
-     if [[ -r $dictfile ]]; then
-         # Dictfile may be too large for practical compgen -W usage, so narrow
--        # it down with grep if $cur looks like something that's safe to embed
-+        # it down with ggrep if $cur looks like something that's safe to embed
+@@ -60,7 +60,7 @@ _comp_cmd_dict()
          # in a pattern instead.
          if [[ $cur == +([-A-Za-z0-9/.]) ]]; then
              _comp_compgen_split -- "$(
@@ -601,20 +267,11 @@ And check the result.
              )"
          else
              _comp_compgen_split -- "$(cat "$dictfile")"
---- bash-completion-2.16.0/completions/dladm.orig
-+++ bash-completion-2.16.0/completions/dladm
-@@ -14,7 +14,7 @@
-       COMPREPLY=( $(compgen -W "${cmds}" -- ${cur}) )
-     elif [[ ${prev} =~ "-z" ]]; then
-       # Some illumos OS distributions have zone-aware dladm. Treat -z as a zone name option
--      local zones="$(zoneadm list -c | grep -v '^global$')"
-+      local zones="$(zoneadm list -c | ggrep -v '^global$')"
-       COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
-     elif [[ ${prev} =~ 'delete-vnic' ]]; then
-       # Redirect stderr to /dev/null not to polute console, e.g.:
---- bash-completion-2.16.0/completions/dmypy.orig
-+++ bash-completion-2.16.0/completions/dmypy
-@@ -38,8 +38,8 @@
+diff --git a/completions-core/dmypy.bash b/completions-core/dmypy.bash
+index 302c0cc..585a7c7 100644
+--- a/completions-core/dmypy.bash
++++ b/completions-core/dmypy.bash
+@@ -38,8 +38,8 @@ _comp_cmd_dmypy()
  
      if [[ ! $has_cmd ]]; then
          local cmds=$("$1" --help 2>&1 |
@@ -625,8 +282,10 @@ And check the result.
          _comp_compgen -F , -- -W '$cmds'
          return
      fi
---- bash-completion-2.16.0/completions/dnssec-keygen.orig
-+++ bash-completion-2.16.0/completions/dnssec-keygen
+diff --git a/completions-core/dnssec-keygen.bash b/completions-core/dnssec-keygen.bash
+index e4619bc..03f56e5 100644
+--- a/completions-core/dnssec-keygen.bash
++++ b/completions-core/dnssec-keygen.bash
 @@ -3,9 +3,9 @@
  _comp_cmd_dnssec_keygen__optarg()
  {
@@ -639,12 +298,14 @@ And check the result.
      _comp_compgen -a -- -W '$args'
  }
  
---- bash-completion-2.16.0/completions/dot.orig
-+++ bash-completion-2.16.0/completions/dot
-@@ -14,14 +14,14 @@
+diff --git a/completions-core/dot.bash b/completions-core/dot.bash
+index feb2ab0..a386661 100644
+--- a/completions-core/dot.bash
++++ b/completions-core/dot.bash
+@@ -14,14 +14,14 @@ _comp_cmd_dot()
          -T*)
              # generate langs
-             _comp_compgen -c "${cur#-T}" split -P "-T" -- "$(
+             _comp_compgen -P "-T" split -- "$(
 -                "$1" -TNON_EXISTENT 2>&1 | command sed -ne 's/.*one of://p'
 +                "$1" -TNON_EXISTENT 2>&1 | command gsed -ne 's/.*one of://p'
              )"
@@ -652,15 +313,17 @@ And check the result.
              ;;
          -K*)
              # generate layouts
-             _comp_compgen -c "${cur#-K}" split -P "-K" -- "$(
+             _comp_compgen -P "-K" split -- "$(
 -                "$1" -KNON_EXISTENT 2>&1 | command sed -ne 's/.*one of://p'
 +                "$1" -KNON_EXISTENT 2>&1 | command gsed -ne 's/.*one of://p'
              )"
              return
              ;;
---- bash-completion-2.16.0/completions/ebtables.orig
-+++ bash-completion-2.16.0/completions/ebtables
-@@ -18,7 +18,7 @@
+diff --git a/completions-core/ebtables.bash b/completions-core/ebtables.bash
+index 0b8dd39..8bc7dd9 100644
+--- a/completions-core/ebtables.bash
++++ b/completions-core/ebtables.bash
+@@ -18,7 +18,7 @@ _comp_cmd_ebtables()
          -${noargopts}[AIDPFXLZ])
              _comp_compgen_split -- "$(
                  "$1" ${table:+-t "$table"} -L 2>/dev/null |
@@ -669,63 +332,71 @@ And check the result.
              )"
              ;;
          -${noargopts}t)
-@@ -28,17 +28,17 @@
-             if [[ $table == "filter" || ! $table ]]; then
+@@ -29,17 +29,17 @@ _comp_cmd_ebtables()
                  _comp_compgen -- -W '$targets'
-                 _comp_compgen -a split -- "$("$1" ${table:+-t "$table"} -L \
--                    2>/dev/null | command sed -n -e \
-+                    2>/dev/null | command gsed -n -e \
-                     "s/INPUT\|OUTPUT\|FORWARD//" -e "$chain")"
+                 _comp_compgen -a split -X '@(INPUT|OUTPUT|FORWARD)' \
+                     -- "$("$1" ${table:+-t "$table"} -L 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              elif [[ $table == "nat" ]]; then
                  _comp_compgen -- -W '$targets'
-                 _comp_compgen -a split -- "$("$1" -t "$table" -L 2>/dev/null |
--                    command sed -n -e "s/OUTPUT|PREROUTING|POSTROUTING//" \
-+                    command gsed -n -e "s/OUTPUT|PREROUTING|POSTROUTING//" \
-                         -e "$chain")"
+                 _comp_compgen -a split -X '@(OUTPUT|PREROUTING|POSTROUTING)' \
+                     -- "$("$1" -t "$table" -L 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              elif [[ $table == "broute" ]]; then
                  _comp_compgen -- -W 'ACCEPT DROP'
-                 _comp_compgen -a split -- "$("$1" -t "$table" -L 2>/dev/null |
--                    command sed -n -e "s/BROUTING//" -e "$chain")"
-+                    command gsed -n -e "s/BROUTING//" -e "$chain")"
+                 _comp_compgen -a split -X 'BROUTING' \
+                     -- "$("$1" -t "$table" -L 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              fi
              ;;
          *)
---- bash-completion-2.16.0/completions/fbgs.orig
-+++ bash-completion-2.16.0/completions/fbgs
-@@ -11,7 +11,7 @@
+diff --git a/completions-core/fbgs.bash b/completions-core/fbgs.bash
+index 7267e78..e130684 100644
+--- a/completions-core/fbgs.bash
++++ b/completions-core/fbgs.bash
+@@ -11,7 +11,7 @@ _comp_cmd_fbgs()
              return
              ;;
          -m | --mode)
 -            _comp_compgen_split -- "$(command sed \
 +            _comp_compgen_split -- "$(command gsed \
-                 -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p}' \
+                 -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p;}' \
                  /etc/fb.modes 2>/dev/null)"
              return
---- bash-completion-2.16.0/completions/fbi.orig
-+++ bash-completion-2.16.0/completions/fbi
-@@ -19,7 +19,7 @@
+diff --git a/completions-core/fbi.bash b/completions-core/fbi.bash
+index 906074f..ee491e4 100644
+--- a/completions-core/fbi.bash
++++ b/completions-core/fbi.bash
+@@ -19,7 +19,7 @@ _comp_cmd_fbi()
              return
              ;;
          -m | --mode)
 -            _comp_compgen_split -- "$(command sed \
 +            _comp_compgen_split -- "$(command gsed \
-                 -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p}' \
+                 -n '/^mode/{s/^mode \{1,\}"\([^"]\{1,\}\)"/\1/g;p;}' \
                  /etc/fb.modes 2>/dev/null)"
              return
---- bash-completion-2.16.0/completions/fio.orig
-+++ bash-completion-2.16.0/completions/fio
+diff --git a/completions-core/fio.bash b/completions-core/fio.bash
+index 36ac55c..1a37209 100644
+--- a/completions-core/fio.bash
++++ b/completions-core/fio.bash
 @@ -2,7 +2,7 @@
  
  _comp_cmd_fio__compgen_engines()
  {
--    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command sed -ne '/^[[:space:]]/p')"
-+    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command gsed -ne '/^[[:space:]]/p')"
+-    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command grep '^[[:space:]]')"
++    _comp_compgen_split -F $'\t\n' -- "$("$1" --enghelp 2>/dev/null | command ggrep '^[[:space:]]')"
  }
  
  _comp_cmd_fio()
---- bash-completion-2.16.0/completions/fprintd-enroll.orig
-+++ bash-completion-2.16.0/completions/fprintd-enroll
-@@ -15,7 +15,7 @@
+diff --git a/completions-core/fprintd-enroll.bash b/completions-core/fprintd-enroll.bash
+index e19fe57..afe248f 100644
+--- a/completions-core/fprintd-enroll.bash
++++ b/completions-core/fprintd-enroll.bash
+@@ -15,7 +15,7 @@ _comp_cmd_fprintd_enroll()
              # Only -enroll may output a message with valid options in it
              _comp_compgen_split -- "$(
                  "${1/-verify/-enroll}" --finger no-such-finger 2>&1 |
@@ -734,40 +405,33 @@ And check the result.
                          -e s/,//g -ne 's/^.*Name must be one of \(.*\)/\1/p'
              )"
              return
---- bash-completion-2.16.0/completions/function.orig
-+++ bash-completion-2.16.0/completions/function
-@@ -8,7 +8,7 @@
-     if ((cword == 1)); then
-         _comp_compgen -- -A function
-     else
--        local funcdef=$(type -- "${words[1]}" 2>/dev/null | command sed -e 1,2d)
-+        local funcdef=$(type -- "${words[1]}" 2>/dev/null | command gsed -e 1,2d)
-         COMPREPLY=("()${funcdef:+ $funcdef}")
-     fi
- } &&
---- bash-completion-2.16.0/completions/gcc.orig
-+++ bash-completion-2.16.0/completions/gcc
-@@ -12,7 +12,7 @@
+diff --git a/completions-core/gcc.bash b/completions-core/gcc.bash
+index 431fb73..6e32408 100644
+--- a/completions-core/gcc.bash
++++ b/completions-core/gcc.bash
+@@ -12,7 +12,7 @@ _comp_cmd_gcc()
              local cc=$("$1" -print-prog-name=cc1 2>/dev/null)
              [[ $cc ]] || return
              _comp_compgen_split -- "$("$cc" --help 2>/dev/null | tr '\t' ' ' |
--                command sed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')"
-+                command gsed -e '/^  *-/!d' -e 's/ *-\([^][ <>]*\).*/-\1/')"
+-                command sed -n 's/^ \{1,\}\(-[^][ <>]*\).*/\1/p')"
++                command gsed -n 's/^ \{1,\}\(-[^][ <>]*\).*/\1/p')"
              [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
          else
              _comp_compgen_filedir
-@@ -62,7 +62,7 @@
-         local REPLY
-         _comp_realcommand "$1"
-         if [[ $REPLY == *$2* ]] ||
--            "$1" --version 2>/dev/null | command grep -q GCC; then
-+            "$1" --version 2>/dev/null | command ggrep -q GCC; then
-             complete -F _comp_cmd_gcc "$1"
-         else
-             complete -F _comp_complete_minimal "$1"
---- bash-completion-2.16.0/completions/gdb.orig
-+++ bash-completion-2.16.0/completions/gdb
-@@ -31,7 +31,7 @@
+@@ -63,7 +63,7 @@ _comp_cmd_gcc__setup_cmd()
+     local REPLY
+     _comp_realcommand "$1"
+     if [[ $REPLY == *$2* ]] ||
+-        "$1" --version 2>/dev/null | command grep -q GCC; then
++        "$1" --version 2>/dev/null | command ggrep -q GCC; then
+         complete -F _comp_cmd_gcc "$1"
+     else
+         complete -F _comp_complete_minimal "$1"
+diff --git a/completions-core/gdb.bash b/completions-core/gdb.bash
+index 9135e45..c1d1110 100644
+--- a/completions-core/gdb.bash
++++ b/completions-core/gdb.bash
+@@ -31,7 +31,7 @@ _comp_cmd_gdb()
                  IFS=$' \t\n'
                  find ${path_array[@]+"${path_array[@]}"} . -name . -o \
                      -type d -prune -o -perm -u+x -print 2>/dev/null |
@@ -776,9 +440,11 @@ And check the result.
              )"
          fi
      elif ((cword == 2)); then
---- bash-completion-2.16.0/completions/gnokii.orig
-+++ bash-completion-2.16.0/completions/gnokii
-@@ -24,7 +24,7 @@
+diff --git a/completions-core/gnokii.bash b/completions-core/gnokii.bash
+index 34a03bb..c782dd0 100644
+--- a/completions-core/gnokii.bash
++++ b/completions-core/gnokii.bash
+@@ -24,7 +24,7 @@ _comp_cmd_gnokii()
                  [[ -f $config_file ]] && break
              done
              [[ ! -f $config_file ]] && return
@@ -787,18 +453,20 @@ And check the result.
                  's/^\[phone_\(.*\)\]/\1/p' "$config_file")"
              return
              ;;
-@@ -221,7 +221,7 @@
-     # these 2 below are allowed in combination with others
+@@ -223,7 +223,7 @@ _comp_cmd_gnokii()
+     # bracket expressions [...] in POSIX sed for the future compatibility.
      local main_cmd
      _comp_split -l main_cmd "$(printf '%s\n' "${all_cmd[@]}" |
--        command sed -e '/--config/d;/--phone/d;s/[][\(){}|^$*+?.]/\\&/g')"
-+        command gsed -e '/--config/d;/--phone/d;s/[][\(){}|^$*+?.]/\\&/g')"
+-        command sed -e '/--config/d;/--phone/d;s/[][\\(){}|^$*+?.]/\\&/g')"
++        command gsed -e '/--config/d;/--phone/d;s/[][\\(){}|^$*+?.]/\\&/g')"
      # don't provide main command completions if one is
      # already on the command line
      local IFS='|'
---- bash-completion-2.16.0/completions/gpg.orig
-+++ bash-completion-2.16.0/completions/gpg
-@@ -20,7 +20,7 @@
+diff --git a/completions-core/gpg.bash b/completions-core/gpg.bash
+index b942342..edb35a2 100644
+--- a/completions-core/gpg.bash
++++ b/completions-core/gpg.bash
+@@ -20,7 +20,7 @@ _comp_cmd_gpg()
              --nrsign-key | --nrlsign-key | --try-secret-key | -${noargopts}k)
              # return list of public keys
              _comp_compgen_split -- "$("$1" --list-keys 2>/dev/null |
@@ -807,7 +475,7 @@ And check the result.
                      's@^pub.*/\([^ ]*\).*$@\1@p' -ne \
                      's@^.*\(<\([^>]*\)>\).*$@\2@p')"
              return
-@@ -29,14 +29,14 @@
+@@ -29,14 +29,14 @@ _comp_cmd_gpg()
              --export-secret-subkeys | -${noargopts}K)
              # return list of secret keys
              _comp_compgen_split -- "$("$1" --list-secret-keys 2>/dev/null |
@@ -822,12 +490,14 @@ And check the result.
              if [[ -e ~/.gnupg/gpg.conf ]]; then
 -                _comp_compgen -a split -- "$(command sed -ne \
 +                _comp_compgen -a split -- "$(command gsed -ne \
-                     's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
+                     's@^[[:blank:]]*group[[:blank:]][[:blank:]]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)"
              fi
---- bash-completion-2.16.0/completions/gpg2.orig
-+++ bash-completion-2.16.0/completions/gpg2
-@@ -21,16 +21,16 @@
+diff --git a/completions-core/gpg2.bash b/completions-core/gpg2.bash
+index d4b878a..24f4d46 100644
+--- a/completions-core/gpg2.bash
++++ b/completions-core/gpg2.bash
+@@ -21,16 +21,16 @@ _comp_cmd_gpg2()
              --locate-keys | --refresh-keys)
              # return list of public keys
              _comp_compgen_split -- "$("$1" --list-keys 2>/dev/null |
@@ -844,12 +514,14 @@ And check the result.
              if [[ -e ~/.gnupg/gpg.conf ]]; then
 -                _comp_compgen -a split -- "$(command sed -ne \
 +                _comp_compgen -a split -- "$(command gsed -ne \
-                     's@^[ \t]*group[ \t][ \t]*\([^=]*\).*$@\1@p' \
+                     's@^[[:blank:]]*group[[:blank:]][[:blank:]]*\([^=]*\).*$@\1@p' \
                      ~/.gnupg/gpg.conf)"
              fi
---- bash-completion-2.16.0/completions/gssdp-discover.orig
-+++ bash-completion-2.16.0/completions/gssdp-discover
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/gssdp-discover.bash b/completions-core/gssdp-discover.bash
+index cae232c..548d6f4 100644
+--- a/completions-core/gssdp-discover.bash
++++ b/completions-core/gssdp-discover.bash
+@@ -16,7 +16,7 @@ _comp_cmd_gssdp_discover()
          --message-type | -m)
              [[ $1 == *gssdp-discover ]] || return
              local types=$("$1" --help 2>&1 |
@@ -858,9 +530,11 @@ And check the result.
              _comp_compgen -F $' \t\n,' -- -W "$types"
              return
              ;;
---- bash-completion-2.16.0/completions/iconv.orig
-+++ bash-completion-2.16.0/completions/iconv
-@@ -15,7 +15,7 @@
+diff --git a/completions-core/iconv.bash b/completions-core/iconv.bash
+index 90ff5b6..64100ca 100644
+--- a/completions-core/iconv.bash
++++ b/completions-core/iconv.bash
+@@ -15,7 +15,7 @@ _iconv_charsets()
  _comp_cmd_iconv__compgen_charsets()
  {
      _comp_compgen_split -X ... -- "$("$1" -l |
@@ -869,9 +543,11 @@ And check the result.
  }
  
  _comp_cmd_iconv()
---- bash-completion-2.16.0/completions/ifstat.orig
-+++ bash-completion-2.16.0/completions/ifstat
-@@ -22,8 +22,8 @@
+diff --git a/completions-core/ifstat.bash b/completions-core/ifstat.bash
+index 6f0ff23..32580ae 100644
+--- a/completions-core/ifstat.bash
++++ b/completions-core/ifstat.bash
+@@ -22,8 +22,8 @@ _comp_cmd_ifstat()
              if ! {
                  "$1" --help 2>&1 || :
              } |
@@ -882,16 +558,16 @@ And check the result.
                      -ne 's/^.*drivers://p')"
              fi
              return
-@@ -34,7 +34,7 @@
+@@ -34,7 +34,7 @@ _comp_cmd_ifstat()
              if ! {
                  "$1" --help 2>&1 || :
              } |
 -                command grep -q -- '-s.*--noupdate'; then
 +                command ggrep -q -- '-s.*--noupdate'; then
-                 _comp_compgen_known_hosts -- "$cur"
+                 _comp_compgen_known_hosts
                  return
              fi
-@@ -45,7 +45,7 @@
+@@ -45,7 +45,7 @@ _comp_cmd_ifstat()
              ! {
                  "$1" --help 2>&1 || :
              } |
@@ -900,38 +576,37 @@ And check the result.
              ;;
          --extended | -${noargopts}x)
              # iproute2: parse xstat types
---- bash-completion-2.16.0/completions/inotifywait.orig
-+++ bash-completion-2.16.0/completions/inotifywait
-@@ -6,7 +6,7 @@
+diff --git a/completions-core/inotifywait.bash b/completions-core/inotifywait.bash
+index b437420..207fc74 100644
+--- a/completions-core/inotifywait.bash
++++ b/completions-core/inotifywait.bash
+@@ -6,7 +6,7 @@ _comp_cmd_inotifywait__events()
      # tab. Word following the tab is event name, others are line
      # wrapped explanations.
      _comp_compgen -a split -- "$("$1" --help 2>/dev/null |
 -        command sed -e '/^Events:/,/^[^'$'\t'']/!d' \
 +        command gsed -e '/^Events:/,/^[^'$'\t'']/!d' \
-             -ne 's/^'$'\t''\([^ '$'\t'']\{1,\}\)[ '$'\t''].*/\1/p')"
+             -ne 's/^'$'\t''\([^[:blank:]]\{1,\}\)[[:blank:]].*/\1/p')"
  }
  
---- bash-completion-2.16.0/completions/invoke-rc.d.orig
-+++ bash-completion-2.16.0/completions/invoke-rc.d
-@@ -19,13 +19,13 @@
-         # generate valid_options
-         _comp_compgen_split -- "$(
-             tr " " "\n" <<<"${words[*]} ${options[*]}" |
--                command sed -ne "/$(command sed 's/ /\\|/g' <<<"${options[*]}")/p" |
-+                command gsed -ne "/$(command gsed 's/ /\\|/g' <<<"${options[*]}")/p" |
-                 sort | uniq -u
-         )"
-         _comp_expand_glob services '"$sysvdir"/!(README*|*.sh|$_comp_backup_glob)' &&
-             _comp_compgen -a -- -W '"${services[@]#"$sysvdir"/}"'
-     elif [[ -x $sysvdir/$prev ]]; then
+diff --git a/completions-core/invoke-rc.d.bash b/completions-core/invoke-rc.d.bash
+index a98c4c9..b9d8ff3 100644
+--- a/completions-core/invoke-rc.d.bash
++++ b/completions-core/invoke-rc.d.bash
+@@ -23,7 +23,7 @@ _comp_cmd_invoke_rc_d()
+ 
+     local sysvdirs
+     if _comp_sysvdirs && [[ -x ${sysvdirs[0]}/$prev ]]; then
 -        _comp_compgen_split -- "$(command sed -e 'y/|/ /' \
 +        _comp_compgen_split -- "$(command gsed -e 'y/|/ /' \
              -ne 's/^.*Usage:[ ]*[^ ]*[ ]*{*\([^}"]*\).*$/\1/p' \
-             "$sysvdir/$prev")"
-     else
---- bash-completion-2.16.0/completions/ip.orig
-+++ bash-completion-2.16.0/completions/ip
-@@ -12,7 +12,7 @@
+             "${sysvdirs[0]}/$prev")"
+     fi
+diff --git a/completions-core/ip.bash b/completions-core/ip.bash
+index 6dab132..4bd281f 100644
+--- a/completions-core/ip.bash
++++ b/completions-core/ip.bash
+@@ -22,7 +22,7 @@ _comp_cmd_ip__netns()
      _comp_split -l unquoted "$(
          {
              ${1-ip} -c=never netns list 2>/dev/null || ${1-ip} netns list
@@ -940,7 +615,7 @@ And check the result.
      )"
      # namespace names can have spaces, so we quote all of them if needed
      local ns quoted=()
-@@ -29,7 +29,7 @@
+@@ -39,7 +39,7 @@ _comp_cmd_ip__link_types()
      _comp_compgen_split -- "$(
          {
              ${1-ip} -c=never link help || ${1-ip} link help
@@ -949,7 +624,7 @@ And check the result.
              '/TYPE := /,/}/!d' -e \
              's/.*{//' -e \
              's/}.*//' -e \
-@@ -42,7 +42,7 @@
+@@ -52,7 +52,7 @@ _comp_cmd_ip__neigh_states()
      _comp_compgen_split -- "$(
          {
              ${1-ip} -c=never neigh help || ${1-ip} neigh help
@@ -958,7 +633,7 @@ And check the result.
              '/STATE := /,/}/!d' -e \
              's/.*{//' -e \
              's/}.*//' -e \
-@@ -93,7 +93,7 @@
+@@ -103,7 +103,7 @@ _comp_cmd_ip()
                      ((cword == 1)) && printf '%s\n' -force
                      {
                          "$1" -c=never help || "$1" help
@@ -967,7 +642,7 @@ And check the result.
                          's/[{|}=]/\n/g' -e \
                          's/\[\([^]]\{1,\}\)\]/\1/g'
                  )"
-@@ -102,7 +102,7 @@
+@@ -112,7 +112,7 @@ _comp_cmd_ip()
                  _comp_compgen_split -- "help $(
                      {
                          "$1" -c=never help || "$1" help
@@ -976,7 +651,7 @@ And check the result.
                          '/OBJECT := /,/}/!d' -e \
                          's/.*{//' -e \
                          's/}.*//' -e \
-@@ -304,7 +304,7 @@
+@@ -315,7 +315,7 @@ _comp_cmd_ip()
                          _comp_compgen_split -- "$(
                              {
                                  "$1" -c=never r 2>/dev/null || "$1" r
@@ -985,7 +660,7 @@ And check the result.
                                  's/.*via \([0-9.]*\).*/\1/p'
                          )"
                      elif [[ $prev == "$subcmd" ]]; then
-@@ -375,7 +375,7 @@
+@@ -386,7 +386,7 @@ _comp_cmd_ip()
                          _comp_compgen -- -W "$(
                              # stats command was added after color, should always have it
                              "$1" -c=never stats help 2>&1 |
@@ -994,7 +669,7 @@ And check the result.
                                      '/^GROUP := /,/}/!d' -e \
                                      's/^GROUP := //g' -e \
                                      '/:=/d' -e \
-@@ -464,7 +464,7 @@
+@@ -475,7 +475,7 @@ _comp_cmd_ip()
                              _comp_compgen_split -- "$(
                                  {
                                      ip -c=never ntable show 2>/dev/null || ip ntable show
@@ -1003,7 +678,7 @@ And check the result.
                              )"
                              ;;
                          *)
-@@ -533,7 +533,7 @@
+@@ -544,7 +544,7 @@ _comp_cmd_ip()
                          _comp_compgen_split -- "help all $(
                              {
                                  "$1" -c=never monitor help || "$1" monitor help
@@ -1012,9 +687,11 @@ And check the result.
                                  '/OBJECTS := /,/[^|]$/!d' -e \
                                  's/OBJECTS := *//' -e \
                                  's/|//g'
---- bash-completion-2.16.0/completions/iperf.orig
-+++ bash-completion-2.16.0/completions/iperf
-@@ -20,8 +20,8 @@
+diff --git a/completions-core/iperf.bash b/completions-core/iperf.bash
+index 3bee88f..0f25e4c 100644
+--- a/completions-core/iperf.bash
++++ b/completions-core/iperf.bash
+@@ -20,8 +20,8 @@ _comp_cmd_iperf()
          --format | -${noargopts}f)
              local formats=$(
                  "$1" --help 2>&1 |
@@ -1025,7 +702,7 @@ And check the result.
              )
              _comp_compgen -- -W '$formats'
              return
-@@ -77,10 +77,10 @@
+@@ -77,10 +77,10 @@ _comp_cmd_iperf()
      for i in "${words[@]}"; do
          case $i in
              -s | --server)
@@ -1038,18 +715,20 @@ And check the result.
                  ;;
          esac
      done
---- bash-completion-2.16.0/completions/ipmitool.orig
-+++ bash-completion-2.16.0/completions/ipmitool
+diff --git a/completions-core/ipmitool.bash b/completions-core/ipmitool.bash
+index 63bcecc..8527952 100644
+--- a/completions-core/ipmitool.bash
++++ b/completions-core/ipmitool.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_ipmitool__singleline_help()
  {
      _comp_compgen_split -- "$("$1" "$2" 2>&1 |
--        command sed -ne 's/[,\r]//g' -e 's/^.*[Cc]ommands://p')"
-+        command gsed -ne 's/[,\r]//g' -e 's/^.*[Cc]ommands://p')"
+-        command sed -ne $'s/[,\r]//g' -e 's/^.*[Cc]ommands://p')"
++        command gsed -ne $'s/[,\r]//g' -e 's/^.*[Cc]ommands://p')"
  }
  
  _comp_cmd_ipmitool()
-@@ -23,7 +23,7 @@
+@@ -23,7 +23,7 @@ _comp_cmd_ipmitool()
              ;;
          -*I)
              _comp_compgen_split -- "$("$1" -h 2>&1 |
@@ -1058,9 +737,11 @@ And check the result.
                      -ne 's/^[[:space:]]\{1,\}\([^[:space:]]\{1,\}\).*/\1/p')"
              return
              ;;
---- bash-completion-2.16.0/completions/iptables.orig
-+++ bash-completion-2.16.0/completions/iptables
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/iptables.bash b/completions-core/iptables.bash
+index 2525460..bac9ad0 100644
+--- a/completions-core/iptables.bash
++++ b/completions-core/iptables.bash
+@@ -16,7 +16,7 @@ _comp_cmd_iptables()
          -*[AIDRPFXLZ])
              _comp_compgen_split -- "$(
                  "$1" ${table:+-t "$table"} -nL 2>/dev/null |
@@ -1069,25 +750,25 @@ And check the result.
              )"
              ;;
          -*t)
-@@ -26,24 +26,24 @@
-             if [[ $table == "filter" || ! $table ]]; then
-                 _comp_compgen -- -W '$targets'
-                 _comp_compgen -a split -- "$("$1" ${table:+-t "$table"} -nL \
--                    2>/dev/null | command sed -ne "$chain" \
-+                    2>/dev/null | command gsed -ne "$chain" \
-                     -e 's/INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING//')"
+@@ -28,24 +28,24 @@ _comp_cmd_iptables()
+                 _comp_compgen -a split \
+                     -X '@(INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING)' \
+                     -- "$("$1" ${table:+-t "$table"} -nL 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              elif [[ $table == "nat" ]]; then
                  _comp_compgen -- -W '$targets MIRROR SNAT DNAT MASQUERADE'
-                 _comp_compgen -a split -- "$("$1" -t "$table" -nL 2>/dev/null |
--                    command sed -ne "$chain" \
-+                    command gsed -ne "$chain" \
-                         -e 's/OUTPUT|PREROUTING|POSTROUTING//')"
+                 _comp_compgen -a split -X '@(OUTPUT|PREROUTING|POSTROUTING)' \
+                     -- "$("$1" -t "$table" -nL 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              elif [[ $table == "mangle" ]]; then
                  _comp_compgen -- -W '$targets MARK TOS'
-                 _comp_compgen -a split -- "$("$1" -t "$table" -nL 2>/dev/null |
--                    command sed -ne "$chain" \
-+                    command gsed -ne "$chain" \
-                         -e 's/INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING//')"
+                 _comp_compgen -a split \
+                     -X '@(INPUT|OUTPUT|FORWARD|PREROUTING|POSTROUTING)' \
+                     -- "$("$1" -t "$table" -nL 2>/dev/null |
+-                        command sed -ne "$chain")"
++                        command gsed -ne "$chain")"
              fi
              ;;
          *)
@@ -1098,21 +779,20 @@ And check the result.
                  [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
              fi
              ;;
---- bash-completion-2.16.0/completions/ipv6calc.orig
-+++ bash-completion-2.16.0/completions/ipv6calc
-@@ -12,9 +12,9 @@
-             return
-             ;;
+diff --git a/completions-core/ipv6calc.bash b/completions-core/ipv6calc.bash
+index 0dda1be..35ee93b 100644
+--- a/completions-core/ipv6calc.bash
++++ b/completions-core/ipv6calc.bash
+@@ -14,7 +14,7 @@ _comp_cmd_ipv6calc()
          --in | --out | --action | -${noargopts}[IOA])
--            # With ipv6calc < 0.73.0, -m does nothing here, so use sed instead.
-+            # With ipv6calc < 0.73.0, -m does nothing here, so use gsed instead.
+             # With ipv6calc < 0.73.0, -m does nothing here, so use sed instead.
              _comp_compgen_split -- "$("$1" "$prev" -h 2>&1 |
 -                command sed -ne 's/^[[:space:]]\{1,\}\([^[:space:]:]\{1,\}\)[[:space:]]*:.*/\1/p')"
 +                command gsed -ne 's/^[[:space:]]\{1,\}\([^[:space:]:]\{1,\}\)[[:space:]]*:.*/\1/p')"
              return
              ;;
          --db-geoip | --db-ip2location-ipv4 | --db-ip2location-ipv6)
-@@ -30,7 +30,7 @@
+@@ -30,7 +30,7 @@ _comp_cmd_ipv6calc()
  
      if [[ $cur == -* ]]; then
          _comp_compgen_help - <<<"$("$1" -h 2>&1 |
@@ -1121,9 +801,11 @@ And check the result.
      fi
  
  } &&
---- bash-completion-2.16.0/completions/isql.orig
-+++ bash-completion-2.16.0/completions/isql
-@@ -8,7 +8,7 @@
+diff --git a/completions-core/isql.bash b/completions-core/isql.bash
+index c735c4e..4e12604 100644
+--- a/completions-core/isql.bash
++++ b/completions-core/isql.bash
+@@ -8,7 +8,7 @@ _comp_cmd_isql()
  
      [[ -f ${ODBCINI-} ]] &&
          _comp_compgen_split -l -- "$(
@@ -1132,9 +814,11 @@ And check the result.
          )"
  } &&
      complete -F _comp_cmd_isql isql
---- bash-completion-2.16.0/completions/java.orig
-+++ bash-completion-2.16.0/completions/java
-@@ -70,7 +70,7 @@
+diff --git a/completions-core/java.bash b/completions-core/java.bash
+index 6b18cf3..80b0b15 100644
+--- a/completions-core/java.bash
++++ b/completions-core/java.bash
+@@ -70,7 +70,7 @@ _comp_cmd_java__classes()
          if [[ $i == *.@(jar|zip) && -r $i ]]; then
              if type zipinfo &>/dev/null; then
                  _comp_split -a classes "$(zipinfo -1 "$i" "$cur*" 2>/dev/null |
@@ -1143,7 +827,7 @@ And check the result.
              elif type unzip &>/dev/null; then
                  # Last column, between entries consisting entirely of dashes
                  _comp_split -a classes "$(unzip -lq "$i" "$cur*" 2>/dev/null |
-@@ -78,7 +78,7 @@
+@@ -78,7 +78,7 @@ _comp_cmd_java__classes()
                           flag && $NF ~ /^[^$]*\.class/ { print $NF }')"
              elif type jar &>/dev/null; then
                  _comp_split -a classes "$(jar tf "$i" "$cur" |
@@ -1152,8 +836,8 @@ And check the result.
              fi
  
          elif [[ -d $i ]]; then
-@@ -121,13 +121,13 @@
-             _comp_expand_glob files '"$i/$cur"*' || continue
+@@ -125,13 +125,13 @@ _comp_cmd_java__packages()
+             _comp_expand_glob files '"$i/$cur_val"*' || continue
              _comp_split -la COMPREPLY "$(
                  command ls -F -d "${files[@]}" 2>/dev/null |
 -                    command sed -e 's|^'"$i"'/||'
@@ -1168,7 +852,7 @@ And check the result.
          # convert path syntax to package syntax
          ((${#COMPREPLY[@]})) && COMPREPLY=("${COMPREPLY[@]//\//.}")
      fi
-@@ -318,7 +318,7 @@
+@@ -322,7 +322,7 @@ _comp_cmd_javac()
          # For some reason there may be -g:none AND -g:{lines,source,vars};
          # convert the none case to the curly brace format so it parses like
          # the others.
@@ -1177,20 +861,24 @@ And check the result.
              "s/^[[:space:]]*${cur%%:*}:{\([^}]\{1,\}\)}.*/\1/p")
          _comp_compgen -c "${cur#*:}" -- -W "${opts//,/ }"
          return
---- bash-completion-2.16.0/completions/lilo.orig
-+++ bash-completion-2.16.0/completions/lilo
+diff --git a/completions-core/lilo.bash b/completions-core/lilo.bash
+index ee73a46..5fc5a7d 100644
+--- a/completions-core/lilo.bash
++++ b/completions-core/lilo.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_lilo__labels()
  {
      _comp_compgen_split -- "$(_comp_awk -F = '$1 ~ /^[ \t]*label$/ {print $2}' \
--        "${1:-/etc/lilo.conf}" 2>/dev/null | command sed -e 's/\"//g')"
-+        "${1:-/etc/lilo.conf}" 2>/dev/null | command gsed -e 's/\"//g')"
+-        "${1:-/etc/lilo.conf}" 2>/dev/null | command sed -e 's/"//g')"
++        "${1:-/etc/lilo.conf}" 2>/dev/null | command gsed -e 's/"//g')"
  }
  
  _comp_cmd_lilo()
---- bash-completion-2.16.0/completions/links.orig
-+++ bash-completion-2.16.0/completions/links
-@@ -28,7 +28,7 @@
+diff --git a/completions-core/links.bash b/completions-core/links.bash
+index ab10461..4c6ff8e 100644
+--- a/completions-core/links.bash
++++ b/completions-core/links.bash
+@@ -28,7 +28,7 @@ _comp_cmd_links()
              ;;
          -driver)
              local drivers=$("$1" -driver foo 2>&1 |
@@ -1199,43 +887,24 @@ And check the result.
              [[ $drivers ]] || drivers='x svgalib fb directfb pmshell atheos'
              _comp_compgen -- -W "$drivers"
              return
---- bash-completion-2.16.0/completions/lintian.orig
-+++ bash-completion-2.16.0/completions/lintian
-@@ -9,7 +9,7 @@
-     if [[ $cur == *, ]]; then
+diff --git a/completions-core/lintian.bash b/completions-core/lintian.bash
+index 98cf38c..74f9a12 100644
+--- a/completions-core/lintian.bash
++++ b/completions-core/lintian.bash
+@@ -25,7 +25,7 @@ _comp_cmd_lintian__checks()
          search=${cur//,/ }
-         for item in $search; do
--            tags=$(command sed -e "s/\<$item\>//g" <<<"$tags")
-+            tags=$(command gsed -e "s/\<$item\>//g" <<<"$tags")
-         done
-         _comp_compgen -aR -- -W "$tags"
-     elif [[ $cur == *,* ]]; then
-@@ -29,11 +29,11 @@
-     if [[ $cur == *, ]]; then
-         search=${cur//,/ }
+         todisable=""
          for item in $search; do
 -            match=$(command grep -nE "^(Check-Script|Abbrev): $item$" \
 +            match=$(command ggrep -nE "^(Check-Script|Abbrev): $item$" \
                  "${check_files[@]}" | cut -d: -f1)
-             todisable=$(_comp_awk '/^(Check-Script|Abbrev)/ { print $2 }' "$match")
-             for name in $todisable; do
--                checks=$(command sed -e "s/\<$name\>//g" <<<"$checks")
-+                checks=$(command gsed -e "s/\<$name\>//g" <<<"$checks")
-             done
+             todisable+=$'\n'$(_comp_awk '/^(Check-Script|Abbrev)/ { print $2 }' "$match")
          done
-         _comp_compgen -aR -- -W "$checks"
-@@ -54,7 +54,7 @@
-     if [[ $cur == *, ]]; then
-         search=${cur//,/ }
-         for item in $search; do
--            infos=$(command sed -e "s/\<$item\>//g" <<<"$infos")
-+            infos=$(command gsed -e "s/\<$item\>//g" <<<"$infos")
-         done
-         _comp_compgen -aR -- -W "$infos"
-     elif [[ $cur == *,* ]]; then
---- bash-completion-2.16.0/completions/lvm.orig
-+++ bash-completion-2.16.0/completions/lvm
-@@ -8,25 +8,25 @@
+diff --git a/completions-core/lvm.bash b/completions-core/lvm.bash
+index 47003b5..7e45297 100644
+--- a/completions-core/lvm.bash
++++ b/completions-core/lvm.bash
+@@ -8,25 +8,25 @@ _comp_cmd_lvm__filedir()
  _comp_cmd_lvm__volumegroups()
  {
      _comp_compgen_split -- "$(vgscan 2>/dev/null |
@@ -1263,101 +932,13 @@ And check the result.
 -        command sed -n -e "s|^.*'\(.*\)'.*$|\1|p")"
 +        command gsed -n -e "s|^.*'\(.*\)'.*$|\1|p")"
      if [[ $cur == /dev/mapper/* ]]; then
-         _comp_compgen -a filedir
-         local i
---- bash-completion-2.16.0/completions/Makefile.in.orig
-+++ bash-completion-2.16.0/completions/Makefile.in
-@@ -42,13 +42,13 @@
-       *\\[\ \	]*) \
-         bs=\\; \
-         sane_makeflags=`printf '%s\n' "$$MAKEFLAGS" \
--          | sed "s/$$bs$$bs[$$bs $$bs	]*//g"`;; \
-+          | gsed "s/$$bs$$bs[$$bs $$bs	]*//g"`;; \
-     esac; \
-   fi; \
-   skip_next=no; \
-   strip_trailopt () \
-   { \
--    flg=`printf '%s\n' "$$flg" | sed "s/$$1.*$$//"`; \
-+    flg=`printf '%s\n' "$$flg" | gsed "s/$$1.*$$//"`; \
-   }; \
-   for flg in $$sane_makeflags; do \
-     test $$skip_next = yes && { skip_next=no; continue; }; \
-@@ -121,27 +121,27 @@
-     n|no|NO) false;; \
-     *) (install-info --version) >/dev/null 2>&1;; \
-   esac
--am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | gsed 's|.|.|g'`;
- am__vpath_adj = case $$p in \
--    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-+    $(srcdir)/*) f=`echo "$$p" | gsed "s|^$$srcdirstrip/||"`;; \
-     *) f=$$p;; \
-   esac;
--am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-+am__strip_dir = f=`echo $$p | gsed -e 's|^.*/||'`;
- am__install_max = 40
- am__nobase_strip_setup = \
--  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-+  srcdirstrip=`echo "$(srcdir)" | gsed 's/[].[^$$\\*|]/\\\\&/g'`
- am__nobase_strip = \
--  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-+  for p in $$list; do echo "$$p"; done | gsed -e "s|$$srcdirstrip/||"
- am__nobase_list = $(am__nobase_strip_setup); \
-   for p in $$list; do echo "$$p $$p"; done | \
--  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-+  gsed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-   $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-     if (++n[$$2] == $(am__install_max)) \
-       { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-     END { for (dir in files) print dir, files[dir] }'
- am__base_list = \
--  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
--  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-+  gsed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-+  gsed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
- am__uninstall_files_from_dir = { \
-   test -z "$$files" \
-     || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-@@ -1358,7 +1358,7 @@
- uninstall-bashcompDATA:
- 	@$(NORMAL_UNINSTALL)
- 	@list='$(bashcomp_DATA)'; test -n "$(bashcompdir)" || list=; \
--	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-+	files=`for p in $$list; do echo $$p; done | gsed -e 's|^.*/||'`; \
- 	dir='$(DESTDIR)$(bashcompdir)'; $(am__uninstall_files_from_dir)
- tags TAGS:
- 
-@@ -1370,21 +1370,21 @@
- 	$(MAKE) $(AM_MAKEFLAGS) distdir-am
- 
- distdir-am: $(DISTFILES)
--	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
--	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
-+	@srcdirstrip=`echo "$(srcdir)" | gsed 's/[].[^$$\\*]/\\\\&/g'`; \
-+	topsrcdirstrip=`echo "$(top_srcdir)" | gsed 's/[].[^$$\\*]/\\\\&/g'`; \
- 	list='$(DISTFILES)'; \
- 	  dist_files=`for file in $$list; do echo $$file; done | \
--	  sed -e "s|^$$srcdirstrip/||;t" \
-+	  gsed -e "s|^$$srcdirstrip/||;t" \
- 	      -e "s|^$$topsrcdirstrip/|$(top_builddir)/|;t"`; \
- 	case $$dist_files in \
- 	  */*) $(MKDIR_P) `echo "$$dist_files" | \
--			   sed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
-+			   gsed '/\//!d;s|^|$(distdir)/|;s,/[^/]*$$,,' | \
- 			   sort -u` ;; \
- 	esac; \
- 	for file in $$dist_files; do \
- 	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
- 	  if test -d $$d/$$file; then \
--	    dir=`echo "/$$file" | sed -e 's,/[^/]*$$,,'`; \
-+	    dir=`echo "/$$file" | gsed -e 's,/[^/]*$$,,'`; \
- 	    if test -d "$(distdir)/$$file"; then \
- 	      find "$(distdir)/$$file" -type d ! -perm -700 -exec chmod u+rwx {} \;; \
- 	    fi; \
---- bash-completion-2.16.0/completions/makepkg.orig
-+++ bash-completion-2.16.0/completions/makepkg
-@@ -14,7 +14,7 @@
+         _comp_compgen -a filedir -X '*/control'
+     fi
+diff --git a/completions-core/makepkg.bash b/completions-core/makepkg.bash
+index a3f2195..aafc296 100644
+--- a/completions-core/makepkg.bash
++++ b/completions-core/makepkg.bash
+@@ -14,7 +14,7 @@ _comp_cmd_makepkg__slackware()
      esac
  
      if [[ $cur == -* ]]; then
@@ -1366,20 +947,11 @@ And check the result.
          return
      fi
  
---- bash-completion-2.16.0/completions/mcrypt.orig
-+++ bash-completion-2.16.0/completions/mcrypt
-@@ -26,7 +26,7 @@
-             ;;
-         -h | --hash)
-             _comp_compgen_split -- "$("$1" --list-hash 2>/dev/null |
--                command sed -e 1d)"
-+                command gsed -e 1d)"
-             return
-             ;;
-         -k | -s | --key | --keysize)
---- bash-completion-2.16.0/completions/medusa.orig
-+++ bash-completion-2.16.0/completions/medusa
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/medusa.bash b/completions-core/medusa.bash
+index 9a093f6..5dbd8d0 100644
+--- a/completions-core/medusa.bash
++++ b/completions-core/medusa.bash
+@@ -16,7 +16,7 @@ _comp_cmd_medusa()
              ;;
          -*M)
              _comp_compgen_split -- "$("$1" -d | _comp_awk '/^ +\+/ {print $2}' |
@@ -1388,9 +960,11 @@ And check the result.
              return
              ;;
      esac
---- bash-completion-2.16.0/completions/mplayer.orig
-+++ bash-completion-2.16.0/completions/mplayer
-@@ -4,8 +4,8 @@
+diff --git a/completions-core/mplayer.bash b/completions-core/mplayer.bash
+index c600d13..583abff 100644
+--- a/completions-core/mplayer.bash
++++ b/completions-core/mplayer.bash
+@@ -4,8 +4,8 @@ _comp_cmd_mplayer__options()
  {
      cur=${cur%\\}
      _comp_compgen_split -- "$("$1" -noconfig all "$2" help 2>/dev/null |
@@ -1401,27 +975,29 @@ And check the result.
  }
  
  _comp_cmd_mplayer()
-@@ -54,7 +54,7 @@
+@@ -54,7 +54,7 @@ _comp_cmd_mplayer()
              ;;
          -subcp | -msgcharset)
              local cp
--            if _comp_split cp "$(iconv --list 2>/dev/null | command sed -e "s@//@@;" 2>/dev/null)"; then
-+            if _comp_split cp "$(iconv --list 2>/dev/null | command gsed -e "s@//@@;" 2>/dev/null)"; then
+-            if _comp_split cp "$(iconv --list 2>/dev/null | command sed -e "s@//@@" 2>/dev/null)"; then
++            if _comp_split cp "$(iconv --list 2>/dev/null | command gsed -e "s@//@@" 2>/dev/null)"; then
                  if [[ $cur == "${cur,,}" ]]; then
                      _comp_compgen -- -W '"${cp[@],,}"'
                  else
-@@ -267,7 +267,7 @@
+@@ -267,7 +267,7 @@ _comp_cmd_mplayer()
      case $cur in
          -*)
              _comp_compgen_split -- "$("$cmd" -noconfig all -list-options 2>/dev/null |
--                command sed -ne "1,/^[[:space:]]*Name/d" \
-+                command gsed -ne "1,/^[[:space:]]*Name/d" \
-                     -e "s/^[[:space:]]*/-/" -e "s/[[:space:]:].*//" \
-                     -e "/^-\(Total\|.*\*\)\{0,1\}$/!p")"
+-                command sed -e '1,/^[[:space:]]*Name/d' \
++                command gsed -e '1,/^[[:space:]]*Name/d' \
+                     -e 's/^[[:space:]]*/-/' -e 's/[[:space:]:].*//' \
+                     -e '/^-\(.*\*\)\{0,1\}$/d;/^-Total$/d')"
              ;;
---- bash-completion-2.16.0/completions/msynctool.orig
-+++ bash-completion-2.16.0/completions/msynctool
-@@ -8,22 +8,22 @@
+diff --git a/completions-core/msynctool.bash b/completions-core/msynctool.bash
+index 5b2ecca..7fb9999 100644
+--- a/completions-core/msynctool.bash
++++ b/completions-core/msynctool.bash
+@@ -8,7 +8,7 @@ _comp_cmd_msynctool()
      case $words in
          --configure)
              _comp_compgen_split -- "$("$1" --showgroup "$prev" |
@@ -1430,27 +1006,11 @@ And check the result.
              return
              ;;
          --addmember)
--            _comp_compgen_split -- "$("$1" --listplugins | command sed -e 1d)"
-+            _comp_compgen_split -- "$("$1" --listplugins | command gsed -e 1d)"
-             return
-             ;;
-     esac
- 
-     case $prev in
-         --configure | --addgroup | --delgroup | --showgroup | --sync | --addmember)
--            _comp_compgen_split -- "$("$1" --listgroups | command sed -e 1d)"
-+            _comp_compgen_split -- "$("$1" --listgroups | command gsed -e 1d)"
-             return
-             ;;
-         --showformats | --filter-objtype | --slow-sync)
--            _comp_compgen_split -- "$("$1" --listobjects | command sed -e 1d)"
-+            _comp_compgen_split -- "$("$1" --listobjects | command gsed -e 1d)"
-             return
-             ;;
-     esac
---- bash-completion-2.16.0/completions/mutt.orig
-+++ bash-completion-2.16.0/completions/mutt
-@@ -67,7 +67,7 @@
+diff --git a/completions-core/mutt.bash b/completions-core/mutt.bash
+index aa9b1e2..cbe0c7f 100644
+--- a/completions-core/mutt.bash
++++ b/completions-core/mutt.bash
+@@ -67,7 +67,7 @@ _comp_cmd_mutt__get_conffiles__visit()
      conffiles+=("$1")
  
      local -a newconffiles
@@ -1459,7 +1019,7 @@ And check the result.
          return 0
  
      local file REPLY
-@@ -90,7 +90,7 @@
+@@ -90,7 +90,7 @@ _comp_cmd_mutt__aliases()
      local REPLY
      _comp_cmd_mutt__get_conffiles "$muttrc" || return 0
      conffiles=("${REPLY[@]}")
@@ -1468,16 +1028,16 @@ And check the result.
          "${conffiles[@]}")"
  }
  
-@@ -101,7 +101,7 @@
+@@ -101,7 +101,7 @@ _comp_cmd_mutt__query()
      [[ $cur ]] || return 0
      local muttcmd=${words[0]}
  
--    local querycmd="$("$muttcmd" -Q query_command 2>/dev/null | command sed -e 's|^query_command=\"\(.*\)\"$|\1|' -e 's|%s|'"$cur"'|')"
-+    local querycmd="$("$muttcmd" -Q query_command 2>/dev/null | command gsed -e 's|^query_command=\"\(.*\)\"$|\1|' -e 's|%s|'"$cur"'|')"
+-    local querycmd=$("$muttcmd" -Q query_command 2>/dev/null | command sed -e 's|^query_command="\(.*\)"$|\1|' -e 's|%s|'"$cur"'|')
++    local querycmd=$("$muttcmd" -Q query_command 2>/dev/null | command gsed -e 's|^query_command="\(.*\)"$|\1|' -e 's|%s|'"$cur"'|')
      if [[ $querycmd ]]; then
          local REPLY
          _comp_expand_tilde "$querycmd"
-@@ -109,7 +109,7 @@
+@@ -109,7 +109,7 @@ _comp_cmd_mutt__query()
          # generate queryresults:
          # $querycmd is expected to be a command with arguments
          _comp_compgen -a split -- "$($querycmd |
@@ -1486,27 +1046,29 @@ And check the result.
      fi
  }
  
-@@ -120,7 +120,7 @@
+@@ -120,7 +120,7 @@ _comp_cmd_mutt__filedir()
      _comp_cmd_mutt__get_muttrc
      muttrc=$REPLY
      if [[ $cur == [=+]* ]]; then
--        folder="$("$muttcmd" -F "$muttrc" -Q folder 2>/dev/null | command sed -e 's|^folder=\"\(.*\)\"$|\1|')"
-+        folder="$("$muttcmd" -F "$muttrc" -Q folder 2>/dev/null | command gsed -e 's|^folder=\"\(.*\)\"$|\1|')"
+-        folder=$("$muttcmd" -F "$muttrc" -Q folder 2>/dev/null | command sed -e 's|^folder="\(.*\)"$|\1|')
++        folder=$("$muttcmd" -F "$muttrc" -Q folder 2>/dev/null | command gsed -e 's|^folder="\(.*\)"$|\1|')
          [[ $folder ]] || folder=~/Mail
  
          # Match any file in $folder beginning with $cur
-@@ -131,7 +131,7 @@
+@@ -131,7 +131,7 @@ _comp_cmd_mutt__filedir()
          return
      elif [[ $cur == !* ]]; then
-         spoolfile="$("$muttcmd" -F "$muttrc" -Q spoolfile 2>/dev/null |
--            command sed -e 's|^spoolfile=\"\(.*\)\"$|\1|')"
-+            command gsed -e 's|^spoolfile=\"\(.*\)\"$|\1|')"
+         spoolfile=$("$muttcmd" -F "$muttrc" -Q spoolfile 2>/dev/null |
+-            command sed -e 's|^spoolfile="\(.*\)"$|\1|')
++            command gsed -e 's|^spoolfile="\(.*\)"$|\1|')
          if [[ $spoolfile ]]; then
              _comp_dequote "\"$spoolfile\"" && spoolfile=$REPLY
              cur=$spoolfile${cur:1}
---- bash-completion-2.16.0/completions/mysql.orig
-+++ bash-completion-2.16.0/completions/mysql
-@@ -35,7 +35,7 @@
+diff --git a/completions-core/mysql.bash b/completions-core/mysql.bash
+index c88e7ac..7949a3d 100644
+--- a/completions-core/mysql.bash
++++ b/completions-core/mysql.bash
+@@ -35,7 +35,7 @@ _comp_cmd_mysql()
              ;;
          --database | -${noargopts}D)
              _comp_compgen_split -- "$(mysqlshow 2>/dev/null |
@@ -1515,7 +1077,7 @@ And check the result.
              return
              ;;
  
-@@ -102,7 +102,7 @@
+@@ -102,6 +102,6 @@ _comp_cmd_mysql()
      esac
  
      _comp_compgen_split -- "$(mysqlshow 2>/dev/null |
@@ -1523,10 +1085,11 @@ And check the result.
 +        command gsed -ne '2d' -e 's/^|.\([^|]*\)|.*/\1/p')"
  } &&
      complete -F _comp_cmd_mysql mysql
- 
---- bash-completion-2.16.0/completions/ncftp.orig
-+++ bash-completion-2.16.0/completions/ncftp
-@@ -17,7 +17,7 @@
+diff --git a/completions-core/ncftp.bash b/completions-core/ncftp.bash
+index e78698f..68460cd 100644
+--- a/completions-core/ncftp.bash
++++ b/completions-core/ncftp.bash
+@@ -17,7 +17,7 @@ _comp_cmd_ncftp()
      fi
  
      if [[ $cword -eq 1 && -f ~/.ncftp/bookmarks ]]; then
@@ -1535,9 +1098,11 @@ And check the result.
              's/^\([^,]\{1,\}\),.*$/\1/p' ~/.ncftp/bookmarks)"
      fi
  
---- bash-completion-2.16.0/completions/nmap.orig
-+++ bash-completion-2.16.0/completions/nmap
-@@ -36,7 +36,7 @@
+diff --git a/completions-core/nmap.bash b/completions-core/nmap.bash
+index 4f76be0..6ecc340 100644
+--- a/completions-core/nmap.bash
++++ b/completions-core/nmap.bash
+@@ -36,7 +36,7 @@ _comp_cmd_nmap()
          # strip everything following a non-option name or = char
          # TODO: should expand -T<0-5> to -T0 ... -T5
          _comp_compgen_split -- "$(
@@ -1546,42 +1111,44 @@ And check the result.
                  -e "s/:.*$//" \
                  -e "s/=.*$/=/" \
                  -e "s/;[[:space:]]*-/ -/g" \
---- bash-completion-2.16.0/completions/openssl.orig
-+++ bash-completion-2.16.0/completions/openssl
-@@ -33,8 +33,8 @@
+diff --git a/completions-core/openssl.bash b/completions-core/openssl.bash
+index 61e6ef4..d379087 100644
+--- a/completions-core/openssl.bash
++++ b/completions-core/openssl.bash
+@@ -33,8 +33,8 @@ _comp_cmd_openssl__compgen_digests()
              _comp_awk '/^-.*[ \t]to use the .* message digest algorithm/ { print $1 }'
      )"
-     _comp_compgen -ac "${cur#-}" split -P "-" -- "$("$1" help 2>&1 |
+     _comp_compgen_split -- "$("$1" help 2>&1 |
 -        command sed -ne '/^Message Digest commands/,/^[[:space:]]*$/p' |
--        command sed -e 1d)"
+-        command sed -e '1d;s/^/-/')"
 +        command gsed -ne '/^Message Digest commands/,/^[[:space:]]*$/p' |
-+        command gsed -e 1d)"
++        command gsed -e '1d;s/^/-/')"
  }
  
  _comp_cmd_openssl()
-@@ -46,7 +46,7 @@
- 
+@@ -47,7 +47,7 @@ _comp_cmd_openssl()
      if ((cword == 1)); then
          local commands
--        commands="$("$1" help 2>&1 | command sed -e '/commands\|help:/d')"
-+        commands="$("$1" help 2>&1 | command gsed -e '/commands\|help:/d')"
+         # We only want the standard commands, so we delete everything starting after and including "Message Digest commands"
+-        commands=$("$1" help 2>&1 | command sed -e '/Standard commands/d;/help:/d' -e '/Message Digest commands/,$d')
++        commands=$("$1" help 2>&1 | command gsed -e '/Standard commands/d;/help:/d' -e '/Message Digest commands/,$d')
          _comp_compgen -- -W "$commands"
      else
          command=${words[1]}
---- bash-completion-2.16.0/completions/pdftotext.orig
-+++ bash-completion-2.16.0/completions/pdftotext
-@@ -12,7 +12,7 @@
-             ;;
-         -enc)
-             _comp_compgen_split -- "$("$1" -listenc 2>/dev/null |
--                command sed -e 1d)"
-+                command gsed -e 1d)"
-             return
-             ;;
-         -eol)
---- bash-completion-2.16.0/completions/perl.orig
-+++ bash-completion-2.16.0/completions/perl
-@@ -131,7 +131,7 @@
+@@ -114,7 +114,7 @@ _comp_cmd_openssl()
+                 enc)
+                     # The -list option was added in openssl 1.1.1e, so we ignore the error here.
+                     # We do get some of the ciphers "by accident", since some are detected in the help output.
+-                    _comp_compgen -a split -- "$("$1" enc -list 2>/dev/null | command sed '/Supported ciphers:/d')"
++                    _comp_compgen -a split -- "$("$1" enc -list 2>/dev/null | command gsed '/Supported ciphers:/d')"
+                     ;;
+             esac
+         else
+diff --git a/completions-core/perl.bash b/completions-core/perl.bash
+index c2ab69a..a118d43 100644
+--- a/completions-core/perl.bash
++++ b/completions-core/perl.bash
+@@ -131,7 +131,7 @@ _comp_cmd_perldoc()
              _comp_cmd_perl__helper "" perldocs
              if [[ $cur == p* ]]; then
                  _comp_compgen -a split -- "$(PERLDOC_PAGER=cat "$1" -u perl |
@@ -1590,9 +1157,11 @@ And check the result.
                      _comp_awk 'NF >= 2 && $1 ~ /^perl/ { print $1 }')"
              fi
          fi
---- bash-completion-2.16.0/completions/pgrep.orig
-+++ bash-completion-2.16.0/completions/pgrep
-@@ -38,7 +38,7 @@
+diff --git a/completions-core/pgrep.bash b/completions-core/pgrep.bash
+index 3be251f..5cd7325 100644
+--- a/completions-core/pgrep.bash
++++ b/completions-core/pgrep.bash
+@@ -38,7 +38,7 @@ _comp_cmd_pgrep()
          --nslist)
              _comp_compgen -c "${cur##*,}" split -F $' \t\n,' -- "$(
                  "$1" --help 2>&1 |
@@ -1601,7 +1170,7 @@ And check the result.
              )" &&
                  _comp_delimited , -W '"${COMPREPLY[@]}"'
              return
-@@ -48,7 +48,7 @@
+@@ -48,7 +48,7 @@ _comp_cmd_pgrep()
      if [[ $cur == -* ]]; then
          _comp_compgen_help ||
              _comp_compgen_usage - <<<"$("$1" --usage 2>&1 |
@@ -1610,9 +1179,11 @@ And check the result.
          [[ $cword -eq 1 && $1 == *pkill ]] && _comp_compgen -a signals -
          return
      fi
---- bash-completion-2.16.0/completions/pkgadd.orig
-+++ bash-completion-2.16.0/completions/pkgadd
-@@ -48,7 +48,7 @@
+diff --git a/completions-core/pkgadd.bash b/completions-core/pkgadd.bash
+index 4101599..3dd4133 100644
+--- a/completions-core/pkgadd.bash
++++ b/completions-core/pkgadd.bash
+@@ -48,7 +48,7 @@ _comp_cmd_pkgadd()
                      local REPLY
                      _comp_dequote "$device"
                      _comp_split -l pkginst_list "$(strings "${REPLY-}" |
@@ -1621,9 +1192,11 @@ And check the result.
                  fi
                  ((${#pkginst_list[@]})) &&
                      _comp_compgen -- -W '"${pkginst_list[@]}"'
---- bash-completion-2.16.0/completions/pngfix.orig
-+++ bash-completion-2.16.0/completions/pngfix
-@@ -15,7 +15,7 @@
+diff --git a/completions-core/pngfix.bash b/completions-core/pngfix.bash
+index d2e0dd2..ac0c95e 100644
+--- a/completions-core/pngfix.bash
++++ b/completions-core/pngfix.bash
+@@ -15,7 +15,7 @@ _comp_cmd_pngfix()
              ;;
          --strip)
              _comp_compgen_split -F '|' -- "$("$1" --help 2>&1 |
@@ -1632,9 +1205,11 @@ And check the result.
              return
              ;;
      esac
---- bash-completion-2.16.0/completions/postcat.orig
-+++ bash-completion-2.16.0/completions/postcat
-@@ -23,7 +23,7 @@
+diff --git a/completions-core/postcat.bash b/completions-core/postcat.bash
+index 73d4f53..83537b5 100644
+--- a/completions-core/postcat.bash
++++ b/completions-core/postcat.bash
+@@ -23,7 +23,7 @@ _comp_cmd_postcat()
      done
      if [[ $qfile ]]; then
          _comp_compgen_split -- "$(mailq 2>/dev/null |
@@ -1643,9 +1218,11 @@ And check the result.
          return
      fi
  
---- bash-completion-2.16.0/completions/postsuper.orig
-+++ bash-completion-2.16.0/completions/postsuper
-@@ -12,17 +12,17 @@
+diff --git a/completions-core/postsuper.bash b/completions-core/postsuper.bash
+index 6a0832a..6e7c38d 100644
+--- a/completions-core/postsuper.bash
++++ b/completions-core/postsuper.bash
+@@ -12,17 +12,17 @@ _comp_cmd_postsuper()
              ;;
          -[dr])
              _comp_compgen_split -- "ALL $(mailq 2>/dev/null |
@@ -1666,29 +1243,24 @@ And check the result.
                  -e '1d; $d; /^[^0-9A-Z]/d; /^$/d; /^[0-9A-Z]*[* ]/d; s/!.*$//')"
              return
              ;;
---- bash-completion-2.16.0/completions/povray.orig
-+++ bash-completion-2.16.0/completions/povray
-@@ -23,7 +23,7 @@
-             # guess what output file type user may want
-             case $(
-                 IFS=$'\n'
--                command grep '^[-+]F' <<<"${words[*]}"
-+                command ggrep '^[-+]F' <<<"${words[*]}"
-             ) in
-                 [-+]FN) oext=png ;;
-                 [-+]FP) oext=ppm ;;
-@@ -48,7 +48,7 @@
-             cur="${povcur#*\[}"
-             pfx="${povcur%\["$cur"}" # prefix == filename
-             [[ -f $pfx && -r $pfx ]] || return
--            _comp_compgen_split -l -- "$(command sed -ne \
-+            _comp_compgen_split -l -- "$(command gsed -ne \
-                 's/^[[:space:]]*\[\([^]]*\]\).*$/\1/p' -- "$pfx")" &&
-                 # to prevent [bar] expand to nothing.  can be done more easily?
-                 _comp_compgen -Rv COMPREPLY -- -P "${pfx}[" -W '"${COMPREPLY[@]}"'
---- bash-completion-2.16.0/completions/ps.orig
-+++ bash-completion-2.16.0/completions/ps
-@@ -61,7 +61,7 @@
+diff --git a/completions-core/povray.bash b/completions-core/povray.bash
+index f6515f3..074384c 100644
+--- a/completions-core/povray.bash
++++ b/completions-core/povray.bash
+@@ -44,7 +44,7 @@ _comp_cmd_povray()
+             [[ $cur =~ ^(.*\.ini)\[ ]] || return
+             local ini=${BASH_REMATCH[1]}
+             [[ -f $ini && -r $ini ]] || return
+-            _comp_compgen -P "${ini}[" split -l -- "$(command sed -ne \
++            _comp_compgen -P "${ini}[" split -l -- "$(command gsed -ne \
+                 's/^[[:space:]]*\[\([^]]*\]\).*$/\1/p' -- "$ini")"
+             # to prevent [bar] expand to nothing.  can be done more easily?
+             return
+diff --git a/completions-core/ps.bash b/completions-core/ps.bash
+index 35e2931..1bccb58 100644
+--- a/completions-core/ps.bash
++++ b/completions-core/ps.bash
+@@ -61,7 +61,7 @@ _comp_cmd_ps()
              "$1" --help
              "$1" --help all
          } 2>/dev/null |
@@ -1697,9 +1269,11 @@ And check the result.
              _comp_compgen_usage
      fi
  } &&
---- bash-completion-2.16.0/completions/puppet.orig
-+++ bash-completion-2.16.0/completions/puppet
-@@ -24,7 +24,7 @@
+diff --git a/completions-core/puppet.bash b/completions-core/puppet.bash
+index bddb971..9765c50 100644
+--- a/completions-core/puppet.bash
++++ b/completions-core/puppet.bash
+@@ -24,7 +24,7 @@ _comp_cmd_puppet__certs()
      if [[ $1 == --all ]]; then
          cert_list=$(
              $puppetca --list --all |
@@ -1708,7 +1282,7 @@ And check the result.
          )
      else
          cert_list=$("$puppetca" --list)
-@@ -35,7 +35,7 @@
+@@ -35,7 +35,7 @@ _comp_cmd_puppet__certs()
  _comp_cmd_puppet__types()
  {
      puppet_types=$(
@@ -1717,7 +1291,7 @@ And check the result.
      )
      _comp_compgen -a -- -W "$puppet_types"
  }
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ _comp_cmd_puppet__references()
          puppetdoc=puppetdoc
  
      puppet_doc_list=$(
@@ -1726,9 +1300,11 @@ And check the result.
      )
      _comp_compgen -a -- -W "$puppet_doc_list"
  }
---- bash-completion-2.16.0/completions/pydoc.orig
-+++ bash-completion-2.16.0/completions/pydoc
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/pydoc.bash b/completions-core/pydoc.bash
+index aafb01b..b697f3a 100644
+--- a/completions-core/pydoc.bash
++++ b/completions-core/pydoc.bash
+@@ -16,7 +16,7 @@ _comp_cmd_pydoc()
      esac
  
      if [[ $cur == -* ]]; then
@@ -1737,7 +1313,7 @@ And check the result.
          return
      fi
  
-@@ -32,7 +32,7 @@
+@@ -32,7 +32,7 @@ _comp_cmd_pydoc()
      # Note that we don't do "pydoc modules" as it is known to hang on
      # some systems; _comp_xfunc_python_modules tends to work better and faster.
      _comp_compgen -a split -- "$("$1" keywords topics |
@@ -1746,10 +1322,12 @@ And check the result.
  
      _comp_compgen -a filedir py
  } &&
---- bash-completion-2.16.0/completions/pylint.orig
-+++ bash-completion-2.16.0/completions/pylint
-@@ -11,10 +11,10 @@
-     local msgs="$(
+diff --git a/completions-core/pylint.bash b/completions-core/pylint.bash
+index 665e8d3..98ab368 100644
+--- a/completions-core/pylint.bash
++++ b/completions-core/pylint.bash
+@@ -11,10 +11,10 @@ _comp_cmd_pylint__message_ids()
+     local msgs=$(
          set -o pipefail
          "$1" --list-msgs-enabled 2>/dev/null |
 -            command sed -ne "$filter" |
@@ -1759,23 +1337,27 @@ And check the result.
              "$1" --list-msgs 2>/dev/null |
 -            command sed -ne 's/^:\([a-z-]\{6,\}\).*/\1/p'
 +            command gsed -ne 's/^:\([a-z-]\{6,\}\).*/\1/p'
-     )"
+     )
      _comp_delimited , -W "$msgs"
  }
---- bash-completion-2.16.0/completions/pytest.orig
-+++ bash-completion-2.16.0/completions/pytest
+diff --git a/completions-core/pytest.bash b/completions-core/pytest.bash
+index 9f44254..4f11eba 100644
+--- a/completions-core/pytest.bash
++++ b/completions-core/pytest.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_pytest__option_choice_args()
  {
      local modes=$("$1" "$2=bash-completion-nonexistent" 2>&1 |
 -        command sed -e 's/[^[:space:][:alnum:]_-]\{1,\}//g' \
 +        command gsed -e 's/[^[:space:][:alnum:]_-]\{1,\}//g' \
-             -ne 's/.*choose from //p')
+             -e 's/.*choose from //p' -e 's/.*Valid modes //p' -e d)
      _comp_compgen -a -- -W '$modes'
  }
---- bash-completion-2.16.0/completions/qdbus.orig
-+++ bash-completion-2.16.0/completions/qdbus
-@@ -6,7 +6,7 @@
+diff --git a/completions-core/qdbus.bash b/completions-core/qdbus.bash
+index 14eb735..f34528c 100644
+--- a/completions-core/qdbus.bash
++++ b/completions-core/qdbus.bash
+@@ -6,7 +6,7 @@ _comp_cmd_qdbus()
      _comp_initialize -- "$@" || return
  
      _comp_compgen_split -- "$(
@@ -1784,9 +1366,11 @@ And check the result.
      )"
  } &&
      complete -F _comp_cmd_qdbus qdbus dcop
---- bash-completion-2.16.0/completions/reportbug.orig
-+++ bash-completion-2.16.0/completions/reportbug
-@@ -33,7 +33,7 @@
+diff --git a/completions-core/reportbug.bash b/completions-core/reportbug.bash
+index 61573a1..b82dde3 100644
+--- a/completions-core/reportbug.bash
++++ b/completions-core/reportbug.bash
+@@ -33,7 +33,7 @@ _comp_cmd_reportbug()
              ;;
          --tag | --ui | --interface | --type | --bts | --severity | --mode | -${noargopts}[TutBS])
              _comp_compgen_split -- "$("$1" "$prev" help 2>&1 |
@@ -1795,9 +1379,11 @@ And check the result.
              return
              ;;
          --editor | --mua | --mbox-reader-cmd | -${noargopts}e)
---- bash-completion-2.16.0/completions/rpcdebug.orig
-+++ bash-completion-2.16.0/completions/rpcdebug
-@@ -13,7 +13,7 @@
+diff --git a/completions-core/rpcdebug.bash b/completions-core/rpcdebug.bash
+index 9e6c59f..f181a4c 100644
+--- a/completions-core/rpcdebug.bash
++++ b/completions-core/rpcdebug.bash
+@@ -13,7 +13,7 @@ _comp_cmd_rpcdebug__flags()
  
      if [[ $module ]]; then
          _comp_compgen_split -- "$(rpcdebug -vh 2>&1 |
@@ -1806,9 +1392,11 @@ And check the result.
      fi
  }
  
---- bash-completion-2.16.0/completions/rpm.orig
-+++ bash-completion-2.16.0/completions/rpm
-@@ -13,7 +13,7 @@
+diff --git a/completions-core/rpm.bash b/completions-core/rpm.bash
+index 3bb7403..0986d92 100644
+--- a/completions-core/rpm.bash
++++ b/completions-core/rpm.bash
+@@ -13,7 +13,7 @@ _comp_cmd_rpm__compgen_installed_packages()
      if [[ -r /var/log/rpmpkgs &&
          /var/log/rpmpkgs -nt /var/lib/rpm/Packages ]]; then
          # using RHL 7.2 or later - this is quicker than querying the DB
@@ -1817,7 +1405,7 @@ And check the result.
              's|^\([^[:space:]]\{1,\}\)-[^[:space:]-]\{1,\}-[^[:space:]-]\{1,\}\.rpm$|\1|p' \
              /var/log/rpmpkgs)"
      elif type rpmqpack &>/dev/null; then
-@@ -37,7 +37,7 @@
+@@ -37,7 +37,7 @@ _comp_cmd_rpm__groups()
  _comp_cmd_rpm__macros()
  {
      # get a list of macros
@@ -1826,7 +1414,7 @@ And check the result.
          's/^-\{0,1\}[0-9]\{1,\}[:=][[:space:]]\{1,\}\([^[:space:](]\{3,\}\).*/%\1/p')"
  }
  
-@@ -46,7 +46,7 @@
+@@ -46,7 +46,7 @@ _comp_cmd_rpm__buildarchs()
  {
      # Case-insensitive BRE to match "compatible build archs"
      local regex_header='[cC][oO][mM][pP][aA][tT][iI][bB][lL][eE][[:space:]]\{1,\}[bB][uU][iI][lL][dD][[:space:]]\{1,\}[aA][rR][cC][hH][sS]'
@@ -1835,7 +1423,7 @@ And check the result.
          "s/^[[:space:]]*${regex_header}[[:space:]]*:[[:space:]]*\(.*\)/\1/p")"
  }
  
-@@ -120,7 +120,7 @@
+@@ -120,7 +120,7 @@ _comp_cmd_rpm()
                  esac
                  _comp_compgen_split -l -- "$("$1" -qa --nodigest \
                      --nosignature --queryformat="\"$fmt\\n\"" 2>/dev/null |
@@ -1844,7 +1432,7 @@ And check the result.
              fi
              return
              ;;
-@@ -281,7 +281,7 @@
+@@ -281,7 +281,7 @@ _comp_cmd_rpmbuild()
              _comp_cmd_rpm__configdir
              if [[ $cfgdir ]]; then
                  _comp_compgen_split -- "$(command ls "$cfgdir" 2>/dev/null |
@@ -1853,60 +1441,68 @@ And check the result.
              fi
              ;;
          --define | --with | --without | -${noargopts}D)
---- bash-completion-2.16.0/completions/rsync.orig
-+++ bash-completion-2.16.0/completions/rsync
-@@ -85,7 +85,7 @@
+diff --git a/completions-core/rsync.bash b/completions-core/rsync.bash
+index 8042a3c..ed99b0e 100644
+--- a/completions-core/rsync.bash
++++ b/completions-core/rsync.bash
+@@ -85,7 +85,7 @@ _comp_cmd_rsync()
              # meaning before v3.2.0) contain the following unusual line in
              # --help:
              # "(-h) --help                  show this help (-h is --help only if used alone)"
--            _comp_compgen -Rv tmp help - <<<"$("$1" --help 2>&1 | command sed -e 's/^([^)]*)//')"
-+            _comp_compgen -Rv tmp help - <<<"$("$1" --help 2>&1 | command gsed -e 's/^([^)]*)//')"
+-            if _comp_compgen -Rv tmp help - <<<"$("$1" --help 2>&1 | command sed -e 's/^([^)]*)//')"; then
++            if _comp_compgen -Rv tmp help - <<<"$("$1" --help 2>&1 | command gsed -e 's/^([^)]*)//')"; then
  
-             _comp_compgen -- -W '"${tmp[@]}"
-                 --daemon --old-d{,irs}
-@@ -102,7 +102,7 @@
-                 fi
+                 _comp_compgen -- -W '"${tmp[@]}"
+                     --daemon --old-d{,irs}
+@@ -107,7 +107,7 @@ _comp_cmd_rsync()
              done
              if [[ $shell == ssh ]]; then
--                local rsync_version=$("$1" --version 2>/dev/null | sed -n '1s/.*rsync *version \([0-9.]*\).*/\1/p')
-+                local rsync_version=$("$1" --version 2>/dev/null | gsed -n '1s/.*rsync *version \([0-9.]*\).*/\1/p')
+                 local rsync_version=$("$1" --version 2>/dev/null |
+-                    command sed -n '1s/.*rsync *version \([0-9.]*\).*/\1/p')
++                    command gsed -n '1s/.*rsync *version \([0-9.]*\).*/\1/p')
                  _comp_cmd_rsync__vercomp "$rsync_version" "3.2.4"
                  if (($? == 2)); then
                      _comp_compgen -x scp remote_files
---- bash-completion-2.16.0/completions/sbopkg.orig
-+++ bash-completion-2.16.0/completions/sbopkg
-@@ -61,7 +61,7 @@
+diff --git a/completions-core/sbopkg.bash b/completions-core/sbopkg.bash
+index 4fbce28..6413d9c 100644
+--- a/completions-core/sbopkg.bash
++++ b/completions-core/sbopkg.bash
+@@ -61,7 +61,7 @@ _comp_cmd_sbopkg()
      local file=${REPO_ROOT-}/${REPO_NAME-}/${REPO_BRANCH-}/SLACKBUILDS.TXT
      [[ -f $file && -r $file ]] || return
  
 -    _comp_compgen_split -l -- "$(command sed -ne "s/^SLACKBUILD NAME: //p" \
 +    _comp_compgen_split -l -- "$(command gsed -ne "s/^SLACKBUILD NAME: //p" \
          "$file")"
-     _comp_compgen -aC "$QUEUEDIR" -- -f -X "!*.sqf"
- } &&
---- bash-completion-2.16.0/completions/screen.orig
-+++ bash-completion-2.16.0/completions/screen
+     if [[ -d ${QUEUEDIR-} ]]; then
+         _comp_compgen -aC "$QUEUEDIR" filedir sqf
+diff --git a/completions-core/screen.bash b/completions-core/screen.bash
+index 644073d..6e4ea6f 100644
+--- a/completions-core/screen.bash
++++ b/completions-core/screen.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_screen__sessions()
  {
      local -a sessions
 -    _comp_split sessions "$(command screen -ls | command sed -ne \
 +    _comp_split sessions "$(command screen -ls | command gsed -ne \
-         's|^\t\{1,\}\([0-9]\{1,\}\.[^\t]\{1,\}\).*'"$1"'.*$|\1|p')" || return
+         's|^'$'\t''\{1,\}\([0-9]\{1,\}\.[^'$'\t'']\{1,\}\).*'"$1"'.*$|\1|p')" || return
      if [[ $cur == +([0-9])?(.*) ]]; then
          # Complete sessions including pid prefixes
---- bash-completion-2.16.0/completions/shellcheck.orig
-+++ bash-completion-2.16.0/completions/shellcheck
+diff --git a/completions-core/shellcheck.bash b/completions-core/shellcheck.bash
+index fdca1c9..cf1f8aa 100644
+--- a/completions-core/shellcheck.bash
++++ b/completions-core/shellcheck.bash
 @@ -3,7 +3,7 @@
  _comp_cmd_shellcheck__optarg()
  {
      local args=$("$1" --help 2>&1 |
--        command sed -e 's/,/ /g' -ne 's/^.*'"$2"'\>.*(\([^)]*\)).*/\1/p')
-+        command gsed -e 's/,/ /g' -ne 's/^.*'"$2"'\>.*(\([^)]*\)).*/\1/p')
+-        command sed -e 's/,/ /g' -ne 's/^.*'"$2"'\([^[:alnum:]].*\)\{0,1\}(\([^)]*\)).*/\2/p')
++        command gsed -e 's/,/ /g' -ne 's/^.*'"$2"'\([^[:alnum:]].*\)\{0,1\}(\([^)]*\)).*/\2/p')
      _comp_compgen -a -- -W '$args'
  }
  
-@@ -23,8 +23,8 @@
+@@ -23,8 +23,8 @@ _comp_cmd_shellcheck()
              ;;
          --format | -${noargopts}f)
              local args=$("$1" --format=nonexistent-format /dev/null 2>&1 |
@@ -1917,20 +1513,24 @@ And check the result.
              _comp_compgen -- -W '$args'
              return
              ;;
---- bash-completion-2.16.0/completions/sitecopy.orig
-+++ bash-completion-2.16.0/completions/sitecopy
-@@ -44,7 +44,7 @@
+diff --git a/completions-core/sitecopy.bash b/completions-core/sitecopy.bash
+index 7dd3fd4..e736326 100644
+--- a/completions-core/sitecopy.bash
++++ b/completions-core/sitecopy.bash
+@@ -43,7 +43,7 @@ _comp_cmd_sitecopy()
+     esac
  
      if [[ -r ~/.sitecopyrc ]]; then
-         _comp_compgen_split -- "$("$1" -v |
--            command sed -n '/^Site:/s/Site: //p')"
-+            command gsed -n '/^Site:/s/Site: //p')"
+-        _comp_compgen_split -- "$("$1" -v | command sed -n 's/^Site: //p')"
++        _comp_compgen_split -- "$("$1" -v | command gsed -n 's/^Site: //p')"
      fi
  } &&
      complete -F _comp_cmd_sitecopy -o default sitecopy
---- bash-completion-2.16.0/completions/slabtop.orig
-+++ bash-completion-2.16.0/completions/slabtop
-@@ -13,7 +13,7 @@
+diff --git a/completions-core/slabtop.bash b/completions-core/slabtop.bash
+index 6c65c73..b082634 100644
+--- a/completions-core/slabtop.bash
++++ b/completions-core/slabtop.bash
+@@ -13,7 +13,7 @@ _comp_cmd_slabtop()
              ;;
          --sort | -${noargopts}s)
              _comp_compgen_split -- "$(
@@ -1939,9 +1539,11 @@ And check the result.
                      -e '/^The following are valid sort criteria/,/^$/!d' \
                      -ne 's/^[[:space:]]\(.\):.*/\1/p'
              )"
---- bash-completion-2.16.0/completions/slapt-get.orig
-+++ bash-completion-2.16.0/completions/slapt-get
-@@ -62,14 +62,14 @@
+diff --git a/completions-core/slapt-get.bash b/completions-core/slapt-get.bash
+index 4f955a2..09d3cef 100644
+--- a/completions-core/slapt-get.bash
++++ b/completions-core/slapt-get.bash
+@@ -62,14 +62,14 @@ _comp_cmd_slapt_get()
              local name=${cur%%-*}
              _comp_compgen_split -l -- "$(
                  LC_ALL=C "$1" -c "$config" --search "^$name" 2>/dev/null |
@@ -1958,9 +1560,11 @@ And check the result.
              )"
              return
              ;;
---- bash-completion-2.16.0/completions/slapt-src.orig
-+++ bash-completion-2.16.0/completions/slapt-src
-@@ -59,13 +59,13 @@
+diff --git a/completions-core/slapt-src.bash b/completions-core/slapt-src.bash
+index b3d7cf4..a939e04 100644
+--- a/completions-core/slapt-src.bash
++++ b/completions-core/slapt-src.bash
+@@ -59,13 +59,13 @@ _comp_cmd_slapt_src()
          _comp_compgen_split -l -- "$(
              LC_ALL=C
              "$1" --config "$config" --search "^$name" 2>/dev/null |
@@ -1976,9 +1580,11 @@ And check the result.
          )"
      fi
  } &&
---- bash-completion-2.16.0/completions/smbclient.orig
-+++ bash-completion-2.16.0/completions/smbclient
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/smbclient.bash b/completions-core/smbclient.bash
+index 53dfb68..df59f44 100644
+--- a/completions-core/smbclient.bash
++++ b/completions-core/smbclient.bash
+@@ -16,7 +16,7 @@ _comp_cmd_smbclient__hosts()
  {
      if [[ ${BASH_COMPLETION_CMD_SMBTREE_SCAN-${COMP_SAMBA_SCAN-}} ]]; then
          _comp_compgen_split -- "$(smbtree -N -S |
@@ -1987,9 +1593,11 @@ And check the result.
      fi
  }
  
---- bash-completion-2.16.0/completions/ss.orig
-+++ bash-completion-2.16.0/completions/ss
-@@ -17,7 +17,7 @@
+diff --git a/completions-core/ss.bash b/completions-core/ss.bash
+index 20aae75..414c07a 100644
+--- a/completions-core/ss.bash
++++ b/completions-core/ss.bash
+@@ -17,7 +17,7 @@ _comp_cmd_ss()
              ;;
          --query | -${noargopts}A)
              local queries=$("$1" --help |
@@ -1998,53 +1606,40 @@ And check the result.
              _comp_delimited , -W '$queries'
              return
              ;;
---- bash-completion-2.16.0/completions/ssh.orig
-+++ bash-completion-2.16.0/completions/ssh
-@@ -494,7 +494,7 @@
+diff --git a/completions-core/ssh.bash b/completions-core/ssh.bash
+index 1ba59de..1aa0f30 100644
+--- a/completions-core/ssh.bash
++++ b/completions-core/ssh.bash
+@@ -498,13 +498,13 @@ _comp_cmd_scp__escape_path()
  
-     # unescape (3 backslashes to 1 for chars we escaped)
-     # shellcheck disable=SC2090
--    _path=$(command sed -e 's/\\\\\\\('"$_comp_cmd_scp__path_esc"'\)/\\\1/g' <<<"$_path")
-+    _path=$(command gsed -e 's/\\\\\\\('"$_comp_cmd_scp__path_esc"'\)/\\\1/g' <<<"$_path")
- 
-     # default to home dir of specified user on remote host
-     if [[ ! $_path ]]; then
-@@ -512,14 +512,14 @@
-         # shellcheck disable=SC2090
-         _files=$(ssh -o 'Batchmode yes' "$_userhost" \
-             command ls -aF1dL "$_path*" 2>/dev/null |
--            command sed -e 's/'"$_comp_cmd_scp__path_esc"'/'"$_escape_replacement"'/g' -e '/[^\/]$/d')
-+            command gsed -e 's/'"$_comp_cmd_scp__path_esc"'/'"$_escape_replacement"'/g' -e '/[^\/]$/d')
+     if [[ $dirs_only ]]; then
+         # escape problematic characters; remove non-dirs
+-        command sed \
++        command gsed \
+             -e '/[^/]$/d' \
+             -e 's/'"$_comp_cmd_scp__path_esc"'/'"$escape_replacement"'/g'
      else
-         # escape problematic characters; remove executables, aliases, pipes
-         # and sockets; add space at end of file names
-         # shellcheck disable=SC2090
-         _files=$(ssh -o 'Batchmode yes' "$_userhost" \
-             command ls -aF1dL "$_path*" 2>/dev/null |
--            command sed -e 's/'"$_comp_cmd_scp__path_esc"'/'"$_escape_replacement"'/g' -e 's/[*@|=]$//g' \
-+            command gsed -e 's/'"$_comp_cmd_scp__path_esc"'/'"$_escape_replacement"'/g' -e 's/[*@|=]$//g' \
-                 -e 's/[^\/]$/& /g')
-     fi
-     _comp_compgen -R split -l -- "$_files"
-@@ -549,13 +549,13 @@
-     if [[ $_dirsonly ]]; then
-         _comp_compgen -U files split -l -- "$(
-             command ls -aF1dL "${files[@]}" 2>/dev/null |
--                command sed -e "s/$_comp_cmd_scp__path_esc/\\\\&/g" \
-+                command gsed -e "s/$_comp_cmd_scp__path_esc/\\\\&/g" \
-                     -e '/[^\/]$/d' -e "s/^/${1-}/"
-         )"
-     else
-         _comp_compgen -U files split -l -- "$(
-             command ls -aF1dL "${files[@]}" 2>/dev/null |
--                command sed -e "s/$_comp_cmd_scp__path_esc/\\\\&/g" \
-+                command gsed -e "s/$_comp_cmd_scp__path_esc/\\\\&/g" \
-                     -e 's/[*@|=]$//g' -e 's/[^\/]$/& /g' -e "s/^/${1-}/"
-         )"
-     fi
---- bash-completion-2.16.0/completions/strings.orig
-+++ bash-completion-2.16.0/completions/strings
-@@ -18,12 +18,12 @@
+         # escape problematic characters; remove executable, symlink, pipe,
+         # socket and door indicators; add space at end of file names
+-        command sed \
++        command gsed \
+             -e 's/[*@|=>]$//g' \
+             -e 's/'"$_comp_cmd_scp__path_esc"'/'"$escape_replacement"'/g' \
+             -e 's/[^/]$/& /g'
+@@ -542,7 +542,7 @@ _comp_xfunc_scp_compgen_remote_files()
+         #
+         # In the following while-loop, we essentially do the following:
+         #
+-        #     REPLY=$(command sed -e 's/\\\\\\\('"$_comp_cmd_scp__path_esc"'\|$\)/\\\1/g' <<<"$REPLY")
++        #     REPLY=$(command gsed -e 's/\\\\\\\('"$_comp_cmd_scp__path_esc"'\|$\)/\\\1/g' <<<"$REPLY")
+         #
+         # We implement this by the Bash built-in features because POSIX BRE
+         # does not support \|.  POSIX sed newly standardized the "-E" flag to
+diff --git a/completions-core/strings.bash b/completions-core/strings.bash
+index 16d40de..c7634d8 100644
+--- a/completions-core/strings.bash
++++ b/completions-core/strings.bash
+@@ -18,12 +18,12 @@ _comp_cmd_strings()
              ;;
          --target | -${noargopts}T)
              _comp_compgen_split -- "$(LC_ALL=C "$1" --help 2>/dev/null |
@@ -2059,7 +1654,7 @@ And check the result.
              return
              ;;
      esac
-@@ -34,7 +34,7 @@
+@@ -34,7 +34,7 @@ _comp_cmd_strings()
          # macOS: ... [-t format] [-number] [-n number] ...
          _comp_compgen_help ||
              _comp_compgen_usage - <<<"$("$1" --help 2>&1 |
@@ -2067,30 +1662,12 @@ And check the result.
 +                command gsed -e "s/\[-number\]//")"
          [[ ${COMPREPLY-} == *= ]] && compopt -o nospace
          return
-     elif [[ $cur == @* ]]; then
---- bash-completion-2.16.0/completions/svcadm.orig
-+++ bash-completion-2.16.0/completions/svcadm
-@@ -25,7 +25,7 @@
- _gen_zoneadm_list()
- {
-     if [[ ${prev} =~ "-z" ]]; then
--        local zones="$(zoneadm list -c | grep -v '^global$')"
-+        local zones="$(zoneadm list -c | ggrep -v '^global$')"
-         COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
      fi
- }
-@@ -133,7 +133,7 @@
-         else
-             # svcadm [-v] milestone [-d] milestone_FMRI
-             if [[ ${line} =~ -S ]]; then
--                command_list="$(echo ${command_list} | sed -e 's/milestone//')"
-+                command_list="$(echo ${command_list} | gsed -e 's/milestone//')"
-             fi
-             COMPREPLY=( $(compgen -W "${command_list}" -- ${cur}) )
-         fi
---- bash-completion-2.16.0/completions/svk.orig
-+++ bash-completion-2.16.0/completions/svk
-@@ -198,7 +198,7 @@
+diff --git a/completions-core/svk.bash b/completions-core/svk.bash
+index fc30648..a5585b9 100644
+--- a/completions-core/svk.bash
++++ b/completions-core/svk.bash
+@@ -198,7 +198,7 @@ _comp_cmd_svk()
                          path=//
                      fi
                      _comp_compgen_split -- "$("$1" list "$path" 2>/dev/null |
@@ -2099,9 +1676,11 @@ And check the result.
                      ;;
                  *)
                      _comp_compgen_filedir
---- bash-completion-2.16.0/completions/sysbench.orig
-+++ bash-completion-2.16.0/completions/sysbench
-@@ -75,7 +75,7 @@
+diff --git a/completions-core/sysbench.bash b/completions-core/sysbench.bash
+index c161197..f54376f 100644
+--- a/completions-core/sysbench.bash
++++ b/completions-core/sysbench.bash
+@@ -75,7 +75,7 @@ _comp_cmd_sysbench()
              ;;
          --db-driver)
              _comp_compgen_split -- "$("$1" --test=oltp help 2>/dev/null |
@@ -2110,42 +1689,24 @@ And check the result.
                      -ne 's/^  *\([^ ]*\) .*/\1/p')"
              return
              ;;
---- bash-completion-2.16.0/completions/tox.orig
-+++ bash-completion-2.16.0/completions/tox
-@@ -33,7 +33,7 @@
-                 } 2>/dev/null
-             )
-             [[ $envs ]] || envs=$(
--                command sed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
-+                command gsed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
-                     tox.ini 2>/dev/null
-             )
-             _comp_delimited , -X '*[{}]*' -W "$envs ALL"
---- bash-completion-2.16.0/completions/tshark.orig
-+++ bash-completion-2.16.0/completions/tshark
-@@ -23,7 +23,7 @@
-                 _comp_compgen -c "${cur#*:}" filedir
+diff --git a/completions-core/tshark.bash b/completions-core/tshark.bash
+index 1ad1d57..901d91b 100644
+--- a/completions-core/tshark.bash
++++ b/completions-core/tshark.bash
+@@ -24,7 +24,7 @@ _comp_cmd_tshark()
              else
-                 [[ -v _comp_cmd_tshark__prefs ]] ||
--                    _comp_cmd_tshark__prefs="$("$1" -G defaultprefs 2>/dev/null | command sed -ne 's/^#\{0,1\}\([a-z0-9_.-]\{1,\}:\).*/\1/p' |
-+                    _comp_cmd_tshark__prefs="$("$1" -G defaultprefs 2>/dev/null | command gsed -ne 's/^#\{0,1\}\([a-z0-9_.-]\{1,\}:\).*/\1/p' |
-                         tr '\n' ' ')"
-                 : ${prefix:=}
-                 _comp_compgen -c "${cur:${#prefix}}" -- -P "$prefix" \
---- bash-completion-2.16.0/completions/update-alternatives.orig
-+++ bash-completion-2.16.0/completions/update-alternatives
-@@ -83,7 +83,7 @@
-             _comp_cmd_update_alternatives__installed
-             ;;
-         *)
--            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command sed '
-+            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command gsed '
-                 /usage:/,/^[[:space:]]*$/{
-                   s/^\([[:space:]]*usage:\)\{0,1\}[[:space:]]*[^[:space:]]*alternatives /  /
-                   s/^[[:space:]]*\[\(-.*\)\]/  \1/
---- bash-completion-2.16.0/completions/valgrind.orig
-+++ bash-completion-2.16.0/completions/valgrind
-@@ -72,7 +72,7 @@
+                 [[ -v _comp_cmd_tshark__mut_prefs ]] ||
+                     _comp_cmd_tshark__mut_prefs=$("$1" -G defaultprefs 2>/dev/null |
+-                        command sed -ne 's/^#\{0,1\}\([a-z0-9_.-]\{1,\}:\).*/\1/p')
++                        command gsed -ne 's/^#\{0,1\}\([a-z0-9_.-]\{1,\}:\).*/\1/p')
+                 _comp_compgen -P "$prefix" -- -W "$_comp_cmd_tshark__mut_prefs"
+                 [[ ${COMPREPLY-} == *: ]] && compopt -o nospace
+             fi
+diff --git a/completions-core/valgrind.bash b/completions-core/valgrind.bash
+index 3e41dee..366bd64 100644
+--- a/completions-core/valgrind.bash
++++ b/completions-core/valgrind.bash
+@@ -72,7 +72,7 @@ _comp_cmd_valgrind()
          --+([-A-Za-z0-9_]))
              # shellcheck disable=SC2086
              local value=$("$1" --help-debug $tool 2>/dev/null |
@@ -2154,9 +1715,11 @@ And check the result.
                      -ne "s|^[[:blank:]]*$prev=\([^[:blank:]]\{1,\}\).*|\1|p")
              case $value in
                  \<file*\>)
---- bash-completion-2.16.0/completions/wget.orig
-+++ bash-completion-2.16.0/completions/wget
-@@ -123,7 +123,7 @@
+diff --git a/completions-core/wget.bash b/completions-core/wget.bash
+index 78df6ee..282575c 100644
+--- a/completions-core/wget.bash
++++ b/completions-core/wget.bash
+@@ -123,7 +123,7 @@ _comp_cmd_wget()
              return
              ;;
          --user | --http-user | --proxy-user | --ftp-user)
@@ -2165,9 +1728,11 @@ And check the result.
                  '/^login/s/^[[:blank:]]*login[[:blank:]]//p' ~/.netrc \
                  2>/dev/null)"
              return
---- bash-completion-2.16.0/completions/wol.orig
-+++ bash-completion-2.16.0/completions/wol
-@@ -17,7 +17,7 @@
+diff --git a/completions-core/wol.bash b/completions-core/wol.bash
+index 06fdf98..a142d58 100644
+--- a/completions-core/wol.bash
++++ b/completions-core/wol.bash
+@@ -17,7 +17,7 @@ _comp_cmd_wol()
              _comp_compgen_split -- "$({
                  ip -c=never addr show || ip addr show || ifconfig -a
              } 2>/dev/null |
@@ -2176,9 +1741,11 @@ And check the result.
                      -ne 's/.*[[:space:]]Bcast:\([^[:space:]]*\).*/\1/p' \
                      -ne 's/.*inet.*[[:space:]]brd[[:space:]]\([^[:space:]]*\).*/\1/p' \
                      -ne 's/.*[[:space:]]broadcast[[:space:]]\{1,\}\([^[:space:]]*\).*/\1/p')"
---- bash-completion-2.16.0/completions/wvdial.orig
-+++ bash-completion-2.16.0/completions/wvdial
-@@ -33,7 +33,7 @@
+diff --git a/completions-core/wvdial.bash b/completions-core/wvdial.bash
+index db28291..a756e0e 100644
+--- a/completions-core/wvdial.bash
++++ b/completions-core/wvdial.bash
+@@ -33,7 +33,7 @@ _comp_cmd_wvdial()
              done
              # parse config files for sections and
              # remove default section
@@ -2187,34 +1754,38 @@ And check the result.
                  's/^\[Dialer \(.*\)\]$/\1/p' "$config" 2>/dev/null)"
              # escape spaces
              COMPREPLY=("${COMPREPLY[@]// /\\ }")
---- bash-completion-2.16.0/completions/xgamma.orig
-+++ bash-completion-2.16.0/completions/xgamma
-@@ -7,7 +7,7 @@
+diff --git a/completions-core/xgamma.bash b/completions-core/xgamma.bash
+index 5f6b72d..d0f833c 100644
+--- a/completions-core/xgamma.bash
++++ b/completions-core/xgamma.bash
+@@ -7,7 +7,7 @@ _comp_cmd_xgamma()
  
      case "$prev" in
          -screen)
 -            local screens=$(xrandr --query 2>/dev/null | command sed -n \
 +            local screens=$(xrandr --query 2>/dev/null | command gsed -n \
-                 '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
+                 's|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
              _comp_compgen -- -W "$screens"
              return
-@@ -30,7 +30,7 @@
+@@ -30,7 +30,7 @@ _comp_cmd_xgamma()
                  compopt -o nospace
              elif [[ $cur == :*.* ]]; then
                  # local screen numbers
--                local t screens=$(xrandr --query 2>/dev/null | command sed -ne \
-+                local t screens=$(xrandr --query 2>/dev/null | command gsed -ne \
-                     '/^Screen /s|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
-                 t="${cur#:}"
-                 _comp_compgen -c "${cur##*.}" -- -P "${t%.*}." -W '$screens'
---- bash-completion-2.16.0/completions/xrandr.orig
-+++ bash-completion-2.16.0/completions/xrandr
-@@ -9,20 +9,20 @@
+-                local screens=$(xrandr --query 2>/dev/null | command sed -ne \
++                local screens=$(xrandr --query 2>/dev/null | command gsed -ne \
+                     's|^Screen \{1,\}\(.*\):.*$|\1|p' 2>/dev/null)
+                 cur=${cur#:}
+                 _comp_compgen -P "${cur%.*}." -- -W '$screens'
+diff --git a/completions-core/xrandr.bash b/completions-core/xrandr.bash
+index 899706a..9007f90 100644
+--- a/completions-core/xrandr.bash
++++ b/completions-core/xrandr.bash
+@@ -9,20 +9,20 @@ _comp_cmd_xrandr__compgen_monitors()
  {
      _comp_compgen_split -- "$(
          "$1" --listmonitors 2>/dev/null |
--            command sed -ne 's/.* [0-9]*: [+\*]*\([^ ]*\).*/\1/p'
-+            command gsed -ne 's/.* [0-9]*: [+\*]*\([^ ]*\).*/\1/p'
+-            command sed -ne 's/.* [0-9]*: [+*]*\([^ ]*\).*/\1/p'
++            command gsed -ne 's/.* [0-9]*: [+*]*\([^ ]*\).*/\1/p'
      )"
  }
  
@@ -2233,7 +1804,7 @@ And check the result.
              -e "1,/^$2 / d" \
              -e '/connected/,$ d' \
              -e '/^[[:space:]]*h: / d' \
-@@ -34,7 +34,7 @@
+@@ -34,7 +34,7 @@ _comp_cmd_xrandr__compgen_modes()
  _comp_cmd_xrandr__compgen_all_modes()
  {
      _comp_compgen_split -- "$(
@@ -2242,7 +1813,7 @@ And check the result.
              -e '/^[^[:space:]].*/ d' \
              -e '/^[[:space:]]*h: / d' \
              -e '/^[[:space:]]*v: / d' \
-@@ -161,13 +161,13 @@
+@@ -161,13 +161,13 @@ _comp_cmd_xrandr()
      if [[ $has_output ]]; then
          _comp_compgen -v options help - <<<"$(
              "$1" --help 2>/dev/null |
@@ -2258,9 +1829,11 @@ And check the result.
          )"
      fi
  
---- bash-completion-2.16.0/completions/xsltproc.orig
-+++ bash-completion-2.16.0/completions/xsltproc
-@@ -16,7 +16,7 @@
+diff --git a/completions-core/xsltproc.bash b/completions-core/xsltproc.bash
+index c307e86..bb2e42f 100644
+--- a/completions-core/xsltproc.bash
++++ b/completions-core/xsltproc.bash
+@@ -16,7 +16,7 @@ _comp_cmd_xsltproc()
              ;;
          --encoding)
              # some aliases removed
@@ -2269,34 +1842,188 @@ And check the result.
              _comp_compgen -- -X '@(UTF[1378]|8859|ISO[0-9_])*' -W '$encodings'
              return
              ;;
---- bash-completion-2.16.0/completions/zfs.orig
-+++ bash-completion-2.16.0/completions/zfs
-@@ -141,7 +141,7 @@
-                 return 1
-             fi
-             local range_start=$(expr "$cur" : '\(.*%\)')
--            $__ZFS_CMD list -H -o name -s name -t snapshot -d 1 $base_dataset | sed 's$.*@$'$range_start'$g'
-+            $__ZFS_CMD list -H -o name -s name -t snapshot -d 1 $base_dataset | gsed 's$.*@$'$range_start'$g'
-         fi
-     else
-         __zfs_match_snapshot_or_bookmark
---- bash-completion-2.16.0/completions/zones.orig
-+++ bash-completion-2.16.0/completions/zones
-@@ -31,7 +31,7 @@
-         esac
-     else
-       # Provide running zone names
--      local zones=$(zoneadm list | grep -v '^global$')
-+      local zones=$(zoneadm list | ggrep -v '^global$')
-       COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
-     fi
+diff --git a/completions-fallback/adb.bash b/completions-fallback/adb.bash
+index 5e66220..cabb1f3 100644
+--- a/completions-fallback/adb.bash
++++ b/completions-fallback/adb.bash
+@@ -6,7 +6,7 @@
+ _comp_cmd_adb__command_usage()
+ {
+     _comp_compgen_help - <<<"$("$1" help 2>&1 |
+-        command sed -e "/^ *\(adb \)\{0,1\} *$2 /!d;s/[]|[]/\n/g")"
++        command gsed -e "/^ *\(adb \)\{0,1\} *$2 /!d;s/[]|[]/\n/g")"
  }
-@@ -45,7 +45,7 @@
  
-     if [[ ${prev} =~ "-z" ]]; then
-       # Provide running zone names
--      local zones="$(zoneadm list -c | grep -v '^global$')"
-+      local zones="$(zoneadm list -c | ggrep -v '^global$')"
-       COMPREPLY=( $(compgen -W "${zones}" -- ${cur}) )
+ _comp_cmd_adb()
+@@ -57,7 +57,7 @@ _comp_cmd_adb()
+             ;;
+         forward)
+             _comp_compgen_help - <<<"$("$1" help 2>&1 |
+-                command sed -ne "s/^ *adb  *forward  *-/-/p")"
++                command gsed -ne "s/^ *adb  *forward  *-/-/p")"
+             ;;
+         reboot)
+             _comp_compgen -- -W 'bootloader recovery'
+diff --git a/completions-fallback/mock.bash b/completions-fallback/mock.bash
+index db8b69d..67b318a 100644
+--- a/completions-fallback/mock.bash
++++ b/completions-fallback/mock.bash
+@@ -47,7 +47,7 @@ _comp_cmd_mock()
+             # (e.g. ix86 chroot builds in x86_64 mock host)
+             # This would actually depend on what the target root
+             # can be used to build for...
+-            _comp_compgen_split -- "$(command rpm --showrc | command sed -ne \
++            _comp_compgen_split -- "$(command rpm --showrc | command gsed -ne \
+                 "s/^[[:space:]]*${regex_header}[[:space:]]*:[[:space:]]*\(.*\)/\1/p")"
+             return
+             ;;
+diff --git a/completions-fallback/modprobe.bash b/completions-fallback/modprobe.bash
+index f1aa04a..add7686 100644
+--- a/completions-fallback/modprobe.bash
++++ b/completions-fallback/modprobe.bash
+@@ -93,7 +93,7 @@ _comp_cmd_modprobe()
+                     prev=${cur%%=*}
+                     cur=${cur#*=}
+                     if PATH="$PATH:/sbin" modinfo -p "$module" 2>/dev/null |
+-                        command grep -q "^$prev:.*(bool)"; then
++                        command ggrep -q "^$prev:.*(bool)"; then
+                         local choices="on off"
+                         [[ $cur ]] && choices="1 0 y Y n N on off"
+                         _comp_compgen -- -W "$choices"
+diff --git a/completions-fallback/modules.bash b/completions-fallback/modules.bash
+index a30711d..b2da658 100644
+--- a/completions-fallback/modules.bash
++++ b/completions-fallback/modules.bash
+@@ -23,13 +23,13 @@
+ 
+ _comp_cmd_module__compgen_list()
+ {
+-    local modules=$(command sed 's/:/ /g' <<<"$LOADEDMODULES" | sort)
++    local modules=$(command gsed 's/:/ /g' <<<"$LOADEDMODULES" | sort)
+     _comp_compgen -- -W "$modules"
+ }
+ 
+ _comp_cmd_module__compgen_path()
+ {
+-    local modules=$(command sed 's/:/ /g' <<<"$MODULEPATH" | sort)
++    local modules=$(command gsed 's/:/ /g' <<<"$MODULEPATH" | sort)
+     _comp_compgen -- -W "$modules"
+ }
+ 
+@@ -37,8 +37,8 @@ _comp_cmd_module__compgen_avail()
+ {
+     local modules=$(
+         module avail 2>&1 |
+-            command grep -E -v '^(-|$)' |
+-            xargs printf '%s\n' | command sed -e 's/(default)//g' | sort
++            command ggrep -E -v '^(-|$)' |
++            xargs printf '%s\n' | command gsed -e 's/(default)//g' | sort
+     )
+     _comp_compgen -- -W "$modules"
+ }
+diff --git a/completions-fallback/mount.bash b/completions-fallback/mount.bash
+index 2fce8df..11f95c3 100644
+--- a/completions-fallback/mount.bash
++++ b/completions-fallback/mount.bash
+@@ -46,8 +46,8 @@ _comp_cmd_mount()
+         if [[ $host ]]; then
+             _comp_compgen -P "//$host" split -- "$(
+                 smbclient -d 0 -NL "$host" 2>/dev/null |
+-                    command sed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
+-                    command sed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
++                    command gsed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
++                    command gsed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
+             )"
+         fi
+     elif [[ -r /etc/vfstab ]]; then
+diff --git a/completions-fallback/mount.linux.bash b/completions-fallback/mount.linux.bash
+index d8f3885..a08b793 100644
+--- a/completions-fallback/mount.linux.bash
++++ b/completions-fallback/mount.linux.bash
+@@ -233,8 +233,8 @@ _comp_cmd_mount()
+         if [[ $host ]]; then
+             _comp_compgen -P "//$host" split -- "$(
+                 smbclient -d 0 -NL "$host" 2>/dev/null |
+-                    command sed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
+-                    command sed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
++                    command gsed -ne '/^[[:blank:]]*Sharename/,/^$/p' |
++                    command gsed -ne '3,$s|^[^A-Za-z]*\([^[:blank:]]*\).*$|/\1|p'
+             )"
+         fi
+     fi
+diff --git a/completions-fallback/nox.bash b/completions-fallback/nox.bash
+index 626d591..b7a5541 100644
+--- a/completions-fallback/nox.bash
++++ b/completions-fallback/nox.bash
+@@ -4,7 +4,7 @@
+ # This serves as a fallback in case the completion is not installed otherwise.
+ 
+ eval -- "$(
+-    pathcmd=$(type -P -- "$1" 2>/dev/null | command sed 's,/[^/]*$,,')
++    pathcmd=$(type -P -- "$1" 2>/dev/null | command gsed 's,/[^/]*$,,')
+     [[ $pathcmd ]] && PATH=$pathcmd${PATH:+:$PATH}
+     register-python-argcomplete --shell bash "$1" 2>/dev/null ||
+         register-python-argcomplete3 --shell bash "$1" 2>/dev/null
+diff --git a/completions-fallback/tox.bash b/completions-fallback/tox.bash
+index 375bea7..4e9e184 100644
+--- a/completions-fallback/tox.bash
++++ b/completions-fallback/tox.bash
+@@ -40,7 +40,7 @@ _comp_cmd_tox()
+                 } 2>/dev/null
+             )
+             [[ $envs ]] || envs=$(
+-                command sed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
++                command gsed -e 's/,/ /g' -ne 's/^envlist[[:space:]]*=//p' \
+                     tox.ini 2>/dev/null
+             )
+             _comp_delimited , -X '*[{}]*' -W "$envs ALL"
+diff --git a/completions-fallback/update-alternatives.bash b/completions-fallback/update-alternatives.bash
+index 94719db..60fcd07 100644
+--- a/completions-fallback/update-alternatives.bash
++++ b/completions-fallback/update-alternatives.bash
+@@ -91,7 +91,7 @@ _comp_cmd_update_alternatives()
+             _comp_cmd_update_alternatives__installed
+             ;;
+         *)
+-            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command sed '
++            _comp_compgen_help - <<<"$(LANG=C "$1" --help 2>&1 | command gsed '
+                 /usage:/,/^[[:space:]]*$/{
+                   s/^\([[:space:]]*usage:\)\{0,1\}[[:space:]]*[^[:space:]]*alternatives /  /
+                   s/^[[:space:]]*\[\(-.*\)\]/  \1/
+diff --git a/completions-fallback/yum.bash b/completions-fallback/yum.bash
+index 625be29..586db6d 100644
+--- a/completions-fallback/yum.bash
++++ b/completions-fallback/yum.bash
+@@ -9,12 +9,12 @@ _comp_cmd_yum__list()
+         # Try to strip in between headings like "Available Packages"
+         # This will obviously only work for English :P
+         _comp_split COMPREPLY "$(yum -d 0 -C list "$1" "$cur*" 2>/dev/null |
+-            command sed -ne '/^Available /d' -e '/^Installed /d' \
++            command gsed -ne '/^Available /d' -e '/^Installed /d' \
+                 -e '/^Updated /d' -e 's/[[:space:]].*//p')"
+     else
+         # Drop first line (e.g. "Updated Packages")
+         _comp_split COMPREPLY "$(yum -d 0 -C list "$1" "$cur*" 2>/dev/null |
+-            command sed -ne 1d -e 's/[[:space:]].*//p')"
++            command gsed -ne 1d -e 's/[[:space:]].*//p')"
      fi
  }
+ 
+@@ -25,7 +25,7 @@ _comp_cmd_yum__compgen_repolist()
+     # Drop first ("repo id      repo name") and last ("repolist: ...") rows
+     _comp_compgen_split -- "$(
+         yum --noplugins -C repolist "$1" 2>/dev/null |
+-            command sed -ne '/^repo[[:space:]]\{1,\}id/d' -e '/^repolist:/d' \
++            command gsed -ne '/^repo[[:space:]]\{1,\}id/d' -e '/^repolist:/d' \
+                 -e 's/[[:space:]].*//p'
+     )"
+ }
+@@ -36,7 +36,7 @@ _comp_cmd_yum__compgen_plugins()
+     _comp_expand_glob files '/usr/lib/yum-plugins/*.py{,c,o}' || return
+     _comp_compgen -U files split -- "$(
+         printf '%s\n' "${files[@]}" |
+-            command sed -ne 's|.*/\([^./]*\)\.py[co]\{0,1\}$|\1|p' | sort -u
++            command gsed -ne 's|.*/\([^./]*\)\.py[co]\{0,1\}$|\1|p' | sort -u
+     )"
+ }
+ 
