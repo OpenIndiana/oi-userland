@@ -18,10 +18,10 @@ BUILD_STYLE = cargo
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		lsd
-HUMAN_VERSION =			1.1.5
+HUMAN_VERSION =			1.2.0
 COMPONENT_SUMMARY =		An ls command with a lot of pretty colors and some other stuff.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:32ff36fa4ac085aafdb515e70e6a12bf271ea4c8a4a2e51b3978106fa1f5801a
+	sha256:1ad10dc8c908255abf125edc3574600c5cfd88fb7a072e2729865049095f3664
 COMPONENT_FMRI =		utilities/lsd
 COMPONENT_CLASSIFICATION =	Applications/System Utilities
 COMPONENT_LICENSE =		Apache-2.0
@@ -31,5 +31,5 @@ include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
-REQUIRED_PACKAGES += library/zlib
+REQUIRED_PACKAGES += library/libgit2
 REQUIRED_PACKAGES += system/library
