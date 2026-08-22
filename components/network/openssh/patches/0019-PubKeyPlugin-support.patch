@@ -1,6 +1,6 @@
-From 1e9262a6ff5a256ef884dcb6cb4c188f33721c7c Mon Sep 17 00:00:00 2001
-From: Alex Wilson <alex.wilson@joyent.com>
-Date: Mon, 3 Aug 2015 16:27:44 -0700
+From 1fcc90f2c4641145a9873352e403036f7175df65 Mon Sep 17 00:00:00 2001
+From: Lexi Wilson <lexi@uq.edu.au>
+Date: Fri, 10 Jul 2026 00:24:15 -0400
 Subject: [PATCH 19/34] PubKeyPlugin support
 
 This adds the PubKeyPlugin directive and associated code from
@@ -52,7 +52,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  static int
  userauth_pubkey(struct ssh *ssh, const char *method)
  {
-@@ -783,6 +799,135 @@ user_key_command_allowed2(struct passwd
+@@ -783,6 +799,148 @@ user_key_command_allowed2(struct passwd
  	return found_key;
  }
  
@@ -70,7 +70,8 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 + * it keeps this code minimally invasive.
 + */
 +static int
-+user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key)
++user_key_allowed_from_plugin(struct passwd *pw, struct sshkey *key,
++    struct sshauthopt **authoptsp)
 +{
 +	RSA_SYM rsa_sym = NULL;
 +	ECDSA_SYM ecdsa_sym = NULL;
@@ -79,6 +80,10 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +	char *argfp = NULL;
 +	void *handle = NULL;
 +	int success = 0;
++	struct sshauthopt *opts;
++
++	if (authoptsp != NULL)
++		*authoptsp = NULL;
 +
 +	if (options.pubkey_plugin == NULL || pw == NULL || key == NULL ||
 +	    (key->type != KEY_RSA &&
@@ -173,9 +178,17 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
 +		handle = NULL;
 +	}
 +
-+	if (success)
++	if (success) {
 +		verbose("Found matching %s key: %s", sshkey_type(key),
 +		    fp != NULL ? fp : "NULL");
++		if ((opts = sshauthopt_new_with_keys_defaults()) != NULL) {
++			*authoptsp = opts;
++		} else {
++			debug("sshauthopt_new failed");
++			success = 0;
++		}
++
++	}
 +
 +	if (fp != NULL) {
 +		free(fp);
@@ -188,21 +201,22 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/auth2-pubkey.c a/auth2-pubkey
  /*
   * Check whether key authenticates and authorises the user.
   */
-@@ -857,6 +1002,10 @@ user_key_allowed(struct ssh *ssh, struct
+@@ -856,6 +1014,11 @@ user_key_allowed(struct ssh *ssh, struct
+ 		goto out;
  	sshauthopt_free(opts);
  	opts = NULL;
- 
-+	success = user_key_allowed_from_plugin(pw, key);
-+	if (success > 0)
-+		goto out;
 +
++	if ((success = user_key_allowed_from_plugin(pw, key, &opts)) != 0)
++		goto out;
++	sshauthopt_free(opts);
++	opts = NULL;
+ 
  	if ((success = user_key_command_allowed2(pw, key, remote_ip,
  	    remote_host, conn_id, rdomain, &opts)) != 0)
- 		goto out;
 diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
 --- a~/servconf.c	1970-01-01 00:00:00
 +++ a/servconf.c	1970-01-01 00:00:00
-@@ -2608,6 +2608,20 @@ process_server_config_line_depth(ServerO
+@@ -2606,6 +2606,20 @@ process_server_config_line_depth(ServerO
  		multistate_ptr = multistate_flag;
  		goto parse_multistate;
  
@@ -223,7 +237,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	case sDeprecated:
  	case sIgnore:
  	case sUnsupported:
-@@ -4365,6 +4379,7 @@ dump_config(ServerOptions *o)
+@@ -4363,6 +4377,7 @@ dump_config(ServerOptions *o)
  	dump_cfg_string(sHostKeyAgent, o->host_key_agent);
  	dump_cfg_string(sKexAlgorithms, o->kex_algorithms);
  	dump_cfg_string(sCASignatureAlgorithms, o->ca_sign_algorithms);

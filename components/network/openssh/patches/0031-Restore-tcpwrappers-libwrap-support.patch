@@ -1,6 +1,7 @@
---- openssh-10.3p1/configure.ac.orig
-+++ openssh-10.3p1/configure.ac
-@@ -1836,6 +1836,62 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/configure.ac a/configure.ac
+--- a~/configure.ac	1970-01-01 00:00:00
++++ a/configure.ac	1970-01-01 00:00:00
+@@ -1836,6 +1836,62 @@ else
  	AC_MSG_RESULT([no])
  fi
  
@@ -63,7 +64,7 @@
  # Check whether user wants to use ldns
  LDNS_MSG="no"
  AC_ARG_WITH(ldns,
-@@ -5960,6 +6016,7 @@
+@@ -5890,6 +5946,7 @@ echo "                       PAM support
  echo "                   OSF SIA support: $SIA_MSG"
  echo "                 KerberosV support: $KRB5_MSG"
  echo "                   SELinux support: $SELINUX_MSG"
@@ -71,8 +72,9 @@
  echo "                   libedit support: $LIBEDIT_MSG"
  echo "                   libldns support: $LDNS_MSG"
  echo "  Solaris process contract support: $SPC_MSG"
---- openssh-10.3p1/sshd-session.c.orig
-+++ openssh-10.3p1/sshd-session.c
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd-session.c a/sshd-session.c
+--- a~/sshd-session.c	1970-01-01 00:00:00
++++ a/sshd-session.c	1970-01-01 00:00:00
 @@ -57,6 +57,11 @@
  #include <prot.h>
  #endif
@@ -85,13 +87,13 @@
  #include "xmalloc.h"
  #include "ssh.h"
  #include "ssh2.h"
-@@ -1188,6 +1193,25 @@
+@@ -1189,6 +1194,25 @@ main(int ac, char **av)
  	audit_connection_from(ssh, remote_ip, remote_port);
  #endif
  
 +#ifdef LIBWRAP
-+	allow_severity = options.log_facility|LOG_INFO;
-+	deny_severity = options.log_facility|LOG_WARNING;
++	int allow_severity = options.log_facility|LOG_INFO;
++	int deny_severity = options.log_facility|LOG_WARNING;
 +	/* Check whether logins are denied from this host. */
 +	if (ssh_packet_connection_is_on_socket(ssh)) {
 +		struct request_info req;
@@ -111,9 +113,10 @@
  	rdomain = ssh_packet_rdomain_in(ssh);
  
  	/* Log the connection. */
---- openssh-10.3p1/sshd.8.orig
-+++ openssh-10.3p1/sshd.8
-@@ -925,6 +925,12 @@
+diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd.8 a/sshd.8
+--- a~/sshd.8	1970-01-01 00:00:00
++++ a/sshd.8	1970-01-01 00:00:00
+@@ -929,6 +929,12 @@ the user's home directory becomes access
  This file should be writable only by the user, and need not be
  readable by anyone else.
  .Pp
@@ -126,7 +129,7 @@
  .It Pa /etc/hosts.equiv
  This file is for host-based authentication (see
  .Xr ssh 1 ) .
-@@ -1052,6 +1058,7 @@
+@@ -1058,6 +1064,7 @@ Each SSHv2 userauth type has its own PAM
  .Xr ssh-keygen 1 ,
  .Xr ssh-keyscan 1 ,
  .Xr chroot 2 ,

@@ -27,7 +27,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  #undef init_pamserviceperauthmethod
  #endif
-@@ -469,6 +472,32 @@ fill_default_server_options(ServerOption
+@@ -467,6 +470,32 @@ fill_default_server_options(ServerOption
  		    &options->num_authkeys_files,
  		    _PATH_SSH_USER_PERMITTED_KEYS2);
  	}
@@ -60,7 +60,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  	if (options->ip_qos_interactive == -1)
  		options->ip_qos_interactive = IPTOS_DSCP_EF;
  	if (options->ip_qos_bulk == -1)
-@@ -2162,9 +2191,12 @@ process_server_config_line_depth(ServerO
+@@ -2160,9 +2189,12 @@ process_server_config_line_depth(ServerO
  			if (*arg == '\0' || strchr(arg, '=') != NULL)
  				fatal("%s line %d: Invalid environment name.",
  				    filename, linenum);
@@ -73,7 +73,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  			opt_array_append(filename, linenum, keyword,
  			    &options->accept_env, &options->num_accept_env,
  			    arg);
-@@ -3193,6 +3225,18 @@ serialise_timingsecret(const ServerOptio
+@@ -3191,6 +3223,18 @@ serialise_timingsecret(const ServerOptio
  	return 0;
  }
  
@@ -92,7 +92,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  static int
  serialise_pamserviceperauthmethod(const ServerOptions *options,
-@@ -3743,6 +3787,18 @@ deserialise_timingsecret(ServerOptions *
+@@ -3741,6 +3785,18 @@ deserialise_timingsecret(ServerOptions *
  	return 0;
  }
  
@@ -111,7 +111,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  static int
  deserialise_pamserviceperauthmethod(ServerOptions *options,
-@@ -3922,6 +3978,7 @@ free_server_options(ServerOptions *optio
+@@ -3920,6 +3976,7 @@ free_server_options(ServerOptions *optio
  #define free_persourcepenalties(options)
  #define free_rekeylimit(options)
  #define free_timingsecret(options)
@@ -119,7 +119,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/servconf.c a/servconf.c
  #ifdef PAM_ENHANCEMENT
  #define free_pamserviceperauthmethod(options)
  #endif
-@@ -3940,6 +3997,7 @@ free_server_options(ServerOptions *optio
+@@ -3938,6 +3995,7 @@ free_server_options(ServerOptions *optio
  #undef free_persourcepenalties
  #undef free_rekeylimit
  #undef free_timingsecret
@@ -199,7 +199,7 @@ diff -wpruN --no-dereference '--exclude=*.orig' a~/session.c a/session.c
 diff -wpruN --no-dereference '--exclude=*.orig' a~/sshd_config a/sshd_config
 --- a~/sshd_config	1970-01-01 00:00:00
 +++ a/sshd_config	1970-01-01 00:00:00
-@@ -26,6 +26,10 @@
+@@ -27,6 +27,10 @@
  #SyslogFacility AUTH
  #LogLevel INFO
  
