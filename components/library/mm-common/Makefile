@@ -18,11 +18,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         mm-common
-COMPONENT_VERSION=      1.0.7
+COMPONENT_VERSION=      1.0.8
 COMPONENT_SUMMARY=      GNOME C++ bindings effort https://www.gtkmm.org support tools
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:494abfce781418259b1e9d8888c73af4de4b6f3be36cc75d9baa8baa0f2a7a39
+COMPONENT_ARCHIVE_HASH= sha256:b189ee636e839d12c00dabefae099fd488ab2358dec24d264761c011950b02a9
 COMPONENT_ARCHIVE_URL=	https://download.gnome.org/sources/$(COMPONENT_NAME)/1.0/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnome.org
 COMPONENT_FMRI=         library/desktop/c++/mm-common
@@ -59,5 +59,5 @@ REQUIRED_PACKAGES += web/curl
 REQUIRED_PACKAGES += web/wget
 
 # Auto-generated dependencies
-PYTHON_REQUIRED_PACKAGES += runtime/python
 REQUIRED_PACKAGES += shell/ksh93
+REQUIRED_PACKAGES.python += runtime/python
