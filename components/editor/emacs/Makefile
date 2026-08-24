@@ -28,19 +28,17 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         emacs
-COMPONENT_VERSION=      30.2
-COMPONENT_REVISION=     2
+COMPONENT_VERSION=      31.1
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/emacs/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9
+COMPONENT_ARCHIVE_HASH= sha256:1da5790d9580c81932b5bf700633114468da7b3412d69faa767daebf974f4586
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			editor/gnu-emacs
 COMPONENT_CLASSIFICATION=	Development/Editors
 COMPONENT_LICENSE=		GPLv3
 COMPONENT_LICENSE_FILE= COPYING
 
-TEST_TARGET= $(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
 
 # we build three different variants of emacs for our users. As Solaris
@@ -174,22 +172,15 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += $(CP) augment/emacs $(PBIN) ;
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) +x $(PBIN)/emacs ;
 
-# ctags and etags go in /usr/gnu/bin instead of /usr/bin
+# etags goes in /usr/gnu/bin instead of /usr/bin
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PGBIN) ;
-COMPONENT_POST_INSTALL_ACTION += $(MV) $(PBIN)/ctags $(PBIN)/etags $(PGBIN) ;
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PBIN)/etags $(PGBIN) ;
 
 # We do not install the files under /var/games/emacs. The reason for
 # this is that we do not install update-game-score as setuid, and
 # therefore the game files are not usable. This the same decision made
 # by Debian, among others.
 COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PVAR) ;
-
-# The file usr/share/emacs/23.1/etc/DOC-23.1.2 gets installed instead of
-# DOC-23.1.1. Remove and replace.
-COMPONENT_POST_INSTALL_ACTION += $(RM) $(PETC)/DOC-$(COMPONENT_VERSION).2 ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
-		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) augment/man/man1/emacs-gtk.1 $(PSHAREMAN1)/emacs-gtk.1 ;
@@ -199,8 +190,6 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) augment/man/man1/emacs-x.1 $(PSHAREMAN1)/emacs-x.1 ;
 
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PGSHAREMAN1) ;
-COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(COMPONENT_SRC)/doc/man/ctags.1 $(PGSHAREMAN1)/ctags.1 ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/doc/man/etags.1 $(PGSHAREMAN1)/etags.1 ;
 
