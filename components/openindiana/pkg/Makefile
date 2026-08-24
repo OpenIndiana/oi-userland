@@ -13,8 +13,6 @@
 # Copyright 2026 Till Wegmüller
 #
 
-# Rebuild: The Third
-
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pkg
