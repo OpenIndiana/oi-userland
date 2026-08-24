@@ -55,7 +55,8 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
-	export DMAKE_MAX_JOBS=1 && \
+	unset MAKEFLAGS MFLAGS && \
+	export DMAKE_MODE=serial && \
 	PATH=$(PATH) $(MAKE) && PATH=$(PATH) $(MAKE) install && \
 	cd pkg && \
 	$(MAKE) clobber && \
