@@ -1,0 +1,13 @@
+avoid not working linker option =-Wl,--compress-debug-sections=*
+
+--- rustc-1.98.0-src/src/bootstrap/src/core/builder/cargo.rs	2026-08-18 21:58:58.000000000 +0200
++++ rustc-1.98.0-src/src/bootstrap/src/core/builder/cargo.rs.orig	2026-08-24 14:35:59.652664748 +0200
+@@ -353,7 +353,7 @@
+                 // Do not enable Zlib compression on:
+                 // - Windows, because MSVC/PDB doesn't support it
+                 // - macOS, because its linker doesn't know the flag
+-                if !self.target.is_windows() && !self.target.is_apple() {
++                if !self.target.is_windows() && !self.target.is_apple() && !self.target.contains("illumos") {
+                     // If we link through cc, we need the -Wl prefix.
+                     // If we don't, then we must not add it, because the linker wouldn't
+                     // understand it.
