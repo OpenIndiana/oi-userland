@@ -1,5 +1,5 @@
---- core-92e5898fa9ffa4dd8742f5f26e790563feef286e/vcl/unx/generic/app/geninst.cxx.~1~	2023-11-14 18:32:13.000000000 -0500
-+++ core-92e5898fa9ffa4dd8742f5f26e790563feef286e/vcl/unx/generic/app/geninst.cxx	2023-11-15 11:52:00.367591187 -0500
+--- libreoffice-26.8.0.0.alpha1/vcl/unx/generic/app/geninst.cxx.~1
++++ libreoffice-26.8.0.0.alpha1/vcl/unx/generic/app/geninst.cxx
 @@ -22,7 +22,7 @@
  #if defined(LINUX)
  #  include <stdio.h>
@@ -8,8 +8,8 @@
 +#if defined(__FreeBSD__) || defined(__sun)
  #  include <sys/utsname.h>
  #endif
- 
-@@ -87,6 +92,11 @@
+ #if defined(__EMSCRIPTEN__)
+@@ -77,6 +77,11 @@
              break;
      }
      aKernelVer = OUString::createFromAscii(stName.sysname) + " " + aKernelVer.copy(0, nIndex);
@@ -18,6 +18,6 @@
 +    uname( &stName );
 +
 +    aKernelVer = OUString::createFromAscii( stName.sysname ) + " " + OUString::createFromAscii( stName.release )+ " " + OUString::createFromAscii( stName.version );
- #elif defined(EMSCRIPTEN)
- #define str(s) #s
- #define xstr(s) str(s)
+ #elif defined(__EMSCRIPTEN__)
+ #if defined __EMSCRIPTEN_MAJOR__
+     aKernelVer = u"Emscripten "_ustr + OUString::number(__EMSCRIPTEN_MAJOR__) + u"."_ustr
