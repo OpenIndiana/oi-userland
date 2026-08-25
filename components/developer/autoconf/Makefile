@@ -23,16 +23,16 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-BUILD_BITS= 64
+USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         autoconf
-COMPONENT_VERSION=      2.72
+COMPONENT_VERSION=      2.73
 COMPONENT_SUMMARY=      GNU autoconf utility
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/autoconf/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e
+COMPONENT_ARCHIVE_HASH= sha256:259ddfa3bddc799cfb81489cc0f17dfdf1bd6d1505dda53c0f45ff60d6a4f9a7
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         developer/build/autoconf
 COMPONENT_CLASSIFICATION=Development/GNU
@@ -42,33 +42,18 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION= ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
-CONFIGURE_OPTIONS += --srcdir=.
 CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS += PERL="$(PERL)"
+
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
 
 COMPONENT_TEST_TRANSFORMS += \
-	' -n ' \
 	' -e "/ok/p" ' \
 	' -e "/skipped/p" ' \
 	' -e "/expected/p" ' \
-	' -e "/results/p" ' \
-	' -e "/^autoreconf/p" ' \
-	' -e "/^C low level/p" ' \
-	' -e "/^Erlang/p" ' \
-	' -e "/^Fortran/p" ' \
-	' -e "/^Go /p" ' \
-	' -e "/^Low level /p" ' \
-	' -e "/^Testing/p" ' \
-	' -e "/^Compatibility/p" ' \
-	' -e "/^Autoconf/p" ' \
-	' -e "/^Autoscan/p" ' \
-	' -e "/^Autotest/p" ' \
-	' -e "/^Executables/p" ' \
-	' -e "/^M4sh/p" ' \
-	' -e "/^M4sugar/p" ' \
-	' -e "/^Semantics/p" ' \
-	' -e "/----/p" '
+	' -e "/FAIL/p" '
+
+TEST_REQUIRED_PACKAGES += runtime/erlang
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += developer/macro/gnu-m4
+REQUIRED_PACKAGES.perl += runtime/perl
