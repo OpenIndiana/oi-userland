@@ -16,13 +16,13 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           makedepend
-COMPONENT_VERSION=        1.0.9
+COMPONENT_VERSION=        1.0.10
 COMPONENT_SUMMARY=        makedepend - makefile dependency generation utility
 COMPONENT_PROJECT_URL=    $(XORG_PROJECT_URL)
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=    $(XORG_UTIL_BASE_URL)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=   sha256:92d0deb659fff6d8ddbc1d27fc4ca8ceb2b6dbe15d73f0a04edc09f1c5782dd4
+COMPONENT_ARCHIVE_HASH=   sha256:f278c4686285d70292c03f7339cc3c0a811fc6c4bf9c053906d0a5732eac9138
 COMPONENT_FMRI=           developer/build/makedepend
 COMPONENT_CLASSIFICATION= Development/X11
 COMPONENT_LICENSE=        MIT License
