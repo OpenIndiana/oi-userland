@@ -18,11 +18,11 @@ include ../../../make-rules/shared-macros.mk
 include $(WS_MAKE_RULES)/x11.mk
 
 COMPONENT_NAME=           xpr
-COMPONENT_VERSION=        1.2.0
+COMPONENT_VERSION=        1.2.1
 COMPONENT_SUMMARY=        xpr - utility for printing xwd window dump images
 COMPONENT_FMRI=           x11/xpr
 COMPONENT_ARCHIVE_EXTENSION= .tar.gz
-COMPONENT_ARCHIVE_HASH=   sha256:4c37dd062c8f61618ed5fad7be907d7f9b219c2c91aa9a312f4ff4cc3494c476
+COMPONENT_ARCHIVE_HASH=   sha256:704cd882eb178b1a95c1e1af4010fc35526ce2414e8566ca128ab3a61420a57c
 COMPONENT_LICENSE_FILE=   COPYING
 
 include $(WS_MAKE_RULES)/common.mk
