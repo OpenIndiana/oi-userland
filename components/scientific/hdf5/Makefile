@@ -20,14 +20,14 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=           hdf5
-COMPONENT_VERSION=		2.1.1
+COMPONENT_VERSION=		2.2.0
 COMPONENT_REVISION=		1
 COMPONENT_SUMMARY=        HDF5 - Data model, library, and file format for storing and managing data
 COMPONENT_PROJECT_URL=    https://www.hdfgroup.org
 COMPONENT_SRC=            $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=        $(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL=    https://github.com/HDFGroup/hdf5/archive/refs/tags/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=   sha256:5849ed7a81be6bc84ff8aa65dd966430adf0daf71e6bcb734b7a37474f92c859
+COMPONENT_ARCHIVE_HASH=   sha256:5b8d75125ae7b4fef55d3b39e8d3dbfd238cdf63b6518afd67fa69ac80f06542
 COMPONENT_CLASSIFICATION= System/Libraries
 COMPONENT_FMRI=           library/c++/hdf5
 COMPONENT_LICENSE=        NCSA
