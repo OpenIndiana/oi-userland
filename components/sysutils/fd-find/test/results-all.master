@@ -1,8 +1,11 @@
      Running unittests src/main.rs (target/release/deps/fd-XXXXXXXXXXXXXXXX)
 
-running 135 tests
+running 157 tests
+test dir_entry::tests::dash_prefixed_paths_detected ... ok
+test dir_entry::tests::safe_paths_not_flagged ... ok
 test exec::tests::command_set_no_args ... ok
 test exec::tests::generate_custom_path_separator ... ok
+test exec::tests::placeholder_as_executable_rejected ... ok
 test exec::tests::template_no_args ... ok
 test exec::tests::tokens_multiple ... ok
 test exec::tests::tokens_multiple_batch ... ok
@@ -114,6 +117,7 @@ test filter::size::tests::tera_plus_suffix ... ok
 test filter::size::tests::tera_plus_suffix_upper ... ok
 test filter::size::tests::tera_plus_upper ... ok
 test filter::time::tests::is_time_filter_applicable ... ok
+test filter::time::tests::out_of_range_unix_timestamp_is_rejected ... ok
 test fmt::fmt_tests::all_placeholders ... ok
 test fmt::fmt_tests::parse_no_placeholders ... ok
 test fmt::fmt_tests::parse_only_brace_escapes ... ok
@@ -136,18 +140,37 @@ test hyperlink::test::test_unicode_encoding ... ok
 test regex_helper::matches_strings_with_leading_dot_simple ... ok
 test regex_helper::pattern_has_uppercase_char_advanced ... ok
 test regex_helper::pattern_has_uppercase_char_simple ... ok
+test sanitize::tests::escape_preserves_information ... ok
+test sanitize::tests::keeps_legitimate_unicode_features ... ok
+test sanitize::tests::maybe_sanitize_passthrough_when_not_terminal ... ok
+test sanitize::tests::preserves_safe_content ... ok
+test sanitize::tests::strips_bel_and_null ... ok
+test sanitize::tests::strips_bidi_overrides_and_zero_width ... ok
+test sanitize::tests::strips_c1_csi_and_osc_initiators ... ok
+test sanitize::tests::strips_cr_output_forgery ... ok
+test sanitize::tests::strips_del ... ok
+test sanitize::tests::strips_newline ... ok
+test sanitize::tests::strips_osc52_clipboard_payload ... ok
+test sanitize::tests::strips_osc8_hyperlink_injection ... ok
+test walk::tests::search_str_for_entry_strips_dot_prefix ... ok
+test walk::tests::search_str_for_entry_with_absolute_path ... ok
+test walk::tests::search_str_for_entry_with_relative_path ... ok
+test walk::tests::search_str_no_base_dir ... ok
+test walk::tests::search_str_no_base_dir_with_file_in_current_dir ... ok
+test walk::tests::search_str_no_base_dir_with_plain_relative_path ... ok
 
-test result: ok. 135 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 157 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
      Running tests/tests.rs (target/release/deps/tests-XXXXXXXXXXXXXXXX)
 
-running 103 tests
+running 108 tests
 test format ... ok
 test test_absolute_path ... ok
 test test_and_bad_pattern ... ok
 test test_and_basic ... ok
 test test_and_empty_pattern ... ok
 test test_and_pattern_starts_with_dash ... ok
+test test_and_pattern_with_forward_slash_is_rejected ... ok
 test test_and_plus_case_sensitive ... ok
 test test_and_plus_extension ... ok
 test test_and_plus_fixed_strings ... ok
@@ -165,6 +188,7 @@ test test_custom_path_separator ... ok
 test test_empty_pattern ... ok
 test test_error_if_hidden_not_set_and_pattern_starts_with_dot ... ok
 test test_exact_depth ... ok
+test test_exact_literal_nonsubstring ... ok
 test test_excludes ... ok
 test test_exec ... ok
 test test_exec_batch ... ok
@@ -225,6 +249,8 @@ test test_opposing::uu ... ok
 test test_owner_current_group ... ok
 test test_owner_current_user ... ok
 test test_owner_ignore_all ... ok
+test test_pattern_with_forward_slash_allowed_with_full_path ... ok
+test test_pattern_with_forward_slash_is_rejected ... ok
 test test_print0 ... ok
 test test_prune ... ok
 test test_quiet ... ok
@@ -233,6 +259,7 @@ test test_regex_searches ... ok
 test test_respect_ignore_files ... ok
 test test_simple ... ok
 test test_single_and_multithreaded_execution ... ok
+test test_single_dash_root_path ... ok
 test test_size ... ok
 test test_smart_case ... ok
 test test_smart_case_glob_searches ... ok
@@ -246,5 +273,5 @@ test test_type ... ok
 test test_type_empty ... ok
 test test_type_executable ... ok
 
-test result: ok. 103 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
+test result: ok. 108 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished
 
