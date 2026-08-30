@@ -22,15 +22,15 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	11.4.12
+COMPONENT_VERSION=	11.4.13
 COMPONENT_MAJOR_VERSION=$(subst $(space),.,$(wordlist 1,2,$(subst ., ,$(HUMAN_VERSION))))
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:5ab7883db519bfcebfdd2aac09bc5544a12ce328f39edd46d0bf01690615ef6c
+COMPONENT_ARCHIVE_HASH=	sha256:1bb254b106d0a7ca871cfa18fa6e18d4b80a7430f9ec9d1571ec4271a13def96
 COMPONENT_PROJECT_URL=	https://www.mariadb.org/
 # For the source files look at https://dlm.mariadb.com/browse/mariadb_server/163
-COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/4699732/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
-COMPONENT_SIG_URL=	https://dlm.mariadb.com/4699736/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
+COMPONENT_ARCHIVE_URL=	https://dlm.mariadb.com/4801426/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
+COMPONENT_SIG_URL=	https://dlm.mariadb.com/4801427/MariaDB/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE).asc
 COMPONENT_LICENSE=	GPL-2.0-only
 COMPONENT_LICENSE_FILE=	COPYING
 
