@@ -29,12 +29,12 @@ BUILD_STYLE = waf
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	4.24.4
+COMPONENT_VERSION=	4.24.6
 COMPONENT_SUMMARY=	A library that permits GPLv2 applications to manipulate CIFS/SMB network resources
 COMPONENT_PROJECT_URL=	https://www.samba.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df2c51ab4361ec626ab9988e5946efcca8465bc7afae834291d5558468265ff8
+COMPONENT_ARCHIVE_HASH=	sha256:810cc955acb367e9bde556dccfb50db177a02b7c553aa1629a0b905fa7616267
 COMPONENT_ARCHIVE_URL=	https://download.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 #COMPONENT_SIG_URL =     https://download.samba.org/pub/samba/stable/$(COMPONENT_SRC).tar.asc
 COMPONENT_FMRI=		library/samba/libsmbclient
