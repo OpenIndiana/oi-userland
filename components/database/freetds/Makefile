@@ -19,6 +19,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		freetds
 COMPONENT_VERSION=	1.5.19
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	FreeTDS command-line utilities
 COMPONENT_PROJECT_URL=	https://www.freetds.org
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -34,6 +35,7 @@ include $(WS_MAKE_RULES)/common.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION += ( $(CLONEY) $(SOURCE_DIR) $(@D) )
 
+CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/freetds
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-krb5
 CONFIGURE_OPTIONS += --enable-msdblib
