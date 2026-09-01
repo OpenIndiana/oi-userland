@@ -31,12 +31,12 @@ ESR =
 # USE_HG_REPO is to use mozilla's hg source repo nstead of github
 # Do not define any for final release build.
 # CANDIDATE_BUILD=1
-# CANDIDATE_BETA=10
+# CANDIDATE_BETA=5
 # CANDIDATE_NIGHTLY=1
 # USE_HG_REPO=1
 
 COMPONENT_NAME=         firefox
-COMPONENT_VERSION=      154.0.1
+COMPONENT_VERSION=      155.0
 COMPONENT_SUMMARY=      Mozilla Firefox Web browser
 COMPONENT_PROJECT_URL =	https://www.mozilla.com/firefox
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -49,7 +49,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC_NAME)$(ESR).source.tar.xz
 endif
 
 ifdef CANDIDATE_NIGHTLY
-COMPONENT_GIT_HASH=     8b3456fa29ad35f58da4cc0a1d182e039124ba5d
+COMPONENT_GIT_HASH=     50691777d300fffc7d1f7844b59769109bc76f3e
 COMPONENT_SRC=          firefox-$(COMPONENT_GIT_HASH)
 COMPONENT_ARCHIVE=      $(COMPONENT_GIT_HASH).tar.gz
 COMPONENT_ARCHIVE_URL=  https://github.com/mozilla-firefox/firefox/archive/$(COMPONENT_ARCHIVE)
@@ -73,11 +73,11 @@ COMPONENT_SRC =         $(COMPONENT_SRC_NAME)
 COMPONENT_ARCHIVE_URL = $(MOZILLA_FTP)/source/$(COMPONENT_ARCHIVE)
 endif
 
-COMPONENT_ARCHIVE_HASH=	sha256:9cbe191fc74b46108376b1d9bf607c0a40288074e0f2333671253789d6ebbd15
+COMPONENT_ARCHIVE_HASH=	sha256:c57fd59835f8c5b9c7f68bead2782238c11d8626b57509cc809915b0b4d70dfb
 COMPONENT_PROJECT_URL = https://www.mozilla.com/en-US/firefox/
 COMPONENT_FMRI=         web/browser/firefox
 
-RUST_VERSION = 1.95.0
+RUST_VERSION = 1.96.0
 
 # TODO: use remote hashfile to verify
 ALLOW_UNVERIFIED_DOWNLOADS=yes
@@ -254,8 +254,8 @@ COMPONENT_POST_INSTALL_ACTION  = \
     mkdir $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution ; \
     $(CP) $(COMPONENT_DIR)/files/distribution.ini $(PROTO_DIR)$(FIREFOX_LIBDIR)/firefox/distribution/distribution.ini ; \
     unzip -c $(PROTOUSRLIBDIR64)/$(COMPONENT_NAME)/omni.ja chrome/toolkit/content/global/license.html \
-            | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist \
-            | /usr/gnu/bin/sed '/Return to top\.$$/{d;}' > $(COMPONENT_NAME).license
+	    | LC_ALL=en_US.UTF-8 lynx --display_charset=utf-8 -stdin --dump -nolist \
+	    | /usr/gnu/bin/sed '/Return to top\.$$/{d;}' > $(COMPONENT_NAME).license
 
 COMPONENT_TEST_MASTER = $(COMPONENT_TEST_RESULTS_DIR)/results-$(MACH).master
 
