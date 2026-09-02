@@ -15,7 +15,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         pigeonhole
-COMPONENT_VERSION=      2.4.4
+COMPONENT_VERSION=      2.4.5
 COMPONENT_SUMMARY=      Sieve Support for Dovecot
 COMPONENT_DESCRIPTION=	The Pigeonhole project provides Sieve support as a plugin for \
 			Dovecot's Local Delivery Agent (LDA) and also for its LMTP \
@@ -32,7 +32,7 @@ COMPONENT_SRC=          dovecot-$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 #COMPONENT_SIG_URL=	https://pigeonhole.dovecot.org/releases/2.4/$(COMPONENT_ARCHIVE).sig
 COMPONENT_ARCHIVE_URL=  https://pigeonhole.dovecot.org/releases/2.4/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:73c54f75359bf613c5c78e570ae98419f9295fe4451db6493e28ecb995bcd214
+COMPONENT_ARCHIVE_HASH= sha256:ad7c478cb3aaa76c5f81f86727a3e6843645b0a1253f5684fb8a0beec0d22925
 COMPONENT_LICENSE=      MIT,LGPLv2.1
 COMPONENT_LICENSE_FILE= COPYING
 
