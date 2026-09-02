@@ -1,0 +1,14 @@
+Java runs out of memory during some operations during build or install.
+Increase Xms memory.
+
+--- jdk26u-jdk-26.0.2.1-ga/make/RunTestsPrebuiltSpec.gmk.old	2026-09-01 15:09:29.445659538 -0400
++++ jdk26u-jdk-26.0.2.1-ga/make/RunTestsPrebuiltSpec.gmk	2026-09-01 15:09:50.641243848 -0400
+@@ -63,7 +63,7 @@
+ 
+ # Use hard-coded values for java flags (one size, fits all!)
+ JAVA_FLAGS := -Duser.language=en -Duser.country=US
+-JAVA_FLAGS_BIG := -Xms64M -Xmx2048M
++JAVA_FLAGS_BIG := -Xms128M -Xmx2048M
+ JAVA_FLAGS_SMALL := -XX:+UseSerialGC -Xms32M -Xmx512M -XX:TieredStopAtLevel=1
+ BUILDJDK_JAVA_FLAGS_SMALL := -Xms32M -Xmx512M -XX:TieredStopAtLevel=1
+ BUILD_JAVA_FLAGS := $(JAVA_FLAGS_BIG)
