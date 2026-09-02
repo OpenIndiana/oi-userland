@@ -17,7 +17,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         dovecot
-COMPONENT_VERSION=      2.4.4
+COMPONENT_VERSION=      2.4.5
 COMPONENT_SUMMARY=      DOVECOT - The Secure IMAP server
 COMPONENT_DESCRIPTION=	Dovecot is an open source IMAP and POP3 email server for \
 		Linux/UNIX-like systems, written with security primarily in mind. \
@@ -28,7 +28,7 @@ COMPONENT_PROJECT_URL=  https://dovecot.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/releases/2.4/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:670f98d55a29b02ae6a97281e51374e553b94496480ab0a07439571ab30ca8c3
+COMPONENT_ARCHIVE_HASH= sha256:868c2686a61b5f8e00a3e4721789b1ab46e6528fd773a5fbed07a6ecba7731e6
 COMPONENT_FMRI=         mail/dovecot
 COMPONENT_CLASSIFICATION= Applications/Internet
 COMPONENT_LICENSE=      MIT,LGPLv2.1
@@ -47,6 +47,7 @@ CONFIGURE_OPTIONS += --sysconfdir=/etc
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS += --without-gssapi
+#CONFIGURE_OPTIONS += --with-gssapi=plugin
 CONFIGURE_OPTIONS += --with-ldap=plugin
 CONFIGURE_OPTIONS += --with-sql=plugin
 CONFIGURE_OPTIONS += --with-lua=plugin
@@ -58,11 +59,14 @@ CONFIGURE_OPTIONS += --with-sql=plugin
 CONFIGURE_OPTIONS += --with-mysql
 CONFIGURE_OPTIONS += --with-pgsql
 CONFIGURE_OPTIONS += --with-sqlite
+CONFIGURE_OPTIONS += --enable-year2038
 CONFIGURE_OPTIONS += --enable-static=no
 CONFIGURE_OPTIONS += --without-systemd
 CONFIGURE_OPTIONS += LDAP_LIBS="-lldap_r"
-CONFIGURE_OPTIONS += CPPFLAGS="-I/usr/include/kerberosv5 -I/usr/include/openldap"
+CONFIGURE_OPTIONS += SSL_LIBS="-L$(OPENSSL_LIBDIR) -lssl -lcrypto"
+CONFIGURE_OPTIONS += CPPFLAGS="-I$(OPENSSL_INCDIR) -I/usr/include/kerberosv5 -I/usr/include/openldap -I/usr/include/gssapi"
 CONFIGURE_OPTIONS += CFLAGS="-Wno-incompatible-pointer-types -D__EXTENSIONS__ -DBUILD_IMAP_HIBERNATE"
+#CONFIGURE_OPTIONS += CFLAGS="-std=c17 -Wno-incompatible-pointer-types -D__EXTENSIONS__ -DBUILD_IMAP_HIBERNATE"
 CONFIGURE_OPTIONS += PGSQL_LIBS="-L$(PG_LIBDIR) -lpq"
 CONFIGURE_OPTIONS += PGSQL_CFLAGS="-I$(PG_INCDIR)"
 CONFIGURE_OPTIONS += MARIADB_LIBS="-L$(MYSQL_LIBDIR) -lmariadb"
