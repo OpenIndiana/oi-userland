@@ -1,18 +1,54 @@
-The 115.x version of Firefox & Thunderbird are mixing OpenGL & EGL calls in a way
-that works with Mesa but not the Nvidia drivers
---- firefox-115.2.0.orig/toolkit/xre/glxtest/glxtest.cpp	2023-09-18 15:31:54.579296247 -0400
-+++ firefox-115.2.0/toolkit/xre/glxtest/glxtest.cpp	2023-09-18 15:12:11.836077440 -0400
-@@ -956,9 +956,13 @@
+Firefox crashes very early in start if using nVidia hardware and
+driver 470.x or higher.  The problem appears that Xorg and/or Mesa doesn't
+have working EGL support on OI, even though the nVidia driver claims support.
+Make sure EGL is not used for now.  Revisit patch when xorg and mesa are
+updated on OI.
+
+--- firefox-89a0d289f40c328d85ec105574f5e7d34fd9846d/toolkit/xre/gfxtest/glxtest.cpp.~1~
++++ firefox-89a0d289f40c328d85ec105574f5e7d34fd9846d/toolkit/xre/gfxtest/glxtest.cpp
+@@ -475,6 +475,11 @@
+ 
+ static bool get_egl_gl_status(EGLDisplay dpy,
+                               PFNEGLGETPROCADDRESS eglGetProcAddress) {
++
++#ifdef __sun
++  return false;
++#endif
++
+   typedef EGLBoolean (*PFNEGLCHOOSECONFIGPROC)(
+       EGLDisplay dpy, EGLint const* attrib_list, EGLConfig* configs,
+       EGLint config_size, EGLint* num_config);
+@@ -642,6 +647,11 @@
+ 
+ static bool get_egl_status(EGLNativeDisplayType native_dpy,
+                            bool aLoadModifiers) {
++
++#ifdef __sun
++  return false;
++#endif
++
+   log("GLX_TEST: get_egl_status start\n");
+ 
+   EGLDisplay dpy = nullptr;
+@@ -986,6 +996,11 @@
+ }
+ 
+ bool x11_egltest() {
++
++#ifdef __sun
++  return false;
++#endif
++
+   log("GLX_TEST: x11_egltest start\n");
+ 
+   Display* dpy = XOpenDisplay(nullptr);
+@@ -1083,9 +1098,7 @@
  #ifdef MOZ_X11
    if (!aWayland) {
      // TODO: --display command line argument is not properly handled
-+#ifdef __sun
-+    glxtest();
-+#else
-     if (!x11_egltest()) {
-       glxtest();
-     }
-+#endif
+-    if (!x11_egltest()) {
+       glx_probe();
+-    }
    }
  #endif
    // Finally write buffered data to the pipe.
