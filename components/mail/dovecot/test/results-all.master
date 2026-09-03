@@ -48,6 +48,10 @@ bits_rotl64 .......................................................... : ok
 bits_rotr64 .......................................................... : ok
 UINT64_SUM_OVERFLOWS ................................................. : ok
 HAS_..._BITS() macro tests ........................................... : ok
+bitmap basic set/get/unset ........................................... : ok
+bitmap zero size ..................................................... : ok
+bitmap_swap .......................................................... : ok
+t_bitmap_init ........................................................ : ok
 bsearch_insert_pos(0,18) ............................................. : ok
 bsearch_insert_pos(1,18) ............................................. : ok
 buffer ............................................................... : ok
@@ -215,7 +219,7 @@ matching ............................................................. : ok
 replacing ............................................................ : ok
 0 / 2 tests failed
 var_expand_merge_tables .............................................. : ok
-var_expand(buildin filters) .......................................... : ok
+var_expand(builtin filters) .......................................... : ok
 var_expand(math) ..................................................... : ok
 var_expand(if) ....................................................... : ok
 var_expand(switch) ................................................... : ok
@@ -230,11 +234,12 @@ var_expand(sorted parameters) ........................................ : ok
 var_expand(percentage handling) ...................................... : ok
 var_expand(set, copy) ................................................ : ok
 var_expand(generate) ................................................. : ok
+var_expand(timestamp) ................................................ : ok
 var_expand(export/import) ............................................ : ok
 var_expand_split ..................................................... : ok
-1 / 19 tests failed
+1 / 20 tests failed
 var_expand_merge_tables .............................................. : ok
-var_expand(buildin filters) .......................................... : ok
+var_expand(builtin filters) .......................................... : ok
 var_expand(math) ..................................................... : ok
 var_expand(if) ....................................................... : ok
 var_expand(switch) ................................................... : ok
@@ -249,9 +254,10 @@ var_expand(sorted parameters) ........................................ : ok
 var_expand(percentage handling) ...................................... : ok
 var_expand(set, copy) ................................................ : ok
 var_expand(generate) ................................................. : ok
+var_expand(timestamp) ................................................ : ok
 var_expand(export/import) ............................................ : ok
 var_expand_split ..................................................... : ok
-1 / 19 tests failed
+1 / 20 tests failed
 test_dns_compare ..................................................... : ok
 test_dns_match ....................................................... : ok
 test_dns_sort ........................................................ : FAILED
@@ -267,7 +273,10 @@ settings_get - sort by name .......................................... : ok
 settings_get - sort by preference (reverse) .......................... : ok
 settings_get - sort by name (reverse) ................................ : ok
 settings_get - hierarchical event .................................... : ok
-0 / 6 tests failed
+settings_get - strlist key expansion ................................. : ok
+settings_get - strlist key not expanded for overrides ................ : ok
+settings_get - empty built-in default means no default ............... : ok
+0 / 9 tests failed
 password scheme(PLAIN) ............................................... : ok
 password scheme(CRYPT) ............................................... : ok
 password scheme(PLAIN-MD4) ........................................... : ok
@@ -279,7 +288,6 @@ password scheme(SHA256) .............................................. : ok
 password scheme(SHA512) .............................................. : ok
 password scheme(SSHA) ................................................ : ok
 password scheme(MD5-CRYPT) ........................................... : ok
-password scheme(OTP) ................................................. : ok
 password scheme(PBKDF2) .............................................. : ok
 password scheme(CRAM-MD5) ............................................ : ok
 password scheme(DIGEST-MD5) .......................................... : ok
@@ -290,7 +298,7 @@ password scheme(ARGON2I) ............................................. : ok
 password scheme(ARGON2ID) ............................................ : ok
 password scheme(ARGON2) .............................................. : ok
 password scheme failures ............................................. : ok
-0 / 22 tests failed
+0 / 21 tests failed
 auth gs2 header valid [1]: decode success ............................ : ok
 auth gs2 header valid [1] ............................................ : ok
 auth gs2 header valid [2]: decode success ............................ : ok
@@ -498,7 +506,19 @@ auth server error sha256 - password mismatch: client input success (0)  : ok
 auth server error sha256 - password mismatch ......................... : ok
 auth server error sha1 - channel bind downgrade attack ............... : ok
 auth server error sha1 - channel bind required ....................... : ok
-0 / 138 tests failed
+auth server error sha1 - invalid client proof (missing '=' and payload)  : ok
+auth server error sha1 - invalid client proof (missing payload) ...... : ok
+auth server error sha1 - invalid client proof (missing '=') .......... : ok
+auth server error sha1 - invalid client proof in final (missing '=' and payload): server input error (0)  : ok
+auth server error sha1 - invalid client proof in final (missing '=' and payload): client input success (0)  : ok
+auth server error sha1 - invalid client proof in final (missing '=' and payload)  : ok
+auth server error sha1 - invalid client proof in final (missing payload): server input error (0)  : ok
+auth server error sha1 - invalid client proof in final (missing payload): client input success (0)  : ok
+auth server error sha1 - invalid client proof in final (missing payload)  : ok
+auth server error sha1 - invalid client proof in final (missing '='): server input error (0)  : ok
+auth server error sha1 - invalid client proof in final (missing '='): client input success (0)  : ok
+auth server error sha1 - invalid client proof in final (missing '=') . : ok
+0 / 156 tests failed
 dns lookup ........................................................... : ok
 dns lookup (timeout) ................................................. : ok
 dns lookup (abort) ................................................... : FAILED
@@ -2156,7 +2176,10 @@ http header invalid [6] .............................................. : ok
 http header invalid [7] .............................................. : ok
 http header invalid [8] .............................................. : ok
 http header invalid [9] .............................................. : ok
-0 / 76 tests failed
+http header invalid [10] ............................................. : ok
+http header invalid [11] ............................................. : ok
+http header invalid [12] ............................................. : ok
+0 / 82 tests failed
 http transfer_chunked input valid [0]: payload read .................. : ok
 http transfer_chunked input valid [0] ................................ : ok
 http transfer_chunked input valid [1]: payload read .................. : ok
@@ -2171,6 +2194,9 @@ http transfer_chunked input invalid [2] .............................. : ok
 http transfer_chunked input invalid [3] .............................. : ok
 http transfer_chunked input invalid [4] .............................. : ok
 http transfer_chunked input invalid [5] .............................. : ok
+http transfer_chunked input invalid [6] .............................. : ok
+http transfer_chunked input strict [0] ............................... : ok
+http transfer_chunked input strict [1] ............................... : ok
 http transfer_chunked output valid [0]: payload chunk ................ : ok
 http transfer_chunked output valid [0]: payload unchunk .............. : ok
 http transfer_chunked output valid [0] ............................... : ok
@@ -2190,7 +2216,7 @@ http transfer_chunked output valid [5]: payload chunk ................ : ok
 http transfer_chunked output valid [5]: payload unchunk .............. : ok
 http transfer_chunked output valid [5] ............................... : ok
 http transfer_chunked input trailer limit ............................ : ok
-0 / 33 tests failed
+0 / 36 tests failed
 http auth challenges valid [0]: parse `Basic realm="WallyWorld"' ..... : ok
 http auth challenges valid [0]: [0]->scheme = Basic .................. : ok
 http auth challenges valid [0]: [0]->data = (null) ................... : ok
@@ -2487,13 +2513,15 @@ http request invalid [10]: parse error code = broken request ......... : ok
 http request invalid [10] ............................................ : ok
 http request invalid [11]: parse error code = broken request ......... : ok
 http request invalid [11] ............................................ : ok
+http request invalid [12]: parse error code = broken request ......... : ok
+http request invalid [12] ............................................ : ok
 http request with NULs (strict) ...................................... : ok
 http request with NULs (lenient): parse success ...................... : ok
 http request with NULs (lenient): header present ..................... : ok
 http request with NULs (lenient): header User-Agent: textclient ...... : ok
 http request with NULs (lenient): parse end .......................... : ok
 http request with NULs (lenient) ..................................... : ok
-0 / 225 tests failed
+0 / 228 tests failed
 http payload download (server non-blocking): sub-process ended properly  : FAILED
 http payload download (server non-blocking): sequential .............. : ok
 http payload download (server non-blocking): sub-process ended properly  : FAILED
@@ -2934,10 +2962,11 @@ JWT Token dates ...................................................... : ok
 JWT key id ........................................................... : ok
 JWT kid escape ....................................................... : ok
 JWT nested fields .................................................... : ok
+JWT many non-singular siblings ....................................... : ok
 JWT RSA token ........................................................ : ok
 JWT RSAPSS token ..................................................... : ok
 JWT ECDSA token ...................................................... : ok
-0 / 12 tests failed
+0 / 13 tests failed
 sasl oauth2 kvpair valid [1] ......................................... : ok
 sasl oauth2 kvpair valid [2] ......................................... : ok
 sasl oauth2 kvpair valid [3] ......................................... : ok
@@ -2994,8 +3023,6 @@ sasl success SCRAM-SHA-256-PLUS ...................................... : ok
 sasl success SCRAM-SHA-256-PLUS (initial) ............................ : ok
 sasl success OAUTHBEARER ............................................. : ok
 sasl success OAUTHBEARER (initial) ................................... : ok
-sasl success OTP ..................................................... : ok
-sasl success OTP (initial) ........................................... : ok
 sasl success EXTERNAL ................................................ : ok
 sasl success EXTERNAL (initial) ...................................... : ok
 sasl success ANONYMOUS ............................................... : ok
@@ -3054,13 +3081,20 @@ sasl bad credentials SCRAM-SHA-256-PLUS .............................. : ok
 sasl bad credentials SCRAM-SHA-256-PLUS .............................. : ok
 sasl bad credentials OAUTHBEARER ..................................... : ok
 sasl bad credentials OAUTHBEARER ..................................... : ok
-sasl bad credentials OTP ............................................. : ok
-sasl bad credentials OTP ............................................. : ok
 sasl bad credentials EXTERNAL ........................................ : ok
 sasl bad credentials NTLM ............................................ : FAILED
 sasl bad credentials XOAUTH2 ......................................... : ok
 sasl bad credentials XOAUTH2 ......................................... : ok
-3 / 12085 tests failed
+sasl oauthbearer malformed: kvpair ok but final separator missing .... : ok
+sasl oauthbearer malformed: kvpair separator missing too ............. : ok
+sasl cram-md5 malformed: digest too short ............................ : ok
+sasl cram-md5 malformed: digest too long ............................. : ok
+sasl cram-md5 malformed: digest empty ................................ : ok
+sasl cram-md5 malformed: digest one byte ............................. : ok
+sasl cram-md5 malformed: digest odd length ........................... : ok
+sasl cram-md5 malformed: digest right length but invalid hex ......... : ok
+sasl cram-md5 malformed: digest right length with non-ASCII hex ...... : ok
+3 / 533 tests failed
 fs metawrap stat ..................................................... : ok
 metawrap: async write ................................................ : ok
 metawrap: async copy ................................................. : ok
@@ -3080,6 +3114,8 @@ test-fs-posix file stat and delete ................................... : ok
 test-fs-posix file write fname rename ................................ : ok
 test-fs-posix file copy fname rename ................................. : ok
 0 / 9 tests failed
+test-fs-abort ........................................................ : ok
+0 / 1 tests failed
 dot istream/ostream random I/O ....................................... : ok
 0 / 1 tests failed
 dot istream accept bare lf ........................................... : ok
@@ -3093,7 +3129,8 @@ istream attachment connector ......................................... : ok
 istream binary converter in mime parts ............................... : ok
 istream binary converter in root ..................................... : ok
 istream binary converter in root having non-binary ................... : ok
-0 / 3 tests failed
+istream binary converter body-less MIME part flush ................... : ok
+0 / 4 tests failed
 i_stream_create_header_filter: exclude ............................... : ok
 i_stream_create_header_filter: large buffer .......................... : ok
 i_stream_create_header_filter: large buffer2 ......................... : ok
@@ -3248,6 +3285,8 @@ message header parser truncate + CLEAN_ONELINE flag .................. : ok
 0 / 9 tests failed
 message id parser .................................................... : ok
 0 / 1 tests failed
+message parser preparsed buffer sizes ................................ : ok
+message parser preparsed sibling overlap ............................. : ok
 message parser in small blocks ....................................... : ok
 message parser in stop early ......................................... : ok
 message parser truncated mime headers ................................ : ok
@@ -3270,7 +3309,13 @@ message parser mime version .......................................... : ok
 message parser mime version missing .................................. : ok
 message parser too many header bytes default ......................... : ok
 message parser too many header bytes 100 ............................. : ok
-0 / 22 tests failed
+message parser preparsed empty preamble .............................. : ok
+message parser preparsed empty preamble lf ........................... : ok
+message parser preparsed epilogue without newline .................... : ok
+message parser preparsed epilogue truncated .......................... : ok
+message parser preparsed epilogue boundary dashes .................... : ok
+message parser preparsed epilogue boundary long line ................. : ok
+0 / 30 tests failed
 message part indexes ................................................. : ok
 0 / 1 tests failed
 attachment detection not attachment .................................. : ok
@@ -3306,8 +3351,14 @@ dot ostream[4]: ...................................................... : ok
 dot ostream[5]: ...................................................... : ok
 dot ostream[6]: ...................................................... : ok
 dot ostream[7]: ...................................................... : ok
+dot ostream[8]: ...................................................... : ok
+dot ostream[9]: ...................................................... : ok
+dot ostream[10]: ..................................................... : ok
 dot ostream parent almost full ....................................... : ok
-0 / 9 tests failed
+dot ostream parent exact fit ......................................... : ok
+dot ostream CR across sendv calls .................................... : ok
+dot ostream CR+dot exact fit ......................................... : ok
+0 / 15 tests failed
 qp-decoder ........................................................... : ok
 0 / 1 tests failed
 qp-encoder ........................................................... : ok
@@ -3334,18 +3385,13 @@ rfc822 parse comment ................................................. : ok
 rfc822 parse comment with NULs ....................................... : ok
 rfc822 parse quoted string ........................................... : ok
 rfc822 parse dot-atom ................................................ : ok
-rfc822 parse domain literal .......................................... : ok
-rfc822 decode punycode ............................................... : ok
+rfc822 parse domain .................................................. : ok
 rfc822 parse content param ........................................... : ok
 rfc822 parse content type with params ................................ : ok
-0 / 8 tests failed
+0 / 7 tests failed
 test_program_success ................................................. : ok
 test_program_io (sync) ............................................... : ok
 test_program_io (async) .............................................. : ok
-test_program_io (big) ................................................ : FAILED
-test_program_failure ................................................. : ok
-test_program_wait (no timeout, no I/O) ............................... : FAILED
-2 / 6 tests failed
 test_program_setup ................................................... : ok
 test_program_success ................................................. : ok
 test_program_io (async) .............................................. : ok
@@ -3849,7 +3895,13 @@ smtp parse any [22] .................................................. : ok
 smtp parse any [23] .................................................. : ok
 smtp parse any [24] .................................................. : ok
 smtp parse any [25] .................................................. : ok
-0 / 644 tests failed
+smtp path broken localpart [0]: parsed without crashing .............. : ok
+smtp path broken localpart [0] ....................................... : ok
+smtp path broken localpart [1]: parsed without crashing .............. : ok
+smtp path broken localpart [1] ....................................... : ok
+smtp path broken localpart [2]: parsed without crashing .............. : ok
+smtp path broken localpart [2] ....................................... : ok
+0 / 650 tests failed
 smtp mail params valid [0]: parse("AUTH=<>") ......................... : ok
 smtp mail params valid [0]: params.auth->localpart = (null) .......... : ok
 smtp mail params valid [0]: params.auth->domain = (null) ............. : ok
@@ -4087,7 +4139,8 @@ smtp reply invalid [7] ............................................... : ok
 smtp reply invalid [8] ............................................... : ok
 smtp reply invalid [9] ............................................... : ok
 smtp reply invalid [10] .............................................. : ok
-0 / 75 tests failed
+smtp reply parse enhanced code ....................................... : ok
+0 / 76 tests failed
 smtp command valid [0]: parse success [buffer] ....................... : ok
 smtp command valid [0]: parse success [stream] ....................... : ok
 smtp command valid [0] ............................................... : ok
@@ -4501,9 +4554,10 @@ imap bodystructure parser full [4] ................................... : ok
 imap bodystructure parser full [5] ................................... : ok
 imap bodystructure parser full [6] ................................... : ok
 imap bodystructure parser full [7] ................................... : ok
+imap bodystructure parser full invalid ............................... : ok
 imap bodystructure truncation ........................................ : ok
 imap bodystructure nesting ........................................... : ok
-0 / 35 tests failed
+0 / 36 tests failed
 imap_parse_date() .................................................... : ok
 imap_parse_date() .................................................... : ok
 0 / 2 tests failed
@@ -4521,14 +4575,19 @@ imap envelope parser [4] ............................................. : ok
 imap envelope parser [5] ............................................. : ok
 0 / 12 tests failed
 imap match ........................................................... : ok
+imap match no redos .................................................. : ok
 imap match globs equal ............................................... : ok
-0 / 2 tests failed
+imap match utf8 ...................................................... : ok
+imap match multibyte ................................................. : ok
+0 / 5 tests failed
 imap parser crlf handling ............................................ : ok
 imap parser partial list ............................................. : ok
 imap parser list limit ............................................... : ok
 imap_parser_read_tag and imap_parser_read_command_name ............... : ok
 imap_parser_read_literal ............................................. : ok
-0 / 5 tests failed
+imap parser quoted-string escapes .................................... : ok
+imap arg get_list empty .............................................. : ok
+0 / 7 tests failed
 imap_append_string_for_humans() ...................................... : ok
 test_imap_append_astring() ........................................... : ok
 test_imap_append_nstring() ........................................... : ok
@@ -4898,6 +4957,14 @@ imapc login hangs: sub-process ended properly ........................ : FAILED
 imapc login hangs .................................................... : FAILED
 imapc login fails: sub-process ended properly ........................ : FAILED
 imapc login fails .................................................... : FAILED
+imapc short tagged reply (IMAP4rev2): sub-process ended properly ..... : FAILED
+imapc short tagged reply (IMAP4rev2) ................................. : FAILED
+imapc short tagged NO reply (IMAP4rev2): sub-process ended properly .. : FAILED
+imapc short tagged NO reply (IMAP4rev2) .............................. : FAILED
+imapc short tagged BAD reply (IMAP4rev2): sub-process ended properly . : FAILED
+imapc short tagged BAD reply (IMAP4rev2) ............................. : FAILED
+imapc banner with short resp-text (IMAP4rev2): sub-process ended properly  : FAILED
+imapc banner with short resp-text (IMAP4rev2) ........................ : FAILED
 imapc reconnect: sub-process ended properly .......................... : FAILED
 imapc reconnect ...................................................... : FAILED
 imapc reconnect resend commands: sub-process ended properly .......... : FAILED
@@ -4912,10 +4979,11 @@ imapc_client_get_capabilities() reconnected: sub-process ended properly  : FAILE
 imapc_client_get_capabilities() reconnected .......................... : FAILED
 imapc_client_get_capabilities() disconnected: sub-process ended properly  : FAILED
 imapc_client_get_capabilities() disconnected ......................... : FAILED
-20 / 21 tests failed
+28 / 29 tests failed
 compression handler gz (detect) ...................................... : ok
 compression handler gz (small, autodetect=no) ........................ : ok
 compression handler gz (empty, autodetect=no) ........................ : ok
+compression handler gz (zero-len frame, autodetect=no) ............... : ok
 compression handler gz (autodetect=no) ............................... : ok
 compression handler gz (seek, autodetect=no) ......................... : ok
 compression handler gz (reset, autodetect=no) ........................ : ok
@@ -4927,6 +4995,7 @@ compression handler gz (partial header read, autodetect=no) .......... : ok
 compression handler bz2 (detect) ..................................... : ok
 compression handler bz2 (small, autodetect=no) ....................... : ok
 compression handler bz2 (empty, autodetect=no) ....................... : ok
+compression handler bz2 (zero-len frame, autodetect=no) .............. : ok
 compression handler bz2 (autodetect=no) .............................. : ok
 compression handler bz2 (seek, autodetect=no) ........................ : ok
 compression handler bz2 (reset, autodetect=no) ....................... : ok
@@ -4937,6 +5006,7 @@ compression handler bz2 (errors, autodetect=no) ...................... : ok
 compression handler bz2 (partial header read, autodetect=no) ......... : ok
 compression handler deflate (small, autodetect=no) ................... : ok
 compression handler deflate (empty, autodetect=no) ................... : ok
+compression handler deflate (zero-len frame, autodetect=no) .......... : ok
 compression handler deflate (autodetect=no) .......................... : ok
 compression handler deflate (seek, autodetect=no) .................... : ok
 compression handler deflate (reset, autodetect=no) ................... : ok
@@ -4948,6 +5018,7 @@ compression handler deflate (partial header read, autodetect=no) ..... : ok
 compression handler lz4 (detect) ..................................... : ok
 compression handler lz4 (small, autodetect=no) ....................... : ok
 compression handler lz4 (empty, autodetect=no) ....................... : ok
+compression handler lz4 (zero-len frame, autodetect=no) .............. : ok
 compression handler lz4 (autodetect=no) .............................. : ok
 compression handler lz4 (seek, autodetect=no) ........................ : ok
 compression handler lz4 (reset, autodetect=no) ....................... : ok
@@ -4959,6 +5030,7 @@ compression handler lz4 (partial header read, autodetect=no) ......... : ok
 compression handler zstd (detect) .................................... : ok
 compression handler zstd (small, autodetect=no) ...................... : ok
 compression handler zstd (empty, autodetect=no) ...................... : ok
+compression handler zstd (zero-len frame, autodetect=no) ............. : ok
 compression handler zstd (autodetect=no) ............................. : ok
 compression handler zstd (seek, autodetect=no) ....................... : ok
 compression handler zstd (reset, autodetect=no) ...................... : ok
@@ -4969,6 +5041,7 @@ compression handler zstd (errors, autodetect=no) ..................... : ok
 compression handler zstd (partial header read, autodetect=no) ........ : ok
 compression handler gz (small, autodetect=yes) ....................... : ok
 compression handler gz (empty, autodetect=yes) ....................... : ok
+compression handler gz (zero-len frame, autodetect=yes) .............. : ok
 compression handler gz (autodetect=yes) .............................. : ok
 compression handler gz (seek, autodetect=yes) ........................ : ok
 compression handler gz (reset, autodetect=yes) ....................... : ok
@@ -4979,6 +5052,7 @@ compression handler gz (errors, autodetect=yes) ...................... : ok
 compression handler gz (partial header read, autodetect=yes) ......... : ok
 compression handler bz2 (small, autodetect=yes) ...................... : ok
 compression handler bz2 (empty, autodetect=yes) ...................... : ok
+compression handler bz2 (zero-len frame, autodetect=yes) ............. : ok
 compression handler bz2 (autodetect=yes) ............................. : ok
 compression handler bz2 (seek, autodetect=yes) ....................... : ok
 compression handler bz2 (reset, autodetect=yes) ...................... : ok
@@ -4989,6 +5063,7 @@ compression handler bz2 (errors, autodetect=yes) ..................... : ok
 compression handler bz2 (partial header read, autodetect=yes) ........ : ok
 compression handler lz4 (small, autodetect=yes) ...................... : ok
 compression handler lz4 (empty, autodetect=yes) ...................... : ok
+compression handler lz4 (zero-len frame, autodetect=yes) ............. : ok
 compression handler lz4 (autodetect=yes) ............................. : ok
 compression handler lz4 (seek, autodetect=yes) ....................... : ok
 compression handler lz4 (reset, autodetect=yes) ...................... : ok
@@ -4999,6 +5074,7 @@ compression handler lz4 (errors, autodetect=yes) ..................... : ok
 compression handler lz4 (partial header read, autodetect=yes) ........ : ok
 compression handler zstd (small, autodetect=yes) ..................... : ok
 compression handler zstd (empty, autodetect=yes) ..................... : ok
+compression handler zstd (zero-len frame, autodetect=yes) ............ : ok
 compression handler zstd (autodetect=yes) ............................ : ok
 compression handler zstd (seek, autodetect=yes) ...................... : ok
 compression handler zstd (reset, autodetect=yes) ..................... : ok
@@ -5018,8 +5094,9 @@ gz large header (autodetect=no) ...................................... : ok
 gz large header (autodetect=yes) ..................................... : ok
 lz4 small header ..................................................... : ok
 lz4 chunk size ....................................................... : ok
+lz4 many empty chunks ................................................ : ok
 compression handler by extension ..................................... : ok
-0 / 106 tests failed
+0 / 116 tests failed
 mail cache uncommitted lookups ....................................... : ok
 mail cache record max size ........................................... : ok
 mail cache record max size (2) ....................................... : ok
@@ -5062,11 +5139,15 @@ mail cache update need purge deleted records (2) ..................... : ok
 mail cache purge deadlines ........................................... : ok
 2 / 26 tests failed
 mail index rotate .................................................... : ok
+mail index log refresh rotation race ................................. : ok
 mail index new extension ............................................. : ok
 mail index corruption: message count ................................. : ok
-0 / 3 tests failed
+mail index corruption: record_size zero .............................. : ok
+mail index map: fsck fail restores old map ........................... : ok
+0 / 6 tests failed
 mail index map lookup seq range ...................................... : ok
-0 / 1 tests failed
+mail index map parse keywords empty name area ........................ : ok
+0 / 2 tests failed
 mail_transaction_log_file_get_modseq_next_offset() ................... : ok
 0 / 1 tests failed
 mail index sync ext atomic inc ....................................... : ok
@@ -5172,6 +5253,12 @@ mailbox get expunges ................................................. : ok
 mail list errors ..................................................... : ok
 mailbox_list_last_error_push/pop() ................................... : ok
 mailbox list get names ............................................... : ok
+mailbox_list_escape_name_params ...................................... : ok
+mailbox_list_escape/unescape round-trip .............................. : ok
+0 / 5 tests failed
+vsize header corruption fix .......................................... : ok
+vsize header message count corruption fix ............................ : ok
+index attachment base64 decoded size ................................. : ok
 0 / 3 tests failed
 imap_msgpart_parse() ................................................. : ok
 0 / 1 tests failed
@@ -5224,6 +5311,9 @@ sql api .............................................................. : ok
 sql statement api .................................................... : ok
 sql prepared statement api ........................................... : ok
 0 / 3 tests failed
+test sql api ......................................................... : ok
+test sql api errors .................................................. : ok
+0 / 2 tests failed
 dict lookup one ...................................................... : ok
 dict atomic inc ...................................................... : ok
 dict set ............................................................. : ok
@@ -5249,99 +5339,102 @@ auth request var expand usernames .................................... : ok
 auth request var expand funcs ........................................ : ok
 auth request fields .................................................. : ok
 test username_filter ................................................. : ok
+db-oauth2: local validation - valid token ............................ : ok
+db-oauth2: local validation - expired token .......................... : ok
+db-oauth2: local validation - wrong username ......................... : ok
+db-oauth2: local validation - bad signature .......................... : ok
+db-oauth2: local validation - required scope present ................. : ok
+db-oauth2: local validation - required scope missing ................. : ok
+db-oauth2: local validation - required audience present .............. : ok
+db-oauth2: local validation - required audience missing .............. : ok
+db-oauth2: local validation - multiple required scopes all present ... : ok
+db-oauth2: local validation - multiple required scopes one missing ... : ok
+db-oauth2: local validation - multiple required audiences all present  : ok
+db-oauth2: local validation - multiple required audiences one missing  : ok
 auth db lua passdb_lookup ............................................ : ok
 auth db lua passdb_lookup ............................................ : ok
 auth db lua passdb_verify ............................................ : ok
 auth db lua bad keyname .............................................. : ok
 ldap_escape() ........................................................ : ok
-0 / 12 tests failed
-auth mech ANONYMOUS 1/86 ............................................. : ok
-auth mech APOP 2/86 .................................................. : ok
-auth mech CRAM-MD5 3/86 .............................................. : ok
-auth mech DIGEST-MD5 4/86 ............................................ : ok
-auth mech DIGEST-MD5 5/86 ............................................ : ok
-auth mech DIGEST-MD5 6/86 ............................................ : ok
-auth mech DIGEST-MD5 7/86 ............................................ : ok
-auth mech DIGEST-MD5 8/86 ............................................ : ok
-auth mech EXTERNAL 9/86 .............................................. : ok
-auth mech DOVECOT-TOKEN 10/86 ........................................ : ok
-auth mech LOGIN 11/86 ................................................ : ok
-auth mech PLAIN 12/86 ................................................ : ok
-auth mech PLAIN 13/86 ................................................ : ok
-auth mech PLAIN 14/86 ................................................ : ok
-auth mech OTP 15/86 .................................................. : ok
-auth mech OTP 16/86 .................................................. : ok
-auth mech OTP 17/86 .................................................. : ok
-auth mech OTP 18/86 .................................................. : ok
-auth mech OAUTHBEARER 19/86 .......................................... : ok
-auth mech SCRAM-SHA-1 20/86 .......................................... : ok
-auth mech SCRAM-SHA-256 21/86 ........................................ : ok
-auth mech XOAUTH2 22/86 .............................................. : ok
-auth mech APOP 23/86 ................................................. : ok
-auth mech CRAM-MD5 24/86 ............................................. : ok
-auth mech DIGEST-MD5 25/86 ........................................... : ok
-auth mech DOVECOT-TOKEN 26/86 ........................................ : ok
-auth mech EXTERNAL 27/86 ............................................. : ok
-auth mech EXTERNAL 28/86 ............................................. : ok
-auth mech LOGIN 29/86 ................................................ : ok
-auth mech OTP 30/86 .................................................. : ok
-auth mech OTP 31/86 .................................................. : ok
-auth mech PLAIN 32/86 ................................................ : ok
-auth mech OAUTHBEARER 33/86 .......................................... : ok
-auth mech XOAUTH2 34/86 .............................................. : ok
-auth mech SCRAM-SHA-1 35/86 .......................................... : ok
-auth mech SCRAM-SHA-256 36/86 ........................................ : ok
-auth mech APOP 37/86 ................................................. : ok
-auth mech APOP 38/86 ................................................. : ok
-auth mech APOP 39/86 ................................................. : ok
-auth mech APOP 40/86 ................................................. : ok
-auth mech OTP 41/86 .................................................. : ok
-auth mech CRAM-MD5 42/86 ............................................. : ok
-auth mech PLAIN 43/86 ................................................ : ok
-auth mech DIGEST-MD5 44/86 ........................................... : ok
-auth mech DIGEST-MD5 45/86 ........................................... : ok
-auth mech DIGEST-MD5 46/86 ........................................... : ok
-auth mech DIGEST-MD5 47/86 ........................................... : ok
-auth mech DIGEST-MD5 48/86 ........................................... : ok
-auth mech DIGEST-MD5 49/86 ........................................... : ok
-auth mech DIGEST-MD5 50/86 ........................................... : ok
-auth mech DIGEST-MD5 51/86 ........................................... : ok
-auth mech DIGEST-MD5 52/86 ........................................... : ok
-auth mech DIGEST-MD5 53/86 ........................................... : ok
-auth mech DIGEST-MD5 54/86 ........................................... : ok
-auth mech DIGEST-MD5 55/86 ........................................... : ok
-auth mech DIGEST-MD5 56/86 ........................................... : ok
-auth mech DIGEST-MD5 57/86 ........................................... : ok
-auth mech DIGEST-MD5 58/86 ........................................... : ok
-auth mech DIGEST-MD5 59/86 ........................................... : ok
-auth mech DIGEST-MD5 60/86 ........................................... : ok
-auth mech DIGEST-MD5 61/86 ........................................... : ok
-auth mech DIGEST-MD5 62/86 ........................................... : ok
-auth mech DIGEST-MD5 63/86 ........................................... : ok
-auth mech DIGEST-MD5 64/86 ........................................... : ok
-auth mech DIGEST-MD5 65/86 ........................................... : ok
-auth mech DIGEST-MD5 66/86 ........................................... : ok
-auth mech DOVECOT-TOKEN 67/86 ........................................ : ok
-auth mech LOGIN 68/86 ................................................ : ok
-auth mech OAUTHBEARER 69/86 .......................................... : ok
-auth mech OAUTHBEARER 70/86 .......................................... : ok
-auth mech OAUTHBEARER 71/86 .......................................... : ok
-auth mech OAUTHBEARER 72/86 .......................................... : ok
-auth mech XOAUTH2 73/86 .............................................. : ok
-auth mech XOAUTH2 74/86 .............................................. : ok
-auth mech PLAIN 75/86 ................................................ : ok
-auth mech PLAIN 76/86 ................................................ : ok
-auth mech PLAIN 77/86 ................................................ : ok
-auth mech OTP 78/86 .................................................. : ok
-auth mech OTP 79/86 .................................................. : ok
-auth mech SCRAM-SHA-1 80/86 .......................................... : ok
-auth mech SCRAM-SHA-1 81/86 .......................................... : ok
-auth mech SCRAM-SHA-1 82/86 .......................................... : ok
-auth mech SCRAM-SHA-1 83/86 .......................................... : ok
-auth mech SCRAM-SHA-1 84/86 .......................................... : ok
-auth mech SCRAM-SHA-1 85/86 .......................................... : ok
-auth mech SCRAM-SHA-256 86/86 ........................................ : ok
-0 / 86 tests failed
+0 / 24 tests failed
+auth mech ANONYMOUS 1/77 ............................................. : ok
+auth mech APOP 2/77 .................................................. : ok
+auth mech CRAM-MD5 3/77 .............................................. : ok
+auth mech DIGEST-MD5 4/77 ............................................ : ok
+auth mech DIGEST-MD5 5/77 ............................................ : ok
+auth mech DIGEST-MD5 6/77 ............................................ : ok
+auth mech DIGEST-MD5 7/77 ............................................ : ok
+auth mech DIGEST-MD5 8/77 ............................................ : ok
+auth mech EXTERNAL 9/77 .............................................. : ok
+auth mech DOVECOT-TOKEN 10/77 ........................................ : ok
+auth mech LOGIN 11/77 ................................................ : ok
+auth mech PLAIN 12/77 ................................................ : ok
+auth mech PLAIN 13/77 ................................................ : ok
+auth mech PLAIN 14/77 ................................................ : ok
+auth mech OAUTHBEARER 15/77 .......................................... : ok
+auth mech SCRAM-SHA-1 16/77 .......................................... : ok
+auth mech SCRAM-SHA-256 17/77 ........................................ : ok
+auth mech XOAUTH2 18/77 .............................................. : ok
+auth mech APOP 19/77 ................................................. : ok
+auth mech CRAM-MD5 20/77 ............................................. : ok
+auth mech DIGEST-MD5 21/77 ........................................... : ok
+auth mech DOVECOT-TOKEN 22/77 ........................................ : ok
+auth mech EXTERNAL 23/77 ............................................. : ok
+auth mech EXTERNAL 24/77 ............................................. : ok
+auth mech LOGIN 25/77 ................................................ : ok
+auth mech PLAIN 26/77 ................................................ : ok
+auth mech OAUTHBEARER 27/77 .......................................... : ok
+auth mech XOAUTH2 28/77 .............................................. : ok
+auth mech SCRAM-SHA-1 29/77 .......................................... : ok
+auth mech SCRAM-SHA-256 30/77 ........................................ : ok
+auth mech APOP 31/77 ................................................. : ok
+auth mech APOP 32/77 ................................................. : ok
+auth mech APOP 33/77 ................................................. : ok
+auth mech APOP 34/77 ................................................. : ok
+auth mech CRAM-MD5 35/77 ............................................. : ok
+auth mech PLAIN 36/77 ................................................ : ok
+auth mech DIGEST-MD5 37/77 ........................................... : ok
+auth mech DIGEST-MD5 38/77 ........................................... : ok
+auth mech DIGEST-MD5 39/77 ........................................... : ok
+auth mech DIGEST-MD5 40/77 ........................................... : ok
+auth mech DIGEST-MD5 41/77 ........................................... : ok
+auth mech DIGEST-MD5 42/77 ........................................... : ok
+auth mech DIGEST-MD5 43/77 ........................................... : ok
+auth mech DIGEST-MD5 44/77 ........................................... : ok
+auth mech DIGEST-MD5 45/77 ........................................... : ok
+auth mech DIGEST-MD5 46/77 ........................................... : ok
+auth mech DIGEST-MD5 47/77 ........................................... : ok
+auth mech DIGEST-MD5 48/77 ........................................... : ok
+auth mech DIGEST-MD5 49/77 ........................................... : ok
+auth mech DIGEST-MD5 50/77 ........................................... : ok
+auth mech DIGEST-MD5 51/77 ........................................... : ok
+auth mech DIGEST-MD5 52/77 ........................................... : ok
+auth mech DIGEST-MD5 53/77 ........................................... : ok
+auth mech DIGEST-MD5 54/77 ........................................... : ok
+auth mech DIGEST-MD5 55/77 ........................................... : ok
+auth mech DIGEST-MD5 56/77 ........................................... : ok
+auth mech DIGEST-MD5 57/77 ........................................... : ok
+auth mech DIGEST-MD5 58/77 ........................................... : ok
+auth mech DIGEST-MD5 59/77 ........................................... : ok
+auth mech DOVECOT-TOKEN 60/77 ........................................ : ok
+auth mech LOGIN 61/77 ................................................ : ok
+auth mech OAUTHBEARER 62/77 .......................................... : ok
+auth mech OAUTHBEARER 63/77 .......................................... : ok
+auth mech OAUTHBEARER 64/77 .......................................... : ok
+auth mech OAUTHBEARER 65/77 .......................................... : ok
+auth mech XOAUTH2 66/77 .............................................. : ok
+auth mech XOAUTH2 67/77 .............................................. : ok
+auth mech PLAIN 68/77 ................................................ : ok
+auth mech PLAIN 69/77 ................................................ : ok
+auth mech PLAIN 70/77 ................................................ : ok
+auth mech SCRAM-SHA-1 71/77 .......................................... : ok
+auth mech SCRAM-SHA-1 72/77 .......................................... : ok
+auth mech SCRAM-SHA-1 73/77 .......................................... : ok
+auth mech SCRAM-SHA-1 74/77 .......................................... : ok
+auth mech SCRAM-SHA-1 75/77 .......................................... : ok
+auth mech SCRAM-SHA-1 76/77 .......................................... : ok
+auth mech SCRAM-SHA-256 77/77 ........................................ : ok
+0 / 77 tests failed
 indexer queue ........................................................ : ok
 indexer queue ........................................................ : ok
 indexer queue reindex ................................................ : ok
@@ -5351,11 +5444,28 @@ indexer queue iter ................................................... : ok
 login_log_format ..................................................... : ok
 connection_trusted ................................................... : ok
 connection_secured ................................................... : ok
-0 / 3 tests failed
+real_remote_ip_expansion ............................................. : ok
+0 / 4 tests failed
 imap_storage_callback_line ........................................... : ok
 0 / 1 tests failed
+imap_state_import_string() ........................................... : ok
+imap_state_import_seq_range() round-trip ............................. : ok
+imap_state_import_seq_range() truncated .............................. : ok
+imap_state_import_seq_range() overflow rejected ...................... : ok
+imap_state_import_searchres() duplicate rejected ..................... : ok
+imap_state_import_compress() unknown handler rejected ................ : ok
+imap_state_import_enabled_feature() unknown feature rejected ......... : ok
+0 / 7 tests failed
 config_parse_file .................................................... : ok
-0 / 1 tests failed
+config_parse_file - heredoc basic .................................... : ok
+config_parse_file - heredoc custom marker ............................ : ok
+config_parse_file - heredoc EODXXX does not terminate ................ : ok
+config_parse_file - heredoc missing terminator ....................... : ok
+config_parse_file - heredoc marker preserved in export ............... : ok
+config_parse_file - SET_FILE export value format ..................... : ok
+config_parse_file - SET_FILE inline export ........................... : ok
+config_parse_file - heredoc in strlist is rejected ................... : ok
+0 / 9 tests failed
 dsync mailbox tree sync creates ...................................... : ok
 dsync mailbox tree sync deletes ...................................... : ok
 dsync mailbox tree sync renames 1 .................................... : ok
@@ -5407,7 +5517,7 @@ kwswitch_1args ....................................................... : ok
 kwswitch_before_12 ................................................... : ok
 kwswitch_before_21 ................................................... : ok
 kwswitch_after_12 .................................................... : ok
-kwswitch_fater_21 .................................................... : ok
+kwswitch_after_21 .................................................... : ok
 0 / 25 tests failed
 i_strccdascmp() ...................................................... : ok
 0 / 1 tests failed
@@ -5429,6 +5539,15 @@ client writer ........................................................ : ok
 client reader ........................................................ : ok
 client reader (group by) ............................................. : ok
 0 / 2 tests failed
+single word .......................................................... : ok
+phrase (old args structure) .......................................... : ok
+phrase (new args structure) .......................................... : ok
+phrase with tab whitespace ........................................... : ok
+three word phrase (new args structure) ............................... : ok
+single word split (e.g. email or dotted word) ........................ : ok
+phrase with sibling next pointer ..................................... : ok
+fts_search_arg_create_or next pointer correctness .................... : ok
+0 / 8 tests failed
 quota transaction is over (count) .................................... : ok
 quota transaction is over (bytes) .................................... : ok
 0 / 2 tests failed
