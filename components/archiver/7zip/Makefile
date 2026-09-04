@@ -29,8 +29,8 @@ ENV=/usr/bin/env
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         7zip
-COMPONENT_VERSION=	26.2
-HUMAN_VERSION=		26.02
+COMPONENT_VERSION=	26.3
+HUMAN_VERSION=		26.03
 COMPONENT_SUMMARY=      File archiver for extremely high compression
 COMPONENT_PROJECT_URL=  https://www.7-zip.org
 COMPONENT_SRC=          7z2602-src
