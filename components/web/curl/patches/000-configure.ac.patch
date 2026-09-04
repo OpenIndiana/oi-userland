@@ -1,31 +1,31 @@
---- curl-8.17.0/configure.ac.~1~	2025-11-05 02:00:46.000000000 -0500
-+++ curl-8.17.0/configure.ac	2025-11-08 09:56:54.167387314 -0500
-@@ -1842,7 +1842,7 @@
-     [
-       dnl not found, check for MIT
-       AC_CHECK_HEADERS(
--        [gssapi/gssapi.h gssapi/gssapi_generic.h gssapi/gssapi_krb5.h],
-+        [gssapi/gssapi.h],
-         [],
-         [not_mit=1])
-       if test "x$not_mit" = "x1"; then
-@@ -1895,6 +1895,9 @@
-           *-hp-hpux*)
-             gss_libname="gss"
-             ;;
-+          *-solaris2*)
-+            gss_libname="gss"
-+            ;;
-           *)
-             gss_libname="gssapi"
-             ;;
-@@ -1928,6 +1931,9 @@
-       *-hp-hpux*)
-         LIBS="-lgss $LIBS"
-         ;;
-+      *-solaris2*)
-+        LIBS="-lgss $LIBS"
-+        ;;
-       *)
-         LIBS="-lgssapi $LIBS"
-         ;;
+--- curl-8.22.0/configure.ac.~1~
++++ curl-8.22.0/configure.ac
+@@ -1976,7 +1976,7 @@
+       [
+         dnl not found, check for MIT
+         AC_CHECK_HEADERS(
+-          [gssapi/gssapi.h gssapi/gssapi_generic.h gssapi/gssapi_krb5.h],
++          [gssapi/gssapi.h],
+           [],
+           [not_mit=1])
+         if test "$not_mit" = "1"; then
+@@ -2037,6 +2037,9 @@
+             *-hp-hpux*)
+               gss_libname="gss"
+               ;;
++            *-solaris2*)
++              gss_libname="gss"
++              ;;
+             *)
+               gss_libname="gssapi"
+               ;;
+@@ -2070,6 +2073,9 @@
+         *-hp-hpux*)
+           LIBS="-lgss $LIBS"
+           ;;
++        *-solaris2*)
++          LIBS="-lgss $LIBS"
++          ;;
+         *)
+           LIBS="-lgssapi $LIBS"
+           ;;
