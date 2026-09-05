@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		URI
-HUMAN_VERSION =			5.35
+HUMAN_VERSION =			5.37
 COMPONENT_SUMMARY =		Uniform Resource Identifiers (absolute and relative)
 COMPONENT_CPAN_AUTHOR =		OALDERS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:89648964ce5ae006726951f42f718576fbefe9e98a41bd2212d57386163092d2
+	sha256:5a8750ddd8ee743d7cc89bebdd542a9b78a34023164ebe19dea0c248e121c21e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -42,7 +42,6 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/file-temp
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/regexp-ipv6
-TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-fatal
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-needs
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-warnings
