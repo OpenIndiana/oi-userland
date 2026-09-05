@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Compress-Raw-Lzma
-HUMAN_VERSION =			2.221
+HUMAN_VERSION =			2.224
 COMPONENT_SUMMARY =		Low-Level Perl Interface to lzma compression library
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e8b2d17c7f29b3e4f286cc3d3f5353df8e811615c42298eedad7cdbfec4aed7f
+	sha256:4c37742614ecf2f94d3413d59632a9229ba7cf6c590298145f3385d8250bb256
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
