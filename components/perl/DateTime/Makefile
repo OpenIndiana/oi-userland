@@ -19,30 +19,29 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DateTime
-HUMAN_VERSION =			1.66
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.67
 COMPONENT_SUMMARY =		A date and time object for Perl
 COMPONENT_CPAN_AUTHOR =		DROLSKY
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:afabd686fb83d3ebf49ee453974f9122f3eec9b25ff8d2ddf4f12de92af1e5e2
+	sha256:ba237fe792c93e8c13879c58fead45de2d1185e53793b792db1a3c9e77dd7b55
 COMPONENT_LICENSE =		Artistic-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/datetime-locale
-PERL_REQUIRED_PACKAGES += library/perl-5/datetime-timezone
-PERL_REQUIRED_PACKAGES += library/perl-5/dist-checkconflicts
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/namespace-autoclean
-PERL_REQUIRED_PACKAGES += library/perl-5/params-validationcompiler
-PERL_REQUIRED_PACKAGES += library/perl-5/parent
-PERL_REQUIRED_PACKAGES += library/perl-5/scalar-list-utils
-PERL_REQUIRED_PACKAGES += library/perl-5/specio
-PERL_REQUIRED_PACKAGES += library/perl-5/try-tiny
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/datetime-locale
+REQUIRED_PACKAGES.perl += library/perl-5/datetime-timezone
+REQUIRED_PACKAGES.perl += library/perl-5/dist-checkconflicts
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/namespace-autoclean
+REQUIRED_PACKAGES.perl += library/perl-5/params-validationcompiler
+REQUIRED_PACKAGES.perl += library/perl-5/parent
+REQUIRED_PACKAGES.perl += library/perl-5/scalar-list-utils
+REQUIRED_PACKAGES.perl += library/perl-5/specio
+REQUIRED_PACKAGES.perl += library/perl-5/try-tiny
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-check
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta-requirements
