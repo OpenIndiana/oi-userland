@@ -19,12 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansi2html
-HUMAN_VERSION =			1.9.2
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.9.4
 COMPONENT_SUMMARY =		Convert text with ANSI color codes to HTML or to LaTeX
 COMPONENT_PROJECT_URL =		https://github.com/pycontribs/ansi2html
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3453bf87535d37b827b05245faaa756dbab4ec3d69925e352b6319c3c955c0a5
+	sha256:2b85cd050787186bc201c15635212258e9beda1463b63f327a8234abae2a4b30
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
