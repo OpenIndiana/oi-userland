@@ -17,14 +17,14 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         slib
-COMPONENT_VERSION=      3.3.1
-HUMAN_VERSION=          3c1
+COMPONENT_VERSION=      3.3.2
+HUMAN_VERSION=          3c2
 COMPONENT_SUMMARY=      GNU slib - a portable library for the Scheme programming language
 COMPONENT_DESCRIPTION=	SLIB is a portable scheme library providing compatibility and utility functions for standard Scheme implementations.
 COMPONENT_PROJECT_URL=  https://people.csail.mit.edu/jaffer/SLIB.html
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH= sha256:c2f8eb98e60530df53211985d4b403b6e97a7a969833c1a6d1bf83561da0c781
+COMPONENT_ARCHIVE_HASH= sha256:7906d8e201dc18e97945a61ac62ce792ec939b67d0bcc23073e0011ac2561a04
 COMPONENT_ARCHIVE_URL=  https://groups.csail.mit.edu/mac/ftpdir/scm/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/slib
 COMPONENT_CLASSIFICATION=Development/Other Languages
