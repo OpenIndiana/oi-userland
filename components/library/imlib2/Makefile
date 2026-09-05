@@ -27,13 +27,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         imlib2
-COMPONENT_VERSION=      1.12.6
-COMPONENT_REVISION=		1
+COMPONENT_VERSION=      1.12.7
 COMPONENT_SUMMARY=      Library that does image file loading and saving as well as rendering, manipulation, arbitrary polygon support
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://sourceforge.net/projects/enlightenment/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:250f9752f69dc522e529a81aaa9395705f7fc312ff2453e5de59ac2ba1f2858f
+COMPONENT_ARCHIVE_HASH= sha256:d71ee5351cc1914fb01968123d0dcf276740e5af5662943ac47ae60cafa4d13b
 COMPONENT_ARCHIVE_URL=  https://downloads.sourceforge.net/project/enlightenment/imlib2-src//$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=         library/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION= System/Libraries
