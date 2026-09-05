@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 312 items
+collecting ... collected 333 items
 
 tests/test_cache.py::CacheTest::test_clear PASSED
 tests/test_cache.py::CacheTest::test_clear_empty PASSED
@@ -18,6 +18,9 @@ tests/test_cache.py::CacheTest::test_getsizeof_replace_same_size PASSED
 tests/test_cache.py::CacheTest::test_getsizeof_replace_shrink PASSED
 tests/test_cache.py::CacheTest::test_getsizeof_subclass PASSED
 tests/test_cache.py::CacheTest::test_insert PASSED
+tests/test_cache.py::CacheTest::test_maxsize_infinite PASSED
+tests/test_cache.py::CacheTest::test_maxsize_negative PASSED
+tests/test_cache.py::CacheTest::test_maxsize_zero PASSED
 tests/test_cache.py::CacheTest::test_missing PASSED
 tests/test_cache.py::CacheTest::test_missing_getsizeof PASSED
 tests/test_cache.py::CacheTest::test_pickle PASSED
@@ -132,6 +135,9 @@ tests/test_fifo.py::FIFOCacheTest::test_getsizeof_replace_same_size PASSED
 tests/test_fifo.py::FIFOCacheTest::test_getsizeof_replace_shrink PASSED
 tests/test_fifo.py::FIFOCacheTest::test_getsizeof_subclass PASSED
 tests/test_fifo.py::FIFOCacheTest::test_insert PASSED
+tests/test_fifo.py::FIFOCacheTest::test_maxsize_infinite PASSED
+tests/test_fifo.py::FIFOCacheTest::test_maxsize_negative PASSED
+tests/test_fifo.py::FIFOCacheTest::test_maxsize_zero PASSED
 tests/test_fifo.py::FIFOCacheTest::test_missing PASSED
 tests/test_fifo.py::FIFOCacheTest::test_missing_getsizeof PASSED
 tests/test_fifo.py::FIFOCacheTest::test_pickle PASSED
@@ -198,6 +204,9 @@ tests/test_lfu.py::LFUCacheTest::test_lfu PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu_clear PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu_getsizeof PASSED
 tests/test_lfu.py::LFUCacheTest::test_lfu_update_existing PASSED
+tests/test_lfu.py::LFUCacheTest::test_maxsize_infinite PASSED
+tests/test_lfu.py::LFUCacheTest::test_maxsize_negative PASSED
+tests/test_lfu.py::LFUCacheTest::test_maxsize_zero PASSED
 tests/test_lfu.py::LFUCacheTest::test_missing PASSED
 tests/test_lfu.py::LFUCacheTest::test_missing_getsizeof PASSED
 tests/test_lfu.py::LFUCacheTest::test_pickle PASSED
@@ -222,6 +231,9 @@ tests/test_lru.py::LRUCacheTest::test_lru PASSED
 tests/test_lru.py::LRUCacheTest::test_lru_clear PASSED
 tests/test_lru.py::LRUCacheTest::test_lru_getsizeof PASSED
 tests/test_lru.py::LRUCacheTest::test_lru_update_existing PASSED
+tests/test_lru.py::LRUCacheTest::test_maxsize_infinite PASSED
+tests/test_lru.py::LRUCacheTest::test_maxsize_negative PASSED
+tests/test_lru.py::LRUCacheTest::test_maxsize_zero PASSED
 tests/test_lru.py::LRUCacheTest::test_missing PASSED
 tests/test_lru.py::LRUCacheTest::test_missing_getsizeof PASSED
 tests/test_lru.py::LRUCacheTest::test_pickle PASSED
@@ -242,6 +254,9 @@ tests/test_rr.py::RRCacheTest::test_getsizeof_replace_same_size PASSED
 tests/test_rr.py::RRCacheTest::test_getsizeof_replace_shrink PASSED
 tests/test_rr.py::RRCacheTest::test_getsizeof_subclass PASSED
 tests/test_rr.py::RRCacheTest::test_insert PASSED
+tests/test_rr.py::RRCacheTest::test_maxsize_infinite PASSED
+tests/test_rr.py::RRCacheTest::test_maxsize_negative PASSED
+tests/test_rr.py::RRCacheTest::test_maxsize_zero PASSED
 tests/test_rr.py::RRCacheTest::test_missing PASSED
 tests/test_rr.py::RRCacheTest::test_missing_getsizeof PASSED
 tests/test_rr.py::RRCacheTest::test_pickle PASSED
@@ -271,6 +286,9 @@ tests/test_tlru.py::TLRUCacheTest::test_getsizeof_replace_same_size PASSED
 tests/test_tlru.py::TLRUCacheTest::test_getsizeof_replace_shrink PASSED
 tests/test_tlru.py::TLRUCacheTest::test_getsizeof_subclass PASSED
 tests/test_tlru.py::TLRUCacheTest::test_insert PASSED
+tests/test_tlru.py::TLRUCacheTest::test_maxsize_infinite PASSED
+tests/test_tlru.py::TLRUCacheTest::test_maxsize_negative PASSED
+tests/test_tlru.py::TLRUCacheTest::test_maxsize_zero PASSED
 tests/test_tlru.py::TLRUCacheTest::test_missing PASSED
 tests/test_tlru.py::TLRUCacheTest::test_missing_getsizeof PASSED
 tests/test_tlru.py::TLRUCacheTest::test_overwrite_existing_with_expired PASSED
@@ -302,6 +320,9 @@ tests/test_ttl.py::TTLCacheTest::test_getsizeof_replace_same_size PASSED
 tests/test_ttl.py::TTLCacheTest::test_getsizeof_replace_shrink PASSED
 tests/test_ttl.py::TTLCacheTest::test_getsizeof_subclass PASSED
 tests/test_ttl.py::TTLCacheTest::test_insert PASSED
+tests/test_ttl.py::TTLCacheTest::test_maxsize_infinite PASSED
+tests/test_ttl.py::TTLCacheTest::test_maxsize_negative PASSED
+tests/test_ttl.py::TTLCacheTest::test_maxsize_zero PASSED
 tests/test_ttl.py::TTLCacheTest::test_missing PASSED
 tests/test_ttl.py::TTLCacheTest::test_missing_getsizeof PASSED
 tests/test_ttl.py::TTLCacheTest::test_pickle PASSED
@@ -319,6 +340,6 @@ tests/test_ttl.py::TTLCacheTest::test_ttl_timer PASSED
 tests/test_ttl.py::TTLCacheTest::test_ttl_tuple_key PASSED
 tests/test_ttl.py::TTLCacheTest::test_update PASSED
 
-======== 312 passed ========
+======== 333 passed ========
   py$(PYV): OK
   congratulations :)
