@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBD-Pg
-HUMAN_VERSION =			3.20.2
+HUMAN_VERSION =			3.21.2
 COMPONENT_SUMMARY =		DBI PostgreSQL interface
 COMPONENT_CPAN_AUTHOR =		TURNSTEP
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:526d3372e6d69766cb683618d1f3b48aca57bfadb1de1db16c3b8136fe61176c
+	sha256:d79179255ccb0c87b029db2eecaea56828e581255c48445d5fc0e79fa4e9245b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-2.0-only
 
 include $(WS_MAKE_RULES)/common.mk
