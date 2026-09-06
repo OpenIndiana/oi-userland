@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		virtualenv
-HUMAN_VERSION =			21.7.4
+HUMAN_VERSION =			21.7.8
 COMPONENT_SUMMARY =		Virtual Python Environment builder
 COMPONENT_PROJECT_URL =		https://github.com/pypa/virtualenv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c9d960c95fa458171e58222a5ccab7465298e4b6559977865e627c4719f1e825
+	sha256:1dc49c790072a9072cb1803f9bd62aa69cd583077cada32390f75505cdc64c9b
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
