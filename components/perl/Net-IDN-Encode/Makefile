@@ -19,20 +19,19 @@ BUILD_STYLE = modulebuild
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Net-IDN-Encode
-HUMAN_VERSION =			2.500
-COMPONENT_REVISION =		3
-COMPONENT_SUMMARY =		Internationalizing Domain Names in Applications (UTS #46)
-COMPONENT_CPAN_AUTHOR =		CFAERBER
+HUMAN_VERSION =			2.502
+COMPONENT_SUMMARY =		Internationalizing Domain Names in Applications (UTS \#46)
+COMPONENT_CPAN_AUTHOR =		RRWO
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:55453633e3ff24ce325b34bc2c8157b9859962a31ab5cf28bf7ccc1c9b3a3eaa
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:1e997781afd4e1bf240f4e347159d3e4c77597f2141ab1541c6268a3356961ad
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/module-build
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/module-build
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-nowarnings
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
