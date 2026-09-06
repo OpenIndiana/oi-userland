@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ExtUtils-PL2Bat
-HUMAN_VERSION =			0.005
-COMPONENT_REVISION =		5
+HUMAN_VERSION =			0.006
 COMPONENT_SUMMARY =		Batch file creation to run perl scripts on Windows
 COMPONENT_CPAN_AUTHOR =		LEONT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:4940f98da2d341d3604393b1a7007c2fc968f89aed3392c90b574453010f9244
-COMPONENT_LICENSE =		Artistic-1.0 OR GPL-1.0-or-later
+	sha256:4c70e95d72a35850a974cb8cd3dde730fdd339267e855aeae5ecf323a3f052b2
+COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
