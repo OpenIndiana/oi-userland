@@ -3,24 +3,33 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 6405 items
+collecting ... collected 6442 items
 
 tests/test_idna.py::IDNATests::testIDNTLDALabels PASSED
 tests/test_idna.py::IDNATests::testIDNTLDULabels PASSED
+tests/test_idna.py::IDNATests::test_bytes_input_errors_are_idnaerror PASSED
 tests/test_idna.py::IDNATests::test_check_bidi PASSED
 tests/test_idna.py::IDNATests::test_check_hyphen_ok PASSED
 tests/test_idna.py::IDNATests::test_check_initial_combiner PASSED
+tests/test_idna.py::IDNATests::test_check_label_contextj_unknown_codepoint PASSED
+tests/test_idna.py::IDNATests::test_check_label_contextj_violation PASSED
 tests/test_idna.py::IDNATests::test_decode PASSED
 tests/test_idna.py::IDNATests::test_decode_display PASSED
 tests/test_idna.py::IDNATests::test_encode PASSED
 tests/test_idna.py::IDNATests::test_encode_decode_invalid_input_type PASSED
 tests/test_idna.py::IDNATests::test_encode_no_transitional_no_warning PASSED
 tests/test_idna.py::IDNATests::test_encode_transitional_deprecation_warning PASSED
+tests/test_idna.py::IDNATests::test_non_canonical_alabel PASSED
 tests/test_idna.py::IDNATests::test_oversized_input_rejected_promptly PASSED
 tests/test_idna.py::IDNATests::test_oversized_label_rejected_promptly PASSED
+tests/test_idna.py::IDNATests::test_uts46_remap PASSED
+tests/test_idna.py::IDNATests::test_uts46_remap_ascii PASSED
+tests/test_idna.py::IDNATests::test_uts46_remap_std3 PASSED
+tests/test_idna.py::IDNATests::test_uts46_remap_transitional_deprecation_warning PASSED
 tests/test_idna.py::IDNATests::test_valid_contextj PASSED
 tests/test_idna.py::IDNATests::test_valid_contexto PASSED
 tests/test_idna.py::IDNATests::test_valid_label_length PASSED
+tests/test_idna.py::UnicodeVersionTests::test_unicode_version_is_exported_and_consistent PASSED
 tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_decodes_alabel PASSED
 tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_decodes_when_any_label_is_alabel PASSED
 tests/test_idna_cli.py::CLIAutoDetectTests::test_autodetect_encodes_plain_ascii_input PASSED
@@ -61,6 +70,7 @@ tests/test_idna_codec.py::IDNACodecTests::testCodec PASSED
 tests/test_idna_codec.py::IDNACodecTests::testDirectDecode PASSED
 tests/test_idna_codec.py::IDNACodecTests::testDirectEncode PASSED
 tests/test_idna_codec.py::IDNACodecTests::testIncrementalDecoder PASSED
+tests/test_idna_codec.py::IDNACodecTests::testIncrementalDecoderNonASCII PASSED
 tests/test_idna_codec.py::IDNACodecTests::testIncrementalEncoder PASSED
 tests/test_idna_codec.py::IDNACodecTests::testIndirectDecode PASSED
 tests/test_idna_codec.py::IDNACodecTests::testIndirectEncode PASSED
@@ -69,6 +79,33 @@ tests/test_idna_codec.py::IDNACodecTests::testStreamWriter PASSED
 tests/test_idna_compat.py::IDNACompatTests::testToASCII PASSED
 tests/test_idna_compat.py::IDNACompatTests::testToUnicode PASSED
 tests/test_idna_compat.py::IDNACompatTests::test_nameprep PASSED
+tests/test_idna_concurrency.py::ConcurrencyTests::test_gil_stays_disabled_when_requested SKIPPED
+tests/test_idna_concurrency.py::ConcurrencyTests::test_threads_agree_with_serial_execution PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_attributes_are_populated PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_attributes_survive_pickle PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_construction_is_backwards_compatible PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_every_error_code_is_documented_and_raisable PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_message_remains_sole_positional_argument PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_positional_attributes_default_to_none PASSED
+tests/test_idna_errors.py::ErrorAttributeTests::test_unknown_codepoint_adjacent_to_joiner PASSED
+tests/test_idna_fuzz_targets.py::FuzzTargetSmokeTests::test_targets_survive_random_input PASSED
+tests/test_idna_properties.py::OnlyIDNAErrorTests::test_codec PASSED
+tests/test_idna_properties.py::OnlyIDNAErrorTests::test_decode PASSED
+tests/test_idna_properties.py::OnlyIDNAErrorTests::test_encode PASSED
+tests/test_idna_properties.py::OnlyIDNAErrorTests::test_label_helpers PASSED
+tests/test_idna_properties.py::OnlyIDNAErrorTests::test_uts46_remap PASSED
+tests/test_idna_properties.py::OutputShapeTests::test_encode_output_is_bounded_ascii PASSED
+tests/test_idna_properties.py::OutputShapeTests::test_uts46_remap_output_is_nfc_and_idempotent PASSED
+tests/test_idna_properties.py::RoundTripTests::test_alabel_ulabel PASSED
+tests/test_idna_properties.py::RoundTripTests::test_decode_encode PASSED
+tests/test_idna_properties.py::RoundTripTests::test_encode_decode_encode PASSED
+tests/test_idna_properties.py::DifferentialTests::test_codec_decode_matches_core PASSED
+tests/test_idna_properties.py::DifferentialTests::test_codec_encode_matches_core PASSED
+tests/test_idna_properties.py::DifferentialTests::test_incremental_decoder_matches_one_shot PASSED
+tests/test_idna_properties.py::DifferentialTests::test_incremental_encoder_matches_one_shot PASSED
+tests/test_idna_properties.py::DifferentialTests::test_strict_is_irrelevant_for_ascii PASSED
+tests/test_idna_properties.py::DifferentialTests::test_transitional_has_no_effect PASSED
+tests/test_idna_properties.py::IntrangesTests::test_membership_matches_set PASSED
 tests/test_idna_uts46.py::UTS46Tests::test_uts46_1000 PASSED
 tests/test_idna_uts46.py::UTS46Tests::test_uts46_1001 PASSED
 tests/test_idna_uts46.py::UTS46Tests::test_uts46_1002 PASSED
@@ -6411,4 +6448,4 @@ tests/test_intranges.py::IntrangeContainsTests::test_simple PASSED
 tests/test_intranges.py::IntrangeContainsTests::test_singleton PASSED
 tests/test_intranges.py::IntrangeContainsTests::test_skips PASSED
 
-======== 6405 passed ========
+======== 6441 passed, 1 skipped ========
