@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Simple
-HUMAN_VERSION =			1.302222
+HUMAN_VERSION =			1.302225
 COMPONENT_SUMMARY =		Basic utilities for writing tests.
 COMPONENT_CPAN_AUTHOR =		EXODIST
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:7cf84a18d6c9450e53ae8b4de5d5fa32c9fe99f3cebbe408fe59433f19921ec2
+	sha256:9b5eefd82a9544582d43d2fb4e3d07e3f97d93293568593b41ad5010afccc785
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
