@@ -19,19 +19,18 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Variable-Magic
-HUMAN_VERSION =			0.64
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.65
 COMPONENT_SUMMARY =		Associate user-defined magic to variables from Perl.
 COMPONENT_CPAN_AUTHOR =		VPIT
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:9f7853249c9ea3b4df92fb6b790c03a60680fc029f44c8bf9894dccf019516bd
+	sha256:457bfb1b2369e44c0e2ef3e7b61580831107cbeebf0f5d8c4b9b02368550b91e
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/socket
-PERL_REQUIRED_PACKAGES += library/perl-5/test-simple
-PERL_REQUIRED_PACKAGES += runtime/perl
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/socket
+REQUIRED_PACKAGES.perl += library/perl-5/test-simple
+REQUIRED_PACKAGES.perl += runtime/perl
