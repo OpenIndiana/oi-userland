@@ -4,9 +4,14 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 149 items
+collecting ... collected 201 items
 
 tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb PASSED
+tests/test_pytest_rerunfailures.py::test_no_error_when_run_with_pdb_without_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_no_error_when_run_with_pdb_and_zero_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb_and_reruns_ini PASSED
+tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb_and_force_reruns PASSED
+tests/test_pytest_rerunfailures.py::test_error_when_run_with_pdb_and_flaky_marker PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_pass PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_skipif_mark PASSED
 tests/test_pytest_rerunfailures.py::test_no_rerun_on_skip_call PASSED
@@ -26,6 +31,13 @@ tests/test_pytest_rerunfailures.py::test_run_with_fail_on_flaky_succeeds_if_all_
 tests/test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_crash PASSED
 tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_temporary_test_crash PASSED
 tests/test_pytest_rerunfailures.py::test_xdist_crash_rerun_releases_cap_when_scheduler_rejects PASSED
+tests/test_pytest_rerunfailures.py::test_sock_recv_raises_connection_error_on_eof PASSED
+tests/test_pytest_rerunfailures.py::test_statusdb_rejects_unauthenticated_commands[incorrect-token] PASSED
+tests/test_pytest_rerunfailures.py::test_statusdb_rejects_unauthenticated_commands[invalid-utf8] PASSED
+tests/test_pytest_rerunfailures.py::test_statusdb_rejects_unauthenticated_commands[non-ascii] PASSED
+tests/test_pytest_rerunfailures.py::test_statusdb_accepts_64_byte_authentication_token PASSED
+tests/test_pytest_rerunfailures.py::test_statusdb_rejects_oversized_authentication PASSED
+tests/test_pytest_rerunfailures.py::test_xdist_configure_node_passes_statusdb_connection_details PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_passes_after_temporary_test_failure_with_flaky_mark PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_without_options PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_if_flaky_mark_is_called_with_positional_argument PASSED
@@ -59,6 +71,8 @@ tests/test_pytest_rerunfailures.py::test_rerun_recreates_test_class_instance PAS
 tests/test_pytest_rerunfailures.py::test_rerun_recreates_instance_without_re_executing_scoped_fixtures PASSED
 tests/test_pytest_rerunfailures.py::test_execution_count_exposed PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_report PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_report_includes_teardown_from_each_attempt PASSED
+tests/test_pytest_rerunfailures.py::test_single_attempt_triggers_at_most_one_rerun PASSED
 tests/test_pytest_rerunfailures.py::test_pytest_runtest_logfinish_is_called PASSED
 tests/test_pytest_rerunfailures.py::test_only_rerun_flag[only_rerun_texts0-True] PASSED
 tests/test_pytest_rerunfailures.py::test_only_rerun_flag[only_rerun_texts1-True] PASSED
@@ -80,6 +94,10 @@ tests/test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts4-T
 tests/test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts5-False] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts6-True] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_flag[rerun_except_texts7-False] PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_exclude_path_prevents_reruns_in_directory PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_exclude_path_prevents_reruns_for_file PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_exclude_path_accepts_multiple_paths PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_exclude_path_prevents_reruns_for_doctest PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts0-rerun_except_texts0-True] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts1-rerun_except_texts1-True] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts2-rerun_except_texts2-False] PASSED
@@ -88,6 +106,8 @@ tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts5-rerun_except_texts5-False] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_and_only_rerun[only_rerun_texts6-rerun_except_texts6-False] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_passes_setup_errors PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_except_setup_error[ValueError-0] PASSED
+tests/test_pytest_rerunfailures.py::test_rerun_except_setup_error[TypeError-1] PASSED
 tests/test_pytest_rerunfailures.py::test_rerun_except_teardown_error_prevents_rerun PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[True-2_0] PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[False-0_0] PASSED
@@ -103,6 +123,23 @@ tests/test_pytest_rerunfailures.py::test_reruns_with_condition_marker[None-0] PA
 tests/test_pytest_rerunfailures.py::test_reruns_with_string_condition[sys.platform.startswith("non-exists") == False-2] PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_string_condition[os.getpid() != -1-2] PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_with_string_condition_with_global_var PASSED
+tests/test_pytest_rerunfailures.py::test_falsy_condition_preserves_higher_scope_teardown[class] PASSED
+tests/test_pytest_rerunfailures.py::test_falsy_condition_preserves_higher_scope_teardown[module] PASSED
+tests/test_pytest_rerunfailures.py::test_falsy_condition_preserves_higher_scope_teardown[session] PASSED
+tests/test_pytest_rerunfailures.py::test_falsy_non_bool_condition_preserves_teardown['os.getpid() == -1'] PASSED
+tests/test_pytest_rerunfailures.py::test_falsy_condition_preserves_teardown_of_earlier_module PASSED
+tests/test_pytest_rerunfailures.py::test_rerunnable_failure_tears_down_module_fixture_once[@pytest.mark.flaky(reruns=2, condition=True)-args0] PASSED
+tests/test_pytest_rerunfailures.py::test_rerunnable_failure_tears_down_module_fixture_once[-args1] PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_preserves_higher_scope_teardown[class] PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_preserves_higher_scope_teardown[module] PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_preserves_higher_scope_teardown[session] PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_preserves_teardown_of_earlier_module PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_reports_failing_higher_scope_teardown PASSED
+tests/test_pytest_rerunfailures.py::test_rerunnable_teardown_error_tears_down_module_fixture_once PASSED
+tests/test_pytest_rerunfailures.py::test_teardown_error_that_is_not_a_failure_does_not_stop_reruns[skip-3-0] PASSED
+tests/test_pytest_rerunfailures.py::test_teardown_error_that_is_not_a_failure_does_not_stop_reruns[xfail-0-3] PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_lets_a_higher_scope_teardown_exit PASSED
+tests/test_pytest_rerunfailures.py::test_terminal_teardown_error_reports_higher_scope_teardown_without_context PASSED
 tests/test_pytest_rerunfailures.py::test_only_rerun_flag_in_flaky_marker[AssertionError-None-True] PASSED
 tests/test_pytest_rerunfailures.py::test_only_rerun_flag_in_flaky_marker[AssertionError: ERR-None-True] PASSED
 tests/test_pytest_rerunfailures.py::test_only_rerun_flag_in_flaky_marker[marker_only_rerun2-None-True] PASSED
@@ -140,6 +177,11 @@ tests/test_pytest_rerunfailures.py::test_exception_match_rerun_except_in_dual_qu
 tests/test_pytest_rerunfailures.py::test_exception_match_only_rerun_in_dual_query PASSED
 tests/test_pytest_rerunfailures.py::test_force_reruns[] PASSED
 tests/test_pytest_rerunfailures.py::test_force_reruns[reruns=1] PASSED
+tests/test_pytest_rerunfailures.py::test_negative_reruns_does_not_skip_initial_execution[pytest_args0-None-] PASSED
+tests/test_pytest_rerunfailures.py::test_negative_reruns_does_not_skip_initial_execution[pytest_args1-reruns = -1-] PASSED
+tests/test_pytest_rerunfailures.py::test_negative_reruns_does_not_skip_initial_execution[pytest_args2-None-] PASSED
+tests/test_pytest_rerunfailures.py::test_negative_reruns_does_not_skip_initial_execution[pytest_args3-None-@pytest.mark.flaky(reruns=-1)] PASSED
+tests/test_pytest_rerunfailures.py::test_xdist_negative_marker_does_not_skip_initial_execution PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_mode_append_sums_marker_and_cli PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_mode_default_is_strict PASSED
 tests/test_pytest_rerunfailures.py::test_reruns_mode_append_without_marker_uses_global PASSED
@@ -152,16 +194,20 @@ tests/test_pytest_rerunfailures.py::test_max_suite_reruns_works_with_passing_tes
 tests/test_pytest_rerunfailures.py::test_max_suite_reruns_without_reruns_has_no_effect PASSED
 tests/test_pytest_rerunfailures.py::test_failing_subtests_are_rerun PASSED
 tests/test_pytest_rerunfailures.py::test_too_many_failing_subtests_are_failures PASSED
+tests/test_pytest_rerunfailures.py::test_failing_subtests_keep_higher_scope_fixture_alive[class] PASSED
+tests/test_pytest_rerunfailures.py::test_failing_subtests_keep_higher_scope_fixture_alive[module] PASSED
+tests/test_pytest_rerunfailures.py::test_failing_subtests_keep_higher_scope_fixture_alive[session] PASSED
+tests/test_pytest_rerunfailures.py::test_failing_subtests_keep_earlier_module_fixture_alive PASSED
+tests/test_pytest_rerunfailures.py::test_xfail_after_failing_subtest_restores_module_fixture PASSED
+tests/test_pytest_rerunfailures.py::test_too_many_failing_subtests_tear_down_module_fixture_once PASSED
+tests/test_pytest_rerunfailures.py::test_failing_subtests_are_rerun_with_xdist PASSED
+tests/test_pytest_rerunfailures.py::test_too_many_failing_subtests_are_failures_with_xdist PASSED
+tests/test_pytest_rerunfailures.py::test_xdist_subtest_cleanup_is_scoped_to_worker PASSED
+tests/test_pytest_rerunfailures.py::test_xdist_subtest_cleanup_is_scoped_to_item_index PASSED
 tests/test_pytest_rerunfailures.py::test_max_suite_reruns_caps_flaky_marker_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_max_suite_reruns_rejects_negative_without_reruns PASSED
 tests/test_pytest_rerunfailures.py::test_max_suite_reruns_preserves_fixture_teardown_when_exhausted PASSED
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:885
-  $(PYTHON_DIR)/vendor-packages/_pytest/config/__init__.py:885: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; xdist
-    self.import_plugin(import_spec, consider_entry_points=True)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-======== 149 passed, 1 warning ========
+======== 201 passed ========
   py$(PYV): OK
   congratulations :)
