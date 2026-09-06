@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/pytest-benchmark pytest_benchmark
+#   $WS_TOOLS/python-integrate-project -d python/pytest-benchmark-39 pytest_benchmark
 #
 
 BUILD_STYLE = pyproject
@@ -19,26 +19,16 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_benchmark
-HUMAN_VERSION =			5.3.0
+HUMAN_VERSION =			5.2.3
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		A \`\`pytest\`\` fixture for benchmarking code. It will group the tests into rounds that are calibrated to the chosen timer.
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:358444d4e89be901ee2b6404fb043ac3d7684002ad7f3563cc153fca6339c965
+	sha256:deb7317998a23c650fd4ff76e1230066a76cb45dcece0aca5607143c619e7779
 COMPONENT_LICENSE =		BSD-2-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
-#
-# Following dependency loops were detected (where 'A --> B' means 'A needs B to
-# run tests', and 'A ==> B' means 'A needs B for build and/or run'):
-#
-# pytest-benchmark --> elasticsearch ==> elastic-transport --> aiohttp --> trustme ==> cryptography --> pytest-benchmark
-#
-# To break loops we need to allow this component to integrate without testing in
-# a case the required packages are not available yet (bootstrap).
-#
-PYTHON_TEST_BOOTSTRAP = yes
-
-# Python 3.9 is not supported by pytest-benchmark >= 5.3.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# pytest-benchmark >= 5.3.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
@@ -67,7 +57,7 @@ COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} benchmark:/,/^$$/d'"
 COMPONENT_TEST_TRANSFORMS += "-e '/^-\{1,\} cProfile/,/^$$/d'"
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/py-cpuinfo2
+REQUIRED_PACKAGES.python += library/python/py-cpuinfo
 REQUIRED_PACKAGES.python += library/python/pytest
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += runtime/python
