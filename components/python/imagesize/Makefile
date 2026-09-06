@@ -19,11 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		imagesize
-HUMAN_VERSION =			2.0.0
+HUMAN_VERSION =			2.0.1
 COMPONENT_SUMMARY =		Get image size from headers (BMP/PNG/JPEG/JPEG2000/GIF/TIFF/SVG/Netpbm/WebP/AVIF/HEIC/HEIF)
-COMPONENT_PROJECT_URL =		https://github.com/shibukawa/imagesize_py
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:8e8358c4a05c304f1fccf7ff96f036e7243a189e9e42e90851993c558cfe9ee3
+	sha256:b2ba6a4dea487a7ebcd53248d3476aca449d30db12a2dde5e0c5ca9624fd77e5
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE.rst
 
