@@ -4,7 +4,7 @@ cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 388 items
+collecting ... collected 421 items
 
 tests/distance/test_DamerauLevenshtein.py::test_distance[test-text-1] PASSED
 tests/distance/test_DamerauLevenshtein.py::test_distance[test-tset-1] PASSED
@@ -33,6 +33,7 @@ tests/distance/test_Indel.py::test_Editops PASSED
 tests/distance/test_Indel.py::testCaseInsensitive PASSED
 tests/distance/test_Jaro.py::test_hash_special_case PASSED
 tests/distance/test_Jaro.py::test_edge_case_lengths PASSED
+tests/distance/test_Jaro.py::test_score_cutoff PASSED
 tests/distance/test_Jaro.py::testCaseInsensitive PASSED
 tests/distance/test_JaroWinkler.py::test_hash_special_case PASSED
 tests/distance/test_JaroWinkler.py::test_large_prefix_weight PASSED
@@ -40,6 +41,7 @@ tests/distance/test_JaroWinkler.py::test_invalid_prefix_weight PASSED
 tests/distance/test_JaroWinkler.py::test_edge_case_lengths PASSED
 tests/distance/test_JaroWinkler.py::testCaseInsensitive PASSED
 tests/distance/test_LCSseq.py::test_basic PASSED
+tests/distance/test_LCSseq.py::test_empty_string PASSED
 tests/distance/test_LCSseq.py::test_Editops PASSED
 tests/distance/test_LCSseq.py::testCaseInsensitive PASSED
 tests/distance/test_Levenshtein.py::test_empty_string PASSED
@@ -152,11 +154,15 @@ tests/distance/test_init.py::test_editops_del_slice[rapidfuzz.distance._initiali
 tests/distance/test_init.py::test_editops_del_slice[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_editops_inversion[rapidfuzz.distance._initialize_py] PASSED
 tests/distance/test_init.py::test_editops_inversion[rapidfuzz.distance._initialize_cpp] PASSED
+tests/distance/test_init.py::test_editops_access_returns_independent_copies[rapidfuzz.distance._initialize_py] PASSED
+tests/distance/test_init.py::test_editops_access_returns_independent_copies[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_opcodes_comparison PASSED
 tests/distance/test_init.py::test_opcode_py_get_index[rapidfuzz.distance._initialize_py] PASSED
 tests/distance/test_init.py::test_opcode_py_get_index[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_opcode_inversion[rapidfuzz.distance._initialize_py] PASSED
 tests/distance/test_init.py::test_opcode_inversion[rapidfuzz.distance._initialize_cpp] PASSED
+tests/distance/test_init.py::test_opcodes_access_returns_independent_copies[rapidfuzz.distance._initialize_py] PASSED
+tests/distance/test_init.py::test_opcodes_access_returns_independent_copies[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_opcodes_empty[rapidfuzz.distance._initialize_py] PASSED
 tests/distance/test_init.py::test_opcodes_empty[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_editops_empty[rapidfuzz.distance._initialize_py] PASSED
@@ -167,6 +173,12 @@ tests/distance/test_init.py::test_merge_adjacent_blocks[rapidfuzz.distance._init
 tests/distance/test_init.py::test_empty_matching_blocks[rapidfuzz.distance._initialize_py] PASSED
 tests/distance/test_init.py::test_empty_matching_blocks[rapidfuzz.distance._initialize_cpp] PASSED
 tests/distance/test_init.py::test_editops_reversible PASSED
+tests/distance/test_init.py::test_editops_remove_subsequence_does_not_modify_source[subsequence_list0-expected0-rapidfuzz.distance._initialize_py] PASSED
+tests/distance/test_init.py::test_editops_remove_subsequence_does_not_modify_source[subsequence_list0-expected0-rapidfuzz.distance._initialize_cpp] PASSED
+tests/distance/test_init.py::test_editops_remove_subsequence_does_not_modify_source[subsequence_list1-expected1-rapidfuzz.distance._initialize_py] PASSED
+tests/distance/test_init.py::test_editops_remove_subsequence_does_not_modify_source[subsequence_list1-expected1-rapidfuzz.distance._initialize_cpp] PASSED
+tests/distance/test_init.py::test_remove_non_subsequence[rapidfuzz.distance._initialize_py] PASSED
+tests/distance/test_init.py::test_remove_non_subsequence[rapidfuzz.distance._initialize_cpp] PASSED
 tests/test_fuzz.py::test_no_processor PASSED
 tests/test_fuzz.py::test_partial_ratio PASSED
 tests/test_fuzz.py::test_token_sort_ratio PASSED
@@ -188,6 +200,27 @@ tests/test_fuzz.py::test_issue90 PASSED
 tests/test_fuzz.py::test_issue138 PASSED
 tests/test_fuzz.py::test_partial_ratio_alignment PASSED
 tests/test_fuzz.py::test_issue196 PASSED
+tests/test_fuzz.py::test_wratio_score_cutoff PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_sort_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_sort_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_set_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_set_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[token_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_sort_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_sort_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_set_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_set_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_ratio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[partial_token_ratio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[WRatio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[WRatio-rapidfuzz.fuzz_py] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[QRatio-rapidfuzz.fuzz_cpp] PASSED
+tests/test_fuzz.py::test_score_cutoff_above_100[QRatio-rapidfuzz.fuzz_py] PASSED
 tests/test_fuzz.py::test_issue231 PASSED
 tests/test_fuzz.py::test_empty_string PASSED
 tests/test_fuzz.py::test_invalid_input[ratio] PASSED
@@ -396,4 +429,4 @@ tests/test_process.py::test_cpdist_integral_dtype_rounding SKIPPED (...)
 tests/test_utils.py::test_fullProcess PASSED
 
 =========================== short test summary info ============================
-======== 369 passed, 19 skipped ========
+======== 402 passed, 19 skipped ========
