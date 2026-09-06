@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/jaraco.compat jaraco_compat
+#   $WS_TOOLS/python-integrate-project -d python/jaraco.compat-39 jaraco_compat
 #
 
 BUILD_STYLE = pyproject
@@ -19,20 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		jaraco_compat
-HUMAN_VERSION =			4.4.0
+HUMAN_VERSION =			4.3.1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Modules providing forward compatibility across Python versions
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:c0e3d11a4267a3ac98c58f3283eebd21472ec3e98facccc93263ceed13c9617c
+	sha256:8be915cbf8f696edf75377796e552e0c4e765226dde48ae15d9fb648161c39c8
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by jaraco.compat >= 4.4.0
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# jaraco.compat >= 4.4.0 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES.python += library/python/coherent-licensed
 REQUIRED_PACKAGES.python += library/python/setuptools
 REQUIRED_PACKAGES.python += library/python/setuptools-scm
 REQUIRED_PACKAGES.python += runtime/python
