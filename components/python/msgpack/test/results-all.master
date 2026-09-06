@@ -3,7 +3,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 129 items
+collecting ... collected 138 items
 
 test/test_buffer.py::test_unpack_buffer PASSED
 test/test_buffer.py::test_unpack_bytearray PASSED
@@ -47,6 +47,7 @@ test/test_format.py::testRaw PASSED
 test/test_format.py::testArray PASSED
 test/test_format.py::testMap PASSED
 test/test_limits.py::test_integer PASSED
+test/test_limits.py::test_single_float PASSED
 test/test_limits.py::test_array_header PASSED
 test/test_limits.py::test_map_header PASSED
 test/test_limits.py::test_max_str_len PASSED
@@ -71,6 +72,7 @@ test/test_memoryview.py::test_bin32_from_byte PASSED
 test/test_memoryview.py::test_bin32_from_float PASSED
 test/test_memoryview.py::test_multidim_memoryview PASSED
 test/test_memoryview.py::test_unpack_noncontiguous_memoryview PASSED
+test/test_memoryview.py::test_unpack_noncontiguous_memoryview_extra_data PASSED
 test/test_newspec.py::test_str8 PASSED
 test/test_newspec.py::test_bin8 PASSED
 test/test_newspec.py::test_bin16 PASSED
@@ -99,6 +101,7 @@ test/test_pack.py::testMapSize PASSED
 test/test_pack.py::test_odict PASSED
 test/test_pack.py::test_pairlist PASSED
 test/test_pack.py::test_get_buffer PASSED
+test/test_pack.py::test_buf_size_is_converted_once PASSED
 test/test_read_size.py::test_read_array_header PASSED
 test/test_read_size.py::test_read_map_header PASSED
 test/test_read_size.py::test_incorrect_type_array PASSED
@@ -120,19 +123,31 @@ test/test_stricttype.py::test_tuple_ext PASSED
 test/test_subtype.py::test_types PASSED
 test/test_timestamp.py::test_timestamp PASSED
 test/test_timestamp.py::test_unpack_timestamp PASSED
+test/test_timestamp.py::test_unpack_timestamp_out_of_range_nanoseconds PASSED
 test/test_timestamp.py::test_timestamp_from PASSED
 test/test_timestamp.py::test_timestamp_to PASSED
 test/test_timestamp.py::test_timestamp_datetime PASSED
+test/test_timestamp.py::test_from_datetime_far_future_precision PASSED
 test/test_timestamp.py::test_unpack_datetime PASSED
 test/test_timestamp.py::test_pack_unpack_before_epoch PASSED
 test/test_timestamp.py::test_pack_datetime PASSED
 test/test_timestamp.py::test_issue451 PASSED
 test/test_timestamp.py::test_pack_datetime_without_tzinfo PASSED
+test/test_timestamp.py::test_too_large_timestamp PASSED
 test/test_unpack.py::test_unpack_array_header_from_file PASSED
 test/test_unpack.py::test_unpacker_hook_refcnt PASSED
 test/test_unpack.py::test_unpacker_ext_hook PASSED
 test/test_unpack.py::test_unpacker_tell PASSED
 test/test_unpack.py::test_unpacker_tell_read_bytes PASSED
 test/test_unpack.py::test_unpacker_reinit_clears_partial_state PASSED
+test/test_unpack.py::test_unpacker_reentrant_feed PASSED
+test/test_unpack.py::test_unpackb_raises_extra_data_with_trailing_bytes PASSED
+test/test_unpack.py::test_unpack_raises_extra_data_on_stream_with_trailing_bytes PASSED
 
-======== 129 passed ========
+=============================== warnings summary ===============================
+test/test_limits.py:174
+  $(@D)/test/test_limits.py:174: PytestUnknownMarkWarning: Unknown pytest.mark.thread_unsafe - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.thread_unsafe
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======== 138 passed, 1 warning ========
