@@ -2,7 +2,8 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 rootdir: $(@D)
-collecting ... collected 82 items
+configfile: pyproject.toml
+collecting ... collected 120 items
 
 test/test_get.py::GetTest::test_bigendian_tiff PASSED
 test/test_get.py::GetTest::test_bigendian_tiff_bytes PASSED
@@ -28,6 +29,7 @@ test/test_get.py::GetTest::test_load_jpeg PASSED
 test/test_get.py::GetTest::test_load_jpeg2000 PASSED
 test/test_get.py::GetTest::test_load_jpeg2000_bytes PASSED
 test/test_get.py::GetTest::test_load_jpeg2000_path PASSED
+test/test_get.py::GetTest::test_load_jpeg2000_with_boxes_before_header PASSED
 test/test_get.py::GetTest::test_load_jpeg_bytes PASSED
 test/test_get.py::GetTest::test_load_jpeg_path PASSED
 test/test_get.py::GetTest::test_load_jpeg_with_exif_rotation_default PASSED
@@ -39,8 +41,12 @@ test/test_get.py::GetTest::test_load_png_path PASSED
 test/test_get.py::GetTest::test_load_svg PASSED
 test/test_get.py::GetTest::test_load_svg_bytes PASSED
 test/test_get.py::GetTest::test_load_svg_float_length PASSED
+test/test_get.py::GetTest::test_load_svg_ignores_stroke_width PASSED
+test/test_get.py::GetTest::test_load_svg_mismatched_quotes PASSED
 test/test_get.py::GetTest::test_load_svg_path PASSED
 test/test_get.py::GetTest::test_load_svg_pt PASSED
+test/test_get.py::GetTest::test_load_svg_single_quoted_pt PASSED
+test/test_get.py::GetTest::test_load_svg_single_quoted_size PASSED
 test/test_get.py::GetTest::test_load_tiff_with_exif_rotation_default PASSED
 test/test_get.py::GetTest::test_load_tiff_with_exif_rotation_disabled PASSED
 test/test_get.py::GetTest::test_load_webp_vp8x PASSED
@@ -50,6 +56,11 @@ test/test_get_filelike.py::test_get_file_object PASSED
 test/test_get_filelike.py::test_get_wrapped_filelike PASSED
 test/test_get_filelike.py::test_invalid_filelike_returns_minus_one PASSED
 test/test_get_filelike.py::test_invalid_filelike_dpi_returns_minus_one PASSED
+test/test_get_filelike.py::GetFileLikeTest::test_get_file_object PASSED
+test/test_get_filelike.py::GetFileLikeTest::test_get_filelike PASSED
+test/test_get_filelike.py::GetFileLikeTest::test_get_wrapped_filelike PASSED
+test/test_get_filelike.py::GetFileLikeTest::test_invalid_filelike_dpi_returns_minus_one PASSED
+test/test_get_filelike.py::GetFileLikeTest::test_invalid_filelike_returns_minus_one PASSED
 test/test_get_info.py::GetInfoTest::test_get_info_applies_avif_rotation_by_default PASSED
 test/test_get_info.py::GetInfoTest::test_get_info_applies_exif_rotation_by_default PASSED
 test/test_get_info.py::GetInfoTest::test_get_info_applies_heic_rotation_by_default PASSED
@@ -65,6 +76,23 @@ test/test_get_info.py::GetInfoTest::test_get_info_selective_fields PASSED
 test/test_get_info.py::GetInfoTest::test_legacy_aliases PASSED
 test/test_get_info.py::GetInfoTest::test_shortcuts_invalid_input PASSED
 test/test_get_url.py::test_get_http_url PASSED
+test/test_get_url.py::test_http_range_skips_large_heif_payload PASSED
+test/test_get_url.py::test_http_range_ignored_falls_back_to_full_response PASSED
+test/test_get_url.py::test_invalid_content_range_retries_with_full_get PASSED
+test/test_get_url.py::test_changed_range_validator_retries_with_full_get PASSED
+test/test_get_url.py::test_jpeg_metadata_orders_stay_in_one_range_block PASSED
+test/test_get_url.py::test_http_error_preserves_sentinel_behavior PASSED
+test/test_get_url.py::test_small_header_format_uses_initial_range_only PASSED
+test/test_get_url.py::test_initial_range_expands_when_header_metadata_is_larger PASSED
+test/test_get_url.py::GetUrlTest::test_changed_range_validator_retries_with_full_get PASSED
+test/test_get_url.py::GetUrlTest::test_get_http_url PASSED
+test/test_get_url.py::GetUrlTest::test_http_error_preserves_sentinel_behavior PASSED
+test/test_get_url.py::GetUrlTest::test_http_range_ignored_falls_back_to_full_response PASSED
+test/test_get_url.py::GetUrlTest::test_http_range_skips_large_heif_payload PASSED
+test/test_get_url.py::GetUrlTest::test_initial_range_expands_when_header_metadata_is_larger PASSED
+test/test_get_url.py::GetUrlTest::test_invalid_content_range_retries_with_full_get PASSED
+test/test_get_url.py::GetUrlTest::test_jpeg_metadata_orders_stay_in_one_range_block PASSED
+test/test_get_url.py::GetUrlTest::test_small_header_format_uses_initial_range_only PASSED
 test/test_getdpi.py::GetDPITest::test_bigendian_tiff PASSED
 test/test_getdpi.py::GetDPITest::test_bigendian_tiff_bytes PASSED
 test/test_getdpi.py::GetDPITest::test_bigendian_tiff_path PASSED
@@ -86,5 +114,21 @@ test/test_getdpi.py::GetDPITest::test_png_path PASSED
 test/test_getdpi.py::GetDPITest::test_svg PASSED
 test/test_getdpi.py::GetDPITest::test_svg_bytes PASSED
 test/test_getdpi.py::GetDPITest::test_svg_path PASSED
+test/test_performance.py::PerformanceRegressionTest::test_already_read_header_is_reused_by_format_parsers 
+test/test_performance.py::PerformanceRegressionTest::test_already_read_header_is_reused_by_format_parsers PASSED
+test/test_performance.py::PerformanceRegressionTest::test_get_without_rotation_skips_heif_exif_item PASSED
+test/test_performance.py::PerformanceRegressionTest::test_heif_exif_declaration_order_is_independent 
+test/test_performance.py::PerformanceRegressionTest::test_heif_exif_declaration_order_is_independent PASSED
+test/test_performance.py::PerformanceRegressionTest::test_heif_extended_and_zero_sized_boxes PASSED
+test/test_performance.py::PerformanceRegressionTest::test_heif_property_order_is_independent 
+test/test_performance.py::PerformanceRegressionTest::test_heif_property_order_is_independent PASSED
+test/test_performance.py::PerformanceRegressionTest::test_heif_top_level_boxes_are_traversed_once PASSED
+test/test_performance.py::PerformanceRegressionTest::test_invalid_iso_box_boundary_is_rejected PASSED
+test/test_performance.py::PerformanceRegressionTest::test_jp2_header_and_resolution_orders_share_one_scan 
+test/test_performance.py::PerformanceRegressionTest::test_jp2_header_and_resolution_orders_share_one_scan PASSED
+test/test_performance.py::PerformanceRegressionTest::test_jpeg_exif_and_sof_orders_use_one_forward_scan 
+test/test_performance.py::PerformanceRegressionTest::test_jpeg_exif_and_sof_orders_use_one_forward_scan PASSED
+test/test_performance.py::PerformanceRegressionTest::test_large_heif_mdat_is_skipped_and_metadata_is_parsed_once PASSED
+test/test_performance.py::PerformanceRegressionTest::test_large_png_only_reads_header PASSED
 
-======== 82 passed ========
+======== 120 passed, 12 subtests passed ========
