@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 562 items
+collecting ... collected 566 items
 
 tests/py_info/test_py_info.py::test_current_as_json PASSED
 tests/py_info/test_py_info.py::test_bad_exe_py_info_raise PASSED
@@ -86,6 +86,8 @@ tests/py_info/test_py_info.py::test_py_info_to_dict_includes_sysconfig_platform 
 tests/py_info/test_py_info.py::test_py_info_json_round_trip PASSED
 tests/py_info/test_py_info.py::test_select_most_likely_prefers_machine_match[x86_64-over-aarch64] PASSED
 tests/py_info/test_py_info.py::test_select_most_likely_prefers_machine_match[arm64-over-x86_64] PASSED
+tests/py_info/test_py_info.py::test_py_info_system_exe[resolved] PASSED
+tests/py_info/test_py_info.py::test_py_info_system_exe[unresolved falls back to executable] PASSED
 tests/py_info/test_py_info_exe_based_of.py::test_discover_empty_folder PASSED
 tests/py_info/test_py_info_exe_based_of.py::test_discover_ok[CPython-3.14.7-64-.-] PASSED
 tests/py_info/test_py_info_exe_based_of.py::test_discover_ok[CPython-3.14.7--.-] PASSED
@@ -276,6 +278,8 @@ tests/test_py_info_collect.py::test_system_executable_undetermined[base-executab
 tests/test_py_info_collect.py::test_system_executable_undetermined[missing-base-before-311] PASSED
 tests/test_py_info_collect.py::test_system_executable_undetermined[missing-base-no-candidates] PASSED
 tests/test_py_info_collect.py::test_system_executable_from_existing_base PASSED
+tests/test_py_info_collect.py::test_system_executable_prefers_exact_version[distinct] PASSED
+tests/test_py_info_collect.py::test_system_executable_prefers_exact_version[alias] PASSED
 tests/test_py_info_collect.py::test_system_executable_versioned_fallback PASSED
 tests/test_py_info_collect.py::test_system_executable_pypy_fallback PASSED
 tests/test_py_info_collect.py::test_tcl_tk_libs_none_without_env PASSED
@@ -569,16 +573,7 @@ tests/windows/test_windows_pep514.py::test_pep514_parse_functions PASSED
 tests/windows/test_windows_pep514.py::test_pep514 SKIPPED (path join...)
 tests/windows/test_windows_pep514.py::test_pep514_run SKIPPED (path ...)
 
-=============================== warnings summary ===============================
-../../../../../../../..$(PYTHON_DIR)/vendor-packages/_pytest/python.py:124
-  $(PYTHON_DIR)/vendor-packages/_pytest/python.py:124: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
-  Test: tests/py_info/test_py_info.py::test_satisfy_py_info, argvalues type: chain
-  Please convert to a list or tuple.
-  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
-    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/.tox/junit.py$(PYV).xml -
-======== 547 passed, 15 skipped, 1 warning ========
+======== 551 passed, 15 skipped ========
   py$(PYV): OK
   congratulations :)
