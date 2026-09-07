@@ -2,11 +2,12 @@
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(PYTHON)
 cachedir: .pytest_cache
 benchmark: 5.2.3 (defaults: timer=time.perf_counter disable_gc=False min_rounds=5 min_time=0.000005 max_time=1.0 calibration_precision=10 warmup=False warmup_iterations=100000)
-OpenSSL: OpenSSL 3.5.7 9 Jun 2026
+OpenSSL: OpenSSL 3.5.8 25 Aug 2026
 FIPS Enabled: False
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 4472 items
+testpaths: tests
+collecting ... collected 4681 items
 
 tests/bench/test_aead.py::test_chacha20poly1305_encrypt PASSED
 tests/bench/test_aead.py::test_chacha20poly1305_decrypt PASSED
@@ -107,7 +108,8 @@ tests/hazmat/asn1/test_serialization.py::TestBitString::test_ok_bitstring PASSED
 tests/hazmat/asn1/test_serialization.py::TestBitString::test_fail_bitstring PASSED
 tests/hazmat/asn1/test_serialization.py::TestTLV::test_ok_decode_tlv PASSED
 tests/hazmat/asn1/test_serialization.py::TestTLV::test_ok_tlv_parse_method PASSED
-tests/hazmat/asn1/test_serialization.py::TestTLV::test_fail_encode_tlv PASSED
+tests/hazmat/asn1/test_serialization.py::TestTLV::test_ok_encode_tlv PASSED
+tests/hazmat/asn1/test_serialization.py::TestTLV::test_ok_encode_tlv_roundtrip_from_value PASSED
 tests/hazmat/asn1/test_serialization.py::TestNull::test_ok_null PASSED
 tests/hazmat/asn1/test_serialization.py::TestSequence::test_ok_sequence_single_field PASSED
 tests/hazmat/asn1/test_serialization.py::TestSequence::test_ok_sequence_multiple_fields PASSED
@@ -145,6 +147,8 @@ tests/hazmat/asn1/test_serialization.py::TestSet::test_ok_set_multiple_fields PA
 tests/hazmat/asn1/test_serialization.py::TestSet::test_fail_set_multiple_fields_wrong_order PASSED
 tests/hazmat/asn1/test_serialization.py::TestSet::test_ok_nested_set PASSED
 tests/hazmat/asn1/test_serialization.py::TestSet::test_ok_set_multiple_types PASSED
+tests/hazmat/asn1/test_serialization.py::TestSetOf::test_ok_encode_setof PASSED
+tests/hazmat/asn1/test_serialization.py::TestSetOf::test_ok_encode_empty_setof PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_sequenceof_size_restriction PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_sequenceof_size_restriction_no_max PASSED
 tests/hazmat/asn1/test_serialization.py::TestSize::test_ok_sequenceof_size_restriction_exact PASSED
@@ -200,6 +204,11 @@ tests/hazmat/asn1/test_serialization.py::TestX509Types::test_optional_certificat
 tests/hazmat/asn1/test_serialization.py::TestX509Types::test_certificate_choice PASSED
 tests/hazmat/asn1/test_serialization.py::TestX509Types::test_decode_invalid PASSED
 tests/hazmat/asn1/test_serialization.py::TestX509Types::test_encode_wrong_type PASSED
+tests/hazmat/asn1/test_serialization.py::TestName::test_name PASSED
+tests/hazmat/asn1/test_serialization.py::TestName::test_fields PASSED
+tests/hazmat/asn1/test_serialization.py::TestName::test_name_implicit PASSED
+tests/hazmat/asn1/test_serialization.py::TestName::test_decode_invalid PASSED
+tests/hazmat/asn1/test_serialization.py::TestName::test_encode_wrong_type PASSED
 tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_oid_value_set PASSED
 tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_int_value_set PASSED
 tests/hazmat/asn1/test_serialization.py::TestValueSet::test_ok_top_level_value_set PASSED
@@ -859,6 +868,7 @@ tests/hazmat/primitives/test_dh.py::TestDH::test_symmetric_key_padding PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_bad_exchange[vector0] PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_bad_exchange[vector1] PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_load_256bit_key_from_pkcs8 PASSED
+tests/hazmat/primitives/test_dh.py::TestDH::test_load_small_modulus_public_key PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector0] SKIPPED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector1] PASSED
 tests/hazmat/primitives/test_dh.py::TestDH::test_dh_vectors[vector2] PASSED
@@ -904,16 +914,17 @@ tests/hazmat/primitives/test_dh.py::TestDHPublicKeySerialization::test_public_by
 tests/hazmat/primitives/test_dh.py::TestDHPublicKeySerialization::test_public_bytes_values[asymmetric/DH/dhpub_rfc5114_2.der-load_der_public_key-asymmetric/DH/dhkey_rfc5114_2.txt] PASSED
 tests/hazmat/primitives/test_dh.py::TestDHPublicKeySerialization::test_public_bytes_invalid_encoding PASSED
 tests/hazmat/primitives/test_dh.py::TestDHPublicKeySerialization::test_public_bytes_pkcs1_unsupported PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes[encoding0-from_pem_parameters] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes[encoding1-from_der_parameters] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp.pem-from_pem_parameters-encoding0-False] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp.der-from_der_parameters-encoding1-False] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp_rfc5114_2.pem-from_pem_parameters-encoding2-True] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp_rfc5114_2.der-from_der_parameters-encoding3-True] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp.pem-from_pem_parameters-asymmetric/DH/dhkey.txt] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp.der-from_der_parameters-asymmetric/DH/dhkey.txt] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp_rfc5114_2.pem-from_pem_parameters-asymmetric/DH/dhkey_rfc5114_2.txt] PASSED
-tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp_rfc5114_2.der-from_der_parameters-asymmetric/DH/dhkey_rfc5114_2.txt] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes[encoding0] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes[encoding1] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp.pem-encoding0-False] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp.der-encoding1-False] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp_rfc5114_2.pem-encoding2-True] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_parameter_bytes_match[asymmetric/DH/dhp_rfc5114_2.der-encoding3-True] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp.pem-encoding0-asymmetric/DH/dhkey.txt] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp.der-encoding1-asymmetric/DH/dhkey.txt] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp_rfc5114_2.pem-encoding2-asymmetric/DH/dhkey_rfc5114_2.txt] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_values[asymmetric/DH/dhp_rfc5114_2.der-encoding3-asymmetric/DH/dhkey_rfc5114_2.txt] PASSED
+tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_load_pkcs3_with_private_value_length PASSED
 tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_rejects_invalid[encoding0-fmt0] PASSED
 tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_rejects_invalid[encoding1-fmt1] PASSED
 tests/hazmat/primitives/test_dh.py::TestDHParameterSerialization::test_public_bytes_rejects_invalid[encoding2-fmt2] PASSED
@@ -1048,6 +1059,7 @@ tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_en
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_encrypted_pem[fmt5-longerpassword] PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_encrypted_pem[fmt6-!*$&(@#$*&($T@%_somesymbols] PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_encrypted_pem[fmt7-\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01\x01] PASSED
+tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_load_pkcs8_invalid_dsa_parameters PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_rejects_invalid[encoding0-fmt0] PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_rejects_invalid[encoding1-fmt1] PASSED
 tests/hazmat/primitives/test_dsa.py::TestDSASerialization::test_private_bytes_rejects_invalid[encoding2-fmt2] PASSED
@@ -1345,10 +1357,32 @@ tests/hazmat/primitives/test_hashes.py::TestHashHash::test_hash_algorithm_instan
 tests/hazmat/primitives/test_hashes.py::TestHashHash::test_hash_reject_unicode PASSED
 tests/hazmat/primitives/test_hashes.py::TestHashHash::test_hash_unsupported_algorithm PASSED
 tests/hazmat/primitives/test_hashes.py::TestHashHash::test_hash_xof PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA1] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA512_224] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA512_256] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA224] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA256] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA384] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA512] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA3_224] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA3_256] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA3_384] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SHA3_512] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[MD5] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq[SM3] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_ne_different_algorithm PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq_digest_size[SHAKE128-32] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq_digest_size[SHAKE256-32] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq_digest_size[BLAKE2b-64] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_eq_digest_size[BLAKE2s-32] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_ne_different_digest_size[SHAKE128] PASSED
+tests/hazmat/primitives/test_hashes.py::TestHashAlgorithmEquality::test_ne_different_digest_size[SHAKE256] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_type[SHAKE128] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_type[SHAKE256] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_size[SHAKE128] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_invalid_digest_size[SHAKE256] PASSED
+tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_xof[SHAKE128] PASSED
+tests/hazmat/primitives/test_hashes.py::TestSHAKE::test_xof[SHAKE256] PASSED
 tests/hazmat/primitives/test_hashes.py::TestSM3::test_sm3 PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_overflow_protection_enormous_digest_size PASSED
 tests/hazmat/primitives/test_hkdf.py::TestHKDF::test_length_limit PASSED
@@ -1747,11 +1781,13 @@ tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrap::test_wrap_invalid_key_l
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrap::test_unwrap_invalid_key_length PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrap::test_wrap_invalid_key_to_wrap_length PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrap::test_unwrap_invalid_wrapped_key_length PASSED
+tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrap::test_wrap_unwrap_large_roundtrip PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_wrap PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_wrap_additional_vectors PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_unwrap PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_unwrap_additional_vectors PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_unwrap_invalid_wrapped_key_length PASSED
+tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_wrap_unwrap_large_roundtrip PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_wrap_empty_key_to_wrap PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_wrap_invalid_key_length PASSED
 tests/hazmat/primitives/test_keywrap.py::TestAESKeyWrapWithPadding::test_unwrap_invalid_key_length PASSED
@@ -1789,6 +1825,29 @@ tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_87 PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-44] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-65] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_kat_vectors_external_mu[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[-ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[-ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[-ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[a context-ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[a context-ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_matches_reference[a context-ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_kat[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_kat[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_kat[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_context_too_long[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_context_too_long[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_context_too_long[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_rejects_private_key[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_rejects_private_key[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_rejects_private_key[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_invalid_key_type PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_already_finalized[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_already_finalized[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_already_finalized[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_copy[ML-DSA-44] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_copy[ML-DSA-65] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_copy[ML-DSA-87] PASSED
+tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_mu_hasher_unsupported SKIPPED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-44] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-65] PASSED
 tests/hazmat/primitives/test_mldsa.py::TestMLDSA::test_private_bytes_raw_round_trip[ML-DSA-87] PASSED
@@ -2151,6 +2210,7 @@ tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_not_bytes_pem PASS
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_pem PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_der[pkcs7/amazon-roots.der] PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_der[pkcs7/amazon-roots.p7b] PASSED
+tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_der_unknown_content_type PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_unsupported_type PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Loading::test_load_pkcs7_empty_certificates PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7SignatureBuilder::test_invalid_data PASSED
@@ -2239,6 +2299,8 @@ tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_smime_decrypt_unsu
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_smime_decrypt_unsupported_content_encryption_algorithm PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_smime_decrypt_not_enveloped PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_smime_decrypt_smime_not_encrypted PASSED
+tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_decrypt_encrypted_key_is_not_an_oracle PASSED
+tests/hazmat/primitives/test_pkcs7.py::TestPKCS7Decrypt::test_decrypt_key_error_is_not_swallowed PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7SerializeCerts::test_roundtrip[encoding0-load_pem_pkcs7_certificates] PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7SerializeCerts::test_roundtrip[encoding1-load_der_pkcs7_certificates] PASSED
 tests/hazmat/primitives/test_pkcs7.py::TestPKCS7SerializeCerts::test_ordering PASSED
@@ -2358,17 +2420,38 @@ tests/hazmat/primitives/test_rsa.py::TestRSAPKCS1Verification::test_rsa_pkcs1v15
 tests/hazmat/primitives/test_rsa.py::TestRSAPKCS1Verification::test_rsa_pkcs1v15_verify_sha256 PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPKCS1Verification::test_rsa_pkcs1v15_verify_sha384 PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSAPKCS1Verification::test_rsa_pkcs1v15_verify_sha512 PASSED
+tests/hazmat/primitives/test_rsa.py::TestPKCS1v15::test_eq PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_calculate_max_pss_salt_length PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_invalid_salt_length_not_integer PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_invalid_salt_length_negative_integer PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_valid_pss_parameters PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_valid_pss_parameters_maximum PASSED
 tests/hazmat/primitives/test_rsa.py::TestPSS::test_mgf_property PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_eq[1] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_eq[32] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_eq[salt_length2] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_eq[salt_length3] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_eq[salt_length4] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_salt_length[1] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_salt_length[salt_length1] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_salt_length[salt_length2] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_salt_length[salt_length3] PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_sentinel_salt_lengths PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne_different_mgf PASSED
+tests/hazmat/primitives/test_rsa.py::TestPSS::test_ne PASSED
 tests/hazmat/primitives/test_rsa.py::TestMGF1::test_invalid_hash_algorithm PASSED
 tests/hazmat/primitives/test_rsa.py::TestMGF1::test_valid_mgf1_parameters PASSED
+tests/hazmat/primitives/test_rsa.py::TestMGF1::test_eq PASSED
 tests/hazmat/primitives/test_rsa.py::TestOAEP::test_invalid_algorithm PASSED
 tests/hazmat/primitives/test_rsa.py::TestOAEP::test_algorithm_property PASSED
 tests/hazmat/primitives/test_rsa.py::TestOAEP::test_mgf_property PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_eq[None] PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_eq[] PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_eq[label] PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_ne_different_mgf PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_ne_different_algorithm PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_ne_different_label PASSED
+tests/hazmat/primitives/test_rsa.py::TestOAEP::test_ne PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSADecryption::test_decrypt_pkcs1v15_vectors PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSADecryption::test_unsupported_padding PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSADecryption::test_decrypt_invalid_decrypt SKIPPED
@@ -2464,6 +2547,8 @@ tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_public_numbers
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_public_numbers_argument_values[1-15] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_public_numbers_argument_values[17-15] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_public_numbers_argument_values[14-15] PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_negative_public_numbers_argument_values[-1-15] PASSED
+tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_negative_public_numbers_argument_values[7--1] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_private_numbers_argument_values[3-11-3-1-3-2-7-2] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_private_numbers_argument_values[3-11-3-1-3-2-7-35] PASSED
 tests/hazmat/primitives/test_rsa.py::TestRSANumbers::test_invalid_private_numbers_argument_values[37-11-3-1-3-2-7-33] PASSED
@@ -2546,7 +2631,6 @@ tests/hazmat/primitives/test_scrypt.py::test_unsupported_backend SKIPPED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_derive[params0] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_derive[params1] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_derive[params2] PASSED
-tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_derive[params3] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_salt_not_bytes PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_scrypt_malloc_failure PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_password_not_bytes PASSED
@@ -2554,7 +2638,6 @@ tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_buffer_protocol PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_verify[params0] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_verify[params1] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_verify[params2] PASSED
-tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_verify[params3] PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_invalid_verify PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_already_finalized PASSED
 tests/hazmat/primitives/test_scrypt.py::TestScrypt::test_invalid_n PASSED
@@ -2598,6 +2681,8 @@ tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_d
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_rsa_public_key[asymmetric/DER_Serialization/rsa_public_key.der] PASSED
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_rsa_public_key[asymmetric/public/PKCS1/rsa.pub.der] PASSED
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_invalid_public_key PASSED
+tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_public_key_bit_string_padding PASSED
+tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_ec_private_key_bit_string_padding PASSED
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_dsa_public_key[asymmetric/DER_Serialization/unenc-dsa-pkcs8.pub.der] PASSED
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_der_dsa_public_key[asymmetric/DER_Serialization/dsa_public_key.der] PASSED
 tests/hazmat/primitives/test_serialization.py::TestDERSerialization::test_load_ec_public_key PASSED
@@ -2769,14 +2854,11 @@ tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_ssh_errors_u
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_errors_bad_curve PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_errors PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[1-1234] PASSED
-tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[1-p@ssw0rd] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[10-1234] PASSED
-tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[10-p@ssw0rd] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[10-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED
-tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[30-1234] PASSED
-tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[30-p@ssw0rd] PASSED
-tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[30-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED
+tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[18-1234] PASSED
+tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_serialize_ssh_private_key_with_password[18-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_dsa_private_key_sizes[key_path0-True] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_dsa_private_key_sizes[key_path1-False] PASSED
 tests/hazmat/primitives/test_ssh.py::TestOpenSSHSerialization::test_dsa_private_key_sizes[key_path2-False] PASSED
@@ -2866,10 +2948,13 @@ tests/hazmat/primitives/test_ssh.py::TestSSHCertificateBuilder::test_sign_and_by
 tests/hazmat/primitives/test_ssh.py::TestSSHSK::test_load_application PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHSK::test_load_application_valueerror PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_rsa_md5 PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_rsa_sha1 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_rsa_sha256 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ed25519_md5 PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ed25519_sha1 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ed25519_sha256 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ecdsa_md5 PASSED
+tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ecdsa_sha1 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_ecdsa_sha256 PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_unsupported_hash PASSED
 tests/hazmat/primitives/test_ssh.py::TestSSHKeyFingerprint::test_ssh_key_fingerprint_unsupported_key PASSED
@@ -2938,11 +3023,12 @@ tests/hazmat/primitives/test_x963kdf.py::TestX963KDF::test_derive_into_buffer_in
 tests/hazmat/primitives/test_x963kdf.py::TestX963KDF::test_derive_into_buffer_incorrect_size[8-16] PASSED
 tests/hazmat/primitives/test_x963kdf.py::TestX963KDF::test_derive_into_buffer_incorrect_size[32-16] PASSED
 tests/hazmat/primitives/test_x963kdf.py::TestX963KDF::test_derive_into_already_finalized PASSED
-tests/hazmat/primitives/test_xofhash.py::test_unsupported_boring_libre SKIPPED
+tests/hazmat/primitives/test_xofhash.py::test_unsupported_xof SKIPPED
 tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_hash_reject_unicode PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_incorrect_hash_algorithm_type PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_raises_update_after_squeeze PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_copy PASSED
+tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_xof_classmethod PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFHash::test_exhaust_bytes PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFSHAKE128::test_shake128_variable PASSED
 tests/hazmat/primitives/test_xofhash.py::TestXOFSHAKE256::test_shake256_variable PASSED
@@ -3030,8 +3116,106 @@ tests/hazmat/test_oid.py::test_basic_oid PASSED
 tests/hazmat/test_oid.py::test_oid_equal PASSED
 tests/hazmat/test_oid.py::test_oid_deepcopy PASSED
 tests/hazmat/test_oid.py::test_oid_constraint PASSED
-tests/test_cryptography_utils.py::TestCachedProperty::test_simple PASSED
-tests/test_cryptography_utils.py::TestCachedProperty::test_set PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[0-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[0-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[1-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[1-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[57-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[57-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16383-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16383-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16384-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16384-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16385-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[16385-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[20480-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[20480-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32767-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32767-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32768-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32768-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32769-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[32769-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[54152-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_round_trip[54152-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[1-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[1-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[57-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[57-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[1024-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[1024-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[16384-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[16384-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[16400-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_streaming[16400-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_empty_message[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_empty_message[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_with_empty_data_emits_header[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_with_empty_data_emits_header[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_exact_chunk_boundary_has_empty_final_chunk[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_exact_chunk_boundary_has_empty_final_chunk[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decrypter_streams_plaintext_incrementally[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decrypter_streams_plaintext_incrementally[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_wrong_key[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_wrong_key[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_wrong_context[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_wrong_context[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[0-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[0-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[24-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[24-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[56-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[56-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[16455-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[16455-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[16459-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_tampering_detected[16459-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_swapped_chunks_detected[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_swapped_chunks_detected[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[0-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[0-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[1-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[1-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[55-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[55-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[56-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[56-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[71-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[71-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[16456-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[16456-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[16471-cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_truncation_detected[16471-cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_extension_detected[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_extension_detected[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_ciphertexts_are_randomized[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_ciphertexts_are_randomized[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_accepts_larger_buffer[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_accepts_larger_buffer[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_buffer_too_small[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_buffer_too_small[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_zero_output[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_update_into_zero_output[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_use_after_finalize[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_use_after_finalize[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decryptor_unusable_after_invalid_tag[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decryptor_unusable_after_invalid_tag[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decryptor_update_into_unusable_after_invalid_tag[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_decryptor_update_into_unusable_after_invalid_tag[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_finalize_only_decryptor_rejects_empty_stream[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_finalize_only_decryptor_rejects_empty_stream[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_generate_key[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_generate_key[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_invalid_key_size[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_invalid_key_size[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_invalid_types[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_invalid_types[cobblestone256] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_accepts_buffers[cobblestone128] PASSED
+tests/test_cobblestone.py::TestCobblestone::test_accepts_buffers[cobblestone256] PASSED
+tests/test_cobblestone.py::TestVariantsAreDistinct::test_key_sizes_differ PASSED
+tests/test_cobblestone.py::TestVariantsAreDistinct::test_cross_variant_key_sizes_rejected PASSED
 tests/test_cryptography_utils.py::test_enum PASSED
 tests/test_doubles.py::TestDummyEd25519PublicKey::test_public_bytes PASSED
 tests/test_doubles.py::TestDummyEd25519PublicKey::test_public_bytes_raw_not_implemented PASSED
@@ -3039,6 +3223,14 @@ tests/test_doubles.py::TestDummyEd25519PublicKey::test_verify_not_implemented PA
 tests/test_doubles.py::TestDummyEd25519PublicKey::test_eq_not_implemented PASSED
 tests/test_doubles.py::TestDummyEd25519PublicKey::test_copy_not_implemented PASSED
 tests/test_doubles.py::TestDummyEd25519PublicKey::test_deepcopy_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_decrypt PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_key_size_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_public_key_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_sign_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_private_numbers_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_private_bytes_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_copy_not_implemented PASSED
+tests/test_doubles.py::TestDummyRSAPrivateKey::test_deepcopy_not_implemented PASSED
 tests/test_fernet.py::TestFernet::test_generate[generate.json[0]] PASSED
 tests/test_fernet.py::TestFernet::test_verify[verify.json[0]] PASSED
 tests/test_fernet.py::TestFernet::test_invalid[invalid.json[0]] PASSED
@@ -3063,6 +3255,7 @@ tests/test_fernet.py::TestFernet::test_bad_key[abc] PASSED
 tests/test_fernet.py::TestFernet::test_extract_timestamp PASSED
 tests/test_fernet.py::TestMultiFernet::test_encrypt PASSED
 tests/test_fernet.py::TestMultiFernet::test_decrypt PASSED
+tests/test_fernet.py::TestMultiFernet::test_decrypt_ttl PASSED
 tests/test_fernet.py::TestMultiFernet::test_decrypt_at_time PASSED
 tests/test_fernet.py::TestMultiFernet::test_no_fernets PASSED
 tests/test_fernet.py::TestMultiFernet::test_non_iterable_argument PASSED
@@ -3072,8 +3265,10 @@ tests/test_fernet.py::TestMultiFernet::test_rotate_preserves_timestamp PASSED
 tests/test_fernet.py::TestMultiFernet::test_rotate_decrypt_no_shared_keys PASSED
 tests/test_fernet.py::TestMultiFernet::test_extract_timestamp_first_fernet_valid_token PASSED
 tests/test_fernet.py::TestMultiFernet::test_extract_timestamp_second_fernet_valid_token PASSED
+tests/test_fernet.py::TestMultiFernet::test_extract_timestamp_no_valid_signature PASSED
 tests/test_fernet.py::TestMultiFernet::test_extract_timestamp_invalid_token PASSED
 tests/test_meta.py::test_no_circular_imports[cryptography.__about__] PASSED
+tests/test_meta.py::test_no_circular_imports[cryptography.cobblestone] PASSED
 tests/test_meta.py::test_no_circular_imports[cryptography.exceptions] PASSED
 tests/test_meta.py::test_no_circular_imports[cryptography.fernet] PASSED
 tests/test_meta.py::test_no_circular_imports[cryptography.hazmat] PASSED
@@ -3198,6 +3393,8 @@ tests/wycheproof/test_aes.py::test_aes_gcm_aead_api[aes_gcm_test.json] SKIPPED
 tests/wycheproof/test_aes.py::test_aes_ccm_aead_api[aes_ccm_test.json] SKIPPED
 tests/wycheproof/test_chacha20poly1305.py::test_chacha20poly1305[chacha20_poly1305_test.json] SKIPPED
 tests/wycheproof/test_cmac.py::test_aes_cmac[aes_cmac_test.json] SKIPPED
+tests/wycheproof/test_cobblestone.py::test_cobblestone[c2sp_chunked_encryption_aes_128_gcm_test.json] SKIPPED
+tests/wycheproof/test_cobblestone.py::test_cobblestone[c2sp_chunked_encryption_aes_256_gcm_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_224_sha224_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_224_sha256_test.json] SKIPPED
 tests/wycheproof/test_dsa.py::test_dsa_signature[dsa_2048_256_sha256_test.json] SKIPPED
@@ -3356,6 +3553,7 @@ tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_with_extensions PASS
 tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_with_acceptable_responses PASSED
 tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_with_unknown_extension PASSED
 tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_with_duplicate_extension PASSED
+tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_invalid_version PASSED
 tests/x509/test_ocsp.py::TestOCSPRequest::test_load_request_two_requests PASSED
 tests/x509/test_ocsp.py::TestOCSPRequest::test_invalid_hash_algorithm PASSED
 tests/x509/test_ocsp.py::TestOCSPRequest::test_serialize_request PASSED
@@ -3411,6 +3609,7 @@ tests/x509/test_ocsp.py::TestSignedCertificateTimestampsExtension::test_ne PASSE
 tests/x509/test_ocsp.py::TestSignedCertificateTimestampsExtension::test_hash PASSED
 tests/x509/test_ocsp.py::TestSignedCertificateTimestampsExtension::test_entry_type PASSED
 tests/x509/test_ocsp.py::TestOCSPResponse::test_bad_response PASSED
+tests/x509/test_ocsp.py::TestOCSPResponse::test_load_response_invalid_version PASSED
 tests/x509/test_ocsp.py::TestOCSPResponse::test_load_response PASSED
 tests/x509/test_ocsp.py::TestOCSPResponse::test_load_multi_valued_response PASSED
 tests/x509/test_ocsp.py::TestOCSPResponse::test_multi_valued_responses PASSED
@@ -3473,6 +3672,7 @@ tests/x509/test_x509.py::TestRevokedCertificate::test_duplicate_entry_ext PASSED
 tests/x509/test_x509.py::TestRevokedCertificate::test_unsupported_crit_entry_ext PASSED
 tests/x509/test_x509.py::TestRevokedCertificate::test_unsupported_reason PASSED
 tests/x509/test_x509.py::TestRevokedCertificate::test_invalid_cert_issuer_ext PASSED
+tests/x509/test_x509.py::TestRevokedCertificate::test_invalidity_date_fractional_seconds PASSED
 tests/x509/test_x509.py::TestRevokedCertificate::test_indexing PASSED
 tests/x509/test_x509.py::TestRevokedCertificate::test_get_revoked_certificate_doesnt_reorder PASSED
 tests/x509/test_x509.py::TestRSAECertificate::test_load_cert_pub_key PASSED
@@ -3503,6 +3703,7 @@ tests/x509/test_x509.py::TestRSACertificate::test_all_issuer_name_types PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_subject PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_unicode_name PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_invalid_unicode_name PASSED
+tests/x509/test_x509.py::TestRSACertificate::test_name_attribute_unsupported_type_tag PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_non_ascii_dns_name PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_all_subject_name_types PASSED
 tests/x509/test_x509.py::TestRSACertificate::test_load_good_ca_cert PASSED
@@ -3656,6 +3857,12 @@ tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_ed4
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA44PrivateKey-MLDSA44PublicKey-sig_oid0-pub_oid0] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA65PrivateKey-MLDSA65PublicKey-sig_oid1-pub_oid1] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_mldsa[MLDSA87PrivateKey-MLDSA87PublicKey-sig_oid2-pub_oid2] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA44PrivateKey-MLKEM768PrivateKey-MLKEM768PublicKey-sig_oid0-pub_oid0] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA65PrivateKey-MLKEM768PrivateKey-MLKEM768PublicKey-sig_oid1-pub_oid1] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA87PrivateKey-MLKEM768PrivateKey-MLKEM768PublicKey-sig_oid2-pub_oid2] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA44PrivateKey-MLKEM1024PrivateKey-MLKEM1024PublicKey-sig_oid3-pub_oid3] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA65PrivateKey-MLKEM1024PrivateKey-MLKEM1024PublicKey-sig_oid4-pub_oid4] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mlkem_mldsa_sig[MLDSA87PrivateKey-MLKEM1024PrivateKey-MLKEM1024PublicKey-sig_oid5-pub_oid5] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_mldsa_rsa_sig PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_x25519_x448_rsa_sig[X25519PrivateKey-X25519PublicKey-pub_key_oid0] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_cert_with_public_x25519_x448_rsa_sig[X448PrivateKey-X448PublicKey-pub_key_oid1] PASSED
@@ -3700,6 +3907,8 @@ tests/x509/test_x509.py::TestCertificateBuilder::test_extensions[add_ext36] PASS
 tests/x509/test_x509.py::TestCertificateBuilder::test_extensions[SubjectKeyIdentifier] PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_build_ca_request_with_path_length_none PASSED
 tests/x509/test_x509.py::TestCertificateBuilder::test_unrecognized_extension[unrecognized0] PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_sign_without_private_key PASSED
+tests/x509/test_x509.py::TestCertificateBuilder::test_build_unsigned_cert PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_sign_invalid_hash_algorithm PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_request_with_unsupported_hash_ed25519 PASSED
 tests/x509/test_x509.py::TestCertificateSigningRequestBuilder::test_request_with_unsupported_hash_ed448 PASSED
@@ -4356,6 +4565,7 @@ tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtens
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_ne PASSED
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_ordering PASSED
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_hash PASSED
+tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_parse_rejects_trailing_data PASSED
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_simple PASSED
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_generate PASSED
 tests/x509/test_x509_ext.py::TestPrecertificateSignedCertificateTimestampsExtension::test_invalid_version PASSED
@@ -4481,11 +4691,5 @@ tests/x509/verification/test_verification.py::TestNameConstraints::test_critical
 tests/x509/verification/test_verification.py::TestNameConstraints::test_noncritical_dirname_constraint_with_dirname_san PASSED
 tests/x509/verification/test_verification.py::TestNameConstraints::test_noncritical_dirname_constraint_ignored PASSED
 
-=============================== warnings summary ===============================
-tests/hazmat/primitives/decrepit/test_algorithms.py::TestTripleDES::test_invalid_key_type
-  $(@D)/tests/hazmat/primitives/decrepit/test_algorithms.py:86: CryptographyDeprecationWarning: Two-key TripleDES (16-byte keys) is deprecated and support will be removed in a future release. Use 24-byte keys instead (e.g., key + key[:8]).
-    TripleDES("0" * 16)  # type: ignore[arg-type]
-
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 =========================== short test summary info ============================
-======== 4286 passed, 186 skipped, 1 warning ========
+======== 4492 passed, 189 skipped ========
