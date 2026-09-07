@@ -17,7 +17,7 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_VERSION= 10.5.0
-COMPONENT_REVISION= 2
+COMPONENT_REVISION= 3
 COMPONENT_SRC= gcc-releases-gcc-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_URL= https://github.com/gcc-mirror/gcc/archive/releases/$(COMPONENT_ARCHIVE)
@@ -41,13 +41,21 @@ include $(WS_MAKE_RULES)/gcc-component.mk
 GCC_MAJOR="$(GCC_COMPONENT_VERSION_MAJOR)"
 PKG_VARS += GCC_MAJOR
 
+ifeq ($(MACH), sparc)
+CONFIGURE_OPTIONS+= --with-cpu=ultrasparc
+CONFIGURE_OPTIONS+= --enable-link-mutex
+CONFIGURE_OPTIONS+= --enable-__cxa_atexit
+COMPONENT_PRE_CONFIGURE_ACTION += \
+	cd $(SOURCE_DIR) && $(GPATCH) -b -p1 < $(COMPONENT_DIR)/sparc/gmp_asm_sparcv9_cpuflags.patch
+endif
+
 # Workaround platform definition inconsistency
 ifeq ($(strip $(BUILD_BITS)),64)
 PARCH = $(MACH:i386=x86_64-pc)
 else
 PARCH = $(MACH:i386=i386-pc)
 endif
-GNU_TRIPLET = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
+GNU_TRIPLET = $(PARCH:sparc=sparcv9-sun)-solaris$(SOLARIS_VERSION)
 PKG_MACROS += GNU_TRIPLET="$(GNU_TRIPLET)"
 
 CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
@@ -56,7 +64,7 @@ CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --with-diagnostics-urls=auto-if-env
 CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
-CONFIGURE_OPTIONS.i386+= --enable-initfini-array
+CONFIGURE_OPTIONS+= --enable-initfini-array
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,go,lto,objc
 CONFIGURE_OPTIONS+= --disable-libitm
 CONFIGURE_OPTIONS+= enable_frame_pointer=yes
