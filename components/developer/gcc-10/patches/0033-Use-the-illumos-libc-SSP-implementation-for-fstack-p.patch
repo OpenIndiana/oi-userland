@@ -64,3 +64,26 @@ index ddbab71370d..2968c276172 100644
 -- 
 2.31.1
 
+--- gcc-releases-gcc-10.5.0/gcc/config/sparc/sol2.h.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/gcc/config/sparc/sol2.h	2026-09-03 09:07:43.711906500 +0200
+@@ -456,3 +456,20 @@
+ 
+ #undef SPARC_LOW_FE_EXCEPT_VALUES
+ #define SPARC_LOW_FE_EXCEPT_VALUES 1
++
++/*
++ * As of 5788, the illumos libc includes support for the stack protector
++ * __stack_chk_fail() function and for the __stack_chk_guard variable.
++ * That means that, for most cases, no extra objects need to be linked in
++ * when compiling with one of the -fstack-protector options.
++ * However, for 32-bit PIC/PIE objects, the gcc stack protector emits a
++ * function call to __stack_chk_fail_local(); this symbol is provided in
++ * illumos via the libssp_ns.a object. The spec below includes this in the
++ * link when appropriate.
++ */
++#if defined(TARGET_LIBC_PROVIDES_SSP)
++#define LINK_SSP_SPEC "%{fstack-protector|fstack-protector-all|" \
++		       "fstack-protector-strong|fstack-protector-explicit:" \
++		       DEF_ARCH32_SPEC("-lssp_ns") \
++		       "}"
++#endif

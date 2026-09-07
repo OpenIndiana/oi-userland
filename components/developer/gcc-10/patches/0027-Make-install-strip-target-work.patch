@@ -1,0 +1,152 @@
+From cf822698e3087b86c6d987a791de22a313bc83d5 Mon Sep 17 00:00:00 2001
+From: Keith Marshall <keith.marshall@mailinator.com>
+Date: Fri, 15 Nov 2019 12:21:51 +0000
+Subject: [PATCH 27/34] Make install-strip target work for libobjc
+
+See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54720
+	libobjc install-strip target not populated
+---
+ libobjc/Makefile.in | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/libobjc/Makefile.in b/libobjc/Makefile.in
+index 46c85407010..280cd01ee51 100644
+--- a/libobjc/Makefile.in
++++ b/libobjc/Makefile.in
+@@ -308,7 +308,8 @@
+ $(srcdir)/aclocal.m4: @MAINT@ $(aclocal_deps)
+ 	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
+ 
+-install: install-libs install-headers
++install-strip: INSTALL_STRIP_FLAG = -s
++install install-strip: install-libs install-headers
+ 
+ install-libs: installdirs
+ 	$(SHELL) $(multi_basedir)/mkinstalldirs $(DESTDIR)$(toolexeclibdir)
+-- 
+2.31.1
+
+Inspired by above patch:
+------------------------
+I created this libtool patch, for all libraries we install.
+Old patch was broken, the 32bit libobjc was not strpped at all.
+The --strip-unneeded option of the GNU strip command strips everythng
+from the target libs. Therefore one can't use nm on the installed libs
+to lookup any symbols. Options: --keep-section-symbols --keep-file-symbols
+remove most space out of shared libs, but retain these tables, for lookup
+purposes, however libs still show unstripped using the file command.
+Above portion of the libobjc Makefile still needs to be here, because
+otherwise no headers/libs from libobjc will be installed.
+I will try to get this integrated into main gcc-tree, because the need
+for this is alredy documented there.
+
+--- gcc-releases-gcc-10.5.0/libstdc++-v3/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libstdc++-v3/configure	2026-09-05 17:10:20.336611500 +0200
+@@ -12300,7 +12300,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libatomic/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libatomic/configure	2026-09-05 17:13:38.452171600 +0200
+@@ -11628,7 +11628,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libgfortran/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libgfortran/configure	2026-09-05 17:12:48.143919200 +0200
+@@ -12960,7 +12960,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libgo/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libgo/configure	2026-09-05 17:12:54.456047700 +0200
+@@ -11729,7 +11729,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libgomp/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libgomp/configure	2026-09-05 17:12:59.596190200 +0200
+@@ -11673,7 +11673,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libitm/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libitm/configure	2026-09-05 17:13:05.100110700 +0200
+@@ -12305,7 +12305,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libobjc/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libobjc/configure	2026-09-05 17:13:11.323866400 +0200
+@@ -11016,7 +11016,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libquadmath/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libquadmath/configure	2026-09-05 17:13:17.759378300 +0200
+@@ -11055,7 +11055,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libsanitizer/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libsanitizer/configure	2026-09-05 17:13:22.947776600 +0200
+@@ -12602,7 +12602,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
+--- gcc-releases-gcc-10.5.0/libssp/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libssp/configure	2026-09-05 17:13:27.738565900 +0200
+@@ -11237,7 +11237,7 @@
+ $as_echo_n "checking whether stripping libraries is possible... " >&6; }
+ if test -n "$STRIP" && $STRIP -V 2>&1 | $GREP "GNU strip" >/dev/null; then
+   test -z "$old_striplib" && old_striplib="$STRIP --strip-debug"
+-  test -z "$striplib" && striplib="$STRIP --strip-unneeded"
++  test -z "$striplib" && striplib="$STRIP --keep-section-symbols --keep-file-symbols"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+ else
