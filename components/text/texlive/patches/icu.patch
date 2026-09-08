@@ -1,0 +1,13 @@
+diff --git a/m4/kpse-icu-flags.m4 b/m4/kpse-icu-flags.m4
+index c7c0267..7b4dd7a 100644
+--- a/m4/kpse-icu-flags.m4
++++ b/m4/kpse-icu-flags.m4
+@@ -62,7 +62,7 @@ echo 'tldbg:[$0] called.' >&AS_MESSAGE_LOG_FD
+ AC_CHECK_TOOL([ICU_CONFIG], [icu-config], [false])[]dnl
+ AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
+ if $ICU_CONFIG --version >/dev/null 2>&1; then
+-  ICU_INCLUDES=`$ICU_CONFIG --cppflags`
++  ICU_INCLUDES=`$ICU_CONFIG --cppflags` -I/usr/include/poppler
+   ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath m4_ifset([kpse_icu_config_args],
+                                                       [kpse_icu_config_args ])--ldflags-libsonly --ldflags-system`
+ elif $PKG_CONFIG --libs icu-uc icu-io >/dev/null 2>&1; then

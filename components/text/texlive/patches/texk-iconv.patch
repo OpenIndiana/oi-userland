@@ -1,0 +1,26 @@
+diff --git a/texk/xdvik/encodings.c b/texk/xdvik/encodings.c
+index 0ab1729..f9a5ac2 100644
+--- a/texk/xdvik/encodings.c
++++ b/texk/xdvik/encodings.c
+@@ -3056,7 +3056,7 @@ cjk2unicode(unsigned char *cjk)
+ 	register_exit_handler(close_iconv, NULL);
+ 	
+     }
+-    if (iconv(m_iconv_gb_ucs4, (iconv_char_pptrT)&from_ptr, &from, &to_ptr, &to) == (size_t)(-1)) {
++    if (iconv(m_iconv_gb_ucs4, (const char**)&from_ptr, &from, &to_ptr, &to) == (size_t)(-1)) {
+ 	XDVI_ERROR((stderr, "cjk2unicode: can't convert GBK to unicode: %s", strerror(errno)));
+ 	return 0;
+     }
+diff --git a/texk/xdvik/util.c b/texk/xdvik/util.c
+index 07be4a5..1321e85 100644
+--- a/texk/xdvik/util.c
++++ b/texk/xdvik/util.c
+@@ -1858,7 +1858,7 @@ iconv_convert_string(const char *from_enc, const char *to_enc, const char *str)
+     }
+ 
+     TRACE_FIND((stderr, "iconv_convert_string: from `%s', to `%s'", from_enc, to_enc));
+-    if (iconv(conv_desc, (iconv_char_pptrT)&in_ptr, &input_len, (char **)&out_ptr, &conv_len) == (size_t)(-1)) {
++    if (iconv(conv_desc, (const char **)&in_ptr, &input_len, (char **)&out_ptr, &conv_len) == (size_t)(-1)) {
+ 	popup_message(XtNameToWidget(globals.widgets.top_level, "*find_popup"),
+ 		      MSG_ERR,
+ 		      NULL,
