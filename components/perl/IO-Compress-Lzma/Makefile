@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		IO-Compress-Lzma
-HUMAN_VERSION =			2.217
+HUMAN_VERSION =			2.224
 COMPONENT_SUMMARY =		Write lzma files/buffers
 COMPONENT_CPAN_AUTHOR =		PMQS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3462ecd1e67e85d5e4fa911bc6d8e38a884ba1d6e90a03535f0d28fe2ad0aacf
+	sha256:b6f13b2e405dc413503d88ffaa92f280402fe3992f45a3e6b1a59aed7a60d834
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
