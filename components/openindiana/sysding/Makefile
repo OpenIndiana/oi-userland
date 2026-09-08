@@ -18,6 +18,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		sysding
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_VERSION=	0.5.11
+# Source refresh: 1557056defffbb8ae97f1a6fe57b3ec835ac0e5c (revision 39).
+# Waits for DNS to become disabled before re-enabling it during initial setup.
 COMPONENT_REVISION=	$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 COMPONENT_SUMMARY=	Simple tool for initial system configuration
 COMPONENT_LICENSE=	CDDL
