@@ -20,7 +20,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		py-cpuinfo
 HUMAN_VERSION =			9.0.0
-COMPONENT_REVISION =		1
+COMPONENT_REVISION =		2
 COMPONENT_SUMMARY =		Get CPU info with pure Python
 COMPONENT_PROJECT_URL =		https://github.com/workhorsy/py-cpuinfo
 COMPONENT_ARCHIVE_HASH =	\
@@ -29,6 +29,9 @@ COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
+
+# For Python 3.14 it is replaced by py-cpuinfo2
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
