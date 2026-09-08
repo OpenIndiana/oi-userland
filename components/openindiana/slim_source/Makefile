@@ -22,8 +22,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=	slim_source
 COMPONENT_SRC=	$(COMPONENT_NAME)
 
-# Source refresh: a69d9367103c32eccc6a8c3ec6b26366da358ce7 (revision 1130).
-# Includes VMware tools and VirtIO SCSI support in text installer images.
+# Source refresh: ec475721f6ebb1e3751b431ff4f60aec6f7190ff (revision 1132).
+# Fixes fresh-disk validation and duplicate curses cleanup in the text installer.
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
 GIT=git
