@@ -1,0 +1,1860 @@
+--- gcc-releases-gcc-10.5.0/configure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/configure	2026-09-05 17:40:30.923731600 +0200
+@@ -741,6 +741,8 @@
+ target_alias
+ host_alias
+ build_alias
++gmp_alias
++CPU_FLAGS
+ LIBS
+ ECHO_T
+ ECHO_N
+@@ -6939,6 +6941,8 @@
+ fi
+ 
+ 
++gmp_alias=ultrasparc2-sun-solaris2.11
++CPU_FLAGS="-mcpu=ultrasparc -mno-app-regs -mvis -mfsmuld"
+ 
+ # During gcc bootstrap, if we use some random cc for stage1 then CFLAGS
+ # might be empty or "-g".  We don't require a C++ compiler, so CXXFLAGS
+@@ -6953,11 +6957,11 @@
+     CFLAGS_FOR_TARGET=$CFLAGS
+     case " $CFLAGS " in
+       *" -O2 "*) ;;
+-      *) CFLAGS_FOR_TARGET="-O2 $CFLAGS_FOR_TARGET" ;;
++      *) CFLAGS_FOR_TARGET="-O2 $CFLAGS_FOR_TARGET $CPU_FLAGS" ;;
+     esac
+     case " $CFLAGS " in
+       *" -g "* | *" -g3 "*) ;;
+-      *) CFLAGS_FOR_TARGET="-g $CFLAGS_FOR_TARGET" ;;
++      *) CFLAGS_FOR_TARGET="-g $CFLAGS_FOR_TARGET $CPU_FLAGS" ;;
+     esac
+   fi
+ fi
+@@ -6970,11 +6974,11 @@
+     CXXFLAGS_FOR_TARGET=$CXXFLAGS
+     case " $CXXFLAGS " in
+       *" -O2 "*) ;;
+-      *) CXXFLAGS_FOR_TARGET="-O2 $CXXFLAGS_FOR_TARGET" ;;
++      *) CXXFLAGS_FOR_TARGET="-O2 $CXXFLAGS_FOR_TARGET $CPU_FLAGS" ;;
+     esac
+     case " $CXXFLAGS " in
+       *" -g "* | *" -g3 "*) ;;
+-      *) CXXFLAGS_FOR_TARGET="-g $CXXFLAGS_FOR_TARGET" ;;
++      *) CXXFLAGS_FOR_TARGET="-g $CXXFLAGS_FOR_TARGET $CPU_FLAGS" ;;
+     esac
+   fi
+ fi
+@@ -15818,7 +15822,7 @@
+ # ---------------------
+ 
+ # Stage specific cflags for build.
+-stage1_cflags="-g"
++stage1_cflags="-g -O2 -m64 -mcpu=ultrasparc -mno-app-regs -mvis -mfsmuld"
+ case $build in
+   vax-*-*)
+     case ${GCC} in
+--- gcc-releases-gcc-10.5.0/libgcc/cofigure.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/libgcc/configure	2026-09-05 17:49:43.376471100 +0200
+@@ -4297,6 +4297,9 @@
+   break
+ done
+ fi
++case $with_multisubdir in
++  sparcv8plus|32) ac_cv_sys_file_offset_bits=32 ;;
++esac
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_sys_file_offset_bits" >&5
+ $as_echo "$ac_cv_sys_file_offset_bits" >&6; }
+ case $ac_cv_sys_file_offset_bits in #(
+--- gcc-releases-gcc-10.5.0/gcc/config/sparc/t-sol2.orig	2023-07-07 09:08:39.000000000 +0200
++++ gcc-releases-gcc-10.5.0/gcc/config/sparc/t-sol2	2026-09-05 17:51:34.806448800 +0200
+@@ -1,4 +1,4 @@
+ MULTILIB_OPTIONS = m32/m64
+-MULTILIB_DIRNAMES = sparcv8plus sparcv9
++MULTILIB_DIRNAMES = 32 sparcv9
+ MULTILIB_MATCHES =
+ MULTILIB_OSDIRNAMES = . sparcv9
+--- gcc-releases-gcc-10.5.0/Makefile.in.~2~	2026-09-05 17:58:22.334534400 +0200
++++ gcc-releases-gcc-10.5.0/Makefile.in	2026-09-05 18:28:34.236998500 +0200
+@@ -359,9 +359,9 @@
+ AR_FOR_BUILD = @AR_FOR_BUILD@
+ AS_FOR_BUILD = @AS_FOR_BUILD@
+ CC_FOR_BUILD = @CC_FOR_BUILD@
+-CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@
++CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@ @CPU_FLAGS@
+ CXXFLAGS_FOR_BUILD = @CXXFLAGS_FOR_BUILD@
+-CXX_FOR_BUILD = @CXX_FOR_BUILD@
++CXX_FOR_BUILD = @CXX_FOR_BUILD@ @CPU_FLAGS@
+ DLLTOOL_FOR_BUILD = @DLLTOOL_FOR_BUILD@
+ DSYMUTIL_FOR_BUILD = @DSYMUTIL_FOR_BUILD@
+ GFORTRAN_FOR_BUILD = @GFORTRAN_FOR_BUILD@
+@@ -381,7 +381,7 @@
+ 
+ # Flags to pass to stage2 and later makes.  They are defined
+ # here so that they can be overridden by Makefile fragments.
+-BOOT_CFLAGS= -g -O2
++BOOT_CFLAGS= -g -O2 -m64 @CPU_FLAGS@
+ BOOT_LDFLAGS=
+ BOOT_ADAFLAGS= -gnatpg
+ 
+@@ -430,10 +430,10 @@
+ GNATBIND = @GNATBIND@
+ GNATMAKE = @GNATMAKE@
+ 
+-CFLAGS = @CFLAGS@
++CFLAGS = @CFLAGS@ @CPU_FLAGS@
+ LDFLAGS = @LDFLAGS@
+ LIBCFLAGS = $(CFLAGS)
+-CXXFLAGS = @CXXFLAGS@
++CXXFLAGS = @CXXFLAGS@ @CPU_FLAGS@
+ LIBCXXFLAGS = $(CXXFLAGS) -fno-implicit-templates
+ GOCFLAGS = $(CFLAGS)
+ GDCFLAGS = $(CFLAGS)
+@@ -2951,8 +2951,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(BUILD_EXPORTS)  \
+ 	(cd $(BUILD_SUBDIR)/libiberty && \
+-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_BUILD_FLAGS)   \
+-		$(TARGET-build-libiberty))
++	  $(MAKE) $(TARGET-build-libiberty))
+ @endif build-libiberty
+ 
+ 
+@@ -3236,8 +3235,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(BUILD_EXPORTS)  \
+ 	(cd $(BUILD_SUBDIR)/fixincludes && \
+-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_BUILD_FLAGS)   \
+-		$(TARGET-build-fixincludes))
++	  $(MAKE) $(TARGET-build-fixincludes))
+ @endif build-fixincludes
+ 
+ 
+@@ -3293,8 +3291,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(BUILD_EXPORTS)  \
+ 	(cd $(BUILD_SUBDIR)/libcpp && \
+-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_BUILD_FLAGS)   \
+-		$(TARGET-build-libcpp))
++	  $(MAKE) $(TARGET-build-libcpp))
+ @endif build-libcpp
+ 
+ 
+@@ -12654,8 +12651,9 @@
+ 	$(SHELL) \
+ 	  $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} --disable-shared LEX="touch lex.yy.c" \
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@ \
+ 	  || exit 1
+ @endif gmp
+ 
+@@ -12673,9 +12671,9 @@
+ 	TFLAGS="$(STAGE1_TFLAGS)"; \
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+-	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 1 in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12687,11 +12685,9 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	   \
+-	  $(STAGE1_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  $(STAGE1_CONFIGURE_FLAGS) --disable-shared ABI=64 \
++	  CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stage2-gmp maybe-configure-stage2-gmp
+@@ -12707,9 +12703,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 2 in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12721,11 +12717,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGE2_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGE2_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stage3-gmp maybe-configure-stage3-gmp
+@@ -12741,9 +12736,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 3 in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12755,11 +12750,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGE3_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGE3_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stage4-gmp maybe-configure-stage4-gmp
+@@ -12775,9 +12769,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 4 in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12789,11 +12783,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGE4_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGE4_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stageprofile-gmp maybe-configure-stageprofile-gmp
+@@ -12809,9 +12802,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage profile in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12823,11 +12816,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGEprofile_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGEprofile_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stagetrain-gmp maybe-configure-stagetrain-gmp
+@@ -12843,9 +12835,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEtrain_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEtrain_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEtrain_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage train in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12857,11 +12849,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGEtrain_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGEtrain_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stagefeedback-gmp maybe-configure-stagefeedback-gmp
+@@ -12877,9 +12868,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage feedback in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12891,11 +12882,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGEfeedback_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGEfeedback_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stageautoprofile-gmp maybe-configure-stageautoprofile-gmp
+@@ -12911,9 +12901,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautoprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautoprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autoprofile in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12925,11 +12915,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGEautoprofile_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGEautoprofile_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ .PHONY: configure-stageautofeedback-gmp maybe-configure-stageautofeedback-gmp
+@@ -12945,9 +12934,9 @@
+ 	test ! -f $(HOST_SUBDIR)/gmp/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautofeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautofeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autofeedback in $(HOST_SUBDIR)/gmp; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/gmp; \
+ 	cd $(HOST_SUBDIR)/gmp || exit 1; \
+@@ -12959,11 +12948,10 @@
+ 	module_srcdir=gmp; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+-	  $(HOST_CONFIGARGS) --build=${build_alias} --host=none-${host_vendor}-${host_os} \
+-	  --target=none-${host_vendor}-${host_os} \
+-	  --with-build-libsubdir=$(HOST_SUBDIR) \
+-	  $(STAGEautofeedback_CONFIGURE_FLAGS) \
+-	  --disable-shared LEX="touch lex.yy.c"
++	  $(HOST_CONFIGARGS) --build=@gmp_alias@ --host=@gmp_alias@ --target=@gmp_alias@ \
++	  --with-build-libsubdir=$(HOST_SUBDIR) $(STAGEautofeedback_CONFIGURE_FLAGS) \
++	  --disable-shared ABI=64 CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++	  LEX="touch lex.yy.c" @host_libs_picflag@
+ @endif gmp-bootstrap
+ 
+ 
+@@ -12983,7 +12971,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS)  \
+ 	(cd $(HOST_SUBDIR)/gmp && \
+-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		$(TARGET-gmp))
+ @endif gmp
+ 
+@@ -13006,15 +12994,15 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE1_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE1_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+-		LIBCFLAGS="$(LIBCFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS)  \
+-		$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE1_TFLAGS)"  \
+ 		$(TARGET-stage1-gmp)
+ 
+@@ -13029,7 +13017,7 @@
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	$(MAKE) $(EXTRA_HOST_FLAGS)  \
+-	$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13051,14 +13039,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE2_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE2_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE2_TFLAGS)"  \
+ 		$(TARGET-stage2-gmp)
+ 
+@@ -13072,7 +13060,7 @@
+ 	  $(MAKE) stage2-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13094,14 +13082,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE3_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE3_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE3_TFLAGS)"  \
+ 		$(TARGET-stage3-gmp)
+ 
+@@ -13115,7 +13103,7 @@
+ 	  $(MAKE) stage3-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13137,14 +13125,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE4_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE4_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE4_TFLAGS)"  \
+ 		$(TARGET-stage4-gmp)
+ 
+@@ -13158,7 +13146,7 @@
+ 	  $(MAKE) stage4-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13180,14 +13168,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
+ 		$(TARGET-stageprofile-gmp)
+ 
+@@ -13201,7 +13189,7 @@
+ 	  $(MAKE) stageprofile-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13223,14 +13211,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEtrain_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEtrain_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEtrain_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEtrain_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEtrain_TFLAGS)"  \
+ 		$(TARGET-stagetrain-gmp)
+ 
+@@ -13244,7 +13232,7 @@
+ 	  $(MAKE) stagetrain-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13266,14 +13254,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEfeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
+ 		$(TARGET-stagefeedback-gmp)
+ 
+@@ -13287,7 +13275,7 @@
+ 	  $(MAKE) stagefeedback-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13309,14 +13297,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	$$s/gcc/config/i386/$(AUTO_PROFILE) \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautoprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEautoprofile_TFLAGS)"  \
+ 		$(TARGET-stageautoprofile-gmp)
+ 
+@@ -13330,7 +13318,7 @@
+ 	  $(MAKE) stageautoprofile-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13352,14 +13340,14 @@
+ 	cd $(HOST_SUBDIR)/gmp && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautofeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 -pedantic @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEautofeedback_TFLAGS)" PERF_DATA=perf.data \
+ 		$(TARGET-stageautofeedback-gmp)
+ 
+@@ -13373,7 +13361,7 @@
+ 	  $(MAKE) stageautofeedback-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/gmp && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif gmp-bootstrap
+ 
+ 
+@@ -13391,7 +13379,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) $(EXTRA_HOST_EXPORTS) \
+ 	(cd $(HOST_SUBDIR)/gmp && \
+-	  $(MAKE) $(FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" $(EXTRA_BOOTSTRAP_FLAGS) check)
++	  $(MAKE) $(FLAGS_TO_PASS) AM_CFLAGS="" $(EXTRA_BOOTSTRAP_FLAGS) check)
+ 
+ @endif gmp
+ 
+@@ -13426,7 +13414,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing info in gmp"; \
+@@ -13451,7 +13439,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing dvi in gmp"; \
+@@ -13476,7 +13464,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing pdf in gmp"; \
+@@ -13501,7 +13489,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing html in gmp"; \
+@@ -13526,7 +13514,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing TAGS in gmp"; \
+@@ -13552,7 +13540,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-info in gmp"; \
+@@ -13578,7 +13566,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-pdf in gmp"; \
+@@ -13604,7 +13592,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-html in gmp"; \
+@@ -13629,7 +13617,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing installcheck in gmp"; \
+@@ -13653,7 +13641,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing mostlyclean in gmp"; \
+@@ -13677,7 +13665,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing clean in gmp"; \
+@@ -13701,7 +13689,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing distclean in gmp"; \
+@@ -13725,7 +13713,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing maintainer-clean in gmp"; \
+@@ -13754,6 +13742,7 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	$(HOST_EXPORTS)  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
+ 	echo Configuring in $(HOST_SUBDIR)/mpfr; \
+ 	cd "$(HOST_SUBDIR)/mpfr" || exit 1; \
+ 	case $(srcdir) in \
+@@ -13784,9 +13773,9 @@
+ 	TFLAGS="$(STAGE1_TFLAGS)"; \
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+-	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 1 in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13818,9 +13807,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 2 in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13831,6 +13820,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -13852,9 +13842,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 3 in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13865,6 +13855,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -13886,9 +13877,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 4 in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13899,6 +13890,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -13920,9 +13912,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage profile in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13933,6 +13925,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -13954,9 +13947,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEtrain_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEtrain_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEtrain_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage train in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -13967,6 +13960,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -13988,9 +13982,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage feedback in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -14001,6 +13995,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -14022,9 +14017,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautoprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautoprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autoprofile in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -14035,6 +14030,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -14056,9 +14052,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpfr/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautofeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautofeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O2 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O2 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O2 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autofeedback in $(HOST_SUBDIR)/mpfr; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpfr; \
+ 	cd $(HOST_SUBDIR)/mpfr || exit 1; \
+@@ -14069,6 +14065,7 @@
+ 	esac; \
+ 	module_srcdir=mpfr; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O2 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -14094,7 +14091,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS)  \
+ 	(cd $(HOST_SUBDIR)/mpfr && \
+-	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++	  $(MAKE) $(BASE_FLAGS_TO_PASS) $(EXTRA_HOST_FLAGS) $(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		$(TARGET-mpfr))
+ @endif mpfr
+ 
+@@ -14117,15 +14114,15 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE1_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE1_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+-		LIBCFLAGS="$(LIBCFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS)  \
+-		$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE1_TFLAGS)"  \
+ 		$(TARGET-stage1-mpfr)
+ 
+@@ -14140,7 +14137,7 @@
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	$(MAKE) $(EXTRA_HOST_FLAGS)  \
+-	$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(STAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14162,14 +14159,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE2_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE2_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE2_TFLAGS)"  \
+ 		$(TARGET-stage2-mpfr)
+ 
+@@ -14183,7 +14180,7 @@
+ 	  $(MAKE) stage2-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14205,14 +14202,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE3_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE3_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE3_TFLAGS)"  \
+ 		$(TARGET-stage3-mpfr)
+ 
+@@ -14226,7 +14223,7 @@
+ 	  $(MAKE) stage3-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14248,14 +14245,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE4_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE4_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGE4_TFLAGS)"  \
+ 		$(TARGET-stage4-mpfr)
+ 
+@@ -14269,7 +14266,7 @@
+ 	  $(MAKE) stage4-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14291,14 +14288,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
+ 		$(TARGET-stageprofile-mpfr)
+ 
+@@ -14312,7 +14309,7 @@
+ 	  $(MAKE) stageprofile-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14334,14 +14331,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEtrain_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEtrain_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEtrain_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEtrain_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEtrain_TFLAGS)"  \
+ 		$(TARGET-stagetrain-mpfr)
+ 
+@@ -14355,7 +14352,7 @@
+ 	  $(MAKE) stagetrain-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14377,14 +14374,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEfeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
+ 		$(TARGET-stagefeedback-mpfr)
+ 
+@@ -14398,7 +14395,7 @@
+ 	  $(MAKE) stagefeedback-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14420,14 +14417,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	$$s/gcc/config/i386/$(AUTO_PROFILE) \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautoprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEautoprofile_TFLAGS)"  \
+ 		$(TARGET-stageautoprofile-mpfr)
+ 
+@@ -14441,7 +14438,7 @@
+ 	  $(MAKE) stageautoprofile-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14463,14 +14460,14 @@
+ 	cd $(HOST_SUBDIR)/mpfr && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautofeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
+-		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" \
++		CFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="" \
++		CXXFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O2 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O2 -m64 @CPU_FLAGS@" \
++		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" \
+ 		TFLAGS="$(STAGEautofeedback_TFLAGS)" PERF_DATA=perf.data \
+ 		$(TARGET-stageautofeedback-mpfr)
+ 
+@@ -14484,7 +14481,7 @@
+ 	  $(MAKE) stageautofeedback-start; \
+ 	fi; \
+ 	cd $(HOST_SUBDIR)/mpfr && \
+-	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" clean
++	$(MAKE) $(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS) AM_CFLAGS="" clean
+ @endif mpfr-bootstrap
+ 
+ 
+@@ -14502,7 +14499,7 @@
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) $(EXTRA_HOST_EXPORTS) \
+ 	(cd $(HOST_SUBDIR)/mpfr && \
+-	  $(MAKE) $(FLAGS_TO_PASS) AM_CFLAGS="-DNO_ASM" $(EXTRA_BOOTSTRAP_FLAGS) check)
++	  $(MAKE) $(FLAGS_TO_PASS) AM_CFLAGS="" $(EXTRA_BOOTSTRAP_FLAGS) check)
+ 
+ @endif mpfr
+ 
+@@ -14537,7 +14534,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing info in mpfr"; \
+@@ -14562,7 +14559,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing dvi in mpfr"; \
+@@ -14587,7 +14584,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing pdf in mpfr"; \
+@@ -14612,7 +14609,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing html in mpfr"; \
+@@ -14637,7 +14634,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing TAGS in mpfr"; \
+@@ -14663,7 +14660,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-info in mpfr"; \
+@@ -14689,7 +14686,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-pdf in mpfr"; \
+@@ -14715,7 +14712,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing install-html in mpfr"; \
+@@ -14740,7 +14737,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing installcheck in mpfr"; \
+@@ -14764,7 +14761,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing mostlyclean in mpfr"; \
+@@ -14788,7 +14785,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing clean in mpfr"; \
+@@ -14812,7 +14809,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing distclean in mpfr"; \
+@@ -14836,7 +14833,7 @@
+ 	r=`${PWD_COMMAND}`; export r; \
+ 	s=`cd $(srcdir); ${PWD_COMMAND}`; export s; \
+ 	$(HOST_EXPORTS) \
+-	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS="-DNO_ASM"; do \
++	for flag in $(EXTRA_HOST_FLAGS) AM_CFLAGS=""; do \
+ 	  eval `echo "$$flag" | sed -e "s|^\([^=]*\)=\(.*\)|\1='\2'; export \1|"`; \
+ 	done; \
+ 	echo "Doing maintainer-clean in mpfr"; \
+@@ -14865,6 +14862,7 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	$(HOST_EXPORTS)  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
+ 	echo Configuring in $(HOST_SUBDIR)/mpc; \
+ 	cd "$(HOST_SUBDIR)/mpc" || exit 1; \
+ 	case $(srcdir) in \
+@@ -14875,6 +14873,7 @@
+ 	module_srcdir=mpc; \
+ 	$(SHELL) \
+ 	  $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} --disable-shared @extra_mpc_gmp_configure_flags@ @extra_mpc_mpfr_configure_flags@ --disable-maintainer-mode \
+@@ -14895,9 +14894,9 @@
+ 	TFLAGS="$(STAGE1_TFLAGS)"; \
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+-	CFLAGS="$(STAGE1_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE1_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(LIBCFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 1 in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -14908,10 +14907,10 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+-	   \
+ 	  $(STAGE1_CONFIGURE_FLAGS) \
+ 	  --disable-shared @extra_mpc_gmp_configure_flags@ @extra_mpc_mpfr_configure_flags@ --disable-maintainer-mode
+ @endif mpc-bootstrap
+@@ -14929,9 +14928,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE2_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE2_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE2_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 2 in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -14942,6 +14941,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -14963,9 +14963,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE3_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE3_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE3_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 3 in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -14976,6 +14976,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -14997,9 +14998,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGE4_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGE4_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGE4_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage 4 in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15010,6 +15011,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15031,9 +15033,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 -pedantic @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage profile in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15044,6 +15046,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15065,9 +15068,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEtrain_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEtrain_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEtrain_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage train in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15078,6 +15081,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15099,9 +15103,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEfeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEfeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEfeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage feedback in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15112,6 +15116,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15133,9 +15138,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautoprofile_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautoprofile_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autoprofile in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15146,6 +15151,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15167,9 +15173,9 @@
+ 	test ! -f $(HOST_SUBDIR)/mpc/Makefile || exit 0; \
+ 	$(HOST_EXPORTS) \
+ 	$(POSTSTAGE1_HOST_EXPORTS) \
+-	CFLAGS="$(STAGEautofeedback_CFLAGS)"; export CFLAGS; \
+-	CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)"; export CXXFLAGS; \
+-	LIBCFLAGS="$(STAGEautofeedback_CFLAGS)"; export LIBCFLAGS;  \
++	CFLAGS="-O3 -m64 @CPU_FLAGS@"; export CFLAGS; \
++	CXXFLAGS="-O3 -m64 @CPU_FLAGS@"; export CXXFLAGS; \
++	LIBCFLAGS="-O3 -m64 @CPU_FLAGS@"; export LIBCFLAGS;  \
+ 	echo Configuring stage autofeedback in $(HOST_SUBDIR)/mpc; \
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(HOST_SUBDIR)/mpc; \
+ 	cd $(HOST_SUBDIR)/mpc || exit 1; \
+@@ -15180,6 +15186,7 @@
+ 	esac; \
+ 	module_srcdir=mpc; \
+ 	$(SHELL) $$s/$$module_srcdir/configure \
++	  CFLAGS="-O3 -m64 @CPU_FLAGS@" \
+ 	  --srcdir=$${topdir}/$$module_srcdir \
+ 	  $(HOST_CONFIGARGS) --build=${build_alias} --host=${host_alias} \
+ 	  --target=${target_alias} \
+@@ -15228,13 +15235,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE1_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE1_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE1_CXXFLAGS)" \
+-		LIBCFLAGS="$(LIBCFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS)  \
+ 		$(STAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGE1_TFLAGS)"  \
+@@ -15273,13 +15280,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE2_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE2_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE2_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE2_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGE2_TFLAGS)"  \
+ 		$(TARGET-stage2-mpc)
+@@ -15316,13 +15323,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE3_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE3_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE3_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE3_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGE3_TFLAGS)"  \
+ 		$(TARGET-stage3-mpc)
+@@ -15359,13 +15366,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGE4_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGE4_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGE4_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGE4_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGE4_TFLAGS)"  \
+ 		$(TARGET-stage4-mpc)
+@@ -15402,13 +15409,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGEprofile_TFLAGS)"  \
+ 		$(TARGET-stageprofile-mpc)
+@@ -15445,13 +15452,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEtrain_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEtrain_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEtrain_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEtrain_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGEtrain_TFLAGS)"  \
+ 		$(TARGET-stagetrain-mpc)
+@@ -15488,13 +15495,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEfeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEfeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEfeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGEfeedback_TFLAGS)"  \
+ 		$(TARGET-stagefeedback-mpc)
+@@ -15531,13 +15538,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	$$s/gcc/config/i386/$(AUTO_PROFILE) \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautoprofile_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautoprofile_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautoprofile_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGEautoprofile_TFLAGS)"  \
+ 		$(TARGET-stageautoprofile-mpc)
+@@ -15574,13 +15581,13 @@
+ 	cd $(HOST_SUBDIR)/mpc && \
+ 	 \
+ 	$(MAKE) $(BASE_FLAGS_TO_PASS) \
+-		CFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		GENERATOR_CFLAGS="$(STAGEautofeedback_GENERATOR_CFLAGS)" \
+-		CXXFLAGS="$(STAGEautofeedback_CXXFLAGS)" \
+-		LIBCFLAGS="$(STAGEautofeedback_CFLAGS)" \
+-		CFLAGS_FOR_TARGET="$(CFLAGS_FOR_TARGET)" \
+-		CXXFLAGS_FOR_TARGET="$(CXXFLAGS_FOR_TARGET)" \
+-		LIBCFLAGS_FOR_TARGET="$(LIBCFLAGS_FOR_TARGET)" \
++		CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		GENERATOR_CFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS="-O3 -m64 @CPU_FLAGS@" \
++		CFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		CXXFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
++		LIBCFLAGS_FOR_TARGET="-O3 -m64 @CPU_FLAGS@" \
+ 		$(EXTRA_HOST_FLAGS) $(POSTSTAGE1_FLAGS_TO_PASS)  \
+ 		TFLAGS="$(STAGEautofeedback_TFLAGS)" PERF_DATA=perf.data \
+ 		$(TARGET-stageautofeedback-mpc)
+--- gcc-releases-gcc-10.5.0/gcc/configure.orig	2026-09-06 10:54:05.249064300 +0200
++++ gcc-releases-gcc-10.5.0/gcc/configure	2026-09-06 17:48:43.982713400 +0200
+@@ -26070,6 +26070,7 @@
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $gcc_cv_as_sparc_ua_pcrel" >&5
+ $as_echo "$gcc_cv_as_sparc_ua_pcrel" >&6; }
++gcc_cv_as_sparc_ua_pcrel=no
+ if test $gcc_cv_as_sparc_ua_pcrel = yes; then
+ 
+ $as_echo "#define HAVE_AS_SPARC_UA_PCREL 1" >>confdefs.h
