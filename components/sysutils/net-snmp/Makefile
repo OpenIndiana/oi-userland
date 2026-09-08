@@ -34,7 +34,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.9.4
-COMPONENT_REVISION=	5
+COMPONENT_REVISION=	6
 COMPONENT_SUMMARY=	Net-SNMP Agent files and libraries
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -71,8 +71,6 @@ CFLAGS += -Wno-incompatible-pointer-types
 CFLAGS += -I$(BUILD_DIR_$(BITS))/include
 
 CONFIGURE_OPTIONS += --enable-static=no
-# should not be used anylonger
-CONFIGURE_OPTIONS += --disable-md5
 CONFIGURE_OPTIONS += --with-default-snmp-version=3
 CONFIGURE_OPTIONS += --with-sys-contact="root@localhost"
 CONFIGURE_OPTIONS += --with-sys-location=Unknown
