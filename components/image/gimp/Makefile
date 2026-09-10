@@ -19,12 +19,12 @@ USE_PARALLEL_BUILD= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gimp
-COMPONENT_VERSION=	3.2.4
+COMPONENT_VERSION=	3.2.6
 COMPONENT_SUMMARY=	Gimp - The Free & Open Source Image Editor
 COMPONENT_PROJECT_URL=	https://www.gimp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:7312bc53e9c6d2d0056ca7b93f1c6b98707946dd934f714c21b8746ecb601588
+COMPONENT_ARCHIVE_HASH= sha256:40b15e90ad0c0c631b76da3c467ea9847fa5c24f37413ac5b492804860a28cd8
 COMPONENT_ARCHIVE_URL=	https://download.gimp.org/gimp/v3.2/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		image/editor/gimp
 COMPONENT_CLASSIFICATION=	Applications/Graphics and Imaging
@@ -53,6 +53,7 @@ COMPONENT_POST_INSTALL_ACTION+= \
 
 # Build dependencies
 REQUIRED_PACKAGES += developer/vala
+REQUIRED_PACKAGES += library/python/pycairo
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(GCC_RUNTIME_PKG)
