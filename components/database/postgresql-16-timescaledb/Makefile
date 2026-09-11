@@ -17,11 +17,11 @@ PG_VERSION= 16
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=	timescaledb
-COMPONENT_VERSION=	2.26.4
+COMPONENT_VERSION=	2.30.0
 COMPONENT_SUMMARY=	Timescaledb extension for PostgreSQL
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:81d29bf1552519c873d777d4ae41b7f3d6b5d5b31155109f56fcaaf1cab0290f
+COMPONENT_ARCHIVE_HASH= sha256:dac2fba0cd4eee9f4adcd04c91b7929850e24bc36f62eaee8bda4230a9fcee66
 
 COMPONENT_ARCHIVE_URL=	https://github.com/timescale/timescaledb/archive/refs/tags/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.timescale.com/
@@ -43,5 +43,4 @@ COMPONENT_INSTALL_ACTION= cd $(@D)/build && $(ENV) $(COMPONENT_INSTALL_ENV) gmak
 REQUIRED_PACKAGES += $(PG_DEVELOPER_PKG)
 
 # Auto-generated dependencies
-REQUIRED_PACKAGES += $(PG_LIBRARY_PKG)
 REQUIRED_PACKAGES += system/library
