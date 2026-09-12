@@ -1,0 +1,13 @@
+diff --git a/completions/gdb b/completions/gdb
+index 5edc704..1774c1d 100644
+--- a/completions-core/gdb.bash
++++ b/completions-core/gdb.bash
+@@ -35,7 +35,7 @@ _comp_cmd_gdb()
+             )"
+         fi
+     elif ((cword == 2)); then
+-        _comp_compgen_split -- "$(command ps axo comm,pid |
++        _comp_compgen_split -- "$(command ps -efo comm,pid |
+             _comp_awk '{if ($1 ~ /^'"${prev##*/}"'/) print $2}')"
+         compopt -o filenames
+         _comp_compgen -a -- -f -X '!?(*/)core?(.?*)' -o plusdirs
