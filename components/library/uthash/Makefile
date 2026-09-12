@@ -12,21 +12,27 @@
 # Copyright 2021 Benjamin S. Osenbach
 #
 
-BUILD_BITS=NO_ARCH
-BUILD_STYLE=justmake
+BUILD_STYLE= justmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		uthash
-COMPONENT_VERSION=	2.3.0
-COMPONENT_SUMMARY= 	C macros for hash tables and more
+COMPONENT_VERSION=	2.4.0
+COMPONENT_SUMMARY= 	uthash is a hash table for C structures
 COMPONENT_PROJECT_URL=	https://github.com/troydhanson/uthash
-COMPONENT_FMRI=		library/uthash
-COMPONENT_CLASSIFICATION=Development/C
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_URL=https://github.com/troydhanson/uthash/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:e10382ab75518bad8319eb922ad04f907cb20cccb451a3aa980c9d005e661acc  
-COMPONENT_LICENSE=BSD
-COMPONENT_LICENSE_FILE=	uthash.license
-TEST_TARGET=$(NO_TESTS) # if no testsuite enabled
+COMPONENT_ARCHIVE_URL= https://github.com/troydhanson/uthash/archive/refs/tags/v$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha256:387ba027946d7c64e9aa19cc53b2edcd714f8f9dca9fa8e3aaef17e0e8e3d736
+COMPONENT_FMRI=		library/uthash
+COMPONENT_CLASSIFICATION= Development/C
+COMPONENT_LICENSE= BSD
+COMPONENT_LICENSE_FILE= LICENSE
+
 include $(WS_MAKE_RULES)/common.mk
+
+COMPONENT_TEST_DIR = $(@D)/tests
+COMPONENT_TEST_CMD = $(GMAKE)
+COMPONENT_TEST_TARGETS = pedantic
+COMPONENT_TEST_ENV += PATH=$(PATH.gnu)
+
+# Auto-generated dependencies
