@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ocaml-findlib
 COMPONENT_VERSION= 1.9.8
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= OCaml-findlib is a library manager for Objective Caml
 COMPONENT_PROJECT_URL=	https://projects.camlcity.org/projects/findlib.html
 COMPONENT_SRC=		ocamlfind-findlib-$(COMPONENT_VERSION)
@@ -26,6 +27,7 @@ COMPONENT_ARCHIVE_HASH=	sha256:d6899935ccabf67f067a9af3f3f88d94e310075d13c648fa0
 COMPONENT_FMRI= library/ocaml/ocaml-findlib
 COMPONENT_CLASSIFICATION= Development/Other Languages
 COMPONENT_LICENSE= MIT
+COMPONENT_LICENSE_FILE= LICENSE
 
 TEST_TARGET=$(NO_TESTS)
 include $(WS_MAKE_RULES)/common.mk
