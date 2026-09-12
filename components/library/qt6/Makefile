@@ -19,7 +19,7 @@ USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=				qt
-COMPONENT_VERSION=		6.10.3
+COMPONENT_VERSION=		6.11.2
 QTV=				$(basename $(COMPONENT_VERSION))
 QT6_VERSION=			$(QTV)
 COMPONENT_SUMMARY=		Qt cross-platform application and UI framework
@@ -27,7 +27,7 @@ COMPONENT_PROJECT_URL=		https://www.qt.io/
 COMPONENT_SRC=			$(COMPONENT_NAME)-everywhere-src-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-	sha256:cbc81e726b0ff3c0cdb0219bf74545e91cec013c4a8503c20f93f83d73dff5d2
+	sha256:6dcfbca271d76a6502741a2c0dc6fc98ef7dd0b7b4cfd0abcebb285a86a26f33
 COMPONENT_ARCHIVE_URL=		https://download.qt.io/official_releases/qt/$(QTV)/$(COMPONENT_VERSION)/single/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			library/qt6
 COMPONENT_CLASSIFICATION= 	Desktop (GNOME)/Libraries
