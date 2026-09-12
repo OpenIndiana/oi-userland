@@ -25,25 +25,24 @@
 # Copyright 2023 Niklas Poslovski
 #
 
+BUILD_STYLE=archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.10.17
-COMPONENT_REVISION=	1
+COMPONENT_VERSION=	1.10.18
 COMPONENT_SUMMARY=	Apache Ant is a Java-based build tool
 COMPONENT_PROJECT_URL=	https://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-bin.tar.bz2
-COMPONENT_ARCHIVE_HASH= sha256:5210fc9d77e96bf5f4639287f29826da85e54a542e0a409463b1642bc3caaee7
+COMPONENT_ARCHIVE_HASH= sha256:bc12be70cb5c1b074c1e73d82a3f3da55f3c65b8a0c7342a6eb6d1d024265280
 COMPONENT_ARCHIVE_URL=	https://dlcdn.apache.org//ant/binaries/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		developer/build/ant
 COMPONENT_CLASSIFICATION=	Development/Distribution Tools
 COMPONENT_LICENSE=	Apache v2.0
 COMPONENT_LICENSE_FILE=	LICENSE
 
-include $(WS_MAKE_RULES)/prep.mk
-include $(WS_MAKE_RULES)/ips.mk
+include $(WS_MAKE_RULES)/common.mk
 
 # Needed for GNU ln
 PATH=$(PATH.gnu)
@@ -55,7 +54,6 @@ install: prep
 	mkdir -p $(PROTO_DIR)/usr/bin
 	mkdir -p $(PROTO_DIR)/usr/share/ant/bin
 	mkdir -p $(PROTO_DIR)/usr/share/ant/etc
-# 	mkdir -p $(PROTO_DIR)/usr/share/ant/lib
 	mkdir -p $(PROTO_DIR)/usr/share/doc/ant
 	mkdir -p $(PROTO_DIR)/usr/share/java/ant
 	cp $(COMPONENT_DIR)/files/ant.conf $(PROTO_DIR)/etc
@@ -82,10 +80,6 @@ install: prep
 
 clean::
 	rm -rf $(BUILD_DIR)
-
-# COMPONENT_POST_INSTALL_ACTION += \
-#      $(GSED) -i -e 's?\/usr\/bin\/python?\/usr\/bin\/python$(PYTHON_VERSION)?' \
-#      $(PROTO_DIR)/usr/share/ant/bin/runant.py
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += runtime/perl
