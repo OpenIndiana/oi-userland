@@ -37,13 +37,37 @@ clobber:	TARGET = clobber
 setup:		TARGET = setup
 test:		TARGET = test
 component-hook:		TARGET = component-hook
+generate-package-kdl:	TARGET = generate-package-kdl
 
 .DEFAULT:	publish
 
-download setup prep build install pre-publish publish validate clean clobber \
-test component-hook unpack patch: $(SUBDIRS)
+download prep build install pre-publish publish validate clean clobber test component-hook generate-package-kdl unpack patch: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	@+echo "$(TARGET) $@" ; $(GMAKE) -s -C $@ $(TARGET)
 
 FORCE:
+
+# Bootstrap pkgdev before running component setup
+setup: bootstrap-pkgdev $(SUBDIRS)
+
+bootstrap-pkgdev:
+	@echo "Bootstrapping pkgdev via cargo from toasterson/forge"
+	cargo install --git https://github.com/toasterson/forge pkgdev
+
+update-pkgdev:
+	@echo "Updating pkgdev via cargo from toasterson/forge"
+	cargo install --git https://github.com/toasterson/forge pkgdev --force
+
+# Generate repology metadata using pkgdev
+.PHONY: repology
+repology: bootstrap-pkgdev
+	@echo "Generating repology metadata with pkgdev"
+	pkgdev generate --output=repology-metadata.json repology
+
+# Clean generated package.kdl files and missing-metadata list
+.PHONY: clean-package-kdl
+clean-package-kdl:
+	@echo "Cleaning generated package.kdl files and components.missing-metadata"
+	@/usr/bin/find components -type f -name package.kdl -exec rm -f {} +
+	@rm -f $(WS_TOP)/components.missing-metadata components.missing-metadata
