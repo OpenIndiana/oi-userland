@@ -28,12 +28,12 @@ USE_COMMON_TEST_MASTER= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffstat
-COMPONENT_VERSION=	1.68
+COMPONENT_VERSION=	1.69
 COMPONENT_SUMMARY=	A utility which provides statistics based on the output of diff
 COMPONENT_PROJECT_URL=	https://invisible-island.net/diffstat/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:89f9294a8ac74fcef6f1b9ac408f43ebedf8d208e3efe0b99b4acc16dc6582c7
+COMPONENT_ARCHIVE_HASH=	sha256:bb02464072f769dd9832fd999526734c90eb4d66fb56d5351540a750c88a77f6
 COMPONENT_ARCHIVE_URL=	https://invisible-mirror.net/archives/diffstat/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=		text/diffstat
 COMPONENT_CLASSIFICATION= System/Text Tools
