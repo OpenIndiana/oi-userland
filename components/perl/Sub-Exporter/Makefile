@@ -19,23 +19,22 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Sub-Exporter
-HUMAN_VERSION =			0.991
-COMPONENT_REVISION =		2
+HUMAN_VERSION =			0.992
 COMPONENT_SUMMARY =		a sophisticated exporter for custom-built routines
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:2a95695d35c5d0d5373a7e145c96b9b016113b74e94116835ac05450cae4d445
+	sha256:31d1b7016390528f3ed2cda379f4026a4e7fbad2aa40c8c9a1808961bf642c67
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/data-optlist
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += library/perl-5/params-util
-PERL_REQUIRED_PACKAGES += library/perl-5/sub-install
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/data-optlist
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += library/perl-5/params-someutil
+REQUIRED_PACKAGES.perl += library/perl-5/sub-install
+REQUIRED_PACKAGES.perl += runtime/perl
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/cpan-meta
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
