@@ -5,7 +5,7 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-collecting ... collected 369 items
+collecting ... collected 424 items
 
 tests/test_advisory.py::TestAdvisory::test_ghsa_ffqj_6fqr_9h24 PASSED
 tests/test_algorithms.py::TestAlgorithms::test_check_crypto_key_type_should_fail_when_not_using_crypto PASSED
@@ -19,18 +19,55 @@ tests/test_algorithms.py::TestAlgorithms::test_hmac_should_throw_exception[testk
 tests/test_algorithms.py::TestAlgorithms::test_hmac_should_throw_exception[testkey_pkcs1.pub.pem] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_should_throw_exception[testkey_rsa.cer] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_should_throw_exception[testkey_rsa.pub] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_reject_loader_accepted_pem_mutations[<lambda>0] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_reject_loader_accepted_pem_mutations[<lambda>1] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_reject_loader_accepted_pem_mutations[<lambda>2] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_accept_incomplete_pem_marker PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_reject_a_later_pem_block PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_should_reject_a_pem_block_after_an_overlapping_end_marker PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_jwk_should_parse_and_verify PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_values[False] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_to_jwk_returns_correct_values[True] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_not_hmac_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_raise_exception_if_empty_json PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_from_jwk_should_reject_empty_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_empty_key[0] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_empty_key[1] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_rsa_pub.json] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_ec_pub_P-256.json] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_okp_pub_Ed25519.json] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwk_json[jwk_hmac.json] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_public_jwk_containers[jwks] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_public_jwk_containers[array] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_public_jwk_containers[nested-array] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_public_jwk_containers[bom-jwks] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_public_jwk_array PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_public_jwk_array_with_escaped_kty PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_accepts_deep_array_secret_with_kty_string PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_jwks_with_oversized_integer PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-8] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-8-sig] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-16] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-16-le] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-16-be] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-32] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-32-le] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_bom_prefixed_jwk_json[utf-32-be] PASSED
 tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_accepts_json_without_kty PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_accepts_deep_non_jwk_bytes PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_object PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-8] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-8-sig] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-16] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-16-le] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-16-be] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-32] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-32-le] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_deep_jwk_with_surrogate[utf-32-be] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_der_public_key[SubjectPublicKeyInfo] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_der_public_key[PKCS1] PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_rejects_der_certificate PASSED
+tests/test_algorithms.py::TestAlgorithms::test_hmac_prepare_key_accepts_non_key_binary_secret PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_parse_pem_public_key PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_pem_private_key_bytes PASSED
 tests/test_algorithms.py::TestAlgorithms::test_rsa_should_accept_unicode_key PASSED
@@ -149,6 +186,7 @@ tests/test_api_jwk.py::TestPyJWK::test_should_load_key_okp_without_alg_from_dict
 tests/test_api_jwk.py::TestPyJWK::test_from_dict_should_throw_exception_if_arg_is_invalid PASSED
 tests/test_api_jwk.py::TestPyJWK::test_missing_crypto_library_good_error_message SKIPPED
 tests/test_api_jwk.py::TestPyJWK::test_missing_crypto_library_raises_missing_cryptography_error SKIPPED
+tests/test_api_jwk.py::TestPyJWKSet::test_should_skip_malformed_rsa_key_and_load_remaining_keys PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_dict PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_should_load_keys_from_jwk_data_json_string PASSED
 tests/test_api_jwk.py::TestPyJWKSet::test_keyset_should_index_by_kid PASSED
@@ -206,8 +244,10 @@ tests/test_api_jws.py::TestJWS::test_sorting_of_headers[False] PASSED
 tests/test_api_jws.py::TestJWS::test_sorting_of_headers[True] PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_header_padding PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_header_string PASSED
+tests/test_api_jws.py::TestJWS::test_decode_deeply_nested_header_throws_decode_error PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_payload_padding PASSED
 tests/test_api_jws.py::TestJWS::test_decode_invalid_crypto_padding PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_non_canonical_crypto_segment PASSED
 tests/test_api_jws.py::TestJWS::test_decode_with_algo_none_should_fail PASSED
 tests/test_api_jws.py::TestJWS::test_decode_with_algo_none_and_verify_false_should_pass PASSED
 tests/test_api_jws.py::TestJWS::test_get_unverified_header_returns_header_values PASSED
@@ -231,6 +271,7 @@ tests/test_api_jws.py::TestJWS::test_encode_with_typ_none PASSED
 tests/test_api_jws.py::TestJWS::test_encode_with_typ_without_keywords PASSED
 tests/test_api_jws.py::TestJWS::test_encode_fails_on_invalid_kid_types PASSED
 tests/test_api_jws.py::TestJWS::test_encode_decode_with_detached_content PASSED
+tests/test_api_jws.py::TestJWS::test_decode_rejects_detached_payload_for_attached_content PASSED
 tests/test_api_jws.py::TestJWS::test_encode_detached_content_with_b64_header PASSED
 tests/test_api_jws.py::TestJWS::test_encode_b64_false_auto_adds_b64_to_crit PASSED
 tests/test_api_jws.py::TestJWS::test_encode_b64_false_preserves_existing_crit_entries PASSED
@@ -246,6 +287,11 @@ tests/test_api_jws.py::TestJWS::test_decode_rejects_crit_with_non_string_values 
 tests/test_api_jws.py::TestJWS::test_decode_rejects_crit_extension_missing_from_header PASSED
 tests/test_api_jws.py::TestJWS::test_decode_accepts_supported_crit_extension PASSED
 tests/test_api_jws.py::TestJWS::test_get_unverified_header_rejects_unknown_crit PASSED
+tests/test_api_jws.py::TestJWS::test_pyjwk_rejects_empty_hmac_key PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_does_not_mutate_options_when_signature_verification_is_disabled PASSED
+tests/test_api_jwt.py::TestJWT::test_reused_options_do_not_disable_claim_verification PASSED
+tests/test_api_jwt.py::TestJWT::test_decode_complete_preserves_mutable_mapping_input PASSED
+tests/test_api_jwt.py::TestJWT::test_constructor_does_not_mutate_options_input PASSED
 tests/test_api_jwt.py::TestJWT::test_jwt_with_options PASSED
 tests/test_api_jwt.py::TestJWT::test_encode_with_jwk_uses_key_algorithm PASSED
 tests/test_api_jwt.py::TestJWT::test_decodes_valid_jwt PASSED
@@ -328,6 +374,8 @@ tests/test_api_jwt.py::TestJWT::test_validate_iss_with_non_str_issuer PASSED
 tests/test_api_jwt.py::TestJWT::test_decode_rejects_token_with_unknown_crit_extension PASSED
 tests/test_compressed_jwt.py::test_decodes_complete_valid_jwt_with_compressed_payload PASSED
 tests/test_exceptions.py::test_missing_required_claim_error_has_proper_str PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_rejects_redirect_without_contacting_destination PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_redirect_handler_does_not_follow_redirects PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_fetch_data_forwards_headers_to_correct_url PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwk_set PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_signing_keys PASSED
@@ -344,6 +392,13 @@ tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_failed_refresh_pres
 tests/test_jwks_client.py::TestPyJWKClient::test_failed_request_should_raise_connection_error PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_refresh_cache PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_no_matching_kid_after_second_attempt PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_is_cooled_down PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_runs_again_after_cooldown PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_serializes_concurrent_misses PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_ignores_cooldown_when_cache_disabled PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_rejects_non_finite_cooldown[nan] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_rejects_non_finite_cooldown[inf] PASSED
+tests/test_jwks_client.py::TestPyJWKClient::test_unknown_kid_refresh_rejects_non_finite_cooldown[-inf] PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_get_jwt_set_invalid_lifespan PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[file:///etc/passwd] PASSED
 tests/test_jwks_client.py::TestPyJWKClient::test_pyjwkclient_rejects_non_http_schemes[ftp://example.org/keys.json] PASSED
@@ -378,6 +433,6 @@ tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp384] PASSED
 tests/test_utils.py::test_is_ssh_key[ecdsa-sha2-nistp521] PASSED
 
 =========================== short test summary info ============================
-======== 365 passed, 4 skipped ========
+======== 420 passed, 4 skipped ========
   py$(PYV): OK
   congratulations :)
