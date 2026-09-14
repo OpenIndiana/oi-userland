@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Cpanel-JSON-XS
-HUMAN_VERSION =			4.44
+HUMAN_VERSION =			4.51
 COMPONENT_SUMMARY =		cPanel fork of JSON::XS, fast and correct serializing
 COMPONENT_CPAN_AUTHOR =		RURBAN
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:f4d4926b7f714664ff05f5a441b4e40e66a73bf075120263011cab7a3ae80e23
+	sha256:70dd9555e174f41e00621f5d3effbda8ce7c983b726c0e8b71bd12f2b70f27ce
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
