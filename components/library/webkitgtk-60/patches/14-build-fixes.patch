@@ -1,0 +1,30 @@
+Patch added to fix the following error:
+from webkitgtk-2.24.2
+
+webkitgtk-2.26.3/Source/ThirdParty/ANGLE/src/common/third_party/smhasher/src/PMurHash.cpp:95:51: error: operator '&&' has no right operand
+         defined(_LITTLE_ENDIAN) && _LITTLE_ENDIAN == 1
+                                                   ^~
+--- webkitgtk-2.48.1/Source/WTF/wtf/Assertions.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/Assertions.h
+@@ -539,7 +539,7 @@
+ 
+ /* COMPILE_ASSERT */
+ #ifndef COMPILE_ASSERT
+-#if COMPILER_SUPPORTS(C_STATIC_ASSERT)
++#if COMPILER_SUPPORTS(C_STATIC_ASSERT) && !OS(SOLARIS)
+ /* Unlike static_assert below, this also works in plain C code. */
+ #define COMPILE_ASSERT(exp, name) _Static_assert((exp), #name)
+ #else
+--- webkitgtk-2.48.1/Source/WebCore/platform/network/DNS.h.orig
++++ webkitgtk-2.48.1/Source/WebCore/platform/network/DNS.h
+@@ -38,6 +38,10 @@
+ #include <netinet/in.h>
+ #endif
+ 
++#ifdef __sun__
++#include <sys/socket.h>
++#endif
++
+ namespace WebCore {
+ 
+ class IPAddress {

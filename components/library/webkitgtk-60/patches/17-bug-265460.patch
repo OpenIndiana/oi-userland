@@ -1,0 +1,42 @@
+This is a hack to clear the issue described here:
+
+https://bugs.webkit.org/show_bug.cgi?id=265460
+
+See also Bug 248823, Bug 209118 Comment 8, and Bug 154147 Comment 3.
+
+The problem is that the compositor is forcing accelerated compositing
+ON when accelerated compositing is disabled or not supported; this
+results in a crash.
+
+Note that effective 295482@main, this situation can also be triggered from
+WebCore::Document::setActiveViewTransition; the patch address this as well.
+
+While this patch is surely not the correct fix, it both clears the
+crash and causes the content to be rendered as expected.
+
+
+--- webkitgtk-2.49.90/Source/WebCore/rendering/RenderLayerCompositor.cpp.~1~	2025-08-08 10:17:55.540470800 +0000
++++ webkitgtk-2.49.90/Source/WebCore/rendering/RenderLayerCompositor.cpp	2025-09-14 17:29:30.798727222 +0000
+@@ -612,6 +612,11 @@
+ 
+ void RenderLayerCompositor::enableCompositingMode(bool enable /* = true */)
+ {
++    if (enable && !m_hasAcceleratedCompositing) {
++        LOG(Compositing, "RenderLayerCompositor::enableCompositingMode: Accelerated compositing unavailable; disabling");
++        enable = false;
++    }
++
+     if (enable != m_compositing) {
+         m_compositing = enable;
+         
+@@ -1507,6 +1512,10 @@
+     }
+ 
+     ASSERT(willBeComposited == needsToBeComposited(layer, queryData));
++    if (willBeComposited && !m_hasAcceleratedCompositing) {
++        LOG(Compositing, "RenderLayerCompositor::computeCompositingRequirements: Accelerated compositing unavailable; using BackingRequired::No");
++        willBeComposited = false;
++    }
+ 
+     // Create or destroy backing here. However, we can't update geometry because layers above us may become composited
+     // during post-order traversal (e.g. for clipping).

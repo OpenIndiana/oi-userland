@@ -1,0 +1,25 @@
+Solaris madvise() first parameter is caddr_t; Linux, BSDs, etc. is void*.
+The cast is safe as void and unsigned char have same alignment.
+
+file upstream bug
+
+--- webkitgtk-2.48.1/Source/bmalloc/bmalloc/VMAllocate.h.orig
++++ webkitgtk-2.48.1/Source/bmalloc/bmalloc/VMAllocate.h
+@@ -213,7 +213,7 @@
+ #elif BOS(FREEBSD)
+     SYSCALL(madvise(p, vmSize, MADV_FREE));
+ #else
+-    SYSCALL(madvise(p, vmSize, MADV_DONTNEED));
++    SYSCALL(madvise(reinterpret_cast<char*>(p), vmSize, MADV_DONTNEED));
+ #if BOS(LINUX)
+     SYSCALL(madvise(p, vmSize, MADV_DONTDUMP));
+ #endif
+@@ -230,7 +230,7 @@
+     // to commit physical memory to back a range of allocated virtual memory.
+     // Instead the kernel will commit pages as they are touched.
+ #else
+-    SYSCALL(madvise(p, vmSize, MADV_NORMAL));
++    SYSCALL(madvise(reinterpret_cast<char*>(p), vmSize, MADV_NORMAL));
+ #if BOS(LINUX)
+     SYSCALL(madvise(p, vmSize, MADV_DODUMP));
+ #endif

@@ -1,0 +1,41 @@
+Hack to fix:
+
+/build/rtutils/components/desktop/webkitgtk4-dev/build/amd64/DerivedSources/WebKit/AcceleratedBackingStoreMessages.h:50:154: error: incomplete type 'WebKit::RendererBufferFormat' named in nested name specifier
+   50 |     using Arguments = std::tuple<uint64_t, WebCore::IntSize, uint32_t, Vector<UnixFileDescriptor>, Vector<uint32_t>, Vector<uint32_t>, uint64_t, WebKit::RendererBufferFormat::Usage>;
+      |                                                                                                                                                  ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/build/rtutils/components/desktop/webkitgtk4-dev/build/amd64/DerivedSources/WebKit/GeneratedSerializers.h:2291:8: note: forward declaration of 'WebKit::RendererBufferFormat'
+  2291 | struct RendererBufferFormat;
+       |        ^
+In file included from /build/rtutils/components/desktop/webkitgtk4-dev/webkit/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp:44:
+/build/rtutils/components/desktop/webkitgtk4-dev/build/amd64/DerivedSources/WebKit/AcceleratedBackingStoreMessages.h:58:225: error: incomplete type 'WebKit::RendererBufferFormat' named in nested name specifier
+    58 |     DidCreateDMABufBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, const Vector<UnixFileDescriptor>& fds, const Vector<uint32_t>& offsets, const Vector<uint32_t>& strides, uint64_t modifier, const WebKit::RendererBufferFormat::Usage& usage)
+       |                                                                                                                                                                                                                         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+/build/rtutils/components/desktop/webkitgtk4-dev/build/amd64/DerivedSources/WebKit/GeneratedSerializers.h:2291:8: note: forward declaration of 'WebKit::RendererBufferFormat'
+  2291 | struct RendererBufferFormat;
+       |        ^
+In file included from /build/rtutils/components/desktop/webkitgtk4-dev/webkit/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp:44:
+/build/rtutils/components/desktop/webkitgtk4-dev/build/amd64/DerivedSources/WebKit/AcceleratedBackingStoreMessages.h:58:225: error: incomplete type 'WebKit::RendererBufferFormat' named in nested name specifier
+   58 |     DidCreateDMABufBuffer(uint64_t id, const WebCore::IntSize& size, uint32_t format, const Vector<UnixFileDescriptor>& fds, const Vector<uint32_t>& offsets, const Vector<uint32_t>& strides, uint64_t modifier, const WebKit::RendererBufferFormat::Usage& usage)
+      |                                                                                                                                                                                                                         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+
+
+--- webkit/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp-	2025-08-04 18:18:35.828851826 +0000
++++ webkit/Source/WebKit/WebProcess/WebPage/CoordinatedGraphics/AcceleratedSurface.cpp	2025-08-04 18:18:51.845278411 +0000
+@@ -24,6 +24,7 @@
+  */
+ 
+ #include "config.h"
++#include "RendererBufferFormat.h"
+ #include "AcceleratedSurface.h"
+ 
+ #if USE(COORDINATED_GRAPHICS)
+--- webkit/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp-	2025-08-04 12:56:47.000000000 +0000
++++ webkit/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp	2025-08-04 18:17:00.874400115 +0000
+@@ -24,6 +24,7 @@
+  */
+ 
+ #include "config.h"
++#include "RendererBufferFormat.h"
+ #include "AcceleratedBackingStore.h"
+ 
+ #include "AcceleratedBackingStoreMessages.h"

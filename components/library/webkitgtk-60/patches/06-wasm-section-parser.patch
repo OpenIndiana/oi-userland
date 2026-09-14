@@ -1,0 +1,38 @@
+--- webkitgtk-2.48.1/Source/JavaScriptCore/wasm/WasmSectionParser.cpp.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/wasm/WasmSectionParser.cpp
+@@ -90,7 +90,7 @@
+             break;
+         }
+         default:
+-            return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, typeKind);
++            return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, (signed char)typeKind);
+         }
+ 
+         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for Type section's "_s, i, "th signature"_s);
+@@ -866,7 +866,7 @@
+         packedType = static_cast<PackedType>(kind);
+         return { };
+     }
+-    return fail("expected a packed type but got "_s, kind);
++    return fail("expected a packed type but got "_s, (signed char)kind);
+ }
+ 
+ auto SectionParser::parseStorageType(StorageType& storageType) -> PartialResult
+@@ -961,7 +961,7 @@
+             break;
+         }
+         default:
+-            return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, typeKind);
++		return fail(i, "th Type is non-Func, non-Struct, and non-Array "_s, (signed char)typeKind);
+         }
+ 
+         WASM_PARSER_FAIL_IF(!signature, "can't allocate enough memory for recursion group's "_s, i, "th signature"_s);
+@@ -1119,7 +1119,7 @@
+         break;
+     }
+     default:
+-        return fail("invalid structural type definition for subtype "_s, typeKind);
++	    return fail("invalid structural type definition for subtype "_s, (signed char)typeKind);
+     }
+ 
+     // When no supertypes are specified and the type is final, we will normalize

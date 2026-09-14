@@ -1,0 +1,252 @@
+Changes for the build to work on Solaris
+
+Potentially suitable to send upstream
+
+--- webkitgtk-2.48.1/Source/WTF/wtf/CurrentTime.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/CurrentTime.cpp
+@@ -305,7 +305,7 @@
+     return fromMachAbsoluteTime(mach_absolute_time());
+ #elif OS(FUCHSIA)
+     return fromRawSeconds(zx_clock_get_monotonic() / static_cast<double>(ZX_SEC(1)));
+-#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(NETBSD)
++#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(SOLARIS) || OS(NETBSD)
+     struct timespec ts { };
+     clock_gettime(CLOCK_MONOTONIC, &ts);
+     return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+--- webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp
+@@ -31,7 +31,7 @@
+ 
+ #if OS(DARWIN)
+ #include <sys/sysctl.h>
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
+ #include <unistd.h>
+ #elif OS(WINDOWS)
+ #include <windows.h>
+@@ -68,7 +68,7 @@
+     int sysctlResult = sysctl(name, sizeof(name) / sizeof(int), &result, &length, 0, 0);
+ 
+     s_numberOfCores = sysctlResult < 0 ? defaultIfUnavailable : result;
+-#elif OS(LINUX) || OS(AIX) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
++#elif OS(LINUX) || OS(AIX) || OS(SOLARIS) || OS(OPENBSD) || OS(NETBSD) || OS(FREEBSD) || OS(HAIKU)
+     long sysconfResult = sysconf(_SC_NPROCESSORS_ONLN);
+ 
+     s_numberOfCores = sysconfResult < 0 ? defaultIfUnavailable : static_cast<int>(sysconfResult);
+--- webkitgtk-2.48.1/Source/WTF/wtf/PageBlock.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/PageBlock.h
+@@ -53,7 +53,7 @@
+ // Use 64 KiB for any unknown CPUs to be conservative.
+ #if OS(DARWIN) || PLATFORM(PLAYSTATION) || CPU(MIPS) || CPU(MIPS64) || CPU(LOONGARCH64) || (OS(LINUX) && CPU(ARM64) && !USE(64KB_PAGE_BLOCK))
+ constexpr size_t CeilingOnPageSize = 16 * KB;
+-#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(UNKNOWN)
++#elif USE(64KB_PAGE_BLOCK) || CPU(PPC) || CPU(PPC64) || CPU(PPC64LE) || CPU(SPARC) || CPU(UNKNOWN)
+ constexpr size_t CeilingOnPageSize = 64 * KB;
+ #elif OS(WINDOWS) || CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)
+ constexpr size_t CeilingOnPageSize = 4 * KB;
+--- webkitgtk-2.50.4/Source/WTF/wtf/PlatformHave.h.~1~	2025-08-08 11:17:54.468492000 +0200
++++ webkitgtk-2.50.4/Source/WTF/wtf/PlatformHave.h	2026-01-15 13:59:04.043430400 +0100
+@@ -229,16 +229,16 @@
+ #define HAVE_MACH_MEMORY_ENTRY 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(FUCHSIA) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64)))
++#if OS(DARWIN) || OS(FUCHSIA) || OS(SOLARIS) || ((OS(FREEBSD) || OS(HAIKU) || OS(NETBSD) || OS(OPENBSD) || OS(LINUX) || OS(HURD) || OS(QNX)) && (CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(RISCV64) || CPU(SPARC)))
+ #define HAVE_MACHINE_CONTEXT 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(HAIKU) || ((OS(LINUX) || OS(HURD)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
++#if OS(DARWIN) || OS(HAIKU) || OS(SOLARIS) || ((OS(LINUX) || OS(HURD)) && defined(__GLIBC__) && !defined(__UCLIBC__) && !CPU(MIPS))
+ #define HAVE_BACKTRACE 1
+ #define HAVE_BACKTRACE_SYMBOLS 1
+ #endif
+ 
+-#if OS(DARWIN) || OS(HAIKU) || OS(LINUX) || OS(HURD)
++#if OS(DARWIN) || OS(HAIKU) || OS(SOLARIS) || OS(LINUX) || OS(HURD)
+ #define HAVE_DLADDR 1
+ #endif
+ 
+@@ -397,7 +397,7 @@
+ #define HAVE_URL_FORMATTING 1
+ #endif
+ 
+-#if !OS(WINDOWS) && !OS(QNX)
++#if !OS(WINDOWS) && !OS(QNX) && !OS(SOLARIS)
+ #define HAVE_STACK_BOUNDS_FOR_NEW_THREAD 1
+ #endif
+ 
+--- webkitgtk-2.48.1/Source/WTF/wtf/PlatformOS.h.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/PlatformOS.h
+@@ -121,6 +121,11 @@
+ #define WTF_OS_QNX 1
+ #endif
+ 
++/* OS(SOLARIS) - Solaris */
++#if defined(sun) || defined(__sun)
++#define WTF_OS_SOLARIS 1
++#endif
++
+ /* OS(WINDOWS) - Any version of Windows */
+ #if defined(WIN32) || defined(_WIN32)
+ #define WTF_OS_WINDOWS 1
+@@ -136,6 +141,7 @@
+     || OS(LINUX)            \
+     || OS(NETBSD)           \
+     || OS(OPENBSD)          \
++    || OS(SOLARIS)          \
+     || defined(unix)        \
+     || defined(__unix)      \
+     || defined(__unix__)
+--- webkitgtk-2.48.1/Source/WTF/wtf/StackBounds.cpp.orig
++++ webkitgtk-2.48.1/Source/WTF/wtf/StackBounds.cpp
+@@ -29,6 +29,10 @@
+ 
+ #include <windows.h>
+ 
++#elif OS(SOLARIS)
++
++#include <thread.h>
++
+ #elif OS(UNIX) || OS(HAIKU)
+ 
+ #include <pthread.h>
+@@ -81,6 +85,19 @@
+     return newThreadStackBounds(pthread_self());
+ }
+ 
++#elif OS(SOLARIS)
++
++StackBounds StackBounds::currentThreadStackBoundsInternal()
++{
++    stack_t s;
++    thr_stksegment(&s);
++    void* origin = s.ss_sp;
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
++    void* bound = static_cast<char*>(origin) - s.ss_size;
++WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
++    return StackBounds { origin, bound };
++}
++
+ #elif OS(UNIX) || OS(HAIKU)
+ 
+ #if OS(OPENBSD)
+--- webkitgtk-2.48.1/Source/WebCore/inspector/InspectorFrontendHost.cpp.orig
++++ webkitgtk-2.48.1/Source/WebCore/inspector/InspectorFrontendHost.cpp
+@@ -414,6 +414,8 @@
+     return "freebsd"_s;
+ #elif OS(OPENBSD)
+     return "openbsd"_s;
++#elif OS(SOLARIS)
++    return "solaris"_s;
+ #else
+     return "unknown"_s;
+ #endif
+--- webkitgtk-2.50.4/Source/JavaScriptCore/runtime/MachineContext.h.~1~	2025-08-08 11:17:51.604548200 +0200
++++ webkitgtk-2.50.4/Source/JavaScriptCore/runtime/MachineContext.h	2026-01-15 13:49:23.635058900 +0100
+@@ -33,6 +33,7 @@
+ #include <wtf/PlatformRegisters.h>
+ #include <wtf/PointerPreparations.h>
+ #include <wtf/StdLibExtras.h>
++#include <sys/regset.h>
+ 
+ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+ 
+@@ -177,7 +178,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ #if CPU(X86_64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RSP]);
+@@ -187,6 +188,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.sp);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_SP]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_SP]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -294,7 +297,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)
+@@ -305,6 +308,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[29]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_S0]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_CCR]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -452,7 +457,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)
+@@ -463,6 +468,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_PC]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_PC]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -624,7 +631,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)
+@@ -635,6 +642,8 @@
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[1]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_A0 + 1]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ASI + 1]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -681,7 +690,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)
+@@ -692,6 +701,8 @@
+     return reinterpret_cast<void*>((uintptr_t) machineContext.regs[19]);
+ #elif CPU(RISCV64)
+     return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[9]);
++#elif defined(__sparcv9)
++    return reinterpret_cast<void*>((uintptr_t) machineContext.gregs[9]);
+ #else
+ #error Unknown Architecture
+ #endif
+@@ -798,7 +809,7 @@
+ #error Unknown Architecture
+ #endif
+ 
+-#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
++#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD) || OS(SOLARIS)
+ 
+ // The following sequence depends on glibc's sys/ucontext.h.
+ #if CPU(X86_64)

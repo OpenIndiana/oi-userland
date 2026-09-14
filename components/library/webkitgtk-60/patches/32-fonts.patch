@@ -1,0 +1,105 @@
+Revert:
+
+       https://bugs.webkit.org/show_bug.cgi?id=306148
+
+This change was introduced in 2.50.5; it adversely affects system font
+selection under GTK3.
+
+
+diff --git a/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp b/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
+index 1821d55a9d32..044ddc0c3e95 100644
+--- a/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
++++ b/Source/WebKit/UIProcess/glib/WebProcessPoolGLib.cpp
+@@ -366,6 +366,14 @@ const String& WebProcessPool::accessibilityBusAddress() const
+         return m_accessibilityBusAddress.value();
+     }
+ 
++#if PLATFORM(GTK)
++    auto address = Display::singleton().accessibilityBusAddress();
++    if (!address.isEmpty()) {
++        m_accessibilityBusAddress = WTF::move(address);
++        return m_accessibilityBusAddress.value();
++    }
++#endif
++
+     m_accessibilityBusAddress = queryAccessibilityBusAddress();
+     return m_accessibilityBusAddress.value();
+ }
+diff --git a/Source/WebKit/UIProcess/gtk/Display.cpp b/Source/WebKit/UIProcess/gtk/Display.cpp
+index e650d414e64d..7a829a0b5b1b 100644
+--- a/Source/WebKit/UIProcess/gtk/Display.cpp
++++ b/Source/WebKit/UIProcess/gtk/Display.cpp
+@@ -96,6 +96,24 @@ GLDisplay* Display::glDisplay() const
+     return nullptr;
+ }
+ 
++String Display::accessibilityBusAddress() const
++{
++    if (!m_gdkDisplay)
++        return { };
++
++#if USE(GTK4)
++    if (const char* atspiBusAddress = static_cast<const char*>(g_object_get_data(G_OBJECT(m_gdkDisplay.get()), "-gtk-atspi-bus-address")))
++        return String::fromUTF8(atspiBusAddress);
++#endif
++
++#if PLATFORM(X11)
++    if (isX11())
++        return accessibilityBusAddressX11();
++#endif
++
++    return { };
++}
++
+ #if !PLATFORM(X11)
+ bool Display::isX11() const
+ {
+diff --git a/Source/WebKit/UIProcess/gtk/Display.h b/Source/WebKit/UIProcess/gtk/Display.h
+index 660d0a7869ae..f8243a9c65a2 100644
+--- a/Source/WebKit/UIProcess/gtk/Display.h
++++ b/Source/WebKit/UIProcess/gtk/Display.h
+@@ -51,10 +51,13 @@ public:
+     bool isX11() const;
+     bool isWayland() const;
+ 
++    String accessibilityBusAddress() const;
++
+ private:
+     Display();
+ #if PLATFORM(X11)
+     bool initializeGLDisplayX11() const;
++    String accessibilityBusAddressX11() const;
+ #endif
+ #if PLATFORM(WAYLAND)
+     bool initializeGLDisplayWayland() const;
+diff --git a/Source/WebKit/UIProcess/gtk/DisplayX11.cpp b/Source/WebKit/UIProcess/gtk/DisplayX11.cpp
+index 64cc213251a1..b59cdd684fcc 100644
+--- a/Source/WebKit/UIProcess/gtk/DisplayX11.cpp
++++ b/Source/WebKit/UIProcess/gtk/DisplayX11.cpp
+@@ -77,6 +77,26 @@ bool Display::initializeGLDisplayX11() const
+     return false;
+ }
+ 
++String Display::accessibilityBusAddressX11() const
++{
++    auto* xDisplay = GDK_DISPLAY_XDISPLAY(m_gdkDisplay.get());
++    Atom atspiBusAtom = XInternAtom(xDisplay, "AT_SPI_BUS", False);
++    Atom type;
++    int format;
++    unsigned long itemCount, bytesAfter;
++    unsigned char* data = nullptr;
++    XErrorTrapper trapper(xDisplay, XErrorTrapper::Policy::Ignore);
++    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port.
++    XGetWindowProperty(xDisplay, RootWindowOfScreen(DefaultScreenOfDisplay(xDisplay)), atspiBusAtom, 0L, 8192, False, XA_STRING, &type, &format, &itemCount, &bytesAfter, &data);
++    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
++
++    auto atspiBusAddress = String::fromUTF8(reinterpret_cast<char*>(data));
++    if (data)
++        XFree(data);
++
++    return atspiBusAddress;
++}
++
+ } // namespace WebKit
+ 
+ #endif // PLATFORM(X11)

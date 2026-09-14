@@ -1,0 +1,234 @@
+
+webkitgtk-2.52.0/Source/WebCore/platform/graphics/ShareableBitmap.h:61:139: error: expected unqualified-id before numeric constant
+   61 |     WEBCORE_EXPORT ShareableBitmapConfiguration(const IntSize&, std::optional<DestinationColorSpace> = std::nullopt, Headroom = Headroom::None, bool isOpaque = false);
+      |                                                                                                                                           ^~~~
+webkitgtk-2.52.0/Source/WebCore/platform/graphics/ShareableBitmap.h:105:37: error: expected unqualified-id before numeric constant
+  105 |     Headroom m_headroom { Headroom::None };
+      |                                     ^~~~
+build/amd64/WebCore/PrivateHeaders/WebCore/ImageFrame.h:151:69: error: could not convert '{<expression error>}' from '<brace-enclosed initializer list>' to 'WebCore::ImageOrientation'
+  151 |     ImageOrientation m_orientation { ImageOrientation::Orientation::None };
+      |                                                                     ^~~~
+      |                                                                     |
+      |                                                                     <brace-enclosed initializer list>
+build/amd64/WebCore/PrivateHeaders/WebCore/ImageSource.h:109:140: error: expected unqualified-id before numeric constant
+  109 |     virtual ImageOrientation frameOrientationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return ImageOrientation::Orientation::None; }
+      |                                                                                                                                            ^~~~
+webkitgtk-2.52.0/Source/WebCore/platform/graphics/transforms/TransformationMatrix.h:274:9: error: expected '}' before numeric constant
+  274 |         None,
+      |         ^~~~
+webkitgtk-2.52.0/build/amd64/WebCore/PrivateHeaders/WebCore/SharedMemory.h:57:27: error: expected identifier before numeric constant
+   57 | enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+      |                           ^~~~
+
+--- webkitgtk-2.52.0/Source/WebCore/platform/graphics/ShareableBitmap.h.~1~
++++ webkitgtk-2.52.0/Source/WebCore/platform/graphics/ShareableBitmap.h
+@@ -54,6 +54,10 @@
+ inline constexpr auto defaultCopyOnWrite = SharedMemory::CopyOnWrite::No;
+ #endif
+ 
++#if defined(None)
++#undef None
++#endif
++
+ class ShareableBitmapConfiguration {
+ public:
+     ShareableBitmapConfiguration() = default;
+--- webkitgtk-2.52.0/Source/WebCore/platform/graphics/ImageFrame.h.~1~
++++ webkitgtk-2.52.0/Source/WebCore/platform/graphics/ImageFrame.h
+@@ -33,6 +33,10 @@
+ #include <WebCore/NativeImage.h>
+ #include <wtf/Seconds.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ class ImageFrame {
+--- webkitgtk-2.52.0/Source/WebCore/platform/graphics/ImageSource.h.~1~
++++ webkitgtk-2.52.0/Source/WebCore/platform/graphics/ImageSource.h
+@@ -30,6 +30,10 @@
+ #include <WebCore/ImageTypes.h>
+ #include <wtf/ThreadSafeWeakPtr.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ class FragmentedSharedBuffer;
+--- webkitgtk-2.52.0/Source/WebCore/platform/graphics/transforms/TransformationMatrix.h.~1~
++++ webkitgtk-2.52.0/Source/WebCore/platform/graphics/transforms/TransformationMatrix.h
+@@ -57,6 +57,10 @@
+ #endif
+ #endif
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WTF {
+ class TextStream;
+ }
+--- webkitgtk-2.52.0/Source/WebCore/platform/SharedMemory.h.~1~
++++ webkitgtk-2.52.0/Source/WebCore/platform/SharedMemory.h
+@@ -48,6 +48,10 @@
+ OBJC_CLASS NSData;
+ #endif
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ class FragmentedSharedBuffer;
+--- webkitgtk-2.52.0/Source/WebCore/rendering/style/RenderStyleConstants.h.old
++++ webkitgtk-2.52.0/Source/WebCore/rendering/style/RenderStyleConstants.h
+@@ -33,6 +33,23 @@
+ #include <wtf/EnumSet.h>
+ #include <wtf/EnumTraits.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
++#if defined(Below)
++#undef Below
++#endif
++
++#if defined(Always)
++#undef Always
++#endif
++
++#if defined(Above)
++#undef Above
++#endif
++
++
+ namespace WTF {
+ class TextStream;
+ }
+--- webkitgtk-2.52.0/Source/WebCore/dom/Document.h.old
++++ webkitgtk-2.52.0/Source/WebCore/dom/Document.h
+@@ -82,6 +82,22 @@
+ #include <wtf/ThreadingPrimitives.h>
+ #endif
+ 
++#if defined(FocusIn)
++#undef FocusIn
++#endif
++
++#if defined(FocusOut)
++#undef FocusOut
++#endif
++
++#if defined(None)
++#undef None
++#endif
++
++#if defined(Left)
++#undef Left
++#endif
++
+ namespace JSC {
+ class CallFrame;
+ class InputCursor;
+--- webkitgtk-2.52.0/Source/WebCore/editing/VisibleSelection.h.old
++++ webkitgtk-2.52.0/Source/WebCore/editing/VisibleSelection.h
+@@ -28,6 +28,10 @@
+ #include <WebCore/TextGranularity.h>
+ #include <WebCore/VisiblePosition.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ // On Mac, Shift-arrow keys move the anchor in a strongly directional selection
+--- webkitgtk-2.52.0/Source/WebCore/editing/FrameSelection.h.old
++++ webkitgtk-2.52.0/Source/WebCore/editing/FrameSelection.h
+@@ -39,6 +39,10 @@
+ #include <wtf/Platform.h>
+ #include <wtf/TZoneMalloc.h>
+ 
++#if defined(Always)
++#undef Always
++#endif
++
+ namespace WebCore {
+ 
+ class CharacterData;
+--- webkitgtk-2.52.0/Source/WebCore/html/HTMLTextFormControlElement.h.old
++++ webkitgtk-2.52.0/Source/WebCore/html/HTMLTextFormControlElement.h
+@@ -28,6 +28,10 @@
+ #include <WebCore/PointerEventTypeNames.h>
+ #include <wtf/ValueOrReference.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ class Position;
+--- webkitgtk-2.52.0/Source/WebCore/editing/FontAttributes.h.old
++++ webkitgtk-2.52.0/Source/WebCore/editing/FontAttributes.h
+@@ -33,6 +33,15 @@
+ #include <wtf/RetainPtr.h>
+ #include <wtf/text/WTFString.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
++#if defined(Left)
++#undef Left
++#endif
++
++
+ OBJC_CLASS NSDictionary;
+ OBJC_CLASS NSTextList;
+ 
+--- webkitgtk-2.52.0/Source/WebKit/Shared/EditorState.h.old
++++ webkitgtk-2.52.0/Source/WebKit/Shared/EditorState.h
+@@ -43,6 +43,10 @@
+ #include <WebCore/DictationContext.h>
+ #endif
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WTF {
+ class TextStream;
+ };
+--- webkitgtk-2.52.0/Source/WebCore/editing/EditingStyle.h.old
++++ webkitgtk-2.52.0/Source/WebCore/editing/EditingStyle.h
+@@ -39,6 +39,10 @@
+ #include <wtf/TriState.h>
+ #include <wtf/text/WTFString.h>
+ 
++#if defined(None)
++#undef None
++#endif
++
+ namespace WebCore {
+ 
+ class CSSStyleProperties;
+--- webkitgtk-2.52.0/Source/WebKit/WebProcess/WebPage/glib/WebPageGLib.cpp.old
++++ webkitgtk-2.52.0/Source/WebKit/WebProcess/WebPage/glib/WebPageGLib.cpp
+@@ -66,6 +66,10 @@
+ #include <xf86drm.h>
+ #endif
+ 
++#if defined(True)
++#undef True
++#endif
++
+ namespace WebKit {
+ using namespace WebCore;
+ 

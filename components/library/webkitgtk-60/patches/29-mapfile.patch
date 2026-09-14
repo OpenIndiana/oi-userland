@@ -1,0 +1,32 @@
+Two issues worked around here.  First is that Solaris linker expects -M for
+mapfiles, not the GNU ld --version-script option.  Ideally, CMakeLists.txt
+or some other appropriate CMake file would be changed to detect that the
+version-script option is not supported and then if not, check if SunOS, and
+if so, use -M instead.
+
+The second is a temporary workaround for the fact that the Solaris linker
+doesn't currently support arbitrary globbing of symbols via '*'.  For now,
+this is worked around with a manual definition of all of the symbols that
+should be exported by the relevant library.  The right fix is probably to
+detect whether we're using the GNU linker, and if not, use a combination of
+perl, sed, etc. to generate the mapfile at build time.
+
+--- webkitgtk-2.50.0/Source/WebKit/webkitglib-symbols.map.~1~   2025-09-17 15:59:28.190885881 +0000
++++ webkitgtk-2.50.0/Source/WebKit/webkitglib-symbols.map       2025-09-17 16:00:08.378226516 +0000
+@@ -1,15 +1,5 @@
+ {
+ global:
+-  jsc_*;
+-  webkit_*;
+-  wpe_*;
+-  extern "C++" {
+-    "WebKit::GPUProcessMain(int, char**)";
+-    "WebKit::NetworkProcessMain(int, char**)";
+-    "WebKit::WebProcessExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
+-    "WebKit::WebProcessExtensionManager::singleton()";
+-    "WebKit::WebProcessMain(int, char**)";
+-  };
+-local:
+   *;
++local:
+ };

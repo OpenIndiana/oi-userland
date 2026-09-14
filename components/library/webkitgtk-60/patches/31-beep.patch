@@ -1,0 +1,11 @@
+--- x/webkitgtk-2.52.0/Source/WebKit/UIProcess/WebProcessProxy.cpp	2026-01-23 08:35:26.615446600 +0000
++++ webkitgtk-2.52.0/Source/WebKit/UIProcess/WebProcessProxy.cpp	2026-03-20 19:27:17.465044384 +0000
+@@ -2815,7 +2815,7 @@
+     liveProcessesLRU().moveToLastIfPresent(*this);
+ }
+ 
+-#if !USE(GLIB)
++#if !USE(GLIB) || OS(SOLARIS)
+ void WebProcessProxy::systemBeep()
+ {
+     PAL::systemBeep();
