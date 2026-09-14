@@ -5,7 +5,7 @@ rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: test
 asyncio: mode=strict, debug=False, asyncio_default_fixture_loop_scope=session, asyncio_default_test_loop_scope=function
-collecting ... collected 9194 items / 919 deselected / 8275 selected
+collecting ... collected 9208 items / 919 deselected / 8289 selected
 
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_aborts_transaction SKIPPED
 test/asynchronous/test_async_cancellation.py::TestAsyncCancellation::test_async_cancellation_closes_change_stream SKIPPED
@@ -2174,6 +2174,7 @@ test/asynchronous/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_replica_set 
 test/asynchronous/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_secondary SKIPPED
 test/asynchronous/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_secondary_lazy SKIPPED
 test/asynchronous/test_gridfs_bucket.py::TestGridfs::test_abort SKIPPED
+test/asynchronous/test_gridfs_bucket.py::TestGridfs::test_abort_with_injected_file_id_does_not_delete_other_files SKIPPED
 test/asynchronous/test_gridfs_bucket.py::TestGridfs::test_alt_collection SKIPPED
 test/asynchronous/test_gridfs_bucket.py::TestGridfs::test_basic SKIPPED
 test/asynchronous/test_gridfs_bucket.py::TestGridfs::test_corrupt_chunk SKIPPED
@@ -2231,6 +2232,12 @@ test/asynchronous/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadBy
 test/asynchronous/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_0 SKIPPED
 test/asynchronous/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_1 SKIPPED
 test/asynchronous/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_2 SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_delete_uses_$eq_to_delete_the_files_collection_document_and_chunks SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_delete_with_a_file_id_containing_a_query_operator_does_not_delete_any_files SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_download_uses_$eq_to_query_the_files_and_chunks_collections SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_download_with_a_file_id_containing_a_query_operator_does_not_return_any_files SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_rename_uses_$eq_to_update_the_files_collection_document SKIPPED
+test/asynchronous/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_rename_with_a_file_id_containing_a_query_operator_does_not_rename_any_files SKIPPED
 test/asynchronous/test_gridfs_spec.py::TestGridfsRename::test_rename_by_id SKIPPED
 test/asynchronous/test_gridfs_spec.py::TestGridfsRename::test_rename_when_file_id_does_not_exist SKIPPED
 test/asynchronous/test_gridfs_spec.py::TestGridfsRenameByName::test_rename_when_file_name_does_not_exist SKIPPED
@@ -6201,6 +6208,7 @@ test/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_secondary SKIPPED
 test/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_secondary_lazy SKIPPED
 test/test_gridfs.py::TestGridfsReplicaSet::test_gridfs_secondary_lazy SKIPPED
 test/test_gridfs_bucket.py::TestGridfs::test_abort SKIPPED (Cannot c...)
+test/test_gridfs_bucket.py::TestGridfs::test_abort_with_injected_file_id_does_not_delete_other_files SKIPPED
 test/test_gridfs_bucket.py::TestGridfs::test_alt_collection SKIPPED
 test/test_gridfs_bucket.py::TestGridfs::test_basic SKIPPED (Cannot c...)
 test/test_gridfs_bucket.py::TestGridfs::test_corrupt_chunk SKIPPED (...)
@@ -6259,6 +6267,12 @@ test/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_rev
 test/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_0 SKIPPED
 test/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_1 SKIPPED
 test/test_gridfs_spec.py::TestGridfsDownloadByName::test_downloadByName_when_revision_is_2 SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_delete_uses_$eq_to_delete_the_files_collection_document_and_chunks SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_delete_with_a_file_id_containing_a_query_operator_does_not_delete_any_files SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_download_uses_$eq_to_query_the_files_and_chunks_collections SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_download_with_a_file_id_containing_a_query_operator_does_not_return_any_files SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_rename_uses_$eq_to_update_the_files_collection_document SKIPPED
+test/test_gridfs_spec.py::TestGridfsQueriesUseEq::test_rename_with_a_file_id_containing_a_query_operator_does_not_rename_any_files SKIPPED
 test/test_gridfs_spec.py::TestGridfsRename::test_rename_by_id SKIPPED
 test/test_gridfs_spec.py::TestGridfsRename::test_rename_when_file_id_does_not_exist SKIPPED
 test/test_gridfs_spec.py::TestGridfsRenameByName::test_rename_when_file_name_does_not_exist SKIPPED
@@ -8297,4 +8311,4 @@ test/test_grid_file.py::TestGridFileNoConnect::test_grid_in_custom_opts
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 - generated xml file: $(@D)/xunit-results/TEST-results.xml -
 =========================== short test summary info ============================
-======== 1680 passed, 6597 skipped, 919 deselected, 2 warnings ========
+======== 1680 passed, 6611 skipped, 919 deselected, 2 warnings ========
