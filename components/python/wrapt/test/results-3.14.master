@@ -4,7 +4,7 @@ platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
-collecting ... collected 1180 items
+collecting ... collected 1196 items
 
 tests/core/test_adapter.py::TestAdapterAttributes::test_doc_string PASSED
 tests/core/test_adapter.py::TestAdapterAttributes::test_module_name PASSED
@@ -111,10 +111,24 @@ tests/core/test_callable_binding_no_args.py::TestCallableBindingNoArgs::test_cal
 tests/core/test_callable_binding_no_args.py::TestCallableBindingNoArgs::test_unbound_access_produces_callable_binding PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_1_keyword_argument PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_1_positional_argument PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_bound_arguments_keyword PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_bound_arguments_mixed PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_bound_arguments_no_arguments PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_bound_arguments_not_forwarded_to_wrapped PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_bound_arguments_positional PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_empty_arguments PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_multiple_keyword_arguments PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_multiple_positional_arguments PASSED
 tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxy::test_no_arguments PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_attribute_on_instance_only PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_attribute_via_non_interned_name PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_bound_method_limitation PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_function_wrapper_called_via_class PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_keyword_argument PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_method_with_instance_bound PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_no_bound_arguments PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_positional_argument PASSED
+tests/core/test_callable_object_proxy.py::TestPartialCallableObjectProxySignature::test_too_many_positional_arguments PASSED
 tests/core/test_class.py::TestIntrospection::test_getmembers PASSED
 tests/core/test_class.py::TestInheritance::test_single_inheritance PASSED
 tests/core/test_class_mro_entries.py::TestInheritance::test_multiple_inheritance PASSED
@@ -1073,6 +1087,8 @@ tests/core/test_type_module_attribute.py::TestSetModuleAndDoc::test_set_module_o
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_doc_after_wrapped_replacement PASSED
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_module_after_wrapped_replacement PASSED
 tests/core/test_type_module_attribute.py::TestWrappedReplacement::test_module_after_wrapped_replacement_on_function_wrapper PASSED
+tests/core/test_type_module_attribute.py::TestNonInternedAttributeNames::test_get_module_and_doc_via_non_interned_name PASSED
+tests/core/test_type_module_attribute.py::TestNonInternedAttributeNames::test_set_module_and_doc_via_non_interned_name PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_buried_under_closure_raises PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_class_attribute PASSED
 tests/core/test_unwrap_object.py::TestUnwrapObject::test_deferred_wrap_and_handle_recovery PASSED
@@ -1187,6 +1203,6 @@ tests/core/test_wrapper_chain.py::TestUnwrapped::test_lazy_proxy PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_unwrapped_object PASSED
 tests/core/test_wrapper_chain.py::TestUnwrapped::test_wrapper_stack PASSED
 
-======== 1180 passed ========
+======== 1196 passed ========
   py$(PYV): OK
   congratulations :)
