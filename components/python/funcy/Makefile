@@ -19,12 +19,13 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		funcy
-HUMAN_VERSION =			2.0
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			2.1
 COMPONENT_SUMMARY =		A fancy and practical functional tools
-COMPONENT_PROJECT_URL =		http://github.com/Suor/funcy
+COMPONENT_PROJECT_URL =		https://github.com/Suor/funcy
+COMPONENT_ARCHIVE_URL =		\
+	https://github.com/Suor/funcy/archive/refs/tags/$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:3963315d59d41c6f30c04bc910e10ab50a3ac4a225868bfa96feed133df075cb
+	sha256:b0ab0b0bc17a8d79f1f1bd008aa8e716a114c7b38231c3bdf20aaef760081a06
 COMPONENT_LICENSE =		BSD-3-Clause
 COMPONENT_LICENSE_FILE =	LICENSE
 
