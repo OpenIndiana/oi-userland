@@ -1,0 +1,16 @@
+pkgdepend fails when there is no RPATH as /usr/lib/firefox/ isn't
+default search path for libraries.
+
+Note that it's not problem for Firefox itself which can cope with it.
+
+--- firefox-153.0/build/moz.configure/flags.configure
++++ firefox-153.0/build/moz.configure/flags.configure
+@@ -455,7 +455,7 @@
+     if target.kernel == "WINNT":
+         return []
+     if target.kernel == "SunOS":
+-        return [f"-L{dist}/bin"]
++        return [f"-L{dist}/bin", "-Wl,-R,$ORIGIN"]
+     if target.os == "WASI":
+         return []
+ 
