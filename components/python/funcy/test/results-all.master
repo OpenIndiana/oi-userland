@@ -1,15 +1,16 @@
-py$(PYV): remove tox env folder $(@D)/.tox/py$(PYV)
 py$(PYV): commands[0]> python -m pytest -W error
 ============================= test session starts ==============================
 platform sunos5 -- Python $(PYTHON_VERSION).X -- $(@D)/.tox/py$(PYV)/bin/python
 cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
-collecting ... collected 202 items
+collecting ... collected 219 items
 
 tests/test_calc.py::test_memoize PASSED
 tests/test_calc.py::test_memoize_args_kwargs PASSED
+tests/test_calc.py::test_memoize_skip PASSED
 tests/test_calc.py::test_memoize_memory PASSED
 tests/test_calc.py::test_memoize_key_func PASSED
+tests/test_calc.py::test_memoize_direct_key_func PASSED
 tests/test_calc.py::test_make_lookuper PASSED
 tests/test_calc.py::test_make_lookuper_nested PASSED
 tests/test_calc.py::test_silent_lookuper PASSED
@@ -18,6 +19,7 @@ tests/test_calc.py::test_cache[int] PASSED
 tests/test_calc.py::test_cache[timedelta] PASSED
 tests/test_calc.py::test_cache_mixed_args PASSED
 tests/test_calc.py::test_cache_timedout PASSED
+tests/test_calc.py::test_cache_expiration_preserves_refilled_key PASSED
 tests/test_calc.py::test_cache_invalidate PASSED
 tests/test_colls.py::test_empty PASSED
 tests/test_colls.py::test_empty_iter PASSED
@@ -39,6 +41,9 @@ tests/test_colls.py::test_select PASSED
 tests/test_colls.py::test_select_extended PASSED
 tests/test_colls.py::test_select_keys PASSED
 tests/test_colls.py::test_select_values PASSED
+tests/test_colls.py::test_split_keys PASSED
+tests/test_colls.py::test_split_keys_extended PASSED
+tests/test_colls.py::test_split_keys_type PASSED
 tests/test_colls.py::test_compact PASSED
 tests/test_colls.py::test_is_distinct PASSED
 tests/test_colls.py::test_all PASSED
@@ -70,6 +75,7 @@ tests/test_colls.py::test_pluck PASSED
 tests/test_colls.py::test_pluck_attr PASSED
 tests/test_colls.py::test_invoke PASSED
 tests/test_debug.py::test_tap PASSED
+tests/test_debug.py::test_log_calls_keyword PASSED
 tests/test_debug.py::test_log_calls PASSED
 tests/test_debug.py::test_print_calls PASSED
 tests/test_debug.py::test_log_calls_raise PASSED
@@ -110,6 +116,14 @@ tests/test_flow.py::test_collecting PASSED
 tests/test_flow.py::test_once PASSED
 tests/test_flow.py::test_once_per PASSED
 tests/test_flow.py::test_once_per_args PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[list-once] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[list-once_per_args] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[dict-once] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[dict-once_per_args] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[set-once] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[set-once_per_args] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[<lambda>-once] PASSED
+tests/test_flow.py::test_once_per_unhashable_arguments[<lambda>-once_per_args] PASSED
 tests/test_flow.py::test_wrap_with PASSED
 tests/test_funcmakers.py::test_callable PASSED
 tests/test_funcmakers.py::test_int PASSED
@@ -190,6 +204,8 @@ tests/test_seqs.py::test_count_by_is_defaultdict PASSED
 tests/test_seqs.py::test_count_reps PASSED
 tests/test_seqs.py::test_partition PASSED
 tests/test_seqs.py::test_chunks PASSED
+tests/test_seqs.py::test_partition_step_gt_n PASSED
+tests/test_seqs.py::test_chunks_step_gt_n PASSED
 tests/test_seqs.py::test_partition_by PASSED
 tests/test_seqs.py::test_with_prev PASSED
 tests/test_seqs.py::test_with_next PASSED
@@ -209,6 +225,6 @@ tests/test_tree.py::test_tree_nodes PASSED
 tests/test_types.py::test_iterable PASSED
 tests/test_types.py::test_is_iter PASSED
 
-======== 202 passed ========
+======== 219 passed ========
   py$(PYV): OK
   congratulations :)
