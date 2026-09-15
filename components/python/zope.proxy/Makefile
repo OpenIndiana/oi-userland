@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_proxy
-HUMAN_VERSION =			7.2
+HUMAN_VERSION =			7.3
 COMPONENT_SUMMARY =		Generic Transparent Proxies
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a44ea34ced433dca665b5e8c300e83e40d2ae6821668f57aef38c11593e56f58
+	sha256:a2c00ff84d416b5008bbcdd7337eb800ade8bc083312e8b5e0ecd7d0c0d11cf6
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
