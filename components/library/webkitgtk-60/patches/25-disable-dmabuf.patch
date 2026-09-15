@@ -1,0 +1,15 @@
+--- webkitgtk-2.52.5/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp.~2~
++++ webkitgtk-2.52.5/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp
+@@ -85,6 +85,12 @@
+     static OptionSet<RendererBufferTransportMode> mode;
+     static std::once_flag onceFlag;
+     std::call_once(onceFlag, [] {
++
++// do not attempt to use EGL/DMABUF support. 
++#ifdef __sun__
++    return;
++#endif
++
+         const char* disableDMABuf = getenv("WEBKIT_DISABLE_DMABUF_RENDERER");
+         if (disableDMABuf && g_strcmp0(disableDMABuf, "0"))
+             return;

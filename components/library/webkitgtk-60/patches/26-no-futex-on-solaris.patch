@@ -1,0 +1,21 @@
+Except for this feature it is easier to port the ANGLE subsystem of
+webkit if we pretend that Illumos is Linux.
+
+--- webkitgtk-2.48.1/Source/ThirdParty/ANGLE/src/common/SimpleMutex.h.orig
++++ webkitgtk-2.48.1/Source/ThirdParty/ANGLE/src/common/SimpleMutex.h
+@@ -32,6 +32,7 @@
+ // - Windows 8+
+ //
+ // There is no TSAN support for futex currently, so it is disabled in that case
++#ifndef __sun__
+ #if !defined(ANGLE_WITH_TSAN)
+ #    if defined(ANGLE_PLATFORM_LINUX) || defined(ANGLE_PLATFORM_ANDROID)
+ // Linux has had futexes for a very long time.  Assume support.
+@@ -43,6 +44,7 @@
+ #        define ANGLE_USE_FUTEX 1
+ #    endif  // defined(ANGLE_PLATFORM_LINUX) || defined(ANGLE_PLATFORM_ANDROID)
+ #endif      // !defined(ANGLE_WITH_TSAN)
++#endif
+ 
+ namespace angle
+ {

@@ -1,0 +1,13 @@
+Silence a recurring warning during the build to reduce noise.
+
+--- webkitgtk-2.48.1/Source/JavaScriptCore/runtime/PropertyTable.h.orig
++++ webkitgtk-2.48.1/Source/JavaScriptCore/runtime/PropertyTable.h
+@@ -201,7 +201,7 @@
+     template<typename Index, typename Entry>
+     void reinsert(Index*, Entry*, const ValueType& entry);
+ 
+-    static bool canFitInCompact(const ValueType& entry) { return entry.offset() <= UINT8_MAX; }
++    static bool canFitInCompact(const ValueType& entry) { return entry.offset() <= (int)UINT8_MAX; }
+ 
+     // Rehash the table. Used to grow, or to recover deleted slots.
+     void rehash(VM&, unsigned newCapacity, bool canStayCompact);

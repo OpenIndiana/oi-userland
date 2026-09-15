@@ -1,0 +1,18 @@
+This patch restores intelligent SELECT popup placement in X11.
+
+See:
+    https://bugs.webkit.org/show_bug.cgi?id=210069
+    https://bugs.webkit.org/show_bug.cgi?id=210603
+
+
+--- a/Source/WebKit/UIProcess/gtk/WebPopupMenuProxyGtk.cpp	2020-04-17 19:23:25.000000000 +0000
++++ b/Source/WebKit/UIProcess/gtk/WebPopupMenuProxyGtk.cpp	2020-04-18 09:51:36.361498353 +0000
+@@ -339,7 +339,7 @@
+     gtk_popover_set_pointing_to(GTK_POPOVER(m_popup), &windowRect);
+     show();
+ #else
+-#if GTK_CHECK_VERSION(3, 24, 0)
++#if GTK_CHECK_VERSION(3, 24, 0) && PLATFORM(WAYLAND)
+     GdkRectangle windowRect = { rect.x(), rect.y(), rect.width(), rect.height() };
+     gtk_widget_translate_coordinates(m_webView, toplevel, windowRect.x, windowRect.y, &windowRect.x, &windowRect.y);
+     gdk_window_move_to_rect(gtk_widget_get_window(m_popup), &windowRect, GDK_GRAVITY_SOUTH_WEST, GDK_GRAVITY_NORTH_WEST,
