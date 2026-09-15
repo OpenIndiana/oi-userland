@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project -d python/zope.hookable zope_hookable
+#   $WS_TOOLS/python-integrate-project -d python/zope.hookable-39 zope_hookable
 #
 
 BUILD_STYLE = pyproject
@@ -19,15 +19,18 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_hookable
-HUMAN_VERSION =			8.3
+HUMAN_VERSION =			8.0
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Zope hookable
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:a05c9f8a4b3f21184cc423dad6116342c1c59818eeb1e4cbdf841f4243952d4f
+	sha256:fd2916aba426e594c20e08ffc76a72421c44072ade14cdbb42e238df0a2211df
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
-# Python 3.9 is not supported by zope.hookable >= 8.1
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+COMPONENT_VERSION =		8.2
+
+# zope.hookable >= 8.1 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
