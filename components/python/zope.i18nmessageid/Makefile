@@ -19,10 +19,10 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		zope_i18nmessageid
-HUMAN_VERSION =			8.2
+HUMAN_VERSION =			8.3
 COMPONENT_SUMMARY =		Message Identifiers for internationalization
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:85204fb2440f6bd0aac52f6a4629eb44f8fe569dcd9caa582a0a39df18a30817
+	sha256:7f7243a114fdb06a2a97dcf6b16c7b1f99168827a5e7ee09ebcd210c76745dee
 COMPONENT_LICENSE =		ZPL-2.1
 COMPONENT_LICENSE_FILE =	LICENSE.txt
 
