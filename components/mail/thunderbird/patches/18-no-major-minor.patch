@@ -1,31 +1,32 @@
-Bug 2039309 attempted to fix Solaris, but gets this type of message:
-(I tried to include sys/types.h as per the major man page, but that did not help.)
-__major and __minor symbols not found by linker.
+Compute Solaris device numbers without libc's private helpers.
 
-Vulkan features not supported by OI so no need to fix code segments or figure
-out which headers to include. Hack: Comment out code segments as a work around.
+Related Mozilla import:
+  imports/260513.patch
+  Petr Sumbera, "Bug 2039309 follow-up - avoid Solaris major/minor
+  relocations in libxul", Mon May 18 2026.
 
+The libxul version script gives unlisted symbols local binding, so the Solaris
+major() and minor() macros leave unsatisfied references to their __major and
+__minor implementations.  The public mkdev constants describe the device
+layout and avoid adding private libc implementation symbols to libxul's ABI.
 
-
---- firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp.~1~
-+++ firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp
-@@ -474,7 +474,7 @@
-     SelectVulkanDecoderPhysicalDevice(const StaticMutexAutoLock& aProofOfLock,
-                                       const nsCString& aRendererNode) {
-   uint32_t rendererDrmMajor = 0, rendererDrmMinor = 0;
--#    if defined(MOZ_WIDGET_GTK)
-+#    if 0
+--- firefox-153.0/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp
++++ firefox-153.0/dom/media/platforms/ffmpeg/FFmpegVulkanVideoDecoder.cpp
+@@ -488,8 +488,17 @@ bool FFmpegVideoDecoder<LIBAV_VER>::FFmp
    if (!aRendererNode.IsEmpty()) {
      struct stat st = {};
      if (stat(aRendererNode.get(), &st) == 0) {
---- firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/toolkit/xre/gfxtest/vulkantest.cpp.~1~
-+++ firefox-923c4d7d35ebb5693f5bda5dec9083f7c4f993b3/toolkit/xre/gfxtest/vulkantest.cpp
-@@ -220,7 +220,7 @@
- 
-   log("vulkantest start\n");
- 
--#ifdef __linux__
-+#if 0
-   if (aDrmRenderPath && *aDrmRenderPath) {
-     struct stat st = {};
-     if (stat(aDrmRenderPath, &st) == 0) {
++#      if defined(XP_SOLARIS) || defined(__sun)
++      // Avoid the Solaris major()/minor() libc helpers.  libxul's version
++      // script gives unlisted symbols local binding, so references to their
++      // __major/__minor implementations cannot be satisfied at link time.
++      rendererDrmMajor =
++          (static_cast<uint64_t>(st.st_rdev) >> NBITSMINOR) & MAXMAJ;
++      rendererDrmMinor = static_cast<uint64_t>(st.st_rdev) & MAXMIN;
++#      else
+       rendererDrmMajor = major(st.st_rdev);
+       rendererDrmMinor = minor(st.st_rdev);
++#      endif
+       FFMPEGV_LOG("Renderer device from GPU: {} (major={}, minor={})",
+                   aRendererNode.get(), rendererDrmMajor, rendererDrmMinor);
+     } else {
