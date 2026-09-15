@@ -26,15 +26,6 @@
 #
 
 
-if [ "x$LC_ALL" = x -a "x$LANG" = x -o "x$LANG" = xC ]; then
-  :
-else
-# Uncomment if you need 6757628
-# European locales have LC_MESSAGES=C in /etc/default/init
-#  LC_MESSAGES=$LANG; export LC_MESSAGES
-  :
-fi
-
 # To determine the character set used for filenames with
 # glib's g_filename_to/from_utf8() functions, we set the
 # environment variables G_FILENAME_ENCODING and G_BROKEN_FILENAMES.
@@ -64,8 +55,8 @@ zh*) VTE_CJK_WIDTH=1; export VTE_CJK_WIDTH;;
 *) ;;
 esac
 
-# Fixes 6555226
-if [ "x$LANG" = "xzh" ] ; then
+# Preserve explicit language preferences.
+if [ "x$LANG" = "xzh" -a "${LANGUAGE+x}" != x ] ; then
   LANGUAGE=zh:zh_CN.EUC
   export LANGUAGE
 fi
