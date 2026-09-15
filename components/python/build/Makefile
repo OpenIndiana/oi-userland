@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		build
-HUMAN_VERSION =			1.5.0
+HUMAN_VERSION =			1.6.1
 COMPONENT_SUMMARY =		A simple, correct Python build frontend
 COMPONENT_PROJECT_URL =		https://build.pypa.io
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:302c22c3ba2a0fd5f3911918651341ebb3896176cbdec15bd421f80b1afc7647
+	sha256:51cc11666391ab6f092070437ac747002ff46f3e4113a3622177ee6b488bfc53
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,9 +40,6 @@ PYTEST_ADDOPTS += --assert=plain
 
 # This list could vary between Python versions
 COMPONENT_TEST_TRANSFORMS += "-e '/^installed packages of interest:/d'"
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core

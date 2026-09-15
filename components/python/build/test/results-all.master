@@ -5,10 +5,18 @@ cachedir: .tox/py$(PYV)/.pytest_cache
 rootdir: $(@D)
 configfile: pyproject.toml
 testpaths: tests
-X workers [259 items]
+X workers [351 items]
 
 scheduling tests via LoadScheduling
 
+tests/test_compat_tarfile.py::test_safe_extractall_extracts_clean_archive[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_accepts_clean_file[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_accepts_safe_symlink[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_rejects_absolute_symlink[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_rejects_device_file[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_rejects_escaping_hardlink[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_rejects_path_traversal[False] PASSED
+tests/test_compat_tarfile.py::test_validate_safe_member_rejects_relative_escape_symlink[False] PASSED
 tests/test_ctx_logger.py::test_ctx_custom_logger[False] PASSED
 tests/test_ctx_logger.py::test_ctx_custom_logger_with_custom_verbosity[False] PASSED
 tests/test_ctx_logger.py::test_custom_subprocess_runner_ctx_logging[False-0-kwarg_origins0] PASSED
@@ -28,12 +36,25 @@ tests/test_env.py::test_default_impl_install_cmd_well_formed[False-True-constrai
 tests/test_env.py::test_default_impl_install_cmd_well_formed[False-True-constraints1-0] PASSED
 tests/test_env.py::test_default_impl_install_cmd_well_formed[False-True-constraints1-1] PASSED
 tests/test_env.py::test_default_impl_install_cmd_well_formed[False-True-constraints1-2] PASSED
+tests/test_env.py::test_default_impl_install_files_line_endings_not_doubled[False] PASSED
 tests/test_env.py::test_default_pip_is_never_too_old[False] PASSED
+tests/test_env.py::test_env_cleanup[False-requested-failure-kept] PASSED
+tests/test_env.py::test_env_cleanup[False-requested-success-removed] PASSED
+tests/test_env.py::test_env_cleanup[False-temporary-failure-removed] PASSED
+tests/test_env.py::test_env_cleanup[False-temporary-success-removed] PASSED
+tests/test_env.py::test_env_dir_accepts_existing_empty_location[False] PASSED
+tests/test_env.py::test_env_dir_created_at_requested_location[False] PASSED
+tests/test_env.py::test_env_dir_rejects_file_at_location[False] PASSED
+tests/test_env.py::test_env_dir_rejects_non_empty_location[False] PASSED
 tests/test_env.py::test_external_uv_detection_failure[False] PASSED
 tests/test_env.py::test_external_uv_detection_success[False] SKIPPED
 tests/test_env.py::test_find_executable_fallback_scheme[False] PASSED
 tests/test_env.py::test_find_executable_osx_framework_scheme[False] PASSED
 tests/test_env.py::test_find_executable_posix_local_scheme[False] PASSED
+tests/test_env.py::test_get_minimum_pip_version_darwin_release_parsing[False--x86_64-19.1.0] PASSED
+tests/test_env.py::test_get_minimum_pip_version_darwin_release_parsing[False-10.16-x86_64-19.1.0] PASSED
+tests/test_env.py::test_get_minimum_pip_version_darwin_release_parsing[False-15-arm64-21.0.1] PASSED
+tests/test_env.py::test_get_minimum_pip_version_darwin_release_parsing[False-15-x86_64-20.3.0] PASSED
 tests/test_env.py::test_get_minimum_pip_version_non_darwin[False] PASSED
 tests/test_env.py::test_get_minimum_pip_version_old_darwin[False] PASSED
 tests/test_env.py::test_has_dependency_missing[False] PASSED
@@ -42,7 +63,9 @@ tests/test_env.py::test_has_keyring_cli_missing[False] PASSED
 tests/test_env.py::test_install_dependencies_passes_keyring_env[False] PASSED
 tests/test_env.py::test_install_dependencies_with_outer_pip[False] PASSED
 tests/test_env.py::test_install_short_circuits[False] PASSED
+tests/test_env.py::test_installed_versions[False] PASSED
 tests/test_env.py::test_isolated_env_abstract[False] PASSED
+tests/test_env.py::test_isolated_env_enter_failure_before_path_set[False] PASSED
 tests/test_env.py::test_isolated_env_log[False] PASSED
 tests/test_env.py::test_isolation[False] PASSED
 tests/test_env.py::test_make_extra_environ_overrides_pythonpath[False] PASSED
@@ -72,6 +95,7 @@ tests/test_env.py::test_uv_impl_install_cmd_well_formed[False-True-constraints0-
 tests/test_env.py::test_uv_impl_install_cmd_well_formed[False-True-constraints1-0] SKIPPED
 tests/test_env.py::test_uv_impl_install_cmd_well_formed[False-True-constraints1-1] SKIPPED
 tests/test_env.py::test_uv_impl_install_cmd_well_formed[False-True-constraints1-2] SKIPPED
+tests/test_env.py::test_uv_impl_install_files_line_endings_not_doubled[False] SKIPPED
 tests/test_env.py::test_uv_install_dependencies_passes_keyring_env[False] SKIPPED
 tests/test_env.py::test_uv_install_respects_existing_keyring_env[False] SKIPPED
 tests/test_env.py::test_uv_install_strips_pythonpath[False] SKIPPED
@@ -81,7 +105,6 @@ tests/test_env.py::test_venv_creation[pip-virtualenv+pip-True] PASSED
 tests/test_env.py::test_venv_creation[uv-venv+uv-None] SKIPPED
 tests/test_env.py::test_venv_creation_no_setuptools[False] PASSED
 tests/test_env.py::test_venv_executable_missing_post_creation[False] PASSED
-tests/test_env.py::test_venv_symlink[False-True] PASSED
 tests/test_env.py::test_virtualenv_no_wheel_flag[False-new] PASSED
 tests/test_env.py::test_virtualenv_no_wheel_flag[False-old] PASSED
 tests/test_integration.py::test_build[False-Solaar-isolated_pip-code] SKIPPED
@@ -130,12 +153,18 @@ tests/test_integration.py::test_build[False-pip-no_isolation-code] SKIPPED
 tests/test_integration.py::test_build[False-pip-no_isolation-entrypoint] SKIPPED
 tests/test_integration.py::test_build[False-pip-no_isolation-module] SKIPPED
 tests/test_integration.py::test_isolation[False] SKIPPED
+tests/test_main.py::test_bootstrap_build_env_logs_versions[False] PASSED
+tests/test_main.py::test_build_failure_hint[False-both] PASSED
+tests/test_main.py::test_build_failure_hint[False-env-only] PASSED
+tests/test_main.py::test_build_failure_hint[False-none-pinned] PASSED
+tests/test_main.py::test_build_failure_hint[False-sdist-only] PASSED
 tests/test_main.py::test_build_isolated[False] PASSED
 tests/test_main.py::test_build_metadata_runner_without_extra_environ[False] PASSED
+tests/test_main.py::test_build_no_isolation_check_deps_chain_without_specifier[False] PASSED
 tests/test_main.py::test_build_no_isolation_check_deps_empty[False] PASSED
+tests/test_main.py::test_build_no_isolation_check_deps_not_installed[False] PASSED
+tests/test_main.py::test_build_no_isolation_check_deps_version_mismatch[False] PASSED
 tests/test_main.py::test_build_no_isolation_skip_dependency_check[False] PASSED
-tests/test_main.py::test_build_no_isolation_with_check_deps[False-missing_deps0-\n\tfoo] PASSED
-tests/test_main.py::test_build_no_isolation_with_check_deps[False-missing_deps1-\n\tfoo\n\tbar -> baz -> qux] PASSED
 tests/test_main.py::test_build_package[False] PASSED
 tests/test_main.py::test_build_package_passes_config_settings_to_build[False] PASSED
 tests/test_main.py::test_build_package_via_sdist[False] PASSED
@@ -144,20 +173,36 @@ tests/test_main.py::test_build_package_via_sdist_incomplete_sdist[False] PASSED
 tests/test_main.py::test_build_package_via_sdist_invalid_distribution[False] PASSED
 tests/test_main.py::test_build_package_via_sdist_passes_config_settings_to_build[False] PASSED
 tests/test_main.py::test_build_package_with_constraints[False] PASSED
+tests/test_main.py::test_build_package_with_constraints_passes_file_through_unmodified[False] PASSED
+tests/test_main.py::test_build_package_with_empty_constraints_txt[False] PASSED
 tests/test_main.py::test_build_raises_build_backend_exception[False] PASSED
 tests/test_main.py::test_build_raises_build_exception[False] PASSED
-tests/test_main.py::test_colors[False-False-env0-colors0] PASSED
-tests/test_main.py::test_colors[False-False-env2-colors2] PASSED
-tests/test_main.py::test_colors[False-False-env4-colors4] PASSED
-tests/test_main.py::test_colors[False-True-env1-colors1] PASSED
-tests/test_main.py::test_colors[False-True-env3-colors3] PASSED
-tests/test_main.py::test_colors[False-True-env5-colors5] PASSED
+tests/test_main.py::test_colors[False-False-False-env0-stdout_colors0-stderr_colors0] PASSED
+tests/test_main.py::test_colors[False-False-False-env4-stdout_colors4-stderr_colors4] PASSED
+tests/test_main.py::test_colors[False-False-False-env6-stdout_colors6-stderr_colors6] PASSED
+tests/test_main.py::test_colors[False-False-True-env2-stdout_colors2-stderr_colors2] PASSED
+tests/test_main.py::test_colors[False-True-False-env3-stdout_colors3-stderr_colors3] PASSED
+tests/test_main.py::test_colors[False-True-True-env1-stdout_colors1-stderr_colors1] PASSED
+tests/test_main.py::test_colors[False-True-True-env5-stdout_colors5-stderr_colors5] PASSED
+tests/test_main.py::test_colors[False-True-True-env7-stdout_colors7-stderr_colors7] PASSED
 tests/test_main.py::test_colors_conflict[False] PASSED
 tests/test_main.py::test_config_json_errors[False-cli_args0-not allowed with argument] PASSED
 tests/test_main.py::test_config_json_errors[False-cli_args1-Invalid JSON in --config-json] PASSED
 tests/test_main.py::test_config_json_errors[False-cli_args2---config-json must contain a JSON object] PASSED
+tests/test_main.py::test_cprint_selects_style_per_stream[False] PASSED
 tests/test_main.py::test_entrypoint[False] PASSED
+tests/test_main.py::test_env_dir_conflicts_with_no_isolation[False] PASSED
+tests/test_main.py::test_env_dir_flag_forwarded[False] PASSED
+tests/test_main.py::test_extract_sdist_cleans_up_on_error[False] PASSED
+tests/test_main.py::test_extract_sdist_fixed_dir_clears_stale_before_extract[False] PASSED
+tests/test_main.py::test_extract_sdist_fixed_dir_is_deterministic_and_kept[False] PASSED
+tests/test_main.py::test_extract_sdist_rejects_absolute_symlink[False] PASSED
+tests/test_main.py::test_extract_sdist_rejects_path_traversal[False] PASSED
+tests/test_main.py::test_extract_sdist_yields_top_level[False] PASSED
 tests/test_main.py::test_handle_build_error_build_backend_exception[False] PASSED
+tests/test_main.py::test_handle_build_error_prints_debug_tip_on_subprocess_failure[False] PASSED
+tests/test_main.py::test_log_dependency_versions[False] PASSED
+tests/test_main.py::test_log_dependency_versions_none[False] PASSED
 tests/test_main.py::test_log_unknown_kind[False] PASSED
 tests/test_main.py::test_logging_output[False-metadata-isolation] PASSED
 tests/test_main.py::test_logging_output[False-metadata-no-isolation] PASSED
@@ -167,40 +212,76 @@ tests/test_main.py::test_logging_output[False-via-sdist-isolation] PASSED
 tests/test_main.py::test_logging_output[False-via-sdist-no-isolation] PASSED
 tests/test_main.py::test_logging_output[False-wheel-direct-isolation] PASSED
 tests/test_main.py::test_logging_output[False-wheel-direct-no-isolation] PASSED
+tests/test_main.py::test_logging_output_backend_versions[False] PASSED
 tests/test_main.py::test_logging_output_env_subprocess_error[False-color] PASSED
 tests/test_main.py::test_logging_output_env_subprocess_error[False-no-color] PASSED
 tests/test_main.py::test_logging_output_venv_failure[False] PASSED
+tests/test_main.py::test_main_non_archive_file_treated_as_directory[False] PASSED
+tests/test_main.py::test_main_sdist_input_default_outdir_is_archive_parent[False] PASSED
+tests/test_main.py::test_main_sdist_input_end_to_end[False] PASSED
+tests/test_main.py::test_main_sdist_input_forwards_extract_dir[False] PASSED
+tests/test_main.py::test_main_sdist_input_metadata[False] PASSED
+tests/test_main.py::test_main_sdist_input_passes_kwargs[False] PASSED
+tests/test_main.py::test_main_sdist_input_rejects_sdist_flag[False-sdist-and-wheel] PASSED
+tests/test_main.py::test_main_sdist_input_rejects_sdist_flag[False-sdist-only] PASSED
+tests/test_main.py::test_main_sdist_input_validation_error_surfaced[False] PASSED
+tests/test_main.py::test_main_sdist_input_wheel_dispatch[False-custom-outdir] PASSED
+tests/test_main.py::test_main_sdist_input_wheel_dispatch[False-no-flag] PASSED
+tests/test_main.py::test_main_sdist_input_wheel_dispatch[False-wheel-long] PASSED
+tests/test_main.py::test_main_sdist_input_wheel_dispatch[False-wheel-short] PASSED
+tests/test_main.py::test_main_via_sdist_forwards_extract_dir[False-default-temp-dir] PASSED
+tests/test_main.py::test_main_via_sdist_forwards_extract_dir[False-fixed-dir] PASSED
+tests/test_main.py::test_metadata_from_wheel_without_dist_info[False] PASSED
 tests/test_main.py::test_metadata_json_output[False] PASSED
+tests/test_main.py::test_metadata_read_from_wheel[False] PASSED
 tests/test_main.py::test_metadata_with_distributions_error[False] PASSED
-tests/test_main.py::test_parse_args[False-cli_args0-build_args0-build_kwargs0-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args1-build_args1-build_kwargs1-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args10-build_args10-build_kwargs10-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args11-build_args11-build_kwargs11-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args12-build_args12-build_kwargs12-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args13-build_args13-build_kwargs13-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args14-build_args14-build_kwargs14-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args15-build_args15-build_kwargs15-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args16-build_args16-build_kwargs16-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args2-build_args2-build_kwargs2-build_package] PASSED
-tests/test_main.py::test_parse_args[False-cli_args3-build_args3-build_kwargs3-build_package] PASSED
-tests/test_main.py::test_parse_args[False-cli_args4-build_args4-build_kwargs4-build_package] PASSED
-tests/test_main.py::test_parse_args[False-cli_args5-build_args5-build_kwargs5-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args6-build_args6-build_kwargs6-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args7-build_args7-build_kwargs7-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args8-build_args8-build_kwargs8-build_package_via_sdist] PASSED
-tests/test_main.py::test_parse_args[False-cli_args9-build_args9-build_kwargs9-build_package_via_sdist] PASSED
+tests/test_main.py::test_parse_args[False-config-empty-values] PASSED
+tests/test_main.py::test_parse_args[False-config-json-empty] PASSED
+tests/test_main.py::test_parse_args[False-config-json-nested] PASSED
+tests/test_main.py::test_parse_args[False-config-json] PASSED
+tests/test_main.py::test_parse_args[False-config-repeated] PASSED
+tests/test_main.py::test_parse_args[False-config-single] PASSED
+tests/test_main.py::test_parse_args[False-defaults] PASSED
+tests/test_main.py::test_parse_args[False-dependency-constraints-txt] PASSED
+tests/test_main.py::test_parse_args[False-env-dir] PASSED
+tests/test_main.py::test_parse_args[False-installer] PASSED
+tests/test_main.py::test_parse_args[False-no-isolation] PASSED
+tests/test_main.py::test_parse_args[False-outdir] PASSED
+tests/test_main.py::test_parse_args[False-sdist-and-wheel] PASSED
+tests/test_main.py::test_parse_args[False-sdist] PASSED
+tests/test_main.py::test_parse_args[False-skip-dependency-check] PASSED
+tests/test_main.py::test_parse_args[False-srcdir-outdir] PASSED
+tests/test_main.py::test_parse_args[False-srcdir] PASSED
+tests/test_main.py::test_parse_args[False-wheel] PASSED
+tests/test_main.py::test_parse_config_settings_pip_compatibility[False-bare-key-warns] PASSED
+tests/test_main.py::test_parse_config_settings_pip_compatibility[False-empty-value] PASSED
+tests/test_main.py::test_parse_config_settings_pip_compatibility[False-with-value] PASSED
 tests/test_main.py::test_parse_config_settings_triple_duplicate[False] PASSED
 tests/test_main.py::test_prog[False] PASSED
+tests/test_main.py::test_report_not_allowed_with_metadata[False] PASSED
+tests/test_main.py::test_report_requires_path[False] PASSED
+tests/test_main.py::test_report_written[False] PASSED
 tests/test_main.py::test_setup_cli_non_windows[False] PASSED
 tests/test_main.py::test_setup_cli_windows_colorama_available[False] PASSED
 tests/test_main.py::test_setup_cli_windows_colorama_missing[False] PASSED
+tests/test_main.py::test_validate_sdist_archive_happy[False] PASSED
+tests/test_main.py::test_validate_sdist_archive_rejects[False-corrupt-tar] PASSED
+tests/test_main.py::test_validate_sdist_archive_rejects[False-invalid-filename] PASSED
+tests/test_main.py::test_validate_sdist_archive_rejects[False-invalid-version] PASSED
+tests/test_main.py::test_validate_sdist_archive_rejects[False-missing-pkg-info] PASSED
+tests/test_main.py::test_validate_sdist_archive_rejects[False-multiple-top-level] PASSED
+tests/test_main.py::test_validate_sdist_archive_top_level_name_mismatch[False] PASSED
 tests/test_main.py::test_verbose_logging_output[False] PASSED
-tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity=-1)
-tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity=-2)
-tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity=0)
-tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity=1)
-tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity=2)
+tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity='-1')
+tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity='-2')
+tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity='0')
+tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity='1')
+tests/test_main.py::test_verbose_logging_output[False] SUBPASSED(verbosity='2')
 tests/test_main.py::test_version[False] PASSED
+tests/test_main.py::test_warning_goes_to_stderr[False] PASSED
+tests/test_main.py::test_wheel_input_requires_metadata[False] PASSED
+tests/test_main.py::test_write_report_cleans_tmp_on_failure[False] PASSED
+tests/test_main.py::test_write_report_is_atomic[False] PASSED
 tests/test_main_helpers.py::test_natural_language_list[False] PASSED
 tests/test_module.py::test_dir[False] PASSED
 tests/test_module.py::test_version[False] PASSED
@@ -231,9 +312,14 @@ tests/test_projectbuilder.py::test_check_dependency[False-missing_dep; python_ve
 tests/test_projectbuilder.py::test_check_dependency[False-missing_dep; python_version>="1"-expected10] PASSED
 tests/test_projectbuilder.py::test_check_dependency[False-prerelease_dep >= 1.0.0-None] PASSED
 tests/test_projectbuilder.py::test_check_dependency[False-requireless_dep-None] PASSED
+tests/test_projectbuilder.py::test_check_dependency_diamond_visits_each_once[False] PASSED
+tests/test_projectbuilder.py::test_check_dependency_exhausted[False-extras_dep == 2.0.0-expected0] PASSED
+tests/test_projectbuilder.py::test_check_dependency_exhausted[False-recursive_dep-expected1] PASSED
 tests/test_projectbuilder.py::test_default_backend[False] PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_backend[False-editable] PASSED
 tests/test_projectbuilder.py::test_get_requires_for_build_missing_backend[False-sdist] PASSED
 tests/test_projectbuilder.py::test_get_requires_for_build_missing_backend[False-wheel] PASSED
+tests/test_projectbuilder.py::test_get_requires_for_build_missing_optional_hooks[False-editable] PASSED
 tests/test_projectbuilder.py::test_get_requires_for_build_missing_optional_hooks[False-sdist] PASSED
 tests/test_projectbuilder.py::test_get_requires_for_build_missing_optional_hooks[False-wheel] PASSED
 tests/test_projectbuilder.py::test_init[False] PASSED
@@ -241,21 +327,26 @@ tests/test_projectbuilder.py::test_init_makes_source_dir_absolute[False] PASSED
 tests/test_projectbuilder.py::test_init_permission_error[False] PASSED
 tests/test_projectbuilder.py::test_log[False] PASSED
 tests/test_projectbuilder.py::test_metadata_invalid_wheel[False] PASSED
+tests/test_projectbuilder.py::test_metadata_path_ambiguous_dist_info[False-two] PASSED
+tests/test_projectbuilder.py::test_metadata_path_ambiguous_dist_info[False-zero] PASSED
 tests/test_projectbuilder.py::test_metadata_path_legacy[False] PASSED
 tests/test_projectbuilder.py::test_metadata_path_no_prepare[False] PASSED
+tests/test_projectbuilder.py::test_metadata_path_no_prepare_build_tag[False] PASSED
 tests/test_projectbuilder.py::test_metadata_path_with_prepare[False] PASSED
 tests/test_projectbuilder.py::test_missing_backend[False] PASSED
 tests/test_projectbuilder.py::test_missing_outdir[False] PASSED
 tests/test_projectbuilder.py::test_missing_requires[False] PASSED
 tests/test_projectbuilder.py::test_no_outdir_multiple[False] PASSED
 tests/test_projectbuilder.py::test_no_outdir_single[False] PASSED
-tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml0-`requires` is a required property] PASSED
-tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml1-`requires` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_default_build_system_table_not_shared[False] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml0-`build-system` must be a table] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml1-`requires` is a required property] PASSED
 tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml2-`requires` must be an array of strings] PASSED
-tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml3-`build-backend` must be a string] PASSED
-tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml4-`backend-path` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml3-`requires` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml4-`build-backend` must be a string] PASSED
 tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml5-`backend-path` must be an array of strings] PASSED
-tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml6-Unknown properties: unknown-prop] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml6-`backend-path` must be an array of strings] PASSED
+tests/test_projectbuilder.py::test_parse_invalid_build_system_table_type[False-pyproject_toml7-Unknown properties: unknown-prop] PASSED
 tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[False-pyproject_toml0-parse_output0] PASSED
 tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[False-pyproject_toml1-parse_output1] PASSED
 tests/test_projectbuilder.py::test_parse_valid_build_system_table_type[False-pyproject_toml2-parse_output2] PASSED
@@ -263,6 +354,7 @@ tests/test_projectbuilder.py::test_prepare[False] PASSED
 tests/test_projectbuilder.py::test_prepare_error[False] PASSED
 tests/test_projectbuilder.py::test_prepare_no_hook[False] PASSED
 tests/test_projectbuilder.py::test_prepare_not_dir_outdir[False] PASSED
+tests/test_projectbuilder.py::test_prepare_not_dir_parent_outdir[False] PASSED
 tests/test_projectbuilder.py::test_relative_outdir[False] PASSED
 tests/test_projectbuilder.py::test_runner_user_specified[False] PASSED
 tests/test_self_packaging.py::test_build_sdist[False] PASSED
@@ -275,6 +367,6 @@ tests/test_util.py::test_wheel_metadata_isolation[False] SKIPPED
 tests/test_util.py::test_with_get_requires[False] PASSED
 
 =========================== short test summary info ============================
-======== 192 passed, 67 skipped, 5 subtests passed ========
+======== 283 passed, 68 skipped, 5 subtests passed ========
   py$(PYV): OK
   congratulations :)
