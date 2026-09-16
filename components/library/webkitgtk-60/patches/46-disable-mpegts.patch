@@ -1,0 +1,53 @@
+
+-- Checking for module 'gstreamer-mpegts-1.0>=1.4.0'
+--   No package 'gstreamer-mpegts-1.0' found
+-- Checking for module 'gstreamer-pbutils-1.0 >= 1.18.4'
+--   Found gstreamer-pbutils-1.0, version 1.28.6
+-- Checking for module 'gstreamer-tag-1.0 >= 1.18.4'
+--   Found gstreamer-tag-1.0, version 1.28.6
+-- Checking for module 'gstreamer-video-1.0 >= 1.18.4'
+--   Found gstreamer-video-1.0, version 1.28.6
+-- Checking for module 'gstreamer-codecparsers-1.0 >= 1.18.4'
+--   No package 'gstreamer-codecparsers-1.0' found
+-- Checking for module 'gstreamer-transcoder-1.0 >= 1.18.4'
+--   No package 'gstreamer-transcoder-1.0' found
+-- Checking for module 'gstreamer-rtp-1.0 >= 1.18.4'
+--   Found gstreamer-rtp-1.0, version 1.28.6
+-- Checking for module 'gstreamer-sdp-1.0 >= 1.18.4'
+--   Found gstreamer-sdp-1.0, version 1.28.6
+-- Checking for module 'gstreamer-webrtc-1.0 >= 1.18.4'
+--   No package 'gstreamer-webrtc-1.0' found
+CMake Error at /usr/share/cmake-4.4/Modules/FindPackageHandleStandardArgs.cmake:290 (message):
+  Could NOT find GStreamer (missing: GSTREAMER_MPEGTS_LIBRARIES) (found
+  suitable version "1.28.6", minimum required is "1.18.4")
+Call Stack (most recent call first):
+  /usr/share/cmake-4.4/Modules/FindPackageHandleStandardArgs.cmake:654 (_FPHSA_FAILURE_MESSAGE)
+  Source/cmake/FindGStreamer.cmake:142 (FIND_PACKAGE_HANDLE_STANDARD_ARGS)
+  Source/cmake/GStreamerChecks.cmake:23 (find_package)
+  Source/cmake/OptionsGTK.cmake:507 (include)
+  Source/cmake/WebKitCommon.cmake:331 (include)
+  CMakeLists.txt:22 (include)
+
+If mpegts is not going to work on the build server, then remove its usage from webkitgtk
+
+--- webkitgtk-2.53.92/Source/cmake/GStreamerDependencies.cmake.old
++++ webkitgtk-2.53.92/Source/cmake/GStreamerDependencies.cmake
+@@ -3,7 +3,6 @@
+ WEBKIT_OPTION_DEPEND(ENABLE_WEB_AUDIO USE_GSTREAMER)
+ WEBKIT_OPTION_DEPEND(ENABLE_WEB_CODECS USE_GSTREAMER)
+ WEBKIT_OPTION_DEPEND(USE_GSTREAMER_GL ENABLE_VIDEO)
+-WEBKIT_OPTION_DEPEND(USE_GSTREAMER_MPEGTS ENABLE_VIDEO)
+ WEBKIT_OPTION_DEPEND(USE_GSTREAMER_WEBRTC ENABLE_WEB_RTC)
+ WEBKIT_OPTION_DEPEND(USE_FLITE ENABLE_SPEECH_SYNTHESIS)
+ WEBKIT_OPTION_DEPEND(USE_SPIEL ENABLE_SPEECH_SYNTHESIS)
+--- webkitgtk-2.53.92/Source/cmake/GStreamerChecks.cmake.old
++++ webkitgtk-2.53.92/Source/cmake/GStreamerChecks.cmake
+@@ -9,7 +9,7 @@
+       else ()
+           set(GSTREAMER_COMPONENTS app pbutils)
+           if (ENABLE_VIDEO)
+-              list(APPEND GSTREAMER_COMPONENTS video mpegts tag gl)
++              list(APPEND GSTREAMER_COMPONENTS video tag gl)
+           endif ()
+ 
+           if (ENABLE_WEB_AUDIO)
