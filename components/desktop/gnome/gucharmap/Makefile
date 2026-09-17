@@ -18,10 +18,10 @@ BUILD_STYLE = meson
 include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			gucharmap
-HUMAN_VERSION=			17.0.2
+HUMAN_VERSION=			18.0.0
 COMPONENT_SUMMARY=		GNOME Character Map
 COMPONENT_ARCHIVE_HASH= \
-	sha256:4723972cafab688af4dd927cf458e579ddaea54865d81b7c1e868f3ebbdf00aa
+	sha256:1eab2a092d4088075f6ffe10dccf8bc2be9518fe5997a14bd5deaa09a0bd8fc2
 COMPONENT_FMRI=			desktop/character-map/gucharmap
 COMPONENT_CLASSIFICATION=	Desktop (GNOME)/Documentation
 COMPONENT_LICENSE=		GPL-3.0-only
