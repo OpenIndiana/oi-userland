@@ -26,11 +26,13 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
-<transform file path=usr/bin/WebKitWebDriver -> drop>
-<transform file path=usr/libexec/MiniBrowser -> drop>
 <transform file path=usr/libexec/webkit2gtk-6.0/[^/]* -> default mode 0555>
+<transform file path=usr/libexec/MiniBrowser-6.0 -> default mode 0555>
+# mediate the binaries in common with the multiple libraries by api version
+link path=usr/libexec/MiniBrowser target=MiniBrowser-6.0 mediator=webkitgtk2 mediator-version=6.0
+link path=usr/bin/WebKitWebDriver target=WebKitWebDriver-6.0 mediator=webkitgtk2 mediator-version=6.0
 
-file path=usr/bin/WebKitWebDriver
+file path=usr/bin/WebKitWebDriver-6.0
 file path=usr/include/webkitgtk-6.0/jsc/JSCClass.h
 file path=usr/include/webkitgtk-6.0/jsc/JSCContext.h
 file path=usr/include/webkitgtk-6.0/jsc/JSCDefines.h
@@ -134,17 +136,17 @@ file path=usr/lib/$(MACH64)/girepository-1.0/WebKitWebProcessExtension-6.0.typel
 link path=usr/lib/$(MACH64)/libjavascriptcoregtk-6.0.so \
     target=libjavascriptcoregtk-6.0.so.1
 link path=usr/lib/$(MACH64)/libjavascriptcoregtk-6.0.so.1 \
-    target=libjavascriptcoregtk-6.0.so.1.8.6
-file path=usr/lib/$(MACH64)/libjavascriptcoregtk-6.0.so.1.8.6
+    target=libjavascriptcoregtk-6.0.so.1.8.7
+file path=usr/lib/$(MACH64)/libjavascriptcoregtk-6.0.so.1.8.7
 link path=usr/lib/$(MACH64)/libwebkitgtk-6.0.so target=libwebkitgtk-6.0.so.4
 link path=usr/lib/$(MACH64)/libwebkitgtk-6.0.so.4 \
-    target=libwebkitgtk-6.0.so.4.19.2
-file path=usr/lib/$(MACH64)/libwebkitgtk-6.0.so.4.19.2
+    target=libwebkitgtk-6.0.so.4.19.3
+file path=usr/lib/$(MACH64)/libwebkitgtk-6.0.so.4.19.3
 file path=usr/lib/$(MACH64)/pkgconfig/javascriptcoregtk-6.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/webkitgtk-6.0.pc
 file path=usr/lib/$(MACH64)/pkgconfig/webkitgtk-web-process-extension-6.0.pc
 file path=usr/lib/$(MACH64)/webkitgtk-6.0/injected-bundle/libwebkitgtkinjectedbundle.so
-file path=usr/libexec/MiniBrowser
+file path=usr/libexec/MiniBrowser-6.0
 file path=usr/libexec/webkit2gtk-6.0/WebKitNetworkProcess
 file path=usr/libexec/webkit2gtk-6.0/WebKitWebProcess
 file path=usr/libexec/webkit2gtk-6.0/jsc
