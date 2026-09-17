@@ -19,11 +19,11 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Test-Fatal
-HUMAN_VERSION =			0.018
+HUMAN_VERSION =			0.019
 COMPONENT_SUMMARY =		incredibly simple helpers for testing code with exceptions
 COMPONENT_CPAN_AUTHOR =		RJBS
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:b8d2cccf9ee467271bc478f9cf7eba49545452be9302ae359bc538b8bf687cd6
+	sha256:d8f6b6c87bb399a7d60c295a94a4b741a85b23889cfd6b72f1ff62f0c55cf70b
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
