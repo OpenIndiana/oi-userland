@@ -19,19 +19,16 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		DBI
-HUMAN_VERSION =			1.652
+HUMAN_VERSION =			1.653
 COMPONENT_SUMMARY =		Database independent interface for Perl
 COMPONENT_ARCHIVE_URL =		\
-	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.652.tgz
+	https://cpan.metacpan.org/authors/id/H/HM/HMBRAND/DBI-1.653.tgz
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e7981833696d15414bb76c43817d48f9fc3879e1421433116374fbc63e8e78ad
+	sha256:a98c21fd37eed8f841172875d175d972fe87f063d7d0d2a3b7765908bb25eb58
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
-
-# The hash varies with every run
-COMPONENT_TEST_TRANSFORMS += "-e 's/\(HASH(0x\)[0-9a-f]\{6\})/\1XXXXXX)/g'"
 
 # Optional test dependencies missing from metadata
 TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod
@@ -39,7 +36,14 @@ TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-pod-coverage
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
+REQUIRED_PACKAGES.perl += library/perl-5/encode
 REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
 REQUIRED_PACKAGES.perl += library/perl-5/module-load
 REQUIRED_PACKAGES.perl += library/perl-5/test-simple
 REQUIRED_PACKAGES.perl += runtime/perl
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/clone
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/db_file
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/module-load
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/params-util
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/sql-statement
+TEST_REQUIRED_PACKAGES.perl += library/perl-5/test-simple
