@@ -19,18 +19,17 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Text-Diff
-HUMAN_VERSION =			1.45
-COMPONENT_REVISION =		4
+HUMAN_VERSION =			1.46
 COMPONENT_SUMMARY =		Perform diffs on files and record sets
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:e8baa07b1b3f53e00af3636898bbf73aec9a0ff38f94536ede1dbe96ef086f04
+	sha256:3fc983e3140fa2580250bbcf2b52e2acbdbc5abda4374c3be78235905d8ca8eb
 COMPONENT_LICENSE =		Artistic-1.0 OR GPL-2.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/algorithm-diff
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/algorithm-diff
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
