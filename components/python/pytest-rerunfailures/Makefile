@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		pytest_rerunfailures
-HUMAN_VERSION =			16.6.1
+HUMAN_VERSION =			16.7
 COMPONENT_SUMMARY =		pytest plugin to re-run tests to eliminate flaky failures
 COMPONENT_PROJECT_URL =		https://github.com/pytest-dev/pytest-rerunfailures
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:20ac38d31f9319c4e8f43fe0d0e9c22755508e8e7987a88de6d7fd93fc6bdabb
+	sha256:6956ddfb65ca1d07e7e3d99e2c5359d82300f4cb062e6049563bd2c106f72d5c
 COMPONENT_LICENSE =		MPL-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
