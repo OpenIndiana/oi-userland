@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		cattrs
-HUMAN_VERSION =			26.1.0
+HUMAN_VERSION =			26.2.0
 COMPONENT_SUMMARY =		Composable complex class support for attrs and dataclasses.
 COMPONENT_PROJECT_URL =		https://catt.rs
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:fa239e0f0ec0715ba34852ce813986dfed1e12117e209b816ab87401271cdd40
+	sha256:3cf49f69df8326bcf17a3cb3d3d3ec4a856858fe3a7473746c9044c317d3ba55
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -43,6 +43,7 @@ PYTEST_ADDOPTS += --ignore bench
 
 # We have no msgspec packaged yet
 PYTEST_ADDOPTS += --ignore tests/preconf/test_msgspec_cpython.py
+PYTEST_ADDOPTS += --ignore tests/preconf/test_msgspec_314_cpython.py
 PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_literal_dicts_msgspec
 PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_msgspec_efficient_enum
 PYTEST_ADDOPTS += --deselect tests/test_preconf.py::test_msgspec_json_converter
