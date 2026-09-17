@@ -1,0 +1,18 @@
+--- webkitgtk-2.53.90/Source/WebDriver/WebDriverService.cpp.old	2026-08-07 13:02:47.366361351 -0400
++++ webkitgtk-2.53.90/Source/WebDriver/WebDriverService.cpp	2026-08-07 13:03:20.322133189 -0400
+@@ -374,12 +374,14 @@
+ void WebDriverService::handleRequest(HTTPRequestHandler::Request&& request, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler)
+ {
+     Function<void (HTTPRequestHandler::Response&&)> actualReplyHandler = WTF::move(replyHandler);
++#if ENABLE(WEBDRIVER_BIDI)
+     if (LOG_CHANNEL(WebDriverClassic).state != WTFLogChannelState::Off) {
+         RELEASE_LOG_INFO(WebDriverClassic, "HTTP request %s %s (body=%zu bytes)", request.method.utf8().data(), request.path.utf8().data(), request.dataLength);
+         actualReplyHandler = [startTime = MonotonicTime::now(), replyHandler = WTF::move(actualReplyHandler)](HTTPRequestHandler::Response&& response) mutable {
+             RELEASE_LOG_INFO(WebDriverClassic, "HTTP response %u in %.0fms", response.statusCode, (MonotonicTime::now() - startTime).milliseconds());
+             replyHandler(WTF::move(response));
+         };
+     }
++#endif
+ 
+     auto method = toCommandHTTPMethod(request.method);
+     if (!method) {

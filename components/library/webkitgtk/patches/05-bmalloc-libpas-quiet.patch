@@ -4,13 +4,13 @@ Silence `warning: cast to 'void *' from smaller integer type
 Suitable for upstream, as pthread_t is not guaranteed to be a pointer.
 
 
---- webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c~	2024-10-29 10:12:27.000000000 +0000
-+++ webkit/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c	2025-07-29 18:01:47.245185262 +0000
-@@ -177,7 +177,7 @@
+--- webkitgtk-2.53.1/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c.old
++++ webkitgtk-2.53.1/Source/bmalloc/libpas/src/libpas/pas_bitfit_page.c	
+@@ -178,7 +178,7 @@
      const char* reason)
  {
      pas_start_crash_logging();
--    pas_log("Thread %p encountered bitfit alloaction error.\n", (void*)pthread_self());
+-    pas_log("Thread %p encountered bitfit allocation error.\n", (void*)pthread_self());
 +    pas_log("Thread %p encountered bitfit alloaction error.\n", (void*)(uintptr_t)pthread_self());
      pas_log("Bits for page %p (%s):\n",
              page, pas_bitfit_page_config_kind_get_string(config_kind));

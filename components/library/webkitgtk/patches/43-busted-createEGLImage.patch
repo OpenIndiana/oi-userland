@@ -1,0 +1,26 @@
+
+ file
+Undefined                       first referenced
+ symbol                             in file
+_ZN7WebCore12DMABufBuffer14createEGLImageERNS_9GLDisplayERKNS_22DMABufBufferAttributesE Source/WebKit/CMakeFiles/WebKit.dir/UIProcess/gtk/AcceleratedBackingStore.cpp.o
+ld: fatal: symbol referencing errors. No output written to lib/libwebkit2gtk-4.1.so.0.23.0
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed
+
+
+--- webkitgtk-2.53.4/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp.old	2026-07-28 02:51:53.846099865 -0400
++++ webkitgtk-2.53.4/Source/WebKit/UIProcess/gtk/AcceleratedBackingStore.cpp	2026-07-28 02:52:28.473870719 -0400
+@@ -374,13 +374,7 @@
+     if (!glDisplay)
+         return nullptr;
+ 
+-    auto* image = DMABufBuffer::createEGLImage(*glDisplay, dmaBufAttributes);
+-    if (!image) {
+-        WTFLogAlways("Failed to create EGL image from DMABuf of size %dx%d", size.width(), size.height());
+         return nullptr;
+-    }
+-
+-    return adoptRef(*new BufferEGLImage(webPage, id, surfaceID, size, usage, WTF::move(dmaBufAttributes), image));
+ }
+ 
+ AcceleratedBackingStore::BufferEGLImage::BufferEGLImage(WebPageProxy& webPage, uint64_t id, uint64_t surfaceID, const IntSize& size, RendererBufferFormat::Usage usage, DMABufBufferAttributes&& dmaBufAttributes, EGLImage image)

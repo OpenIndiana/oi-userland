@@ -1,0 +1,20 @@
+On Solaris, WebKit leaks pre-warmed WebKitWebProcesses.
+
+Disable default process prewarming.
+
+
+--- webkitgtk-2.52.6/Source/WebKit/UIProcess/WebProcessPool.cpp.~1~	2026-08-08 16:51:55.173694400 +0000
++++ webkitgtk-2.52.6/Source/WebKit/UIProcess/WebProcessPool.cpp	2026-09-10 09:13:56.981722363 +0000
+@@ -2184,10 +2184,12 @@
+     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.
+     bool doingAnAutomaticProcessSwap = processSwapRequestedByClient == ProcessSwapRequestedByClient::No && process.ptr() != sourceProcess.ptr();
+     Ref configuration = this->configuration();
++#if !OS(SOLARIS)
+     if (doingAnAutomaticProcessSwap && !configuration->wasAutomaticProcessWarmingSetByClient() && !configuration->clientWouldBenefitFromAutomaticProcessPrewarming()) {
+         WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "processForNavigation: Automatically turning on process prewarming because the client would benefit from it");
+         configuration->setClientWouldBenefitFromAutomaticProcessPrewarming(true);
+     }
++#endif
+ 
+     if (configuration->alwaysKeepAndReuseSwappedProcesses() && process.ptr() != sourceProcess.ptr()) {
+         static std::once_flag onceFlag;
