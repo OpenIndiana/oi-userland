@@ -18,7 +18,7 @@ BUILD_STYLE = archive
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			unicode-ucd-unihan
-COMPONENT_VERSION=		17.0.0
+COMPONENT_VERSION=		18.0.0
 COMPONENT_SUMMARY=		Unicode Han Database
 COMPONENT_PROJECT_URL=		https://www.unicode.org/ucd/
 COMPONENT_FMRI=			data/unicode-ucd-unihan
@@ -26,7 +26,7 @@ COMPONENT_CLASSIFICATION=	System/Text Tools
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		Unihan-$(HUMAN_VERSION).zip
 COMPONENT_ARCHIVE_URL=		https://www.unicode.org/Public/$(HUMAN_VERSION)/ucd/Unihan.zip
-COMPONENT_ARCHIVE_HASH=		sha256:f7a48b2b545acfaa77b2d607ae28747404ce02baefee16396c5d2d7a8ef34b5e
+COMPONENT_ARCHIVE_HASH=		sha256:4c93ea9c1f636451729a840978f1667a53886af37ba854fdcce109721c63d43e
 COMPONENT_LICENSE=		Unicode-3.0
 
 BUILD_TARGET = $(BUILD_DIR)/.built
