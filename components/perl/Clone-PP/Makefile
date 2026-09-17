@@ -19,16 +19,15 @@ BUILD_STYLE = makemaker
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		Clone-PP
-HUMAN_VERSION =			1.08
-COMPONENT_REVISION =		1
+HUMAN_VERSION =			1.09
 COMPONENT_SUMMARY =		Recursively copy Perl datatypes
 COMPONENT_CPAN_AUTHOR =		NEILB
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:57203094a5d8574b6a00951e8f2399b666f4e74f9511d9c9fb5b453d5d11f578
+	sha256:4bb44697ef82105bd8d6204e550796a1eea89ce7108a98e0b7bf3ae4700d1c34
 COMPONENT_LICENSE =		Artistic-1.0-Perl OR GPL-1.0-or-later
 
 include $(WS_MAKE_RULES)/common.mk
 
 # Auto-generated dependencies
-PERL_REQUIRED_PACKAGES += library/perl-5/extutils-makemaker
-PERL_REQUIRED_PACKAGES += runtime/perl
+REQUIRED_PACKAGES.perl += library/perl-5/extutils-makemaker
+REQUIRED_PACKAGES.perl += runtime/perl
