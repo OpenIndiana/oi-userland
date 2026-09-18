@@ -1,0 +1,155 @@
+fix(libc): resolve gettext catalogue fallbacks
+
+--- a/usr/src/lib/libc/port/i18n/gettext_real.c
++++ b/usr/src/lib/libc/port/i18n/gettext_real.c
+@@ -263,24 +263,98 @@
+ 		mp->status = 0;
+ 	}
+
+-	/*
+-	 * Finally, handle a single binding
+-	 */
+-#ifdef GETTEXT_DEBUG
+-	*mp->msgfile = '\0';
+-#endif
+-	if (mk_msgfile(mp) == NULL) {
+-		DFLTMSG(result, msgid1, msgid2, n, plural);
+-		return (result);
+-	}
+-
+-	result = handle_mo(mp);
++	result = handle_locale(mp);
+ 	if (result) {
+ 		return (result);
+ 	}
+ 	DFLTMSG(result, msgid1, msgid2, n, plural);
+ 	return (result);
+ } /* _real_gettext_u */
++
++/* Search catalogue names from most to least specific. */
++char *
++handle_locale(struct msg_pack *mp)
++{
++	const char *saved = mp->locale;
++	char name[MAXPATHLEN], normalized[MAXPATHLEN], path[MAXPATHLEN];
++	char *territory, *codeset, *modifier, *p, *out, *result;
++	unsigned int parts = 0;
++	int mask, length;
++	int digits = 1;
++
++	if (mk_msgfile(mp) == NULL)
++		return (NULL);
++	result = handle_mo(mp);
++	if ((mp->status & (ST_GNU_MSG_FOUND | ST_SUN_MO_FOUND)) != 0)
++		return (result);
++	if (strlen(saved) >= sizeof (name) || strchr(saved, '/') != NULL)
++		return (result);
++	(void) strcpy(name, saved);
++
++	modifier = strchr(name, '@');
++	if (modifier != NULL) {
++		*modifier++ = '\0';
++		parts |= 8;
++	}
++	codeset = strchr(name, '.');
++	if (codeset != NULL) {
++		*codeset++ = '\0';
++		parts |= 2;
++	}
++	territory = strchr(name, '_');
++	if (territory != NULL) {
++		*territory++ = '\0';
++		parts |= 4;
++	}
++	if (strcmp(name, "C") == 0 || strcmp(name, "POSIX") == 0)
++		return (result);
++
++	/* Normalize codesets without depending on the current locale. */
++	out = normalized;
++	if (codeset != NULL) {
++		for (p = codeset; *p != '\0'; p++) {
++			if (*p >= '0' && *p <= '9') {
++				*out++ = *p;
++			} else if ((*p >= 'A' && *p <= 'Z') ||
++			    (*p >= 'a' && *p <= 'z')) {
++				*out++ = (*p >= 'A' && *p <= 'Z') ?
++				    *p + ('a' - 'A') : *p;
++				digits = 0;
++			}
++		}
++	}
++	*out = '\0';
++	if (out != normalized) {
++		if (digits && strlen(normalized) + 4 <= sizeof (normalized)) {
++			(void) memmove(normalized + 3, normalized,
++			    strlen(normalized) + 1);
++			(void) memcpy(normalized, "iso", 3);
++		}
++		if (strcmp(normalized, codeset) != 0)
++			parts |= 1;
++	}
++
++	for (mask = parts; mask >= 0; mask--) {
++		if ((mask & ~parts) != 0 || (mask & 3) == 3)
++			continue;
++		length = snprintf(path, sizeof (path), "%s%s%s%s%s%s%s",
++		    name, (mask & 4) ? "_" : "", (mask & 4) ? territory : "",
++		    (mask & 3) ? "." : "",
++		    (mask & 2) ? codeset : ((mask & 1) ? normalized : ""),
++		    (mask & 8) ? "@" : "", (mask & 8) ? modifier : "");
++		if (length < 0 || (size_t)length >= sizeof (path) ||
++		    strcmp(path, saved) == 0)
++			continue;
++		mp->locale = path;
++		if (mk_msgfile(mp) == NULL)
++			continue;
++		result = handle_mo(mp);
++		if ((mp->status & (ST_GNU_MSG_FOUND | ST_SUN_MO_FOUND)) != 0)
++			break;
++	}
++	mp->locale = saved;
++	return (result);
++}
+
+ #define	ALLFREE	\
+ 	free_all(nlstmp, nnp, pathname, ppaths, lang)
+--- a/usr/src/lib/libc/port/i18n/gettext_gnu.c
++++ b/usr/src/lib/libc/port/i18n/gettext_gnu.c
+@@ -319,12 +319,7 @@
+ #ifdef GETTEXT_DEBUG
+ 		*mp->msgfile = '\0';
+ #endif
+-		if (mk_msgfile(mp) == NULL) {
+-			/* illegal locale name */
+-			continue;
+-		}
+-
+-		result = handle_mo(mp);
++		result = handle_locale(mp);
+ 		if (mp->status & ST_GNU_MSG_FOUND)
+ 			return (result);
+
+--- a/usr/src/lib/libc/port/i18n/gettext.h
++++ b/usr/src/lib/libc/port/i18n/gettext.h
+@@ -191,6 +191,7 @@
+ extern char	*_real_bindtextdomain_u(const char *, const char *, int);
+ extern char	*_real_gettext_u(const char *, const char *,
+     const char *, unsigned long int, int, int, locale_t);
++extern char	*handle_locale(struct msg_pack *);
+ extern char	*handle_mo(struct msg_pack *);
+
+ extern int	gnu_setmsg(Msg_node *, char *, size_t);
+--- a/usr/src/man/man3c/gettext.3c
++++ b/usr/src/man/man3c/gettext.3c
+@@ -128,6 +128,11 @@
+ \fBdcngettext()\fR.
+ .sp
+ .LP
++Catalogue lookup also tries less specific locale names by removing the codeset,
++territory, and modifier, in that order. Normalized codeset names are tried before
++removing the codeset. Each message domain is searched independently.
++.sp
++.LP
+ For \fBgettext()\fR and \fBngettext()\fR, the domain used is set by the last
+ valid call to \fBtextdomain()\fR. If a valid call to \fBtextdomain()\fR has not
+ been made, the default domain  (called \fBmessages\fR) is used.
