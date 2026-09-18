@@ -13,6 +13,33 @@ Potentially suitable to send upstream
      struct timespec ts { };
      clock_gettime(CLOCK_MONOTONIC, &ts);
      return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+
+# webkitgtk-2.54.0/Source/ThirdParty/ANGLE/src/common/system_utils_linux.cpp: In function 'double angle::GetCurrentSystemTime()':
+# webkitgtk-2.54.0/Source/ThirdParty/ANGLE/src/common/system_utils_linux.cpp:54:19: error: 'CLOCK_MONOTONIC_RAW' was not declared in this scope; did you mean 'CLOCK_MONOTONIC'?
+#    54 |     clock_gettime(CLOCK_MONOTONIC_RAW, &currentTime);
+#       |                   ^~~~~~~~~~~~~~~~~~~
+#       |                   CLOCK_MONOTONIC
+#
+# CLOCK_HIGHRES on Solaris is effectively CLOCK_MONOTONIC_RAW (as per clock_gettime man page) and an alias to CLOCK_MONOTONIC
+--- webkitgtk-2.54.0/Source/ThirdParty/ANGLE/src/common/system_utils_linux.cpp.old
++++ webkitgtk-2.54.0/Source/ThirdParty/ANGLE/src/common/system_utils_linux.cpp
+@@ -51,14 +51,14 @@
+ double GetCurrentSystemTime()
+ {
+     struct timespec currentTime;
+-    clock_gettime(CLOCK_MONOTONIC_RAW, &currentTime);
++    clock_gettime(CLOCK_MONOTONIC, &currentTime);
+     return currentTime.tv_sec + currentTime.tv_nsec * 1e-9;
+ }
+ 
+ uint64_t GetCurrentSystemTimeNs()
+ {
+     struct timespec currentTime;
+-    clock_gettime(CLOCK_MONOTONIC_RAW, &currentTime);
++    clock_gettime(CLOCK_MONOTONIC, &currentTime);
+     return static_cast<uint64_t>(currentTime.tv_sec) * 1000'000'000 + currentTime.tv_nsec;
+ }
+ 
 --- webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp.orig
 +++ webkitgtk-2.48.1/Source/WTF/wtf/NumberOfCores.cpp
 @@ -31,7 +31,7 @@

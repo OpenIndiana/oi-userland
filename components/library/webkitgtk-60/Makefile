@@ -21,11 +21,11 @@ BUILD_STYLE=		cmake
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webkitgtk-60
-COMPONENT_VERSION=	2.53.92
+COMPONENT_VERSION=	2.54.0
 COMPONENT_SUMMARY=	Web content engine library for GTK+
 COMPONENT_SRC=		webkitgtk-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
-COMPONENT_ARCHIVE_HASH= sha256:2ab7d6b3d586539fac574401a9bfe571c098f85f7835232ae0bc0bae9c9c5bd7
+COMPONENT_ARCHIVE_HASH= sha256:846fd19ccedbae1dbfe904f26dbf2d68a800a33a50caf2ad5222c8dcb3f25682
 COMPONENT_ARCHIVE_URL=	https://webkitgtk.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://webkitgtk.org
 COMPONENT_FMRI=		library/desktop/webkitgtk2-60
@@ -75,6 +75,11 @@ CMAKE_OPTIONS += -DUSE_SYSPROF_CAPTURE=NO
 COMPONENT_BUILD_ENV += GI_SCANNER_DISABLE_CACHE=""
 
 COMPONENT_INSTALL_ARGS = 
+
+# Rename binaries to append API version.  They will be added as mediator links using the original file name by the p5m file.  This allows supporting multiple versions of the same binary filename
+COMPONENT_POST_INSTALL_ACTION += \
+  $(MV) $(PROTO_DIR)/usr/bin/WebKitWebDriver $(PROTO_DIR)/usr/bin/WebKitWebDriver-6.0 ; \
+  $(MV) $(PROTO_DIR)/usr/libexec/MiniBrowser $(PROTO_DIR)/usr/libexec/MiniBrowser-6.0
 
 # manual dependencies for SPARC
 REQUIRED_PACKAGES += library/desktop/gdk-pixbuf
