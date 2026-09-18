@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		tox
-HUMAN_VERSION =			4.60.0
+HUMAN_VERSION =			4.64.7
 COMPONENT_SUMMARY =		tox is a generic virtualenv management and test command line tool
 COMPONENT_PROJECT_URL =		https://tox.wiki
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:6f93bb580d35e00fc69cfec1116eecbe21155f747753ca5019374f7c69b2eac9
+	sha256:b8033a00945a02493adebdc337e4e45136e21a7083c00b2ae27c998370b72af3
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,9 +40,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This test fails with tox-current-env
 PYTEST_ADDOPTS += --deselect tests/tox_env/python/test_python_api.py::test_build_wheel_in_non_base_pkg_env
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/cachetools
