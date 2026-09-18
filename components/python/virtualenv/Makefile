@@ -19,11 +19,11 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		virtualenv
-HUMAN_VERSION =			21.7.8
+HUMAN_VERSION =			21.7.10
 COMPONENT_SUMMARY =		Virtual Python Environment builder
 COMPONENT_PROJECT_URL =		https://github.com/pypa/virtualenv
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:1dc49c790072a9072cb1803f9bd62aa69cd583077cada32390f75505cdc64c9b
+	sha256:a7bf10f37ecc36f1942d6e469d6b59f5fe308f60ac711f66f51ef3bd8cb2c9aa
 COMPONENT_LICENSE =		MIT
 COMPONENT_LICENSE_FILE =	LICENSE
 
@@ -40,9 +40,6 @@ include $(WS_MAKE_RULES)/common.mk
 
 # This test tries to install setuptools using pip and it fails
 PYTEST_ADDOPTS += --deselect tests/unit/create/via_global_ref/test_build_c_ext.py::test_can_build_c_extensions
-
-# Random directory name
-COMPONENT_TEST_TRANSFORMS += "-e 's|/tmp/.*/garbage[^/]*|\$$(TMPDIR)|'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/distlib
