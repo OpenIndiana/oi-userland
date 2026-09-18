@@ -1,0 +1,67 @@
+webkitgtk-2.53.1/Source/WTF/wtf/generic/MemoryFootprintGeneric.cpp: In function 'std::size_t WTF::memoryFootprint()':
+webkitgtk-2.53.1/Source/WTF/wtf/generic/MemoryFootprintGeneric.cpp:36:22: error: 'memoryStatus' was not declared in this scope
+   36 |     auto memoryUse = memoryStatus();
+      |                      ^~~~~~~~~~~~
+
+
+--- webkitgtk-2.53.1/Source/WTF/wtf/AvailableMemory.h.old	2026-05-03 19:56:04.123804994 -0400
++++ webkitgtk-2.53.1/Source/WTF/wtf/AvailableMemory.h	2026-05-03 19:56:17.704696336 -0400
+@@ -32,7 +32,7 @@
+ 
+ WTF_EXPORT_PRIVATE size_t availableMemory();
+ 
+-#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD)
++#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
+ struct MemoryStatus {
+     MemoryStatus(size_t memoryFootprint, double percentAvailableMemoryInUse)
+         : memoryFootprint(memoryFootprint)
+--- webkitgtk-2.53.1/Source/WTF/wtf/AvailableMemory.cpp.~1~	2026-04-13 05:29:42.005056600 -0400
++++ webkitgtk-2.53.1/Source/WTF/wtf/AvailableMemory.cpp	2026-05-03 21:17:22.702514093 -0400
+@@ -40,7 +40,7 @@
+ #import <mach/mach.h>
+ #import <math.h>
+ #elif OS(UNIX)
+-#if OS(FREEBSD) || OS(LINUX)
++#if OS(FREEBSD) || OS(LINUX) || OS(SOLARIS)
+ #include <sys/sysinfo.h>
+ #endif
+ #if OS(LINUX)
+@@ -49,6 +49,11 @@
+ #include <sys/sysctl.h>
+ #include <sys/types.h>
+ #include <sys/user.h>
++#elif OS(SOLARIS)
++#include <stdio.h>
++#include <stdlib.h>
++#include <procfs.h>
++#include <fcntl.h>
+ #endif
+ #include <unistd.h>
+ #elif OS(WINDOWS)
+@@ -181,7 +186,7 @@
+     return availableMemory;
+ }
+ 
+-#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD)
++#if PLATFORM(IOS_FAMILY) || OS(LINUX) || OS(FREEBSD) || OS(SOLARIS)
+ MemoryStatus memoryStatus()
+ {
+ #if PLATFORM(IOS_FAMILY)
+@@ -207,6 +212,17 @@
+     size_t memoryFootprint = 0;
+     if (!sysctl(mib, 4, &info, &infolen, nullptr, 0))
+         memoryFootprint = static_cast<size_t>(info.ki_rssize) * pageSize();
++#elif OS(SOLARIS)
++    FILE *procfile;
++    char procfilename[96];
++    psinfo_t processinfo;
++
++    size_t memoryFootprint = 0;
++    snprintf(procfilename, sizeof(procfilename), "/proc/%d/psinfo", getpid());
++    if ((procfile = fopen (procfilename, "r")) == NULL)
++        if (fread (&processinfo, sizeof (psinfo_t), 1, procfile) == sizeof(processinfo))
++            memoryFootprint = static_cast<size_t>(processinfo.pr_rssize) * 1024; 
++    fclose (procfile);
+ #endif
+ 
+     double percentInUse = static_cast<double>(memoryFootprint) / static_cast<double>(availableMemory());

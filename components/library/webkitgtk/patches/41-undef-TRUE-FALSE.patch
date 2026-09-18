@@ -1,0 +1,21 @@
+build/amd64/WebCore/PrivateHeaders/WebCore/AXCoreObject.h:191:50: error: expected identifier before numeric constant
+  191 | enum class AccessibilityCurrentState : uint8_t { False, True, Page, Step, Location, Date, Time };
+      |                                                  ^~~~~
+build/amd64/WebCore/PrivateHeaders/WebCore/AXCoreObject.h:191:50: error: expected '}' before numeric constant
+
+--- webkitgtk-2.53.4/Source/WebCore/accessibility/AXCoreObject.h.old
++++ webkitgtk-2.53.4/Source/WebCore/accessibility/AXCoreObject.h
+@@ -188,6 +188,13 @@
+     DefaultBehavior,
+ };
+ 
++#if defined(False)
++#undef False
++#endif
++#if defined(True)
++#undef True
++#endif
++
+ enum class AccessibilityCurrentState : uint8_t { False, True, Page, Step, Location, Date, Time };
+ 
+ enum class AccessibilityPopupValue : uint8_t {

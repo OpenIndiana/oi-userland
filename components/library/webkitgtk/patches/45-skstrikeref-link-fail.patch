@@ -1,0 +1,59 @@
+
+_ZN11SkStrikeRefC1E5sk_spI8SkStrikeEf lib/libSkia.a(SkFont.cpp.o)
+ld: fatal: symbol referencing errors. No output written to lib/libwebkit2gtk-4.1.so.0.24.0
+
+Remove SkStrikeRef from SkFont.cpp and SkFont.h
+
+--- webkitgtk-2.53.90/Source/ThirdParty/skia/src/core/SkFont.cpp.old
++++ webkitgtk-2.53.90/Source/ThirdParty/skia/src/core/SkFont.cpp
+@@ -17,7 +17,6 @@
+ #include "include/core/SkRect.h"
+ #include "include/core/SkRefCnt.h"
+ #include "include/core/SkScalar.h"
+-#include "include/core/SkStrikeRef.h"
+ #include "include/core/SkTypeface.h"
+ #include "include/core/SkTypes.h"
+ #include "include/private/SkDebug.h"
+@@ -237,11 +236,6 @@
+     };
+ }
+ 
+-SkStrikeRef SkFont::makeStrikeRef() const {
+-    auto [strikeSpec, strikeToSourceScale] = SkStrikeSpec::MakeCanonicalized(*this);
+-    return SkStrikeRef(strikeSpec.findOrCreateStrike(), strikeToSourceScale);
+-}
+-
+ void SkFont::getWidthsBounds(SkSpan<const SkGlyphID> glyphIDs,
+                              SkSpan<SkScalar> widths,
+                              SkSpan<SkRect> bounds,
+--- webkitgtk-2.53.90/Source/ThirdParty/skia/include/core/SkFont.h.old
++++ webkitgtk-2.53.90/Source/ThirdParty/skia/include/core/SkFont.h
+@@ -26,7 +26,6 @@
+ 
+ class SkMatrix;
+ class SkPaint;
+-class SkStrikeRef;
+ enum class SkFontHinting;
+ enum class SkTextEncoding;
+ struct SkFontMetrics;
+@@ -357,20 +356,6 @@
+     SkScalar measureText(const void* text, size_t byteLength, SkTextEncoding encoding,
+                          SkRect* bounds, const SkPaint* paint) const;
+ 
+-    /** Returns an SkStrikeRef for this font's current settings.
+-
+-        An SkStrikeRef caches the resolved strike (font metrics engine), avoiding the overhead
+-        of descriptor construction, hashing, and global cache lookup on each glyph query.
+-        This is useful when making many glyph metric calls (e.g. getWidths) with the same
+-        font configuration.
+-
+-        The returned SkStrikeRef is independent of this SkFont; subsequent changes to this
+-        SkFont do not affect it. Create a new SkStrikeRef after changing font properties.
+-
+-        @return  an SkStrikeRef for the current font settings
+-    */
+-    SkStrikeRef makeStrikeRef() const;
+-
+     /** Retrieves the advance and bounds for each glyph in glyphs.
+         widths receives min(widths.size(), glyphs.size()) values.
+         bounds receives min(bounds.size(), glyphs.size()) values.

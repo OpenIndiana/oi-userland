@@ -1,0 +1,18 @@
+build/amd64/WebCore/PrivateHeaders/WebCore/CachedImage.h:137:32: error: expected identifier before 'int'
+  137 |     void error(CachedResource::Status) override;
+      |  
+
+--- webkitgtk-2.53.4/Source/WebCore/loader/cache/CachedImage.h.old
++++ webkitgtk-2.53.4/Source/WebCore/loader/cache/CachedImage.h
+@@ -134,6 +134,11 @@
+     void didUpdateImageData();
+     EncodedDataStatus updateImageData(bool allDataReceived);
+     void updateData(const SharedBuffer&) override;
++
++#if defined(Status)
++#undef Status
++#endif
++
+     void error(CachedResource::Status) override;
+     void responseReceived(ResourceResponse&&) override;
+ 

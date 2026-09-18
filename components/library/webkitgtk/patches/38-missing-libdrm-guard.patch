@@ -1,0 +1,12 @@
+--- webkitgtk-2.53.4/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp.old
++++ webkitgtk-2.53.4/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp
+@@ -751,7 +751,9 @@
+             addEGLInfo(hardwareAccelerationObject);
+     } else {
+ #if PLATFORM(GTK)
++#if USE(LIBDRM)
+         addTableRow(hardwareAccelerationObject, "Buffer format"_s, renderBufferDescription(request));
++#endif // USE(LIBDRM)
+ #endif
+     }
+ 

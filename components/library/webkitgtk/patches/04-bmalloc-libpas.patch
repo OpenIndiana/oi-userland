@@ -4,8 +4,8 @@
  
  /* BENABLE(LIBPAS) is enabling libpas build. But this does not mean we use libpas for bmalloc replacement. */
  #if !defined(BENABLE_LIBPAS)
--#if BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
-+#if BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(SOLARIS) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
+-#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
++#if (!BUSE(MIMALLOC) && !BUSE(SYSTEM_MALLOC)) && BCPU(ADDRESS64) && (BOS(DARWIN) || BOS(SOLARIS) || BOS(WINDOWS) || (BOS(LINUX) && (BCPU(X86_64) || BCPU(ARM64))) || BPLATFORM(PLAYSTATION))
  #define BENABLE_LIBPAS 1
  #ifndef PAS_BMALLOC
  #define PAS_BMALLOC 1
@@ -86,15 +86,16 @@
  uint64_t pas_get_current_monotonic_time_nanoseconds(void)
 --- webkit/Source/bmalloc/libpas/src/libpas/pas_page_malloc.c~	2025-07-01 12:43:55.000000000 +0000
 +++ webkit/Source/bmalloc/libpas/src/libpas/pas_page_malloc.c	2025-07-02 17:35:13.694435809 +0000
-@@ -325,6 +325,8 @@
-     // We don't need to call madvise to map page.
+@@ -420,6 +420,9 @@
  #elif PAS_OS(FREEBSD)
+     PAS_ASSERT(!is_symmetric);
      PAS_SYSCALL(madvise(ptr, size, MADV_NORMAL));
 +#elif PAS_OS(SOLARIS)
++    PAS_ASSERT(!is_symmetric);
 +    PAS_SYSCALL(posix_madvise(ptr, size, POSIX_MADV_NORMAL));
+ #else
+     PAS_ASSERT(!is_symmetric);
  #endif
- }
- 
 @@ -368,6 +370,8 @@
          PAS_SYSCALL(madvise(ptr, size, MADV_FREE_REUSABLE));
  #elif PAS_OS(FREEBSD)
