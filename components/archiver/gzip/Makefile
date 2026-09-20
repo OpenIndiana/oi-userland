@@ -28,13 +28,13 @@ USE_DEFAULT_TEST_TRANSFORMS= yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.14
+COMPONENT_VERSION=	1.15
 COMPONENT_SUMMARY=	The GNU Zip (gzip) compression utility
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_URL=	https://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha256:01a7b881bd220bfdf615f97b8718f80bdfd3f6add385b993dcf6efd14e8c0ac6
+COMPONENT_ARCHIVE_HASH= sha256:9aa0cc780dec156b8282844833b342ab7cb08c25d2cd9a1869cdd0df31deff48
 COMPONENT_FMRI=		compress/gzip
 COMPONENT_CLASSIFICATION= Applications/System Utilities
 COMPONENT_LICENSE=	GPLv3, FDLv1.3
@@ -78,6 +78,8 @@ install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 # Get the binaries to test from the component build area.
 COMPONENT_TEST_ENV += PATH=$(BUILD_DIR_$(BITS)):$(PATH.gnu)
 COMPONENT_TEST_TARGETS = check
+
+PKG_HARDLINKS += usr/bin/gunzip
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES += shell/bash
