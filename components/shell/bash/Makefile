@@ -62,7 +62,7 @@ LIBS =	-lc -lsocket -lgen
 # -z redlocsym -- let's shrink the SHT_SYMTAB as much as we can
 LDFLAGS = $(LD_Z_REDLOCSYM)
 
-COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -f -i )
+COMPONENT_PREP_ACTION = ( cd $(@D); autoconf -fi )
 
 COMPONENT_POST_INSTALL_ACTION =  \
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
