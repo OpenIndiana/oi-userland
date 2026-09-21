@@ -19,21 +19,21 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		gpep517
-HUMAN_VERSION =			20
+HUMAN_VERSION =			23
 COMPONENT_SUMMARY =		Python package builder and installer for non-pip-centric world
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:0bbedae28b26482b2e5e186cdb3c5657ded7b76558ae297c57a93724dcb8f359
+	sha256:284fb369c76d3ebb122d9829744d152414c687a22444612c843d33b4959c871b
 COMPONENT_LICENSE =		GPL-2.0-only
 COMPONENT_LICENSE_FILE =	COPYING
 
 include $(WS_MAKE_RULES)/common.mk
 
-# https://github.com/gentoo/gpep517/issues/17
-PYTEST_ADDOPTS += --ignore test/test_integration.py
+COMPONENT_TEST_TRANSFORMS += "-e 's/cp$(subst .,,$(PYTHON_VERSION))-/cp\$$(PYV)-/g'"
 
 # Auto-generated dependencies
 REQUIRED_PACKAGES.python += library/python/flit-core
 REQUIRED_PACKAGES.python += library/python/installer
 REQUIRED_PACKAGES.python += library/python/tomli
 REQUIRED_PACKAGES.python += runtime/python
+TEST_REQUIRED_PACKAGES.python += library/python/packaging
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
