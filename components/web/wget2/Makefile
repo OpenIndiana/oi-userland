@@ -22,15 +22,16 @@
 #
 
 USE_DEFAULT_TEST_TRANSFORMS= yes
+USE_PARALLEL_BUILD = yes
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         wget2
-COMPONENT_VERSION=      2.2.1
+COMPONENT_VERSION=      2.3.0
 COMPONENT_SUMMARY=		GNU Wget2 is the successor of GNU Wget, a file and recursive website downloader
 COMPONENT_PROJECT_URL=  https://www.gnu.org/software/wget/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.lz
-COMPONENT_ARCHIVE_HASH= sha256:f77397cce50b60670f48cfca5867517caed93f7c07ebea76541984d5d8d5c6d1
+COMPONENT_ARCHIVE_HASH= sha256:becf0a06fcfb7760be88db4b29048b31cb7c789e33dc571475071144b0f2caf4
 COMPONENT_ARCHIVE_URL=  https://ftp.gnu.org/gnu/wget/$(COMPONENT_ARCHIVE)
 COMPONENT_FMRI=			web/$(COMPONENT_NAME)
 COMPONENT_CLASSIFICATION=	Applications/Internet
@@ -62,6 +63,8 @@ COMPONENT_TEST_TRANSFORMS += \
 	' -e "/^See/p" ' \
 	' -e "/^Please/p" '
 
+# Needed to build documentation
+REQUIRED_PACKAGES += developer/documentation-tool/doxygen
 # Auto-generated dependencies
 REQUIRED_PACKAGES += $(OPENSSL_PKG)
 REQUIRED_PACKAGES += compress/bzip2
