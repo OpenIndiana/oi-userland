@@ -19,38 +19,20 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		multidict
-HUMAN_VERSION =			6.7.1
+HUMAN_VERSION =			6.9.1
 COMPONENT_SUMMARY =		multidict implementation
 COMPONENT_PROJECT_URL =		https://github.com/aio-libs/multidict
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ec6652a1bee61c53a3e5776b6049172c53b6aaba34f18c9ad04f82712bac623d
+	sha256:0f06e60fa190aa7abd0914c2a766736fdc8e9f34878c4346338534b73d1b20e2
 COMPONENT_LICENSE =		Apache-2.0
 COMPONENT_LICENSE_FILE =	LICENSE
 
 TEST_STYLE = pytest
 
-include $(WS_MAKE_RULES)/common.mk
+# Python 3.9 is not supported by multidict >= 6.8.0
+PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
 
-#
-# Tests are run from build directory that contains cloned copy of sdist.  We
-# try to ask Python to find tested modules in the proto area (the PYTHONPATH is
-# set accordingly), but Python (< 3.11) always adds the current directory to
-# sys.path and there is no known (simple) way how to avoid that.  Except -I,
-# but that would cause Python to ignore PYTHONPATH too so we would not have
-# access to the proto area either.  The -P option together with PYTHONSAFEPATH
-# environment variable were added to Python 3.11 only so we cannot use them yet
-# for all Python versions we support.
-#
-# Since sdist for this project contains the main module in the top-level
-# directory we cannot force Python to skip it.  But, unfortunately, this module
-# does not contain built dynamic libraries, so Python cannot find them while
-# testing.
-#
-# To workaround this we rename the main module in the build directory during
-# testing so Python will need to defer to PYTHONPATH.
-#
-COMPONENT_PRE_TEST_ACTION +=	$(MV) $(@D)/multidict $(@D)/multidict-RENAMED ;
-COMPONENT_POST_TEST_ACTION +=	$(MV) $(@D)/multidict-RENAMED $(@D)/multidict ;
+include $(WS_MAKE_RULES)/common.mk
 
 # This project does not support tox so we need to provide test requirements
 # manually.
@@ -60,12 +42,13 @@ TEST_REQUIREMENTS += requirements/pytest.txt
 PYTEST_ADDOPTS += --ignore tests/test_multidict_benchmarks.py
 PYTEST_ADDOPTS += --ignore tests/test_views_benchmarks.py
 
+# This test needs coverage
+PYTEST_ADDOPTS += --deselect tests/test_leaks.py::test_leak
+
 # Auto-generated dependencies
 REQUIRED_PACKAGES += system/library
 REQUIRED_PACKAGES.python += library/python/setuptools
-REQUIRED_PACKAGES.python += library/python/typing-extensions
 REQUIRED_PACKAGES.python += runtime/python
-TEST_REQUIRED_PACKAGES.python += library/python/cffi
 TEST_REQUIRED_PACKAGES.python += library/python/objgraph
 TEST_REQUIRED_PACKAGES.python += library/python/psutil
 TEST_REQUIRED_PACKAGES.python += library/python/pytest
