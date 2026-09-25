@@ -11,7 +11,7 @@
 
 #
 # This file was automatically generated using the following command:
-#   $WS_TOOLS/python-integrate-project ansi2html
+#   $WS_TOOLS/python-integrate-project -d python/ansi2html-39 ansi2html
 #
 
 BUILD_STYLE = pyproject
@@ -19,16 +19,17 @@ BUILD_STYLE = pyproject
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =		ansi2html
-HUMAN_VERSION =			1.9.5
+HUMAN_VERSION =			1.9.4
+COMPONENT_REVISION =		1
 COMPONENT_SUMMARY =		Convert text with ANSI color codes to HTML or to LaTeX
 COMPONENT_PROJECT_URL =		https://github.com/pycontribs/ansi2html
 COMPONENT_ARCHIVE_HASH =	\
-	sha256:ae17e92f1d6cac0e67d367e07fb0ba8a23dac8f193fc5d7a8c8a50fe5ddd95a4
+	sha256:2b85cd050787186bc201c15635212258e9beda1463b63f327a8234abae2a4b30
 COMPONENT_LICENSE =		LGPL-3.0-only
 COMPONENT_LICENSE_FILE =	LICENSE
 
-# Python 3.9 is not supported by ansi2html >= 1.9.5
-PYTHON_VERSIONS := $(filter-out 3.9,$(PYTHON_VERSIONS))
+# ansi2html >= 1.9.5 requires Python >= 3.10
+PYTHON_VERSIONS = 3.9
 
 include $(WS_MAKE_RULES)/common.mk
 
