@@ -1,0 +1,13 @@
+The guard here is hopelessly incorrect and inconsistent, and obviously so.
+
+--- a/src/hotspot/os/posix/os_posix.cpp	Fri Jun 28 13:01:37 2024
++++ b/src/hotspot/os/posix/os_posix.cpp	Fri Jun 28 13:41:06 2024
+@@ -169,7 +169,7 @@
+ 
+ bool os::first_resident_in_range(address start, size_t size, address& resident_start, size_t& resident_size) {
+ 
+-#ifdef _AIX
++#ifndef LINUX
+   resident_start = start;
+   resident_size = size;
+   return true;

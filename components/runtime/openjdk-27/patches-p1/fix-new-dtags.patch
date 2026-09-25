@@ -1,0 +1,30 @@
+--- a/make/common/JdkNativeCompilation.gmk	Thu Sep 25 00:07:44 2025
++++ b/make/common/JdkNativeCompilation.gmk	Mon Sep 29 12:44:25 2025
+@@ -31,13 +31,20 @@
+ include NativeCompilation.gmk
+ 
+ ifeq ($(call isCompiler, gcc), true)
+-  # --disable-new-dtags forces use of RPATH instead of RUNPATH for rpaths.
+-  # This protects internal library dependencies within the JDK from being
+-  # overridden using LD_LIBRARY_PATH. See JDK-8326891 for more information.
+-  SetExecutableOrigin = \
+-      -Wl,-rpath,\$(DOLLAR)ORIGIN$1 -Wl,--disable-new-dtags
+-  SetSharedLibraryOrigin = \
+-      -Wl,-z,origin -Wl,-rpath,\$(DOLLAR)ORIGIN$1 -Wl,--disable-new-dtags
++  ifeq ($(call isTargetOs, linux), true)
++    # --disable-new-dtags forces use of RPATH instead of RUNPATH for rpaths.
++    # This protects internal library dependencies within the JDK from being
++    # overridden using LD_LIBRARY_PATH. See JDK-8326891 for more information.
++    SetExecutableOrigin = \
++        -Wl,-rpath,\$(DOLLAR)ORIGIN$1 -Wl,--disable-new-dtags
++    SetSharedLibraryOrigin = \
++        -Wl,-z,origin -Wl,-rpath,\$(DOLLAR)ORIGIN$1 -Wl,--disable-new-dtags
++  else
++    SetExecutableOrigin = \
++        -Wl,-rpath,\$(DOLLAR)ORIGIN$1
++    SetSharedLibraryOrigin = \
++        -Wl,-z,origin -Wl,-rpath,\$(DOLLAR)ORIGIN$1
++  endif
+ else ifeq ($(call isCompiler, clang), true)
+   ifeq ($(call isTargetOs, macosx), true)
+     SetExecutableOrigin = \
